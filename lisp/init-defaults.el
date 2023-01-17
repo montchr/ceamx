@@ -42,6 +42,7 @@
  help-window-select t                   ; Focus new help windows when opened
  indent-tabs-mode nil                   ; Stop using tabs to indent
  inhibit-startup-screen t               ; Disable start-up screen
+ initial-buffer-choice t                ; Always start with *scratch*
  initial-scratch-message ""             ; Empty the initial *scratch* buffer
  initial-major-mode #'fundamental-mode  ; Improve initial scratch buffer load time
  ;; initial-major-mode #'org-mode          ; Prefer `org-mode' for *scratch*
