@@ -54,6 +54,9 @@
 (require 'init-packages)
 
 (require 'init-theme)
+(require 'init-keys)
+(require 'init-editor)
+(require 'init-vcs)
 
 ;; TODO: reload yabai on init
 ;; unfortunately
