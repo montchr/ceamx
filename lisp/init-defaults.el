@@ -33,15 +33,12 @@
  auto-save-list-file-prefix nil         ; Prevent tracking for auto-saves
  create-lockfiles nil                   ; Locks are more nuisance than blessing
  cursor-in-non-selected-windows nil     ; Hide the cursor in inactive windows
- cursor-type '(hbar . 2)                ; Underline-shaped cursor
+;;  cursor-type '(hbar . 2)                ; Underline-shaped cursor
  custom-unlispify-menu-entries nil      ; Prefer kebab-case for titles
  custom-unlispify-tag-names nil         ; Prefer kebab-case for symbols
  delete-by-moving-to-trash t            ; Delete files to trash
  fill-column 80                         ; Set width for automatic line breaks
- gc-cons-threshold (* 8 1024 1024)      ; We're not using Game Boys anymore
  help-window-select t                   ; Focus new help windows when opened
- indent-tabs-mode nil                   ; Stop using tabs to indent
- inhibit-startup-screen t               ; Disable start-up screen
  initial-buffer-choice t                ; Always start with *scratch*
  initial-scratch-message ""             ; Empty the initial *scratch* buffer
  initial-major-mode #'fundamental-mode  ; Improve initial scratch buffer load time

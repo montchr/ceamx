@@ -28,18 +28,66 @@
 
 ;;; Code:
 
-(require 'package)
+;;; === ELPACA =================================================================
 
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
+;; <https://github.com/progfolio/elpaca>
 
-(customize-set-variable 'package-archive-priorities
-                        '(("gnu"    . 99)   ; Prefer: GNU packages
-                          ("nongnu" . 80)   ; Fallback: Use non-GNU packages
-                          ("stable" . 70)   ; Prefer: MELPA stable releases
-                          ("melpa"  . 0)))  ; Fallback: MELPA rolling releases
+(defvar elpaca-directory (expand-file-name "elpaca/" +path-packages-dir))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil
+                              :build (:not elpaca--activate-package)))
 
-(customize-set-variable 'package-user-dir (expand-file-name "etc/elpa/" cmx-cache-dir))
+(when-let ((repo  (expand-file-name "repos/elpaca/" elpaca-directory))
+           (build (expand-file-name "elpaca/" elpaca-builds-directory))
+           (order (cdr elpaca-order))
+           ((add-to-list 'load-path (if (file-exists-p build) build repo)))
+           ((not (file-exists-p repo))))
+  (condition-case-unless-debug err
+      (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+               ((zerop (call-process "git" nil buffer t "clone"
+                                     (plist-get order :repo) repo)))
+               (default-directory repo)
+               ((zerop (call-process "git" nil buffer t "checkout"
+                                     (or (plist-get order :ref) "--")))))
+          (progn
+            (byte-recompile-directory repo 0 'force)
+            (require 'elpaca)
+            (and (fboundp 'elpaca-generate-autoloads)
+                 (elpaca-generate-autoloads "elpaca" repo))
+            (kill-buffer buffer))
+        (error "%s" (with-current-buffer buffer (buffer-string))))
+    ((error)
+     (warn "%s" err)
+     (delete-directory repo 'recursive))))
+(require 'elpaca-autoloads)
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
+
+
+;;; === USE-PACKAGE ============================================================
+
+(defmacro use-feature (name &rest args)
+  "Like `use-package' but accounting for asynchronous installation.
+NAME and ARGS are in `use-package'."
+  (declare (indent defun))
+  `(elpaca nil (use-package ,name
+                 :ensure nil
+                 ,@args)))
+
+;; Install use-package
+(elpaca use-package
+  ;; Customize/Configure the package in the BODY of the macro.
+  (setq use-package-always-defer t))
+
+(setq init-file-debug nil)
+(if init-file-debug
+    (setq use-package-verbose t
+          use-package-expand-minimally nil
+          use-package-compute-statistics t
+          debug-on-error t)
+  (setq use-package-verbose nil
+        use-package-expand-minimally t))
 
 (provide 'init-packages)
 ;;; init-packages.el ends here

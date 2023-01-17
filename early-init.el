@@ -33,45 +33,96 @@
 ;;; Code:
 
 (setq package-enable-at-startup nil)
+(setq inhibit-default-init nil)
+(setq native-comp-async-report-warnings-errors nil)
 (setq load-prefer-newer t)
 
-(defun cmx/reduce-gc ()
-  "Reduce the frequency of garbage collection."
-  (setq gc-cons-threshold most-positive-fixnum
-        gc-cons-percentage 0.6))
-
-(defun cmx/restore-gc ()
-  "Restore the frequency of garbage collection."
-  (setq gc-cons-threshold 16777216
-        gc-cons-percentage 0.1))
-
-;; Make GC more rare during init, while minibuffer is active, and
-;; when shutting down. In the latter two cases we try doing the
-;; reduction early in the hook.
-(cmx/reduce-gc)
-(add-hook 'minibuffer-setup-hook #'cmx/reduce-gc -50)
-(add-hook 'kill-emacs-hook #'cmx/reduce-gc -50)
-
-;; But make it more regular after startup and after closing minibuffer.
-(add-hook 'emacs-startup-hook #'cmx/restore-gc)
-(add-hook 'minibuffer-exit-hook #'cmx/restore-gc)
-
-;; Avoid unnecessary regexp matching while loading .el files.
-(defvar cmx/file-name-handler-alist file-name-handler-alist)
+;; Skip expensive regular expression searches in file name handlers.
+(defvar default-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
-(defun cmx/restore-file-name-handler-alist ()
-  "Restores the file-name-handler-alist variable."
-  (setq file-name-handler-alist cmx/file-name-handler-alist)
-  (makunbound 'cmx/file-name-handler-alist))
-(add-hook 'emacs-startup-hook #'cmx/restore-file-name-handler-alist)
+
+(defconst +path-home-dir (file-name-as-directory (getenv "HOME"))
+  "Path to user home directory.")
+(defconst +path-config-dir
+  (file-name-as-directory
+   (or (getenv "XDG_CONFIG_HOME")
+       (concat path-home-dir ".config")))
+  "The root directory for personal configurations.")
+
+(defconst +path-config-dir user-emacs-directory)
+
+(defconst +path-local-dir
+  (concat
+   (file-name-as-directory
+    (or (getenv "XDG_CACHE_HOME")
+        (concat +path-home-dir ".cache")))
+   "ceamx/")
+  "The root directory for local Emacs files.
+Use this as permanent storage for files that are safe to share
+across systems.")
+
+(defconst +path-etc-dir (concat +path-local-dir "etc/")
+  "Directory for non-volatile storage.
+Use this for files that don't change much, like servers binaries,
+external dependencies or long-term shared data.")
+
+(defconst +path-cache-dir (concat +path-local-dir "cache/")
+  "Directory for volatile storage.
+Use this for files that change often, like cache files.")
+
+(defconst +path-packages-dir
+  (expand-file-name (format "packages/%s.%s/"
+                            emacs-major-version
+                            emacs-minor-version)
+                    +path-local-dir)
+  "Where packages are stored.")
+
+(defconst +path-projects-dir
+  (file-name-as-directory
+   (or (getenv "XDG_PROJECTS_HOME")
+       (concat +path-home-dir "Developer")))
+  "The root directory for projects.")
+
+;;; === STARTUP PERFORMANCE TUNING ==========================================
+
+;; Relocate the native-comp cache during early-init.
+(startup-redirect-eln-cache (convert-standard-filename (expand-file-name "eln/" +path-cache-dir)))
+(add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" +path-cache-dir))
+
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 1)
+
+(defun +gc-after-focus-change ()
+  "Run garbage collection when frame loses focus."
+  (run-with-idle-timer
+   5 nil
+   (lambda () (unless (frame-focus-state) (garbage-collect)))))
+
+(defun +reset-init-values ()
+  "Restore sensible settings after initialization."
+  (run-with-idle-timer
+   1 nil
+   (lambda ()
+     (setq file-name-handler-alist default-file-name-handler-alist
+           gc-cons-percentage 0.1
+           gc-cons-threshold 100000000)
+     (message "gc-cons-threshold & file-name-handler-alist restored")
+     (when (boundp 'after-focus-change-function)
+       (add-function :after after-focus-change-function #'+gc-after-focus-change)))))
+(with-eval-after-load 'elpaca
+  (add-hook 'elpaca-after-init-hook '+reset-init-values))
 
 ;; LSP performance improvements.
 (setenv "LSP_USE_PLISTS" "true")
 (when (functionp 'json-serialize)
   (setq read-process-output-max (* 1024 1024 8)))
 
-;; Avoid expensive frame resizing.
+;; Avoid expensive visual elements before UI initialization.
 (setq frame-inhibit-implied-resize t)
+(push '(menu-bar-lines . 0) default-frame-alist)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+(push '(horizontal-scroll-bars . nil) default-frame-alist)
 
 ;; Prevent early flashes of unstyled UI.
 (setq-default
@@ -80,15 +131,24 @@
  '((background-color . "#3F3F3F")       ; Default background color
    (bottom-divider-width . 1)           ; Thin horizontal window divider
    (foreground-color . "#DCDCCC")       ; Default foreground color
-   (fullscreen . maximized)             ; Maximize the window by default
-   (horizontal-scroll-bars . nil)       ; No horizontal scroll-bars
    (left-fringe . 8)                    ; Thin left fringe
-   (menu-bar-lines . 0)                 ; No menu bar
    (right-divider-width . 1)            ; Thin vertical window divider
    (right-fringe . 8)                   ; Thin right fringe
-   (tool-bar-lines . 0)                 ; No tool bar
-   (undecorated . t)                    ; Remove extraneous X decorations
-   (vertical-scroll-bars . nil)))       ; No vertical scroll-bars
+   (undecorated . t)))                  ; Remove extraneous X decorations
+
+;; Basic font configuration.
+;; `fontaine' will handle fonts once loaded.
+(push '(font . "Iosevka") default-frame-alist)
+(set-face-font 'default "Iosevka")
+(set-face-font 'variable-pitch "IBM Plex Sans")
+(copy-face 'default 'fixed-pitch)
+
+;; Ignore Xorg resources.
+(advice-add #'x-apply-session-resources :override #'ignore)
+
+;; Inhibit annoyances.
+(setq ring-bell-function #'ignore
+      inhibit-startup-screen t)
 
 (provide 'early-init)
 ;;; early-init.el ends here

@@ -28,37 +28,46 @@
 
 ;;; Code:
 
-(defvar cmx-config-dir user-emacs-directory)
-(defvar cmx-cache-dir (expand-file-name "ceamx" (getenv "XDG_CACHE_HOME")))
-
-(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lisp" +path-config-dir))
 
 ;; Profile startup time.
 (require 'init-benchmarking)
 
 ;; Configure customization file.
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(setq custom-file (expand-file-name "custom.el" +path-config-dir))
 
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
 
-(defconst *spell-check-support-enabled* nil)
-(defconst *is-a-mac* (eq system-type 'darwin))
+(defconst +is-graphical (display-graphic-p))
+(defconst +is-root-user (string-equal "root" (getenv "USER")))
+(defconst +is-sys-mac (eq system-type 'darwin))
+(defconst +is-sys-linux (eq system-type 'gnu/linux))
+(defconst +env-sys-name (system-name))
 
-;;; Native compilation settings
-(when (featurep 'native-compile)
-  (setq native-comp-async-report-warnings-errors nil
-        native-comp-deferred-compilation t)
-  (when (fboundp 'startup-redirect-eln-cache)
-    (if (version< emacs-version "29")
-        (add-to-list 'native-comp-eln-load-path (convert-standard-filename (expand-file-name "var/eln-cache/" cmx-cache-dir)))
-      (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/eln-cache/" cmx-cache-dir)))))
-  (add-to-list 'native-comp-eln-load-path (expand-file-name "var/eln-cache/" cmx-cache-dir)))
+;; Tame fullscreen behavior across window managers.
+(pcase window-system
+  ('w32 (set-frame-parameter nil 'fullscreen 'fullboth))
+  (_ (set-frame-parameter nil 'fullscreen 'maximized)))
 
 (require 'init-defaults)
 (require 'init-packages)
 
-(load-theme 'modus-vivendi t)
+(require 'init-theme)
+
+;; TODO: reload yabai on init
+;; unfortunately
+;; (when (and
+;;        (not elpa-bootstrap-p)
+;;        env-graphic-p
+;;        env-sys-mac-p)
+;;   (add-hook 'after-init-hook
+;;             (lambda ()
+;;               (shell-command-to-string "yabai-relaunch"))))
+
+;; Load custom file.
+(when (file-exists-p custom-file)
+  (load custom-file nil 'nomessage))
 
 (provide 'init)
 ;;; init.el ends here
