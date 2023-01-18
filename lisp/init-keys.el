@@ -187,6 +187,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 
   (+general-global-menu! "help" "h"
     "d"   '(:ignore t :which-key "describe")
+    "db"  'describe-bindings
     "df"  'describe-function
     "dF"  'describe-face
     "dk"  'describe-key
