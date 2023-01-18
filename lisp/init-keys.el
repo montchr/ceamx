@@ -104,24 +104,24 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     ;; "d"  'kill-current-buffer
     ;; "b" '((lambda () (interactive) (switch-to-buffer nil))
     ;;      :which-key "other-buffer")
-    "i"  #'ibuffer
+    "i" 'ibuffer
     ;; FIXME: broken
     ;; "d" '((lambda () (interactive) (kill-buffer (current-buffer) :wk "delete")))
-    "o" '((lambda () (interactive) (switch-to-buffer nil))
-           :which-key "other-buffer")
-    "p"  'previous-buffer
-    "["  'previous-buffer
     "M" '((lambda () (interactive) (switch-to-buffer "*Messages*"))
           :which-key "messages-buffer")
     "n"  'next-buffer
     "N"  '(evil-buffer-new :which-key "new")
-    "]"  'next-buffer
+    "o" '((lambda () (interactive) (switch-to-buffer nil))
+           :which-key "other-buffer")
+    "p"  'previous-buffer
     "r"  '(revert-buffer :wk "revert")
     "R"  '(rename-buffer :wk "rename")
     "s"  'save-buffer
-    "S"  #'save-some-buffers
+    "S"  'save-some-buffers
     "x" '((lambda () (interactive) (switch-to-buffer "*scratch*"))
            :which-key "scratch-buffer")
+    "["  'previous-buffer
+    "]"  'next-buffer
     "TAB" '((lambda () (interactive) (switch-to-buffer nil))
             :which-key "other-buffer"))
 
@@ -141,13 +141,14 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "s" 'eval-last-sexp)
 
   (+general-global-menu! "file" "f"
-    "f"  #'find-file
+    "f"  'find-file
 
     "d"   '((lambda (&optional arg)
               (interactive "P")
               (let ((buffer (when arg (current-buffer))))
                 (diff-buffer-with-file buffer))) :which-key "diff-with-file")
-    "D"  #'+delete-this-file
+    ;; TODO
+    ;; "D"  '+delete-this-file
 
     "e"   '(:ignore t :which-key "edit")
     ;;"ed"  '((lambda () (interactive) (find-file-existing literate-file) (widen))
@@ -191,6 +192,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "dt"  '((lambda () (interactive) (describe-text-properties (point)))
             :which-key "describe-text-properties")
     "dv"  'describe-variable
+
     "h"   (general-simulate-key "C-h" :which-key "help"))
 
   (+general-global-menu! "link" "l")

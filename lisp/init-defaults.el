@@ -24,7 +24,7 @@
 
 ;;; Commentary:
 
-;;  I've been told these defaults are better, and I tend to agree.
+;;  Better is better, maybe.
 
 ;;; Code:
 
@@ -33,7 +33,6 @@
  auto-save-list-file-prefix nil         ; Prevent tracking for auto-saves
  create-lockfiles nil                   ; Locks are more nuisance than blessing
  cursor-in-non-selected-windows nil     ; Hide the cursor in inactive windows
-;;  cursor-type '(hbar . 2)                ; Underline-shaped cursor
  custom-unlispify-menu-entries nil      ; Prefer kebab-case for titles
  custom-unlispify-tag-names nil         ; Prefer kebab-case for symbols
  delete-by-moving-to-trash t            ; Delete files to trash
@@ -42,7 +41,6 @@
  initial-buffer-choice t                ; Always start with *scratch*
  initial-scratch-message ""             ; Empty the initial *scratch* buffer
  initial-major-mode #'fundamental-mode  ; Improve initial scratch buffer load time
- ;; initial-major-mode #'org-mode          ; Prefer `org-mode' for *scratch*
  mouse-yank-at-point t                  ; Yank at point rather than pointer
  native-comp-async-report-warnings-errors 'silent ; Skip error buffers
  read-process-output-max (* 1024 1024)  ; Increase read size for data chunks
