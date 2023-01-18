@@ -107,6 +107,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "i" 'ibuffer
     ;; FIXME: broken
     ;; "d" '((lambda () (interactive) (kill-buffer (current-buffer) :wk "delete")))
+    "k" 'kill-buffer
     "M" '((lambda () (interactive) (switch-to-buffer "*Messages*"))
           :which-key "messages-buffer")
     "n"  'next-buffer
