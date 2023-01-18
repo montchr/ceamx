@@ -78,6 +78,14 @@
 (put 'advice-add 'lisp-indent-function 2)
 (put 'plist-put 'lisp-indent-function 2)
 
+;; Disable bidirectional text scanning.
+(setq-default bidi-display-reordering 'left-to-right
+              bidi-paragraph-direction 'left-to-right)
+
+;; Remove unnecessary OS-specific command-line options while running
+;; Emacs in a different OS.
+(unless +is-sys-mac    (setq command-line-ns-option-alist nil))
+(unless +is-sys-linux  (setq command-line-x-option-alist nil))
 
 (provide 'init-defaults)
 ;;; init-defaults.el ends here
