@@ -245,84 +245,12 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 
   ) ;; end `general' configuration
 
-(elpaca-use-package evil
-  :demand t
-
-  :preface
-  (setq evil-want-integration t
-        evil-want-keybinding nil)
-
-  :general
-  (+general-global-window
-    "H" 'evil-window-move-far-left
-    "J" 'evil-window-move-very-bottom
-    "K" 'evil-window-move-very-top
-    "L" 'evil-window-move-far-right)
-  (+general-global-menu! "quit" "q"
-    ":" 'evil-command-window-ex
-    "/" 'evil-command-window-search-forward
-    "?" 'evil-command-window-search-backward)
-
-  :custom
-  (evil-symbol-word-search t "search by symbol with * and #.")
-  (evil-shift-width 2 "Same behavior for vim's '<' and '>' commands")
-  (evil-want-C-i-jump nil)
-  (evil-want-fine-undo t)
-  (evil-complete-all-buffers nil)
-  (evil-split-window-below t)
-  (evil-vsplit-window-right t)
-  (evil-want-Y-yank-to-eol t)
-  ;; (evil-search-module 'evil-search "use vim-like search instead of 'isearch")
-  (evil-select-search-module 'evil-search-module 'isearch)
-  ;; Use Emacs default undo system.
-  (evil-undo-system 'undo-redo)
-  (evil-kill-on-visual-paste t)
-  (evil-respect-visual-line-mode t)
-  (evil-normal-state-cursor 'box)
-  (evil-visual-state-cursor 'hollow)
-  (evil-insert-state-cursor '(bar . 2))
-  (evil-emacs-state-cursor '(hbar . 2))
-  (evil-ex-interactive-search-highlight 'selected-window)
-
-  :config
-  ;; Use default Emacs mouse click behavior
-  (define-key evil-motion-state-map [down-mouse-1] nil)
-
-  (defun +evil-kill-minibuffer ()
-    (interactive)
-    (when (windowp (active-minibuffer-window))
-      (evil-ex-search-exit)))
-
-  (add-hook 'mouse-leave-buffer-hook #'+evil-kill-minibuffer)
-
-  (evil-mode 1))
-
-(elpaca-use-package evil-collection
-  :after (evil)
-
-  :custom
-  (evil-collection-setup-minibuffer t)
-  ;; (evil-collection-company-use-tng t)
-
-  :config
-  (evil-collection-init))
-
-(elpaca-use-package anzu
-  :defer 10
-  :config (global-anzu-mode))
-
-(elpaca-use-package evil-anzu
-  :after (evil anzu))
-
-
 (elpaca-use-package which-key
   :demand t
+  :diminish which-key-mode
 
   :init
   (setq which-key-enable-extended-define-key t)
-
-  :config
-  (which-key-mode)
 
   :custom
   (which-key-side-window-location 'bottom)
@@ -330,7 +258,17 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
   (which-key-side-window-max-width 0.33)
   (which-key-idle-delay 0.075)
 
-  :diminish which-key-mode)
+  :config
+  (setq which-key-sort-uppercase-first nil
+        which-key-add-column-padding 1)
+  (which-key-mode))
+
+;; TODO
+;; (when (and env-sys-mac-p env-graphic-p)
+;;   (defvar mac-option-modifier)
+;;   (defvar mac-command-modifier)
+;;   (setq mac-option-modifier nil
+;;         mac-command-modifier 'meta))
 
 (provide 'init-keys)
 ;;; init-keys.el ends here
