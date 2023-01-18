@@ -127,7 +127,7 @@ Use this for files that change often, like cache files.")
 
 ;; Prevent early flashes of unstyled UI.
 (setq-default
- mode-line-format nil
+ ;; mode-line-format nil
  default-frame-alist
  '((background-color . "#3F3F3F")       ; Default background color
    (bottom-divider-width . 1)           ; Thin horizontal window divider
