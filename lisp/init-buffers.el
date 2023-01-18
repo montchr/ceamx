@@ -1,4 +1,4 @@
-;;; init-vcs.el --- Git/VCS -*- lexical-binding: t -*-
+;;; init-buffers.el --- Buffer management -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -24,32 +24,26 @@
 
 ;;; Commentary:
 
-;;  Configurations for git + magit.
-;;  And other version control systems, if they exist...
+;;  Configuration for buffer management
 
 ;;; Code:
 
-(elpaca-use-package magit
-  :after (general)
+(elpaca-use-package dimmer
+  :defer 5
+  :after (which-key)
 
-  :general
-  (+general-global-git/version-control
-    ;; "g"  'magit-status
-    "b"  'magit-branch
-    "B"  'magit-blame
-    "c"  'magit-clone
-    "f"  '(:ignore t :which-key "file")
-    "ff" 'magit-find-file
-    "fh" 'magit-log-buffer-file
-    "i"  'magit-init
-    "L"  'magit-list-repositories
-    "m"  'magit-dispatch
-    "S"  'magit-stage-file
-    "s"  'magit-status
-    "U"  'magit-unstage-file)
+  :custom
+  (dimmer-exclusion-regexp-list '("^\\*[h|H]elm.*\\*"
+                                  "^\\*Minibuf-.*\\*"
+                                  "^\\*Echo.*"
+                                  "^.\\*which-key\\*$"))
+  (dimmer-fraction 0.10)
+  (dimmer-watch-frame-focus-events nil)
 
   :config
-  (transient-bind-q-to-quit))
+  (dimmer-mode 1)
+  (dimmer-configure-which-key)
+  (dimmer-configure-magit))
 
-(provide 'init-vcs)
-;;; init-vcs.el ends here
+(provide 'init-buffers)
+;;; init-buffers.el ends here

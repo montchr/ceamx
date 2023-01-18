@@ -1,4 +1,4 @@
-;;; init.el --- Personal configuration file -*- lexical-binding: t -*-
+;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -28,13 +28,13 @@
 
 ;;; Code:
 
-(add-to-list 'load-path (expand-file-name "lisp" +path-config-dir))
+(add-to-list 'load-path (expand-file-name "lisp" +path-emacs-dir))
 
 ;; Profile startup time.
-(require 'init-benchmarking)
+;; (require 'init-benchmarking)
 
 ;; Configure customization file.
-(setq custom-file (expand-file-name "custom.el" +path-config-dir))
+(setq custom-file (expand-file-name "custom.el" +path-emacs-dir))
 
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
@@ -45,17 +45,16 @@
 (defconst +is-sys-linux (eq system-type 'gnu/linux))
 (defconst +env-sys-name (system-name))
 
-;; Tame fullscreen behavior across window managers.
-(pcase window-system
-  ('w32 (set-frame-parameter nil 'fullscreen 'fullboth))
-  (_ (set-frame-parameter nil 'fullscreen 'maximized)))
-
 (require 'init-defaults)
 (require 'init-packages)
 
 (require 'init-theme)
+(require 'init-modeline)
 (require 'init-keys)
 (require 'init-editor)
+(require 'init-buffers)
+(require 'init-files)
+(require 'init-dired)
 (require 'init-vcs)
 
 ;; TODO: reload yabai on init
@@ -73,4 +72,7 @@
   (load custom-file nil 'nomessage))
 
 (provide 'init)
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
 ;;; init.el ends here

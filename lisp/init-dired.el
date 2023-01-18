@@ -1,4 +1,4 @@
-;;; init-vcs.el --- Git/VCS -*- lexical-binding: t -*-
+;;; init-dired.el --- Dired -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -24,32 +24,19 @@
 
 ;;; Commentary:
 
-;;  Configurations for git + magit.
-;;  And other version control systems, if they exist...
+;;  Configuration for Dired
 
 ;;; Code:
 
-(elpaca-use-package magit
-  :after (general)
+(use-feature dired
+  :commands (dired)
+
+  :custom
+  (dired-listing-switches "-alh" "Human friendly file sizes.")
+  (dired-kill-when-opening-new-dired-buffer t)
 
   :general
-  (+general-global-git/version-control
-    ;; "g"  'magit-status
-    "b"  'magit-branch
-    "B"  'magit-blame
-    "c"  'magit-clone
-    "f"  '(:ignore t :which-key "file")
-    "ff" 'magit-find-file
-    "fh" 'magit-log-buffer-file
-    "i"  'magit-init
-    "L"  'magit-list-repositories
-    "m"  'magit-dispatch
-    "S"  'magit-stage-file
-    "s"  'magit-status
-    "U"  'magit-unstage-file)
+  (+general-global-application "d" 'dired))
 
-  :config
-  (transient-bind-q-to-quit))
-
-(provide 'init-vcs)
-;;; init-vcs.el ends here
+(provide 'init-dired)
+;;; init-dired.el ends here

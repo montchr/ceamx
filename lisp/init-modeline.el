@@ -1,4 +1,4 @@
-;;; init-vcs.el --- Git/VCS -*- lexical-binding: t -*-
+;;; init-modeline.el --- Modeline -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -24,32 +24,12 @@
 
 ;;; Commentary:
 
-;;  Configurations for git + magit.
-;;  And other version control systems, if they exist...
+;;  Modeline configuration
 
 ;;; Code:
 
-(elpaca-use-package magit
-  :after (general)
+(elpaca-use-package diminish
+  :defer 10)
 
-  :general
-  (+general-global-git/version-control
-    ;; "g"  'magit-status
-    "b"  'magit-branch
-    "B"  'magit-blame
-    "c"  'magit-clone
-    "f"  '(:ignore t :which-key "file")
-    "ff" 'magit-find-file
-    "fh" 'magit-log-buffer-file
-    "i"  'magit-init
-    "L"  'magit-list-repositories
-    "m"  'magit-dispatch
-    "S"  'magit-stage-file
-    "s"  'magit-status
-    "U"  'magit-unstage-file)
-
-  :config
-  (transient-bind-q-to-quit))
-
-(provide 'init-vcs)
-;;; init-vcs.el ends here
+(provide 'init-modeline)
+;;; init-modeline.el ends here

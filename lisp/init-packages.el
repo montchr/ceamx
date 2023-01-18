@@ -37,7 +37,6 @@
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
                               :ref nil
                               :build (:not elpaca--activate-package)))
-
 (when-let ((repo  (expand-file-name "repos/elpaca/" elpaca-directory))
            (build (expand-file-name "elpaca/" elpaca-builds-directory))
            (order (cdr elpaca-order))
@@ -64,7 +63,6 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
-
 ;;; === USE-PACKAGE ============================================================
 
 (defmacro use-feature (name &rest args)
@@ -77,7 +75,9 @@ NAME and ARGS are in `use-package'."
 
 ;; Install use-package
 (elpaca use-package
-  ;; Customize/Configure the package in the BODY of the macro.
+  ;; NOTE: `use-package-always-defer' in combination with `:after' may cause a
+  ;; package to never load unless precautions are taken:
+  ;; <https://github.com/jwiegley/use-package#loading-packages-in-sequence>
   (setq use-package-always-defer t))
 
 (setq init-file-debug nil)

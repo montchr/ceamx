@@ -43,13 +43,14 @@
 
 (defconst +path-home-dir (file-name-as-directory (getenv "HOME"))
   "Path to user home directory.")
+
 (defconst +path-config-dir
   (file-name-as-directory
    (or (getenv "XDG_CONFIG_HOME")
        (concat path-home-dir ".config")))
   "The root directory for personal configurations.")
 
-(defconst +path-config-dir user-emacs-directory)
+(defconst +path-emacs-dir user-emacs-directory)
 
 (defconst +path-local-dir
   (concat
@@ -151,4 +152,7 @@ Use this for files that change often, like cache files.")
       inhibit-startup-screen t)
 
 (provide 'early-init)
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
 ;;; early-init.el ends here
