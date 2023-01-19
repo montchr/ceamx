@@ -28,12 +28,28 @@
 
 ;;; Code:
 
+;;
 ;;; === ELPACA =================================================================
+;;  <https://github.com/progfolio/elpaca>
 
-;; <https://github.com/progfolio/elpaca>
+;; `elpaca' recipes seem to follow the `straight.el' format...
+;; (maybe? does not seem to be documented entirely...):
+;;
+;; <https://github.com/radian-software/straight.el/tree/develop#the-recipe-format>
+;;
+;; Sometimes packages might include additional subpackages in their repo. 
+;; Examples I've encountered: `evil-collection', `corfu', `vertico'.
+;; These additional files can be copied to the package destination
+;; in addition to the default package file(s) by declaring them in a recipe
+;; under the `:files' property. For example, given the element
+;; `:files (:defaults "snippets")', all files under the `snippets' subdirectory
+;; would also be copied. See the recipe format docs for details.
 
+;; Configurate package/build directories
 (defvar elpaca-directory (expand-file-name "elpaca/" +path-packages-dir))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+
+;; Bootstrap
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
                               :ref nil
                               :build (:not elpaca--activate-package)))
@@ -63,7 +79,11 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
+
+
+;;
 ;;; === USE-PACKAGE ============================================================
+;;  <https://github.com/jwiegley/use-package>
 
 (defmacro use-feature (name &rest args)
   "Like `use-package' but accounting for asynchronous installation.
@@ -80,6 +100,7 @@ NAME and ARGS are in `use-package'."
   ;; <https://github.com/jwiegley/use-package#loading-packages-in-sequence>
   (setq use-package-always-defer t))
 
+;; Add a debug mode flag.
 (setq init-file-debug nil)
 (if init-file-debug
     (setq use-package-verbose t

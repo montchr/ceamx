@@ -44,6 +44,10 @@
 (defvar default-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
+;;
+;;; === PATHS ======================================================================================
+;;
+
 (defconst +path-home-dir (file-name-as-directory (getenv "HOME"))
   "Path to user home directory.")
 
@@ -87,7 +91,9 @@ Use this for files that change often, like cache files.")
        (concat +path-home-dir "Developer")))
   "The root directory for projects.")
 
-;;; === STARTUP PERFORMANCE TUNING ==========================================
+;;
+;;; === STARTUP PERFORMANCE TUNING =================================================================
+;;
 
 ;; Relocate the native-comp cache during early-init.
 (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "eln/" +path-cache-dir)))
@@ -155,7 +161,8 @@ Use this for files that change often, like cache files.")
       inhibit-startup-screen t)
 
 (provide 'early-init)
+;;; early-init.el ends here
+
 ;; Local Variables:
 ;; no-byte-compile: t
 ;; End:
-;;; early-init.el ends here
