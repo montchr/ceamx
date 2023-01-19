@@ -35,7 +35,7 @@
 
   :general
   (+general-global-git/version-control
-    ;; "g"  'magit-status
+    "g"  'magit-status
     "b"  'magit-branch
     "B"  'magit-blame
     "c"  'magit-clone
