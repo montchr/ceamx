@@ -290,7 +290,9 @@
 ;;; === CORFU :: "Completion Overlay Region FUnction" ===============================================
 ;;  <https://github.com/minad/corfu>
 
-(elpaca-use-package corfu
+;; Recipe derived from <https://github.com/progfolio/.emacs.d/blob/7935d69dc2bb05af99b3743b9d33826043bfedd8/init.org#corfu>
+(elpaca-use-package (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
+  :defer 5
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
   (corfu-auto t)                 ;; Enable auto completion
@@ -307,8 +309,11 @@
   ;;        (shell-mode . corfu-mode)
   ;;        (eshell-mode . corfu-mode))
 
-  :init
-  (global-corfu-mode))
+  :config
+  ;; NOTE: The `corfu' readme calls `global-corfu-mode' under `:init'.
+  (global-corfu-mode)
+  (with-eval-after-load 'evil
+      (setq evil-complete-next-func (lambda (_) (completion-at-point)))))
 
 (use-feature emacs
   :init
