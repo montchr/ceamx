@@ -97,12 +97,8 @@ NAME and ARGS are in `use-package'."
                  :ensure nil
                  ,@args)))
 
-;; Install use-package
-(elpaca use-package
-  ;; NOTE: `use-package-always-defer' in combination with `:after' may cause a
-  ;; package to never load unless precautions are taken:
-  ;; <https://github.com/jwiegley/use-package#loading-packages-in-sequence>
-  (setq use-package-always-defer t))
+;; Install use-package.
+(elpaca use-package (require 'use-package))
 
 ;; Add a debug mode flag.
 (setq init-file-debug nil)
