@@ -31,8 +31,7 @@
 (add-to-list 'load-path (expand-file-name "lisp" +path-emacs-dir))
 
 ;; Profile startup time.
-;; FIXME: needs elpaca compat update
-;; (require 'init-benchmarking)
+(require 'init-benchmarking)
 
 ;; Configure customization file.
 (setq custom-file (expand-file-name "custom.el" +path-emacs-dir))
