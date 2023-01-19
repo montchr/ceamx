@@ -50,7 +50,9 @@
     "U"  'magit-unstage-file)
 
   :config
-  (transient-bind-q-to-quit))
+  ;; Close transient with ESC or q
+  (transient-bind-q-to-quit)
+  (define-key transient-map [escape] #'transient-quit-one))
 
 (provide 'init-vcs)
 ;;; init-vcs.el ends here
