@@ -88,6 +88,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 (defun cmx/show-init-time ()
   (message "init completed in %.2fms"
            (cmx/time-subtract-millis after-init-time before-init-time)))
+;; FIXME: incompatible with elpaca async load
 (add-hook 'after-init-hook 'cmx/show-init-time)
 
 (provide 'init-benchmarking)

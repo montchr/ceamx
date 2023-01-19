@@ -25,14 +25,17 @@
 ;;; Commentary:
 
 ;; Prior to Emacs 27, the `init.el' was supposed to handle the
-;; initialisation of the package manager, by means of calling
-;; `package-initialize'.  Starting with Emacs 27, the default
-;; behaviour is to start the package manager before loading the init
-;; file.
+;; initialisation of `package.el', by means of calling
+;; `package-initialize'. Starting with Emacs 27, the default
+;; behavior is to start `package.el' before loading the init
+;; file. 
 
 ;;; Code:
 
+;; We don't want to use `package.el'. Considering the init behavior
+;; described in the Commentary, we need to disable `package.el' immediately.
 (setq package-enable-at-startup nil)
+
 (setq inhibit-default-init nil)
 (setq native-comp-async-report-warnings-errors nil)
 (setq load-prefer-newer t)

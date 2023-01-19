@@ -29,6 +29,7 @@
 
 ;;; Code:
 
+;; FIXME: evil bindings unavailable! prob an issue with general
 (elpaca-use-package magit
   :after (general)
 

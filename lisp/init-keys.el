@@ -34,6 +34,8 @@
   (general-override-mode)
   (general-auto-unbind-keys)
 
+  ;; FIXME: use `general-def'
+  ;; <https://github.com/noctuid/general.el#usage-recommendations-and-documentation-clarifications>
   (general-define-key
    :keymaps 'override
    :states '(insert normal hybrid motion visual operator emacs)
