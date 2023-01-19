@@ -79,6 +79,10 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
+;; Use Evil bindings in status and UI maps
+(with-eval-after-load 'evil
+  (with-eval-after-load 'elpaca-ui
+    (evil-make-intercept-map elpaca-ui-mode-map)))
 
 
 ;;
