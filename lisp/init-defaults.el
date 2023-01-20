@@ -52,8 +52,6 @@
  delete-by-moving-to-trash t            ; Delete files to trash
  fill-column 80                         ; Set width for automatic line breaks
  help-window-select t                   ; Focus new help windows when opened
- initial-buffer-choice t                ; Always start with *scratch*
- initial-scratch-message ""             ; Empty the initial *scratch* buffer
  initial-major-mode #'fundamental-mode  ; Improve initial scratch buffer load time
  mouse-yank-at-point t                  ; Yank at point rather than pointer
  native-comp-async-report-warnings-errors 'silent ; Skip error buffers
@@ -64,7 +62,6 @@
  select-enable-clipboard t              ; Merge system's and Emacs' clipboard
  sentence-end-double-space nil          ; Use a single space after dots
  show-help-function t                   ; Enable help text everywhere
- ;; show-help-function nil                 ; Disable help text everywhere
  uniquify-buffer-name-style 'forward    ; Uniquify buffer names
  use-short-answers t                    ; Replace yes/no prompts with y/n
  window-combination-resize t            ; Resize windows proportionally
@@ -78,12 +75,44 @@
 (put 'downcase-region 'disabled nil)    ; Enable `downcase-region'
 (put 'scroll-left 'disabled nil)        ; Enable `scroll-left'
 (put 'upcase-region 'disabled nil)      ; Enable `upcase-region'
-(set-default-coding-systems 'utf-8)     ; Default to utf-8 encoding
+
+;; Default to UTF-8 for all of the things.
+;; FIXME: these can't all be necessary, right?
+(set-charset-priority 'unicode)
+(set-default-coding-systems 'utf-8)
+(setq locale-coding-system 'utf-8
+      coding-system-for-read 'utf-8
+      coding-system-for-write 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+
+;; Enable recent files mode.
+(recentf-mode t)
+(setq recentf-exclude `(,(expand-file-name "straight/build/" user-emacs-directory)
+                        ,(expand-file-name "eln-cache/" user-emacs-directory)
+                        ,(expand-file-name "etc/" user-emacs-directory)
+                        ,(expand-file-name "var/" user-emacs-directory)))
+
+;; Follow symlinks.
+(setq vc-follow-symlinks t)
+
+;; Disable extraneous OS window chrome.
+(when (window-system)
+  (tool-bar-mode -1)
+  (toggle-scroll-bar -1))
+
+;; Enable winner mode globally for undo/redo window layout changes.
+(winner-mode t)
+
+(show-paren-mode t)
 
 ;; Unbind `suspend-frame'
 (global-unset-key (kbd "C-x C-z"))
 
-;;; Global indentation defaults
+;; Global indentation defaults
 (setq-default
  indent-tabs-mode nil
  tab-always-indent 'complete ; Indent, then try completions

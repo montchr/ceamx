@@ -28,6 +28,9 @@
 
 ;;; Code:
 
+(display-time-mode -1)
+(setq column-number-mode t)
+
 (elpaca-use-package diminish
   :defer 10)
 
