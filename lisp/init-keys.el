@@ -287,12 +287,12 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
         which-key-add-column-padding 1)
   (which-key-mode))
 
-;; TODO
-;; (when (and env-sys-mac-p env-graphic-p)
-;;   (defvar mac-option-modifier)
-;;   (defvar mac-command-modifier)
-;;   (setq mac-option-modifier nil
-;;         mac-command-modifier 'meta))
+;; macOS: Disable 'option' and bind 'command' key as `meta'.
+(when (and +is-sys-mac +is-graphical)
+  (defvar mac-option-modifier)
+  (defvar mac-command-modifier)
+  (setq mac-option-modifier nil
+        mac-command-modifier 'meta))
 
 (provide 'init-keys)
 ;;; init-keys.el ends here
