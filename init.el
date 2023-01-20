@@ -59,15 +59,10 @@
 (require 'init-dired)
 (require 'init-vcs)
 
-;; TODO: reload yabai on init
 ;; unfortunately
-;; (when (and
-;;        (not elpa-bootstrap-p)
-;;        env-graphic-p
-;;        env-sys-mac-p)
-;;   (add-hook 'after-init-hook
-;;             (lambda ()
-;;               (shell-command-to-string "yabai-relaunch"))))
+(when (and +is-sys-mac +is-graphical)
+  (add-hook 'elpaca-after-init-hook (lambda ()
+    (shell-command-to-string "yabai-relaunch"))))
 
 ;; Load custom file.
 (when (file-exists-p custom-file)
