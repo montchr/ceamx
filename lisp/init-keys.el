@@ -289,12 +289,16 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
         which-key-add-column-padding 1)
   (which-key-mode))
 
-;; macOS: Disable 'option' and bind 'command' key as `meta'.
+;; macOS: Remap modifier keys.
 (when (and +is-sys-mac +is-graphical)
-  (defvar mac-option-modifier)
-  (defvar mac-command-modifier)
-  (setq mac-option-modifier nil
-        mac-command-modifier 'meta))
+  (setq mac-control-modifier 'control
+        mac-option-modifier 'meta
+        mac-command-modifier 'super)
+  ;; Common system clipboard hotkeys.
+  (global-set-key [(s c)] 'kill-ring-save)
+  (global-set-key [(s v)] 'yank)
+  (global-set-key [(s x)] 'kill-region)
+  (global-set-key [(s q)] 'kill-emacs))
 
 (provide 'init-keys)
 ;;; init-keys.el ends here
