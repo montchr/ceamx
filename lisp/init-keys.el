@@ -100,6 +100,8 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
            :which-key "elpaca-info")
     "ps" 'elpaca-status
     "pt" 'elpaca-try
+    "pu" 'elpaca-update
+    "pU" 'elpaca-update-all
     "pv" 'elpaca-visit)
 
   (+general-global-menu! "buffer" "b"
@@ -108,7 +110,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     ;;      :which-key "other-buffer")
     "i" 'ibuffer
     ;; FIXME: broken
-    ;; "d" '((lambda () (interactive) (kill-buffer (current-buffer) :wk "delete")))
+    ;; "d" '((lambda () (interactive) (kill-buffer (current-buffer))) :which-key "delete")
     "k" 'kill-buffer
     "M" '((lambda () (interactive) (switch-to-buffer "*Messages*"))
           :which-key "messages-buffer")
@@ -140,7 +142,9 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "b" 'eval-buffer
     "d" 'eval-defun
     "e" 'eval-expression
+    "E" 'elisp-eval-region-or-buffer
     "p" 'pp-eval-last-sexp
+    "r" 'eval-region
     "s" 'eval-last-sexp)
 
   (+general-global-menu! "file" "f"
@@ -154,50 +158,61 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     ;; "D"  '+delete-this-file
 
     "e"   '(:ignore t :which-key "edit")
-    ;;"ed"  '((lambda () (interactive) (find-file-existing literate-file) (widen))
-    ;;        :which-key "dotfile")
     "eR"  '((lambda () (interactive) (load-file user-init-file))
             :which-key "reload-init.el")
 
     "R"   'rename-file-and-buffer
     "s"   'save-buffer
-    "S"   '(write-file :wk "Save as ...")
+    "S"   '(write-file :which-key "save as...")
+    ;; TODO
     ;;"u"  #'+sudo-find-file
     ;;    "U"  #'+sudo-this-file
-    "v"   'find-variable-at-point
-    "V"   'find-variable
     ;;"y"  #'+yank-this-file-name
+
+    ;; FIXME: move to a 'search' menu
+    ;; "v"   'find-variable-at-point
+    ;; "V"   'find-variable
     )
 
   (+general-global-menu! "frame" "F"
     "D" 'delete-other-frames
     "F" 'select-frame-by-name
     "O" 'other-frame-prefix
-    "c" '(:ingore t :which-key "color")
+
+    "c" '(:ignore t :which-key "color")
     "cb" 'set-background-color
     "cc" 'set-cursor-color
     "cf" 'set-foreground-color
-    ;; TODO: use fontaine
-    ;; "f" 'set-frame-font
+
+    "f" '(fontaine-set-preset :which-key "set font...")
     "m" 'make-frame-on-monitor
     "n" 'next-window-any-frame
     "o" 'other-frame
     "p" 'previous-window-any-frame
     "r" 'set-frame-name)
 
+  ;; TODO: sparse keymap?
   (+general-global-menu! "git/version-control" "g")
 
   (+general-global-menu! "help" "h"
+    "h"  (general-simulate-key "C-h" :which-key "help")
+
+    "b"  'describe-bindings
+    "f"  'describe-function
+    "F"  'describe-face
+    "k"  'describe-key
+    "o"  'describe-symbol
+    "v"  'describe-variable
+
+    ;; FIXME: somehow these inherit the `which-key' labels from the top-level leader menu
     "d"   '(:ignore t :which-key "describe")
     "db"  'describe-bindings
     "df"  'describe-function
     "dF"  'describe-face
     "dk"  'describe-key
     "dt"  '((lambda () (interactive) (describe-text-properties (point)))
-            :which-key "describe-text-properties")
-    "dv"  'describe-variable
-
-    "h"   (general-simulate-key "C-h" :which-key "help"))
+            :which-key "text-props")
+    "dv"  'describe-variable)
 
   (+general-global-menu! "link" "l")
 
@@ -222,7 +237,9 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "O" 'delete-other-windows
     "X" '((lambda () (interactive) (call-interactively #'other-window) (kill-buffer-and-window))
           :which-key "kill-other-buffer-and-window")
+
     "d" 'delete-window
+    "D" 'kill-buffer-and-window
     "h" 'windmove-left
     "j" 'windmove-down
     "k" 'windmove-up
@@ -232,6 +249,8 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
             "toggle window dedication"
             (set-window-dedicated-p (selected-window) (not (window-dedicated-p))))
           :which-key "toggle window dedication")
+
+    ;; TODO: move to `r' prefix?
     "."  '(:ignore :which-key "resize")
     ".h" '((lambda () (interactive)
              (call-interactively (if (window-prev-sibling) #'enlarge-window-horizontally
@@ -246,8 +265,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
            :which-key "divider up")
     ".k" '((lambda () (interactive)
              (call-interactively (if (window-prev-sibling) #'enlarge-window #'shrink-window)))
-           :which-key "divider down")
-    "x" 'kill-buffer-and-window)
+           :which-key "divider down"))
 
   ) ;; end `general' configuration
 
