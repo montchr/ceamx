@@ -28,6 +28,20 @@
 
 ;;; Code:
 
+;; > Help keeping ~/.emacs.d clean
+;; <https://github.com/emacscollective/no-littering>
+(elpaca-use-package no-littering
+  :demand
+
+  :preface
+  (setq no-littering-etc-directory +path-etc-dir)
+  (setq no-littering-var-directory +path-var-dir)
+
+  :config
+  (with-eval-after-load 'recentf
+    (add-to-list 'recentf-exclude no-littering-var-directory)
+    (add-to-list 'recentf-exclude no-littering-etc-directory)))
+
 (setq-default
  ad-redefinition-action 'accept         ; Silence warnings for redefinition
  auto-save-list-file-prefix nil         ; Prevent tracking for auto-saves

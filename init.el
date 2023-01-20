@@ -45,8 +45,8 @@
 (defconst +is-sys-linux (eq system-type 'gnu/linux))
 (defconst +env-sys-name (system-name))
 
-(require 'init-defaults)
 (require 'init-packages)
+(require 'init-defaults)
 
 (require 'init-theme)
 (require 'init-modeline)

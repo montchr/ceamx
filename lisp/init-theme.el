@@ -45,7 +45,7 @@
   :ensure t
   :demand t
   :config
-  (setq fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-cache-dir))
+  (setq fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
   (setq fontaine-presets
          '((small :default-height 106
             :default-family "Iosevka Term")

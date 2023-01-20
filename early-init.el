@@ -74,9 +74,9 @@ across systems.")
 Use this for files that don't change much, like servers binaries,
 external dependencies or long-term shared data.")
 
-(defconst +path-cache-dir (concat +path-local-dir "cache/")
+(defconst +path-var-dir (concat +path-local-dir "var/")
   "Directory for volatile storage.
-Use this for files that change often, like cache files.")
+Use this for files that change often, like data and cache files.")
 
 (defconst +path-packages-dir
   (expand-file-name (format "packages/%s.%s/"
@@ -96,8 +96,8 @@ Use this for files that change often, like cache files.")
 ;;
 
 ;; Relocate the native-comp cache during early-init.
-(startup-redirect-eln-cache (convert-standard-filename (expand-file-name "eln/" +path-cache-dir)))
-(add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" +path-cache-dir))
+(startup-redirect-eln-cache (convert-standard-filename (expand-file-name "eln/" +path-var-dir)))
+(add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" +path-var-dir))
 
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 1)
