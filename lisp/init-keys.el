@@ -57,7 +57,9 @@
               (let ((local current-prefix-arg)
                     (current-prefix-arg nil))
                 (call-interactively (if local #'text-scale-adjust #'global-text-scale-adjust))))
-            :which-key "zoom"))
+            :which-key "zoom")
+    ;; TODO: update if using projectile
+    "SPC"  'project-find-file)
 
   ;; major modes
   (general-create-definer global-leader
