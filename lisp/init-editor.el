@@ -28,6 +28,27 @@
 
 ;;; Code:
 
+(use-feature emacs
+  :hook
+  ((org-mode . (lambda () (cmx/add-local-electric-pairs '((?= . ?=)
+                                                          (?~ . ?~))))))
+  :init
+  (electric-pair-mode +1)
+  (setq electric-pair-mode-preserve-balance nil)
+
+  ;; mode-specific local-electric pairs
+  ;; <https://www.lucacambiaghi.com/vanilla-emacs/readme.html#h:BE3F251D-5F39-4337-B27C-CFB81EE9A504>
+  (defconst +default-electric-pairs electric-pair-pairs)
+  (defun cmx/add-local-electric-pairs (pairs)
+    "Example usage:
+    (add-hook 'jupyter-org-interaction-mode '(lambda () (set-local-electric-pairs '())))
+    "
+    (setq-local electric-pair-pairs (append +default-electric-pairs pairs))
+    (setq-local electric-pair-text-pairs electric-pair-pairs))
+)
+
+
+
 (elpaca-use-package apheleia
   :config
   (apheleia-global-mode +1))
