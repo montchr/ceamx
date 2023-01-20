@@ -37,8 +37,10 @@
 ;;; === VERTICO :: "VERTical Interactive COmpletion" ================================================
 ;;  <https://github.com/minad/vertico>
 
-(elpaca-use-package vertico
-  :demand t
+(elpaca-use-package
+  (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
+
+  :defer t
   
   :init
   (vertico-mode)
@@ -56,15 +58,14 @@
   (setq vertico-cycle t))
 
 ;; Configure directory extension.
-;; FIXME: elpaca cannot find this -- `use-package' or `use-feature' alone breaks everythings
-(elpaca-use-package vertico-directory
+(use-feature vertico-directory
   :after vertico
   ;; More convenient directory navigation commands
   :bind (:map vertico-map
               ("RET" . vertico-directory-enter)
-              ("DEL" . vertico-directory-delete-char)
-              ("M-DEL" . vertico-directory-delete-word))
-  ;; Tidy shadowed file names
+              ("M-DEL" . vertico-directory-delete-char)
+              ("DEL" . vertico-directory-delete-word))
+  ;; Tidy shadowed file names -- e.g. cleans `~/foo/bar///' to `/', and `~/foo/bar/~/' to `~/'.
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
