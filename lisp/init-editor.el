@@ -33,6 +33,7 @@
   ((org-mode . (lambda () (cmx/add-local-electric-pairs '((?= . ?=)
                                                           (?~ . ?~))))))
   :init
+  (electric-indent-mode +1)
   (electric-pair-mode +1)
   (setq electric-pair-mode-preserve-balance nil)
 
