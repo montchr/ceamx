@@ -30,6 +30,7 @@
 
 (elpaca-use-package evil
   :demand t
+  :after general
 
   :preface
   (setq evil-want-integration t
