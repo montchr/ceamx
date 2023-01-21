@@ -145,6 +145,8 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "d" 'eval-defun
     "e" 'eval-expression
     "E" 'elisp-eval-region-or-buffer
+    "I" '((lambda () (interactive) (load-file user-init-file))
+          :which-key "init.el")
     "p" 'pp-eval-last-sexp
     "r" 'eval-region
     "s" 'eval-last-sexp)
