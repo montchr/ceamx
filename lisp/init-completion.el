@@ -38,7 +38,7 @@
 ;;  <https://github.com/minad/vertico>
 
 (elpaca-use-package
-  (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
+    (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
 
   :defer t
   
@@ -315,7 +315,7 @@
   ;; NOTE: The `corfu' readme calls `global-corfu-mode' under `:init'.
   (global-corfu-mode)
   (with-eval-after-load 'evil
-      (setq evil-complete-next-func (lambda (_) (completion-at-point)))))
+    (setq evil-complete-next-func (lambda (_) (completion-at-point)))))
 
 (use-feature emacs
   :init
@@ -380,11 +380,12 @@
   ;;(add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-symbol)
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
-)
+  )
 
 
 ;;
 ;;; === INTEGRATIONS ================================================================================
+
 
 ;;
 ;;; embark-consult
@@ -410,6 +411,18 @@
     (setq input (orderless-pattern-compiler input))
     (cons input (lambda (str) (orderless--highlight input str))))
   (setq affe-regexp-compiler #'affe-orderless-regexp-compiler))
+
+
+;;
+;;; wgrep :: "Writable grep buffer and apply the changes to files"
+;;  <https://github.com/mhayashi1120/Emacs-wgrep>
+
+(elpaca-use-package wgrep
+  :general
+  (grep-mode-map "W" 'wgrep-change-to-wgrep-mode)
+  :init
+  (setq wgrep-auto-save-buffer nil)
+  (setq wgrep-change-readonly-file t))
 
 
 (provide 'init-completion)
