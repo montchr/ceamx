@@ -120,5 +120,14 @@
   :diminish
   :config (evil-commentary-mode +1))
 
+(elpaca-use-package evil-surround
+  :general
+  (:states 'operator
+           "s"  'evil-surround-edit
+           "S"  'evil-Surround-edit)
+  (:states 'visual
+           "S"   'evil-surround-region
+           "gS"  'evil-Surround-region))
+
 (provide 'init-evil)
 ;;; init-evil.el ends here
