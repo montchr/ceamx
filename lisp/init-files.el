@@ -28,9 +28,11 @@
 
 ;;; Code:
 
+;; FIXME: is this real? i don't think so...
 (use-feature files
   :config
-  ;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
+  ;; source: <http://steve.yegge.googlepages.com/my-dot-emacs-file>
+  ;; TODO: compare with <https://www.lucacambiaghi.com/vanilla-emacs/readme.html#h:6A783697-911E-433D-B8ED-CC70F5F217FA>
   (defun rename-file-and-buffer (new-name)
     "Renames both current buffer and file it's visiting to NEW-NAME."
     (interactive "sNew name: ")

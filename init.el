@@ -50,8 +50,10 @@
 
 (require 'init-theme)
 (require 'init-modeline)
+
 (require 'init-keys)
 (require 'init-evil)
+
 (require 'init-window)
 (require 'init-completion)
 (require 'init-editor)
