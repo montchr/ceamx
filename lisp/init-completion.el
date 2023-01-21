@@ -61,10 +61,11 @@
 (use-feature vertico-directory
   :after vertico
   ;; More convenient directory navigation commands
-  :bind (:map vertico-map
-              ("RET" . vertico-directory-enter)
-              ("M-DEL" . vertico-directory-delete-char)
-              ("DEL" . vertico-directory-delete-word))
+  :bind
+  (:map vertico-map
+        ("RET"    . vertico-directory-enter)
+        ("DEL"    . vertico-directory-delete-char)
+        ("M-DEL"  . vertico-directory-delete-word))
   ;; Tidy shadowed file names -- e.g. cleans `~/foo/bar///' to `/', and `~/foo/bar/~/' to `~/'.
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
