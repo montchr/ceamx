@@ -48,10 +48,6 @@
 
   :custom
   (backup-by-copying t)
-  (backup-directory-alist `((".*" . ,(expand-file-name
-                                      (concat +path-var-dir "backups"))))
-                          "Keep backups in their own directory")
-  (auto-save-file-name-transforms `((".*" ,(concat +path-var-dir "autosaves/") t)))
   (delete-old-versions t)
   (kept-new-versions 10)
   (kept-old-versions 5)
