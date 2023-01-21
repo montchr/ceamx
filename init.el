@@ -62,6 +62,12 @@
 (require 'init-dired)
 (require 'init-vcs)
 
+;; Auto-start Emacs daemon if not already running.
+(use-feature emacs
+  :init
+  (unless (and (fboundp 'server-running-p) (server-running-p))
+    (server-start)))
+
 ;; unfortunately
 (when (and +is-sys-mac +is-graphical)
   (add-hook 'elpaca-after-init-hook (lambda ()
