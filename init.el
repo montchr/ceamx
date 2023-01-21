@@ -54,6 +54,7 @@
 (require 'init-keys)
 (require 'init-evil)
 
+(require 'init-discovery)
 (require 'init-window)
 (require 'init-completion)
 (require 'init-editor)
