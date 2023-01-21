@@ -28,6 +28,22 @@
 
 ;;; Code:
 
+(use-feature emacs
+  :init
+  ;; Create missing directories when we open a file that doesn't exist under a
+  ;; directory tree that may not exist.
+  ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
+  (defun cmx/create-missing-directories-h ()
+    "Automatically create missing directories when creating new files."
+    (unless (file-remote-p buffer-file-name)
+      (let ((parent-directory (file-name-directory buffer-file-name)))
+        (and (not (file-directory-p parent-directory))
+             (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                               parent-directory))
+             (progn (make-directory parent-directory 'parents)
+                    t)))))
+  (add-hook 'find-file-not-found-functions #'cmx/create-missing-directories-h))
+
 ;; FIXME: is this real? i don't think so...
 (use-feature files
   :config
