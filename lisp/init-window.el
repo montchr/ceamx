@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-(use-package emacs
+(use-feature emacs
   :init
   ;; Don't close windows with <ESC> key.
   (defadvice keyboard-escape-quit
