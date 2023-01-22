@@ -100,8 +100,8 @@ NAME and ARGS are in `use-package'."
 ;; Install use-package.
 (elpaca use-package (require 'use-package))
 
-;; Add a debug mode flag.
-(setq init-file-debug nil)
+;; `use-package' debug mode.
+(setq init-file-debug t)
 (if init-file-debug
     (setq use-package-verbose t
           use-package-expand-minimally nil
