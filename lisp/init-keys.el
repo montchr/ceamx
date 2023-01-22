@@ -196,7 +196,6 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "p" 'previous-window-any-frame
     "r" 'set-frame-name)
 
-  ;; TODO: sparse keymap?
   (+general-global-menu! "git/version-control" "g")
 
   (+general-global-menu! "help" "h"

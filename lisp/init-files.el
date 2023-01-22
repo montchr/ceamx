@@ -44,7 +44,6 @@
                     t)))))
   (add-hook 'find-file-not-found-functions #'cmx/create-missing-directories-h))
 
-;; FIXME: is this real? i don't think so...
 (use-feature files
   :config
   ;; source: <http://steve.yegge.googlepages.com/my-dot-emacs-file>
