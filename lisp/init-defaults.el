@@ -89,9 +89,6 @@
 (prefer-coding-system 'utf-8)
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
-;; Follow symlinks.
-(setq vc-follow-symlinks t)
-
 ;; Disable extraneous OS window chrome.
 (when (window-system)
   (tool-bar-mode -1)
