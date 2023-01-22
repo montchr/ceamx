@@ -124,12 +124,10 @@
 ;;  Enable rich completion annotations in the minibuffer.
 
 (elpaca-use-package marginalia
-  ;; Either bind `marginalia-cycle' globally or only in the minibuffer
-  :bind (("M-A" . marginalia-cycle)
-         :map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
   :after vertico
 
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
 
   :init
   ;; Must be in the :init section of use-package such that the mode gets
