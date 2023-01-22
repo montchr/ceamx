@@ -97,9 +97,6 @@
   (tool-bar-mode -1)
   (toggle-scroll-bar -1))
 
-;; Enable winner mode globally for undo/redo window layout changes.
-(winner-mode t)
-
 (show-paren-mode t)
 
 ;; Unbind `suspend-frame'

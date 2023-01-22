@@ -36,5 +36,7 @@
     (let ((buffer-quit-function (lambda () ())))
       ad-do-it)))
 
+(use-feature winner)
+
 (provide 'init-window)
 ;;; init-window.el ends here
