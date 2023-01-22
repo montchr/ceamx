@@ -268,12 +268,14 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 
   :init
   (setq which-key-enable-extended-define-key t)
+  (setq which-key-prefix-prefix "+")
+  (setq which-key-separator " ")
 
   :custom
+  (which-key-idle-delay 0.02)
   (which-key-side-window-location 'bottom)
   (which-key-sort-order 'which-key-key-order-alpha)
   (which-key-side-window-max-width 0.33)
-  (which-key-idle-delay 0.02)
 
   :config
   (setq which-key-sort-uppercase-first nil
