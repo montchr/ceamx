@@ -37,9 +37,6 @@
         evil-want-keybinding nil
         evil-want-C-u-scroll t)
 
-  ;; FIXME: set this elsewhere
-  ;; (setq evil-shift-width 2)
-
   ;; TODO: move to `init-buffers'?
   (defun +save-and-kill-this-buffer ()
     (interactive)
