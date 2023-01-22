@@ -38,10 +38,10 @@
 ;;  <https://github.com/minad/vertico>
 
 (elpaca-use-package
-    (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
-
+  (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
+  :demand
   :defer t
-  
+
   :init
   (vertico-mode)
 
@@ -60,9 +60,9 @@
 ;; Configure directory extension.
 (use-feature vertico-directory
   :after vertico
-  ;; More convenient directory navigation commands
   :bind
   (:map vertico-map
+        ;; More convenient directory navigation commands
         ("RET"    . vertico-directory-enter)
         ("DEL"    . vertico-directory-delete-char)
         ("M-DEL"  . vertico-directory-delete-word))
@@ -124,12 +124,12 @@
 ;;  Enable rich completion annotations in the minibuffer.
 
 (elpaca-use-package marginalia
-  :ensure t
-  
   ;; Either bind `marginalia-cycle' globally or only in the minibuffer
   :bind (("M-A" . marginalia-cycle)
          :map minibuffer-local-map
          ("M-A" . marginalia-cycle))
+  :after vertico
+
 
   :init
   ;; Must be in the :init section of use-package such that the mode gets
@@ -142,7 +142,7 @@
 ;;  <https://github.com/oantolin/embark>
 
 (elpaca-use-package embark
-  :ensure t
+  :after vertico
 
   :bind
   (("C-." . embark-act)         ; pick some comfortable binding
@@ -392,7 +392,7 @@
 ;;  <https://github.com/minad/consult#embark-integration>
 
 (elpaca-use-package embark-consult
-  :demand t
+  :after (embark consult)
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
