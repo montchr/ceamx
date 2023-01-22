@@ -307,13 +307,10 @@
   ;; (corfu-scroll-margin 5)        ;; Use scroll margin
 
   ;; Enable Corfu only for certain modes.
-  ;; :hook ((prog-mode . corfu-mode)
-  ;;        (shell-mode . corfu-mode)
-  ;;        (eshell-mode . corfu-mode))
+  :hook ((prog-mode . corfu-mode)
+         (org-mode . corfu-mode))
 
   :config
-  ;; NOTE: The `corfu' readme calls `global-corfu-mode' under `:init'.
-  (global-corfu-mode)
   (with-eval-after-load 'evil
     (setq evil-complete-next-func (lambda (_) (completion-at-point)))))
 
