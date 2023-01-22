@@ -108,38 +108,27 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "pv" 'elpaca-visit)
 
   (+general-global-menu! "buffer" "b"
-    ;; "d"  'kill-current-buffer
-    ;; "b" '((lambda () (interactive) (switch-to-buffer nil))
-    ;;      :which-key "other-buffer")
-    "i" 'ibuffer
-    ;; FIXME: broken
-    ;; "d" '((lambda () (interactive) (kill-buffer (current-buffer))) :which-key "delete")
-    "k" 'kill-buffer
-    "M" '((lambda () (interactive) (switch-to-buffer "*Messages*"))
-          :which-key "messages-buffer")
-    "n"  'next-buffer
-    "N"  '(evil-buffer-new :which-key "new")
-    "o" '((lambda () (interactive) (switch-to-buffer nil))
-           :which-key "other-buffer")
-    "p"  'previous-buffer
-    "r"  '(revert-buffer :wk "revert")
-    "R"  '(rename-buffer :wk "rename")
-    "s"  'save-buffer
+    "h"  'previous-buffer
+    ;; TODO: is there an alternative with better ui?
+    "i"  'ibuffer
+    "d"  '(kill-current-buffer      :which-key "delete")
+    "l"  '(next-buffer              :which-key "next")
+    "k"  '(kill-current-buffer      :which-key "kill")
+    "M"  '(view-echo-area-messages  :which-key "messages")
+    "n"  '(next-buffer              :which-key "next")
+    "o"  '(mode-line-other-buffer   :which-key "other...")
+    "p"  '(previous-buffer          :which-key "prev")
+    "r"  '(revert-buffer            :which-key "revert")
+    "R"  '(rename-buffer            :which-key "rename...")
+    "s"  '(save-buffer              :which-key "save")
     "S"  'save-some-buffers
-    "x" '((lambda () (interactive) (switch-to-buffer "*scratch*"))
-           :which-key "scratch-buffer")
+    "x"  '(scratch-buffer           :which-key "scratch")
+
     "["  'previous-buffer
     "]"  'next-buffer
-    "TAB" '((lambda () (interactive) (switch-to-buffer nil))
-            :which-key "other-buffer"))
+    "TAB"  'mode-line-other-buffer)
 
   (+general-global-menu! "bookmark" "B")
-
-  ;; FIXME
-  ;;(+general-global-menu! "prev" "["
-  ;;  "b" 'prev-buffer)
-  ;;(+general-global-menu! "next" "]"
-  ;;  "b" 'next-buffer)
 
   (+general-global-menu! "eval" "e"
     "b" 'eval-buffer

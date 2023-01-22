@@ -28,11 +28,16 @@
 
 ;;; Code:
 
+(use-feature evil
+  :general
+  (+general-global-buffer
+    "N" '(evil-buffer-new :which-key "new")))
+
 (use-feature consult
   :general
   (+general-global-buffer
-    "b"  'consult-project-buffer
-    "B"  'consult-buffer))
+    "b"  '(consult-project-buffer :which-key "switch")
+    "B"  '(consult-buffer :which-key "any")))
 
 (elpaca-use-package dimmer
   :defer 5
