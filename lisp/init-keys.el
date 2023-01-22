@@ -223,6 +223,8 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "r" 'restart-emacs
     "Q" 'kill-emacs)
 
+  (+general-global-menu! "search" "s")
+
   (+general-global-menu! "window" "w"
     "?" 'split-window-vertically
     "=" 'balance-windows

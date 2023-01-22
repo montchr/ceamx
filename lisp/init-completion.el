@@ -38,7 +38,7 @@
 ;;  <https://github.com/minad/vertico>
 
 (elpaca-use-package
-  (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
+    (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
   :demand
   :defer t
 
@@ -124,10 +124,9 @@
 ;;  Enable rich completion annotations in the minibuffer.
 
 (elpaca-use-package marginalia
-  :after vertico
-
-  :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
+  :bind
+  (:map minibuffer-local-map
+        ("M-A" . marginalia-cycle))
 
   :init
   ;; <https://www.lucacambiaghi.com/vanilla-emacs/readme.html#h:37ACBBF7-989F-4A57-9454-06B79B8EB4F0>
@@ -144,20 +143,21 @@
 ;;  <https://github.com/oantolin/embark>
 
 (elpaca-use-package embark
-  :after vertico
+  :after (marginalia)
 
   :bind
-  (("C-." . embark-act)         ; pick some comfortable binding
-   ("M-." . embark-dwim)        ; good alternative: C-;
-   ("C-h B" . embark-bindings)) ; alternative for `describe-bindings'
+  (("C-;" . embark-act)
+   ("M-." . embark-dwim))
+
+  :general
+  (+general-global-help
+    "b" '(embark-bindings :which-key "bindings"))
 
   :init
-
-  ;; Optionally replace the key help with a completing-read interface
+  ;; Replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
 
   :config
-
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
@@ -230,33 +230,31 @@
    ("M-s" . consult-history)                 ;; orig. next-matching-history-element
    ("M-r" . consult-history))                ;; orig. previous-matching-history-element
 
+  :general
+  (general-nmap
+    :states '(normal insert)
+    "M-p" 'consult-yank-pop)
+  (+general-global-search
+    "s" 'consult-line
+    "i" '(consult-isearch-history :which-key "isearch")
+    "o" '(consult-outline :which-key "outline")
+    "p" '(consult-ripgrep :which-key "project"))
+
+
   ;; Enable automatic preview at point in the *Completions* buffer. This is
   ;; relevant when you use the default completion UI.
   :hook (completion-list-mode . consult-preview-at-point-mode)
 
   :init
-
-  ;; Optionally configure the register formatting. This improves the register
-  ;; preview for `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
   (setq register-preview-delay 0.5
         register-preview-function #'consult-register-format)
-
-  ;; Optionally tweak the register preview window.
-  ;; This adds thin lines, sorting and hides the mode line of the window.
   (advice-add #'register-preview :override #'consult-register-window)
-
-  ;; Use Consult to select xref locations with preview
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
 
   :config
-
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
   (setq consult-preview-key 'any)
-  ;; (setq consult-preview-key (kbd "M-."))
-  ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+
   ;; For some commands and buffer sources it is useful to configure the
   ;; :preview-key on a per-command basis using the `consult-customize' macro.
   (consult-customize
@@ -390,10 +388,8 @@
 ;;; embark-consult
 ;;  <https://github.com/minad/consult#embark-integration>
 
-(elpaca-use-package embark-consult
-  :after (embark consult)
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+(elpaca-use-package embark-consult :defer t
+  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 ;;
 ;;; aff.el :: "Asynchronous Fuzzy Finder for Emacs"
