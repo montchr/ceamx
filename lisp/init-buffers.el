@@ -28,6 +28,12 @@
 
 ;;; Code:
 
+(use-feature emacs
+  :init
+  ;; Disable buffer line wrapping by default.
+  ;; <https://www.emacswiki.org/emacs/TruncateLines>
+  (set-default 'truncate-lines t))
+
 (use-feature evil
   :general
   (+general-global-buffer
