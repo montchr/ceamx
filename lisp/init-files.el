@@ -70,6 +70,8 @@
   (kept-old-versions 5)
   (version-control t))
 
+(use-feature recentf)
+
 (use-feature xref
   :init
   (setq xref-prompt-for-identifier nil) ;; always find references of symbol at point

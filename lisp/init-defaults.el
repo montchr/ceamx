@@ -89,9 +89,6 @@
 (prefer-coding-system 'utf-8)
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
-;; Enable recent files mode.
-(recentf-mode t)
-
 ;; Follow symlinks.
 (setq vc-follow-symlinks t)
 
