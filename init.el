@@ -46,6 +46,7 @@
 (defconst +env-sys-name (system-name))
 
 (require 'init-packages)
+(require 'init-lib)
 (require 'init-defaults)
 
 (require 'init-theme)
