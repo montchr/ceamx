@@ -28,6 +28,12 @@
 
 ;;; Code:
 
+(use-feature consult
+  :general
+  (+general-global-buffer
+    "b"  'consult-project-buffer
+    "B"  'consult-buffer))
+
 (elpaca-use-package dimmer
   :defer 5
   :after (which-key)
