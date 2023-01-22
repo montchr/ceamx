@@ -91,10 +91,6 @@
 
 ;; Enable recent files mode.
 (recentf-mode t)
-(setq recentf-exclude `(,(expand-file-name "straight/build/" user-emacs-directory)
-                        ,(expand-file-name "eln-cache/" user-emacs-directory)
-                        ,(expand-file-name "etc/" user-emacs-directory)
-                        ,(expand-file-name "var/" user-emacs-directory)))
 
 ;; Follow symlinks.
 (setq vc-follow-symlinks t)
