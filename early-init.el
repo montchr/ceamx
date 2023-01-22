@@ -145,10 +145,10 @@ Use this for files that change often, like data and cache files.")
    (left-fringe . 8)                    ; Thin left fringe
    (right-divider-width . 1)            ; Thin vertical window divider
    (right-fringe . 8)                   ; Thin right fringe
-   (undecorated . t)))                  ; Remove extraneous X decorations
+   (undecorated . t)))                  ; Remove extraneous OS window system decorations
 
 ;; Basic font configuration.
-;; `fontaine' will handle fonts once loaded.
+;; `fontaine' will handle fonts once loaded in `init-theme'.
 (push '(font . "Iosevka") default-frame-alist)
 (set-face-font 'default "Iosevka")
 (set-face-font 'variable-pitch "IBM Plex Sans")
