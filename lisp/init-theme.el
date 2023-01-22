@@ -30,9 +30,7 @@
 
 ;;; --- modus-themes ---
 
-(elpaca-use-package modus-themes
-  :ensure t
-  :demand t
+(elpaca-use-package modus-themes :demand t
   :config
   (setq modus-themes-italic-constructs t
         modus-themes-bold-constructs t)
@@ -41,9 +39,7 @@
 
 ;;; -- fontaine ---
 
-(elpaca-use-package fontaine
-  :ensure t
-  :demand t
+(elpaca-use-package fontaine :demand t
   :config
   (setq fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
   (setq fontaine-presets
@@ -74,6 +70,30 @@
 
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
+
+(elpaca-use-package (ligature :host github :repo "mickeynp/ligature.el")
+  :config
+  ;; Enable all Iosevka ligatures in programming modes
+  ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
+  (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
+                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+  ;; Enable all JetBrains Mono ligatures in programming modes
+  ;; (ligature-set-ligatures 'prog-mode '("-|" "-~" "---" "-<<" "-<" "--" "->" "->>" "-->" "///" "/=" "/=="
+  ;;                                     "/>" "//" "/*" "*>" "***" "*/" "<-" "<<-" "<=>" "<=" "<|" "<||"
+  ;;                                     "<|||" "<|>" "<:" "<>" "<-<" "<<<" "<==" "<<=" "<=<" "<==>" "<-|"
+  ;;                                     "<<" "<~>" "<=|" "<~~" "<~" "<$>" "<$" "<+>" "<+" "</>" "</" "<*"
+  ;;                                     "<*>" "<->" "<!--" ":>" ":<" ":::" "::" ":?" ":?>" ":=" "::=" "=>>"
+  ;;                                     "==>" "=/=" "=!=" "=>" "===" "=:=" "==" "!==" "!!" "!=" ">]" ">:"
+  ;;                                     ">>-" ">>=" ">=>" ">>>" ">-" ">=" "&&&" "&&" "|||>" "||>" "|>" "|]"
+  ;;                                     "|}" "|=>" "|->" "|=" "||-" "|-" "||=" "||" ".." ".?" ".=" ".-" "..<"
+  ;;                                     "..." "+++" "+>" "++" "[||]" "[<" "[|" "{|" "??" "?." "?=" "?:" "##"
+  ;;                                     "###" "####" "#[" "#{" "#=" "#!" "#:" "#_(" "#_" "#?" "#(" ";;" "_|_"
+  ;;                                     "__" "~~" "~~>" "~>" "~-" "~@" "$>" "^=" "]#"))
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t))
 
 (provide 'init-theme)
 ;;; init-theme.el ends here
