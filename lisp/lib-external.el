@@ -1,4 +1,4 @@
-;;; init-lib.el --- Library functions -*- lexical-binding: t -*-
+;;; init-external.el --- Third-party function and macro libraries -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -24,13 +24,25 @@
 
 ;;; Commentary:
 
-;;  Loads and defines library functions.
+;;  Defines package recipies and feature configuration for external function and
+;;  macro libraries.
 
 ;;; Code:
 
-(require 'lib-external)
+;;
+;;; --- llama :: compact syntax for short lambda ---
+;;  <https://git.sr.ht/~tarsius/llama>
+;;
+;;  > The ## macro, whose signature is (## FN &rest args), expands to a lambda
+;;  > expressions, which wraps around its arguments.
+;;
+;;  Example:
+;;
+;;  (##foo % (bar %3) %*)
+;;  => (lambda (% _%2 %3 &rest %*)
+;;       (foo % (bar %3) %*))
+(elpaca-use-package (llama :host sourcehut :repo "tarsius/llama")
+  :commands (##))
 
-(require 'lib-doom)
-
-(provide 'init-lib)
-;;; init-lib.el ends here
+(provide 'lib-external)
+;;; lib-external.el ends here
