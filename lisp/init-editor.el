@@ -51,8 +51,7 @@
 
 
 (elpaca-use-package apheleia
-  :config
-  (apheleia-global-mode +1))
+  :init (apheleia-global-mode +1))
 
 (provide 'init-editor)
 ;;; init-editor.el ends here
