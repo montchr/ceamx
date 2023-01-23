@@ -32,7 +32,6 @@
 ;; Follow symlinks.
 (setq vc-follow-symlinks t)
 
-;; FIXME: evil bindings unavailable! prob an issue with general
 (elpaca-use-package magit
   :after (general)
 
@@ -53,8 +52,42 @@
     "U"  'magit-unstage-file)
 
   :config
+  (setq magit-diff-refine-hunk t)                ; show granular diffs in selected hunk
+  (setq magit-save-repository-buffers nil)       ; avoid side-effects (e.g. auto-format)
+  (setq magit-revision-insert-related-refs nil)  ; parent/related refs: rarely useful
+
   ;; Close transient with ESC
   (define-key transient-map [escape] #'transient-quit-one)
+
+
+  ;; Prevent sudden window position resets when staging/unstaging/discarding/etc
+  ;; hunks in `magit-status-mode' buffers.
+  (defvar +magit--pos nil)
+  (add-hook 'magit-pre-refresh-hook
+    (defun +magit--set-window-state-h ()
+      (setq-local +magit--pos (list (current-buffer) (point) (window-start)))))
+  (add-hook 'magit-post-refresh-hook
+    (defun +magit--restore-window-state-h ()
+      (when (and +magit--pos (eq (current-buffer) (car +magit--pos)))
+        (goto-char (cadr +magit--pos))
+        (set-window-start nil (caddr +magit--pos) t)
+        (kill-local-variable '+magit--pos))))
+
+  ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
+  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+
+
+  (transient-append-suffix 'magit-fetch "-p"
+    '("-t" "Fetch all tags" ("-t" "--tags")))
+  (transient-append-suffix 'magit-pull "-r"
+    '("-a" "Autostash" "--autostash"))
+
+  ;; Clean up after magit by killing leftover magit buffers and reverting
+  ;; affected buffers (or at least marking them as need-to-be-reverted).
+  (define-key magit-mode-map "q" #'+magit/quit)
+  (define-key magit-mode-map "Q" #'+magit/quit-all)
+
+  )
 
 (provide 'init-vcs)
 ;;; init-vcs.el ends here
