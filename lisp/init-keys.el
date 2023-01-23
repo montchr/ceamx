@@ -74,6 +74,7 @@
             (cons (cadr (split-string (car arg) " "))
                   (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))))
 
+  (defalias 'kbd! #'general-simulate-key)
 
   ;; Ease the creation of nested menu bindings.
   (defmacro +general-global-menu! (name infix-key &rest body)
@@ -188,7 +189,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
   (+general-global-menu! "git/version-control" "g")
 
   (+general-global-menu! "help" "h"
-    "h"  (general-simulate-key "C-h" :which-key "help")
+    "h"  (kbd! "C-h" :which-key "help")
 
     "b"  'describe-bindings
     "f"  'describe-function
