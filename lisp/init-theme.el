@@ -95,8 +95,9 @@
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-(use-feature prettify-symbols
-  :hook prog-mode)
+;; FIXME: configure symbols -- e.g. `lambda' prettification is problematic
+;; (use-feature prettify-symbols
+;;   :hook prog-mode)
 
 (provide 'init-theme)
 ;;; init-theme.el ends here
