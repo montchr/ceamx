@@ -127,6 +127,8 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 
   (+general-global-menu! "bookmark" "B")
 
+  (+general-global-menu! "code" "c")
+
   (+general-global-menu! "eval" "e"
     "b" 'eval-buffer
     "d" 'eval-defun
