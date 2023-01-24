@@ -53,5 +53,20 @@
 (elpaca-use-package apheleia
   :init (apheleia-global-mode +1))
 
+;;
+;;; === PULSAR ======================================================================================
+;;  > Pulse highlight line on demand or after running select functions
+;;  <https://protesilaos.com/emacs/pulsar>
+
+(elpaca-use-package pulsar
+  :defer 5
+  :config
+  (setq pulsar-pulse           t)
+  (setq pulsar-delay           0.055)
+  (setq pulsar-iterations      10)
+  (setq pulsar-face            'pulsar-magenta)
+  (setq pulsar-highlight-face  'pulsar-yellow)
+  (pulsar-global-mode 1))
+
 (provide 'init-editor)
 ;;; init-editor.el ends here
