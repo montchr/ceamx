@@ -158,9 +158,6 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     ;;    "U"  #'+sudo-this-file
     ;;"y"  #'+yank-this-file-name
 
-    ;; FIXME: move to a 'search' menu
-    ;; "v"   'find-variable-at-point
-    ;; "V"   'find-variable
     )
 
   (+general-global-menu! "frame" "F"
@@ -218,7 +215,12 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "r" 'restart-emacs
     "Q" 'kill-emacs)
 
-  (+general-global-menu! "search" "s")
+  (+general-global-menu! "search" "s"
+    "l"  '((lambda () (interactive "P")
+             (call-interactively (if % #'find-library-other-window #'find-library)))
+           :which-key "+find-library")
+    "v"  'find-variable-at-point
+    "V"  'find-variable)
 
   (+general-global-menu! "window" "w"
     "?" 'split-window-vertically
