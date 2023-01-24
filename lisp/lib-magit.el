@@ -1,4 +1,4 @@
-;;; autoloads/magit.el --- Autoloads for magit -*- lexical-binding: t -*-
+;;; lib-magit.el --- Autoloads for magit -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2014-2022  Henrik Lissner
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
@@ -44,7 +44,6 @@
 
 ;;; Code:
 
-;;;###autoload
 (defun +magit-display-buffer-fn (buffer)
   "Same as `magit-display-buffer-traditional', except...
 
@@ -127,7 +126,6 @@ window that already exists in that direction. It will split otherwise."
             (force-mode-line-update))
         (revert-buffer t t t)))))
 
-;;;###autoload
 (defun +magit-mark-stale-buffers-h ()
   "Revert all visible buffers and mark buried buffers as stale.
 
@@ -140,7 +138,6 @@ modified."
         (with-current-buffer buffer
           (setq-local +magit--stale-p t))))))
 
-;;;###autoload
 (defun +magit-revert-buffer-maybe-h ()
   "Update `vc' and `git-gutter' if out of date."
   (when +magit--stale-p
@@ -150,7 +147,6 @@ modified."
 ;;
 ;;; Commands
 
-;;;###autoload
 (defun +magit/quit (&optional kill-buffer)
   "Bury the current magit buffer.
 
@@ -167,7 +163,6 @@ kill all magit buffers for this repo."
                     (window-list))
         (+magit/quit-all))))
 
-;;;###autoload
 (defun +magit/quit-all ()
   "Kill all magit buffers for the current repository."
   (interactive)
@@ -186,10 +181,5 @@ kill all magit buffers for this repo."
             (kill-process process)
             (kill-buffer buf)))))))
 
-;;;###autoload
-(defun +magit/start-code-review (arg)
-  (interactive "P")
-  (call-interactively
-    (if (or arg (not (featurep 'forge)))
-        #'code-review-start
-      #'code-review-forge-pr-at-point)))
+(provide 'lib-magit)
+;;; lib-magit.el ends here

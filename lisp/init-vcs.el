@@ -29,8 +29,22 @@
 
 ;;; Code:
 
+;;
+;;; --- `vc-mode' ---
+
 ;; Follow symlinks.
 (setq vc-follow-symlinks t)
+
+
+;;
+;;; === MAGIT ======================================================================================
+;;  <https://magit.vc/>
+
+(autoload '+magit-display-buffer-fn "lib-magit")
+(autoload '+magit-mark-stale-buffers-h "lib-magit" "Revert all visible buffers and mark buried buffers as stale.")
+(autoload '+magit-revert-buffer-maybe-h "lib-magit" "Update `vc' and `git-gutter' if out of date.")
+(autoload '+magit/quit "lib-magit" "Bury the current magit buffer. <...>" t)
+(autoload '+magit/quit-all "lib-magit" "Kill all magit buffers for the current repository." t)
 
 (elpaca-use-package magit
   :after (general)
@@ -41,9 +55,11 @@
     "b"  'magit-branch
     "B"  'magit-blame
     "c"  'magit-clone
+
     "f"  '(:ignore t :which-key "file")
     "ff" 'magit-find-file
     "fh" 'magit-log-buffer-file
+
     "i"  'magit-init
     "L"  'magit-list-repositories
     "m"  'magit-dispatch
@@ -59,19 +75,30 @@
   ;; Close transient with ESC
   (define-key transient-map [escape] #'transient-quit-one)
 
+  ;; FIXME: replace `doom-switch-buffer-hook'
+  ;; (advise! +magit-revert-repo-buffers-deferred-a (&rest _)
+  ;;   :after '(magit-checkout magit-branch-and-checkout)
+  ;;   ;; Since the project likely now contains new files, best we undo the
+  ;;   ;; projectile cache so it can be regenerated later.
+  ;;   (projectile-invalidate-cache nil)
+  ;;   ;; Use a more efficient strategy to auto-revert buffers whose git state has
+  ;;   ;; changed: refresh the visible buffers immediately...
+  ;;   (+magit-mark-stale-buffers-h))
+  ;; ;; ...then refresh the rest only when we switch to them, not all at once.
+  ;; (add-hook 'doom-switch-buffer-hook #'+magit-revert-buffer-maybe-h)
 
   ;; Prevent sudden window position resets when staging/unstaging/discarding/etc
   ;; hunks in `magit-status-mode' buffers.
   (defvar +magit--pos nil)
   (add-hook 'magit-pre-refresh-hook
-    (defun +magit--set-window-state-h ()
-      (setq-local +magit--pos (list (current-buffer) (point) (window-start)))))
+            (defun +magit--set-window-state-h ()
+              (setq-local +magit--pos (list (current-buffer) (point) (window-start)))))
   (add-hook 'magit-post-refresh-hook
-    (defun +magit--restore-window-state-h ()
-      (when (and +magit--pos (eq (current-buffer) (car +magit--pos)))
-        (goto-char (cadr +magit--pos))
-        (set-window-start nil (caddr +magit--pos) t)
-        (kill-local-variable '+magit--pos))))
+            (defun +magit--restore-window-state-h ()
+              (when (and +magit--pos (eq (current-buffer) (car +magit--pos)))
+                (goto-char (cadr +magit--pos))
+                (set-window-start nil (caddr +magit--pos) t)
+                (kill-local-variable '+magit--pos))))
 
   ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
