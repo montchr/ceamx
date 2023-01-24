@@ -145,16 +145,14 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
               (interactive "P")
               (let ((buffer (when arg (current-buffer))))
                 (diff-buffer-with-file buffer))) :which-key "diff-with-file")
-    ;; TODO
-    ;; "D"  '+delete-this-file
 
     "e"   '(:ignore t :which-key "edit")
     "eR"  '((lambda () (interactive) (load-file user-init-file))
             :which-key "reload-init.el")
 
-    "R"   'rename-file-and-buffer
     "s"   'save-buffer
     "S"   '(write-file :which-key "save as...")
+
     ;; TODO
     ;;"u"  #'+sudo-find-file
     ;;    "U"  #'+sudo-this-file
