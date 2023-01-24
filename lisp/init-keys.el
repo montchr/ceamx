@@ -188,6 +188,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "f"  'describe-function
     "F"  'describe-face
     "k"  'describe-key
+    "l"  'apropos-library
     "o"  'describe-symbol
     "v"  'describe-variable
 
