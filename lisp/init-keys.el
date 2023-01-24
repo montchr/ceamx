@@ -53,12 +53,6 @@
     "!"   'shell-command
     ":"   'eval-expression
     "."   'repeat
-    "z"   '((lambda (local) (interactive "p")
-              (unless repeat-mode (repeat-mode))
-              (let ((local current-prefix-arg)
-                    (current-prefix-arg nil))
-                (call-interactively (if local #'text-scale-adjust #'global-text-scale-adjust))))
-            :which-key "zoom")
     ;; TODO: update if using projectile
     "SPC"  'project-find-file)
 
