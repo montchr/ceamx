@@ -149,6 +149,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
                 (diff-buffer-with-file buffer))) :which-key "diff-with-file")
 
     "e"   '(:ignore t :which-key "edit")
+    ;; FIXME: eval is what we want
     "eR"  '((lambda () (interactive) (load-file user-init-file))
             :which-key "reload-init.el")
 
@@ -163,10 +164,12 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     )
 
   (+general-global-menu! "frame" "F"
-    "D" 'delete-other-frames
     "F" 'select-frame-by-name
+
+    "D" 'delete-other-frames
     "O" 'other-frame-prefix
 
+    ;; FIXME: replace with theme / `modus-themes' bindings
     "c" '(:ignore t :which-key "color")
     "cb" 'set-background-color
     "cc" 'set-cursor-color

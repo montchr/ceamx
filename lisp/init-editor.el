@@ -24,14 +24,11 @@
 
 ;;; Commentary:
 
-;;  Keybindings configuration
+;;  Basic editor configuration
 
 ;;; Code:
 
 (use-feature emacs
-  :hook
-  ((org-mode . (lambda () (cmx/add-local-electric-pairs '((?= . ?=)
-                                                          (?~ . ?~))))))
   :init
   (electric-indent-mode +1)
   (electric-pair-mode +1)
@@ -42,13 +39,14 @@
   (defconst +default-electric-pairs electric-pair-pairs)
   (defun cmx/add-local-electric-pairs (pairs)
     "Example usage:
-    (add-hook 'jupyter-org-interaction-mode '(lambda () (set-local-electric-pairs '())))
+    (add-hook 'jupyter-org-interaction-mode '(lambda () (cmx/add-local-electric-pairs '())))
     "
     (setq-local electric-pair-pairs (append +default-electric-pairs pairs))
     (setq-local electric-pair-text-pairs electric-pair-pairs))
-)
 
-
+  :hook
+  ((org-mode . (lambda () (cmx/add-local-electric-pairs '((?= . ?=)
+                                                     (?~ . ?~)))))))
 
 (elpaca-use-package apheleia
   :init (apheleia-global-mode +1))
