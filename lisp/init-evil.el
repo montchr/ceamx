@@ -37,11 +37,7 @@
         evil-want-keybinding nil
         evil-want-C-u-scroll t)
 
-  ;; TODO: move to `init-buffers'?
-  (defun +save-and-kill-this-buffer ()
-    (interactive)
-    (save-buffer)
-    (kill-this-buffer))
+  (defun cmx/save-and-kill-this-buffer () (interactive) (save-buffer) (kill-this-buffer))
 
   :general
   (+general-global-window
@@ -84,13 +80,12 @@
     (define-key evil-insert-state-map (kbd "C-p") nil))
 
   (evil-ex-define-cmd "q" #'kill-this-buffer)
-  (evil-ex-define-cmd "wq" #'+save-and-kill-this-buffer)
+  (evil-ex-define-cmd "wq" #'cmx/+save-and-kill-this-buffer)
 
   (defun +evil-kill-minibuffer ()
     (interactive)
     (when (windowp (active-minibuffer-window))
       (evil-ex-search-exit)))
-
   (add-hook 'mouse-leave-buffer-hook #'+evil-kill-minibuffer)
 
   (evil-mode 1))

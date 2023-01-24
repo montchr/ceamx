@@ -28,6 +28,10 @@
 
 ;;; Code:
 
+(autoload 'cmx/delete-this-file "lib-files" nil t)
+(autoload 'cmx/copy-this-file "lib-files" nil t)
+(autoload 'cmx/move-this-file "lib-files" nil t)
+
 (use-feature emacs
   :init
   ;; Create missing directories when we open a file that doesn't exist under a
@@ -45,24 +49,6 @@
   (add-hook 'find-file-not-found-functions #'cmx/create-missing-directories-h))
 
 (use-feature files
-  :config
-  ;; source: <http://steve.yegge.googlepages.com/my-dot-emacs-file>
-  ;; TODO: compare with <https://www.lucacambiaghi.com/vanilla-emacs/readme.html#h:6A783697-911E-433D-B8ED-CC70F5F217FA>
-  (defun rename-file-and-buffer (new-name)
-    "Renames both current buffer and file it's visiting to NEW-NAME."
-    (interactive "sNew name: ")
-    (let ((name (buffer-name))
-          (filename (buffer-file-name)))
-      (if (not filename)
-          (message "Buffer '%s' is not visiting a file." name)
-        (if (get-buffer new-name)
-            (message "A buffer named '%s' already exists." new-name)
-          (progn
-            (rename-file filename new-name 1)
-            (rename-buffer new-name)
-            (set-visited-file-name new-name)
-            (set-buffer-modified-p nil))))))
-
   :custom
   (backup-by-copying t)
   (delete-old-versions t)
@@ -73,9 +59,21 @@
 (use-feature recentf)
 
 (use-feature xref
-  :init
-  (setq xref-prompt-for-identifier nil) ;; always find references of symbol at point
-)
+  :config
+  ;; Always find references of symbol at point.
+  (setq xref-prompt-for-identifier nil))
+
+;; TODO: find another way to set these after general?
+;;       `+general-global-file' invocation cannot be at top-level
+;;       maybe doom's `after!'?
+(use-feature general
+   :config
+  (+general-global-file
+    ;; "R" 'cmx/rename-current-file
+    "C" 'cmx/copy-this-file
+    "D" 'cmx/delete-this-file
+    "R" 'cmx/move-this-file
+    ))
 
 (provide 'init-files)
 ;;; init-files.el ends here
