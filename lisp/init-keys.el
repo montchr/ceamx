@@ -50,9 +50,11 @@
 
   ;; leaderless bindings
   (global-definer
-    "!"   'shell-command
-    ":"   'eval-expression
-    "."   'repeat
+    "`"  '((lambda () (interactive) (switch-to-buffer (other-buffer (current-buffer) 1))) :which-key "prev buffer")
+    "!"  'shell-command
+    ":"  'eval-expression
+    "."  'repeat
+
     ;; TODO: update if using projectile
     "SPC"  'project-find-file)
 
