@@ -39,15 +39,29 @@
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
 
+;;; FIXME: use `-p' suffix convention for predicates
+
+;; FIXME: redundant -- remove
 (defconst +is-graphical (display-graphic-p))
+(defconst +is-xorg (memq window-system '(x)))
 (defconst +is-root-user (string-equal "root" (getenv "USER")))
-(defconst +is-sys-mac (eq system-type 'darwin))
+;; FIXME: distinguish macOS window system and darwin system
+(defconst +is-sys-mac (or (memq window-system '(mac ns)) (eq system-type 'darwin)))
 (defconst +is-sys-linux (eq system-type 'gnu/linux))
+;; FIXME: redundant -- remove
 (defconst +env-sys-name (system-name))
 
 (require 'init-packages)
 (require 'init-lib)
 (require 'init-defaults)
+
+;;; <https://github.com/purcell/exec-path-from-shell>
+(elpaca-use-package exec-path-from-shell
+  :if (or +is-sys-mac +is-xorg (daemonp))
+  :config
+  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"))
+    (add-to-list 'exec-path-from-shell-variables var))
+  (exec-path-from-shell-initialize))
 
 (require 'init-theme)
 (require 'init-modeline)
