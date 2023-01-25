@@ -59,7 +59,7 @@
   (evil-split-window-below t)
   (evil-vsplit-window-right t)
   (evil-want-Y-yank-to-eol t)
-  ;; (evil-search-module 'evil-search "use vim-like search instead of 'isearch")
+  (evil-search-module 'evil-search "use vim-like search instead of 'isearch")
   (evil-select-search-module 'evil-search-module 'isearch)
   (evil-undo-system 'undo-redo) ; use emacs default
   (evil-kill-on-visual-paste t)
@@ -74,29 +74,15 @@
   ;; Use default Emacs mouse click behavior
   (define-key evil-motion-state-map [down-mouse-1] nil)
 
-  ;; Avoid conflict with `company' tooltip selection
-  (with-eval-after-load 'evil-maps
-    (define-key evil-insert-state-map (kbd "C-n") nil)
-    (define-key evil-insert-state-map (kbd "C-p") nil))
-
   (evil-ex-define-cmd "q" #'kill-this-buffer)
   (evil-ex-define-cmd "wq" #'cmx/+save-and-kill-this-buffer)
-
-  (defun +evil-kill-minibuffer ()
-    (interactive)
-    (when (windowp (active-minibuffer-window))
-      (evil-ex-search-exit)))
-  (add-hook 'mouse-leave-buffer-hook #'+evil-kill-minibuffer)
 
   (evil-mode 1))
 
 (elpaca-use-package evil-collection
   :after (evil)
-
   :custom
-  (evil-collection-setup-minibuffer t)
-  (evil-collection-company-use-tng nil)
-
+  (evil-collection-setup-minibuffer nil)
   :config
   (evil-collection-init))
 
@@ -109,17 +95,17 @@
 
 (elpaca-use-package evil-commentary
   :after evil
-  :diminish
-  :config (evil-commentary-mode +1))
+  :config (evil-commentary-mode +1)
+  :diminish)
 
 (elpaca-use-package evil-surround
   :general
-  (:states 'operator
-           "s"  'evil-surround-edit
-           "S"  'evil-Surround-edit)
-  (:states 'visual
-           "S"   'evil-surround-region
-           "gS"  'evil-Surround-region))
+  ( :states 'operator
+    "s"  'evil-surround-edit
+    "S"  'evil-Surround-edit)
+  ( :states 'visual
+    "S"   'evil-surround-region
+    "gS"  'evil-Surround-region))
 
 (provide 'init-evil)
 ;;; init-evil.el ends here

@@ -162,8 +162,8 @@ Use this for files that change often, like data and cache files.")
       inhibit-startup-screen t)
 
 (provide 'early-init)
-;;; early-init.el ends here
-
 ;; Local Variables:
 ;; no-byte-compile: t
 ;; End:
+;;; early-init.el ends here
+
