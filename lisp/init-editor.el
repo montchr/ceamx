@@ -30,7 +30,7 @@
 
 (use-feature emacs
   :init
-  (electric-indent-mode +1)
+  ;; (electric-indent-mode +1)
   (electric-pair-mode +1)
   (setq electric-pair-mode-preserve-balance nil)
 
@@ -65,6 +65,15 @@
   (setq pulsar-face            'pulsar-magenta)
   (setq pulsar-highlight-face  'pulsar-yellow)
   (pulsar-global-mode 1))
+
+
+;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;;; aggressive-indent-mode :: Re-indent code after every change
+;;  <https://github.com/Malabarba/aggressive-indent-mode>
+
+(elpaca-use-package aggressive-indent
+  :hook (prog-mode))
+
 
 (provide 'init-editor)
 ;;; init-editor.el ends here
