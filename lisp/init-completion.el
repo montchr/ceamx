@@ -67,6 +67,9 @@
          "  ")
        cand))))
 
+;; Enable mouse support in Vertico buffers.
+(use-feature vertico-mouse-mode
+  :after (vertico))
 
 ;; Configure directory extension.
 (use-feature vertico-directory
