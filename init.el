@@ -55,7 +55,7 @@
 (require 'init-keys)
 (require 'init-evil)
 
-(require 'init-discovery)
+(require 'init-clippy)
 (require 'init-window)
 (require 'init-completion)
 (require 'init-editor)

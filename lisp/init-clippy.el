@@ -1,4 +1,4 @@
-;;; init-discovery.el --- Discovering things -*- lexical-binding: t; -*-
+;;; init-clippy.el --- Help -*- lexical-binding: t; -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -24,7 +24,7 @@
 
 ;;; Commentary:
 
-;; Configuration for things that help and things that find other things.
+;; "It looks like you're writing an Emacs. Would you like help?"
 
 ;;; Code:
 
@@ -32,14 +32,14 @@
   :after evil
   :init
   (setq evil-lookup-func #'helpful-at-point)
-  :bind
-  ([remap describe-function] . helpful-callable)
-  ([remap describe-command]  . helpful-command)
-  ([remap describe-variable] . helpful-variable)
-  ([remap describe-key]      . helpful-key))
+  :bind (([remap describe-function] . helpful-callable)
+         ([remap describe-command]  . helpful-command)
+         ([remap describe-variable] . helpful-variable)
+         ([remap describe-key]      . helpful-key)))
 
-(use-feature eldoc
-  :hook (emacs-lisp-mode))
+(elpaca-use-package flycheck
+  :hook (prog-mode)
+  :init (global-flycheck-mode))
 
-(provide 'init-discovery)
-;;; init-discovery.el ends here
+(provide 'init-clippy)
+;;; init-clippy.el ends here
