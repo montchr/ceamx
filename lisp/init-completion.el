@@ -37,10 +37,8 @@
 ;;; === VERTICO :: "VERTical Interactive COmpletion" ================================================
 ;;  <https://github.com/minad/vertico>
 
-(elpaca-use-package
-    (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
-  :demand
-  :defer t
+(elpaca-use-package (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
+  :demand t
 
   :init
   (vertico-mode)
@@ -143,8 +141,7 @@
 ;;  <https://github.com/oantolin/embark>
 
 (elpaca-use-package embark
-  :after (marginalia)
-
+  :defer t
   :bind
   (("C-;" . embark-act)
    ("M-." . embark-dwim))
