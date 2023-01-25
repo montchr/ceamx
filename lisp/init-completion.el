@@ -53,7 +53,20 @@
   (setq vertico-resize t)
 
   ;; Enable cycling for `vertico-next' and `vertico-previous'.
-  (setq vertico-cycle t))
+  (setq vertico-cycle t)
+
+  :config
+  ;; Prefix current candidate with arrow
+  ;; <https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow>
+  (advice-add #'vertico--format-candidate :around
+    (lambda (orig cand prefix suffix index _start)
+      (setq cand (funcall orig cand prefix suffix index _start))
+      (concat
+       (if (= vertico--index index)
+           (propertize "» " 'face 'vertico-current)
+         "  ")
+       cand))))
+
 
 ;; Configure directory extension.
 (use-feature vertico-directory
