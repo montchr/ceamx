@@ -64,6 +64,8 @@
 (require 'init-dired)
 (require 'init-vcs)
 
+(require 'init-lang-elisp)
+
 ;; Auto-start Emacs daemon if not already running.
 (use-feature emacs
   :init
