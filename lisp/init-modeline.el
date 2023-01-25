@@ -3,7 +3,7 @@
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/dotfield
+;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "28.1"))
 
