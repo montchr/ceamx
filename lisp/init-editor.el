@@ -48,12 +48,17 @@
   ((org-mode . (lambda () (cmx/add-local-electric-pairs '((?= . ?=)
                                                      (?~ . ?~)))))))
 
+
+;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;;; Apheleia :: Run code formatter on buffer contents without moving point
+;;  <https://github.com/radian-software/apheleia>
+
 (elpaca-use-package apheleia
   :init (apheleia-global-mode +1))
 
-;;
-;;; === PULSAR ======================================================================================
-;;  > Pulse highlight line on demand or after running select functions
+
+;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;;; Pulsar :: Pulse highlight line on demand or after running select functions
 ;;  <https://protesilaos.com/emacs/pulsar>
 
 (elpaca-use-package pulsar
