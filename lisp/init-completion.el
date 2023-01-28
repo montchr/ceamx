@@ -153,8 +153,8 @@
 ;;         completion-category-defaults nil
 ;;         completion-category-overrides '((file (styles partial-completion)))))
 
-(use-package orderless
-  ;; :demand t
+(elpaca-use-package orderless
+  :demand t
   :config
   (defvar +orderless-dispatch-alist
     '((?% . char-fold-to-regexp)
