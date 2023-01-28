@@ -77,6 +77,8 @@
 (require 'init-files)
 (require 'init-dired)
 (require 'init-vcs)
+(require 'init-projects)
+
 
 (require 'init-lang-elisp)
 (require 'init-lang-nix)

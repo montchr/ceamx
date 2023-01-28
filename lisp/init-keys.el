@@ -73,6 +73,8 @@
   (defalias 'kbd! #'general-simulate-key)
 
   ;; Ease the creation of nested menu bindings.
+  ;; TODO: define sparse keymaps so that menus whose mappings are all deferred
+  ;;       do not result in an empty menu (this is a hypothesis though)
   (defmacro +general-global-menu! (name infix-key &rest body)
     "Create a definer named +general-global-NAME wrapping global-definer.
 Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY."
@@ -106,7 +108,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 
   (+general-global-menu! "buffer" "b"
     "h"  'previous-buffer
-    ;; TODO: is there an alternative with better ui?
+    ;; TODO: is there an alternative with better ui? maybe: bufler.el
     "i"  'ibuffer
     "d"  '(kill-current-buffer      :which-key "delete")
     "l"  '(next-buffer              :which-key "next")
@@ -214,7 +216,8 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "w" 'widen)
 
   (+general-global-menu! "project" "p"
-    "b" '(:ignore t :which-key "buffer"))
+    "b"  '(:ignore t :which-key "buffer")
+    "f"  '(project-find-file :which-key "find-file..."))
 
   (+general-global-menu! "quit" "q"
     "q" 'save-buffers-kill-emacs
