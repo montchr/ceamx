@@ -29,11 +29,13 @@
 
 ;;; Code:
 
-;;
-;;; --- `vc-mode' ---
-
 ;; Follow symlinks.
 (setq vc-follow-symlinks t)
+
+(elpaca-use-package diff-hl
+  :after (vc-mode)
+  :init
+  (global-diff-hl-mode +1))
 
 
 ;;
