@@ -79,6 +79,7 @@
 (require 'init-vcs)
 
 (require 'init-lang-elisp)
+(require 'init-lang-nix)
 
 ;; Auto-start Emacs daemon if not already running.
 (use-feature emacs
