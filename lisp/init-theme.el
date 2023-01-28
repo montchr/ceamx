@@ -72,39 +72,40 @@
           (magit-mode . dimmer-configure-magit)))
 
 
+
 ;;; -- fontaine ---
 
 (elpaca-use-package fontaine :demand t
-  :config
-  (setq fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
-  (setq fontaine-presets
-         '((small :default-height 106
-            :default-family "Iosevka Term")
-           (regular :default-height 124)
-           (medium :default-height 135)
-           (large :default-height 160)
-           (xlarge :default-height 170
-                   :bold-weight bold)
-           (t
-            :default-family "Iosevka"
-            :default-weight regular
-            :default-height 124
-            :fixed-pitch-family nil
-            :fixed-pitch-family nil
-            :fixed-pitch-height 1.0
-            :fixed-pitch-serif-family nil
-            :fixed-pitch-serif-weight nil
-            :variable-pitch-family "IBM Plex Sans"
-            :variable-pitch-weight nil
-            :variable-pitch-height 1.0
-            :bold-family nil
-            :bold-weight semibold
-            :italic-family nil
-            :italic-slant italic
-            :line-spacing nil)))
+                    :config
+                    (setq fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
+                    (setq fontaine-presets
+                          '((small :default-height 106
+                                   :default-family "Iosevka Term")
+                            (regular :default-height 124)
+                            (medium :default-height 135)
+                            (large :default-height 160)
+                            (xlarge :default-height 170
+                                    :bold-weight bold)
+                            (t
+                             :default-family "Iosevka"
+                             :default-weight regular
+                             :default-height 124
+                             :fixed-pitch-family nil
+                             :fixed-pitch-family nil
+                             :fixed-pitch-height 1.0
+                             :fixed-pitch-serif-family nil
+                             :fixed-pitch-serif-weight nil
+                             :variable-pitch-family "IBM Plex Sans"
+                             :variable-pitch-weight nil
+                             :variable-pitch-height 1.0
+                             :bold-family nil
+                             :bold-weight semibold
+                             :italic-family nil
+                             :italic-slant italic
+                             :line-spacing nil)))
 
-  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
-  (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
+                    (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+                    (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
 
 (elpaca-use-package (ligature :host github :repo "mickeynp/ligature.el")
   :config
