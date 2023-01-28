@@ -30,10 +30,19 @@
 
 ;;; --- modus-themes ---
 
-(elpaca-use-package modus-themes :demand t
+(elpaca-use-package modus-themes
+  :demand t
   :config
-  (setq modus-themes-italic-constructs t
-        modus-themes-bold-constructs t)
+  (setq modus-themes-italic-constructs t)
+  (setq modus-themes-bold-constructs t)
+  (setq modus-themes-common-palette-overrides
+        '((fringe unspecified)))
+
+  ;; via <https://protesilaos.com/emacs/modus-themes#h:d0a3157b-9c04-46e8-8742-5fb2a7ae8798>
+  (defun cmx/multine-comments-h ()
+    (setq-local c-doc-face-name 'font-lock-comment-face))
+  (add-hook 'php-mode-hook #'cmx/multine-comments-h)
+
   (load-theme 'modus-vivendi-tinted :no-confirm))
 
 
