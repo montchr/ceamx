@@ -45,22 +45,5 @@
     "b"  '(consult-project-buffer :which-key "switch")
     "B"  '(consult-buffer :which-key "any")))
 
-(elpaca-use-package dimmer
-  :defer 5
-  :after (which-key)
-
-  :custom
-  (dimmer-exclusion-regexp-list '("^\\*[h|H]elm.*\\*"
-                                  "^\\*Minibuf-.*\\*"
-                                  "^\\*Echo.*"
-                                  "^.\\*which-key\\*$"))
-  (dimmer-fraction 0.10)
-  (dimmer-watch-frame-focus-events nil)
-
-  :config
-  (dimmer-mode 1)
-  (dimmer-configure-which-key)
-  (dimmer-configure-magit))
-
 (provide 'init-buffers)
 ;;; init-buffers.el ends here
