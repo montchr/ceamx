@@ -106,10 +106,10 @@
 (use-feature savehist :init (savehist-mode))
 
 (use-feature vertico-repeat
-  :after (vertico)
-  :commands (vertico-repeat-history vertico-repeat-save)
+  :after (savehist vertico)
+  :commands '(vertico-repeat-history vertico-repeat-save)
+  :hook '((minibuffer-setup . #'vertico-repeat-save))
   :config
-  (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
   (add-to-list 'savehist-additional-variables #'vertico-repeat-history))
 
 (use-feature emacs
