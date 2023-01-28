@@ -37,7 +37,7 @@
 ;;
 ;; <https://github.com/radian-software/straight.el/tree/develop#the-recipe-format>
 ;;
-;; Sometimes packages might include additional subpackages in their repo. 
+;; Sometimes packages might include additional subpackages in their repo.
 ;; Examples I've encountered: `evil-collection', `corfu', `vertico'.
 ;; These additional files can be copied to the package destination
 ;; in addition to the default package file(s) by declaring them in a recipe

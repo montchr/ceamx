@@ -198,7 +198,10 @@
 
   ;; Define orderless style with initialism by default
   (orderless-define-completion-style +orderless-with-initialism
-    (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
+    (orderless-matching-styles
+     '(orderless-initialism
+       orderless-literal
+       orderless-regexp)))
 
   ;; You may want to combine the `orderless` style with `substring` and/or `basic`.
   ;; There are many details to consider, but the following configurations all work well.
@@ -269,9 +272,9 @@
 (elpaca-use-package embark
   :general
   ("C-;" #'embark-act)
-   ("M-." #'embark-dwim)
-   ( :keymaps 'minibuffer-local-map
-     "C-c C-e" '(+vertico/embark-export-write :which-key "Export to writable buffer"))
+  ("M-." #'embark-dwim)
+  ( :keymaps 'minibuffer-local-map
+    "C-c C-e" '(+vertico/embark-export-write :which-key "Export to writable buffer"))
   (+general-global-help
     "b" '(embark-bindings :which-key "bindings"))
 
