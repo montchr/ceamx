@@ -45,6 +45,17 @@
 
   (load-theme 'modus-vivendi-tinted :no-confirm))
 
+(use-feature solar
+  :config
+  (setq calendar-latitude 39.96)
+  (setq calendar-longitude -75.13))
+
+(elpaca-use-package circadian
+  :after solar
+  :config
+  (setq circadian-themes '((:sunrise . modus-operandi-tinted)
+                           (:sunset  . modus-vivendi-tinted)))
+  (circadian-setup))
 
 (elpaca-use-package dimmer
   :after (modus-themes)
