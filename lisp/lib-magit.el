@@ -2,6 +2,7 @@
 
 ;; Copyright (c) 2014-2022  Henrik Lissner
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; SPDX-License-Identifier: GPL-3.0-or-later OR MIT
 
 ;; Author: Henrik Lissner
 ;; URL: https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/tools/magit/autoload.el

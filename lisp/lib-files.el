@@ -2,6 +2,7 @@
 
 ;; Copyright (c) 2014-2022  Henrik Lissner
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; SPDX-License-Identifier: GPL-3.0-or-later OR MIT
 
 ;; Author: Henrik Lissner
 ;;         Chris Montgomery <chris@cdom.io>
@@ -61,10 +62,10 @@
           (recentf-remove-if-non-kept file))
         (when (and
                (bound-and-true-p projectile-mode)
-                ;; FIXME: de-doom
-                ;; (doom-project-p)
-                ;; (projectile-file-cached-p file (doom-project-root))
-              )
+               ;; FIXME: de-doom
+               ;; (doom-project-p)
+               ;; (projectile-file-cached-p file (doom-project-root))
+               )
           (projectile-purge-file-from-cache file)))
       )
     (dolist (default-directory toplevels)
