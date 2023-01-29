@@ -44,14 +44,7 @@
     "i" '(projectile-invalidate-cache :which-key "re-cache")
     "p" '(projectile-switch-project :which-key "switch..."))
   (+general-global-search
-    "p" '(projectile-ripgrep :which-key "project...")
     "x" '(projectile-find-references :which-key "xref"))
-
-  ;; TODO: maybe, but mostly not -- see <https://docs.projectile.mx/projectile/usage.html#using-projectile-with-project-el>
-  ;; ([remap project-find-file] . #'projectile-find-file
-  ;;  [remap save-some-buffers] . #'projectile-save-project-buffers
-  ;;  [remap other-buffer]      . #'projectile-project-buffers-other-buffer)
-
   ( :keymaps 'projectile-mode-map
     "s-p"    'projectile-command-map
     "C-c p"  'projectile-command-map)
