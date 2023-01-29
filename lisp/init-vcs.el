@@ -114,9 +114,18 @@
   ;; Clean up after magit by killing leftover magit buffers and reverting
   ;; affected buffers (or at least marking them as need-to-be-reverted).
   (define-key magit-mode-map "q" #'+magit/quit)
-  (define-key magit-mode-map "Q" #'+magit/quit-all)
+  (define-key magit-mode-map "Q" #'+magit/quit-all))
 
-  )
+
+;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;;; git-timemachine
+;;  <https://codeberg.org/pidu/git-timemachine>
+;;  <https://github.com/emacsmirror/git-timemachine>
+
+(elpaca-use-package git-timemachine
+  :general
+  (+general-global-git/version-control
+    "t" #'git-timemachine))
 
 (provide 'init-vcs)
 ;;; init-vcs.el ends here
