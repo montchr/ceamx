@@ -77,10 +77,11 @@
 
   (setq dimmer-watch-frame-focus-events nil)
 
-  (dimmer-mode 1)
-
-  :hook '((which-key-mode . dimmer-configure-which-key)
-          (magit-mode . dimmer-configure-magit)))
+  (dimmer-configure-which-key)
+  (dimmer-configure-magit)
+  ;; TODO
+  ;; (dimmer-configure-org)
+  (dimmer-mode t))
 
 
 
