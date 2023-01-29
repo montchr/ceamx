@@ -29,13 +29,12 @@
 ;;; Code:
 
 (elpaca-use-package nix-mode
-  :mode "\\.nix\\'")
+  :hook ((nix-mode . lsp-deferred)))
 
-(use-feature eglot
-  :defines (eglot-server-programs)
+(use-feature lsp-nix
+  :after lsp-mode
   :config
-  (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
-  :hook (nix-mode . eglot-ensure))
+  (setq lsp-nix-nil-formatter nil))
 
 (provide 'init-lang-nix)
 ;;; init-lang-nix.el ends here
