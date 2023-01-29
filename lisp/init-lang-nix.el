@@ -31,5 +31,11 @@
 (elpaca-use-package nix-mode
   :mode "\\.nix\\'")
 
+(use-feature eglot
+  :defines (eglot-server-programs)
+  :config
+  (add-to-list 'eglot-server-programs '(nix-mode . ("nil")))
+  :hook (nix-mode . eglot-ensure))
+
 (provide 'init-lang-nix)
 ;;; init-lang-nix.el ends here
