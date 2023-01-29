@@ -107,8 +107,8 @@
 
 (use-feature vertico-repeat
   :after (savehist vertico)
-  :commands '(vertico-repeat-history vertico-repeat-save)
-  :hook '((minibuffer-setup . #'vertico-repeat-save))
+  :commands (vertico-repeat-history vertico-repeat-save)
+  :hook ((minibuffer-setup . vertico-repeat-save))
   :config
   (add-to-list 'savehist-additional-variables #'vertico-repeat-history))
 

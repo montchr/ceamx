@@ -52,9 +52,9 @@
   ;;  [remap save-some-buffers] . #'projectile-save-project-buffers
   ;;  [remap other-buffer]      . #'projectile-project-buffers-other-buffer)
 
-  '( :keymaps 'projectile-mode-map
-     "s-p"    #'projectile-command-map
-     "C-c p"  #'projectile-command-map)
+  ( :keymaps 'projectile-mode-map
+    "s-p"    'projectile-command-map
+    "C-c p"  'projectile-command-map)
 
   :init
   ;; Use Emacs default completion system i.e. `completing-read'
