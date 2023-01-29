@@ -46,7 +46,31 @@
 
   :hook
   ((org-mode . (lambda () (cmx/add-local-electric-pairs '((?= . ?=)
-                                                     (?~ . ?~)))))))
+                                                          (?~ . ?~)))))))
+
+
+;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;;; tree-sitter
+;;
+;;  Since builtin tree-sitter support is only available in Emacs 29+ (still in
+;;  development as of <2023-01-28>), the internal documentation might be the
+;;  best resource for describing how it can be used. In general, though, it
+;;  seems as though support must be added by a combination of individual major
+;;  modes (probably won't happen until well after Emacs 29 is released...) and
+;;  the availability of language parser definitions (of which very few are
+;;  included in Emacs 29 currently...).
+;;
+;;  <https://git.savannah.gnu.org/cgit/emacs.git/tree/admin/notes/tree-sitter/starter-guide?h=emacs-29>
+;;
+;;  So, for all those reasons... ignore the builtin tree-sitter support for now,
+;;  and use the external package instead...
+
+(elpaca-use-package tree-sitter)
+(elpaca-use-package tree-sitter-langs :after tree-sitter)
+
+;; FIXME: nope.
+;; (use-feature treesit
+;;   :hook prog-mode)
 
 
 ;; § ────────── ────────── ────────── ────────── ────────── ──────────
