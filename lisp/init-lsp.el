@@ -51,7 +51,6 @@
   :general
   (+general-global-code
     "a"  '(lsp-execute-code-action :which-key "action")
-    "l"  '(:keymap lsp-command-map :which-key "lsp")
     "r"  '(lsp-rename :which-key "rename..."))
 
   :config
