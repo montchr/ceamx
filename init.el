@@ -54,14 +54,7 @@
 (require 'init-packages)
 (require 'init-lib)
 (require 'init-defaults)
-
-;;; <https://github.com/purcell/exec-path-from-shell>
-(elpaca-use-package exec-path-from-shell
-  :if (or +is-sys-mac +is-xorg (daemonp))
-  :config
-  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"))
-    (add-to-list 'exec-path-from-shell-variables var))
-  (exec-path-from-shell-initialize))
+(require 'init-env)
 
 (require 'init-theme)
 (require 'init-modeline)
