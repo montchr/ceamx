@@ -52,17 +52,21 @@
   :init
   ;; Use Emacs default completion system i.e. `completing-read'
   (setq projectile-completion-system 'default)
-  ;; TODO: should this be set here entirely, or merely appended-to?
+
+  ;; TODO: should this be set here entirely, or merely appended-to?  ;; TODO: should this be set here entirely, or merely appended-to?  ;; TODO: should this be set here entirely, or merely appended-to?
   (setq projectile-project-root-files '(".envrc" ".projectile"))
+
   (projectile-mode +1)
 
   :config
-  (setq projectile-project-search-path '("~/Developer/sources/"
-                                         "~/Developer/contrib/"
-                                         "~/Developer/work/projects/"))
+  (setq projectile-project-search-path '(("~/Developer/sources/" . 1)
+                                         ("~/Developer/contrib/" . 2)
+                                         ("~/Developer/work/" . 3)))
   (setq projectile-require-project-root t)
   (setq projectile-sort-order 'recently-active)
-  (setq projectile-switch-project-action #'projectile-find-file))
+  (setq projectile-switch-project-action #'projectile-find-file)
+
+  (add-to-list 'projectile-globally-ignored-directories "vendor"))
 
 (provide 'init-projects)
 ;;; init-projects.el ends here
