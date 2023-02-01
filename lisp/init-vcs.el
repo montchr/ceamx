@@ -70,9 +70,10 @@
     "U"  'magit-unstage-file)
 
   :config
-  (setq magit-diff-refine-hunk t)                ; show granular diffs in selected hunk
-  (setq magit-save-repository-buffers nil)       ; avoid side-effects (e.g. auto-format)
-  (setq magit-revision-insert-related-refs nil)  ; parent/related refs: rarely useful
+  (setq magit-diff-refine-hunk t)                  ; show granular diffs in selected hunk
+  (setq magit-save-repository-buffers nil)         ; avoid side-effects (e.g. auto-format)
+  (setq magit-revision-insert-related-refs nil)    ; parent/related refs: rarely useful
+  (setq magit-process-finish-apply-ansi-colors t)  ; render ANSI colors in process output
 
   ;; Close transient with ESC
   (define-key transient-map [escape] #'transient-quit-one)
