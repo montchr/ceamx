@@ -38,5 +38,21 @@
 
 (use-feature winner)
 
+
+(elpaca-use-package (burly :host github :repo "alphapapa/burly.el")
+  :general
+  (+general-global-bookmark
+    "F" #'burly-bookmark-frames
+    "W" #'burly-bookmark-windows)
+  (+general-global-frame
+    "b" '(burly-bookmark-frames :which-key "bmark"))
+  (+general-global-window
+    "b" '(burly-bookmark-windows :which-key "bmark"))
+  (+general-global-tabs
+    "R" #'burly-reset-tab)
+
+  :init
+  (burly-tabs-mode))
+
 (provide 'init-window)
 ;;; init-window.el ends here

@@ -231,6 +231,9 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
     "v"  'find-variable-at-point
     "V"  'find-variable)
 
+  (+general-global-menu! "tabs" "t"
+    "n" '(tab-new :which-key "new"))
+
   (+general-global-menu! "window" "w"
     "?" 'split-window-vertically
     "=" 'balance-windows
