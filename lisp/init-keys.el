@@ -54,8 +54,6 @@
     "!"  'shell-command
     ":"  'eval-expression
     "."  'repeat
-
-    ;; TODO: update if using projectile
     "SPC"  'project-find-file)
 
   ;; major modes
@@ -233,6 +231,10 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 
   (+general-global-menu! "tabs" "t"
     "n" '(tab-new :which-key "new"))
+
+  (+general-global-menu! "toggle" "T"
+    "L" '(line-number-mode :which-key "linums")
+    "f" '(flycheck-mode :which-key "flycheck"))
 
   (+general-global-menu! "window" "w"
     "?" 'split-window-vertically
