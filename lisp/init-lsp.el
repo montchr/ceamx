@@ -36,6 +36,7 @@
   :commands (lsp-deferred)
 
   :init
+  (setq lsp-use-plists t)
   (setq lsp-restart 'ignore)
   (setq lsp-eldoc-enable-hover nil)
   (setq lsp-enable-on-type-formatting nil)
