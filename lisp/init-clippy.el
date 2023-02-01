@@ -37,9 +37,13 @@
          ([remap describe-variable] . helpful-variable)
          ([remap describe-key]      . helpful-key)))
 
+
 (elpaca-use-package flycheck
-  :hook (prog-mode)
-  :init (global-flycheck-mode))
+  ;; TODO: enable -- but not in `emacs-lisp-mode' due to endless issues with
+  ;; undefined variables and functions etc.
+  :disabled)
+
+
 
 (provide 'init-clippy)
 ;;; init-clippy.el ends here
