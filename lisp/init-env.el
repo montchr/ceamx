@@ -30,9 +30,11 @@
 
 (elpaca-use-package inheritenv)
 
-(elpaca-use-package direnv
+(elpaca-use-package envrc
   :demand t
   :when (executable-find "direnv")
+  :init
+  (envrc-global-mode)
   :config
   ;; <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/tools/direnv/config.el#L11-L24>
   (defun +direnv-init-global-mode-earlier-h ()
