@@ -28,6 +28,10 @@
 
 ;;; Code:
 
+(defconst +path-notes-dir (file-name-as-directory "~/Documents/notes"))
+
+(defconst +org-capture-default-file (concat +path-notes-dir "inbox.org"))
+
 (elpaca-use-package org
   :general
   (global-definer
@@ -48,8 +52,33 @@
     "t d" '(org-deadline :wk "deadline")
     "x" '(org-toggle-checkbox :wk "toggle checkbox"))
 
+  :init
+  (setq org-directory "~/Documents/notes/")
+
+  :config
+  (setq org-image-actual-width 300)
+  (setq org-startup-with-inline-images t)
+
   :hook ((org-mode . prettify-symbols-mode)
          (org-mode . visual-line-mode)))
+
+(elpaca-use-package doct
+  :defer t
+  :commands (doct))
+
+(use-feature org-capture
+  :after (org-mode doct)
+  :config
+  (setq org-capture-templates
+        (doct `(("Personal todo"
+                 :keys "t"
+                 :icon ("checklist" :set "octicon" :color "green")
+                 :file +org-capture-default-file
+                 :prepend t
+                 :headline "Inbox"
+                 :type entry
+                 :template ("* TODO %?"
+                            "%i %a"))))))
 
 (provide 'init-org)
 ;;; init-org.el ends here
