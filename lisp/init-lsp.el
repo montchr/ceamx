@@ -61,6 +61,10 @@
   ((lsp-mode . (lambda () (setq-local evil-lookup-func #'lsp-describe-thing-at-point)))
    (lsp-mode . lsp-enable-which-key-integration)))
 
+(elpaca-use-package lsp-ui
+  :after (lsp-mode)
+  :commands (lsp-ui-mode))
+
 (elpaca-use-package consult-lsp
   :after (lsp-mode consult)
   :general
@@ -71,7 +75,6 @@
    [remap xref-find-apropos]  #'consult-lsp-symbols))
 
 ;;; optionally:
-;; (use-package lsp-ui :commands lsp-ui-mode)
 ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 ;; (use-package dap-mode)
 ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
