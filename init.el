@@ -77,6 +77,7 @@
 
 (require 'init-lang-elisp)
 (require 'init-lang-nix)
+(require 'init-lang-misc)
 
 ;; Auto-start Emacs daemon if not already running.
 (use-feature emacs
