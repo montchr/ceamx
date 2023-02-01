@@ -74,6 +74,9 @@
   ;; Use default Emacs mouse click behavior
   (define-key evil-motion-state-map [down-mouse-1] nil)
 
+  ;; Global search by default.
+  (setq evil-ex-substitute-global t)
+
   (evil-ex-define-cmd "q" #'kill-this-buffer)
   (evil-ex-define-cmd "wq" #'cmx/+save-and-kill-this-buffer)
 
