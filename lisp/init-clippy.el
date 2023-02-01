@@ -45,5 +45,14 @@
 
 
 
+;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;;; GNU Hyperbole
+;;
+
+;; FIXME: causes startup errors!
+;; (elpaca-use-package hyperbole
+;;   :config
+;;   (hyperbole-mode 1))
+
 (provide 'init-clippy)
 ;;; init-clippy.el ends here
