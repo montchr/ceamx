@@ -70,6 +70,7 @@
 (require 'init-files)
 (require 'init-dired)
 (require 'init-vcs)
+(require 'init-templates)
 (require 'init-projects)
 (require 'init-lsp)
 
