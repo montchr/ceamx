@@ -73,6 +73,7 @@
 (require 'init-templates)
 (require 'init-projects)
 (require 'init-lsp)
+(require 'init-org)
 
 (require 'init-lang-elisp)
 (require 'init-lang-nix)
