@@ -56,6 +56,12 @@
 (require 'init-defaults)
 (require 'init-env)
 
+(use-feature emacs
+  :init
+  ;; Show window decorations on macOS.
+  (when +is-sys-mac
+    (add-to-list 'default-frame-alist '(undecorated . nil))))
+
 (require 'init-theme)
 (require 'init-modeline)
 
@@ -84,11 +90,6 @@
   :init
   (unless (and (fboundp 'server-running-p) (server-running-p))
     (server-start)))
-
-;; unfortunately
-(when (and +is-sys-mac +is-graphical)
-  (add-hook 'elpaca-after-init-hook (lambda ()
-    (shell-command-to-string "yabai-relaunch"))))
 
 ;; Load custom file.
 (when (file-exists-p custom-file)
