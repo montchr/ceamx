@@ -102,9 +102,9 @@
   ;; Enable all Iosevka ligatures in programming modes
   ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
   (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
-                                      "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
-                                      "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
-                                      ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
   ;; Enable all JetBrains Mono ligatures in programming modes
   ;; (ligature-set-ligatures 'prog-mode '("-|" "-~" "---" "-<<" "-<" "--" "->" "->>" "-->" "///" "/=" "/=="
   ;;                                     "/>" "//" "/*" "*>" "***" "*/" "<-" "<<-" "<=>" "<=" "<|" "<||"
@@ -149,6 +149,9 @@
 ;;   ;; TODO
 ;;   ;; (dimmer-configure-org)
 ;;   (dimmer-mode t))
+
+;; FIXME: move to a dedicated 'ui' module
+(use-package magit-section :defer t)
 
 (provide 'init-theme)
 ;;; init-theme.el ends here

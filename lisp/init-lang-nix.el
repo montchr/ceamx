@@ -29,6 +29,9 @@
 ;;; Code:
 
 (use-package nix-mode
+  ;; NOTE: `magit-section' is a hard dependency,
+  ;;       but does not install automatically with `nix-mode'
+  :after (magit-section)
   :hook ((nix-mode . lsp-deferred)))
 
 (use-feature lsp-nix
