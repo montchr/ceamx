@@ -33,7 +33,7 @@
 ;;  <https://github.com/bbatsov/projectile>
 ;;  <https://docs.projectile.mx>
 
-(elpaca-use-package projectile
+(use-package projectile
   ;; :demand
   :after (general)
 

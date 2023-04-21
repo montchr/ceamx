@@ -31,8 +31,11 @@
 (display-time-mode -1)
 (setq column-number-mode t)
 
-(elpaca-use-package diminish
+(use-package diminish
   :defer 10)
+
+;; Wait until `diminish` is activated so its use-package keyword is installed
+(elpaca-wait) 
 
 (provide 'init-modeline)
 ;;; init-modeline.el ends here

@@ -32,7 +32,7 @@
 ;; Follow symlinks.
 (setq vc-follow-symlinks t)
 
-(elpaca-use-package diff-hl
+(use-package diff-hl
   :after (vc-mode)
   :init
   (global-diff-hl-mode +1))
@@ -48,8 +48,11 @@
 (autoload '+magit/quit "lib-magit" "Bury the current magit buffer. <...>" t)
 (autoload '+magit/quit-all "lib-magit" "Kill all magit buffers for the current repository." t)
 
-(elpaca-use-package magit
-  :after (general)
+;; (elpaca magit-section)
+
+(use-package magit
+  ;; :defer t
+  ;; :after (general magit-section)
 
   :general
   (+general-global-git/version-control
@@ -123,7 +126,7 @@
 ;;  <https://codeberg.org/pidu/git-timemachine>
 ;;  <https://github.com/emacsmirror/git-timemachine>
 
-(elpaca-use-package git-timemachine
+(use-package git-timemachine
   :general
   (+general-global-git/version-control
     "t" #'git-timemachine))

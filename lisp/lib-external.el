@@ -41,8 +41,9 @@
 ;;  (##foo % (bar %3) %*)
 ;;  => (lambda (% _%2 %3 &rest %*)
 ;;       (foo % (bar %3) %*))
-(elpaca-use-package (llama :host sourcehut :repo "tarsius/llama")
-  :commands (##))
+  (use-package llama
+    :elpaca (llama :host sourcehut :repo "tarsius/llama")
+    :commands (##))
 
 (provide 'lib-external)
 ;;; lib-external.el ends here

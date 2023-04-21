@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-(elpaca-use-package helpful
+(use-package helpful
   :after evil
   :init
   (setq evil-lookup-func #'helpful-at-point)
@@ -38,7 +38,7 @@
          ([remap describe-key]      . helpful-key)))
 
 
-(elpaca-use-package flycheck
+(use-package flycheck
   ;; TODO: enable -- but not in `emacs-lisp-mode' due to endless issues with
   ;; undefined variables and functions etc.
   :disabled)
@@ -50,7 +50,7 @@
 ;;
 
 ;; FIXME: causes startup errors!
-;; (elpaca-use-package hyperbole
+;; (use-package hyperbole
 ;;   :config
 ;;   (hyperbole-mode 1))
 

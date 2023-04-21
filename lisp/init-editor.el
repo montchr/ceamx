@@ -65,8 +65,8 @@
 ;;  So, for all those reasons... ignore the builtin tree-sitter support for now,
 ;;  and use the external package instead...
 
-(elpaca-use-package tree-sitter)
-(elpaca-use-package tree-sitter-langs :after tree-sitter)
+(use-package tree-sitter)
+(use-package tree-sitter-langs :after tree-sitter)
 
 ;; FIXME: nope.
 ;; (use-feature treesit
@@ -77,7 +77,7 @@
 ;;; Apheleia :: Run code formatter on buffer contents without moving point
 ;;  <https://github.com/radian-software/apheleia>
 
-(elpaca-use-package apheleia
+(use-package apheleia
   :init (apheleia-global-mode +1))
 
 
@@ -85,7 +85,7 @@
 ;;; Pulsar :: Pulse highlight line on demand or after running select functions
 ;;  <https://protesilaos.com/emacs/pulsar>
 
-(elpaca-use-package pulsar
+(use-package pulsar
   :defer 5
   :config
   (setq pulsar-pulse           t)
@@ -100,7 +100,7 @@
 ;;; aggressive-indent-mode :: Re-indent code after every change
 ;;  <https://github.com/Malabarba/aggressive-indent-mode>
 
-(elpaca-use-package aggressive-indent
+(use-package aggressive-indent
   :hook (prog-mode))
 
 

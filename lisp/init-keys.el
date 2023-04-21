@@ -30,7 +30,23 @@
 
 ;;; Code:
 
-(elpaca-use-package general
+
+;; macOS: Remap modifier keys.
+(when (and +is-sys-mac +is-graphical)
+  (setq mac-control-modifier 'control
+        mac-option-modifier 'meta
+        mac-command-modifier 'super)
+  ;; Common system clipboard hotkeys.
+  (global-set-key [(s c)] 'kill-ring-save)
+  (global-set-key [(s v)] 'yank)
+  (global-set-key [(s x)] 'kill-region)
+  (global-set-key [(s q)] 'kill-emacs))
+
+;;
+;;; === GENERAL.EL =============================================================
+;;  
+
+(use-package general
   :demand t
   :config
   (general-evil-setup)
@@ -75,7 +91,7 @@
   ;;       do not result in an empty menu (this is a hypothesis though)
   (defmacro +general-global-menu! (name infix-key &rest body)
     "Create a definer named +general-global-NAME wrapping global-definer.
-Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY."
+    Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY."
     (declare (indent 2))
     (let* ((n (concat "+general-global-" name))
            (prefix (intern (concat n "-map"))))
@@ -91,7 +107,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
   (+general-global-menu! "application" "a"
     "p" '(:ignore t "elpaca")
     "pr"  '((lambda () (interactive)
-              (let ((current-prefix-arg '(4)))
+              (let ((current-prefix-arg (not current-prefix-arg)))
                 (call-interactively #'elpaca-rebuild)))
             :which-key "rebuild")
     "pm" 'elpaca-manager
@@ -275,7 +291,15 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 
   ) ;; end `general' configuration
 
-(elpaca-use-package which-key
+;; Wait until `general` is activated so its use-package keyword is installed
+(elpaca-wait) 
+
+
+;;
+;;; === WHICH-KEY ==============================================================
+;;  
+
+(use-package which-key
   :demand t
   :diminish which-key-mode
 
@@ -295,16 +319,8 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
         which-key-add-column-padding 1)
   (which-key-mode))
 
-;; macOS: Remap modifier keys.
-(when (and +is-sys-mac +is-graphical)
-  (setq mac-control-modifier 'control
-        mac-option-modifier 'meta
-        mac-command-modifier 'super)
-  ;; Common system clipboard hotkeys.
-  (global-set-key [(s c)] 'kill-ring-save)
-  (global-set-key [(s v)] 'yank)
-  (global-set-key [(s x)] 'kill-region)
-  (global-set-key [(s q)] 'kill-emacs))
+;; Wait until `which-key` is activated so its use-package keyword is installed
+(elpaca-wait) 
 
 (provide 'init-keys)
 ;;; init-keys.el ends here

@@ -37,7 +37,8 @@
 ;;; === VERTICO :: "VERTical Interactive COmpletion" ================================================
 ;;  <https://github.com/minad/vertico>
 
-(elpaca-use-package (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
+(use-package vertico
+  :elpaca (vertico :host github :repo "minad/vertico" :files (:defaults "extensions/*"))
   :demand t
 
   :init
@@ -62,10 +63,10 @@
     (lambda (orig cand prefix suffix index _start)
       (setq cand (funcall orig cand prefix suffix index _start))
       (concat
-       (if (= vertico--index index)
-           (propertize "» " 'face 'vertico-current)
-         "  ")
-       cand))))
+      (if (= vertico--index index)
+          (propertize "» " 'face 'vertico-current)
+        "  ")
+      cand))))
 
 ;; Configure directory extension.
 (use-feature vertico-directory
@@ -142,7 +143,7 @@
 ;;  <https://github.com/oantolin/orderless>
 ;;  > Emacs completion style that matches multiple regexps in any order 
 
-;; (elpaca-use-package orderless
+;; (use-package orderless
 ;;   :init
 
 ;;   ;; TODO: Configure a custom style dispatcher (see the Consult wiki)
@@ -153,7 +154,7 @@
 ;;         completion-category-defaults nil
 ;;         completion-category-overrides '((file (styles partial-completion)))))
 
-(elpaca-use-package orderless
+(use-package orderless
   :demand t
   :config
   (defvar +orderless-dispatch-alist
@@ -248,7 +249,7 @@
 ;;  <https://github.com/minad/marginalia>
 ;;  Enable rich completion annotations in the minibuffer.
 
-(elpaca-use-package marginalia
+(use-package marginalia
   :bind
   (:map minibuffer-local-map
         ("M-A" . marginalia-cycle))
@@ -269,7 +270,7 @@
 
 (autoload '+vertico/embark-export-write "lib-vertico" "Export RESULTS to writable buffer")
 
-(elpaca-use-package embark
+(use-package embark
   :general
   ("C-;" #'embark-act)
   ("M-." #'embark-dwim)
@@ -299,7 +300,7 @@
 ;;  - `fd' is intentionally excluded from `consult' core.
 ;;    however, support can be added manually: <https://github.com/minad/consult/wiki#find-files-using-fd>
 
-(elpaca-use-package consult
+(use-package consult
   ;; Enable automatic preview at point in the *Completions* buffer. This is
   ;; relevant when you use the default completion UI.
   :hook (completion-list-mode . consult-preview-at-point-mode)
@@ -476,8 +477,10 @@
 ;;  <https://github.com/minad/corfu>
 
 ;; Recipe derived from <https://github.com/progfolio/.emacs.d/blob/7935d69dc2bb05af99b3743b9d33826043bfedd8/init.org#corfu>
-(elpaca-use-package (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
+(use-package corfu
+  :elpaca (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
   :defer 5
+
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
   (corfu-auto t)                 ;; Enable auto completion
@@ -491,7 +494,7 @@
 
   ;; Enable Corfu only for certain modes.
   :hook ((prog-mode . corfu-mode)
-         (org-mode . corfu-mode))
+        (org-mode . corfu-mode))
 
   :config
   (with-eval-after-load 'evil
@@ -525,7 +528,7 @@
 ;;; === CAPE :: "Completion At Point Extensions" ====================================================
 ;;  <https://github.com/minad/cape>
 
-(elpaca-use-package cape
+(use-package cape
   ;; Bind dedicated completion commands
   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
   :bind (("C-c p p" . completion-at-point) ;; capf
@@ -570,14 +573,14 @@
 ;;; embark-consult
 ;;  <https://github.com/minad/consult#embark-integration>
 
-(elpaca-use-package embark-consult
+(use-package embark-consult
   :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 ;;
 ;;; aff.el :: "Asynchronous Fuzzy Finder for Emacs"
 ;;  <https://github.com/minad/affe>
 
-(elpaca-use-package affe
+(use-package affe
   :after (orderless)
   :config
   ;; Manual preview key for `affe-grep'
@@ -594,7 +597,7 @@
 ;;; wgrep :: "Writable grep buffer and apply the changes to files"
 ;;  <https://github.com/mhayashi1120/Emacs-wgrep>
 
-(elpaca-use-package wgrep
+(use-package wgrep
   :init
   (setq wgrep-auto-save-buffer t)
   (setq wgrep-change-readonly-file t)

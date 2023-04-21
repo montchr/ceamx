@@ -30,7 +30,7 @@
 
 ;;; --- modus-themes ---
 
-(elpaca-use-package modus-themes
+(use-package modus-themes
   :demand t
   :config
   (setq modus-themes-italic-constructs t)
@@ -45,49 +45,10 @@
 
   (load-theme 'modus-vivendi-tinted :no-confirm))
 
-(use-feature solar
-  :config
-  (setq calendar-latitude 39.96)
-  (setq calendar-longitude -75.13))
-
-(elpaca-use-package circadian
-  :after solar
-  :config
-  (setq circadian-themes '((:sunrise . modus-operandi-tinted)
-                           (:sunset  . modus-vivendi-tinted)))
-  (circadian-setup))
-
-(elpaca-use-package dimmer
-  :after (modus-themes)
-
-  ;; :custom
-  ;; FIXME: include corfu etc
-  ;; (dimmer-exclusion-regexp-list '("^\\*[h|H]elm.*\\*"
-  ;;                                 "^\\*Minibuf-.*\\*"
-  ;;                                 "^\\*Echo.*"
-  ;;                                 "^.\\*which-key\\*$")
-  ;;                               )
-
-  :config
-  ;;; See notes re: Modus Themes compatibility:
-  ;;; <https://protesilaos.com/emacs/modus-themes#h:8eb4b758-d318-4480-9ead-357a571beb93>
-  (setq dimmer-fraction 0.3)
-  (setq dimmer-adjustment-mode :foreground)
-  (setq dimmer-use-colorspace :rgb)
-
-  (setq dimmer-watch-frame-focus-events nil)
-
-  (dimmer-configure-which-key)
-  (dimmer-configure-magit)
-  ;; TODO
-  ;; (dimmer-configure-org)
-  (dimmer-mode t))
-
-
-
 ;;; -- fontaine ---
 
-(elpaca-use-package fontaine :demand t
+(use-package fontaine
+  :demand t
                     :config
                     (setq fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
                     (setq fontaine-presets
@@ -119,14 +80,31 @@
                     (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
                     (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
 
-(elpaca-use-package (ligature :host github :repo "mickeynp/ligature.el")
+(use-feature solar
+  :config
+  (setq calendar-latitude 39.96)
+  (setq calendar-longitude -75.13))
+
+(use-package circadian
+  :after solar
+  :config
+  (setq circadian-themes '((:sunrise . modus-operandi-tinted)
+                           (:sunset  . modus-vivendi-tinted)))
+  (circadian-setup))
+
+
+
+;;; -- ligature.el ---
+
+(use-package ligature
+  :elpaca (ligature :host github :repo "mickeynp/ligature.el")
   :config
   ;; Enable all Iosevka ligatures in programming modes
   ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
   (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
-                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
-                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
-                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+                                      "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                      "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                      ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
   ;; Enable all JetBrains Mono ligatures in programming modes
   ;; (ligature-set-ligatures 'prog-mode '("-|" "-~" "---" "-<<" "-<" "--" "->" "->>" "-->" "///" "/=" "/=="
   ;;                                     "/>" "//" "/*" "*>" "***" "*/" "<-" "<<-" "<=>" "<=" "<|" "<||"
@@ -146,6 +124,31 @@
 ;; FIXME: configure symbols -- e.g. `lambda' prettification is problematic
 ;; (use-feature prettify-symbols
 ;;   :hook prog-mode)
+
+;; (use-package dimmer
+;;   :after (modus-themes)
+
+;;   :custom
+;;   ;; FIXME: include corfu etc
+;;   (dimmer-exclusion-regexp-list '("^\\*[h|H]elm.*\\*"
+;;                                   "^\\*Minibuf-.*\\*"
+;;                                   "^\\*Echo.*"
+;;                                   "^.\\*which-key\\*$"))
+
+;;   :config
+;;   ;;; See notes re: Modus Themes compatibility:
+;;   ;;; <https://protesilaos.com/emacs/modus-themes#h:8eb4b758-d318-4480-9ead-357a571beb93>
+;;   (setq dimmer-fraction 0.3)
+;;   (setq dimmer-adjustment-mode :foreground)
+;;   (setq dimmer-use-colorspace :rgb)
+
+;;   (setq dimmer-watch-frame-focus-events nil)
+
+;;   (dimmer-configure-which-key)
+;;   (dimmer-configure-magit)
+;;   ;; TODO
+;;   ;; (dimmer-configure-org)
+;;   (dimmer-mode t))
 
 (provide 'init-theme)
 ;;; init-theme.el ends here

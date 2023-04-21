@@ -28,9 +28,8 @@
 
 ;;; Code:
 
-(elpaca-use-package evil
+(use-package evil
   :demand t
-  :after general
 
   :preface
   (setq evil-want-integration t
@@ -82,26 +81,28 @@
 
   (evil-mode 1))
 
-(elpaca-use-package evil-collection
+(use-package evil-collection
   :after (evil)
   :custom
+  (evil-collection-elpaca-want-g-filters nil)
   (evil-collection-setup-minibuffer nil)
   :config
   (evil-collection-init))
 
-(elpaca-use-package anzu
+(use-package anzu
   :defer 10
   :config (global-anzu-mode))
 
-(elpaca-use-package evil-anzu
+(use-package evil-anzu
   :after (evil anzu))
 
-(elpaca-use-package evil-commentary
-  :after evil
+(use-package evil-commentary
+  :after (evil)
   :config (evil-commentary-mode +1)
   :diminish)
 
-(elpaca-use-package evil-surround
+(use-package evil-surround
+  :after (evil)
   :general
   ( :states 'operator
     "s"  'evil-surround-edit

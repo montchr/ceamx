@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-(elpaca-use-package nix-mode
+(use-package nix-mode
   :hook ((nix-mode . lsp-deferred)))
 
 (use-feature lsp-nix

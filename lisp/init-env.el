@@ -28,9 +28,9 @@
 
 ;;; Code:
 
-(elpaca-use-package inheritenv)
+(use-package inheritenv)
 
-(elpaca-use-package envrc
+(use-package envrc
   :demand t
   :when (executable-find "direnv")
   :init

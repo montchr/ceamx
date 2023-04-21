@@ -45,44 +45,45 @@
 ;; `:files (:defaults "snippets")', all files under the `snippets' subdirectory
 ;; would also be copied. See the recipe format docs for details.
 
+(defvar elpaca-installer-version 0.3)
+
 ;; Configurate package/build directories
 (defvar elpaca-directory (expand-file-name "elpaca/" +path-packages-dir))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 
 ;; Bootstrap
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
                               :ref nil
+                              :files (:defaults (:exclude "extensions"))
                               :build (:not elpaca--activate-package)))
-(when-let ((repo  (expand-file-name "repos/elpaca/" elpaca-directory))
-           (build (expand-file-name "elpaca/" elpaca-builds-directory))
-           (order (cdr elpaca-order))
-           ((add-to-list 'load-path (if (file-exists-p build) build repo)))
-           ((not (file-exists-p repo))))
-  (condition-case-unless-debug err
-      (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-               ((zerop (call-process "git" nil buffer t "clone"
-                                     (plist-get order :repo) repo)))
-               (default-directory repo)
-               ((zerop (call-process "git" nil buffer t "checkout"
-                                     (or (plist-get order :ref) "--")))))
-          (progn
-            (byte-recompile-directory repo 0 'force)
-            (require 'elpaca)
-            (and (fboundp 'elpaca-generate-autoloads)
-                 (elpaca-generate-autoloads "elpaca" repo))
-            (kill-buffer buffer))
-        (error "%s" (with-current-buffer buffer (buffer-string))))
-    ((error)
-     (warn "%s" err)
-     (delete-directory repo 'recursive))))
-(require 'elpaca-autoloads)
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (condition-case-unless-debug err
+        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                 ((zerop (call-process "git" nil buffer t "clone"
+                                       (plist-get order :repo) repo)))
+                 ((zerop (call-process "git" nil buffer t "checkout"
+                                       (or (plist-get order :ref) "--"))))
+                 (emacs (concat invocation-directory invocation-name))
+                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                 ((require 'elpaca))
+                 ((elpaca-generate-autoloads "elpaca" repo)))
+            (kill-buffer buffer)
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (load "./elpaca-autoloads")))
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
-
-;; Use Evil bindings in status and UI maps
-(with-eval-after-load 'evil
-  (with-eval-after-load 'elpaca-ui
-    (evil-make-intercept-map elpaca-ui-mode-map)))
 
 
 ;;
@@ -91,22 +92,29 @@
 
 (defmacro use-feature (name &rest args)
   "Like `use-package' but accounting for asynchronous installation.
-NAME and ARGS are in `use-package'."
+  NAME and ARGS are in `use-package'."
   (declare (indent defun))
-  `(elpaca nil (use-package ,name
-                 :ensure nil
-                 ,@args)))
+  `(use-package ,name
+     :elpaca nil
+     ,@args))
 
-;; Install use-package.
+;; Install use-package support.
+(elpaca elpaca-use-package
+  ;; Enable :elpaca use-package keyword.
+  (elpaca-use-package-mode)
+  ;; Assume :elpaca t unless otherwise specified.
+  (setq elpaca-use-package-by-default t))
 (elpaca use-package (require 'use-package))
 
+;; Block until current queue processed.
+(elpaca-wait)
+
 ;; `use-package' debug mode.
-(setq init-file-debug t)
-(if init-file-debug
+(setq init-file-debug t) ; <- for testing only!
+(if debug-on-error
     (setq use-package-verbose t
           use-package-expand-minimally nil
-          use-package-compute-statistics t
-          debug-on-error t)
+          use-package-compute-statistics t)
   (setq use-package-verbose nil
         use-package-expand-minimally t))
 

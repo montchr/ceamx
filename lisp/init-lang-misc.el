@@ -29,16 +29,16 @@
 
 ;;; Code:
 
-(elpaca-use-package apache-mode
+(use-package apache-mode
   :defer t)
 
-(elpaca-use-package just-mode
+(use-package just-mode
   :defer t)
 
-(elpaca-use-package robots-txt-mode
+(use-package robots-txt-mode
   :defer t)
 
-(elpaca-use-package vimrc-mode
+(use-package vimrc-mode
   :defer t
   :init
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))

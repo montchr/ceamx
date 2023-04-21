@@ -29,7 +29,7 @@
 ;;; Code:
 
 
-(elpaca-use-package tempel
+(use-package tempel
   ;; :custom
   ;; ;; Require trigger prefix before template name when completing.
   ;; (tempel-trigger-prefix "<")
@@ -61,7 +61,7 @@
   ;; (global-tempel-abbrev-mode)
   )
 
-(elpaca-use-package tempel-collection)
+(use-package tempel-collection)
 
 (provide 'init-templates)
 ;;; init-templates.el ends here

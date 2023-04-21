@@ -32,7 +32,7 @@
 
 (autoload '+lsp-defer-server-shutdown-a "lib-lsp")
 
-(elpaca-use-package lsp-mode
+(use-package lsp-mode
   :commands (lsp-deferred)
 
   :init
@@ -73,7 +73,7 @@
   ((lsp-mode . (lambda () (setq-local evil-lookup-func #'lsp-describe-thing-at-point)))
    (lsp-mode . lsp-enable-which-key-integration)))
 
-(elpaca-use-package lsp-ui
+(use-package lsp-ui
   :after (lsp-mode)
   :commands (lsp-ui-mode)
   :config
@@ -92,7 +92,7 @@
   (setq lsp-ui-sideline-show-code-actions t)
   (setq lsp-ui-sideline-update-mode 'point))
 
-(elpaca-use-package consult-lsp
+(use-package consult-lsp
   :after (lsp-mode consult)
   :general
   (+general-global-search

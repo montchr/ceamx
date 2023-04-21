@@ -39,7 +39,8 @@
 (use-feature winner)
 
 
-(elpaca-use-package (burly :host github :repo "alphapapa/burly.el")
+(use-package burly
+  :elpaca (burly :host github :repo "alphapapa/burly.el")
   :general
   (+general-global-bookmark
     "F" #'burly-bookmark-frames

@@ -30,9 +30,8 @@
 
 ;; > Help keeping ~/.emacs.d clean
 ;; <https://github.com/emacscollective/no-littering>
-(elpaca-use-package no-littering
-  :demand
-
+(use-package no-littering
+  :demand t
   :preface
   (setq no-littering-etc-directory +path-etc-dir)
   (setq no-littering-var-directory +path-var-dir)

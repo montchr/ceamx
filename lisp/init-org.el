@@ -32,7 +32,7 @@
 
 (defconst +org-capture-default-file (concat +path-notes-dir "inbox.org"))
 
-(elpaca-use-package org
+(use-package org
   :general
   (global-definer
     "X"  '(org-capture :which-key "capture..."))
@@ -62,7 +62,7 @@
   :hook ((org-mode . prettify-symbols-mode)
          (org-mode . visual-line-mode)))
 
-(elpaca-use-package doct
+(use-package doct
   :defer t
   :commands (doct))
 

@@ -38,7 +38,7 @@
 ;;  <https://github.com/emacs-elsa/Elsa>
 
 ;; TODO
-;; (elpaca-use-package elsa
+;; (use-package elsa
 ;;   :defer t)
 
 
@@ -46,7 +46,7 @@
 ;;; lispy :: "short and sweet LISP editing"
 ;;  <https://github.com/abo-abo/lispy>
 
-(elpaca-use-package lispy
+(use-package lispy
   :diminish
   :defines (lispy-mode-map)
   :hook ((emacs-lisp-mode . lispy-mode))
@@ -57,13 +57,13 @@
 ;;; package-lint :: A linting library for elisp package metadata
 ;;  <https://github.com/purcell/package-lint>
 
-(elpaca-use-package package-lint
+(use-package package-lint
   :commands (package-lint-current-buffer))
 
 ;;
 ;;; flycheck-package
 ;;  <https://github.com/purcell/flycheck-package>
-(elpaca-use-package flycheck-package
+(use-package flycheck-package
   :after (flycheck package-lint)
   :config
   (flycheck-package-setup)
