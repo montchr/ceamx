@@ -55,7 +55,7 @@
                                       (concat +path-local-dir "backups"))))
                           "Keep backups in a dedicated directory.")
   (delete-old-versions t)
-  (kept-new-versions 10)
+  (kept-new-versions 5)
   (kept-old-versions 5)
   (require-final-newline t)
   (version-control t))
