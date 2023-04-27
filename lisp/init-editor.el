@@ -101,7 +101,10 @@
 ;;  <https://github.com/Malabarba/aggressive-indent-mode>
 
 (use-package aggressive-indent
-  :hook (prog-mode))
+  :commands (global-aggressive-indent-mode)
+  :defer 2
+  :config
+  (global-aggressive-indent-mode 1))
 
 
 (provide 'init-editor)
