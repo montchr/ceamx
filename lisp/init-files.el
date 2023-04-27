@@ -57,6 +57,7 @@
   (delete-old-versions t)
   (kept-new-versions 10)
   (kept-old-versions 5)
+  (require-final-newline t)
   (version-control t))
 
 (use-feature recentf)
