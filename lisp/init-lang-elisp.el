@@ -60,9 +60,8 @@
 (use-package package-lint
   :commands (package-lint-current-buffer))
 
-;;
-;;; flycheck-package
-;;  <https://github.com/purcell/flycheck-package>
+;; Flycheck integration
+;; <https://github.com/purcell/flycheck-package>
 (use-package flycheck-package
   :after (flycheck package-lint)
   :config

@@ -145,6 +145,7 @@
 
   (+general-global-menu! "code" "c")
 
+  ;; TODO: move to `init-lang-elisp'?
   (+general-global-menu! "eval" "e"
     "b" 'eval-buffer
     "d" 'eval-defun
