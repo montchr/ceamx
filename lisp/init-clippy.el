@@ -39,9 +39,12 @@
 
 
 (use-package flycheck
+  :commands (flycheck-mode)
   ;; TODO: enable -- but not in `emacs-lisp-mode' due to endless issues with
   ;; undefined variables and functions etc.
-  :disabled)
+  ;; :disabled
+  :custom
+  (flycheck-emacs-lisp-load-path 'inherit))
 
 
 
