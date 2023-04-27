@@ -51,6 +51,9 @@
 (use-feature files
   :custom
   (backup-by-copying t)
+  (backup-directory-alist `((".*" . ,(expand-file-name
+                                      (concat +path-local-dir "backups"))))
+                          "Keep backups in a dedicated directory.")
   (delete-old-versions t)
   (kept-new-versions 10)
   (kept-old-versions 5)
