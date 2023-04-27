@@ -104,7 +104,10 @@
 ;;; --- vertico: history ---
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
-(use-feature savehist :init (savehist-mode))
+(use-feature savehist
+  :defer 1
+  :config
+  (savehist-mode t))
 
 (use-feature vertico-repeat
   :after (savehist vertico)
