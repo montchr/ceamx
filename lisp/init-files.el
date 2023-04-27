@@ -60,6 +60,14 @@
   (require-final-newline t)
   (version-control t))
 
+(use-feature autorevert
+  :defer 2
+  :custom
+  ;; Automatically revert a buffer if its file has changed on disk.
+  (auto-revert-interval 0.01 "Instantly revert")
+  :config
+  (global-auto-revert-mode t))
+
 (use-feature recentf)
 
 (use-feature xref
