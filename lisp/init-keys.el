@@ -89,17 +89,17 @@
   ;; Ease the creation of nested menu bindings.
   ;; TODO: define sparse keymaps so that menus whose mappings are all deferred
   ;;       do not result in an empty menu (this is a hypothesis though)
-  (defmacro +general-global-menu! (name infix-key &rest body)
+  (defmacro +general-global-menu! (name prefix-key &rest body)
     "Create a definer named +general-global-NAME wrapping global-definer.
-    Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY."
+  Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY."
     (declare (indent 2))
     (let* ((n (concat "+general-global-" name))
-           (prefix (intern (concat n "-map"))))
+           (prefix-map (intern (concat n "-map"))))
       `(progn
          (general-create-definer ,(intern n)
            :wrapping global-definer
-           :prefix-map (quote ,prefix)
-           :infix ,infix-key
+           :prefix-map (quote ,prefix-map)
+           :prefix ,prefix-key
            :wk-full-keys nil
            "" '(:ignore t :which-key ,name))
          (,(intern n) ,@body))))
