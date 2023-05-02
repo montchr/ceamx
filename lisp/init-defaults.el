@@ -113,8 +113,8 @@
 
 ;; Remove unnecessary OS-specific command-line options while running
 ;; Emacs in a different OS.
-(unless +is-sys-mac    (setq command-line-ns-option-alist nil))
-(unless +is-sys-linux  (setq command-line-x-option-alist nil))
+(unless +sys-mac-p    (setq command-line-ns-option-alist nil))
+(unless +sys-linux-p  (setq command-line-x-option-alist nil))
 
 (provide 'init-defaults)
 ;;; init-defaults.el ends here

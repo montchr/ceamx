@@ -39,17 +39,11 @@
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
 
-;;; FIXME: use `-p' suffix convention for predicates
-
-;; FIXME: redundant -- remove
-(defconst +is-graphical (display-graphic-p))
-(defconst +is-xorg (memq window-system '(x)))
-(defconst +is-root-user (string-equal "root" (getenv "USER")))
-;; FIXME: distinguish macOS window system and darwin system
-(defconst +is-sys-mac (or (memq window-system '(mac ns)) (eq system-type 'darwin)))
-(defconst +is-sys-linux (eq system-type 'gnu/linux))
-;; FIXME: redundant -- remove
-(defconst +env-sys-name (system-name))
+(defconst +graphical-p (display-graphic-p))
+(defconst +xorg-p (memq window-system '(x)))
+(defconst +user-root-p (string-equal "root" (getenv "USER")))
+(defconst +sys-mac-p (or (memq window-system '(mac ns)) (eq system-type 'darwin)))
+(defconst +sys-linux-p (eq system-type 'gnu/linux))
 
 (require 'init-packages)
 (require 'init-lib)
@@ -59,7 +53,7 @@
 (use-feature emacs
   :init
   ;; Show window decorations on macOS.
-  (when +is-sys-mac
+  (when +sys-mac-p
     (add-to-list 'default-frame-alist '(undecorated . nil))))
 
 (require 'init-theme)

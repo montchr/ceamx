@@ -32,7 +32,7 @@
 
 
 ;; macOS: Remap modifier keys.
-(when (and +is-sys-mac +is-graphical)
+(when (and +sys-mac-p +graphical-p)
   (setq mac-control-modifier 'control
         mac-option-modifier 'meta
         mac-command-modifier 'super)
