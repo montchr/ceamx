@@ -51,19 +51,23 @@
   :demand t
   :config
   (setq fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
+  ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
+  ;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
+  ;; at least i think that's what's causing the inconsistencies...
   (setq fontaine-presets
-        '((small :default-height 106)
-          (regular :default-height 124)
-          (medium :default-height 135)
-          (large :default-height 160)
-          (xlarge :default-height 170
-                  :bold-weight bold)
+        '((small :default-height 130)
+          (regular :default-height 150)
+          (medium :default-height 170)
+          (large :default-height 200
+                 :line-spacing 0.1)
+          (xlarge :default-height 240
+                  :line-spacing nil)
           (t
            ;; FIXME: only if this proprietary font is available on the system!
            ;; TODO: set values from nix config (or, less ideally, by env vars)
-           :default-family "Berkeley Mono Variable"
+           :default-family "Berkeley Mono"
            :default-weight regular
-           :default-height 124
+           :default-height 100
            :fixed-pitch-family nil
            :fixed-pitch-family nil
            :fixed-pitch-height 1.0
@@ -73,10 +77,10 @@
            :variable-pitch-weight nil
            :variable-pitch-height 1.0
            :bold-family nil
-           :bold-weight semibold
+           :bold-weight bold
            :italic-family nil
            :italic-slant italic
-           :line-spacing nil)))
+           :line-spacing 0.2))
 
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
