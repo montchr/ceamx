@@ -45,7 +45,7 @@
 ;; `:files (:defaults "snippets")', all files under the `snippets' subdirectory
 ;; would also be copied. See the recipe format docs for details.
 
-(defvar elpaca-installer-version 0.3)
+(defvar elpaca-installer-version 0.4)
 
 ;; Configurate package/build directories
 (defvar elpaca-directory (expand-file-name "elpaca/" +path-packages-dir))
