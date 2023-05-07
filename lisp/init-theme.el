@@ -49,36 +49,37 @@
 
 (use-package fontaine
   :demand t
-                    :config
-                    (setq fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
-                    (setq fontaine-presets
-                          '((small :default-height 106
-                                   :default-family "Iosevka Term")
-                            (regular :default-height 124)
-                            (medium :default-height 135)
-                            (large :default-height 160)
-                            (xlarge :default-height 170
-                                    :bold-weight bold)
-                            (t
-                             :default-family "Iosevka"
-                             :default-weight regular
-                             :default-height 124
-                             :fixed-pitch-family nil
-                             :fixed-pitch-family nil
-                             :fixed-pitch-height 1.0
-                             :fixed-pitch-serif-family nil
-                             :fixed-pitch-serif-weight nil
-                             :variable-pitch-family "IBM Plex Sans"
-                             :variable-pitch-weight nil
-                             :variable-pitch-height 1.0
-                             :bold-family nil
-                             :bold-weight semibold
-                             :italic-family nil
-                             :italic-slant italic
-                             :line-spacing nil)))
+  :config
+  (setq fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
+  (setq fontaine-presets
+        '((small :default-height 106)
+          (regular :default-height 124)
+          (medium :default-height 135)
+          (large :default-height 160)
+          (xlarge :default-height 170
+                  :bold-weight bold)
+          (t
+           ;; FIXME: only if this proprietary font is available on the system!
+           ;; TODO: set values from nix config (or, less ideally, by env vars)
+           :default-family "Berkeley Mono Variable"
+           :default-weight regular
+           :default-height 124
+           :fixed-pitch-family nil
+           :fixed-pitch-family nil
+           :fixed-pitch-height 1.0
+           :fixed-pitch-serif-family nil
+           :fixed-pitch-serif-weight nil
+           :variable-pitch-family "Inter"
+           :variable-pitch-weight nil
+           :variable-pitch-height 1.0
+           :bold-family nil
+           :bold-weight semibold
+           :italic-family nil
+           :italic-slant italic
+           :line-spacing nil)))
 
-                    (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
-                    (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
+  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+  (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
 
 (use-feature solar
   :config
@@ -101,6 +102,7 @@
   :config
   ;; Enable all Iosevka ligatures in programming modes
   ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
+  ;; FIXME: adjust for Berkeley Mono?
   (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
                                        "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
                                        "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="

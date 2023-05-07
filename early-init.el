@@ -151,7 +151,7 @@ Use this for files that change often, like data and cache files.")
 ;; `fontaine' will handle fonts once loaded in `init-theme'.
 (push '(font . "Iosevka") default-frame-alist)
 (set-face-font 'default "Iosevka")
-(set-face-font 'variable-pitch "IBM Plex Sans")
+(set-face-font 'variable-pitch "Inter")
 (copy-face 'default 'fixed-pitch)
 
 ;; Ignore Xorg resources.
