@@ -122,6 +122,15 @@
 
 
 ;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;;; magit-delta :: use `delta' difftool 
+;;  <https://github.com/dandavison/magit-delta>
+;;  <https://dandavison.github.io/delta/tips-and-tricks/using-delta-with-magit.html>
+
+(use-package magit-delta
+  :hook (magit-mode . magit-delta-mode))
+
+
+;; § ────────── ────────── ────────── ────────── ────────── ──────────
 ;;; git-timemachine
 ;;  <https://codeberg.org/pidu/git-timemachine>
 ;;  <https://github.com/emacsmirror/git-timemachine>
