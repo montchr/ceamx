@@ -55,17 +55,16 @@
   ;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
   ;; at least i think that's what's causing the inconsistencies...
   (setq fontaine-presets
-        '((small :default-height 130)
-          (regular :default-height 150)
-          (medium :default-height 170)
-          (large :default-height 200
+        '((small :default-height 110)
+          (regular :default-height 130)
+          (medium :default-height 150)
+          (large :default-height 170
                  :line-spacing 0.1)
           (xlarge :default-height 240
                   :line-spacing nil)
           (t
-           ;; FIXME: only if this proprietary font is available on the system!
            ;; TODO: set values from nix config (or, less ideally, by env vars)
-           :default-family "Berkeley Mono"
+           :default-family "JetBrains Mono"
            :default-weight regular
            :default-height 100
            :fixed-pitch-family nil
@@ -80,7 +79,7 @@
            :bold-weight bold
            :italic-family nil
            :italic-slant italic
-           :line-spacing 0.2))
+           :line-spacing 0.1)))
 
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
@@ -104,25 +103,19 @@
 (use-package ligature
   :elpaca (ligature :host github :repo "mickeynp/ligature.el")
   :config
-  ;; Enable all Iosevka ligatures in programming modes
-  ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
-  ;; FIXME: adjust for Berkeley Mono?
-  (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
-                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
-                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
-                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
   ;; Enable all JetBrains Mono ligatures in programming modes
-  ;; (ligature-set-ligatures 'prog-mode '("-|" "-~" "---" "-<<" "-<" "--" "->" "->>" "-->" "///" "/=" "/=="
-  ;;                                     "/>" "//" "/*" "*>" "***" "*/" "<-" "<<-" "<=>" "<=" "<|" "<||"
-  ;;                                     "<|||" "<|>" "<:" "<>" "<-<" "<<<" "<==" "<<=" "<=<" "<==>" "<-|"
-  ;;                                     "<<" "<~>" "<=|" "<~~" "<~" "<$>" "<$" "<+>" "<+" "</>" "</" "<*"
-  ;;                                     "<*>" "<->" "<!--" ":>" ":<" ":::" "::" ":?" ":?>" ":=" "::=" "=>>"
-  ;;                                     "==>" "=/=" "=!=" "=>" "===" "=:=" "==" "!==" "!!" "!=" ">]" ">:"
-  ;;                                     ">>-" ">>=" ">=>" ">>>" ">-" ">=" "&&&" "&&" "|||>" "||>" "|>" "|]"
-  ;;                                     "|}" "|=>" "|->" "|=" "||-" "|-" "||=" "||" ".." ".?" ".=" ".-" "..<"
-  ;;                                     "..." "+++" "+>" "++" "[||]" "[<" "[|" "{|" "??" "?." "?=" "?:" "##"
-  ;;                                     "###" "####" "#[" "#{" "#=" "#!" "#:" "#_(" "#_" "#?" "#(" ";;" "_|_"
-  ;;                                     "__" "~~" "~~>" "~>" "~-" "~@" "$>" "^=" "]#"))
+  (ligature-set-ligatures 'prog-mode '("-|" "-~" "---" "-<<" "-<" "--" "->" "->>" "-->" "///" "/=" "/=="
+                                       "/>" "//" "/*" "*>" "***" "*/" "<-" "<<-" "<=>" "<=" "<|" "<||"
+                                       "<|||" "<|>" "<:" "<>" "<-<" "<<<" "<==" "<<=" "<=<" "<==>" "<-|"
+                                       "<<" "<~>" "<=|" "<~~" "<~" "<$>" "<$" "<+>" "<+" "</>" "</" "<*"
+                                       "<*>" "<->" "<!--" ":>" ":<" ":::" "::" ":?" ":?>" ":=" "::=" "=>>"
+                                       "==>" "=/=" "=!=" "=>" "===" "=:=" "==" "!==" "!!" "!=" ">]" ">:"
+                                       ">>-" ">>=" ">=>" ">>>" ">-" ">=" "&&&" "&&" "|||>" "||>" "|>" "|]"
+                                       "|}" "|=>" "|->" "|=" "||-" "|-" "||=" "||" ".." ".?" ".=" ".-" "..<"
+                                       "..." "+++" "+>" "++" "[||]" "[<" "[|" "{|" "??" "?." "?=" "?:" "##"
+                                       "###" "####" "#[" "#{" "#=" "#!" "#:" "#_(" "#_" "#?" "#(" ";;" "_|_"
+                                       "__" "~~" "~~>" "~>" "~-" "~@" "$>" "^=" "]#"))
+
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))

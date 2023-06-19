@@ -24,8 +24,6 @@
 
 ;;; Commentary:
 
-;;  Not the operating system.
-
 ;;; Code:
 
 (use-feature emacs
