@@ -28,6 +28,7 @@
 
 ;;; Code:
 
+;; FIXME: ensure exists
 (defconst +path-notes-dir (file-name-as-directory "~/Documents/notes"))
 
 (defconst +org-capture-default-file (concat +path-notes-dir "inbox.org"))
@@ -39,25 +40,56 @@
   (global-leader
     "a" '(org-archive-subtree :which-key "archive subtree")
     "E" '(org-export-dispatch :which-key "export...")
+
     "l" '(:ignore true :wk "link")
     "l l" '(org-insert-link :wk "insert link")
     "l s" '(org-store-link :wk "store link")
+
     "r" '(org-refile :wk "refile...")
     "p" '(org-priority :wk "priority")
     "q" '(org-set-tags-command :wk "tag")
     "s" '(org-sort :wk "sort")
+
     "t" '(:ignore true :wk "todo")
     "t t" '(org-todo :wk "heading todo")
     "t s" '(org-schedule :wk "schedule")
     "t d" '(org-deadline :wk "deadline")
+    
     "x" '(org-toggle-checkbox :wk "toggle checkbox"))
 
   :init
+  ;; FIXME: use `+path-notes-dir'? 
   (setq org-directory "~/Documents/notes/")
 
   :config
+
   (setq org-image-actual-width 300)
   (setq org-startup-with-inline-images t)
+
+  ;; via <https://github.com/minad/org-modern#configuration>
+  ;; Edit settings
+  (setq org-auto-align-tags nil)
+  (setq org-tags-column 0)
+  (setq org-catch-invisible-edits 'show-and-error)
+  (setq org-special-ctrl-a/e t)
+  (setq org-insert-heading-respect-content t)
+
+  ;; Org styling, hide markup etc.
+  (setq org-hide-emphasis-markers t)
+  (setq org-pretty-entities t)
+  (setq org-ellipsis "…")
+
+    ;; Agenda styling
+  ;; via <https://github.com/minad/org-modern#configuration>
+  (setq org-agenda-tags-column 0)
+  (setq org-agenda-block-separator ?─)
+  (setq org-agenda-time-grid
+        '((daily today require-timed)
+          (800 1000 1200 1400 1600 1800 2000)
+          " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+  (setq org-agenda-current-time-string
+        "⭠ now ─────────────────────────────────────────────────")
+
 
   :hook ((org-mode . prettify-symbols-mode)
          (org-mode . visual-line-mode)))
@@ -79,6 +111,10 @@
                  :type entry
                  :template ("* TODO %?"
                             "%i %a"))))))
+
+;;; org-modern <https://github.com/minad/org-modern>
+(use-package org-modern
+  :hook ((org-mode . org-modern-mode)))
 
 (provide 'init-org)
 ;;; init-org.el ends here
