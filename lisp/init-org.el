@@ -37,6 +37,29 @@
   :general
   (global-definer
     "X"  '(org-capture :which-key "capture..."))
+  (+general-global-application
+    "o" '(:ignore t :which-key "org...")
+
+    "oc" 'org-capture
+    ;; TODO
+    ;; "oC" '+org-capture-again
+    "oi" 'org-insert-link
+    ;; TODO
+    ;; "oj" 'org-chronicle
+
+    "ok" '(:ignore t :which-key "clock...")
+    "okg" 'org-clock-goto
+    "oki" 'org-clock-in-last
+    ;; TODO: not available? needs to be running?
+    ;; "okj" 'org-clock-jump-to-current-clock
+    "oko" 'org-clock-out
+    "okr" 'org-resolve-clocks
+
+    "ol" 'org-store-link
+    "om" 'org-tags-view
+    "os" 'org-search-view
+    "oT" 'org-todo-list)
+
   (global-leader
     "a" '(org-archive-subtree :which-key "archive subtree")
     "E" '(org-export-dispatch :which-key "export...")
