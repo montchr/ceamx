@@ -124,30 +124,20 @@
 ;; (use-feature prettify-symbols
 ;;   :hook prog-mode)
 
-;; (use-package dimmer
-;;   :after (modus-themes)
+(use-feature emacs
+  :config
+  ;; Add frame borders and window dividers
+  ;; via <https://github.com/minad/org-modern#configuration>
+  (modify-all-frames-parameters
+   '((right-divider-width . 10)
+     (internal-border-width . 10)))
+  (dolist (face '(window-divider
+                  window-divider-first-pixel
+                  window-divider-last-pixel))
+    (face-spec-reset-face face)
+    (set-face-foreground face (face-attribute 'default :background)))
+  (set-face-background 'fringe (face-attribute 'default :background)))
 
-;;   :custom
-;;   ;; FIXME: include corfu etc
-;;   (dimmer-exclusion-regexp-list '("^\\*[h|H]elm.*\\*"
-;;                                   "^\\*Minibuf-.*\\*"
-;;                                   "^\\*Echo.*"
-;;                                   "^.\\*which-key\\*$"))
-
-;;   :config
-;;   ;;; See notes re: Modus Themes compatibility:
-;;   ;;; <https://protesilaos.com/emacs/modus-themes#h:8eb4b758-d318-4480-9ead-357a571beb93>
-;;   (setq dimmer-fraction 0.3)
-;;   (setq dimmer-adjustment-mode :foreground)
-;;   (setq dimmer-use-colorspace :rgb)
-
-;;   (setq dimmer-watch-frame-focus-events nil)
-
-;;   (dimmer-configure-which-key)
-;;   (dimmer-configure-magit)
-;;   ;; TODO
-;;   ;; (dimmer-configure-org)
-;;   (dimmer-mode t))
 
 ;; FIXME: move to a dedicated 'ui' module
 (use-package magit-section :defer t)
