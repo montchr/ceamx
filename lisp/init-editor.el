@@ -48,6 +48,9 @@
   ((org-mode . (lambda () (cmx/add-local-electric-pairs '((?= . ?=)
                                                           (?~ . ?~)))))))
 
+(use-package editorconfig
+  :config (editorconfig-mode 1))
+
 
 ;; § ────────── ────────── ────────── ────────── ────────── ──────────
 ;;; tree-sitter
