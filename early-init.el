@@ -54,7 +54,7 @@
 (defconst +path-config-dir
   (file-name-as-directory
    (or (getenv "XDG_CONFIG_HOME")
-       (concat path-home-dir ".config")))
+       (concat +path-home-dir ".config")))
   "The root directory for personal configurations.")
 
 (defconst +path-emacs-dir user-emacs-directory)
