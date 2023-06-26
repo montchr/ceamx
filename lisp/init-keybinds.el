@@ -1,4 +1,4 @@
-;;; init-keys.el --- Keybindings -*- lexical-binding: t -*-
+;;; init-keybinds.el --- Keybindings -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -323,5 +323,5 @@
 ;; Wait until `which-key` is activated so its use-package keyword is installed
 (elpaca-wait) 
 
-(provide 'init-keys)
-;;; init-keys.el ends here
+(provide 'init-keybinds)
+;;; init-keybinds.el ends here

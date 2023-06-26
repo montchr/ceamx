@@ -54,7 +54,7 @@
 (require 'init-theme)
 (require 'init-modeline)
 
-(require 'init-keys)
+(require 'init-keybinds)
 (require 'init-evil)
 
 (require 'init-clippy)
