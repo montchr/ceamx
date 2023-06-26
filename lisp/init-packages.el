@@ -32,10 +32,7 @@
 ;;; === ELPACA =================================================================
 ;;  <https://github.com/progfolio/elpaca>
 
-;; `elpaca' recipes seem to follow the `straight.el' format...
-;; (maybe? does not seem to be documented entirely...):
-;;
-;; <https://github.com/radian-software/straight.el/tree/develop#the-recipe-format>
+;; Recipe format :: <https://github.com/progfolio/elpaca/blob/master/doc/manual.md#recipes
 ;;
 ;; Sometimes packages might include additional subpackages in their repo.
 ;; Examples I've encountered: `evil-collection', `corfu', `vertico'.
@@ -45,7 +42,7 @@
 ;; `:files (:defaults "snippets")', all files under the `snippets' subdirectory
 ;; would also be copied. See the recipe format docs for details.
 
-(defvar elpaca-installer-version 0.4)
+(defvar elpaca-installer-version 0.5)
 
 ;; Configurate package/build directories
 (defvar elpaca-directory (expand-file-name "elpaca/" +path-packages-dir))
@@ -64,6 +61,7 @@
   (add-to-list 'load-path (if (file-exists-p build) build repo))
   (unless (file-exists-p repo)
     (make-directory repo t)
+    (when (< emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
         (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
                  ((zerop (call-process "git" nil buffer t "clone"
@@ -75,7 +73,7 @@
                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
                  ((require 'elpaca))
                  ((elpaca-generate-autoloads "elpaca" repo)))
-            (kill-buffer buffer)
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
           (error "%s" (with-current-buffer buffer (buffer-string))))
       ((error) (warn "%s" err) (delete-directory repo 'recursive))))
   (unless (require 'elpaca-autoloads nil t)
