@@ -32,9 +32,9 @@
   :demand t
 
   :preface
-  (setq evil-want-integration t
-        evil-want-keybinding nil
-        evil-want-C-u-scroll t)
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
 
   (defun cmx/save-and-kill-this-buffer () (interactive) (save-buffer) (kill-this-buffer))
 

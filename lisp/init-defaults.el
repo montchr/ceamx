@@ -45,7 +45,6 @@
  ad-redefinition-action 'accept         ; Silence warnings for redefinition
  auto-save-list-file-prefix nil         ; Prevent tracking for auto-saves
  create-lockfiles nil                   ; Locks are more nuisance than blessing
- cursor-in-non-selected-windows nil     ; Hide the cursor in inactive windows
  custom-unlispify-menu-entries nil      ; Prefer kebab-case for titles
  custom-unlispify-tag-names nil         ; Prefer kebab-case for symbols
  delete-by-moving-to-trash t            ; Delete files to trash
@@ -75,18 +74,17 @@
 (put 'scroll-left 'disabled nil)        ; Enable `scroll-left'
 (put 'upcase-region 'disabled nil)      ; Enable `upcase-region'
 
+;; Increase number of messages saved in log.
+(setq message-log-max 10000)
+
 ;; Default to UTF-8 for all of the things.
-;; FIXME: these can't all be necessary, right?
-(set-charset-priority 'unicode)
-(set-default-coding-systems 'utf-8)
-(setq locale-coding-system 'utf-8
-      coding-system-for-read 'utf-8
-      coding-system-for-write 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+(set-language-environment "UTF-8")
+;; `set-language-environment' also presumptively sets `default-input-method'.
+(setq default-input-method nil)
+
+;; Prevent unnecessary rendering/line scanning in non-focused windows.
+(setq-default cursor-in-non-selected-windows nil)
+(setq highlight-nonselected-windows nil)
 
 ;; Disable extraneous OS window chrome.
 (when (window-system)
@@ -110,6 +108,7 @@
 ;; Disable bidirectional text scanning.
 (setq-default bidi-display-reordering 'left-to-right
               bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
 
 ;; Remove unnecessary OS-specific command-line options while running
 ;; Emacs in a different OS.
@@ -118,8 +117,30 @@
 
 ;; No littering the file system with backup files.
 (setq make-backup-files nil)
-(setq auto-save-default nil)
 (setq create-lockfiles nil)
+
+;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
+(setq auto-mode-case-fold nil)
+
+;; "Don't ping things that look like domain names."
+(setq ffap-machine-p-known 'reject)
+
+;; Throttle UI refreshing slightly.
+(setq idle-update-delay 1.0)  ; default is 0.5
+
+;; PGTK-only: Improve childframe responsiveness (e.g. `lsp-ui').
+;; See emacs-lsp/lsp-ui#613.
+(when (boundp 'pgtk-wait-for-event-timeout)
+  (setq pgtk-wait-for-event-timeout 0.001))
+
+;; Ensure secrets and auth credentials are not stored in plaintext (the default).
+;; Requires GnuPG configuration.
+(setq auth-sources (list (file-name-concat +path-var-dir "authinfo.gpg")
+                         "~/.authinfo.gpg"))
+
+;; "More performant rapid scrolling over unfontified regions. May cause brief
+;; spells of inaccurate fontification immediately after scrolling."
+(setq fast-but-imprecise-scrolling t)
 
 (provide 'init-defaults)
 ;;; init-defaults.el ends here

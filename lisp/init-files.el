@@ -79,13 +79,26 @@
 ;;       `+general-global-file' invocation cannot be at top-level
 ;;       maybe doom's `after!'?
 (use-feature general
-   :config
+  :config
   (+general-global-file
     ;; "R" 'cmx/rename-current-file
     "C" 'cmx/copy-this-file
     "D" 'cmx/delete-this-file
     "R" 'cmx/move-this-file
     ))
+
+
+;;
+;;; Autosaves
+;;
+
+(setq auto-save-interval 30)
+(setq auto-save-timeout 5)
+;; Don't create auto-save ~ files.
+(setq auto-save-default nil)
+
+(auto-save-visited-mode)
+
 
 (provide 'init-files)
 ;;; init-files.el ends here

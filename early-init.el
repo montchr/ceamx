@@ -102,12 +102,15 @@ Use this for files that change often, like data and cache files.")
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 1)
 
+;; FIXME: works, but consumes 100% cpu on m2 macbook air ... maybe that's okay?
+;; just doesn't seem to let up... anyway, it is kinda annoying since i don't yet
+;; live inside emacs, so it likely interferes with memory-intensive applications
+;; (esp. jetbrains ides...)
 (defun +gc-after-focus-change ()
   "Run garbage collection when frame loses focus."
   (run-with-idle-timer
    5 nil
    (lambda () (unless (frame-focus-state) (garbage-collect)))))
-
 (defun +reset-init-values ()
   "Restore sensible settings after initialization."
   (run-with-idle-timer
