@@ -129,7 +129,26 @@
 (use-package git-timemachine
   :general
   (+general-global-git/version-control
-    "t" #'git-timemachine))
+    "t" #'git-timemachine)
+
+  :config
+
+  ;; Show revision details in `header-line-format' instead of the minibuffer,
+  ;; for better visibility.
+  ;; via <https://github.com/doomemacs/doomemacs/blob/07fca786154551f90f36535bfb21f8ca4abd5027/modules/emacs/vc/config.el#L76C1-L90C47>
+  (setq git-timemachine-show-minibuffer-details t)
+  (defadvice! +vc-update-header-line-a (revision)
+    "Show revision details in the header-line, instead of the minibuffer."
+    :override #'git-timemachine--show-minibuffer-details
+    (let* ((date-relative (nth 3 revision))
+           (date-full (nth 4 revision))
+           (author (if git-timemachine-show-author (concat (nth 6 revision) ": ") ""))
+           (sha-or-subject (if (eq git-timemachine-minibuffer-detail 'commit) (car revision) (nth 5 revision))))
+      (setq header-line-format
+            (format "%s%s [%s (%s)]"
+                    (propertize author 'face 'git-timemachine-minibuffer-author-face)
+                    (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
+                    date-full date-relative)))))
 
 (provide 'init-vcs)
 ;;; init-vcs.el ends here
