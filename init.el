@@ -50,12 +50,7 @@
 (require 'init-defaults)
 (require 'init-env)
 
-(use-feature emacs
-  :init
-  ;; Show window decorations on macOS.
-  (when +sys-mac-p
-    (add-to-list 'default-frame-alist '(undecorated . nil))))
-
+(require 'init-frame)
 (require 'init-theme)
 (require 'init-modeline)
 
