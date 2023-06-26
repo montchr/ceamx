@@ -125,7 +125,7 @@ The current file is the file from which `add-to-load-path!' is used."
 ;;; --- Definers ---
 ;;
 
-(defmacro advise! (symbol arglist &optional docstring &rest body)
+(defmacro defadvice! (symbol arglist &optional docstring &rest body)
   "Define an advice called SYMBOL and add it to PLACES.
 ARGLIST is as in `defun'. WHERE is a keyword as passed to `advice-add', and
 PLACE is the function to which to add the advice, like in `advice-add'.
@@ -145,7 +145,7 @@ DOCSTRING and BODY are as in `defun'.
          (dolist (target (cdr targets))
            (advice-add target (car targets) #',symbol))))))
 
-(defmacro disadvise! (symbol _arglist &optional docstring &rest body)
+(defmacro undefadvice! (symbol _arglist &optional docstring &rest body)
   "Undefine an advice called SYMBOL.
 This has the same signature as `disadvise!' and exists as an easy undefiner when
 testing advice (when combined with `rotate-text').

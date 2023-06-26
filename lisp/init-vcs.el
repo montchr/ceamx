@@ -82,7 +82,7 @@
   (define-key transient-map [escape] #'transient-quit-one)
 
   ;; FIXME: replace `doom-switch-buffer-hook'
-  ;; (advise! +magit-revert-repo-buffers-deferred-a (&rest _)
+  ;; (defadvice! +magit-revert-repo-buffers-deferred-a (&rest _)
   ;;   :after '(magit-checkout magit-branch-and-checkout)
   ;;   ;; Since the project likely now contains new files, best we undo the
   ;;   ;; projectile cache so it can be regenerated later.
