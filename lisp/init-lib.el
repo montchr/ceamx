@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'lib-common)
+
 (require 'lib-external)
 
 (require 'lib-doom)
