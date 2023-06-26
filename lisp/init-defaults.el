@@ -116,5 +116,10 @@
 (unless +sys-mac-p    (setq command-line-ns-option-alist nil))
 (unless +sys-linux-p  (setq command-line-x-option-alist nil))
 
+;; No littering the file system with backup files.
+(setq make-backup-files nil)
+(setq auto-save-default nil)
+(setq create-lockfiles nil)
+
 (provide 'init-defaults)
 ;;; init-defaults.el ends here
