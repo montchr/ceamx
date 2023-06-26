@@ -85,9 +85,9 @@
   (unless (and (fboundp 'server-running-p) (server-running-p))
     (server-start)))
 
-;; Load custom file.
+;; Load custom file after all packages have loaded.
 (when (file-exists-p custom-file)
-  (load custom-file nil 'nomessage))
+  (add-hook 'elpaca-after-init-hook (lambda () (load custom-file 'noerror))))
 
 (provide 'init)
 ;; Local Variables:
