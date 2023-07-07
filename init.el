@@ -45,8 +45,25 @@
 (defconst +sys-mac-p (or (memq window-system '(mac ns)) (eq system-type 'darwin)))
 (defconst +sys-linux-p (eq system-type 'gnu/linux))
 
+;;; Initialise Elpaca and kick off package loading.
 (require 'init-packages)
-(require 'init-lib)
+
+
+;;
+;;; === CORE LIBRARIES ===
+;;
+
+(require 'cl-lib)
+(require 'map)
+
+(require 'lib-common)
+(require 'lib-doom)
+
+
+;;
+;;; === DEFAULTS/ENVIRONMENT ===
+;;
+
 (require 'init-defaults)
 (require 'init-env)
 
@@ -54,8 +71,18 @@
 (require 'init-theme)
 (require 'init-modeline)
 
+
+;;
+;;; === KEYBINDS ===
+;;
+
 (require 'init-keybinds)
 (require 'init-evil)
+
+
+;;
+;;; === INTERACTION ===
+;;
 
 (require 'init-clippy)
 (require 'init-window)
@@ -63,6 +90,7 @@
 (require 'init-editor)
 (require 'init-buffers)
 (require 'init-files)
+
 (require 'init-dired)
 (require 'init-vcs)
 (require 'init-templates)
