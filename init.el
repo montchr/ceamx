@@ -67,6 +67,13 @@
 (require 'init-defaults)
 (require 'init-env)
 
+
+;;
+;;; === APPEARANCE ===
+;;
+
+(when +graphical-p
+  (require 'lib-gui))
 (require 'init-frame)
 (require 'init-theme)
 (require 'init-modeline)
