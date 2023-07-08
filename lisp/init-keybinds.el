@@ -55,11 +55,14 @@
 (general-override-mode)
 (general-auto-unbind-keys)
 
-;; FIXME: remove these temporary safeguards against copypasta from noctuid config
-(eval-and-compile
-  (defalias 'gsetq #'general-setq)
-  (defalias 'gsetq-local #'general-setq-local)
-  (defalias 'gsetq-default #'general-setq-default))
+;; FIXME: remove these temporary safeguards against copypasta
+(defalias 'gsetq #'general-setq)
+(defalias 'gsetq-local #'general-setq-local)
+(defalias 'gsetq-default #'general-setq-default)
+
+
+
+;;; -----------------------------------------------------
 
 (general-define-key
  :keymaps 'override
@@ -326,6 +329,12 @@
 
 ;; Wait until `which-key` is activated so its use-package keyword is installed
 (elpaca-wait) 
+
+
+;;
+;;; === BINDINGS ===============================================================
+;;  
+
 
 (provide 'init-keybinds)
 ;;; init-keybinds.el ends here
