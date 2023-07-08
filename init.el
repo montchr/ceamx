@@ -110,10 +110,8 @@
 (require 'init-lang-misc)
 
 ;; Auto-start Emacs daemon if not already running.
-(use-feature emacs
-  :init
-  (unless (and (fboundp 'server-running-p) (server-running-p))
-    (server-start)))
+(unless (and (fboundp 'server-running-p) (server-running-p))
+  (server-start))
 
 ;; Load custom file after all packages have loaded.
 (when (file-exists-p custom-file)
