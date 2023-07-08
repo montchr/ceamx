@@ -30,6 +30,8 @@
 
 ;;; Code:
 
+(require 'lib-keybinds)
+
 
 ;; macOS: Remap modifier keys.
 (when (and +sys-mac-p +graphical-p)

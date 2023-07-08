@@ -1,14 +1,14 @@
 ;;; lib-files.el --- File helpers -*- lexical-binding: t -*-
 
-;; Copyright (c) 2014-2022  Henrik Lissner
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2014-2022  Henrik Lissner
 ;; SPDX-License-Identifier: GPL-3.0-or-later OR MIT
 
 ;; Author: Henrik Lissner
 ;;         Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
-;; Modified: 23 January, 2023
-;; Created: 23 January, 2023
+;; Modified: 08 July 2023
+;; Created: 23 January 2023
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "28.1"))
 
@@ -135,6 +135,21 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (set-visited-file-name new-path t t)
     (cmx-files--update-refs old-path new-path)
     (message "File moved to %S" (abbreviate-file-name new-path))))
+
+;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
+(defun cmx/kill-this-buffer ()
+  "`kill-this-buffer' with no menu-bar checks.
+`kill-this-buffer' is supposed to be called from the menu bar.
+See <https://www.reddit.com/r/emacs/comments/64xb3q/killthisbuffer_sometimes_just_stops_working/>."
+  (interactive)
+  (if (minibufferp)
+      (abort-recursive-edit)
+    (kill-buffer (current-buffer))))
+
+;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
+(cl-defun cmx/basename (&optional (file (buffer-file-name)))
+  "Return the basename of FILE."
+  (file-name-sans-extension (file-name-nondirectory file)))
 
 ;; (defun doom--sudo-file-path (file)
 ;;   (let ((host (or (file-remote-p file 'host) "localhost")))
