@@ -37,7 +37,12 @@
 (when (and +sys-mac-p +graphical-p)
   (setq mac-control-modifier 'control
         mac-option-modifier 'meta
-        mac-command-modifier 'super)
+        ns-option-modifier 'meta
+        mac-command-modifier 'super
+        ns-command-modifier 'super
+        ;; Free up the right-side option key for character composition.
+        mac-right-option-modifier 'none
+        ns-right-option-modifier 'none)
   ;; Common system clipboard hotkeys.
   (global-set-key [(s c)] 'kill-ring-save)
   (global-set-key [(s v)] 'yank)
