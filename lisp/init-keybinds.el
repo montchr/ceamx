@@ -48,254 +48,256 @@
 ;;; === GENERAL.EL =============================================================
 ;;  
 
-(use-package general
-  :demand t
-  :config
-  (general-evil-setup)
-  (general-override-mode)
-  (general-auto-unbind-keys)
-
-  (general-define-key
-   :keymaps 'override
-   :states '(insert normal hybrid motion visual operator emacs)
-   :prefix-map '+prefix-map
-   :prefix "SPC"
-   :global-prefix "S-SPC")
-
-  (general-create-definer global-definer
-    :wk-full-keys nil
-    :keymaps '+prefix-map)
-
-  ;; leaderless bindings
-  (global-definer
-    "`"  '((lambda () (interactive) (switch-to-buffer (other-buffer (current-buffer) 1))) :which-key "prev buffer")
-    "!"  'shell-command
-    ":"  'eval-expression
-    "."  'repeat
-    "SPC"  'project-find-file)
-
-  ;; major modes
-  (general-create-definer global-leader
-    :keymaps 'override
-    :states '(insert normal hybrid motion visual operator)
-    :prefix "SPC m"
-    :non-normal-prefix "S-SPC m"
-    "" '( :ignore t
-          :which-key
-          (lambda (arg)
-            (cons (cadr (split-string (car arg) " "))
-                  (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))))
-
-  (defalias 'kbd! #'general-simulate-key)
-
-  ;; Ease the creation of nested menu bindings.
-  ;; TODO: define sparse keymaps so that menus whose mappings are all deferred
-  ;;       do not result in an empty menu (this is a hypothesis though)
-  (defmacro +general-global-menu! (name prefix-key &rest body)
-    "Create a definer named +general-global-NAME wrapping global-definer.
-  Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY."
-    (declare (indent 2))
-    (let* ((n (concat "+general-global-" name))
-           (prefix-map (intern (concat n "-map"))))
-      `(progn
-         (general-create-definer ,(intern n)
-           :wrapping global-definer
-           :prefix-map (quote ,prefix-map)
-           :prefix ,prefix-key
-           :wk-full-keys nil
-           "" '(:ignore t :which-key ,name))
-         (,(intern n) ,@body))))
-
-  (+general-global-menu! "application" "a"
-    "p" '(:ignore t "elpaca")
-    "pr"  '((lambda () (interactive)
-              (let ((current-prefix-arg (not current-prefix-arg)))
-                (call-interactively #'elpaca-rebuild)))
-            :which-key "rebuild")
-    "pm" 'elpaca-manager
-    "pl" 'elpaca-log
-    "pi" '((lambda () (interactive) (info "Elpaca"))
-           :which-key "elpaca-info")
-    "ps" 'elpaca-status
-    "pt" 'elpaca-try
-    "pu" 'elpaca-update
-    "pU" 'elpaca-update-all
-    "pv" 'elpaca-visit)
-
-  (+general-global-menu! "buffer" "b"
-    "h"  'previous-buffer
-    ;; TODO: is there an alternative with better ui? maybe: bufler.el
-    "i"  'ibuffer
-    "d"  '(kill-current-buffer      :which-key "delete")
-    "l"  '(next-buffer              :which-key "next")
-    "k"  '(kill-current-buffer      :which-key "kill")
-    "M"  '(view-echo-area-messages  :which-key "messages")
-    "n"  '(next-buffer              :which-key "next")
-    "o"  '(mode-line-other-buffer   :which-key "other...")
-    "p"  '(previous-buffer          :which-key "prev")
-    "r"  '(revert-buffer            :which-key "revert")
-    "R"  '(rename-buffer            :which-key "rename...")
-    "s"  '(save-buffer              :which-key "save")
-    "S"  'save-some-buffers
-    "x"  '(scratch-buffer           :which-key "scratch")
-
-    "["  'previous-buffer
-    "]"  'next-buffer
-    "TAB"  'mode-line-other-buffer)
-
-  (+general-global-menu! "bookmark" "B")
-
-  (+general-global-menu! "code" "c")
-
-  ;; TODO: move to `init-lang-elisp'?
-  (+general-global-menu! "eval" "e"
-    "b" 'eval-buffer
-    "d" 'eval-defun
-    "e" 'elisp-eval-region-or-buffer
-    "E" 'eval-expression
-    "I" '((lambda () (interactive) (load-file user-init-file))
-          :which-key "init.el")
-    "p" 'pp-eval-last-sexp
-    "r" 'eval-region
-    "s" 'eval-last-sexp)
-
-  (+general-global-menu! "file" "f"
-    "f"  'find-file
-
-    "d"   '((lambda (&optional arg)
-              (interactive "P")
-              (let ((buffer (when arg (current-buffer))))
-                (diff-buffer-with-file buffer))) :which-key "diff-with-file")
-
-    "e"   '(:ignore t :which-key "edit")
-    ;; FIXME: eval is what we want
-    "eR"  '((lambda () (interactive) (load-file user-init-file))
-            :which-key "reload-init.el")
-
-    "s"   'save-buffer
-    "S"   '(write-file :which-key "save as...")
-
-    ;; TODO
-    ;;"u"  #'+sudo-find-file
-    ;;    "U"  #'+sudo-this-file
-    ;;"y"  #'+yank-this-file-name
-
-    )
-
-  (+general-global-menu! "frame" "F"
-    "F" 'select-frame-by-name
-
-    "D" 'delete-other-frames
-    "O" 'other-frame-prefix
-
-    ;; FIXME: replace with theme / `modus-themes' bindings
-    "c" '(:ignore t :which-key "color")
-    "cb" 'set-background-color
-    "cc" 'set-cursor-color
-    "cf" 'set-foreground-color
-
-    "f" '(fontaine-set-preset :which-key "set font...")
-    "m" 'make-frame-on-monitor
-    "n" 'next-window-any-frame
-    "o" 'other-frame
-    "p" 'previous-window-any-frame
-    "r" 'set-frame-name)
-
-  (+general-global-menu! "git/version-control" "g")
-
-  (+general-global-menu! "help" "h"
-    "h"  (kbd! "C-h" :which-key "help")
-
-    "b"  'describe-bindings
-    "f"  'describe-function
-    "F"  'describe-face
-    "k"  'describe-key
-    "l"  'apropos-library
-    "o"  'describe-symbol
-    "v"  'describe-variable
-
-    ;; FIXME: somehow these inherit the `which-key' labels from the top-level leader menu
-    "d"   '(:ignore t :which-key "describe")
-    "db"  'describe-bindings
-    "df"  'describe-function
-    "dF"  'describe-face
-    "dk"  'describe-key
-    "dt"  '((lambda () (interactive) (describe-text-properties (point)))
-            :which-key "text-props")
-    "dv"  'describe-variable)
-
-  (+general-global-menu! "link" "l")
-
-  (+general-global-menu! "narrow" "n"
-    "d" 'narrow-to-defun
-    "p" 'narrow-to-page
-    "r" 'narrow-to-region
-    "w" 'widen)
-
-  (+general-global-menu! "project" "p"
-    "b"  '(:ignore t :which-key "buffer")
-    "f"  '(project-find-file :which-key "find-file..."))
-
-  (+general-global-menu! "quit" "q"
-    "q" 'save-buffers-kill-emacs
-    "r" 'restart-emacs
-    "Q" 'kill-emacs)
-
-  (+general-global-menu! "search" "s"
-    "l"  '((lambda () (interactive "P")
-             (call-interactively (if % #'find-library-other-window #'find-library)))
-           :which-key "+find-library")
-    "v"  'find-variable-at-point
-    "V"  'find-variable)
-
-  (+general-global-menu! "tabs" "t"
-    "n" '(tab-new :which-key "new"))
-
-  (+general-global-menu! "toggle" "T"
-    "L" '(line-number-mode :which-key "linums")
-    "f" '(flycheck-mode :which-key "flycheck"))
-
-  (+general-global-menu! "window" "w"
-    "?" 'split-window-vertically
-    "=" 'balance-windows
-    "/" 'split-window-horizontally
-    "O" 'delete-other-windows
-    "X" '((lambda () (interactive) (call-interactively #'other-window) (kill-buffer-and-window))
-          :which-key "kill-other-buffer-and-window")
-
-    "d" 'delete-window
-    "D" 'kill-buffer-and-window
-    "h" 'windmove-left
-    "j" 'windmove-down
-    "k" 'windmove-up
-    "l" 'windmove-right
-    "o" 'other-window
-    "t" '((lambda () (interactive)
-            "toggle window dedication"
-            (set-window-dedicated-p (selected-window) (not (window-dedicated-p))))
-          :which-key "toggle window dedication")
-
-    ;; TODO: move to `r' prefix?
-    "."  '(:ignore :which-key "resize")
-    ".h" '((lambda () (interactive)
-             (call-interactively (if (window-prev-sibling) #'enlarge-window-horizontally
-                                   #'shrink-window-horizontally)))
-           :which-key "divider left")
-    ".l" '((lambda () (interactive)
-             (call-interactively (if (window-next-sibling) #'enlarge-window-horizontally
-                                   #'shrink-window-horizontally)))
-           :which-key "divider right")
-    ".j" '((lambda () (interactive)
-             (call-interactively (if (window-next-sibling) #'enlarge-window #'shrink-window)))
-           :which-key "divider up")
-    ".k" '((lambda () (interactive)
-             (call-interactively (if (window-prev-sibling) #'enlarge-window #'shrink-window)))
-           :which-key "divider down"))
-
-  ) ;; end `general' configuration
-
-;; Wait until `general` is activated so its use-package keyword is installed
+(use-package general :demand t)
 (elpaca-wait) 
+
+(general-evil-setup)
+(general-override-mode)
+(general-auto-unbind-keys)
+
+;; FIXME: remove these temporary safeguards against copypasta from noctuid config
+(eval-and-compile
+  (defalias 'gsetq #'general-setq)
+  (defalias 'gsetq-local #'general-setq-local)
+  (defalias 'gsetq-default #'general-setq-default))
+
+(general-define-key
+ :keymaps 'override
+ :states '(insert normal hybrid motion visual operator emacs)
+ :prefix-map '+prefix-map
+ :prefix "SPC"
+ :global-prefix "S-SPC")
+
+(general-create-definer global-definer
+  :wk-full-keys nil
+  :keymaps '+prefix-map)
+
+;; leaderless bindings
+(global-definer
+  "`"  '((lambda () (interactive) (switch-to-buffer (other-buffer (current-buffer) 1))) :which-key "prev buffer")
+  "!"  'shell-command
+  ":"  'eval-expression
+  "."  'repeat
+  "SPC"  'project-find-file)
+
+;; major modes
+(general-create-definer global-leader
+  :keymaps 'override
+  :states '(insert normal hybrid motion visual operator)
+  :prefix "SPC m"
+  :non-normal-prefix "S-SPC m"
+  "" '( :ignore t
+        :which-key
+        (lambda (arg)
+          (cons (cadr (split-string (car arg) " "))
+                (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))))
+
+(defalias 'kbd! #'general-simulate-key)
+
+;; Ease the creation of nested menu bindings.
+;; TODO: define sparse keymaps so that menus whose mappings are all deferred
+;;       do not result in an empty menu (this is a hypothesis though)
+(defmacro +general-global-menu! (name prefix-key &rest body)
+  "Create a definer named +general-global-NAME wrapping global-definer.
+  Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY."
+  (declare (indent 2))
+  (let* ((n (concat "+general-global-" name))
+         (prefix-map (intern (concat n "-map"))))
+    `(progn
+       (general-create-definer ,(intern n)
+         :wrapping global-definer
+         :prefix-map (quote ,prefix-map)
+         :prefix ,prefix-key
+         :wk-full-keys nil
+         "" '(:ignore t :which-key ,name))
+       (,(intern n) ,@body))))
+
+(+general-global-menu! "application" "a"
+  "p" '(:ignore t "elpaca")
+  "pr"  '((lambda () (interactive)
+            (let ((current-prefix-arg (not current-prefix-arg)))
+              (call-interactively #'elpaca-rebuild)))
+          :which-key "rebuild")
+  "pm" 'elpaca-manager
+  "pl" 'elpaca-log
+  "pi" '((lambda () (interactive) (info "Elpaca"))
+         :which-key "elpaca-info")
+  "ps" 'elpaca-status
+  "pt" 'elpaca-try
+  "pu" 'elpaca-update
+  "pU" 'elpaca-update-all
+  "pv" 'elpaca-visit)
+
+(+general-global-menu! "buffer" "b"
+  "h"  'previous-buffer
+  ;; TODO: is there an alternative with better ui? maybe: bufler.el
+  "i"  'ibuffer
+  "d"  '(kill-current-buffer      :which-key "delete")
+  "l"  '(next-buffer              :which-key "next")
+  "k"  '(kill-current-buffer      :which-key "kill")
+  "M"  '(view-echo-area-messages  :which-key "messages")
+  "n"  '(next-buffer              :which-key "next")
+  "o"  '(mode-line-other-buffer   :which-key "other...")
+  "p"  '(previous-buffer          :which-key "prev")
+  "r"  '(revert-buffer            :which-key "revert")
+  "R"  '(rename-buffer            :which-key "rename...")
+  "s"  '(save-buffer              :which-key "save")
+  "S"  'save-some-buffers
+  "x"  '(scratch-buffer           :which-key "scratch")
+
+  "["  'previous-buffer
+  "]"  'next-buffer
+  "TAB"  'mode-line-other-buffer)
+
+(+general-global-menu! "bookmark" "B")
+
+(+general-global-menu! "code" "c")
+
+;; TODO: move to `init-lang-elisp'?
+(+general-global-menu! "eval" "e"
+  "b" 'eval-buffer
+  "d" 'eval-defun
+  "e" 'elisp-eval-region-or-buffer
+  "E" 'eval-expression
+  "I" '((lambda () (interactive) (load-file user-init-file))
+        :which-key "init.el")
+  "p" 'pp-eval-last-sexp
+  "r" 'eval-region
+  "s" 'eval-last-sexp)
+
+(+general-global-menu! "file" "f"
+  "f"  'find-file
+
+  "d"   '((lambda (&optional arg)
+            (interactive "P")
+            (let ((buffer (when arg (current-buffer))))
+              (diff-buffer-with-file buffer))) :which-key "diff-with-file")
+
+  "e"   '(:ignore t :which-key "edit")
+  ;; FIXME: eval is what we want
+  "eR"  '((lambda () (interactive) (load-file user-init-file))
+          :which-key "reload-init.el")
+
+  "s"   'save-buffer
+  "S"   '(write-file :which-key "save as...")
+
+  ;; TODO
+  ;;"u"  #'+sudo-find-file
+  ;;    "U"  #'+sudo-this-file
+  ;;"y"  #'+yank-this-file-name
+
+  )
+
+(+general-global-menu! "frame" "F"
+  "F" 'select-frame-by-name
+
+  "D" 'delete-other-frames
+  "O" 'other-frame-prefix
+
+  ;; FIXME: replace with theme / `modus-themes' bindings
+  "c" '(:ignore t :which-key "color")
+  "cb" 'set-background-color
+  "cc" 'set-cursor-color
+  "cf" 'set-foreground-color
+
+  "f" '(fontaine-set-preset :which-key "set font...")
+  "m" 'make-frame-on-monitor
+  "n" 'next-window-any-frame
+  "o" 'other-frame
+  "p" 'previous-window-any-frame
+  "r" 'set-frame-name)
+
+(+general-global-menu! "git/version-control" "g")
+
+(+general-global-menu! "help" "h"
+  "h"  (kbd! "C-h" :which-key "help")
+
+  "b"  'describe-bindings
+  "f"  'describe-function
+  "F"  'describe-face
+  "k"  'describe-key
+  "l"  'apropos-library
+  "o"  'describe-symbol
+  "v"  'describe-variable
+
+  ;; FIXME: somehow these inherit the `which-key' labels from the top-level leader menu
+  "d"   '(:ignore t :which-key "describe")
+  "db"  'describe-bindings
+  "df"  'describe-function
+  "dF"  'describe-face
+  "dk"  'describe-key
+  "dt"  '((lambda () (interactive) (describe-text-properties (point)))
+          :which-key "text-props")
+  "dv"  'describe-variable)
+
+(+general-global-menu! "link" "l")
+
+(+general-global-menu! "narrow" "n"
+  "d" 'narrow-to-defun
+  "p" 'narrow-to-page
+  "r" 'narrow-to-region
+  "w" 'widen)
+
+(+general-global-menu! "project" "p"
+  "b"  '(:ignore t :which-key "buffer")
+  "f"  '(project-find-file :which-key "find-file..."))
+
+(+general-global-menu! "quit" "q"
+  "q" 'save-buffers-kill-emacs
+  "r" 'restart-emacs
+  "Q" 'kill-emacs)
+
+(+general-global-menu! "search" "s"
+  "l"  '((lambda () (interactive "P")
+           (call-interactively (if % #'find-library-other-window #'find-library)))
+         :which-key "+find-library")
+  "v"  'find-variable-at-point
+  "V"  'find-variable)
+
+(+general-global-menu! "tabs" "t"
+  "n" '(tab-new :which-key "new"))
+
+(+general-global-menu! "toggle" "T"
+  "L" '(line-number-mode :which-key "linums")
+  "f" '(flycheck-mode :which-key "flycheck"))
+
+(+general-global-menu! "window" "w"
+  "?" 'split-window-vertically
+  "=" 'balance-windows
+  "/" 'split-window-horizontally
+  "O" 'delete-other-windows
+  "X" '((lambda () (interactive) (call-interactively #'other-window) (kill-buffer-and-window))
+        :which-key "kill-other-buffer-and-window")
+
+  "d" 'delete-window
+  "D" 'kill-buffer-and-window
+  "h" 'windmove-left
+  "j" 'windmove-down
+  "k" 'windmove-up
+  "l" 'windmove-right
+  "o" 'other-window
+  "t" '((lambda () (interactive)
+          "toggle window dedication"
+          (set-window-dedicated-p (selected-window) (not (window-dedicated-p))))
+        :which-key "toggle window dedication")
+
+  ;; TODO: move to `r' prefix?
+  "."  '(:ignore :which-key "resize")
+  ".h" '((lambda () (interactive)
+           (call-interactively (if (window-prev-sibling) #'enlarge-window-horizontally
+                                 #'shrink-window-horizontally)))
+         :which-key "divider left")
+  ".l" '((lambda () (interactive)
+           (call-interactively (if (window-next-sibling) #'enlarge-window-horizontally
+                                 #'shrink-window-horizontally)))
+         :which-key "divider right")
+  ".j" '((lambda () (interactive)
+           (call-interactively (if (window-next-sibling) #'enlarge-window #'shrink-window)))
+         :which-key "divider up")
+  ".k" '((lambda () (interactive)
+           (call-interactively (if (window-prev-sibling) #'enlarge-window #'shrink-window)))
+         :which-key "divider down"))
+
 
 
 ;;
