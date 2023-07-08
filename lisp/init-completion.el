@@ -278,9 +278,9 @@
   ("C-;" #'embark-act)
   ("M-." #'embark-dwim)
   ( :keymaps 'minibuffer-local-map
-    "C-c C-e" '(+vertico/embark-export-write :which-key "Export to writable buffer"))
+    "C-c C-e" '("Export to writable buffer" . +vertico/embark-export-write))
   (+general-global-help
-    "b" '(embark-bindings :which-key "bindings"))
+    "b" '("bindings" . embark-bindings))
 
   :init
   ;; Replace the key help with a completing-read interface
@@ -375,9 +375,9 @@
 
   (+general-global-search
     "s"  'consult-line
-    "i"  '(consult-isearch-history :which-key "isearch")
-    "o"  '(consult-outline :which-key "outline")
-    "p"  '(consult-ripgrep :which-key "project"))
+    "i"  '("isearch" . consult-isearch-history)
+    "o"  '("outline" . consult-outline)
+    "p"  '("project" . consult-ripgrep))
 
   :config
   (setq consult-preview-key 'any)
@@ -497,7 +497,7 @@
 
   ;; Enable Corfu only for certain modes.
   :hook ((prog-mode . corfu-mode)
-        (org-mode . corfu-mode))
+         (org-mode . corfu-mode))
 
   :config
   (with-eval-after-load 'evil

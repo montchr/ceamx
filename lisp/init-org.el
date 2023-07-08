@@ -36,7 +36,7 @@
 (use-package org
   :general
   (global-definer
-    "X"  '(org-capture :which-key "capture..."))
+    "X"  '("capture..." . org-capture))
   (+general-global-application
     "o" '(:ignore t :which-key "org...")
 
@@ -61,24 +61,24 @@
     "oT" 'org-todo-list)
 
   (global-leader
-    "a" '(org-archive-subtree :which-key "archive subtree")
-    "E" '(org-export-dispatch :which-key "export...")
+    "a" '("archive subtree" . org-archive-subtree)
+    "E" '("export..." . org-export-dispatch)
 
     "l" '(:ignore true :wk "link")
-    "l l" '(org-insert-link :wk "insert link")
-    "l s" '(org-store-link :wk "store link")
+    "l l" '("insert link" . org-insert-link)
+    "l s" '("store link" . org-store-link)
 
-    "r" '(org-refile :wk "refile...")
-    "p" '(org-priority :wk "priority")
-    "q" '(org-set-tags-command :wk "tag")
-    "s" '(org-sort :wk "sort")
+    "r" '("refile..." . org-refile)
+    "p" '("priority" . org-priority)
+    "q" '("tag" . org-set-tags-command)
+    "s" '("sort" . org-sort)
 
     "t" '(:ignore true :wk "todo")
-    "t t" '(org-todo :wk "heading todo")
-    "t s" '(org-schedule :wk "schedule")
-    "t d" '(org-deadline :wk "deadline")
+    "t t" '("heading todo" . org-todo)
+    "t s" '("schedule" . org-schedule)
+    "t d" '("deadline" . org-deadline)
     
-    "x" '(org-toggle-checkbox :wk "toggle checkbox"))
+    "x" '("toggle checkbox" . org-toggle-checkbox))
 
   :init
   ;; FIXME: use `+path-notes-dir'? 
@@ -102,7 +102,7 @@
   (setq org-pretty-entities t)
   (setq org-ellipsis "…")
 
-    ;; Agenda styling
+  ;; Agenda styling
   ;; via <https://github.com/minad/org-modern#configuration>
   (setq org-agenda-tags-column 0)
   (setq org-agenda-block-separator ?─)

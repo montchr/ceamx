@@ -50,8 +50,8 @@
 
   :general
   (+general-global-code
-    "a"  '(lsp-execute-code-action :which-key "action")
-    "r"  '(lsp-rename :which-key "rename..."))
+    "a"  '("action" . lsp-execute-code-action)
+    "r"  '("rename..." . lsp-rename))
 
   :config
   (setq lsp-eldoc-enable-hover t)
@@ -96,8 +96,8 @@
   :after (lsp-mode consult)
   :general
   (+general-global-search
-    "j" '(consult-lsp-file-symbols :which-key "file symbols")
-    "J" '(consult-lsp-symbols :which-key "workspace symbols"))
+    "j" '("file symbols" . consult-lsp-file-symbols)
+    "J" '("workspace symbols" . consult-lsp-symbols))
   (lsp-mode-map
    [remap xref-find-apropos]  #'consult-lsp-symbols))
 

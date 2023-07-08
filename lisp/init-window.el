@@ -44,9 +44,9 @@
     "F" #'burly-bookmark-frames
     "W" #'burly-bookmark-windows)
   (+general-global-frame
-    "b" '(burly-bookmark-frames :which-key "bmark"))
+    "b" '("bmark" . burly-bookmark-frames))
   (+general-global-window
-    "b" '(burly-bookmark-windows :which-key "bmark"))
+    "b" '("bmark" . burly-bookmark-windows))
   (+general-global-tabs
     "R" #'burly-reset-tab)
 

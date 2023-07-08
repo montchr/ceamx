@@ -37,13 +37,13 @@
 (use-feature evil
   :general
   (+general-global-buffer
-    "N" '(evil-buffer-new :which-key "new")))
+    "N" '("new" . evil-buffer-new)))
 
 (use-feature consult
   :general
   (+general-global-buffer
-    "b"  '(consult-project-buffer :which-key "switch")
-    "B"  '(consult-buffer :which-key "any")))
+    "b"  '("switch" . consult-project-buffer)
+    "B"  '("any" . consult-buffer)))
 
 (provide 'init-buffers)
 ;;; init-buffers.el ends here

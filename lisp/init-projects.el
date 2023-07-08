@@ -39,12 +39,12 @@
 
   :general
   (+general-global-project
-    "a" '(projectile-add-known-project :which-key "add")
-    "f" '(projectile-find-file-dwim :which-key "find-file-dwim")
-    "i" '(projectile-invalidate-cache :which-key "re-cache")
-    "p" '(projectile-switch-project :which-key "switch..."))
+    "a" '("add" . projectile-add-known-project)
+    "f" '("find-file-dwim" . projectile-find-file-dwim)
+    "i" '("re-cache" . projectile-invalidate-cache)
+    "p" '("switch..." . projectile-switch-project))
   (+general-global-search
-    "x" '(projectile-find-references :which-key "xref"))
+    "x" '("xref" . projectile-find-references))
   ( :keymaps 'projectile-mode-map
     "s-p"    'projectile-command-map
     "C-c p"  'projectile-command-map)
