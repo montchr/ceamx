@@ -1,14 +1,14 @@
 ;;; lib-doom.el --- Doom Emacs standard library excerpts -*- lexical-binding: t -*-
 
-;; Copyright (c) 2014-2022  Henrik Lissner
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2014-2022  Henrik Lissner
 ;; SPDX-License-Identifier: GPL-3.0-or-later OR MIT
 
 ;; Author: Henrik Lissner
 ;;         Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
-;; Modified: 22 January, 2023
-;; Created: 22 January, 2023
+;; Modified: 08 July 2023
+;; Created: 22 January 2023
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "28.1"))
 
@@ -42,9 +42,60 @@
 
 ;;  Helpers lifted from Doom Emacs standard library.
 ;;
-;;  - <2023-01-22>: <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-lib.el>
+;;  - [2023-07-08]: <https://github.com/doomemacs/doomemacs/blob/07fca786154551f90f36535bfb21f8ca4abd5027/lisp/doom-lib.el>
+;;  - [2023-01-22]: <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-lib.el>
 
 ;;; Code:
+
+(defun cmx/unquote (exp)
+  "Return EXP unquoted."
+  (declare (pure t) (side-effect-free t))
+  (while (memq (car-safe exp) '(quote function))
+    (setq exp (cadr exp)))
+  exp)
+
+(defun cmx/keyword-intern (str)
+  "Converts STR (a string) into a keyword (`keywordp')."
+  (declare (pure t) (side-effect-free t))
+  (cl-check-type str string)
+  (intern (concat ":" str)))
+
+(defun cmx/keyword-name (keyword)
+  "Returns the string name of KEYWORD (`keywordp') minus the leading colon."
+  (declare (pure t) (side-effect-free t))
+  (cl-check-type keyword keyword)
+  (substring (symbol-name keyword) 1))
+
+
+(defalias 'cmx/partial #'apply-partially)
+
+(defun cmx/rpartial (fn &rest args)
+  "Return a partial application of FUN to right-hand ARGS.
+
+ARGS is a list of the last N arguments to pass to FUN. The result is a new
+function which does the same as FUN, except that the last N arguments are fixed
+at the values with which this function was called."
+  (declare (side-effect-free t))
+  (lambda (&rest pre-args)
+    (apply fn (append pre-args args))))
+
+(defun cmx/lookup-key (keys &rest keymaps)
+  "Like `lookup-key', but search active keymaps if KEYMAP is omitted."
+  (if keymaps
+      (cl-some (cmx/rpartial #'lookup-key keys) keymaps)
+    (cl-loop for keymap
+             in (append (cl-loop for alist in emulation-mode-map-alists
+                                 append (mapcar #'cdr
+                                                (if (symbolp alist)
+                                                    (if (boundp alist) (symbol-value alist))
+                                                  alist)))
+                        (list (current-local-map))
+                        (mapcar #'cdr minor-mode-overriding-map-alist)
+                        (mapcar #'cdr minor-mode-map-alist)
+                        (list (current-global-map)))
+             if (keymapp keymap)
+             if (lookup-key keymap keys)
+             return it)))
 
 ;;
 ;;; === MACROS ======================================================================================
