@@ -42,48 +42,50 @@
 
 ;;  Helpers for working with hydras.
 
-;;;; Sources:
+;;;; Sources/References:
 
 ;;  - <https://github.com/jkitchin/scimax/blob/43d91a4e218af8e3d807c1138b3489355767bf24/scimax-hydra.el>
+;;  - <https://github.com/abo-abo/hydra/wiki/Nesting-Hydras#visiting-other-hydras-temporarily>
+
+;;
 
 ;;; Code:
 
 (require 'cl)
 
 ;; Lexical closure to encapsulate the stack variable.
-(lexical-let ((scimax-hydra-stack '()))
-             (defun scimax-hydra-push (expr)
+(lexical-let ((cmx-hydra-stack '()))
+             (defun cmx-hydra-push (expr)
                "Push an EXPR onto the stack."
-               (push expr scimax-hydra-stack))
+               (push expr cmx-hydra-stack))
 
-             (defun scimax-hydra-pop ()
+             (defun cmx-hydra-pop ()
                "Pop an expression off the stack and call it."
                (interactive)
-               (let ((x (pop scimax-hydra-stack)))
+               (let ((x (pop cmx-hydra-stack)))
                  (when x
 	                 (call-interactively x))))
 
-             (defun scimax-hydra ()
+             (defun cmx-hydra ()
                "Show the current stack."
                (interactive)
                (with-help-window (help-buffer)
-                 (princ "Scimax-hydra-stack\n")
-                 (pp scimax-hydra-stack)))
+                 (princ "Cmx-hydra-stack\n")
+                 (pp cmx-hydra-stack)))
 
-             (defun scimax-hydra-reset ()
+             (defun cmx-hydra-reset ()
                "Reset the stack to empty."
                (interactive)
-               (setq scimax-hydra-stack '())))
+               (setq cmx-hydra-stack '())))
 
-;; TODO: add `!' suffix in line with conventions
-(defmacro scimax-open-hydra (hydra)
+(defmacro enter-hydra! (hydra)
   "Push current HYDRA to a stack.
 This is a macro so I don't have to quote the hydra name."
   `(progn
-     (scimax-hydra-push hydra-curr-body-fn)
+     (cmx-hydra-push hydra-curr-body-fn)
      (call-interactively ',hydra)))
 
-(defun scimax-hydra-help ()
+(defun cmx-hydra-help ()
   "Show help buffer for current hydra."
   (interactive)
   (with-help-window (help-buffer)
@@ -113,7 +115,7 @@ This is a macro so I don't have to quote the hydra name."
 				                           ((symbolp (nth 1 head))
 				                            (format "`%s'" (nth 1 head)))
 				                           ((and (listp (nth 1 head))
-					                               (eq 'scimax-open-hydra (car (nth 1 head))))
+					                               (eq 'enter-hydra! (car (nth 1 head))))
 				                            (format "`%s'" (nth 1 (nth 1 head))))
 				                           ((listp (nth 1 head))
 				                            (with-temp-buffer

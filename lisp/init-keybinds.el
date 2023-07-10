@@ -145,6 +145,8 @@ and Emacs states, and for non-evil users.")
 (defvar cmx-hydra-key "<f12>"
   "Key to bind `cmx/body' to.")
 
+(global-set-key (kbd cmx-hydra-key) 'cmx-hydra/main/body)
+
 
 ;;; --- load ---
 
@@ -188,8 +190,9 @@ localleader prefix."
     ,@args))
 
 ;; PERF: `evil-define-key*' instead of `general-define-key' (via doom)
-(evil-define-key* '(normal visual motion) map (kbd cmx-leader-key) 'cmx/body)
-(evil-define-key* '(emacs insert) map (kbd cmx-leader-alt-key) 'cmx/body)
+;; FIXME: define these once migrated to hydras to replace general leaders
+;; (evil-define-key* '(normal visual motion) map (kbd cmx-leader-key) 'cmx/body)
+;; (evil-define-key* '(emacs insert) map (kbd cmx-leader-alt-key) 'cmx/body)
 
 (general-override-mode)
 (general-auto-unbind-keys)

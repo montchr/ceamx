@@ -67,7 +67,7 @@
 
 ;; 
 ;;; pretty-hydra :: Major mode leader key powered by Hydra.
-;;  <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra> 
+;;  <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 (use-package pretty-hydra
   :after '(hydra))
@@ -95,20 +95,17 @@
 ;;; Shared Hydra Parts
 ;;
 
-(defhydra scimax-base (:color blue)
+(defhydra cmx-hydra/base (:color blue)
   "base"
-  ("," scimax-hydra-pop "back" :color blue)
-  ("x" execute-extended-command "M-x")
+  ("," cmx-hydra-pop "back" :color blue)
+  ;; ("x" execute-extended-command "M-x")
   ("C-s" save-buffer "Save")
   ("/" undo "undo" :color red)
   ("\\" redo "redo" :color red)
-  ("8" (switch-to-buffer "*scratch*") "*scratch*")
-  ("?" scimax-hydra-help "Menu help")
+  ("?" cmx-hydra-help "Menu help")
 
   ;; FIXME: 'm'
-  ;; ("." scimax-dispatch-mode-hydra "Major mode hydras")
-
-  ("u" (hydra--universal-argument current-prefix-arg) "C-u" :color red)
+  ;; ("." cmx-dispatch-mode-hydra "Major mode hydras")
 
   "`"  '("other buffer" . (lambda () (interactive) (switch-to-buffer (other-buffer (current-buffer) 1))))
   "!"  'shell-command
@@ -123,53 +120,53 @@
 ;;; Main Hydra
 ;;
 
-(defhydra scimax ( :color blue
-                   :inherit (scimax-base/heads)
-                   :columns 4
-                   :body-pre (scimax-hydra-reset)
-                   :idle 0.5)
-  "scimax"
+(defhydra cmx-hydra/main ( :color blue
+                           :inherit (cmx-hydra/base/heads)
+                           :columns 4
+                           :body-pre (cmx-hydra-reset)
+                           :idle 0.5)
+  "main"
 
   ;;   "/" '(nil :which-key "search...")
   ;;   "[" '(nil :which-key "previous...")
   ;;   "]" '(nil :which-key "next...")
 
-  ("a" (scimax-open-hydra scimax-applications/body) "Applications")
-  ("b" (scimax-open-hydra scimax-buffers/body) "Buffers")
+  ("a" (enter-hydra! cmx-hydra/applications/body) "Applications")
+  ("b" (enter-hydra! cmx-hydra/buffers/body) "Buffers")
   ;; TODO: 'B' for 'bookmarks'
   ;; TODO: 'c' for 'code'/lsp
   ;; d ... ?
 
   ;; TODO: consider 'eval'?
   ;; FIXME: why this ambiguity?
-  ("e" (scimax-open-hydra scimax-errors/body) "Edit/Errors")
+  ("e" (enter-hydra! cmx-hydra/errors/body) "Edit/Errors")
 
-  ("f" (scimax-open-hydra scimax-files/body) "Files")
+  ("f" (enter-hydra! cmx-hydra/files/body) "Files")
 
   ;; TODO: 'F' for 'frame'
-  ;; ("F" (scimax-open-hydra scimax-frame/body) "Frame")
+  ;; ("F" (enter-hydra! cmx-hydra/frame/body) "Frame")
 
   ;; FIXME: git
-  ;; ("g" (scimax-open-hydra scimax-google/body) "Google")
+  ;; ("g" (enter-hydra! cmx-hydra/google/body) "Google")
 
-  ("h" (scimax-open-hydra scimax-help/body) "Help")
-  ("i" (scimax-open-hydra scimax-insert/body) "Insert")
-  ("j" (scimax-open-hydra scimax-jump/body) "Jump")
-  ("k" (scimax-open-hydra scimax-bookmarks/body) "Bookmarks")
+  ("h" (enter-hydra! cmx-hydra/help/body) "Help")
+  ("i" (enter-hydra! cmx-hydra/insert/body) "Insert")
+  ("j" (enter-hydra! cmx-hydra/jump/body) "Jump")
+  ("k" (enter-hydra! cmx-hydra/bookmarks/body) "Bookmarks")
   ;; TODO: compare with doom et al
   ;;   "l" '(nil :which-key "link...")
-  ;; ("l" (scimax-open-hydra scimax-lisp/body) "Lisp")
+  ;; ("l" (enter-hydra! cmx-hydra/lisp/body) "Lisp")
 
   ;; FIXME: swap with major modes
-  ;; ("m" (scimax-open-hydra scimax-minor-modes/body) "Minor modes/mark")
+  ;; ("m" (enter-hydra! cmx-hydra/minor-modes/body) "Minor modes/mark")
   ;; FIXME: swap with minor modes
-  ;; ("s-m" scimax-dispatch-mode-hydra "Major mode hydras")
+  ;; ("s-m" cmx-dispatch-mode-hydra "Major mode hydras")
 
   ;; TODO: consider...?
-  ("M" (scimax-open-hydra scimax-smerge/body) "smerge")
+  ("M" (enter-hydra! cmx-hydra/smerge/body) "smerge")
 
   ;; FIXME: 'notes'? but that might be better in 'org'
-  ("n" (scimax-open-hydra scimax-navigation/body) "Navigation")
+  ("n" (enter-hydra! cmx-hydra/navigation/body) "Navigation")
 
   ;; TODO: consider whether to keep this somewhat-common binding.
   ;;       doom-emacs has `SPC o' mapped to "open" bindings, but many other
@@ -177,79 +174,72 @@
   ;;       anything that would conflict except for maybe 'agenda', which would
   ;;       be better off in 'org' anyway...
   ;;   "o" '(nil :which-key "open...")
-  ("o" (scimax-open-hydra scimax-org/body) "org")
+  ("o" (enter-hydra! cmx-hydra/org/body) "org")
 
-  ("p" (scimax-open-hydra hydra-projectile/body) "Project")
-  ;; q ... is for quitting in `scimax-base', don't reassign
+  ("p" (enter-hydra! hydra-projectile/body) "Project")
+  ;; q ... is for quitting in `cmx-hydra/base', don't reassign
   ;; r ... ?
-  ("s" (scimax-open-hydra scimax-search/body) "Search")
+  ("s" (enter-hydra! cmx-hydra/search/body) "Search")
 
   ;; TODO: i have this set to 'toggle' based on doom, but i like what scimax does with 'text'
   ;;   "t" '(nil :which-key "toggle...")
-  ("t" (scimax-open-hydra scimax-text/body) "Text")
+  ("t" (enter-hydra! cmx-hydra/text/body) "Text")
 
   ;; TODO:   "T" '(nil :which-key "tabs...")
 
-  ;; NOTE: u is a prefix arg in `scimax-base', do not reassign
+  ;; NOTE: u is a prefix arg in `cmx-hydra/base', do not reassign
 
   ;; FIXME: remap to 'g' for 'git' if only for muscle memory
-  ;; ("v" (scimax-open-hydra scimax-version-control/body) "Version control")
+  ;; ("v" (enter-hydra! cmx-hydra/version-control/body) "Version control")
 
-  ("w" (scimax-open-hydra scimax-windows/body) "Windows")
-  ;; x ... is for M-x in `scimax-base', don't reassign
+  ("w" (enter-hydra! cmx-hydra/windows/body) "Windows")
+  ;; x ... is for M-x in `cmx-hydra/base', don't reassign
   ;; y ... ?
-  ("z" (scimax-open-hydra scimax-customize/body) "Customize"))
+  ("z" (enter-hydra! cmx-hydra/customize/body) "Customize"))
 
 
 ;;
 ;;; Applications
 ;;
 
-(defun scimax-app-hints ()
-  "Calculate some variables for the applications hydra."
-  (setq elfeed-count
-	      (s-pad-right 12 " "
-		                 (if (get-buffer "*elfeed-search*")
-			                   (format "RSS(%s)"
-				                         (car (s-split "/" (with-current-buffer "*elfeed-search*"
-						                                         (elfeed-search--count-unread)))))
-		                   "RSS(?)"))))
+;; (defun cmx-hydra--app-hints ()
+;;   "Calculate some variables for the applications hydra."
+;;   (setq elfeed-count
+;; 	      (s-pad-right 12 " "
+;; 		                 (if (get-buffer "*elfeed-search*")
+;; 			                   (format "RSS(%s)"
+;; 				                         (car (s-split "/" (with-current-buffer "*elfeed-search*"
+;; 						                                         (elfeed-search--count-unread)))))
+;; 		                   "RSS(?)"))))
 
-(defhydra scimax-applications ( :hint nil
-				                        :pre (scimax-app-hints)
-				                        :color blue
-				                        :inherit (scimax-base/heads))
+(defhydra cmx-hydra/applications ( :hint nil
+				                           ;; :pre (cmx-hydra--app-hints)
+				                           :color blue
+				                           :inherit (cmx-hydra/base/heads))
   "applications"
 
   ;; TODO: verify command
   ;; ("a" (org-db-agenda "+2d") "agenda" :column "Emacs")
 
-  ("d" dired "dired" :column  "Emacs")
-  
-  ;; FIXME: what does this even do? open something like vterm?
-  ;; ("b" bash "bash" :column "OS")
-  ;; FIXME: probably unnecessary
-  ;; ("f" finder "Finder" :column "OS")
-  ("e" eshell "eshell" :column "OS")
-
   ;; TODO: adjust or remove
   ;; ("c" google-calendar "Calendar" :column "Web")
-  ("G" (scimax-open-hydra scimax-gsuite/body) "GSuite" :column "Web")
 
-  ("j" scimax-journal/body "journal" :column "Emacs")
-
+  ("d" dired "dired" :column  "Emacs")
+  ("e" eshell "eshell" :column "OS")
+  ("G" (enter-hydra! cmx-hydra/gsuite/body) "GSuite" :column "Web")
+  ("j" cmx-hydra/journal/body "journal" :column "Emacs")
   ("m" compose-mail "Compose mail" :column "commands")
 
-  ;; FIXME: don't miss this one, in case it's not from the same source file
+  ;; FIXME: don't miss this one -- it's not from the same source file
   ;; ("n" nb-hydra/body "notebook" :column "Emacs")
 
-  ("p" (scimax-open-hydra cmx-hydra-packages) "Packages (Elpaca)" :column "Emacs")
+  ("p" (enter-hydra! cmx-hydra/packages) "Packages (Elpaca)" :column "Emacs")
   ("r" elfeed "elfeed" :column "Emacs"))
 
 
 (defhydra cmx-hydra-packages ( :hint nil
                                :color blue
-                               :inherit (scimax-base/heads))
+                               :inherit (cmx-hydra/base/heads))
   "Packages (Elpaca)"
   ("i" (info "Elpaca") "info")
   ("l" elpaca-log "log")
@@ -261,7 +251,7 @@
   ("U" elpaca-update-all "update all")
   ("v" elpaca-visit))
 
-(defhydra scimax-gsuite (:color blue)
+(defhydra cmx-hydra/gsuite (:color blue)
   "GSuite"
   ("d" (browse-url "https://docs.google.com/document/u/0/" "GDoc"))
   ("h" (browse-url "https://docs.google.com/spreadsheets/u/0/" "GSheet"))
@@ -273,7 +263,7 @@
 ;;; Buffers
 ;;
 
-(defhydra scimax-buffers (:color blue :inherit (scimax-base/heads) :columns 3 :hint nil)
+(defhydra cmx-hydra/buffers (:color blue :inherit (cmx-hydra/base/heads) :columns 3 :hint nil)
   "buffer"
   ("K" kill-other-buffers      "close others" :column "Close")
   ("M" view-echo-area-messages "*Messages*"   :column "Misc")
@@ -299,7 +289,7 @@
 ;; NOTE: watch out for potential performance issues here, in case the act of
 ;;       defining the hydra causes lsp-mode to load now.
 
-(defhydra cmx-hydra-code (:color blue :inherit (scimax-base/heads))
+(defhydra cmx-hydra/code (:color blue :inherit (cmx-hydra/base/heads))
   "code/lsp"
   ("a" lsp-execute-code-action "action"    :column "Refactor")
   ("r" lsp-rename              "rename..." :column "Refactor"))
@@ -308,60 +298,37 @@
 ;;; Emacs Lisp
 ;;
 
-;; (defhydra)
+(defhydra cmx-hydra/eval (:color blue :inherit (cmx-hydra/base/heads))
+  "eval"
+  ("b" #'eval-buffer)
+  ("d" #'eval-defun)
+  ("e" #'elisp-eval-region-or-buffer)
+  ("p" #'pp-eval-last-sexp)
+  ("r" #'eval-region)
+  ("s" #'eval-last-sexp)
 
+  ("E" #'eval-expression)
+  ("I" (load-file user-init-file) "init.el"))
 
-;; TODO: move to `init-lang-elisp'?
-(+general-global-menu! "eval" "e"
-  "b" 'eval-buffer
-  "d" 'eval-defun
-  "e" 'elisp-eval-region-or-buffer
-  "E" 'eval-expression
-  "I" '("init.el" . (lambda () (interactive) (load-file user-init-file)))
-  "p" 'pp-eval-last-sexp
-  "r" 'eval-region
-  "s" 'eval-last-sexp)
-
-(+general-global-menu! "file" "f"
-  "f"  'find-file
-
-  "d"   '("diff with file" . (lambda (&optional arg)
-                               (interactive "P")
-                               (let ((buffer (when arg (current-buffer))))
-                                 (diff-buffer-with-file buffer))))
-
+(defhydra cmx-hydra/file (:color blue :inherit (cmx-hydra/base/heads))
+  "file"
+  ;; TODO:
   ;; "e"   '(:ignore t :which-key "edit")
   ;; FIXME: eval is what we want
   ;; "eR"  '("reload config" (lambda () (interactive) (load-file user-init-file)))
-
-  "s"   'save-buffer
-  "S"   '("save as..." . write-file)
-
-  ;; TODO
   ;;"u"  #'+sudo-find-file
   ;;    "U"  #'+sudo-this-file
   ;;"y"  #'+yank-this-file-name
 
-  )
+  ("d" (lambda (&optional arg)
+         (interactive "P")
+         (let ((buffer (when arg (current-buffer))))
+           (diff-buffer-with-file buffer)))
+   "diff with file")
+  ("f" #'find-file)
+  ("s" #'save-buffer)
 
-(+general-global-menu! "frame" "F"
-  "F" 'select-frame-by-name
-
-  "D" 'delete-other-frames
-  "O" 'other-frame-prefix
-
-  ;; FIXME: replace with theme / `modus-themes' bindings
-  "c" '(:ignore t :which-key "color")
-  "cb" 'set-background-color
-  "cc" 'set-cursor-color
-  "cf" 'set-foreground-color
-
-  "f" '("set font..." . fontaine-set-preset)
-  "m" 'make-frame-on-monitor
-  "n" 'next-window-any-frame
-  "o" 'other-frame
-  "p" 'previous-window-any-frame
-  "r" 'set-frame-name)
+  ("S" #'write-file "save as..."))
 
 (+general-global-menu! "git/version-control" "g")
 
