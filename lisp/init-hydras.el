@@ -305,6 +305,55 @@ This is a macro so I don't have to quote the hydra name."
 ;;   "w" '(nil :which-key "window...")
 
 
+;;;; applications
+
+(defun scimax-app-hints ()
+  "Calculate some variables for the applications hydra."
+  (setq elfeed-count
+	      (s-pad-right 12 " "
+		                 (if (get-buffer "*elfeed-search*")
+			                   (format "RSS(%s)"
+				                         (car (s-split "/" (with-current-buffer "*elfeed-search*"
+						                                         (elfeed-search--count-unread)))))
+		                   "RSS(?)"))))
+
+
+(defhydra scimax-applications ( :hint nil
+				                        :pre (scimax-app-hints)
+				                        :color blue
+				                        :inherit (scimax-base/heads))
+  "applications"
+
+  ;; TODO: verify command
+  ;; ("a" (org-db-agenda "+2d") "agenda" :column "Emacs")
+
+  ("d" dired "dired" :column  "Emacs")
+  ("j" scimax-journal/body "journal" :column "Emacs")
+  ;; FIXME: don't miss this one, in case it's not from the same source file
+  ;; ("n" nb-hydra/body "notebook" :column "Emacs")
+  ("r" elfeed "elfeed" :column "Emacs")
+  
+  ;; FIXME: what does this even do? open something like vterm?
+  ;; ("b" bash "bash" :column "OS")
+  ;; FIXME: probably unnecessary
+  ;; ("f" finder "Finder" :column "OS")
+  ("e" eshell "eshell" :column "OS")
+
+  ;; TODO: adjust or remove
+  ;; ("c" google-calendar "Calendar" :column "Web")
+  ;; ("g" google "Google" :column "Web")
+  ("G" (scimax-open-hydra scimax-gsuite/body) "GSuite" :column "Web")
+  ;; ("s" slack/body "Slack" :column "Web")
+  
+  ;; FIXME: find another binding, connect with elpaca 
+  ;; ("k" package-list-packages "List packages" :column "commands")
+
+  ("m" compose-mail "Compose mail" :column "commands"))
+
+(defhydra cmx-hydra-packages (:hint nil
+                                    :color blue :inherit scimax-base/heads) "Packages (elpaca)" ("r" elpaca-i))
+
+
 (+general-global-menu! "application" "a"
   "p" '(:ignore t "elpaca")
   "pr"  '("rebuild" . (lambda () (interactive)
@@ -318,6 +367,16 @@ This is a macro so I don't have to quote the hydra name."
   "pu" 'elpaca-update
   "pU" 'elpaca-update-all
   "pv" 'elpaca-visit)
+
+
+
+(defhydra scimax-gsuite (:color blue)
+  "GSuite"
+  ("v" (browse-url "https://drive.google.com/drive/u/0/my-drive") "GDrive")
+  ("d" (browse-url "https://docs.google.com/document/u/0/" "GDoc"))
+  ("h" (browse-url "https://docs.google.com/spreadsheets/u/0/" "GSheet"))
+  ("s" (browse-url "https://docs.google.com/presentation/u/0/" "GSlides"))
+  ("j" (browse-url "https://jamboard.google.com/" "Jamboard")))
 
 (+general-global-menu! "buffer" "b"
   "h"  '("prev" . previous-buffer)
