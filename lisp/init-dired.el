@@ -33,7 +33,10 @@
 
   :custom
   (dired-listing-switches "-alh" "Human friendly file sizes.")
-  (dired-kill-when-opening-new-dired-buffer t))
+  (dired-kill-when-opening-new-dired-buffer t)
+
+  :general
+  (+general-global-application "d" 'dired))
 
 (provide 'init-dired)
 ;;; init-dired.el ends here

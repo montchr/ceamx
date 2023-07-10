@@ -34,20 +34,16 @@
   ;; <https://www.emacswiki.org/emacs/TruncateLines>
   (set-default 'truncate-lines t))
 
-;; (use-feature evil
-;; FIXME: hydra
-;; :general
-;; (+general-global-buffer
-;;   "N" '("new" . evil-buffer-new))
-;; )
+(use-feature evil
+  :general
+  (+general-global-buffer
+    "N" '("new" . evil-buffer-new)))
 
-;; (use-feature consult
-;; FIXME: hydra
-;; :general
-;; (+general-global-buffer
-;;   "b"  '("switch" . consult-project-buffer)
-;;   "B"  '("any" . consult-buffer))
-;; )
+(use-feature consult
+  :general
+  (+general-global-buffer
+    "b"  '("switch" . consult-project-buffer)
+    "B"  '("any" . consult-buffer)))
 
 (provide 'init-buffers)
 ;;; init-buffers.el ends here

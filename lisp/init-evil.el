@@ -38,17 +38,16 @@
 
   (defun cmx/save-and-kill-this-buffer () (interactive) (save-buffer) (kill-this-buffer))
 
-  ;; FIXME: hydras
-  ;; :general
-  ;; (+general-global-window
-  ;;   "H" 'evil-window-move-far-left
-  ;;   "J" 'evil-window-move-very-bottom
-  ;;   "K" 'evil-window-move-very-top
-  ;;   "L" 'evil-window-move-far-right)
-  ;; (+general-global-menu! "quit" "q"
-  ;;   ":" 'evil-command-window-ex
-  ;;   "/" 'evil-command-window-search-forward
-  ;;   "?" 'evil-command-window-search-backward)
+  :general
+  (+general-global-window
+    "H" 'evil-window-move-far-left
+    "J" 'evil-window-move-very-bottom
+    "K" 'evil-window-move-very-top
+    "L" 'evil-window-move-far-right)
+  (+general-global-menu! "quit" "q"
+    ":" 'evil-command-window-ex
+    "/" 'evil-command-window-search-forward
+    "?" 'evil-command-window-search-backward)
 
   :custom
   (evil-symbol-word-search t "search by symbol with * and #.")

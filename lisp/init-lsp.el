@@ -48,6 +48,11 @@
   (setq lsp-enable-text-document-color nil)
   (setq lsp-log-io nil)
 
+  :general
+  (+general-global-code
+    "a"  '("action" . lsp-execute-code-action)
+    "r"  '("rename..." . lsp-rename))
+
   :config
   (setq lsp-eldoc-enable-hover t)
   (setq lsp-enable-on-type-formatting nil)
@@ -89,11 +94,10 @@
 
 (use-package consult-lsp
   :after (lsp-mode consult)
-  ;; FIXME: hydra
-  ;; :general
-  ;; (+general-global-search
-  ;;   "j" '("file symbols" . consult-lsp-file-symbols)
-  ;;   "J" '("workspace symbols" . consult-lsp-symbols))
+  :general
+  (+general-global-search
+    "j" '("file symbols" . consult-lsp-file-symbols)
+    "J" '("workspace symbols" . consult-lsp-symbols))
   (lsp-mode-map
    [remap xref-find-apropos]  #'consult-lsp-symbols))
 

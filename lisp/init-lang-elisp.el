@@ -68,23 +68,5 @@
   (flycheck-package-setup)
   :hook (emacs-lisp-mode))
 
-;; TODO: <https://github.com/jerrypnz/major-mode-hydra.el/tree/72bdce649245df276a3f49fb57f890c10fbf0a31>
-;; (major-mode-hydra-define emacs-lisp-mode nil
-;;                          ("Eval"
-;;                           (("b" eval-buffer "buffer")
-;;                            ("e" eval-defun "defun")
-;;                            ("r" eval-region "region"))
-;;                           "REPL"
-;;                           (("I" ielm "ielm"))
-;;                           "Test"
-;;                           (("t" ert "prompt")
-;;                            ("T" (ert t) "all")
-;;                            ("F" (ert :failed) "failed"))
-;;                           "Doc"
-;;                           (("d" describe-foo-at-point "thing-at-pt")
-;;                            ("f" describe-function "function")
-;;                            ("v" describe-variable "variable")
-;;                            ("i" info-lookup-symbol "info lookup"))))
-
 (provide 'init-lang-elisp)
 ;;; init-lang-elisp.el ends here
