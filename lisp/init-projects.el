@@ -38,13 +38,14 @@
   :after (general)
 
   :general
-  (+general-global-project
-    "a" '("add" . projectile-add-known-project)
-    "f" '("find-file-dwim" . projectile-find-file-dwim)
-    "i" '("re-cache" . projectile-invalidate-cache)
-    "p" '("switch..." . projectile-switch-project))
-  (+general-global-search
-    "x" '("xref" . projectile-find-references))
+  ;; FIXME: hydras
+  ;; (+general-global-project
+  ;;   "a" '("add" . projectile-add-known-project)
+  ;;   "f" '("find-file-dwim" . projectile-find-file-dwim)
+  ;;   "i" '("re-cache" . projectile-invalidate-cache)
+  ;;   "p" '("switch..." . projectile-switch-project))
+  ;; (+general-global-search
+  ;;   "x" '("xref" . projectile-find-references))
   ( :keymaps 'projectile-mode-map
     "s-p"    'projectile-command-map
     "C-c p"  'projectile-command-map)

@@ -279,8 +279,10 @@
   ("M-." #'embark-dwim)
   ( :keymaps 'minibuffer-local-map
     "C-c C-e" '("Export to writable buffer" . +vertico/embark-export-write))
-  (+general-global-help
-    "b" '("bindings" . embark-bindings))
+
+  ;; FIXME: hydras
+  ;; (+general-global-help
+  ;;   "b" '("bindings" . embark-bindings))
 
   :init
   ;; Replace the key help with a completing-read interface
@@ -373,11 +375,12 @@
     "M-s l"  #'consult-line ;; Needed by consult-line to detect isearch.
     "M-s L"  #'consult-line-multi)  ;; Needed by consult-line to detect isearch.
 
-  (+general-global-search
-    "s"  'consult-line
-    "i"  '("isearch" . consult-isearch-history)
-    "o"  '("outline" . consult-outline)
-    "p"  '("project" . consult-ripgrep))
+ ;; FIXME: hydras 
+  ;; (+general-global-search
+  ;;   "s"  'consult-line
+  ;;   "i"  '("isearch" . consult-isearch-history)
+  ;;   "o"  '("outline" . consult-outline)
+  ;;   "p"  '("project" . consult-ripgrep))
 
   :config
   (setq consult-preview-key 'any)

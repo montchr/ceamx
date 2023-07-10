@@ -60,13 +60,12 @@
   :commands defhydra)
 (elpaca-wait)
 
-
-;; Add a `:hydra' keyword to `use-package'.
+;; Add `:hydra' keyword to `use-package'.
 (use-package use-package-hydra
   :after '(hydra))
 
 
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;; 
 ;;; pretty-hydra :: Major mode leader key powered by Hydra.
 ;;  <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra> 
 
@@ -74,7 +73,7 @@
   :after '(hydra))
 
 
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;; 
 ;;; major-mode-hydra :: Major mode leader key powered by Hydra.
 ;;  <https://github.com/jerrypnz/major-mode-hydra.el> 
 
@@ -85,106 +84,16 @@
   ("SPC m" . major-mode-hydra))
 
 
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; scimax-hydra utilities
+;; 
+;;; Utilities
 ;;
 
-;; Lexical closure to encapsulate the stack variable.
-(lexical-let ((scimax-hydra-stack '()))
-             (defun scimax-hydra-push (expr)
-               "Push an EXPR onto the stack."
-               (push expr scimax-hydra-stack))
-
-             (defun scimax-hydra-pop ()
-               "Pop an expression off the stack and call it."
-               (interactive)
-               (let ((x (pop scimax-hydra-stack)))
-                 (when x
-	                 (call-interactively x))))
-
-             (defun scimax-hydra ()
-               "Show the current stack."
-               (interactive)
-               (with-help-window (help-buffer)
-                 (princ "Scimax-hydra-stack\n")
-                 (pp scimax-hydra-stack)))
-
-             (defun scimax-hydra-reset ()
-               "Reset the stack to empty."
-               (interactive)
-               (setq scimax-hydra-stack '())))
-
-;; TODO: add `!' suffix in line with conventions
-(defmacro scimax-open-hydra (hydra)
-  "Push current HYDRA to a stack.
-This is a macro so I don't have to quote the hydra name."
-  `(progn
-     (scimax-hydra-push hydra-curr-body-fn)
-     (call-interactively ',hydra)))
-
-(defun scimax-hydra-help ()
-  "Show help buffer for current hydra."
-  (interactive)
-  (with-help-window (help-buffer)
-    (with-current-buffer (help-buffer)
-      (unless (featurep 'emacs-keybinding-command-tooltip-mode)
-	      (require 'emacs-keybinding-command-tooltip-mode))
-      (emacs-keybinding-command-tooltip-mode +1))
-    (let ((s (format "Help for %s\n" hydra-curr-body-fn)))
-      (princ s)
-      (princ (make-string (length s) ?-))
-      (princ "\n"))
-
-    (princ (mapconcat
-	          (lambda (head)
-	            (format "%s%s"
-		                  ;;  key
-		                  (s-pad-right 10 " " (car head))
-		                  ;; command
-		                  (let* ((hint (if (stringp (nth 2 head))
-				                               (concat " " (nth 2 head))
-				                             ""))
-			                       (cmd (cond
-				                           ;; quit
-				                           ((null (nth 1 head))
-				                            "")
-				                           ;; a symbol
-				                           ((symbolp (nth 1 head))
-				                            (format "`%s'" (nth 1 head)))
-				                           ((and (listp (nth 1 head))
-					                               (eq 'scimax-open-hydra (car (nth 1 head))))
-				                            (format "`%s'" (nth 1 (nth 1 head))))
-				                           ((listp (nth 1 head))
-				                            (with-temp-buffer
-				                              (pp (nth 1 head) (current-buffer))
-				                              (let ((fill-prefix (make-string 10 ? )))
-					                              (indent-code-rigidly
-					                               (save-excursion
-					                                 (goto-char (point-min))
-					                                 (forward-line)
-					                                 (point))
-					                               (point-max) 10))
-				                              (buffer-string)))
-				                           (t
-				                            (format "%s" (nth 1 head)))))
-			                       (l1 (format "%s%s" (s-pad-right 50 " " (car (split-string cmd "\n"))) hint))
-			                       (s (s-join "\n" (append (list l1) (cdr (split-string cmd "\n"))))))
-			                  (s-pad-right 50 " " s))))
-	          (symbol-value
-	           (intern
-	            (replace-regexp-in-string
-	             "/body$" "/heads"
-	             (symbol-name  hydra-curr-body-fn))))
-	          "\n"))))
+(defalias 'hydra-def! #'pretty-hydra-define)
 
 
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; Hydras
+;; 
+;;; Shared Hydra Parts
 ;;
-
-;;** TODO: set naming convention: `cmx-hydra-*'
-
-;;;; shared hydra parts
 
 (defhydra scimax-base (:color blue)
   "base"
@@ -210,7 +119,9 @@ This is a macro so I don't have to quote the hydra name."
   ("q" nil "quit"))
 
 
-;;;; main hydra
+;; 
+;;; Main Hydra
+;;
 
 (defhydra scimax ( :color blue
                    :inherit (scimax-base/heads)
@@ -218,26 +129,36 @@ This is a macro so I don't have to quote the hydra name."
                    :body-pre (scimax-hydra-reset)
                    :idle 0.5)
   "scimax"
+
+  ;;   "/" '(nil :which-key "search...")
+  ;;   "[" '(nil :which-key "previous...")
+  ;;   "]" '(nil :which-key "next...")
+
   ("a" (scimax-open-hydra scimax-applications/body) "Applications")
   ("b" (scimax-open-hydra scimax-buffers/body) "Buffers")
-
+  ;; TODO: 'B' for 'bookmarks'
   ;; TODO: 'c' for 'code'/lsp
-
-  ;; d ?
+  ;; d ... ?
 
   ;; TODO: consider 'eval'?
   ;; FIXME: why this ambiguity?
   ("e" (scimax-open-hydra scimax-errors/body) "Edit/Errors")
 
   ("f" (scimax-open-hydra scimax-files/body) "Files")
+
+  ;; TODO: 'F' for 'frame'
+  ;; ("F" (scimax-open-hydra scimax-frame/body) "Frame")
+
   ;; FIXME: git
   ;; ("g" (scimax-open-hydra scimax-google/body) "Google")
+
   ("h" (scimax-open-hydra scimax-help/body) "Help")
   ("i" (scimax-open-hydra scimax-insert/body) "Insert")
   ("j" (scimax-open-hydra scimax-jump/body) "Jump")
   ("k" (scimax-open-hydra scimax-bookmarks/body) "Bookmarks")
   ;; TODO: compare with doom et al
-  ("l" (scimax-open-hydra scimax-lisp/body) "Lisp")
+  ;;   "l" '(nil :which-key "link...")
+  ;; ("l" (scimax-open-hydra scimax-lisp/body) "Lisp")
 
   ;; FIXME: swap with major modes
   ;; ("m" (scimax-open-hydra scimax-minor-modes/body) "Minor modes/mark")
@@ -255,19 +176,19 @@ This is a macro so I don't have to quote the hydra name."
   ;;       folks use "applications" ('SPC a') for this, and i can't think of
   ;;       anything that would conflict except for maybe 'agenda', which would
   ;;       be better off in 'org' anyway...
+  ;;   "o" '(nil :which-key "open...")
   ("o" (scimax-open-hydra scimax-org/body) "org")
 
   ("p" (scimax-open-hydra hydra-projectile/body) "Project")
-
-  ;; NOTE: q is for quit in `scimax-base', don't reassign
-
-  ;; TODO: something
-  ;; ("r" (scimax-open-hydra scimax-registers/body) "Registers/resume")
-
+  ;; q ... is for quitting in `scimax-base', don't reassign
+  ;; r ... ?
   ("s" (scimax-open-hydra scimax-search/body) "Search")
 
   ;; TODO: i have this set to 'toggle' based on doom, but i like what scimax does with 'text'
+  ;;   "t" '(nil :which-key "toggle...")
   ("t" (scimax-open-hydra scimax-text/body) "Text")
+
+  ;; TODO:   "T" '(nil :which-key "tabs...")
 
   ;; NOTE: u is a prefix arg in `scimax-base', do not reassign
 
@@ -275,37 +196,14 @@ This is a macro so I don't have to quote the hydra name."
   ;; ("v" (scimax-open-hydra scimax-version-control/body) "Version control")
 
   ("w" (scimax-open-hydra scimax-windows/body) "Windows")
-  ;; NOTE: x is for M-x in `scimax-base', don't reassign
+  ;; x ... is for M-x in `scimax-base', don't reassign
   ;; y ... ?
   ("z" (scimax-open-hydra scimax-customize/body) "Customize"))
 
 
-;; (leader-def!
-;;   ;; leader maps
-;;   "/" '(nil :which-key "search...")
-;;   "[" '(nil :which-key "previous...")
-;;   "]" '(nil :which-key "next...")
-;;   "a" '(nil :which-key "apps...")
-;;   "b" '(nil :which-key "buffer...")
-;;   "B" '(nil :which-key "bmarks...")
-;;   "c" '(nil :which-key "code...")
-;;   "e" '(nil :which-key "eval...")
-;;   "f" '(nil :which-key "file...")
-;;   "F" '(nil :which-key "frame...")
-;;   "g" '(nil :which-key "git...")
-;;   "h" '(nil :which-key "help...")
-;;   "i" '(nil :which-key "insert...")
-;;   "j" '(nil :which-key "jump...")
-;;   "l" '(nil :which-key "link...")
-;;   "o" '(nil :which-key "open...")
-;;   "p" '(nil :which-key "project...")
-;;   "q" '(nil :which-key "quit...?")
-;;   "t" '(nil :which-key "toggle...")
-;;   "T" '(nil :which-key "tabs...")
-;;   "w" '(nil :which-key "window...")
-
-
-;;;; applications
+;;
+;;; Applications
+;;
 
 (defun scimax-app-hints ()
   "Calculate some variables for the applications hydra."
@@ -317,7 +215,6 @@ This is a macro so I don't have to quote the hydra name."
 						                                         (elfeed-search--count-unread)))))
 		                   "RSS(?)"))))
 
-
 (defhydra scimax-applications ( :hint nil
 				                        :pre (scimax-app-hints)
 				                        :color blue
@@ -328,10 +225,6 @@ This is a macro so I don't have to quote the hydra name."
   ;; ("a" (org-db-agenda "+2d") "agenda" :column "Emacs")
 
   ("d" dired "dired" :column  "Emacs")
-  ("j" scimax-journal/body "journal" :column "Emacs")
-  ;; FIXME: don't miss this one, in case it's not from the same source file
-  ;; ("n" nb-hydra/body "notebook" :column "Emacs")
-  ("r" elfeed "elfeed" :column "Emacs")
   
   ;; FIXME: what does this even do? open something like vterm?
   ;; ("b" bash "bash" :column "OS")
@@ -341,67 +234,82 @@ This is a macro so I don't have to quote the hydra name."
 
   ;; TODO: adjust or remove
   ;; ("c" google-calendar "Calendar" :column "Web")
-  ;; ("g" google "Google" :column "Web")
   ("G" (scimax-open-hydra scimax-gsuite/body) "GSuite" :column "Web")
-  ;; ("s" slack/body "Slack" :column "Web")
-  
-  ;; FIXME: find another binding, connect with elpaca 
-  ;; ("k" package-list-packages "List packages" :column "commands")
 
-  ("m" compose-mail "Compose mail" :column "commands"))
+  ("j" scimax-journal/body "journal" :column "Emacs")
 
-(defhydra cmx-hydra-packages (:hint nil
-                                    :color blue :inherit scimax-base/heads) "Packages (elpaca)" ("r" elpaca-i))
+  ("m" compose-mail "Compose mail" :column "commands")
 
+  ;; FIXME: don't miss this one, in case it's not from the same source file
+  ;; ("n" nb-hydra/body "notebook" :column "Emacs")
 
-(+general-global-menu! "application" "a"
-  "p" '(:ignore t "elpaca")
-  "pr"  '("rebuild" . (lambda () (interactive)
-                        (let ((current-prefix-arg (not current-prefix-arg)))
-                          (call-interactively #'elpaca-rebuild))))
-  "pm" 'elpaca-manager
-  "pl" 'elpaca-log
-  "pi" '("elpaca-info" . (lambda () (interactive) (info "Elpaca")))
-  "ps" 'elpaca-status
-  "pt" 'elpaca-try
-  "pu" 'elpaca-update
-  "pU" 'elpaca-update-all
-  "pv" 'elpaca-visit)
+  ("p" (scimax-open-hydra cmx-hydra-packages) "Packages (Elpaca)" :column "Emacs")
+  ("r" elfeed "elfeed" :column "Emacs"))
 
 
+(defhydra cmx-hydra-packages ( :hint nil
+                               :color blue
+                               :inherit (scimax-base/heads))
+  "Packages (Elpaca)"
+  ("i" (info "Elpaca") "info")
+  ("l" elpaca-log "log")
+  ("m" elpaca-manager "manager")
+  ("r" elpaca-rebuild "rebuild")
+  ("s" elpaca-status "status")
+  ("t" elpaca-try "try package...")
+  ("u" elpaca-update "update package...")
+  ("U" elpaca-update-all "update all")
+  ("v" elpaca-visit))
 
 (defhydra scimax-gsuite (:color blue)
   "GSuite"
-  ("v" (browse-url "https://drive.google.com/drive/u/0/my-drive") "GDrive")
   ("d" (browse-url "https://docs.google.com/document/u/0/" "GDoc"))
   ("h" (browse-url "https://docs.google.com/spreadsheets/u/0/" "GSheet"))
   ("s" (browse-url "https://docs.google.com/presentation/u/0/" "GSlides"))
-  ("j" (browse-url "https://jamboard.google.com/" "Jamboard")))
+  ("v" (browse-url "https://drive.google.com/drive/u/0/my-drive") "GDrive"))
 
-(+general-global-menu! "buffer" "b"
-  "h"  '("prev" . previous-buffer)
-  ;; TODO: is there an alternative with better ui? maybe: bufler.el
-  "i"  'ibuffer
-  "d"  '("delete" . kill-current-buffer)
-  "l"  '("next" . next-buffer)
-  "k"  '("kill" . kill-current-buffer)
-  "M"  '("messages" . view-echo-area-messages)
-  "n"  '("next" . next-buffer)
-  "o"  '("other..." . mode-line-other-buffer)
-  "p"  '("prev" . previous-buffer)
-  "r"  '("revert" . revert-buffer)
-  "R"  '("rename..." . rename-buffer)
-  "s"  '("save" . save-buffer)
-  "S"  #'save-some-buffers
-  "x"  '("scratch" . scratch-buffer)
 
-  "["  'previous-buffer
-  "]"  'next-buffer
-  "TAB"  'mode-line-other-buffer)
+;;
+;;; Buffers
+;;
 
-(+general-global-menu! "bookmark" "B")
+(defhydra scimax-buffers (:color blue :inherit (scimax-base/heads) :columns 3 :hint nil)
+  "buffer"
+  ("K" kill-other-buffers      "close others" :column "Close")
+  ("M" view-echo-area-messages "*Messages*"   :column "Misc")
+  ("R" rename-buffer           "rename..."    :column "File")
+  ("S" save-some-buffers       "save all..."  :column "File")
 
-(+general-global-menu! "code" "c")
+  ("b" switch-to-buffer       "switch"        :column "Switch")
+  ("d" kill-current-buffer 		"close buf"     :column "Close" :color red)
+  ("k" kill-this-buffer       "close buf+win" :column "Close" :color red)
+  ("l" ibuffer                "ibuffer"       :column "Switch")
+  ("n" next-buffer            "next"          :column "Switch" :color red)
+  ("o" mode-line-other-buffer	"other buf"		  :column "Switch" :color red)
+  ("p" previous-buffer        "prev"          :column "Switch" :color red)
+  ("r" revert-buffer          "revert..."     :column "File")
+  ("s" save-buffer            "save"          :column "File")
+  ("x" scratch-buffer         "*scratch*"     :column "Misc"))
+
+
+;;
+;;; Code / LSP
+;;
+
+;; NOTE: watch out for potential performance issues here, in case the act of
+;;       defining the hydra causes lsp-mode to load now.
+
+(defhydra cmx-hydra-code (:color blue :inherit (scimax-base/heads))
+  "code/lsp"
+  ("a" lsp-execute-code-action "action"    :column "Refactor")
+  ("r" lsp-rename              "rename..." :column "Refactor"))
+
+;;
+;;; Emacs Lisp
+;;
+
+;; (defhydra)
+
 
 ;; TODO: move to `init-lang-elisp'?
 (+general-global-menu! "eval" "e"

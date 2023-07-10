@@ -39,16 +39,18 @@
 
 (use-package burly
   :elpaca (burly :host github :repo "alphapapa/burly.el")
-  :general
-  (+general-global-bookmark
-    "F" #'burly-bookmark-frames
-    "W" #'burly-bookmark-windows)
-  (+general-global-frame
-    "b" '("bmark" . burly-bookmark-frames))
-  (+general-global-window
-    "b" '("bmark" . burly-bookmark-windows))
-  (+general-global-tabs
-    "R" #'burly-reset-tab)
+
+  ;; FIXME: hydras
+  ;; :general
+  ;; (+general-global-bookmark
+  ;;   "F" #'burly-bookmark-frames
+  ;;   "W" #'burly-bookmark-windows)
+  ;; (+general-global-frame
+  ;;   "b" '("bmark" . burly-bookmark-frames))
+  ;; (+general-global-window
+  ;;   "b" '("bmark" . burly-bookmark-windows))
+  ;; (+general-global-tabs
+  ;;   "R" #'burly-reset-tab)
 
   :init
   (burly-tabs-mode))
