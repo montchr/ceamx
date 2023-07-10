@@ -125,32 +125,146 @@ all hooks after it are ignored.")
 ;;; === GENERAL.EL =============================================================
 ;;  
 
+
+;;; TODO: move vars to top of file
+
+(defvar cmx-leader-key "SPC"
+  "The leader prefix key for Evil users.")
+
+(defvar cmx-leader-alt-key "M-SPC"
+  "An alternative leader prefix key, used for Insert and Emacs states, and for
+non-evil users.")
+
+(defvar cmx-localleader-key "SPC m"
+  "The localleader prefix key, for major-mode specific commands.")
+
+(defvar cmx-localleader-alt-key "M-SPC m"
+  "The localleader prefix key, for major-mode specific commands. Used for Insert
+and Emacs states, and for non-evil users.")
+
+(defvar cmx-hydra-key "<f12>"
+  "Key to bind `cmx/body' to.")
+
+
+;;; --- load ---
+
 (use-package general :demand t)
 (elpaca-wait) 
 
+;; Create alias macros corresponding to vimisms.
+;; <https://github.com/noctuid/general.el/blob/feature/general-config-and-speed-documentation/README.org#vim-like-definers>
+;; TODO: consider removal, i don't need this, but ensure it's unused
 (general-evil-setup)
-(general-override-mode)
-(general-auto-unbind-keys)
+
+
+;;; --- aliases / macros ---
 
 ;; FIXME: remove these temporary safeguards against copypasta
 (defalias 'gsetq #'general-setq)
 (defalias 'gsetq-local #'general-setq-local)
 (defalias 'gsetq-default #'general-setq-default)
+;; TODO: maybe remove (added as copypasta safeguard)
+(defalias 'define-key! #'general-def)
+(defalias 'undefine-key! #'general-unbind)
+
+;; Prevent "X starts with non-prefix key Y" errors except at startup.
+;; via doom <https://github.com/doomemacs/doomemacs/blob/07fca786154551f90f36535bfb21f8ca4abd5027/lisp/doom-keybinds.el#L123-L124>
+;; (add-hook 'doom-after-modules-init-hook #'general-auto-unbind-keys)
+
+(defmacro define-localleader-key! (&rest args)
+  "Define <localleader> key.
+
+Uses `general-define-key' under the hood, but does not support :major-modes,
+:states, :prefix or :non-normal-prefix. Use `map!' for a more convenient
+interface.
+
+See `cmx-localleader-key' and `cmx-localleader-alt-key' to change the
+localleader prefix."
+  `(general-define-key
+    :states '(normal visual motion emacs insert)
+    :major-modes t
+    :prefix cmx-localleader-key
+    :non-normal-prefix cmx-localleader-alt-key
+    ,@args))
+
+;; PERF: `evil-define-key*' instead of `general-define-key' (via doom)
+(evil-define-key* '(normal visual motion) map (kbd cmx-leader-key) 'cmx/body)
+(evil-define-key* '(emacs insert) map (kbd cmx-leader-alt-key) 'cmx/body)
+
+(general-override-mode)
+(general-auto-unbind-keys)
 
 
 
-;;; -----------------------------------------------------
 
-(general-define-key
- :keymaps 'override
- :states '(insert normal hybrid motion visual operator emacs)
- :prefix-map '+prefix-map
- :prefix "SPC"
- :global-prefix "S-SPC")
+;;
+;;; === WHICH-KEY ==============================================================
+;;  
 
-(general-create-definer global-definer
-  :wk-full-keys nil
-  :keymaps '+prefix-map)
+;; TODO: load on first input <https://github.com/doomemacs/doomemacs/blob/07fca786154551f90f36535bfb21f8ca4abd5027/lisp/doom-keybinds.el#L223>
+;;       ...unless that wouldn't work with elpaca async
+(use-package which-key
+  :demand t
+  :diminish which-key-mode
+
+  :init
+  (setq which-key-enable-extended-define-key t)
+  (setq which-key-prefix-prefix "+")
+  (setq which-key-separator " ")
+  ;; TODO (via doom)
+  ;; (setq which-key-sort-order #'which-key-key-order-alpha
+  ;;       which-key-sort-uppercase-first nil
+  ;;       which-key-add-column-padding 1
+  ;;       which-key-max-display-columns nil
+  ;;       which-key-min-display-lines 6
+  ;;       which-key-side-window-slot -10)
+
+  :custom
+  (which-key-idle-delay 0.02)
+  (which-key-side-window-location 'bottom)
+  (which-key-sort-order 'which-key-key-order-alpha)
+  (which-key-side-window-max-width 0.33)
+
+  :config
+  (setq which-key-sort-uppercase-first nil
+        which-key-add-column-padding 1)
+  (which-key-mode))
+
+;; Wait until `which-key` is activated so its use-package keyword is installed
+(elpaca-wait) 
+
+
+;;
+;;; === BINDINGS ===============================================================
+;;  
+
+;; Set the globally-available Hydra keybinding.
+(global-set-key (kbd cmx-hydra-key) 'cmx/body)
+
+
+;; (leader-def!
+;;   ;; leader maps
+;;   "/" '(nil :which-key "search...")
+;;   "[" '(nil :which-key "previous...")
+;;   "]" '(nil :which-key "next...")
+;;   "a" '(nil :which-key "apps...")
+;;   "b" '(nil :which-key "buffer...")
+;;   "B" '(nil :which-key "bmarks...")
+;;   "c" '(nil :which-key "code...")
+;;   "e" '(nil :which-key "eval...")
+;;   "f" '(nil :which-key "file...")
+;;   "F" '(nil :which-key "frame...")
+;;   "g" '(nil :which-key "git...")
+;;   "h" '(nil :which-key "help...")
+;;   "i" '(nil :which-key "insert...")
+;;   "j" '(nil :which-key "jump...")
+;;   "l" '(nil :which-key "link...")
+;;   "o" '(nil :which-key "open...")
+;;   "p" '(nil :which-key "project...")
+;;   "q" '(nil :which-key "quit...?")
+;;   "t" '(nil :which-key "toggle...")
+;;   "T" '(nil :which-key "tabs...")
+;;   "w" '(nil :which-key "window...")
 
 ;; leaderless bindings
 (global-definer
@@ -160,37 +274,6 @@ all hooks after it are ignored.")
   "."  'repeat
   "SPC"  'project-find-file)
 
-;; major modes
-(general-create-definer global-leader
-  :keymaps 'override
-  :states '(insert normal hybrid motion visual operator)
-  :prefix "SPC m"
-  :non-normal-prefix "S-SPC m"
-  "" '( :ignore t
-        :which-key
-        (lambda (arg)
-          (cons (cadr (split-string (car arg) " "))
-                (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))))
-
-(defalias 'kbd! #'general-simulate-key)
-
-;; Ease the creation of nested menu bindings.
-;; TODO: define sparse keymaps so that menus whose mappings are all deferred
-;;       do not result in an empty menu (this is a hypothesis though)
-(defmacro +general-global-menu! (name prefix-key &rest body)
-  "Create a definer named +general-global-NAME wrapping global-definer.
-  Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY."
-  (declare (indent 2))
-  (let* ((n (concat "+general-global-" name))
-         (prefix-map (intern (concat n "-map"))))
-    `(progn
-       (general-create-definer ,(intern n)
-         :wrapping global-definer
-         :prefix-map (quote ,prefix-map)
-         :prefix ,prefix-key
-         :wk-full-keys nil
-         "" '(:ignore t :which-key ,name))
-       (,(intern n) ,@body))))
 
 (+general-global-menu! "application" "a"
   "p" '(:ignore t "elpaca")
@@ -287,7 +370,7 @@ all hooks after it are ignored.")
 
 (+general-global-menu! "help" "h"
   ;; FIXME: this seems suspect...
-  "h"  (kbd! "C-h" :which-key "help")
+  ;; "h"  (kbd! "C-h" :which-key "help")
 
   "b"  'describe-bindings
   "f"  'describe-function
@@ -392,39 +475,6 @@ all hooks after it are ignored.")
                 #'enlarge-window
               #'shrink-window)))))
 
-
-
-;;
-;;; === WHICH-KEY ==============================================================
-;;  
-
-(use-package which-key
-  :demand t
-  :diminish which-key-mode
-
-  :init
-  (setq which-key-enable-extended-define-key t)
-  (setq which-key-prefix-prefix "+")
-  (setq which-key-separator " ")
-
-  :custom
-  (which-key-idle-delay 0.02)
-  (which-key-side-window-location 'bottom)
-  (which-key-sort-order 'which-key-key-order-alpha)
-  (which-key-side-window-max-width 0.33)
-
-  :config
-  (setq which-key-sort-uppercase-first nil
-        which-key-add-column-padding 1)
-  (which-key-mode))
-
-;; Wait until `which-key` is activated so its use-package keyword is installed
-(elpaca-wait) 
-
-
-;;
-;;; === BINDINGS ===============================================================
-;;  
 
 
 (provide 'init-keybinds)

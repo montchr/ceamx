@@ -80,9 +80,10 @@
 
 
 ;;
-;;; === KEYBINDS ===
+;;; === HYDRAS + KEYBINDS ===
 ;;
 
+(require 'init-hydras)
 (require 'init-keybinds)
 (require 'init-evil)
 
