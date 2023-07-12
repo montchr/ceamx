@@ -60,13 +60,12 @@
   ;; Prefix current candidate with arrow
   ;; <https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow>
   (advice-add #'vertico--format-candidate :around
-    (lambda (orig cand prefix suffix index _start)
-      (setq cand (funcall orig cand prefix suffix index _start))
-      (concat
-      (if (= vertico--index index)
-          (propertize "» " 'face 'vertico-current)
-        "  ")
-      cand))))
+    (lambda (orig cand prefix suffix index start)
+      (setq cand (funcall orig cand prefix suffix index start))
+      (concat (if (= vertico--index index)
+                  (propertize "» " 'face 'vertico-current)
+                "  ")
+              cand))))
 
 ;; Configure directory extension.
 (use-feature vertico-directory
