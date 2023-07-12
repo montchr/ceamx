@@ -84,13 +84,66 @@
   ;; TODO: verify this is what we want
   ("SPC m" . major-mode-hydra))
 
+(elpaca-wait)
 
 ;; 
 ;;; Utilities
 ;;
 
-(defalias 'hydra-def! #'pretty-hydra-define)
 
+
+;; (defmacro /bindings/define-prefix-keys (keymap prefix &rest body)
+;;   (declare (indent defun))
+;;   `(progn
+;;      ,@(cl-loop for binding in body
+;;                 collect
+;;                 `(let ((seq ,(car binding))
+;;                        (func ,(cadr binding))
+;;                        (desc ,(caddr binding)))
+;;                    (define-key ,keymap (kbd seq) func)
+;;                    (when desc
+;;                      (which-key-add-key-based-replacements
+;;                        (if ,prefix
+;;                            (concat ,prefix " " seq)
+;;                          seq)
+;;                        desc))))))
+
+;; (defmacro /bindings/define-keys (keymap &rest body)
+;;   (declare (indent defun))
+;;   `(/bindings/define-prefix-keys ,keymap nil ,@body))
+
+;; (defmacro /bindings/define-key (keymap sequence binding &optional description)
+;;   (declare (indent defun))
+;;   `(/bindings/define-prefix-keys ,keymap nil
+;;      (,sequence ,binding ,description)))
+
+;; 
+
+;; (setq /bindings/normal-space-leader-map (make-sparse-keymap))
+;; (/bindings/define-prefix-keys /bindings/normal-space-leader-map "SPC"
+;;   ("SPC" #'execute-extended-command "M-x")
+;;   ("t" #'/hydras/toggles/body "toggle...")
+;;   ("q" #'/hydras/quit/body "quit...")
+;;   ("e" #'/hydras/errors/body "errors...")
+;;   ("b" #'/hydras/buffers/body "buffers...")
+;;   ("j" #'/hydras/jumps/body "jump...")
+;;   ("f" #'/hydras/files/body "files...")
+;;   ("s" #'/hydras/search/body "search...")
+;;   ("l" #'/hydras/jumps/lambda-l-and-exit "lines(current)")
+;;   ("L" #'/hydras/jumps/lambda-L-and-exit "lines(all)")
+;;   ("o" #'/hydras/jumps/lambda-i-and-exit "outline")
+;;   ("v" vc-prefix-map)
+;;   ("4" ctl-x-4-map)
+;;   ("5" ctl-x-5-map "frames...")
+;;   ("'" #'/eshell/new-split "shell")
+;;   ("y" (bind
+;;         (cond
+;;          ((eq dotemacs-switch-engine 'ivy)
+;;           (call-interactively #'counsel-yank-pop))
+;;          ((eq dotemacs-switch-engine 'consult)
+;;           (call-interactively #'consult-yank-pop))
+;;          ((eq dotemacs-switch-engine 'helm)
+;;           (call-interactively #'helm-show-kill-ring)))) "kill-ring"))
 
 ;; 
 ;;; Shared Hydra Parts
@@ -108,12 +161,8 @@
   ;; FIXME: 'm'
   ;; ("." cmx-dispatch-mode-hydra "Major mode hydras")
 
-  "`"  '("other buffer" . (lambda () (interactive) (switch-to-buffer (other-buffer (current-buffer) 1))))
-  "!"  'shell-command
-  ":"  'eval-expression
-  "."  'repeat
-  "SPC"  'project-find-file
-
+  ("`" (switch-to-buffer (other-buffer (current-buffer) 1)) "other buffer")
+  ("SPC" #'project-find-file "")
   ("q" nil "quit"))
 
 
@@ -121,82 +170,79 @@
 ;;; Main Hydra
 ;;
 
-(defhydra cmx-hydra/main ( :color blue
-                           :inherit (cmx-hydra/base/heads)
-                           :columns 4
-                           :body-pre (cmx-hydra-reset)
-                           :idle 0.5)
-  "main"
 
-  ;;   "/" '(nil :which-key "search...")
-  ;;   "[" '(nil :which-key "previous...")
-  ;;   "]" '(nil :which-key "next...")
+(pretty-hydra-define cmx-hydra/main
+  ( :title "ceamx/"
+    :color blue
+    :inherit (cmx-hydra/base/heads)
+    :body-pre (cmx-hydra-reset)
+    :idle 0.5)
 
-  ("a" (enter-hydra! cmx-hydra/applications/body) "Applications")
-  ("b" (enter-hydra! cmx-hydra/buffers/body) "Buffers")
-  ;; TODO: 'B' for 'bookmarks'
-  ;; TODO: 'c' for 'code'/lsp
-  ;; d ... ?
+  (""
+   (;;   "/" '(nil :which-key "search...")
+    ;;   "[" '(nil :which-key "previous...")
+    ;;   "]" '(nil :which-key "next...")
 
-  ;; TODO: consider 'eval'?
-  ;; FIXME: why this ambiguity?
-  ("e" (enter-hydra! cmx-hydra/errors/body) "Edit/Errors")
+    ("a" (enter-hydra! cmx-hydra/applications/body) "Applications")
+    ("b" (enter-hydra! cmx-hydra/buffers/body) "Buffers")
+    ;; TODO: 'B' for 'bookmarks'
+    ;; TODO: 'c' for 'code'/lsp
+    ;; d ... ?
 
-  ("f" (enter-hydra! cmx-hydra/files/body) "Files")
+    ;; TODO: consider 'eval'?
+    ;; FIXME: why this ambiguity?
+    ("e" (enter-hydra! cmx-hydra/errors/body) "Edit/Errors")
 
-  ;; TODO: 'F' for 'frame'
-  ;; ("F" (enter-hydra! cmx-hydra/frame/body) "Frame")
+    ("f" (enter-hydra! cmx-hydra/files/body) "Files")
 
-  ;; FIXME: git
-  ;; ("g" (enter-hydra! cmx-hydra/google/body) "Google")
+    ;; TODO: 'F' for 'frame'
+    ;; ("F" (enter-hydra! cmx-hydra/frame/body) "Frame")
 
-  ("h" (enter-hydra! cmx-hydra/help/body) "Help")
-  ("i" (enter-hydra! cmx-hydra/insert/body) "Insert")
-  ("j" (enter-hydra! cmx-hydra/jump/body) "Jump")
-  ("k" (enter-hydra! cmx-hydra/bookmarks/body) "Bookmarks")
-  ;; TODO: compare with doom et al
-  ;;   "l" '(nil :which-key "link...")
-  ;; ("l" (enter-hydra! cmx-hydra/lisp/body) "Lisp")
+    ;; FIXME: git
+    ("g" (enter-hydra! cmx-hydra/git/body) "Git")
 
-  ;; FIXME: swap with major modes
-  ;; ("m" (enter-hydra! cmx-hydra/minor-modes/body) "Minor modes/mark")
-  ;; FIXME: swap with minor modes
-  ;; ("s-m" cmx-dispatch-mode-hydra "Major mode hydras")
+    ;;("h" (enter-hydra! cmx-hydra/help/body) "Help")
+    ;;("i" (enter-hydra! cmx-hydra/insert/body) "Insert")
+    ;;("j" (enter-hydra! cmx-hydra/jump/body) "Jump")
+    ;;("k" (enter-hydra! cmx-hydra/bookmarks/body) "Bookmarks")
+    ;; TODO: compare with doom et al
+    ;;   "l" '(nil :which-key "link...")
+    ;; ("l" (enter-hydra! cmx-hydra/lisp/body) "Lisp")
 
-  ;; TODO: consider...?
-  ("M" (enter-hydra! cmx-hydra/smerge/body) "smerge")
+    ;; FIXME: swap with major modes
+    ;; ("m" (enter-hydra! cmx-hydra/minor-modes/body) "Minor modes/mark")
+    ;; FIXME: swap with minor modes
+    ;; ("s-m" cmx-dispatch-mode-hydra "Major mode hydras")
 
-  ;; FIXME: 'notes'? but that might be better in 'org'
-  ("n" (enter-hydra! cmx-hydra/navigation/body) "Navigation")
+    ;; TODO: consider...?
+    ;; ("M" (enter-hydra! cmx-hydra/smerge/body) "smerge")
 
-  ;; TODO: consider whether to keep this somewhat-common binding.
-  ;;       doom-emacs has `SPC o' mapped to "open" bindings, but many other
-  ;;       folks use "applications" ('SPC a') for this, and i can't think of
-  ;;       anything that would conflict except for maybe 'agenda', which would
-  ;;       be better off in 'org' anyway...
-  ;;   "o" '(nil :which-key "open...")
-  ("o" (enter-hydra! cmx-hydra/org/body) "org")
+    ;; FIXME: 'notes'? but that might be better in 'org'
+    ;; ("n" (enter-hydra! cmx-hydra/navigation/body) "Navigation")
 
-  ("p" (enter-hydra! hydra-projectile/body) "Project")
-  ;; q ... is for quitting in `cmx-hydra/base', don't reassign
-  ;; r ... ?
-  ("s" (enter-hydra! cmx-hydra/search/body) "Search")
+    ;; ("o" (enter-hydra! cmx-hydra/org/body) "org")
 
-  ;; TODO: i have this set to 'toggle' based on doom, but i like what scimax does with 'text'
-  ;;   "t" '(nil :which-key "toggle...")
-  ("t" (enter-hydra! cmx-hydra/text/body) "Text")
+    ;; ("p" (enter-hydra! hydra-projectile/body) "Project")
+    ;; q ... is for quitting in `cmx-hydra/base', don't reassign
+    ;; r ... ?
+    ;; ("s" (enter-hydra! cmx-hydra/search/body) "Search")
 
-  ;; TODO:   "T" '(nil :which-key "tabs...")
+    ;; TODO: i have this set to 'toggle' based on doom, but i like what scimax does with 'text'
+    ;;   "t" '(nil :which-key "toggle...")
+    ;; ("t" (enter-hydra! cmx-hydra/text/body) "Text")
 
-  ;; NOTE: u is a prefix arg in `cmx-hydra/base', do not reassign
+    ;; TODO:   "T" '(nil :which-key "tabs...")
 
-  ;; FIXME: remap to 'g' for 'git' if only for muscle memory
-  ;; ("v" (enter-hydra! cmx-hydra/version-control/body) "Version control")
+    ;; NOTE: u is a prefix arg in `cmx-hydra/base', do not reassign
 
-  ("w" (enter-hydra! cmx-hydra/windows/body) "Windows")
-  ;; x ... is for M-x in `cmx-hydra/base', don't reassign
-  ;; y ... ?
-  ("z" (enter-hydra! cmx-hydra/customize/body) "Customize"))
+    ;; FIXME: remap to 'g' for 'git' if only for muscle memory
+    ;; ("v" (enter-hydra! cmx-hydra/version-control/body) "Version control")
+
+    ;; ("w" (enter-hydra! cmx-hydra/windows/body) "Windows")
+    ;; x ... is for M-x in `cmx-hydra/base', don't reassign
+    ;; y ... ?
+    ;; ("z" (enter-hydra! cmx-hydra/customize/body) "Customize")
+    )))
 
 
 ;;
@@ -213,50 +259,58 @@
 ;; 						                                         (elfeed-search--count-unread)))))
 ;; 		                   "RSS(?)"))))
 
-(defhydra cmx-hydra/applications ( :hint nil
-				                           ;; :pre (cmx-hydra--app-hints)
-				                           :color blue
-				                           :inherit (cmx-hydra/base/heads))
-  "applications"
+(pretty-hydra-define cmx-hydra/applications
+  ( :title "ceamx/applications/" 
+    :hint nil
+	  ;; :pre (cmx-hydra--app-hints)
+	  :color blue
+	  :inherit (cmx-hydra/base/heads))
 
-  ;; TODO: verify command
-  ;; ("a" (org-db-agenda "+2d") "agenda" :column "Emacs")
+  ("Emacs"
+   (;; TODO: verify command
+    ;; ("a" (org-db-agenda "+2d") "agenda" :column "Emacs")
+    ("d" dired "dired")
+    ;;  ("j" cmx-hydra/journal/body "journal")
+    ;; FIXME: don't miss this one -- it's not from the same source file
+    ;; ("n" nb-hydra/body "notebook" :column "Emacs")
+    ("p" (enter-hydra! cmx-hydra/packages/body) "Packages")
+    ("r" #'elfeed "elfeed"))
 
-  ;; TODO: adjust or remove
-  ;; ("c" google-calendar "Calendar" :column "Web")
+   "OS"
+   (("e" eshell "eshell"))
 
-  ("d" dired "dired" :column  "Emacs")
-  ("e" eshell "eshell" :column "OS")
-  ("G" (enter-hydra! cmx-hydra/gsuite/body) "GSuite" :column "Web")
-  ("j" cmx-hydra/journal/body "journal" :column "Emacs")
-  ("m" compose-mail "Compose mail" :column "commands")
+   "Web"
+   (;; TODO: adjust or remove
+    ;; ("c" google-calendar "Calendar" :column "Web")
+    ("G" (enter-hydra! cmx-hydra/gsuite/body) "GSuite"))
 
-  ;; FIXME: don't miss this one -- it's not from the same source file
-  ;; ("n" nb-hydra/body "notebook" :column "Emacs")
-
-  ("p" (enter-hydra! cmx-hydra/packages) "Packages (Elpaca)" :column "Emacs")
-  ("r" elfeed "elfeed" :column "Emacs"))
+   "Commands"
+   (("m" compose-mail "Compose mail"))))
 
 
-(defhydra cmx-hydra-packages ( :hint nil
-                               :color blue
-                               :inherit (cmx-hydra/base/heads))
-  "Packages (Elpaca)"
-  ("i" (info "Elpaca") "info")
-  ("l" elpaca-log "log")
-  ("m" elpaca-manager "manager")
-  ("r" elpaca-rebuild "rebuild")
-  ("s" elpaca-status "status")
-  ("t" elpaca-try "try package...")
-  ("u" elpaca-update "update package...")
-  ("U" elpaca-update-all "update all")
-  ("v" elpaca-visit))
+(pretty-hydra-define cmx-hydra/packages
+  ( :title "ceamx/applications/packages/" 
+    :hint nil
+    :color blue
+    :columns 3
+    :inherit (cmx-hydra/base/heads))
 
-(defhydra cmx-hydra/gsuite (:color blue)
-  "GSuite"
-  ("d" (browse-url "https://docs.google.com/document/u/0/" "GDoc"))
-  ("h" (browse-url "https://docs.google.com/spreadsheets/u/0/" "GSheet"))
-  ("s" (browse-url "https://docs.google.com/presentation/u/0/" "GSlides"))
+  ("Elpaca"
+   (("i" (info "Elpaca") "info")
+    ("l" #'elpaca-log "log")
+    ("m" #'elpaca-manager "manager")
+    ("r" #'elpaca-rebuild "rebuild")
+    ("s" #'elpaca-status "status")
+    ("t" #'elpaca-try "try package...")
+    ("u" #'elpaca-update "update package...")
+    ("v" #'elpaca-visit)
+    ("U" #'elpaca-update-all "update all"))))
+
+(defhydra cmx-hydra/gsuite (:color blue :inherit (cmx-hydra/base/heads))
+  "ceamx/applications/gsuite/"
+  ("d" (browse-url "https://docs.google.com/document/u/0/") "GDoc")
+  ("h" (browse-url "https://docs.google.com/spreadsheets/u/0/") "GSheet")
+  ("s" (browse-url "https://docs.google.com/presentation/u/0/") "GSlides")
   ("v" (browse-url "https://drive.google.com/drive/u/0/my-drive") "GDrive"))
 
 
@@ -264,23 +318,34 @@
 ;;; Buffers
 ;;
 
-(defhydra cmx-hydra/buffers (:color blue :inherit (cmx-hydra/base/heads) :columns 3 :hint nil)
-  "buffer"
-  ("K" kill-other-buffers      "close others" :column "Close")
-  ("M" view-echo-area-messages "*Messages*"   :column "Misc")
-  ("R" rename-buffer           "rename..."    :column "File")
-  ("S" save-some-buffers       "save all..."  :column "File")
+(pretty-hydra-define cmx-hydra/buffers
+  ( :title "ceamx/buffers/"
+    :color blue
+    :inherit (cmx-hydra/base/heads)
+    :columns 3
+    :hint nil)
 
-  ("b" switch-to-buffer       "switch"        :column "Switch")
-  ("d" kill-current-buffer 		"close buf"     :column "Close" :color red)
-  ("k" kill-this-buffer       "close buf+win" :column "Close" :color red)
-  ("l" ibuffer                "ibuffer"       :column "Switch")
-  ("n" next-buffer            "next"          :column "Switch" :color red)
-  ("o" mode-line-other-buffer	"other buf"		  :column "Switch" :color red)
-  ("p" previous-buffer        "prev"          :column "Switch" :color red)
-  ("r" revert-buffer          "revert..."     :column "File")
-  ("s" save-buffer            "save"          :column "File")
-  ("x" scratch-buffer         "*scratch*"     :column "Misc"))
+  ("Switch"
+   (("b" switch-to-buffer       "switch")
+    ("l" ibuffer                "ibuffer")
+    ("n" next-buffer            "next"       :color red)
+    ("o" mode-line-other-buffer	"other buf"	 :color red)
+    ("p" previous-buffer        "prev"       :color red))
+
+   "File"
+   (("r" revert-buffer          "revert...")
+    ("R" rename-buffer          "rename...")
+    ("s" save-buffer            "save")
+    ("S" save-some-buffers      "save all..."))
+
+   "Close"
+   (("d" kill-current-buffer 		"close buf"      :color red)
+    ("k" kill-this-buffer       "close buf+win"  :color red)
+    ("K" kill-other-buffers     "close others"))
+
+   "Misc"
+   (("M" view-echo-area-messages "*Messages*")
+    ("x" scratch-buffer          "*scratch*"))))
 
 
 ;;
@@ -290,17 +355,22 @@
 ;; NOTE: watch out for potential performance issues here, in case the act of
 ;;       defining the hydra causes lsp-mode to load now.
 
-(defhydra cmx-hydra/code (:color blue :inherit (cmx-hydra/base/heads))
-  "code/lsp"
-  ("a" lsp-execute-code-action "action"    :column "Refactor")
-  ("r" lsp-rename              "rename..." :column "Refactor"))
+(pretty-hydra-define cmx-hydra/code
+  ( :title "ceamx/code/"
+    :color blue
+    :inherit (cmx-hydra/base/heads))
+
+  ("Refactor"
+   (("a" #'lsp-execute-code-action "action"    :column "Refactor")
+    ("r" #'lsp-rename              "rename..." :column "Refactor"))))
 
 ;;
 ;;; Emacs Lisp
 ;;
 
+;; FIXME: prob should be some other name
 (defhydra cmx-hydra/eval (:color blue :inherit (cmx-hydra/base/heads))
-  "eval"
+  "ceamx/eval/"
   ("b" #'eval-buffer)
   ("d" #'eval-defun)
   ("e" #'elisp-eval-region-or-buffer)
@@ -311,8 +381,16 @@
   ("E" #'eval-expression)
   ("I" (load-file user-init-file) "init.el"))
 
-(defhydra cmx-hydra/file (:color blue :inherit (cmx-hydra/base/heads))
-  "file"
+
+;;
+;;; Files
+;;
+
+(pretty-hydra-define cmx-hydra/file
+  ( :title "ceamx/file/"
+    :color blue
+    :inherit (cmx-hydra/base/heads))
+
   ;; TODO:
   ;; "e"   '(:ignore t :which-key "edit")
   ;; FIXME: eval is what we want
@@ -321,124 +399,147 @@
   ;;    "U"  #'+sudo-this-file
   ;;"y"  #'+yank-this-file-name
 
-  ("d" (lambda (&optional arg)
-         (interactive "P")
-         (let ((buffer (when arg (current-buffer))))
-           (diff-buffer-with-file buffer)))
-   "diff with file")
-  ("f" #'find-file)
-  ("s" #'save-buffer)
+  ("File"
+   (("d" (lambda (&optional arg)
+           (interactive "P")
+           (let ((buffer (when arg (current-buffer))))
+             (diff-buffer-with-file buffer)))
+     "diff with file")
+    ("f" #'find-file)
+    ("S" #'write-file "save as...")
+    ("s" #'save-buffer))))
 
-  ("S" #'write-file "save as..."))
+(pretty-hydra-define cmx-hydra/git
+  ( :title "ceamx/git/"
+    :color blue
+    :inherit (cmx-hydra/base/heads))
 
-(+general-global-menu! "git/version-control" "g")
+  ("Working Tree"
+   (("b" #'magit-branch "branch")
+    ("B" #'magit-blame "blame")
+    ("g" #'magit-status "status"))
 
-(+general-global-menu! "help" "h"
-  ;; FIXME: this seems suspect...
-  ;; "h"  (kbd! "C-h" :which-key "help")
+   "File"
+   (("ff" #'magit-find-file "find...")
+    ("fh" #'magit-log-buffer-file "history...")
+    ("S" #'magit-stage-file "stage")
+    ("U" #'magit-unstage-file "unstage"))
 
-  "b"  'describe-bindings
-  "f"  'describe-function
-  "F"  'describe-face
-  "k"  'describe-key
-  "l"  'apropos-library
-  "o"  'describe-symbol
-  "v"  'describe-variable
+   "Repo"
+   (("c" #'magit-clone "clone...")
+    ("i" #'magit-init "init")
+    ("L" #'magit-list-repos "list repos"))
 
-  ;; FIXME: somehow these inherit the `which-key' labels from the top-level leader menu
-  "d"   '(:ignore t :which-key "describe")
-  "db"  'describe-bindings
-  "df"  'describe-function
-  "dF"  'describe-face
-  "dk"  'describe-key
-  "dt"  '("text props" . (lambda () (interactive)
-                           (describe-text-properties (point))))
-  "dv"  'describe-variable)
+   ""
+   (("d" #'magit-dispatch))))
 
-(+general-global-menu! "link" "l")
 
-(+general-global-menu! "narrow" "n"
-  "d" 'narrow-to-defun
-  "p" 'narrow-to-page
-  "r" 'narrow-to-region
-  "w" 'widen)
+;; (+general-global-menu! "help" "h"
+;;   ;; FIXME: this seems suspect...
+;;   ;; "h"  (kbd! "C-h" :which-key "help")
 
-(+general-global-menu! "project" "p"
-  "b"  '(:ignore t :which-key "buffer")
-  "f"  '("find-file..." . project-find-file))
+;;   "b"  'describe-bindings
+;;   "f"  'describe-function
+;;   "F"  'describe-face
+;;   "k"  'describe-key
+;;   "l"  'apropos-library
+;;   "o"  'describe-symbol
+;;   "v"  'describe-variable
 
-(+general-global-menu! "quit" "q"
-  "q" 'save-buffers-kill-emacs
-  "r" 'restart-emacs
-  "Q" 'kill-emacs)
+;;   ;; FIXME: somehow these inherit the `which-key' labels from the top-level leader menu
+;;   "d"   '(:ignore t :which-key "describe")
+;;   "db"  'describe-bindings
+;;   "df"  'describe-function
+;;   "dF"  'describe-face
+;;   "dk"  'describe-key
+;;   "dt"  '("text props" . (lambda () (interactive)
+;;                            (describe-text-properties (point))))
+;;   "dv"  'describe-variable)
 
-(+general-global-menu! "search" "s"
-  "l"  '("+find-library" .
-         (lambda () (interactive "P")
-           (call-interactively
-            (if % #'find-library-other-window #'find-library))))
-  "v"  'find-variable-at-point
-  "V"  'find-variable)
+;; (+general-global-menu! "link" "l")
 
-(+general-global-menu! "tabs" "t"
-  "n" '("new" . tab-new))
+;; (+general-global-menu! "narrow" "n"
+;;   "d" 'narrow-to-defun
+;;   "p" 'narrow-to-page
+;;   "r" 'narrow-to-region
+;;   "w" 'widen)
 
-(+general-global-menu! "toggle" "T"
-  "L" '("linums" . line-number-mode)
-  "f" '("flycheck" . flycheck-mode))
+;; (+general-global-menu! "project" "p"
+;;   "b"  '(:ignore t :which-key "buffer")
+;;   "f"  '("find-file..." . project-find-file))
 
-(+general-global-menu! "window" "w"
-  "?" 'split-window-vertically
-  "=" 'balance-windows
-  "/" 'split-window-horizontally
-  "O" 'delete-other-windows
-  "X" '("kill-other-buffer-and-window" .
-        (lambda () (interactive)
-          (call-interactively #'other-window)
-          (kill-buffer-and-window)))
-  "d" 'delete-window
-  "D" 'kill-buffer-and-window
-  "h" 'windmove-left
-  "j" 'windmove-down
-  "k" 'windmove-up
-  "l" 'windmove-right
-  "o" 'other-window
-  "t" '("toggle window dedication" .
-        (lambda () (interactive)
-          "toggle window dedication"
-          (set-window-dedicated-p
-           (selected-window)
-           (not (window-dedicated-p)))))
+;; (+general-global-menu! "quit" "q"
+;;   "q" 'save-buffers-kill-emacs
+;;   "r" 'restart-emacs
+;;   "Q" 'kill-emacs)
 
-  ;; TODO: move to `r' prefix?
-  "."  '(:ignore :which-key "resize")
-  ".h" '("divider left" .
-         (lambda () (interactive)
-           (call-interactively
-            (if (window-prev-sibling)
-                #'enlarge-window-horizontally
-              #'shrink-window-horizontally))))
+;; (+general-global-menu! "search" "s"
+;;   "l"  '("+find-library" .
+;;          (lambda () (interactive "P")
+;;            (call-interactively
+;;             (if % #'find-library-other-window #'find-library))))
+;;   "v"  'find-variable-at-point
+;;   "V"  'find-variable)
 
-  ".l" '("divider right" .
-         (lambda () (interactive)
-           (call-interactively
-            (if (window-next-sibling)
-                #'enlarge-window-horizontally
-              #'shrink-window-horizontally))))
+;; (+general-global-menu! "tabs" "t"
+;;   "n" '("new" . tab-new))
 
-  ".j" '("divider up" .
-         (lambda () (interactive)
-           (call-interactively
-            (if (window-next-sibling)
-                #'enlarge-window
-              #'shrink-window))))
+;; (+general-global-menu! "toggle" "T"
+;;   "L" '("linums" . line-number-mode)
+;;   "f" '("flycheck" . flycheck-mode))
 
-  ".k" '("divider down" .
-         (lambda () (interactive)
-           (call-interactively
-            (if (window-prev-sibling)
-                #'enlarge-window
-              #'shrink-window)))))
+;; (+general-global-menu! "window" "w"
+;;   "?" 'split-window-vertically
+;;   "=" 'balance-windows
+;;   "/" 'split-window-horizontally
+;;   "O" 'delete-other-windows
+;;   "X" '("kill-other-buffer-and-window" .
+;;         (lambda () (interactive)
+;;           (call-interactively #'other-window)
+;;           (kill-buffer-and-window)))
+;;   "d" 'delete-window
+;;   "D" 'kill-buffer-and-window
+;;   "h" 'windmove-left
+;;   "j" 'windmove-down
+;;   "k" 'windmove-up
+;;   "l" 'windmove-right
+;;   "o" 'other-window
+;;   "t" '("toggle window dedication" .
+;;         (lambda () (interactive)
+;;           "toggle window dedication"
+;;           (set-window-dedicated-p
+;;            (selected-window)
+;;            (not (window-dedicated-p)))))
+
+;;   ;; TODO: move to `r' prefix?
+;;   "."  '(:ignore :which-key "resize")
+;;   ".h" '("divider left" .
+;;          (lambda () (interactive)
+;;            (call-interactively
+;;             (if (window-prev-sibling)
+;;                 #'enlarge-window-horizontally
+;;               #'shrink-window-horizontally))))
+
+;;   ".l" '("divider right" .
+;;          (lambda () (interactive)
+;;            (call-interactively
+;;             (if (window-next-sibling)
+;;                 #'enlarge-window-horizontally
+;;               #'shrink-window-horizontally))))
+
+;;   ".j" '("divider up" .
+;;          (lambda () (interactive)
+;;            (call-interactively
+;;             (if (window-next-sibling)
+;;                 #'enlarge-window
+;;               #'shrink-window))))
+
+;;   ".k" '("divider down" .
+;;          (lambda () (interactive)
+;;            (call-interactively
+;;             (if (window-prev-sibling)
+;;                 #'enlarge-window
+;;               #'shrink-window)))))
 
 
 
