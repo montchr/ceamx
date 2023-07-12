@@ -142,5 +142,9 @@
 ;; spells of inaccurate fontification immediately after scrolling."
 (setq fast-but-imprecise-scrolling t)
 
+;; Restore Emacs session buffers, their file names, major modes, buffer
+;; positions, window+frame configuration, "some important global variables".
+(desktop-save-mode 1)
+
 (provide 'init-defaults)
 ;;; init-defaults.el ends here
