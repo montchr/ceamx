@@ -7,7 +7,7 @@
 ;; Author:  Chris Montgomery <chris@cdom.io>
 ;;          John Kitchin <jkitchin@andrew.cmu.edu>
 ;; URL: https://git.sr.ht/~montchr/ceamx
-;; Modified: 09 July 2023
+;; Modified: 10 July 2023
 ;; Created: 09 July 2023
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "28.1"))
@@ -51,39 +51,30 @@
 
 ;;; Code:
 
-(require 'cl)
+(defvar cmx-hydra-stack '())
 
-;; Lexical closure to encapsulate the stack variable.
-(lexical-let ((cmx-hydra-stack '()))
-             (defun cmx-hydra-push (expr)
-               "Push an EXPR onto the stack."
-               (push expr cmx-hydra-stack))
+(defun cmx-hydra-push (expr)
+  "Push an EXPR onto the stack."
+  (push expr cmx-hydra-stack))
 
-             (defun cmx-hydra-pop ()
-               "Pop an expression off the stack and call it."
-               (interactive)
-               (let ((x (pop cmx-hydra-stack)))
-                 (when x
-	                 (call-interactively x))))
+(defun cmx-hydra-pop ()
+  "Pop an expression off the stack and call it."
+  (interactive)
+  (let ((x (pop cmx-hydra-stack)))
+    (when x
+	    (call-interactively x))))
 
-             (defun cmx-hydra ()
-               "Show the current stack."
-               (interactive)
-               (with-help-window (help-buffer)
-                 (princ "Cmx-hydra-stack\n")
-                 (pp cmx-hydra-stack)))
+(defun cmx-hydra-show ()
+  "Show the current stack."
+  (interactive)
+  (with-help-window (help-buffer)
+    (princ "cmx-hydra-stack\n")
+    (pp cmx-hydra-stack)))
 
-             (defun cmx-hydra-reset ()
-               "Reset the stack to empty."
-               (interactive)
-               (setq cmx-hydra-stack '())))
-
-(defmacro enter-hydra! (hydra)
-  "Push current HYDRA to a stack.
-This is a macro so I don't have to quote the hydra name."
-  `(progn
-     (cmx-hydra-push hydra-curr-body-fn)
-     (call-interactively ',hydra)))
+(defun cmx-hydra-reset ()
+  "Reset the stack to empty."
+  (interactive)
+  (setq cmx-hydra-stack '()))
 
 (defun cmx-hydra-help ()
   "Show help buffer for current hydra."
@@ -139,6 +130,19 @@ This is a macro so I don't have to quote the hydra name."
 	             "/body$" "/heads"
 	             (symbol-name  hydra-curr-body-fn))))
 	          "\n"))))
+
+
+;;
+;;; Macros
+;;
+
+(defmacro enter-hydra! (hydra)
+  "Push current HYDRA to a stack.
+This is a macro so I don't have to quote the hydra name."
+  `(progn
+     (cmx-hydra-push hydra-curr-body-fn)
+     (call-interactively ',hydra)))
+
 
 (provide 'lib-hydras)
 ;;; lib-hydras.el ends here
