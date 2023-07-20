@@ -66,16 +66,11 @@
 
 
 ;;
-;;; === DEFAULTS/ENVIRONMENT ===
+;;; Modules
 ;;
 
 (require 'init-defaults)
 (require 'init-env)
-
-
-;;
-;;; === APPEARANCE ===
-;;
 
 (when +graphical-p
   (require 'lib-gui))
@@ -88,11 +83,10 @@
 ;;; === HYDRAS + KEYBINDS ===
 ;;
 
+;;(require 'init-keys-meow)
 (require 'init-hydras)
 (require 'init-keybinds)
 (require 'init-evil)
-
-
 ;;
 ;;; === INTERACTION ===
 ;;
