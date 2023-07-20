@@ -32,6 +32,14 @@
 
 (require 'lib-keybinds)
 
+(defvar cmx-hydra-key "<f12>"
+  "Key to bind `cmx-hydra/main/body' to.")
+
+(defvar cmx-leader-key "SPC")
+(defvar cmx-leader-alt-key "M-SPC")
+
+(global-set-key (kbd cmx-hydra-key) 'cmx-hydra/main/body)
+
 
 ;; macOS: Remap modifier keys.
 (when (and +sys-mac-p +graphical-p)
@@ -128,24 +136,6 @@ all hooks after it are ignored.")
 
 ;;; TODO: move vars to top of file
 
-(defvar cmx-leader-key "SPC"
-  "The leader prefix key for Evil users.")
-
-(defvar cmx-leader-alt-key "M-SPC"
-  "An alternative leader prefix key, used for Insert and Emacs states, and for
-non-evil users.")
-
-(defvar cmx-localleader-key "SPC m"
-  "The localleader prefix key, for major-mode specific commands.")
-
-(defvar cmx-localleader-alt-key "M-SPC m"
-  "The localleader prefix key, for major-mode specific commands. Used for Insert
-and Emacs states, and for non-evil users.")
-
-(defvar cmx-hydra-key "<f12>"
-  "Key to bind `cmx/body' to.")
-
-(global-set-key (kbd cmx-hydra-key) 'cmx-hydra/main/body)
 
 
 ;;; --- load ---
@@ -189,10 +179,6 @@ localleader prefix."
     :non-normal-prefix cmx-localleader-alt-key
     ,@args))
 
-;; PERF: `evil-define-key*' instead of `general-define-key' (via doom)
-;; FIXME: define these once migrated to hydras to replace general leaders
-;; (evil-define-key* '(normal visual motion) map (kbd cmx-leader-key) 'cmx/body)
-;; (evil-define-key* '(emacs insert) map (kbd cmx-leader-alt-key) 'cmx/body)
 
 (general-override-mode)
 (general-auto-unbind-keys)
@@ -201,257 +187,12 @@ localleader prefix."
 
 ;;; -----------------------------------------------------
 
-(general-define-key
- :keymaps 'override
- :states '(insert normal hybrid motion visual operator emacs)
- :prefix-map '+prefix-map
- :prefix "SPC"
- :global-prefix "S-SPC")
-
-(general-create-definer global-definer
-  :wk-full-keys nil
-  :keymaps '+prefix-map)
-
-;; leaderless bindings
-(global-definer
-  "`"  '("other buffer" . (lambda () (interactive) (switch-to-buffer (other-buffer (current-buffer) 1))))
-  "!"  'shell-command
-  ":"  'eval-expression
-  "."  'repeat
-  "SPC"  'project-find-file)
-
-;; major modes
-(general-create-definer global-leader
-  :keymaps 'override
-  :states '(insert normal hybrid motion visual operator)
-  :prefix "SPC m"
-  :non-normal-prefix "S-SPC m"
-  "" '( :ignore t
-        :which-key
-        (lambda (arg)
-          (cons (cadr (split-string (car arg) " "))
-                (replace-regexp-in-string "-mode$" "" (symbol-name major-mode))))))
-
 (defalias 'kbd! #'general-simulate-key)
 
-;; Ease the creation of nested menu bindings.
-;; TODO: define sparse keymaps so that menus whose mappings are all deferred
-;;       do not result in an empty menu (this is a hypothesis though)
-(defmacro +general-global-menu! (name prefix-key &rest body)
-  "Create a definer named +general-global-NAME wrapping global-definer.
-  Create prefix map: +general-global-NAME-map. Prefix bindings in BODY with PREFIX-KEY."
-  (declare (indent 2))
-  (let* ((n (concat "+general-global-" name))
-         (prefix-map (intern (concat n "-map"))))
-    `(progn
-       (general-create-definer ,(intern n)
-         :wrapping global-definer
-         :prefix-map (quote ,prefix-map)
-         :prefix ,prefix-key
-         :wk-full-keys nil
-         "" '(:ignore t :which-key ,name))
-       (,(intern n) ,@body))))
-
-(+general-global-menu! "application" "a"
-  "p" '(:ignore t "elpaca")
-  "pr"  '("rebuild" . (lambda () (interactive)
-                        (let ((current-prefix-arg (not current-prefix-arg)))
-                          (call-interactively #'elpaca-rebuild))))
-  "pm" 'elpaca-manager
-  "pl" 'elpaca-log
-  "pi" '("elpaca-info" . (lambda () (interactive) (info "Elpaca")))
-  "ps" 'elpaca-status
-  "pt" 'elpaca-try
-  "pu" 'elpaca-update
-  "pU" 'elpaca-update-all
-  "pv" 'elpaca-visit)
-
-(+general-global-menu! "buffer" "b"
-  "h"  '("prev" . previous-buffer)
-  ;; TODO: is there an alternative with better ui? maybe: bufler.el
-  "i"  'ibuffer
-  "d"  '("delete" . kill-current-buffer)
-  "l"  '("next" . next-buffer)
-  "k"  '("kill" . kill-current-buffer)
-  "M"  '("messages" . view-echo-area-messages)
-  "n"  '("next" . next-buffer)
-  "o"  '("other..." . mode-line-other-buffer)
-  "p"  '("prev" . previous-buffer)
-  "r"  '("revert" . revert-buffer)
-  "R"  '("rename..." . rename-buffer)
-  "s"  '("save" . save-buffer)
-  "S"  #'save-some-buffers
-  "x"  '("scratch" . scratch-buffer)
-
-  "["  'previous-buffer
-  "]"  'next-buffer
-  "TAB"  'mode-line-other-buffer)
-
-(+general-global-menu! "bookmark" "B")
-
-(+general-global-menu! "code" "c")
-
-;; TODO: move to `init-lang-elisp'?
-(+general-global-menu! "eval" "e"
-  "b" 'eval-buffer
-  "d" 'eval-defun
-  "e" 'elisp-eval-region-or-buffer
-  "E" 'eval-expression
-  "I" '("init.el" . (lambda () (interactive) (load-file user-init-file)))
-  "p" 'pp-eval-last-sexp
-  "r" 'eval-region
-  "s" 'eval-last-sexp)
-
-(+general-global-menu! "file" "f"
-  "f"  'find-file
-
-  "d"   '("diff with file" . (lambda (&optional arg)
-                               (interactive "P")
-                               (let ((buffer (when arg (current-buffer))))
-                                 (diff-buffer-with-file buffer))))
-
-  ;; "e"   '(:ignore t :which-key "edit")
-  ;; FIXME: eval is what we want
-  ;; "eR"  '("reload config" (lambda () (interactive) (load-file user-init-file)))
-
-  "s"   'save-buffer
-  "S"   '("save as..." . write-file)
-
-  ;; TODO
-  ;;"u"  #'+sudo-find-file
-  ;;    "U"  #'+sudo-this-file
-  ;;"y"  #'+yank-this-file-name
-
-  )
-
-(+general-global-menu! "frame" "F"
-  "F" 'select-frame-by-name
-
-  "D" 'delete-other-frames
-  "O" 'other-frame-prefix
-
-  ;; FIXME: replace with theme / `modus-themes' bindings
-  "c" '(:ignore t :which-key "color")
-  "cb" 'set-background-color
-  "cc" 'set-cursor-color
-  "cf" 'set-foreground-color
-
-  "f" '("set font..." . fontaine-set-preset)
-  "m" 'make-frame-on-monitor
-  "n" 'next-window-any-frame
-  "o" 'other-frame
-  "p" 'previous-window-any-frame
-  "r" 'set-frame-name)
-
-(+general-global-menu! "git/version-control" "g")
-
-(+general-global-menu! "help" "h"
-  ;; FIXME: this seems suspect...
-  "h"  (kbd! "C-h" :which-key "help")
-
-  "b"  'describe-bindings
-  "f"  'describe-function
-  "F"  'describe-face
-  "k"  'describe-key
-  "l"  'apropos-library
-  "o"  'describe-symbol
-  "v"  'describe-variable
-
-  ;; FIXME: somehow these inherit the `which-key' labels from the top-level leader menu
-  "d"   '(:ignore t :which-key "describe")
-  "db"  'describe-bindings
-  "df"  'describe-function
-  "dF"  'describe-face
-  "dk"  'describe-key
-  "dt"  '("text props" . (lambda () (interactive)
-                           (describe-text-properties (point))))
-  "dv"  'describe-variable)
-
-(+general-global-menu! "link" "l")
-
-(+general-global-menu! "narrow" "n"
-  "d" 'narrow-to-defun
-  "p" 'narrow-to-page
-  "r" 'narrow-to-region
-  "w" 'widen)
-
-(+general-global-menu! "project" "p"
-  "b"  '(:ignore t :which-key "buffer")
-  "f"  '("find-file..." . project-find-file))
-
-(+general-global-menu! "quit" "q"
-  "q" 'save-buffers-kill-emacs
-  "r" 'restart-emacs
-  "Q" 'kill-emacs)
-
-(+general-global-menu! "search" "s"
-  "l"  '("+find-library" .
-         (lambda () (interactive "P")
-           (call-interactively
-            (if % #'find-library-other-window #'find-library))))
-  "v"  'find-variable-at-point
-  "V"  'find-variable)
-
-(+general-global-menu! "tabs" "t"
-  "n" '("new" . tab-new))
-
-(+general-global-menu! "toggle" "T"
-  "L" '("linums" . line-number-mode)
-  "f" '("flycheck" . flycheck-mode))
-
-(+general-global-menu! "window" "w"
-  "?" 'split-window-vertically
-  "=" 'balance-windows
-  "/" 'split-window-horizontally
-  "O" 'delete-other-windows
-  "X" '("kill-other-buffer-and-window" .
-        (lambda () (interactive)
-          (call-interactively #'other-window)
-          (kill-buffer-and-window)))
-  "d" 'delete-window
-  "D" 'kill-buffer-and-window
-  "h" 'windmove-left
-  "j" 'windmove-down
-  "k" 'windmove-up
-  "l" 'windmove-right
-  "o" 'other-window
-  "t" '("toggle window dedication" .
-        (lambda () (interactive)
-          "toggle window dedication"
-          (set-window-dedicated-p
-           (selected-window)
-           (not (window-dedicated-p)))))
-
-  ;; TODO: move to `r' prefix?
-  "."  '(:ignore :which-key "resize")
-  ".h" '("divider left" .
-         (lambda () (interactive)
-           (call-interactively
-            (if (window-prev-sibling)
-                #'enlarge-window-horizontally
-              #'shrink-window-horizontally))))
-
-  ".l" '("divider right" .
-         (lambda () (interactive)
-           (call-interactively
-            (if (window-next-sibling)
-                #'enlarge-window-horizontally
-              #'shrink-window-horizontally))))
-
-  ".j" '("divider up" .
-         (lambda () (interactive)
-           (call-interactively
-            (if (window-next-sibling)
-                #'enlarge-window
-              #'shrink-window))))
-
-  ".k" '("divider down" .
-         (lambda () (interactive)
-           (call-interactively
-            (if (window-prev-sibling)
-                #'enlarge-window
-              #'shrink-window)))))
-
+(general-define-key
+ :states '(normal visual motion)
+ :keymaps 'override
+ "SPC" 'cmx-hydra/main/body)
 
 
 ;;

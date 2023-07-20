@@ -54,24 +54,6 @@
   ;; :defer t
   ;; :after (general magit-section)
 
-  :general
-  (+general-global-git/version-control
-    "g"  'magit-status
-    "b"  'magit-branch
-    "B"  'magit-blame
-    "c"  'magit-clone
-
-    "f"  '(:ignore t :which-key "file")
-    "ff" 'magit-find-file
-    "fh" 'magit-log-buffer-file
-
-    "i"  'magit-init
-    "L"  'magit-list-repositories
-    "m"  'magit-dispatch
-    "S"  'magit-stage-file
-    "s"  'magit-status
-    "U"  'magit-unstage-file)
-
   :config
   (setq magit-diff-refine-hunk t)                  ; show granular diffs in selected hunk
   (setq magit-save-repository-buffers nil)         ; avoid side-effects (e.g. auto-format)
@@ -127,10 +109,6 @@
 ;;  <https://github.com/emacsmirror/git-timemachine>
 
 (use-package git-timemachine
-  :general
-  (+general-global-git/version-control
-    "t" #'git-timemachine)
-
   :config
 
   ;; Show revision details in `header-line-format' instead of the minibuffer,

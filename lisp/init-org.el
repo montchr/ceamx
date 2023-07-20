@@ -34,52 +34,6 @@
 (defconst +org-capture-default-file (concat +path-notes-dir "inbox.org"))
 
 (use-package org
-  :general
-  (global-definer
-    "X"  '("capture..." . org-capture))
-  (+general-global-application
-    "o" '(:ignore t :which-key "org...")
-
-    "oc" 'org-capture
-    ;; TODO
-    ;; "oC" '+org-capture-again
-    "oi" 'org-insert-link
-    ;; TODO
-    ;; "oj" 'org-chronicle
-
-    "ok" '(:ignore t :which-key "clock...")
-    "okg" 'org-clock-goto
-    "oki" 'org-clock-in-last
-    ;; TODO: not available? needs to be running?
-    ;; "okj" 'org-clock-jump-to-current-clock
-    "oko" 'org-clock-out
-    "okr" 'org-resolve-clocks
-
-    "ol" 'org-store-link
-    "om" 'org-tags-view
-    "os" 'org-search-view
-    "oT" 'org-todo-list)
-
-  (global-leader
-    "a" '("archive subtree" . org-archive-subtree)
-    "E" '("export..." . org-export-dispatch)
-
-    "l" '(:ignore true :wk "link")
-    "l l" '("insert link" . org-insert-link)
-    "l s" '("store link" . org-store-link)
-
-    "r" '("refile..." . org-refile)
-    "p" '("priority" . org-priority)
-    "q" '("tag" . org-set-tags-command)
-    "s" '("sort" . org-sort)
-
-    "t" '(:ignore true :wk "todo")
-    "t t" '("heading todo" . org-todo)
-    "t s" '("schedule" . org-schedule)
-    "t d" '("deadline" . org-deadline)
-    
-    "x" '("toggle checkbox" . org-toggle-checkbox))
-
   :init
   ;; FIXME: use `+path-notes-dir'? 
   (setq org-directory "~/Documents/notes/")

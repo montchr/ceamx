@@ -48,9 +48,8 @@
 ;;; Initialise Elpaca and kick off package loading.
 (require 'init-packages)
 
-
 ;;
-;;; === CORE LIBRARIES ===
+;;; Core Libraries
 ;;
 
 (require 'cl-lib)
@@ -58,6 +57,7 @@
 
 ;;; s.el :: "The long lost Emacs string manipulation library." :: <https://github.com/magnars/s.el>
 (use-package s)
+
 ;;; dash :: "A modern list library for Emacs" :: <https://github.com/magnars/dash.el>
 (use-package dash)
 

@@ -7,7 +7,7 @@
 ;; Author:  Chris Montgomery <chris@cdom.io>
 ;;          John Kitchin <jkitchin@andrew.cmu.edu>
 ;; URL: https://git.sr.ht/~montchr/ceamx
-;; Modified: 09 July 2023
+;; Modified: 19 July 2023
 ;; Created: 09 July 2023
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "28.1"))
@@ -76,7 +76,7 @@
 
 ;; 
 ;;; major-mode-hydra :: Major mode leader key powered by Hydra.
-;;  <https://github.com/jerrypnz/major-mode-hydra.el> 
+;;  <https://github.com/jerrypnz/major-mode-hydra.el>
 
 (use-package major-mode-hydra
   :after '(hydra pretty-hydra)
@@ -86,64 +86,6 @@
 
 (elpaca-wait)
 
-;; 
-;;; Utilities
-;;
-
-
-
-;; (defmacro /bindings/define-prefix-keys (keymap prefix &rest body)
-;;   (declare (indent defun))
-;;   `(progn
-;;      ,@(cl-loop for binding in body
-;;                 collect
-;;                 `(let ((seq ,(car binding))
-;;                        (func ,(cadr binding))
-;;                        (desc ,(caddr binding)))
-;;                    (define-key ,keymap (kbd seq) func)
-;;                    (when desc
-;;                      (which-key-add-key-based-replacements
-;;                        (if ,prefix
-;;                            (concat ,prefix " " seq)
-;;                          seq)
-;;                        desc))))))
-
-;; (defmacro /bindings/define-keys (keymap &rest body)
-;;   (declare (indent defun))
-;;   `(/bindings/define-prefix-keys ,keymap nil ,@body))
-
-;; (defmacro /bindings/define-key (keymap sequence binding &optional description)
-;;   (declare (indent defun))
-;;   `(/bindings/define-prefix-keys ,keymap nil
-;;      (,sequence ,binding ,description)))
-
-;; 
-
-;; (setq /bindings/normal-space-leader-map (make-sparse-keymap))
-;; (/bindings/define-prefix-keys /bindings/normal-space-leader-map "SPC"
-;;   ("SPC" #'execute-extended-command "M-x")
-;;   ("t" #'/hydras/toggles/body "toggle...")
-;;   ("q" #'/hydras/quit/body "quit...")
-;;   ("e" #'/hydras/errors/body "errors...")
-;;   ("b" #'/hydras/buffers/body "buffers...")
-;;   ("j" #'/hydras/jumps/body "jump...")
-;;   ("f" #'/hydras/files/body "files...")
-;;   ("s" #'/hydras/search/body "search...")
-;;   ("l" #'/hydras/jumps/lambda-l-and-exit "lines(current)")
-;;   ("L" #'/hydras/jumps/lambda-L-and-exit "lines(all)")
-;;   ("o" #'/hydras/jumps/lambda-i-and-exit "outline")
-;;   ("v" vc-prefix-map)
-;;   ("4" ctl-x-4-map)
-;;   ("5" ctl-x-5-map "frames...")
-;;   ("'" #'/eshell/new-split "shell")
-;;   ("y" (bind
-;;         (cond
-;;          ((eq dotemacs-switch-engine 'ivy)
-;;           (call-interactively #'counsel-yank-pop))
-;;          ((eq dotemacs-switch-engine 'consult)
-;;           (call-interactively #'consult-yank-pop))
-;;          ((eq dotemacs-switch-engine 'helm)
-;;           (call-interactively #'helm-show-kill-ring)))) "kill-ring"))
 
 ;; 
 ;;; Shared Hydra Parts
@@ -151,19 +93,20 @@
 
 (defhydra cmx-hydra/base (:color blue)
   "base"
-  ("," cmx-hydra-pop "back" :color blue)
-  ;; ("x" execute-extended-command "M-x")
-  ("C-s" save-buffer "Save")
-  ("/" undo "undo" :color red)
-  ("\\" redo "redo" :color red)
-  ("?" cmx-hydra-help "Menu help")
+
+  (","   #'cmx-hydra-pop  "back" :color blue)
+  ("C-s" #'save-buffer    "save")
+  ("/"   #'undo           "undo" :color red)
+  ("\\"  #'undo-redo      "redo" :color red)
+  ("?"   #'cmx-hydra-help "help")
 
   ;; FIXME: 'm'
   ;; ("." cmx-dispatch-mode-hydra "Major mode hydras")
 
-  ("`" (switch-to-buffer (other-buffer (current-buffer) 1)) "other buffer")
-  ("SPC" #'project-find-file "")
-  ("q" nil "quit"))
+  ("`" (switch-to-buffer
+        (other-buffer (current-buffer) 1))
+   "other buffer")
+  ("SPC" #'project-find-file "find file..."))
 
 
 ;; 
@@ -176,7 +119,8 @@
     :color blue
     :inherit (cmx-hydra/base/heads)
     :body-pre (cmx-hydra-reset)
-    :idle 0.5)
+    :idle 0.5
+    :columns 4)
 
   (""
    (;;   "/" '(nil :which-key "search...")
@@ -184,64 +128,38 @@
     ;;   "]" '(nil :which-key "next...")
 
     ("a" (enter-hydra! cmx-hydra/applications/body) "Applications")
-    ("b" (enter-hydra! cmx-hydra/buffers/body) "Buffers")
-    ;; TODO: 'B' for 'bookmarks'
-    ;; TODO: 'c' for 'code'/lsp
+    ("b" (enter-hydra! cmx-hydra/buffer/body) "Buffer")
+    ("B" (enter-hydra! cmx-hydra/bookmark/body) "Bookmark")
+    ("c" (enter-hydra! cmx-hydra/code/body) "Code")
     ;; d ... ?
-
-    ;; TODO: consider 'eval'?
-    ;; FIXME: why this ambiguity?
-    ("e" (enter-hydra! cmx-hydra/errors/body) "Edit/Errors")
-
-    ("f" (enter-hydra! cmx-hydra/files/body) "Files")
-
-    ;; TODO: 'F' for 'frame'
-    ;; ("F" (enter-hydra! cmx-hydra/frame/body) "Frame")
-
-    ;; FIXME: git
+    ("e" (enter-hydra! cmx-hydra/eval/body) "Eval")
+    ("f" (enter-hydra! cmx-hydra/file/body) "File")
+    ("F" (enter-hydra! cmx-hydra/frame/body) "Frame")
     ("g" (enter-hydra! cmx-hydra/git/body) "Git")
-
-    ;;("h" (enter-hydra! cmx-hydra/help/body) "Help")
+    ("h" (enter-hydra! cmx-hydra/help/body) "Help")
     ;;("i" (enter-hydra! cmx-hydra/insert/body) "Insert")
     ;;("j" (enter-hydra! cmx-hydra/jump/body) "Jump")
-    ;;("k" (enter-hydra! cmx-hydra/bookmarks/body) "Bookmarks")
-    ;; TODO: compare with doom et al
-    ;;   "l" '(nil :which-key "link...")
-    ;; ("l" (enter-hydra! cmx-hydra/lisp/body) "Lisp")
-
-    ;; FIXME: swap with major modes
-    ;; ("m" (enter-hydra! cmx-hydra/minor-modes/body) "Minor modes/mark")
-    ;; FIXME: swap with minor modes
-    ;; ("s-m" cmx-dispatch-mode-hydra "Major mode hydras")
-
-    ;; TODO: consider...?
-    ;; ("M" (enter-hydra! cmx-hydra/smerge/body) "smerge")
-
-    ;; FIXME: 'notes'? but that might be better in 'org'
-    ;; ("n" (enter-hydra! cmx-hydra/navigation/body) "Navigation")
-
-    ;; ("o" (enter-hydra! cmx-hydra/org/body) "org")
-
-    ;; ("p" (enter-hydra! hydra-projectile/body) "Project")
-    ;; q ... is for quitting in `cmx-hydra/base', don't reassign
+    ;;("J" (enter-hydra! cmx-hydra/journal/body) "Journal")
+    ;; k ... bookmarks ... ?
+    ;; l ... links ... ?
+    ;; m --- RESERVED: for major mode map
+    ;; M ... major mode hydras?
+    ;; TODO: 'notes'
+    ;; ("n" (enter-hydra! cmx-hydra/notes/body) "Notes")
+    ("o" (enter-hydra! cmx-hydra/org/body) "Org-Mode")
+    ("p" (enter-hydra! cmx-hydra/project/body) "Project")
+    ("q" (enter-hydra! cmx-hydra/session/body) "Session")
     ;; r ... ?
-    ;; ("s" (enter-hydra! cmx-hydra/search/body) "Search")
-
-    ;; TODO: i have this set to 'toggle' based on doom, but i like what scimax does with 'text'
-    ;;   "t" '(nil :which-key "toggle...")
-    ;; ("t" (enter-hydra! cmx-hydra/text/body) "Text")
-
-    ;; TODO:   "T" '(nil :which-key "tabs...")
-
-    ;; NOTE: u is a prefix arg in `cmx-hydra/base', do not reassign
-
-    ;; FIXME: remap to 'g' for 'git' if only for muscle memory
-    ;; ("v" (enter-hydra! cmx-hydra/version-control/body) "Version control")
-
-    ;; ("w" (enter-hydra! cmx-hydra/windows/body) "Windows")
-    ;; x ... is for M-x in `cmx-hydra/base', don't reassign
+    ("s" (enter-hydra! cmx-hydra/search/body) "Search")
+    ("t" (enter-hydra! cmx-hydra/toggle/body) "Toggles")
+    ("T" (enter-hydra! cmx-hydra/tab/body) "Tabs")
+    ;; u ... ?
+    ;; v ... ?
+    ("w" (enter-hydra! cmx-hydra/window/body) "Windows")
+    ;; x ... ?
+    ("X" (enter-hydra! cmx-hydra/org-capture/body) "Capture")
     ;; y ... ?
-    ;; ("z" (enter-hydra! cmx-hydra/customize/body) "Customize")
+    ;; z ... ?
     )))
 
 
@@ -249,20 +167,9 @@
 ;;; Applications
 ;;
 
-;; (defun cmx-hydra--app-hints ()
-;;   "Calculate some variables for the applications hydra."
-;;   (setq elfeed-count
-;; 	      (s-pad-right 12 " "
-;; 		                 (if (get-buffer "*elfeed-search*")
-;; 			                   (format "RSS(%s)"
-;; 				                         (car (s-split "/" (with-current-buffer "*elfeed-search*"
-;; 						                                         (elfeed-search--count-unread)))))
-;; 		                   "RSS(?)"))))
-
 (pretty-hydra-define cmx-hydra/applications
-  ( :title "ceamx/applications/" 
+  ( :title "ceamx/applications/"
     :hint nil
-	  ;; :pre (cmx-hydra--app-hints)
 	  :color blue
 	  :inherit (cmx-hydra/base/heads))
 
@@ -273,23 +180,19 @@
     ;;  ("j" cmx-hydra/journal/body "journal")
     ;; FIXME: don't miss this one -- it's not from the same source file
     ;; ("n" nb-hydra/body "notebook" :column "Emacs")
-    ("p" (enter-hydra! cmx-hydra/packages/body) "Packages")
-    ("r" #'elfeed "elfeed"))
+    ("n" #'newsticker-show-news "news")
+    ("p" (enter-hydra! cmx-hydra/packages/body) "Packages"))
 
-   "OS"
+   "Shells"
    (("e" eshell "eshell"))
-
-   "Web"
-   (;; TODO: adjust or remove
-    ;; ("c" google-calendar "Calendar" :column "Web")
-    ("G" (enter-hydra! cmx-hydra/gsuite/body) "GSuite"))
 
    "Commands"
    (("m" compose-mail "Compose mail"))))
 
 
+
 (pretty-hydra-define cmx-hydra/packages
-  ( :title "ceamx/applications/packages/" 
+  ( :title "ceamx/applications/packages/"
     :hint nil
     :color blue
     :columns 3
@@ -297,7 +200,6 @@
 
   ("Elpaca"
    (("i" (info "Elpaca") "info")
-    ("l" #'elpaca-log "log")
     ("m" #'elpaca-manager "manager")
     ("r" #'elpaca-rebuild "rebuild")
     ("s" #'elpaca-status "status")
@@ -306,54 +208,59 @@
     ("v" #'elpaca-visit)
     ("U" #'elpaca-update-all "update all"))))
 
-(defhydra cmx-hydra/gsuite (:color blue :inherit (cmx-hydra/base/heads))
-  "ceamx/applications/gsuite/"
-  ("d" (browse-url "https://docs.google.com/document/u/0/") "GDoc")
-  ("h" (browse-url "https://docs.google.com/spreadsheets/u/0/") "GSheet")
-  ("s" (browse-url "https://docs.google.com/presentation/u/0/") "GSlides")
-  ("v" (browse-url "https://drive.google.com/drive/u/0/my-drive") "GDrive"))
+
+;;
+;;; Bookmarks
+;;
+
+(pretty-hydra-define cmx-hydra/bookmark
+  ( :title "ceamx/bookmark/"
+    :color blue
+    :inherit (cmx-hydra/base/heads))
+
+  ("Save"
+   (("F" #'burly-bookmark-frames  "frames")
+    ("W" #'burly-bookmark-windows "windows"))))
 
 
 ;;
 ;;; Buffers
 ;;
 
-(pretty-hydra-define cmx-hydra/buffers
-  ( :title "ceamx/buffers/"
+(pretty-hydra-define cmx-hydra/buffer
+  ( :title "ceamx/buffer/"
     :color blue
     :inherit (cmx-hydra/base/heads)
-    :columns 3
-    :hint nil)
+    :columns 3)
 
   ("Switch"
-   (("b" switch-to-buffer       "switch")
-    ("l" ibuffer                "ibuffer")
-    ("n" next-buffer            "next"       :color red)
-    ("o" mode-line-other-buffer	"other buf"	 :color red)
-    ("p" previous-buffer        "prev"       :color red))
+   (("b" #'consult-project-buffer "in prj...")
+    ("B" #'consult-buffer         "any...")
+    ("o" #'mode-line-other-buffer	"other"	     :color red)
+    ("[" #'previous-buffer        "prev"       :color red)
+    ("]" #'next-buffer            "next"       :color red))
 
    "File"
-   (("r" revert-buffer          "revert...")
-    ("R" rename-buffer          "rename...")
-    ("s" save-buffer            "save")
-    ("S" save-some-buffers      "save all..."))
+   (("r" #'revert-buffer          "revert...")
+    ("R" #'rename-buffer          "rename...")
+    ("s" #'save-buffer            "save")
+    ("S" #'save-some-buffers      "save all..."))
 
    "Close"
-   (("d" kill-current-buffer 		"close buf"      :color red)
-    ("k" kill-this-buffer       "close buf+win"  :color red)
-    ("K" kill-other-buffers     "close others"))
+   (("d" #'kill-current-buffer 		"close buf"      :color red)
+    ("k" #'kill-this-buffer       "close buf+win"  :color red)
+    ("K" #'kill-other-buffers     "close others"))
 
    "Misc"
-   (("M" view-echo-area-messages "*Messages*")
-    ("x" scratch-buffer          "*scratch*"))))
+   (("M" #'view-echo-area-messages "*Messages*")
+    ;; TODO: why does it need to be evil?
+    ("N" #'evil-buffer-new       "new")
+    ("x" #'scratch-buffer          "*scratch*"))))
 
 
 ;;
 ;;; Code / LSP
 ;;
-
-;; NOTE: watch out for potential performance issues here, in case the act of
-;;       defining the hydra causes lsp-mode to load now.
 
 (pretty-hydra-define cmx-hydra/code
   ( :title "ceamx/code/"
@@ -364,8 +271,9 @@
    (("a" #'lsp-execute-code-action "action"    :column "Refactor")
     ("r" #'lsp-rename              "rename..." :column "Refactor"))))
 
+
 ;;
-;;; Emacs Lisp
+;;; Emacs Lisp / "Eval"
 ;;
 
 ;; FIXME: prob should be some other name
@@ -399,15 +307,45 @@
   ;;    "U"  #'+sudo-this-file
   ;;"y"  #'+yank-this-file-name
 
-  ("File"
+  ("Current"
+   (("s" #'save-buffer          "save")
+    ("S" #'write-file           "save as...")
+    ("C" #'cmx/copy-this-file   "copy...")
+    ("D" #'cmx/delete-this-file "delete")
+    ("R" #'cmx/move-this-file   "move..."))
+
+   "Others"
    (("d" (lambda (&optional arg)
            (interactive "P")
            (let ((buffer (when arg (current-buffer))))
              (diff-buffer-with-file buffer)))
-     "diff with file")
-    ("f" #'find-file)
-    ("S" #'write-file "save as...")
-    ("s" #'save-buffer))))
+     "diff with...")
+    ("f" #'find-file "find..."))))
+
+
+;;
+;;; Frames
+;;
+
+(pretty-hydra-define cmx-hydra/frame
+  ( :title "ceamx/frame/"
+    :inherit (cmx-hydra/base/heads))
+
+  ("Switch"
+   (("F" #'select-frame-by-name      "by name...")
+    ("o" #'other-frame               "other")
+    ("[" #'previous-window-any-frame "prev")
+    ("]" #'next-window-any-frame     "next"))
+
+   "Manage"
+   (("b" #'burly-bookmark-frames         "save workspace")
+    ("n" #'make-frame-on-current-monitor "create frame")
+    ("N" #'make-frame-on-monitor         "create frame on monitor...")
+    ("R" #'set-frame-name                "rename frame"))))
+
+;;
+;;; Git / Version Control
+;;
 
 (pretty-hydra-define cmx-hydra/git
   ( :title "ceamx/git/"
@@ -422,8 +360,9 @@
    "File"
    (("ff" #'magit-find-file "find...")
     ("fh" #'magit-log-buffer-file "history...")
-    ("S" #'magit-stage-file "stage")
-    ("U" #'magit-unstage-file "unstage"))
+    ("t"  #'git-timemachine "timemachine")
+    ("S"  #'magit-stage-file "stage")
+    ("U"  #'magit-unstage-file "unstage"))
 
    "Repo"
    (("c" #'magit-clone "clone...")
@@ -434,59 +373,204 @@
    (("d" #'magit-dispatch))))
 
 
-;; (+general-global-menu! "help" "h"
-;;   ;; FIXME: this seems suspect...
-;;   ;; "h"  (kbd! "C-h" :which-key "help")
+;;
+;;; Help
+;;
 
-;;   "b"  'describe-bindings
-;;   "f"  'describe-function
-;;   "F"  'describe-face
-;;   "k"  'describe-key
-;;   "l"  'apropos-library
-;;   "o"  'describe-symbol
-;;   "v"  'describe-variable
+(pretty-hydra-define cmx-hydra/help
+  ( :title "ceamx/help/"
+    :color blue
+    :inherit (cmx-hydra/base/heads))
 
-;;   ;; FIXME: somehow these inherit the `which-key' labels from the top-level leader menu
-;;   "d"   '(:ignore t :which-key "describe")
-;;   "db"  'describe-bindings
-;;   "df"  'describe-function
-;;   "dF"  'describe-face
-;;   "dk"  'describe-key
-;;   "dt"  '("text props" . (lambda () (interactive)
-;;                            (describe-text-properties (point))))
-;;   "dv"  'describe-variable)
+  (""
+   (("h" #'help-for-help))
 
-;; (+general-global-menu! "link" "l")
+   "Describe"
+   (("b" #'embark-bindings                  "bindings...")
+    ("f" #'describe-function                "function...")
+    ("F" #'describe-face                    "face...")
+    ("k" #'describe-key                     "key...")
+    ("o" #'describe-symbol                  "symbol...")
+    ("t" (describe-text-properties (point)) "text properties...")
+    ("v" #'describe-variable                "variable..."))
 
-;; (+general-global-menu! "narrow" "n"
-;;   "d" 'narrow-to-defun
-;;   "p" 'narrow-to-page
-;;   "r" 'narrow-to-region
-;;   "w" 'widen)
+   "Apropos"
+   (("l" #'apropos-library))))
 
-;; (+general-global-menu! "project" "p"
-;;   "b"  '(:ignore t :which-key "buffer")
-;;   "f"  '("find-file..." . project-find-file))
+;;
+;;; Org-Mode
+;;
 
-;; (+general-global-menu! "quit" "q"
-;;   "q" 'save-buffers-kill-emacs
-;;   "r" 'restart-emacs
-;;   "Q" 'kill-emacs)
+(pretty-hydra-define cmx-hydra/org
+  ( :title "ceamx/org/"
+    :color blue
+    :inherit (cmx-hydra/base/heads))
 
-;; (+general-global-menu! "search" "s"
-;;   "l"  '("+find-library" .
-;;          (lambda () (interactive "P")
-;;            (call-interactively
-;;             (if % #'find-library-other-window #'find-library))))
-;;   "v"  'find-variable-at-point
-;;   "V"  'find-variable)
+  ("Tasks"
+   (("t" #'org-todo-list "todo list"))
 
-;; (+general-global-menu! "tabs" "t"
-;;   "n" '("new" . tab-new))
+   ""
+   (("c" (enter-hydra! cmx-hydra/org-capture/body)))))
 
-;; (+general-global-menu! "toggle" "T"
-;;   "L" '("linums" . line-number-mode)
-;;   "f" '("flycheck" . flycheck-mode))
+(defhydra cmx-hydra/org-capture
+  ( :color blue
+    :inherit (cmx-hydra/base/heads))
+  "org-capture"
+  ("c" #'org-capture "capture..."))
+
+
+;;
+;;; Project
+;;
+
+(pretty-hydra-define cmx-hydra/project
+  ( :title "ceamx/project/"
+    :color blue
+    :inherit (cmx-hydra/base/heads))
+
+  ("Files"
+   (("f" #'projectile-find-file-dwim "find..."))
+
+   "Meta"
+   (("a" #'projectile-add-known-project "add project...")
+		("i" #'projectile-invalidate-cache  "invalidate cache")
+    ("p" #'projectile-switch-project    "switch project..."))))
+
+
+;;
+;;; Session
+;;
+
+(defhydra cmx-hydra/session (:color blue)
+  "[ceamx/session]"
+  ("r" #'restart-emacs           "restart")
+  ("q" #'save-buffers-kill-emacs "save and quit"))
+
+
+;;
+;;; Search
+;;
+
+(defhydra cmx-hydra/search
+  ( :color blue
+    :columns 3
+    :inherit (cmx-hydra/base/heads))
+  "
+[ceamx/search]
+--------------
+Text                    Symbols            Misc
+-------------------------------------------------------------------
+_s_: line...        _j_: in file...        _l_: libraries/features...
+_o_: outline...     _J_: in workspace...   _h_: search history...
+_p_: in project...  _v_: this var         
+                    _V_: some var...
+                    _x_: refs
+"
+  ("i" #'consult-isearch-history)
+  ("j" #'consult-lsp-file-symbols)
+  ("J" #'consult-lsp-symbols      )
+  ("l" (lambda () (interactive "P")
+         (call-interactively
+          (if % #'find-library-other-window
+            #'find-library))))
+  ("o" #'consult-outline)
+  ("p" #'consult-ripgrep)
+  ("s" #'consult-line)
+  ("v" #'find-variable-at-point )
+  ("V" #'find-variable)
+  ("x" #'projectile-find-references))
+
+
+;;
+;;; Tabs
+;;
+
+(defhydra cmx-hydra/tab
+  ( :color blue
+    :inherit (cmx-hydra/base/heads))
+  "[ceamx/tab]"
+  ("n" #'tab-new))
+
+
+;;
+;;; Toggles
+;;
+
+(defhydra cmx-hydra/toggle
+  (:color blue
+          :inherit (cmx-hydra/base/heads))
+  "
+[ceamx/toggle]
+---------------------------------------------------------------------------------
+_f_: flycheck
+_L_: linums
+"
+  ("L" #'line-number-mode)
+  ("f" #'flycheck-mode))
+
+
+;;
+;;; Window Management
+;;
+
+(defhydra cmx-hydra/window (:hint nil)
+  "
+[ceamx/window]
+---------------------------------------------------------------------------------
+Movement^^    ^Split^         ^Switch^		^Resize^
+---------------------------------------------------------------------------------
+_h_ ←       	_v_ertical      _b_uffer		  _q_ X←
+_j_ ↓        	_x_ horizontal	_f_ind files	_w_ X↓
+_k_ ↑        	_z_ undo      	_a_ce 1		    _e_ X↑
+_l_ →        	_Z_ reset      	_s_wap		    _r_ X→
+_F_ollow      _D_lt Other   	_S_ave		    max_i_mize
+_SPC_ cancel	_o_nly this   	_d_elete	
+"
+  ("h" #'windmove-left)
+  ("j" #'windmove-down)
+  ("k" #'windmove-up)
+  ("l" #'windmove-right)
+  ("q" #'hydra-move-splitter-left)
+  ("w" #'hydra-move-splitter-down)
+  ("e" #'hydra-move-splitter-up)
+  ("r" #'hydra-move-splitter-right)
+  ("b" #'consult-buffer)
+  ("f" #'projectile-find-file)
+  ("F" #'follow-mode)
+  ("a" (lambda ()
+         (interactive)
+         (ace-window 1)
+         ;; FIXME: does this exist?
+         (add-hook 'ace-window-end-once-hook
+                   #'cmx-hydra/window/body)))
+  ("v" (lambda ()
+         (interactive)
+         (split-window-right)
+         (windmove-right)))
+  ("x" (lambda ()
+         (interactive)
+         (split-window-below)
+         (windmove-down)))
+  ("s" (lambda ()
+         (interactive)
+         (ace-window 4)
+         (add-hook 'ace-window-end-once-hook
+                   'cmx-hydra/window/body)))
+  ("S" save-buffer)
+  ("d" delete-window)
+  ("D" (lambda ()
+         (interactive)
+         (ace-window 16)
+         (add-hook 'ace-window-end-once-hook
+                   #'cmx-hydra/window/body)))
+  ("o" delete-other-windows)
+  ("i" ace-maximize-window)
+  ("z" (progn
+         (winner-undo)
+         (setq this-command #'winner-undo)))
+  ("Z" winner-redo)
+  ("SPC" nil))
+
 
 ;; (+general-global-menu! "window" "w"
 ;;   "?" 'split-window-vertically
@@ -540,6 +624,40 @@
 ;;             (if (window-prev-sibling)
 ;;                 #'enlarge-window
 ;;               #'shrink-window)))))
+
+
+;; via <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
+(require 'rect)
+(defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
+                                     :color pink
+                                     :hint nil
+                                     :post (deactivate-mark))
+  "
+  ^_k_^       _w_ copy      _o_pen       _N_umber-lines            |\\     -,,,--,,_
+_h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..  \-;;,_
+  ^_j_^       _d_ kill      _c_lear      _r_eset-region-mark      |,4-  ) )_   .;.(  `'-'
+^^^^          _u_ndo        _g_ quit     ^ ^                     '---''(./..)-'(_\_)
+"
+  ("k" rectangle-previous-line)
+  ("j" rectangle-next-line)
+  ("h" rectangle-backward-char)
+  ("l" rectangle-forward-char)
+  ("d" kill-rectangle)                    ;; C-x r k
+  ("y" yank-rectangle)                    ;; C-x r y
+  ("w" copy-rectangle-as-kill)            ;; C-x r M-w
+  ("o" open-rectangle)                    ;; C-x r o
+  ("t" string-rectangle)                  ;; C-x r t
+  ("c" clear-rectangle)                   ;; C-x r c
+  ("e" rectangle-exchange-point-and-mark) ;; C-x C-x
+  ("N" rectangle-number-lines)            ;; C-x r N
+  ("r" (if (region-active-p)
+           (deactivate-mark)
+         (rectangle-mark-mode 1)))
+  ("u" undo nil)
+  ("g" nil))      ;; ok
+
+;; TODO: move this to `init-keybinds'
+(global-set-key (kbd "C-x SPC") 'hydra-rectangle/body)
 
 
 

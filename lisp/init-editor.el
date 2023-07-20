@@ -49,6 +49,7 @@
                                                           (?~ . ?~)))))))
 
 (use-package editorconfig
+  :commands (editorconfig-mode)
   :config (editorconfig-mode 1))
 
 

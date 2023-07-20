@@ -75,18 +75,6 @@
   ;; Always find references of symbol at point.
   (setq xref-prompt-for-identifier nil))
 
-;; TODO: find another way to set these after general?
-;;       `+general-global-file' invocation cannot be at top-level
-;;       maybe doom's `after!'?
-(use-feature general
-  :config
-  (+general-global-file
-    ;; "R" 'cmx/rename-current-file
-    "C" 'cmx/copy-this-file
-    "D" 'cmx/delete-this-file
-    "R" 'cmx/move-this-file
-    ))
-
 
 ;;
 ;;; Autosaves
