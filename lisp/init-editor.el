@@ -111,5 +111,35 @@
   (global-aggressive-indent-mode 1))
 
 
+;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;;; drag-stuff :: Move stuff around in arbitrary directions
+;;  <https://github.com/rejeep/drag-stuff.el>
+;;
+;; As of [2023-07-20], this package appears to be abandoned. , the last update was
+;; in 2017.
+;;
+;;;; Issues
+;;
+;; Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
+;; recent versions of Emacs:
+;;
+;; <https://github.com/rejeep/drag-stuff.el/issues/36>
+;;
+;;;; Alternatives
+;;
+;; I haven't yet found any other package to move arbitrary regions up/down while
+;; preserving column position.
+;;
+;; `move-text-mode' <https://github.com/emacsfodder/move-text>, claims to do
+;; this but fails pretty badly, moving the region/selection to the first column
+;; regardless of its original position.
+
+(use-package drag-stuff
+  :bind
+  (([M-up]    . drag-stuff-up)
+   ([M-right] . drag-stuff-right)
+   ([M-down]  . drag-stuff-down)
+   ([M-left]  . drag-stuff-left)))
+
 (provide 'init-editor)
 ;;; init-editor.el ends here
