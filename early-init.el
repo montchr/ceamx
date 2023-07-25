@@ -1,4 +1,4 @@
-;;; early-init.el --- Early Init File -*- lexical-binding: t -*-
+;;; early-init.el --- Early Init File
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
