@@ -23,26 +23,29 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;  
-
 ;;; Code:
 
-(use-feature emacs
-  :init
-  (when +sys-mac-p
-    ;; macOS: Show window decorations.
-    (add-to-list 'default-frame-alist '(undecorated . nil))
+(when +sys-mac-p
+  ;; macOS: Show window decorations.
+  (add-to-list 'default-frame-alist '(undecorated . nil))
 
-    ;; macOS: GUI menu bar is necessary otherwise Emacs will be treated as a
-    ;; non-application OS window (e.g. no focus capture). Menu bar is, however,
-    ;; ugly in terminal frames.
-    (defun cmx/restore-gui-menu-bar-h (&optional frame)
-      (when-let (frame (or frame (selected-frame)))
-        (when (display-graphic-p frame)
-          (set-frame-parameter frame 'menu-bar-lines 1))))
-    (add-hook 'window-setup-hook #'cmx/restore-gui-menu-bar-h)
-    (add-hook 'after-make-frame-functions #'cmx/restore-gui-menu-bar-h)))
+  ;; macOS: GUI menu bar is necessary otherwise Emacs will be treated as a
+  ;; non-application OS window (e.g. no focus capture). Menu bar is, however,
+  ;; ugly in terminal frames.
+  (defun cmx/restore-gui-menu-bar-h (&optional frame)
+    (when-let (frame (or frame (selected-frame)))
+      (when (display-graphic-p frame)
+        (set-frame-parameter frame 'menu-bar-lines 1))))
+  (add-hook 'window-setup-hook #'cmx/restore-gui-menu-bar-h)
+  (add-hook 'after-make-frame-functions #'cmx/restore-gui-menu-bar-h))
+
+;; Stop C-z from minimizing windows under OS X
+(defun cmx/maybe-suspend-frame ()
+  (interactive)
+  (unless (and +sys-mac-p window-system)
+    (suspend-frame)))
+(global-set-key (kbd "C-z") #'cmx/maybe-suspend-frame)
+
 
 (provide 'init-frame)
 ;;; init-frame.el ends here

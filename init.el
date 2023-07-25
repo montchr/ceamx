@@ -74,22 +74,17 @@
 
 (when +graphical-p
   (require 'lib-gui))
-(require 'init-frame)
+
+(require 'init-frame-hooks)
+(require 'init-xterm)
 (require 'init-theme)
+(require 'init-frame)
 (require 'init-modeline)
-
-
-;;
-;;; === HYDRAS + KEYBINDS ===
-;;
 
 ;;(require 'init-keys-meow)
 (require 'init-hydras)
 (require 'init-keybinds)
 (require 'init-evil)
-;;
-;;; === INTERACTION ===
-;;
 
 (require 'init-clippy)
 (require 'init-window)

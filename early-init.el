@@ -131,32 +131,6 @@ Use this for files that change often, like data and cache files.")
 (when (functionp 'json-serialize)
   (setq read-process-output-max (* 1024 1024 8)))
 
-;; Avoid expensive visual elements before UI initialization.
-(setq frame-inhibit-implied-resize t)
-(push '(menu-bar-lines . 0) default-frame-alist)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-(push '(horizontal-scroll-bars . nil) default-frame-alist)
-
-;; Prevent early flashes of unstyled UI.
-(setq-default
- ;; mode-line-format nil
- default-frame-alist
- '((background-color . "#3F3F3F")       ; Default background color
-   (bottom-divider-width . 1)           ; Thin horizontal window divider
-   (foreground-color . "#DCDCCC")       ; Default foreground color
-   (left-fringe . 8)                    ; Thin left fringe
-   (right-divider-width . 1)            ; Thin vertical window divider
-   (right-fringe . 8)                   ; Thin right fringe
-   (undecorated . t)))                  ; Remove extraneous OS window system decorations
-
-;; Basic font configuration.
-;; `fontaine' will handle fonts once loaded in `init-theme'.
-(push '(font . "Iosevka") default-frame-alist)
-(set-face-font 'default "Iosevka")
-(set-face-font 'variable-pitch "Inter")
-(copy-face 'default 'fixed-pitch)
-
 ;; Ignore Xorg resources.
 (advice-add #'x-apply-session-resources :override #'ignore)
 

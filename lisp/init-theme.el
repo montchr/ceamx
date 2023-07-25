@@ -28,6 +28,38 @@
 
 ;;; Code:
 
+;; Don't prompt to confirm theme safety.
+;; This also has the benefit of avoiding problems with
+;; first-time startup on Emacs > 26.3.
+(setq custom-safe-themes t)
+
+;; If you don't customize it, this is the theme you get.
+(setq-default custom-enabled-themes '(modus-vivendi))
+
+;; Ensure that themes will be applied even if they have not been customized
+(defun cmx-reapply-themes ()
+  "Forcibly load the themes listed in `custom-enabled-themes'."
+  (dolist (theme custom-enabled-themes)
+    (unless (custom-theme-p theme)
+      (load-theme theme)))
+  (custom-set-variables `(custom-enabled-themes (quote ,custom-enabled-themes))))
+
+(add-hook 'elpaca-after-init-hook 'cmx-reapply-themes)
+
+;; Toggle between light and dark theme.
+
+(defun light ()
+  "Activate a light color theme."
+  (interactive)
+  (setq custom-enabled-themes '(modus-operandi-tinted))
+  (cmx-reapply-themes))
+
+(defun dark ()
+  "Activate a dark color theme."
+  (interactive)
+  (setq custom-enabled-themes '(modus-vivendi))
+  (cmx-reapply-themes))
+
 ;;; --- modus-themes ---
 
 (use-package modus-themes
