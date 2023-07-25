@@ -100,6 +100,10 @@
 (when (file-exists-p custom-file)
   (add-hook 'elpaca-after-init-hook (lambda () (load custom-file 'noerror))))
 
+;; Wait for all packages to initialize in non-interactive mode.
+(when noninteractive
+  (elpaca-wait))
+
 (provide 'init)
 ;; Local Variables:
 ;; no-byte-compile: t
