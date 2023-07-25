@@ -39,18 +39,13 @@
          ([remap describe-key]      . helpful-key)))
 
 (use-package flycheck
-  :commands (flycheck-mode)
-  ;; TODO: enable -- but not in `emacs-lisp-mode' due to endless issues with
-  ;; undefined variables and functions etc.
-  ;; :disabled
-  :custom
-  (flycheck-emacs-lisp-load-path 'inherit))
-
-
-
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; GNU Hyperbole
-;;
+  :commands (global-flycheck-mode)
+  :init
+  (setq-default flycheck-emacs-lisp-load-path 'inherit)
+  (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled))
+  (setq-default flycheck-global-modes '(not org-mode))
+  :config
+  (global-flycheck-mode +1))
 
 ;; FIXME: causes startup errors!
 ;; (use-package hyperbole
