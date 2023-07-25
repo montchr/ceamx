@@ -1,4 +1,4 @@
-;;; init-modeline.el --- Modeline -*- lexical-binding: t -*-
+;;; init-ui-modeline.el --- Modeline -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -36,5 +36,5 @@
 ;; Wait until `diminish` is activated so its use-package keyword is installed
 (elpaca-wait) 
 
-(provide 'init-modeline)
-;;; init-modeline.el ends here
+(provide 'init-ui-modeline)
+;;; init-ui-modeline.el ends here

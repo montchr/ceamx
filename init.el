@@ -63,9 +63,11 @@
 
 (require 'init-frame-hooks)
 (require 'init-xterm)
-(require 'init-theme)
+(require 'init-ui-theme)
+(require 'init-ui-font)
 (require 'init-frame)
-(require 'init-modeline)
+(require 'init-ui-icons)
+(require 'init-ui-modeline)
 
 ;;(require 'init-keys-meow)
 (require 'init-hydras)
