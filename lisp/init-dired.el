@@ -35,5 +35,11 @@
   (dired-listing-switches "-alh" "Human friendly file sizes.")
   (dired-kill-when-opening-new-dired-buffer t))
 
+;; <https://github.com/alexluigit/dirvish>
+(use-package dirvish
+  :defer t
+  :config
+  (dirvish-override-dired-mode))
+
 (provide 'init-dired)
 ;;; init-dired.el ends here
