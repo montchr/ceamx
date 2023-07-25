@@ -37,6 +37,7 @@
          ("M-*" . tempel-insert))
 
   :init
+  (setq tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
 
   ;; Setup completion at point
   (defun cmx-tempel-setup-capf ()
@@ -51,16 +52,13 @@
                 (cons #'tempel-expand
                       completion-at-point-functions)))
 
-  (add-hook 'prog-mode-hook '+tempel/setup-capf)
-  (add-hook 'text-mode-hook '+tempel/setup-capf)
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook #'cmx-tempel-setup-capf)
+    ;; See also `global-tempel-abbrev-mode'.
+    (add-hook hook #'tempel-abbrev-mode)))
 
-  ;; Optionally make the Tempel templates available to Abbrev,
-  ;; either locally or globally. `expand-abbrev' is bound to C-x '.
-  ;; (add-hook 'prog-mode-hook #'tempel-abbrev-mode)
-  ;; (global-tempel-abbrev-mode)
-  )
-
-(use-package tempel-collection)
+(use-package tempel-collection
+  :after tempel)
 
 (provide 'init-templates)
 ;;; init-templates.el ends here
