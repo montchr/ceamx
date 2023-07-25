@@ -441,7 +441,10 @@ _p_: in project...  _v_: this var
   ( :color blue
     :inherit (cmx-hydra/base/heads))
   "[ceamx/tab]"
-  ("n" #'tab-new))
+  ("h" #'tab-previous "prev")
+  ("l" #'tab-next "next")
+  ("n" #'tab-new "new")
+  ("t" #'tab-recent "recent"))
 
 ;;; Toggles
 
