@@ -473,10 +473,10 @@ _h_   _l_     _x_ horizontal	_f_ind files	_w_ X↓
 _F_ollow      _D_lt Other   	_S_ave		    max_i_mize
 _SPC_ cancel	_o_nly this   	_d_elete	
 "
-  ("h" #'windmove-left)
-  ("j" #'windmove-down)
-  ("k" #'windmove-up)
-  ("l" #'windmove-right)
+  ("h" #'windmove-left   :color blue)
+  ("j" #'windmove-down   :color blue)
+  ("k" #'windmove-up     :color blue)
+  ("l" #'windmove-right  :color blue)
   ("q" #'hydra-move-splitter-left)
   ("w" #'hydra-move-splitter-down)
   ("e" #'hydra-move-splitter-up)
@@ -503,19 +503,19 @@ _SPC_ cancel	_o_nly this   	_d_elete
          (ace-window 4)
          (add-hook 'ace-window-end-once-hook
                    'cmx-hydra/window/body)))
-  ("S" save-buffer)
-  ("d" delete-window)
+  ("S" #'burly-bookmark-windows)
+  ("d" #'delete-window)
   ("D" (lambda ()
          (interactive)
          (ace-window 16)
          (add-hook 'ace-window-end-once-hook
                    #'cmx-hydra/window/body)))
-  ("o" delete-other-windows)
-  ("i" ace-maximize-window)
+  ("o" #'delete-other-windows  :color blue)
+  ("i" #'ace-maximize-window   :color blue)
   ("z" (progn
          (winner-undo)
          (setq this-command #'winner-undo)))
-  ("Z" winner-redo)
+  ("Z" #'winner-redo)
   ("SPC" nil))
 
 
