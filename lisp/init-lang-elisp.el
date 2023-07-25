@@ -43,20 +43,17 @@
   :bind ( :map lispy-mode-map
           ("C-a" . beginning-of-line)))
 
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;; 
 ;;; package-lint :: A linting library for elisp package metadata
 ;;  <https://github.com/purcell/package-lint>
 
-(use-package package-lint
-  :commands (package-lint-current-buffer))
+(use-package package-lint :defer t)
 
 ;; Flycheck integration
 ;; <https://github.com/purcell/flycheck-package>
 (use-package flycheck-package
   :after (flycheck package-lint)
-  :config
-  (flycheck-package-setup)
-  :hook (emacs-lisp-mode))
+  :config (flycheck-package-setup))
 
 (provide 'init-lang-elisp)
 ;;; init-lang-elisp.el ends here
