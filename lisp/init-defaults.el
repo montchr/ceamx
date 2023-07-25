@@ -145,6 +145,8 @@
 ;; Restore Emacs session buffers, their file names, major modes, buffer
 ;; positions, window+frame configuration, "some important global variables".
 (desktop-save-mode 1)
+(setq desktop-dirname (file-name-as-directory +path-local-dir))
+(setq desktop-save t)
 
 (provide 'init-defaults)
 ;;; init-defaults.el ends here
