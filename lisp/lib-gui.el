@@ -8,7 +8,6 @@
 ;; Modified:  06 July 2023
 ;; Created:  06 July 2023
 ;; Version:  0.1.0
-;; Package-Requires: ((emacs "28.1"))
 
 ;; This file is NOT part of GNU Emacs.
 

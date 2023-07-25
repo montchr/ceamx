@@ -5,7 +5,6 @@
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "28.1"))
 
 ;; This file is NOT part of GNU Emacs.
 

@@ -13,7 +13,6 @@
 ;; Version: 0.0.1
 ;; Keywords: local
 ;; Homepage: https://github.com/`(cl-find-if-not #'string-empty-p (list (cdr (doom-call-process "git" "config" "github.user")) user-login-name))`/`(file-name-base buffer-file-name)`
-;; Package-Requires: ((emacs "28.1"))
 
 ;; This file is not part of GNU Emacs.
 
