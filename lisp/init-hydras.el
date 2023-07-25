@@ -73,8 +73,7 @@
 (use-package major-mode-hydra
   :after '(hydra pretty-hydra)
   :bind
-  ;; TODO: verify this is what we want
-  ("SPC m" . major-mode-hydra))
+  ("M-SPC" . major-mode-hydra))
 
 (elpaca-wait)
 
