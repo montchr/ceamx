@@ -387,9 +387,8 @@
   ;; Both < and C-+ work reasonably well.
   (setq consult-narrow-key "<") ;; (kbd "C-+")
 
-  ;; TODO: Make narrowing help available in the minibuffer.
-  ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
+  ;; Make narrowing help available in the minibuffer.
+  (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'embark-prefix-help-command)
 
   ;;; Use Orderless as pattern compiler for consult-grep/ripgrep/find.
   ;;; via <https://github.com/minad/consult/wiki#use-orderless-as-pattern-compiler-for-consult-grepripgrepfind>
