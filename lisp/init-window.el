@@ -36,11 +36,13 @@
 
 (use-feature winner)
 
-
 (use-package burly
   :elpaca (burly :host github :repo "alphapapa/burly.el")
   :init
   (burly-tabs-mode))
+
+(use-package olivetti :defer t
+  :hook (org-mode . olivetti-mode))
 
 (provide 'init-window)
 ;;; init-window.el ends here
