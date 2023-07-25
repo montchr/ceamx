@@ -146,7 +146,7 @@
 ;; positions, window+frame configuration, "some important global variables".
 (desktop-save-mode 1)
 (setq desktop-dirname (file-name-as-directory +path-local-dir))
-(setq desktop-save t)
+(setq desktop-save 'ask-if-new)
 
 (provide 'init-defaults)
 ;;; init-defaults.el ends here
