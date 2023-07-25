@@ -93,8 +93,11 @@
 (require 'init-lang-misc)
 
 ;; Auto-start Emacs daemon if not already running.
-(unless (and (fboundp 'server-running-p) (server-running-p))
-  (server-start))
+(defun +maybe-start-server ()
+  (require 'server)
+  (unless (and (fboundp 'server-running-p) (server-running-p))
+    (server-start)))
+(add-hook 'elpaca-after-init-hook #'+maybe-start-server)
 
 ;; Load custom file after all packages have loaded.
 (when (file-exists-p custom-file)
