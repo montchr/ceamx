@@ -7,7 +7,6 @@
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;;         Bailey Ling <bling@live.ca>
 ;; URL: https://git.sr.ht/~montchr/ceamx
-;; Modified: 29 January, 2023
 ;; Created: 29 January, 2023
 ;; Version: 0.1.0
 

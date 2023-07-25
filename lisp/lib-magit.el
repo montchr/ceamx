@@ -6,7 +6,6 @@
 
 ;; Author: Henrik Lissner
 ;; URL: https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/tools/magit/autoload.el
-;; Modified: 22 January, 2023
 ;; Created: 22 January, 2023
 ;; Version: 0.1.0
 

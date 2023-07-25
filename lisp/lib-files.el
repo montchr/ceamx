@@ -7,7 +7,6 @@
 ;; Author: Henrik Lissner
 ;;         Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
-;; Modified: 08 July 2023
 ;; Created: 23 January 2023
 ;; Version: 0.1.0
 

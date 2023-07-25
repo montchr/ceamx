@@ -6,7 +6,6 @@
 ;; Author: Steve Purcell
 ;;         Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
-;; Modified: 20 July 2023
 ;; Created: 20 July 2023
 
 ;; This program is free software; you can redistribute it and/or modify
