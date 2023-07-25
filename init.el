@@ -90,6 +90,7 @@
 ;; languages
 (require 'init-lang-elisp)
 (require 'init-lang-nix)
+(require 'init-lang-yaml)
 (require 'init-lang-misc)
 
 ;; Auto-start Emacs daemon if not already running.
