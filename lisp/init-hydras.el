@@ -143,8 +143,8 @@
     ("q" (enter-hydra! cmx-hydra/session/body) "Session")
     ;; r ... ?
     ("s" (enter-hydra! cmx-hydra/search/body) "Search")
-    ("t" (enter-hydra! cmx-hydra/toggle/body) "Toggles")
-    ("T" (enter-hydra! cmx-hydra/tab/body) "Tabs")
+    ("t" (enter-hydra! cmx-hydra/tab/body) "Tabs")
+    ("T" (enter-hydra! cmx-hydra/toggle/body) "Toggles")
     ;; u ... ?
     ;; v ... ?
     ("w" (enter-hydra! cmx-hydra/window/body) "Windows")
