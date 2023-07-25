@@ -32,17 +32,7 @@
   :hook (emacs-lisp-mode)
   :diminish eldoc-mode)
 
-
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; Elsa :: Emacs Lisp Static Analyser
-;;  <https://github.com/emacs-elsa/Elsa>
-
-;; TODO
-;; (use-package elsa
-;;   :defer t)
-
-
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;; 
 ;;; lispy :: "short and sweet LISP editing"
 ;;  <https://github.com/abo-abo/lispy>
 

@@ -28,7 +28,6 @@
 
 ;;; Code:
 
-
 (use-package tempel
   ;; :custom
   ;; ;; Require trigger prefix before template name when completing.
@@ -40,7 +39,7 @@
   :init
 
   ;; Setup completion at point
-  (defun +tempel/setup-capf ()
+  (defun cmx-tempel-setup-capf ()
     ;; Add the Tempel Capf to `completion-at-point-functions'.
     ;; `tempel-expand' only triggers on exact matches. Alternatively use
     ;; `tempel-complete' if you want to see all matches, but then you

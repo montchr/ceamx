@@ -7,8 +7,6 @@
 ;; Author: Henrik Lissner
 ;;         Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
-;; Modified: 08 July 2023
-;; Created: 22 January 2023
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "28.1"))
 
@@ -41,27 +39,24 @@
 ;;; Commentary:
 
 ;;  Helpers lifted from Doom Emacs standard library.
-;;
-;;  - [2023-07-08]: <https://github.com/doomemacs/doomemacs/blob/07fca786154551f90f36535bfb21f8ca4abd5027/lisp/doom-lib.el>
-;;  - [2023-01-22]: <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-lib.el>
 
 ;;; Code:
 
-(defun cmx/unquote (exp)
+(defun cmx-unquote (exp)
   "Return EXP unquoted."
   (declare (pure t) (side-effect-free t))
   (while (memq (car-safe exp) '(quote function))
     (setq exp (cadr exp)))
   exp)
 
-(defun cmx/keyword-intern (str)
-  "Converts STR (a string) into a keyword (`keywordp')."
+(defun cmx-keyword-intern (str)
+  "Convert STR (a string) into a keyword (`keywordp')."
   (declare (pure t) (side-effect-free t))
   (cl-check-type str string)
   (intern (concat ":" str)))
 
-(defun cmx/keyword-name (keyword)
-  "Returns the string name of KEYWORD (`keywordp') minus the leading colon."
+(defun cmx-keyword-name (keyword)
+  "Return the string name of KEYWORD (`keywordp') minus the leading colon."
   (declare (pure t) (side-effect-free t))
   (cl-check-type keyword keyword)
   (substring (symbol-name keyword) 1))

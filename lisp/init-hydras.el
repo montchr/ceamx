@@ -86,10 +86,7 @@
 
 (elpaca-wait)
 
-
-;; 
-;;; Shared Hydra Parts
-;;
+;;; Common heads
 
 (defhydra cmx-hydra/base (:color blue)
   "base"
@@ -108,11 +105,7 @@
    "other buffer")
   ("SPC" #'project-find-file "find file..."))
 
-
-;; 
 ;;; Main Hydra
-;;
-
 
 (pretty-hydra-define cmx-hydra/main
   ( :title "ceamx/"
@@ -162,10 +155,7 @@
     ;; z ... ?
     )))
 
-
-;;
 ;;; Applications
-;;
 
 (pretty-hydra-define cmx-hydra/applications
   ( :title "ceamx/applications/"
@@ -189,8 +179,6 @@
    "Commands"
    (("m" compose-mail "Compose mail"))))
 
-
-
 (pretty-hydra-define cmx-hydra/packages
   ( :title "ceamx/applications/packages/"
     :hint nil
@@ -208,10 +196,7 @@
     ("v" #'elpaca-visit)
     ("U" #'elpaca-update-all "update all"))))
 
-
-;;
 ;;; Bookmarks
-;;
 
 (pretty-hydra-define cmx-hydra/bookmark
   ( :title "ceamx/bookmark/"
@@ -222,10 +207,7 @@
    (("F" #'burly-bookmark-frames  "frames")
     ("W" #'burly-bookmark-windows "windows"))))
 
-
-;;
 ;;; Buffers
-;;
 
 (pretty-hydra-define cmx-hydra/buffer
   ( :title "ceamx/buffer/"
@@ -247,6 +229,7 @@
     ("S" #'save-some-buffers      "save all..."))
 
    "Close"
+   ;; TODO: red feels weird, maybe reconsider
    (("d" #'kill-current-buffer 		"close buf"      :color red)
     ("k" #'kill-this-buffer       "close buf+win"  :color red)
     ("K" #'kill-other-buffers     "close others"))
@@ -257,10 +240,7 @@
     ("N" #'evil-buffer-new       "new")
     ("x" #'scratch-buffer          "*scratch*"))))
 
-
-;;
 ;;; Code / LSP
-;;
 
 (pretty-hydra-define cmx-hydra/code
   ( :title "ceamx/code/"
@@ -271,10 +251,7 @@
    (("a" #'lsp-execute-code-action "action"    :column "Refactor")
     ("r" #'lsp-rename              "rename..." :column "Refactor"))))
 
-
-;;
 ;;; Emacs Lisp / "Eval"
-;;
 
 ;; FIXME: prob should be some other name
 (defhydra cmx-hydra/eval (:color blue :inherit (cmx-hydra/base/heads))
@@ -289,10 +266,7 @@
   ("E" #'eval-expression)
   ("I" (load-file user-init-file) "init.el"))
 
-
-;;
 ;;; Files
-;;
 
 (pretty-hydra-define cmx-hydra/file
   ( :title "ceamx/file/"
@@ -322,10 +296,7 @@
      "diff with...")
     ("f" #'find-file "find..."))))
 
-
-;;
 ;;; Frames
-;;
 
 (pretty-hydra-define cmx-hydra/frame
   ( :title "ceamx/frame/"
@@ -343,9 +314,7 @@
     ("N" #'make-frame-on-monitor         "create frame on monitor...")
     ("R" #'set-frame-name                "rename frame"))))
 
-;;
 ;;; Git / Version Control
-;;
 
 (pretty-hydra-define cmx-hydra/git
   ( :title "ceamx/git/"
@@ -372,10 +341,7 @@
    ""
    (("d" #'magit-dispatch))))
 
-
-;;
 ;;; Help
-;;
 
 (pretty-hydra-define cmx-hydra/help
   ( :title "ceamx/help/"
@@ -397,9 +363,7 @@
    "Apropos"
    (("l" #'apropos-library))))
 
-;;
 ;;; Org-Mode
-;;
 
 (pretty-hydra-define cmx-hydra/org
   ( :title "ceamx/org/"
@@ -418,10 +382,7 @@
   "org-capture"
   ("c" #'org-capture "capture..."))
 
-
-;;
 ;;; Project
-;;
 
 (pretty-hydra-define cmx-hydra/project
   ( :title "ceamx/project/"
@@ -436,20 +397,14 @@
 		("i" #'projectile-invalidate-cache  "invalidate cache")
     ("p" #'projectile-switch-project    "switch project..."))))
 
-
-;;
 ;;; Session
-;;
 
 (defhydra cmx-hydra/session (:color blue)
   "[ceamx/session]"
   ("r" #'restart-emacs           "restart")
   ("q" #'save-buffers-kill-emacs "save and quit"))
 
-
-;;
 ;;; Search
-;;
 
 (defhydra cmx-hydra/search
   ( :color blue
@@ -481,9 +436,7 @@ _p_: in project...  _v_: this var
   ("x" #'projectile-find-references))
 
 
-;;
 ;;; Tabs
-;;
 
 (defhydra cmx-hydra/tab
   ( :color blue
@@ -491,10 +444,7 @@ _p_: in project...  _v_: this var
   "[ceamx/tab]"
   ("n" #'tab-new))
 
-
-;;
 ;;; Toggles
-;;
 
 (defhydra cmx-hydra/toggle
   (:color blue
@@ -508,21 +458,18 @@ _L_: linums
   ("L" #'line-number-mode)
   ("f" #'flycheck-mode))
 
-
-;;
 ;;; Window Management
-;;
 
 (defhydra cmx-hydra/window (:hint nil)
   "
 [ceamx/window]
----------------------------------------------------------------------------------
-Movement^^    ^Split^         ^Switch^		^Resize^
----------------------------------------------------------------------------------
-_h_ ←       	_v_ertical      _b_uffer		  _q_ X←
-_j_ ↓        	_x_ horizontal	_f_ind files	_w_ X↓
-_k_ ↑        	_z_ undo      	_a_ce 1		    _e_ X↑
-_l_ →        	_Z_ reset      	_s_wap		    _r_ X→
+---------------------------------------------------------
+^Movement^    ^Split^         ^Switch^		  ^Resize^
+---------------------------------------------------------
+  ^_k_^       _v_ertical      _b_uffer		  _q_ X←
+_h_   _l_     _x_ horizontal	_f_ind files	_w_ X↓
+  ^_j_^       _z_ undo      	_a_ce 1		    _e_ X↑
+              _Z_ reset      	_s_wap		    _r_ X→
 _F_ollow      _D_lt Other   	_S_ave		    max_i_mize
 _SPC_ cancel	_o_nly this   	_d_elete	
 "
@@ -658,7 +605,6 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 ;; TODO: move this to `init-keybinds'
 (global-set-key (kbd "C-x SPC") 'hydra-rectangle/body)
-
 
 
 (provide 'init-hydras)

@@ -88,14 +88,6 @@
 ;;; === USE-PACKAGE ============================================================
 ;;  <https://github.com/jwiegley/use-package>
 
-(defmacro use-feature (name &rest args)
-  "Like `use-package' but accounting for asynchronous installation.
-  NAME and ARGS are in `use-package'."
-  (declare (indent defun))
-  `(use-package ,name
-     :elpaca nil
-     ,@args))
-
 ;; Install use-package support.
 (elpaca elpaca-use-package
   ;; Enable :elpaca use-package keyword.
@@ -115,6 +107,14 @@
           use-package-compute-statistics t)
   (setq use-package-verbose nil
         use-package-expand-minimally t))
+
+(defmacro use-feature (name &rest args)
+  "Like `use-package' but accounting for asynchronous installation.
+NAME and ARGS are in `use-package'."
+  (declare (indent defun))
+  `(use-package ,name
+     :elpaca nil
+     ,@args))
 
 (provide 'init-packages)
 ;;; init-packages.el ends here
