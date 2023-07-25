@@ -112,7 +112,6 @@
     :color blue
     :inherit (cmx-hydra/base/heads)
     :body-pre (cmx-hydra-reset)
-    :idle 0.5
     :columns 4)
 
   (""
