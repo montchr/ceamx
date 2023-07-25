@@ -38,6 +38,8 @@
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
 
+;; DEPRECATED: all of these except for the mac predicate are obvious or simple
+;;             enough on their own.
 (defconst +graphical-p (display-graphic-p))
 (defconst +xorg-p (memq window-system '(x)))
 (defconst +user-root-p (string-equal "root" (getenv "USER")))
