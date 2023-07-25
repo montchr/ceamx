@@ -57,6 +57,7 @@
   (kept-old-versions 5)
   (require-final-newline t)
   (version-control t))
+(setq! backup-by-copying t)
 
 (use-feature autorevert
   :defer 2
