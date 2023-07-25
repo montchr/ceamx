@@ -52,8 +52,6 @@
 
 (require 'lib-hydras)
 
-
-
 (use-package hydra
   :demand t
   :commands defhydra)
@@ -63,16 +61,12 @@
 (use-package use-package-hydra
   :after '(hydra))
 
-
-;; 
 ;;; pretty-hydra :: Major mode leader key powered by Hydra.
 ;;  <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 (use-package pretty-hydra
   :after '(hydra))
 
-
-;; 
 ;;; major-mode-hydra :: Major mode leader key powered by Hydra.
 ;;  <https://github.com/jerrypnz/major-mode-hydra.el>
 
@@ -215,9 +209,9 @@
   ("Switch"
    (("b" #'consult-project-buffer "in prj...")
     ("B" #'consult-buffer         "any...")
-    ("o" #'mode-line-other-buffer	"other"	     :color red)
-    ("[" #'previous-buffer        "prev"       :color red)
-    ("]" #'next-buffer            "next"       :color red))
+    ("o" #'mode-line-other-buffer	"other")
+    ("[" #'previous-buffer        "prev")
+    ("]" #'next-buffer            "next"))
 
    "File"
    (("r" #'revert-buffer          "revert...")
@@ -226,9 +220,8 @@
     ("S" #'save-some-buffers      "save all..."))
 
    "Close"
-   ;; TODO: red feels weird, maybe reconsider
-   (("d" #'kill-current-buffer 		"close buf"      :color red)
-    ("k" #'kill-this-buffer       "close buf+win"  :color red)
+   (("d" #'kill-current-buffer 		"close buf")
+    ("k" #'kill-this-buffer       "close buf+win")
     ("K" #'kill-other-buffers     "close others"))
 
    "Misc"
@@ -473,10 +466,13 @@ _h_   _l_     _x_ horizontal	_f_ind files	_w_ X↓
 _F_ollow      _D_lt Other   	_S_ave		    max_i_mize
 _SPC_ cancel	_o_nly this   	_d_elete	
 "
+  ;; I usually only need to move one window at a time,
+  ;; so red breaks flow.
   ("h" #'windmove-left   :color blue)
   ("j" #'windmove-down   :color blue)
   ("k" #'windmove-up     :color blue)
   ("l" #'windmove-right  :color blue)
+
   ("q" #'hydra-move-splitter-left)
   ("w" #'hydra-move-splitter-down)
   ("e" #'hydra-move-splitter-up)
@@ -504,7 +500,7 @@ _SPC_ cancel	_o_nly this   	_d_elete
          (add-hook 'ace-window-end-once-hook
                    'cmx-hydra/window/body)))
   ("S" #'burly-bookmark-windows)
-  ("d" #'delete-window)
+  ("d" #'delete-window :color blue)
   ("D" (lambda ()
          (interactive)
          (ace-window 16)
