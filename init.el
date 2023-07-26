@@ -78,7 +78,15 @@
 
 (require 'init-clippy)
 (require 'init-window)
+
+(require 'init-selection-vertico)
+(require 'init-selection-orderless)
+(require 'init-selection-marginalia)
+(require 'init-selection-consult)
 (require 'init-completion)
+(require 'init-embark)
+(require 'init-wgrep)
+
 (require 'init-editor)
 (require 'init-buffers)
 (require 'init-files)
