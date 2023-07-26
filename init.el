@@ -104,10 +104,13 @@
 (require 'init-lang-yaml)
 (require 'init-lang-misc)
 
-;; Auto-start Emacs daemon if not already running.
+(require 'init-fun)
+
 (defun +maybe-start-server ()
+  "Auto-start Emacs daemon if not already running."
   (require 'server)
-  (unless (and (fboundp 'server-running-p) (server-running-p))
+  (unless (and (fboundp 'server-running-p)
+               (server-running-p))
     (server-start)))
 (add-hook 'elpaca-after-init-hook #'+maybe-start-server)
 
