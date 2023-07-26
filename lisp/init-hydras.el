@@ -98,52 +98,51 @@
 
 ;;; Main Hydra
 
-(pretty-hydra-define cmx-hydra/main
+(defhydra cmx-hydra/main
   ( :title "ceamx/"
     :color blue
     :inherit (cmx-hydra/base/heads)
     :body-pre (cmx-hydra-reset)
     :columns 4)
+  "[ceamx/]"
+  ;;   "/" '(nil :which-key "search...")
+  ;;   "[" '(nil :which-key "previous...")
+  ;;   "]" '(nil :which-key "next...")
 
-  (""
-   (;;   "/" '(nil :which-key "search...")
-    ;;   "[" '(nil :which-key "previous...")
-    ;;   "]" '(nil :which-key "next...")
-
-    ("a" (enter-hydra! cmx-hydra/applications/body) "Applications")
-    ("b" (enter-hydra! cmx-hydra/buffer/body) "Buffer")
-    ("B" (enter-hydra! cmx-hydra/bookmark/body) "Bookmark")
-    ("c" (enter-hydra! cmx-hydra/code/body) "Code")
-    ;; d ... ?
-    ("e" (enter-hydra! cmx-hydra/eval/body) "Eval")
-    ("f" (enter-hydra! cmx-hydra/file/body) "File")
-    ("F" (enter-hydra! cmx-hydra/frame/body) "Frame")
-    ("g" (enter-hydra! cmx-hydra/git/body) "Git")
-    ("h" (enter-hydra! cmx-hydra/help/body) "Help")
-    ;;("i" (enter-hydra! cmx-hydra/insert/body) "Insert")
-    ;;("j" (enter-hydra! cmx-hydra/jump/body) "Jump")
-    ;;("J" (enter-hydra! cmx-hydra/journal/body) "Journal")
-    ;; k ... bookmarks ... ?
-    ;; l ... links ... ?
-    ;; m --- RESERVED: for major mode map
-    ;; M ... major mode hydras?
-    ;; TODO: 'notes'
-    ;; ("n" (enter-hydra! cmx-hydra/notes/body) "Notes")
-    ("o" (enter-hydra! cmx-hydra/org/body) "Org-Mode")
-    ("p" (enter-hydra! cmx-hydra/project/body) "Project")
-    ("q" (enter-hydra! cmx-hydra/session/body) "Session")
-    ;; r ... ?
-    ("s" (enter-hydra! cmx-hydra/search/body) "Search")
-    ("t" (enter-hydra! cmx-hydra/tab/body) "Tabs")
-    ("T" (enter-hydra! cmx-hydra/toggle/body) "Toggles")
-    ;; u ... ?
-    ;; v ... ?
-    ("w" (enter-hydra! cmx-hydra/window/body) "Windows")
-    ;; x ... ?
-    ("X" (enter-hydra! cmx-hydra/org-capture/body) "Capture")
-    ;; y ... ?
-    ;; z ... ?
-    )))
+  ("a" (enter-hydra! cmx-hydra/applications/body) "Applications")
+  ("b" (enter-hydra! cmx-hydra/buffer/body) "Buffer")
+  ("B" (enter-hydra! cmx-hydra/bookmark/body) "Bookmark")
+  ("c" (enter-hydra! cmx-hydra/code/body) "Code")
+  ;; d ... ?
+  ("e" (enter-hydra! cmx-hydra/eval/body) "Eval")
+  ("f" (enter-hydra! cmx-hydra/file/body) "File")
+  ("F" (enter-hydra! cmx-hydra/frame/body) "Frame")
+  ("g" (enter-hydra! cmx-hydra/git/body) "Git")
+  ("h" (enter-hydra! cmx-hydra/help/body) "Help")
+  ;;("i" (enter-hydra! cmx-hydra/insert/body) "Insert")
+  ;;("j" (enter-hydra! cmx-hydra/jump/body) "Jump")
+  ;;("J" (enter-hydra! cmx-hydra/journal/body) "Journal")
+  ;; k ... bookmarks ... ?
+  ;; l ... links ... ?
+  ;; m --- RESERVED: for major mode map
+  ;; M ... major mode hydras?
+  ;; TODO: 'notes'
+  ;; ("n" (enter-hydra! cmx-hydra/notes/body) "Notes")
+  ("o" (enter-hydra! cmx-hydra/org/body) "Org-Mode")
+  ("p" (enter-hydra! cmx-hydra/project/body) "Project")
+  ("q" (enter-hydra! cmx-hydra/session/body) "Session")
+  ;; r ... ?
+  ("s" (enter-hydra! cmx-hydra/search/body) "Search")
+  ("t" (enter-hydra! cmx-hydra/tab/body) "Tabs")
+  ("T" (enter-hydra! cmx-hydra/toggle/body) "Toggles")
+  ;; u ... ?
+  ;; v ... ?
+  ("w" (enter-hydra! cmx-hydra/window/body) "Windows")
+  ;; x ... ?
+  ("X" (enter-hydra! cmx-hydra/org-capture/body) "Capture")
+  ;; y ... ?
+  ;; z ... ?
+  )
 
 ;;; Applications
 
