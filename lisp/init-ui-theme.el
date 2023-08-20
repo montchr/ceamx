@@ -56,6 +56,14 @@
   (setq custom-enabled-themes '(modus-vivendi))
   (cmx-reapply-themes))
 
+(use-feature custom
+  :init
+  ;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+  (defvar after-enable-theme-hook nil)
+  (defun run-after-enable-theme-hook (&rest _args)
+    (run-hooks 'after-enable-theme-hook))
+  (advice-add 'enable-theme :after #'run-after-enable-theme-hook))
+
 (use-package modus-themes
   :demand t
   :config
