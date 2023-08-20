@@ -141,6 +141,12 @@
 ;; spells of inaccurate fontification immediately after scrolling."
 (setq fast-but-imprecise-scrolling t)
 
+;; Don’t compact font caches during garbage collection.
+;; NOTE: Set pre-emptively, anticipating lag from `doom-modeline',
+;;       as recommended in its readme.
+;;       <https://github.com/seagle0128/doom-modeline#faq>
+(setq inhibit-compacting-font-caches t)
+
 ;; Restore Emacs session buffers, their file names, major modes, buffer
 ;; positions, window+frame configuration, "some important global variables".
 ;; FIXME: conflicts with daemon on darwin
