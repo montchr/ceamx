@@ -22,12 +22,16 @@
 
 ;; Some packages look nicer with icons. The icons will be configured here.
 
+;; Icon fonts should be installed via Nix.
+
 ;;; Code:
 
-;; NOTE: Fonts are installed via Nix.
 (use-package all-the-icons
   :if (display-graphic-p))
 
+(use-package nerd-icons
+  :if (display-graphic-p)
+  :custom (nerd-icons-font-family "Symbols Nerd Font Mono"))
 
 (use-package svg-lib)
 
