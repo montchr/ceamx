@@ -77,11 +77,11 @@
 
 
 ;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; Apheleia :: Run code formatter on buffer contents without moving point
-;;  <https://github.com/radian-software/apheleia>
+;;; emacs-reformatter
+;;  <https://github.com/purcell/emacs-reformatter>
 
-(use-package apheleia
-  :init (apheleia-global-mode +1))
+(use-package reformatter
+  :functions (reformatter-define))
 
 
 ;; § ────────── ────────── ────────── ────────── ────────── ──────────

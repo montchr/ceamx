@@ -31,7 +31,14 @@
   ;; NOTE: `magit-section' is a hard dependency,
   ;;       but does not install automatically with `nix-mode'
   :after (magit-section)
-  :hook ((nix-mode . lsp-deferred)))
+  :functions (nix-mode-hook))
+
+(after! [nix-mode reformatter]
+  (reformatter-define nix-format-alejandra
+    :program "alejandra")
+  (dolist (fn '(lsp-deferred nix-format-alejandra-on-save-mode))
+    (add-hook 'nix-mode-hook fn)))
+
 
 (use-feature lsp-nix
   :after lsp-mode
