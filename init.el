@@ -98,12 +98,16 @@
 (require 'init-lsp)
 (require 'init-org)
 
-;; languages
+;;; languages
 (require 'init-lang-elisp)
 (require 'init-lang-nix)
 (require 'init-lang-yaml)
 (require 'init-lang-misc)
 
+;;; tools
+(require 'init-tools)
+
+;;; entertainment
 (require 'init-fun)
 
 (defun +maybe-start-server ()
