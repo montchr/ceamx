@@ -114,6 +114,12 @@
     (server-start)))
 (add-hook 'elpaca-after-init-hook #'+maybe-start-server)
 
+;; unfortunately
+(when (and +graphical-p +sys-mac-p)
+  (add-hook 'elpaca-after-init-hook
+            (lambda ()
+              (async-shell-command "yabai --restart-service"))))
+
 ;; Load custom file after all packages have loaded.
 (when (file-exists-p custom-file)
   (add-hook 'elpaca-after-init-hook (lambda () (load custom-file 'noerror))))
