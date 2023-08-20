@@ -30,9 +30,7 @@
 (display-time-mode -1)
 (setq column-number-mode t)
 
-(use-package diminish
-  :defer 10)
-
+(use-package diminish)
 ;; Wait until `diminish` is activated so its use-package keyword is installed
 (elpaca-wait) 
 
