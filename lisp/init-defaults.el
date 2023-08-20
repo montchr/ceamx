@@ -143,7 +143,8 @@
 
 ;; Restore Emacs session buffers, their file names, major modes, buffer
 ;; positions, window+frame configuration, "some important global variables".
-(desktop-save-mode 1)
+;; FIXME: conflicts with daemon on darwin
+;; (desktop-save-mode 1)
 (setq desktop-dirname (file-name-as-directory +path-local-dir))
 (setq desktop-save 'ask-if-new)
 
