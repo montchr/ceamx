@@ -28,6 +28,19 @@
 (use-package all-the-icons
   :if (display-graphic-p))
 
+
+(use-package svg-lib)
+
+(use-package kind-icon
+  :after (svg-lib corfu)
+  :config
+  (setq! kind-icon-use-icons (display-graphic-p))
+  (setq! kind-icon-default-face 'corfu-default)
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+  ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+  (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache))
+
+
 (provide 'init-ui-icons)
 ;;; init-ui-icons.el ends here
 
