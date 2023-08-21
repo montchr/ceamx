@@ -27,18 +27,16 @@
 
 ;;; Code:
 
-;; FIXME: ensure exists
-(defconst +path-notes-dir (file-name-as-directory "~/Documents/notes"))
-
-(defconst +org-capture-default-file (concat +path-notes-dir "inbox.org"))
+(defconst +org-capture-default-file
+  (expand-file-name
+   (concat +path-notes-dir "inbox.org"))
+  "Path to default inbox file for new org-capture entries.")
 
 (use-package org
   :init
-  ;; FIXME: use `+path-notes-dir'? 
-  (setq org-directory "~/Documents/notes/")
+  (setq org-directory (expand-file-name +path-notes-dir))
 
   :config
-
   (setq org-image-actual-width 300)
   (setq org-startup-with-inline-images t)
 
