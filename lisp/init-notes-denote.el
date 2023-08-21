@@ -1,0 +1,160 @@
+;;; init-notes-denote.el --- Denote configuration          -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; <https://protesilaos.com/emacs/denote>
+
+;;; Code:
+
+(use-package denote
+  :config
+  (setq denote-directory +path-notes-dir)
+  (setq denote-known-keywords '("emacs"))
+  (setq denote-infer-keywords t)
+  (setq denote-sort-keywords t)
+  (setq denote-prompts '(title keywords))
+  ;; TODO: exclude gtd
+  ;; (setq denote-excluded-directories-regexp nil)
+  (setq denote-excluded-keywords-regexp nil)
+  ;; Pick dates, where relevant, with Org's advanced interface:
+  (setq denote-date-prompt-use-org-read-date t)
+  (setq denote-allow-multi-word-keywords t)
+  (setq denote-date-format nil) ; read doc string
+  ;; By default, we do not show the context of links.  We just display
+  ;; file names.  This provides a more informative view.
+  ;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
+  ;; advanced.
+  (setq denote-backlinks-show-context t)
+  ;; If you use Markdown or plain text files (Org renders links as buttons
+  ;; right away)
+  (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
+  ;; We use different ways to specify a path for demo purposes.
+  (setq denote-dired-directories
+        (list denote-directory
+              (thread-last denote-directory (expand-file-name "attachments"))
+              (expand-file-name "~/Documents/books")))
+  (add-hook 'dired-mode-hook #'denote-dired-mode)
+  ;; Alternatively:
+  ;; (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
+
+  ;; Here is a custom, user-level command from one of the examples we
+  ;; showed in this manual.  We define it here and add it to a key binding
+  ;; below.
+  (defun my-denote-journal ()
+    "Create an entry tagged 'journal' with the date as its title.
+If a journal for the current day exists, visit it.  If multiple
+entries exist, prompt with completion for a choice between them.
+Else create a new file."
+    (interactive)
+    (let* ((today (format-time-string "%A %e %B %Y"))
+           (string (denote-sluggify today))
+           (files (denote-directory-files-matching-regexp string)))
+      (cond
+       ((> (length files) 1)
+        (find-file (completing-read "Select file: " files nil :require-match)))
+       (files
+        (find-file (car files)))
+       (t
+        (denote
+         today
+         '("journal"))))))
+
+  ;; Denote DOES NOT define any key bindings.  This is for the user to
+  ;; decide.  For example:
+  (let ((map global-map))
+    (define-key map (kbd "C-c n j") #'my-denote-journal) ; our custom command
+    (define-key map (kbd "C-c n n") #'denote)
+    (define-key map (kbd "C-c n N") #'denote-type)
+    (define-key map (kbd "C-c n d") #'denote-date)
+    (define-key map (kbd "C-c n z") #'denote-signature) ; "zettelkasten" mnemonic
+    (define-key map (kbd "C-c n s") #'denote-subdirectory)
+    (define-key map (kbd "C-c n t") #'denote-template)
+    ;; If you intend to use Denote with a variety of file types, it is
+    ;; easier to bind the link-related commands to the `global-map', as
+    ;; shown here.  Otherwise follow the same pattern for `org-mode-map',
+    ;; `markdown-mode-map', and/or `text-mode-map'.
+    (define-key map (kbd "C-c n i") #'denote-link) ; "insert" mnemonic
+    (define-key map (kbd "C-c n I") #'denote-add-links)
+    (define-key map (kbd "C-c n b") #'denote-backlinks)
+    (define-key map (kbd "C-c n f f") #'denote-find-link)
+    (define-key map (kbd "C-c n f b") #'denote-find-backlink)
+    ;; Note that `denote-rename-file' can work from any context, not just
+    ;; Dired bufffers.  That is why we bind it here to the `global-map'.
+    (define-key map (kbd "C-c n r") #'denote-rename-file)
+    (define-key map (kbd "C-c n R") #'denote-rename-file-using-front-matter))
+
+  ;; Key bindings specifically for Dired.
+  (let ((map dired-mode-map))
+    (define-key map (kbd "C-c C-d C-i") #'denote-link-dired-marked-notes)
+    (define-key map (kbd "C-c C-d C-r") #'denote-dired-rename-marked-files)
+    (define-key map (kbd "C-c C-d C-R") #'denote-dired-rename-marked-files-using-front-matter))
+
+  (with-eval-after-load 'org-capture
+    (setq denote-org-capture-specifiers "%l\n%i\n%?")
+    (add-to-list 'org-capture-templates
+                 '("n" "New note (with denote.el)" plain
+                   (file denote-last-path)
+                   #'denote-org-capture
+                   :no-save t
+                   :immediate-finish nil
+                   :kill-buffer t
+                   :jump-to-captured t)))
+
+  ;; Also check the commands `denote-link-after-creating',
+  ;; `denote-link-or-create'.  You may want to bind them to keys as well.
+
+  
+  ;; If you want to have Denote commands available via a right click
+  ;; context menu, use the following and then enable
+  ;; `context-menu-mode'.
+  (add-hook 'context-menu-functions #'denote-context-menu))
+
+
+;;
+;;; denote-menu <https://github.com/namilus/denote-menu>
+;;
+
+(use-package denote-menu
+  :after (denote)
+  :config
+  (keymap-global-set "C-c z" #'list-denotes)
+
+  (keymap-set denote-menu-mode-map "c" #'denote-menu-clear-filters)
+  (keymap-set denote-menu-mode-map "/ r" #'denote-menu-filter)
+  (keymap-set denote-menu-mode-map "/ k" #'denote-menu-filter-by-keyword)
+  (keymap-set denote-menu-mode-map "/ o" #'denote-menu-filter-out-keyword)
+  (keymap-set denote-menu-mode-map "e" #'denote-menu-export-to-dired))
+
+;;
+;;; Integrations
+;;
+
+;; <https://github.com/mclear-tools/consult-notes#denote>
+(after! [denote consult-notes]
+  (consult-notes-denote-mode)
+  ;; Search only for text files in Denote dir.
+  (setq consult-notes-denote-files-function
+        (function denote-directory-text-only-files)))
+
+
+
+(provide 'init-notes-denote)
+;;; init-notes-denote.el ends here
+

@@ -95,10 +95,14 @@
 (require 'init-vcs)
 (require 'init-templates)
 (require 'init-projects)
-(require 'init-lsp)
+
+;; org + notes
 (require 'init-org)
+(require 'init-notes)
+(require 'init-notes-denote)
 
 ;;; languages
+(require 'init-lsp)
 (require 'init-lang-elisp)
 (require 'init-lang-nix)
 (require 'init-lang-yaml)
