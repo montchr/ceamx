@@ -88,7 +88,10 @@
 
 ;;; org-modern <https://github.com/minad/org-modern>
 (use-package org-modern
-  :hook ((org-mode . org-modern-mode)))
+  :after (org-mode)
+  :commands (global-org-modern-mode)
+  :config
+  (global-org-modern-mode))
 
 (provide 'init-org)
 ;;; init-org.el ends here
