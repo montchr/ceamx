@@ -61,12 +61,14 @@
 (use-package use-package-hydra
   :after '(hydra))
 
+;;
 ;;; pretty-hydra :: Major mode leader key powered by Hydra.
 ;;  <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 (use-package pretty-hydra
   :after '(hydra))
 
+;;
 ;;; major-mode-hydra :: Major mode leader key powered by Hydra.
 ;;  <https://github.com/jerrypnz/major-mode-hydra.el>
 
@@ -74,10 +76,11 @@
   :after '(hydra pretty-hydra)
   :bind
   ("M-SPC" . major-mode-hydra))
-
 (elpaca-wait)
 
+;;
 ;;; Common heads
+;;
 
 (defhydra cmx-hydra/base (:color blue)
   "base"
@@ -96,7 +99,9 @@
    "other buffer")
   ("SPC" #'project-find-file "find file..."))
 
+;;
 ;;; Main Hydra
+;;
 
 (defhydra cmx-hydra/main
   ( :title "ceamx/"
@@ -144,7 +149,9 @@
   ;; z ... ?
   )
 
+;;
 ;;; Applications
+;;
 
 (pretty-hydra-define cmx-hydra/applications
   ( :title "ceamx/applications/"
@@ -185,7 +192,9 @@
     ("v" #'elpaca-visit)
     ("U" #'elpaca-update-all "update all"))))
 
+;;
 ;;; Bookmarks
+;;
 
 (pretty-hydra-define cmx-hydra/bookmark
   ( :title "ceamx/bookmark/"
@@ -196,7 +205,9 @@
    (("F" #'burly-bookmark-frames  "frames")
     ("W" #'burly-bookmark-windows "windows"))))
 
+;;
 ;;; Buffers
+;;
 
 (pretty-hydra-define cmx-hydra/buffer
   ( :title "ceamx/buffer/"
@@ -228,7 +239,9 @@
     ("N" #'evil-buffer-new       "new")
     ("x" #'scratch-buffer          "*scratch*"))))
 
+;;
 ;;; Code / LSP
+;;
 
 (pretty-hydra-define cmx-hydra/code
   ( :title "ceamx/code/"
@@ -239,7 +252,9 @@
    (("a" #'lsp-execute-code-action "action"    :column "Refactor")
     ("r" #'lsp-rename              "rename..." :column "Refactor"))))
 
+;;
 ;;; Emacs Lisp / "Eval"
+;;
 
 (pretty-hydra-define cmx-hydra/eval
   ( :title   "ceamx/eval/"
@@ -260,7 +275,9 @@
    (("r" #'eval-region "region"))))
 
 
+;;
 ;;; Files
+;;
 
 (pretty-hydra-define cmx-hydra/file
   ( :title "ceamx/file/"
@@ -290,7 +307,9 @@
      "diff with...")
     ("f" #'find-file "find..."))))
 
+;;
 ;;; Frames
+;;
 
 (pretty-hydra-define cmx-hydra/frame
   ( :title "ceamx/frame/"
@@ -308,7 +327,9 @@
     ("N" #'make-frame-on-monitor         "create frame on monitor...")
     ("R" #'set-frame-name                "rename frame"))))
 
+;;
 ;;; Git / Version Control
+;;
 
 (pretty-hydra-define cmx-hydra/git
   ( :title "ceamx/git/"
@@ -335,7 +356,9 @@
    ""
    (("d" #'magit-dispatch))))
 
+;;
 ;;; Help
+;;
 
 (pretty-hydra-define cmx-hydra/help
   ( :title "ceamx/help/"
@@ -357,7 +380,9 @@
    "Apropos"
    (("l" #'apropos-library))))
 
+;;
 ;;; Org-Mode
+;;
 
 (pretty-hydra-define cmx-hydra/org
   ( :title "ceamx/org/"
@@ -376,7 +401,9 @@
   "org-capture"
   ("c" #'org-capture "capture..."))
 
+;;
 ;;; Project
+;;
 
 (pretty-hydra-define cmx-hydra/project
   ( :title "ceamx/project/"
@@ -391,14 +418,18 @@
 		("i" #'projectile-invalidate-cache  "invalidate cache")
     ("p" #'projectile-switch-project    "switch project..."))))
 
+;;
 ;;; Session
+;;
 
 (defhydra cmx-hydra/session (:color blue)
   "[ceamx/session]"
   ("r" #'restart-emacs           "restart")
   ("q" #'save-buffers-kill-emacs "save and quit"))
 
+;;
 ;;; Search
+;;
 
 (defhydra cmx-hydra/search
   ( :color blue
@@ -430,7 +461,9 @@ _p_: in project...  _v_: this var
   ("x" #'projectile-find-references))
 
 
+;;
 ;;; Tabs
+;;
 
 (defhydra cmx-hydra/tab
   ( :color blue
@@ -441,7 +474,9 @@ _p_: in project...  _v_: this var
   ("n" #'tab-new "new")
   ("t" #'tab-recent "recent"))
 
+;;
 ;;; Toggles
+;;
 
 (defhydra cmx-hydra/toggle
   (:color blue
@@ -455,7 +490,9 @@ _L_: linums
   ("L" #'line-number-mode)
   ("f" #'flycheck-mode))
 
+;;
 ;;; Window Management
+;;
 
 (defhydra cmx-hydra/window (:hint nil)
   "
