@@ -43,27 +43,23 @@
 (setq tab-always-indent 'complete)
 
 (use-package corfu
-  :elpaca (corfu :host github
-                 :repo "minad/corfu"
-                 :files (:defaults "extensions/*"))
-  :defer 5
-
-  :custom
-  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)                 ;; Enable auto completion
-  ;; (corfu-separator ?\s)          ;; Orderless field separator
-  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
-  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
-  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-  ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+  :elpaca (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
 
   ;; Enable Corfu only for certain modes.
-  :hook ((prog-mode . corfu-mode)
-         (org-mode . corfu-mode))
+  :hook ((prog-mode . corfu-mode))
 
   :config
+  (setq! corfu-cycle t)   ; Enable cycling for `corfu-next/previous'
+  (setq! corfu-auto t)    ; Enable auto completion
+  (setq! corfu-auto-delay 0.02)
+  ;; (setq! corfu-separator ?\s)          ;; Orderless field separator
+  ;; (setq! corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (setq! corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (setq! corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (setq! corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (setq! corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  ;; (setq! corfu-scroll-margin 5)        ;; Use scroll margin
+
   (with-eval-after-load 'evil
     (setq evil-complete-next-func (lambda (_) (completion-at-point)))))
 
@@ -79,6 +75,7 @@
 (use-package cape
   ;; Bind dedicated completion commands
   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+  ;; FIXME: conflicts with `cmx-project-keymap'
   :bind (("C-c p p" . completion-at-point) ;; capf
          ("C-c p t" . complete-tag)        ;; etags
          ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
