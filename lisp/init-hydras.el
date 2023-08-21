@@ -241,18 +241,24 @@
 
 ;;; Emacs Lisp / "Eval"
 
-;; FIXME: prob should be some other name
-(defhydra cmx-hydra/eval (:color blue :inherit (cmx-hydra/base/heads))
-  "ceamx/eval/"
-  ("b" #'eval-buffer)
-  ("d" #'eval-defun)
-  ("e" #'elisp-eval-region-or-buffer)
-  ("p" #'pp-eval-last-sexp)
-  ("r" #'eval-region)
-  ("s" #'eval-last-sexp)
+(pretty-hydra-define cmx-hydra/eval
+  ( :title   "ceamx/eval/"
+    :color blue
+    :inherit (cmx-hydra/base/heads))
 
-  ("E" #'eval-expression)
-  ("I" (load-file user-init-file) "init.el"))
+  ("Expression"
+   (("d" #'eval-defun "defun")
+    ("e" #'eval-last-sexp "lsexp")
+    ("E" #'eval-expression "expr...")
+    ("p" #'pp-eval-last-sexp "lsexp (pretty)"))
+
+   "Buffer"
+   (("b" #'eval-buffer "buffer")
+    ("I" (load-file user-init-file) "init.el"))
+
+   "Region"
+   (("r" #'eval-region "region"))))
+
 
 ;;; Files
 
