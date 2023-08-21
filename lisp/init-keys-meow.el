@@ -114,7 +114,10 @@
      '("<escape>" . ignore)))
   :config
   (cmx/meow-setup)
-  (meow-global-mode 1))
+
+  ;; TODO: when ready.
+  ;; (meow-global-mode 1)
+  )
 
 
 (provide 'init-keys-meow)
