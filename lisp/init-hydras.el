@@ -446,7 +446,7 @@ _p_: in project...  _v_: this var
                     _V_: some var...
                     _x_: refs
 "
-  ("i" #'consult-isearch-history)
+  ("h" #'consult-isearch-history)
   ("j" #'consult-lsp-file-symbols)
   ("J" #'consult-lsp-symbols      )
   ("l" (lambda () (interactive "P")
