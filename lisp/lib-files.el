@@ -71,8 +71,15 @@
     (when (bound-and-true-p save-place-mode)
       (save-place-forget-unreadable-files))))
 
+;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
+(cl-defun cmx-basename (&optional (file (buffer-file-name)))
+  "Return the basename of FILE."
+  (file-name-sans-extension (file-name-nondirectory file)))
+
+
 ;;
 ;;; Commands
+;;
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L397-L424>
 (defun cmx/delete-this-file (&optional path force-p)
@@ -144,10 +151,10 @@ See <https://www.reddit.com/r/emacs/comments/64xb3q/killthisbuffer_sometimes_jus
       (abort-recursive-edit)
     (kill-buffer (current-buffer))))
 
-;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
-(cl-defun cmx/basename (&optional (file (buffer-file-name)))
-  "Return the basename of FILE."
-  (file-name-sans-extension (file-name-nondirectory file)))
+(defun cmx/diff-with-file (&optional arg)
+  (interactive "P")
+  (let ((buffer (when arg (current-buffer))))
+    (diff-buffer-with-file buffer)))
 
 ;; (defun doom--sudo-file-path (file)
 ;;   (let ((host (or (file-remote-p file 'host) "localhost")))

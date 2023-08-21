@@ -63,8 +63,8 @@
   ("M-y"  #'consult-yank-pop)                ;; orig. yank-pop
 
   (;; C-c bindings (mode-specific-map)
-   "C-c h"  #'consult-history
-   "C-c m"  #'consult-mode-command
+   ;; "C-c h"  #'consult-history
+   ;; "C-c m"  #'consult-mode-command
    "C-c k"  #'consult-kmacro)
 
   (;; Custom M-# bindings for fast register access

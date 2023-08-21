@@ -72,7 +72,7 @@
   (define-key dirvish-mode-map (kbd "<mouse-3>") 'dired-mouse-find-file)
 
   :bind ; Bind `dirvish|dirvish-side|dirvish-dwim' as you see fit
-  (("C-c f" . dirvish-fd)
+  (;; ("C-c f" . dirvish-fd)
    :map dirvish-mode-map ; Dirvish inherits `dired-mode-map'
    ("a"   . dirvish-quick-access)
    ("f"   . dirvish-file-info-menu)
