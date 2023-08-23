@@ -45,8 +45,6 @@
   :general
   ([remap bookmark-jump]                   #'consult-bookmark
    [remap repeat-complex-command]          #'consult-complex-command
-   [remap evil-show-marks]                 #'consult-mark
-   ;; [remap evil-show-jumps]              #'+vertico/jump-list
    [remap goto-line]                       #'consult-goto-line
    [remap imenu]                           #'consult-imenu
    [remap isearch-edit-string]             #'consult-isearch-history

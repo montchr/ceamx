@@ -27,16 +27,7 @@
 
 ;;; Code:
 
-(require 'lib-keybinds)
-
-(defvar cmx-hydra-key "<f12>"
-  "Key to bind `cmx-hydra/main/body' to.")
-
-(defvar cmx-leader-key "SPC")
-(defvar cmx-leader-alt-key "M-SPC")
-
-(global-set-key (kbd cmx-hydra-key) 'cmx-hydra/main/body)
-
+(keymap-global-set "<f12>" #'cmx-hydra/main/body)
 
 ;; macOS: Remap modifier keys.
 (when (and +sys-mac-p +graphical-p)
@@ -126,13 +117,8 @@ all hooks after it are ignored.")
   (eldoc-add-command 'cmx/escape))
 
 
-;; TODO: maybe remove (added as copypasta safeguard)
-(defalias 'define-key! #'general-def)
-(defalias 'undefine-key! #'general-unbind)
-
-
 ;;
-;;; === WHICH-KEY ==============================================================
+;;; which-key
 ;;  
 
 (use-package which-key
@@ -160,7 +146,7 @@ all hooks after it are ignored.")
 
 
 ;;
-;;; === BINDINGS ===============================================================
+;;; Bindings
 ;;
 ;;; Notes:
 ;;
@@ -364,9 +350,7 @@ all hooks after it are ignored.")
 (keymap-global-set "C-c e"		'("eval..." . cmx-elisp-keymap))
 (keymap-global-set "C-c f"		'("file..." . cmx-file-keymap))
 (keymap-global-set "C-c F"		'("frame..." . cmx-frame-keymap))
-;; NOTE: "C-c g" is not sequenced to "SPC g", hence "C-c G"
 (keymap-global-set "C-c G"		'("git..." . cmx-git-keymap))
-;; NOTE: "C-c h" is not sequenced to "SPC h", hence "C-c H"
 (keymap-global-set "C-c H"		'("help..." . cmx-help-keymap))
 (keymap-global-set "C-c o"		'("org..." . cmx-org-keymap))
 (keymap-global-set "C-c p"		'("project..." . cmx-project-keymap))

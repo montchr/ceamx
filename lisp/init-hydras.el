@@ -235,8 +235,7 @@
 
    "Misc"
    (("M" #'view-echo-area-messages "*Messages*")
-    ;; TODO: why does it need to be evil?
-    ("N" #'evil-buffer-new       "new")
+    ("N" #'cmx/buffer-new       "new")
     ("x" #'scratch-buffer          "*scratch*"))))
 
 ;;
@@ -494,6 +493,8 @@ _L_: linums
 ;;; Window Management
 ;;
 
+;; TODO: split to its own file
+
 (defhydra cmx-hydra/window (:hint nil)
   "
 [ceamx/window]
@@ -556,60 +557,7 @@ _SPC_ cancel	_o_nly this   	_d_elete
   ("SPC" nil))
 
 
-;; (+general-global-menu! "window" "w"
-;;   "?" 'split-window-vertically
-;;   "=" 'balance-windows
-;;   "/" 'split-window-horizontally
-;;   "O" 'delete-other-windows
-;;   "X" '("kill-other-buffer-and-window" .
-;;         (lambda () (interactive)
-;;           (call-interactively #'other-window)
-;;           (kill-buffer-and-window)))
-;;   "d" 'delete-window
-;;   "D" 'kill-buffer-and-window
-;;   "h" 'windmove-left
-;;   "j" 'windmove-down
-;;   "k" 'windmove-up
-;;   "l" 'windmove-right
-;;   "o" 'other-window
-;;   "t" '("toggle window dedication" .
-;;         (lambda () (interactive)
-;;           "toggle window dedication"
-;;           (set-window-dedicated-p
-;;            (selected-window)
-;;            (not (window-dedicated-p)))))
-
-;;   ;; TODO: move to `r' prefix?
-;;   "."  '(:ignore :which-key "resize")
-;;   ".h" '("divider left" .
-;;          (lambda () (interactive)
-;;            (call-interactively
-;;             (if (window-prev-sibling)
-;;                 #'enlarge-window-horizontally
-;;               #'shrink-window-horizontally))))
-
-;;   ".l" '("divider right" .
-;;          (lambda () (interactive)
-;;            (call-interactively
-;;             (if (window-next-sibling)
-;;                 #'enlarge-window-horizontally
-;;               #'shrink-window-horizontally))))
-
-;;   ".j" '("divider up" .
-;;          (lambda () (interactive)
-;;            (call-interactively
-;;             (if (window-next-sibling)
-;;                 #'enlarge-window
-;;               #'shrink-window))))
-
-;;   ".k" '("divider down" .
-;;          (lambda () (interactive)
-;;            (call-interactively
-;;             (if (window-prev-sibling)
-;;                 #'enlarge-window
-;;               #'shrink-window)))))
-
-
+;; TODO: split to its own file
 ;; via <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
 (require 'rect)
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)

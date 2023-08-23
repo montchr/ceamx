@@ -71,10 +71,9 @@
 (require 'init-ui-icons)
 (require 'init-ui-modeline)
 
-(require 'init-keys-meow) ; TODO: uncomment when meow
+(require 'init-keys-meow)
 (require 'init-hydras)
-(require 'init-keybinds) ; TODO: comment when meow
-;; (require 'init-keys) ; TODO: uncomment when meow
+(require 'init-keys)
 (require 'init-evil) ; TODO: comment when meow
 
 (require 'init-clippy)

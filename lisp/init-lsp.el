@@ -64,8 +64,7 @@
   (advice-add '+lsp-defer-server-shutdown-a :around #'lsp--shutdown-workspace)
 
   :hook
-  ((lsp-mode . (lambda () (setq-local evil-lookup-func #'lsp-describe-thing-at-point)))
-   (lsp-mode . lsp-enable-which-key-integration)))
+  ((lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package lsp-ui
   :after (lsp-mode)

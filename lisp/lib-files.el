@@ -5,6 +5,7 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later OR MIT
 
 ;; Author: Henrik Lissner
+;;         Vegard Øye <vegard_oye at hotmail.com>
 ;;         Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Created: 23 January 2023
@@ -80,6 +81,27 @@
 ;;
 ;;; Commands
 ;;
+
+;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L3325-L3332>
+(defun cmx/file-edit (file &optional bang)
+  "Open FILE.
+If no FILE is specified, reload the current buffer from disk."
+  :repeat nil
+  (interactive "<f><!>")
+  (if file
+      (find-file file)
+    (revert-buffer bang (or bang (not (buffer-modified-p))) t)))
+
+;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L4652-L4660>
+(defun cmx/buffer-new (&optional file)
+  "Edit a new unnamed buffer or FILE."
+  :repeat nil
+  (interactive "<f>")
+  (if file
+      (cmx/file-edit file)
+    (let ((buffer (generate-new-buffer "*new*")))
+      (set-buffer-major-mode buffer)
+      (set-window-buffer nil buffer))))
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L397-L424>
 (defun cmx/delete-this-file (&optional path force-p)

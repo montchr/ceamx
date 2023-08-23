@@ -33,14 +33,6 @@
 ;;  <https://docs.projectile.mx>
 
 (use-package projectile
-  ;; :demand
-  :after (general)
-
-  :general
-  ( :keymaps 'projectile-mode-map
-    "s-p"    'projectile-command-map
-    "C-c p"  'projectile-command-map)
-
   :init
   ;; Use Emacs default completion system i.e. `completing-read'
   (setq projectile-completion-system 'default)
@@ -51,6 +43,10 @@
   (projectile-mode +1)
 
   :config
+  (define-keymap :keymap projectile-mode-map
+    "s-p"    'projectile-command-map
+    "C-c P"  'projectile-command-map)
+
   (setq projectile-project-search-path '(("~/Developer/sources/" . 1)
                                          ("~/Developer/contrib/" . 2)
                                          ("~/Developer/work/" . 3)))

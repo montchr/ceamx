@@ -27,6 +27,25 @@
 
 ;;; Code:
 
+(defvar cmx-leader-key "SPC")
+(defvar cmx-leader-alt-key "M-SPC")
+
+(use-package general :demand t)
+(elpaca-wait) 
+
+;; Create alias macros corresponding to vimisms.
+;; <https://github.com/noctuid/general.el/blob/feature/general-config-and-speed-documentation/README.org#vim-like-definers>
+;; TODO: consider removal, i don't need this, but ensure it's unused
+(general-evil-setup)
+
+(general-override-mode)
+(general-auto-unbind-keys)
+
+(general-define-key
+ :states '(normal visual motion)
+ :keymaps 'override
+ "SPC" 'cmx-hydra/main/body)
+
 (use-package evil
   :demand t
 
@@ -58,14 +77,18 @@
   (evil-ex-interactive-search-highlight 'selected-window)
 
   :config
-  ;; Use default Emacs mouse click behavior
-  (define-key evil-motion-state-map [down-mouse-1] nil)
-
+  (setq evil-complete-next-func (lambda (_) (completion-at-point)))
   ;; Global search by default.
   (setq evil-ex-substitute-global t)
 
+  ;; Use default Emacs mouse click behavior
+  (define-key evil-motion-state-map [down-mouse-1] nil)
+
   (evil-ex-define-cmd "q" #'kill-this-buffer)
   (evil-ex-define-cmd "wq" #'cmx/+save-and-kill-this-buffer)
+
+  (with-eval-after-load helpful
+    (setq evil-lookup-func #'helpful-at-point))
 
   (evil-mode 1))
 

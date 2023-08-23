@@ -28,10 +28,8 @@
 ;;; Code:
 
 (use-package helpful
-  :after evil
   :commands (helpful-at-point)
   :init
-  (setq evil-lookup-func #'helpful-at-point)
   :bind (([remap describe-function] . helpful-callable)
          ([remap describe-command]  . helpful-command)
          ([remap describe-variable] . helpful-variable)
