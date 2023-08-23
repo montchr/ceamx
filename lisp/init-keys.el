@@ -111,7 +111,7 @@ all hooks after it are ignored.")
            (when interactive
              (setq this-command 'keyboard-quit))))))
 
-(global-set-key [remap keyboard-quit] #'cmx/escape)
+(keymap-global-set "<remap> <keyboard-quit>" #'cmx/escape)
 
 (with-eval-after-load 'eldoc
   (eldoc-add-command 'cmx/escape))

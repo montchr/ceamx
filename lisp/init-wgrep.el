@@ -35,11 +35,11 @@
   (setq wgrep-change-readonly-file t)
 
   :config
+  (keymap-set grep-mode-map "W" #'wgrep-change-to-wgrep-mode)
+  (keymap-set dired-mode-map "C-c C-e" #'wgrep-change-to-wgrep-mode)
   ;; (advice-add #'wgrep-abort-changes :after #'+popup-close-a)
   ;; (advice-add #'wgrep-finish-edit :after #'+popup-close-a)
-  (keymap-set grep-mode-map "W" #'wgrep-change-to-wgrep-mode)
-  (when (boundp 'dired-mode-map)
-    (keymap-set dired-mode-map "C-c C-e" #'wgrep-change-to-wgrep-mode)))
+  )
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
 (defun +vertico/embark-export-write ()

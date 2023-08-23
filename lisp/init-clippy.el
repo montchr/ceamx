@@ -28,12 +28,11 @@
 ;;; Code:
 
 (use-package helpful
-  :commands (helpful-at-point)
-  :init
-  :bind (([remap describe-function] . helpful-callable)
-         ([remap describe-command]  . helpful-command)
-         ([remap describe-variable] . helpful-variable)
-         ([remap describe-key]      . helpful-key)))
+  :config
+  (keymap-global-set "<remap> <describe-function>" #'helpful-callable)
+  (keymap-global-set "<remap> <describe-command>" #'helpful-command)
+  (keymap-global-set "<remap> <describe-variable>" #'helpful-variable)
+  (keymap-global-set "<remap> <describe-key>" #'helpful-key))
 
 (use-package flycheck
   :commands (global-flycheck-mode)

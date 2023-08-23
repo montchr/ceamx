@@ -87,9 +87,8 @@
 
 (use-package consult-lsp
   :after (lsp-mode consult)
-  :general
-  (lsp-mode-map
-   [remap xref-find-apropos]  #'consult-lsp-symbols))
+  :config
+  (keymap-set lsp-mode-map "<remap> <xref-find-apropos>" #'consult-lsp-symbols))
 
 ;;; optionally:
 ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)

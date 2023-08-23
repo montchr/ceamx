@@ -42,67 +42,65 @@
   (setq xref-show-xrefs-function #'consult-xref)
   (advice-add #'register-preview :override #'consult-register-window)
 
-  :general
-  ([remap bookmark-jump]                   #'consult-bookmark
-   [remap repeat-complex-command]          #'consult-complex-command
-   [remap goto-line]                       #'consult-goto-line
-   [remap imenu]                           #'consult-imenu
-   [remap isearch-edit-string]             #'consult-isearch-history
-   [remap locate]                          #'consult-locate
-   [remap load-theme]                      #'consult-theme
-   [remap man]                             #'consult-man
-   [remap recentf-open-files]              #'consult-recent-file
-   [remap switch-to-buffer]                #'consult-buffer
-   [remap switch-to-buffer-other-window]   #'consult-buffer-other-window
-   [remap switch-to-buffer-other-frame]    #'consult-buffer-other-frame
-   [remap yank-pop]                        #'consult-yank-pop
-   [remap project-switch-to-buffer]        #'consult-project-buffer)
-
-  ("M-y"  #'consult-yank-pop)                ;; orig. yank-pop
-
-  (
-
-   ;; C-c bindings (mode-specific-map)
-   ;; TODO: find new bindings below top level
-   ;; "C-c h"  #'consult-history
-   ;; "C-c m"  #'consult-mode-command
-   ;; "C-c k"  #'consult-kmacro
-   )
-
-  (;; Custom M-# bindings for fast register access
-   "M-#"    #'consult-register-load
-   "M-'"    #'consult-register-store          ;; orig. abbrev-prefix-mark (unrelated)
-   "C-M-#"  #'consult-register)
-
-  (;; M-g bindings (goto-map)
-   "M-g e"  #'consult-compile-error
-   "M-g f"  #'consult-flymake               ;; Alternative: consult-flycheck
-   "M-g o"  #'consult-outline               ;; Alternative: consult-org-heading
-   "M-g m"  #'consult-mark
-   "M-g k"  #'consult-global-mark
-   "M-g i"  #'consult-imenu
-   "M-g I"  #'consult-imenu-multi)
-
-  (;; M-s bindings (search-map)
-   "M-s d"  #'consult-find
-   "M-s D"  #'consult-locate
-   "M-s g"  #'consult-ripgrep
-   "M-s G"  #'consult-git-grep
-   "M-s l"  #'consult-line
-   "M-s L"  #'consult-line-multi
-   "M-s k"  #'consult-keep-lines
-   "M-s u"  #'consult-focus-lines)
-
-  ;;; Isearch integration
-  ("M-s e"   #'consult-isearch-history)
-  ( :keymaps 'minibuffer-local-map
-    "M-s"    #'consult-history                 ;; orig. next-matching-history-element
-    "M-r"    #'consult-history)                ;; orig. previous-matching-history-element
-  ( :keymaps 'isearch-mode-map
-    "M-s l"  #'consult-line ;; Needed by consult-line to detect isearch.
-    "M-s L"  #'consult-line-multi)  ;; Needed by consult-line to detect isearch.
-
   :config
+	(define-keymap :keymap global-map
+    "<remap> <bookmark-jump>"                   #'consult-bookmark
+    "<remap> <repeat-complex-command>"          #'consult-complex-command
+    "<remap> <goto-line>"                       #'consult-goto-line
+    "<remap> <imenu>"                           #'consult-imenu
+    "<remap> <isearch-edit-string>"             #'consult-isearch-history
+    "<remap> <locate>"                          #'consult-locate
+    "<remap> <load-theme>"                      #'consult-theme
+    "<remap> <man>"                             #'consult-man
+    "<remap> <recentf-open-files>"              #'consult-recent-file
+    "<remap> <switch-to-buffer>"                #'consult-buffer
+    "<remap> <switch-to-buffer-other-window>"   #'consult-buffer-other-window
+    "<remap> <switch-to-buffer-other-frame>"    #'consult-buffer-other-frame
+    "<remap> <yank-pop>"                        #'consult-yank-pop
+    "<remap> <project-switch-to-buffer>"        #'consult-project-buffer
+
+    ;; C-c bindings (mode-specific-map)
+    ;; TODO: verify
+    "C-c s h"  #'consult-history
+    "C-c s m"  #'consult-mode-command
+    "C-c s k"  #'consult-kmacro
+
+    ;; Custom M-# bindings for fast register access
+    "M-#"    #'consult-register-load
+    "M-'"    #'consult-register-store          
+    "C-M-#"  #'consult-register
+
+    ;; M-g bindings (goto-map)
+    "M-g e"  #'consult-compile-error
+    "M-g f"  #'consult-flymake               ;; Alternative: consult-flycheck
+    "M-g o"  #'consult-outline               ;; Alternative: consult-org-heading
+    "M-g m"  #'consult-mark
+    "M-g k"  #'consult-global-mark
+    "M-g i"  #'consult-imenu
+    "M-g I"  #'consult-imenu-multi
+
+
+    ;; M-s bindings (search-map)
+    "M-s d"  #'consult-find
+    "M-s D"  #'consult-locate
+    "M-s g"  #'consult-ripgrep
+    "M-s G"  #'consult-git-grep
+    "M-s l"  #'consult-line
+    "M-s L"  #'consult-line-multi
+    "M-s k"  #'consult-keep-lines
+    "M-s u"  #'consult-focus-lines)
+
+  ;; TODO: may be unnecessary when remapping `yank-pop'?
+  ;; (keymap-global-set "M-y" #'consult-yank-pop)
+
+  ;;; `isearch' integration:
+  (keymap-global-set "M-s e" #'consult-isearch-history)
+  (keymap-set minibuffer-local-map "M-s" #'consult-history) ; orig. next-matching-history-element
+  (keymap-set minibuffer-local-map "M-r" #'consult-history) ; orig. previous-matching-history-element
+  ;; Needed by consult-line to detect isearch.
+  (keymap-set isearch-mode-map "M-s l" #'consult-line)
+  (keymap-set isearch-mode-map "M-s L" #'consult-line-multi)
+
   (setq consult-preview-key 'any)
 
   ;; For some commands and buffer sources it is useful to configure the
@@ -181,26 +179,17 @@
   (advice-add #'consult-outline :before #'+consult--set-previous-point)
   (advice-add #'vertico--update :after #'+consult-vertico--update-choose)
 
-  ;;; --- project-awareness ---
-
   ;; By default `consult-project-function' uses `project-root' from project.el.
-  ;; Optionally configure a different project root function.
-  ;; There are multiple reasonable alternatives to chose from.
-  ;;;; 1. project.el (the default)
-  ;; (setq consult-project-function #'consult--default-project--function)
-  ;;;; 2. projectile.el (projectile-project-root)
-  ;; (autoload 'projectile-project-root "projectile")
-  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
-  ;;;; 3. vc.el (vc-root-dir)
-  ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
-  ;;;; 4. locate-dominating-file
-  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
-  )
+  (with-eval-after-load 'projectile
+    (autoload 'projectile-project-root "projectile")
+    (setq consult-project-function (lambda (_) (projectile-project-root)))))
+
 
 ;; <https://github.com/minad/consult#embark-integration>
 (use-package embark-consult
   :after (embark consult)
   :hook (embark-collect-mode . consult-preview-at-point-mode))
+
 
 (provide 'init-selection-consult)
 ;;; init-selection-consult.el ends here

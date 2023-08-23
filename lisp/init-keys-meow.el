@@ -27,7 +27,7 @@
 
 (use-package meow
   :init
-  (defun cmx/meow-setup ()
+  (defun cmx-meow-setup ()
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
     (meow-motion-overwrite-define-key
      '("j" . meow-next)
@@ -113,7 +113,7 @@
      '("'" . repeat)
      '("<escape>" . ignore)))
   :config
-  (cmx/meow-setup)
+  (cmx-meow-setup)
 
   ;; TODO: when ready.
   ;; (meow-global-mode 1)

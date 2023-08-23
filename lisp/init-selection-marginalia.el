@@ -26,19 +26,21 @@
 ;;; Code:
 
 (use-package marginalia
-  :bind
-  (:map minibuffer-local-map
-        ("M-A" . marginalia-cycle))
-
   :init
   ;; <https://www.lucacambiaghi.com/vanilla-emacs/readme.html#h:37ACBBF7-989F-4A57-9454-06B79B8EB4F0>
-  (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  (setq marginalia-annotators '(marginalia-annotators-heavy
+                                marginalia-annotators-light
+                                nil))
+
   ;; Must be in the :init section of use-package such that the mode gets
   ;; enabled right away. Note that this forces loading the package.
   (marginalia-mode)
-  ;; TODO: use `after!'
+
   (with-eval-after-load 'projectile
-    (add-to-list 'marginalia-command-categories '(projectile-find-file . file))))
+    (add-to-list 'marginalia-command-categories '(projectile-find-file . file)))
+
+  :config
+  (keymap-set minibuffer-local-map "M-A" #'marginalia-cycle))
 
 (provide 'init-selection-marginalia)
 ;;; init-selection-marginalia.el ends here

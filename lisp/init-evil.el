@@ -87,7 +87,7 @@
   (evil-ex-define-cmd "q" #'kill-this-buffer)
   (evil-ex-define-cmd "wq" #'cmx/+save-and-kill-this-buffer)
 
-  (with-eval-after-load helpful
+  (with-eval-after-load 'helpful
     (setq evil-lookup-func #'helpful-at-point))
 
   (evil-mode 1))

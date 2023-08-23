@@ -32,8 +32,8 @@
   :diminish eldoc-mode)
 
 ;; 
-;;; lispy :: "short and sweet LISP editing"
-;;  <https://github.com/abo-abo/lispy>
+;;; lispy -- "short and sweet LISP editing" -- <https://github.com/abo-abo/lispy>
+;;
 
 (use-package lispy
   :diminish
