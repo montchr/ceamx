@@ -271,6 +271,28 @@ all hooks after it are ignored.")
 (defalias 'cmx-help-keymap cmx-help-keymap)
 
 
+(defvar-keymap cmx-notes-keymap
+  "b" #'denote-backlinks
+  "d" #'denote-date
+  "f" '("find..." . (keymap))
+  "f f" #'denote-find-link
+  "f b" #'denote-find-backlink
+  "i" #'denote-link ; "insert" mnemonic
+  "I" #'denote-add-links
+  "j" #'my-denote-journal ; our custom command
+  "n" #'denote
+  "N" #'denote-type
+  ;; Note that `denote-rename-file' can work from any context, not just
+  ;; Dired buffers.  That is why we bind it here to the `global-map'.
+  "r" #'denote-rename-file
+  "R" #'denote-rename-file-using-front-matter
+  "s" #'denote-subdirectory
+  "t" #'denote-template
+  "z" #'denote-signature ; "zettelkasten" mnemonic
+  )
+(defalias 'cmx-notes-keymap cmx-notes-keymap)
+
+
 (defvar-keymap cmx-capture-keymap
   "c" '("capture..." . org-capture))
 (defalias 'cmx-capture-keymap cmx-capture-keymap)
@@ -352,6 +374,7 @@ all hooks after it are ignored.")
 (keymap-global-set "C-c F"		'("frame..." . cmx-frame-keymap))
 (keymap-global-set "C-c G"		'("git..." . cmx-git-keymap))
 (keymap-global-set "C-c H"		'("help..." . cmx-help-keymap))
+(keymap-global-set "C-c n"		'("notes..." . cmx-notes-keymap))
 (keymap-global-set "C-c o"		'("org..." . cmx-org-keymap))
 (keymap-global-set "C-c p"		'("project..." . cmx-project-keymap))
 (keymap-global-set "C-c P"  	'("packages..." . cmx-packages-keymap))
