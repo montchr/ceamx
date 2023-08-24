@@ -158,7 +158,19 @@ Example usage:
   (which-key-mode))
 
 ;; Wait until `which-key` is activated so its use-package keyword is installed
-(elpaca-wait) 
+(elpaca-wait)
+
+
+;;
+;;; keycast
+;;
+
+(use-package keycast
+  :defer t
+  :commands (keycast-mode-line-mode
+             keycast-header-line-mode
+             keycast-tab-bar-mode
+             keycast-log-mode))
 
 
 ;;
