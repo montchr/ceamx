@@ -74,7 +74,7 @@
 (require 'init-keys-meow)
 (require 'init-hydras)
 (require 'init-keys)
-(require 'init-evil) ; TODO: comment when meow
+;; (require 'init-evil) ; TODO: comment when meow
 
 (require 'init-clippy)
 (require 'init-window)

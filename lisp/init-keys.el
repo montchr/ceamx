@@ -23,7 +23,7 @@
 
 ;;; Commentary:
 
-;;  NEW Keybindings configuration (for meow)
+;;  Keybindings configuration.
 
 ;;; Code:
 
@@ -111,15 +111,31 @@ all hooks after it are ignored.")
            (when interactive
              (setq this-command 'keyboard-quit))))))
 
-(keymap-global-set "<remap> <keyboard-quit>" #'cmx/escape)
+;; (keymap-global-set "<remap> <keyboard-quit>" #'cmx/escape)
 
-(with-eval-after-load 'eldoc
-  (eldoc-add-command 'cmx/escape))
+;; (with-eval-after-load 'eldoc
+;;   (eldoc-add-command 'cmx/escape))
+
+(defun cmx-meow-define-keys (state &rest keybinds)
+  "Define KEYBINDS in STATE.
+
+Adapted from `meow-define-keys' for an interface similar to `defvar-keymap'.
+
+Example usage:
+  (cmx-meow-define-keys
+    'normal
+    \"a\" #'meow-append"
+  (declare (indent 1))
+  (let ((map (alist-get state meow-keymap-alist)))
+    (apply 'define-keymap :keymap map keybinds)))
+
+(defalias 'cmx-meow-normal-define-key
+  (apply-partially 'cmx-meow-define-keys 'normal))
 
 
 ;;
 ;;; which-key
-;;  
+;;
 
 (use-package which-key
   :demand t
@@ -163,6 +179,11 @@ all hooks after it are ignored.")
 ;;   It's also worth noting that this approach comes from Emacs core's
 ;;   definition of `kmacro-keymap'. However, regardless, the Emacs 29+
 ;;   keybinding functions also do not cause any issues.
+
+
+(cmx-meow-normal-define-key
+ "<" #'meow-page-up
+ ">" #'meow-page-down)
 
 
 (defvar-keymap cmx-applications-keymap
@@ -277,9 +298,9 @@ all hooks after it are ignored.")
   "f" '("find..." . (keymap))
   "f f" #'denote-find-link
   "f b" #'denote-find-backlink
-  "i" #'denote-link ; "insert" mnemonic
+  "i" #'denote-link                     ; "insert" mnemonic
   "I" #'denote-add-links
-  "j" #'my-denote-journal ; our custom command
+  "j" #'my-denote-journal               ; our custom command
   "n" #'denote
   "N" #'denote-type
   ;; Note that `denote-rename-file' can work from any context, not just
@@ -288,7 +309,7 @@ all hooks after it are ignored.")
   "R" #'denote-rename-file-using-front-matter
   "s" #'denote-subdirectory
   "t" #'denote-template
-  "z" #'denote-signature ; "zettelkasten" mnemonic
+  "z" #'denote-signature                ; "zettelkasten" mnemonic
   )
 (defalias 'cmx-notes-keymap cmx-notes-keymap)
 
@@ -358,11 +379,17 @@ all hooks after it are ignored.")
 
 
 (defvar-keymap cmx-toggle-keymap
+  "l" #'display-line-numbers-mode
   "L" #'line-number-mode
   "f" #'flycheck-mode)
 (defalias 'cmx-toggle-keymap cmx-toggle-keymap)
 
+;; FIXME: this will not work due to meow's d binding
+;; (cmx-meow-normal-define-key "g d" #'xref-find-definitions)
 
+
+
+(keymap-global-set "C-c `"    '("other buffer" . mode-line-other-buffer))
 (keymap-global-set "C-c a"		'("applications..." . cmx-applications-keymap))
 (keymap-global-set "C-c b"		'("buffer..." . cmx-buffer-keymap))
 (keymap-global-set "C-c B"		'("bookmarks..." . cmx-bookmark-keymap))

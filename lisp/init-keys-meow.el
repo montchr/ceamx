@@ -26,8 +26,13 @@
 
 
 (use-package meow
+  :demand t
+  :commands (meow-global-mode
+             meow-motion-overwrite-define-key
+             meow-leader-define-key
+             meow-normal-define-key)
   :init
-  (defun cmx-meow-setup ()
+  (defun meow-setup ()
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
     (meow-motion-overwrite-define-key
      '("j" . meow-next)
@@ -112,12 +117,38 @@
      '("z" . meow-pop-selection)
      '("'" . repeat)
      '("<escape>" . ignore)))
+  
   :config
-  (cmx-meow-setup)
+  ;; hide lighters
+  (diminish 'meow-normal-mode)
+  (diminish 'meow-motion-mode)
+  (diminish 'meow-insert-mode)
+  (diminish 'meow-keypad-mode)
+  (diminish 'meow-beacon-mode)
 
-  ;; TODO: when ready.
-  ;; (meow-global-mode 1)
-  )
+  ;; custom indicator
+  (when window-system
+    (setq meow-replace-state-name-list
+          '((normal . "🅝")
+            (beacon . "🅑")
+            (insert . "🅘")
+            (motion . "🅜")
+            (keypad . "🅚"))))
+
+
+  (setq! meow-esc-delay 0.001)
+
+  (meow-thing-register 'angle
+                       '(pair ("<") (">"))
+                       '(pair ("<") (">")))
+
+  (add-to-list 'meow-char-thing-table
+               '(?a . angle))
+
+  (meow-setup)
+  (meow-global-mode 1)
+
+  (setq! meow-keypad-leader-dispatch "C-c"))
 
 
 (provide 'init-keys-meow)
