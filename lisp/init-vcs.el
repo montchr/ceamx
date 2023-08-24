@@ -101,6 +101,9 @@
   (define-key magit-mode-map "q" #'+magit/quit)
   (define-key magit-mode-map "Q" #'+magit/quit-all))
 
+(use-package treemacs-magit
+  :after (treemacs magit))
+
 
 ;; § ────────── ────────── ────────── ────────── ────────── ──────────
 ;;; git-timemachine

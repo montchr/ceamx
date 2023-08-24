@@ -381,7 +381,8 @@ Example usage:
 (defvar-keymap cmx-toggle-keymap
   "l" #'display-line-numbers-mode
   "L" #'line-number-mode
-  "f" #'flycheck-mode)
+  "f" #'flycheck-mode
+  "t" #'treemacs)
 (defalias 'cmx-toggle-keymap cmx-toggle-keymap)
 
 ;; FIXME: this will not work due to meow's d binding

@@ -56,5 +56,8 @@
 
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 
+(use-package treemacs-projectile
+  :after (treemacs projectile))
+
 (provide 'init-projects)
 ;;; init-projects.el ends here

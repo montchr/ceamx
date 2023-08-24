@@ -70,6 +70,7 @@
 (require 'init-frame)
 (require 'init-ui-icons)
 (require 'init-ui-modeline)
+(require 'init-ui-treemacs)
 
 (require 'init-keys-meow)
 (require 'init-hydras)
