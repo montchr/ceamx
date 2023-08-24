@@ -154,5 +154,7 @@
 (setq desktop-dirname (file-name-as-directory +path-local-dir))
 (setq desktop-save 'ask-if-new)
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 (provide 'init-defaults)
 ;;; init-defaults.el ends here
