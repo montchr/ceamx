@@ -232,10 +232,16 @@ Example usage:
   "x" '("*scratch*" . scratch-buffer))
 (defalias 'cmx-buffer-keymap cmx-buffer-keymap)
 
+;; TODO: make this more convenient
+(defvar-keymap cmx-goto-keymap
+  "d" '("definition" . xref-find-definitions)
+  "r" '("references" . xref-find-references))
+(defalias 'cmx-goto-keymap cmx-goto-keymap)
 
 (defvar-keymap cmx-code-keymap
   ;; FIXME: wrong type argument commandp error if unavailable
   "a" '("action.." . lsp-execute-code-action)
+  "g" '("go to..." . cmx-goto-keymap)
   ;; FIXME: wrong type argument commandp error if unavailable
   "r" '("rename..." . lsp-rename))
 (defalias 'cmx-code-keymap cmx-code-keymap)
