@@ -31,16 +31,5 @@
   :hook (emacs-lisp-mode)
   :diminish eldoc-mode)
 
-;; 
-;;; lispy -- "short and sweet LISP editing" -- <https://github.com/abo-abo/lispy>
-;;
-
-(use-package lispy
-  :diminish
-  :defines (lispy-mode-map)
-  :hook ((emacs-lisp-mode . lispy-mode))
-  :bind ( :map lispy-mode-map
-          ("C-a" . beginning-of-line)))
-
 (provide 'init-lang-elisp)
 ;;; init-lang-elisp.el ends here
