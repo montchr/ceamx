@@ -32,7 +32,7 @@
 
 (use-package diminish)
 ;; Wait until `diminish` is activated so its use-package keyword is installed
-(elpaca-wait) 
+(elpaca-wait)
 
 ;; NOTE: be wary of performance issues, as this package is notoriously heavy
 ;; FIXME: darwin: icons worked inconsistently until installing
@@ -51,6 +51,7 @@
   (setq! doom-modeline-unicode-fallback t)
   (setq! doom-modeline-buffer-encoding nil)
   (setq! doom-modeline-github nil)
+  (setq! doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
   (setq! doom-modeline-icon t)
 
