@@ -24,13 +24,21 @@
 
 ;;; Code:
 
+(require 'lib-doom)
 
 (use-package meow
   :demand t
+  :diminish (meow-normal-mode
+             meow-motion-mode
+             meow-insert-mode
+             meow-keypad-mode
+             meow-beacon-mode)
   :commands (meow-global-mode
              meow-motion-overwrite-define-key
              meow-leader-define-key
-             meow-normal-define-key)
+             meow-normal-define-key
+             meow-thing-register)
+  :functions (meow-setup)
   :init
   (defun meow-setup ()
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
@@ -117,15 +125,9 @@
      '("z" . meow-pop-selection)
      '("'" . repeat)
      '("<escape>" . ignore)))
-  
-  :config
-  ;; hide lighters
-  (diminish 'meow-normal-mode)
-  (diminish 'meow-motion-mode)
-  (diminish 'meow-insert-mode)
-  (diminish 'meow-keypad-mode)
-  (diminish 'meow-beacon-mode)
 
+  :config
+  (require 'meow)
   ;; custom indicator
   (when window-system
     (setq meow-replace-state-name-list
