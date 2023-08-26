@@ -140,21 +140,27 @@
 
   (setq! meow-esc-delay 0.001)
 
+  ;; Register additional things.
   (meow-thing-register 'angle
                        '(pair ("<") (">"))
                        '(pair ("<") (">")))
-
-  (add-to-list 'meow-char-thing-table
-               '(?a . angle))
+  (meow-thing-register 'double-quote
+                       '(regexp "\"" "\"")
+                       '(regexp "\"" "\""))
+  (meow-thing-register 'single-quote
+                       '(regexp "'" "'")
+                       '(regexp "'" "'"))
+  (dolist (thing '((?a . angle)
+                   (?q . single-quote)
+                   (?Q . double-quote)))
+    (add-to-list 'meow-char-thing-table thing))
 
   (meow-setup)
   (meow-global-mode 1)
 
   (setq meow-use-clipboard t)
-
   (setq! meow-keypad-leader-dispatch "C-c"))
 
 
 (provide 'init-keys-meow)
 ;;; init-keys-meow.el ends here
-
