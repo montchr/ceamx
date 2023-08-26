@@ -53,7 +53,7 @@
 ;;
 ;;   In the same vein, this keybind adds a [C-i] event, so users can bind to it.
 ;;   Otherwise, it falls back to regular C-i keybinds.
-;; 
+;;
 ;; Source: <https://github.com/doomemacs/doomemacs/blob/07fca786154551f90f36535bfb21f8ca4abd5027/lisp/doom-keybinds.el#L47-L67>
 (define-key key-translation-map [?\C-i]
             (cmd! (if (let ((keys (this-single-command-raw-keys)))
@@ -192,11 +192,14 @@ Example usage:
 ;;   definition of `kmacro-keymap'. However, regardless, the Emacs 29+
 ;;   keybinding functions also do not cause any issues.
 
+(keymap-global-set "M-["  #'insert-pair)
+(keymap-global-set "M-{"  #'insert-pair)
+(keymap-global-set "M-\"" #'insert-pair)
+(keymap-global-set "M-'"  #'insert-pair)
 
 (cmx-meow-normal-define-key
  "<" #'meow-page-up
  ">" #'meow-page-down)
-
 
 (defvar-keymap cmx-applications-keymap
   "d" #'dired
