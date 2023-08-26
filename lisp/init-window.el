@@ -43,5 +43,29 @@
 (use-package olivetti :defer t
   :hook (org-mode . olivetti-mode))
 
+;;
+;;; popper <https://github.com/karthink/popper> -- "minor-mode to summon and dismiss buffers easily."
+;;
+
+(use-package popper
+  :bind (("C-`"   . popper-toggle-latest)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          help-mode
+          (lambda (buf) (with-current-buffer buf
+                          (and (derived-mode-p 'fundamental-mode)
+                               (< (count-lines (point-min) (point-max))
+                                  10))))))
+
+  (popper-mode +1)
+  (popper-echo-mode +1)                 ; For echo area hints
+
+  :config
+  (setq! popper-group-function #'popper-group-by-projectile))
+
+
 (provide 'init-window)
 ;;; init-window.el ends here
