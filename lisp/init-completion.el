@@ -78,7 +78,7 @@
          ("M-p h" . cape-history)
          ("M-p f" . cape-file)
          ("M-p k" . cape-keyword)
-         ("M-p s" . cape-symbol)
+         ("M-p s" . cape-elisp-symbol)
          ("M-p a" . cape-abbrev)
          ;; FIXME: obsolete
          ("M-p i" . cape-ispell)
@@ -105,7 +105,7 @@
   ;;(add-to-list 'completion-at-point-functions #'cape-ispell)
   ;;(add-to-list 'completion-at-point-functions #'cape-dict)
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
-  (add-to-list 'completion-at-point-functions #'cape-symbol))
+  (add-to-list 'completion-at-point-functions #'cape-elisp-symbol))
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
