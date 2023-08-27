@@ -347,6 +347,14 @@ Example usage:
 (defalias 'cmx-org-keymap cmx-org-keymap)
 
 
+(defvar-keymap cmx-project-keymap
+  "a" '("add..." . projectile-add-known-project)
+  "f" '("find file..." . projectile-find-file)
+  "i" '("invalidate cache" . projectile-invalidate-cache)
+  "p" '("switch..." . projectile-switch-project))
+(defalias 'cmx-project-keymap cmx-project-keymap)
+
+
 (defvar-keymap cmx-packages-keymap
 	"i" '("elpaca manual" . (lambda () (interactive)
                             (info "Elpaca")))
@@ -359,18 +367,10 @@ Example usage:
   "v" #'elpaca-visit)
 (defalias 'cmx-packages-keymap cmx-packages-keymap)
 
-
-(defvar-keymap cmx-project-keymap
-  "a" '("add..." . projectile-add-known-project)
-  "f" '("find file..." . projectile-find-file)
-  "i" '("invalidate cache" . projectile-invalidate-cache)
-  "p" '("switch..." . projectile-switch-project))
-(defalias 'cmx-project-keymap cmx-project-keymap)
-
-
 (defvar-keymap cmx-session-keymap
-  "r" '("restart" . restart-emacs)
-  "q" '("save and quit" . save-buffers-kill-emacs))
+  "p" '("packages" . cmx-packages-keymap)
+  "q" '("save and quit" . save-buffers-kill-emacs)
+  "r" '("restart" . restart-emacs))
 (defalias 'cmx-session-keymap cmx-session-keymap)
 
 
@@ -432,6 +432,7 @@ Example usage:
 (keymap-global-set "C-c n"		'("notes..." . cmx-notes-keymap))
 (keymap-global-set "C-c o"		'("org..." . cmx-org-keymap))
 (keymap-global-set "C-c p"		'("project..." . cmx-project-keymap))
+;; FIXME: overridden by `projectile-command-map' binding
 (keymap-global-set "C-c P"  	'("packages..." . cmx-packages-keymap))
 (keymap-global-set "C-c q"		'("session..." . cmx-session-keymap))
 (keymap-global-set "C-c s"		'("search..." . cmx-search-keymap))
