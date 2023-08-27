@@ -64,7 +64,8 @@
   (popper-echo-mode +1)                 ; For echo area hints
 
   :config
-  (setq! popper-group-function #'popper-group-by-projectile))
+  (after! 'projectile
+    (setq! popper-group-function #'popper-group-by-projectile)))
 
 
 (provide 'init-window)
