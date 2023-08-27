@@ -43,7 +43,8 @@
 (setq tab-always-indent 'complete)
 
 (use-package corfu
-  :elpaca (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
+  :elpaca (corfu :host github :repo "minad/corfu"
+                 :files (:defaults "extensions/*"))
 
   ;; Enable Corfu only for certain modes.
   :hook ((prog-mode . corfu-mode))
@@ -51,15 +52,14 @@
   :config
   ;; (setq! corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
   ;; (setq! corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-  ;; (setq! corfu-preview-current nil)    ;; Disable current candidate preview
   ;; (setq! corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (setq! corfu-on-exact-match nil)     ;; Configure handling of exact matches
   ;; (setq! corfu-scroll-margin 5)        ;; Use scroll margin
-  (setq! corfu-cycle t)   ; Enable cycling for `corfu-next/previous'
-  (setq! corfu-auto t)    ; Enable auto completion
-  (setq! corfu-auto-delay 0.02)
-  (setq! corfu-separator ?\s)          ;; Orderless field separator
-  )
+  (setq! corfu-cycle t)
+  (setq! corfu-auto t)
+  (setq! corfu-auto-delay 0.5)
+  (setq! corfu-separator ?\s)
+  (setq! corfu-preview-current nil))
 
 (use-package dabbrev :elpaca nil
   :bind
