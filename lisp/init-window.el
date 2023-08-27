@@ -25,6 +25,8 @@
 
 ;;; Code:
 
+(require 'lib-doom)
+
 (use-feature emacs
   :init
   ;; Don't close windows with <ESC> key.
@@ -44,17 +46,37 @@
   :hook (org-mode . olivetti-mode))
 
 ;;
+;;; shackle :: Enforce rules for popup windows
+;;  <https://depp.brause.cc/shackle/>
+
+(use-package shackle
+  :elpaca (shackle :repo "https://depp.brause.cc/shackle.git")
+  :demand t
+  :config
+  (setq shackle-rules '((compilation-mode :noselect t)))
+  (setq shackle-default-rule '(:select t)))
+
+
+;;
 ;;; popper <https://github.com/karthink/popper> -- "minor-mode to summon and dismiss buffers easily."
 ;;
 
 (use-package popper
+  :after (shackle)
   :diminish
+  :commands (popper-mode
+             popper-echo-mode
+             popper-group-by-projectile)
   :bind (("C-`"   . popper-toggle-latest)
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
   :init
+  (after! 'shackle
+    (setq popper-display-control nil))
   (setq popper-reference-buffers
         '("\\*Messages\\*"
+          "Output\\*$"
+          compilation-mode
           help-mode
           (lambda (buf) (with-current-buffer buf
                           (and (derived-mode-p 'fundamental-mode)
@@ -67,6 +89,7 @@
   :config
   (after! 'projectile
     (setq! popper-group-function #'popper-group-by-projectile)))
+
 
 
 (provide 'init-window)
