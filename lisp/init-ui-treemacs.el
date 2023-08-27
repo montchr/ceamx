@@ -49,14 +49,15 @@
           treemacs-hide-dot-git-directory          t
           treemacs-indentation                     2
           treemacs-indentation-string              " "
-          treemacs-is-never-other-window           nil
+          treemacs-is-never-other-window           t
           treemacs-max-git-entries                 5000
           treemacs-missing-project-action          'ask
           treemacs-move-forward-on-expand          nil
-          treemacs-no-png-images                   nil
+          treemacs-no-png-images                   t
           treemacs-no-delete-other-windows         t
           treemacs-project-follow-cleanup          nil
-          treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+          ;; FIXME: should already be handled by `no-littering', but needs confirmation
+          ;; treemacs-persist-file                    (expand-file-name "treemacs-persist" +path-local-dir)
           treemacs-position                        'left
           treemacs-read-string-input               'from-child-frame
           treemacs-recenter-distance               0.1
@@ -64,13 +65,13 @@
           treemacs-recenter-after-tag-follow       nil
           treemacs-recenter-after-project-jump     'always
           treemacs-recenter-after-project-expand   'on-distance
-          treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
+          treemacs-litter-directories              '("node_modules" "vendor" "result" ".venv" ".cask")
           treemacs-project-follow-into-home        nil
           treemacs-show-cursor                     nil
           treemacs-show-hidden-files               t
           treemacs-silent-filewatch                nil
           treemacs-silent-refresh                  nil
-          treemacs-sorting                         'alphabetic-asc
+          treemacs-sorting                         'alphabetic-case-insensitive-asc
           treemacs-select-when-already-in-treemacs 'move-back
           treemacs-space-between-root-nodes        t
           treemacs-tag-follow-cleanup              t
@@ -102,7 +103,9 @@
        (treemacs-git-mode 'simple)))
 
     (treemacs-hide-gitignored-files-mode nil))
+
   :bind
+  ;; TODO: add to new sidebar keymap in `init-keys'
   (:map global-map
         ("M-0"       . treemacs-select-window)
         ("C-x t 1"   . treemacs-delete-other-windows)
