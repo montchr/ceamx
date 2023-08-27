@@ -197,6 +197,8 @@ Example usage:
 (keymap-global-set "M-'"  #'insert-pair)
 
 (cmx-meow-normal-define-key
+ ;; FIXME: popper not in effect here, also appears scrolled off screen
+ ;; "`" '("*Messages*" . view-echo-area-messages)
  "<" #'meow-page-up
  ">" #'meow-page-down)
 

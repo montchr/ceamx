@@ -48,6 +48,7 @@
 ;;
 
 (use-package popper
+  :diminish
   :bind (("C-`"   . popper-toggle-latest)
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
