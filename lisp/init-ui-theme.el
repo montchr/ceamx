@@ -44,30 +44,19 @@
 ;; Render multiline comments using `font-lock-comment-face'.
 (add-hook 'php-mode-hook #'cmx--multine-comment-face-hook)
 
-(use-package modus-themes
-  :demand t
-  :config
-  (setq modus-themes-italic-constructs t)
-  (setq modus-themes-bold-constructs t)
-  (setq modus-themes-common-palette-overrides
-        '((fringe unspecified)))
 
-  ;; If you don't customize it, this is the theme you get.
-  (setq-default custom-enabled-themes '(modus-vivendi))
-
-  (load-theme 'modus-vivendi :no-confirm))
 
 (use-feature solar
   :config
   (setq calendar-latitude 39.96)
   (setq calendar-longitude -75.13))
 
-(use-package circadian
-  :after solar
-  :config
-  (setq circadian-themes '((:sunrise . modus-operandi-tinted)
-                           (:sunset  . modus-vivendi-tinted)))
-  (circadian-setup))
+;; (use-package circadian
+;;   :after solar
+;;   :config
+;;   (setq circadian-themes '((:sunrise . modus-operandi-tinted)
+;;                            (:sunset  . modus-vivendi-tinted)))
+;;   (circadian-setup))
 
 ;; FIXME: does not belong in this file, is more of a generalised interface library
 (use-package magit-section :defer t)

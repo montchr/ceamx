@@ -34,38 +34,5 @@
 ;; Wait until `diminish` is activated so its use-package keyword is installed
 (elpaca-wait)
 
-;; NOTE: be wary of performance issues, as this package is notoriously heavy
-;; FIXME: darwin: icons worked inconsistently until installing
-;; "Symbols Nerd Font Mono" via `nerd-icons-install-fonts'.
-;; The resulting file =NFM.ttf= seems significantly different than the version
-;; installed by Nix, but I'm not positive yet because the macOS Font Book app is
-;; pretty difficult to work with.
-;; Nerd Fonts recently released a new major version and I suspect that may factor into the issue.
-;; Note, however, that the nerd-icons package uses the latest font version (v3.0.x)
-;; This GitHub issue /might/ be relevant: <https://github.com/rainstormstudio/nerd-icons.el/issues/43>
-(use-package doom-modeline
-  :after (nerd-icons)
-  :hook (elpaca-after-init . doom-modeline-mode)
-  :config
-  (setq! doom-modeline-support-imenu t)
-  (setq! doom-modeline-unicode-fallback t)
-  (setq! doom-modeline-buffer-encoding nil)
-  (setq! doom-modeline-github nil)
-  (setq! doom-modeline-buffer-file-name-style 'truncate-upto-project)
-
-  (setq! doom-modeline-icon t)
-
-  ;; note that the major mode icon is not missing like most others.
-  ;; git branch icon is also fine.
-  (setq! doom-modeline-major-mode-icon t)
-
-  ;; FIXME: missing icons when using nix-installed icon font
-  (setq! doom-modeline-buffer-state-icon t)
-  (setq! doom-modeline-buffer-modification-icon t)
-
-  (setq! doom-modeline-modal t)
-  ;; FIXME: missing icon with nix-installed font... but only when non-nil?! when nil, icon displays properly...
-  (setq! doom-modeline-modal-icon t))
-
 (provide 'init-ui-modeline)
 ;;; init-ui-modeline.el ends here
