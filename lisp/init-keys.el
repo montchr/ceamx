@@ -218,7 +218,6 @@ Example usage:
 
 (defvar-keymap cmx-buffer-keymap
   "b" `("switch..." . ,(progn
-                         #'switch-to-buffer
                          (after! 'consult #'consult-project-buffer)
                          (after! 'bufler #'bufler-switch-buffer)))
   "B" '("switch (any)..." . consult-buffer)
