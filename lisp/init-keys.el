@@ -392,6 +392,9 @@ Example usage:
   "x" '("refs (p)" . projectile-find-references))
 (defalias 'cmx-search-keymap cmx-search-keymap)
 
+(defvar-keymap cmx-sidebar-keymap
+  "t" #'cmx/treemacs/toggle)
+(defalias 'cmx-sidebar-keymap cmx-sidebar-keymap)
 
 (defvar-keymap cmx-tab-keymap
   "h" '("prev" . tab-previous)
@@ -432,6 +435,7 @@ Example usage:
 (keymap-global-set "C-c P"  	'("packages..." . cmx-packages-keymap))
 (keymap-global-set "C-c q"		'("session..." . cmx-session-keymap))
 (keymap-global-set "C-c s"		'("search..." . cmx-search-keymap))
+(keymap-global-set "C-c S"		'("sidebar..." . cmx-sidebar-keymap))
 (keymap-global-set "C-c TAB"	'("tab..." . cmx-tab-keymap))
 (keymap-global-set "C-c t"		'("toggle..." . cmx-toggle-keymap))
 (keymap-global-set "C-c w"		'("window..." . cmx-hydra/window/body))
