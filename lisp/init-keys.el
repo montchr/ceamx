@@ -397,6 +397,7 @@ Example usage:
 (defalias 'cmx-sidebar-keymap cmx-sidebar-keymap)
 
 (defvar-keymap cmx-tab-keymap
+  "d" '("delete" . tab-close)
   "h" '("prev" . tab-previous)
   "l" '("next" . tab-next)
   "n" '("new" . tab-new)
