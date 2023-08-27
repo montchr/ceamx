@@ -217,7 +217,10 @@ Example usage:
 
 
 (defvar-keymap cmx-buffer-keymap
-  "b" '("switch..." . consult-project-buffer)
+  "b" `("switch..." . ,(progn
+                         #'switch-to-buffer
+                         (after! 'consult #'consult-project-buffer)
+                         (after! 'bufler #'bufler-switch-buffer)))
   "B" '("switch (any)..." . consult-buffer)
   "o" '("other" . mode-line-other-buffer)
   "[" '("prev" . previous-buffer)
