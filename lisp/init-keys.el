@@ -215,8 +215,8 @@ Example usage:
 
 
 (defvar-keymap cmx-buffer-keymap
-  "b" '("switch..." . consult-project-buffer)
-  "B" '("switch (any)..." . consult-buffer)
+  "b" '("switch..." . switch-to-buffer)
+  "B" '("switch (any)..." . nil)
   "o" '("other" . mode-line-other-buffer)
   "[" '("prev" . previous-buffer)
   "]" '("next" . next-buffer)
@@ -372,17 +372,17 @@ Example usage:
 
 
 (defvar-keymap cmx-search-keymap
-  "h" '("history..." . consult-isearch-history)
-  "j" '("symbols (f)..." . consult-lsp-file-symbols)
-  "J" '("symbols (g)..." . consult-lsp-symbols)
+  "h" nil
+  "j" nil
+  "J" nil
   "l" '("library..." . (lambda () (interactive "P")
                          (call-interactively
                           (if %
                               #'find-library-other-window
                             #'find-library))))
-  "o" '("outline (f)..." . consult-outline)
-  "p" '("grep (p)..." . consult-ripgrep)
-  "s" '("line (f)..." . consult-line)
+  "o" nil
+  "p" nil
+  "s" nil
   "v" '("variable" . find-variable-at-point)
   "V" '("variable..." . find-variable)
   "x" '("refs (p)" . projectile-find-references))

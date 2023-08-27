@@ -53,11 +53,13 @@
     "<remap> <load-theme>"                      #'consult-theme
     "<remap> <man>"                             #'consult-man
     "<remap> <recentf-open-files>"              #'consult-recent-file
-    "<remap> <switch-to-buffer>"                #'consult-buffer
+    "<remap> <switch-to-buffer>"                #'consult-project-buffer
     "<remap> <switch-to-buffer-other-window>"   #'consult-buffer-other-window
     "<remap> <switch-to-buffer-other-frame>"    #'consult-buffer-other-frame
     "<remap> <yank-pop>"                        #'consult-yank-pop
     "<remap> <project-switch-to-buffer>"        #'consult-project-buffer
+
+    "B" '("switch (any)..." . consult-buffer)
 
     ;; C-c bindings (mode-specific-map)
     ;; TODO: verify
@@ -67,13 +69,13 @@
 
     ;; Custom M-# bindings for fast register access
     "M-#"    #'consult-register-load
-    "M-'"    #'consult-register-store          
+    "M-'"    #'consult-register-store
     "C-M-#"  #'consult-register
 
     ;; M-g bindings (goto-map)
     "M-g e"  #'consult-compile-error
-    "M-g f"  #'consult-flymake               ;; Alternative: consult-flycheck
-    "M-g o"  #'consult-outline               ;; Alternative: consult-org-heading
+    "M-g f"  #'consult-flymake ;; Alternative: consult-flycheck
+    "M-g o"  #'consult-outline ;; Alternative: consult-org-heading
     "M-g m"  #'consult-mark
     "M-g k"  #'consult-global-mark
     "M-g i"  #'consult-imenu
@@ -93,7 +95,15 @@
   ;; TODO: may be unnecessary when remapping `yank-pop'?
   ;; (keymap-global-set "M-y" #'consult-yank-pop)
 
-  ;;; `isearch' integration:
+  (define-keymap :keymap cmx-search-keymap
+    "h" '("history..." . consult-isearch-history)
+    "j" '("symbols (f)..." . consult-lsp-file-symbols)
+    "J" '("symbols (g)..." . consult-lsp-symbols)
+    "o" '("outline (f)..." . consult-outline)
+    "p" '("grep (p)..." . consult-ripgrep)
+    "s" '("line (f)..." . consult-line))
+
+;;; `isearch' integration:
   (keymap-global-set "M-s e" #'consult-isearch-history)
   (keymap-set minibuffer-local-map "M-s" #'consult-history) ; orig. next-matching-history-element
   (keymap-set minibuffer-local-map "M-r" #'consult-history) ; orig. previous-matching-history-element
@@ -121,9 +131,9 @@
   ;; Make narrowing help available in the minibuffer.
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'embark-prefix-help-command)
 
-  ;;; Use Orderless as pattern compiler for consult-grep/ripgrep/find.
-  ;;; via <https://github.com/minad/consult/wiki#use-orderless-as-pattern-compiler-for-consult-grepripgrepfind>
-  ;;; FIXME: both options break!
+;;; Use Orderless as pattern compiler for consult-grep/ripgrep/find.
+;;; via <https://github.com/minad/consult/wiki#use-orderless-as-pattern-compiler-for-consult-grepripgrepfind>
+;;; FIXME: both options break!
 
   ;; (defun +consult--orderless-regexp-compiler (input type &rest _config)
   ;;   (setq input (orderless-pattern-compiler input))
@@ -142,10 +152,10 @@
   ;;     (apply args)))
   ;; (advice-add #'consult-ripgrep :around #'+consult--with-orderless)
 
-  ;;; --- buffers ---
+;;; --- buffers ---
 
-  ;;; Pre-select nearest heading for `consult-org-heading' and `consult-outline'
-  ;;; <https://github.com/minad/consult/wiki#pre-select-nearest-heading-for-consult-org-heading-and-consult-outline-using-vertico>
+;;; Pre-select nearest heading for `consult-org-heading' and `consult-outline'
+;;; <https://github.com/minad/consult/wiki#pre-select-nearest-heading-for-consult-org-heading-and-consult-outline-using-vertico>
 
   (defvar +consult--previous-point nil
     "Location of point before entering minibuffer.
@@ -161,7 +171,7 @@
                (memq current-minibuffer-command
                      '(consult-org-heading consult-outline)))
       (setq vertico--index
-            (max 0 ; if none above, choose the first below
+            (max 0                      ; if none above, choose the first below
                  (1- (or (seq-position
                           vertico--candidates
                           +consult--previous-point
