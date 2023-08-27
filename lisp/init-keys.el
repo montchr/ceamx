@@ -196,6 +196,12 @@ Example usage:
 (keymap-global-set "M-\"" #'insert-pair)
 (keymap-global-set "M-'"  #'insert-pair)
 
+(after! [meow vundo]
+  ;; NOTE: This should only be set when using modal keybindings
+  ;;       so the default binding is still available.
+  (keymap-global-set "C-x u" #'vundo))
+
+
 (cmx-meow-normal-define-key
  ;; FIXME: popper not in effect here, also appears scrolled off screen
  ;; "`" '("*Messages*" . view-echo-area-messages)

@@ -89,6 +89,7 @@
 ;;  <https://protesilaos.com/emacs/pulsar>
 
 (use-package pulsar
+  :commands (pulsar-global-mode)
   :defer 5
   :config
   (setq pulsar-pulse           t)
@@ -108,6 +109,20 @@
   :defer 2
   :config
   (global-aggressive-indent-mode 1))
+
+
+;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;;; vundo (visual undo) :: Visualize the undo tree.
+;;  <https://github.com/casouri/vundo>
+
+(use-package vundo
+  :defer t
+  :commands (vundo)
+  :init
+  (setq! vundo-glyph-alist vundo-unicode-symbols)
+  :config
+  ;; TODO: set via symbols font variable
+  (set-face-attribute 'vundo-default nil :family "Symbols Nerd Font Mono"))
 
 
 ;; § ────────── ────────── ────────── ────────── ────────── ──────────
