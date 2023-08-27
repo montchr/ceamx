@@ -104,6 +104,8 @@
 ;;; aggressive-indent-mode :: Re-indent code after every change
 ;;  <https://github.com/Malabarba/aggressive-indent-mode>
 
+;;; TODO: consider removing ... might be too aggressive
+
 (use-package aggressive-indent
   :commands (global-aggressive-indent-mode)
   :defer 2
@@ -118,19 +120,16 @@
 (use-package vundo
   :defer t
   :commands (vundo)
-  :init
-  (setq! vundo-glyph-alist vundo-unicode-symbols)
+  :defines (vundo-unicode-symbols vundo-glyph-alist)
   :config
-  ;; TODO: set via symbols font variable
-  (set-face-attribute 'vundo-default nil :family "Symbols Nerd Font Mono"))
+  (setq! vundo-glyph-alist vundo-unicode-symbols))
 
 
 ;; § ────────── ────────── ────────── ────────── ────────── ──────────
 ;;; drag-stuff :: Move stuff around in arbitrary directions
 ;;  <https://github.com/rejeep/drag-stuff.el>
 ;;
-;; As of [2023-07-20], this package appears to be abandoned. , the last update was
-;; in 2017.
+;; This package appears to be abandoned since 2017.
 ;;
 ;;;; Issues
 ;;
