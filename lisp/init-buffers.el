@@ -33,5 +33,17 @@
   ;; <https://www.emacswiki.org/emacs/TruncateLines>
   (set-default 'truncate-lines t))
 
+(use-package bufler
+  :elpaca (bufler :host github :repo "alphapapa/bufler.el"
+                  :files (:defaults (:exclude "helm-bufler.el")))
+  :commands (bufler-mode)
+
+  :init
+  (bufler-mode)
+
+  :config
+  ;; NOTE: This may have a negative impact on performance.
+  (setq bufler-vc-state t))
+
 (provide 'init-buffers)
 ;;; init-buffers.el ends here
