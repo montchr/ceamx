@@ -27,42 +27,22 @@
 
 ;;; Code:
 
+(require 'config-ui-theme)
+(require 'lib-ui-theme)
+
 ;; Don't prompt to confirm theme safety.
 ;; This also has the benefit of avoiding problems with
 ;; first-time startup on Emacs > 26.3.
 (setq custom-safe-themes t)
 
-;; If you don't customize it, this is the theme you get.
-(setq-default custom-enabled-themes '(modus-vivendi))
-
 ;; Ensure that themes will be applied even if they have not been customized
-(defun cmx-reapply-themes ()
-  "Forcibly load the themes listed in `custom-enabled-themes'."
-  (dolist (theme custom-enabled-themes)
-    (unless (custom-theme-p theme)
-      (load-theme theme)))
-  (custom-set-variables `(custom-enabled-themes (quote ,custom-enabled-themes))))
 (add-hook 'elpaca-after-init-hook 'cmx-reapply-themes)
 
-(defun light ()
-  "Activate a light color theme."
-  (interactive)
-  (setq custom-enabled-themes '(modus-operandi-tinted))
-  (cmx-reapply-themes))
+;; Set up `after-enable-theme-hook'.
+(advice-add 'enable-theme :after #'cmx--after-enable-theme-hook)
 
-(defun dark ()
-  "Activate a dark color theme."
-  (interactive)
-  (setq custom-enabled-themes '(modus-vivendi))
-  (cmx-reapply-themes))
-
-(use-feature custom
-  :init
-  ;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-  (defvar after-enable-theme-hook nil)
-  (defun run-after-enable-theme-hook (&rest _args)
-    (run-hooks 'after-enable-theme-hook))
-  (advice-add 'enable-theme :after #'run-after-enable-theme-hook))
+;; Render multiline comments using `font-lock-comment-face'.
+(add-hook 'php-mode-hook #'cmx--multine-comment-face-hook)
 
 (use-package modus-themes
   :demand t
@@ -72,12 +52,10 @@
   (setq modus-themes-common-palette-overrides
         '((fringe unspecified)))
 
-  ;; via <https://protesilaos.com/emacs/modus-themes#h:d0a3157b-9c04-46e8-8742-5fb2a7ae8798>
-  (defun cmx/multine-comments-h ()
-    (setq-local c-doc-face-name 'font-lock-comment-face))
-  (add-hook 'php-mode-hook #'cmx/multine-comments-h)
+  ;; If you don't customize it, this is the theme you get.
+  (setq-default custom-enabled-themes '(modus-vivendi))
 
-  (load-theme 'modus-vivendi-tinted :no-confirm))
+  (load-theme 'modus-vivendi :no-confirm))
 
 (use-feature solar
   :config
@@ -96,4 +74,3 @@
 
 (provide 'init-ui-theme)
 ;;; init-ui-theme.el ends here
-
