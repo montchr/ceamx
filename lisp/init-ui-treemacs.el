@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(require 'lib-ui-treemacs)
+
 (use-package treemacs
   :defer t
   :init
