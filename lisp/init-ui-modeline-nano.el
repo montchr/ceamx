@@ -41,11 +41,8 @@
               nano-modeline-org-capture-mode
               nano-modeline-org-agenda-mode)
 
-  :init
-  (require 'nano-modeline)
-
   :config
-  (require 'nano-modeline)
+  ;; (setq! nano-modeline-position #'nano-modeline-footer)
 
   (add-hook 'prog-mode-hook            #'nano-modeline-prog-mode)
   (add-hook 'text-mode-hook            #'nano-modeline-text-mode)

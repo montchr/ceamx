@@ -28,9 +28,6 @@
 (add-to-list 'default-frame-alist '(undecorated . t))
 
 (when +sys-mac-p
-  ;; macOS: Hide window decorations.
-  (add-to-list 'default-frame-alist '(undecorated . t))
-
   ;; macOS: GUI menu bar is necessary otherwise Emacs will be treated as a
   ;; non-application OS window (e.g. no focus capture). Menu bar is, however,
   ;; ugly in terminal frames.

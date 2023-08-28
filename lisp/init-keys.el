@@ -260,7 +260,7 @@ Example usage:
 (defvar-keymap cmx-elisp-keymap
   "b" #'eval-buffer
   "d" #'eval-defun
-  "e" '("eval-last-sexp" . pp-eval-last-sexp)
+  "e" #'eval-last-sexp
   "E" #'eval-expression
   "I" '("reload init-file" . (lambda ()
                                (interactive)

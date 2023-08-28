@@ -3,6 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes '(nano))
  '(newsticker-url-list
    '(("Human Transit" "https://humantransit.org/feed" nil nil nil)
      ("Hacker News" "https://news.ycombinator.com/rss" nil nil nil)

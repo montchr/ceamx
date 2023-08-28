@@ -47,9 +47,7 @@
  custom-unlispify-menu-entries nil      ; Prefer kebab-case for titles
  custom-unlispify-tag-names nil         ; Prefer kebab-case for symbols
  delete-by-moving-to-trash t            ; Delete files to trash
- fill-column 80                         ; Set width for automatic line breaks
  help-window-select t                   ; Focus new help windows when opened
- initial-major-mode #'fundamental-mode  ; Improve initial scratch buffer load time
  mouse-yank-at-point t                  ; Yank at point rather than pointer
  native-comp-async-report-warnings-errors 'silent ; Skip error buffers
  read-process-output-max (* 1024 1024)  ; Increase read size for data chunks
@@ -73,6 +71,14 @@
 (put 'scroll-left 'disabled nil)        ; Enable `scroll-left'
 (put 'upcase-region 'disabled nil)      ; Enable `upcase-region'
 
+;; Improve initial scratch buffer load time
+(setq default-major-mode #'text-mode)
+(setq initial-major-mode #'text-mode)
+
+;; Automatic hard wrapping at 80 characters.
+(setq auto-fill-mode t)
+(setq fill-column 80)
+
 ;; Increase number of messages saved in log.
 (setq message-log-max 10000)
 
@@ -88,7 +94,10 @@
 ;; Disable extraneous OS window chrome.
 (when (window-system)
   (tool-bar-mode -1)
-  (toggle-scroll-bar -1))
+  (toggle-scroll-bar -1)
+  ;; Display help text in echo area, not in a popup.
+  (tooltip-mode -1)
+  (scroll-bar-mode -1))
 
 (show-paren-mode t)
 
@@ -154,7 +163,16 @@
 (setq desktop-dirname (file-name-as-directory +path-local-dir))
 (setq desktop-save 'ask-if-new)
 
+;; TODO: Ideally, this action should only affect edited lines.
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(setq use-file-dialog nil)
+(setq use-dialog-box nil)
+(setq indicate-empty-lines nil)
+
+(setq-default cursor-type '(hbar .  2))
+(setq-default cursor-in-non-selected-windows nil)
+
 
 (provide 'init-defaults)
 ;;; init-defaults.el ends here

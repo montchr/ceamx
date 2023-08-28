@@ -33,30 +33,7 @@
 
   :config
   ;;; Configuration sourced from `nano-mode'.
-  (setq inhibit-startup-screen t)
-  (setq inhibit-startup-message t)
-  (setq inhibit-startup-echo-area-message t)
-  ;; No message in scratch buffer
-  (setq initial-scratch-message nil)
-  (setq initial-buffer-choice nil)
-  (setq frame-title-format nil)
-  (setq use-file-dialog nil)
-  (setq use-dialog-box nil)
-  (setq pop-up-windows nil)
-  (setq indicate-empty-lines nil)
-  (setq initial-major-mode 'text-mode)
-  (setq default-major-mode 'text-mode)
   (setq font-lock-maximum-decoration t)
-  ;; No line break space points
-  (setq auto-fill-mode nil)
-  (setq fill-column 80)
-  ;; Bar cursor
-  (setq-default cursor-type '(hbar .  2))
-  (setq-default cursor-in-non-selected-windows nil)
-  (setq blink-cursor-mode nil)
-  (tooltip-mode -1)
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)
   (setq default-frame-alist
         (append (list
                  '(min-height . 1)  '(height . 45)
@@ -65,7 +42,7 @@
                  '(internal-border-width . 24)
                  '(left-fringe . 0)
                  '(right-fringe . 0)
-                 '(undecorated-round . t) ;; emacs-plu@29 only
+                 '(undecorated-round . t) ;; emacs-plus@29 only
                  '(tool-bar-lines . 0)
                  '(menu-bar-lines . 0))))
 
@@ -82,6 +59,11 @@
                           'truncation (make-glyph-code ?… 'nano-faded))
   (set-display-table-slot standard-display-table
                           'wrap (make-glyph-code ?- 'nano-faded))
+
+  (custom-theme-set-faces 'nano
+                          '(nano-mono ((t (:weight light :height 140 :family "JetBrains Mono"))))
+                          '(nano-sans ((t (:weight light :height 140 :family "Inter")))))
+
 
   (let ((font (font-spec :name "Symbols Nerd Font Mono")))
     (if (find-font font)
