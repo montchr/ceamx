@@ -110,7 +110,9 @@
 ;;; languages
 (require 'init-lsp)
 (require 'init-lang-elisp)
+(require 'init-lang-html)
 (require 'init-lang-nix)
+(require 'init-lang-php)
 (require 'init-lang-yaml)
 (require 'init-lang-misc)
 
