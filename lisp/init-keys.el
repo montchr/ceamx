@@ -208,6 +208,7 @@ Example usage:
  "<" #'meow-page-up
  ">" #'meow-page-down)
 
+
 (defvar-keymap cmx-applications-keymap
   "d" #'dired
   "e" #'eshell
@@ -223,7 +224,7 @@ Example usage:
 
 
 (defvar-keymap cmx-buffer-keymap
-  "b" `("switch..." . bufler-switch-buffer)
+  "b" `("switch..." . consult-project-buffer)
   "B" '("switch (any)..." . consult-buffer)
   "o" '("other" . mode-line-other-buffer)
   "[" '("prev" . previous-buffer)
