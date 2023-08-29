@@ -43,6 +43,9 @@
 
   :config
   ;; (setq! nano-modeline-position #'nano-modeline-footer)
+  (when (eq nano-modeline-position #'nano-modeline-header)
+    (setq-default mode-line-format (list "%_"))
+    (setq mode-line-format (list "%_")))
 
   (add-hook 'prog-mode-hook            #'nano-modeline-prog-mode)
   (add-hook 'text-mode-hook            #'nano-modeline-text-mode)

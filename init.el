@@ -67,13 +67,13 @@
 (require 'init-xterm)
 (require 'init-frame)
 (require 'init-ui-theme)
-(require 'init-ui-nano-theme)
-;;(require 'init-ui-modus-themes)
+;;(require 'init-ui-nano-theme)
+(require 'init-ui-modus-themes)
 (require 'init-ui-font)
 (require 'init-ui-icons)
 (require 'init-ui-modeline)
-(require 'init-ui-modeline-nano)
-;;(require 'init-ui-modeline-doom)
+;;(require 'init-ui-modeline-nano)
+(require 'init-ui-modeline-doom)
 (require 'init-ui-treemacs)
 
 

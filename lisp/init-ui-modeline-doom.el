@@ -43,6 +43,9 @@
   (setq! doom-modeline-github nil)
   (setq! doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
+  ;; Enable HUD mode, providing a micromap of buffer position.
+  (setq! doom-modeline-hud t)
+
   (setq! doom-modeline-icon t)
 
   ;; note that the major mode icon is not missing like most others.

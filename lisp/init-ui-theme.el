@@ -44,19 +44,42 @@
 ;; Render multiline comments using `font-lock-comment-face'.
 (add-hook 'php-mode-hook #'cmx--multine-comment-face-hook)
 
+(setq font-lock-maximum-decoration t)
+(setq default-frame-alist
+      (append (list
+               '(min-height . 1)  '(height . 45)
+               '(min-width  . 1)  '(width  . 81)
+               '(vertical-scroll-bars . nil)
+               ;; '(internal-border-width . 24
+               '(left-fringe . 0)
+               '(right-fringe . 0)
+               '(tool-bar-lines . 0)
+               '(menu-bar-lines . 0))))
 
+(when +sys-mac-p
+  ;; emacs-plus@29+ only
+  (add-to-list 'default-frame-alist '(undecorated-round . t)))
+
+;;; <https://git.sr.ht/~protesilaos/spacious-padding>
+(use-package spacious-padding
+  :commands (spacious-padding-mode)
+  :init (spacious-padding-mode)
+  :config
+  (setq spacious-padding-widths '( :internal-border-width 32
+                                   :right-divider-width 24
+                                   :scroll-bar-width 8)))
 
 (use-feature solar
   :config
   (setq calendar-latitude 39.96)
   (setq calendar-longitude -75.13))
 
-;; (use-package circadian
-;;   :after solar
-;;   :config
-;;   (setq circadian-themes '((:sunrise . modus-operandi-tinted)
-;;                            (:sunset  . modus-vivendi-tinted)))
-;;   (circadian-setup))
+(use-package circadian
+  :after solar
+  :config
+  (setq circadian-themes '((:sunrise . modus-operandi)
+                           (:sunset  . modus-vivendi)))
+  (circadian-setup))
 
 ;; FIXME: does not belong in this file, is more of a generalised interface library
 (use-package magit-section :defer t)

@@ -35,6 +35,16 @@
   ;; If you don't customize it, this is the theme you get.
   (setq-default custom-enabled-themes '(modus-vivendi))
 
+  (defun cmx-modus-themes--custom-faces ()
+    (modus-themes-with-colors
+      (custom-set-faces
+       ;; Add "padding" to modeline.
+       `(mode-line ((,c :box ( :line-width 10
+                               :color ,bg-mode-line-active))))
+       `(mode-line-inactive ((,c :box ( :line-width 10
+                                        :color ,bg-mode-line-inactive)))))))
+  (add-hook 'modus-themes-after-load-theme-hook #'cmx-modus-themes--custom-faces)
+
   (load-theme 'modus-vivendi :no-confirm))
 
 (provide 'init-ui-modus-themes)
