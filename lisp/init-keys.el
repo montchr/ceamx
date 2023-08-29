@@ -308,6 +308,7 @@ Example usage:
   "t" #'git-timemachine)
 (defalias 'cmx-git-keymap cmx-git-keymap)
 
+
 (defvar-keymap cmx-help-keymap
   "h" #'help-for-help
   "b" #'embark-bindings
@@ -380,9 +381,11 @@ Example usage:
 (defalias 'cmx-packages-keymap cmx-packages-keymap)
 
 (defvar-keymap cmx-session-keymap
+  "f" '("font..." . fontaine-set-preset)
   "p" '("packages" . cmx-packages-keymap)
   "q" '("save and quit" . save-buffers-kill-emacs)
-  "r" '("restart" . restart-emacs))
+  "r" '("restart" . restart-emacs)
+  "t" '("theme..." . consult-theme))
 (defalias 'cmx-session-keymap cmx-session-keymap)
 
 
