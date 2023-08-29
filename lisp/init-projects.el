@@ -37,15 +37,15 @@
   ;; Use Emacs default completion system i.e. `completing-read'
   (setq projectile-completion-system 'default)
 
-  ;; TODO: should this be set here entirely, or merely appended-to?  ;; TODO: should this be set here entirely, or merely appended-to?  ;; TODO: should this be set here entirely, or merely appended-to?
+  ;; TODO: should this be set here entirely, or merely appended-to?
   (setq projectile-project-root-files '(".envrc" ".projectile"))
 
   (projectile-mode +1)
 
   :config
   (define-keymap :keymap projectile-mode-map
-    "s-p"    'projectile-command-map
-    "C-c P"  'projectile-command-map)
+    ;; NOTE: Overrides default `cmx-project-keymap' binding.
+    "C-c p" '("project" . projectile-command-map))
 
   (setq projectile-project-search-path '(("~/Developer/sources/" . 1)
                                          ("~/Developer/contrib/" . 2)
