@@ -322,6 +322,11 @@ Example usage:
 (defalias 'cmx-help-keymap cmx-help-keymap)
 
 
+(defvar-keymap cmx-insert-keymap
+  "y" #'yank-from-kill-ring)
+(defalias 'cmx-insert-keymap cmx-insert-keymap)
+
+
 (defvar-keymap cmx-notes-keymap
   "b" #'denote-backlinks
   "d" #'denote-date
@@ -423,7 +428,6 @@ Example usage:
 ;; (cmx-meow-normal-define-key "g d" #'xref-find-definitions)
 
 
-
 (keymap-global-set "C-c `"    '("other buffer" . mode-line-other-buffer))
 (keymap-global-set "C-c a"		'("applications..." . cmx-applications-keymap))
 (keymap-global-set "C-c b"		'("buffer..." . cmx-buffer-keymap))
@@ -436,6 +440,7 @@ Example usage:
 (keymap-global-set "C-c F"		'("frame..." . cmx-frame-keymap))
 (keymap-global-set "C-c G"		'("git..." . cmx-git-keymap))
 (keymap-global-set "C-c H"		'("help..." . cmx-help-keymap))
+(keymap-global-set "C-c i"		'("insert..." . cmx-insert-keymap))
 (keymap-global-set "C-c n"		'("notes..." . cmx-notes-keymap))
 (keymap-global-set "C-c o"		'("org..." . cmx-org-keymap))
 (keymap-global-set "C-c p"		'("project..." . cmx-project-keymap))
