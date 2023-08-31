@@ -78,8 +78,8 @@
 ;;; Autosaves
 ;;
 
-(setq auto-save-interval 300)           ; input events before autosave
-(setq auto-save-timeout 30)             ; idle seconds before autosave
+(setq auto-save-interval 666)           ; input events before autosave
+(setq auto-save-timeout 33)             ; idle seconds before autosave
 ;; Don't create auto-save ~ files.
 (setq auto-save-default nil)
 
