@@ -32,7 +32,9 @@
 (autoload '+lsp-defer-server-shutdown-a "lib-lsp")
 
 (use-package lsp-mode
-  :commands (lsp-deferred)
+  :commands (lsp-deferred lsp-execute-code-action)
+  :autoload (lsp--shutdown-workspace)
+  :defines (lsp-modeline-code-actions-segments) ; idk why tho
 
   :init
   (setq lsp-use-plists t)
@@ -63,7 +65,10 @@
 
   (advice-add '+lsp-defer-server-shutdown-a :around #'lsp--shutdown-workspace)
 
+  (keymap-set lsp-mode-map "M-<return>" #'lsp-execute-code-action)
+
   :hook
+  ;; FIXME: might overwrite which-key strings defined in `init-keys'?
   ((lsp-mode . lsp-enable-which-key-integration)))
 
 (use-package lsp-ui
