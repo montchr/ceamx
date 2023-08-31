@@ -3,7 +3,7 @@
 ;; Copyright (C) 2023  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: 
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -31,15 +31,18 @@
   ;; at least i think that's what's causing the inconsistencies...
   (setq fontaine-presets
         '((small :default-height 110)
-          (regular :default-height 130)
-          (medium :default-height 150)
-          (large :default-height 170
+          (regular :default-height 140)
+          (regular-alt :default-height 130)
+          (medium :default-height 160)
+          (medium-alt :default-height 150)
+          (large :default-height 180)
+          (large-alt :default-height 170
                  :line-spacing 0.1)
           (xlarge :default-height 240
                   :line-spacing nil)
           (t
            ;; TODO: set values from nix config (or, less ideally, by env vars)
-           :default-family "JetBrains Mono"
+           :default-family "Iosevka Comfy"
            :default-weight regular
            :default-height 100
            :fixed-pitch-family nil
@@ -51,7 +54,7 @@
            :variable-pitch-weight nil
            :variable-pitch-height 1.0
            :bold-family nil
-           :bold-weight bold
+           :bold-weight semibold
            :italic-family nil
            :italic-slant italic
            :line-spacing 0.1)))
@@ -62,26 +65,20 @@
 (use-package ligature
   :elpaca (ligature :host github :repo "mickeynp/ligature.el")
   :config
-  ;; Enable all JetBrains Mono ligatures in programming modes
-  (ligature-set-ligatures 'prog-mode '("-|" "-~" "---" "-<<" "-<" "--" "->" "->>" "-->" "///" "/=" "/=="
-                                       "/>" "//" "/*" "*>" "***" "*/" "<-" "<<-" "<=>" "<=" "<|" "<||"
-                                       "<|||" "<|>" "<:" "<>" "<-<" "<<<" "<==" "<<=" "<=<" "<==>" "<-|"
-                                       "<<" "<~>" "<=|" "<~~" "<~" "<$>" "<$" "<+>" "<+" "</>" "</" "<*"
-                                       "<*>" "<->" "<!--" ":>" ":<" ":::" "::" ":?" ":?>" ":=" "::=" "=>>"
-                                       "==>" "=/=" "=!=" "=>" "===" "=:=" "==" "!==" "!!" "!=" ">]" ">:"
-                                       ">>-" ">>=" ">=>" ">>>" ">-" ">=" "&&&" "&&" "|||>" "||>" "|>" "|]"
-                                       "|}" "|=>" "|->" "|=" "||-" "|-" "||=" "||" ".." ".?" ".=" ".-" "..<"
-                                       "..." "+++" "+>" "++" "[||]" "[<" "[|" "{|" "??" "?." "?=" "?:" "##"
-                                       "###" "####" "#[" "#{" "#=" "#!" "#:" "#_(" "#_" "#?" "#(" ";;" "_|_"
-                                       "__" "~~" "~~>" "~>" "~-" "~@" "$>" "^=" "]#"))
+  ;; Enable all Iosevka ligatures in programming modes
+  ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
+  (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
+                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
 
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
 ;; FIXME: configure symbols -- e.g. `lambda' prettification is problematic
-;; (use-feature prettify-symbols
-;;   :hook prog-mode)
+(use-feature prettify-symbols
+  :hook prog-mode)
 
 
 (provide 'init-ui-font)

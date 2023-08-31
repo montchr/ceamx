@@ -61,7 +61,8 @@
                           'wrap (make-glyph-code ?- 'nano-faded))
 
   (custom-theme-set-faces 'nano
-                          '(nano-mono ((t (:weight light :height 140 :family "JetBrains Mono"))))
+                          ;;'(nano-mono ((t (:weight light :height 140 :family "Iosevka Xtal"))))
+                          '(nano-mono ((t (:weight light :height 140 :family "Iosevka Comfy"))))
                           '(nano-sans ((t (:weight light :height 140 :family "Inter")))))
 
 
