@@ -402,6 +402,7 @@ Example usage:
                             #'find-library))))
   "o" '("outline (f)..." . consult-outline)
   "p" '("grep (p)..." . consult-ripgrep)
+  "R" '("replace (p)..." . projectile-replace)
   "s" '("line (f)..." . consult-line)
   "v" '("variable" . find-variable-at-point)
   "V" '("variable..." . find-variable)
