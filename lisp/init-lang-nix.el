@@ -36,9 +36,12 @@
 (after! [nix-mode reformatter]
   (reformatter-define nix-format-alejandra
     :program "alejandra")
-  (dolist (fn '(lsp-deferred nix-format-alejandra-on-save-mode))
+  (dolist (fn '(lsp-deferred
+                nix-format-alejandra-on-save-mode))
     (add-hook 'nix-mode-hook fn)))
 
+(after! [nix-mode aggressive-indent]
+  (appendq! aggressive-indent-excluded-modes '(nix-mode)))
 
 (use-feature lsp-nix
   :after lsp-mode
