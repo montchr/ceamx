@@ -101,6 +101,15 @@
 
 
 ;; § ────────── ────────── ────────── ────────── ────────── ──────────
+;;; hl-todo :: Highlight TODO and other codetags in comments and strings
+;;  <https://github.com/tarsius/hl-todo>
+;;  <https://peps.python.org/pep-0350/#specification>
+
+(use-package hl-todo
+  :hook (prog-mode . hl-todo-mode))
+
+
+;; § ────────── ────────── ────────── ────────── ────────── ──────────
 ;;; aggressive-indent-mode :: Re-indent code after every change
 ;;  <https://github.com/Malabarba/aggressive-indent-mode>
 
