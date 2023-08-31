@@ -390,6 +390,8 @@ Example usage:
 
 
 (defvar-keymap cmx-search-keymap
+  "d" `("directory..." . ,(cmd! (consult-ripgrep
+                                 (file-name-directory buffer-file-name))))
   "h" '("history..." . consult-isearch-history)
   "j" '("symbols (f)..." . consult-lsp-file-symbols)
   "J" '("symbols (g)..." . consult-lsp-symbols)
