@@ -33,13 +33,13 @@
 
 (use-package diff-hl
   :after (vc-mode)
-  :init
-  (global-diff-hl-mode +1))
+  :commands (global-diff-hl-mode)
+  :init (global-diff-hl-mode +1))
 
 
 ;;
-;;; === MAGIT ======================================================================================
-;;  <https://magit.vc/>
+;;; Magit -- <https://magit.vc/>
+;;
 
 (autoload '+magit-display-buffer-fn "lib-magit")
 (autoload '+magit-mark-stale-buffers-h "lib-magit" "Revert all visible buffers and mark buried buffers as stale.")
@@ -50,9 +50,6 @@
 ;; (elpaca magit-section)
 
 (use-package magit
-  ;; :defer t
-  ;; :after (general magit-section)
-
   :config
   (setq magit-diff-refine-hunk t)                  ; show granular diffs in selected hunk
   (setq magit-save-repository-buffers nil)         ; avoid side-effects (e.g. auto-format)
