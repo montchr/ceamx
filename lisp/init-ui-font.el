@@ -37,7 +37,7 @@
           (medium-alt :default-height 150)
           (large :default-height 180)
           (large-alt :default-height 170
-                 :line-spacing 0.1)
+                     :line-spacing 0.1)
           (xlarge :default-height 240
                   :line-spacing nil)
           (t
@@ -45,14 +45,16 @@
            :default-family "Iosevka Comfy"
            :default-weight regular
            :default-height 100
-           :fixed-pitch-family nil
-           :fixed-pitch-family nil
+           :fixed-pitch-family "Iosevka Comfy"
+           :fixed-pitch-weight nil
            :fixed-pitch-height 1.0
-           :fixed-pitch-serif-family nil
+           :fixed-pitch-serif-family "Iosevka Comfy Motion"
            :fixed-pitch-serif-weight nil
-           :variable-pitch-family "Inter"
+           ;; :variable-pitch-family "Inter"
+           ;; TODO: probably worth trying one of the others, maybe not-wide
+           :variable-pitch-family "Iosevka Comfy Wide Duo"
            :variable-pitch-weight nil
-           :variable-pitch-height 1.0
+           :variable-pitch-height 0.9
            :bold-family nil
            :bold-weight semibold
            :italic-family nil
