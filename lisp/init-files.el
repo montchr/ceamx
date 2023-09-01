@@ -45,6 +45,8 @@
                   t)))))
 (add-hook 'find-file-not-found-functions #'cmx-create-missing-directories-h)
 
+(setq find-file-suppress-same-file-warnings t)
+
 (setq! backup-by-copying t)
 (setq! backup-directory-alist `((".*" . ,(expand-file-name
                                           (concat +path-local-dir "backups")))))
