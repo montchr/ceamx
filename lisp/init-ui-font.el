@@ -76,9 +76,9 @@
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-;; FIXME: configure symbols -- e.g. `lambda' prettification is problematic
-(use-feature prettify-symbols
-  :hook prog-mode)
+;; FIXME: results in init errors due to feature not found
+;; (use-feature prettify-symbols
+;;   :hook prog-mode)
 
 (after! 'fontaine
   (add-hook 'fontaine-set-preset-hook #'global-prettify-symbols-mode))
