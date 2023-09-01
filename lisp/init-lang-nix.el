@@ -40,9 +40,10 @@
                 nix-format-alejandra-on-save-mode))
     (add-hook 'nix-mode-hook fn)))
 
-(after! [nix-mode aggressive-indent]
-  (appendq! aggressive-indent-excluded-modes '(nix-mode)))
+;; (after! [nix-mode aggressive-indent]
+;;   (add-to-list aggressive-indent-excluded-modes 'nix-mode))
 
+;; via `lsp-mode' package
 (use-feature lsp-nix
   :after lsp-mode
   :config
