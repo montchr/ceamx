@@ -80,6 +80,9 @@
 (use-feature prettify-symbols
   :hook prog-mode)
 
+(after! 'fontaine
+  (add-hook 'fontaine-set-preset-hook #'global-prettify-symbols-mode))
+
 
 (provide 'init-ui-font)
 ;;; init-ui-font.el ends here
