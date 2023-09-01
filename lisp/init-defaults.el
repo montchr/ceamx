@@ -104,14 +104,6 @@
 ;; Unbind `suspend-frame'
 (global-unset-key (kbd "C-x C-z"))
 
-;; Global indentation defaults
-(setq-default
- indent-tabs-mode nil
- tab-always-indent 'complete ; Indent, then try completions
- tab-width 2)
-(put 'add-function 'lisp-indent-function 2)
-(put 'advice-add 'lisp-indent-function 2)
-(put 'plist-put 'lisp-indent-function 2)
 
 ;; Disable bidirectional text scanning.
 (setq-default bidi-display-reordering 'left-to-right

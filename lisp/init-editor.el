@@ -27,8 +27,16 @@
 
 ;;; Code:
 
+;; Global indentation defaults
+(setq-default indent-tabs-mode nil)
+(setq-default tab-always-indent 'complete) ; Indent, then try completions
+(setq-default tab-width 2)
+(dolist (sym '(add-function advice-add plist-put))
+  (put sym 'lisp-indent-function 2))
+
 (use-feature emacs
   :init
+  ;; TODO: is this redundant when `aggressive-indent-mode'?
   ;; (electric-indent-mode +1)
   (electric-pair-mode +1)
   (setq electric-pair-mode-preserve-balance nil)
