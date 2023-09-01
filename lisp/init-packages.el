@@ -87,26 +87,6 @@
 ;;; === USE-PACKAGE ============================================================
 ;;  <https://github.com/jwiegley/use-package>
 
-;; Install use-package support.
-(elpaca elpaca-use-package
-  ;; Enable :elpaca use-package keyword.
-  (elpaca-use-package-mode)
-  ;; Assume :elpaca t unless otherwise specified.
-  (setq elpaca-use-package-by-default t))
-(elpaca use-package (require 'use-package))
-
-;; Block until current queue processed.
-(elpaca-wait)
-
-;; `use-package' debug mode.
-(setq init-file-debug t) ; <- for testing only!
-(if debug-on-error
-    (setq use-package-verbose t
-          use-package-expand-minimally nil
-          use-package-compute-statistics t)
-  (setq use-package-verbose nil
-        use-package-expand-minimally t))
-
 (defmacro use-feature (name &rest args)
   "Like `use-package' but accounting for asynchronous installation.
 NAME and ARGS are in `use-package'."
@@ -114,6 +94,24 @@ NAME and ARGS are in `use-package'."
   `(use-package ,name
      :elpaca nil
      ,@args))
+
+;; Install use-package support.
+(elpaca elpaca-use-package
+  ;; Enable :elpaca use-package keyword.
+  (elpaca-use-package-mode)
+  ;; Assume :elpaca t unless otherwise specified.
+  (setq elpaca-use-package-by-default t))
+(elpaca use-package (require 'use-package))
+(elpaca-wait)
+
+;; `use-package' debug mode.
+(setq init-file-debug t)
+(if debug-on-error
+    (setq use-package-verbose t
+          use-package-expand-minimally nil
+          use-package-compute-statistics t)
+  (setq use-package-verbose nil
+        use-package-expand-minimally t))
 
 (provide 'init-packages)
 ;;; init-packages.el ends here
