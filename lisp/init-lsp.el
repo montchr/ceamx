@@ -76,15 +76,21 @@
   :commands (lsp-ui-mode)
   :config
   (setq lsp-ui-doc-enable t)
-	(setq lsp-ui-doc-position 'top)
-  (setq lsp-ui-doc-delay 0.2)
-  (setq lsp-ui-doc-max-width 50)
+  ;; `at-point' displays the ui just above the symbol,
+  ;; obscuring the buffer contents that tend to be most relevant
+  ;; as leading up to the thing at point.
+  ;; `top' is similarly annoying, and it conflicts with sideline ui.
+	(setq lsp-ui-doc-position 'bottom) ; alt: top, at-point
+  ;; Long delay, as the doc is more helpful when I'm pausing in confusion.
+  (setq lsp-ui-doc-delay 1.0)
+  ;; TODO: auto determine by window width?
+  (setq lsp-ui-doc-max-width 80)
   (setq lsp-ui-doc-max-height 30)
   (setq lsp-ui-doc-include-signature t)
   (setq lsp-ui-doc-header t)
   (setq lsp-ui-doc-show-with-cursor t)
 
-  (setq lsp-ui-sideline-delay 0.2)
+  (setq lsp-ui-sideline-delay 0.5)
   (setq lsp-ui-sideline-show-diagnostics nil)
   (setq lsp-ui-sideline-show-hover nil)
   (setq lsp-ui-sideline-show-code-actions t)
@@ -92,7 +98,9 @@
 
 (use-package consult-lsp
   :after (lsp-mode consult)
+  :commands (consult-lsp-symbols)
   :config
+  ;; TODO: only when supported by language server? otherwise results in error
   (keymap-set lsp-mode-map "<remap> <xref-find-apropos>" #'consult-lsp-symbols))
 
 ;;; optionally:
