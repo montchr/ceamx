@@ -45,18 +45,14 @@
                   t)))))
 (add-hook 'find-file-not-found-functions #'cmx-create-missing-directories-h)
 
-(use-feature files
-  :custom
-  (backup-by-copying t)
-  (backup-directory-alist `((".*" . ,(expand-file-name
-                                      (concat +path-local-dir "backups"))))
-                          "Keep backups in a dedicated directory.")
-  (delete-old-versions t)
-  (kept-new-versions 5)
-  (kept-old-versions 5)
-  (require-final-newline t)
-  (version-control t))
 (setq! backup-by-copying t)
+(setq! backup-directory-alist `((".*" . ,(expand-file-name
+                                          (concat +path-local-dir "backups")))))
+(setq! delete-old-versions t)
+(setq! kept-new-versions 5)
+(setq! kept-old-versions 5)
+(setq! require-final-newline t)
+(setq! version-control t)
 
 (use-feature autorevert
   :defer 2
