@@ -178,6 +178,8 @@ See <https://www.reddit.com/r/emacs/comments/64xb3q/killthisbuffer_sometimes_jus
   (let ((buffer (when arg (current-buffer))))
     (diff-buffer-with-file buffer)))
 
+;;; <https://github.com/doomemacs/doomemacs/blob/7a7503045850ea83f205de6e71e6d886187f4a22/lisp/lib/files.el#L464-L518>
+
 ;; (defun doom--sudo-file-path (file)
 ;;   (let ((host (or (file-remote-p file 'host) "localhost")))
 ;;     (concat "/" (when (file-remote-p file)

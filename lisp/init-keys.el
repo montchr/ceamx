@@ -305,8 +305,10 @@ Example usage:
   "C" '("copy..." . cmx/copy-this-file)
   "d" '("diff with..." . cmx/diff-with-file)
   "D" '("delete" . cmx/delete-this-file)
+  "f" '("find (p)..." . project-find-file)
   ;; TODO: show dirvish preview instead of dired preview
-  "f" '("find..." . find-file)
+  ;; FIXME: flickering on every keystroke...?
+  "F" '("find (g)..." . find-file)
   "R" '("rename/move..." . cmx/move-this-file)
   "s" '("save" . save-buffer)
   "S" '("save as..." . write-file))
