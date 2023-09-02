@@ -27,8 +27,12 @@
 
 ;;; Code:
 
+(autoload 'after! "lib-common" t)
+(autoload 'reformatter-define "reformatter" t)
+(autoload 'use-feature "init-packages" t)
+
 (use-package nix-mode
-  ;; NOTE: `magit-section' is a hard dependency,
+  ;; NOTE: `magit-section' is a hard dependency (but why?),
   ;;       but does not install automatically with `nix-mode'
   :after (magit-section)
   :functions (nix-mode-hook))
@@ -40,12 +44,13 @@
                 nix-format-alejandra-on-save-mode))
     (add-hook 'nix-mode-hook fn)))
 
-;; (after! [nix-mode aggressive-indent]
-;;   (add-to-list aggressive-indent-excluded-modes 'nix-mode))
+(after! [nix-mode aggressive-indent]
+  (add-to-list 'aggressive-indent-excluded-modes 'nix-mode))
 
 ;; via `lsp-mode' package
 (use-feature lsp-nix
-  :after lsp-mode
+  :after (lsp-mode)
+  :defines (lsp-nix-nil-formatter)
   :config
   (setq lsp-nix-nil-formatter nil))
 
