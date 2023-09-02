@@ -143,7 +143,6 @@ Example usage:
   :diminish which-key-mode
 
   :init
-  (setq which-key-enable-extended-define-key t)
   (setq which-key-prefix-prefix "+")
   (setq which-key-separator " ")
 
