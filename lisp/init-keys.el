@@ -1,4 +1,4 @@
-;;; init-keys.el --- Keybindings (new) -*- lexical-binding: t -*-
+;;; init-keys.el --- Keybindings -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -225,6 +225,17 @@ Example usage:
  "<" #'meow-page-up
  ">" #'meow-page-down)
 
+(defvar-keymap cmx-go-prev-keymap
+  "[" #'previous-buffer
+  "b" #'previous-buffer
+  "t" #'tab-previous)
+(defalias 'cmx-go-prev-keymap cmx-go-prev-keymap)
+
+(defvar-keymap cmx-go-next-keymap
+  "]" #'next-buffer
+  "b" #'next-buffer
+  "t" #'tab-next)
+(defalias 'cmx-go-next-keymap cmx-go-next-keymap)
 
 (defvar-keymap cmx-applications-keymap
   "d" #'dired
@@ -450,7 +461,8 @@ Example usage:
 ;; FIXME: this will not work due to meow's d binding
 ;; (cmx-meow-normal-define-key "g d" #'xref-find-definitions)
 
-
+(keymap-global-set "C-c ["    '("previous..." . cmx-go-prev-keymap))
+(keymap-global-set "C-c ]"    '("next..." . cmx-go-next-keymap))
 (keymap-global-set "C-c `"    '("other buffer" . mode-line-other-buffer))
 (keymap-global-set "C-c a"		'("applications..." . cmx-applications-keymap))
 (keymap-global-set "C-c b"		'("buffer..." . cmx-buffer-keymap))
