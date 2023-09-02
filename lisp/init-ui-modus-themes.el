@@ -28,7 +28,7 @@
   :demand t
   :config
   (setq modus-themes-italic-constructs t)
-  (setq modus-themes-bold-constructs nil)
+  (setq modus-themes-bold-constructs t)
   (setq modus-themes-common-palette-overrides
         '((fringe unspecified)))
 

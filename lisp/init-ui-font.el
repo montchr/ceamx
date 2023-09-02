@@ -30,7 +30,7 @@
   ;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
   ;; at least i think that's what's causing the inconsistencies...
   (setq fontaine-presets
-        '((small :default-height 110)
+        `((small :default-height 110)
           (regular :default-height 140)
           (regular-alt :default-height 130)
           (medium :default-height 160)
@@ -43,7 +43,7 @@
           (t
            ;; TODO: set values from nix config (or, less ideally, by env vars)
            :default-family "Iosevka Comfy"
-           :default-weight regular
+           :default-weight ,(if +sys-mac-p 'medium 'regular)
            :default-height 100
            :fixed-pitch-family "Iosevka Comfy"
            :fixed-pitch-weight nil
@@ -56,7 +56,7 @@
            :variable-pitch-weight nil
            :variable-pitch-height 0.9
            :bold-family nil
-           :bold-weight semibold
+           :bold-weight ,(if +sys-mac-p 'bold 'semibold)
            :italic-family nil
            :italic-slant italic
            :line-spacing 0.1)))
