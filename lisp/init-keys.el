@@ -212,6 +212,7 @@ Example usage:
 (keymap-global-set "M-{"  #'insert-pair)
 (keymap-global-set "M-\"" #'insert-pair)
 (keymap-global-set "M-'"  #'insert-pair)
+(keymap-global-set "M-`"  #'insert-pair)
 
 (after! [meow vundo]
   ;; NOTE: This should only be set when using modal keybindings
