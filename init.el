@@ -101,7 +101,7 @@
 (require 'init-templates)
 (require 'init-projects)
 
-;;; org + notes
+;;; memex
 (require 'init-org)
 (require 'init-notes)
 (require 'init-notes-denote)

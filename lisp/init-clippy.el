@@ -47,10 +47,5 @@
   :config
   (global-flycheck-mode +1))
 
-;; FIXME: causes startup errors!
-;; (use-package hyperbole
-;;   :config
-;;   (hyperbole-mode 1))
-
 (provide 'init-clippy)
 ;;; init-clippy.el ends here
