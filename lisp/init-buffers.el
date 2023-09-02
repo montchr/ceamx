@@ -31,7 +31,12 @@
   :init
   ;; Disable buffer line wrapping by default.
   ;; <https://www.emacswiki.org/emacs/TruncateLines>
-  (set-default 'truncate-lines t))
+  (set-default 'truncate-lines t)
+  :config
+  ;; Hide buffer until there's output.
+  ;; Prevents an extra window appearing during init.
+  (setq async-shell-command-display-buffer nil))
+
 
 ;; (use-package bufler
 ;;   :elpaca (bufler :host github :repo "alphapapa/bufler.el"
