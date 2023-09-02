@@ -455,8 +455,7 @@ Example usage:
 (keymap-global-set "C-c a"		'("applications..." . cmx-applications-keymap))
 (keymap-global-set "C-c b"		'("buffer..." . cmx-buffer-keymap))
 (keymap-global-set "C-c B"		'("bookmarks..." . cmx-bookmark-keymap))
-;; NOTE: "C-c c" is not easily accessible with meow numpad, hence "C-c C"
-;; TODO: Consider using "C-c C-c", which might(?) achieve the desired key sequence ("SPC c")
+;; NOTE: "C-c c" is not easily accessible with `meow-keypad', hence "C-c C"
 (keymap-global-set "C-c C"		'("code..." . cmx-code-keymap))
 (keymap-global-set "C-c e"		'("eval..." . cmx-elisp-keymap))
 (keymap-global-set "C-c f"		'("file..." . cmx-file-keymap))
@@ -467,7 +466,6 @@ Example usage:
 (keymap-global-set "C-c n"		'("notes..." . cmx-notes-keymap))
 (keymap-global-set "C-c o"		'("org..." . cmx-org-keymap))
 (keymap-global-set "C-c p"		'("project..." . cmx-project-keymap))
-;; FIXME: overridden by `projectile-command-map' binding
 (keymap-global-set "C-c P"  	'("packages..." . cmx-packages-keymap))
 (keymap-global-set "C-c q"		'("session..." . cmx-session-keymap))
 (keymap-global-set "C-c s"		'("search..." . cmx-search-keymap))
