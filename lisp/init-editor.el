@@ -29,6 +29,7 @@
 
 ;; Global indentation defaults
 (setq-default indent-tabs-mode nil)
+;; FIXME: does not do what i would expect ... seems to complete before indent
 (setq-default tab-always-indent 'complete) ; Indent, then try completions
 (setq-default tab-width 2)
 (dolist (sym '(add-function advice-add plist-put))

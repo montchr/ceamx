@@ -27,10 +27,25 @@
 
 ;;; Code:
 
+(autoload 'elpaca-wait "elpaca")
+(autoload 'cmx-hydra/main/body "init-hydras")
+(autoload 'cmx/lookup-key "lib-doom")
+(autoload 'burly-bookmark-frames "burly")
+(autoload 'burly-bookmark-windows "burly")
+(autoload 'meow-page-up "meow")
+(autoload 'meow-page-down "meow")
+
+(autoload 'cmd! "lib-doom" t)
+(autoload 'after! "lib-common" t)
+(autoload 'vundo "vundo")
+
+(defvar +sys-mac-p)
+(defvar meow-keymap-alist)
+
 (keymap-global-set "<f12>" #'cmx-hydra/main/body)
 
 ;; macOS: Remap modifier keys.
-(when (and +sys-mac-p +graphical-p)
+(when (and +sys-mac-p (display-graphic-p))
   (setq mac-control-modifier 'control
         mac-option-modifier 'meta
         ns-option-modifier 'meta
@@ -89,13 +104,13 @@
 ;; `keyboard-quit', but this is much more intuitive.
 
 (defvar cmx-escape-hook nil
-  "A hook run when C-g is pressed (or ESC in normal mode, for evil users).
+  "A hook run when `C-g' is pressed (or `ESC' in normal mode, for evil users).
 
 More specifically, when `cmx/escape' is pressed. If any hook returns non-nil,
 all hooks after it are ignored.")
 
 (defun cmx/escape (&optional interactive)
-  "Run `cmx-escape-hook'."
+  "Run `cmx-escape-hook', optionally INTERACTIVE."
   (interactive (list 'interactive))
   (cond ((minibuffer-window-active-p (minibuffer-window))
          ;; quit the minibuffer if open.
@@ -124,8 +139,8 @@ Adapted from `meow-define-keys' for an interface similar to `defvar-keymap'.
 
 Example usage:
   (cmx-meow-define-keys
-    'normal
-    \"a\" #'meow-append"
+    \\'normal
+    \"a\" #\\'meow-append"
   (declare (indent 1))
   (let ((map (alist-get state meow-keymap-alist)))
     (apply 'define-keymap :keymap map keybinds)))
@@ -141,6 +156,7 @@ Example usage:
 (use-package which-key
   :demand t
   :diminish which-key-mode
+  :commands (which-key-mode)
 
   :init
   (setq which-key-prefix-prefix "+")

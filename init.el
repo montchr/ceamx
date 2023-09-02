@@ -96,13 +96,12 @@
 (require 'init-editor)
 (require 'init-buffers)
 (require 'init-files)
-
 (require 'init-dired)
 (require 'init-vcs)
 (require 'init-templates)
 (require 'init-projects)
 
-;; org + notes
+;;; org + notes
 (require 'init-org)
 (require 'init-notes)
 (require 'init-notes-denote)
