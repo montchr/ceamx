@@ -120,6 +120,7 @@
 
 ;;; tools
 (require 'init-tools)
+(require 'init-ledger)
 
 ;;; entertainment
 (require 'init-fun)
