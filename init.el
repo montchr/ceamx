@@ -115,6 +115,9 @@
 (require 'init-lang-yaml)
 (require 'init-lang-misc)
 
+;;; shells
+(require 'init-shell-nu)
+
 ;;; tools
 (require 'init-tools)
 
