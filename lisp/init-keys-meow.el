@@ -107,6 +107,7 @@
      '("o" . meow-block)
      '("O" . meow-to-block)
      '("p" . meow-yank)
+     ;; TODO: this gets in my way more than it helps
      '("q" . meow-quit)
      '("Q" . meow-goto-line)
      '("r" . meow-replace)

@@ -32,7 +32,11 @@
   (keymap-global-set "<remap> <describe-function>" #'helpful-callable)
   (keymap-global-set "<remap> <describe-command>" #'helpful-command)
   (keymap-global-set "<remap> <describe-variable>" #'helpful-variable)
-  (keymap-global-set "<remap> <describe-key>" #'helpful-key))
+  (keymap-global-set "<remap> <describe-key>" #'helpful-key)
+
+  ;; Probably the most helpful command of all.
+  (keymap-global-set "C-h C-h" #'helpful-at-point)
+  (keymap-set cmx-help-keymap "h" #'helpful-at-point))
 
 (use-package flycheck
   :commands (global-flycheck-mode)
