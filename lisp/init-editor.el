@@ -38,23 +38,7 @@
   :init
   ;; TODO: is this redundant when `aggressive-indent-mode'?
   ;; (electric-indent-mode +1)
-  (electric-pair-mode +1)
-  (setq electric-pair-mode-preserve-balance nil)
-
-  ;; mode-specific local-electric pairs
-  ;; <https://www.lucacambiaghi.com/vanilla-emacs/readme.html#h:BE3F251D-5F39-4337-B27C-CFB81EE9A504>
-  (defconst +default-electric-pairs electric-pair-pairs)
-  ;; TODO: rename without slash, as this is non-interactive
-  (defun cmx--add-local-electric-pairs (pairs)
-    "Example usage:
-    (add-hook 'jupyter-org-interaction-mode (lambda () (cmx--add-local-electric-pairs '())))
-    "
-    (setq-local electric-pair-pairs (append +default-electric-pairs pairs))
-    (setq-local electric-pair-text-pairs electric-pair-pairs))
-  (defun cmx--org-mode--add-local-electric-pairs ()
-    (cmx--add-local-electric-pairs '((?= . ?=)
-                                     (?~ . ?~))))
-  (add-hook 'org-mode-hook #'cmx--org-mode--add-local-electric-pairs))
+  (electric-pair-mode +1))
 
 (use-package editorconfig
   :commands (editorconfig-mode)

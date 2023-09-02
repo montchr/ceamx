@@ -27,6 +27,8 @@
 
 ;;; Code:
 
+(autoload 'cmx-electric-pair-add-local-pairs "lib-editor")
+
 (defconst +org-capture-default-file
   (expand-file-name
    (concat +path-notes-dir "inbox.org"))
@@ -63,6 +65,11 @@
           " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (setq org-agenda-current-time-string
         "⭠ now ─────────────────────────────────────────────────")
+
+  (defun cmx--org-mode--add-local-electric-pairs ()
+    (cmx-electric-pair-add-local-pairs '((?= . ?=)
+                                         (?~ . ?~))))
+  (add-hook 'org-mode-hook #'cmx--org-mode--add-local-electric-pairs)
 
 
   :hook ((org-mode . prettify-symbols-mode)
