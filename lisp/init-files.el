@@ -76,8 +76,11 @@
 ;;; Autosaves
 ;;
 
-(setq auto-save-interval 666)           ; input events before autosave
-(setq auto-save-timeout 33)             ; idle seconds before autosave
+;; FIXME: saves way too quickly/frequently, maybe around 5 second delay
+;;        check the value of `auto-save--timer', which
+(setq auto-save-interval 666)          ; input events before autosave
+(setq auto-save-visited-interval 666)   ; idle interval for *all* file-visiting buffers
+(setq auto-save-timeout 69)            ; idle interval before autosave
 ;; Don't create auto-save ~ files.
 (setq auto-save-default nil)
 
