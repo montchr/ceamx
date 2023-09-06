@@ -27,7 +27,10 @@
 
 ;;; Code:
 
-;; Global indentation defaults
+;;
+;;; Indentation
+;;
+
 (setq-default indent-tabs-mode nil)
 ;; FIXME: does not do what i would expect ... seems to complete before indent
 (setq-default tab-always-indent 'complete) ; Indent, then try completions
@@ -35,20 +38,41 @@
 (dolist (sym '(add-function advice-add plist-put))
   (put sym 'lisp-indent-function 2))
 
-(use-feature emacs
-  :init
-  ;; TODO: is this redundant when `aggressive-indent-mode'?
-  ;; (electric-indent-mode +1)
-  (electric-pair-mode +1))
+;; TODO: is this redundant when `aggressive-indent-mode'?
+;; (electric-indent-mode +1)
+
+
+;;
+;;; Words
+;;
+
+(global-subword-mode -1)
+
+
+;;
+;;; Characters
+;;
+
+(electric-pair-mode +1)
+
+
+;;
+;;; Formatting
+;;
 
 (use-package editorconfig
   :commands (editorconfig-mode)
   :config (editorconfig-mode 1))
 
+;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
+(use-package reformatter
+  :functions (reformatter-define))
 
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
+
+;;
 ;;; tree-sitter
 ;;
+
 ;;  FIXME: make native tree-sitter support work... somehow... need langs installed...
 ;;  TODO: maybe try <https://github.com/nix-community/nix-doom-emacs/blob/9a5b34d9ba30842eb8f0d7deb08bf03a75930471/overrides.nix#L106-L111>
 
@@ -60,16 +84,12 @@
 ;;   :hook prog-mode)
 
 
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; emacs-reformatter
-;;  <https://github.com/purcell/emacs-reformatter>
+;;
+;;; Feedback
+;;
 
-(use-package reformatter
-  :functions (reformatter-define))
-
-
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; Pulsar :: Pulse highlight line on demand or after running select functions
+;;
+;;; pulsar :: pulse/highlight line on demand or after running select functions
 ;;  <https://protesilaos.com/emacs/pulsar>
 
 (use-package pulsar

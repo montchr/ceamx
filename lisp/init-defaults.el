@@ -64,7 +64,6 @@
 
 (blink-cursor-mode 1)                   ; Prefer a blinking cursor
 (delete-selection-mode 1)               ; Replace region when inserting text
-(global-subword-mode 1)                 ; Iterate through CamelCase words
 (mouse-avoidance-mode 'exile)           ; Avoid collision of mouse with point
 
 (put 'downcase-region 'disabled nil)    ; Enable `downcase-region'
