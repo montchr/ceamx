@@ -29,17 +29,21 @@
 
 (use-package tempel
   ;; :custom
-  ;; ;; Require trigger prefix before template name when completing.
+  ;;
+  ;; Require trigger prefix before template name when completing.
   ;; (tempel-trigger-prefix "<")
 
   :bind (("M-+" . tempel-complete) ;; Alternative tempel-expand
          ("M-*" . tempel-insert))
 
   :init
+  ;; NOTE: tempel does not seem to pick up changes to files even after
+  ;;       re-evalling the `use-package' declaration. however, it does pick up
+  ;;       newly-added templates.
   (setq tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
 
   ;; Setup completion at point
-  (defun cmx-tempel-setup-capf ()
+  (defun cmx:tempel--setup-capf-h ()
     ;; Add the Tempel Capf to `completion-at-point-functions'.
     ;; `tempel-expand' only triggers on exact matches. Alternatively use
     ;; `tempel-complete' if you want to see all matches, but then you
@@ -51,8 +55,8 @@
                 (cons #'tempel-expand
                       completion-at-point-functions)))
 
-  (dolist (hook '(prog-mode-hook text-mode-hook))
-    (add-hook hook #'cmx-tempel-setup-capf)
+  (dolist (hook '(conf-mode-hook prog-mode-hook text-mode-hook))
+    (add-hook hook #'cmx:tempel--setup-capf-h)
     ;; See also `global-tempel-abbrev-mode'.
     (add-hook hook #'tempel-abbrev-mode)))
 
