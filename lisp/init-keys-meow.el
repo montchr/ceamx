@@ -42,10 +42,13 @@
   :init
   (defun meow-setup ()
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+
     (meow-motion-overwrite-define-key
      '("j" . meow-next)
      '("k" . meow-prev)
      '("<escape>" . ignore))
+
+    ;; FIXME: rebind my global bindings with this function?
     (meow-leader-define-key
      ;; SPC j/k will run the original command in MOTION state.
      '("j" . "H-j")
@@ -63,6 +66,7 @@
      '("0" . meow-digit-argument)
      '("/" . meow-keypad-describe-key)
      '("?" . meow-cheatsheet))
+
     (meow-normal-define-key
      '("0" . meow-expand-0)
      '("9" . meow-expand-9)
@@ -107,7 +111,6 @@
      '("o" . meow-block)
      '("O" . meow-to-block)
      '("p" . meow-yank)
-     ;; TODO: this gets in my way more than it helps
      '("q" . meow-quit)
      '("Q" . meow-goto-line)
      '("r" . meow-replace)
