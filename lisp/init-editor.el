@@ -55,6 +55,13 @@
 
 (electric-pair-mode +1)
 
+;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
+(use-package page-break-lines
+  :defer 1
+  :commands (global-page-break-lines-mode)
+  :config
+  (global-page-break-lines-mode))
+
 
 ;;
 ;;; Formatting
