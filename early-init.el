@@ -27,7 +27,7 @@
 ;; initialisation of `package.el', by means of calling
 ;; `package-initialize'. Starting with Emacs 27, the default
 ;; behavior is to start `package.el' before loading the init
-;; file. 
+;; file.
 
 ;;; Code:
 
@@ -106,10 +106,6 @@ Use this for files that change often, like data and cache files.")
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 1)
 
-;; FIXME: works, but consumes 100% cpu on m2 macbook air ... maybe that's okay?
-;; just doesn't seem to let up... anyway, it is kinda annoying since i don't yet
-;; live inside emacs, so it likely interferes with memory-intensive applications
-;; (esp. jetbrains ides...)
 (defun +gc-after-focus-change ()
   "Run garbage collection when frame loses focus."
   (run-with-idle-timer
@@ -147,4 +143,3 @@ Use this for files that change often, like data and cache files.")
 ;; no-byte-compile: t
 ;; End:
 ;;; early-init.el ends here
-

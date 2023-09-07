@@ -37,6 +37,9 @@
   :after (magit-section)
   :functions (nix-mode-hook))
 
+;; TODO: instead of always formatting with alejandra, let the
+;; formatter by changed easily by dir-local variables, maybe via
+;; `lsp-format-buffer'
 (after! [nix-mode reformatter]
   (reformatter-define nix-format-alejandra
     :program "alejandra")

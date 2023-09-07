@@ -1,10 +1,19 @@
 #+TITLE: ceamx -- an emacs configuration
 
+* Tasks
+
+** TODO Write command to toggle between upper/lower-case char
+
+This would then be bound to =~= (tilde) in =meow-normal-mode=
+
+** TODO =org-support-shift-select=
+
+
 * Notes
 
 ** =magit-delta=
 
-As of <2023-06-20 Tue>, removed primarily because of the massive hit to performance. 
+As of <2023-06-20 Tue>, removed primarily because of the massive hit to performance.
 See <[[https://github.com/dandavison/magit-delta/issues/9][https://github.com/dandavison/magit-delta/issues/9]]> for details.
 
 Also it requires disabling =line-numbers= in configuration, which isn't a big issue but was the initial reason I uninstalled.
