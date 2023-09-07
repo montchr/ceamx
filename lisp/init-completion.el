@@ -57,7 +57,7 @@
   ;; (setq! corfu-scroll-margin 5)        ;; Use scroll margin
   (setq! corfu-cycle t)
   (setq! corfu-auto t)
-  (setq! corfu-auto-delay 0.1)
+  (setq! corfu-auto-delay 0.2)
   (setq! corfu-separator ?\s)
   (setq! corfu-preview-current nil))
 
