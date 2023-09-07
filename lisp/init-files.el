@@ -76,9 +76,9 @@
 ;;; Autosaves
 ;;
 
-(setq auto-save-interval 666)          ; input events before autosave
-(setq auto-save-visited-interval 93)   ; idle interval for *all* file-visiting buffers
-(setq auto-save-timeout 69)            ; idle interval before autosave
+(setq auto-save-interval 300)          ; input events before autosave
+(setq auto-save-visited-interval 30)   ; idle interval for all file-visiting buffers
+(setq auto-save-timeout 30)         ; idle interval before autosave
 
 ;; Don't create auto-save ~ files.
 (setq auto-save-default nil)
