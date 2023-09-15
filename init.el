@@ -100,6 +100,7 @@
 (require 'init-vcs)
 (require 'init-templates)
 (require 'init-projects)
+(require 'init-workspace)
 
 ;;; memex
 (require 'init-org)

@@ -27,6 +27,7 @@
 
 (require 'lib-doom)
 
+;; TODO: is there really any point to `use-feature' for `emacs'?
 (use-feature emacs
   :init
   ;; Don't close windows with <ESC> key.
@@ -35,6 +36,7 @@
     (let ((buffer-quit-function (lambda () ())))
       ad-do-it)))
 
+;; TODO: remove? also see <https://github.com/nex3/perspective-el?tab=readme-ov-file#some-musings-on-emacs-window-layouts>
 (use-feature winner)
 
 (use-package burly
@@ -45,24 +47,24 @@
 (use-package olivetti :defer t
   :hook (org-mode . olivetti-mode))
 
+;; Equally-sized windows are generally undesirable as a default.
 ;;
-;;; shackle :: Enforce rules for popup windows
-;;  <https://depp.brause.cc/shackle/>
-
-(use-package shackle
-  :elpaca (shackle :repo "https://depp.brause.cc/shackle.git")
-  :demand t
-  :config
-  (setq shackle-rules '((compilation-mode :noselect t)))
-  (setq shackle-default-rule '(:select t)))
+;; While it may be appropriate for primary buffers,
+;; the vast majority of buffers Emacs throws at us
+;; are only useful for a short period of time,
+;; and so they should be treated as "popups".
+;; Same goes for buffers we invoke manually.
+;;
+;; For example, Embark is great, but should not take up as much visual space
+;; as the file-visiting buffer from which it was invoked.
+(setq! even-window-sizes nil)
 
 
 ;;
-;;; popper <https://github.com/karthink/popper> -- "minor-mode to summon and dismiss buffers easily."
-;;
+;;; popper -- <https://github.com/karthink/popper>
+;;  "minor-mode to summon and dismiss buffers easily."
 
 (use-package popper
-  :after (shackle)
   :diminish
   :commands (popper-mode
              popper-echo-mode
@@ -71,17 +73,20 @@
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
   :init
-  (after! 'shackle
-    (setq popper-display-control nil))
   (setq popper-reference-buffers
         '("\\*Messages\\*"
           "Output\\*$"
+          "\\*vc\\*"
+          "\\*Help\\*"
+          "\\*Warnings\\*"
+          "\\*elpaca-log\\*"
+          "\\*helpful "
           compilation-mode
           help-mode
           (lambda (buf) (with-current-buffer buf
-                          (and (derived-mode-p 'fundamental-mode)
-                               (< (count-lines (point-min) (point-max))
-                                  10))))))
+                     (and (derived-mode-p 'fundamental-mode)
+                          (< (count-lines (point-min) (point-max))
+                             10))))))
 
   (popper-mode +1)
   (popper-echo-mode +1)                 ; For echo area hints

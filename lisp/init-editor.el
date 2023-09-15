@@ -150,6 +150,7 @@
 ;;  <https://github.com/rejeep/drag-stuff.el>
 ;;
 ;; This package appears to be abandoned since 2017.
+;; But, as of <2023-09-06>, it still works well.
 ;;
 ;;;; Issues
 ;;

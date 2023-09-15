@@ -211,7 +211,9 @@ Example usage:
   "b" `("switch..." . consult-project-buffer)
   "B" '("switch (any)..." . consult-buffer)
   "o" '("other" . mode-line-other-buffer)
+  ;; FIXME: only consider file-visiting buffers, or even better, buffers i am editing
   "[" '("prev" . previous-buffer)
+  ;; FIXME: only consider file-visiting buffers, or even better, buffers i am editing
   "]" '("next" . next-buffer)
   "r" '("revert" . revert-buffer)
   "R" '("rename..." . rename-buffer)
@@ -436,7 +438,10 @@ Example usage:
 (keymap-global-set "C-c n"		'("notes..." . cmx-notes-keymap))
 (keymap-global-set "C-c o"		'("org..." . cmx-org-keymap))
 (keymap-global-set "C-c p"		'("project..." . cmx-project-keymap))
-(keymap-global-set "C-c P"  	'("packages..." . cmx-packages-keymap))
+;; NOTE: Reserved for `persp-mode-map'.
+(keymap-global-set "C-c P"  	'("perspective..." . nil))
+;; TODO: remove?
+;; (keymap-global-set "C-c P"  	'("packages..." . cmx-packages-keymap))
 (keymap-global-set "C-c q"		'("session..." . cmx-session-keymap))
 (keymap-global-set "C-c s"		'("search..." . cmx-search-keymap))
 (keymap-global-set "C-c S"		'("sidebar..." . cmx-sidebar-keymap))

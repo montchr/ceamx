@@ -147,13 +147,6 @@
 ;;       <https://github.com/seagle0128/doom-modeline#faq>
 (setq inhibit-compacting-font-caches t)
 
-;; Restore Emacs session buffers, their file names, major modes, buffer
-;; positions, window+frame configuration, "some important global variables".
-;; FIXME: conflicts with daemon on darwin
-;; (desktop-save-mode 1)
-(setq desktop-dirname (file-name-as-directory +path-local-dir))
-(setq desktop-save 'ask-if-new)
-
 ;; TODO: Ideally, this action should only affect edited lines.
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
