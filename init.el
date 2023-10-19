@@ -55,7 +55,6 @@
 (use-package dash)
 
 (require 'lib-common)
-(require 'lib-doom)
 
 (require 'init-defaults)
 (require 'init-env)

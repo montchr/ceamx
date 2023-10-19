@@ -29,13 +29,13 @@
 
 (autoload 'elpaca-wait "elpaca")
 (autoload 'cmx-hydra/main/body "init-hydras")
-(autoload 'cmx/lookup-key "lib-doom")
+(autoload 'cmx/lookup-key "lib-common")
 (autoload 'burly-bookmark-frames "burly")
 (autoload 'burly-bookmark-windows "burly")
 (autoload 'meow-page-up "meow")
 (autoload 'meow-page-down "meow")
 
-(autoload 'cmd! "lib-doom" t)
+(autoload 'cmd! "lib-common" t)
 (autoload 'after! "lib-common" t)
 (autoload 'vundo "vundo")
 

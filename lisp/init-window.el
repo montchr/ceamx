@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(require 'lib-doom)
+(require 'lib-common)
 
 ;; TODO: is there really any point to `use-feature' for `emacs'?
 (use-feature emacs

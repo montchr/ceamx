@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(autoload 'setq! "lib-doom" t)
+(autoload 'setq! "lib-common" t)
 
 ;; Disable buffer line wrapping by default.
 ;; <https://www.emacswiki.org/emacs/TruncateLines>

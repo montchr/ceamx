@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(require 'lib-doom)
+(require 'lib-common)
 
 (use-package meow
   :demand t
