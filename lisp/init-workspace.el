@@ -30,45 +30,45 @@
 (defvar cmx-buffer-keymap)
 (defvar consult--source-buffer)
 (defvar consult-buffer-sources)
-(defvar persp-consult-source)
+;; (defvar persp-consult-source)
 
-(use-package perspective
-  :commands (persp-mode
-             persp-list-buffers
-             persp-switch-to-buffer*
-             persp-kill-buffer*)
-  :autoload (persp-state-save)
+;; (use-package perspective
+;;   :commands (persp-mode
+;;              persp-list-buffers
+;;              persp-switch-to-buffer*
+;;              persp-kill-buffer*)
+;;   :autoload (persp-state-save)
 
-  :custom                     ;
-  (persp-mode-prefix-key (kbd "C-c M-p"))  ; pick your own prefix key here
+;;   :custom                     ;
+;;   (persp-mode-prefix-key (kbd "C-c M-p"))  ; pick your own prefix key here
 
-  :init
-  (persp-mode)
+;;   :init
+;;   (persp-mode)
 
-  :config
-  (keymap-global-set "<remap> <switch-to-buffer>" #'persp-switch-to-buffer*)
-  (keymap-global-set "<remap> <kill-buffer>" #'persp-kill-buffer*)
+;;   :config
+;;   (keymap-global-set "<remap> <switch-to-buffer>" #'persp-switch-to-buffer*)
+;;   (keymap-global-set "<remap> <kill-buffer>" #'persp-kill-buffer*)
 
-  (define-keymap :keymap cmx-buffer-keymap
-    "b" #'persp-switch-to-buffer*
-    "B" #'persp-list-buffers
-    "K" #'persp-kill-buffer*)
+;;   (define-keymap :keymap cmx-buffer-keymap
+;;     "b" #'persp-switch-to-buffer*
+;;     "B" #'persp-list-buffers
+;;     "K" #'persp-kill-buffer*)
 
-  ;; Persist the perspective sessions to storage.
-  (add-hook 'kill-emacs-hook #'persp-state-save))
+;;   ;; Persist the perspective sessions to storage.
+;;   (add-hook 'kill-emacs-hook #'persp-state-save))
 
-;; Hide default buffer sources, showing only buffers within the current perspective.
-;; Note that you can still access list of all buffers in all perspectives by narrowing using prefix b.
-(after! [perspective consult]
-  (consult-customize consult--source-buffer :hidden t :default nil)
-  (add-to-list 'consult-buffer-sources persp-consult-source))
+;; ;; Hide default buffer sources, showing only buffers within the current perspective.
+;; ;; Note that you can still access list of all buffers in all perspectives by narrowing using prefix b.
+;; (after! [perspective consult]
+;;   (consult-customize consult--source-buffer :hidden t :default nil)
+;;   (add-to-list 'consult-buffer-sources persp-consult-source))
 
-;;; `perspective'+`projectile' integration -- <https://github.com/bbatsov/persp-projectile>
-(use-package persp-projectile
-  :after (perspective projectile)
-  :commands (projectile-persp-switch-project)
-  :config
-  (keymap-global-set "<remap> <projectile-switch-project>" #'projectile-persp-switch-project))
+;; ;;; `perspective'+`projectile' integration -- <https://github.com/bbatsov/persp-projectile>
+;; (use-package persp-projectile
+;;   :after (perspective projectile)
+;;   :commands (projectile-persp-switch-project)
+;;   :config
+;;   (keymap-global-set "<remap> <projectile-switch-project>" #'projectile-persp-switch-project))
 
 (provide 'init-workspace)
 ;;; init-workspace.el ends here

@@ -1,11 +1,14 @@
 ;;; lib-common.el --- Common library functions -*- lexical-binding: t -*-
 
-;; Copyright (c) 2023  Chris Montgomery <chris@cdom.io>
-;; Copyright (c) 2013-2021  Bailey Ling <bling@live.ca>
+;; Copyright (C) 2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2014-2023  Henrik Lissner
+;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
+;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
 ;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;;         Bailey Ling <bling@live.ca>
+;;         7696122 <7696122@gmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Created: 29 January, 2023
 ;; Version: 0.1.0
@@ -41,49 +44,18 @@
 ;; General, common, and generic library functions.
 
 ;;; Code:
-;;
-;;; Logging
 
-(defvar doom-inhibit-log (not (or noninteractive init-file-debug))
-  "If non-nil, suppress `doom-log' output.")
+(require 'cl-lib)
 
-(defun doom--log (text &rest args)
-  (let ((inhibit-message (not init-file-debug))
-        (absolute? (string-prefix-p ":" text)))
-    (apply #'message
-           (propertize (concat "* %.06f:%s" (if (not absolute?) ":") text)
-                       'face 'font-lock-doc-face)
-           (float-time (time-subtract (current-time) before-init-time))
-           (mapconcat
-            (lambda (x) (format "%s" x))
-            (unless absolute?
-              (append (cons '* (remq t (reverse doom-context)))
-                      (if (bound-and-true-p doom-module-context)
-                          (let ((key (doom-module-context-key)))
-                            (delq nil (list (car key) (cdr key)))))))
-            ":")
-           args)))
+;;;; Helpers
 
-(defmacro doom-log (message &rest args)
-  "Log a message in *Messages*.
-
-Does not emit the message in the echo area. This is a macro instead of a
-function to prevent the potentially expensive evaluation of its arguments when
-debug mode is off. Return non-nil."
-  (declare (debug t))
-  `(unless doom-inhibit-log (doom--log ,message ,@args)))
-
-
-;;
-;;; Helpers
-
-(defun doom--resolve-hook-forms (hooks)
-  "Converts a list of modes into a list of hook symbols.
+(defun cmx--resolve-hook-forms (hooks)
+  "Convert a list of modes into a list of hook symbols.
 
 If a mode is quoted, it is left as is. If the entire HOOKS list is quoted, the
 list is returned as-is."
   (declare (pure t) (side-effect-free t))
-  (let ((hook-list (ensure-list (doom-unquote hooks))))
+  (let ((hook-list (ensure-list (cmx-unquote hooks))))
     (if (eq (car-safe hooks) 'quote)
         hook-list
       (cl-loop for hook in hook-list
@@ -91,9 +63,10 @@ list is returned as-is."
                collect (cadr hook)
                else collect (intern (format "%s-hook" (symbol-name hook)))))))
 
-(defun doom--setq-hook-fns (hooks rest &optional singles)
+;; TODO: seems probably excessive
+(defun cmx--setq-hook-fns (hooks rest &optional singles)
   (unless (or singles (= 0 (% (length rest) 2)))
-    (signal 'wrong-number-of-arguments (list #'evenp (length rest))))
+    (signal 'wrong-number-of-arguments (list #'cl-evenp (length rest))))
   (cl-loop with vars = (let ((args rest)
                              vars)
                          (while args
@@ -102,13 +75,13 @@ list is returned as-is."
                                    (cons (pop args) (pop args)))
                                  vars))
                          (nreverse vars))
-           for hook in (doom--resolve-hook-forms hooks)
+           for hook in (cmx--resolve-hook-forms hooks)
            for mode = (string-remove-suffix "-hook" (symbol-name hook))
            append
            (cl-loop for (var . val) in vars
                     collect
                     (list var val hook
-                          (intern (format "doom--setq-%s-for-%s-h"
+                          (intern (format "cmx--setq-%s-for-%s-h"
                                           var mode))))))
 
 ;;; Generic
@@ -120,21 +93,20 @@ list is returned as-is."
     (setq exp (cadr exp)))
   exp)
 
-(defun cmx-keyword-intern (str)
-  "Convert STR (a string) into a keyword (`keywordp')."
-  (declare (pure t) (side-effect-free t))
-  (cl-check-type str string)
-  (intern (concat ":" str)))
+;; (defun cmx-keyword-intern (str)
+;;   "Convert STR (a string) into a keyword (`keywordp')."
+;;   (declare (pure t) (side-effect-free t))
+;;   (cl-check-type str string)
+;;   (intern (concat ":" str)))
 
-(defun cmx-keyword-name (keyword)
-  "Return the string name of KEYWORD (`keywordp') minus the leading colon."
-  (declare (pure t) (side-effect-free t))
-  (cl-check-type keyword keyword)
-  (substring (symbol-name keyword) 1))
+;; (defun cmx-keyword-name (keyword)
+;;   "Return the string name of KEYWORD (`keywordp') minus the leading colon."
+;;   (declare (pure t) (side-effect-free t))
+;;   (cl-check-type keyword keyword)
+;;   (substring (symbol-name keyword) 1))
 
-
-(defalias 'cmx/partial #'apply-partially)
-(defun cmx/rpartial (fn &rest args)
+(defalias 'cmx-partial #'apply-partially)
+(defun cmx-rpartial (fn &rest args)
   "Return a partial application of FN to right-hand ARGS.
 
 ARGS is a list of the last N arguments to pass to FN. The result is a new
@@ -144,12 +116,12 @@ at the values with which this function was called."
   (lambda (&rest pre-args)
     (apply fn (append pre-args args))))
 
-(defun cmx/lookup-key (keys &rest keymaps)
+(defun cmx-lookup-key (keys &rest keymaps)
   "Lookup KEYS in the active or specified KEYMAPS.
 
 Like `lookup-key', but search active keymaps if KEYMAPS is omitted."
   (if keymaps
-      (cl-some (cmx/rpartial #'lookup-key keys) keymaps)
+      (cl-some (cmx-rpartial #'lookup-key keys) keymaps)
     (cl-loop for keymap
              in (append (cl-loop for alist in emulation-mode-map-alists
                                  append (mapcar #'cdr
@@ -164,9 +136,28 @@ Like `lookup-key', but search active keymaps if KEYMAPS is omitted."
              if (lookup-key keymap keys)
              return it)))
 
+;;
+;;; TTY/GUI
+;;
+
+;; TODO: yikes
+;; (defun etcc--get-current-gnome-profile-name ()
+;;   "Return Current profile name of Gnome Terminal."
+;;   ;; https://github.com/helino/current-gnome-terminal-profile/blob/master/current-gnome-terminal-profile.sh
+;;   (if (etcc--in-gnome-terminal?)
+;;       (let ((cmd "#!/bin/sh
+;; FNAME=$HOME/.current_gnome_profile
+;; gnome-terminal --save-config=$FNAME
+;; ENTRY=`grep ProfileID < $FNAME`
+;; rm $FNAME
+;; TERM_PROFILE=${ENTRY#*=}
+;; echo -n $TERM_PROFILE"))
+;;         (shell-command-to-string cmd))
+;;     "Default"))
+
 
 ;;
-;;; === MACROS =================================================================
+;;; Macros
 ;;
 
 (defmacro cmd! (&rest body)
@@ -313,10 +304,10 @@ HOOK-OR-FUNCTION can be a quoted hook or a sharp-quoted function (which will be
 advised)."
   (declare (indent 1))
   (let ((append? (if (eq (car forms) :after) (pop forms)))
-        (fn (gensym "doom-transient-hook")))
+        (fn (gensym "cmx-transient-hook")))
     `(let ((sym ,hook-or-function))
        (defun ,fn (&rest _)
-         ,(format "Transient hook for %S" (doom-unquote hook-or-function))
+         ,(format "Transient hook for %S" (cmx-unquote hook-or-function))
          ,@forms
          (let ((sym ,hook-or-function))
            (cond ((functionp sym) (advice-remove sym #',fn))
@@ -348,7 +339,7 @@ This macro accepts, in order:
                      (when (looking-at-p "\\s-*(")
                        (lisp-indent-defform state indent-point))))
            (debug t))
-  (let* ((hook-forms (doom--resolve-hook-forms hooks))
+  (let* ((hook-forms (cmx--resolve-hook-forms hooks))
          (func-forms ())
          (defn-forms ())
          append-p local-p remove-p depth)
@@ -401,7 +392,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
 \(fn HOOKS &rest [SYM VAL]...)"
   (declare (indent 1))
   (macroexp-progn
-   (cl-loop for (var val hook fn) in (doom--setq-hook-fns hooks var-vals)
+   (cl-loop for (var val hook fn) in (cmx--setq-hook-fns hooks var-vals)
             collect `(defun ,fn (&rest _)
                        ,(format "%s = %s" var (pp-to-string val))
                        (setq-local ,var ,val))
@@ -414,7 +405,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
   (declare (indent 1))
   (macroexp-progn
    (cl-loop for (_var _val hook fn)
-            in (doom--setq-hook-fns hooks vars 'singles)
+            in (cmx--setq-hook-fns hooks vars 'singles)
             collect `(remove-hook ',hook #',fn))))
 
 (provide 'lib-common)

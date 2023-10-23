@@ -25,6 +25,10 @@
 
 ;;  Configuration for file templates and snippet expansion.
 
+;; NOTE: `tempel' does not seem to pick up changes to files even after
+;;       re-evalling the `use-package' declaration. However, it does
+;;       pick up newly-added templates.
+
 ;;; Code:
 
 (use-package tempel
@@ -37,9 +41,6 @@
          ("M-*" . tempel-insert))
 
   :init
-  ;; NOTE: tempel does not seem to pick up changes to files even after
-  ;;       re-evalling the `use-package' declaration. however, it does pick up
-  ;;       newly-added templates.
   (setq tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
 
   ;; Setup completion at point

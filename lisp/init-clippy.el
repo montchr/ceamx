@@ -29,21 +29,23 @@
 
 (use-package helpful
   :config
-  (keymap-global-set "<remap> <describe-function>" #'helpful-callable)
-  (keymap-global-set "<remap> <describe-command>" #'helpful-command)
-  (keymap-global-set "<remap> <describe-variable>" #'helpful-variable)
-  (keymap-global-set "<remap> <describe-key>" #'helpful-key)
+  (keymap-set help-mode-map "C-h" #'helpful-at-point)
+  (dolist (map (list cmx-help-keymap help-mode-map))
+    (define-keymap :keymap map
+      "c" #'helpful-command
+      "f" #'helpful-callable
+      "h" #'helpful-at-point
+      "k" #'helpful-key
+      "o" #'helpful-symbol
+      "v" #'helpful-variable)))
 
-  ;; Probably the most helpful command of all.
-  (keymap-global-set "C-h C-h" #'helpful-at-point)
-  (keymap-set cmx-help-keymap "h" #'helpful-at-point))
 
 (use-package flycheck
   :commands (global-flycheck-mode)
   :init
   (setq-default flycheck-emacs-lisp-load-path 'inherit)
   (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled))
-  (setq-default flycheck-global-modes '(not org-mode))
+  (setq-default flycheck-global-modes '(prog-mode))
   :config
   (global-flycheck-mode +1))
 

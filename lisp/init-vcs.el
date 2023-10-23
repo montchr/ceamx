@@ -48,9 +48,17 @@
 (autoload '+magit/quit-all "lib-magit" "Kill all magit buffers for the current repository." t)
 
 ;; (elpaca magit-section)
+;; (use-package magit-section
+;;   (after! [evil-collection]
+;;     (evil-collection-init 'magit-section)))
 
 (use-package magit
+  :defer t
+
   :config
+  (after! [evil-collection]
+    (evil-collection-init 'magit))
+
   (setq magit-diff-refine-hunk t)                  ; show granular diffs in selected hunk
   (setq magit-save-repository-buffers nil)         ; avoid side-effects (e.g. auto-format)
   (setq magit-revision-insert-related-refs nil)    ; parent/related refs: rarely useful

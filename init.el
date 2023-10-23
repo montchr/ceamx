@@ -4,7 +4,6 @@
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -27,86 +26,130 @@
 
 ;;; Code:
 
+;;; Configure module load path.
 (add-to-list 'load-path (expand-file-name "lisp" +path-emacs-dir))
+(add-to-list 'load-path (expand-file-name "lisp/lib" +path-emacs-dir))
 
-;; Profile startup time.
+;;; Profile startup time.
 (require 'init-benchmarking)
 
-;; Configure customization file.
+;;; Configure customization file.
 (setq custom-file (expand-file-name "custom.el" +path-emacs-dir))
 
+;;; Define default user identity.
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
 
-;; DEPRECATED: all of these except for the mac predicate are obvious or simple
-;;             enough on their own.
-(defconst +graphical-p (display-graphic-p))
-(defconst +xorg-p (memq window-system '(x)))
-(defconst +user-root-p (string-equal "root" (getenv "USER")))
-(defconst +sys-mac-p (or (memq window-system '(mac ns)) (eq system-type 'darwin)))
-(defconst +sys-linux-p (eq system-type 'gnu/linux))
+;;; Load environment-related constants.
+(require 'config-env)
 
+;;; Initialize package loading.
 (require 'init-packages)
 
+
+;;
+;;; Libraries
+;;
+
+;;; Bundled with Emacs
 (require 'cl-lib)
 (require 'map)
 
+;;; Install common library packages
 (use-package s)
 (use-package dash)
 
+;;; Custom libraries.
 (require 'lib-common)
+(require 'lib-on)
+(if (display-graphic-p)
+    (require 'lib-gui)
+  (require 'lib-term))
+
+
+;;
+;;; Configuration
+;;
 
 (require 'init-defaults)
+
 (require 'init-env)
 
-(when +graphical-p
-  (require 'lib-gui))
+;;;; Display
 
 (require 'init-frame-hooks)
 (require 'init-xterm)
 (require 'init-frame)
+
+;;;; Appearance: Theme
 (require 'init-ui-theme)
 ;;(require 'init-ui-nano-theme)
 (require 'init-ui-modus-themes)
+
+;;;; Appearance: Typography + Iconography
 (require 'init-ui-font)
 (require 'init-ui-icons)
+
+;;;; Appearance: Modeline
 (require 'init-ui-modeline)
 ;;(require 'init-ui-modeline-nano)
 (require 'init-ui-modeline-doom)
+
+;;;; Appearance: Sidebar
 (require 'init-ui-treemacs)
 
+;;;; Keybindings
 
-(require 'init-keys-meow)
+;; TODO: rename to `init-keys-hydras'
 (require 'init-hydras)
 (require 'init-keys)
-;; (require 'init-evil) ; TODO: comment when meow
+(require 'init-keys-evil)
+(require 'init-keys-bindings)
 
+;; TODO: split up clippy (it's vague)
+;; TODO: why here? explain
 (require 'init-clippy)
+
+;;;; Window
+
 (require 'init-window)
+
+;;;; Selection
 
 (require 'init-selection-vertico)
 (require 'init-selection-orderless)
 (require 'init-selection-marginalia)
 (require 'init-selection-consult)
 (require 'init-completion)
+
+;;;; Actions
+
 (require 'init-embark)
 (require 'init-wgrep)
 
+;;;; Editing, buffers, files
+
 (require 'init-editor)
-(require 'init-buffers)
 (require 'init-files)
 (require 'init-dired)
+
+;;;; Project + Workspace
+
 (require 'init-vcs)
 (require 'init-templates)
 (require 'init-projects)
 (require 'init-workspace)
 
-;;; memex
+;;;; Memex
+
+;; TODO: move after syntaxes? org-mode is heavy
+
 (require 'init-org)
 (require 'init-notes)
 (require 'init-notes-denote)
 
-;;; languages
+;;;; Syntaxes
+
 (require 'init-lsp)
 (require 'init-lang-elisp)
 (require 'init-lang-html)
@@ -115,15 +158,19 @@
 (require 'init-lang-yaml)
 (require 'init-lang-misc)
 
-;;; shells
+;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
 (require 'init-shell-nu)
 
-;;; tools
+;;;; Miscellaneous
+
 (require 'init-tools)
 (require 'init-ledger)
-
-;;; entertainment
 (require 'init-fun)
+
+
+;;
+;;; Postlude
+;;
 
 (defun +maybe-start-server ()
   "Auto-start Emacs daemon if not already running."
@@ -134,9 +181,9 @@
 (add-hook 'elpaca-after-init-hook #'+maybe-start-server)
 
 ;; unfortunately
-(when (and +graphical-p +sys-mac-p)
-  (add-hook 'elpaca-after-init-hook
-            (lambda () (async-shell-command "yabai --restart-service"))))
+(when (and +gui-p +sys-mac-p)
+(add-hook 'elpaca-after-init-hook
+          (lambda () (async-shell-command "yabai --restart-service"))))
 
 ;; Load custom file after all packages have loaded.
 (when (file-exists-p custom-file)
@@ -148,7 +195,4 @@
   (elpaca-wait))
 
 (provide 'init)
-;; Local Variables:
-;; no-byte-compile: t
-;; End:
 ;;; init.el ends here

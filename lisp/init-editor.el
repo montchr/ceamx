@@ -27,10 +27,6 @@
 
 ;;; Code:
 
-;;
-;;; Indentation
-;;
-
 (setq-default indent-tabs-mode nil)
 ;; FIXME: does not do what i would expect ... seems to complete before indent
 (setq-default tab-always-indent 'complete) ; Indent, then try completions
@@ -41,44 +37,31 @@
 ;; TODO: is this redundant when `aggressive-indent-mode'?
 ;; (electric-indent-mode +1)
 
-
-;;
-;;; Words
-;;
-
 (global-subword-mode -1)
-
-
-;;
-;;; Characters
-;;
 
 (electric-pair-mode +1)
 
+;;
 ;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
+
 (use-package page-break-lines
   :defer 1
   :commands (global-page-break-lines-mode)
   :config
   (global-page-break-lines-mode))
 
-
-;;
-;;; Formatting
-;;
-
 (use-package editorconfig
   :commands (editorconfig-mode)
   :config (editorconfig-mode 1))
 
-;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
+;;
+;;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
+
 (use-package reformatter
   :functions (reformatter-define))
 
-
 ;;
 ;;; tree-sitter
-;;
 
 ;;  FIXME: make native tree-sitter support work... somehow... need langs installed...
 ;;  TODO: maybe try <https://github.com/nix-community/nix-doom-emacs/blob/9a5b34d9ba30842eb8f0d7deb08bf03a75930471/overrides.nix#L106-L111>
@@ -89,11 +72,6 @@
 ;; FIXME:
 ;; (use-feature treesit
 ;;   :hook prog-mode)
-
-
-;;
-;;; Feedback
-;;
 
 ;;
 ;;; pulsar :: pulse/highlight line on demand or after running select functions
@@ -110,21 +88,18 @@
   (setq pulsar-highlight-face  'pulsar-yellow)
   (pulsar-global-mode 1))
 
-
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; hl-todo :: Highlight TODO and other codetags in comments and strings
-;;  <https://github.com/tarsius/hl-todo>
+;;
+;;; hl-todo :: <https://github.com/tarsius/hl-todo>
+;;
+;;  Highlight TODO and other codetags in comments and strings
+;;
 ;;  <https://peps.python.org/pep-0350/#specification>
 
 (use-package hl-todo
   :hook (prog-mode . hl-todo-mode))
 
-
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; aggressive-indent-mode :: Re-indent code after every change
-;;  <https://github.com/Malabarba/aggressive-indent-mode>
-
-;;; TODO: consider removing ... might be too aggressive
+;;
+;;; aggressive-indent-mode :: <https://github.com/Malabarba/aggressive-indent-mode>
 
 (use-package aggressive-indent
   :commands (global-aggressive-indent-mode)
@@ -132,10 +107,37 @@
   :config
   (global-aggressive-indent-mode 1))
 
+;;
+;;; undo-fu :: <https://codeberg.org/ideasman42/emacs-undo-fu>
+;;
+;;  Simple, stable linear undo with redo for Emacs.
 
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; vundo (visual undo) :: Visualize the undo tree.
-;;  <https://github.com/casouri/vundo>
+(use-package undo-fu
+  :config
+  (keymap-global-unset "C-z")
+  (keymap-global-set "C-z" #'undo-fu-only-undo)
+  (keymap-global-set "C-S-z" #'undo-fu-only-redo))
+
+;;
+;;; undo-fu-session :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
+;;
+;;  Save & recover undo steps between Emacs sessions.
+
+(use-package undo-fu-session
+  :after undo-fu
+
+  :init
+  (setq undo-fu-session-directory (expand-file-name "undo-fu-session" +path-var-dir))
+
+  :config
+  (setq undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+  (setq undo-fu-session-ignore-temp-files t)
+  (setq undo-fu-session-ignore-encrypted-files t)
+
+  (undo-fu-session-global-mode))
+
+;;
+;;; vundo (visual undo) :: <https://github.com/casouri/vundo>
 
 (use-package vundo
   :defer t
@@ -145,12 +147,13 @@
   (setq! vundo-glyph-alist vundo-unicode-symbols))
 
 
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; drag-stuff :: Move stuff around in arbitrary directions
-;;  <https://github.com/rejeep/drag-stuff.el>
 ;;
-;; This package appears to be abandoned since 2017.
-;; But, as of <2023-09-06>, it still works well.
+;;; drag-stuff :: <https://github.com/rejeep/drag-stuff.el>
+;;
+;;  Move stuff around in arbitrary directions
+;;
+;;  This package appears to be abandoned since 2017.
+;;  But, as of <2023-09-06>, it still works well.
 ;;
 ;;;; Issues
 ;;

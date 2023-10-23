@@ -1,7 +1,7 @@
 ;;; lib-lsp.el --- LSP library functions -*- lexical-binding: t -*-
 
-;; Copyright (c) 2014-2022  Henrik Lissner
-;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2014-2023  Henrik Lissner
 ;; SPDX-License-Identifier: GPL-3.0-or-later OR MIT
 
 ;; Author: Henrik Lissner
@@ -62,9 +62,9 @@ server getting expensively restarted when reverting buffers."
            (if (numberp +lsp-defer-shutdown) +lsp-defer-shutdown 3)
            nil (lambda (workspace)
                  (with-lsp-workspace
-                  workspace
-                  (unless (lsp--workspace-buffers workspace)
-                    (let ((lsp-restart 'ignore)) (funcall fn)))))
+                     workspace
+                   (unless (lsp--workspace-buffers workspace)
+                     (let ((lsp-restart 'ignore)) (funcall fn)))))
            lsp--cur-workspace))))
 
 

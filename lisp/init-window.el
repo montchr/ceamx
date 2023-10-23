@@ -27,25 +27,18 @@
 
 (require 'lib-common)
 
-;; TODO: is there really any point to `use-feature' for `emacs'?
-(use-feature emacs
-  :init
-  ;; Don't close windows with <ESC> key.
-  (defadvice keyboard-escape-quit
-      (around keyboard-escape-quit-dont-close-windows activate)
-    (let ((buffer-quit-function (lambda () ())))
-      ad-do-it)))
+(defadvice keyboard-escape-quit
+    (around keyboard-escape-quit-dont-close-windows activate)
+  (let ((buffer-quit-function (lambda () ())))
+    ad-do-it))
 
-;; TODO: remove? also see <https://github.com/nex3/perspective-el?tab=readme-ov-file#some-musings-on-emacs-window-layouts>
-(use-feature winner)
+;; Disable buffer line wrapping by default.
+;; <https://www.emacswiki.org/emacs/TruncateLines>
+(set-default 'truncate-lines t)
 
-(use-package burly
-  :elpaca (burly :host github :repo "alphapapa/burly.el")
-  :init
-  (burly-tabs-mode))
-
-(use-package olivetti :defer t
-  :hook (org-mode . olivetti-mode))
+;; Hide buffer until there's output.
+;; Prevents an extra window appearing during init.
+(setq async-shell-command-display-buffer nil)
 
 ;; Equally-sized windows are generally undesirable as a default.
 ;;
@@ -57,8 +50,21 @@
 ;;
 ;; For example, Embark is great, but should not take up as much visual space
 ;; as the file-visiting buffer from which it was invoked.
+(setq! display-buffer-base-action
+       '((display-buffer-reuse-window display-buffer-pop-up-window)
+         (reusable-frames . t)))
 (setq! even-window-sizes nil)
 
+;; TODO: remove? also see <https://github.com/nex3/perspective-el?tab=readme-ov-file#some-musings-on-emacs-window-layouts>
+(use-feature winner)
+
+(use-package burly
+  :elpaca (burly :host github :repo "alphapapa/burly.el")
+  :init
+  (burly-tabs-mode))
+
+(use-package olivetti :defer t
+  :hook (org-mode . olivetti-mode))
 
 ;;
 ;;; popper -- <https://github.com/karthink/popper>
@@ -73,28 +79,29 @@
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
   :init
-  (setq popper-reference-buffers
-        '("\\*Messages\\*"
-          "Output\\*$"
-          "\\*vc\\*"
-          "\\*Help\\*"
-          "\\*Warnings\\*"
-          "\\*elpaca-log\\*"
-          "\\*helpful "
-          compilation-mode
-          help-mode
-          (lambda (buf) (with-current-buffer buf
-                     (and (derived-mode-p 'fundamental-mode)
-                          (< (count-lines (point-min) (point-max))
-                             10))))))
+  (setq! popper-reference-buffers
+         '("\\*Messages\\*"
+           "Output\\*$"
+           "\\*vc\\*"
+           "\\*Warnings\\*"
+           "\\*elpaca-log\\*"
+           compilation-mode
+           help-mode
+           helpful-mode
+           (lambda (buf) (with-current-buffer buf
+                      (and (derived-mode-p 'fundamental-mode)
+                           (< (count-lines (point-min) (point-max))
+                              10))))))
 
   (popper-mode +1)
   (popper-echo-mode +1)                 ; For echo area hints
 
   :config
+  ;; <https://github.com/karthink/popper?tab=readme-ov-file#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
+  (setq popper-display-control nil)
+
   (after! 'projectile
     (setq! popper-group-function #'popper-group-by-projectile)))
-
 
 
 (provide 'init-window)
