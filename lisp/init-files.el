@@ -50,21 +50,22 @@
   :config
   (auto-insert-mode t))
 
-(setq! backup-by-copying t)
-(setq! backup-directory-alist `((".*" . ,(expand-file-name
-                                          (concat +path-local-dir "backups")))))
-(setq! delete-old-versions t)
-(setq! kept-new-versions 5)
-(setq! kept-old-versions 5)
-(setq! require-final-newline t)
-(setq! version-control t)
+(setopt find-file-suppress-same-file-warnings t)
+
+(setopt backup-by-copying t)
+(setopt backup-directory-alist `((".*" . ,(expand-file-name
+                                           (concat +path-local-dir "backups")))))
+(setopt delete-old-versions t)
+(setopt kept-new-versions 5)
+(setopt kept-old-versions 5)
+(setopt require-final-newline t)
+(setopt version-control t)
 
 (use-feature autorevert
   :defer 2
-  :custom
-  ;; Automatically revert a buffer if its file has changed on disk.
-  (auto-revert-interval 0.01 "Instantly revert")
   :config
+  ;; Automatically revert a buffer if its file has changed on disk.
+  (setopt auto-revert-interval 0.01)
   (global-auto-revert-mode t))
 
 (use-feature recentf)
@@ -72,22 +73,20 @@
 (use-feature xref
   :config
   ;; Always find references of symbol at point.
-  (setq xref-prompt-for-identifier nil))
-
+  (setopt xref-prompt-for-identifier nil))
 
 ;;
 ;;; Autosaves
 ;;
 
-(setq auto-save-interval 300)          ; input events before autosave
-(setq auto-save-visited-interval 30)   ; idle interval for all file-visiting buffers
-(setq auto-save-timeout 30)         ; idle interval before autosave
+(setopt auto-save-interval 300)          ; input events before autosave
+(setopt auto-save-visited-interval 30)   ; idle interval for all file-visiting buffers
+(setopt auto-save-timeout 30)         ; idle interval before autosave
 
 ;; Don't create auto-save ~ files.
-(setq auto-save-default nil)
+(setopt auto-save-default nil)
 
 (auto-save-visited-mode)
-
 
 (provide 'init-files)
 ;;; init-files.el ends here
