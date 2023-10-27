@@ -38,22 +38,12 @@
 
 ;; Hide buffer until there's output.
 ;; Prevents an extra window appearing during init.
-(setq async-shell-command-display-buffer nil)
+(setopt async-shell-command-display-buffer nil)
 
-;; Equally-sized windows are generally undesirable as a default.
-;;
-;; While it may be appropriate for primary buffers,
-;; the vast majority of buffers Emacs throws at us
-;; are only useful for a short period of time,
-;; and so they should be treated as "popups".
-;; Same goes for buffers we invoke manually.
-;;
-;; For example, Embark is great, but should not take up as much visual space
-;; as the file-visiting buffer from which it was invoked.
-(setq! display-buffer-base-action
-       '((display-buffer-reuse-window display-buffer-pop-up-window)
-         (reusable-frames . t)))
-(setq! even-window-sizes nil)
+(setopt display-buffer-base-action
+        '((display-buffer-reuse-mode-window display-buffer-pop-up-window)
+          (reusable-frames . t)))
+(setopt even-window-sizes nil)
 
 (use-feature winner
   :config (winner-mode))
