@@ -32,15 +32,15 @@
 ;;; Code:
 
 ;; TAB cycle if there are only few candidates
-(setq completion-cycle-threshold 3)
+(setopt completion-cycle-threshold 3)
 
 ;; Hide commands in M-x which do not apply to the current mode.
 ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
-(setq read-extended-command-predicate #'command-completion-default-include-p)
+(setopt read-extended-command-predicate #'command-completion-default-include-p)
 
 ;; Enable indentation+completion using the TAB key.
 ;; `completion-at-point' is often bound to M-TAB.
-(setq-default tab-always-indent 'complete)
+(setopt tab-always-indent 'complete)
 
 (use-package corfu
   :elpaca (corfu :host github :repo "minad/corfu"
@@ -55,57 +55,48 @@
   ;; (setq! corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (setq! corfu-on-exact-match nil)     ;; Configure handling of exact matches
   ;; (setq! corfu-scroll-margin 5)        ;; Use scroll margin
-  (setq! corfu-cycle t)
-  (setq! corfu-auto t)
-  (setq! corfu-auto-delay 0.2)
-  (setq! corfu-separator ?\s)
-  (setq! corfu-preview-current nil))
+  (setopt corfu-cycle t)
+  (setopt corfu-auto t)
+  (setopt corfu-auto-delay 0.2)
+  (setopt corfu-separator ?\s)
+  (setopt corfu-preview-current nil))
 
-(use-package dabbrev :elpaca nil
-  :bind
+(use-feature dabbrev
+  :config
   ;; Swap M-/ and C-M-/
-  (("M-/" . dabbrev-completion)
-   ("C-M-/" . dabbrev-expand))
+  (keymap-global-set "M-/"    #'dabbrev-completion)
+  (keymap-global-set "C-M-/"  #'dabbrev-expand)
 
-  :custom
-  (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+  ;; TODO: look into using `rx'
+  (setopt dabbrev-ignored-buffer-regexps
+          '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
 
 (use-package cape
-  ;; Bind dedicated completion commands
-  :bind (("M-p p" . completion-at-point) ;; capf
-         ("M-p t" . complete-tag)        ;; etags
-         ("M-p d" . cape-dabbrev)        ;; or dabbrev-completion
-         ("M-p h" . cape-history)
-         ("M-p f" . cape-file)
-         ("M-p k" . cape-keyword)
-         ("M-p s" . cape-elisp-symbol)
-         ("M-p a" . cape-abbrev)
-         ;; FIXME: obsolete
-         ("M-p i" . cape-ispell)
-         ("M-p l" . cape-line)
-         ("M-p w" . cape-dict)
-         ("M-p \\" . cape-tex)
-         ("M-p _" . cape-tex)
-         ("M-p ^" . cape-tex)
-         ("M-p &" . cape-sgml)
-         ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
-         ("M-p r" . cape-rfc1345))
-
   :init
-  ;; Add `completion-at-point-functions', used by `completion-at-point'.
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
   ;;(add-to-list 'completion-at-point-functions #'cape-history)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
-  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
   ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
   ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
   ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
-  ;;(add-to-list 'completion-at-point-functions #'cape-ispell)
   ;;(add-to-list 'completion-at-point-functions #'cape-dict)
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
-  (add-to-list 'completion-at-point-functions #'cape-elisp-symbol))
+  (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+
+  :config
+  (keymap-global-set "M-p p" #'completion-at-point) ;; capf
+  (keymap-global-set "M-p t" #'complete-tag)        ;; etags
+  (keymap-global-set "M-p d" #'cape-dabbrev)        ;; or dabbrev-completion
+  (keymap-global-set "M-p h" #'cape-history)
+  (keymap-global-set "M-p f" #'cape-file)
+  (keymap-global-set "M-p k" #'cape-keyword)
+  (keymap-global-set "M-p s" #'cape-elisp-symbol)
+  (keymap-global-set "M-p a" #'cape-abbrev)
+  (keymap-global-set "M-p l" #'cape-line)
+  (keymap-global-set "M-p w" #'cape-dict)
+  ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
+  (keymap-global-set "M-p r" #'cape-rfc1345))
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
