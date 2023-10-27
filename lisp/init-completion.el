@@ -40,7 +40,7 @@
 
 ;; Enable indentation+completion using the TAB key.
 ;; `completion-at-point' is often bound to M-TAB.
-(setq tab-always-indent 'complete)
+(setq-default tab-always-indent 'complete)
 
 (use-package corfu
   :elpaca (corfu :host github :repo "minad/corfu"
