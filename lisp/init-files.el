@@ -45,7 +45,10 @@
                   t)))))
 (add-hook 'find-file-not-found-functions #'cmx-create-missing-directories-h)
 
-(setq find-file-suppress-same-file-warnings t)
+;; Add file headers to new files.
+(use-feature autoinsert
+  :config
+  (auto-insert-mode t))
 
 (setq! backup-by-copying t)
 (setq! backup-directory-alist `((".*" . ,(expand-file-name
