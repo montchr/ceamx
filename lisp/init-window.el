@@ -88,7 +88,7 @@
 
   :config
   ;; <https://github.com/karthink/popper?tab=readme-ov-file#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
-  (setq popper-display-control nil)
+  (setq popper-display-control t)
 
   (after! 'projectile
     (setq! popper-group-function #'popper-group-by-projectile)))
@@ -96,6 +96,8 @@
 ;;
 ;;; Window management hydra
 ;;
+
+;; Bound in `cmx-leader-keymap'
 
 (defhydra cmx-hydra/window (:hint nil)
   "
