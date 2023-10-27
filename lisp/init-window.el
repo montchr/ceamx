@@ -55,8 +55,8 @@
          (reusable-frames . t)))
 (setq! even-window-sizes nil)
 
-;; TODO: remove? also see <https://github.com/nex3/perspective-el?tab=readme-ov-file#some-musings-on-emacs-window-layouts>
-(use-feature winner)
+(use-feature winner
+  :config (winner-mode))
 
 (use-package burly
   :elpaca (burly :host github :repo "alphapapa/burly.el")
