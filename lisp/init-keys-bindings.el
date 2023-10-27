@@ -399,7 +399,8 @@
 (after! [evil]
   ;;; Normal state
   (define-keymap :keymap evil-normal-state-map
-    "g d" #'xref-find-definitions)
+    "g d"  #'xref-find-definitions
+    "K"    #'helpful-at-point)
 
   ;;; Insert state
   ;;
