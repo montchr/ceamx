@@ -103,6 +103,68 @@
   (after! 'projectile
     (setq! popper-group-function #'popper-group-by-projectile)))
 
+;;
+;;; Window management hydra
+;;
+
+(defhydra cmx-hydra/window (:hint nil)
+  "
+---------------------------------------------------------
+^Movement^    ^Split^         ^Switch^		  ^Resize^
+---------------------------------------------------------
+  ^_k_^       _v_ertical      _b_uffer		  _q_ X←
+_h_   _l_     _x_ horizontal	_f_ind files	_w_ X↓
+  ^_j_^       _z_ undo      	_a_ce 1		    _e_ X↑
+              _Z_ reset      	_s_wap		    _r_ X→
+_F_ollow      _D_lt Other   	_S_ave		    max_i_mize
+_SPC_ cancel	_o_nly this   	_d_elete
+"
+  ;; I usually only need to move one window at a time,
+  ;; so red breaks flow.
+  ("h" #'windmove-left   :color blue)
+  ("j" #'windmove-down   :color blue)
+  ("k" #'windmove-up     :color blue)
+  ("l" #'windmove-right  :color blue)
+
+  ("q" #'hydra-move-splitter-left)
+  ("w" #'hydra-move-splitter-down)
+  ("e" #'hydra-move-splitter-up)
+  ("r" #'hydra-move-splitter-right)
+  ("b" #'consult-buffer)
+  ("f" #'projectile-find-file)
+  ("F" #'follow-mode)
+  ("a" (lambda ()
+         (interactive)
+         (ace-window 1)
+         ;; FIXME: hook does not exist?
+         (add-hook 'ace-window-end-once-hook #'cmx-hydra/window/body)))
+  ("v" (lambda ()
+         (interactive)
+         (split-window-right)
+         (windmove-right)))
+  ("x" (lambda ()
+         (interactive)
+         (split-window-below)
+         (windmove-down)))
+  ("s" (lambda ()
+         (interactive)
+         (ace-window 4)
+         ;; FIXME: hook does not exist?
+         (add-hook 'ace-window-end-once-hook #'cmx-hydra/window/body)))
+  ("S" #'burly-bookmark-windows)
+  ("d" #'delete-window :color blue)
+  ("D" (lambda ()
+         (interactive)
+         (ace-window 16)
+         ;; FIXME: hook does not exist?
+         (add-hook 'ace-window-end-once-hook #'cmx-hydra/window/body)))
+  ("o" #'delete-other-windows  :color blue)
+  ("i" #'ace-maximize-window   :color blue)
+  ("z" (progn
+         (winner-undo)
+         (setq this-command #'winner-undo)))
+  ("Z" #'winner-redo)
+  ("SPC" nil))
 
 (provide 'init-window)
 ;;; init-window.el ends here

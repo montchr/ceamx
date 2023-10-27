@@ -386,6 +386,8 @@
 (keymap-global-set "M-'"  #'insert-pair)
 (keymap-global-set "M-`"  #'insert-pair)
 
+(keymap-global-set "C-x SPC" #'hydra-rectangle/body)
+
 (after! [vundo]
   (keymap-global-set "C-x u" #'vundo))
 

@@ -98,21 +98,18 @@
 ;;;; Sidebar
 (require 'init-ui-treemacs)
 
-;;;; Keybindings
-
-;; TODO: rename to `init-keys-hydras'
-(require 'init-hydras)
+;;; Keybindings
 (require 'init-keys)
 (require 'init-keys-evil)
+(require 'init-keys-hydra)
 (require 'init-keys-bindings)
+
+;;; Window
+(require 'init-window)
 
 ;; TODO: split up clippy (it's vague)
 ;; TODO: why here? explain
 (require 'init-clippy)
-
-;;;; Window
-
-(require 'init-window)
 
 ;;; Selection
 
