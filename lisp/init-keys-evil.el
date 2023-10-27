@@ -155,6 +155,7 @@
 
 (use-package evil-collection
   :after (evil)
+
   :config
   (setq! evil-collection-elpaca-want-g-filters nil)
   (setq! evil-collection-setup-minibuffer nil)
@@ -214,20 +215,16 @@
 
 (use-package evil-embrace
   :after (evil embrace)
+
   :commands
   embrace-add-pair
   embrace-add-pair-regexp
   evil-embrace-enable-evil-surround-integration
-  :hook ((org-mode . embrace-org-mode-hook)
-         (ruby-mode . embrace-ruby-mode-hook)
-         (emacs-lisp-mode . embrace-emacs-lisp-mode-hook)
-         ((lisp-mode emacs-lisp-mode clojure-mode racket-mode hy-mode)
-          . +evil-embrace-lisp-mode-hook-h)
-         ((c++-mode c++-ts-mode rustic-mode csharp-mode java-mode swift-mode typescript-mode)
-          . +evil-embrace-angle-bracket-modes-hook-h))
+
   :init
   (after! [evil-surround]
     (evil-embrace-enable-evil-surround-integration))
+
   :config
   (setq evil-embrace-show-help-p nil))
 

@@ -2,10 +2,6 @@
 
 * Tasks
 
-** TODO Write command to toggle between upper/lower-case char
-
-This would then be bound to =~= (tilde) in =meow-normal-mode=
-
 ** TODO =org-support-shift-select=
 
 

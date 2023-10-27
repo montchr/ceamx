@@ -75,27 +75,27 @@
 
 (require 'init-env)
 
-;;;; Display
+;;; Displays + Appearance
 
 (require 'init-frame-hooks)
 (require 'init-xterm)
 (require 'init-frame)
 
-;;;; Appearance: Theme
+;;;; Theme
 (require 'init-ui-theme)
-;;(require 'init-ui-nano-theme)
 (require 'init-ui-modus-themes)
+;; (require 'init-ui-nano-theme)
 
-;;;; Appearance: Typography + Iconography
+;;;; Typography + Iconography
 (require 'init-ui-font)
 (require 'init-ui-icons)
 
-;;;; Appearance: Modeline
+;;;; Modeline
 (require 'init-ui-modeline)
 ;;(require 'init-ui-modeline-nano)
 (require 'init-ui-modeline-doom)
 
-;;;; Appearance: Sidebar
+;;;; Sidebar
 (require 'init-ui-treemacs)
 
 ;;;; Keybindings
@@ -114,7 +114,7 @@
 
 (require 'init-window)
 
-;;;; Selection
+;;; Selection
 
 (require 'init-selection-vertico)
 (require 'init-selection-orderless)
@@ -122,25 +122,25 @@
 (require 'init-selection-consult)
 (require 'init-completion)
 
-;;;; Actions
+;;; Actions
 
 (require 'init-embark)
 (require 'init-wgrep)
 
-;;;; Editing, buffers, files
+;;; Editing, buffers, files
 
 (require 'init-editor)
 (require 'init-files)
 (require 'init-dired)
 
-;;;; Project + Workspace
+;;; Project + Workspace
 
 (require 'init-vcs)
 (require 'init-templates)
 (require 'init-projects)
 (require 'init-workspace)
 
-;;;; Memex
+;;; Memex
 
 ;; TODO: move after syntaxes? org-mode is heavy
 
@@ -148,7 +148,7 @@
 (require 'init-notes)
 (require 'init-notes-denote)
 
-;;;; Syntaxes
+;;; Syntaxes
 
 (require 'init-lsp)
 (require 'init-lang-elisp)
@@ -161,7 +161,7 @@
 ;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
 (require 'init-shell-nu)
 
-;;;; Miscellaneous
+;;; Miscellaneous
 
 (require 'init-tools)
 (require 'init-ledger)

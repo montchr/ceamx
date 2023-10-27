@@ -390,7 +390,7 @@
   (keymap-global-set "C-x u" #'vundo))
 
 ;;
-;;; Evil State Bindings
+;;; Evil Bindings
 ;;
 
 (after! [evil]

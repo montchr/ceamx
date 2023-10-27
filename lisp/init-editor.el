@@ -43,6 +43,7 @@
 
 ;;
 ;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
+;;
 
 (use-package page-break-lines
   :defer 1
@@ -50,18 +51,24 @@
   :config
   (global-page-break-lines-mode))
 
+;;
+;;; editorconfig
+;;
+
 (use-package editorconfig
   :commands (editorconfig-mode)
   :config (editorconfig-mode 1))
 
 ;;
 ;;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
+;;
 
 (use-package reformatter
   :functions (reformatter-define))
 
 ;;
 ;;; tree-sitter
+;;
 
 ;;  FIXME: make native tree-sitter support work... somehow... need langs installed...
 ;;  TODO: maybe try <https://github.com/nix-community/nix-doom-emacs/blob/9a5b34d9ba30842eb8f0d7deb08bf03a75930471/overrides.nix#L106-L111>
