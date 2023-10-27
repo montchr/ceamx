@@ -68,7 +68,9 @@
   (setopt auto-revert-interval 0.01)
   (global-auto-revert-mode t))
 
-(use-feature recentf)
+(use-feature recentf
+  :config
+  (recentf-mode))
 
 (use-feature xref
   :config
