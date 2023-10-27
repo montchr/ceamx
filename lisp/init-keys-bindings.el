@@ -380,11 +380,12 @@
 
 (keymap-global-set "<remap> <keyboard-quit>" #'cmx/escape)
 
-(keymap-global-set "M-["  #'insert-pair)
-(keymap-global-set "M-{"  #'insert-pair)
-(keymap-global-set "M-\"" #'insert-pair)
-(keymap-global-set "M-'"  #'insert-pair)
-(keymap-global-set "M-`"  #'insert-pair)
+(dolist (key '("M-["
+               "M-{"
+               "M-\""
+               "M-'"
+               "M-`"))
+  (keymap-global-set key #'insert-pair))
 
 (keymap-global-set "C-x SPC" #'hydra-rectangle/body)
 
