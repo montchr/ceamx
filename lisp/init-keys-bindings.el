@@ -198,7 +198,8 @@
 ;;; "i" => Insertions
 
 (defvar-keymap cmx-insert-keymap
-  "y" #'yank-from-kill-ring)
+  "t"  #'tempel-insert
+  "y"  #'yank-from-kill-ring)
 (defalias 'cmx-insert-keymap cmx-insert-keymap)
 
 ;;; "n" => Notes
