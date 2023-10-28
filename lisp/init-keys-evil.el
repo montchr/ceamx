@@ -121,12 +121,15 @@
   (evil-ex-define-cmd "q" #'kill-this-buffer)
   (evil-ex-define-cmd "wq" #'cmx/save-and-kill-this-buffer)
 
-  ;; Make sure some modes start in Emacs state
-  (dolist (mode '(custom-mode
-                  eshell-mode
-                  term-mode))
-    (add-to-list 'evil-emacs-state-modes mode))
+  ;; Assign initial evil state to some specific major modes.
+  ;; Note that this approach will not work for minor modes,
+  ;; which need a state function added as a mode hook.
+  (dolist (cell '((custom-mode . emacs)
+                  (eshell-mode . emacs)
+                  (term-mode . emacs)))
+    (evil-set-initial-state (car cell) (cdr cell)))
 
+  ;; Use evil search module.
   (evil-select-search-module 'evil-search-module 'evil-search)
 
   ;; Ensure `evil-shift-width' always matches `tab-width'; evil does not police
