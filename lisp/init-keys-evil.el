@@ -434,5 +434,52 @@
   (evil-traces-use-diff-faces)
   (evil-traces-mode))
 
+;;
+;;; `evil-goggles' :: <https://github.com/edkolev/evil-goggles>
+;;
+
+(use-package evil-goggles
+  :after evil
+  :init
+  ;; example:
+  ;; (setopt evil-goggles-enable-paste nil)
+
+  ;; list of all on/off variables, their default value is `t`:
+  ;;
+  ;; evil-goggles-enable-delete
+  ;; evil-goggles-enable-change
+  ;; evil-goggles-enable-indent
+  ;; evil-goggles-enable-yank
+  ;; evil-goggles-enable-join
+  ;; evil-goggles-enable-fill-and-move
+  ;; evil-goggles-enable-paste
+  ;; evil-goggles-enable-shift
+  ;; evil-goggles-enable-surround
+  ;; evil-goggles-enable-commentary
+  ;; evil-goggles-enable-nerd-commenter
+  ;; evil-goggles-enable-replace-with-register
+  ;; evil-goggles-enable-set-marker
+  ;; evil-goggles-enable-undo
+  ;; evil-goggles-enable-redo
+  ;; evil-goggles-enable-record-macro
+
+  :config
+  (setopt evil-goggles-duration 0.200) ; default => 0.200
+
+  ;; this variable affects "blocking" hints, for example when deleting
+  ;; -- the hint is displayed, the deletion is delayed (blocked) until
+  ;; the hint disappers, then the hint is removed and the deletion
+  ;; executed; it makes sense to have this duration short
+  (setopt evil-goggles-blocking-duration 0.050) ;; default is nil, i.e. use `evil-goggles-duration'
+
+  ;; this variable affects "async" hints, for example when indenting
+  ;; -- the indentation is performed with the hint visible, i.e. the
+  ;; hint is displayed, the action (indent) is executed
+  ;; (asynchronous), then the hint is removed, highlighting the result
+  ;; of the indentation
+  (setopt evil-goggles-async-duration 0.900) ;; default is nil, i.e. use `evil-goggles-duration'
+
+  (evil-goggles-mode))
+
 (provide 'init-keys-evil)
 ;;; init-keys-evil.el ends here

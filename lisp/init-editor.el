@@ -82,16 +82,18 @@
 ;;; pulsar :: pulse/highlight line on demand or after running select functions
 ;;  <https://protesilaos.com/emacs/pulsar>
 
-(use-package pulsar
-  :commands (pulsar-global-mode)
-  :defer 5
-  :config
-  (setq pulsar-pulse           t)
-  (setq pulsar-delay           0.055)
-  (setq pulsar-iterations      10)
-  (setq pulsar-face            'pulsar-magenta)
-  (setq pulsar-highlight-face  'pulsar-yellow)
-  (pulsar-global-mode 1))
+;; TODO: remove? might be redundant with `evil-goggles'
+
+;; (use-package pulsar
+;;   :commands (pulsar-global-mode)
+;;   :defer 5
+;;   :config
+;;   (setq pulsar-pulse           t)
+;;   (setq pulsar-delay           0.055)
+;;   (setq pulsar-iterations      10)
+;;   (setq pulsar-face            'pulsar-magenta)
+;;   (setq pulsar-highlight-face  'pulsar-yellow)
+;;   (pulsar-global-mode 1))
 
 ;;
 ;;; hl-todo :: <https://github.com/tarsius/hl-todo>
