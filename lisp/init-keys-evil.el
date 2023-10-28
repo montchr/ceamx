@@ -166,6 +166,15 @@
              ibuffer imenu magit-section magit man markdown-mode org rg ripgrep
              tab-bar term vertico vterm wgrep which-key xref xwidget))
 
+  ;; FIXME: not working in magit status
+  (defun +evil-collection-setup-h (_mode mode-keymaps)
+    "Remove any bindings to global prefix keys in MODE-KEYMAPS."
+    (evil-collection-translate-key '(normal) mode-keymaps
+      (kbd "SPC") nil
+      (kbd "M-SPC") nil
+      "," nil))
+  (add-hook 'evil-collection-setup-hook #'+evil-collection-setup-h)
+
   (evil-collection-init))
 
 ;;
@@ -179,7 +188,6 @@
              evilnc-inner-comment
              evilnc-outer-commenter)
   :config
-
   (evilnc-default-hotkeys))
 
 ;;
