@@ -402,6 +402,7 @@
   (define-keymap :keymap evil-normal-state-map
     "g d"  #'xref-find-definitions
     "K"    #'helpful-at-point)
+  ;; (evil-define-key* '(normal) 'global "K" #'helpful-at-point)
 
   ;;; Insert state
   ;;
@@ -497,7 +498,9 @@
     (define-key evil-motion-state-map "H" 'evil-backward-arg)
 
     ;; jump out
-    (define-key evil-normal-state-map "K" 'evil-jump-out-args))
+    ;; FIXME: conflicts with desired K bind
+    ;; (define-key evil-normal-state-map "K" 'evil-jump-out-args)
+    )
 
 
   )
