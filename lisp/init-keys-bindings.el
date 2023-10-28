@@ -369,11 +369,7 @@
 
 (after! [evil]
   ;; Bind leader key to existing leader map.
-  (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'cmx-leader-keymap)
-  ;; TODO: make sure evil doesn't override the binding from above, then remove
-  ;; (evil-define-key* '(emacs insert) 'global (kbd cmx-leader-alt-key) 'cmx-leader-keymap)
-  )
-
+  (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'cmx-leader-keymap))
 
 ;;
 ;;; Global Bindings
