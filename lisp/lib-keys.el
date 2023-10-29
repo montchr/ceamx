@@ -69,6 +69,29 @@ all hooks after it are ignored.")
              (when interactive
                (setq this-command 'keyboard-quit)))))))
 
+(defconst cmx-namespace "cmx")
+
+;; FIXME: doesn't work
+;; reference: <https://github.com/abo-abo/hydra/blob/317e1de33086637579a7aeb60f77ed0405bf359b/hydra.el#L1265>
+;; (defmacro def-leader-arm! (name key &rest defs)
+;;   "Define a new leader arm NAME under KEY whose keymap contains DEFS."
+;;   (declare (indent defun))
+;;   (let* ((prefix (format "%s-%S" cmx-namespace name))
+;;          (keymap-name (intern (format "%s-keymap" prefix)))
+;;          (arm-name (intern (format "%s-leader" prefix)))
+;;          (menu-name (format "%S..." name)))
+;;     `(progn
+;;        ;; (set (defvar ,arm-name
+;;        ;;        nil
+;;        ;;        "Something")
+;;        ;;      ,(define-prefix-command ,arm-name ,keymap-name ,menu-name))
+;;        (define-keymap :keymap ,keymap-name ,@defs)
+;;        (keymap-set cmx-leader-keymap ,key ,arm-name))))
+;; usage:
+;; (def-leader-arm! foo-arm "x"
+;;   "a" #'view-hello-file
+;;   "b" #'helpful-key)
+
 
 
 (provide 'lib-keys)
