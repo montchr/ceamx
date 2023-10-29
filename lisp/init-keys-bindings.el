@@ -310,13 +310,15 @@
 ;;; "TAB" => Tabs
 
 (defvar-keymap cmx-tab-keymap
-  "d" '("delete" . tab-close)
-  "h" '("prev" . tab-previous)
-  "l" '("next" . tab-next)
-  "n" '("new" . tab-new)
-  "t" '("other" . tab-recent)
-  "x" '("close" . tab-close))
+  "TAB"  '("other" . tab-recent)
+  "d"    '("delete" . tab-close)
+  "h"    '("prev" . tab-previous)
+  "l"    '("next" . tab-next)
+  "n"    '("new" . tab-new)
+  "t"    '("other" . tab-recent)
+  "x"    '("close" . tab-close))
 (defalias 'cmx-tab-keymap cmx-tab-keymap)
+
 
 ;;; Top-level leader map
 
