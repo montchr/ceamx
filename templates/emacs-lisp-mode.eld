@@ -9,4 +9,5 @@ emacs-lisp-mode
      "(use-package " name n>
      ":config" n>
      ")")
+(seto "(setopt " p " " p ")")
 (sset "(setq " (s name) " " (s val) ")")
