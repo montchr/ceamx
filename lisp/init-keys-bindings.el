@@ -499,7 +499,10 @@
     )
 
 
-  )
+
+
+
+  ) ; end `(after! [evil])'
 
 (provide 'init-keys-bindings)
 ;;; init-keys-bindings.el ends here
