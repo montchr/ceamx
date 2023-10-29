@@ -27,9 +27,37 @@
 
 ;;; Code:
 
+(defvar cmx-lisp-mode-list '(emacs-lisp-mode lisp-mode)
+  "Supported Lisps.")
+
 (use-feature eldoc
   :hook (emacs-lisp-mode)
   :diminish eldoc-mode)
+
+;;
+;;; `lispy' :: <https://github.com/abo-abo/lispy>
+;;
+;;  <http://oremacs.com/lispy/>
+
+(use-package lispy
+  :config
+  (dolist (mode cmx-lisp-mode-list)
+    (let ((hook (intern (format "%S-hook" mode))))
+      (add-hook hook (cmd! (lispy-mode 1))))))
+
+;;
+;;; `lispyville' :: <https://github.com/noctuid/lispyville>
+;;
+
+(use-package lispyville
+  :after lispy
+  :init
+  (add-hook 'lispy-mode-hook #'lispyville-mode)
+  :config
+  (lispyville-set-key-theme '(operators
+                              c-w
+                              atom-motions)))
+
 
 (provide 'init-lang-elisp)
 ;;; init-lang-elisp.el ends here
