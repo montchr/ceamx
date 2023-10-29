@@ -71,6 +71,13 @@
 ;;; Configuration
 ;;
 
+;; Generally sorted in order of likelihood of first user interaction.
+;;
+;; An interaction can be one-way or two-way:
+;; keep in mind that perception is still a (one-way) interaction,
+;; so legibility of displayed information is important immediately,
+;; even if the interface cannot respond to input.
+
 (require 'init-defaults)
 
 (require 'init-env)
@@ -82,6 +89,7 @@
 (require 'init-frame)
 
 ;;;; Theme
+(require 'init-ui)
 (require 'init-ui-theme)
 (require 'init-ui-modus-themes)
 ;; (require 'init-ui-nano-theme)
@@ -96,16 +104,17 @@
 (require 'init-ui-modeline-doom)
 
 ;;;; Sidebar
+;; TODO: figure out how to load as late as possible?
 (require 'init-ui-treemacs)
 
 ;;; Keybindings
 (require 'init-keys)
 (require 'init-keys-evil)
-(require 'init-keys-hydra)
 (require 'init-keys-bindings)
 
 ;;; Window
 (require 'init-window)
+(require 'init-buffer)
 
 ;; TODO: split up clippy (it's vague)
 ;; TODO: why here? explain

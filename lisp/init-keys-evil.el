@@ -326,24 +326,6 @@
   (global-evil-quickscope-always-mode +1))
 
 ;;
-;;; `evil-snipe' :: <https://github.com/hlissner/evil-snipe>
-;;
-;; > 2-char searching ala vim-sneak & vim-seek
-
-;; TODO: keybindings
-(use-package evil-snipe
-  :after evil
-  :commands (evil-snipe-local-mode evil-snipe-override-local-mode)
-  :hook ((on-first-input . evil-snipe-override-mode)
-         (on-first-input . evil-snipe-mode))
-  :init
-  (setq evil-snipe-smart-case t)
-  (setq evil-snipe-scope 'line)
-  (setq evil-snipe-repeat-scope 'visible)
-  (setq evil-snipe-char-fold t))
-
-
-;;
 ;;; `evil-ts' :: <https://github.com/foxfriday/evil-ts>
 ;;
 

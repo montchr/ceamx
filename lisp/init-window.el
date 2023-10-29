@@ -94,9 +94,19 @@
     (setq! popper-group-function #'popper-group-by-projectile)))
 
 ;;
+;;; `ace-window' :: <https://github.com/abo-abo/ace-window>
+;;
+
+(use-package ace-window
+  :after avy)
+
+;;
 ;;; Window management hydra
 ;;
 
+;; Depends on `ace-window', `projectile', and of course, `hydra'.
+;; Maybe others too.
+;;
 ;; Bound in `cmx-leader-keymap'
 
 (defhydra cmx-hydra/window (:hint nil)
