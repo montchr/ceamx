@@ -39,5 +39,14 @@
   :config
   (ace-link-setup-default))
 
+;;
+;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
+;;
+
+(use-package expand-region
+  :commands er/expand-region
+  :config
+  (keymap-global-set "C-=" #'er/expand-region))
+
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
