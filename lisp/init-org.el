@@ -110,5 +110,15 @@
   :after org
   :commands org-cliplink)
 
+;;
+;;; `org-rich-yank' :: <https://github.com/unhammer/org-rich-yank>
+;;
+;;  Automatically surround code in src block markup upon paste.
+
+;; TODO: bindings
+(use-package org-rich-yank
+  :after org
+  :commands org-rich-yank)
+
 (provide 'init-org)
 ;;; init-org.el ends here
