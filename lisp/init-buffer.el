@@ -61,5 +61,16 @@
   ;; Optional, enables centered-cursor-mode in all buffers.
   (global-centered-cursor-mode))
 
+;;
+;;; `scratch' :: <https://codeberg.org/emacs-weirdware/scratch>
+;;
+;;  Open a new scratch buffer initialized to the same major mode as the current buffer.
+
+(use-package scratch
+  :commands scratch
+  :config
+  (keymap-set cmx-buffer-keymap "X" '("*scratch* (same mode)" . scratch)))
+
+
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
