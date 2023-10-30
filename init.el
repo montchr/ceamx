@@ -56,8 +56,10 @@
 (require 'map)
 
 ;;; Install common library packages
-(use-package s)
-(use-package dash)
+(use-package s)    ; strings => <https://github.com/magnars/s.el>
+(use-package dash) ; lists => <https://github.com/magnars/dash.el>
+(use-package f)    ; files => <https://github.com/rejeep/f.el>
+(use-package ht)   ; hash tables => <https://github.com/Wilfred/ht.el>
 
 ;;; Custom libraries.
 (require 'lib-common)
