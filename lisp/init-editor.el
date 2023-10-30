@@ -62,7 +62,9 @@
 ;;
 
 (use-package reformatter
-  :functions (reformatter-define))
+  :config
+  (reformatter-define prettier
+                      :program "prettier"))
 
 ;;
 ;;; tree-sitter
