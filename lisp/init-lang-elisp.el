@@ -55,8 +55,7 @@
   (add-hook 'lispy-mode-hook #'lispyville-mode)
   :config
   (lispyville-set-key-theme '(operators
-                              c-w
-                              atom-motions)))
+                              c-w)))
 
 
 (provide 'init-lang-elisp)
