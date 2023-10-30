@@ -100,5 +100,15 @@
   :config
   (global-org-modern-mode))
 
+;;
+;;; org-cliplink :: <https://github.com/rexim/org-cliplink>
+;;
+
+;; NOTE: abandoned, many open issues, likely unreliable
+
+(use-package org-cliplink
+  :after org
+  :commands org-cliplink)
+
 (provide 'init-org)
 ;;; init-org.el ends here
