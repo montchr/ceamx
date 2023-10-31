@@ -57,11 +57,22 @@
 
 (use-package lispyville
   :after lispy
+  :defines lispyville-key-theme
+
   :init
+  ;; via doom
+  (setq lispyville-key-theme
+        '((operators normal)
+          c-w
+          (prettify insert)
+          (atom-movement t)
+          slurp/barf-lispy
+          additional
+          additional-insert))
   (add-hook 'lispy-mode-hook #'lispyville-mode)
+
   :config
-  (lispyville-set-key-theme '(operators
-                              c-w)))
+  (lispyville-set-key-theme))
 
 
 (provide 'init-lang-elisp)
