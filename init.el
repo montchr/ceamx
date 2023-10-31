@@ -56,12 +56,15 @@
 (require 'map)
 
 ;;; Install common library packages
-(use-package s)    ; strings => <https://github.com/magnars/s.el>
-(use-package dash) ; lists => <https://github.com/magnars/dash.el>
-(use-package f)    ; files => <https://github.com/rejeep/f.el>
-(use-package ht)   ; hash tables => <https://github.com/Wilfred/ht.el>
+(use-package s)     ; strings => <https://github.com/magnars/s.el>
+(use-package dash)  ; lists => <https://github.com/magnars/dash.el>
+(use-package f)     ; files => <https://github.com/rejeep/f.el>
+(use-package ht)    ; hash tables => <https://github.com/Wilfred/ht.el>
+(use-package llama) ;  `##' lambda shorthand => <https://git.sr.ht/~tarsius/llama>
 
 (require 'lib-common)
+
+;; TODO: `when' blocks for readability
 (if (display-graphic-p)
     (require 'lib-gui)
   (require 'lib-term))
