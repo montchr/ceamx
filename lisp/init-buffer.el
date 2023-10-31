@@ -54,19 +54,6 @@
   (keymap-global-set "C-=" #'er/expand-region))
 
 ;;
-;;; `centered-cursor-mode' :: <https://github.com/andre-r/centered-cursor-mode.el>
-;;
-
-;; NOTE: early in development -- may have performance issues
-
-(use-package centered-cursor-mode
-  ;; TODO: necessary?
-  :demand t
-  :config
-  ;; Optional, enables centered-cursor-mode in all buffers.
-  (global-centered-cursor-mode))
-
-;;
 ;;; `scratch' :: <https://codeberg.org/emacs-weirdware/scratch>
 ;;
 ;;  Open a new scratch buffer initialized to the same major mode as the current buffer.
