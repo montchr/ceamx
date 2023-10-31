@@ -76,8 +76,8 @@
 (use-package scratch
   :commands scratch
   :config
-  (keymap-set cmx-buffer-keymap "X" '("*scratch* (same mode)" . scratch)))
-
+  (keymap-set cmx-buffer-keymap "X"
+              `("*scratch* (same mode)" . ,(cmd! (scratch major-mode)))))
 
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
