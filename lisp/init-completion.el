@@ -42,6 +42,8 @@
 ;; `completion-at-point' is often bound to M-TAB.
 (setopt tab-always-indent 'complete)
 
+;; FIXME: evil escape does not quit completion when `evil-disable-insert-state-bindings' is t
+;; <https://github.com/emacs-evil/evil-collection/issues/676>
 (use-package corfu
   :elpaca (corfu :host github :repo "minad/corfu"
                  :files (:defaults "extensions/*"))
@@ -50,8 +52,9 @@
   :hook ((prog-mode . corfu-mode))
 
   :config
-  ;; (setq! corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-  ;; (setq! corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; Stay out of my way!
+  (setopt corfu-quit-at-boundary t)
+  (setopt corfu-quit-no-match 'separator)
   ;; (setq! corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (setq! corfu-on-exact-match nil)     ;; Configure handling of exact matches
   ;; (setq! corfu-scroll-margin 5)        ;; Use scroll margin
@@ -59,6 +62,7 @@
   (setopt corfu-auto t)
   (setopt corfu-auto-delay 0.2)
   (setopt corfu-separator ?\s)
+  ;; TODO: maybe enable when invoked manually?
   (setopt corfu-preview-current nil))
 
 (use-feature dabbrev
@@ -67,7 +71,7 @@
   (keymap-global-set "M-/"    #'dabbrev-completion)
   (keymap-global-set "C-M-/"  #'dabbrev-expand)
 
-  ;; TODO: look into using `rx'
+  ;; TODO: look into using `rx' for easier building of regexps
   (setopt dabbrev-ignored-buffer-regexps
           '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
 
