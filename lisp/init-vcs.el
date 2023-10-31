@@ -132,5 +132,14 @@
                     (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
                     date-full date-relative)))))
 
+;;
+;;; `browse-at-remote' :: <https://github.com/rmuslimov/browse-at-remote>
+;;
+
+(use-package browse-at-remote
+  :commands browse-at-remote
+  :config
+  (keymap-set cmx-git-keymap "o" #'browse-at-remote))
+
 (provide 'init-vcs)
 ;;; init-vcs.el ends here
