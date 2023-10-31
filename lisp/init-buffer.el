@@ -28,6 +28,11 @@
 
 ;;; Code:
 
+(use-feature emacs
+  :config
+  ;; Linkify URLs and email addresses in all buffers.
+  (global-goto-address-mode))
+
 ;;
 ;;; `ace-link' :: <https://github.com/abo-abo/ace-link>
 ;;
