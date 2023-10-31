@@ -49,7 +49,9 @@
   ;; in favor of just moving past the closing quote as I would expect.
   (setopt lispy-close-quotes-at-end-p t)
 
-  )
+  ;; TODO: Remove after <https://github.com/abo-abo/lispy/pull/619> (if ever?)
+  ;; (keymap-unset lispy-mode-map "`" t) ; <- does not work. why not?
+  (keymap-set lispy-mode-map "`" #'self-insert-command))
 
 ;;
 ;;; `lispyville' :: <https://github.com/noctuid/lispyville>
