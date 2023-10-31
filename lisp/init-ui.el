@@ -70,10 +70,9 @@
   (keymap-global-set "M-j" #'avy-goto-char-timer)
 
   (after! [evil]
-    ;; Replace the default vim-like binding of "f" with avy.
-    (evil-define-key '(normal) 'global "f" #'avy-goto-char-timer)
-    (evil-define-key '(normal) 'global "F" #'evil-avy-goto-char-in-line)
-    (evil-define-key '(normal) 'global "g s" #'avy-goto-char-timer)))
+    (evil-define-key '(normal) 'global "f" #'evil-avy-goto-char-in-line)
+    (evil-define-key '(normal) 'global "F" #'avy-goto-char-timer)
+    (evil-define-key '(normal) 'global "gs" #'avy-goto-char-timer)))
 
 
 (provide 'init-ui)
