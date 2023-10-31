@@ -56,7 +56,12 @@
        (concat +path-home-dir ".config")))
   "The root directory for personal configurations.")
 
+;; DEPRECATED: pointless
 (defconst +path-emacs-dir user-emacs-directory)
+
+(defconst +path-site-lisp-dir
+  (concat user-emacs-directory "site-lisp/")
+  "Absolute path to the site-lisp directory.")
 
 (defconst +path-local-dir
   (concat

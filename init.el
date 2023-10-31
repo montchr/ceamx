@@ -68,6 +68,12 @@
     (require 'lib-gui)
   (require 'lib-term))
 
+(require 'lib-files)
+
+;; Prepend the site-lisp directory and its immediate subdirectories to the load path.
+(push +path-site-lisp-dir load-path)
+(cmx-prepend-subdirs-to-load-path +path-site-lisp-dir)
+
 
 ;;
 ;;; Configuration

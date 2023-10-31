@@ -1,11 +1,13 @@
 ;;; lib-files.el --- File helpers -*- lexical-binding: t -*-
 
-;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
-;; Copyright (c) 2014-2022  Henrik Lissner
-;; SPDX-License-Identifier: GPL-3.0-or-later OR MIT
+;; Copyright (C) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2014-2022  Henrik Lissner
+;; Copyright (C) 2006-2021  Steve Purcell
+;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause
 
 ;; Author: Henrik Lissner
 ;;         Vegard Øye <vegard_oye at hotmail.com>
+;;         Steve Purcell
 ;;         Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Created: 23 January 2023
@@ -37,11 +39,33 @@
 ;; The above copyright notice and this permission notice shall be
 ;; included in all copies or substantial portions of the Software.
 
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 ;;; Commentary:
 
 ;;  Helper functions for working with files.
 
 ;;; Code:
+
+(require 'cl-lib)
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L369-L391>
 (defun cmx-files--update-refs (&rest files)
@@ -77,6 +101,18 @@
   "Return the basename of FILE."
   (file-name-sans-extension (file-name-nondirectory file)))
 
+;; via <https://github.com/purcell/emacs.d/blob/28194a035ca9a259030ba7ef58089561078c4893/lisp/init-site-lisp.el>
+(defun cmx-prepend-subdirs-to-load-path (parent-dir)
+  "Add every non-hidden subdir of PARENT-DIR to `load-path'."
+  (let ((default-directory parent-dir))
+    (setq load-path
+          (append
+           (cl-remove-if-not
+            #'file-directory-p
+            (directory-files (expand-file-name parent-dir) t "^[^\\.]"))
+           load-path))))
+
+
 
 ;;
 ;;; Commands
@@ -103,6 +139,7 @@ If no FILE is specified, reload the current buffer from disk."
       (set-buffer-major-mode buffer)
       (set-window-buffer nil buffer))))
 
+;; FIXME: this does not actually kill its buffers -- buffer must be deleted manually
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L397-L424>
 (defun cmx/delete-this-file (&optional path force-p)
   "Delete PATH, kill its buffers and expunge it from vc/magit cache.
