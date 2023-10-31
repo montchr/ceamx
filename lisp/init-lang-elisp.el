@@ -43,7 +43,13 @@
   :config
   (dolist (mode cmx-lisp-mode-list)
     (let ((hook (intern (format "%S-hook" mode))))
-      (add-hook hook (cmd! (lispy-mode 1))))))
+      (add-hook hook (cmd! (lispy-mode 1)))))
+
+  ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
+  ;; in favor of just moving past the closing quote as I would expect.
+  (setopt lispy-close-quotes-at-end-p t)
+
+  )
 
 ;;
 ;;; `lispyville' :: <https://github.com/noctuid/lispyville>
