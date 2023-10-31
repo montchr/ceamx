@@ -28,14 +28,15 @@
 
 ;;; Code:
 
+(require 'lib-common)
+
 (use-package lua-mode
-  ;; (setq-default lua-indent-level 2)
+  :config
+  (setq-default lua-indent-level 2)
   (after! [reformatter]
     (reformatter-define lua-format
       :program "lua-format"
-      :args
-      '("--indent-width=2" "--no-use-tab")
-      :lighter "LuaFmt ")))
+      :args '("--indent-width=2" "--no-use-tab"))))
 
 (provide 'init-lang-lua)
 ;;; init-lang-lua.el ends here
