@@ -39,10 +39,12 @@
 (add-hook 'elpaca-after-init-hook 'cmx-reapply-themes)
 
 ;; Set up `after-enable-theme-hook'.
-(advice-add 'enable-theme :after #'cmx--after-enable-theme-hook)
-
-;; Render multiline comments using `font-lock-comment-face'.
-(add-hook 'php-mode-hook #'cmx--multine-comment-face-hook)
+;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+(defvar cmx-after-enable-theme-hook nil)
+(defun cmx-after-enable-theme-hook (&rest _args)
+  "Hook to run after enabling theme."
+  (run-hooks 'cmx-after-enable-theme-hook))
+(advice-add 'enable-theme :after #'cmx-after-enable-theme-hook)
 
 (setq font-lock-maximum-decoration t)
 (setq default-frame-alist

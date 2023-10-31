@@ -50,15 +50,8 @@
 
 ;; Hook to render C-style docblocks aka "multiline comments" as comments.
 ;; via <https://protesilaos.com/emacs/modus-themes#h:d0a3157b-9c04-46e8-8742-5fb2a7ae8798>
-(defun cmx--multine-comment-face-hook ()
+(defun cmx--multiline-comment-face-h ()
   (setq-local c-doc-face-name 'font-lock-comment-face))
-
-;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-(defvar after-enable-theme-hook nil)
-(defun cmx--after-enable-theme-hook (&rest _args)
-  "Hook to run after enabling theme."
-  (run-hooks 'after-enable-theme-hook))
-
 
 (provide 'lib-ui-theme)
 ;;; lib-ui-theme.el ends here
