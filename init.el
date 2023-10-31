@@ -61,9 +61,7 @@
 (use-package f)    ; files => <https://github.com/rejeep/f.el>
 (use-package ht)   ; hash tables => <https://github.com/Wilfred/ht.el>
 
-;;; Custom libraries.
 (require 'lib-common)
-(require 'lib-on)
 (if (display-graphic-p)
     (require 'lib-gui)
   (require 'lib-term))
@@ -73,6 +71,9 @@
 ;; Prepend the site-lisp directory and its immediate subdirectories to the load path.
 (push +path-site-lisp-dir load-path)
 (cmx-prepend-subdirs-to-load-path +path-site-lisp-dir)
+
+;;; site-lisp packages
+(require 'on)
 
 
 ;;

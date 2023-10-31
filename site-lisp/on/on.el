@@ -1,4 +1,4 @@
-;;; lib-on.el --- Hooks for faster startup -*- lexical-binding: t; -*-
+;;; on.el --- Hooks for when things happen -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Chris Montgomery
 ;; Copyright (C) 2022  Alex Griffin
@@ -51,7 +51,7 @@
 ;; by providing finer-grained control of the timing at which packages
 ;; are loaded.
 
-;; Modified from the original to support `elpaca'.
+;; Modified from the original to support `elpaca' and some additional events.
 
 ;;; Code:
 
@@ -159,5 +159,5 @@ triggering hooks during startup."
   (on-run-hook-on 'on-first-file-hook   '(find-file-hook dired-initial-position-hook))
   (on-run-hook-on 'on-first-input-hook  '(pre-command-hook)))
 
-(provide 'lib-on)
-;;; lib-on.el ends here
+(provide 'on)
+;;; on.el ends here
