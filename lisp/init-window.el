@@ -65,12 +65,12 @@
   :commands (popper-mode
              popper-echo-mode
              popper-group-by-projectile)
-  :bind (("C-`"   . popper-toggle-latest)
+  :bind (("C-`"   . popper-toggle)
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
   :init
-  (setq! popper-reference-buffers
-         '("\\*Messages\\*"
+  (setopt popper-reference-buffers
+        '("\\*Messages\\*"
            "Output\\*$"
            "\\*vc\\*"
            "\\*Warnings\\*"
@@ -88,10 +88,10 @@
 
   :config
   ;; <https://github.com/karthink/popper?tab=readme-ov-file#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
-  (setq popper-display-control t)
+  (setopt popper-display-control t)
 
-  (after! 'projectile
-    (setq! popper-group-function #'popper-group-by-projectile)))
+  (after! projectile
+    (setopt popper-group-function #'popper-group-by-projectile)))
 
 ;;
 ;;; `ace-window' :: <https://github.com/abo-abo/ace-window>
