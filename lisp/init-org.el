@@ -80,7 +80,7 @@
   :commands (doct))
 
 (use-feature org-capture
-  :after (org-mode doct)
+  :after (org doct)
   :config
   (setq org-capture-templates
         (doct `(("Personal todo"
@@ -95,7 +95,7 @@
 
 ;;; org-modern <https://github.com/minad/org-modern>
 (use-package org-modern
-  :after (org-mode)
+  :after (org)
   :commands (global-org-modern-mode)
   :config
   (global-org-modern-mode))
