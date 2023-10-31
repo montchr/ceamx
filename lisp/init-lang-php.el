@@ -34,16 +34,19 @@
      (string-suffix-p cand (oref (xref-item-location item) file))) xref-ignored-files))
 
 (use-package php-mode
-  :defer t)
+  :defer t
+  :config
+  ;; Render multiline comments using `font-lock-comment-face'.
+  (add-hook 'php-mode-hook #'cmx--multiline-comment-face-h))
 
 (after! 'lsp-mode
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\vendor")
 
+  ;; FIXME: move these to lsp module?
   (defadvice! +lsp--ignored-locations-to-xref-items-a (items)
     "Remove ignored files from list of xref-items."
     :filter-return #'lsp--locations-to-xref-items
     (cl-remove-if #'xref-ignored-file-p items))
-
   (defadvice! +lsp-ui-peek--ignored-locations-a (items)
     "Remove ignored files from list of xref-items."
     :filter-return #'lsp-ui-peek--get-references
