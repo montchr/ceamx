@@ -81,8 +81,5 @@
                            (:sunset  . modus-vivendi)))
   (circadian-setup))
 
-;; FIXME: does not belong in this file, is more of a generalised interface library
-(use-package magit-section :defer t)
-
 (provide 'init-ui-theme)
 ;;; init-ui-theme.el ends here

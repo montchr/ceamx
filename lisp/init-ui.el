@@ -27,6 +27,10 @@
 
 (require 'lib-hydras)
 
+;; Required as a dependency for many packages, including some (like
+;; `nix-mode') who don't seem to declare it.
+(use-package magit-section)
+
 ;;
 ;;; Hydra
 ;;

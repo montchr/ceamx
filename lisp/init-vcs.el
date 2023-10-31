@@ -48,15 +48,11 @@
 (autoload '+magit/quit "lib-magit" "Bury the current magit buffer. <...>" t)
 (autoload '+magit/quit-all "lib-magit" "Kill all magit buffers for the current repository." t)
 
-;; (elpaca magit-section)
-;; (use-package magit-section
-;;   (after! [evil-collection]
-;;     (evil-collection-init 'magit-section)))
-
 (use-package magit
   :defer t
 
   :config
+  ;; TODO: is this still necessary?
   (after! [evil-collection]
     (evil-collection-init 'magit))
 
