@@ -33,10 +33,12 @@
 (after! [evil]
   (add-hook 'git-commit-mode-hook #'evil-insert-state))
 
+;;; <https://github.com/dgutov/diff-hl>
 (use-package diff-hl
   :after (vc-mode)
   :commands (global-diff-hl-mode)
-  :init (global-diff-hl-mode +1))
+  :config
+  (global-diff-hl-mode +1))
 
 ;;
 ;;; Magit -- <https://magit.vc/>
