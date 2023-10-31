@@ -38,11 +38,26 @@
 ;;
 ;;  Quickly jump to and follow links with `avy'
 
-(use-package ace-link
-  :after avy
-  :commands ace-link-setup-default
-  :config
-  (ace-link-setup-default))
+;; FIXME: seems entirely broken
+
+;; (use-package ace-link
+;;   :after avy
+
+;;   :commands
+;;   ace-link-addr
+;;   ace-link-setup-default
+
+;;   :config
+;;   (ace-link-setup-default)
+;;   (keymap-global-set "M-o" #'ace-link-addr)
+;;   (after! [lispy]
+;;     (keymap-set lispy-mode-map "M-o" nil))
+
+;;   (after! [evil]
+;;     ;; FIXME: won't work with evil normal state? "wrong number of arguments (4 . 4), 1"
+;;     ;; (evil-define-key '(normal) 'cmx-intercept-mode-map "go" #'ace-link-addr)
+;;     ;; (evil-define-key '(normal) 'cmx-intercept-mode-map "M-o" #'ace-link-addr)
+;;     ))
 
 ;;
 ;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
