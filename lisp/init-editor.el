@@ -111,11 +111,13 @@
 ;;; aggressive-indent-mode :: <https://github.com/Malabarba/aggressive-indent-mode>
 ;;
 
-(use-package aggressive-indent
-  :commands (global-aggressive-indent-mode)
-  :defer 2
-  :config
-  (global-aggressive-indent-mode 1))
+;; FIXME: tramples all over editorconfig-mode
+
+;; (use-package aggressive-indent
+;;   :commands (global-aggressive-indent-mode)
+;;   :defer 2
+;;   :config
+;;   (global-aggressive-indent-mode 1))
 
 ;;
 ;;; undo-fu :: <https://codeberg.org/ideasman42/emacs-undo-fu>
