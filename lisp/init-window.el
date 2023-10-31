@@ -90,7 +90,7 @@
   ;; <https://github.com/karthink/popper?tab=readme-ov-file#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
   (setopt popper-display-control t)
 
-  (after! projectile
+  (after! [projectile]
     (setopt popper-group-function #'popper-group-by-projectile)))
 
 ;;
