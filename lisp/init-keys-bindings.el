@@ -21,9 +21,37 @@
 ;;; Commentary:
 
 ;; TODO: use `define-prefix-command' instead of aliases
+;; TODO: s/cmx-*-keymap/cmx-*-map -- this is Emacs convention (see `define-minor-mode' docs)
+
+;; FIXME: regardless of preference, there is no way to update the
+;; leader when modifying its composite arm maps after binding the
+;; leader itself, unless you re-bind the leader key too. or maybe this
+;; is caused by using `defalias'?
 
 ;; I prefer to see everything in one place rather than have bindings
 ;; scattered through many files. Perhaps I will change my mind someday.
+
+;; While I know I could benefit from using general.el (I have in the past),
+;; I am avoiding `general' for a few reasons:
+;;
+;; - It's bloated and its author has stated they would like to replace it.
+;; - While `general' provides a nice interface over many domain complexities,
+;;   its *necessary* complexity warrants detailed documentation.
+;;   But the docs are pretty *verbose* in addition to being detailed.
+;;   It's tough to figure out "idiomatic" usages, especially when
+;;   many usages in the wild are using macros/functions
+;;   that have been "deprecated" or discouraged.
+;; - `evil' already provides its own methods for defining keys, which `general'
+;;   still uses under the hood.
+;; - GNU Emacs has, especially in version 29, made some improvements
+;;   to its core keybinding utilities (e.g. `keymap-set' and `define-keymap').
+;;   These almost come close to replicating the syntactic sugar of `general'.
+;; - At the end of the day, after I've written a lot of these keybindings
+;;   manually with `keymap-set' and `defvar-keymap' etc., I'm coming to grok
+;;   many more details and nuances of the keybindings API and packages' usage of them.
+;;   So, I am learning by doing things "the hard way".
+
+;;; Tips:
 
 ;; - When iterating on keymaps, you can quickly update `which-key' string
 ;;   replacements by evaling the keymap's `defalias' expression.
