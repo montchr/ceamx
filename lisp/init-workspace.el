@@ -32,6 +32,13 @@
 (defvar consult-buffer-sources)
 ;; (defvar persp-consult-source)
 
+;; TODO: restore https://github.com/alphapapa/bufler.el
+
+(use-package burly
+  :elpaca (burly :host github :repo "alphapapa/burly.el")
+  :init
+  (burly-tabs-mode))
+
 ;; (use-package perspective
 ;;   :commands (persp-mode
 ;;              persp-list-buffers

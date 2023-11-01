@@ -26,15 +26,16 @@
 
 (require 'lib-text)
 
-(defvar evil-split-window-below)
-(defvar evil-vsplit-window-right)
-
 (autoload 'evil-apply-on-block "evil")
 (autoload 'evil-define-operator "evil")
 (autoload 'evil-delete "evil")
 (autoload 'evil-window-split "evil")
 (autoload 'evil-window-vsplit "evil")
 (autoload 'wgrep-mark-deletion "wgrep")
+
+;; TODO: move to a config file? idk...
+(defvar evil-split-window-below)
+(defvar evil-vsplit-window-right)
 
 ;;;###autoload
 (defun cmx/save-and-kill-this-buffer ()
@@ -76,6 +77,8 @@ If `evil-vsplit-window-right' is non-nil, the new window isn't focused."
 ;;
 ;;; Operators
 ;;
+
+;; FIXME: these have side effects, move to `init-keys-evil'
 
 ;;;###autoload
 (evil-define-operator +evil-delete (beg end type register yank-handler)

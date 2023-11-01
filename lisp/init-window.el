@@ -27,13 +27,13 @@
 
 (require 'lib-common)
 
+;; TODO: add notes
 (defadvice keyboard-escape-quit
     (around keyboard-escape-quit-dont-close-windows activate)
   (let ((buffer-quit-function (lambda () ())))
     ad-do-it))
 
 ;; Disable buffer line wrapping by default.
-;; <https://www.emacswiki.org/emacs/TruncateLines>
 (set-default 'truncate-lines t)
 
 ;; Hide buffer until there's output.
@@ -47,11 +47,6 @@
 
 (use-feature winner
   :config (winner-mode))
-
-(use-package burly
-  :elpaca (burly :host github :repo "alphapapa/burly.el")
-  :init
-  (burly-tabs-mode))
 
 (use-package olivetti :defer t
   :hook (org-mode . olivetti-mode))
