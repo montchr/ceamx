@@ -137,7 +137,12 @@
   ;; FIXME: does not exist
   ;; (keymap-set map "K" ("close others" . kill-other-buffers))
   "M" '("*Messages*" . view-echo-area-messages)
-  "x" '("*scratch*" . scratch-buffer))
+  "x" '("*scratch*" . scratch-buffer)
+  ;; FIXME: something is odd here... not always detecting current
+  ;; major mode? but *not always* not always
+  ;; "X" '("*scratch* (same mode)" . scratch)
+  )
+
 (defalias 'cmx-buffer-keymap cmx-buffer-keymap)
 
 ;;; "c" => Code
@@ -402,6 +407,7 @@
 
 (after! [evil]
   ;; Bind leader key to existing leader map.
+  ;; FIXME: overridden in magit-status
   (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'cmx-leader-keymap))
 
 ;;
@@ -491,6 +497,7 @@
 
   (after! [evil-escape]
     ;; TODO: overlaps with global binding above?
+    ;; FIXME: this is prob not what we want... don't we want something like `evil-force-normal-state'?
     (evil-define-key* '(insert replace visual operator) 'global "\C-g" #'evil-escape))
 
   (after! [evil-visualstar]
