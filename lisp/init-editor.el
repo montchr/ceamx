@@ -73,8 +73,8 @@
 ;;  FIXME: make native tree-sitter support work... somehow... need langs installed...
 ;;  TODO: maybe try <https://github.com/nix-community/nix-doom-emacs/blob/9a5b34d9ba30842eb8f0d7deb08bf03a75930471/overrides.nix#L106-L111>
 
-(use-package tree-sitter)
-(use-package tree-sitter-langs :after tree-sitter)
+;; (use-package tree-sitter)
+;; (use-package tree-sitter-langs :after tree-sitter)
 
 ;; FIXME:
 ;; (use-feature treesit
