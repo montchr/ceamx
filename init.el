@@ -201,9 +201,12 @@
 (add-hook 'elpaca-after-init-hook #'+maybe-start-server)
 
 ;; unfortunately
+(defun cmx-after-init-restart-yabai-h ()
+  "Restart the yabai service after Elpaca initialization is complete."
+  (after! [exec-path-from-shell]
+    (async-shell-command "yabai --restart-service")))
 (when (and +gui-p +sys-mac-p)
-(add-hook 'elpaca-after-init-hook
-          (lambda () (async-shell-command "yabai --restart-service"))))
+  (add-hook 'elpaca-after-init-hook #'cmx-after-init-restart-yabai-h))
 
 ;; Load custom file after all packages have loaded.
 (when (file-exists-p custom-file)
