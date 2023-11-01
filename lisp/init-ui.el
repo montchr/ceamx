@@ -44,7 +44,7 @@
 
 ;;; pretty-hydra :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 (use-package pretty-hydra
-  :after '(hydra))
+  :after (hydra))
 
 ;;
 ;;; Avy

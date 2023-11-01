@@ -238,10 +238,9 @@
 (use-package evil-embrace
   :after (evil embrace)
 
-  :commands
-  embrace-add-pair
-  embrace-add-pair-regexp
-  evil-embrace-enable-evil-surround-integration
+  :commands (embrace-add-pair
+             embrace-add-pair-regexp
+             evil-embrace-enable-evil-surround-integration)
 
   :init
   (after! [evil-surround]

@@ -28,9 +28,8 @@
 
 ;; TODO: add bindings
 (use-package json-navigator
-  :commands
-  json-navigator-navigate-after-point
-  json-navigator-navigate-region)
+  :commands (json-navigator-navigate-after-point
+             json-navigator-navigate-region))
 
 (provide 'init-lang-json)
 ;;; init-lang-json.el ends here

@@ -30,7 +30,7 @@
 (setq dired-listing-switches
       "-l --almost-all --human-readable --group-directories-first --no-group")
 (setq dired-kill-when-opening-new-dired-buffer t)
-(setq dired-mouse-drag-files t)                  
+(setq dired-mouse-drag-files t)
 (setq mouse-drag-and-drop-region-cross-program t)
 
 ;; <https://github.com/alexluigit/dirvish>
@@ -39,10 +39,9 @@
   :defer t
   :after (all-the-icons)
 
-  :commands
-  (dirvish-override-dired-mode
-   dirvish-peek-mode
-   dirvish-side-follow-mode)
+  :commands (dirvish-override-dired-mode
+             dirvish-peek-mode
+             dirvish-side-follow-mode)
 
   :init
   (dirvish-override-dired-mode)
