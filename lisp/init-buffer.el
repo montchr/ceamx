@@ -53,5 +53,16 @@
   (keymap-set cmx-buffer-keymap "X"
               `("*scratch* (same mode)" . ,(cmd! (scratch major-mode)))))
 
+;;
+;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
+;;
+
+(use-package page-break-lines
+  :defer 1
+  :commands (global-page-break-lines-mode)
+  :config
+  (global-page-break-lines-mode))
+
+
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
