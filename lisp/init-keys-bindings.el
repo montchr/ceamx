@@ -67,7 +67,33 @@
 ;;   definition of `kmacro-keymap'. However, regardless, the Emacs 29+
 ;;   keybinding functions also do not cause any issues.
 
+
 ;;; Code:
+
+;;
+;;; `cmx-intercept-mode'
+;;
+;;  Define a minor mode whose associated keymap is registered with
+;;  `evil' as an intercept keymap.
+;;
+;;  <https://github.com/noctuid/evil-guide?tab=readme-ov-file#preventing-certain-keys-from-being-overridden>
+
+(defvar-keymap cmx-intercept-mode-map
+  :doc "High-precedence keymap.")
+
+(define-minor-mode cmx-intercept-mode
+  "Global minor mode for higher-precedence evil keybindings."
+  :global t)
+
+(cmx-intercept-mode)
+
+;; Register with evil.
+(after! [evil]
+(dolist (state '(normal visual insert))
+  (evil-make-intercept-map
+   (evil-get-auxiliary-keymap
+     cmx-intercept-mode-map state t t)
+   state)))
 
 ;;
 ;;; Leader maps
