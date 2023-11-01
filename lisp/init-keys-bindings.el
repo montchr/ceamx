@@ -81,6 +81,7 @@
   "[" #'previous-buffer
   "b" #'previous-buffer
   "e" #'flycheck-previous-error
+  "F" #'previous-window-any-frame
   "t" #'tab-previous)
 (defalias 'cmx-go-prev-keymap cmx-go-prev-keymap)
 
@@ -90,6 +91,7 @@
   "]" #'next-buffer
   "b" #'next-buffer
   "e" #'flycheck-next-error
+  "F" #'next-window-any-frame
   "t" #'tab-next)
 (defalias 'cmx-go-next-keymap cmx-go-next-keymap)
 
@@ -293,7 +295,8 @@
 (defvar-keymap cmx-session-keymap
   "f" '("font..." . fontaine-set-preset)
   "p" '("packages" . cmx-packages-keymap)
-  "q" '("save and quit" . save-buffers-kill-emacs)
+  "q" '("close frame" . delete-frame)
+  "Q" '("save+quit" . save-buffers-kill-emacs)
   "r" '("restart" . restart-emacs)
   "t" '("theme..." . consult-theme))
 (defalias 'cmx-session-keymap cmx-session-keymap)
