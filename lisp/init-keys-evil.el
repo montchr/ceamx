@@ -150,6 +150,10 @@
                        'evil-delete
                        'evil-replace))
 
+  (after! [corfu]
+    ;; Close candidate overlay upon entering normal state.
+    (add-hook 'evil-normal-state-entry-hook #'corfu-quit))
+
   (evil-mode 1))
 
 ;;
