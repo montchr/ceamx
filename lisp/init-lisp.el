@@ -29,6 +29,10 @@
 
 (require 'config-lisp)
 
+;; Always use 2-space indentation.
+(dolist (sym '(add-function advice-add plist-put))
+  (put sym 'lisp-indent-function 2))
+
 (use-feature eldoc
   :hook (emacs-lisp-mode)
   :diminish eldoc-mode)

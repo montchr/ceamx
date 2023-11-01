@@ -29,8 +29,6 @@
 
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
-(dolist (sym '(add-function advice-add plist-put))
-  (put sym 'lisp-indent-function 2))
 
 ;; TODO: is this redundant when `aggressive-indent-mode'?
 ;; (electric-indent-mode +1)
