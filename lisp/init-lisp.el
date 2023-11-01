@@ -1,4 +1,4 @@
-;;; init-lang-elisp.el --- Emacs Lisp language configuration -*- lexical-binding: t -*-
+;;; init-lisp.el --- Emacs Lisp language configuration -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -27,8 +27,7 @@
 
 ;;; Code:
 
-(defvar cmx-lisp-mode-list '(emacs-lisp-mode lisp-mode)
-  "Supported Lisps.")
+(require 'config-lisp)
 
 (use-feature eldoc
   :hook (emacs-lisp-mode)
@@ -51,15 +50,17 @@
 
   ;; TODO: Remove after <https://github.com/abo-abo/lispy/pull/619> (if ever?)
   ;; (keymap-unset lispy-mode-map "`" t) ; <- does not work. why not?
-  (keymap-set lispy-mode-map "`" #'self-insert-command))
+  (keymap-set lispy-mode-map "`"   #'self-insert-command)
+
+  (keymap-set lispy-mode-map "M-v" nil))
 
 ;;
 ;;; `lispyville' :: <https://github.com/noctuid/lispyville>
 ;;
 
 (use-package lispyville
-  :after lispy
-  :defines lispyville-key-theme
+  :after (evil lispy)
+  :defines (lispyville-key-theme)
 
   :init
   ;; via doom
@@ -76,6 +77,5 @@
   :config
   (lispyville-set-key-theme))
 
-
-(provide 'init-lang-elisp)
-;;; init-lang-elisp.el ends here
+(provide 'init-lisp)
+;;; init-lisp.el ends here

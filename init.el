@@ -166,10 +166,11 @@
 (require 'init-notes)
 (require 'init-notes-denote)
 
-;;; Syntaxes
+;;; Language/syntax support
 
+(require 'init-lisp)
 (require 'init-lsp)
-(require 'init-lang-elisp)
+
 (require 'init-lang-html)
 (require 'init-lang-json)
 (require 'init-lang-lua)
