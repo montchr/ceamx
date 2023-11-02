@@ -27,18 +27,13 @@
 
 ;;; Code:
 
-;; > Help keeping ~/.emacs.d clean
-;; <https://github.com/emacscollective/no-littering>
+;;; `no-littering' :: <https://github.com/emacscollective/no-littering>
+;;  Help keeping ~/.emacs.d clean
 (use-package no-littering
   :demand t
-  :preface
+  :init
   (setq no-littering-etc-directory +path-etc-dir)
-  (setq no-littering-var-directory +path-var-dir)
-
-  :config
-  (with-eval-after-load 'recentf
-    (add-to-list 'recentf-exclude no-littering-var-directory)
-    (add-to-list 'recentf-exclude no-littering-etc-directory)))
+  (setq no-littering-var-directory +path-var-dir))
 
 (setq-default
  ad-redefinition-action 'accept         ; Silence warnings for redefinition

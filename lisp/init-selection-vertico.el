@@ -89,12 +89,6 @@
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
 
-;; Persist history over Emacs restarts. Vertico sorts by history position.
-(use-package savehist :elpaca nil
-  :defer 1
-  :config (savehist-mode t))
-
-
 (use-package vertico-repeat :elpaca nil
   :after (savehist vertico)
   :commands (vertico-repeat-history vertico-repeat-save)

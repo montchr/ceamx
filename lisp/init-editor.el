@@ -108,46 +108,6 @@
 ;;   (global-aggressive-indent-mode 1))
 
 ;;
-;;; undo-fu :: <https://codeberg.org/ideasman42/emacs-undo-fu>
-;;
-;;  Simple, stable linear undo with redo for Emacs.
-
-(use-package undo-fu
-  :config
-  (keymap-global-unset "C-z")
-  (keymap-global-set "C-z" #'undo-fu-only-undo)
-  (keymap-global-set "C-S-z" #'undo-fu-only-redo))
-
-;;
-;;; undo-fu-session :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
-;;
-;;  Save & recover undo steps between Emacs sessions.
-
-(use-package undo-fu-session
-  :after undo-fu
-
-  :init
-  (setq undo-fu-session-directory (expand-file-name "undo-fu-session" +path-var-dir))
-
-  :config
-  (setq undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
-  (setq undo-fu-session-ignore-temp-files t)
-  (setq undo-fu-session-ignore-encrypted-files t)
-
-  (undo-fu-session-global-mode))
-
-;;
-;;; vundo (visual undo) :: <https://github.com/casouri/vundo>
-
-(use-package vundo
-  :defer t
-  :commands (vundo)
-  :defines (vundo-unicode-symbols vundo-glyph-alist)
-  :config
-  (setq! vundo-glyph-alist vundo-unicode-symbols))
-
-
-;;
 ;;; drag-stuff :: <https://github.com/rejeep/drag-stuff.el>
 ;;
 ;;  Move stuff around in arbitrary directions

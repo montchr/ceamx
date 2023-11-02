@@ -127,6 +127,7 @@
 ;;; Window
 (require 'init-window)
 (require 'init-buffer)
+(require 'init-history)
 
 ;; TODO: split up clippy (it's vague)
 ;; TODO: why here? explain
