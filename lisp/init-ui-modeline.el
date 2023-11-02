@@ -30,6 +30,11 @@
 (display-time-mode -1)
 (setq column-number-mode t)
 
+;; Show the name of the current function definition in the modeline.
+(use-feature which-func
+  :config
+  (which-function-mode 1))
+
 (use-package diminish)
 ;; Wait until `diminish` is activated so its use-package keyword is installed
 (elpaca-wait)
