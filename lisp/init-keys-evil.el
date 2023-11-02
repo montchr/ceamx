@@ -151,7 +151,15 @@
 
   (after! [corfu]
     ;; Close candidate overlay upon entering normal state.
-    (add-hook 'evil-normal-state-entry-hook #'corfu-quit))
+    ;; FIXME: causes overlay to close almost immediately even in insert mode
+    ;; (add-hook 'evil-normal-state-entry-hook #'corfu-quit)
+
+    ;; (remove-hook 'evil-normal-state-entry-hook #'corfu-quit)
+    ;; FIXME: total breakage of evil normal state -- wrong number of args
+    ;; (advice-add 'evil-normal-state :after #'corfu-quit)
+    ;; (advice-remove 'evil-normal-state #'corfu-quit)
+
+    )
 
   (evil-mode 1))
 
