@@ -44,6 +44,16 @@
 
     ))
 
+;;; `uniquify' (internal)
+;;  Disambiguate identically-named buffers.
+(use-feature uniquify
+  :config
+  (setopt uniquify-buffer-name-style 'forward)
+  (setopt uniquify-separator "/")
+  ;; Rename after killing uniquified buffer.
+  (setopt uniquify-after-kill-buffer-p t)
+  ;; Don't muck with special buffers.
+  (setopt uniquify-ignore-buffers-re "^\\*"))
 
 ;;
 ;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
