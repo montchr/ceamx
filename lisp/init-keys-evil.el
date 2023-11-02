@@ -135,8 +135,8 @@
   ;; this itself, so we must.
   (setq-hook! 'after-change-major-mode-hook evil-shift-width tab-width)
 
-  (after! [undo-fu evil]
     (setq evil-undo-system 'undo-fu))
+  (after! [undo-fu]
 
   (after! [helpful]
     (setq evil-lookup-func #'helpful-at-point))
