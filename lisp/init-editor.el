@@ -36,6 +36,7 @@
 (setq-default tab-width 2)
 
 ;; Automatically maintain indentation.
+(electric-indent-mode +1)
 
 (global-subword-mode -1)
 
