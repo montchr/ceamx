@@ -29,9 +29,21 @@
 ;;; Code:
 
 (use-feature emacs
+;;
+;;; `goto-address' (internal)
+;; Linkify URLs and email addresses in buffers.
+
+(use-feature goto-addr
   :config
-  ;; Linkify URLs and email addresses in all buffers.
-  (global-goto-address-mode))
+  (add-hook 'prog-mode-hook #'goto-address-prog-mode)
+
+  (after! [evil]
+    ;; TODO: allow graceful fail if not at URL
+    ;; FIXME: breaks help buffer behavior -- thinks files are URLs to open in browser
+    ;; (evil-define-key '(normal) 'global (kbd "<return>") #'goto-address-at-point)
+
+    ))
+
 
 ;;
 ;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
