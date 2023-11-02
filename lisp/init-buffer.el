@@ -28,7 +28,10 @@
 
 ;;; Code:
 
-(use-feature emacs
+;; Remember location in a file when saving files.
+(setq save-place-file (expand-file-name "saveplace" +path-local-dir))
+(save-place-mode 1)
+
 ;;
 ;;; `goto-address' (internal)
 ;; Linkify URLs and email addresses in buffers.
