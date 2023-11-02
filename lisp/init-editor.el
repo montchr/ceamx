@@ -27,11 +27,15 @@
 
 ;;; Code:
 
+;;
+;;; Formatting
+;;
+
+;; Default indentation: 2 spaces
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 
-;; TODO: is this redundant when `aggressive-indent-mode'?
-;; (electric-indent-mode +1)
+;; Automatically maintain indentation.
 
 (global-subword-mode -1)
 
@@ -41,71 +45,27 @@
 ;;; editorconfig
 ;;
 
+;;; editorconfig :: <https://editorconfig.org>
 (use-package editorconfig
   :commands (editorconfig-mode)
   :config (editorconfig-mode 1))
 
-;;
 ;;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
-;;
-
 (use-package reformatter
   :config
-  (reformatter-define prettier
-                      :program "prettier"))
+  ;; Prettier is a commonly-used formatter for several languages.
+  (reformatter-define prettier :program "prettier"))
+
 
 ;;
-;;; tree-sitter
+;;; Visual feedback
 ;;
 
-;;  FIXME: make native tree-sitter support work... somehow... need langs installed...
-;;  TODO: maybe try <https://github.com/nix-community/nix-doom-emacs/blob/9a5b34d9ba30842eb8f0d7deb08bf03a75930471/overrides.nix#L106-L111>
-
-;; (use-package tree-sitter)
-;; (use-package tree-sitter-langs :after tree-sitter)
-
-;; FIXME:
-;; (use-feature treesit
-;;   :hook prog-mode)
-
-;;
-;;; pulsar :: pulse/highlight line on demand or after running select functions
-;;  <https://protesilaos.com/emacs/pulsar>
-
-;; TODO: remove? might be redundant with `evil-goggles'
-
-;; (use-package pulsar
-;;   :commands (pulsar-global-mode)
-;;   :defer 5
-;;   :config
-;;   (setq pulsar-pulse           t)
-;;   (setq pulsar-delay           0.055)
-;;   (setq pulsar-iterations      10)
-;;   (setq pulsar-face            'pulsar-magenta)
-;;   (setq pulsar-highlight-face  'pulsar-yellow)
-;;   (pulsar-global-mode 1))
-
-;;
 ;;; hl-todo :: <https://github.com/tarsius/hl-todo>
-;;
 ;;  Highlight TODO and other codetags in comments and strings
-;;
 ;;  <https://peps.python.org/pep-0350/#specification>
-
 (use-package hl-todo
   :hook (prog-mode . hl-todo-mode))
-
-;;
-;;; aggressive-indent-mode :: <https://github.com/Malabarba/aggressive-indent-mode>
-;;
-
-;; FIXME: tramples all over editorconfig-mode
-
-;; (use-package aggressive-indent
-;;   :commands (global-aggressive-indent-mode)
-;;   :defer 2
-;;   :config
-;;   (global-aggressive-indent-mode 1))
 
 ;;
 ;;; drag-stuff :: <https://github.com/rejeep/drag-stuff.el>
