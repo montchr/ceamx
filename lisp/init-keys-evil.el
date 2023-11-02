@@ -94,7 +94,6 @@
 (defvar evil-split-window-below t)
 (defvar evil-vsplit-window-right t)
 
-
 (use-package evil
   :demand t
 

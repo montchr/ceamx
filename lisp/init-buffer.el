@@ -58,30 +58,21 @@
   ;; Don't muck with special buffers.
   (setopt uniquify-ignore-buffers-re "^\\*"))
 
-;;
 ;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
-;;
-
 (use-package expand-region
   :commands er/expand-region
   :config
   (keymap-global-set "C-=" #'er/expand-region))
 
-;;
 ;;; `scratch' :: <https://codeberg.org/emacs-weirdware/scratch>
-;;
-;;  Open a new scratch buffer initialized to the same major mode as the current buffer.
-
+;;  Mode-specific scratch buffers.
 (use-package scratch
   :commands scratch
   :config
   (keymap-set cmx-buffer-keymap "X"
               `("*scratch* (same mode)" . ,(cmd! (scratch major-mode)))))
 
-;;
 ;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
-;;
-
 (use-package page-break-lines
   :defer 1
   :commands (global-page-break-lines-mode)
