@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2023  Chris Montgomery
 ;; Copyright (C) 2022  Alex Griffin
-;; Copyright (C) 2014-2022  Henrik Lissner.
+;; Copyright (C) 2014-2022  Henrik Lissner
 
 ;; Author: Alex Griffin <a@ajgrf.com>
 ;; Version: 0.1.0

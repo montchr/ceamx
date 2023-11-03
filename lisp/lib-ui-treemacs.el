@@ -2,7 +2,7 @@
 
 ;; Copyright (c) 2023  Chris Montgomery <chris@cdom.io>
 ;; Copyright (c) 2014-2022  Henrik Lissner
-;; SPDX-License-Identifier: GPL-3.0-or-later OR MIT
+;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT
 
 ;; Author: Henrik Lissner
 ;;         Chris Montgomery <chris@cdom.io>
