@@ -18,16 +18,33 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;;; Commentary:
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
 
-;; FIXME: add copyright+license from doom
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+;; EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+;; MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+;; IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+;; CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+;; TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+;; SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+;;; Commentary:
 
 ;; Initialization for evil-mode and its evil relatives.
 ;;
 ;; Largely stolen from Doom Emacs' base evil configurations.
 
 ;; TODO: add some of doom's evil keybindings <https://github.com/doomemacs/doomemacs/blob/master/modules/editor/evil/config.el#L403-L610>
-;; TODO: add from <https://depp.brause.cc/dotemacs/#orgf271dd6>
+;; TODO: check out <https://depp.brause.cc/dotemacs/#orgf271dd6>
 
 ;;;; References:
 
@@ -218,12 +235,12 @@
   (evilmi-init-plugins))
 
 ;;
-;;; `evil-surround' + `evil-embrace'
+;;; Surround and Embrace Evil Mode (SEEM)
 ;;
-;;  <https://github.com/emacs-evil/evil-surround/>
-;;  <https://github.com/cute-jumper/evil-embrace.el/>
+;;  <https://github.com/cute-jumper/embrace.el?tab=readme-ov-file#for-evil-surround-users>
+;;  <https://github.com/cute-jumper/evil-embrace.el/tree/master?tab=readme-ov-file#why>
 
-;; TODO: bindings
+;;; `evil-surround' :: <https://github.com/emacs-evil/evil-surround/>
 (use-package evil-surround
   :after evil
   :commands (global-evil-surround-mode
@@ -234,7 +251,7 @@
   (evil-define-key '(visual) 'global "S" #'evil-surround-region)
   (global-evil-surround-mode +1))
 
-;; can be loaded independently of evil
+;;; `embrace' :: <https://github.com/cute-jumper/embrace.el>
 (use-package embrace
   :commands (embrace-org-mode-hook
              embrace-ruby-mode-hook)
