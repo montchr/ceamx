@@ -24,12 +24,19 @@
 
 ;;; Code:
 
-
+(require 'config-packages)
 (require 'lib-hydras)
 
 ;; Required as a dependency for many packages, including some (like
 ;; `nix-mode') who don't seem to declare it.
 (use-package magit-section)
+
+;;; popon :: <https://codeberg.org/akib/emacs-popon>
+;;  "Pop" floating text "on" a window
+(use-package popon :elpaca popon-elpaca-order
+  :autoload (popon-create
+             popon-kill
+             popon-x-y-at-pos))
 
 ;;
 ;;; Hydra

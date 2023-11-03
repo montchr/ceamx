@@ -25,6 +25,8 @@
 
 ;; "It looks like you're writing an Emacs. Would you like help?"
 
+;; TODO: consider using flymake? why need flycheck?
+
 ;;; Code:
 
 (use-package helpful

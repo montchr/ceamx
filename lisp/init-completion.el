@@ -25,11 +25,16 @@
 
 ;;  Configuration for completion-at-point.
 
+;; TODO: Some interesting maybe-useful stuff in here: <https://github.com/doomemacs/doomemacs/pull/7002/files>
+
 ;; - <https://github.com/minad/corfu>
 ;; - <https://github.com/minad/cape>
 ;; - <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
 
 ;;; Code:
+
+(require 'config-packages)
+(require 'lib-completion)
 
 ;; TAB cycle if there are only few candidates
 (setopt completion-cycle-threshold 3)
@@ -72,6 +77,25 @@
   (setopt corfu-separator ?\s)
   ;; TODO: maybe enable when invoked manually?
   (setopt corfu-preview-current nil))
+
+;;; `corfu-terminal' :: <https://codeberg.org/akib/emacs-corfu-terminal>
+;;  Corfu-endorsed solution to making it usable in terminal.
+;;  See also `popon', the utility library powering the interface.
+(use-package corfu-terminal
+  :elpaca corfu-terminal-elpaca-order
+  :if (not (display-graphic-p))
+  :after (popon corfu)
+  :config
+  (corfu-terminal-mode +1))
+
+;;; `corfu-doc-terminal' :: <https://codeberg.org/akib/emacs-corfu-doc-terminal>
+;;  Support for completion candidate documentation flyouts in terminal.
+(use-package corfu-doc-terminal
+  :elpaca corfu-doc-terminal-elpaca-order
+  :after (corfu-terminal)
+  :if (not (display-graphic-p))
+  :config
+  (corfu-doc-terminal-mode +1))
 
 (use-feature dabbrev
   :config
