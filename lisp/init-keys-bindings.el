@@ -452,7 +452,7 @@
   "g"		 '("[Git]" . cmx-git-keymap)
   "h"		 '("[Help]" . cmx-help-keymap)
   "i"		 '("[Insert]" . cmx-insert-keymap)
-  ;; "j"
+  "j"    '("jump: line" . consult-line)
   ;; "k"
   ;; "l"
   ;; "m"
