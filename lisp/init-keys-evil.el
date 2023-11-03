@@ -109,7 +109,6 @@
     (evil-set-cursor-color (get 'cursor 'evil-emacs-color)))
 
   (setq evil-mode-line-format 'nil)
-  ;; TODO: is this defined? no?
   (setq evil-default-cursor '+evil-default-cursor-fn)
   (setq evil-normal-state-cursor 'box)
   (setq evil-emacs-state-cursor  '(box +evil-emacs-cursor-fn))
@@ -233,6 +232,7 @@
              evil-surround-region)
   :config
   (global-evil-surround-mode 1))
+  ;; FIXME: 1 or t ?
 
 ;; can be loaded independently of evil
 (use-package embrace

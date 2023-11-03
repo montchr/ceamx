@@ -26,6 +26,7 @@
 ;;; Code:
 
 (use-package marginalia
+  :defines (marginalia-annotators)
   :init
   ;; <https://www.lucacambiaghi.com/vanilla-emacs/readme.html#h:37ACBBF7-989F-4A57-9454-06B79B8EB4F0>
   (setq marginalia-annotators '(marginalia-annotators-heavy

@@ -67,7 +67,7 @@
 
     ;; Custom M-# bindings for fast register access
     "M-#"    #'consult-register-load
-    "M-'"    #'consult-register-store          
+    "M-'"    #'consult-register-store
     "C-M-#"  #'consult-register
 
     ;; M-g bindings (goto-map)

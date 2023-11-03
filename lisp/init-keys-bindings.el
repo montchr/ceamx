@@ -128,7 +128,9 @@
   "r" '("references" . xref-find-references))
 (defalias 'cmx-goto-keymap cmx-goto-keymap)
 
+;;
 ;;; "a" => Applications
+;;
 
 (defvar-keymap cmx-applications-keymap
   "d" #'dired
@@ -137,14 +139,18 @@
   "n" #'newsticker-show-news)
 (defalias 'cmx-applications-keymap cmx-applications-keymap)
 
+;;
 ;;; "B" => Bookmarks
+;;
 
 (defvar-keymap cmx-bookmark-keymap
   "F" #'burly-bookmark-frames
   "W" #'burly-bookmark-windows)
 (defalias 'cmx-bookmark-keymap cmx-bookmark-keymap)
 
+;;
 ;;; "b" => Buffers
+;;
 
 (defvar-keymap cmx-buffer-keymap
   "b" `("switch..." . consult-project-buffer)
@@ -171,7 +177,9 @@
 
 (defalias 'cmx-buffer-keymap cmx-buffer-keymap)
 
+;;
 ;;; "c" => Code
+;;
 
 (defvar-keymap cmx-code-keymap
   ;; FIXME: wrong type argument commandp error if unavailable
@@ -181,7 +189,9 @@
   "r" '("rename..." . lsp-rename))
 (defalias 'cmx-code-keymap cmx-code-keymap)
 
+;;
 ;;; "e" => Eval
+;;
 
 ;; FIXME: rename to reflect purpose
 
@@ -196,7 +206,9 @@
   "r" #'eval-region)
 (defalias 'cmx-elisp-keymap cmx-elisp-keymap)
 
+;;
 ;;; "f" => Files
+;;
 
 (defvar-keymap cmx-file-keymap
   ;; TODO
@@ -214,7 +226,9 @@
   "S" '("save as..." . write-file))
 (defalias 'cmx-file-keymap cmx-file-keymap)
 
+;;
 ;;; "F" => Frames
+;;
 
 (defvar-keymap cmx-frame-keymap
   "b" '("save layout..." . burly-bookmark-frames)
@@ -227,7 +241,9 @@
   "]" '("next" . next-window-any-frame))
 (defalias 'cmx-frame-keymap cmx-frame-keymap)
 
+;;
 ;;; "g" => Git
+;;
 
 (defvar-keymap cmx-git-keymap
   "b" #'magit-branch
@@ -241,7 +257,9 @@
   "t" #'git-timemachine)
 (defalias 'cmx-git-keymap cmx-git-keymap)
 
+;;
 ;;; "h" => Help
+;;
 
 (defvar-keymap cmx-help-keymap
   "h" #'help-for-help
@@ -256,14 +274,18 @@
   "v" #'describe-variable)
 (defalias 'cmx-help-keymap cmx-help-keymap)
 
+;;
 ;;; "i" => Insertions
+;;
 
 (defvar-keymap cmx-insert-keymap
   "t"  #'tempel-insert
   "y"  #'yank-from-kill-ring)
 (defalias 'cmx-insert-keymap cmx-insert-keymap)
 
+;;
 ;;; "n" => Notes
+;;
 
 (defvar-keymap cmx-notes-keymap
   "b" #'denote-backlinks
@@ -299,7 +321,9 @@
   "t" '("todos" . org-todo-list))
 (defalias 'cmx-org-keymap cmx-org-keymap)
 
+;;
 ;;; "p" => Projects
+;;
 
 (defvar-keymap cmx-project-keymap
   "a" '("add..." . projectile-add-known-project)
@@ -308,7 +332,9 @@
   "p" '("switch..." . projectile-switch-project))
 (defalias 'cmx-project-keymap cmx-project-keymap)
 
+;;
 ;;; "q" => Session
+;;
 
 ;;;; "q p" Package Management
 (defvar-keymap cmx-packages-keymap
@@ -332,7 +358,9 @@
   "t" '("theme..." . consult-theme))
 (defalias 'cmx-session-keymap cmx-session-keymap)
 
+;;
 ;;; "s" => Search
+;;
 
 (defvar-keymap cmx-search-keymap
   "d" `("directory..." . ,(cmd! (consult-ripgrep
@@ -354,13 +382,17 @@
   "x" '("refs (p)" . projectile-find-references))
 (defalias 'cmx-search-keymap cmx-search-keymap)
 
+;;
 ;;; "S" => Sidebars
+;;
 
 (defvar-keymap cmx-sidebar-keymap
   "t" #'cmx/treemacs/toggle)
 (defalias 'cmx-sidebar-keymap cmx-sidebar-keymap)
 
+;;
 ;;; "t" => Toggles
+;;
 
 (defvar-keymap cmx-toggle-keymap
   "l" #'display-line-numbers-mode
@@ -369,7 +401,9 @@
   "t" #'treemacs)
 (defalias 'cmx-toggle-keymap cmx-toggle-keymap)
 
+;;
 ;;; "TAB" => Tabs
+;;
 
 (defvar-keymap cmx-tab-keymap
   "TAB"  '("other" . tab-recent)
@@ -382,7 +416,9 @@
 (defalias 'cmx-tab-keymap cmx-tab-keymap)
 
 
+;;
 ;;; Top-level leader map
+;;
 
 (defvar-keymap cmx-leader-keymap
   ;; One-shot commands

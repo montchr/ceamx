@@ -3,7 +3,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(nano))
  '(newsticker-url-list
    '(("Human Transit" "https://humantransit.org/feed" nil nil nil)
      ("Hacker News" "https://news.ycombinator.com/rss" nil nil nil)
@@ -158,9 +157,3 @@
      ("stitcher.io" "https://stitcher.io/rss" nil nil nil)
      ("Pluralistic: Daily links from Cory Doctorow" "https://pluralistic.net/feed/" nil nil nil)
      ("Softwares on Karthinks" "https://karthinks.com/software/index.xml" nil nil nil))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )

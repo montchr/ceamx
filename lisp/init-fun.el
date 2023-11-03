@@ -45,4 +45,3 @@
 
 (provide 'init-fun)
 ;;; init-fun.el ends here
-

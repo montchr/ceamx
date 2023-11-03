@@ -135,4 +135,3 @@ Else create a new file."
 
 (provide 'init-notes-denote)
 ;;; init-notes-denote.el ends here
-

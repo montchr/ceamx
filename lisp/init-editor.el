@@ -38,6 +38,7 @@
 ;; Automatically maintain indentation.
 (electric-indent-mode +1)
 
+;; Don't consider camelCaseWORDs as separate words.
 (global-subword-mode -1)
 
 (electric-pair-mode +1)

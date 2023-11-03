@@ -103,6 +103,7 @@
 ;;;; Theme
 (require 'init-ui)
 (require 'init-ui-theme)
+;; TODO: probably not for tty
 (require 'init-ui-modus-themes)
 ;; (require 'init-ui-nano-theme)
 

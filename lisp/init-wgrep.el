@@ -28,6 +28,8 @@
 (require 'lib-common)
 
 (use-package wgrep
+  :defines ( wgrep-auto-save-buffer
+             wgrep-change-readonly-file)
   :commands (wgrep-change-to-wgrep-mode)
 
   :init

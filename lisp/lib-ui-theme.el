@@ -22,6 +22,10 @@
 
 ;; Theme library functions and macros.
 
+;; TODO: revist this approach
+
+;; FIXME: doesn't load properly after restarting emacs (but neither does `exec-path-from-shell' -- might be the elpaca hook?)
+
 ;;; Code:
 
 (defun cmx-reapply-themes ()

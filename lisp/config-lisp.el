@@ -20,7 +20,9 @@
 
 ;;; Commentary:
 
-;; Definitions relating to Lispy and lispy languages.
+;; Definitions relating to Emacs Lisp and other supported lispy languages.
+
+;; Support indicated by `cmx-lisp-mode-list'.
 
 ;;; Code:
 

@@ -3,7 +3,7 @@
 ;; Copyright (C) 2023  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: 
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -47,4 +47,3 @@
 
 (provide 'init-ui-icons)
 ;;; init-ui-icons.el ends here
-
