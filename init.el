@@ -107,7 +107,8 @@
 ;; (require 'init-ui-nano-theme)
 
 ;;;; Typography + Iconography
-(require 'init-ui-font)
+(when (display-graphic-p)
+  (require 'init-ui-font))
 (require 'init-ui-icons)
 
 ;;;; Modeline
