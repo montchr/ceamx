@@ -90,27 +90,21 @@
 
 (use-package which-key
   :demand t
-  :diminish which-key-mode
-  :commands (which-key-mode)
-
-  :init
-  (setq which-key-prefix-prefix "+")
-  (setq which-key-separator " ")
-
-  :custom
-  (which-key-idle-delay 0.02)
-  (which-key-side-window-location 'bottom)
-  (which-key-sort-order 'which-key-key-order-alpha)
-  (which-key-side-window-max-width 0.33)
+  :diminish t
+  :commands ( which-key-mode
+              which-key-setup-side-window-right-bottom)
 
   :config
-  (setq which-key-sort-uppercase-first nil
-        which-key-add-column-padding 1)
-  (which-key-mode))
+  (setopt which-key-add-column-padding 1)
+  (setopt which-key-idle-delay 1.00)
+  (setopt which-key-separator " ")
+  (setopt which-key-side-window-max-width 0.33)
+  (setopt which-key-sort-order 'which-key-key-order-alpha)
+  (setopt which-key-sort-uppercase-first nil)
 
-;; Wait until `which-key' is activated so its `use-package' keyword is installed.
-;; TODO: remove prob, we don't want to use the keyword, but make sure it doesn't break other things
-;; (elpaca-wait)
+  (which-key-setup-side-window-right-bottom)
+
+  (which-key-mode +1))
 
 (provide 'init-keys)
 ;;; init-keys.el ends here
