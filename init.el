@@ -64,10 +64,9 @@
 
 (require 'lib-common)
 
-;; TODO: `when' blocks for readability
-(if (display-graphic-p)
-    (require 'lib-gui)
-  (require 'lib-term))
+(when (display-graphic-p)
+  (require 'lib-gui))
+
 
 (require 'lib-files)
 
