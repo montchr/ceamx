@@ -101,24 +101,32 @@
 
 ;;; Navigation maps
 
+;; TODO: merge both `cmx-go-prev-keymap' and `cmx-go-next-keymap' into the
+;;       appropriate leaderless evil motion state bindings e.g. "[" and "]" in
+;;       normal state. i tried doing that quickly but am not sure how to
+;;       determine what is bound to "[" or "]" directly. i would have thought
+;;       prefix mapped to keymap, but maybe evil is weirder than that...
+
 ;;;; Previous
 
 (defvar-keymap cmx-go-prev-keymap
-  "[" #'previous-buffer
-  "b" #'previous-buffer
-  "e" #'flycheck-previous-error
-  "F" #'previous-window-any-frame
-  "t" #'tab-previous)
+  "TAB" #'tab-previous
+  "["   #'previous-buffer
+  "b"   #'previous-buffer
+  "e"   #'flycheck-previous-error
+  "F"   #'previous-window-any-frame
+  "t"   #'tab-previous)
 (defalias 'cmx-go-prev-keymap cmx-go-prev-keymap)
 
 ;;;; Next
 
 (defvar-keymap cmx-go-next-keymap
-  "]" #'next-buffer
-  "b" #'next-buffer
-  "e" #'flycheck-next-error
-  "F" #'next-window-any-frame
-  "t" #'tab-next)
+  "TAB" #'tab-next
+  "]"   #'next-buffer
+  "b"   #'next-buffer
+  "e"   #'flycheck-next-error
+  "F"   #'next-window-any-frame
+  "t"   #'tab-next)
 (defalias 'cmx-go-next-keymap cmx-go-next-keymap)
 
 ;; TODO: make this more convenient
