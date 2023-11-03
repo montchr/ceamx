@@ -231,8 +231,7 @@
              evil-Surround-edit
              evil-surround-region)
   :config
-  (global-evil-surround-mode 1))
-  ;; FIXME: 1 or t ?
+  (global-evil-surround-mode +1))
 
 ;; can be loaded independently of evil
 (use-package embrace

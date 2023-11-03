@@ -129,17 +129,6 @@
 (defalias 'cmx-goto-keymap cmx-goto-keymap)
 
 ;;
-;;; "a" => Applications
-;;
-
-(defvar-keymap cmx-applications-keymap
-  "d" #'dired
-  "e" #'eshell
-  "m" #'compose-mail
-  "n" #'newsticker-show-news)
-(defalias 'cmx-applications-keymap cmx-applications-keymap)
-
-;;
 ;;; "B" => Bookmarks
 ;;
 
@@ -287,10 +276,24 @@
 ;;; "n" => Notes
 ;;
 
+;; TODO: bind at top-level too
+;; TODO: seems redundant but i will likely add a bunch to this
+;;;; "n o c" => Org-Capture
+(defvar-keymap cmx-capture-keymap
+  "c" '("capture..." . org-capture))
+(defalias 'cmx-capture-keymap cmx-capture-keymap)
+
+;;;; "n o" => Org-Mode
+(defvar-keymap cmx-org-keymap
+  "c" '("capture..." . cmx-capture-keymap)
+  "t" '("todos" . org-todo-list))
+(defalias 'cmx-org-keymap cmx-org-keymap)
+
 (defvar-keymap cmx-notes-keymap
   "b" #'denote-backlinks
+  "c" #'org-capture
   "d" #'denote-date
-  "f" '("find..." . (keymap))
+  "f" '("[find]" . (keymap))
   "f f" #'denote-find-link
   "f b" #'denote-find-backlink
   "i" #'denote-link                     ; "insert" mnemonic
@@ -298,28 +301,28 @@
   "j" #'my-denote-journal               ; our custom command
   "n" #'denote
   "N" #'denote-type
+  "o" '("[Org-Mode]" . cmx-org-keymap)
   ;; Note that `denote-rename-file' can work from any context, not just
   ;; Dired buffers.  That is why we bind it here to the `global-map'.
   "r" #'denote-rename-file
   "R" #'denote-rename-file-using-front-matter
   "s" #'denote-subdirectory
   "t" #'denote-template
-  "z" #'denote-signature                ; "zettelkasten" mnemonic
-  )
+  ;; "zettelkasten" mnemonic
+  "z" #'denote-signature)
 (defalias 'cmx-notes-keymap cmx-notes-keymap)
 
+;;
+;;; "o" => Open
+;;
 
-;;; "o" => Org-Mode
-
-;;;; "o c" => Capture
-(defvar-keymap cmx-capture-keymap
-  "c" '("capture..." . org-capture))
-(defalias 'cmx-capture-keymap cmx-capture-keymap)
-
-(defvar-keymap cmx-org-keymap
-  "c" '("capture..." . cmx-capture-keymap)
-  "t" '("todos" . org-todo-list))
-(defalias 'cmx-org-keymap cmx-org-keymap)
+(defvar-keymap cmx-open-keymap
+  "d" #'dired
+  "e" #'eshell
+  "l" '("link..." . link-hint)
+  "m" '("mail" . compose-mail)
+  "n" '("news" . newsticker-show-news))
+(defalias 'cmx-open-keymap cmx-open-keymap)
 
 ;;
 ;;; "p" => Projects
@@ -427,38 +430,40 @@
   ;; FIXME: should be whatever is bound to "SPC SPC", but using that directly is an error
   "SPC"  #'project-find-file
 
-  "["    '("previous..." . cmx-go-prev-keymap)
-  "]"    '("next..." . cmx-go-next-keymap)
-  "TAB"  '("tab..." . cmx-tab-keymap)
-
-  "a"		 '("applications..." . cmx-applications-keymap)
-  "b"		 '("buffer..." . cmx-buffer-keymap)
-  "B"		 '("bookmarks..." . cmx-bookmark-keymap)
-  "c"		 '("code..." . cmx-code-keymap)
+  "["    '("[Previous]" . cmx-go-prev-keymap)
+  "]"    '("[Next]" . cmx-go-next-keymap)
+  "TAB"  '("[Tab]" . cmx-tab-keymap)
+  ;; TODO: "a" => Agenda
+  "b"		 '("[Buffer]" . cmx-buffer-keymap)
+  "B"		 '("[Bookmarks]" . cmx-bookmark-keymap)
+  "c"		 '("[Code]" . cmx-code-keymap)
   ;; TODO: "d"
-  "e"		 '("eval..." . cmx-elisp-keymap)
-  "f"		 '("file..." . cmx-file-keymap)
-  "F"		 '("frame..." . cmx-frame-keymap)
-  "g"		 '("git..." . cmx-git-keymap)
-  "h"		 '("help..." . cmx-help-keymap)
-  "i"		 '("insert..." . cmx-insert-keymap)
+  "e"		 '("[Eval]" . cmx-elisp-keymap)
+  "f"		 '("[File]" . cmx-file-keymap)
+  "F"		 '("[Frame]" . cmx-frame-keymap)
+  "g"		 '("[Git]" . cmx-git-keymap)
+  "h"		 '("[Help]" . cmx-help-keymap)
+  "i"		 '("[Insert]" . cmx-insert-keymap)
   ;; "j"
   ;; "k"
   ;; "l"
   ;; "m"
-  "n"		 '("notes..." . cmx-notes-keymap)
-  "o"		 '("org..." . cmx-org-keymap)
-  "p"		 '("project..." . cmx-project-keymap)
-  ;; NOTE: Reserved for `persp-mode-map'.
-  "P"  	 '("perspective..." . nil)
-  "q"		'("session..." . cmx-session-keymap)
+  "n"		 '("[Notes]" . cmx-notes-keymap)
+  "o"		 '("[Open]" . cmx-open-keymap)
+  "p"		 '("[Project]" . cmx-project-keymap)
+  "q"		 '("[Quit/Session]" . cmx-session-keymap)
   ;; "r"
-  "s"		'("search..." . cmx-search-keymap)
-  "S"		'("sidebar..." . cmx-sidebar-keymap)
-  "t"		'("toggle..." . cmx-toggle-keymap)
+  "s"		'("[Search]" . cmx-search-keymap)
+  ;; TODO: use/lose
+  ;; "S"		'("[Sidebar]" . cmx-sidebar-keymap)
+  "t"		'("[Toggle]" . cmx-toggle-keymap)
   ;; "u"
   ;; "v"
-  "w"		'("window..." . cmx-hydra/window/body))
+  "w"		'("[Window]" . cmx-hydra/window/body)
+  "x"   '("[Capture]" . cmx-capture-keymap)
+  ;; "y"
+  ;; "z"
+  )
 (defalias 'cmx-leader-keymap cmx-leader-keymap)
 
 ;; Make leader keymap bindings accessible under `C-c'.
