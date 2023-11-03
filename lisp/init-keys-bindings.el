@@ -466,7 +466,8 @@
   )
 (defalias 'cmx-leader-keymap cmx-leader-keymap)
 
-;; Make leader keymap bindings accessible under `C-c'.
+;; Make leader keymap bindings accessible under `C-c',
+;; while keeping other commands bound to `mode-specific-map'.
 (set-keymap-parent mode-specific-map cmx-leader-keymap)
 
 (keymap-global-set cmx-leader-alt-key 'cmx-leader-keymap)
@@ -475,7 +476,11 @@
 (after! [evil]
   ;; Bind leader key to existing leader map.
   ;; FIXME: overridden in magit-status
-  (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'cmx-leader-keymap))
+  (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'cmx-leader-keymap)
+
+  ;; EXPERIMENTAL: Bind leader to `,' (comma).
+  (evil-define-key* '(normal visual motion) 'global "," 'cmx-leader-keymap)
+  )
 
 ;;
 ;;; Global Bindings
