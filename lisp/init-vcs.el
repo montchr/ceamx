@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-(setq vc-follow-symlinks t)
+(setopt vc-follow-symlinks t)
 
 (after! [evil]
   (add-hook 'git-commit-mode-hook #'evil-insert-state))
@@ -58,10 +58,10 @@
   (after! [evil-collection]
     (evil-collection-init 'magit))
 
-  (setq magit-diff-refine-hunk t)                  ; show granular diffs in selected hunk
-  (setq magit-save-repository-buffers nil)         ; avoid side-effects (e.g. auto-format)
-  (setq magit-revision-insert-related-refs nil)    ; parent/related refs: rarely useful
-  (setq magit-process-finish-apply-ansi-colors t)  ; render ANSI colors in process output
+  (setopt magit-diff-refine-hunk t)                  ; show granular diffs in selected hunk
+  (setopt magit-save-repository-buffers nil)         ; avoid side-effects (e.g. auto-format)
+  (setopt magit-revision-insert-related-refs nil)    ; parent/related refs: rarely useful
+  (setopt magit-process-finish-apply-ansi-colors t)  ; render ANSI colors in process output
 
   ;; Close transient with ESC
   (define-key transient-map [escape] #'transient-quit-one)
@@ -92,7 +92,7 @@
                 (kill-local-variable '+magit--pos))))
 
   ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
-  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+  (setopt magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
 
 
   (transient-append-suffix 'magit-fetch "-p"
@@ -120,7 +120,7 @@
   ;; Show revision details in `header-line-format' instead of the minibuffer,
   ;; for better visibility.
   ;; via <https://github.com/doomemacs/doomemacs/blob/07fca786154551f90f36535bfb21f8ca4abd5027/modules/emacs/vc/config.el#L76C1-L90C47>
-  (setq git-timemachine-show-minibuffer-details t)
+  (setopt git-timemachine-show-minibuffer-details t)
   (defadvice! +vc-update-header-line-a (revision)
     "Show revision details in the header-line, instead of the minibuffer."
     :override #'git-timemachine--show-minibuffer-details

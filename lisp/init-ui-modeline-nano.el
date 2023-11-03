@@ -42,7 +42,7 @@
               nano-modeline-org-agenda-mode)
 
   :config
-  ;; (setq! nano-modeline-position #'nano-modeline-footer)
+  ;; (setopt nano-modeline-position #'nano-modeline-footer)
   (when (eq nano-modeline-position #'nano-modeline-header)
     (setq-default mode-line-format (list "%_"))
     (setq mode-line-format (list "%_")))

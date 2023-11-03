@@ -67,11 +67,11 @@
 
 ;; Improve initial scratch buffer load time
 (setq default-major-mode #'text-mode)
-(setq initial-major-mode #'text-mode)
+(setopt initial-major-mode #'text-mode)
 
 ;; Automatic hard wrapping at 80 characters.
 (setq auto-fill-mode t)
-(setq fill-column 80)
+(setopt fill-column 80)
 
 ;; Increase number of messages saved in log.
 (setq message-log-max 10000)
@@ -79,11 +79,11 @@
 ;; Default to UTF-8 for all of the things.
 (set-language-environment "UTF-8")
 ;; `set-language-environment' also presumptively sets `default-input-method'.
-(setq default-input-method nil)
+(setopt default-input-method nil)
 
 ;; Prevent unnecessary rendering/line scanning in non-focused windows.
 (setq-default cursor-in-non-selected-windows nil)
-(setq highlight-nonselected-windows nil)
+(setopt highlight-nonselected-windows nil)
 
 ;; Disable extraneous OS window chrome.
 (when (window-system)
@@ -110,17 +110,17 @@
 (unless +sys-linux-p  (setq command-line-x-option-alist nil))
 
 ;; No littering the file system with backup files.
-(setq make-backup-files nil)
-(setq create-lockfiles nil)
+(setopt make-backup-files nil)
+(setopt create-lockfiles nil)
 
 ;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
-(setq auto-mode-case-fold nil)
+(setopt auto-mode-case-fold nil)
 
 ;; "Don't ping things that look like domain names."
-(setq ffap-machine-p-known 'reject)
+(setopt ffap-machine-p-known 'reject)
 
 ;; Throttle UI refreshing slightly.
-(setq idle-update-delay 1.0)  ; default is 0.5
+(setopt idle-update-delay 1.0)  ; default is 0.5
 
 ;; PGTK-only: Improve childframe responsiveness (e.g. `lsp-ui').
 ;; See emacs-lsp/lsp-ui#613.
@@ -129,12 +129,12 @@
 
 ;; Ensure secrets and auth credentials are not stored in plaintext (the default).
 ;; Requires GnuPG configuration.
-(setq auth-sources (list (file-name-concat +path-var-dir "authinfo.gpg")
+(setopt auth-sources (list (file-name-concat +path-var-dir "authinfo.gpg")
                          "~/.authinfo.gpg"))
 
 ;; "More performant rapid scrolling over unfontified regions. May cause brief
 ;; spells of inaccurate fontification immediately after scrolling."
-(setq fast-but-imprecise-scrolling t)
+(setopt fast-but-imprecise-scrolling t)
 
 ;; Don’t compact font caches during garbage collection.
 ;; NOTE: Set pre-emptively, anticipating lag from `doom-modeline',
@@ -145,9 +145,9 @@
 ;; TODO: Ideally, this action should only affect edited lines.
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-(setq use-file-dialog nil)
-(setq use-dialog-box nil)
-(setq indicate-empty-lines nil)
+(setopt use-file-dialog nil)
+(setopt use-dialog-box nil)
+(setopt indicate-empty-lines nil)
 
 (setq-default cursor-type '(hbar .  2))
 (setq-default cursor-in-non-selected-windows nil)

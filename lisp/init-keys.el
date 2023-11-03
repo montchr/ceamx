@@ -41,14 +41,14 @@
 
 ;; macOS: Remap modifier keys.
 (when (and +sys-mac-p (display-graphic-p))
-  (setq mac-control-modifier 'control
-        mac-option-modifier 'meta
-        ns-option-modifier 'meta
-        mac-command-modifier 'super
-        ns-command-modifier 'super
-        ;; Free up the right-side option key for character composition.
-        mac-right-option-modifier 'none
-        ns-right-option-modifier 'none)
+  (setopt mac-control-modifier 'control)
+  (setopt mac-option-modifier 'meta)
+  (setopt ns-option-modifier 'meta)
+  (setopt mac-command-modifier 'super)
+  (setopt ns-command-modifier 'super)
+  ;; Free up the right-side option key for character composition.
+  (setopt mac-right-option-modifier 'none)
+  (setopt ns-right-option-modifier 'none)
   ;; Common system clipboard hotkeys.
   (global-set-key [(s c)] 'kill-ring-save)
   (global-set-key [(s v)] 'yank)

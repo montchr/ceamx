@@ -36,10 +36,10 @@
   :hook (completion-list-mode . consult-preview-at-point-mode)
 
   :init
-  (setq register-preview-delay 0.5)
-  (setq register-preview-function #'consult-register-format)
-  (setq xref-show-definitions-function #'consult-xref)
-  (setq xref-show-xrefs-function #'consult-xref)
+  (setopt register-preview-delay 0.5)
+  (setopt register-preview-function #'consult-register-format)
+  (setopt xref-show-definitions-function #'consult-xref)
+  (setopt xref-show-xrefs-function #'consult-xref)
   (advice-add #'register-preview :override #'consult-register-window)
 
   :config
@@ -101,7 +101,7 @@
   (keymap-set isearch-mode-map "M-s l" #'consult-line)
   (keymap-set isearch-mode-map "M-s L" #'consult-line-multi)
 
-  (setq consult-preview-key 'any)
+  (setopt consult-preview-key 'any)
 
   ;; For some commands and buffer sources it is useful to configure the
   ;; :preview-key on a per-command basis using the `consult-customize' macro.
@@ -116,7 +116,7 @@
 
   ;; Configure the narrowing key.
   ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; (kbd "C-+")
+  (setopt consult-narrow-key "<") ;; (kbd "C-+")
 
   ;; Make narrowing help available in the minibuffer.
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'embark-prefix-help-command)
@@ -132,7 +132,7 @@
   ;;    (lambda (str) (orderless--highlight input str))))
 
   ;; OPTION 1: Activate globally for all consult-grep/ripgrep/find/...
-  ;; (setq consult--regexp-compiler #'consult--orderless-regexp-compiler)
+  ;; (setopt consult--regexp-compiler #'consult--orderless-regexp-compiler)
 
   ;; OPTION 2: Activate only for some commands, e.g., consult-ripgrep!
   ;; (defun +consult--with-orderless (&rest args)
@@ -182,7 +182,7 @@
   ;; By default `consult-project-function' uses `project-root' from project.el.
   (with-eval-after-load 'projectile
     (autoload 'projectile-project-root "projectile")
-    (setq consult-project-function (lambda (_) (projectile-project-root)))))
+    (setopt consult-project-function (lambda (_) (projectile-project-root)))))
 
 
 ;; <https://github.com/minad/consult#embark-integration>

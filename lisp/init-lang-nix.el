@@ -55,7 +55,7 @@
   :after (lsp-mode)
   :defines (lsp-nix-nil-formatter)
   :config
-  (setq lsp-nix-nil-formatter nil))
+  (setopt lsp-nix-nil-formatter nil))
 
 (provide 'init-lang-nix)
 ;;; init-lang-nix.el ends here

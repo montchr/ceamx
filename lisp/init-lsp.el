@@ -67,31 +67,31 @@
   :defines (lsp-modeline-code-actions-segments) ; idk why tho
 
   :init
-  (setq lsp-use-plists t)
-  (setq lsp-restart 'ignore)
-  (setq lsp-headerline-breadcrumb-enable nil)
+  (setopt lsp-use-plists t)
+  (setopt lsp-restart 'ignore)
+  (setopt lsp-headerline-breadcrumb-enable nil)
   ;; Keybindings are handled manually.
-  (setq lsp-keymap-prefix nil)
+  (setopt lsp-keymap-prefix nil)
 
   ;;; Disable performance-hindering features.
-	(setq lsp-enable-file-watchers nil)
-  (setq lsp-enable-folding nil)
-  (setq lsp-enable-text-document-color nil)
-  (setq lsp-log-io nil)
+	(setopt lsp-enable-file-watchers nil)
+  (setopt lsp-enable-folding nil)
+  (setopt lsp-enable-text-document-color nil)
+  (setopt lsp-log-io nil)
 
   :config
-  (setq lsp-eldoc-enable-hover t)
-  (setq lsp-enable-on-type-formatting nil)
+  (setopt lsp-eldoc-enable-hover t)
+  (setopt lsp-enable-on-type-formatting nil)
   ;; FIXME: snippets are good? but this depends on yasnippet
-  (setq lsp-enable-snippet nil)
-  (setq lsp-enable-xref t)
-  (setq lsp-lens-enable t)
-  (setq lsp-modeline-code-actions-enable t)
-  (setq lsp-modeline-code-actions-segments '(count icon name))
-  (setq lsp-modeline-diagnostics-enable t)
-  (setq lsp-modeline-workspace-status-enable t)
-  (setq lsp-signature-render-documentation t)
-  (setq lsp-signature-auto-activate '(:on-trigger-char :on-server-request :after-completion))
+  (setopt lsp-enable-snippet nil)
+  (setopt lsp-enable-xref t)
+  (setopt lsp-lens-enable t)
+  (setopt lsp-modeline-code-actions-enable t)
+  (setopt lsp-modeline-code-actions-segments '(count icon name))
+  (setopt lsp-modeline-diagnostics-enable t)
+  (setopt lsp-modeline-workspace-status-enable t)
+  (setopt lsp-signature-render-documentation t)
+  (setopt lsp-signature-auto-activate '(:on-trigger-char :on-server-request :after-completion))
 
   (advice-add '+lsp-defer-server-shutdown-a :around #'lsp--shutdown-workspace)
 
@@ -105,26 +105,26 @@
   :after (lsp-mode)
   :commands (lsp-ui-mode)
   :config
-  (setq lsp-ui-doc-enable t)
+  (setopt lsp-ui-doc-enable t)
   ;; `at-point' displays the ui just above the symbol,
   ;; obscuring the buffer contents that tend to be most relevant
   ;; as leading up to the thing at point.
   ;; `top' is similarly annoying, and it conflicts with sideline ui.
-	(setq lsp-ui-doc-position 'bottom) ; alt: top, at-point
+	(setopt lsp-ui-doc-position 'bottom) ; alt: top, at-point
   ;; Long delay, as the doc is more helpful when I'm pausing in confusion.
-  (setq lsp-ui-doc-delay 1.0)
+  (setopt lsp-ui-doc-delay 1.0)
   ;; TODO: auto determine by window width?
-  (setq lsp-ui-doc-max-width 80)
-  (setq lsp-ui-doc-max-height 30)
-  (setq lsp-ui-doc-include-signature t)
-  (setq lsp-ui-doc-header t)
-  (setq lsp-ui-doc-show-with-cursor t)
+  (setopt lsp-ui-doc-max-width 80)
+  (setopt lsp-ui-doc-max-height 30)
+  (setopt lsp-ui-doc-include-signature t)
+  (setopt lsp-ui-doc-header t)
+  (setopt lsp-ui-doc-show-with-cursor t)
 
-  (setq lsp-ui-sideline-delay 0.5)
-  (setq lsp-ui-sideline-show-diagnostics nil)
-  (setq lsp-ui-sideline-show-hover nil)
-  (setq lsp-ui-sideline-show-code-actions t)
-  (setq lsp-ui-sideline-update-mode 'point))
+  (setopt lsp-ui-sideline-delay 0.5)
+  (setopt lsp-ui-sideline-show-diagnostics nil)
+  (setopt lsp-ui-sideline-show-hover nil)
+  (setopt lsp-ui-sideline-show-code-actions t)
+  (setopt lsp-ui-sideline-update-mode 'point))
 
 (use-package consult-lsp
   :after (lsp-mode consult)

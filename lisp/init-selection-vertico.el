@@ -35,16 +35,16 @@
   (vertico-mode)
 
   ;; Different scroll margin
-  ;; (setq vertico-scroll-margin 0)
+  ;; (setopt vertico-scroll-margin 0)
 
   ;; Show more candidates
-  ;; (setq vertico-count 20)
+  ;; (setopt vertico-count 20)
 
   ;; Grow and shrink the Vertico minibuffer
-  (setq vertico-resize t)
+  (setopt vertico-resize t)
 
   ;; Enable cycling for `vertico-next' and `vertico-previous'.
-  (setq vertico-cycle t)
+  (setopt vertico-cycle t)
 
   :config
   ;; Prefix current candidate with arrow
@@ -110,17 +110,17 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (advice-add #'completing-read-multiple :filter-args #'+crm-indicator)
 
 ;; Do not allow the cursor in the minibuffer prompt
-(setq minibuffer-prompt-properties '( read-only t
+(setopt minibuffer-prompt-properties '( read-only t
                                       cursor-intangible t
                                       face minibuffer-prompt))
 (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
 ;; Hide commands in M-x which do not work in the current mode.
 ;; Vertico commands are hidden in normal buffers.
-(setq read-extended-command-predicate #'command-completion-default-include-p)
+(setopt read-extended-command-predicate #'command-completion-default-include-p)
 
 ;; Enable recursive minibuffers.
-(setq enable-recursive-minibuffers t)
+(setopt enable-recursive-minibuffers t)
 
 (provide 'init-selection-vertico)
 ;;; init-selection-vertico.el ends here

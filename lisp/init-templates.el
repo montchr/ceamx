@@ -41,7 +41,7 @@
          ("M-*" . tempel-insert))
 
   :init
-  (setq tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
+  (setopt tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
 
   ;; Setup completion at point
   (defun cmx:tempel--setup-capf-h ()

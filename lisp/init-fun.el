@@ -26,10 +26,11 @@
 ;; <https://www.emacswiki.org/emacs/ZoneMode>
 (use-feature zone
   :defer t
+  :defines (zone-timer)
 
   :config
   ;; Zone out after one minute.
-  (setq zone-timer (run-with-idle-timer 60 t 'zone))
+  (setopt zone-timer (run-with-idle-timer 60 t 'zone))
 
   ;; FIXME: likely broken
   (defun zone-choose (pgm)

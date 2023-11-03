@@ -25,11 +25,11 @@
 (use-package fontaine
   :demand t
   :config
-  (setq fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
+  (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
   ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
   ;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
   ;; at least i think that's what's causing the inconsistencies...
-  (setq fontaine-presets
+  (setopt fontaine-presets
         `((small :default-height 110)
           (regular :default-height 140)
           (regular-alt :default-height 130)

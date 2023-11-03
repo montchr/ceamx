@@ -36,34 +36,34 @@
 
 (use-package org
   :init
-  (setq org-directory (expand-file-name +path-notes-dir))
+  (setopt org-directory (expand-file-name +path-notes-dir))
 
   :config
-  (setq org-image-actual-width 300)
-  (setq org-startup-with-inline-images t)
+  (setopt org-image-actual-width 300)
+  (setopt org-startup-with-inline-images t)
 
   ;; via <https://github.com/minad/org-modern#configuration>
   ;; Edit settings
-  (setq org-auto-align-tags nil)
-  (setq org-tags-column 0)
-  (setq org-catch-invisible-edits 'show-and-error)
-  (setq org-special-ctrl-a/e t)
-  (setq org-insert-heading-respect-content t)
+  (setopt org-auto-align-tags nil)
+  (setopt org-tags-column 0)
+  (setopt org-catch-invisible-edits 'show-and-error)
+  (setopt org-special-ctrl-a/e t)
+  (setopt org-insert-heading-respect-content t)
 
   ;; Org styling, hide markup etc.
-  (setq org-hide-emphasis-markers t)
-  (setq org-pretty-entities t)
-  (setq org-ellipsis "…")
+  (setopt org-hide-emphasis-markers t)
+  (setopt org-pretty-entities t)
+  (setopt org-ellipsis "…")
 
   ;; Agenda styling
   ;; via <https://github.com/minad/org-modern#configuration>
-  (setq org-agenda-tags-column 0)
-  (setq org-agenda-block-separator ?─)
-  (setq org-agenda-time-grid
+  (setopt org-agenda-tags-column 0)
+  (setopt org-agenda-block-separator ?─)
+  (setopt org-agenda-time-grid
         '((daily today require-timed)
           (800 1000 1200 1400 1600 1800 2000)
           " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
-  (setq org-agenda-current-time-string
+  (setopt org-agenda-current-time-string
         "⭠ now ─────────────────────────────────────────────────")
 
   (defun cmx--org-mode--add-local-electric-pairs ()
@@ -82,7 +82,7 @@
 (use-feature org-capture
   :after (org doct)
   :config
-  (setq org-capture-templates
+  (setopt org-capture-templates
         (doct `(("Personal todo"
                  :keys "t"
                  :icon ("checklist" :set "octicon" :color "green")

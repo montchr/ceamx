@@ -25,28 +25,28 @@
 
 (use-package denote
   :config
-  (setq denote-directory +path-notes-dir)
-  (setq denote-known-keywords '("emacs"))
-  (setq denote-infer-keywords t)
-  (setq denote-sort-keywords t)
-  (setq denote-prompts '(title keywords))
+  (setopt denote-directory +path-notes-dir)
+  (setopt denote-known-keywords '("emacs"))
+  (setopt denote-infer-keywords t)
+  (setopt denote-sort-keywords t)
+  (setopt denote-prompts '(title keywords))
   ;; TODO: exclude gtd
-  ;; (setq denote-excluded-directories-regexp nil)
-  (setq denote-excluded-keywords-regexp nil)
+  ;; (setopt denote-excluded-directories-regexp nil)
+  (setopt denote-excluded-keywords-regexp nil)
   ;; Pick dates, where relevant, with Org's advanced interface:
-  (setq denote-date-prompt-use-org-read-date t)
-  (setq denote-allow-multi-word-keywords t)
-  (setq denote-date-format nil) ; read doc string
+  (setopt denote-date-prompt-use-org-read-date t)
+  (setopt denote-allow-multi-word-keywords t)
+  (setopt denote-date-format nil) ; read doc string
   ;; By default, we do not show the context of links.  We just display
   ;; file names.  This provides a more informative view.
   ;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
   ;; advanced.
-  (setq denote-backlinks-show-context t)
+  (setopt denote-backlinks-show-context t)
   ;; If you use Markdown or plain text files (Org renders links as buttons
   ;; right away)
   (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
   ;; We use different ways to specify a path for demo purposes.
-  (setq denote-dired-directories
+  (setopt denote-dired-directories
         (list denote-directory
               (thread-last denote-directory (expand-file-name "attachments"))
               (expand-file-name "~/Documents/books")))
@@ -85,7 +85,7 @@ Else create a new file."
 
 
   (with-eval-after-load 'org-capture
-    (setq denote-org-capture-specifiers "%l\n%i\n%?")
+    (setopt denote-org-capture-specifiers "%l\n%i\n%?")
     (add-to-list 'org-capture-templates
                  '("n" "New note (with denote.el)" plain
                    (file denote-last-path)
@@ -128,7 +128,7 @@ Else create a new file."
 (after! [denote consult-notes]
   (consult-notes-denote-mode)
   ;; Search only for text files in Denote dir.
-  (setq consult-notes-denote-files-function
+  (setopt consult-notes-denote-files-function
         (function denote-directory-text-only-files)))
 
 

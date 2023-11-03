@@ -27,11 +27,12 @@
 
 ;;; Code:
 
-(setq dired-listing-switches
+;; FIXME: errors (prob incompatible with `exa')
+(setopt dired-listing-switches
       "-l --almost-all --human-readable --group-directories-first --no-group")
-(setq dired-kill-when-opening-new-dired-buffer t)
-(setq dired-mouse-drag-files t)
-(setq mouse-drag-and-drop-region-cross-program t)
+(setopt dired-kill-when-opening-new-dired-buffer t)
+(setopt dired-mouse-drag-files t)
+(setopt mouse-drag-and-drop-region-cross-program t)
 
 ;; <https://github.com/alexluigit/dirvish>
 ;; <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#Sample-config>
@@ -58,10 +59,10 @@
   (dirvish-peek-mode) ; Preview files in minibuffer
   (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
 
-  (setq mouse-1-click-follows-link nil)
-  (setq dirvish-mode-line-format
+  (setopt mouse-1-click-follows-link nil)
+  (setopt dirvish-mode-line-format
         '(:left (sort symlink) :right (omit yank index)))
-  (setq dirvish-attributes
+  (setopt dirvish-attributes
         '(all-the-icons
           file-time
           file-size

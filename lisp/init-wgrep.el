@@ -33,8 +33,8 @@
   :commands (wgrep-change-to-wgrep-mode)
 
   :init
-  (setq wgrep-auto-save-buffer t)
-  (setq wgrep-change-readonly-file t)
+  (setopt wgrep-auto-save-buffer t)
+  (setopt wgrep-change-readonly-file t)
 
   :config
   (keymap-set grep-mode-map "W" #'wgrep-change-to-wgrep-mode)

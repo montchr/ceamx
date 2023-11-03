@@ -38,7 +38,7 @@
   (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
-  (setq web-mode-engines-alist
+  (setopt web-mode-engines-alist
         '(("php"    . "\\.phtml\\'")
           ("blade"  . "\\.blade\\.")))
 
@@ -46,18 +46,18 @@
   ;;       but recommended by `web-mode' documentation.
   (defun +web-mode--customization-hook ()
     "Customization hook for `web-mode'"
-    (setq web-mode-markup-indent-offset 2)
-    (setq web-mode-css-indent-offset 2)
-    (setq web-mode-code-indent-offset 2)
-    (setq web-mode-enable-auto-pairing t)
-    (setq web-mode-enable-css-colorization t)
-    (setq web-mode-enable-block-face t)
-    (setq web-mode-enable-part-face t))
+    (setopt web-mode-markup-indent-offset 2)
+    (setopt web-mode-css-indent-offset 2)
+    (setopt web-mode-code-indent-offset 2)
+    (setopt web-mode-enable-auto-pairing t)
+    (setopt web-mode-enable-css-colorization t)
+    (setopt web-mode-enable-block-face t)
+    (setopt web-mode-enable-part-face t))
   (add-hook 'web-mode-hook '+web-mode--customization-hook)
 
   ;; NOTE: The following customizations should NOT be set
   ;;       in `+web-mode--customization-hook'.
-  (setq web-mode-enable-current-element-highlight t))
+  (setopt web-mode-enable-current-element-highlight t))
 
 (provide 'init-lang-html)
 ;;; init-lang-html.el ends here

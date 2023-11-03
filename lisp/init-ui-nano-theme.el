@@ -33,8 +33,8 @@
 
   :config
   ;;; Configuration sourced from `nano-mode'.
-  (setq font-lock-maximum-decoration t)
-  (setq default-frame-alist
+  (setopt font-lock-maximum-decoration t)
+  (setopt default-frame-alist
         (append (list
                  '(min-height . 1)  '(height . 45)
                  '(min-width  . 1)  '(width  . 81)
@@ -47,7 +47,7 @@
                  '(menu-bar-lines . 0))))
 
   ;; Line spacing (in pixels)
-  ;; (setq line-spacing 0)
+  ;; (setopt line-spacing 0)
 
   ;; Vertical window divider
   (setq window-divider-default-right-width 24)

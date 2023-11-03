@@ -55,9 +55,9 @@
   ;; Stay out of my way!
   (setopt corfu-quit-at-boundary t)
   (setopt corfu-quit-no-match 'separator)
-  ;; (setq! corfu-preselect 'prompt)      ;; Preselect the prompt
-  ;; (setq! corfu-on-exact-match nil)     ;; Configure handling of exact matches
-  ;; (setq! corfu-scroll-margin 5)        ;; Use scroll margin
+  ;; (setopt corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (setopt corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  ;; (setopt corfu-scroll-margin 5)        ;; Use scroll margin
   (setopt corfu-cycle t)
   (setopt corfu-auto t)
   (setopt corfu-auto-delay 0.2)

@@ -109,7 +109,7 @@
     (evil-set-cursor-color (get 'cursor 'evil-emacs-color)))
 
   (setq evil-mode-line-format 'nil)
-  (setq evil-default-cursor '+evil-default-cursor-fn)
+  (setq evil-default-cursor #'+evil-default-cursor-fn)
   (setq evil-normal-state-cursor 'box)
   (setq evil-emacs-state-cursor  '(box +evil-emacs-cursor-fn))
   (setq evil-insert-state-cursor '(bar . 2))
@@ -134,11 +134,11 @@
   ;; this itself, so we must.
   (setq-hook! 'after-change-major-mode-hook evil-shift-width tab-width)
 
-    (setq evil-undo-system 'undo-fu))
   (after! [undo-fu]
+    (setopt evil-undo-system 'undo-fu))
 
   (after! [helpful]
-    (setq evil-lookup-func #'helpful-at-point))
+    (setopt evil-lookup-func #'helpful-at-point))
 
   (after! [eldoc]
     ;; Allow eldoc to trigger directly after changing modes
@@ -170,8 +170,8 @@
   :after (evil)
 
   :config
-  (setq! evil-collection-elpaca-want-g-filters nil)
-  (setq! evil-collection-setup-minibuffer nil)
+  (setopt evil-collection-elpaca-want-g-filters nil)
+  (setopt evil-collection-setup-minibuffer nil)
 
   (setopt evil-collection-mode-list
           '( bookmark consult comint compile eldoc debug diff-hl diff-mode dired
@@ -254,7 +254,7 @@
     (evil-embrace-enable-evil-surround-integration))
 
   :config
-  (setq evil-embrace-show-help-p nil))
+  (setopt evil-embrace-show-help-p nil))
 
 ;;
 ;;; `evil-escape' :: <https://github.com/emacsorphanage/evil-escape/>
@@ -268,10 +268,10 @@
   :hook (on-first-input . evil-escape-mode)
 
   :init
-  (setq evil-escape-excluded-states '(normal visual multiedit emacs motion))
-  (setq evil-escape-excluded-major-modes '(neotree-mode treemacs-mode vterm-mode))
-  (setq evil-escape-key-sequence "jk")
-  (setq evil-escape-delay 0.15)
+  (setopt evil-escape-excluded-states '(normal visual multiedit emacs motion))
+  (setopt evil-escape-excluded-major-modes '(neotree-mode treemacs-mode vterm-mode))
+  (setopt evil-escape-key-sequence "jk")
+  (setopt evil-escape-delay 0.15)
 
   :config
   ;; `evil-escape' in the minibuffer is more disruptive than helpful. That is,
@@ -313,7 +313,7 @@
   :unless (< (display-color-cells) 256)
 
   :config
-  (setq evil-quickscope-word-separator " -./")
+  (setopt evil-quickscope-word-separator " -./")
 
   (set-face-attribute 'evil-quickscope-first-face nil
                       :inherit nil)
@@ -404,7 +404,7 @@
 (use-package evil-lion
   :after evil
   :config
-  (setq evil-lion-squeeze-spaces nil) ;; default t
+  (setopt evil-lion-squeeze-spaces nil) ;; default t
   (evil-lion-mode))
 
 ;;

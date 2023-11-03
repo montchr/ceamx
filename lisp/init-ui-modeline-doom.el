@@ -37,28 +37,28 @@
   :after (nerd-icons)
   :hook (elpaca-after-init . doom-modeline-mode)
   :config
-  (setq! doom-modeline-support-imenu t)
-  (setq! doom-modeline-unicode-fallback t)
-  (setq! doom-modeline-buffer-encoding nil)
-  (setq! doom-modeline-github nil)
-  (setq! doom-modeline-buffer-file-name-style 'truncate-upto-project)
+  (setopt doom-modeline-support-imenu t)
+  (setopt doom-modeline-unicode-fallback t)
+  (setopt doom-modeline-buffer-encoding nil)
+  (setopt doom-modeline-github nil)
+  (setopt doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
   ;; Enable HUD mode, providing a micromap of buffer position.
-  (setq! doom-modeline-hud t)
+  (setopt doom-modeline-hud t)
 
-  (setq! doom-modeline-icon t)
+  (setopt doom-modeline-icon t)
 
   ;; note that the major mode icon is not missing like most others.
   ;; git branch icon is also fine.
-  (setq! doom-modeline-major-mode-icon t)
+  (setopt doom-modeline-major-mode-icon t)
 
   ;; FIXME: missing icons when using nix-installed icon font
-  (setq! doom-modeline-buffer-state-icon t)
-  (setq! doom-modeline-buffer-modification-icon t)
+  (setopt doom-modeline-buffer-state-icon t)
+  (setopt doom-modeline-buffer-modification-icon t)
 
-  (setq! doom-modeline-modal t)
+  (setopt doom-modeline-modal t)
   ;; FIXME: missing icon with nix-installed font... but only when non-nil?! when nil, icon displays properly...
-  (setq! doom-modeline-modal-icon t))
+  (setopt doom-modeline-modal-icon t))
 
 (provide 'init-ui-modeline-doom)
 ;;; init-ui-modeline-doom.el ends here

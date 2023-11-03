@@ -27,9 +27,9 @@
 (use-package modus-themes
   :demand t
   :config
-  (setq modus-themes-italic-constructs t)
-  (setq modus-themes-bold-constructs t)
-  (setq modus-themes-common-palette-overrides
+  (setopt modus-themes-italic-constructs t)
+  (setopt modus-themes-bold-constructs t)
+  (setopt modus-themes-common-palette-overrides
         '((fringe unspecified)))
 
   ;; If you don't customize it, this is the theme you get.

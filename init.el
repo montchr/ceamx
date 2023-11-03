@@ -34,7 +34,7 @@
 (require 'init-benchmarking)
 
 ;;; Configure customization file.
-(setq custom-file (expand-file-name "custom.el" +path-emacs-dir))
+(setopt custom-file (expand-file-name "custom.el" +path-emacs-dir))
 
 ;;; Define default user identity.
 (setq-default user-full-name "Chris Montgomery"

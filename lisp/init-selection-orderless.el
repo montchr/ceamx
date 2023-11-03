@@ -29,10 +29,10 @@
 ;;   :init
 
 ;;   ;; TODO: Configure a custom style dispatcher (see the Consult wiki)
-;;   ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+;;   ;; (setopt orderless-style-dispatchers '(+orderless-dispatch)
 ;;   ;;       orderless-component-separator #'orderless-escapable-split-on-space)
 
-;;   (setq completion-styles '(orderless basic)
+;;   (setopt completion-styles '(orderless basic)
 ;;         completion-category-defaults nil
 ;;         completion-category-overrides '((file (styles partial-completion)))))
 
@@ -91,39 +91,40 @@
   ;; Personally I (@minad) use option 3 currently. Also note that you may want to configure
   ;; special styles for special completion categories, e.g., partial-completion for files.
   ;;
-  ;; 1. (setq completion-styles '(orderless))
+  ;; 1. (setopt completion-styles '(orderless))
   ;; This configuration results in a very coherent completion experience,
   ;; since orderless is used always and exclusively. But it may not work
   ;; in all scenarios. Prefix expansion with TAB is not possible.
   ;;
-  ;; 2. (setq completion-styles '(substring orderless))
+  ;; 2. (setopt completion-styles '(substring orderless))
   ;; By trying substring before orderless, TAB expansion is possible.
   ;; The downside is that you can observe the switch from substring to orderless
   ;; during completion, less coherent.
   ;;
-  ;; 3. (setq completion-styles '(orderless basic))
+  ;; 3. (setopt completion-styles '(orderless basic))
   ;; Certain dynamic completion tables (completion-table-dynamic)
   ;; do not work properly with orderless. One can add basic as a fallback.
   ;; Basic will only be used when orderless fails, which happens only for
   ;; these special tables.
   ;;
-  ;; 4. (setq completion-styles '(substring orderless basic))
+  ;; 4. (setopt completion-styles '(substring orderless basic))
   ;; Combine substring, orderless and basic.
   ;;
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        ;;; Enable partial-completion for files.
-        ;;; Either give orderless precedence or partial-completion.
-        ;;; Note that completion-category-overrides is not really an override,
-        ;;; but rather prepended to the default completion-styles.
-        ;; completion-category-overrides '((file (styles orderless partial-completion))) ;; orderless is tried first
-        completion-category-overrides '((file (styles partial-completion)) ;; partial-completion is tried first
-                                        ;; enable initialism by default for symbols
-                                        (command (styles +orderless-with-initialism))
-                                        (variable (styles +orderless-with-initialism))
-                                        (symbol (styles +orderless-with-initialism)))
-        orderless-component-separator #'orderless-escapable-split-on-space ;; allow escaping space with backslash!
-        orderless-style-dispatchers '(+orderless-dispatch)))
+  (setopt completion-styles '(orderless basic))
+        (setopt completion-category-defaults nil)
+        ;; Enable partial-completion for files.
+        ;; Either give `orderless' precedence or `partial-completion'.
+        ;; Note that `completion-category-overrides' is not really an override,
+        ;; but rather prepended to the default `completion-styles'.
+        (setopt completion-category-overrides '( ;; (file (styles orderless partial-completion)) ; orderless is tried first
+                                                 (file (styles partial-completion))              ; partial-completion is tried first
+                                                 ;; enable initialism by default for symbols
+                                                 (command (styles +orderless-with-initialism))
+                                                 (variable (styles +orderless-with-initialism))
+                                                 (symbol (styles +orderless-with-initialism))))
+        ;; Allow escaping space with backslash.
+        (setopt orderless-component-separator #'orderless-escapable-split-on-space)
+        (setopt orderless-style-dispatchers '(+orderless-dispatch)))
 
 (provide 'init-selection-orderless)
 ;;; init-selection-orderless.el ends here

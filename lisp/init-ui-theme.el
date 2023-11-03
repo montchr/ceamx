@@ -46,8 +46,8 @@
   (run-hooks 'cmx-after-enable-theme-hook))
 (advice-add 'enable-theme :after #'cmx-after-enable-theme-hook)
 
-(setq font-lock-maximum-decoration t)
-(setq default-frame-alist
+(setopt font-lock-maximum-decoration t)
+(setopt default-frame-alist
       (append (list
                '(min-height . 1)  '(height . 45)
                '(min-width  . 1)  '(width  . 81)
@@ -67,20 +67,20 @@
   :commands (spacious-padding-mode)
   :init (spacious-padding-mode)
   :config
-  (setq spacious-padding-widths '( :internal-border-width 32
+  (setopt spacious-padding-widths '( :internal-border-width 32
                                    :right-divider-width 24
                                    :scroll-bar-width 8)))
 
 (use-feature solar
   :config
-  (setq calendar-latitude 39.96)
-  (setq calendar-longitude -75.13))
+  (setopt calendar-latitude 39.96)
+  (setopt calendar-longitude -75.13))
 
 (use-package circadian
   :after solar
   :config
-  (setq circadian-themes '((:sunrise . modus-operandi)
-                           (:sunset  . modus-vivendi)))
+  (setopt circadian-themes '((:sunrise . modus-operandi)
+                             (:sunset  . modus-vivendi)))
   (circadian-setup))
 
 (provide 'init-ui-theme)

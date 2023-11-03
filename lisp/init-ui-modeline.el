@@ -28,7 +28,7 @@
 ;;; Code:
 
 (display-time-mode -1)
-(setq column-number-mode t)
+(setopt column-number-mode t)
 
 ;; Show the name of the current function definition in the modeline.
 (use-feature which-func

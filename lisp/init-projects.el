@@ -35,9 +35,9 @@
 (use-package projectile
   :init
   ;; Use Emacs default completion system i.e. `completing-read'
-  (setq projectile-completion-system 'default)
+  (setopt projectile-completion-system 'default)
 
-  (setq projectile-project-root-files '(".envrc" ".projectile"))
+  (setopt projectile-project-root-files '(".envrc" ".projectile"))
 
   (projectile-mode +1)
 
@@ -48,12 +48,12 @@
 
   (keymap-global-set "<remap> <project-find-file>" #'projectile-find-file)
 
-  (setq projectile-project-search-path '(("~/Developer/sources/" . 1)
+  (setopt projectile-project-search-path '(("~/Developer/sources/" . 1)
                                          ("~/Developer/contrib/" . 2)
                                          ("~/Developer/work/" . 3)))
-  (setq projectile-require-project-root t)
-  (setq projectile-sort-order 'recently-active)
-  (setq projectile-switch-project-action #'projectile-find-file)
+  (setopt projectile-require-project-root t)
+  (setopt projectile-sort-order 'recently-active)
+  (setopt projectile-switch-project-action #'projectile-find-file)
 
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 
