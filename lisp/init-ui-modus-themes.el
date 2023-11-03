@@ -32,9 +32,6 @@
   (setopt modus-themes-common-palette-overrides
         '((fringe unspecified)))
 
-  ;; If you don't customize it, this is the theme you get.
-  (setq-default custom-enabled-themes '(modus-vivendi))
-
   (defun cmx-modus-themes--custom-faces ()
     (modus-themes-with-colors
       (custom-set-faces
