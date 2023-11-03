@@ -41,11 +41,6 @@
 ;; Don't consider camelCaseWORDs as separate words.
 (global-subword-mode -1)
 
-(electric-pair-mode +1)
-
-;;
-;;; editorconfig
-;;
 
 ;;; editorconfig :: <https://editorconfig.org>
 (use-package editorconfig
@@ -58,6 +53,33 @@
   ;; Prettier is a commonly-used formatter for several languages.
   (reformatter-define prettier :program "prettier"))
 
+;;; `smartparens' :: <https://github.com/Fuco1/smartparens>
+(use-package smartparens
+  :config
+  ;; Load default package configuration.
+  (require 'smartparens-config)
+
+  (setopt sp-base-key-bindings 'paredit)
+  (setopt sp-autoskip-closing-pair 'always)
+  (setopt sp-hybrid-kill-entire-symbol nil)
+
+  (sp-use-paredit-bindings)
+
+  (show-smartparens-global-mode +1)
+
+  ;; TODO: this is already bound by default. why the alternative command?
+  ;; TODO: rename prefix etc
+  ;; (define-key prog-mode-map (kbd "M-(") (prelude-wrap-with "("))
+  ;; FIXME: pick terminal friendly binding
+  ;; (define-key prog-mode-map (kbd "M-[") (prelude-wrap-with "["))
+  ;; (define-key prog-mode-map (kbd "M-\"") (prelude-wrap-with "\""))
+
+  ;; Load `smartparens' just about everywhere editable.
+  ;; TODO: why is `org-mode' absent? does org do its own thing?
+  ;; TODO: abstract to a function, this logic is duplicative of elsewhere
+  (dolist (mode '(prog-mode text-mode markdown-mode))
+    (let ((mode-hook (intern (format "%S-hook" mode))))
+      (add-hook mode-hook #'smartparens-mode))))
 
 ;;
 ;;; Visual feedback
