@@ -405,6 +405,14 @@
 (defalias 'cmx-toggle-keymap cmx-toggle-keymap)
 
 ;;
+;;; "y" => Copy / Evil Yank
+;;
+
+(defvar-keymap cmx-yank-keymap
+  "l" '("link (visible)" . link-hint-copy-link))
+(defalias 'cmx-yank-keymap cmx-yank-keymap)
+
+;;
 ;;; "TAB" => Tabs
 ;;
 
@@ -461,7 +469,7 @@
   ;; "v"
   "w"		'("[Window]" . cmx-hydra/window/body)
   "x"   '("[Capture]" . cmx-capture-keymap)
-  ;; "y"
+  "y"   '("[Copy]" . cmx-yank-keymap)
   ;; "z"
   )
 (defalias 'cmx-leader-keymap cmx-leader-keymap)
