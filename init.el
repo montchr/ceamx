@@ -114,7 +114,9 @@
 ;;;; Modeline
 (require 'init-ui-modeline)
 ;;(require 'init-ui-modeline-nano)
-(require 'init-ui-modeline-doom)
+;; TODO: maybe maybe not?
+(when (display-graphic-p)
+  (require 'init-ui-modeline-doom))
 
 ;;;; Sidebar
 ;; TODO: figure out how to load as late as possible?
