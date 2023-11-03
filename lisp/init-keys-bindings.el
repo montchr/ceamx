@@ -158,6 +158,8 @@
   ;; FIXME: does not exist
   ;; (keymap-set map "K" ("close others" . kill-other-buffers))
   "M" '("*Messages*" . view-echo-area-messages)
+  ;; TODO: maybe find a better place for this binding
+  "u" '("visual undo..." . vundo)
   "x" '("*scratch*" . scratch-buffer)
   ;; FIXME: something is odd here... not always detecting current
   ;; major mode? but *not always* not always
@@ -206,6 +208,7 @@
   ;; "y" #'+yank-this-file-name
   "C" '("copy..." . cmx/copy-this-file)
   "d" '("diff with..." . cmx/diff-with-file)
+  ;; FIXME: kill buffer on file deletion
   "D" '("delete" . cmx/delete-this-file)
   ;; TODO: show dirvish preview instead of dired preview
   ;; FIXME: flickering on every keystroke...?
@@ -495,6 +498,11 @@
 ;;
 
 (keymap-global-set "<remap> <keyboard-quit>" #'cmx/escape)
+
+;; macOS muscle-memory habits
+(when +sys-mac-p
+  (keymap-global-set "s-{" #'tab-previous)
+  (keymap-global-set "s-}" #'tab-next))
 
 (dolist (key '("M-["
                "M-{"

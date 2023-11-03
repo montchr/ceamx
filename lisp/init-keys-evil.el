@@ -231,6 +231,7 @@
              evil-Surround-edit
              evil-surround-region)
   :config
+  (evil-define-key '(visual) 'global "S" #'evil-surround-region)
   (global-evil-surround-mode +1))
 
 ;; can be loaded independently of evil
