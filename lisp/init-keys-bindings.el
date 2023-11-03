@@ -319,7 +319,7 @@
 (defvar-keymap cmx-open-keymap
   "d" #'dired
   "e" #'eshell
-  "l" '("link..." . link-hint)
+  "l" '("link..." . link-hint-open-link)
   "m" '("mail" . compose-mail)
   "n" '("news" . newsticker-show-news))
 (defalias 'cmx-open-keymap cmx-open-keymap)

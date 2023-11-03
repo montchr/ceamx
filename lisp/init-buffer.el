@@ -58,6 +58,16 @@
   ;; Don't muck with special buffers.
   (setopt uniquify-ignore-buffers-re "^\\*"))
 
+;;; `link-hint' :: <https://github.com/noctuid/link-hint.el>
+;;  avy-based link jumping
+(use-package link-hint
+  :after (avy)
+  :commands ( link-hint-open-link
+              link-hint-open-link-at-point)
+  :config
+  (after! [evil]
+    (evil-define-key '(normal) 'global "gO" #'link-hint-open-link)))
+
 ;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
 (use-package expand-region
   :commands er/expand-region
