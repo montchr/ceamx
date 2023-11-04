@@ -478,6 +478,7 @@
   "t"		'("[Toggle]" . cmx-toggle-keymap)
   ;; "u"
   ;; "v"
+  ;; FIXME: ditch the hydra, it makes no sense to me, barely even works
   "w"		'("[Window]" . cmx-hydra/window/body)
   "x"   '("[Capture]" . cmx-capture-keymap)
   "y"   '("[Copy]" . cmx-yank-keymap)

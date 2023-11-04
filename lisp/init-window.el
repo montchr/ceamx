@@ -110,11 +110,11 @@
 ---------------------------------------------------------
 ^Movement^    ^Split^         ^Switch^		  ^Resize^
 ---------------------------------------------------------
-  ^_k_^       _v_ertical      _b_uffer		  _q_ X←
-_h_   _l_     _x_ horizontal	_f_ind files	_w_ X↓
+  ^_k_^       _v_ert          _b_uffer		  _q_ X←
+_h_   _l_     _x_ horiz     	_f_ind files	_w_ X↓
   ^_j_^       _z_ undo      	_a_ce 1		    _e_ X↑
-              _Z_ reset      	_s_wap		    _r_ X→
-_F_ollow      _D_lt Other   	_S_ave		    max_i_mize
+^^            _Z_ reset      	_s_wap		    _r_ X→
+_F_ollow      _D_lt one   	  _S_ave
 _SPC_ cancel	_o_nly this   	_d_elete
 "
   ;; I usually only need to move one window at a time,
@@ -144,20 +144,12 @@ _SPC_ cancel	_o_nly this   	_d_elete
          (interactive)
          (split-window-below)
          (windmove-down)))
-  ("s" (lambda ()
-         (interactive)
-         (ace-window 4)
-         ;; FIXME: hook does not exist?
-         (add-hook 'ace-window-end-once-hook #'cmx-hydra/window/body)))
+  ("s" #'ace-window)
   ("S" #'burly-bookmark-windows)
   ("d" #'delete-window :color blue)
-  ("D" (lambda ()
-         (interactive)
-         (ace-window 16)
-         ;; FIXME: hook does not exist?
-         (add-hook 'ace-window-end-once-hook #'cmx-hydra/window/body)))
+  ("D" #'ace-delete-window)
   ("o" #'delete-other-windows  :color blue)
-  ("i" #'ace-maximize-window   :color blue)
+  ;; TODO: what the hell and where the hell did this come from and why?
   ("z" (progn
          (winner-undo)
          (setq this-command #'winner-undo)))
