@@ -150,22 +150,20 @@
 ;;
 
 (defvar-keymap cmx-buffer-keymap
+  ;; FIXME: only consider file-visiting buffers, or perhaps buffers i am editing (recent)
+  "[" '("prev" . previous-buffer)
+  "]" '("next" . next-buffer)
+
   "b" `("switch..." . consult-project-buffer)
   "B" '("switch (any)..." . consult-buffer)
+  "d" '("close" . kill-current-buffer)
+  "k" '("close (+win)" . kill-this-buffer)
+  "M" '("*Messages*" . view-echo-area-messages)
   "o" '("other" . mode-line-other-buffer)
-  ;; FIXME: only consider file-visiting buffers, or even better, buffers i am editing
-  "[" '("prev" . previous-buffer)
-  ;; FIXME: only consider file-visiting buffers, or even better, buffers i am editing
-  "]" '("next" . next-buffer)
   "r" '("revert" . revert-buffer)
   "R" '("rename..." . rename-buffer)
   "s" '("save" . save-buffer)
   "S" '("save all..." . save-some-buffers)
-  "d" '("close" . kill-current-buffer)
-  "k" '("close (+win)" . kill-this-buffer)
-  ;; FIXME: does not exist
-  ;; (keymap-set map "K" ("close others" . kill-other-buffers))
-  "M" '("*Messages*" . view-echo-area-messages)
   ;; TODO: maybe find a better place for this binding
   "u" '("visual undo..." . vundo)
   "x" '("*scratch*" . scratch-buffer)
@@ -177,11 +175,11 @@
 ;;
 
 (defvar-keymap cmx-code-keymap
-  ;; FIXME: wrong type argument commandp error if unavailable
+  ;; FIXME: wrong type argument commandp error if unavailable -- language server must support it
   "a" '("action.." . lsp-execute-code-action)
-  "g" '("go to..." . cmx-goto-keymap)
-  ;; FIXME: wrong type argument commandp error if unavailable
-  "r" '("rename..." . lsp-rename))
+  "r" '("rename..." . lsp-rename)
+
+  "g" '("go to..." . cmx-goto-keymap))
 (defalias 'cmx-code-keymap cmx-code-keymap)
 
 ;;
@@ -215,7 +213,7 @@
   ;; FIXME: kill buffer on file deletion
   "D" '("delete" . cmx/delete-this-file)
   ;; TODO: show dirvish preview instead of dired preview
-  ;; FIXME: flickering on every keystroke...?
+  ;; FIXME: flickering on every keystroke...? prob cos of bad flags (see `init-files')
   "f" '("find (g)..." . find-file)
   "R" '("rename/move..." . cmx/move-this-file)
   "s" '("save" . save-buffer)
