@@ -193,9 +193,12 @@
   "d" #'eval-defun
   "e" #'eval-last-sexp
   "E" #'eval-expression
-  "I" '("reload init-file" . (lambda ()
-                               (interactive)
-                               (load-file user-init-file)))
+  ;; FIXME: this doesn't actually work as advertised -- in fact, this might not
+  ;; be possible, strictly speaking (would need some kind of abstraction for
+  ;; user config like that of spacemacs or doom)
+  ;; "I" '("reload init-file" . (lambda ()
+  ;;                              (interactive)
+  ;;                              (load-file user-init-file)))
   "r" #'eval-region)
 (defalias 'cmx-elisp-keymap cmx-elisp-keymap)
 
