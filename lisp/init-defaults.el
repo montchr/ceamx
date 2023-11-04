@@ -152,9 +152,5 @@
 (setq-default cursor-type '(hbar .  2))
 (setq-default cursor-in-non-selected-windows nil)
 
-;; TODO: configure in nix home-manager config based on selected profile
-;;       note, however, that as of writing, i don't have a setting for default browser
-(setopt browse-url-browser-function 'browse-url-firefox)
-
 (provide 'init-defaults)
 ;;; init-defaults.el ends here
