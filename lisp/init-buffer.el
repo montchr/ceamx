@@ -77,10 +77,7 @@
 ;;; `scratch' :: <https://codeberg.org/emacs-weirdware/scratch>
 ;;  Mode-specific scratch buffers.
 (use-package scratch
-  :commands scratch
-  :config
-  (keymap-set cmx-buffer-keymap "X"
-              `("*scratch* (same mode)" . ,(cmd! (scratch major-mode)))))
+  :commands scratch)
 
 ;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
 (use-package page-break-lines

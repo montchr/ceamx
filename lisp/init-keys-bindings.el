@@ -169,11 +169,7 @@
   ;; TODO: maybe find a better place for this binding
   "u" '("visual undo..." . vundo)
   "x" '("*scratch*" . scratch-buffer)
-  ;; FIXME: something is odd here... not always detecting current
-  ;; major mode? but *not always* not always
-  ;; "X" '("*scratch* (same mode)" . scratch)
-  )
-
+  "X" `("*scratch* (m)" . ,(cmd! (scratch major-mode))))
 (defalias 'cmx-buffer-keymap cmx-buffer-keymap)
 
 ;;
