@@ -1,8 +1,12 @@
 ;;; init-keys-evil.el --- Evil keybindings initialization  -*- lexical-binding: t; -*-
 
+;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT
+
 ;; Copyright (C) 2023  Chris Montgomery
+;; Copyright (C) 2014-2022  Henrik Lissner
 
 ;; Author: Chris Montgomery <chris@cdom.io>
+;;         Henrik Lissner
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -53,11 +57,11 @@
 
 ;;; Code:
 
+(require 'elpaca)
+
 (require 'config-keys)
 (require 'lib-common)
 (require 'lib-keys)
-
-(autoload 'elpaca-wait "elpaca")
 
 ;;
 ;;; Configuration

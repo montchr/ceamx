@@ -26,9 +26,10 @@
 
 ;;; Code:
 
-;;; Configure module load path.
-(add-to-list 'load-path (expand-file-name "lisp" +path-emacs-dir))
-(add-to-list 'load-path (expand-file-name "lisp/lib" +path-emacs-dir))
+;;; Configure load path.
+(dolist (subdir '("autoloads" "lisp" "lisp/lib"))
+  (let ((dir (expand-file-name subdir +path-emacs-dir)))
+    (add-to-list 'load-path dir)))
 
 ;;; Profile startup time.
 (require 'init-benchmarking)
@@ -67,8 +68,12 @@
 (when (display-graphic-p)
   (require 'lib-gui))
 
-
 (require 'lib-files)
+
+;; FIXME: needs autoloads of its own -- missing dependencies (esp. evil)
+;;        another reason some kind of module-like directory organization
+;;        with its own set of autoloads would allow for better encapsulation
+;; (require 'ceamx-autoloads)
 
 ;; Prepend the site-lisp directory and its immediate subdirectories to the load path.
 (push +path-site-lisp-dir load-path)
