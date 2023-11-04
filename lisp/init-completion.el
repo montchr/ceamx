@@ -33,7 +33,6 @@
 
 ;;; Code:
 
-(require 'config-packages)
 (require 'lib-completion)
 
 ;; TAB cycle if there are only few candidates
@@ -82,7 +81,7 @@
 ;;  Corfu-endorsed solution to making it usable in terminal.
 ;;  See also `popon', the utility library powering the interface.
 (use-package corfu-terminal
-  :elpaca corfu-terminal-elpaca-order
+  :elpaca (corfu-terminal :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
   :if (not (display-graphic-p))
   :after (popon corfu)
   :config
@@ -90,12 +89,17 @@
 
 ;;; `corfu-doc-terminal' :: <https://codeberg.org/akib/emacs-corfu-doc-terminal>
 ;;  Support for completion candidate documentation flyouts in terminal.
-(use-package corfu-doc-terminal
-  :elpaca corfu-doc-terminal-elpaca-order
-  :after (corfu-terminal)
-  :if (not (display-graphic-p))
-  :config
-  (corfu-doc-terminal-mode +1))
+;;
+;;  FIXME: missing `corfu-doc' dependency -- that package was integrated into
+;;  corfu core, but still not available. since this is a non-essential
+;;  enhancement, it will probably be removed.
+;;
+;; (use-package corfu-doc-terminal
+;;   :elpaca (corfu-doc-terminal :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git")
+;;   :after (corfu-terminal)
+;;   :if (not (display-graphic-p))
+;;   :config
+;;   (corfu-doc-terminal-mode +1))
 
 (use-feature dabbrev
   :config

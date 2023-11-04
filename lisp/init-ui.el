@@ -24,7 +24,6 @@
 
 ;;; Code:
 
-(require 'config-packages)
 (require 'lib-hydras)
 
 ;; Required as a dependency for many packages, including some (like
@@ -33,7 +32,8 @@
 
 ;;; popon :: <https://codeberg.org/akib/emacs-popon>
 ;;  "Pop" floating text "on" a window
-(use-package popon :elpaca popon-elpaca-order
+(use-package popon
+  :elpaca (popon :repo "https://codeberg.org/akib/emacs-popon.git")
   :autoload (popon-create
              popon-kill
              popon-x-y-at-pos))
