@@ -266,6 +266,7 @@
   "F" #'describe-face
   "k" #'describe-key
   "l" #'apropos-library
+  "m" #'describe-mode
   "o" #'describe-symbol
   "t" '("text properties" . (lambda () (interactive)
                               (describe-text-properties (point))))
