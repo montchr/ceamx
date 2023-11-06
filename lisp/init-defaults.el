@@ -72,7 +72,11 @@
 (setopt initial-major-mode #'text-mode)
 
 ;; Automatic hard wrapping at 80 characters.
-(setq auto-fill-mode t)
+;; FIXME: contextually only!
+;; TODO: move to `init-editor'
+;; NOTE: p sure setting the variable does nothing -- because i would def know if it was working
+;;       obviously copypasta
+;; (setq auto-fill-mode t)
 (setopt fill-column 80)
 
 ;; Increase number of messages saved in log.
