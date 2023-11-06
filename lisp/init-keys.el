@@ -49,11 +49,12 @@
   ;; Free up the right-side option key for character composition.
   (setopt mac-right-option-modifier 'none)
   (setopt ns-right-option-modifier 'none)
-  ;; Common system clipboard hotkeys.
-  (global-set-key [(s c)] 'kill-ring-save)
-  (global-set-key [(s v)] 'yank)
-  (global-set-key [(s x)] 'kill-region)
-  (global-set-key [(s q)] 'kill-emacs))
+  ;; Common system hotkeys.
+  (define-keymap :keymap (current-global-map)
+    "s-c" #'kill-ring-save
+    "s-v" #'yank
+    "s-x" #'kill-region
+    "s-q" #'save-buffers-kill-emacs))
 
 ;; HACK: Emacs cannot distinguish between C-i from TAB. This is largely a
 ;;   byproduct of its history in the terminal, which can't distinguish them
