@@ -79,13 +79,13 @@
 (use-package scratch
   :commands scratch)
 
+
 ;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
+;;  Make form-feed (page-break) characters serve their purpose, visually.
 (use-package page-break-lines
-  :defer 1
   :commands (global-page-break-lines-mode)
   :config
   (global-page-break-lines-mode))
-
 
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
