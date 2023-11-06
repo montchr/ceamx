@@ -63,7 +63,7 @@
 (require 'config-lisp)
 (require 'lib-common)
 (require 'lib-keys)
-(require 'lib-keys-evil)
+
 
 ;;
 ;;; Configuration
@@ -184,6 +184,11 @@
     )
 
   (evil-mode 1))
+
+(elpaca-wait)
+
+;; FIXME: this is terrible -- must be loaded after evil
+(require 'lib-keys-evil)
 
 ;;
 ;;; `evil-collection' :: <https://github.com/emacs-evil/evil-collection>
