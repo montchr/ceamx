@@ -43,44 +43,46 @@
 (use-package suggest
   :commands (suggest))
 
-(use-package lispy
+;; TODO: investigate rigpa
+;; FIXME: a bunch of warnings on emacs init
+;;; `symex' :: <https://github.com/drym-org/symex.el>
+;;  structural editing for symbolic expressions in lisp modes
+(use-package symex
+  :diminish
+
+  ;; NOTE: the readme says settings should be added to `:custom', but i take
+  ;; that to mean that they should be set in a customize-friendly way
   :config
-  (dolist (mode cmx-lisp-mode-list)
-    (let ((hook (intern (format "%S-hook" mode))))
-      (add-hook hook (cmd! (lispy-mode 1)))))
+  (setopt symex-modal-backend 'evil)
 
-  ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
-  ;; in favor of just moving past the closing quote as I would expect.
-  (setopt lispy-close-quotes-at-end-p t)
+  (symex-initialize)
 
-  ;; TODO: Remove after <https://github.com/abo-abo/lispy/pull/619> (if ever?)
-  ;; (keymap-unset lispy-mode-map "`" t) ; <- does not work. why not?
-  (keymap-set lispy-mode-map "`"   #'self-insert-command)
+  (keymap-global-set "s-;" #'symex-mode-interface)
 
-  (keymap-set lispy-mode-map "M-v" nil))
+  ;; Rebind ESC when `symex-mode' is active, as it is preferred over Evil normal state.
+  ;; via <https://github.com/drym-org/symex.el/issues/24>
+  (evil-define-key '(normal insert) symex-mode-map
+    (kbd "<escape>") 'symex-mode-interface)
 
-;;
-;;; `lispyville' :: <https://github.com/noctuid/lispyville>
-;;
+  ;; In case Symex's reversal of the muscle-memory j/k bindings becomes too much.
+  ;; See <https://github.com/drym-org/symex.el?tab=readme-ov-file#up-and-down>
+  ;;
+  ;; (setq symex--user-evil-keyspec
+  ;;     '(("j" . symex-go-up)
+  ;;       ("k" . symex-go-down)
+  ;;       ("C-j" . symex-climb-branch)
+  ;;       ("C-k" . symex-descend-branch)
+  ;;       ("M-j" . symex-goto-highest)
+  ;;       ("M-k" . symex-goto-lowest)))
+  )
 
-(use-package lispyville
-  :after (evil lispy)
-  :defines (lispyville-key-theme)
-
-  :init
-  ;; via doom
-  (setq lispyville-key-theme
-        '((operators normal)
-          c-w
-          (prettify insert)
-          (atom-movement t)
-          slurp/barf-lispy
-          additional
-          additional-insert))
-  (add-hook 'lispy-mode-hook #'lispyville-mode)
-
-  :config
-  (lispyville-set-key-theme))
+;; TODO
+;; <https://github.com/bbatsov/prelude/blob/b57ff48e0985a6ef0f1ed9b279ec487c55982334/core/prelude-core.el#L147>
+;; (defun prelude-wrap-with (s)
+;;   "Create a wrapper function for smartparens using S."
+;;   `(lambda (&optional arg)
+;;      (interactive "P")
+;;      (sp-wrap-with-pair ,s)))
 
 (provide 'init-lisp)
 ;;; init-lisp.el ends here
