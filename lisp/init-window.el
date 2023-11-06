@@ -48,13 +48,12 @@
 (use-feature winner
   :config (winner-mode))
 
+;;; `olivetti-mode'
 (use-package olivetti :defer t
   :hook (org-mode . olivetti-mode))
 
-;;
 ;;; popper -- <https://github.com/karthink/popper>
 ;;  "minor-mode to summon and dismiss buffers easily."
-
 (use-package popper
   :diminish
   :commands (popper-mode
@@ -89,72 +88,9 @@
   (after! [projectile]
     (setopt popper-group-function #'popper-group-by-projectile)))
 
-;;
 ;;; `ace-window' :: <https://github.com/abo-abo/ace-window>
-;;
-
 (use-package ace-window
   :after avy)
-
-;;
-;;; Window management hydra
-;;
-
-;; Depends on `ace-window', `projectile', and of course, `hydra'.
-;; Maybe others too.
-;;
-;; Bound in `cmx-leader-keymap'
-
-(defhydra cmx-hydra/window (:hint nil)
-  "
----------------------------------------------------------
-^Movement^    ^Split^         ^Switch^		  ^Resize^
----------------------------------------------------------
-  ^_k_^       _v_ert          _b_uffer		  _q_ X←
-_h_   _l_     _x_ horiz     	_f_ind files	_w_ X↓
-  ^_j_^       _z_ undo      	_a_ce 1		    _e_ X↑
-^^            _Z_ reset      	_s_wap		    _r_ X→
-_F_ollow      _D_lt one   	  _S_ave
-_SPC_ cancel	_o_nly this   	_d_elete
-"
-  ;; I usually only need to move one window at a time,
-  ;; so red breaks flow.
-  ("h" #'windmove-left   :color blue)
-  ("j" #'windmove-down   :color blue)
-  ("k" #'windmove-up     :color blue)
-  ("l" #'windmove-right  :color blue)
-
-  ("q" #'hydra-move-splitter-left)
-  ("w" #'hydra-move-splitter-down)
-  ("e" #'hydra-move-splitter-up)
-  ("r" #'hydra-move-splitter-right)
-  ("b" #'consult-buffer)
-  ("f" #'projectile-find-file)
-  ("F" #'follow-mode)
-  ("a" (lambda ()
-         (interactive)
-         (ace-window 1)
-         ;; FIXME: hook does not exist?
-         (add-hook 'ace-window-end-once-hook #'cmx-hydra/window/body)))
-  ("v" (lambda ()
-         (interactive)
-         (split-window-right)
-         (windmove-right)))
-  ("x" (lambda ()
-         (interactive)
-         (split-window-below)
-         (windmove-down)))
-  ("s" #'ace-window)
-  ("S" #'burly-bookmark-windows)
-  ("d" #'delete-window :color blue)
-  ("D" #'ace-delete-window)
-  ("o" #'delete-other-windows  :color blue)
-  ;; TODO: what the hell and where the hell did this come from and why?
-  ("z" (progn
-         (winner-undo)
-         (setq this-command #'winner-undo)))
-  ("Z" #'winner-redo)
-  ("SPC" nil))
 
 (provide 'init-window)
 ;;; init-window.el ends here

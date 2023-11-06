@@ -101,6 +101,58 @@ If `evil-vsplit-window-right' is non-nil, the new window isn't focused."
   (evil-normal-state)
   (evil-visual-restore))
 
+;;; window management
+
+(defun +evil--window-swap (direction)
+  "Move current window to the next window in DIRECTION.
+If there are no windows there and there is only one window, split in that
+direction and place this window there. If there are no windows and this isn't
+the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
+  (when (window-dedicated-p)
+    (user-error "Cannot swap a dedicated window"))
+  (let* ((this-window (selected-window))
+         (this-buffer (current-buffer))
+         (that-window (window-in-direction direction nil this-window))
+         (that-buffer (window-buffer that-window)))
+    (when (or (minibufferp that-buffer)
+              (window-dedicated-p this-window))
+      (setq that-buffer nil that-window nil))
+    (if (not (or that-window (one-window-p t)))
+        (funcall (pcase direction
+                   ('left  #'evil-window-move-far-left)
+                   ('right #'evil-window-move-far-right)
+                   ('up    #'evil-window-move-very-top)
+                   ('down  #'evil-window-move-very-bottom)))
+      (unless that-window
+        (setq that-window
+              (split-window this-window nil
+                            (pcase direction
+                              ('up 'above)
+                              ('down 'below)
+                              (_ direction))))
+        (with-selected-window that-window
+          (scratch-buffer))
+        (setq that-buffer (window-buffer that-window)))
+      (window-swap-states this-window that-window)
+      (select-window that-window))))
+
+;;;###autoload
+(defun cmx/evil/window-move-left ()
+  "Swap windows to the left."
+  (interactive) (+evil--window-swap 'left))
+;;;###autoload
+(defun cmx/evil/window-move-right ()
+  "Swap windows to the right"
+  (interactive) (+evil--window-swap 'right))
+;;;###autoload
+(defun cmx/evil/window-move-up ()
+  "Swap windows upward."
+  (interactive) (+evil--window-swap 'up))
+;;;###autoload
+(defun cmx/evil/window-move-down ()
+  "Swap windows downward."
+  (interactive) (+evil--window-swap 'down))
+
 ;;
 ;;; Operators
 ;;

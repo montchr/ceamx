@@ -20,16 +20,18 @@
 
 ;;; Commentary:
 
-;; TODO: use `define-prefix-command' instead of aliases
+;; TODO: quikgrok descriptions for `cmx-window-keymap' defs
 ;; TODO: s/cmx-*-keymap/cmx-*-map -- this is Emacs convention (see `define-minor-mode' docs)
+;; FIXME: there is no way to update the leader when modifying its composite arm
+;;        maps after binding the leader itself, unless you re-bind the leader
+;;        key too. or maybe this is caused by using `defalias'?
+;; TODO: use `define-prefix-command' instead of aliases
+;;       -- though i still haven't figured out how it works
 
-;; FIXME: regardless of preference, there is no way to update the
-;; leader when modifying its composite arm maps after binding the
-;; leader itself, unless you re-bind the leader key too. or maybe this
-;; is caused by using `defalias'?
-
-;; I prefer to see everything in one place rather than have bindings
+;; I like to see everything in one place rather than have bindings
 ;; scattered through many files. Perhaps I will change my mind someday.
+;; On the other hand, I understand the logic in colocation for the sake of modularity.
+;; But this is my brain, not someone else's.
 
 ;; While I know I could benefit from using general.el (I have in the past),
 ;; I am avoiding `general' for a few reasons:
@@ -66,7 +68,6 @@
 ;;   It's also worth noting that this approach comes from Emacs core's
 ;;   definition of `kmacro-keymap'. However, regardless, the Emacs 29+
 ;;   keybinding functions also do not cause any issues.
-
 
 ;;; Code:
 
@@ -413,6 +414,56 @@
 (defalias 'cmx-toggle-keymap cmx-toggle-keymap)
 
 ;;
+;;; "w" => Window
+;;
+
+;; Largely based on Doom bindings, which are based on `evil-window-map'.
+
+(defvar-keymap cmx-window-keymap
+  :doc "Custom keymap for window management."
+
+  ;;; default
+  "w" #'ace-window
+
+  ;;; tune
+  "="  #'balance-windows
+  ">"  #'evil-window-increase-width
+  "<"  #'evil-window-decrease-width
+
+  ;;; navigate
+  "h"      #'evil-window-left
+  "j"      #'evil-window-down
+  "k"      #'evil-window-up
+  "l"      #'evil-window-right
+  "C-h"    #'evil-window-left
+  "C-j"    #'evil-window-down
+  "C-k"    #'evil-window-up
+  "C-l"    #'evil-window-right
+  "C-w"    #'other-window
+
+  ;;; swap
+  "H"      #'cmx/evil/window-move-left
+  "J"      #'cmx/evil/window-move-down
+  "K"      #'cmx/evil/window-move-up
+  "L"      #'cmx/evil/window-move-right
+  "r"      #'evil-window-rotate-downwards
+  "R"      #'evil-window-rotate-upwards
+  "C-S-w"  #'ace-swap-window
+
+  ;;; mutate
+  "d"      #'evil-window-delete
+  "n"      #'evil-window-new
+  "o"      #'delete-other-windows
+  "s"      #'evil-window-split
+  "T"      #'tear-off-window
+  "u"      #'winner-undo
+  "v"      #'evil-window-vsplit
+  "C-c"    #'ace-delete-window
+  "C-r"    #'winner-redo
+  "C-u"    #'winner-undo)
+(defalias 'cmx-window-keymap cmx-window-keymap)
+
+;;
 ;;; "y" => Copy / Evil Yank
 ;;
 
@@ -475,8 +526,7 @@
   "t"		'("[Toggle]" . cmx-toggle-keymap)
   ;; "u"
   ;; "v"
-  ;; FIXME: ditch the hydra, it makes no sense to me, barely even works
-  "w"		'("[Window]" . cmx-hydra/window/body)
+  "w"		'("[Window]" . cmx-window-keymap)
   "x"   '("[Capture]" . cmx-capture-keymap)
   "y"   '("[Copy]" . cmx-yank-keymap)
   ;; "z"
@@ -631,10 +681,6 @@
     ;; FIXME: conflicts with desired K bind
     ;; (define-key evil-normal-state-map "K" 'evil-jump-out-args)
     )
-
-
-
-
 
   ) ; end `(after! [evil])'
 
