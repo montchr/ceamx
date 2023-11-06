@@ -330,7 +330,8 @@
   "e" #'eshell
   "l" '("link..." . link-hint-open-link)
   "m" '("mail" . compose-mail)
-  "n" '("news" . newsticker-show-news))
+  "n" '("news" . newsticker-show-news)
+  "s" #'suggest)
 (defalias 'cmx-open-keymap cmx-open-keymap)
 
 ;;

@@ -37,10 +37,11 @@
   :hook (emacs-lisp-mode)
   :diminish eldoc-mode)
 
-;;
-;;; `lispy' :: <https://github.com/abo-abo/lispy>
-;;
-;;  <http://oremacs.com/lispy/>
+;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
+;;  discover elisp functions that do what you want,
+;;  brought to you by enumerative program synthesis
+(use-package suggest
+  :commands (suggest))
 
 (use-package lispy
   :config
