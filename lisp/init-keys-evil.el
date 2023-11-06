@@ -314,8 +314,7 @@
                             (embrace-build-help "\\?" "\\?")))
 
   :config
-  ;; (setopt evil-embrace-show-help-p nil)
-  )
+  (setopt evil-embrace-show-help-p t))
 
 ;;
 ;;; `evil-escape' :: <https://github.com/emacsorphanage/evil-escape/>
