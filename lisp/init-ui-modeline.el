@@ -35,7 +35,8 @@
   :config
   (which-function-mode 1))
 
-(use-package diminish)
+(use-package diminish
+  :demand t)
 ;; Wait until `diminish` is activated so its use-package keyword is installed
 (elpaca-wait)
 
