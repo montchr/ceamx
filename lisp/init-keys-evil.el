@@ -60,8 +60,10 @@
 (require 'elpaca)
 
 (require 'config-keys)
+(require 'config-lisp)
 (require 'lib-common)
 (require 'lib-keys)
+(require 'lib-keys-evil)
 
 ;;
 ;;; Configuration
