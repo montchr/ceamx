@@ -53,6 +53,11 @@
   ;; Prettier is a commonly-used formatter for several languages.
   (reformatter-define prettier :program "prettier"))
 
+;; TODO: <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/modules/config/default/config.el#L83>
+;; TODO: TAB back and forth between parens in normal state
+;;       chatgpt tells me that smartparens is responsible for that in doom emacs, we shall see...
+;;       ok i just installed doom in a scratch directory and weirdly enough i'm not seeing the behavior i remember at all
+;;       but hey, it would be nice, right?
 ;;; `smartparens' :: <https://github.com/Fuco1/smartparens>
 (use-package smartparens
   :config
@@ -75,8 +80,7 @@
   ;; (define-key prog-mode-map (kbd "M-\"") (prelude-wrap-with "\""))
 
   ;; Load `smartparens' just about everywhere editable.
-  ;; TODO: why is `org-mode' absent? does org do its own thing?
-  ;; TODO: abstract to a function, this logic is duplicative of elsewhere
+  ;; FIXME: avoid constructing names -- obscures usages
   (dolist (mode '(prog-mode text-mode markdown-mode))
     (let ((mode-hook (intern (format "%S-hook" mode))))
       (add-hook mode-hook #'smartparens-mode))))

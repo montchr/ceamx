@@ -50,6 +50,7 @@
   (run-hooks 'cmx-after-enable-theme-hook))
 (advice-add 'enable-theme :after #'cmx-after-enable-theme-hook)
 
+;; TODO: why? also move to `init-ui-font'
 (setopt font-lock-maximum-decoration t)
 (setopt default-frame-alist
       (append (list

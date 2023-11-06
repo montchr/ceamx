@@ -34,8 +34,9 @@
 (setopt dired-mouse-drag-files t)
 (setopt mouse-drag-and-drop-region-cross-program t)
 
-;; <https://github.com/alexluigit/dirvish>
-;; <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#Sample-config>
+;;; `dirvish' :: <https://github.com/alexluigit/dirvish>
+;;
+;;  <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#Sample-config>
 (use-package dirvish
   :defer t
   :after (all-the-icons)
@@ -45,6 +46,7 @@
              dirvish-side-follow-mode)
 
   :init
+  ;; FIXME: not working? too early?
   (dirvish-override-dired-mode)
 
   ;; TODO

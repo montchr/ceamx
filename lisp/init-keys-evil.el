@@ -244,6 +244,7 @@
 ;;  <https://github.com/cute-jumper/embrace.el?tab=readme-ov-file#for-evil-surround-users>
 ;;  <https://github.com/cute-jumper/evil-embrace.el/tree/master?tab=readme-ov-file#why>
 
+;; FIXME: disable insertion of extra padding space by default, but allow the option to override
 ;;; `evil-surround' :: <https://github.com/emacs-evil/evil-surround/>
 (use-package evil-surround
   :after evil
@@ -263,6 +264,7 @@
   (add-hook 'org-mode-hook 'embrace-org-mode-hook)
   (add-hook 'ruby-mode-hook 'embrace-ruby-mode-hook))
 
+;;; `evil-embrace' :: <https://github.com/cute-jumper/evil-embrace.el>
 (use-package evil-embrace
   :after (evil embrace)
 

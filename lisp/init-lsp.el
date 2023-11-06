@@ -82,7 +82,7 @@
   :config
   (setopt lsp-eldoc-enable-hover t)
   (setopt lsp-enable-on-type-formatting nil)
-  ;; FIXME: snippets are good? but this depends on yasnippet
+  ;; TODO: snippets are good? but this depends on yasnippet
   (setopt lsp-enable-snippet nil)
   (setopt lsp-enable-xref t)
   (setopt lsp-lens-enable t)

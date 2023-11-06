@@ -25,6 +25,8 @@
 
 ;;  Better is better, maybe.
 
+;; TODO: move settings to appropriate feature files for discoverability
+
 ;;; Code:
 
 ;;; `no-littering' :: <https://github.com/emacscollective/no-littering>
@@ -134,6 +136,7 @@
 
 ;; "More performant rapid scrolling over unfontified regions. May cause brief
 ;; spells of inaccurate fontification immediately after scrolling."
+;; TODO: move to `init-ui'?
 (setopt fast-but-imprecise-scrolling t)
 
 ;; Don’t compact font caches during garbage collection.
@@ -143,6 +146,7 @@
 (setq inhibit-compacting-font-caches t)
 
 ;; TODO: Ideally, this action should only affect edited lines.
+;; TODO: move to `init-editor'
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (setopt use-file-dialog nil)
