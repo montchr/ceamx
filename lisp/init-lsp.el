@@ -71,7 +71,9 @@
   (setopt lsp-restart 'ignore)
   (setopt lsp-headerline-breadcrumb-enable nil)
   ;; Keybindings are handled manually.
-  (setopt lsp-keymap-prefix nil)
+  ;; FIXME: figure out how to disable for real?
+  ;; FIXME: invalid value -- should be string
+  ;; (setopt lsp-keymap-prefix nil)
 
   ;;; Disable performance-hindering features.
 	(setopt lsp-enable-file-watchers nil)
