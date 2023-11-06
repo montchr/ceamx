@@ -104,9 +104,6 @@
 
   (treemacs-hide-gitignored-files-mode nil)
 
-  (defvar-keymap cmx-explore-keymap
-    "t" #'treemacs)
-
 
   :bind
   ;; TODO: add to new sidebar keymap in `init-keys'
