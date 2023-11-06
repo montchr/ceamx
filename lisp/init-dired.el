@@ -27,9 +27,9 @@
 
 ;;; Code:
 
-;; FIXME: errors (prob incompatible with `exa')
-(setopt dired-listing-switches
-      "-l --almost-all --human-readable --group-directories-first --no-group")
+;; FIXME: errors (incompatible with `eza'? but which command does it actually run? depends on $PATH or no?)
+;; (setopt dired-listing-switches
+;;       "-l --almost-all --human-readable --group-directories-first --no-group")
 (setopt dired-kill-when-opening-new-dired-buffer t)
 (setopt dired-mouse-drag-files t)
 (setopt mouse-drag-and-drop-region-cross-program t)
