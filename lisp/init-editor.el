@@ -95,6 +95,15 @@
 (use-package hl-todo
   :hook (prog-mode . hl-todo-mode))
 
+(after! [hl-line]
+  ;; Highlight current line.
+  (global-hl-line-mode +1))
+
+
+;;
+;;; Mutations
+;;
+
 ;;
 ;;; drag-stuff :: <https://github.com/rejeep/drag-stuff.el>
 ;;
