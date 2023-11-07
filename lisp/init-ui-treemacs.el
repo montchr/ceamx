@@ -117,13 +117,6 @@
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag)))
 
-(use-package treemacs-icons-dired
-  :hook (dired-mode . treemacs-icons-dired-enable-once))
-
-;; (use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
-;;   :after (treemacs persp-mode) ;;or perspective vs. persp-mode
-;;   :config (treemacs-set-scope-type 'Perspectives))
-
 (use-package treemacs-tab-bar
   :if tab-bar-mode
   :after (treemacs)
