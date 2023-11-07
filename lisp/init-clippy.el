@@ -25,7 +25,14 @@
 
 ;; "It looks like you're writing an Emacs. Would you like help?"
 
-;; TODO: consider using flymake? why need flycheck?
+;; If you are ever wonder "why do you need `flycheck'? Why not just use
+;; `flymake'?" The answer is that `flymake' is pretty terrible compared to
+;; `flycheck'. `flymake' does not even come anywhere close, especially in terms
+;; of language support. At the time of writing, Flycheck's comparison states
+;; that Flymake only supports 10 languages by default, with little option for
+;; expansion in terms of third-party package support.
+;;
+;; <https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
 
 ;;; Code:
 
@@ -43,11 +50,12 @@
 
 
 (use-package flycheck
-  :commands (global-flycheck-mode)
   :init
   (setq-default flycheck-emacs-lisp-load-path 'inherit)
   (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled))
   (setq-default flycheck-global-modes '(prog-mode))
+  ;; `global-flycheck-mode' seems to have no effect, so load on hook.
+  (add-hook 'prog-mode-hook #'flycheck-mode)
   :config
   (global-flycheck-mode +1))
 
