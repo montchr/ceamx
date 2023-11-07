@@ -581,6 +581,9 @@
 ;;
 
 (after! [evil]
+  ;; Don't let evil trample over the immensely-useful question mark.
+  (evil-define-key '(normal visual motion) 'global "?" nil)
+
   ;;; Normal state
   (define-keymap :keymap evil-normal-state-map
     "g d"  #'xref-find-definitions
