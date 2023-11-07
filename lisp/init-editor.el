@@ -99,6 +99,9 @@
   ;; Highlight current line.
   (global-hl-line-mode +1))
 
+;;; `rainbow-delimiters' :: <https://github.com/Fanael/rainbow-delimiters>
+(use-package rainbow-delimiters
+  :commands (rainbow-delimiters-mode))
 
 ;;
 ;;; Mutations

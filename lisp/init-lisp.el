@@ -65,6 +65,9 @@
 ;;   ;; (add-hook 'flycheck-mode-hook #'+emacs-lisp-non-package-mode)
 ;;   )
 
+(after! 'rainbow-delimiters
+  (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode))
+
 (after! 'smartparens
   (smartparens-strict-mode +1))
 
