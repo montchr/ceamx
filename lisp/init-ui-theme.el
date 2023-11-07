@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(require 'config-ui-theme)
+(require 'config-ui)
 (require 'lib-ui-theme)
 
 ;; Don't prompt to confirm theme safety.

@@ -104,8 +104,10 @@
 (require 'init-xterm)
 (require 'init-frame)
 
-;;;; Theme
+(require 'config-ui)
 (require 'init-ui)
+
+;;;; Theme
 (require 'init-ui-theme)
 ;; TODO: probably not for tty
 (require 'init-ui-modus-themes)
@@ -118,10 +120,12 @@
 
 ;;;; Modeline
 (require 'init-ui-modeline)
-;;(require 'init-ui-modeline-nano)
-;; TODO: maybe maybe not?
+;; TODO: why not tty?
 (when (display-graphic-p)
-  (require 'init-ui-modeline-doom))
+  (pcase cmx-modeline-provider
+    (`nano           (require 'init-ui-modeline-nano))
+    (`doom-modeline  (require 'init-ui-modeline-doom))
+    (`telephone-line (require 'init-ui-modeline-telephone-line))))
 
 ;;;; Sidebar
 ;; TODO: figure out how to load as late as possible?

@@ -1,9 +1,9 @@
-;;; config-ui-theme.el ---Theme configuration variables  -*- lexical-binding: t; -*-
+;;; config-ui.el --- General UI settings             -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords:
+;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -20,13 +20,15 @@
 
 ;;; Commentary:
 
-;;
+;; FIXME: defcustom with preset options
 
 ;;; Code:
 
-;; Since the Modus Themes are part of Emacs, these are good defaults.
 (defvar cmx-ui-theme-dark 'modus-vivendi "Preferred dark theme.")
+
 (defvar cmx-ui-theme-light 'modus-operandi "Preferred light theme.")
 
-(provide 'config-ui-theme)
-;;; config-ui-theme.el ends here
+(defvar cmx-modeline-provider 'doom-modeline)
+
+(provide 'config-ui)
+;;; config-ui.el ends here
