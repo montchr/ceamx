@@ -92,6 +92,43 @@ all hooks after it are ignored.")
 ;;   "a" #'view-hello-file
 ;;   "b" #'helpful-key)
 
+;; works.
+;; TODO: docstring
+(defmacro def-arm! (sym key description &rest defs)
+  (declare (indent defun))
+  `(progn
+     (define-prefix-command (quote ,sym))
+     (define-keymap
+       :keymap ,sym
+       ,@defs)
+     (keymap-set cmx-leader-keymap ,key '(,description . ,sym))))
+
+;; TODO: define in config
+(defvar cmx-mode-specific-arm-key "m")
+
+(require 'cl-lib)
+
+(cl-defmacro def-mode-arm! (mode description &rest defs)
+  "Define the mode-specific leader arm for MODE with DESCRIPTION and bindings DEFS."
+  (declare (doc-string 2)
+           (indent defun))
+  (progn
+    (let* ((mode-name (symbol-name mode))
+           (keymap-sym (intern (format "cmx-%s-specific-map" mode-name)))
+           (description description)
+           (defs (or defs nil)))
+      `(def-arm! ,keymap-sym "m"
+         ,description
+         ,@defs))))
+
+(def-mode-arm! emacs-lisp-mode "Something"
+  "v" #'zone)
+
+
+;; (defvar cmx-emacs-lisp-mode-map nil)
+;; (def-mode-arm! emacs-lisp-mode
+;;   "e" '("eeeevvvv" . eval-defun))
+
 
 
 (provide 'lib-keys)
