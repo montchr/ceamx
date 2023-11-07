@@ -49,21 +49,21 @@
   ;; FIXME: not working? too early?
   (dirvish-override-dired-mode)
 
-  ;; TODO
-  ;; :custom
-  ;; (dirvish-quick-access-entries ; It's a custom option, `setq' won't work
-  ;;  '(("h" "~/"                          "Home")
-  ;;    ("d" "~/Downloads/"                "Downloads")
-  ;;    ("m" "/mnt/"                       "Drives")
-  ;;    ("t" "~/.local/share/Trash/files/" "TrashCan")))
-
   :config
   (dirvish-peek-mode) ; Preview files in minibuffer
   (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
 
+  ;; TODO: use consts
+  (setopt dirvish-quick-access-entries
+          '(("c" "~/Documents/cheatsheets/" "Cheatsheets")
+            ("D" "~/Downloads/" "Downloads")
+            ("r" "~/Documents/reference" "Reference")
+            ("n" "~/Documents/notes/" "Notes")))
+
   (setopt mouse-1-click-follows-link nil)
   (setopt dirvish-mode-line-format
-        '(:left (sort symlink) :right (omit yank index)))
+          '( :left (sort symlink)
+             :right (omit yank index)))
   (setopt dirvish-attributes
         '(all-the-icons
           file-time
