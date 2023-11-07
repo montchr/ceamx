@@ -330,6 +330,7 @@
 ;; > everything else in Emacs.
 
 (use-package evil-escape
+  :diminish
   :after evil
   :commands evil-escape
   :hook (on-first-input . evil-escape-mode)
@@ -431,8 +432,11 @@
 ;;
 ;;; `anzu' + `evil-anzu'
 ;;
+;;  Display current and total search match info in modeline.
 
+;; TODO: consider moving to modeline file
 (use-package anzu
+  :diminish
   :defer 10
   :config (global-anzu-mode))
 
