@@ -95,9 +95,8 @@
 (use-package hl-todo
   :hook (prog-mode . hl-todo-mode))
 
-(after! [hl-line]
-  ;; Highlight current line.
-  (global-hl-line-mode +1))
+;; Highlight current line.
+(global-hl-line-mode +1)
 
 ;;; `rainbow-delimiters' :: <https://github.com/Fanael/rainbow-delimiters>
 (use-package rainbow-delimiters
