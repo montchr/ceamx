@@ -43,38 +43,40 @@
 (use-package suggest
   :commands (suggest))
 
-;; TODO: investigate rigpa
-;; FIXME: a bunch of warnings on emacs init
-;;; `symex' :: <https://github.com/drym-org/symex.el>
-;;  structural editing for symbolic expressions in lisp modes
-(use-package symex
-  :diminish
+;; FIXME: via doom <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/modules/lang/emacs-lisp/config.el#L10C1-L20C50>
+;; (defvar +emacs-lisp-linter-warnings
+;;   '(not free-vars    ; don't complain about unknown variables
+;;         noruntime    ; don't complain about unknown function calls
+;;         unresolved)  ; don't complain about undefined functions
+;;   "The value for `byte-compile-warnings' in non-packages.
 
-  ;; NOTE: the readme says settings should be added to `:custom', but i take
-  ;; that to mean that they should be set in a customize-friendly way
-  :config
-  (setopt symex-modal-backend 'evil)
+;; This reduces the verbosity of flycheck in Emacs configs and scripts, which are
+;; so stateful that the deluge of false positives (from the byte-compiler,
+;; package-lint, and checkdoc) can be more overwhelming than helpful.
 
-  (symex-initialize)
+;; See `+emacs-lisp-non-package-mode' for details.")
 
-  (keymap-global-set "s-;" #'symex-mode-interface)
+;; (after! 'flycheck
+;;   ;; UX: Flycheck's two emacs-lisp checkers produce a *lot* of false positives
+;;   ;;   in non-packages (like Emacs configs or elisp scripts), so I disable
+;;   ;;   `emacs-lisp-checkdoc' and set `byte-compile-warnings' to a subset of the
+;;   ;;   original in the flycheck instance (see `+emacs-lisp-linter-warnings').
+;;   ;; TODO: do it
+;;   ;; (add-hook 'flycheck-mode-hook #'+emacs-lisp-non-package-mode)
+;;   )
 
-  ;; Rebind ESC when `symex-mode' is active, as it is preferred over Evil normal state.
-  ;; via <https://github.com/drym-org/symex.el/issues/24>
-  (evil-define-key '(normal insert) symex-mode-map
-    (kbd "<escape>") 'symex-mode-interface)
+(after! 'smartparens
+  (smartparens-strict-mode +1))
 
-  ;; In case Symex's reversal of the muscle-memory j/k bindings becomes too much.
-  ;; See <https://github.com/drym-org/symex.el?tab=readme-ov-file#up-and-down>
-  ;;
-  ;; (setq symex--user-evil-keyspec
-  ;;     '(("j" . symex-go-up)
-  ;;       ("k" . symex-go-down)
-  ;;       ("C-j" . symex-climb-branch)
-  ;;       ("C-k" . symex-descend-branch)
-  ;;       ("M-j" . symex-goto-highest)
-  ;;       ("M-k" . symex-goto-lowest)))
+(defvar evil-cleverparens-use-s-and-S nil)
+(use-package evil-cleverparens
+  :init
+  (add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
+  :config ;; (require 'evil-cleverparens-text-objects)
   )
+
+;; TODO
+;; (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-defun)
 
 ;; TODO
 ;; <https://github.com/bbatsov/prelude/blob/b57ff48e0985a6ef0f1ed9b279ec487c55982334/core/prelude-core.el#L147>
