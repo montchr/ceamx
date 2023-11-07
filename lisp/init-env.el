@@ -28,13 +28,12 @@
 ;;; Code:
 
 (use-package exec-path-from-shell
-  :if (or (memq window-system '(mac ns x pgtk))
-          (unless (memq system-type '(ms-dos windows-nt))
-            (daemonp)))
+  :demand t
   :commands (exec-path-from-shell-initialize)
   :config
   (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"))
     (add-to-list 'exec-path-from-shell-variables var))
+
   (exec-path-from-shell-initialize))
 
 ;;; inheritenv
@@ -44,9 +43,12 @@
 
 (use-package envrc
   :demand t
-  :when (executable-find "direnv")
+  :after (exec-path-from-shell)
+  ;; FIXME: because exec-path-from-shell doesn't start reliably, this never happens
+  ;; :when (executable-find "direnv")
   :commands (envrc-global-mode)
-  :init (envrc-global-mode)
+  :init
+  (envrc-global-mode)
   :config
   ;; <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/tools/direnv/config.el#L11-L24>
   (defun +direnv-init-global-mode-earlier-h ()
