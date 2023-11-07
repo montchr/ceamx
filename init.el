@@ -133,6 +133,7 @@
 
 ;;; Keybindings
 (require 'init-keys)
+;; FIXME: rename to `init-evil'
 (require 'init-keys-evil)
 (require 'init-keys-bindings)
 
