@@ -261,7 +261,9 @@
 
 (defvar-keymap cmx-help-keymap
   "h" #'help-for-help
+
   "b" #'embark-bindings
+  "c" `("cheatsheet..." . ,(cmd! (ido-find-file-in-dir cmx-cheatsheets-dir)))
   "f" #'describe-function
   "F" #'describe-face
   "k" #'describe-key

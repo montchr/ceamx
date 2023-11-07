@@ -67,6 +67,11 @@ Use this for files that change often, like data and cache files.")
        (concat +path-home-dir "Developer")))
   "The root directory for projects.")
 
+(defconst cmx-cheatsheets-dir
+  (file-name-as-directory
+   (concat +path-home-dir "Documents/cheatsheets"))
+  "Absolute path to the directory containing user cheatsheets.")
+
 (defconst cmx-path-notes-dir
   (file-name-as-directory
    (concat +path-home-dir "Documents/notes")))
