@@ -142,31 +142,26 @@
 (require 'init-buffer)
 (require 'init-history)
 
-;; TODO: split up clippy (it's vague)
-;; TODO: why here? explain
-(require 'init-clippy)
-
 ;;; Selection
-
 (require 'init-selection-vertico)
 (require 'init-selection-orderless)
 (require 'init-selection-marginalia)
 (require 'init-selection-consult)
 (require 'init-completion)
 
-;;; Actions
+;;; Help
+(require 'init-help)
 
+;;; Actions
 (require 'init-embark)
 (require 'init-wgrep)
 
 ;;; Editing, buffers, files
-
 (require 'init-editor)
 (require 'init-files)
 (require 'init-dired)
 
 ;;; Project + Workspace
-
 (require 'init-vcs)
 (require 'init-templates)
 (require 'init-projects)
@@ -197,8 +192,10 @@
 ;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
 (require 'init-shell-nu)
 
-;;; Miscellaneous
+;;; Linting
+(require 'init-flycheck)
 
+;;; Miscellaneous
 (require 'init-tools)
 (require 'init-ledger)
 (require 'init-fun)
