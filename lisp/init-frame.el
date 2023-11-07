@@ -24,26 +24,31 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Hide window decorations.
-(add-to-list 'default-frame-alist '(undecorated . t))
+(require 'lib-frame)
 
-(when +sys-mac-p
-  ;; macOS: GUI menu bar is necessary otherwise Emacs will be treated as a
-  ;; non-application OS window (e.g. no focus capture). Menu bar is, however,
-  ;; ugly in terminal frames.
-  (defun cmx--restore-gui-menu-bar-hook (&optional frame)
-    (when-let (frame (or frame (selected-frame)))
-      (when (display-graphic-p frame)
-        (set-frame-parameter frame 'menu-bar-lines 1))))
-  (add-hook 'window-setup-hook #'cmx--restore-gui-menu-bar-hook)
-  (add-hook 'after-make-frame-functions #'cmx--restore-gui-menu-bar-hook))
+;; macOS has terrible window management UX and it always has.
+;; and it is only getting *worse*.
+;; this used to be fine, but then they introduced
+;; "stage manager", a crippling load of unusable horseshit.
+;; it's a wonder that yabai is still possible!
+(if +sys-mac-p
+    ;; GUI menu bar is necessary otherwise Emacs will be treated as a
+    ;; non-application OS window (e.g. no focus capture). Menu bar is, however,
+    ;; ugly in terminal frames.
+    ;;
+    ;; NOTE: It seems that frame decorations are also necessary now...? See above.
+    (progn
+      (defun cmx--restore-gui-menu-bar-hook (&optional frame)
+        (when-let (frame (or frame (selected-frame)))
+          (when (display-graphic-p frame)
+            (set-frame-parameter frame 'menu-bar-lines 1))))
+      (add-hook 'window-setup-hook #'cmx--restore-gui-menu-bar-hook)
+      (add-hook 'after-make-frame-functions #'cmx--restore-gui-menu-bar-hook))
+  ;; Hide window decorations.
+  (add-to-list 'default-frame-alist '(undecorated . t)))
 
 ;; macOS: Stop C-z from minimizing windows.
-(defun cmx/maybe-suspend-frame ()
-  (interactive)
-  (unless (and +sys-mac-p window-system)
-    (suspend-frame)))
-(global-set-key (kbd "C-z") #'cmx/maybe-suspend-frame)
+(keymap-global-set "C-z" #'cmx/maybe-suspend-frame)
 
 (provide 'init-frame)
 ;;; init-frame.el ends here
