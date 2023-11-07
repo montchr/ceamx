@@ -60,6 +60,7 @@
 (setopt kept-old-versions 5)
 (setopt require-final-newline t)
 (setopt version-control t)
+(setopt find-file-visit-truename t)
 
 (use-feature autorevert
   :defer 2
