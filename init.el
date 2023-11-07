@@ -180,6 +180,7 @@
 (require 'init-lisp)
 (require 'init-lsp)
 
+(require 'init-lang-data)
 (require 'init-lang-html)
 (require 'init-lang-json)
 (require 'init-lang-lua)
