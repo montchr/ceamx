@@ -90,11 +90,11 @@
 
 ;; Register with evil.
 (after! [evil]
-(dolist (state '(normal visual insert))
-  (evil-make-intercept-map
-   (evil-get-auxiliary-keymap
-     cmx-intercept-mode-map state t t)
-   state)))
+  (dolist (state '(normal visual insert))
+    (evil-make-intercept-map
+     (evil-get-auxiliary-keymap
+      cmx-intercept-mode-map state t t)
+     state)))
 
 ;;
 ;;; Leader maps
