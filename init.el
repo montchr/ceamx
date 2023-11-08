@@ -178,9 +178,11 @@
 ;;; Language/syntax support
 
 (require 'init-lisp)
+;; TODO: move to after lang modes, since it's less essential
 (require 'init-lsp)
 
 (require 'init-lang-data)
+(require 'init-lang-emacs-lisp)
 (require 'init-lang-html)
 (require 'init-lang-json)
 (require 'init-lang-lua)

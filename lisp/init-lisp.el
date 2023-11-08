@@ -29,65 +29,35 @@
 
 (require 'config-lisp)
 
-;; Always use 2-space indentation.
+;;
+;;; Shared mode hooks
+;;
+
+;; For managing load order, especially concerning visual enhancements.
+;; Apply to hooks on individual Lisp modes in their respective files.
+
+(defun cmx-lisp-prog-defaults-h ()
+  (after! 'smartparens (smartparens-strict-mode +1))
+  ;; (after! 'evil-cleverparens (evil-cleverparens-mode +1))
+  (after! 'rainbow-delimiters (rainbow-delimiters-mode +1))
+  ;; `highlight-function-calls-mode' should be invoked after other highlighters
+  ;; (e.g. `rainbow-delimiters-mode'), according to its readme.
+  (after! 'highlight-function-calls (highlight-function-calls-mode +1)))
+
+(setq cmx-lisp-prog-hook 'cmx-lisp-prog-defaults-h)
+
+(defun cmx-interactive-lisp-prog-defaults-h ()
+  (after! 'smartparens
+    (smartparens-strict-mode +1))
+  (after! 'rainbow-delimiters
+    (rainbow-delimiters-mode +1))
+  (whitespace-mode -1))
+
+(setq cmx-interactive-lisp-prog-hook 'cmx-interactive-lisp-prog-defaults-h)
+
+;; Always use 2-space indentation in Lisps.
 (dolist (sym '(add-function advice-add plist-put))
   (put sym 'lisp-indent-function 2))
-
-(use-feature eldoc
-  :hook (emacs-lisp-mode)
-  :diminish eldoc-mode)
-
-;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
-;;  discover elisp functions that do what you want,
-;;  brought to you by enumerative program synthesis
-(use-package suggest
-  :commands (suggest))
-
-;; FIXME: via doom <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/modules/lang/emacs-lisp/config.el#L10C1-L20C50>
-;; (defvar +emacs-lisp-linter-warnings
-;;   '(not free-vars    ; don't complain about unknown variables
-;;         noruntime    ; don't complain about unknown function calls
-;;         unresolved)  ; don't complain about undefined functions
-;;   "The value for `byte-compile-warnings' in non-packages.
-
-;; This reduces the verbosity of flycheck in Emacs configs and scripts, which are
-;; so stateful that the deluge of false positives (from the byte-compiler,
-;; package-lint, and checkdoc) can be more overwhelming than helpful.
-
-;; See `+emacs-lisp-non-package-mode' for details.")
-
-;; (after! 'flycheck
-;;   ;; UX: Flycheck's two emacs-lisp checkers produce a *lot* of false positives
-;;   ;;   in non-packages (like Emacs configs or elisp scripts), so I disable
-;;   ;;   `emacs-lisp-checkdoc' and set `byte-compile-warnings' to a subset of the
-;;   ;;   original in the flycheck instance (see `+emacs-lisp-linter-warnings').
-;;   ;; TODO: do it
-;;   ;; (add-hook 'flycheck-mode-hook #'+emacs-lisp-non-package-mode)
-;;   )
-
-(after! 'rainbow-delimiters
-  (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode))
-
-(after! 'smartparens
-  (smartparens-strict-mode +1))
-
-(defvar evil-cleverparens-use-s-and-S nil)
-(use-package evil-cleverparens
-  :init
-  (add-hook 'emacs-lisp-mode-hook #'evil-cleverparens-mode)
-  :config ;; (require 'evil-cleverparens-text-objects)
-  )
-
-;; TODO
-;; (define-key emacs-lisp-mode-map (kbd "C-c C-c") 'eval-defun)
-
-;; TODO
-;; <https://github.com/bbatsov/prelude/blob/b57ff48e0985a6ef0f1ed9b279ec487c55982334/core/prelude-core.el#L147>
-;; (defun prelude-wrap-with (s)
-;;   "Create a wrapper function for smartparens using S."
-;;   `(lambda (&optional arg)
-;;      (interactive "P")
-;;      (sp-wrap-with-pair ,s)))
 
 (provide 'init-lisp)
 ;;; init-lisp.el ends here

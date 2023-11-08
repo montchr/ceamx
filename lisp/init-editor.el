@@ -41,7 +41,6 @@
 ;; Don't consider camelCaseWORDs as separate words.
 (global-subword-mode -1)
 
-
 ;;; editorconfig :: <https://editorconfig.org>
 (use-package editorconfig
   :commands (editorconfig-mode)
@@ -74,15 +73,7 @@
 
   (show-smartparens-global-mode +1)
 
-  ;; TODO: this is already bound by default. why the alternative command?
-  ;; TODO: rename prefix etc
-  ;; (define-key prog-mode-map (kbd "M-(") (prelude-wrap-with "("))
-  ;; FIXME: pick terminal friendly binding
-  ;; (define-key prog-mode-map (kbd "M-[") (prelude-wrap-with "["))
-  ;; (define-key prog-mode-map (kbd "M-\"") (prelude-wrap-with "\""))
-
   ;; Load `smartparens' just about everywhere editable.
-  ;; FIXME: avoid constructing names -- obscures usages
   (dolist (mode '(prog-mode text-mode markdown-mode))
     (let ((mode-hook (intern (format "%S-hook" mode))))
       (add-hook mode-hook #'smartparens-mode))))
