@@ -633,9 +633,9 @@
   ;;     "l" #'magit-log
   ;;     "h" #'magit-diff-toggle-refine-hunk))
 
-  (after! [wgrep]
-    ;; A wrapper that invokes `wgrep-mark-deletion' across lines you use
-    ;; `evil-delete' in wgrep buffers.
+  ;; A wrapper that invokes `wgrep-mark-deletion' across lines you use
+  ;; `evil-delete' in wgrep buffers.
+  (after! 'wgrep
     (keymap-set wgrep-mode-map "<remap> <evil-delete>" #'+evil-delete))
 
   (after! [evil-matchit]
