@@ -28,5 +28,7 @@
 
 (defvar cmx-leader-alt-key "M-SPC")
 
+(defvar cmx-mode-specific-arm-key "m")
+
 (provide 'config-keys)
 ;;; config-keys.el ends here
