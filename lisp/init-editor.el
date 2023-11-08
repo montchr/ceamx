@@ -31,20 +31,31 @@
 ;;; Formatting
 ;;
 
+;; Don't consider camelCaseWORDs as separate words.
+(global-subword-mode -1)
+
 ;; Default indentation: 2 spaces
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 
-;; Automatically maintain indentation.
+;; Automatically maintain indentation while typing.
 (electric-indent-mode +1)
-
-;; Don't consider camelCaseWORDs as separate words.
-(global-subword-mode -1)
 
 ;;; editorconfig :: <https://editorconfig.org>
 (use-package editorconfig
-  :commands (editorconfig-mode)
-  :config (editorconfig-mode 1))
+  :config (editorconfig-mode +1))
+
+;;; `snap-indent' :: <https://github.com/jeffvalk/snap-indent>
+;;  yet another "simple automatic indentation" package
+(use-package snap-indent
+  :after (editorconfig)
+  :init (add-hook 'prog-mode #'snap-indent-mode)
+  :config
+  (setopt snap-indent-format 'untabify)
+  (setopt snap-indent-on-save t)
+  ;; Prevent issues with long lines with this totally arbitrary number.
+  ;; TODO: consider so-long
+  (setopt snap-indent-length-limit 200))
 
 ;;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
 (use-package reformatter

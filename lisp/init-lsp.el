@@ -82,9 +82,16 @@
   (setopt lsp-log-io nil)
 
   :config
+  ;; > By default, lsp-mode configures `indent-region-function' so that Emacs uses
+  ;; > language servers' `textDocument/rangeFormatting' request to format text in
+  ;; > buffers. So EditorConfig settings are ignored unless language servers
+  ;; > themselves support loading configs from .editorconfig.
+  ;; via <https://github.com/editorconfig/editorconfig-emacs?tab=readme-ov-file#editorconfig-format-buffer-does-not-work-well-with-lsp-mode>
+  (setopt lsp-enable-indentation nil)
+
   (setopt lsp-eldoc-enable-hover t)
   (setopt lsp-enable-on-type-formatting nil)
-  ;; TODO: snippets are good? but this depends on yasnippet
+  ;; lsp-mode snippets depend on yasnippet, which we don't use.
   (setopt lsp-enable-snippet nil)
   (setopt lsp-enable-xref t)
   (setopt lsp-lens-enable t)

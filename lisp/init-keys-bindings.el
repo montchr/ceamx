@@ -489,7 +489,6 @@
   "x"    '("close" . tab-close))
 (defalias 'cmx-tab-keymap cmx-tab-keymap)
 
-
 ;;
 ;;; Top-level leader map
 ;;
