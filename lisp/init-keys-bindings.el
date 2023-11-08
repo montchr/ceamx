@@ -496,9 +496,7 @@
 (defvar-keymap cmx-leader-keymap
   ;; One-shot commands
   "`"    '("other buffer" . mode-line-other-buffer)
-  ;; FIXME: make sure this is rebound to `projectile-find-file' once available
-  ;; FIXME: should be whatever is bound to "SPC SPC", but using that directly is an error
-  "SPC"  #'project-find-file
+  "SPC"  #'consult-project-buffer
 
   "["    '("[Previous]" . cmx-go-prev-keymap)
   "]"    '("[Next]" . cmx-go-next-keymap)
