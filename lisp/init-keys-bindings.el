@@ -580,7 +580,7 @@
 
 (after! [evil]
   ;; Don't let evil trample over the immensely-useful question mark.
-  (evil-define-key '(normal visual motion) 'global "?" nil)
+  (evil-define-key '(normal motion) 'global "?" nil)
 
   ;;; Normal state
   (define-keymap :keymap evil-normal-state-map
