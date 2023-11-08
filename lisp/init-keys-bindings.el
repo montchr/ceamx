@@ -555,24 +555,24 @@
 ;;; Global Bindings
 ;;
 
-(keymap-global-set "<remap> <keyboard-quit>" #'cmx/escape)
+(dolist (pair '("[" "{" "\"" "'" "`"))
+  (let ((key (format "M-%s" pair)))
+    (keymap-global-set key #'insert-pair)))
 
 ;; macOS muscle-memory habits
 (when +sys-mac-p
   (keymap-global-set "s-{" #'tab-previous)
   (keymap-global-set "s-}" #'tab-next))
 
-(dolist (key '("M-["
-               "M-{"
-               "M-\""
-               "M-'"
-               "M-`"))
-  (keymap-global-set key #'insert-pair))
+(define-keymap :keymap (current-global-map)
+  "C-:" #'avy-goto-char
+  "C-'" #'avy-goto-char-2
+  "C-." #'avy-resume
+  "M-j" #'avy-goto-char-timer
+  "C-x u" #'vundo
+  "C-x SPC" #'hydra-rectangle/body
 
-(keymap-global-set "C-x SPC" #'hydra-rectangle/body)
-
-(after! [vundo]
-  (keymap-global-set "C-x u" #'vundo))
+  "<remap> <keyboard-quit>" #'cmx/escape)
 
 ;;
 ;;; Evil Bindings
@@ -584,9 +584,11 @@
 
   ;;; Normal state
   (define-keymap :keymap evil-normal-state-map
+    "f"    #'evil-avy-goto-char-in-line
+    "F"    #'avy-goto-char-timer
     "g d"  #'xref-find-definitions
+    "g s"  #'avy-goto-char-timer
     "K"    #'helpful-at-point)
-  ;; (evil-define-key* '(normal) 'global "K" #'helpful-at-point)
 
   ;;; Insert state
   ;;
@@ -670,8 +672,11 @@
     (define-key evil-inner-text-objects-map "J" 'evil-indent-plus-i-indent-up-down)
     (define-key evil-outer-text-objects-map "J" 'evil-indent-plus-a-indent-up-down))
 
-  ;; TODO: DRY
   (after! [evil-args]
+    ;; jump out
+    ;; FIXME: conflicts with desired K bind
+    ;; (define-key evil-normal-state-map "K" 'evil-jump-out-args)
+
     ;; inner/outer
     (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
     (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
@@ -680,14 +685,7 @@
     (define-key evil-normal-state-map "L" 'evil-forward-arg)
     (define-key evil-normal-state-map "H" 'evil-backward-arg)
     (define-key evil-motion-state-map "L" 'evil-forward-arg)
-    (define-key evil-motion-state-map "H" 'evil-backward-arg)
-
-    ;; jump out
-    ;; FIXME: conflicts with desired K bind
-    ;; (define-key evil-normal-state-map "K" 'evil-jump-out-args)
-    )
-
-  ) ; end `(after! [evil])'
+    (define-key evil-motion-state-map "H" 'evil-backward-arg)))
 
 (provide 'init-keys-bindings)
 ;;; init-keys-bindings.el ends here

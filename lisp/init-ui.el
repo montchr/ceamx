@@ -69,18 +69,7 @@
   (setopt avy-all-windows-alt t)
   (setopt avy-background nil)
   (setopt avy-style 'de-bruijn)
-  (setopt avy-timeout-seconds 0.2)
-
-  (keymap-global-set "C-:" #'avy-goto-char)
-  (keymap-global-set "C-'" #'avy-goto-char-2)
-  (keymap-global-set "C-." #'avy-resume)
-  (keymap-global-set "M-j" #'avy-goto-char-timer)
-
-  (after! [evil]
-    (evil-define-key '(normal) 'global "f" #'evil-avy-goto-char-in-line)
-    (evil-define-key '(normal) 'global "F" #'avy-goto-char-timer)
-    (evil-define-key '(normal) 'global "gs" #'avy-goto-char-timer)))
-
+  (setopt avy-timeout-seconds 0.2))
 
 (provide 'init-ui)
 ;;; init-ui.el ends here
