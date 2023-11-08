@@ -72,6 +72,12 @@
   :commands ( smartparens-mode
               sp-use-paredit-bindings
               show-smartparens-global-mode)
+  :init
+  ;; Load `smartparens' just about everywhere editable.
+  (dolist (mode '(prog-mode text-mode markdown-mode git-commit-mode))
+    (let ((mode-hook (intern (format "%S-hook" mode))))
+      (add-hook mode-hook #'smartparens-mode)))
+
   :config
   ;; Load default package configuration.
   (require 'smartparens-config)
@@ -82,12 +88,7 @@
 
   (sp-use-paredit-bindings)
 
-  (show-smartparens-global-mode +1)
-
-  ;; Load `smartparens' just about everywhere editable.
-  (dolist (mode '(prog-mode text-mode markdown-mode))
-    (let ((mode-hook (intern (format "%S-hook" mode))))
-      (add-hook mode-hook #'smartparens-mode))))
+  (show-smartparens-global-mode +1))
 
 ;;
 ;;; Visual feedback
