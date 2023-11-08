@@ -518,15 +518,13 @@
   "j"    '("jump: line" . consult-line)
   ;; "k"
   ;; "l"
-  ;; "m"
+  ;; "m" => RESERVED for mode-specific local maps
   "n"		 '("[Notes]" . cmx-notes-keymap)
   "o"		 '("[Open]" . cmx-open-keymap)
   "p"		 '("[Project]" . cmx-project-keymap)
   "q"		 '("[Quit/Session]" . cmx-session-keymap)
   ;; "r"
   "s"		'("[Search]" . cmx-search-keymap)
-  ;; TODO: use/lose
-  ;; "S"		'("[Sidebar]" . cmx-sidebar-keymap)
   "t"		'("[Toggle]" . cmx-toggle-keymap)
   ;; "u"
   ;; "v"
@@ -546,12 +544,12 @@
 
 (after! [evil]
   ;; Bind leader key to existing leader map.
-  ;; FIXME: overridden in magit-status
   (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'cmx-leader-keymap)
+  (after! [magit]
+    (keymap-set magit-mode-map cmx-leader-key #'cmx-leader-keymap))
 
-  ;; EXPERIMENTAL: Bind leader to `,' (comma).
-  (evil-define-key* '(normal visual motion) 'global "," 'cmx-leader-keymap)
-  )
+  ;; Bind leader to `,' (comma).
+  (evil-define-key* '(normal visual motion) 'global "," 'cmx-leader-keymap))
 
 ;;
 ;;; Global Bindings
