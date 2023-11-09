@@ -71,6 +71,16 @@
 
 ;;; `lispy' :: <https://github.com/abo-abo/lispy>
 (use-package lispy
+  :init
+  (defun cmx-init-lispy-in-eval-expression-h ()
+    "Enable `lispy-mode' in the minibuffer for `eval-expression'."
+    (lispy-mode)
+    ;; When `lispy-key-theme' has `parinfer', the TAB key doesn't do
+    ;; completion, neither (kbd "<tab>"/"TAB"/"C-i")/[tab]/"\C-i" works in
+    ;; terminal as tested so remapping is used as a workaround
+    (local-set-key (vector 'remap (lookup-key lispy-mode-map (kbd "TAB"))) #'completion-at-point))
+  (add-hook 'eval-expression-minibuffer-setup-hook #'cmx-init-lispy-in-eval-expression-h)
+
   :config
   (dolist (mode cmx-lisp-mode-list)
     (let ((hook (intern (format "%S-hook" mode))))

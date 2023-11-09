@@ -29,5 +29,9 @@
 (defvar cmx-lisp-mode-list '(emacs-lisp-mode lisp-mode)
   "Supported Lisps.")
 
+(defvar +emacs-lisp-outline-regexp "[ \t]*;;;\\(;*\\**\\) [^ \t\n]"
+  "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
+This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
+
 (provide 'config-lisp)
 ;;; config-lisp.el ends here
