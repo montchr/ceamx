@@ -20,23 +20,8 @@
 
 ;;; Commentary:
 
-;;
-
 ;;; Code:
 
-;; mode-specific local-electric pairs
-;; <https://www.lucacambiaghi.com/vanilla-emacs/readme.html#h:BE3F251D-5F39-4337-B27C-CFB81EE9A504>
-(defconst +default-electric-pairs electric-pair-pairs)
-(defun cmx-electric-pair-add-local-pairs (pairs)
-  "Add new local electric PAIRS to the current buffer.
-
-Example usage:
-
-    (add-hook \\'jupyter-org-interaction-mode
-      (lambda ()
-        (cmx-electric-pair-add-local-pairs \\'())))"
-  (setq-local electric-pair-pairs (append +default-electric-pairs pairs))
-  (setq-local electric-pair-text-pairs electric-pair-pairs))
 
 
 (provide 'lib-editor)
