@@ -87,5 +87,10 @@
   :config
   (global-page-break-lines-mode))
 
+;;; `rainbow-mode' :: <https://elpa.gnu.org/packages/rainbow-mode.html>
+;;  colorize color names and hexcodes in buffers
+(use-package rainbow-mode
+  :defer t)
+
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
