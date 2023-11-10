@@ -96,24 +96,6 @@
     (when (bound-and-true-p save-place-mode)
       (save-place-forget-unreadable-files))))
 
-;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
-(cl-defun cmx-basename (&optional (file (buffer-file-name)))
-  "Return the basename of FILE."
-  (file-name-sans-extension (file-name-nondirectory file)))
-
-;; via <https://github.com/purcell/emacs.d/blob/28194a035ca9a259030ba7ef58089561078c4893/lisp/init-site-lisp.el>
-(defun cmx-prepend-subdirs-to-load-path (parent-dir)
-  "Add every non-hidden subdir of PARENT-DIR to `load-path'."
-  (let ((default-directory parent-dir))
-    (setq load-path
-          (append
-           (cl-remove-if-not
-            #'file-directory-p
-            (directory-files (expand-file-name parent-dir) t "^[^\\.]"))
-           load-path))))
-
-
-
 ;;
 ;;; Commands
 ;;

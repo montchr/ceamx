@@ -233,12 +233,47 @@ This is a variadic `cl-pushnew'."
   `(setq ,sym (append ,@lists ,sym)))
 
 
-;;; Loaders
+;;; Filesystem
 
-(defmacro add-load-path! (&rest dirs)
+(defun cmx-subdirs (parent-dir)
+  "Return every non-hidden subdirectory of PARENT-DIR."
+  (cl-remove-if-not
+   #'file-directory-p
+   (directory-files
+    (expand-file-name parent-dir) t "^[^\\.]")))
+
+;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
+(cl-defun cmx-basename (&optional (file (buffer-file-name)))
+  "Return the basename of FILE."
+  (file-name-sans-extension (file-name-nondirectory file)))
+
+(defmacro file! ()
+  "Return the path of the file this macro was called."
+  (or
+   ;; REVIEW: Use `macroexp-file-name' once 27 support is dropped.
+   (let ((file (car (last current-load-list))))
+     (if (stringp file) file))
+   (bound-and-true-p byte-compile-current-file)
+   load-file-name
+   buffer-file-name                     ; for `eval'
+   (error "file!: cannot deduce the current file path")))
+
+(defmacro dir! ()
+  "Return the directory of the file this macro was called."
+   (let (file-name-handler-alist)
+     (file-name-directory (macroexpand '(file!)))))
+
+(defmacro subdirs! (parent-dir)
+  "Return non-hidden subdirectories of PARENT-DIR.
+Simple wrapper around `cmx-subdirs'."
+  `(cmx-subdirs ,parent-dir))
+
+;;; Loading
+
+(defmacro add-load-paths! (&rest dirs)
   "Add DIRS to `load-path', relative to the current file.
 The current file is the file from which `add-to-load-path!' is used."
-  `(let ((default-directory ,(dir!))
+  `(let ((default-directory (dir!))
          file-name-handler-alist)
      (dolist (dir (list ,@dirs))
        (cl-pushnew (expand-file-name dir) load-path :test #'string=))))

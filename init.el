@@ -75,13 +75,12 @@
 ;;        with its own set of autoloads would allow for better encapsulation
 ;; (require 'ceamx-autoloads)
 
-;; Prepend the site-lisp directory and its immediate subdirectories to the load path.
-(push cmx-site-lisp-dir load-path)
-(cmx-prepend-subdirs-to-load-path cmx-site-lisp-dir)
+;;; Add site-lisp directory tree to load path.
+(add-to-list 'load-path cmx-site-lisp-dir)
+(prependq! load-path (subdirs! cmx-site-lisp-dir))
 
 ;;; site-lisp packages
 (require 'on)
-
 
 ;;
 ;;; Configuration
