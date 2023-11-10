@@ -74,6 +74,8 @@
 (require 'config-paths)
 (require 'config-help)
 (require 'config-keys)
+(require 'lib-keys)
+
 ;;
 ;;; `cmx-intercept-mode'
 ;;
@@ -262,21 +264,26 @@
 ;;; "h" => Help
 ;;
 
-(defvar-keymap cmx-help-keymap
-  "h" #'help-for-help
-
-  "b" #'embark-bindings
-  "c" `("cheatsheet..." . ,(cmd! (ido-find-file-in-dir cmx-cheatsheets-dir)))
-  "f" #'describe-function
-  "F" #'describe-face
-  "k" #'describe-key
-  "l" #'apropos-library
-  "m" #'describe-mode
-  "o" #'describe-symbol
-  "t" '("text properties" . (lambda () (interactive)
-                              (describe-text-properties (point))))
-  "v" #'describe-variable)
-(defalias 'cmx-help-keymap cmx-help-keymap)
+(def-arm! cmx-helpful-map "h" "[Help]"
+  "c" '("callable..." . helpful-callable)
+  "C" '("command..." . helpful-command)
+  "f" '("function..." . helpful-function)
+  "F" '("face..." . describe-face)
+  "h" '("thing (pt)" . helpful-at-point)
+  ;; TODO: add as command
+  "H" `("cheatsheet..." . ,(cmd!!
+                            #'ido-find-file-in-dir
+                            current-prefix-arg
+                            cmx-cheatsheets-dir))
+  "k" '("keys..." . helpful-key)
+  "l" '("library..." . apropos-library)
+  "m" '("modes (b)" . describe-mode)
+  "o" '("symbol..." . helpful-symbol)
+  "t" `("text-props (pt)" . ,(cmd!!
+                              #'describe-text-properties
+                              current-prefix-arg
+                              (point)))
+  "v" '("variable..." . helpful-variable))
 
 ;;
 ;;; "i" => Insertions
@@ -381,7 +388,7 @@
 ;;; "s" => Search
 ;;
 
-(defvar-keymap cmx-search-keymap
+(def-arm! cmx-search-map "s" "[Search]"
   "d" `("directory..." . ,(cmd! (consult-ripgrep
                                  (file-name-directory buffer-file-name))))
   "h" '("history..." . consult-isearch-history)
@@ -393,21 +400,13 @@
                               #'find-library-other-window
                             #'find-library))))
   "o" '("outline (f)..." . consult-outline)
+  ;; TODO: use thing-at-point as default value like `projectile-ripgrep' (which cannot find ripgrep)
   "p" '("grep (p)..." . consult-ripgrep)
   "R" '("replace (p)..." . projectile-replace)
   "s" '("line (f)..." . consult-line)
   "v" '("variable" . find-variable-at-point)
   "V" '("variable..." . find-variable)
   "x" '("refs (p)" . projectile-find-references))
-(defalias 'cmx-search-keymap cmx-search-keymap)
-
-;;
-;;; "S" => Sidebars
-;;
-
-(defvar-keymap cmx-sidebar-keymap
-  "t" #'cmx/treemacs/toggle)
-(defalias 'cmx-sidebar-keymap cmx-sidebar-keymap)
 
 ;;
 ;;; "t" => Toggles
@@ -497,6 +496,10 @@
 ;;
 
 (define-keymap :keymap cmx-leader-keymap
+  ;; `def-arm!'ed above
+  ;; "h"		 '("[Help]" . cmx-helpful-map)
+  ;; "s"		'("[Search]" . cmx-search-keymap)
+
   ;; One-shot commands
   "`"    '("other buffer" . mode-line-other-buffer)
   "SPC"  #'consult-project-buffer
@@ -513,7 +516,6 @@
   "f"		 '("[File]" . cmx-file-keymap)
   "F"		 '("[Frame]" . cmx-frame-keymap)
   "g"		 '("[Git]" . cmx-git-keymap)
-  "h"		 '("[Help]" . cmx-help-keymap)
   "i"		 '("[Insert]" . cmx-insert-keymap)
   "j"    '("jump: line" . consult-line)
   ;; "k"
@@ -524,7 +526,6 @@
   "p"		 '("[Project]" . cmx-project-keymap)
   "q"		 '("[Quit/Session]" . cmx-session-keymap)
   ;; "r"
-  "s"		'("[Search]" . cmx-search-keymap)
   "t"		'("[Toggle]" . cmx-toggle-keymap)
   ;; "u"
   ;; "v"

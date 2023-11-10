@@ -32,14 +32,17 @@
               helpful-key helpful-symbol helpful-variable)
   :config
   (keymap-set help-mode-map "C-h" #'helpful-at-point)
-  (dolist (map (list cmx-help-keymap help-mode-map))
-    (define-keymap :keymap map
-      "c" #'helpful-command
-      "f" #'helpful-callable
-      "h" #'helpful-at-point
-      "k" #'helpful-key
-      "o" #'helpful-symbol
-      "v" #'helpful-variable)))
+  ;; FIXME: partially moved into `init-keys-bindings', but not yet the `help-mode-map' overrides
+  ;; (dolist (map (list cmx-help-keymap help-mode-map))
+  ;;   (define-keymap :keymap map
+  ;;     "c" #'helpful-command
+  ;;     "f" #'helpful-callable
+  ;;     "h" #'helpful-at-point
+  ;;     "k" #'helpful-key
+  ;;     "o" #'helpful-symbol
+  ;;     "v" #'helpful-variable))
+  )
+
 
 (provide 'init-help)
 ;;; init-help.el ends here
