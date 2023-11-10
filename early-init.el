@@ -56,9 +56,6 @@
        (concat +path-home-dir ".config")))
   "The root directory for personal configurations.")
 
-;; DEPRECATED: pointless
-(defconst +path-emacs-dir user-emacs-directory)
-
 (defconst +path-site-lisp-dir
   (concat user-emacs-directory "site-lisp/")
   "Absolute path to the site-lisp directory.")
@@ -96,6 +93,7 @@ Use this for files that change often, like data and cache files.")
   "The root directory for projects.")
 
 ;; FIXME: ensure directory exists -- will cause errors otherwise
+;;        ideally do this later in init
 (defconst +path-notes-dir
   (file-name-as-directory
    (concat +path-home-dir "Documents/notes")))

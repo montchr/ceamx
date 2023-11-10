@@ -28,14 +28,14 @@
 
 ;;; Configure load path.
 (dolist (subdir '("autoloads" "lisp" "lisp/lib"))
-  (let ((dir (expand-file-name subdir +path-emacs-dir)))
+  (let ((dir (expand-file-name subdir user-emacs-directory)))
     (add-to-list 'load-path dir)))
 
 ;;; Profile startup time.
 (require 'init-benchmarking)
 
 ;;; Configure customization file.
-(setopt custom-file (expand-file-name "custom.el" +path-emacs-dir))
+(setopt custom-file (expand-file-name "custom.el" user-emacs-directory))
 
 ;;; Define default user identity.
 (setq-default user-full-name "Chris Montgomery"

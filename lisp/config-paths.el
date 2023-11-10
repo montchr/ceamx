@@ -33,8 +33,6 @@
        (concat +path-home-dir ".config")))
   "The root directory for personal configurations.")
 
-(defconst +path-emacs-dir user-emacs-directory)
-
 (defconst +path-local-dir
   (concat
    (file-name-as-directory
