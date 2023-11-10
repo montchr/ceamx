@@ -1,9 +1,9 @@
-;;; config-org.el --- org-mode variables             -*- lexical-binding: t; -*-
+;;; config-projects.el --- Project settings          -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords:
+;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -20,16 +20,15 @@
 
 ;;; Commentary:
 
-;;
-
 ;;; Code:
 
-(require 'config-notes)
+(require 'config-paths)
 
-(defvar cmx-org-capture-default-file
-  (expand-file-name
-   (concat cmx-notes-dir "inbox.org"))
-  "Path to default inbox file for new org-capture entries.")
+(defvar cmx-projects-dir
+  (file-name-as-directory
+   (or (getenv "XDG_PROJECTS_HOME")
+       (concat cmx-home-dir "Developer")))
+  "The root directory for projects.")
 
-(provide 'config-org)
-;;; config-org.el ends here
+(provide 'config-projects)
+;;; config-projects.el ends here

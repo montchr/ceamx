@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(require 'config-lisp)
+
 (defun cmx-emacs-lisp-defaults-h ()
   "Sensible defaults for `emacs-lisp-mode'."
   (run-hooks 'cmx-lisp-prog-hook)

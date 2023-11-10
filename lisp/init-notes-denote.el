@@ -23,9 +23,14 @@
 
 ;;; Code:
 
+(require 'config-notes)
+
+(unless (file-directory-p cmx-notes-dir)
+  (make-directory cmx-notes-dir))
+
 (use-package denote
   :config
-  (setopt denote-directory +path-notes-dir)
+  (setopt denote-directory cmx-notes-dir)
   (setopt denote-known-keywords '("emacs"))
   (setopt denote-infer-keywords t)
   (setopt denote-sort-keywords t)
@@ -36,7 +41,7 @@
   ;; Pick dates, where relevant, with Org's advanced interface:
   (setopt denote-date-prompt-use-org-read-date t)
   (setopt denote-allow-multi-word-keywords t)
-  (setopt denote-date-format nil) ; read doc string
+  (setopt denote-date-format nil)       ; read doc string
   ;; By default, we do not show the context of links.  We just display
   ;; file names.  This provides a more informative view.
   ;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
@@ -47,9 +52,8 @@
   (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
   ;; We use different ways to specify a path for demo purposes.
   (setopt denote-dired-directories
-        (list denote-directory
-              (thread-last denote-directory (expand-file-name "attachments"))
-              (expand-file-name "~/Documents/books")))
+          (list denote-directory
+                (thread-last denote-directory (expand-file-name "attachments"))))
   (add-hook 'dired-mode-hook #'denote-dired-mode)
   ;; Alternatively:
   ;; (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
@@ -76,13 +80,11 @@ Else create a new file."
          today
          '("journal"))))))
 
-  
   ;; Key bindings specifically for Dired.
   (define-keymap :keymap dired-mode-map
     "C-c C-d C-i" #'denote-link-dired-marked-notes
     "C-c C-d C-r" #'denote-dired-rename-marked-files
     "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter)
-
 
   (with-eval-after-load 'org-capture
     (setopt denote-org-capture-specifiers "%l\n%i\n%?")
@@ -98,7 +100,6 @@ Else create a new file."
   ;; Also check the commands `denote-link-after-creating',
   ;; `denote-link-or-create'.  You may want to bind them to keys as well.
 
-  
   ;; If you want to have Denote commands available via a right click
   ;; context menu, use the following and then enable
   ;; `context-menu-mode'.

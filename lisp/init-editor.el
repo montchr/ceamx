@@ -31,6 +31,8 @@
 ;;; Formatting
 ;;
 
+(require 'lib-editor)
+
 ;; Don't consider camelCaseWORDs as separate words.
 (global-subword-mode -1)
 

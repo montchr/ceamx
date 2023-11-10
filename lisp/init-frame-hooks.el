@@ -59,7 +59,7 @@ Selectively runs either `after-make-console-frame-hooks' or
                  'after-make-console-frame-hooks))))
 (add-hook 'after-make-frame-functions 'run-after-make-frame-hooks)
 
-(defconst cmx/initial-frame (selected-frame)
+(defvar cmx/initial-frame (selected-frame)
   "The frame (if any) active during Emacs initialization.")
 
 ;; Although in most cases `after-init-hook' should be replaced with
@@ -72,4 +72,3 @@ Selectively runs either `after-make-console-frame-hooks' or
 
 (provide 'init-frame-hooks)
 ;;; init-frame-hooks.el ends here
-

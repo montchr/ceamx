@@ -54,7 +54,7 @@
 
 (setopt backup-by-copying t)
 (setopt backup-directory-alist `((".*" . ,(expand-file-name
-                                           (concat +path-local-dir "backups")))))
+                                           (concat cmx-local-dir "backups")))))
 (setopt delete-old-versions t)
 (setopt kept-new-versions 5)
 (setopt kept-old-versions 5)

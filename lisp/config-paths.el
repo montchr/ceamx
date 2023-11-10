@@ -20,59 +20,54 @@
 
 ;;; Commentary:
 
-;;
+;; Define variables pointing to commonly-used paths.
+
+;; Path variables relating to specific modules should be defined in a
+;; feature-specific file i.e. `config-<module>'.
 
 ;;; Code:
 
-(defconst +path-home-dir (file-name-as-directory (getenv "HOME"))
+(defvar cmx-site-lisp-dir
+  (concat user-emacs-directory "site-lisp/")
+  "Absolute path to the site-lisp directory.")
+
+(defvar cmx-home-dir (file-name-as-directory (getenv "HOME"))
   "Path to user home directory.")
 
-(defconst +path-config-dir
+(defvar cmx-config-dir
   (file-name-as-directory
    (or (getenv "XDG_CONFIG_HOME")
-       (concat +path-home-dir ".config")))
+       (concat cmx-home-dir ".config")))
   "The root directory for personal configurations.")
 
-(defconst +path-local-dir
+(defvar cmx-local-dir
   (concat
    (file-name-as-directory
     (or (getenv "XDG_CACHE_HOME")
-        (concat +path-home-dir ".cache")))
+        (concat cmx-home-dir ".cache")))
    "ceamx/")
   "The root directory for local Emacs files.
+
 Use this as permanent storage for files that are safe to share
 across systems.")
 
-(defconst +path-etc-dir (concat +path-local-dir "etc/")
+(defvar cmx-etc-dir (concat cmx-local-dir "etc/")
   "Directory for non-volatile storage.
+
 Use this for files that don't change much, like servers binaries,
 external dependencies or long-term shared data.")
 
-(defconst +path-var-dir (concat +path-local-dir "var/")
+(defvar cmx-var-dir (concat cmx-local-dir "var/")
   "Directory for volatile storage.
+
 Use this for files that change often, like data and cache files.")
 
-(defconst +path-packages-dir
+(defvar cmx-packages-dir
   (expand-file-name (format "packages/%s.%s/"
                             emacs-major-version
                             emacs-minor-version)
-                    +path-local-dir)
+                    cmx-local-dir)
   "Where packages are stored.")
-
-(defconst +path-projects-dir
-  (file-name-as-directory
-   (or (getenv "XDG_PROJECTS_HOME")
-       (concat +path-home-dir "Developer")))
-  "The root directory for projects.")
-
-(defconst cmx-cheatsheets-dir
-  (file-name-as-directory
-   (concat +path-home-dir "Documents/cheatsheets"))
-  "Absolute path to the directory containing user cheatsheets.")
-
-(defconst cmx-path-notes-dir
-  (file-name-as-directory
-   (concat +path-home-dir "Documents/notes")))
 
 (provide 'config-paths)
 ;;; config-paths.el ends here

@@ -43,68 +43,17 @@
 (defvar default-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
-;;
-;;; === PATHS ======================================================================================
-;;
-
-(defconst +path-home-dir (file-name-as-directory (getenv "HOME"))
-  "Path to user home directory.")
-
-(defconst +path-config-dir
-  (file-name-as-directory
-   (or (getenv "XDG_CONFIG_HOME")
-       (concat +path-home-dir ".config")))
-  "The root directory for personal configurations.")
-
-(defconst +path-site-lisp-dir
-  (concat user-emacs-directory "site-lisp/")
-  "Absolute path to the site-lisp directory.")
-
-(defconst +path-local-dir
-  (concat
-   (file-name-as-directory
-    (or (getenv "XDG_CACHE_HOME")
-        (concat +path-home-dir ".cache")))
-   "ceamx/")
-  "The root directory for local Emacs files.
-Use this as permanent storage for files that are safe to share
-across systems.")
-
-(defconst +path-etc-dir (concat +path-local-dir "etc/")
-  "Directory for non-volatile storage.
-Use this for files that don't change much, like servers binaries,
-external dependencies or long-term shared data.")
-
-(defconst +path-var-dir (concat +path-local-dir "var/")
-  "Directory for volatile storage.
-Use this for files that change often, like data and cache files.")
-
-(defconst +path-packages-dir
-  (expand-file-name (format "packages/%s.%s/"
-                            emacs-major-version
-                            emacs-minor-version)
-                    +path-local-dir)
-  "Where packages are stored.")
-
-(defconst +path-projects-dir
-  (file-name-as-directory
-   (or (getenv "XDG_PROJECTS_HOME")
-       (concat +path-home-dir "Developer")))
-  "The root directory for projects.")
-
-;; FIXME: ensure directory exists -- will cause errors otherwise
-;;        ideally do this later in init
-(defconst +path-notes-dir
-  (file-name-as-directory
-   (concat +path-home-dir "Documents/notes")))
+(load (concat (file-name-directory load-file-name)
+              "lisp/config-paths")
+      nil (not init-file-debug))
 
 ;;
-;;; === STARTUP PERFORMANCE TUNING =================================================================
+;;; Startup performance tuning
 ;;
 
 ;; Relocate the native-comp cache during early-init.
-(startup-redirect-eln-cache (convert-standard-filename (expand-file-name "eln/" +path-var-dir)))
-(add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" +path-var-dir))
+(startup-redirect-eln-cache (convert-standard-filename (expand-file-name "eln/" cmx-var-dir)))
+(add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" cmx-var-dir))
 
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 1)

@@ -31,7 +31,7 @@
   (setopt savehist-additional-variables '(search-ring regexp-search-ring))
   (setopt savehist-autosave-interval 60)
   ;; NOTE: Also configured by `no-littering'.
-  (setopt savehist-file (expand-file-name "savehist" +path-local-dir))
+  (setopt savehist-file (expand-file-name "savehist" cmx-local-dir))
   (savehist-mode +1))
 
 ;;; `recentf' (internal)
@@ -42,7 +42,7 @@
   ;; Disable recentf-cleanup on Emacs start, because it can cause
   ;; problems with remote files.
   (setopt recentf-auto-cleanup 'never)
-  (dolist (path '(+path-etc-dir +path-var-dir))
+  (dolist (path '(cmx-etc-dir cmx-var-dir))
     (add-to-list 'recentf-exclude path))
   (recentf-mode +1))
 
@@ -83,7 +83,7 @@
   :after undo-fu
 
   :init
-  (setopt undo-fu-session-directory (expand-file-name "undo-fu-session" +path-var-dir))
+  (setopt undo-fu-session-directory (expand-file-name "undo-fu-session" cmx-var-dir))
 
   :config
   (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))

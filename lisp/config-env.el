@@ -26,38 +26,38 @@
 
 ;;; Code:
 
-(defconst +gui-p
+(defvar +gui-p
   (display-graphic-p))
 
-(defconst +xorg-p
+(defvar +xorg-p
   (memq window-system '(x)))
 
-(defconst +user-root-p
+(defvar +user-root-p
   (string-equal "root" (getenv "USER")))
 
-(defconst +sys-mac-p
+(defvar +sys-mac-p
   (or (memq window-system '(mac ns))
       (eq system-type 'darwin)))
 
-(defconst +sys-linux-p
+(defvar +sys-linux-p
   (eq system-type 'gnu/linux))
 
-(defconst +env-dumb-p
+(defvar +env-dumb-p
   (string= (getenv "TERM") "dumb"))
 
-(defconst +env-iterm-p
+(defvar +env-iterm-p
   (string= (getenv "TERM_PROGRAM") "iTerm.app"))
 
-(defconst +env-xterm-p
+(defvar +env-xterm-p
   (not (string-empty-p (getenv "XTERM_VERSION"))))
 
-(defconst +env-gnome-terminal-p
+(defvar +env-gnome-terminal-p
   (string= (getenv "COLORTERM") "gnome-terminal"))
 
-(defconst +env-konsole-p
+(defvar +env-konsole-p
   (not (string-empty-p (getenv "KONSOLE_PROFILE_NAME"))))
 
-(defconst +env-apple-terminal-p
+(defvar +env-apple-terminal-p
   (string= (getenv "TERM_PROGRAM") "Apple_Terminal"))
 
 (provide 'config-env)

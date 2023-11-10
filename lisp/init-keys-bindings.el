@@ -71,6 +71,8 @@
 
 ;;; Code:
 
+(require 'config-paths)
+(require 'config-help)
 (require 'config-keys)
 ;;
 ;;; `cmx-intercept-mode'

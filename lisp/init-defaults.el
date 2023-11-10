@@ -34,8 +34,8 @@
 (use-package no-littering
   :demand t
   :init
-  (setq no-littering-etc-directory +path-etc-dir)
-  (setq no-littering-var-directory +path-var-dir))
+  (setq no-littering-etc-directory cmx-etc-dir)
+  (setq no-littering-var-directory cmx-var-dir))
 
 (setq-default
  ad-redefinition-action 'accept         ; Silence warnings for redefinition
@@ -129,7 +129,7 @@
 
 ;; Ensure secrets and auth credentials are not stored in plaintext (the default).
 ;; Requires GnuPG configuration.
-(setopt auth-sources (list (file-name-concat +path-var-dir "authinfo.gpg")
+(setopt auth-sources (list (file-name-concat cmx-var-dir "authinfo.gpg")
                          "~/.authinfo.gpg"))
 
 ;; "More performant rapid scrolling over unfontified regions. May cause brief

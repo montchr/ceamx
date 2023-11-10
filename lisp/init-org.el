@@ -27,15 +27,16 @@
 
 ;;; Code:
 
-(defconst +org-capture-default-file
-  (expand-file-name
-   (concat +path-notes-dir "inbox.org"))
-  "Path to default inbox file for new org-capture entries.")
+(require 'config-notes)
+(require 'config-org)
+
+;; Must be set before loading Org-Mode.
+(defvar org-directory cmx-notes-dir)
+
+(unless (file-directory-p org-directory)
+  (make-directory org-directory))
 
 (use-package org
-  :init
-  (setopt org-directory (expand-file-name +path-notes-dir))
-
   :config
   (setopt org-image-actual-width 300)
   (setopt org-startup-with-inline-images t)
@@ -58,11 +59,11 @@
   (setopt org-agenda-tags-column 0)
   (setopt org-agenda-block-separator ?─)
   (setopt org-agenda-time-grid
-        '((daily today require-timed)
-          (800 1000 1200 1400 1600 1800 2000)
-          " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+          '((daily today require-timed)
+            (800 1000 1200 1400 1600 1800 2000)
+            " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (setopt org-agenda-current-time-string
-        "⭠ now ─────────────────────────────────────────────────")
+          "⭠ now ─────────────────────────────────────────────────")
 
   :hook ((org-mode . prettify-symbols-mode)
          (org-mode . visual-line-mode)))

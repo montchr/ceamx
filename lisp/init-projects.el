@@ -25,11 +25,14 @@
 
 ;;  Configuration for project awareness.
 
+;; TODO: consider whether we can get by with `project.el'
+
 ;;; Code:
 
-;; § ────────── ────────── ────────── ────────── ────────── ──────────
-;;; projectile :: Project Interaction Library for Emacs
-;;  <https://github.com/bbatsov/projectile>
+(require 'config-projects)
+
+;;
+;;; projectile :: <https://github.com/bbatsov/projectile>
 ;;  <https://docs.projectile.mx>
 
 (use-package projectile
@@ -48,9 +51,11 @@
 
   (keymap-global-set "<remap> <project-find-file>" #'projectile-find-file)
 
+
+  ;; TODO: use `cmx-projects-dir'
   (setopt projectile-project-search-path '(("~/Developer/sources/" . 1)
-                                         ("~/Developer/contrib/" . 2)
-                                         ("~/Developer/work/" . 3)))
+                                           ("~/Developer/contrib/" . 2)
+                                           ("~/Developer/work/" . 3)))
   (setopt projectile-require-project-root t)
   (setopt projectile-sort-order 'recently-active)
   (setopt projectile-switch-project-action #'projectile-find-file)

@@ -29,7 +29,7 @@
 ;;; Code:
 
 ;; Remember location in a file when saving files.
-(setq save-place-file (expand-file-name "saveplace" +path-local-dir))
+(setq save-place-file (expand-file-name "saveplace" cmx-local-dir))
 (save-place-mode 1)
 
 ;;

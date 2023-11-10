@@ -25,7 +25,7 @@
 (use-package fontaine
   :demand t
   :config
-  (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" +path-var-dir))
+  (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" cmx-var-dir))
   ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
   ;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
   ;; at least i think that's what's causing the inconsistencies...

@@ -44,7 +44,7 @@
 (defvar elpaca-installer-version 0.5)
 
 ;; Configurate package/build directories
-(defvar elpaca-directory (expand-file-name "elpaca/" +path-packages-dir))
+(defvar elpaca-directory (expand-file-name "elpaca/" cmx-packages-dir))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 
