@@ -22,6 +22,22 @@
 
 ;; Keybindings something something.
 
+;; Q: Is it safe to `defvar-keymap' here since `config-*' files should be idempotent?
+;;
+;; A: Yes, I think so -- for the same reason that it is safe to invoke `defvar'
+;;    for the same symbol multiple times in order to, for example, appease the
+;;    byte-compiler.
+;;
+;;    I dug into the C source code for `defvar' and found these notes:
+;;
+;;    > A simple (defvar foo) with lexical scoping does "nothing" except
+;;    > declare that var to be dynamically scoped *locally* (i.e. within
+;;    > the current file or let-block).
+;;
+;;    > Simple (defvar <var>) should not count as a definition at all.
+;;    > It could get in the way of other definitions, and unloading this
+;;    > package could try to make the variable unbound.
+
 ;;; Code:
 
 (defvar cmx-leader-key "SPC")
@@ -29,6 +45,9 @@
 (defvar cmx-leader-alt-key "M-SPC")
 
 (defvar cmx-mode-specific-arm-key "m")
+
+(defvar-keymap cmx-leader-keymap
+  :doc "User-defined leader keymap.")
 
 (provide 'config-keys)
 ;;; config-keys.el ends here

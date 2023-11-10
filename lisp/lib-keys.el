@@ -73,14 +73,15 @@ all hooks after it are ignored.")
              (when interactive
                (setq this-command 'keyboard-quit)))))))
 
-(defmacro def-arm! (sym key description &rest defs)
+(defmacro def-arm! (keymap key description &rest defs)
+  "Define KEYMAP with DEFS bound to KEY with DESCRIPTION in `cmx-leader-keymap'."
   (declare (indent defun))
   `(progn
-     (define-prefix-command (quote ,sym))
+     (define-prefix-command (quote ,keymap))
      (define-keymap
-       :keymap ,sym
+       :keymap ,keymap
        ,@defs)
-     (keymap-set cmx-leader-keymap ,key '(,description . ,sym))))
+     (keymap-set cmx-leader-keymap ,key '(,description . ,keymap))))
 
 (defmacro def-mode-arm! (mode description &rest defs)
   "Define the mode-specific leader arm for MODE with DESCRIPTION and bindings DEFS."

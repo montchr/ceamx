@@ -71,6 +71,7 @@
 
 ;;; Code:
 
+(require 'config-keys)
 ;;
 ;;; `cmx-intercept-mode'
 ;;
@@ -493,7 +494,7 @@
 ;;; Top-level leader map
 ;;
 
-(defvar-keymap cmx-leader-keymap
+(define-keymap :keymap cmx-leader-keymap
   ;; One-shot commands
   "`"    '("other buffer" . mode-line-other-buffer)
   "SPC"  #'consult-project-buffer
