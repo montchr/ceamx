@@ -204,10 +204,10 @@
   (setopt evil-collection-mode-list
           '( bookmark consult comint compile eldoc debug diff-hl diff-mode dired
              embark eldoc eww elfeed flycheck flymake grep help helpful
-             ibuffer imenu magit-section magit man markdown-mode org rg ripgrep
-             tab-bar term vertico vterm wgrep which-key xref xwidget))
+             ibuffer imenu info magit-section magit man
+             markdown-mode org rg ripgrep tab-bar term vertico
+             vterm wgrep which-key xref xwidget))
 
-  ;; FIXME: not working in magit status
   (defun +evil-collection-setup-h (_mode mode-keymaps)
     "Remove any bindings to global prefix keys in MODE-KEYMAPS."
     (evil-collection-translate-key '(normal) mode-keymaps
