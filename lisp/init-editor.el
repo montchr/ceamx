@@ -65,11 +65,15 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 ;;
 ;;  This mode is buffer-local. It might be undesireable in some cases,
 ;;  so consider enabling it selectively.
+(use-feature whitespace
+  :defines ( whitespace-style
+             whitespace-display-mappings)
+  :config
+  (setopt whitespace-style '(face tabs tab-mark trailing))
+  ;; Visualize tabs as a pipe character - "|" (ASCII ID 124)
+  ;; NOTE: the original value is still present at tail
+  (cl-pushnew '(tab-mark 9 [124 9] [92 9]) whitespace-display-mappings))
 
-(setopt whitespace-style '(face tabs tab-mark trailing))
-;; Visualize tabs as a pipe character - "|" (ASCII ID 124)
-;; NOTE: the original value is still present at tail
-(cl-pushnew '(tab-mark 9 [124 9] [92 9]) whitespace-display-mappings)
 
 ;;
 ;;; Packages
