@@ -43,6 +43,12 @@
   ;;     "v" #'helpful-variable))
   )
 
+;;; `elisp-demos' :: <https://github.com/xuchunyang/elisp-demos>
+;;  Display usage examples inside help buffers for Emacs Lisp callables.
+(use-package elisp-demos
+  :after (helpful)
+  :config
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 (provide 'init-help)
 ;;; init-help.el ends here
