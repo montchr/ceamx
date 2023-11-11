@@ -84,6 +84,7 @@
 ;;
 ;;  <https://github.com/noctuid/evil-guide?tab=readme-ov-file#preventing-certain-keys-from-being-overridden>
 
+;; TODO: move to `config-keys'
 (defvar-keymap cmx-intercept-mode-map
   :doc "High-precedence keymap.")
 
@@ -183,9 +184,8 @@
 (defvar-keymap cmx-code-keymap
   ;; FIXME: wrong type argument commandp error if unavailable -- language server must support it
   "a" '("action.." . lsp-execute-code-action)
-  "r" '("rename..." . lsp-rename)
-
-  "g" '("go to..." . cmx-goto-keymap))
+  "i" #'iedit-mode
+  "r" '("rename..." . lsp-rename))
 (defalias 'cmx-code-keymap cmx-code-keymap)
 
 ;;
@@ -199,12 +199,7 @@
   "d" #'eval-defun
   "e" #'eval-last-sexp
   "E" #'eval-expression
-  ;; FIXME: this doesn't actually work as advertised -- in fact, this might not
-  ;; be possible, strictly speaking (would need some kind of abstraction for
-  ;; user config like that of spacemacs or doom)
-  ;; "I" '("reload init-file" . (lambda ()
-  ;;                              (interactive)
-  ;;                              (load-file user-init-file)))
+  "i" #'ielm
   "r" #'eval-region)
 (defalias 'cmx-elisp-keymap cmx-elisp-keymap)
 
@@ -588,6 +583,7 @@
     "f"    #'evil-avy-goto-char-in-line
     "F"    #'avy-goto-char-timer
     "g d"  #'xref-find-definitions
+    "g D"  #'xref-find-references
     "g s"  #'avy-goto-char-timer
     "K"    #'helpful-at-point)
 
