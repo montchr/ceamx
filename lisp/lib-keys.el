@@ -73,6 +73,16 @@ all hooks after it are ignored.")
              (when interactive
                (setq this-command 'keyboard-quit)))))))
 
+;;; Keybindings
+
+(defmacro def-map! (command &rest defs)
+  "Define a prefix COMMAND whose keymap is initialized with DEFS."
+  (declare (indent (defun)))
+  `(progn
+     (define-prefix-command (quote ,command))
+     (define-keymap :keymap ,command
+       ,@defs)))
+
 (defmacro def-arm! (keymap key description &rest defs)
   "Define KEYMAP with DEFS bound to KEY with DESCRIPTION in `cmx-leader-keymap'."
   (declare (indent defun))
@@ -83,6 +93,7 @@ all hooks after it are ignored.")
        ,@defs)
      (keymap-set cmx-leader-keymap ,key '(,description . ,keymap))))
 
+;; TODO: not yet practical or functional
 (defmacro def-mode-arm! (mode description &rest defs)
   "Define the mode-specific leader arm for MODE with DESCRIPTION and bindings DEFS."
   (declare (doc-string 2)
@@ -95,16 +106,6 @@ all hooks after it are ignored.")
       `(def-arm! ,keymap-sym "m"
          ,description
          ,@defs))))
-
-;; (def-mode-arm! emacs-lisp-mode "Something"
-;;   "v" #'zone)
-
-
-;; (defvar cmx-emacs-lisp-mode-map nil)
-;; (def-mode-arm! emacs-lisp-mode
-;;   "e" '("eeeevvvv" . eval-defun))
-
-
 
 (provide 'lib-keys)
 ;;; lib-keys.el ends here
