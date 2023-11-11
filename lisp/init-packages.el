@@ -25,13 +25,18 @@
 
 ;;  Configuration for Emacs package management.
 
+;; TODO: force `use-package' to accept correct function sharp quote syntax: <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el#L619-L642>
+
 ;;; Code:
 
-;;
-;;; === ELPACA =================================================================
-;;  <https://github.com/progfolio/elpaca>
+(require 'config-paths)
+(require 'lib-common)
 
-;; Recipe format :: <https://github.com/progfolio/elpaca/blob/master/doc/manual.md#recipes
+;;
+;;; `elpaca' :: <https://github.com/progfolio/elpaca>
+;;
+
+;;; Recipe format :: <https://github.com/progfolio/elpaca/blob/master/doc/manual.md#recipes
 ;;
 ;; Sometimes packages might include additional subpackages in their repo.
 ;; Examples I've encountered: `evil-collection', `corfu', `vertico'.
@@ -84,16 +89,8 @@
 
 
 ;;
-;;; === USE-PACKAGE ============================================================
-;;  <https://github.com/jwiegley/use-package>
-
-(defmacro use-feature (name &rest args)
-  "Like `use-package' but accounting for asynchronous installation.
-NAME and ARGS are in `use-package'."
-  (declare (indent defun))
-  `(use-package ,name
-     :elpaca nil
-     ,@args))
+;;; `use-package' :: <https://github.com/jwiegley/use-package>
+;;
 
 ;; Install use-package support.
 (elpaca elpaca-use-package
@@ -103,6 +100,14 @@ NAME and ARGS are in `use-package'."
   (setq elpaca-use-package-by-default t))
 (elpaca use-package (require 'use-package))
 (elpaca-wait)
+
+(defmacro use-feature (name &rest args)
+  "Like `use-package' but accounting for asynchronous installation.
+NAME and ARGS are in `use-package'."
+  (declare (indent defun))
+  `(use-package ,name
+     :elpaca nil
+     ,@args))
 
 ;; `use-package' debug mode.
 (setq init-file-debug t)
