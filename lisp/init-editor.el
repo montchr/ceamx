@@ -45,6 +45,20 @@
 (electric-indent-mode +1)
 (setopt backward-delete-char-untabify-method 'hungry)
 
+(defun cmx-prog-mode--init-defaults-h ()
+  "Intialize common defaults for programming modes.
+In most cases, these modes derive from `prog-mode', but there may be some exceptions."
+  (whitespace-mode 1)
+  (after! [smartparens evil]
+    ;;; Maintain indentation and comments upon newline.
+    ;; I first tried `keymap-local-set' but the binding was overridden by `evil-ret'.
+    ;; TODO: advise `evil-ret'?
+    (keymap-set evil-insert-state-map "RET" #'comment-indent-new-line)))
+
+(defvar cmx-prog-mode-init-hook #'cmx-prog-mode--init-defaults-h)
+
+(add-hook 'prog-mode-hook (cmd! (run-hooks 'cmx-prog-mode-init-hook)))
+
 
 ;;; editorconfig :: <https://editorconfig.org>
 (use-package editorconfig
