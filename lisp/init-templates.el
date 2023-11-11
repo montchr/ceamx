@@ -43,8 +43,8 @@
   :init
   (setopt tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
 
-  ;; Setup completion at point
-  (defun cmx:tempel--setup-capf-h ()
+  ;; Setup completion at point for Tempel templates.
+  (defun cmx-tempel--setup-capf-h ()
     ;; Add the Tempel Capf to `completion-at-point-functions'.
     ;; `tempel-expand' only triggers on exact matches. Alternatively use
     ;; `tempel-complete' if you want to see all matches, but then you
@@ -57,7 +57,7 @@
                       completion-at-point-functions)))
 
   (dolist (hook '(conf-mode-hook prog-mode-hook text-mode-hook))
-    (add-hook hook #'cmx:tempel--setup-capf-h)
+    (add-hook hook #'cmx-tempel--setup-capf-h)
     ;; See also `global-tempel-abbrev-mode'.
     (add-hook hook #'tempel-abbrev-mode)))
 
