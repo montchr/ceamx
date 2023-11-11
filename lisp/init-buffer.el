@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'lib-keys)
+
 ;; Remember location in a file when saving files.
 (setq save-place-file (expand-file-name "saveplace" cmx-local-dir))
 (save-place-mode 1)
@@ -67,6 +69,13 @@
   :config
   (after! [evil]
     (evil-define-key '(normal) 'global "gO" #'link-hint-open-link)))
+
+(use-feature outline
+  :defines (outline-minor-mode-map)
+  :config
+  (setq-default outline-minor-mode t)
+  ;; Corresponds to default binding of `C-c @'.
+  (def-arm! outline-minor-mode-map "@" "(doc): outline"))
 
 ;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
 (use-package expand-region
