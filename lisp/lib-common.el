@@ -329,49 +329,8 @@ DOCSTRING and BODY are as in `defun'.
          (dolist (target (cdr targets))
            (advice-add target (car targets) #',symbol))))))
 
-(defmacro undefadvice! (symbol _arglist &optional docstring &rest body)
-  "Undefine an advice called SYMBOL.
-This has the same signature as `disadvise!' and exists as an easy undefiner when
-testing advice (when combined with `rotate-text').
-\(fn SYMBOL ARGLIST &optional DOCSTRING &rest [WHERE PLACES...] BODY\)"
-  (declare (doc-string 3) (indent defun))
-  (let (where-alist)
-    (unless (stringp docstring)
-      (push docstring body))
-    (while (keywordp (car body))
-      (push `(cons ,(pop body) (ensure-list ,(pop body)))
-            where-alist))
-    `(dolist (targets (list ,@(nreverse where-alist)))
-       (dolist (target (cdr targets))
-         (advice-remove target #',symbol)))))
-
-
 ;;; Hooks
 
-(defmacro add-transient-hook! (hook-or-function &rest forms)
-  "Attaches a self-removing function to HOOK-OR-FUNCTION.
-
-FORMS are evaluated once, when that function/hook is first invoked, then never
-again.
-
-HOOK-OR-FUNCTION can be a quoted hook or a sharp-quoted function (which will be
-advised)."
-  (declare (indent 1))
-  (let ((append? (if (eq (car forms) :after) (pop forms)))
-        (fn (gensym "cmx-transient-hook")))
-    `(let ((sym ,hook-or-function))
-       (defun ,fn (&rest _)
-         ,(format "Transient hook for %S" (cmx-unquote hook-or-function))
-         ,@forms
-         (let ((sym ,hook-or-function))
-           (cond ((functionp sym) (advice-remove sym #',fn))
-                 ((symbolp sym)   (remove-hook sym #',fn))))
-         (unintern ',fn nil))
-       (cond ((functionp sym)
-              (advice-add ,hook-or-function ,(if append? :after :before) #',fn))
-             ((symbolp sym)
-              (put ',fn 'permanent-local-hook t)
-              (add-hook sym #',fn ,append?))))))
 (defmacro def-hook! (name arglist hooks docstring &rest body)
   "Define a function called NAME and add it to a hook.
 ARGLIST is as in `defun'. HOOKS is a list of hooks to which to
