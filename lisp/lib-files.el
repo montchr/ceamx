@@ -143,6 +143,10 @@ If FORCE-P, delete without confirmation."
           (progn (delete-file path t) t)
         (if (file-exists-p path)
             (error "Failed to delete %S" short-path)
+          ;; Ensures that windows displaying this buffer will be switched to
+          ;; real buffers (`doom-real-buffer-p')
+          ;; FIXME: implement -- invent the universe
+          ;; (doom/kill-this-buffer-in-all-windows buf t)
           (cmx-files--update-refs path)
           (message "Deleted %S" short-path))))))
 

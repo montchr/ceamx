@@ -1,12 +1,14 @@
 ;;; lib-common.el --- Common library functions -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2016–2022  Radian LLC and contributors
 ;; Copyright (C) 2014-2023  Henrik Lissner
 ;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
 ;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
 ;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT
 
 ;; Author: Chris Montgomery <chris@cdom.io>
+;;         Radon Rosborough <radon@intuitiveexplanations.com>
 ;;         Bailey Ling <bling@live.ca>
 ;;         7696122 <7696122@gmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -42,6 +44,12 @@
 ;;; Commentary:
 
 ;; General, common, and generic library functions.
+
+;;; Sources:
+
+;; TODO: add doom lib, others
+
+;; <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
 
 ;;; Code:
 
@@ -135,30 +143,6 @@ Like `lookup-key', but search active keymaps if KEYMAPS is omitted."
              if (keymapp keymap)
              if (lookup-key keymap keys)
              return it)))
-
-;;
-;;; TTY/GUI
-;;
-
-;; TODO: yikes
-;; (defun etcc--get-current-gnome-profile-name ()
-;;   "Return Current profile name of Gnome Terminal."
-;;   ;; https://github.com/helino/current-gnome-terminal-profile/blob/master/current-gnome-terminal-profile.sh
-;;   (if (etcc--in-gnome-terminal?)
-;;       (let ((cmd "#!/bin/sh
-;; FNAME=$HOME/.current_gnome_profile
-;; gnome-terminal --save-config=$FNAME
-;; ENTRY=`grep ProfileID < $FNAME`
-;; rm $FNAME
-;; TERM_PROFILE=${ENTRY#*=}
-;; echo -n $TERM_PROFILE"))
-;;         (shell-command-to-string cmd))
-;;     "Default"))
-
-
-;;
-;;; Macros
-;;
 
 (defmacro cmd! (&rest body)
   "Return (lambda () (interactive) ,@BODY)
@@ -280,13 +264,58 @@ The current file is the file from which `add-to-load-path!' is used."
 
 ;;; Advice
 
+(defmacro def-advice! (name arglist where place docstring &rest body)
+  "Define an advice called NAME and add it to a function.
+ARGLIST is as in `defun'. WHERE is a keyword as passed to
+`advice-add', and PLACE is the function to which to add the
+advice, like in `advice-add'. PLACE should be sharp-quoted.
+DOCSTRING and BODY are as in `defun'."
+  (declare (indent 2)
+           (doc-string 5))
+  (unless (stringp docstring)
+    (error "Ceamx: advice `%S' not documented'" name))
+  (unless (and (listp place)
+               (= 2 (length place))
+               (eq (nth 0 place) 'function)
+               (symbolp (nth 1 place)))
+    (error "Ceamx: advice `%S' does not sharp-quote place `%S'" name place))
+  `(progn
+     ;; NOTE(Radian):
+     ;;
+     ;; > You'd think I would put an `eval-and-compile' around this. It
+     ;; > turns out that doing so breaks the ability of
+     ;; > `elisp-completion-at-point' to complete on function arguments
+     ;; > to the advice. I know, right? Apparently this is because the
+     ;; > code that gets the list of lexically bound symbols at point
+     ;; > tries to `macroexpand-all', and apparently macroexpanding
+     ;; > `eval-and-compile' goes ahead and evals the thing and returns
+     ;; > only the function symbol. No good. But the compiler does still
+     ;; > want to know the function is defined (this is a Gilardi
+     ;; > scenario), so we pacify it by `eval-when-compile'ing something
+     ;; > similar (see below).
+     (defun ,name ,arglist
+       ,(let ((article (if (string-match-p "^:[aeiou]" (symbol-name where))
+                           "an"
+                         "a")))
+          (format "%s\n\nThis is %s `%S' advice for\n`%S'."
+                  docstring article where
+                  (if (and (listp place)
+                           (memq (car place) ''function))
+                      (cadr place)
+                    place)))
+       ,@body)
+     (eval-when-compile
+       (declare-function ,name nil))
+     (advice-add ,place ',where #',name)
+     ',name))
+
 (defmacro defadvice! (symbol arglist &optional docstring &rest body)
   "Define an advice called SYMBOL and add it to PLACES.
 ARGLIST is as in `defun'. WHERE is a keyword as passed to `advice-add', and
 PLACE is the function to which to add the advice, like in `advice-add'.
 DOCSTRING and BODY are as in `defun'.
 \(fn SYMBOL ARGLIST &optional DOCSTRING &rest [WHERE PLACES...] BODY\)"
-  (declare (doc-string 3) (indent defun))
+  (declare (obsolete "def-advice!" "2023-11-10") (doc-string 3) (indent defun))
   (unless (stringp docstring)
     (push docstring body)
     (setq docstring nil))
@@ -343,6 +372,30 @@ advised)."
              ((symbolp sym)
               (put ',fn 'permanent-local-hook t)
               (add-hook sym #',fn ,append?))))))
+(defmacro def-hook! (name arglist hooks docstring &rest body)
+  "Define a function called NAME and add it to a hook.
+ARGLIST is as in `defun'. HOOKS is a list of hooks to which to
+add the function, or just a single hook. DOCSTRING and BODY are
+as in `defun'."
+  (declare (indent 2)
+           (doc-string 4))
+  (unless (listp hooks)
+    (setq hooks (list hooks)))
+  (dolist (hook hooks)
+    (unless (string-match-p "-\\(hook\\|functions\\)$" (symbol-name hook))
+      (error "Symbol `%S' is not a hook" hook)))
+  (unless (stringp docstring)
+    (error "Ceamx: no docstring provided for `def-hook!'"))
+  (let ((hooks-str (format "`%S'" (car hooks))))
+    (dolist (hook (cdr hooks))
+      (setq hooks-str (format "%s\nand `%S'" hooks-str hook)))
+    `(progn
+       (defun ,name ,arglist
+         ,(format "%s\n\nThis function is for use in %s."
+                  docstring hooks-str)
+         ,@body)
+       (dolist (hook ',hooks)
+         (add-hook hook ',name)))))
 
 (defmacro add-hook! (hooks &rest rest)
   "A convenience macro for adding N functions to M hooks.
@@ -359,7 +412,8 @@ This macro accepts, in order:
      implicitly be wrapped in a lambda).
 
 \(fn HOOKS [:append :local [:depth N]] FUNCTIONS-OR-FORMS...)"
-  (declare (indent (lambda (indent-point state)
+  (declare (obsolete "def-hook!" "2023-11-10")
+           (indent (lambda (indent-point state)
                      (goto-char indent-point)
                      (when (looking-at-p "\\s-*(")
                        (lisp-indent-defform state indent-point))))
