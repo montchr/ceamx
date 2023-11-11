@@ -330,7 +330,7 @@
 ;; > everything else in Emacs.
 
 (use-package evil-escape
-  :diminish
+  :blackout
   :after evil
   :commands evil-escape
   :hook (on-first-input . evil-escape-mode)
@@ -436,7 +436,7 @@
 
 ;; TODO: consider moving to modeline file
 (use-package anzu
-  :diminish
+  :blackout
   :defer 10
   :config (global-anzu-mode))
 

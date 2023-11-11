@@ -24,9 +24,8 @@
 
 ;; Q: Is it safe to `defvar-keymap' here since `config-*' files should be idempotent?
 ;;
-;; A: Yes, I think so -- for the same reason that it is safe to invoke `defvar'
-;;    for the same symbol multiple times in order to, for example, appease the
-;;    byte-compiler.
+;; A: Yes. For the same reason that it is safe to invoke `defvar' for the same
+;;    symbol multiple times in order to, for example, appease the byte-compiler.
 ;;
 ;;    I dug into the C source code for `defvar' and found these notes:
 ;;
@@ -46,8 +45,12 @@
 
 (defvar cmx-mode-specific-arm-key "m")
 
-(defvar-keymap cmx-leader-keymap
-  :doc "User-defined leader keymap.")
+(defvar-keymap cmx-intercept-mode-map
+  :doc "High-precedence user-defined keymap.")
+
+(defvar-keymap cmx-leader-map
+  :doc "User-defined leader keymap."
+  :parent mode-specific-map)
 
 (provide 'config-keys)
 ;;; config-keys.el ends here

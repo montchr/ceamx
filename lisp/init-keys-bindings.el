@@ -490,7 +490,7 @@
 ;;; Top-level leader map
 ;;
 
-(define-keymap :keymap cmx-leader-keymap
+(define-keymap :keymap cmx-leader-map
   ;; `def-arm!'ed above
   ;; "h"		 '("[Help]" . cmx-helpful-map)
   ;; "s"		'("[Search]" . cmx-search-keymap)
@@ -529,23 +529,19 @@
   "y"   '("[Copy]" . cmx-yank-keymap)
   ;; "z"
   )
-(defalias 'cmx-leader-keymap cmx-leader-keymap)
+(defalias 'cmx-leader-map cmx-leader-map)
 
-;; Make leader keymap bindings accessible under `C-c',
-;; while keeping other commands bound to `mode-specific-map'.
-(set-keymap-parent mode-specific-map cmx-leader-keymap)
-
-(keymap-global-set cmx-leader-alt-key 'cmx-leader-keymap)
-(keymap-global-set "<f12>" 'cmx-leader-keymap)
+(keymap-global-set cmx-leader-alt-key 'cmx-leader-map)
+(keymap-global-set "<f12>" 'cmx-leader-map)
 
 (after! [evil]
   ;; Bind leader key to existing leader map.
-  (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'cmx-leader-keymap)
+  (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'cmx-leader-map)
   (after! [magit]
-    (keymap-set magit-mode-map cmx-leader-key #'cmx-leader-keymap))
+    (keymap-set magit-mode-map cmx-leader-key #'cmx-leader-map))
 
   ;; Bind leader to `,' (comma).
-  (evil-define-key* '(normal visual motion) 'global "," 'cmx-leader-keymap))
+  (evil-define-key* '(normal visual motion) 'global "," 'cmx-leader-map))
 
 ;;
 ;;; Global Bindings
