@@ -26,22 +26,39 @@
 
 (require 'config-lisp)
 
-(defun cmx-emacs-lisp-defaults-h ()
+;;
+;;; Mode hooks
+;;
+
+;;; `emacs-lisp-mode'
+
+(defun cmx-prog--emacs-lisp-init-h ()
   "Sensible defaults for `emacs-lisp-mode'."
-  (run-hooks 'cmx-lisp-prog-hook)
+  (run-hooks 'cmx-prog-lisp-init-hook)
   (after! 'eldoc (eldoc-mode +1))
   (after! 'rainbow-mode (rainbow-mode +1))
   (setq mode-name "EL"))
 
-(setq cmx-emacs-lisp-mode-hook 'cmx-emacs-lisp-defaults-h)
+(setq cmx-prog-emacs-lisp-hook 'cmx-prog--emacs-lisp-init-h)
 
-(add-hook 'emacs-lisp-mode-hook (##run-hooks 'cmx-emacs-lisp-mode-hook))
+(add-hook 'emacs-lisp-mode-hook (cmd! (run-hooks 'cmx-prog-emacs-lisp-hook)))
 
-;;; `eldoc' (builtin)
-(use-feature eldoc
-  :commands (eldoc-mode)
-  :diminish eldoc-mode
-  :init (add-hook 'emacs-lisp-mode-hook #'eldoc-mode))
+;;; `ielm'
+
+(defun cmx-prog--ielm-init-h ()
+  "Sensible defaults for `ielm'."
+  (run-hooks 'cmx-interactive-lisp-prog-init-hook)
+  (after! 'eldoc
+    (diminish 'eldoc-mode)
+    (eldoc-mode +1)))
+
+(defvar cmx-prog-ielm-init-hook #'cmx-prog--ielm-init-h)
+
+(add-hook 'ielm-mode-hook (cmd! (run-hooks 'cmx-prog-ielm-init-hook)))
+
+;;
+;;; Configuration
+;;
 
 ;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
 ;;  discover elisp functions that do what you want,
@@ -71,52 +88,12 @@
 ;;   ;; (add-hook 'flycheck-mode-hook #'+emacs-lisp-non-package-mode)
 ;;   )
 
-;;; `lispy' :: <https://github.com/abo-abo/lispy>
-(use-package lispy
-  :init
-  (defun cmx-init-lispy-in-eval-expression-h ()
-    "Enable `lispy-mode' in the minibuffer for `eval-expression'."
-    (lispy-mode)
-    ;; When `lispy-key-theme' has `parinfer', the TAB key doesn't do
-    ;; completion, neither (kbd "<tab>"/"TAB"/"C-i")/[tab]/"\C-i" works in
-    ;; terminal as tested so remapping is used as a workaround
-    (local-set-key (vector 'remap (lookup-key lispy-mode-map (kbd "TAB"))) #'completion-at-point))
-  (add-hook 'eval-expression-minibuffer-setup-hook #'cmx-init-lispy-in-eval-expression-h)
-
-  :config
-  (dolist (mode cmx-lisp-mode-list)
-    (let ((hook (intern (format "%S-hook" mode))))
-      (add-hook hook (cmd! (lispy-mode +1)))))
-
-  ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
-  ;; in favor of just moving past the closing quote as I would expect.
-  (setopt lispy-close-quotes-at-end-p t)
-
-  ;; TODO: Remove after <https://github.com/abo-abo/lispy/pull/619> (if ever?)
-  ;; (keymap-unset lispy-mode-map "`" t) ; <- does not work. why not?
-  (keymap-set lispy-mode-map "`"   #'self-insert-command)
-
-  (keymap-set lispy-mode-map "M-v" nil))
-
-;;; `lispyville' :: <https://github.com/noctuid/lispyville>
-(use-package lispyville
-  :after (evil lispy)
-  :defines (lispyville-key-theme)
-
-  :init
-  ;; via doom
-  (setq lispyville-key-theme
-        '((operators normal)
-          c-w
-          (prettify insert)
-          (atom-movement t)
-          slurp/barf-lispy
-          additional
-          additional-insert))
-  (add-hook 'lispy-mode-hook #'lispyville-mode)
-
-  :config
-  (lispyville-set-key-theme))
+(after! 'lispy
+  (setq lispy-outline
+        (concat
+         ;; `lispy-mode' requires `lispy-outline' start with ^
+         (unless (string-prefix-p "^" +emacs-lisp-outline-regexp) "^")
+         +emacs-lisp-outline-regexp)))
 
 ;;
 ;;; Keybinds
