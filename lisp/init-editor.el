@@ -59,6 +59,21 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 
 (add-hook 'prog-mode-hook (cmd! (run-hooks 'cmx-prog-mode-init-hook)))
 
+;;; `whitespace-mode' (internal)
+;;
+;;  Show all problematic whitespace as configured by `whitespace-style'.
+;;
+;;  This mode is buffer-local. It might be undesireable in some cases,
+;;  so consider enabling it selectively.
+
+(setopt whitespace-style '(face tabs tab-mark trailing))
+;; Visualize tabs as a pipe character - "|" (ASCII ID 124)
+;; NOTE: the original value is still present at tail
+(cl-pushnew '(tab-mark 9 [124 9] [92 9]) whitespace-display-mappings)
+
+;;
+;;; Packages
+;;
 
 ;;; editorconfig :: <https://editorconfig.org>
 (use-package editorconfig
