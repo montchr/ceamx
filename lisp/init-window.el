@@ -55,7 +55,7 @@
 ;;; popper -- <https://github.com/karthink/popper>
 ;;  "minor-mode to summon and dismiss buffers easily."
 (use-package popper
-  :diminish
+  :blackout
   :commands (popper-mode
              popper-echo-mode
              popper-group-by-projectile)

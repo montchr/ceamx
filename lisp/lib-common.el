@@ -175,8 +175,7 @@ FEATURE may be any one of:
     \"evil-autoloads\" => (with-eval-after-load \"evil-autolaods\" BODY)
     [evil cider]     => (with-eval-after-load 'evil
                           (with-eval-after-load 'cider
-                            BODY))
-"
+                            BODY))"
   (declare (indent 1))
   (cond
    ((vectorp feature)

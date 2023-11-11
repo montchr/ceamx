@@ -49,7 +49,6 @@
   "Sensible defaults for `ielm'."
   (run-hooks 'cmx-interactive-lisp-prog-init-hook)
   (after! 'eldoc
-    (diminish 'eldoc-mode)
     (eldoc-mode +1)))
 
 (defvar cmx-prog-ielm-init-hook #'cmx-prog--ielm-init-h)
@@ -59,6 +58,9 @@
 ;;
 ;;; Configuration
 ;;
+
+(use-feature eldoc
+  :blackout)
 
 ;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
 ;;  discover elisp functions that do what you want,

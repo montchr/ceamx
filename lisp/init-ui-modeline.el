@@ -35,9 +35,11 @@
   :config
   (which-function-mode 1))
 
-(use-package diminish
+;;; `blackout' :: ` <https://github.com/radian-software/blackout>
+(use-package blackout
   :demand t)
-;; Wait until `diminish` is activated so its use-package keyword is installed
+
+;; Wait until `blackout' is activated so its `use-package' keyword is installed.
 (elpaca-wait)
 
 (provide 'init-ui-modeline)
