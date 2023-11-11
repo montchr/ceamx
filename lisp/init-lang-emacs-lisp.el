@@ -59,6 +59,7 @@
 ;;; Configuration
 ;;
 
+;;; `eldoc' (internal)
 (use-feature eldoc
   :blackout)
 

@@ -70,12 +70,16 @@
   (after! [evil]
     (evil-define-key '(normal) 'global "gO" #'link-hint-open-link)))
 
+;; FIXME: how to bind to leader map??? no idea how the mode's internal keybinding works despite looking at source...
 (use-feature outline
   :defines (outline-minor-mode-map)
   :config
   (setq-default outline-minor-mode t)
+
   ;; Corresponds to default binding of `C-c @'.
-  (def-arm! outline-minor-mode-map "@" "(doc): outline"))
+  ;; FIXME: doesn't work
+  ;; (keymap-set cmx-leader-map "@" '("(outline)" . outline-mode-prefix-map))
+  )
 
 ;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
 (use-package expand-region

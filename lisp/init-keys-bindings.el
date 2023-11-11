@@ -490,6 +490,10 @@
 ;;; Top-level leader map
 ;;
 
+;; FIXME: does not work
+;; (defalias '+outline-mode-prefix-command outline-mode-prefix-map)
+
+;; (defvar-keymap :keymap (copy-keymap outline-minor-mode-map))
 (define-keymap :keymap cmx-leader-map
   ;; `def-arm!'ed above
   ;; "h"		 '("[Help]" . cmx-helpful-map)
@@ -502,6 +506,9 @@
   "["    '("[Previous]" . cmx-go-prev-keymap)
   "]"    '("[Next]" . cmx-go-next-keymap)
   "TAB"  '("[Tab]" . cmx-tab-keymap)
+  ;; FIXME: does not work
+  ;; "@"    '("(outline)" . +outline-mode-prefix-command)
+
   ;; TODO: "a" => Agenda
   "b"		 '("[Buffer]" . cmx-buffer-keymap)
   "B"		 '("[Bookmarks]" . cmx-bookmark-keymap)
