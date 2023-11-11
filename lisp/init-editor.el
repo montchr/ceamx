@@ -31,6 +31,7 @@
 ;;; Formatting
 ;;
 
+(require 'lib-common)
 (require 'lib-editor)
 
 ;; Don't consider camelCaseWORDs as separate words.
@@ -42,6 +43,8 @@
 
 ;; Automatically maintain indentation while typing.
 (electric-indent-mode +1)
+(setopt backward-delete-char-untabify-method 'hungry)
+
 
 ;;; editorconfig :: <https://editorconfig.org>
 (use-package editorconfig
