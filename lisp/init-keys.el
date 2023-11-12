@@ -105,7 +105,6 @@
   (setopt which-key-prefix-prefix "")
   (setopt which-key-separator " ")
   (setopt which-key-side-window-max-width 0.33)
-  (setopt which-key-sort-order )
   ;; Sort non-prefix-keys above prefix keys.
   (setopt which-key-sort-order 'which-key-prefix-then-key-order)
   (setopt which-key-sort-uppercase-first nil)
