@@ -27,7 +27,7 @@
 (autoload 'consult-customize "consult")
 (autoload 'after! "lib-common" t)
 
-(defvar cmx-buffer-keymap)
+;; (defvar cmx-buffer-map)
 (defvar consult--source-buffer)
 (defvar consult-buffer-sources)
 ;; (defvar persp-consult-source)
@@ -56,7 +56,7 @@
 ;;   (keymap-global-set "<remap> <switch-to-buffer>" #'persp-switch-to-buffer*)
 ;;   (keymap-global-set "<remap> <kill-buffer>" #'persp-kill-buffer*)
 
-;;   (define-keymap :keymap cmx-buffer-keymap
+;;   (define-keymap :keymap cmx-buffer-map
 ;;     "b" #'persp-switch-to-buffer*
 ;;     "B" #'persp-list-buffers
 ;;     "K" #'persp-kill-buffer*)

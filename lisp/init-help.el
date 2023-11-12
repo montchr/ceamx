@@ -33,7 +33,7 @@
   :config
   (keymap-set help-mode-map "C-h" #'helpful-at-point)
   ;; FIXME: partially moved into `init-keys-bindings', but not yet the `help-mode-map' overrides
-  ;; (dolist (map (list cmx-help-keymap help-mode-map))
+  ;; (dolist (map (list cmx-help-map help-mode-map))
   ;;   (define-keymap :keymap map
   ;;     "c" #'helpful-command
   ;;     "f" #'helpful-callable

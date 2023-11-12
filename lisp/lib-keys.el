@@ -94,18 +94,18 @@ all hooks after it are ignored.")
      (keymap-set cmx-leader-map ,key '(,description . ,keymap))))
 
 ;; TODO: not yet practical or functional
-(defmacro def-mode-arm! (mode description &rest defs)
-  "Define the mode-specific leader arm for MODE with DESCRIPTION and bindings DEFS."
-  (declare (doc-string 2)
-           (indent defun))
-  (progn
-    (let* ((mode-name (symbol-name mode))
-           (keymap-sym (intern (format "cmx-%s-specific-map" mode-name)))
-           (description description)
-           (defs (or defs nil)))
-      `(def-arm! ,keymap-sym "m"
-         ,description
-         ,@defs))))
+;; (defmacro def-mode-arm! (mode description &rest defs)
+;;   "Define the mode-specific leader arm for MODE with DESCRIPTION and bindings DEFS."
+;;   (declare (doc-string 2)
+;;            (indent defun))
+;;   (progn
+;;     (let* ((mode-name (symbol-name mode))
+;;            (keymap-sym (intern (format "cmx-%s-specific-map" mode-name)))
+;;            (description description)
+;;            (defs (or defs nil)))
+;;       `(def-arm! ,keymap-sym "m"
+;;          ,description
+;;          ,@defs))))
 
 (provide 'lib-keys)
 ;;; lib-keys.el ends here

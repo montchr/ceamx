@@ -48,9 +48,11 @@
 (defvar-keymap cmx-intercept-mode-map
   :doc "High-precedence user-defined keymap.")
 
+(define-prefix-command 'cmx-leader-map)
 (defvar-keymap cmx-leader-map
   :doc "User-defined leader keymap."
   :parent mode-specific-map)
+
 
 (provide 'config-keys)
 ;;; config-keys.el ends here

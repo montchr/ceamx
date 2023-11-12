@@ -141,7 +141,7 @@
 (use-package browse-at-remote
   :commands browse-at-remote
   :config
-  (keymap-set cmx-git-keymap "o" #'browse-at-remote))
+  (keymap-set cmx-git-map "o" #'browse-at-remote))
 
 (provide 'init-vcs)
 ;;; init-vcs.el ends here

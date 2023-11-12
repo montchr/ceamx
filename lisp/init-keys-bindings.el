@@ -20,13 +20,10 @@
 
 ;;; Commentary:
 
-;; TODO: quikgrok descriptions for `cmx-window-keymap' defs
-;; TODO: s/cmx-*-keymap/cmx-*-map -- this is Emacs convention (see `define-minor-mode' docs)
+;; TODO: quikgrok descriptions for `cmx-window-map' defs
 ;; FIXME: there is no way to update the leader when modifying its composite arm
 ;;        maps after binding the leader itself, unless you re-bind the leader
 ;;        key too. or maybe this is caused by using `defalias'?
-;; TODO: use `define-prefix-command' instead of aliases
-;;       -- though i still haven't figured out how it works
 
 ;; I like to see everything in one place rather than have bindings
 ;; scattered through many files. Perhaps I will change my mind someday.
@@ -53,27 +50,12 @@
 ;;   many more details and nuances of the keybindings API and packages' usage of them.
 ;;   So, I am learning by doing things "the hard way".
 
-;;; Tips:
-
-;; - When iterating on keymaps, you can quickly update `which-key' string
-;;   replacements by evaling the keymap's `defalias' expression.
-;; - Emacs 29 introduces several improved keybinding and keymap functions,
-;;   deprecating the long-standing `define-key'-style functions.
-;;   Use `keymap-set', `keymap-global-set', `defvar-keymap', and similar.
-;;   <https://www.gnu.org/software/emacs/manual/html_node/elisp/Creating-Keymaps.html>
-;; - Despite <https://github.com/justbur/emacs-which-key/issues/338#issuecomment-1101928153>,
-;;   the correct string replacements are reflected in which-key output. This may
-;;   be thanks to the aliasing of each keymap, as suggested by meow-edit  maintainers.
-;;   <https://github.com/meow-edit/meow/issues/71#issuecomment-962090002>
-;;   It's also worth noting that this approach comes from Emacs core's
-;;   definition of `kmacro-keymap'. However, regardless, the Emacs 29+
-;;   keybinding functions also do not cause any issues.
-
 ;;; Code:
 
 (require 'config-paths)
 (require 'config-help)
 (require 'config-keys)
+(require 'lib-common)
 (require 'lib-keys)
 
 ;;
@@ -108,7 +90,7 @@
 
 ;;; Navigation maps
 
-;; TODO: merge both `cmx-go-prev-keymap' and `cmx-go-next-keymap' into the
+;; TODO: merge both `cmx-go-prev-map' and `cmx-go-next-map' into the
 ;;       appropriate leaderless evil motion state bindings e.g. "[" and "]" in
 ;;       normal state. i tried doing that quickly but am not sure how to
 ;;       determine what is bound to "[" or "]" directly. i would have thought
@@ -116,47 +98,43 @@
 
 ;;;; Previous
 
-(defvar-keymap cmx-go-prev-keymap
+(def-arm! cmx-go-prev-map "[" "[Prev]"
   "TAB" #'tab-previous
   "["   #'previous-buffer
   "b"   #'previous-buffer
   "e"   #'flycheck-previous-error
   "F"   #'previous-window-any-frame
   "t"   #'tab-previous)
-(defalias 'cmx-go-prev-keymap cmx-go-prev-keymap)
 
 ;;;; Next
 
-(defvar-keymap cmx-go-next-keymap
+(def-arm! cmx-go-next-map "]" "[Next]"
   "TAB" #'tab-next
   "]"   #'next-buffer
   "b"   #'next-buffer
   "e"   #'flycheck-next-error
   "F"   #'next-window-any-frame
   "t"   #'tab-next)
-(defalias 'cmx-go-next-keymap cmx-go-next-keymap)
 
 ;; TODO: make this more convenient
 ;;;; Goto
-(defvar-keymap cmx-goto-keymap
+(def-map! cmx-goto-map
   "d" '("definition" . xref-find-definitions)
   "r" '("references" . xref-find-references))
-(defalias 'cmx-goto-keymap cmx-goto-keymap)
 
 ;;
 ;;; "B" => Bookmarks
 ;;
 
-(defvar-keymap cmx-bookmark-keymap
+(def-arm! cmx-bookmark-map "B" "[Bookmarks]"
   "F" #'burly-bookmark-frames
   "W" #'burly-bookmark-windows)
-(defalias 'cmx-bookmark-keymap cmx-bookmark-keymap)
 
 ;;
 ;;; "b" => Buffers
 ;;
 
-(defvar-keymap cmx-buffer-keymap
+(def-arm! cmx-buffer-map "b" "[Buffer]"
   ;; FIXME: only consider file-visiting buffers, or perhaps buffers i am editing (recent)
   "[" '("prev" . previous-buffer)
   "]" '("next" . next-buffer)
@@ -175,39 +153,34 @@
   "u" '("visual undo..." . vundo)
   "x" '("*scratch*" . scratch-buffer)
   "X" `("*scratch* (m)" . ,(cmd! (scratch major-mode))))
-(defalias 'cmx-buffer-keymap cmx-buffer-keymap)
 
 ;;
 ;;; "c" => Code
 ;;
 
-(defvar-keymap cmx-code-keymap
+(def-arm! cmx-code-map "c" "Code"
   ;; FIXME: wrong type argument commandp error if unavailable -- language server must support it
   "a" '("action.." . lsp-execute-code-action)
   "i" #'iedit-mode
   "r" '("rename..." . lsp-rename))
-(defalias 'cmx-code-keymap cmx-code-keymap)
 
 ;;
 ;;; "e" => Eval
 ;;
 
-;; FIXME: rename to reflect purpose
-
-(defvar-keymap cmx-elisp-keymap
+(def-arm! cmx-eval-map "e" "[Eval]"
   "b" #'eval-buffer
   "d" #'eval-defun
   "e" #'eval-last-sexp
   "E" #'eval-expression
   "i" #'ielm
   "r" #'eval-region)
-(defalias 'cmx-elisp-keymap cmx-elisp-keymap)
 
 ;;
 ;;; "f" => Files
 ;;
 
-(defvar-keymap cmx-file-keymap
+(def-arm! cmx-file-map "f" "[File]"
   ;; TODO
   ;; "u" #'+sudo-find-file
   ;; "U" #'+sudo-this-file
@@ -222,13 +195,12 @@
   "R" '("rename/move..." . cmx/move-this-file)
   "s" '("save" . save-buffer)
   "S" '("save as..." . write-file))
-(defalias 'cmx-file-keymap cmx-file-keymap)
 
 ;;
 ;;; "F" => Frames
 ;;
 
-(defvar-keymap cmx-frame-keymap
+(def-arm! cmx-frame-map "F" "[Frame]"
   "b" '("save layout..." . burly-bookmark-frames)
 	"F" '("switch to..." . select-frame-by-name)
   "n" '("create" . make-frame-on-current-monitor)
@@ -237,13 +209,12 @@
   "R" '("rename..." . set-frame-name)
   "[" '("prev" . previous-window-any-frame)
   "]" '("next" . next-window-any-frame))
-(defalias 'cmx-frame-keymap cmx-frame-keymap)
 
 ;;
 ;;; "g" => Git
 ;;
 
-(defvar-keymap cmx-git-keymap
+(def-arm! cmx-git-map "g" "[Git]"
   "b" #'magit-branch
   "B" #'magit-blame
   "f" #'magit-find-file
@@ -253,7 +224,6 @@
   "s" #'magit-stage-file
   "S" #'magit-unstage-file
   "t" #'git-timemachine)
-(defalias 'cmx-git-keymap cmx-git-keymap)
 
 ;;
 ;;; "h" => Help
@@ -284,10 +254,9 @@
 ;;; "i" => Insertions
 ;;
 
-(defvar-keymap cmx-insert-keymap
+(def-arm! cmx-insert-map "i" "[Insert]"
   "t"  #'tempel-insert
   "y"  #'yank-from-kill-ring)
-(defalias 'cmx-insert-keymap cmx-insert-keymap)
 
 ;;
 ;;; "n" => Notes
@@ -296,29 +265,28 @@
 ;; TODO: bind at top-level too
 ;; TODO: seems redundant but i will likely add a bunch to this
 ;;;; "n o c" => Org-Capture
-(defvar-keymap cmx-capture-keymap
+(def-map! cmx-capture-map
   "c" '("capture..." . org-capture))
-(defalias 'cmx-capture-keymap cmx-capture-keymap)
 
 ;;;; "n o" => Org-Mode
-(defvar-keymap cmx-org-keymap
-  "c" '("capture..." . cmx-capture-keymap)
+(def-map! cmx-org-map
+  "c" '("capture..." . cmx-capture-map)
   "t" '("todos" . org-todo-list))
-(defalias 'cmx-org-keymap cmx-org-keymap)
 
-(defvar-keymap cmx-notes-keymap
+(def-arm! cmx-notes-map "n" "[Note]"
   "b" #'denote-backlinks
   "c" #'org-capture
   "d" #'denote-date
-  "f" '("[find]" . (keymap))
-  "f f" #'denote-find-link
-  "f b" #'denote-find-backlink
+  ;; FIXME: what?
+  ;; "f" '("[find]" . (keymap))
+  ;; "f f" #'denote-find-link
+  ;; "f b" #'denote-find-backlink
   "i" #'denote-link                     ; "insert" mnemonic
   "I" #'denote-add-links
   "j" #'my-denote-journal               ; our custom command
   "n" #'denote
   "N" #'denote-type
-  "o" '("[Org-Mode]" . cmx-org-keymap)
+  "o" '("[Org-Mode]" . cmx-org-map)
   ;; Note that `denote-rename-file' can work from any context, not just
   ;; Dired buffers.  That is why we bind it here to the `global-map'.
   "r" #'denote-rename-file
@@ -327,38 +295,35 @@
   "t" #'denote-template
   ;; "zettelkasten" mnemonic
   "z" #'denote-signature)
-(defalias 'cmx-notes-keymap cmx-notes-keymap)
 
 ;;
 ;;; "o" => Open
 ;;
 
-(defvar-keymap cmx-open-keymap
+(def-arm! cmx-open-map "o" "[Open]"
   "d" #'dired
   "e" #'eshell
   "l" '("link..." . link-hint-open-link)
   "m" '("mail" . compose-mail)
   "n" '("news" . newsticker-show-news)
   "s" #'suggest)
-(defalias 'cmx-open-keymap cmx-open-keymap)
 
 ;;
 ;;; "p" => Projects
 ;;
 
-(defvar-keymap cmx-project-keymap
+(def-arm! cmx-project-map "p" "[Project]"
   "a" '("add..." . projectile-add-known-project)
   "f" '("find file..." . projectile-find-file)
   "i" '("invalidate cache" . projectile-invalidate-cache)
   "p" '("switch..." . projectile-switch-project))
-(defalias 'cmx-project-keymap cmx-project-keymap)
 
 ;;
 ;;; "q" => Session
 ;;
 
 ;;;; "q p" Package Management
-(defvar-keymap cmx-packages-keymap
+(def-map! cmx-packages-map
 	"i" '("elpaca manual" . (lambda () (interactive)
                             (info "Elpaca")))
   "m" #'elpaca-manager
@@ -368,16 +333,14 @@
   "u" #'elpaca-update
   "U" #'elpaca-update-all
   "v" #'elpaca-visit)
-(defalias 'cmx-packages-keymap cmx-packages-keymap)
 
-(defvar-keymap cmx-session-keymap
+(def-arm! cmx-session-map "q" "[Session]"
   "f" '("font..." . fontaine-set-preset)
-  "p" '("packages" . cmx-packages-keymap)
+  "p" '("packages" . cmx-packages-map)
   "q" '("close frame" . delete-frame)
   "Q" '("save+quit" . save-buffers-kill-emacs)
   "r" '("restart" . restart-emacs)
   "t" '("theme..." . consult-theme))
-(defalias 'cmx-session-keymap cmx-session-keymap)
 
 ;;
 ;;; "s" => Search
@@ -407,12 +370,11 @@
 ;;; "t" => Toggles
 ;;
 
-(defvar-keymap cmx-toggle-keymap
+(def-arm! cmx-toggle-map "t" "[Toggle]"
   "l" #'display-line-numbers-mode
   "L" #'line-number-mode
   "f" #'flycheck-mode
   "t" #'treemacs)
-(defalias 'cmx-toggle-keymap cmx-toggle-keymap)
 
 ;;
 ;;; "w" => Window
@@ -420,9 +382,7 @@
 
 ;; Largely based on Doom bindings, which are based on `evil-window-map'.
 
-(defvar-keymap cmx-window-keymap
-  :doc "Custom keymap for window management."
-
+(def-arm! cmx-window-map "w" "[Window]"
   ;;; default
   "w" #'ace-window
 
@@ -462,21 +422,19 @@
   "C-c"    #'ace-delete-window
   "C-r"    #'winner-redo
   "C-u"    #'winner-undo)
-(defalias 'cmx-window-keymap cmx-window-keymap)
 
 ;;
 ;;; "y" => Copy / Evil Yank
 ;;
 
-(defvar-keymap cmx-yank-keymap
+(def-arm! cmx-yank-map "y" "[Yank]"
   "l" '("link (visible)" . link-hint-copy-link))
-(defalias 'cmx-yank-keymap cmx-yank-keymap)
 
 ;;
 ;;; "TAB" => Tabs
 ;;
 
-(defvar-keymap cmx-tab-keymap
+(def-arm! cmx-tab-map "TAB" "[Tab]"
   "TAB"  '("other" . tab-recent)
   "d"    '("delete" . tab-close)
   "h"    '("prev" . tab-previous)
@@ -484,7 +442,6 @@
   "n"    '("new" . tab-new)
   "t"    '("other" . tab-recent)
   "x"    '("close" . tab-close))
-(defalias 'cmx-tab-keymap cmx-tab-keymap)
 
 ;;
 ;;; Top-level leader map
@@ -493,50 +450,24 @@
 ;; FIXME: does not work
 ;; (defalias '+outline-mode-prefix-command outline-mode-prefix-map)
 
-;; (defvar-keymap :keymap (copy-keymap outline-minor-mode-map))
 (define-keymap :keymap cmx-leader-map
-  ;; `def-arm!'ed above
-  ;; "h"		 '("[Help]" . cmx-helpful-map)
-  ;; "s"		'("[Search]" . cmx-search-keymap)
-
-  ;; One-shot commands
-  "`"    '("other buffer" . mode-line-other-buffer)
-  "SPC"  #'consult-project-buffer
-
-  "["    '("[Previous]" . cmx-go-prev-keymap)
-  "]"    '("[Next]" . cmx-go-next-keymap)
-  "TAB"  '("[Tab]" . cmx-tab-keymap)
   ;; FIXME: does not work
   ;; "@"    '("(outline)" . +outline-mode-prefix-command)
 
   ;; TODO: "a" => Agenda
-  "b"		 '("[Buffer]" . cmx-buffer-keymap)
-  "B"		 '("[Bookmarks]" . cmx-bookmark-keymap)
-  "c"		 '("[Code]" . cmx-code-keymap)
   ;; TODO: "d"
-  "e"		 '("[Eval]" . cmx-elisp-keymap)
-  "f"		 '("[File]" . cmx-file-keymap)
-  "F"		 '("[Frame]" . cmx-frame-keymap)
-  "g"		 '("[Git]" . cmx-git-keymap)
-  "i"		 '("[Insert]" . cmx-insert-keymap)
-  "j"    '("jump: line" . consult-line)
   ;; "k"
   ;; "l"
   ;; "m" => RESERVED for mode-specific local maps
-  "n"		 '("[Notes]" . cmx-notes-keymap)
-  "o"		 '("[Open]" . cmx-open-keymap)
-  "p"		 '("[Project]" . cmx-project-keymap)
-  "q"		 '("[Quit/Session]" . cmx-session-keymap)
   ;; "r"
-  "t"		'("[Toggle]" . cmx-toggle-keymap)
   ;; "u"
   ;; "v"
-  "w"		'("[Window]" . cmx-window-keymap)
-  "x"   '("[Capture]" . cmx-capture-keymap)
-  "y"   '("[Copy]" . cmx-yank-keymap)
   ;; "z"
-  )
-(defalias 'cmx-leader-map cmx-leader-map)
+
+  ;; One-shot commands
+  "`"    '("other buffer" . mode-line-other-buffer)
+  "SPC"  #'consult-project-buffer
+  "j"    '("jump: line" . consult-line))
 
 (keymap-global-set cmx-leader-alt-key 'cmx-leader-map)
 (keymap-global-set "<f12>" 'cmx-leader-map)
