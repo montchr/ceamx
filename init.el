@@ -132,10 +132,11 @@
 
 ;;; Keybindings
 (require 'init-keys)
-(defvar cmx-modal-keys-provider 'meow)
+(defvar cmx-modal-keys-provider 'evil)
 (pcase cmx-modal-keys-provider
-  (`meow (require 'init-keys-meow))
-  (`evil (require 'init-keys-evil)))
+  (`boon (require 'init-keys-boon))
+  (`evil (require 'init-keys-evil))
+  (`meow (require 'init-keys-meow)))
 (require 'init-keys-bindings)
 
 ;;; Window
