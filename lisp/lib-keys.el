@@ -84,14 +84,14 @@ all hooks after it are ignored.")
        ,@defs)))
 
 (defmacro def-arm! (keymap key description &rest defs)
-  "Define KEYMAP with DEFS bound to KEY with DESCRIPTION in `cmx-leader-map'."
+  "Define KEYMAP with DEFS bound to KEY with DESCRIPTION in `mode-specific-map'."
   (declare (indent defun))
   `(progn
      (define-prefix-command (quote ,keymap))
      (define-keymap
        :keymap ,keymap
        ,@defs)
-     (keymap-set cmx-leader-map ,key '(,description . ,keymap))))
+     (keymap-set mode-specific-map ,key '(,description . ,keymap))))
 
 ;; TODO: not yet practical or functional
 ;; (defmacro def-mode-arm! (mode description &rest defs)

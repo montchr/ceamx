@@ -450,7 +450,7 @@
 ;; FIXME: does not work
 ;; (defalias '+outline-mode-prefix-command outline-mode-prefix-map)
 
-(define-keymap :keymap cmx-leader-map
+(define-keymap :keymap mode-specific-map
   ;; FIXME: does not work
   ;; "@"    '("(outline)" . +outline-mode-prefix-command)
 
@@ -469,17 +469,17 @@
   "SPC"  #'consult-project-buffer
   "j"    '("jump: line" . consult-line))
 
-(keymap-global-set cmx-leader-alt-key 'cmx-leader-map)
-(keymap-global-set "<f12>" 'cmx-leader-map)
+(keymap-global-set cmx-leader-alt-key 'mode-specific-command-prefix)
+(keymap-global-set "<f12>" 'mode-specific-command-prefix)
 
 (after! [evil]
   ;; Bind leader key to existing leader map.
-  (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'cmx-leader-map)
+  (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'mode-specific-command-prefix)
   (after! [magit]
-    (keymap-set magit-mode-map cmx-leader-key #'cmx-leader-map))
+    (keymap-set magit-mode-map cmx-leader-key #'mode-specific-command-prefix))
 
   ;; Bind leader to `,' (comma).
-  (evil-define-key* '(normal visual motion) 'global "," 'cmx-leader-map))
+  (evil-define-key* '(normal visual motion) 'global "," 'mode-specific-command-prefix))
 
 ;;
 ;;; Global Bindings

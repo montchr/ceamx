@@ -78,7 +78,7 @@
 
   ;; Corresponds to default binding of `C-c @'.
   ;; FIXME: doesn't work
-  ;; (keymap-set cmx-leader-map "@" '("(outline)" . outline-mode-prefix-map))
+  ;; (keymap-set mode-specific-map "@" '("(outline)" . outline-mode-prefix-map))
   )
 
 ;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
