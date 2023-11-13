@@ -132,8 +132,10 @@
 
 ;;; Keybindings
 (require 'init-keys)
-;; FIXME: rename to `init-evil'
-(require 'init-keys-evil)
+(defvar cmx-modal-keys-provider 'meow)
+(pcase cmx-modal-keys-provider
+  (`meow (require 'init-keys-meow))
+  (`evil (require 'init-keys-evil)))
 (require 'init-keys-bindings)
 
 ;;; Window
