@@ -91,7 +91,7 @@ all hooks after it are ignored.")
      (define-keymap
        :keymap ,keymap
        ,@defs)
-     (keymap-set mode-specific-map ,key '(,description . ,keymap))))
+     (keymap-set mode-specific-map ,key (cons ,description ,keymap))))
 
 ;; TODO: not yet practical or functional
 ;; (defmacro def-mode-arm! (mode description &rest defs)
