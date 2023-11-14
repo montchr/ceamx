@@ -17,6 +17,16 @@ See <https://github.com/dandavison/magit-delta/issues/13>.
 
 ## Tips
 
+### Copy the list of packages installed by elpaca as string
+
+First, invoke `(elpaca-write-lockfile)`. In the output file, `defvar` its contents.
+
+Assuming `(defvar cmx-elpaca-packages ...)`, then:
+
+```emacs-lisp
+(kill-new (mapconcat (##symbol-name (car %1)) cmx-elpaca-packages "\n"))
+```
+
 ### Avoid `add-to-list`; prefer `push` or `cl-pushnew`
 
 From the documentation for `add-to-list`:
