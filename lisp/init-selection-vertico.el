@@ -56,6 +56,7 @@
                   (propertize "» " 'face 'vertico-current)
                 "  ")
               cand))))
+
 (elpaca-wait)
 
 ;; Configure directory extension.
@@ -96,31 +97,33 @@
   :config
   (add-to-list 'savehist-additional-variables #'vertico-repeat-history))
 
-;; Add prompt indicator to `completing-read-multiple'.
-(defvar crm-separator)
-(defun +crm-indicator (args)
-  "Add prompt indicator to `completing-read-multiple' (ARGS are candidates).
+(use-feature emacs
+  :init
+  ;; Add prompt indicator to `completing-read-multiple'.
+  (defvar crm-separator)
+  (defun +crm-indicator (args)
+    "Add prompt indicator to `completing-read-multiple' (ARGS are candidates).
 We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
-  (cons (format "[CRM%s] %s"
-                (replace-regexp-in-string
-                 "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                 crm-separator)
-                (car args))
-        (cdr args)))
-(advice-add #'completing-read-multiple :filter-args #'+crm-indicator)
+    (cons (format "[CRM%s] %s"
+            (replace-regexp-in-string
+              "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+              crm-separator)
+            (car args))
+      (cdr args)))
+  (advice-add #'completing-read-multiple :filter-args #'+crm-indicator)
 
-;; Do not allow the cursor in the minibuffer prompt
-(setopt minibuffer-prompt-properties '( read-only t
-                                      cursor-intangible t
-                                      face minibuffer-prompt))
-(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  ;; Do not allow the cursor in the minibuffer prompt
+  (setopt minibuffer-prompt-properties '( read-only t
+                                          cursor-intangible t
+                                          face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
-;; Hide commands in M-x which do not work in the current mode.
-;; Vertico commands are hidden in normal buffers.
-(setopt read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Hide commands in M-x which do not work in the current mode.
+  ;; Vertico commands are hidden in normal buffers.
+  (setopt read-extended-command-predicate #'command-completion-default-include-p)
 
-;; Enable recursive minibuffers.
-(setopt enable-recursive-minibuffers t)
+  ;; Enable recursive minibuffers.
+  (setopt enable-recursive-minibuffers t))
 
 (provide 'init-selection-vertico)
 ;;; init-selection-vertico.el ends here
