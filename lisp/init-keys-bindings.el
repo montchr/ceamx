@@ -270,7 +270,9 @@
 
 ;;;; "o" / "n o" => Org-Mode
 (def-arm! cmx-org-map "o" "[Org-Mode]"
+  "a" #'org-agenda
   "c" '("capture..." . cmx-capture-map)
+  "l" #'org-store-link
   "t" '("todos" . org-todo-list))
 
 ;;;; "n" => Notes
@@ -278,10 +280,9 @@
   "b" #'denote-backlinks
   "c" #'org-capture
   "d" #'denote-date
-  ;; FIXME: what?
-  ;; "f" '("[find]" . (keymap))
-  ;; "f f" #'denote-find-link
-  ;; "f b" #'denote-find-backlink
+  "f" '("[find]" . (keymap))
+  "f f" #'denote-find-link
+  "f b" #'denote-find-backlink
   "i" #'denote-link                     ; "insert" mnemonic
   "I" #'denote-add-links
   "j" #'my-denote-journal               ; our custom command
