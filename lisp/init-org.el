@@ -37,6 +37,10 @@
   (make-directory org-directory))
 
 (use-package org
+  :init
+  (add-hook 'org-mode-hook #'prettify-symbols-mode)
+  (add-hook 'org-mode-hook #'visual-line-mode)
+
   :config
   (setopt org-image-actual-width 300)
   (setopt org-startup-with-inline-images t)
@@ -53,6 +57,8 @@
   (setopt org-hide-emphasis-markers t)
   (setopt org-pretty-entities t)
   (setopt org-ellipsis "…")
+  (setopt org-startup-indented t)
+  (setopt org-startup-folded 'show2levels)
 
   ;; Agenda styling
   ;; via <https://github.com/minad/org-modern#configuration>
@@ -64,9 +70,7 @@
             " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (setopt org-agenda-current-time-string
           "⭠ now ─────────────────────────────────────────────────")
-
-  :hook ((org-mode . prettify-symbols-mode)
-         (org-mode . visual-line-mode)))
+)
 
 (use-package doct
   :defer t
@@ -89,7 +93,11 @@
 ;;; org-modern <https://github.com/minad/org-modern>
 (use-package org-modern
   :after (org)
-  :commands (global-org-modern-mode)
+  :commands (org-modern-mode org-modern-agenda)
+  :init
+  (add-hook 'org-mode-hook #'org-modern-mode)
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+
   :config
   (global-org-modern-mode))
 
