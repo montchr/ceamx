@@ -35,7 +35,9 @@
 ;; This GitHub issue /might/ be relevant: <https://github.com/rainstormstudio/nerd-icons.el/issues/43>
 (use-package doom-modeline
   :after (nerd-icons)
-  :hook (elpaca-after-init . doom-modeline-mode)
+  :commands (doom-modeline-mode)
+  :init
+  (add-hook 'cmx-init-hook #'doom-modeline-mode)
   :config
   (setopt doom-modeline-support-imenu t)
   (setopt doom-modeline-unicode-fallback t)

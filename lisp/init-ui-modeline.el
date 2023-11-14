@@ -40,7 +40,7 @@
   :demand t)
 
 ;; Wait until `blackout' is activated so its `use-package' keyword is installed.
-(elpaca-wait)
+;; FIXME: (elpaca-wait)
 
 (provide 'init-ui-modeline)
 ;;; init-ui-modeline.el ends here

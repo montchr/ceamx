@@ -25,7 +25,7 @@
 ;;; Code:
 
 (use-package nano-modeline
-  :elpaca (nano-modeline :fetcher github :repo "rougier/nano-modeline")
+  ;; FIXME: :elpaca (nano-modeline :fetcher github :repo "rougier/nano-modeline")
   :after (nano-theme)
 
   :functions (nano-modeline-prog-mode

@@ -57,7 +57,7 @@
 
 ;;; Code:
 
-(require 'elpaca)
+;; FIXME: (require 'elpaca)
 
 (require 'config-keys)
 (require 'config-lisp)
@@ -185,7 +185,7 @@
 
   (evil-mode 1))
 
-(elpaca-wait)
+;; FIXME: (elpaca-wait)
 
 ;; FIXME: this is terrible -- must be loaded after evil
 (require 'lib-keys-evil)
@@ -198,8 +198,10 @@
   :after (evil)
 
   :config
-  (setopt evil-collection-elpaca-want-g-filters nil)
   (setopt evil-collection-setup-minibuffer nil)
+
+  (after! 'elpaca
+    (setopt evil-collection-elpaca-want-g-filters nil))
 
   (setopt evil-collection-mode-list
           '( bookmark consult comint compile eldoc debug diff-hl diff-mode dired

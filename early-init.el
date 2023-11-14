@@ -47,6 +47,11 @@
               "lisp/config-paths")
       nil (not init-file-debug))
 
+(load (expand-file-name "dotfield-early-init.el" user-emacs-directory))
+(require 'dotfield-early-init)
+
+(defalias 'cmx-init-hook 'after-init-hook)
+
 ;;
 ;;; Startup performance tuning
 ;;
@@ -75,8 +80,9 @@
      ;; (message "gc-cons-threshold & file-name-handler-alist restored")
      (when (boundp 'after-focus-change-function)
        (add-function :after after-focus-change-function #'+gc-after-focus-change)))))
-(with-eval-after-load 'elpaca
-  (add-hook 'elpaca-after-init-hook '+reset-init-values))
+;; (with-eval-after-load 'elpaca
+;;   (add-hook 'elpaca-after-init-hook '+reset-init-values))
+(add-hook 'cmx-init-hook #'+reset-init-values)
 
 ;; LSP performance improvements.
 (setenv "LSP_USE_PLISTS" "true")

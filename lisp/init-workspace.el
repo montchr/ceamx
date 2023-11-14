@@ -35,7 +35,7 @@
 ;; TODO: restore https://github.com/alphapapa/bufler.el
 
 (use-package burly
-  :elpaca (burly :host github :repo "alphapapa/burly.el")
+  ;; FIXME: :elpaca (burly :host github :repo "alphapapa/burly.el")
   :init
   (burly-tabs-mode))
 

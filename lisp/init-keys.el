@@ -30,7 +30,6 @@
 (require 'lib-common)
 (require 'lib-keys)
 
-(autoload 'elpaca-wait "elpaca")
 (autoload 'burly-bookmark-frames "burly")
 (autoload 'burly-bookmark-windows "burly")
 (autoload 'vundo "vundo")

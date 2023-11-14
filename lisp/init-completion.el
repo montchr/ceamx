@@ -57,8 +57,8 @@
 ;; FIXME: evil escape does not quit completion when `evil-disable-insert-state-bindings' is t
 ;; <https://github.com/emacs-evil/evil-collection/issues/676>
 (use-package corfu
-  :elpaca (corfu :host github :repo "minad/corfu"
-                 :files (:defaults "extensions/*"))
+  ;; FIXME: :elpaca (corfu :host github :repo "minad/corfu"
+  ;;                :files (:defaults "extensions/*"))
 
   ;; Enable Corfu only for certain modes.
   :hook ((prog-mode . corfu-mode))
@@ -81,7 +81,7 @@
 ;;  Corfu-endorsed solution to making it usable in terminal.
 ;;  See also `popon', the utility library powering the interface.
 (use-package corfu-terminal
-  :elpaca (corfu-terminal :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
+  ;; FIXME: :elpaca (corfu-terminal :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
   :if (not (display-graphic-p))
   :after (popon corfu)
   :config

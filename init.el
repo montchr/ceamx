@@ -26,6 +26,9 @@
 
 ;;; Code:
 
+(load (expand-file-name "dotfield-init.el" user-emacs-directory))
+(require 'dotfield-init)
+
 ;;; Configure load path.
 (dolist (subdir '("autoloads" "lisp" "lisp/lib"))
   (let ((dir (expand-file-name subdir user-emacs-directory)))
@@ -215,7 +218,7 @@
   (unless (and (fboundp 'server-running-p)
                (server-running-p))
     (server-start)))
-(add-hook 'elpaca-after-init-hook #'+maybe-start-server)
+(add-hook 'cmx-init-hook #'+maybe-start-server)
 
 ;; unfortunately
 (defun cmx-after-init-restart-yabai-h ()
@@ -223,16 +226,18 @@
   (after! [exec-path-from-shell]
     (async-shell-command "yabai --restart-service")))
 (when (and +gui-p +sys-mac-p)
-  (add-hook 'elpaca-after-init-hook #'cmx-after-init-restart-yabai-h))
+  (add-hook 'cmx-init-hook #'cmx-after-init-restart-yabai-h))
 
 ;; Load custom file after all packages have loaded.
 (when (file-exists-p custom-file)
-  (add-hook 'elpaca-after-init-hook
-            (lambda () (load custom-file 'noerror))))
+  (defun cmx-load-custom-file-after-init-h ()
+    (load custom-file 'noerror))
+  (add-hook 'cmx-init-hook #'cmx-load-custom-file-after-init-h))
 
 ;; Wait for all packages to initialize in non-interactive mode.
 (when noninteractive
-  (elpaca-wait))
+  (with-eval-after-load 'elpaca
+    (elpaca-wait)))
 
 (provide 'init)
 ;;; init.el ends here

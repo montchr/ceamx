@@ -26,9 +26,10 @@
 ;;; Code:
 
 (use-package vertico
-  :elpaca (vertico :host github
-                   :repo "minad/vertico"
-                   :files (:defaults "extensions/*"))
+  ;; FIXME: :elpaca (vertico :host github
+  ;;                  :repo "minad/vertico"
+  ;;                  :files (:defaults "extensions/*"))
+
   :demand t
 
   :init
@@ -57,10 +58,11 @@
                 "  ")
               cand))))
 
-(elpaca-wait)
+;; FIXME: (elpaca-wait)
 
 ;; Configure directory extension.
-(use-package vertico-directory :elpaca nil
+(use-package vertico-directory
+  ;; :elpaca nil
   :after vertico
   :commands (vertico-directory-tidy)
 
@@ -90,7 +92,8 @@
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
 
-(use-package vertico-repeat :elpaca nil
+(use-package vertico-repeat
+  ;; FIXME: :elpaca nil
   :after (savehist vertico)
   :commands (vertico-repeat-history vertico-repeat-save)
   :hook ((minibuffer-setup . vertico-repeat-save))

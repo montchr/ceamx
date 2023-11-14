@@ -3,7 +3,7 @@
 ;; Copyright (C) 2023  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: 
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 ;;
 
 (use-package consult-notes
-  :elpaca (:host github :repo "mclear-tools/consult-notes")
+  ;; FIXME: :elpaca (:host github :repo "mclear-tools/consult-notes")
   :commands (consult-notes
              consult-notes-search-in-all-notes))
 
@@ -60,4 +60,3 @@
 
 (provide 'init-notes)
 ;;; init-notes.el ends here
-

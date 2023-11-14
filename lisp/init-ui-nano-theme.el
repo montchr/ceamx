@@ -26,7 +26,7 @@
 
 
 (use-package nano-theme
-  :elpaca (nano :fetcher github :repo "rougier/nano-theme" :branch "master")
+  ;; FIXME: :elpaca (nano :fetcher github :repo "rougier/nano-theme" :branch "master")
 
   :init
   (load-theme 'nano t)
@@ -71,7 +71,7 @@
         (set-fontset-font t '(#xe000 . #xffdd) font)
       (message "Symbols Nerd Font Mono has not been found on your system"))))
 
-(elpaca-wait)
+;; FIXME: (elpaca-wait)
 
 (provide 'init-ui-nano-theme)
 ;;; init-ui-nano-theme.el ends here

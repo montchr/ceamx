@@ -93,8 +93,8 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
     (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
       (fset
        fn (lambda (&rest _)
-            ;; Only trigger this after Emacs and Elpaca have initialized.
-            (when (and elpaca-after-init-time
+            ;; Only trigger this after Emacs or, if available, Elpaca have initialized.
+            (when (and (or elpaca-after-init-time after-init-time)
                        (or (daemonp)
                            ;; In some cases, hooks may be lexically unset to
                            ;; inhibit them during expensive batch operations on
@@ -108,7 +108,8 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
       (cond ((daemonp)
              ;; In a daemon session we don't need all these lazy loading
              ;; shenanigans. Just load everything immediately.
-             (add-hook 'elpaca-after-init-hook fn 'append))
+             ;; FIXME: (add-hook 'elpaca-after-init-hook fn 'append)
+             (add-hook 'after-init-hook fn 'append))
             ((eq hook 'find-file-hook)
              ;; Advise `after-find-file' instead of using `find-file-hook'
              ;; because the latter is triggered too late (after the file has

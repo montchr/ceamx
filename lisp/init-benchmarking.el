@@ -103,9 +103,10 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
     (display-buffer (current-buffer))))
 
 (defun +show-init-time ()
+  "Echo the total Emacs init time."
   (message "init completed in %.2fms"
            (+time-subtract-millis after-init-time before-init-time)))
-(add-hook 'elpaca-after-init-hook '+show-init-time)
+(add-hook 'cmx-init-hook #'+show-init-time)
 
 (provide 'init-benchmarking)
 ;;; init-benchmarking.el ends here

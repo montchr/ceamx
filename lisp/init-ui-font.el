@@ -65,7 +65,7 @@
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
 
 (use-package ligature
-  :elpaca (ligature :host github :repo "mickeynp/ligature.el")
+  ;; FIXME: :elpaca (ligature :host github :repo "mickeynp/ligature.el")
   :config
   ;; Enable all Iosevka ligatures in programming modes
   ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
