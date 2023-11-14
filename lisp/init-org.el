@@ -42,11 +42,9 @@
   (add-hook 'org-mode-hook #'visual-line-mode)
 
   :config
-  (setopt org-image-actual-width 300)
-  (setopt org-startup-with-inline-images t)
 
   ;; via <https://github.com/minad/org-modern#configuration>
-  ;; Edit settings
+  ;; Editing settings
   (setopt org-auto-align-tags nil)
   (setopt org-tags-column 0)
   (setopt org-catch-invisible-edits 'show-and-error)
@@ -54,11 +52,13 @@
   (setopt org-insert-heading-respect-content t)
 
   ;; Org styling, hide markup etc.
-  (setopt org-hide-emphasis-markers t)
-  (setopt org-pretty-entities t)
   (setopt org-ellipsis "…")
-  (setopt org-startup-indented t)
+  (setopt org-hide-emphasis-markers t)
+  (setopt org-image-actual-width 300)
+  (setopt org-pretty-entities t)
   (setopt org-startup-folded 'show2levels)
+  (setopt org-startup-indented t)
+  (setopt org-startup-with-inline-images t)
 
   ;; Agenda styling
   ;; via <https://github.com/minad/org-modern#configuration>
