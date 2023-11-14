@@ -261,20 +261,19 @@
   "y"  #'yank-from-kill-ring)
 
 ;;
-;;; "n" => Notes
+;;; Notes / Org-Mode
 ;;
 
-;; TODO: bind at top-level too
-;; TODO: seems redundant but i will likely add a bunch to this
-;;;; "n o c" => Org-Capture
-(def-map! cmx-capture-map
-  "c" '("capture..." . org-capture))
+;;;; "X" / "n o c" => Org-Capture
+(def-arm! cmx-capture-map "X" "[Capture]"
+  "X" '("capture..." . org-capture))
 
-;;;; "n o" => Org-Mode
-(def-map! cmx-org-map
+;;;; "o" / "n o" => Org-Mode
+(def-arm! cmx-org-map "o" "[Org-Mode]"
   "c" '("capture..." . cmx-capture-map)
   "t" '("todos" . org-todo-list))
 
+;;;; "n" => Notes
 (def-arm! cmx-notes-map "n" "[Note]"
   "b" #'denote-backlinks
   "c" #'org-capture
@@ -299,10 +298,10 @@
   "z" #'denote-signature)
 
 ;;
-;;; "o" => Open
+;;; "O" => Open
 ;;
 
-(def-arm! cmx-open-map "o" "[Open]"
+(def-arm! cmx-open-map "O" "[Open]"
   "d" #'dired
   "e" #'eshell
   "l" '("link..." . link-hint-open-link)
@@ -384,6 +383,7 @@
 
 ;; Largely based on Doom bindings, which are based on `evil-window-map'.
 
+;; FIXME: assumes `evil'
 (def-arm! cmx-window-map "w" "[Window]"
   ;;; default
   "w" #'ace-window
@@ -453,9 +453,6 @@
 ;; (defalias '+outline-mode-prefix-command outline-mode-prefix-map)
 
 (define-keymap :keymap mode-specific-map
-  ;; FIXME: does not work
-  ;; "@"    '("(outline)" . +outline-mode-prefix-command)
-
   ;; TODO: "a" => Agenda
   ;; TODO: "d"
   ;; "k"
