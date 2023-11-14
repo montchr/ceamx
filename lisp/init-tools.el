@@ -3,7 +3,7 @@
 ;; Copyright (C) 2023  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: 
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -34,6 +34,11 @@
   (devdocs-update-all)
   (keymap-global-set "C-h D" #'devdocs-lookup))
 
+;;; `pandoc-mode' :: <https://joostkremers.github.io/pandoc-mode/>
+(use-package pandoc-mode
+  :commands pandoc-mode
+  :init
+  (add-hook 'markdown-mode-hook #'pandoc-mode))
+
 (provide 'init-tools)
 ;;; init-tools.el ends here
-
