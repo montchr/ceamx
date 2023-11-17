@@ -61,7 +61,6 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
           (add-to-list '+require-times
                        (list feature require-start-time time)
                        t))))))
-(advice-add 'require :around '+require-times-wrapper)
 
 (define-derived-mode +require-times-mode tabulated-list-mode "Require-Times"
   "Show times taken to `require' packages."
@@ -106,7 +105,15 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
   "Echo the total Emacs init time."
   (message "init completed in %.2fms"
            (+time-subtract-millis after-init-time before-init-time)))
-(add-hook 'cmx-init-hook #'+show-init-time)
+
+;;
+;;; Configuration
+;;
+
+(advice-add 'require :around '+require-times-wrapper)
+
+(add-hook 'after-init-hook #'+show-init-time)
+
 
 (provide 'init-benchmarking)
 ;;; init-benchmarking.el ends here

@@ -99,11 +99,11 @@
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 
 ;; FIXME: not in nixpkgs
-(use-package org-modern-indent
-  ;; :elpaca (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
-  :config
-  (setopt org-startup-indented t)
-  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
+;;(use-package org-modern-indent
+;;  ;; :elpaca (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
+ ;; :config
+;;  (setopt org-startup-indented t)
+;;  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
 ;;
 ;;; org-cliplink :: <https://github.com/rexim/org-cliplink>

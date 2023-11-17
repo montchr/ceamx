@@ -1,7 +1,17 @@
 # ceamx -- an emacs configuration
 
+The vast majority of packages are installed via Nixpkgs.
+Others can be installed with `package.el`.
+
 ## Tasks
 
+- [ ] Restore `org-modern-indent`
+- [ ] Create Nix home-manager module to be imported in some configuration so
+      that package requirements are not separated.
+
+      Currently this configuration is split across multiple unrelated projects
+      and only work by coincidence. Ceamx could not easily be re-created on a
+      new machine until a Nix module is co-located here.
 - [ ] `org-support-shift-select`
 
 ## Notes

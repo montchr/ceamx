@@ -24,18 +24,48 @@
 
 ;;  Personal Emacs configuration file.
 
+;;; Sources:
+
+;; - <https://git.sr.ht/~protesilaos/dotfiles/tree/e21affc0153e556e06a28813efb252c7757b6aff/item/emacs/.emacs.d/init.el>
+
 ;;; Code:
 
-(load (expand-file-name "dotfield-init.el" user-emacs-directory))
-(require 'dotfield-init)
+(defgroup ceamx nil
+  "User-configurable options for Ceamx."
+  :group 'file)
+
+;; TODO: implement
+;; (defcustom ceamx-load-theme-family 'modus
+;;   "Set of themes to load.
+;; Valid values are the symbols `ef', `modus', and `standard', which
+;; reference the `ef-themes', `modus-themes', and `standard-themes',
+;; respectively.
+
+;; A nil value does not load any of the above (use Emacs without a
+;; theme).
+
+;; This user option must be set in the `ceamx-pre-custom.el'
+;; file.  If that file exists in the Emacs directory, it is loaded
+;; before all other modules of my setup."
+;;   :group 'ceamx
+;;   :type '(choice :tag "Set of themes to load" :value modus
+;;                  (const :tag "The `ef-themes' module" ef)
+;;                  (const :tag "The `modus-themes' module" modus)
+;;                  (const :tag "The `standard-themes' module" standard)
+;;                  (const :tag "Do not load a theme module" nil)))
+
+;; TODO: implement?
+;; (defcustom ceamx-completion-ui 'vertico
+;;   "Choose minibuffer completion UI between `mct' or `vertico'."
+;;   :group 'ceamx
+;;   :type '(choice :tag "Minibuffer user interface"
+;;                  (const :tag "The `mct' module" mct)
+;;                  (const :tag "The `vertico' module" vertico)))
 
 ;;; Configure load path.
 (dolist (subdir '("autoloads" "lisp" "lisp/lib"))
   (let ((dir (expand-file-name subdir user-emacs-directory)))
     (add-to-list 'load-path dir)))
-
-;;; Profile startup time.
-(require 'init-benchmarking)
 
 ;;; Configure customization file.
 (setopt custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -47,7 +77,29 @@
 ;;; Load environment-related constants.
 (require 'config-env)
 
-;;; Initialize package loading.
+;;
+;;; Package initialization
+;;
+
+(require 'package)
+
+(require 'config-package)
+(require 'lib-package)
+
+;; Package manifest (update via `package-quickstart-refresh' after changes).
+;; TODO: uncomment when stable
+;; (setq package-quickstart t)
+;; (setq package-quickstart-file "ceamx-packages.el")
+
+(add-hook 'package-menu-mode-hook #'hl-line-mode)
+
+(eval-when-compile
+  ;; TODO: make sure we are using the version installed by nixpkgs, not the builtin version
+  ;;       same goes for modus-themes and others
+  (require 'use-package)
+  (use-package blackout :demand t))
+
+;; FIXME: move stuff out of here?
 (require 'init-packages)
 
 
@@ -218,7 +270,7 @@
   (unless (and (fboundp 'server-running-p)
                (server-running-p))
     (server-start)))
-(add-hook 'cmx-init-hook #'+maybe-start-server)
+(add-hook 'after-init-hook #'+maybe-start-server)
 
 ;; unfortunately
 (defun cmx-after-init-restart-yabai-h ()
@@ -226,13 +278,13 @@
   (after! [exec-path-from-shell]
     (async-shell-command "yabai --restart-service")))
 (when (and +gui-p +sys-mac-p)
-  (add-hook 'cmx-init-hook #'cmx-after-init-restart-yabai-h))
+  (add-hook 'after-init-hook #'cmx-after-init-restart-yabai-h))
 
 ;; Load custom file after all packages have loaded.
 (when (file-exists-p custom-file)
   (defun cmx-load-custom-file-after-init-h ()
     (load custom-file 'noerror))
-  (add-hook 'cmx-init-hook #'cmx-load-custom-file-after-init-h))
+  (add-hook 'after-init-hook #'cmx-load-custom-file-after-init-h))
 
 ;; Wait for all packages to initialize in non-interactive mode.
 (when noninteractive

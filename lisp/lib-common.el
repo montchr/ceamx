@@ -445,5 +445,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
             in (cmx--setq-hook-fns hooks vars 'singles)
             collect `(remove-hook ',hook #',fn))))
 
+;;; Packages
+
 (provide 'lib-common)
 ;;; lib-common.el ends here

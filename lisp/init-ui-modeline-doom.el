@@ -37,7 +37,7 @@
   :after (nerd-icons)
   :commands (doom-modeline-mode)
   :init
-  (add-hook 'cmx-init-hook #'doom-modeline-mode)
+  (add-hook 'after-init-hook #'doom-modeline-mode)
   :config
   (setopt doom-modeline-support-imenu t)
   (setopt doom-modeline-unicode-fallback t)

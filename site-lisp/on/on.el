@@ -94,7 +94,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
       (fset
        fn (lambda (&rest _)
             ;; Only trigger this after Emacs or, if available, Elpaca have initialized.
-            (when (and (or elpaca-after-init-time after-init-time)
+            (when (and after-init-time
                        (or (daemonp)
                            ;; In some cases, hooks may be lexically unset to
                            ;; inhibit them during expensive batch operations on

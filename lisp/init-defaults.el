@@ -109,10 +109,6 @@
 (unless +sys-mac-p    (setq command-line-ns-option-alist nil))
 (unless +sys-linux-p  (setq command-line-x-option-alist nil))
 
-;; No littering the file system with backup files.
-(setopt make-backup-files nil)
-(setopt create-lockfiles nil)
-
 ;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
 (setopt auto-mode-case-fold nil)
 

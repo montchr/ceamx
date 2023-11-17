@@ -1,4 +1,4 @@
-;;; early-init.el --- Early Init File
+;;; early-init.el --- Early Init File  -*- no-byte-compile: t; -*-
 
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
 
@@ -31,73 +31,88 @@
 
 ;;; Code:
 
-;; We don't want to use `package.el'. Considering the init behavior
-;; described in the Commentary, we need to disable `package.el' immediately.
-(setq package-enable-at-startup nil)
+;; Enable loading of `package.el'.
+(setq package-enable-at-startup t)
 
-(setq inhibit-default-init nil)
-(setq native-comp-async-report-warnings-errors nil)
-(setq load-prefer-newer t)
+;;; PERF: Minimize garbage collection during startup:
 
-;; Skip expensive regular expression searches in file name handlers.
-(defvar default-file-name-handler-alist file-name-handler-alist)
+(defun cmx-gc-reduce-freq ()
+  "Reduce the frequency of garbage collection."
+  (setq gc-cons-threshold most-positive-fixnum)
+  (setq gc-cons-percentage 0.6))
+
+(defun cmx-gc-restore-freq ()
+  "Restore the frequency of garbage collection."
+  ;; FIXME: these appear to be arbitrary values
+  (setq gc-cons-threshold 16777216)
+  (setq gc-cons-percentage 0.1))
+
+;; Make GC more rare during init (i.e. right now), while minibuffer is active,
+;; and when shutting down. In the latter two cases, we try doing the reduction
+;; early in the hook.
+(cmx-gc-reduce-freq)
+(add-hook 'minibuffer-setup-hook #'cmx-gc-reduce-freq -50)
+(add-hook 'kill-emacs-hook #'cmx-gc-reduce-freq -50)
+
+;; But make it more regular after startup and after closing minibuffer.
+(add-hook 'emacs-startup-hook #'cmx-gc-restore-freq)
+(add-hook 'minibuffer-exit-hook #'cmx-gc-restore-freq)
+
+;;; PERF: Avoid complex regexp matching in load path during startup:
+
+;; Avoid unnecessary regexp matching while loading .el files.
+(defvar cmx-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
+(defun cmx--restore-file-name-handler-alist-h ()
+  "Restore the original value of the `file-name-handler-alist' variable."
+  (setq file-name-handler-alist cmx-file-name-handler-alist)
+  (makunbound 'cmx-file-name-handler-alist))
+
+(add-hook 'emacs-startup-hook #'cmx--restore-file-name-handler-alist-h)
+
+(setq native-comp-async-report-warnings-errors 'silent)
+(setq native-compile-prune-cache t)
+
+;; Don't load outdated byte-compiled files. This should not even be an option.
+(setq load-prefer-newer t)
+
+;;; Configure well-known paths:
+
+;; Load settings describing well-known paths.
 (load (concat (file-name-directory load-file-name)
               "lisp/config-paths")
       nil (not init-file-debug))
 
-(load (expand-file-name "dotfield-early-init.el" user-emacs-directory))
-(require 'dotfield-early-init)
-
-(defalias 'cmx-init-hook 'after-init-hook)
-
-;;
-;;; Startup performance tuning
-;;
-
-;; Relocate the native-comp cache during early-init.
+;; Use preferred cache directories for native-comp.
 (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "eln/" cmx-var-dir)))
 (add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" cmx-var-dir))
 
-(setq gc-cons-threshold most-positive-fixnum
-      gc-cons-percentage 1)
+;;; Inhibit annoyances:
 
-(defun +gc-after-focus-change ()
-  "Run garbage collection when frame loses focus."
-  (run-with-idle-timer
-   5 nil
-   (lambda () (unless (frame-focus-state) (garbage-collect)))))
-(defun +reset-init-values ()
-  "Restore sensible settings after initialization."
-  (run-with-idle-timer
-   1 nil
-   (lambda ()
-     (setq file-name-handler-alist default-file-name-handler-alist
-           gc-cons-percentage 0.1
-           gc-cons-threshold 100000000)
-     ;; TODO: debug mode flag
-     ;; (message "gc-cons-threshold & file-name-handler-alist restored")
-     (when (boundp 'after-focus-change-function)
-       (add-function :after after-focus-change-function #'+gc-after-focus-change)))))
-;; (with-eval-after-load 'elpaca
-;;   (add-hook 'elpaca-after-init-hook '+reset-init-values))
-(add-hook 'cmx-init-hook #'+reset-init-values)
-
-;; LSP performance improvements.
+;; Performance improvements for language server JSON-RPC (LSP).
 (setenv "LSP_USE_PLISTS" "true")
 (when (functionp 'json-serialize)
   (setq read-process-output-max (* 1024 1024 8)))
 
-;; Ignore Xorg resources.
+;; No bells.
+(setq ring-bell-function #'ignore)
+
+;; Display scratch buffer on startup.
+(setq inhibit-startup-screen t)
+
+;; No littering.
+(setq make-backup-files nil)
+(setq create-lockfiles nil)
+
+;; Prevent X11 from taking control of visual behavior and appearance.
 (advice-add #'x-apply-session-resources :override #'ignore)
 
-;; Inhibit annoyances.
-(setq ring-bell-function #'ignore
-      inhibit-startup-screen t)
+;; Avoid expensive frame resizing.
+(setq frame-inhibit-implied-resize t)
+
+;; There is no place like Emacs.
+(add-hook 'after-init-hook (lambda () (set-frame-name "home")))
 
 (provide 'early-init)
-;; Local Variables:
-;; no-byte-compile: t
-;; End:
 ;;; early-init.el ends here

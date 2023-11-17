@@ -40,7 +40,7 @@
 (setq-default custom-enabled-themes '(modus-vivendi))
 
 ;; Ensure that themes will be applied even if they have not been customized
-(add-hook 'cmx-init-hook #'cmx-reapply-themes)
+(add-hook 'after-init-hook #'cmx-reapply-themes)
 
 ;; Set up `after-enable-theme-hook'.
 ;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
