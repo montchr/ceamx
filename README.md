@@ -25,6 +25,34 @@ Also it requires disabling `line-numbers` in configuration,
 which isn't a big issue but was the initial reason I uninstalled.
 See <https://github.com/dandavison/magit-delta/issues/13>.
 
+## Naming Things
+
+### Boolean Variables vs. Predicate Functions
+
+The naming for booleans and predicates is different.
+
+#### Example
+
+```elisp
+(defvar cmx-foo-flag t)
+(defvar cmx-is-foo-enabled t)
+(defun cmx-foo-p ()
+  ;; sketchy logic (don't do this)
+  (or cmx-foo-flag cmx-is-foo-enabled))
+```
+
+#### Explanation
+
+From [Coding Conventions (GNU Emacs Lisp Reference Manual)](https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html):
+
+> If the purpose of a function is to tell you whether a certain condition is
+> true or false, give the function a name that ends in ‘p’ (which stands for
+> “predicate”). If the name is one word, add just ‘p’; if the name is multiple
+> words, add ‘\-p’. Examples are `framep` and `frame-live-p`. We recommend to
+> avoid using this `-p` suffix in boolean variable names, unless the variable is
+> bound to a predicate function; instead, use a `-flag` suffix or names like
+> `is-foo`.
+
 ## Tips
 
 ### Copy the list of packages installed by elpaca as string
