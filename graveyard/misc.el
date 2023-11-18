@@ -30,7 +30,7 @@
 ;;  TODO: maybe try <https://github.com/nix-community/nix-doom-emacs/blob/9a5b34d9ba30842eb8f0d7deb08bf03a75930471/overrides.nix#L106-L111>
 
 ;; FIXME:
-;; (use-feature treesit
+;; (use-feature! treesit
 ;;   :hook prog-mode)
 
 ;;

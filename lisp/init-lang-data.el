@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(use-feature nxml-mode
+(use-feature! nxml-mode
   :mode "\\.p\\(?:list\\|om\\)\\'" ; plist, pom
   :mode "\\.xs\\(?:d\\|lt\\)\\'"   ; xslt, xsd
   :mode "\\.rss\\'"

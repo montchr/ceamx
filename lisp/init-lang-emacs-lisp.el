@@ -60,7 +60,7 @@
 ;;
 
 ;;; `eldoc' (internal)
-(use-feature eldoc
+(use-feature! eldoc
   :blackout)
 
 ;;; `suggest' :: <https://github.com/Wilfred/suggest.el>

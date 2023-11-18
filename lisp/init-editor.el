@@ -65,7 +65,7 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 ;;
 ;;  This mode is buffer-local. It might be undesireable in some cases,
 ;;  so consider enabling it selectively.
-(use-feature whitespace
+(use-feature! whitespace
   :defines ( whitespace-style
              whitespace-display-mappings)
   :config
@@ -184,7 +184,7 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 ;;; Rectangle operations
 ;;
 
-(use-feature rect
+(use-feature! rect
   :after hydra
   :defer t
 

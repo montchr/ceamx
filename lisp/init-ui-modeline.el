@@ -31,7 +31,7 @@
 (setopt column-number-mode t)
 
 ;; Show the name of the current function definition in the modeline.
-(use-feature which-func
+(use-feature! which-func
   :config
   (which-function-mode 1))
 

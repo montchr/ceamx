@@ -100,7 +100,7 @@
   :config
   (add-to-list 'savehist-additional-variables #'vertico-repeat-history))
 
-(use-feature emacs
+(use-feature! emacs
   :init
   ;; Add prompt indicator to `completing-read-multiple'.
   (defvar crm-separator)

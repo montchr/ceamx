@@ -26,7 +26,7 @@
 ;;; Code:
 
 ;;; `savehist' (internal)
-(use-feature savehist
+(use-feature! savehist
   :config
   (setopt savehist-additional-variables '(search-ring regexp-search-ring))
   (setopt savehist-autosave-interval 60)
@@ -35,7 +35,7 @@
   (savehist-mode +1))
 
 ;;; `recentf' (internal)
-(use-feature recentf
+(use-feature! recentf
   :config
   (setopt recentf-max-saved-items 500) ; default => 20
   (setopt recentf-max-menu-items 15)   ; default => 10

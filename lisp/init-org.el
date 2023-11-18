@@ -76,7 +76,7 @@
   :defer t
   :commands (doct))
 
-(use-feature org-capture
+(use-feature! org-capture
   :after (org doct)
   :config
   (setopt org-capture-templates

@@ -29,6 +29,8 @@
 ;;; Code:
 
 (require 'package)
+(require 'use-package)
+
 (require 'config-package)
 
 ;; TODO: make interactive command?
@@ -66,6 +68,22 @@ that is expanded with the `package!' macro."
   (delete-dups (append cmx-loaded-packages package-activated-list)))
 
 ;;; Macros
+
+;; TODO: make this more useful than just a name...
+(defmacro use-feature! (name &rest args)
+  "Simple wrapper for `use-package', passing through NAME and ARGS.
+
+Functionally no different from `use-package' currently.
+
+Exists primarily as an indication of intent to configure an
+already-configured package. Also kept around for backward
+compatibility.
+
+Refer to the `use-package' documentation for further information."
+  (declare (indent defun))
+  `(use-package ,name
+     ;; :elpaca nil
+     ,@args))
 
 (defmacro package! (package &rest body)
   "Require PACKAGE with BODY configurations.

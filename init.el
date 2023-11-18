@@ -24,6 +24,8 @@
 
 ;;  Personal Emacs configuration file.
 
+;; FIXME: cannot load some packages (namely `spacious-padding' in tty session)
+
 ;;; Sources:
 
 ;; - <https://git.sr.ht/~protesilaos/dotfiles/tree/e21affc0153e556e06a28813efb252c7757b6aff/item/emacs/.emacs.d/init.el>
@@ -34,33 +36,11 @@
   "User-configurable options for Ceamx."
   :group 'file)
 
-;; TODO: implement
-;; (defcustom ceamx-load-theme-family 'modus
-;;   "Set of themes to load.
-;; Valid values are the symbols `ef', `modus', and `standard', which
-;; reference the `ef-themes', `modus-themes', and `standard-themes',
-;; respectively.
-
-;; A nil value does not load any of the above (use Emacs without a
-;; theme).
-
-;; This user option must be set in the `ceamx-pre-custom.el'
-;; file.  If that file exists in the Emacs directory, it is loaded
-;; before all other modules of my setup."
-;;   :group 'ceamx
-;;   :type '(choice :tag "Set of themes to load" :value modus
-;;                  (const :tag "The `ef-themes' module" ef)
-;;                  (const :tag "The `modus-themes' module" modus)
-;;                  (const :tag "The `standard-themes' module" standard)
-;;                  (const :tag "Do not load a theme module" nil)))
-
-;; TODO: implement?
-;; (defcustom ceamx-completion-ui 'vertico
-;;   "Choose minibuffer completion UI between `mct' or `vertico'."
-;;   :group 'ceamx
-;;   :type '(choice :tag "Minibuffer user interface"
-;;                  (const :tag "The `mct' module" mct)
-;;                  (const :tag "The `vertico' module" vertico)))
+;; TODO: describe
+(defcustom cmx-init-debug-flag nil
+  "Whether to enable initialization debug flag (this is it)."
+  :group 'ceamx
+  :type '(boolean))
 
 ;;; Configure load path.
 (dolist (subdir '("autoloads" "lisp" "lisp/lib"))
@@ -83,9 +63,6 @@
 
 (require 'package)
 
-(require 'config-package)
-(require 'lib-package)
-
 ;; Package manifest (update via `package-quickstart-refresh' after changes).
 ;; TODO: uncomment when stable
 ;; (setq package-quickstart t)
@@ -93,15 +70,35 @@
 
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 
+;;; `use-package'
+;;  <https://www.gnu.org/software/emacs/manual/html_mono/use-package.html>
+;;  <https://github.com/jwiegley/use-package>
+;;  TODO: make sure we are using the version installed by nixpkgs, not the builtin version
+;;        same goes for modus-themes and others
 (eval-when-compile
-  ;; TODO: make sure we are using the version installed by nixpkgs, not the builtin version
-  ;;       same goes for modus-themes and others
   (require 'use-package)
+
+  ;;;; Initialize keyword extensions.
   (use-package blackout :demand t))
 
-;; FIXME: move stuff out of here?
-(require 'init-packages)
+(require 'lib-package)
 
+(use-feature! use-package
+  :config
+  ;; When non-nil, improves performance and effectiveness of byte-compilation,
+  ;; but decreases introspectability.
+  ;; TODO: switch to enabled when ready for byte-comp
+  (setopt use-package-expand-minimally nil)
+
+  ;; Support for Emacs init introspection.
+  (when cmx-init-debug-flag
+    (setopt use-package-expand-minimally nil)
+    ;; NOTE: Requires that the `use-package' library is explicitly `require'd in
+    ;;       files where its macro is invoked, else no output.
+    ;;       See docstring for more info.
+    (setopt use-package-verbose t)
+    ;; NOTE: Requires explicit `require', else errors re: undefined variables.
+    (setopt use-package-compute-statistics t)))
 
 ;;
 ;;; Libraries

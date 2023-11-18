@@ -46,7 +46,7 @@
 (add-hook 'find-file-not-found-functions #'cmx-create-missing-directories-h)
 
 ;; Add file headers to new files.
-(use-feature autoinsert
+(use-feature! autoinsert
   :config
   (auto-insert-mode t))
 
@@ -62,14 +62,14 @@
 (setopt version-control t)
 (setopt find-file-visit-truename t)
 
-(use-feature autorevert
+(use-feature! autorevert
   :defer 2
   :config
   ;; Automatically revert a buffer if its file has changed on disk.
   (setopt auto-revert-interval 0.01)
   (global-auto-revert-mode t))
 
-(use-feature xref
+(use-feature! xref
   :config
   ;; Always find references of symbol at point.
   (setopt xref-prompt-for-identifier nil))

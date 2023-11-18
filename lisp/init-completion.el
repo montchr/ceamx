@@ -101,7 +101,7 @@
 ;;   :config
 ;;   (corfu-doc-terminal-mode +1))
 
-(use-feature dabbrev
+(use-feature! dabbrev
   :config
   ;; Swap M-/ and C-M-/
   (keymap-global-set "M-/"    #'dabbrev-completion)

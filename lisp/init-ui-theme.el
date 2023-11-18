@@ -65,7 +65,7 @@
                                      :right-divider-width 24
                                      :scroll-bar-width 8)))
 
-(use-feature solar
+(use-feature! solar
   :config
   (setopt calendar-latitude 39.96)
   (setopt calendar-longitude -75.13))

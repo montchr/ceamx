@@ -79,7 +79,7 @@
   (global-ligature-mode t))
 
 ;; FIXME: results in init errors due to feature not found
-;; (use-feature prettify-symbols
+;; (use-feature! prettify-symbols
 ;;   :hook prog-mode)
 
 (after! 'fontaine

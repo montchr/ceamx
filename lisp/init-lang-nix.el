@@ -29,7 +29,6 @@
 
 (autoload 'after! "lib-common" t)
 (autoload 'reformatter-define "reformatter" t)
-(autoload 'use-feature "init-packages" t)
 
 (use-package nix-mode
   ;; NOTE: `magit-section' is a hard dependency (but why?),
@@ -51,7 +50,7 @@
   (add-to-list 'aggressive-indent-excluded-modes 'nix-mode))
 
 ;; via `lsp-mode' package
-(use-feature lsp-nix
+(use-feature! lsp-nix
   :after (lsp-mode)
   :defines (lsp-nix-nil-formatter)
   :config

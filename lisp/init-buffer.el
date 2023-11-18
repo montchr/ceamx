@@ -38,7 +38,7 @@
 ;;; `goto-address' (internal)
 ;; Linkify URLs and email addresses in buffers.
 
-(use-feature goto-addr
+(use-feature! goto-addr
   :config
   (add-hook 'prog-mode-hook #'goto-address-prog-mode)
 
@@ -51,7 +51,7 @@
 
 ;;; `uniquify' (internal)
 ;;  Disambiguate identically-named buffers.
-(use-feature uniquify
+(use-feature! uniquify
   :config
   (setopt uniquify-buffer-name-style 'forward)
   (setopt uniquify-separator "/")
@@ -71,7 +71,7 @@
     (evil-define-key '(normal) 'global "gO" #'link-hint-open-link)))
 
 ;; FIXME: how to bind to leader map??? no idea how the mode's internal keybinding works despite looking at source...
-(use-feature outline
+(use-feature! outline
   :defines (outline-minor-mode-map)
   :config
   (setq-default outline-minor-mode t)

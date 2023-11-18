@@ -45,7 +45,7 @@
           (reusable-frames . t)))
 (setopt even-window-sizes nil)
 
-(use-feature winner
+(use-feature! winner
   :config (winner-mode))
 
 ;;; `olivetti-mode'
