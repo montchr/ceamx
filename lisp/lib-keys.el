@@ -77,10 +77,11 @@ all hooks after it are ignored.")
 
 ;; FIXME: skip prefix-command def if already existing to avoid destructive overwrite
 (defmacro def-map! (command &rest defs)
-  "Define a prefix COMMAND whose keymap is initialized with DEFS."
+  "Define a new keymap and prefix COMMAND composed of keybindings DEFS."
   (declare (indent (defun)))
   `(progn
-     (define-prefix-command (quote ,command))
+     (unless (commandp (quote ,command))
+       (define-prefix-command (quote ,command)))
      ;; FIXME: technically incorrect naming
      (define-keymap :keymap ,command
        ,@defs)))

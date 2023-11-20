@@ -331,7 +331,7 @@ DOCSTRING and BODY are as in `defun'.
 ;;; Hooks
 
 (defmacro def-hook! (name arglist hooks docstring &rest body)
-  "Define a function called NAME and add it to a hook.
+  "Define function NAME and add it to HOOKS.
 ARGLIST is as in `defun'. HOOKS is a list of hooks to which to
 add the function, or just a single hook. DOCSTRING and BODY are
 as in `defun'."
