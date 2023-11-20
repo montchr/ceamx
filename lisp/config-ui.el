@@ -30,5 +30,25 @@
 
 (defvar cmx-modeline-provider 'doom-modeline)
 
+;; TODO: implement
+;; (defcustom ceamx-load-theme-family 'modus
+;;   "Set of themes to load.
+;; Valid values are the symbols `ef', `modus', and `standard', which
+;; reference the `ef-themes', `modus-themes', and `standard-themes',
+;; respectively.
+
+;; A nil value does not load any of the above (use Emacs without a
+;; theme).
+
+;; This user option must be set in the `ceamx-pre-custom.el'
+;; file.  If that file exists in the Emacs directory, it is loaded
+;; before all other modules of my setup."
+;;   :group 'ceamx
+;;   :type '(choice :tag "Set of themes to load" :value modus
+;;                  (const :tag "The `ef-themes' module" ef)
+;;                  (const :tag "The `modus-themes' module" modus)
+;;                  (const :tag "The `standard-themes' module" standard)
+;;                  (const :tag "Do not load a theme module" nil)))
+
 (provide 'config-ui)
 ;;; config-ui.el ends here

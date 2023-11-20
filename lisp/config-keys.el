@@ -39,20 +39,41 @@
 
 ;;; Code:
 
-(defvar cmx-leader-key "SPC")
+;;
+;;; Options
+;;
 
-(defvar cmx-leader-alt-key "M-SPC")
+(defcustom cmx-leader-key "SPC"
+  "Leader prefix key sequence for use in modal schemes."
+  :type '(key)
+  :group 'ceamx)
 
-(defvar cmx-mode-specific-arm-key "m")
+(defcustom cmx-leader-alt-key "M-SPC"
+  "Alternative leader prefix key sequence."
+  :type '(key)
+  :group 'ceamx)
+
+(defcustom cmx-mode-specific-arm-key "m"
+  "Key sequence for major-mode-specific leader arm maps, relative to leader."
+  :type '(key)
+  :group 'ceamx)
+
+;;
+;;; Keymaps
+;;
+
+;;; Interceptions
 
 (defvar-keymap cmx-intercept-mode-map
   :doc "High-precedence user-defined keymap.")
 
-(define-prefix-command 'cmx-leader-map)
+;;; Leader
+
+(unless (commandp 'cmx-leader-map)
+  (define-prefix-command 'cmx-leader-map))
 (defvar-keymap cmx-leader-map
   :doc "User-defined leader keymap."
   :parent mode-specific-map)
-
 
 (provide 'config-keys)
 ;;; config-keys.el ends here
