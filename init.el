@@ -240,6 +240,7 @@
 (require 'init-lang-html)
 (require 'init-lang-json)
 (require 'init-lang-lua)
+(require 'init-lang-markdown)
 (require 'init-lang-nix)
 (require 'init-lang-php)
 (require 'init-lang-yaml)
