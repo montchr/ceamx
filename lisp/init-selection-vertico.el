@@ -25,6 +25,14 @@
 
 ;;; Code:
 
+(require 'lib-common)
+
+(defvar savehist-additional-variables)
+
+;;
+;;; Packages
+;;
+
 (use-package vertico
   ;; FIXME: :elpaca (vertico :host github
   ;;                  :repo "minad/vertico"
@@ -58,13 +66,13 @@
                 "  ")
               cand))))
 
-;; FIXME: (elpaca-wait)
-
 ;; Configure directory extension.
 (use-package vertico-directory
-  ;; :elpaca nil
   :after vertico
-  :commands (vertico-directory-tidy)
+  :commands ( vertico-directory-enter
+              vertico-directory-delete-char
+              vertico-directory-delete-word
+              vertico-directory-tidy)
 
   :init
   ;; TODO: what for, exactly? needs binding?
@@ -82,7 +90,6 @@
   ;;         (delete-region (1+ (point)) (point-max))
   ;;         t))))
 
-  :config
   (define-keymap :keymap vertico-map
     "RET"     #'vertico-directory-enter
     "DEL"     #'vertico-directory-delete-char
@@ -91,12 +98,12 @@
   ;; Tidy shadowed file names -- e.g. cleans `~/foo/bar///' to `/', and `~/foo/bar/~/' to `~/'.
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
-
 (use-package vertico-repeat
-  ;; FIXME: :elpaca nil
   :after (savehist vertico)
-  :commands (vertico-repeat-history vertico-repeat-save)
-  :hook ((minibuffer-setup . vertico-repeat-save))
+  :commands ( vertico-repeat-history
+              vertico-repeat-save)
+  :init
+  (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
   :config
   (add-to-list 'savehist-additional-variables #'vertico-repeat-history))
 
