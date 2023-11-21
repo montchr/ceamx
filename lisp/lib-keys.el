@@ -25,6 +25,7 @@
 ;; Helper functions and macros for keybindings.
 
 ;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
+;; <https://github.com/casouri/lunarymacs/blob/cd1f34449038e5ec371b1277941c529ea1fb4e9e/site-lisp/luna-key.el>
 
 ;;; Code:
 
@@ -75,7 +76,18 @@ all hooks after it are ignored.")
 
 ;;; Keybindings
 
-;; FIXME: skip prefix-command def if already existing to avoid destructive overwrite
+;; TODO: add utility to apply prefix to provided keys and bind in maps,
+;; deferring until maps are defined if necessary. see
+;; <https://github.com/casouri/lunarymacs/blob/master/site-lisp/luna-key.el>
+
+;; TODO: account for remapping (don't prefix)
+;; TODO: validate final result
+(defun cmx-key--normalize-with-prefix (prefix key)
+  "Produce a normalized key sequence from the concatenation of PREFIX and KEY."
+  (cl-assert (key-valid-p prefix))
+  (cl-assert (key-valid-p key))
+  (format "%s %s" prefix key))
+
 (defmacro def-map! (command &rest defs)
   "Define a new keymap and prefix COMMAND composed of keybindings DEFS."
   (declare (indent (defun)))
