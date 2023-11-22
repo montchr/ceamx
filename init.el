@@ -260,6 +260,12 @@
 ;;; Linting
 (require 'init-flycheck)
 
+;;; Tree-Sitter
+(when (and (require 'treesit nil t)
+           (fboundp 'treesit-available-p)
+           (treesit-available-p))
+  (require 'init-treesitter))
+
 ;;; Miscellaneous
 (require 'init-tools)
 (require 'init-ledger)
