@@ -491,8 +491,13 @@
 
 ;; macOS muscle-memory habits
 (when +sys-mac-p
-  (keymap-global-set "s-{" #'tab-previous)
-  (keymap-global-set "s-}" #'tab-next))
+  (define-keymap :keymap (current-global-map)
+    "s-x" #'kill-region
+    "s-c" #'kill-ring-save
+    "s-s" #'save-buffer
+    "s-w" #'kill-buffer
+    "s-{" #'tab-previous
+    "s-}" #'tab-next))
 
 (define-keymap :keymap (current-global-map)
   "C-:" #'avy-goto-char
