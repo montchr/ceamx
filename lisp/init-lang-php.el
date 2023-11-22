@@ -24,9 +24,13 @@
 
 ;;; Code:
 
+(require 'lib-ui)
+
+;; FIXME: append, don't define a new var entirely
 (defvar xref-ignored-files '("_ide_helper_models.php" "_ide_helper.php")
   "List of files to be ignored by `xref'.")
 
+;; FIXME: relocate this... somewhere...
 (defun xref-ignored-file-p (item)
   "Return t if `item' should be ignored."
   (seq-some
@@ -35,9 +39,35 @@
 
 (use-package php-mode
   :defer t
-  :config
+  :init
   ;; Render multiline comments using `font-lock-comment-face'.
-  (add-hook 'php-mode-hook #'cmx--multiline-comment-face-h))
+  (add-hook 'php-mode-hook #'cmx--multiline-comment-face-h)
+  :config
+  (setopt php-mode-template-compatibility nil)
+
+  ;; TODO: from doom
+  ;; (set-docsets! 'php-mode "PHP" "PHPUnit" "Laravel" "CakePHP" "CodeIgniter" "Doctrine_ORM")
+  ;; (set-repl-handler! 'php-mode #'+php/open-repl)
+  ;; (set-lookup-handlers! 'php-mode :documentation #'php-search-documentation)
+  ;; (set-ligatures! 'php-mode
+  ;;   ;; Functional
+  ;;   :lambda "function()" :lambda "fn"
+  ;;   :def "function"
+  ;;   ;; Types
+  ;;   :null "null"
+  ;;   :true "true" :false "false"
+  ;;   :int "int" :float "float"
+  ;;   :str "string"
+  ;;   :bool "list"
+  ;;   ;; Flow
+  ;;   :not "!"
+  ;;   :and "&&" :and "and"
+  ;;   :or "||" :or "or"
+  ;;   :for "for"
+  ;;   :return "return"
+  ;;   :yield "use")
+
+  )
 
 (after! 'lsp-mode
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\vendor")
