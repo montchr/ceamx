@@ -246,6 +246,7 @@
 (require 'init-lang-data)
 (require 'init-lang-emacs-lisp)
 (require 'init-lang-html)
+(require 'init-lang-js)
 (require 'init-lang-json)
 (require 'init-lang-lua)
 (require 'init-lang-markdown)
