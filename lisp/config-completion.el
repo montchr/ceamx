@@ -24,7 +24,14 @@
 
 ;;; Code:
 
-;; TODO: implement?
+(defcustom ceamx-completion-at-point-ui 'corfu
+  "Choose `completion-at-point' UI between `corfu' or `lsp-bridge'."
+  :group 'ceamx
+  :type '(choice :tag "completion-at-point user interface"
+           (const :tag "The `corfu' module" corfu)
+           (const :tag "The `lsp-bridge' module" lsp-bridge)))
+
+;; TODO: implement? should move to sleection
 ;; (defcustom ceamx-completion-ui 'vertico
 ;;   "Choose minibuffer completion UI between `mct' or `vertico'."
 ;;   :group 'ceamx

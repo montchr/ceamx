@@ -201,7 +201,15 @@
 (require 'init-selection-orderless)
 (require 'init-selection-marginalia)
 (require 'init-selection-consult)
+
+;;; Completion-At-Point
+(require 'config-completion)
 (require 'init-completion)
+;; TODO: this
+;; (pcase cmx-completion-at-point-ui
+;;   (`lsp-bridge (require 'init-lsp-bridge))
+;;   ;; FIXME: rename/restruct feature to be specific to corfu, separate generalities
+;;   (`corfu      (require 'init-completion)))
 
 ;;; Help
 (require 'init-help)
