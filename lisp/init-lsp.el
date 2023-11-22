@@ -67,7 +67,8 @@
   :defines (lsp-modeline-code-actions-segments) ; idk why tho
 
   :init
-  (setopt lsp-use-plists t)
+  ;; FIXME: ideally would be enabled, but lately has been failing
+  (setopt lsp-use-plists nil)
   (setopt lsp-restart 'ignore)
   (setopt lsp-headerline-breadcrumb-enable nil)
   ;; Keybindings are handled manually.

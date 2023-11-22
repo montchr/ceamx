@@ -91,7 +91,6 @@
 ;;; Inhibit annoyances:
 
 ;; Performance improvements for language server JSON-RPC (LSP).
-(setenv "LSP_USE_PLISTS" "true")
 (when (functionp 'json-serialize)
   (setq read-process-output-max (* 1024 1024 8)))
 
