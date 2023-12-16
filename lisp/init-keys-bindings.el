@@ -474,12 +474,15 @@
 
 (after! [evil]
   ;; Bind leader key to existing leader map.
-  (evil-define-key* '(normal visual motion) 'global (kbd cmx-leader-key) 'mode-specific-command-prefix)
+  (evil-define-key* '(normal visual motion) 'global
+    (kbd cmx-leader-key) 'mode-specific-command-prefix)
   (after! [magit]
-    (keymap-set magit-mode-map cmx-leader-key #'mode-specific-command-prefix))
+    (keymap-set magit-mode-map
+      cmx-leader-key #'mode-specific-command-prefix))
 
   ;; Bind leader to `,' (comma).
-  (evil-define-key* '(normal visual motion) 'global "," 'mode-specific-command-prefix))
+  (evil-define-key* '(normal visual motion) 'global
+    "," 'mode-specific-command-prefix))
 
 ;;
 ;;; Global Bindings
