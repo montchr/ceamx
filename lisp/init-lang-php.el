@@ -24,7 +24,8 @@
 
 ;;; Code:
 
-(require 'lib-ui)
+;; FIXME: doesn't exist -- why is it here?
+;; (require 'lib-ui)
 
 ;; FIXME: append, don't define a new var entirely
 (defvar xref-ignored-files '("_ide_helper_models.php" "_ide_helper.php")
