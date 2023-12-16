@@ -26,7 +26,7 @@
 
 (defvar cmx-projects-dir
   (file-name-as-directory
-   (or (getenv "XDG_PROJECTS_HOME")
+   (or (getenv "XDG_PROJECTS_DIR")
        (concat cmx-home-dir "Developer")))
   "The root directory for projects.")
 
