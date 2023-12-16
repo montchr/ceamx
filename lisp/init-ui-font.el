@@ -28,38 +28,44 @@
   (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" cmx-var-dir))
   ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
   ;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
-  ;; at least i think that's what's causing the inconsistencies...
+  ;;        at least i think that's what's causing the inconsistencies...
+  ;;        update: this might also be happening on NixOS running on
+  ;;        old MacBookPro hardware, so could be a general ppi issue
   (setopt fontaine-presets
-        `((small :default-height 110)
-          (regular :default-height 140)
-          (regular-alt :default-height 130)
-          (medium :default-height 160)
-          (medium-alt :default-height 150)
-          (large :default-height 180)
-          (large-alt :default-height 170
-                     :line-spacing 0.1)
-          (xlarge :default-height 240
-                  :line-spacing nil)
-          (t
-           ;; TODO: set values from nix config (or, less ideally, by env vars)
-           :default-family "Iosevka Comfy"
-           :default-weight ,(if +sys-mac-p 'medium 'regular)
-           :default-height 100
-           :fixed-pitch-family "Iosevka Comfy"
-           :fixed-pitch-weight nil
-           :fixed-pitch-height 1.0
-           :fixed-pitch-serif-family "Iosevka Comfy Motion"
-           :fixed-pitch-serif-weight nil
-           ;; :variable-pitch-family "Inter"
-           ;; TODO: probably worth trying one of the others, maybe not-wide
-           :variable-pitch-family "Iosevka Comfy Wide Duo"
-           :variable-pitch-weight nil
-           :variable-pitch-height 0.9
-           :bold-family nil
-           :bold-weight ,(if +sys-mac-p 'bold 'semibold)
-           :italic-family nil
-           :italic-slant italic
-           :line-spacing 0.1)))
+          `(
+            ;; FIXME: ligatures at some sizes are broken on HodgePodge
+            ;;        test case (double-colons, should not have a visual space between)
+            ;;        => ::
+            (small :default-height 110) ; FIXME: liga broken on HodgePodge
+            (regular :default-height 140) ; FIXME: liga broken on HodgePodge
+            (regular-alt :default-height 130) ; works on HodgePodge
+            (medium :default-height 160)
+            (medium-alt :default-height 150)
+            (large :default-height 180)
+            (large-alt :default-height 170
+                       :line-spacing 0.1)
+            (xlarge :default-height 240
+                    :line-spacing nil)
+            (t
+             ;; TODO: set values from nix config (or, less ideally, by env vars)
+             :default-family "Iosevka Comfy"
+             :default-weight ,(if +sys-mac-p 'medium 'regular)
+             :default-height 100
+             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-weight nil
+             :fixed-pitch-height 1.0
+             :fixed-pitch-serif-family "Iosevka Comfy Motion"
+             :fixed-pitch-serif-weight nil
+             ;; :variable-pitch-family "Inter"
+             ;; TODO: probably worth trying one of the others, maybe not-wide
+             :variable-pitch-family "Iosevka Comfy Wide Duo"
+             :variable-pitch-weight nil
+             :variable-pitch-height 0.9
+             :bold-family nil
+             :bold-weight ,(if +sys-mac-p 'bold 'semibold)
+             :italic-family nil
+             :italic-slant italic
+             :line-spacing 0.1)))
 
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
