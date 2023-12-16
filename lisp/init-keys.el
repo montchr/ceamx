@@ -38,6 +38,15 @@
 
 (defvar +sys-mac-p)
 
+;; Common system hotkeys, complicated for cross-platform usability.
+;;
+;; "C-S" prefix is inspired by the use of this mod combo in terminals, where
+;; `C-c' for example would kill the current process.
+(define-keymap :keymap (current-global-map)
+  "C-S-c" #'kill-ring-save
+  "C-S-v" #'yank
+  "C-S-x" #'kill-region)
+
 ;; macOS: Remap modifier keys.
 (when (and +sys-mac-p (display-graphic-p))
   (setopt mac-control-modifier 'control)
