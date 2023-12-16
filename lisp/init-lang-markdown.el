@@ -97,13 +97,13 @@ and
   (add-hook 'markdown-mode-hook #'evil-markdown-mode)
 
   (evil-define-key '(normal) 'evil-markdown-mode-map
-    "M-r" #'browse-url-of-file)
+    (kbd "M-r") #'browse-url-of-file)
 
   (evil-define-key '(insert) 'evil-markdown-mode-map
-    "M-*" #'markdown-insert-list-item
-    "M-b" #'markdown-insert-bold
-    "M-i" #'markdown-insert-italic
-    "M--" #'markdown-insert-hr)
+    (kbd "M-*") #'markdown-insert-list-item
+    (kbd "M-b") #'markdown-insert-bold
+    (kbd "M-i") #'markdown-insert-italic
+    (kbd "M--") #'markdown-insert-hr)
 
   (evil-define-key '(motion) 'evil-markdown-mode-map
     "[h" #'markdown-previous-visible-heading
