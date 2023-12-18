@@ -147,23 +147,23 @@
 ;;; `consult-gh' :: <https://github.com/armindarvish/consult-gh>
 ;;
 
-;; TODO: look through readme and review settings, add config as desired
+ ;; TODO: look through readme and review settings, add config as desired
 
 ;; NOTE: The double-dashed option names are NOT private, despite the Elisp
 ;; naming convention. Try to ignore it.
-(use-package consult-gh
-  :config
-  (dolist (owner '("montchr" "seadome"))
-    (add-to-list 'consult-gh-default-orgs-list owner))
+;; (use-package consult-gh
+;;   :config
+;;   (dolist (owner '("montchr" "seadome"))
+;;     (add-to-list 'consult-gh-default-orgs-list owner))
 
-  ;; TODO: use/lose
-  ;; use "gh org list" to get a list of all your organizations and adds them to default list
-  ;; (setq consult-gh-default-orgs-list (append consult-gh-default-orgs-list (remove "" (split-string (or (consult-gh--command-to-string "org" "list") "") "\n"))))
+;;   ;; TODO: use/lose
+;;   ;; use "gh org list" to get a list of all your organizations and adds them to default list
+;;   ;; (setq consult-gh-default-orgs-list (append consult-gh-default-orgs-list (remove "" (split-string (or (consult-gh--command-to-string "org" "list") "") "\n"))))
 
-  ;; Set the default folder for cloning repositories. By default Consult-GH will
-  ;; confirm this before cloning.
-  (setq consult-gh-default-clone-directory
-    (concat cmx-projects-dir "repos")))
+;;   ;; Set the default folder for cloning repositories. By default Consult-GH will
+;;   ;; confirm this before cloning.
+;;   (setq consult-gh-default-clone-directory
+;;     (concat cmx-projects-dir "repos")))
 
 (provide 'init-vcs)
 ;;; init-vcs.el ends here
