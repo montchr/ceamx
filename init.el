@@ -182,14 +182,9 @@
 ;; TODO: figure out how to load as late as possible?
 (require 'init-ui-treemacs)
 
-;;; Keybindings
+;;; Keyboard support
 (require 'init-keys)
-(defvar cmx-modal-keys-provider 'evil)
-(pcase cmx-modal-keys-provider
-  (`boon (require 'init-keys-boon))
-  (`evil (require 'init-keys-evil))
-  (`meow (require 'init-keys-meow)))
-(require 'init-keys-bindings)
+(require 'init-keys-evil)
 
 ;;; Window
 (require 'init-window)
@@ -272,6 +267,8 @@
 (require 'init-ledger)
 (require 'init-fun)
 
+;;; Keybindings
+(require 'init-keys-bindings)
 
 ;;
 ;;; Postlude
@@ -281,7 +278,7 @@
   "Auto-start Emacs daemon if not already running."
   (require 'server)
   (unless (and (fboundp 'server-running-p)
-               (server-running-p))
+            (server-running-p))
     (server-start)))
 (add-hook 'after-init-hook #'+maybe-start-server)
 

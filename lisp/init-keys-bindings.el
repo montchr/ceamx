@@ -158,8 +158,6 @@
 ;;; "c" => Code
 ;;
 
-;; TODO: will likely need to be rebound when using meow
-
 (def-arm! cmx-code-map "c" "Code"
   ;; FIXME: wrong type argument commandp error if unavailable -- language server must support it
   "a" '("action.." . lsp-execute-code-action)
@@ -511,15 +509,6 @@
   "C-x SPC" #'hydra-rectangle/body
 
   "<remap> <keyboard-quit>" #'cmx/escape)
-
-;;
-;;; Meow Bindings
-;;
-
-(after! 'meow
-  ;; FIXME: this will not work due to meow's d binding
-  ;; (cmx-meow-normal-define-key "g d" #'xref-find-definitions)
-  )
 
 
 ;;
