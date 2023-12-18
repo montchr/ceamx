@@ -36,15 +36,14 @@
   :after (magit-section)
   :functions (nix-mode-hook))
 
-;; TODO: instead of always formatting with alejandra, let the
-;; formatter by changed easily by dir-local variables, maybe via
-;; `lsp-format-buffer'
 (after! [nix-mode reformatter]
+  ;; <https://github.com/kamadorueda/alejandra>
   (reformatter-define nix-format-alejandra
     :program "alejandra")
-  (dolist (fn '(lsp-deferred
-                nix-format-alejandra-on-save-mode))
-    (add-hook 'nix-mode-hook fn)))
+
+  ;; <https://github.com/serokell/nixfmt>
+  (reformatter-define nix-format-nixfmt
+    :program "nixfmt"))
 
 (after! [nix-mode aggressive-indent]
   (add-to-list 'aggressive-indent-excluded-modes 'nix-mode))
