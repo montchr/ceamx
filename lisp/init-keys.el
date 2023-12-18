@@ -117,7 +117,7 @@
   (setopt which-key-sort-order 'which-key-prefix-then-key-order)
   (setopt which-key-sort-uppercase-first nil)
 
-  (which-key-setup-side-window-right-bottom)
+  (which-key-setup-side-window-bottom)
 
   (which-key-mode +1))
 
