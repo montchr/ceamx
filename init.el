@@ -63,11 +63,6 @@
 
 (require 'package)
 
-;; Package manifest (update via `package-quickstart-refresh' after changes).
-;; TODO: uncomment when stable
-;; (setq package-quickstart t)
-;; (setq package-quickstart-file "ceamx-packages.el")
-
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 
 ;;; `use-package'
