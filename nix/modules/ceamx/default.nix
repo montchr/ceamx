@@ -17,8 +17,6 @@ in {
     home.packages = [
       pkgs.fd
       pkgs.ripgrep
-      # FIXME: flake inputs (i.e. use flake-parts for sanity, not divnix/std)
-      # nil-lsp.packages.nil
     ];
   };
 }

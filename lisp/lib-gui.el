@@ -36,7 +36,7 @@
 
 ;;; Commentary:
 
-;;  Helper functions and macros for working with keybindings.
+;;  Cutting-edge helpers for yesterday's graphical user interfaces.
 
 ;;; Code:
 
