@@ -261,6 +261,8 @@
 (require 'init-tools)
 (require 'init-ledger)
 (require 'init-fun)
+;; TODO: nothing here yet
+;; (require 'init-news)
 
 ;;; Keybindings
 (require 'init-keys-bindings)
