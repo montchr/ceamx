@@ -73,10 +73,12 @@
            compilation-mode
            help-mode
            helpful-mode
-           (lambda (buf) (with-current-buffer buf
-                      (and (derived-mode-p 'fundamental-mode)
-                           (< (count-lines (point-min) (point-max))
-                              10))))))
+           ;; FIXME: this is too aggressive. e.g. takes over scratch buffers and some blank new windows
+           ;; (lambda (buf) (with-current-buffer buf
+           ;;            (and (derived-mode-p 'fundamental-mode)
+           ;;                 (< (count-lines (point-min) (point-max))
+           ;;                    10))))
+           ))
 
   (popper-mode +1)
   (popper-echo-mode +1)                 ; For echo area hints
@@ -89,6 +91,7 @@
     (setopt popper-group-function #'popper-group-by-projectile)))
 
 ;;; `ace-window' :: <https://github.com/abo-abo/ace-window>
+;; TODO: keybindings
 (use-package ace-window
   :after avy)
 
