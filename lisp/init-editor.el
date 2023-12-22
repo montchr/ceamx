@@ -107,6 +107,7 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 ;;       but hey, it would be nice, right?
 ;;; `smartparens' :: <https://github.com/Fuco1/smartparens>
 (use-package smartparens
+  :autoload ( sp-local-pair)
   :commands ( smartparens-mode
               sp-use-paredit-bindings
               show-smartparens-global-mode)
@@ -127,6 +128,22 @@ In most cases, these modes derive from `prog-mode', but there may be some except
   (sp-use-paredit-bindings)
 
   (show-smartparens-global-mode +1)
+
+  ;;; When pressing RET after inserting a pair, add an extra newline and indent.
+  ;;  <https://github.com/radian-software/radian/blob/develop/emacs/radian.el#L2174-L2214>
+  ;;  <https://github.com/Fuco1/smartparens/issues/80#issuecomment-18910312>.
+
+  (dolist (delim '("(" "[" "{"))
+    (dolist (mode '(fundamental-mode
+                    javascript-mode
+                    nix-mode
+                    ;; TODO: are these really necessary since everything derives from `fundamental-mode'?
+                    ;;      it seems the answer is yes, but why?
+                    prog-mode
+                    text-mode))
+      (cmx--smartparens-pair-setup mode delim)))
+
+  (cmx--smartparens-pair-setup #'python-mode "\"\"\"")
 
   ;; Work around https://github.com/Fuco1/smartparens/issues/1036.
   (when (fboundp 'minibuffer-mode)
