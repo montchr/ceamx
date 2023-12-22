@@ -126,7 +126,10 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 
   (sp-use-paredit-bindings)
 
-  (show-smartparens-global-mode +1))
+  (show-smartparens-global-mode +1)
+
+  ;; Work around https://github.com/Fuco1/smartparens/issues/783.
+  (setq sp-escape-quotes-after-insert nil))
 
 ;;
 ;;; Visual feedback
