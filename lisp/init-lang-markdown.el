@@ -35,7 +35,7 @@
 
 ;;; `markdown-mode' :: <https://github.com/jrblevin/markdown-mode>
 (use-package markdown-mode
-  :autoload ( markdown-match-generic-metadata )
+  :autoload (markdown-match-generic-metadata)
 
   :init
   (defvar markdown-enable-wiki-links t)
@@ -79,14 +79,18 @@
   :config
   (def-advice! cmx--disable-markdown-front-matter-fontification (&rest _)
     :override #'markdown-match-generic-metadata
-  "Prevent fontification of YAML metadata blocks in `markdown-mode'.
+    "Prevent fontification of YAML metadata blocks in `markdown-mode'.
 This prevents a mis-feature wherein if the first line of a
 Markdown document has a colon in it, then it's distractingly and
 usually wrongly fontified as a metadata block. See
 <https://github.com/jrblevin/markdown-mode/issues/328#issuecomment-405361296>
 and
 <https://github.com/radian-software/radian/blob/b2fac3a615186f77de0bdc7e4f06e9aa46c222bb/emacs/radian.el#L3199-L3206>."
-    (ignore (goto-char (point-max)))))
+    (ignore (goto-char (point-max))))
+
+  ;; Register code fence pair.
+  (after! [smartparens]
+    (cmx--smartparens-pair-setup #'markdown-mode "```")))
 
 (use-package evil-markdown
   :after (evil evil-collection markdown-mode)
