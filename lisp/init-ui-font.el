@@ -33,12 +33,14 @@
   ;;        old MacBookPro hardware, so could be a general ppi issue
   (setopt fontaine-presets
           `(
-            ;; FIXME: ligatures at some sizes are broken on HodgePodge
+            ;; FIXME: ligatures at some sizes sometimes broken -- but not everywhere...?
             ;;        test case (double-colons, should not have a visual space between)
             ;;        => ::
-            (small :default-height 110) ; FIXME: liga broken on HodgePodge
-            (regular :default-height 140) ; FIXME: liga broken on HodgePodge
-            (regular-alt :default-height 130) ; works on HodgePodge
+            (xsmall :default-height 100)
+            (small :default-height 110) ; FIXME: liga broken?
+            ;; FIXME: does this override default preset?
+            (regular :default-height 140) ; FIXME: liga broken?
+            (regular-alt :default-height 130)
             (medium :default-height 160)
             (medium-alt :default-height 150)
             (large :default-height 180)
