@@ -22,6 +22,11 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
+;; FIXME: unreadable childframes sometimes. e.g. command output, embark.
+;; at least make sure these childframes seriously have modeline disabled and
+;; their padding reduced
+
 ;;; Code:
 
 (require 'lib-frame)
