@@ -128,6 +128,11 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 
   (show-smartparens-global-mode +1)
 
+  ;; Work around https://github.com/Fuco1/smartparens/issues/1036.
+  (when (fboundp 'minibuffer-mode)
+    (sp-local-pair #'minibuffer-mode "`" nil :actions nil)
+    (sp-local-pair #'minibuffer-mode "'" nil :actions nil))
+
   ;; Work around https://github.com/Fuco1/smartparens/issues/783.
   (setq sp-escape-quotes-after-insert nil))
 
