@@ -64,13 +64,12 @@
           '( :left (sort symlink)
              :right (omit yank index)))
   (setopt dirvish-attributes
-        '(all-the-icons
-          file-time
-          file-size
-          collapse
-          subtree-state
-          vc-state
-          git-msg))
+          '(all-the-icons
+            file-time
+            file-size
+            collapse
+            subtree-state
+            vc-state))
 
   (define-keymap :keymap dirvish-mode-map
     "<mouse-1>" #'dirvish-subtree-toggle-or-open
