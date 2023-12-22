@@ -60,7 +60,6 @@
             ("r" "~/Documents/reference" "Reference")
             ("n" "~/Documents/notes/" "Notes")))
 
-  (setopt mouse-1-click-follows-link nil)
   (setopt dirvish-mode-line-format
           '( :left (sort symlink)
              :right (omit yank index)))
