@@ -105,10 +105,13 @@
 (setq create-lockfiles nil)
 
 ;; Prevent X11 from taking control of visual behavior and appearance.
-(advice-add #'x-apply-session-resources :override #'ignore)
+(setq inhibit-x-resources t)
 
 ;; Avoid expensive frame resizing.
 (setq frame-inhibit-implied-resize t)
+
+;; Allow resizing the frame to the maximum available space on the desktop.
+(setq frame-resize-pixelwise t)
 
 ;; There is no place like Emacs.
 (add-hook 'after-init-hook (lambda () (set-frame-name "home")))
