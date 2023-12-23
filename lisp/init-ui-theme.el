@@ -35,8 +35,11 @@
 ;; first-time startup on Emacs > 26.3.
 (setopt custom-safe-themes t)
 
-;; Ensure that themes will be applied even if they have not been customized
-(add-hook 'after-init-hook #'cmx-reapply-themes)
+;; Ensure that themes will be applied in new frames to counteract default
+;; effects from early-init frame flash workaround.
+;; TODO: also some other link i can't find now
+;; <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
+(add-hook 'after-make-frame-functions #'cmx-theme-re-enable-in-frame)
 
 ;; Set up `after-enable-theme-hook'.
 ;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>

@@ -47,6 +47,16 @@
   (setq custom-enabled-themes `(,cmx-ui-theme-dark))
   (cmx-reapply-themes))
 
+;; via prot-emacs (needs link/credit)
+(defun cmx-theme-re-enable-in-frame (_frame)
+  "Re-enable active theme, if any, upon FRAME creation.
+Add this to `after-make-frame-functions' so that new frames do
+not retain the generic background set by the function
+`cmx-theme-no-bright-flash'."
+  (when-let ((theme (car custom-enabled-themes)))
+    (enable-theme theme)))
+
+
 
 (provide 'lib-ui-theme)
 ;;; lib-ui-theme.el ends here
