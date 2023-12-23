@@ -94,6 +94,7 @@ and
 
   ;; Register code fence pair.
   (after! [smartparens]
+    (require 'lib-editor)
     (cmx--smartparens-pair-setup #'markdown-mode "```")))
 
 (use-package evil-markdown
