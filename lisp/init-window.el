@@ -60,9 +60,6 @@
   :commands (popper-mode
              popper-echo-mode
              popper-group-by-projectile)
-  :bind (("C-`"   . popper-toggle)
-         ("M-`"   . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
   :init
   (setopt popper-reference-buffers
         '("\\*Messages\\*"
@@ -81,6 +78,12 @@
   (popper-echo-mode +1)                 ; For echo area hints
 
   :config
+  (define-keymap :keymap (current-global-map)
+    "C-`"   #'popper-toggle
+    ;; NOTE: Conflicts with default GNOME keybinding.
+    "M-`"   #'popper-echo-mode
+    "C-M-`" #'popper-toggle-type)
+
   ;; <https://github.com/karthink/popper?tab=readme-ov-file#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
   (setopt popper-display-control t)
 
