@@ -85,6 +85,11 @@
     "M-`"   #'popper-echo-mode
     "C-M-`" #'popper-toggle-type)
 
+  (def-hook! cmx-escape-popper-popup-h (&rest _) cmx-escape-hook
+    "Close any focused `popper' popup when calling `cmx/escape'."
+    (when (bound-and-true-p popper-popup-status)
+      (popper-toggle)))
+
   ;; NOTE: A non-nil value for this setting will conflict with `shackle.el' (if
   ;; installed) and, potentially, `display-buffer-alist' customizations.
   ;; <https://github.com/karthink/popper?tab=readme-ov-file#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
