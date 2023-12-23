@@ -244,6 +244,7 @@
   "l" '("library..." . apropos-library)
   "m" '("modes (b)" . describe-mode)
   "o" '("symbol..." . helpful-symbol)
+  "s" '("suggest..." . suggest)
   "t" `("text-props (pt)" . ,(cmd!!
                               #'describe-text-properties
                               current-prefix-arg
