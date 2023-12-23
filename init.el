@@ -156,8 +156,13 @@
 ;;;; Theme
 (require 'init-ui-theme)
 ;; TODO: probably not for tty
-(require 'init-ui-modus-themes)
-;; (require 'init-ui-nano-theme)
+(pcase cmx-theme-family
+  ('modus
+    (require 'init-ui-modus-themes))
+  ('nano
+    ;; NOTE: this is probably very broken -- so is the upstream project :/
+    (require 'init-ui-nano-theme)))
+
 
 ;;;; Typography + Iconography
 (when (display-graphic-p)
@@ -169,9 +174,12 @@
 ;; TODO: why not tty?
 (when (display-graphic-p)
   (pcase cmx-modeline-provider
-    (`nano           (require 'init-ui-modeline-nano))
-    (`doom-modeline  (require 'init-ui-modeline-doom))
-    (`telephone-line (require 'init-ui-modeline-telephone-line))))
+    ('doom
+      (require 'init-ui-modeline-doom))
+    ('nano
+      (require 'init-ui-modeline-nano))
+    ('telephone
+      (require 'init-ui-modeline-telephone-line))))
 
 ;;;; Sidebar
 ;; TODO: figure out how to load as late as possible?

@@ -24,31 +24,55 @@
 
 ;;; Code:
 
-(defvar cmx-ui-theme-dark 'modus-vivendi "Preferred dark theme.")
+(defcustom cmx-modeline-provider 'doom
+  "Modeline provider to load.
+Valid values are the symbols `doom', `nano', and `telephone'
+which reference the `doom-modeline', `nano-modeline', and
+`telephone-line' modules respectively.
 
-(defvar cmx-ui-theme-light 'modus-operandi "Preferred light theme.")
+A nil value will not load any modeline customizations (use Emacs
+with its default modeline)."
+  :group 'ceamx
+  :type '(choice :tag "Modeline to load" :value doom
+           (const :tag "The `doom-modeline' module" doom)
+           (const :tag "The `nano-modeline' module" nano)
+           (const :tag "The `telephone-line' module" telephone)
+           (const :tag "Do not load a modeline module" nil)))
 
-(defvar cmx-modeline-provider 'doom-modeline)
+(defcustom cmx-theme-family 'modus
+  "Set of themes to load.
+Valid values are the symbols `ef', `modus', and `standard', which
+reference the `ef-themes', `modus-themes', and `standard-themes',
+respectively.
+
+A nil value does not load any of the above (use Emacs without a
+theme)."
+  :group 'ceamx
+  :type '(choice :tag "Set of themes to load" :value modus
+                 (const :tag "The `ef-themes' module" ef)
+                 (const :tag "The `modus-themes' module" modus)
+                 (const :tag "The `standard-themes' module" standard)
+                 (const :tag "Do not load a theme module" nil)))
 
 ;; TODO: implement
-;; (defcustom ceamx-load-theme-family 'modus
-;;   "Set of themes to load.
-;; Valid values are the symbols `ef', `modus', and `standard', which
-;; reference the `ef-themes', `modus-themes', and `standard-themes',
-;; respectively.
+;;       see `modus-themes-items' for available options source for that theme family
 
-;; A nil value does not load any of the above (use Emacs without a
-;; theme).
-
-;; This user option must be set in the `ceamx-pre-custom.el'
-;; file.  If that file exists in the Emacs directory, it is loaded
-;; before all other modules of my setup."
+;; (defcustom cmx-theme-dark nil
+;;   "Preferred dark theme.
+;; A nil value means functionality relying on this will be unavailable."
 ;;   :group 'ceamx
-;;   :type '(choice :tag "Set of themes to load" :value modus
-;;                  (const :tag "The `ef-themes' module" ef)
-;;                  (const :tag "The `modus-themes' module" modus)
-;;                  (const :tag "The `standard-themes' module" standard)
-;;                  (const :tag "Do not load a theme module" nil)))
+;;   :type '(symbol))
+
+;; (defcustom cmx-theme-light nil
+;;   "Preferred light theme.
+;; A nil value means functionality relying on this will be unavailable."
+;;   :group 'ceamx
+;;   :type '(symbol))
+
+;; FIXME: defcustom
+(defvar cmx-ui-theme-dark 'modus-vivendi "Preferred dark theme.")
+(defvar cmx-ui-theme-light 'modus-operandi "Preferred light theme.")
+
 
 (provide 'config-ui)
 ;;; config-ui.el ends here
