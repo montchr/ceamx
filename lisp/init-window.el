@@ -68,6 +68,7 @@
            "\\*Warnings\\*"
            "\\*elpaca-log\\*"
            "\\*Embark Export"
+           "\\*lispy-message\\*"        ; `lispy-eval' output
            compilation-mode
            help-mode
            helpful-mode
