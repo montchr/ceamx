@@ -61,6 +61,9 @@
     ;; See also `global-tempel-abbrev-mode'.
     (add-hook hook #'tempel-abbrev-mode)))
 
+;;; `tempel-collection' :: <https://github.com/Crandel/tempel-collection>
+;;  A set of pre-defined templates for `tempel'.
+;;  <https://github.com/Crandel/tempel-collection/tree/main/templates>
 (use-package tempel-collection
   :after tempel)
 

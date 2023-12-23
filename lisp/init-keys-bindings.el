@@ -190,7 +190,6 @@
   ;; FIXME: kill buffer on file deletion
   "D" '("delete" . cmx/delete-this-file)
   ;; TODO: show dirvish preview instead of dired preview
-  ;; FIXME: flickering on every keystroke...? prob cos of bad flags (see `init-files')
   "f" '("find (g)..." . find-file)
   "R" '("rename/move..." . cmx/move-this-file)
   "s" '("save" . save-buffer)

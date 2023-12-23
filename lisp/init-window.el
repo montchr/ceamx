@@ -69,7 +69,7 @@
            "\\*vc\\*"
            "\\*Warnings\\*"
            "\\*elpaca-log\\*"
-           "\\*Embark Export"           ; `consult-ripgrep'
+           "\\*Embark Export"
            compilation-mode
            help-mode
            helpful-mode

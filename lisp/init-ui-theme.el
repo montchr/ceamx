@@ -54,6 +54,7 @@
 (setopt font-lock-maximum-decoration t)
 
 (when +sys-mac-p
+  ;; `undecorated-round' is macOS-specific.
   (add-to-list 'default-frame-alist '(undecorated-round . t)))
 
 ;;; <https://git.sr.ht/~protesilaos/spacious-padding>
@@ -73,6 +74,7 @@
 (use-package circadian
   :after solar
   :config
+  ;; FIXME: based on theme selected by `cmx-ui-theme-dark'
   (setopt circadian-themes '((:sunrise . modus-operandi)
                              (:sunset  . modus-vivendi)))
   (circadian-setup))

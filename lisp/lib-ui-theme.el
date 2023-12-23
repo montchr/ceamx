@@ -1,4 +1,4 @@
-;;; lib-ui-theme.el ---Theme library functions and macros  -*- lexical-binding: t; -*-
+;;; lib-ui-theme.el --- Theme library functions and macros  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Chris Montgomery
 

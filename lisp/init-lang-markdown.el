@@ -20,6 +20,8 @@
 
 ;;; Commentary:
 
+;; FIXME: no asteriks pair
+
 ;;; Code:
 
 (require 'config-env)
@@ -28,6 +30,7 @@
 
 (defvar org-src-lang-modes)
 
+;; TODO: why not?
 ;; (define-keymap :keymap markdown-mode-map
 ;; 	"C-c i l" #'markdown-insert-link
 ;; 	;; FIXME: pop latest kill
@@ -54,6 +57,7 @@
 
   ;; This is set to `nil' by default, which causes a wrong-type-arg error
   ;; when you use `markdown-open'. These are more sensible defaults.
+  ;; TODO: make this a globally-usable variable, since it always holds true.
   (defvar
     markdown-open-command
     (cond (+sys-mac-p "open")
