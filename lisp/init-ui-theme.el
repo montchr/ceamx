@@ -33,7 +33,7 @@
 ;; Don't prompt to confirm theme safety.
 ;; This also has the benefit of avoiding problems with
 ;; first-time startup on Emacs > 26.3.
-(setq custom-safe-themes t)
+(setopt custom-safe-themes t)
 
 ;; If you don't customize it, this is the theme you get.
 ;; `modus-vivendi' is bundled with Emacs, albeit in an older version.
