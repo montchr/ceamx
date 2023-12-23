@@ -370,42 +370,6 @@
         t)))
   (evil-exchange-install))
 
-
-;;
-;;; `evil-quickscope' :: <https://github.com/blorbx/evil-quickscope>
-;;
-;;  subtle always-on hints for unique f/t jump targets
-;;  port of <https://github.com/unblevable/quick-scope>
-;;
-
-;; via <https://github.com/PythonNut/quark-emacs/blob/4c2e39f4b7b2c545e55aaced7059af4636121d0e/modules/config-evil-modules.el>
-(use-package evil-quickscope
-  :after evil
-  :unless (< (display-color-cells) 256)
-
-  :config
-  (setopt evil-quickscope-word-separator " -./")
-
-  (set-face-attribute 'evil-quickscope-first-face nil
-                      :inherit nil)
-
-  (if (display-graphic-p)
-      (set-face-attribute 'evil-quickscope-second-face nil
-                          :underline '(:style wave)
-                          :inherit nil)
-    (set-face-attribute 'evil-quickscope-second-face nil
-                        :inherit nil))
-
-  (define-advice evil-quickscope-update-overlays-bidirectional
-      (:override () only-normal-state)
-    "Update overlays in both directions from point."
-    (evil-quickscope-remove-overlays)
-    (when (memq evil-state '(normal motion))
-      (evil-quickscope-apply-overlays-forward)
-      (evil-quickscope-apply-overlays-backward)))
-
-  (global-evil-quickscope-always-mode +1))
-
 ;;
 ;;; `evil-ts' :: <https://github.com/foxfriday/evil-ts>
 ;;
