@@ -304,7 +304,8 @@
 (def-arm! cmx-open-map "O" "[Open]"
   "d" #'dired
   "e" #'eshell
-  "l" '("link..." . link-hint-open-link)
+  "l" '("link-at-point" . link-hint-open-link-at-point)
+  "L" '("link..." . link-hint-open-link)
   "m" '("mail" . compose-mail)
   "n" '("news" . newsticker-show-news)
   "s" #'suggest)
