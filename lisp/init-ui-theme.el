@@ -56,14 +56,40 @@
   ;; `undecorated-round' is macOS-specific.
   (add-to-list 'default-frame-alist '(undecorated-round . t)))
 
-;;; <https://git.sr.ht/~protesilaos/spacious-padding>
+;;; `spacious-padding' :: <https://protesilaos.com/emacs/spacious-padding>
+;;  TODO: track upstream git repo by tag since this is in rapid development
 (use-package spacious-padding
+   :defer 1
   :commands (spacious-padding-mode)
-  :init (spacious-padding-mode)
+  :defines (spacious-padding-widths)
+
+:init
+  ;; These are the defaults, but I keep it here for visiibility.
+  (setopt spacious-padding-widths
+        '(
+           :internal-border-width 15
+           ;; FIXME: `:internal-border-width' in combination with non-zero
+           ;; `:header-line-width' breaks tab height.
+           ;;
+           ;; Since I don't use the header line (does anyone?), hiding it this
+           ;; way is fine with me. However, this seems like a `spacious-padding' bug.
+           :header-line-width 0         ; default: 4
+           :mode-line-width 6
+           :tab-width 4
+           :right-divider-width 30
+           :scroll-bar-width 8))
+
   :config
-  (setopt spacious-padding-widths '( :internal-border-width 24
-                                     :right-divider-width 24
-                                     :scroll-bar-width 8)))
+  ;; (setopt tab-bar-border nil)
+
+  ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
+  ;; is very flexible.
+  ;; TODO: v0.3.0 standardizes this a bit
+  ;; (setq spacious-padding-subtle-mode-line
+  ;;       `(:mode-line-active default     ; NOTE: assumes `modus-themes'
+  ;;                           :mode-line-inactive vertical-border))
+
+  (spacious-padding-mode 1))
 
 (use-feature! solar
   :config
