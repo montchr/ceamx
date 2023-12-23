@@ -40,7 +40,6 @@
 ;;
 ;;  <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#Sample-config>
 (use-package dirvish
-  :defer t
   :after (all-the-icons)
 
   :commands (dirvish-override-dired-mode
