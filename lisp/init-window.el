@@ -84,8 +84,12 @@
     "M-`"   #'popper-echo-mode
     "C-M-`" #'popper-toggle-type)
 
+  ;; NOTE: A non-nil value for this setting will conflict with `shackle.el' (if
+  ;; installed) and, potentially, `display-buffer-alist' customizations.
   ;; <https://github.com/karthink/popper?tab=readme-ov-file#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
-  (setopt popper-display-control t)
+  (after! 'shackle
+    (setopt popper-display-control nil))
+
 
   (after! [projectile]
     (setopt popper-group-function #'popper-group-by-projectile)))
