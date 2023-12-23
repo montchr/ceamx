@@ -31,6 +31,8 @@
 ;; (setopt dired-listing-switches
 ;;       "-l --almost-all --human-readable --group-directories-first --no-group")
 (setopt dired-kill-when-opening-new-dired-buffer t)
+
+;; Mouse/drag-and-drop support.
 (setopt dired-mouse-drag-files t)
 (setopt mouse-drag-and-drop-region-cross-program t)
 
@@ -46,10 +48,10 @@
              dirvish-side-follow-mode)
 
   :init
-  ;; FIXME: not working? too early?
   (dirvish-override-dired-mode)
 
   :config
+  ;; FIXME: neither of these are working
   (dirvish-peek-mode) ; Preview files in minibuffer
   (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
 
@@ -71,7 +73,14 @@
             subtree-state
             vc-state))
 
+  ;; <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#mouse-settings>
+  (def-hook! cmx--dirvish-no-mouse-follows-link (&rest _)
+    dirvish-find-entry-hook
+    "Disable `mouse-1-click-follows-link' in `dirvish' buffers."
+    (setopt mouse-1-click-follows-link nil))
+
   (define-keymap :keymap dirvish-mode-map
+    ;; NOTE: `mouse-1-click-follows-link' must be nil (see above)
     "<mouse-1>" #'dirvish-subtree-toggle-or-open
     "<mouse-2>" #'dired-mouse-find-file-other-window
     "<mouse-3>" #'dired-mouse-find-file
