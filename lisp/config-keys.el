@@ -49,7 +49,10 @@
   :group 'ceamx)
 
 (defcustom cmx-leader-alt-key "M-SPC"
-  "Alternative leader prefix key sequence."
+  "Alternative leader prefix key sequence.
+Note that the default value conflicts with a keybinding in the
+GNOME desktop environment. This conflict must be resolved outside
+of Emacs."
   :type '(key)
   :group 'ceamx)
 
