@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'lib-common)
+(require 'lib-window)
 
 ;; TODO: add notes
 (defadvice keyboard-escape-quit
@@ -73,11 +74,7 @@
            compilation-mode
            help-mode
            helpful-mode
-           ;; FIXME: this is too aggressive. e.g. takes over scratch buffers and some blank new windows
-           ;; (lambda (buf) (with-current-buffer buf
-           ;;            (and (derived-mode-p 'fundamental-mode)
-           ;;                 (< (count-lines (point-min) (point-max))
-           ;;                    10))))
+           +popper-current-buffer-popup-p
            ))
 
   (popper-mode +1)
