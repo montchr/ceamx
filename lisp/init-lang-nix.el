@@ -51,6 +51,13 @@
 (after! [nix-mode smartparens]
   (sp-pair "''" "''"))
 
+(use-package eglot
+  :after (nix-mode)
+  :defines (eglot-server-programs)
+
+  :config
+  (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nil"))))
+
 ;; via `lsp-mode' package
 (use-feature! lsp-nix
   :after (lsp-mode)

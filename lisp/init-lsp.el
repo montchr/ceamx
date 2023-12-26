@@ -38,14 +38,15 @@
 ;;
 
 (use-package lsp-mode
-  :commands (lsp-deferred lsp-execute-code-action)
-  :autoload (lsp--shutdown-workspace)
+  :commands (lsp lsp-deferred lsp-execute-code-action)
+  :autoload (lsp--shutdown-workspace lsp-enable-which-key-integration)
   :defines (lsp-modeline-code-actions-segments) ; idk why tho
 
   :init
   ;; FIXME: ideally would be enabled, but lately has been failing
   (setopt lsp-use-plists nil)
-  (setopt lsp-restart 'ignore)
+
+  ;; (setopt lsp-restart 'ignore)
   (setopt lsp-headerline-breadcrumb-enable nil)
   ;; Keybindings are handled manually.
   ;; FIXME: figure out how to disable for real?
@@ -83,9 +84,7 @@
 
   (keymap-set lsp-mode-map "M-<return>" #'lsp-execute-code-action)
 
-  :hook
-  ;; FIXME: might overwrite which-key strings defined in `init-keys'?
-  ((lsp-mode . lsp-enable-which-key-integration)))
+  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
 
 (use-package lsp-ui
   :after (lsp-mode)

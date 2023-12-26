@@ -242,8 +242,6 @@
 
 (require 'init-prog)
 (require 'init-lisp)
-;; TODO: move to after lang modes, since it's less essential
-(require 'init-lsp)
 
 (require 'init-lang-data)
 (require 'init-lang-emacs-lisp)
@@ -259,6 +257,9 @@
 
 ;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
 (require 'init-shell-nu)
+
+(require 'init-eglot)
+;; (require 'init-lsp)
 
 ;;; Linting
 (require 'init-flycheck)

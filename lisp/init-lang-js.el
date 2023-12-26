@@ -30,6 +30,7 @@
 
 (defun cmx-init-javascript-modes ()
   (setopt js-indent-level 2)
+
   (after! [lsp-mode]
     (lsp-deferred)
     (lsp-lens-mode)
