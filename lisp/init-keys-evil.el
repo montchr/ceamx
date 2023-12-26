@@ -461,6 +461,7 @@
 (use-package evil-traces
   :after evil
   :config
+  ;; FIXME: this writes to custom.el
   (evil-traces-use-diff-faces)
   (evil-traces-mode))
 
