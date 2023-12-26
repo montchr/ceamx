@@ -56,53 +56,6 @@
   ;; `undecorated-round' is macOS-specific.
   (add-to-list 'default-frame-alist '(undecorated-round . t)))
 
-;;; `spacious-padding' :: <https://protesilaos.com/emacs/spacious-padding>
-;;  TODO: track upstream git repo by tag since this is in rapid development
-(use-package spacious-padding
-   :defer 1
-  :commands (spacious-padding-mode)
-  :defines (spacious-padding-widths)
-
-:init
-  ;; These are the defaults, but I keep it here for visiibility.
-  (setopt spacious-padding-widths
-        '(
-           :internal-border-width 15
-           ;; FIXME: `:internal-border-width' in combination with non-zero
-           ;; `:header-line-width' breaks tab height.
-           ;;
-           ;; Since I don't use the header line (does anyone?), hiding it this
-           ;; way is fine with me. However, this seems like a `spacious-padding' bug.
-           :header-line-width 0         ; default: 4
-           :mode-line-width 6
-           :tab-width 4
-           :right-divider-width 30
-           :scroll-bar-width 8))
-
-  :config
-  ;; (setopt tab-bar-border nil)
-
-  ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
-  ;; is very flexible.
-  ;; TODO: v0.3.0 standardizes this a bit
-  ;; (setq spacious-padding-subtle-mode-line
-  ;;       `(:mode-line-active default     ; NOTE: assumes `modus-themes'
-  ;;                           :mode-line-inactive vertical-border))
-
-  (spacious-padding-mode 1))
-
-(use-feature! solar
-  :config
-  (setopt calendar-latitude 39.96)
-  (setopt calendar-longitude -75.13))
-
-(use-package circadian
-  :after solar
-  :config
-  ;; FIXME: based on theme selected by `cmx-ui-theme-dark'
-  (setopt circadian-themes '((:sunrise . modus-operandi)
-                             (:sunset  . modus-vivendi)))
-  (circadian-setup))
 
 (provide 'init-ui-theme)
 ;;; init-ui-theme.el ends here

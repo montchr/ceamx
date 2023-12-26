@@ -181,7 +181,10 @@
     ('telephone
       (require 'init-ui-modeline-telephone-line))))
 
+(require 'init-after-ui)
+
 ;;;; Sidebar
+;; TODO: should not be considered "ui" -- or rather, "ui" should mean "appearance"
 ;; TODO: figure out how to load as late as possible?
 (require 'init-ui-treemacs)
 
