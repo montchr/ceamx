@@ -40,9 +40,12 @@
 ;; Prevents an extra window appearing during init.
 (setopt async-shell-command-display-buffer nil)
 
+;; TODO: what do each of these do?
 (setopt display-buffer-base-action
-        '((display-buffer-reuse-mode-window display-buffer-pop-up-window)
+        '((display-buffer-reuse-mode-window
+           display-buffer-pop-up-window)
           (reusable-frames . t)))
+
 (setopt even-window-sizes nil)
 
 (use-feature! winner
