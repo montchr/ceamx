@@ -58,15 +58,23 @@
 
 ;;; Code:
 
+(use-package treesit
+  :demand t)
+
 ;;; `treesit-auto' <https://github.com/renzmann/treesit-auto>
 (use-package treesit-auto
-  :commands global-treesit-auto-mode
+  :after (treesit)
+  :commands (global-treesit-auto-mode)
+  ;; FIXME: Package has bad autoloads
+  ;; <https://github.com/renzmann/treesit-auto/issues/44>
+  :autoload (treesit-auto-add-to-auto-mode-alist)
+
   :config
   ;; Grammars should be installed via Nixpkgs.
   (setopt treesit-auto-install nil)
-  ;; Don't make me think.
+
   (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
+  (global-treesit-auto-mode +1))
 
 
 (provide 'init-treesitter)
