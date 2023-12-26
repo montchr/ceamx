@@ -37,7 +37,7 @@
   (forward-line -1)
   (indent-according-to-mode))
 
-(defun cmx--smartparens-pair-setup (mode delim)
+(defun cmx-sp-pair (mode delim)
   "In major mode MODE, set up DELIM with `newline-and-indent'."
   (sp-local-pair mode delim nil :post-handlers
                  '((cmx--smartparens-indent-new-pair "RET")

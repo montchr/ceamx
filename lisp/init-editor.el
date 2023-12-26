@@ -134,16 +134,17 @@ In most cases, these modes derive from `prog-mode', but there may be some except
   ;;  <https://github.com/Fuco1/smartparens/issues/80#issuecomment-18910312>.
 
   (dolist (delim '("(" "[" "{"))
+    ;; NOTE: For some reason, the modes must be specified explicitly; that is,
+    ;; specifying `fundamental-mode' does not imply all modes will inherit its
+    ;; pairs.
     (dolist (mode '(fundamental-mode
                     javascript-mode
                     nix-mode
-                    ;; TODO: are these really necessary since everything derives from `fundamental-mode'?
-                    ;;      it seems the answer is yes, but why?
                     prog-mode
                     text-mode))
-      (cmx--smartparens-pair-setup mode delim)))
+      (cmx-sp-pair mode delim)))
 
-  (cmx--smartparens-pair-setup #'python-mode "\"\"\"")
+  (cmx-sp-pair #'python-mode "\"\"\"")
 
   ;; Work around https://github.com/Fuco1/smartparens/issues/1036.
   (when (fboundp 'minibuffer-mode)

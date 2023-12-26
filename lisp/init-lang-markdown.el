@@ -26,6 +26,7 @@
 
 (require 'config-env)
 (require 'lib-common)
+(require 'lib-editor)
 (require 'lib-lang-markdown)
 
 (defvar org-src-lang-modes)
@@ -38,6 +39,7 @@
 
 ;;; `markdown-mode' :: <https://github.com/jrblevin/markdown-mode>
 (use-package markdown-mode
+  :commands (markdown-mode)
   :autoload (markdown-match-generic-metadata)
 
   :init
@@ -95,7 +97,7 @@ and
   ;; Register code fence pair.
   (after! [smartparens]
     (require 'lib-editor)
-    (cmx--smartparens-pair-setup #'markdown-mode "```")))
+    (cmx-sp-pair #'markdown-mode "```")))
 
 (use-package evil-markdown
   :after (evil evil-collection markdown-mode)
