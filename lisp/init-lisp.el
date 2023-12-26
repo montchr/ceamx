@@ -100,7 +100,7 @@
   :defines (lispyville-key-theme)
 
   :init
-  ;; via doom
+  ;; NOTE: `setopt' throws warning on mismatched type
   (setq lispyville-key-theme
         '((operators normal)
           c-w
