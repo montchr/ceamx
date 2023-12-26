@@ -31,6 +31,11 @@
 
 (require 'lib-frame)
 
+;;; Disable menu bar by default.
+(use-package emacs
+  :config
+  (menu-bar-mode -1))
+
 ;; macOS has terrible window management UX and it always has.
 ;; and it is only getting *worse*.
 ;; this used to be fine, but then they introduced
