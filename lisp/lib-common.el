@@ -332,6 +332,7 @@ DOCSTRING and BODY are as in `defun'.
 
 ;;; Hooks
 
+;; FIXME: Does not seem to accept a quoted list of hooks as expected
 (defmacro def-hook! (name arglist hooks docstring &rest body)
   "Define function NAME and add it to HOOKS.
 ARGLIST is as in `defun'. HOOKS is a list of hooks to which to

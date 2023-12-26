@@ -29,6 +29,7 @@
 (require 'lib-window)
 
 ;; TODO: add notes
+;; FIXME: add notes. what is this?
 (defadvice keyboard-escape-quit
     (around keyboard-escape-quit-dont-close-windows activate)
   (let ((buffer-quit-function (lambda () ())))

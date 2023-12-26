@@ -69,7 +69,6 @@ that is expanded with the `package!' macro."
 
 ;;; Macros
 
-;; TODO: make this more useful than just a name...
 (defmacro use-feature! (name &rest args)
   "Simple wrapper for `use-package', passing through NAME and ARGS.
 
