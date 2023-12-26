@@ -34,6 +34,9 @@
 (setq save-place-file (expand-file-name "saveplace" cmx-local-dir))
 (save-place-mode 1)
 
+;; Disable buffer line wrapping by default.
+(set-default 'truncate-lines t)
+
 ;;
 ;;; `goto-address' (internal)
 ;; Linkify URLs and email addresses in buffers.

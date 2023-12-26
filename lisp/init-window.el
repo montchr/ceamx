@@ -35,8 +35,6 @@
   (let ((buffer-quit-function (lambda () ())))
     ad-do-it))
 
-;; Disable buffer line wrapping by default.
-(set-default 'truncate-lines t)
 
 ;; Hide buffer until there's output.
 ;; Prevents an extra window appearing during init.
