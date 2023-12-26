@@ -237,6 +237,7 @@
 
 ;;; Language/syntax support
 
+(require 'init-prog)
 (require 'init-lisp)
 ;; TODO: move to after lang modes, since it's less essential
 (require 'init-lsp)
