@@ -28,13 +28,11 @@
 (require 'lib-common)
 (require 'lib-window)
 
-;; TODO: add notes
-;; FIXME: add notes. what is this?
-(defadvice keyboard-escape-quit
-    (around keyboard-escape-quit-dont-close-windows activate)
-  (let ((buffer-quit-function (lambda () ())))
-    ad-do-it))
-
+;; FIXME: add notes. what is this? how does it relate to `cmx/escape'?
+;; (defadvice keyboard-escape-quit
+;;     (around keyboard-escape-quit-dont-close-windows activate)
+;;   (let ((buffer-quit-function (lambda () ())))
+;;     ad-do-it))
 
 ;; Hide buffer until there's output.
 ;; Prevents an extra window appearing during init.
