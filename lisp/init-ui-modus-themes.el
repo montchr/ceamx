@@ -29,18 +29,18 @@
   :config
   (setopt modus-themes-italic-constructs t)
   (setopt modus-themes-bold-constructs t)
-  (setopt modus-themes-common-palette-overrides
-        '((fringe unspecified)))
+  ;; (setopt modus-themes-common-palette-overrides
+  ;;       '((fringe unspecified)))
 
-  (defun cmx-modus-themes--custom-faces ()
-    (modus-themes-with-colors
-      (custom-set-faces
-       ;; Add "padding" to modeline.
-       `(mode-line ((,c :box ( :line-width 10
-                               :color ,bg-mode-line-active))))
-       `(mode-line-inactive ((,c :box ( :line-width 10
-                                        :color ,bg-mode-line-inactive)))))))
-  (add-hook 'modus-themes-after-load-theme-hook #'cmx-modus-themes--custom-faces)
+  ;; (defun cmx-modus-themes--custom-faces ()
+  ;;   (modus-themes-with-colors
+  ;;     (custom-set-faces
+  ;;      ;; Add "padding" to modeline.
+  ;;      `(mode-line ((,c :box ( :line-width 10
+  ;;                              :color ,bg-mode-line-active))))
+  ;;      `(mode-line-inactive ((,c :box ( :line-width 10
+  ;;                                       :color ,bg-mode-line-inactive)))))))
+  ;; (add-hook 'modus-themes-after-load-theme-hook #'cmx-modus-themes--custom-faces)
 
   (load-theme 'modus-vivendi :no-confirm))
 
