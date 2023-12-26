@@ -108,5 +108,11 @@
 (use-package rainbow-mode
   :defer t)
 
+;; FIXME: `consult-project-buffer' does not reliably find files! cannot be trusted
+;; (after! [consult-buffer]
+;;   ;; TODO:
+;;   ;; (setopt consult-buffer-filter ...)
+;;   )
+
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
