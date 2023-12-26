@@ -48,6 +48,9 @@
 (after! [nix-mode aggressive-indent]
   (add-to-list 'aggressive-indent-excluded-modes 'nix-mode))
 
+(after! [nix-mode smartparens]
+  (sp-pair "''" "''"))
+
 ;; via `lsp-mode' package
 (use-feature! lsp-nix
   :after (lsp-mode)
