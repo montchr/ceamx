@@ -152,7 +152,7 @@ In most cases, these modes derive from `prog-mode', but there may be some except
     (sp-local-pair #'minibuffer-mode "'" nil :actions nil))
 
   ;; Work around https://github.com/Fuco1/smartparens/issues/783.
-  (setq sp-escape-quotes-after-insert nil))
+  (setopt sp-escape-quotes-after-insert nil))
 
 ;;
 ;;; Visual feedback
