@@ -487,8 +487,6 @@
 ;;
 
 ;; Wrap text in supported symbols.
-;; TODO: consider de-abstracting so that binding is more easily discoverable
-;;       (i think this was in a recent commit)
 (dolist (pair '("[" "{" "\"" "'" "`"))
   (let ((key (format "M-%s" pair)))
     (keymap-global-set key #'insert-pair)))

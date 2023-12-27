@@ -139,7 +139,6 @@
   (setq evil-visual-state-cursor 'hollow)
 
   :config
-  ;; FIXME: i don't think this is working quite right. some popups are not dimissed.
   (evil-ex-define-cmd "q" #'kill-this-buffer)
   (evil-ex-define-cmd "wq" #'cmx/save-and-kill-this-buffer)
 
