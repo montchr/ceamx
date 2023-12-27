@@ -28,7 +28,9 @@
 ;;; `savehist' (internal)
 (use-feature! savehist
   :config
-  (setopt savehist-additional-variables '(search-ring regexp-search-ring))
+  (setopt savehist-additional-variables '( search-ring
+                                           regexp-search-ring
+                                           kill-ring))
   (setopt savehist-autosave-interval 60)
   ;; NOTE: Also configured by `no-littering'.
   (setopt savehist-file (expand-file-name "savehist" cmx-local-dir))
