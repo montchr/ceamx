@@ -61,39 +61,7 @@
 ;;; Package initialization
 ;;
 
-(require 'package)
-
-(add-hook 'package-menu-mode-hook #'hl-line-mode)
-
-;;; `use-package'
-;;  <https://www.gnu.org/software/emacs/manual/html_mono/use-package.html>
-;;  <https://github.com/jwiegley/use-package>
-;;  TODO: make sure we are using the version installed by nixpkgs, not the builtin version
-;;        same goes for modus-themes and others
-(eval-when-compile
-  (require 'use-package)
-
-  ;;;; Initialize keyword extensions.
-  (use-package blackout :demand t))
-
-(require 'lib-package)
-
-(use-feature! use-package
-  :config
-  ;; When non-nil, improves performance and effectiveness of byte-compilation,
-  ;; but decreases introspectability.
-  ;; TODO: switch to enabled when ready for byte-comp
-  (setopt use-package-expand-minimally nil)
-
-  ;; Support for Emacs init introspection.
-  (when cmx-init-debug-flag
-    (setopt use-package-expand-minimally nil)
-    ;; NOTE: Requires that the `use-package' library is explicitly `require'd in
-    ;;       files where its macro is invoked, else no output.
-    ;;       See docstring for more info.
-    (setopt use-package-verbose t)
-    ;; NOTE: Requires explicit `require', else errors re: undefined variables.
-    (setopt use-package-compute-statistics t)))
+(require 'init-packages)
 
 ;;
 ;;; Libraries
@@ -103,12 +71,23 @@
 (require 'cl-lib)
 (require 'map)
 
+
 ;;; Install common library packages
 (use-package s)     ; strings => <https://github.com/magnars/s.el>
 (use-package dash)  ; lists => <https://github.com/magnars/dash.el>
 (use-package f)     ; files => <https://github.com/rejeep/f.el>
 (use-package ht)    ; hash tables => <https://github.com/Wilfred/ht.el>
 (use-package llama) ;  `##' lambda shorthand => <https://git.sr.ht/~tarsius/llama>
+
+
+;;; Latest versions of Emacs internals.
+;;  Prevents Elpaca errors for packages that expect later versions available.
+;;  TODO: This could be caused by the currently-mixed state of Elpaca-managed
+;;  and Nixpkgs packages.
+(use-package eldoc)
+(use-package jsonrpc)
+
+(elpaca-wait)
 
 (require 'lib-common)
 
@@ -292,7 +271,7 @@
   (unless (and (fboundp 'server-running-p)
             (server-running-p))
     (server-start)))
-(add-hook 'after-init-hook #'+maybe-start-server)
+(add-hook 'elpaca-after-init-hook #'+maybe-start-server)
 
 ;; unfortunately
 (defun cmx-after-init-restart-yabai-h ()
@@ -300,13 +279,13 @@
   (after! [exec-path-from-shell]
     (async-shell-command "yabai --restart-service")))
 (when (and +gui-p +sys-mac-p)
-  (add-hook 'after-init-hook #'cmx-after-init-restart-yabai-h))
+  (add-hook 'elpaca-after-init-hook #'cmx-after-init-restart-yabai-h))
 
 ;; Load custom file after all packages have loaded.
 (when (file-exists-p custom-file)
   (defun cmx-load-custom-file-after-init-h ()
     (load custom-file 'noerror))
-  (add-hook 'after-init-hook #'cmx-load-custom-file-after-init-h))
+  (add-hook 'elpaca-after-init-hook #'cmx-load-custom-file-after-init-h))
 
 ;; Wait for all packages to initialize in non-interactive mode.
 (when noninteractive

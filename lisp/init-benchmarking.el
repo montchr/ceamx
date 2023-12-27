@@ -101,10 +101,18 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
     (tabulated-list-revert)
     (display-buffer (current-buffer))))
 
-(defun +show-init-time ()
-  "Echo the total Emacs init time."
-  (message "init completed in %.2fms"
-           (+time-subtract-millis after-init-time before-init-time)))
+;; FIXME: no lambda hooks
+(add-hook 'elpaca-after-init-hook
+          (lambda ()
+            (message "Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract (current-time) before-init-time)))
+                     gcs-done)))
+
+;; FIXME: flycheck errors with profiler functions
+;; (profiler-start 'cpu+mem)
+;; (add-hook 'elpaca-after-init-hook (lambda () (profiler-stop) (profiler-report)))
 
 ;;
 ;;; Configuration
@@ -112,7 +120,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 (advice-add 'require :around '+require-times-wrapper)
 
-(add-hook 'after-init-hook #'+show-init-time)
+(add-hook 'elpaca-after-init-hook #'+show-init-time)
 
 
 (provide 'init-benchmarking)

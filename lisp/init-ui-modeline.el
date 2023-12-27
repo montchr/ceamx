@@ -35,12 +35,5 @@
   :config
   (which-function-mode 1))
 
-;;; `blackout' :: ` <https://github.com/radian-software/blackout>
-(use-package blackout
-  :demand t)
-
-;; Wait until `blackout' is activated so its `use-package' keyword is installed.
-;; FIXME: (elpaca-wait)
-
 (provide 'init-ui-modeline)
 ;;; init-ui-modeline.el ends here

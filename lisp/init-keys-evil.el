@@ -185,7 +185,7 @@
 
   (evil-mode 1))
 
-;; FIXME: (elpaca-wait)
+(elpaca-wait)
 
 ;; FIXME: this is terrible -- must be loaded after evil -- needs autoloads internally
 (require 'lib-keys-evil)
@@ -253,79 +253,85 @@
 ;;  <https://github.com/cute-jumper/embrace.el?tab=readme-ov-file#for-evil-surround-users>
 ;;  <https://github.com/cute-jumper/evil-embrace.el/tree/master?tab=readme-ov-file#why>
 
+;; TODO: do we really need these? or is it a vim-emulation completionist thing?
+
 ;; FIXME: disable insertion of extra padding space by default, but allow the option to override
 ;;; `evil-surround' :: <https://github.com/emacs-evil/evil-surround/>
-(use-package evil-surround
-  :after evil
-  :commands (global-evil-surround-mode
-             evil-surround-edit
-             evil-Surround-edit
-             evil-surround-region)
-  :config
-  (keymap-set evil-visual-state-map "S" #'evil-surround-region)
-  (global-evil-surround-mode +1))
+;; (use-package evil-surround
+;;   :after evil
+;;   :commands (global-evil-surround-mode
+;;              evil-surround-edit
+;;              evil-Surround-edit
+;;              evil-surround-region)
+;;   :config
+;;   (keymap-set evil-visual-state-map "S" #'evil-surround-region)
+;;   (global-evil-surround-mode +1))
 
-;;; `embrace' :: <https://github.com/cute-jumper/embrace.el>
-(use-package embrace
-  :commands (embrace-org-mode-hook
-             embrace-ruby-mode-hook
-             embrace-emacs-lisp-mode-hook))
+;; FIXME: `embrace' and `evil-embrace' don't install properly
+;; `embrace' :: <https://github.com/cute-jumper/embrace.el>
+;; (use-package embrace
+;;             :elpaca (embrace :host github :repo "cute-jumper/embrace.el")
+;;  :commands (embrace-org-mode-hook
+;;             embrace-ruby-mode-hook
+;;             embrace-emacs-lisp-mode-hook))
 
-;;; `evil-embrace' :: <https://github.com/cute-jumper/evil-embrace.el>
-(use-package evil-embrace
-  :after (evil embrace)
+;; `evil-embrace' :: <https://github.com/cute-jumper/evil-embrace.el>
+;; (use-package evil-embrace
 
-  :commands (embrace-add-pair
-             embrace-add-pair-regexp
-             evil-embrace-enable-evil-surround-integration)
+;;             :elpaca (evil-embrace :host github :repo "cute-jumper/evil-embrace.el")
+;;  :after (evil embrace)
 
-  :init
-  (defun +evil-embrace-lisp-mode-hook-h ()
-    ;; Avoid `embrace-add-pair-regexp' because it would overwrite the default
-    ;; `f' rule, which we want for other modes
-    (push (cons ?f (make-embrace-pair-struct
-                    :key ?f
-                    :read-function #'+evil--embrace-elisp-fn
-                    :left-regexp "([^ ]+ "
-                    :right-regexp ")"))
-          embrace--pairs-list))
+;;  :commands (embrace-add-pair
+;;             embrace-add-pair-regexp
+;;             evil-embrace-enable-evil-surround-integration)
 
-  (defun +evil-embrace-angle-bracket-modes-hook-h ()
-    (let ((var (make-local-variable 'evil-embrace-evil-surround-keys)))
-      (set var (delq ?< evil-embrace-evil-surround-keys))
-      (set var (delq ?> evil-embrace-evil-surround-keys)))
-    (embrace-add-pair-regexp ?< "\\_<[a-z0-9-_]+<" ">" #'+evil--embrace-angle-brackets)
-    (embrace-add-pair ?> "<" ">"))
+;;  :init
+;;  (defun +evil-embrace-lisp-mode-hook-h ()
+;;    ;; Avoid `embrace-add-pair-regexp' because it would overwrite the default
+;;    ;; `f' rule, which we want for other modes
+;;    (push (cons ?f (make-embrace-pair-struct
+;;                    :key ?f
+;;                    :read-function #'+evil--embrace-elisp-fn
+;;                    :left-regexp "([^ ]+ "
+;;                    :right-regexp ")"))
+;;          embrace--pairs-list))
 
-  (add-hook 'org-mode-hook #'embrace-org-mode-hook)
-  (add-hook 'ruby-mode-hook #'embrace-ruby-mode-hook)
-  (add-hook 'emacs-lisp-mode-hook #'embrace-emacs-lisp-mode-hook)
+;;  (defun +evil-embrace-angle-bracket-modes-hook-h ()
+;;    (let ((var (make-local-variable 'evil-embrace-evil-surround-keys)))
+;;      (set var (delq ?< evil-embrace-evil-surround-keys))
+;;      (set var (delq ?> evil-embrace-evil-surround-keys)))
+;;    (embrace-add-pair-regexp ?< "\\_<[a-z0-9-_]+<" ">" #'+evil--embrace-angle-brackets)
+;;    (embrace-add-pair ?> "<" ">"))
 
-  (dolist (mode cmx-lisp-mode-list)
-    (add-hook mode #'+evil-embrace-lisp-mode-hook-h))
+;;  (add-hook 'org-mode-hook #'embrace-org-mode-hook)
+;;  (add-hook 'ruby-mode-hook #'embrace-ruby-mode-hook)
+;;  (add-hook 'emacs-lisp-mode-hook #'embrace-emacs-lisp-mode-hook)
 
-  (dolist (mode '(typescript-mode rustic-mode c++-ts-mode))
-    (add-hook mode #'+evil-embrace-angle-bracket-modes-hook-h))
+;;  (dolist (mode cmx-lisp-mode-list)
+;;    (add-hook mode #'+evil-embrace-lisp-mode-hook-h))
 
-  (after! [evil-surround]
-    (evil-embrace-enable-evil-surround-integration))
+;;  (dolist (mode '(typescript-mode rustic-mode c++-ts-mode))
+;;    (add-hook mode #'+evil-embrace-angle-bracket-modes-hook-h))
 
-  ;; TODO: find out whether this is still necessary?
-  ;; HACK: This must be done ASAP, before embrace has a chance to
-  ;;   buffer-localize `embrace--pairs-list' (which happens right after it calls
-  ;;   `embrace--setup-defaults'), otherwise any new, global default pairs we
-  ;;   define won't be in scope.
-  ;; via <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/modules/editor/evil/config.el#L257C1-L265C64>
-  (defadvice! +evil--embrace-init-escaped-pairs-a (&rest args)
-    "Add escaped-sequence support to embrace."
-    :after #'embrace--setup-defaults
-    (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" #'+evil--embrace-escaped
-                            (embrace-build-help "\\?" "\\?")))
+;;  (after! [evil-surround]
+;;    (evil-embrace-enable-evil-surround-integration))
 
-  :config
-  (setopt evil-embrace-show-help-p t))
+;;  ;; TODO: find out whether this is still necessary?
+;;  ;; HACK: This must be done ASAP, before embrace has a chance to
+;;  ;;   buffer-localize `embrace--pairs-list' (which happens right after it calls
+;;  ;;   `embrace--setup-defaults'), otherwise any new, global default pairs we
+;;  ;;   define won't be in scope.
+;;  ;; via <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/modules/editor/evil/config.el#L257C1-L265C64>
+;;  (defadvice! +evil--embrace-init-escaped-pairs-a (&rest args)
+;;    "Add escaped-sequence support to embrace."
+;;    :after #'embrace--setup-defaults
+;;    (embrace-add-pair-regexp ?\\ "\\[[{(]" "\\[]})]" #'+evil--embrace-escaped
+;;                            (embrace-build-help "\\?" "\\?")))
 
-;;
+;;  :config
+;;  (setopt evil-embrace-show-help-p t))
+
+;;;
 ;;; `evil-escape' :: <https://github.com/emacsorphanage/evil-escape/>
 ;;
 ;; > Customizable key sequence to escape from insert state and

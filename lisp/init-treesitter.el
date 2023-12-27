@@ -58,7 +58,7 @@
 
 ;;; Code:
 
-(use-package treesit
+(use-feature! treesit
   :demand t)
 
 ;;; `treesit-auto' <https://github.com/renzmann/treesit-auto>

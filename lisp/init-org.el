@@ -37,6 +37,8 @@
   (make-directory org-directory))
 
 (use-package org
+  :elpaca (:autoloads "org-loaddefs.el")
+
   :init
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
   (add-hook 'org-mode-hook #'visual-line-mode)

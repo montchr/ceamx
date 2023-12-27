@@ -22,7 +22,7 @@
 
 ;;; Code:
 
-(require 'config-paths)
+(require 'ceamx-paths)
 
 (defvar cmx-notes-dir
   (file-name-as-directory

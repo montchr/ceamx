@@ -31,7 +31,7 @@
 
 (require 'lib-frame)
 
-(use-package emacs
+(use-feature! emacs
   :config
   ;; Disable menu bar by default.
   (menu-bar-mode -1))

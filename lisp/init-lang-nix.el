@@ -51,7 +51,7 @@
 (after! [nix-mode smartparens]
   (sp-pair "''" "''"))
 
-(use-package eglot
+(use-feature! eglot
   :after (nix-mode)
   :defines (eglot-server-programs)
 

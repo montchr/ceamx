@@ -31,8 +31,8 @@
 
 ;;; Code:
 
-;; Enable loading of `package.el'.
-(setq package-enable-at-startup t)
+;; Disable package.el
+(setq package-enable-at-startup nil)
 
 ;;; PERF: Minimize garbage collection during startup:
 
@@ -56,20 +56,45 @@
 
 ;; But make it more regular after startup and after closing minibuffer.
 (add-hook 'emacs-startup-hook #'cmx-gc-restore-freq)
+(with-eval-after-load 'elpaca
+  (remove-hook 'emacs-startup-hook #'cmx-gc-restore-freq)
+  (add-hook 'elpaca-after-init-hook #'cmx-gc-restore-freq))
 (add-hook 'minibuffer-exit-hook #'cmx-gc-restore-freq)
 
-;;; PERF: Avoid complex regexp matching in load path during startup:
+;;
+;;; Directories:
 
-;; Avoid unnecessary regexp matching while loading .el files.
+;; Load settings describing well-known paths.
+(load (concat (file-name-directory load-file-name)
+              "ceamx-paths")
+      nil (not init-file-debug))
+;; (require 'ceamx-paths
+;;   (concat (file-name-directory load-file-name)
+;;                         "ceamx-paths.el"))
+
+;; Use preferred cache directories for native-comp.
+(startup-redirect-eln-cache (convert-standard-filename (expand-file-name "eln/" cmx-var-dir)))
+(add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" cmx-var-dir))
+
+
+;;
+;;; PERF: Avoid complex regexp matching in load path during startup.
+
 (defvar cmx-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
-(defun cmx--restore-file-name-handler-alist-h ()
+(defun cmx-restore-file-name-handler-alist-h ()
   "Restore the original value of the `file-name-handler-alist' variable."
   (setq file-name-handler-alist cmx-file-name-handler-alist)
   (makunbound 'cmx-file-name-handler-alist))
 
-(add-hook 'emacs-startup-hook #'cmx--restore-file-name-handler-alist-h)
+(add-hook 'emacs-startup-hook #'cmx-restore-file-name-handler-alist-h)
+(with-eval-after-load 'elpaca
+  (remove-hook 'emacs-startup-hook #'cmx-restore-file-name-handler-alist-h)
+  (add-hook 'elpaca-after-init-hook #'cmx-restore-file-name-handler-alist-h))
+
+;;
+;;; Native compilation:
 
 (setq native-comp-async-report-warnings-errors 'silent)
 (setq native-compile-prune-cache t)
@@ -77,17 +102,7 @@
 ;; Don't load outdated byte-compiled files. This should not even be an option.
 (setq load-prefer-newer t)
 
-;;; Configure well-known paths:
-
-;; Load settings describing well-known paths.
-(load (concat (file-name-directory load-file-name)
-              "lisp/config-paths")
-      nil (not init-file-debug))
-
-;; Use preferred cache directories for native-comp.
-(startup-redirect-eln-cache (convert-standard-filename (expand-file-name "eln/" cmx-var-dir)))
-(add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" cmx-var-dir))
-
+;;
 ;;; Inhibit annoyances:
 
 ;; Performance improvements for language server JSON-RPC (LSP).
@@ -104,6 +119,9 @@
 (setq make-backup-files nil)
 (setq create-lockfiles nil)
 
+;;
+;;; Frames:
+
 ;; Prevent X11 from taking control of visual behavior and appearance.
 (setq inhibit-x-resources t)
 
@@ -114,7 +132,7 @@
 (setq frame-resize-pixelwise t)
 
 ;; There is no place like Emacs.
-(add-hook 'after-init-hook (lambda () (set-frame-name "home")))
+(add-hook 'elpaca-after-init-hook (lambda () (set-frame-name "home")))
 
 (provide 'early-init)
 ;;; early-init.el ends here

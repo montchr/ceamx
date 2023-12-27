@@ -1,4 +1,4 @@
-;;; config-projects.el --- Project settings          -*- lexical-binding: t; -*-
+;;; lib-packages.el --- Core library functions and macros  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Chris Montgomery
 
@@ -20,15 +20,21 @@
 
 ;;; Commentary:
 
+;;
+
 ;;; Code:
 
-(require 'ceamx-paths)
+(defmacro use-feature! (name &rest args)
+  "Simple wrapper for `use-package', passing through NAME and ARGS.
 
-(defvar cmx-projects-dir
-  (file-name-as-directory
-   (or (getenv "XDG_PROJECTS_DIR")
-       (concat cmx-home-dir "Developer")))
-  "The root directory for projects.")
+Like `use-package' but accounting for asyncronous installation
+with `elpaca'.
 
-(provide 'config-projects)
-;;; config-projects.el ends here
+Refer to the `use-package' documentation for further information."
+  (declare (indent defun))
+  `(use-package ,name
+     :elpaca nil
+     ,@args))
+
+(provide 'lib-packages)
+;;; lib-packages.el ends here

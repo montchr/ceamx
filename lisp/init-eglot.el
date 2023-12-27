@@ -29,7 +29,9 @@
 
 (require 'lib-common)
 
+;; NOTE: This will grab the latest version of Eglot, not the version bundled with Emacs.
 (use-package eglot
+  :after (jsonrpc)
   :commands (eglot eglot-ensure)
 
   :init
@@ -37,10 +39,10 @@
     :around #'eglot-ensure
     "Run `eglot-ensure' in supported modes."
     (when (alist-get major-mode eglot-server-programs nil nil
-            (lambda (modes key)
-              (if (listp modes)
-                (member key modes)
-                (eq key modes))))
+                     (lambda (modes key)
+                       (if (listp modes)
+                           (member key modes)
+                         (eq key modes))))
       (funcall fn)))
 
   (setopt eglot-sync-connect 1)
@@ -60,9 +62,10 @@
     (defvar popper-reference-buffers)
     ;; TODO: make this a macro?
     (setopt popper-reference-buffers
-      (append popper-reference-buffers '("^\\*eglot-help"))))
+            (append popper-reference-buffers '("^\\*eglot-help")))))
 
-  ;; TODO: <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/lsp/%2Beglot.el>
+
+;; TODO: <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/lsp/%2Beglot.el>
 ;; (def-advice! +lsp--defer-server-shutdown-a (fn &optional server)
 ;;   :around #'eglot--managed-mode
 ;;   "Defer server shutdown for a few seconds.
@@ -84,7 +87,7 @@
 ;;          (funcall fn server)))
 
 
-  )
+
 
 ;; FIXME: install package
 ;; (use-package flycheck-eglot

@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(require 'config-paths)
+(require 'ceamx-paths)
 
 (defvar cmx-cheatsheets-dir
   (file-name-as-directory

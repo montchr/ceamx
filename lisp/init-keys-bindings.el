@@ -52,7 +52,7 @@
 
 ;;; Code:
 
-(require 'config-paths)
+(require 'ceamx-paths)
 (require 'config-help)
 (require 'config-keys)
 (require 'lib-common)
@@ -332,16 +332,16 @@
 ;;
 
 ;;;; "q p" Package Management
-;; (def-map! cmx-packages-map
-;; 	"i" '("elpaca manual" . (lambda () (interactive)
-;;                             (info "Elpaca")))
-;;   "m" #'elpaca-manager
-;;   "r" #'elpaca-rebuild
-;;   "s" #'elpaca-status
-;;   "t" #'elpaca-try
-;;   "u" #'elpaca-update
-;;   "U" #'elpaca-update-all
-;;   "v" #'elpaca-visit)
+(def-map! cmx-packages-map
+	"i" `("elpaca manual" . ,(cmd! (info "Elpaca")))
+  "m" #'elpaca-manager
+  "r" #'elpaca-rebuild
+  "s" #'elpaca-status
+  "t" #'elpaca-try
+  "u" #'elpaca-update
+  "U" #'elpaca-update-all
+  "v" #'elpaca-visit)
+
 
 (def-arm! cmx-session-map "q" "[Session]"
   "f" '("font..." . fontaine-set-preset)

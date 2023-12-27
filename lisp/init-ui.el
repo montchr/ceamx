@@ -44,10 +44,6 @@
 (use-package hydra
   :commands defhydra)
 
-;;; Add `:hydra' keyword to `use-package'.
-(use-package use-package-hydra
-  :after hydra)
-
 ;;; pretty-hydra :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 (use-package pretty-hydra
   :after (hydra))

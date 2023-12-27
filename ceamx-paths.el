@@ -1,4 +1,4 @@
-;;; config-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
+;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Chris Montgomery
 
@@ -47,19 +47,16 @@
         (concat cmx-home-dir ".cache")))
    "ceamx/")
   "The root directory for local Emacs files.
-
 Use this as permanent storage for files that are safe to share
 across systems.")
 
 (defvar cmx-etc-dir (concat cmx-local-dir "etc/")
   "Directory for non-volatile storage.
-
 Use this for files that don't change much, like servers binaries,
 external dependencies or long-term shared data.")
 
 (defvar cmx-var-dir (concat cmx-local-dir "var/")
   "Directory for volatile storage.
-
 Use this for files that change often, like data and cache files.")
 
 (defvar cmx-packages-dir
@@ -68,11 +65,15 @@ Use this for files that change often, like data and cache files.")
                             emacs-minor-version)
                     cmx-local-dir)
   "Where packages are stored.
-
 See also `package-user-dir'.
-
 Packages will be stored in subdirectories based on the current
 Emacs version to prevent bytecode incompatibility.")
 
-(provide 'config-paths)
-;;; config-paths.el ends here
+(provide 'ceamx-paths)
+;;; ceamx-paths.el ends here
+
+;; Local Variables:
+;; no-byte-compile: t
+;; no-native-compile: t
+;; no-update-autoloads: t
+;; End:

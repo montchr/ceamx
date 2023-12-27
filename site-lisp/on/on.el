@@ -56,7 +56,7 @@
 ;;; Code:
 
 (defvar elpaca-after-init-hook)
-(defvar elpaca-after-init-time)
+;; (defvar elpaca-after-init-time)
 
 (defvar on-first-input-hook nil
   "Transient hooks run before the first user input.")
@@ -94,6 +94,7 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
       (fset
        fn (lambda (&rest _)
             ;; Only trigger this after Emacs or, if available, Elpaca have initialized.
+            ;; FIXME: is elpaca really considered here? i don't see it
             (when (and after-init-time
                        (or (daemonp)
                            ;; In some cases, hooks may be lexically unset to
@@ -106,10 +107,12 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
               (run-hooks hook-var)
               (set hook-var nil))))
       (cond ((daemonp)
+              ;; TODO: reconsider
              ;; In a daemon session we don't need all these lazy loading
              ;; shenanigans. Just load everything immediately.
-             ;; FIXME: (add-hook 'elpaca-after-init-hook fn 'append)
-             (add-hook 'after-init-hook fn 'append))
+              (if (boundp 'elpaca-after-init-hook)
+                (add-hook 'elpaca-after-init-hook fn 'append))
+              (add-hook 'after-init-hook fn 'append))
             ((eq hook 'find-file-hook)
              ;; Advise `after-find-file' instead of using `find-file-hook'
              ;; because the latter is triggered too late (after the file has

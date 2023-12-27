@@ -34,10 +34,7 @@
 ;;
 
 (use-package vertico
-  ;; FIXME: :elpaca (vertico :host github
-  ;;                  :repo "minad/vertico"
-  ;;                  :files (:defaults "extensions/*"))
-
+  :elpaca (vertico :files (:defaults "extensions/*"))
   :demand t
 
   :init
@@ -67,7 +64,7 @@
               cand))))
 
 ;; Configure directory extension.
-(use-package vertico-directory
+(use-feature! vertico-directory
   :after vertico
   :commands ( vertico-directory-enter
               vertico-directory-delete-char
@@ -98,7 +95,7 @@
   ;; Tidy shadowed file names -- e.g. cleans `~/foo/bar///' to `/', and `~/foo/bar/~/' to `~/'.
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
-(use-package vertico-repeat
+(use-feature! vertico-repeat
   :after (savehist vertico)
   :commands ( vertico-repeat-history
               vertico-repeat-save)
