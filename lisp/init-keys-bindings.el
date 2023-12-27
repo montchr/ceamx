@@ -299,7 +299,7 @@
 ;;; "O" => Open
 ;;
 
-(def-arm! cmx-open-map "O" "[Open]"
+(def-arm! cmx-open-map "o" "[Open]"
   "d" #'dired
   "e" #'eshell
   "l" '("link-at-point" . link-hint-open-link-at-point)
