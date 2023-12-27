@@ -159,10 +159,9 @@
 ;;
 
 (def-arm! cmx-code-map "c" "Code"
-  ;; FIXME: wrong type argument commandp error if unavailable -- language server must support it
-  "a" '("action.." . lsp-execute-code-action)
+  "a" '("action.." . eglot-code-actions)
   "i" #'iedit-mode
-  "r" '("rename..." . lsp-rename))
+  "r" '("rename..." . eglot-rename))
 
 ;;
 ;;; "e" => Eval
