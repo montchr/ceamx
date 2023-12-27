@@ -44,22 +44,21 @@
   (setopt tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
 
   ;; Setup completion at point for Tempel templates.
-  (defun cmx-tempel--setup-capf-h ()
-    ;; Add the Tempel Capf to `completion-at-point-functions'.
-    ;; `tempel-expand' only triggers on exact matches. Alternatively use
-    ;; `tempel-complete' if you want to see all matches, but then you
-    ;; should also configure `tempel-trigger-prefix', such that Tempel
-    ;; does not trigger too often when you don't expect it. NOTE: We add
-    ;; `tempel-expand' *before* the main programming mode Capf, such
-    ;; that it will be tried first.
-    (setq-local completion-at-point-functions
-                (cons #'tempel-expand
-                      completion-at-point-functions)))
+  (def-hook! +tempel-setup-capf-h () (conf-mode-hook prog-mode-hook text-mode-hook)
+             "Add the Tempel Capf to `completion-at-point-functions'.
 
-  (dolist (hook '(conf-mode-hook prog-mode-hook text-mode-hook))
-    (add-hook hook #'cmx-tempel--setup-capf-h)
-    ;; See also `global-tempel-abbrev-mode'.
-    (add-hook hook #'tempel-abbrev-mode)))
+    `tempel-expand' only triggers on exact matches. Alternatively use
+    `tempel-complete' if you want to see all matches, but then you
+    should also configure `tempel-trigger-prefix', such that Tempel
+    does not trigger too often when you don't expect it. NOTE: We add
+    `tempel-expand' *before* the main programming mode Capf, such
+    that it will be tried first."
+             (setq-local completion-at-point-functions
+                         (cons #'tempel-expand
+                               completion-at-point-functions)))
+
+  (global-tempel-abbrev-mode +1))
+
 
 ;;; `tempel-collection' :: <https://github.com/Crandel/tempel-collection>
 ;;  A set of pre-defined templates for `tempel'.
