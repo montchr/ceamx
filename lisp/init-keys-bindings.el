@@ -85,6 +85,15 @@
      state)))
 
 ;;
+;;; Mouse/trackpad support
+;;
+
+;;; Horizontal scroll support (without scrollbars).
+(keymap-global-set "<wheel-left>" #'scroll-left)
+(keymap-global-set "<wheel-right>" #'scroll-right)
+
+
+;;
 ;;; Leader maps
 ;;
 
