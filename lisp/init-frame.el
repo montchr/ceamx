@@ -34,11 +34,7 @@
 (use-package emacs
   :config
   ;; Disable menu bar by default.
-  (menu-bar-mode -1)
-
-  ;; Disable extraneous borders.
-  (setopt tab-bar-border 0)
-  (setopt tool-bar-border 0))
+  (menu-bar-mode -1))
 
 ;; macOS has terrible window management UX and it always has.
 ;; and it is only getting *worse*.

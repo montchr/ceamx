@@ -29,29 +29,25 @@
 ;;; `spacious-padding' :: <https://protesilaos.com/emacs/spacious-padding>
 ;;  TODO: track upstream git repo by tag since this is in rapid development
 (use-package spacious-padding
-   :defer 1
+  :defer 1
   :commands (spacious-padding-mode)
   :defines (spacious-padding-widths)
 
-:init
-  ;; These are the defaults, but I keep it here for visiibility.
+  :init
+  ;; These are the defaults, but I keep it here for visibility.
   (setopt spacious-padding-widths
-        '(
-           :internal-border-width 15
-           ;; FIXME: `:internal-border-width' in combination with non-zero
-           ;; `:header-line-width' breaks tab height.
-           ;;
-           ;; Since I don't use the header line (does anyone?), hiding it this
-           ;; way is fine with me. However, this seems like a `spacious-padding' bug.
-           :header-line-width 4
-           ;; :header-line-width 0
-           :mode-line-width 6
-           :tab-width 4
-           :right-divider-width 30
-           :scroll-bar-width 8))
+          '(
+            ;; NOTE: Currently breaks `tab-bar-mode' display on Emacs 29.
+            ;;       Fixed in master branch.
+            ;; <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+            :internal-border-width 15
+            :header-line-width 4
+            :mode-line-width 6
+            :tab-width 4
+            :right-divider-width 30
+            :scroll-bar-width 8))
 
   :config
-  ;; (setopt tab-bar-border nil)
 
   ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
   ;; is very flexible.
