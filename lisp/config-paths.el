@@ -67,7 +67,12 @@ Use this for files that change often, like data and cache files.")
                             emacs-major-version
                             emacs-minor-version)
                     cmx-local-dir)
-  "Where packages are stored.")
+  "Where packages are stored.
+
+See also `package-user-dir'.
+
+Packages will be stored in subdirectories based on the current
+Emacs version to prevent bytecode incompatibility.")
 
 (provide 'config-paths)
 ;;; config-paths.el ends here
