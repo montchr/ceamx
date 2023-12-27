@@ -183,6 +183,9 @@
 
 (require 'init-after-ui)
 
+;; Workspace
+(require 'init-workspace)
+
 ;;;; Sidebar
 ;; TODO: should not be considered "ui" -- or rather, "ui" should mean "appearance"
 ;; TODO: figure out how to load as late as possible?
@@ -224,11 +227,10 @@
 (require 'init-files)
 (require 'init-dired)
 
-;;; Project + Workspace
+;;; Projects
 (require 'init-vcs)
 (require 'init-templates)
 (require 'init-projects)
-(require 'init-workspace)
 
 ;;; Memex
 

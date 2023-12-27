@@ -24,8 +24,9 @@
 
 ;;; Code:
 
+(require 'lib-common)
+
 (autoload 'consult-customize "consult")
-(autoload 'after! "lib-common" t)
 
 ;; (defvar cmx-buffer-map)
 (defvar consult--source-buffer)
@@ -35,47 +36,36 @@
 ;; TODO: restore https://github.com/alphapapa/bufler.el
 
 (use-package burly
-  ;; FIXME: :elpaca (burly :host github :repo "alphapapa/burly.el")
+  :demand t
+  :commands (burly-open-last-bookmark)
+  :autoload (burly-bookmark-frames)
+
   :init
-  (burly-tabs-mode))
+  ;; FIXME: `tab-bar-mode' is currently broken due to upstream Emacs 29 bug
+  ;; <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+  ;; (burly-tabs-mode)
 
-;; (use-package perspective
-;;   :commands (persp-mode
-;;              persp-list-buffers
-;;              persp-switch-to-buffer*
-;;              persp-kill-buffer*)
-;;   :autoload (persp-state-save)
+  ;; FIXME: ugh no don't even try
+  ;; Restore previous configuration during init.
+;;   (add-hook 'on-init-ui-hook #'burly-open-last-bookmark)
 
-;;   :custom                     ;
-;;   (persp-mode-prefix-key (kbd "C-c M-p"))  ; pick your own prefix key here
+;;   (def-hook! +burly-bookmark-frames-on-kill-emacs-h () kill-emacs-hook
+;;              "Bookmark current frames and windows with `burly-bookmark-frames'
+;; upon ending the Emacs session."
+  ;;     (burly-bookmark-frames "ceamx-burly-default")))
+  )
 
-;;   :init
-;;   (persp-mode)
 
+
+;; TODO
+;; (use-package bufler
+;; :quelpa (bufler :fetcher github :repo "alphapapa/bufler.el"
+;;                 :files (:defaults (:exclude "helm-bufler.el"))))
+;; FIXME: exclude "helm-bufler.el"
+;; FIXME: install
+;; (use-package bufler
 ;;   :config
-;;   (keymap-global-set "<remap> <switch-to-buffer>" #'persp-switch-to-buffer*)
-;;   (keymap-global-set "<remap> <kill-buffer>" #'persp-kill-buffer*)
-
-;;   (define-keymap :keymap cmx-buffer-map
-;;     "b" #'persp-switch-to-buffer*
-;;     "B" #'persp-list-buffers
-;;     "K" #'persp-kill-buffer*)
-
-;;   ;; Persist the perspective sessions to storage.
-;;   (add-hook 'kill-emacs-hook #'persp-state-save))
-
-;; ;; Hide default buffer sources, showing only buffers within the current perspective.
-;; ;; Note that you can still access list of all buffers in all perspectives by narrowing using prefix b.
-;; (after! [perspective consult]
-;;   (consult-customize consult--source-buffer :hidden t :default nil)
-;;   (add-to-list 'consult-buffer-sources persp-consult-source))
-
-;; ;;; `perspective'+`projectile' integration -- <https://github.com/bbatsov/persp-projectile>
-;; (use-package persp-projectile
-;;   :after (perspective projectile)
-;;   :commands (projectile-persp-switch-project)
-;;   :config
-;;   (keymap-global-set "<remap> <projectile-switch-project>" #'projectile-persp-switch-project))
+;;   (bufler-mode +1))
 
 (provide 'init-workspace)
 ;;; init-workspace.el ends here
