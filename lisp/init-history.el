@@ -39,7 +39,7 @@
 ;;; `recentf' (internal)
 (use-feature! recentf
   :config
-  (setopt recentf-max-saved-items 500) ; default => 20
+  (setopt recentf-max-saved-items 50) ; default => 20
   (setopt recentf-max-menu-items 15)   ; default => 10
   ;; Disable recentf-cleanup on Emacs start, because it can cause
   ;; problems with remote files.
