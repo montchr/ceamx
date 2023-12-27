@@ -67,6 +67,7 @@
 
 (require 'cl-lib)
 
+;; FIXME: is this supposed to work on save? not working in either magit or projectile
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L369-L391>
 (defun cmx-files--update-refs (&rest files)
   "Ensure FILES are updated in `recentf', `magit' and `save-place'."
@@ -145,8 +146,10 @@ If FORCE-P, delete without confirmation."
             (error "Failed to delete %S" short-path)
           ;; Ensures that windows displaying this buffer will be switched to
           ;; real buffers (`doom-real-buffer-p')
-          ;; FIXME: implement -- invent the universe
+          ;; FIXME: implement -- invent the universe -- but the stuff within is very useful to us (e.g. doom-real-buffer-p and filtering buffers)...
           ;; (doom/kill-this-buffer-in-all-windows buf t)
+          ;; TODO: remove when the above is implemented -- `kill-this-buffer' only removes the one buffer
+          (kill-this-buffer)
           (cmx-files--update-refs path)
           (message "Deleted %S" short-path))))))
 
