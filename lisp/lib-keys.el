@@ -94,8 +94,8 @@ all hooks after it are ignored.")
   `(progn
      (unless (commandp (quote ,command))
        (define-prefix-command (quote ,command)))
-     ;; FIXME: technically incorrect naming
-     (define-keymap :keymap ,command
+     (define-keymap
+       :keymap ,command
        ,@defs)))
 
 (defmacro def-arm! (keymap key description &rest defs)
