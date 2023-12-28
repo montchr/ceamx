@@ -457,24 +457,22 @@
 ;;; Top-level leader map
 ;;
 
-;; FIXME: does not work
-;; (defalias '+outline-mode-prefix-command outline-mode-prefix-map)
+;; TODO: why not `other-buffer'?
+(leader-key! "`"   '("other buffer" . mode-line-other-buffer))
+(leader-key! "SPC" '("project buffer..." . consult-project-buffer))
+(leader-key! "j"   '("jump: line..." . consult-line))
 
-(define-keymap :keymap mode-specific-map
-  ;; TODO: "a" => Agenda
-  ;; TODO: "d"
-  ;; "k"
-  ;; "l"
-  ;; "m" => RESERVED for mode-specific local maps
-  ;; "r"
-  ;; "u"
-  ;; "v"
-  ;; "z"
-
-  ;; One-shot commands
-  "`"    '("other buffer" . mode-line-other-buffer)
-  "SPC"  #'consult-project-buffer
-  "j"    '("jump: line" . consult-line))
+;; (define-keymap :keymap mode-specific-map
+;;   ;; TODO: "a" => Agenda
+;;   ;; TODO: "d"
+;;   ;; "k"
+;;   ;; "l"
+;;   ;; "m" => RESERVED for mode-specific local maps
+;;   ;; "r"
+;;   ;; "u"
+;;   ;; "v"
+;;   ;; "z"
+;;   )
 
 (keymap-global-set cmx-leader-alt-key 'mode-specific-command-prefix)
 (keymap-global-set "<f12>" 'mode-specific-command-prefix)

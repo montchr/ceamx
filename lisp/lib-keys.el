@@ -98,15 +98,26 @@ all hooks after it are ignored.")
        :keymap ,command
        ,@defs)))
 
+(defmacro leader-key! (key def)
+  "Bind DEF to KEY in the leader map.
+If `meow-leader-define-key' is available, then that function will
+handle the binding. Otherwise, binding will be handled with
+`keymap-set' into `mode-specific-map'.
+
+Note that as of writing, `meow' bindings do not seem to support
+descriptions in a way that is comprehensible to `which-key'."
+  (declare (indent defun))
+  `(if (fboundp 'meow-leader-define-key)
+      (meow-leader-define-key (cons ,key ,def))
+    (keymap-set mode-specific-map ,key ,def)))
+
 (defmacro def-arm! (keymap key description &rest defs)
   "Define KEYMAP with DEFS bound to KEY with DESCRIPTION in `mode-specific-map'."
   (declare (indent defun))
   `(progn
      (define-prefix-command (quote ,keymap))
-     (define-keymap
-       :keymap ,keymap
-       ,@defs)
-     (keymap-set mode-specific-map ,key (cons ,description ,keymap))))
+     (define-keymap :keymap ,keymap ,@defs)
+     (leader-key! ,key (cons ,description ,keymap))))
 
 ;; TODO: not yet practical or functional
 ;; (defmacro def-mode-arm! (mode description &rest defs)
