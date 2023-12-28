@@ -21,40 +21,15 @@
 ;;; Commentary:
 
 ;; TODO: quikgrok descriptions for `cmx-window-map' defs
-;; FIXME: there is no way to update the leader when modifying its composite arm
-;;        maps after binding the leader itself, unless you re-bind the leader
-;;        key too. or maybe this is caused by using `defalias'?
-
-;; I like to see everything in one place rather than have bindings
-;; scattered through many files. Perhaps I will change my mind someday.
-;; On the other hand, I understand the logic in colocation for the sake of modularity.
-;; But this is my brain, not someone else's.
-
-;; While I know I could benefit from using general.el (I have in the past),
-;; I am avoiding `general' for a few reasons:
-;;
-;; - It's bloated and its author has stated they would like to replace it.
-;; - While `general' provides a nice interface over many domain complexities,
-;;   its *necessary* complexity warrants detailed documentation.
-;;   But the docs are pretty *verbose* in addition to being detailed.
-;;   It's tough to figure out "idiomatic" usages, especially when
-;;   many usages in the wild are using macros/functions
-;;   that have been "deprecated" or discouraged.
-;; - `evil' already provides its own methods for defining keys, which `general'
-;;   still uses under the hood.
-;; - GNU Emacs has, especially in version 29, made some improvements
-;;   to its core keybinding utilities (e.g. `keymap-set' and `define-keymap').
-;;   These almost come close to replicating the syntactic sugar of `general'.
-;; - At the end of the day, after I've written a lot of these keybindings
-;;   manually with `keymap-set' and `defvar-keymap' etc., I'm coming to grok
-;;   many more details and nuances of the keybindings API and packages' usage of them.
-;;   So, I am learning by doing things "the hard way".
 
 ;;; Code:
 
+;; FIXME: come on load path
 (require 'ceamx-paths)
+
 (require 'config-help)
 (require 'config-keys)
+
 (require 'lib-common)
 (require 'lib-keys)
 
@@ -462,8 +437,21 @@
 (leader-key! "SPC" '("project buffer..." . consult-project-buffer))
 (leader-key! "j"   '("jump: line..." . consult-line))
 
+;; via <https://github.com/mclear-tools/dotemacs/blob/dc18ceebe9b3580b6b4deeb033f282670cb4df8b/cpm-setup-meow.el>
+(leader-key! ")" '("slurp ->" . "C-)"))
+(leader-key! "(" '("<- slurp" . "C-("))
+(leader-key! "}" "C-}")
+(leader-key! "." "M-.")
+(leader-key! ";" #'comment-line)
+(leader-key! "j" #'avy-goto-char-2)
+
+(leader-key! "a" '("agenda..." . consult-org-agenda))
+
+;; TODO: install
+;; (leader-key! "?"   #'consult-apropos)
+
 ;; (define-keymap :keymap mode-specific-map
-;;   ;; TODO: "a" => Agenda
+;;   ;; TODO: "a" => Agenda (in progress)
 ;;   ;; TODO: "d"
 ;;   ;; "k"
 ;;   ;; "l"

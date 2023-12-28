@@ -172,7 +172,8 @@
 
 ;;; Keyboard support
 (require 'init-keys)
-(require 'init-keys-evil)
+;; (require 'init-keys-evil)
+(require 'init-keys-meow)
 
 ;;; Window
 (require 'init-window)
