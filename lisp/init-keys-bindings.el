@@ -373,37 +373,37 @@
 
   ;;; tune
   "="  #'balance-windows
-  ">"  #'evil-window-increase-width
-  "<"  #'evil-window-decrease-width
+  ;; ">"  #'evil-window-increase-width
+  ;; "<"  #'evil-window-decrease-width
 
   ;;; navigate
-  "h"      #'evil-window-left
-  "j"      #'evil-window-down
-  "k"      #'evil-window-up
-  "l"      #'evil-window-right
-  "C-h"    #'evil-window-left
-  "C-j"    #'evil-window-down
-  "C-k"    #'evil-window-up
-  "C-l"    #'evil-window-right
+  ;; "h"      #'evil-window-left
+  ;; "j"      #'evil-window-down
+  ;; "k"      #'evil-window-up
+  ;; "l"      #'evil-window-right
+  ;; "C-h"    #'evil-window-left
+  ;; "C-j"    #'evil-window-down
+  ;; "C-k"    #'evil-window-up
+  ;; "C-l"    #'evil-window-right
   "C-w"    #'other-window
 
   ;;; swap
-  "H"      #'cmx/evil/window-move-left
-  "J"      #'cmx/evil/window-move-down
-  "K"      #'cmx/evil/window-move-up
-  "L"      #'cmx/evil/window-move-right
-  "r"      #'evil-window-rotate-downwards
-  "R"      #'evil-window-rotate-upwards
+  ;; "H"      #'cmx/evil/window-move-left
+  ;; "J"      #'cmx/evil/window-move-down
+  ;; "K"      #'cmx/evil/window-move-up
+  ;; "L"      #'cmx/evil/window-move-right
+  ;; "r"      #'evil-window-rotate-downwards
+  ;; "R"      #'evil-window-rotate-upwards
   "C-S-w"  #'ace-swap-window
 
   ;;; mutate
-  "d"      #'evil-window-delete
-  "n"      #'evil-window-new
+  ;; "d"      #'evil-window-delete
+  ;; "n"      #'evil-window-new
   "o"      #'delete-other-windows
-  "s"      #'evil-window-split
+  ;; "s"      #'evil-window-split
   "T"      #'tear-off-window
   "u"      #'winner-undo
-  "v"      #'evil-window-vsplit
+  ;; "v"      #'evil-window-vsplit
   "C-c"    #'ace-delete-window
   "C-r"    #'winner-redo
   "C-u"    #'winner-undo)
