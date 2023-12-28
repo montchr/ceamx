@@ -340,8 +340,7 @@ add the function, or just a single hook. DOCSTRING and BODY are
 as in `defun'."
   (declare (indent 2)
            (doc-string 4))
-  (unless (listp hooks)
-    (setq hooks (list hooks)))
+  (setq hooks (ensure-list (cmx-unquote hooks)))
   (dolist (hook hooks)
     (unless (string-match-p "-\\(hook\\|functions\\)$" (symbol-name hook))
       (error "Symbol `%S' is not a hook" hook)))
