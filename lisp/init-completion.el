@@ -42,12 +42,13 @@
 ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
 (setopt read-extended-command-predicate #'command-completion-default-include-p)
 
-;; Enable indentation+completion using the TAB key.
-;; `completion-at-point' is often bound to M-TAB.
-(setopt tab-always-indent 'complete)
+;; Don't let `completion-at-point' interfere with indentation.
+(setopt tab-always-indent t)
 
-;; Avoid overwriting essential Emacs default binding for `set-mark-command'.
+;; `completion-at-point' is often bound to M-TAB, but that conflicts with OS behavior.
+;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
 (keymap-global-set "C-S-SPC" #'completion-at-point)
+
 (after! [evil]
   ;; Since we now know `evil' is loaded, it's reasonable to overwrite the mark binding.
   (keymap-set evil-insert-state-map "C-SPC" #'completion-at-point)
