@@ -28,6 +28,8 @@
 
 ;;; Code:
 
+(require 'ceamx-paths)
+
 (setopt vc-follow-symlinks t)
 
 (after! [evil]
