@@ -68,6 +68,11 @@
   ;; Close transient with ESC
   (define-key transient-map [escape] #'transient-quit-one)
 
+  ;; FIXME: meow won't allow this?
+  ;; TODO: what is the default magit binding for "j"?
+  ;; (keymap-set magit-status-mode-map "j" nil)
+  ;; (keymap-set magit-status-mode-map "k" #'magit-discard)
+
   (defadvice! +magit-revert-repo-buffers-deferred-a (&rest _)
     "Revert repo buffers and invalidate caches upon checkout."
     :after '(magit-checkout magit-branch-and-checkout)
