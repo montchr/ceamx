@@ -211,27 +211,30 @@
 ;;; "h" => Help
 ;;
 
-(def-arm! cmx-helpful-map "h" "[Help]"
-  "c" '("callable..." . helpful-callable)
-  "C" '("command..." . helpful-command)
-  "f" '("function..." . helpful-function)
-  "F" '("face..." . describe-face)
-  "h" '("thing (pt)" . helpful-at-point)
+;; NOTE: This only modifies the existing `help-map' bound to C-h.
+
+(define-keymap :keymap help-map
+  "c" #'helpful-command
+  "f" #'helpful-function
+  "F" #'describe-face
+  "h" #'helpful-at-point
   ;; TODO: add as command
   "H" `("cheatsheet..." . ,(cmd!!
-                            #'ido-find-file-in-dir
-                            current-prefix-arg
-                            cmx-cheatsheets-dir))
-  "k" '("keys..." . helpful-key)
-  "l" '("library..." . apropos-library)
-  "m" '("modes (b)" . describe-mode)
-  "o" '("symbol..." . helpful-symbol)
-  "s" '("suggest..." . suggest)
+                             #'ido-find-file-in-dir
+                             current-prefix-arg
+                             cmx-cheatsheets-dir))
+  ;; NOTE: currently `meow-describe-key'
+  ;; "k" #'describe-key
+  "K" #'describe-key-briefly
+  "l" #'find-library
+  "o" #'helpful-symbol
+  "s" #'suggest
   "t" `("text-props (pt)" . ,(cmd!!
-                              #'describe-text-properties
-                              current-prefix-arg
-                              (point)))
-  "v" '("variable..." . helpful-variable))
+                               #'describe-text-properties
+                               current-prefix-arg
+                               (point)))
+  "v" #'helpful-variable)
+
 
 ;;
 ;;; "i" => Insertions

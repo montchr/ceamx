@@ -27,27 +27,23 @@
 
 ;;; Code:
 
+;; FIXME: there are some blocking bugs that have gone unfixed for quite a while
+;;        some symbols' helpful pages cannot be displayed.
+;;        <https://github.com/Wilfred/helpful/issues/329>
+;;        consider maybe: <https://www.emacswiki.org/emacs/HelpPlus>
 (use-package helpful
   :commands ( helpful-at-point helpful-command helpful-callable
               helpful-key helpful-symbol helpful-variable)
   :config
-  (keymap-set help-mode-map "C-h" #'helpful-at-point)
-  ;; FIXME: partially moved into `init-keys-bindings', but not yet the `help-mode-map' overrides
-  ;; (dolist (map (list cmx-help-map help-mode-map))
-  ;;   (define-keymap :keymap map
-  ;;     "c" #'helpful-command
-  ;;     "f" #'helpful-callable
-  ;;     "h" #'helpful-at-point
-  ;;     "k" #'helpful-key
-  ;;     "o" #'helpful-symbol
-  ;;     "v" #'helpful-variable))
-  )
+  ;; Meow compatibility, overriding default target of "SPC h h".
+  (keymap-set help-map "C-h" #'helpful-at-point))
 
 ;;; `elisp-demos' :: <https://github.com/xuchunyang/elisp-demos>
 ;;  Display usage examples inside help buffers for Emacs Lisp callables.
 (use-package elisp-demos
   :after (helpful)
-  :config
+  :autoload (elisp-demos-advice-helpful-update)
+  :init
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 (provide 'init-help)
