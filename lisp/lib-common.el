@@ -272,6 +272,7 @@ ARGLIST is as in `defun'. WHERE is a keyword as passed to
 advice, like in `advice-add'. PLACE should be sharp-quoted.
 DOCSTRING and BODY are as in `defun'."
   (declare (indent 2)
+    (obsolete "defadvice!" "2023-12-28")
            (doc-string 5))
   (unless (stringp docstring)
     (error "Ceamx: advice `%S' not documented'" name))
@@ -316,14 +317,16 @@ ARGLIST is as in `defun'. WHERE is a keyword as passed to `advice-add', and
 PLACE is the function to which to add the advice, like in `advice-add'.
 DOCSTRING and BODY are as in `defun'.
 \(fn SYMBOL ARGLIST &optional DOCSTRING &rest [WHERE PLACES...] BODY\)"
-  (declare (obsolete "def-advice!" "2023-11-10") (doc-string 3) (indent defun))
+  (declare
+    (doc-string 3)
+    (indent defun))
   (unless (stringp docstring)
     (push docstring body)
     (setq docstring nil))
   (let (where-alist)
     (while (keywordp (car body))
       (push `(cons ,(pop body) (ensure-list ,(pop body)))
-            where-alist))
+        where-alist))
     `(progn
        (defun ,symbol ,arglist ,docstring ,@body)
        (dolist (targets (list ,@(nreverse where-alist)))
@@ -332,7 +335,6 @@ DOCSTRING and BODY are as in `defun'.
 
 ;;; Hooks
 
-;; FIXME: Does not seem to accept a quoted list of hooks as expected
 (defmacro def-hook! (name arglist hooks docstring &rest body)
   "Define function NAME and add it to HOOKS.
 ARGLIST is as in `defun'. HOOKS is a list of hooks to which to
