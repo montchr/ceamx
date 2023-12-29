@@ -154,12 +154,23 @@
 ;;; `consult-gh' :: <https://github.com/armindarvish/consult-gh>
 ;;
 
- ;; TODO: look through readme and review settings, add config as desired
+;; TODO: look through readme and review settings, add config as desired
+;;
+;; [2023-12-28]: I still haven't gotten it to work at all. Searches come up with
+;; nothing and the tool keeps trying to write to the `gh' CLI's config file,
+;; which is fortunately read-only in the Nix store.
+;;
+;; I really wish this tool was usuable but it's not surprising that GitHub would
+;; change a bunch of API stuff, breaking integrations at any time.
 
+;;
 ;; NOTE: The double-dashed option names are NOT private, despite the Elisp
 ;; naming convention. Try to ignore it.
 ;; (use-package consult-gh
-;;   :config
+;;   :elpaca (consult-gh :host github :repo "armindarvish/consult-gh")
+;;   :defines ( consult-gh-default-clone-directory
+;;              consult-gh-default-orgs-list)
+;;   :init
 ;;   (dolist (owner '("montchr" "seadome"))
 ;;     (add-to-list 'consult-gh-default-orgs-list owner))
 
@@ -169,7 +180,7 @@
 
 ;;   ;; Set the default folder for cloning repositories. By default Consult-GH will
 ;;   ;; confirm this before cloning.
-;;   (setq consult-gh-default-clone-directory
+;;   (setopt consult-gh-default-clone-directory
 ;;     (concat cmx-projects-dir "repos")))
 
 (provide 'init-vcs)
