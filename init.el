@@ -257,10 +257,8 @@
 ;; (require 'init-news)
 
 ;;; Keybindings
-;; TODO: move to original load order but bind *leader* late
-;;       this should, i hope, allow other modules to bind to custom leader maps
-;;       and have those bindings respected seamlessly esp. in `which-key'
 (require 'init-keys-bindings)
+(require 'init-keys-reference)
 
 ;;
 ;;; Postlude

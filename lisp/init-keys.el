@@ -94,32 +94,7 @@
   (eldoc-add-command 'cmx/escape))
 
 
-;;
-;;; which-key
-;;
 
-(use-package which-key
-  :demand t
-  :blackout
-  :commands ( which-key-mode
-              which-key-setup-side-window-right-bottom)
-
-  :config
-  (setopt which-key-add-column-padding 1)
-  ;; Determine whether keys have been rebound, considering the active keymaps.
-  ;; TODO: keep an eye on this: sounds expensive
-  (setopt which-key-compute-remaps t)
-  (setopt which-key-idle-delay 1.00)
-  (setopt which-key-prefix-prefix "")
-  (setopt which-key-separator " ")
-  (setopt which-key-side-window-max-width 0.33)
-  ;; Sort non-prefix-keys above prefix keys.
-  (setopt which-key-sort-order 'which-key-prefix-then-key-order)
-  (setopt which-key-sort-uppercase-first nil)
-
-  (which-key-setup-side-window-bottom)
-
-  (which-key-mode +1))
 
 (provide 'init-keys)
 ;;; init-keys.el ends here
