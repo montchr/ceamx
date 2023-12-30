@@ -64,37 +64,5 @@
     "s-x" #'kill-region
     "s-q" #'save-buffers-kill-emacs))
 
-;; HACK: Emacs cannot distinguish between C-i from TAB. This is largely a
-;;   byproduct of its history in the terminal, which can't distinguish them
-;;   either, however, when GUIs came about Emacs greated separate input events
-;;   for more contentious keys like TAB and RET. Therefore [return] != RET,
-;;   [tab] != TAB, and [backspace] != DEL.
-;;
-;;   In the same vein, this keybind adds a [C-i] event, so users can bind to it.
-;;   Otherwise, it falls back to regular C-i keybinds.
-;;
-;; Source: <https://github.com/doomemacs/doomemacs/blob/07fca786154551f90f36535bfb21f8ca4abd5027/lisp/doom-keybinds.el#L47-L67>
-;; Further reading: <https://emacs.stackexchange.com/questions/17509/how-to-distinguish-c-i-from-tab>
-(define-key
- key-translation-map
- [?\C-i]
- (cmd! (if (let ((keys (this-single-command-raw-keys)))
-             (and keys
-                  (not (cl-position 'tab    keys))
-                  (not (cl-position 'kp-tab keys))
-                  (display-graphic-p)
-                  ;; Fall back if no <C-i> keybind can be found, otherwise
-                  ;; we've broken all pre-existing C-i keybinds.
-                  (let ((key (cmx-lookup-key
-                              (vconcat (cl-subseq keys 0 -1) [C-i]))))
-                    (not (or (numberp key) (null key))))))
-           [C-i] [?\C-i])))
-
-(with-eval-after-load 'eldoc
-  (eldoc-add-command 'cmx/escape))
-
-
-
-
 (provide 'init-keys)
 ;;; init-keys.el ends here

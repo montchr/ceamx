@@ -28,12 +28,6 @@
 (require 'lib-common)
 (require 'lib-window)
 
-;; FIXME: add notes. what is this? how does it relate to `cmx/escape'?
-;; (defadvice keyboard-escape-quit
-;;     (around keyboard-escape-quit-dont-close-windows activate)
-;;   (let ((buffer-quit-function (lambda () ())))
-;;     ad-do-it))
-
 ;; Hide buffer until there's output.
 ;; Prevents an extra window appearing during init.
 (setopt async-shell-command-display-buffer nil)
@@ -88,11 +82,6 @@
     ;; NOTE: Conflicts with default GNOME keybinding.
     "M-`"   #'popper-echo-mode
     "C-M-`" #'popper-toggle-type)
-
-  (def-hook! cmx-escape-popper-popup-h (&rest _) cmx-escape-hook
-    "Close any focused `popper' popup when calling `cmx/escape'."
-    (when (bound-and-true-p popper-popup-status)
-      (popper-toggle)))
 
   ;; NOTE: A non-nil value for this setting will conflict with `shackle.el' (if
   ;; installed) and, potentially, `display-buffer-alist' customizations.

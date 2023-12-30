@@ -42,5 +42,12 @@ This is intended for use as a predicate in `popper-reference-buffers'."
              (and (not (zerop lines))
                (< lines max-lines))))))
 
+(defun +popper-close-focused (&rest _)
+  "Close any focused `popper' popup.
+Intended, but not necessarily for use as a hook."
+  ;; (autoload 'popper-toggle "popper")
+  (when (bound-and-true-p popper-popup-status)
+    (popper-toggle)))
+
 (provide 'lib-window)
 ;;; lib-window.el ends here

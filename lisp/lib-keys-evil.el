@@ -209,14 +209,5 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
         (call-interactively #'wgrep-mark-deletion))
       beg (1- end) nil))))
 
-;;
-;;; Advice
-;;
-
-(defun +evil-escape-a (&rest _)
-  "Call `cmx/escape' if `evil-force-normal-state' is called interactively."
-  (when (called-interactively-p 'any)
-    (call-interactively #'cmx/escape)))
-
 (provide 'lib-keys-evil)
 ;;; lib-keys-evil.el ends here
