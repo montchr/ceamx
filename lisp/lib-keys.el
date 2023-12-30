@@ -114,7 +114,8 @@ acknowledges this incompatibility."
     (keymap-set mode-specific-map ,key ,def)))
 
 (defmacro def-arm! (keymap key description &rest defs)
-  "Define KEYMAP with DEFS bound to KEY with DESCRIPTION in `mode-specific-map'."
+  "Define KEYMAP with DEFS bound to KEY with DESCRIPTION in the appropriate leader.
+See `leader-key!' for more info about leader behavior."
   (declare (indent defun))
   `(progn
      (define-prefix-command (quote ,keymap))

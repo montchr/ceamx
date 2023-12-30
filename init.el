@@ -81,13 +81,10 @@
 (use-package ht)    ; hash tables => <https://github.com/Wilfred/ht.el>
 (use-package llama) ;  `##' lambda shorthand => <https://git.sr.ht/~tarsius/llama>
 
-
-
+;;; Ceamx basic libraries
 (require 'lib-common)
-
 (when (display-graphic-p)
   (require 'lib-gui))
-
 (require 'lib-files)
 
 ;; FIXME: needs autoloads of its own -- missing dependencies (esp. evil)
@@ -123,12 +120,13 @@
 (require 'init-xterm)
 (require 'init-frame)
 
+;; TODO: no need to import `config-ui' i think?
 (require 'config-ui)
 (require 'init-ui)
 
 ;;;; Theme
 (require 'init-ui-theme)
-;; TODO: probably not for tty
+;; TODO: probably not for tty?
 (pcase cmx-theme-family
   ('modus
     (require 'init-ui-modus-themes))
@@ -208,7 +206,6 @@
 ;;; Editing
 (require 'init-editor)
 (require 'init-templates)
-
 
 ;;; Memex
 

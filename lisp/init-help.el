@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-;; FIXME: there are some blocking bugs that have gone unfixed for quite a while
+;; NOTE: there are some blocking bugs that have gone unfixed for quite a while
 ;;        some symbols' helpful pages cannot be displayed.
 ;;        <https://github.com/Wilfred/helpful/issues/329>
 ;;        consider maybe: <https://www.emacswiki.org/emacs/HelpPlus>

@@ -139,9 +139,7 @@
      '("z" . meow-pop-selection)
      '("Z" . meow-pop-all-selection)    ; custom addition
      '("'" . repeat)
-     ;; TODO: `esc-map' ?
      '("<escape>" . ignore)
-     ;; TODO: does this need to be conditional? otherwise, can it be bound in a smarter way?
      '(":" . avy-goto-char-2)))
 
   ;; FIXME: errors i think (`appendq!' seems broken overall, i haven't found it ever to do what i expected)

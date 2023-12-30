@@ -24,11 +24,15 @@
 
 ;;; Code:
 
+(declare-function 'popper-popup-status "popper")
+(declare-function 'popper-toggle "popper")
+
 ;; TODO: add buffers tracking files in nix store, which are only useful for
 ;; reference purposes, often invoked when viewing definition of low-level
 ;; Emacs internals defined in C code (e.g. `string-equal')
 (defun +popper-current-buffer-popup-p (buf)
-    "Whether the buffer BUF should be considered a popup."
+  "Whether the buffer BUF should be considered a popup.
+This is intended for use as a predicate in `popper-reference-buffers'."
     (with-current-buffer buf
       (and (derived-mode-p 'fundamental-mode)
            (not (bound-and-true-p scratch-buffer))

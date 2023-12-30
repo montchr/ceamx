@@ -64,7 +64,7 @@
     ;; Since the project likely now contains new files, best we undo the
     ;; projectile cache so it can be regenerated later.
     (after! 'projectile
-      (projectile-invalidate-cache nil))
+       (projectile-invalidate-cache nil))
     ;; Use a more efficient strategy to auto-revert buffers whose git state has
     ;; changed: refresh the visible buffers immediately...
     (+magit-mark-stale-buffers-h))
