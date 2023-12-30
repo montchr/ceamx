@@ -118,6 +118,7 @@
 
 (def-arm! cmx-code-map "c" "Code"
   "a" '("action.." . eglot-code-actions)
+  "h" #'helpful-at-point
   "i" #'iedit-mode
   "r" '("rename..." . eglot-rename))
 
@@ -207,7 +208,13 @@
                                #'describe-text-properties
                                current-prefix-arg
                                (point)))
-  "v" #'helpful-variable)
+  ;; FIXME: `helpful' is not very helpful when it errors out on so many occasions
+  ;;        <https://github.com/Wilfred/helpful/issues/329>
+  "v" #'helpful-variable
+
+  ;; Primarily for Meow keypad.
+  "C-h" "h"
+  "C-o" "o")
 
 
 ;;

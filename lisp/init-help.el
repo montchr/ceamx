@@ -33,10 +33,7 @@
 ;;        consider maybe: <https://www.emacswiki.org/emacs/HelpPlus>
 (use-package helpful
   :commands ( helpful-at-point helpful-command helpful-callable
-              helpful-key helpful-symbol helpful-variable)
-  :config
-  ;; Meow compatibility, overriding default target of "SPC h h".
-  (keymap-set help-map "C-h" #'helpful-at-point))
+              helpful-key helpful-symbol helpful-variable))
 
 ;;; `elisp-demos' :: <https://github.com/xuchunyang/elisp-demos>
 ;;  Display usage examples inside help buffers for Emacs Lisp callables.

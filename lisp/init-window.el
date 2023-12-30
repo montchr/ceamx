@@ -109,7 +109,6 @@
     (setopt popper-group-function #'popper-group-by-projectile)))
 
 ;;; `ace-window' :: <https://github.com/abo-abo/ace-window>
-;; TODO: keybindings
 (use-package ace-window
   :after avy)
 
