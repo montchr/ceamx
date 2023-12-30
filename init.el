@@ -71,6 +71,14 @@
 (require 'cl-lib)
 (require 'map)
 
+;;; Latest versions of Emacs internals.
+;;  Prevents Elpaca errors for packages that expect later versions available.
+;;  TODO: This could be caused by the currently-mixed state of Elpaca-managed
+;;  and Nixpkgs packages.
+(use-package eldoc)
+(use-package jsonrpc)
+
+(elpaca-wait)
 
 ;;; Install common library packages
 (use-package s)     ; strings => <https://github.com/magnars/s.el>
@@ -80,14 +88,6 @@
 (use-package llama) ;  `##' lambda shorthand => <https://git.sr.ht/~tarsius/llama>
 
 
-;;; Latest versions of Emacs internals.
-;;  Prevents Elpaca errors for packages that expect later versions available.
-;;  TODO: This could be caused by the currently-mixed state of Elpaca-managed
-;;  and Nixpkgs packages.
-(use-package eldoc)
-(use-package jsonrpc)
-
-(elpaca-wait)
 
 (require 'lib-common)
 
