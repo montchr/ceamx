@@ -105,7 +105,9 @@ handle the binding. Otherwise, binding will be handled with
 `keymap-set' into `mode-specific-map'.
 
 Note that as of writing, `meow' bindings do not seem to support
-descriptions in a way that is comprehensible to `which-key'."
+descriptions in a way that is comprehensible to `which-key' --
+the documentation for `meow-keypad-describe-keymap-function'
+acknowledges this incompatibility."
   (declare (indent defun))
   `(if (fboundp 'meow-leader-define-key)
       (meow-leader-define-key (cons ,key ,def))

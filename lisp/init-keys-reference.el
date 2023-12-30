@@ -25,9 +25,11 @@
 ;; keybindings.
 
 ;; For example, `which-key' does not seem to like the way that `meow' handles
-;; keybindings, displaying only `which-key-prefix-prefix'. `general.el' behaves
-;; similarly, from what I can recall. I suspect this has something to do with
-;; key translations, a subject with which I am currently unfamiliar.
+;; keybindings -- see the documentation for
+;; `meow-keypad-describe-keymap-function' -- displaying only
+;; `which-key-prefix-prefix'. `general.el' behaves similarly, from what I can
+;; recall. I suspect this has something to do with key translations, a subject
+;; with which I am currently unfamiliar.
 
 ;;; Code:
 
@@ -35,28 +37,28 @@
 ;;; which-key
 ;;
 
-(use-package which-key
-  :demand t
-  :blackout
-  :commands ( which-key-mode
-              which-key-setup-side-window-right-bottom)
+;; (use-package which-key
+;;   :demand t
+;;   :blackout
+;;   :commands ( which-key-mode
+;;               which-key-setup-side-window-right-bottom)
 
-  :config
-  (setopt which-key-add-column-padding 1)
-  ;; Determine whether keys have been rebound, considering the active keymaps.
-  ;; NOTE: Does not seem to work reliably -- see Commentary section above.
-  ;; (setopt which-key-compute-remaps t)
-  (setopt which-key-idle-delay 1.00)
-  (setopt which-key-prefix-prefix "")
-  (setopt which-key-separator " ")
-  (setopt which-key-side-window-max-width 0.33)
-  ;; Sort non-prefix-keys above prefix keys.
-  (setopt which-key-sort-order 'which-key-prefix-then-key-order)
-  (setopt which-key-sort-uppercase-first nil)
+;;   :config
+;;   (setopt which-key-add-column-padding 1)
+;;   ;; Determine whether keys have been rebound, considering the active keymaps.
+;;   ;; NOTE: Does not seem to work reliably -- see Commentary section above.
+;;   ;; (setopt which-key-compute-remaps t)
+;;   (setopt which-key-idle-delay 1.00)
+;;   (setopt which-key-prefix-prefix "")
+;;   (setopt which-key-separator " ")
+;;   (setopt which-key-side-window-max-width 0.33)
+;;   ;; Sort non-prefix-keys above prefix keys.
+;;   (setopt which-key-sort-order 'which-key-prefix-then-key-order)
+;;   (setopt which-key-sort-uppercase-first nil)
 
-  (which-key-setup-side-window-bottom)
+;;   (which-key-setup-side-window-bottom)
 
-  (which-key-mode +1))
+;;   (which-key-mode +1))
 
 (provide 'init-keys-reference)
 ;;; init-keys-reference.el ends here
