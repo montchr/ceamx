@@ -126,7 +126,7 @@
      '("R" . meow-swap-grab)
      '("s" . meow-kill)
      '("t" . meow-till)
-     '("T" . meow-till-expand)          ; custom addition
+     ;; '("T" . meow-till-expand)          ; custom addition
      '("u" . meow-undo)
      '("U" . meow-undo-in-selection)
      '("v" . meow-visit)
@@ -137,7 +137,7 @@
      '("y" . meow-save)
      '("Y" . meow-sync-grab)
      '("z" . meow-pop-selection)
-     '("Z" . meow-pop-all-selection)    ; custom addition
+     ;; '("Z" . meow-pop-all-selection)    ; custom addition
      '("'" . repeat)
      '("<escape>" . ignore)
      '(":" . avy-goto-char-2)))
