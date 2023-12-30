@@ -38,17 +38,29 @@
 
 (defun cmx-prog--lisp-init-h ()
   "Initialize defaults for Lisp programming modes."
+
+  ;; FIXME: move to appropriate place
+  ;; FIXME: `pp-buffer' is broken (at least for elisp)
+  ;;        <https://mail.gnu.org/archive/html/emacs-diffs/2023-07/
+  (setopt pp-max-width fill-column)
+  (setopt pp-use-max-width t)
+
   (after! 'smartparens
-    (smartparens-strict-mode +1))
+    (smartparens-strict-mode 1))
+
   (after! 'rainbow-delimiters
-    (rainbow-delimiters-mode +1))
+    (rainbow-delimiters-mode 1))
+
   ;; `highlight-function-calls-mode' should be invoked after other highlighters
   ;; (e.g. `rainbow-delimiters-mode'), according to its readme.
   (after! 'highlight-function-calls
-    (highlight-function-calls-mode +1))
-  (after! [lispy lispyville]
-    (lispy-mode +1)
-    (lispyville-mode +1)))
+    (highlight-function-calls-mode 1))
+
+  (after! 'lispy
+    (lispy-mode 1))
+
+  (after! 'lispyville
+    (lispyville-mode 1)))
 
 (setq cmx-prog-lisp-init-hook 'cmx-prog--lisp-init-h)
 
@@ -81,6 +93,7 @@
   :config
   (dolist (mode cmx-lisp-mode-list)
     (let ((hook (intern (format "%S-hook" mode))))
+      ;; FIXME: just add `lispy-mode' directly jeez
       (add-hook hook (cmd! (lispy-mode +1)))))
 
   ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
@@ -94,7 +107,7 @@
 
   (keymap-set lispy-mode-map "M-v" nil))
 
-;;; `lispyville' :: <https://github.com/noctuid/lispyville>
+;; `lispyville' :: <https://github.com/noctuid/lispyville>
 (use-package lispyville
   :after (evil lispy)
   :defines (lispyville-key-theme)
@@ -116,7 +129,7 @@
 
   (add-hook! 'evil-escape-inhibit-functions
     (defun +lispy-inhibit-evil-escape-fn ()
-      (and lispy-mode (evil-insert-state-p)))))
+       (and lispy-mode (evil-insert-state-p)))))
 
 
 (provide 'init-lisp)

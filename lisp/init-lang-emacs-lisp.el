@@ -35,7 +35,7 @@
 (defun cmx-prog--emacs-lisp-init-h ()
   "Sensible defaults for `emacs-lisp-mode'."
   (run-hooks 'cmx-prog-lisp-init-hook)
-  (after! 'eldoc (eldoc-mode +1))
+  (eldoc-mode +1)
   (after! 'rainbow-mode (rainbow-mode +1))
   (setq mode-name "EL"))
 
