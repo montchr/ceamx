@@ -1,4 +1,4 @@
-;;; init-keys-reference.el --- Support for keybindings help, cheatsheets, and other references  -*- lexical-binding: t; -*-
+;;; init-keys-which-key.el --- Support for which-key  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Chris Montgomery
 
@@ -37,28 +37,21 @@
 ;;; which-key
 ;;
 
-;; (use-package which-key
-;;   :demand t
-;;   :blackout
-;;   :commands ( which-key-mode
-;;               which-key-setup-side-window-right-bottom)
+(use-package which-key
+  :blackout t
+  :commands ( which-key-mode
+              which-key-setup-side-window-right-bottom)
 
-;;   :config
-;;   (setopt which-key-add-column-padding 1)
-;;   ;; Determine whether keys have been rebound, considering the active keymaps.
-;;   ;; NOTE: Does not seem to work reliably -- see Commentary section above.
-;;   ;; (setopt which-key-compute-remaps t)
-;;   (setopt which-key-idle-delay 1.00)
-;;   (setopt which-key-prefix-prefix "")
-;;   (setopt which-key-separator " ")
-;;   (setopt which-key-side-window-max-width 0.33)
-;;   ;; Sort non-prefix-keys above prefix keys.
-;;   (setopt which-key-sort-order 'which-key-prefix-then-key-order)
-;;   (setopt which-key-sort-uppercase-first nil)
+  :config
+  ;; Determine whether keys have been rebound, considering the active keymaps.
+  ;; NOTE: Does not seem to work reliably -- see Commentary section above.
+  (setopt which-key-compute-remaps t)
+  (setopt which-key-idle-delay 1.00)
 
-;;   (which-key-setup-side-window-bottom)
+  ;; Sort non-prefix-keys above prefix keys.
+  (setopt which-key-sort-order 'which-key-prefix-then-key-order)
 
-;;   (which-key-mode +1))
+  (setopt which-key-sort-uppercase-first nil))
 
-(provide 'init-keys-reference)
-;;; init-keys-reference.el ends here
+(provide 'init-keys-which-key)
+;;; init-keys-which-key.el ends here

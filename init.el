@@ -253,7 +253,7 @@
 
 ;;; Keybindings
 (require 'init-keys-bindings)
-(require 'init-keys-reference)
+(require 'init-keys-which-key)
 
 ;;
 ;;; Postlude
