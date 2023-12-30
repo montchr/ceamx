@@ -116,7 +116,7 @@
 ;;; "c" => Code
 ;;
 
-(def-arm! cmx-code-map "c" "Code"
+(def-arm! cmx-code-map "C" "Code"
   "a" '("action.." . eglot-code-actions)
   "h" #'helpful-at-point
   "i" #'iedit-mode
