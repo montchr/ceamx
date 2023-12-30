@@ -62,7 +62,7 @@
 ;;; `browse-at-remote' :: <https://github.com/rmuslimov/browse-at-remote>
 (use-package browse-at-remote
   :commands browse-at-remote
-  :config
+  :init
   (keymap-set cmx-git-map "o" #'browse-at-remote))
 
 ;;
