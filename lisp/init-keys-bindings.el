@@ -118,6 +118,7 @@
 
 (def-arm! cmx-code-map "C" "Code"
   "a" '("action.." . eglot-code-actions)
+  "d" #'xref-find-definitions
   "h" #'helpful-at-point
   "i" #'iedit-mode
   "r" '("rename..." . eglot-rename))
