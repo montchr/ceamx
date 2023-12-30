@@ -69,7 +69,7 @@
     ;; changed: refresh the visible buffers immediately...
     (+magit-mark-stale-buffers-h))
   ;; ...then refresh the rest only when we switch to them, not all at once.
-  (add-hook 'on-switch-buffer-hook #'+magit-revert-buffer-maybe-h)
+  (add-hook 'window-buffer-change-functions #'+magit-revert-buffer-maybe-h)
 
   ;; Prevent sudden window position resets when staging/unstaging/discarding/etc
   ;; hunks in `magit-status-mode' buffers.

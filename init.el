@@ -97,7 +97,7 @@
 (prependq! load-path (subdirs! cmx-site-lisp-dir))
 
 ;;; site-lisp packages
-(require 'on)
+
 
 ;;
 ;;; Configuration
