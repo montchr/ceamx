@@ -47,7 +47,7 @@
 
 ;;; Code:
 
-(require 'init-frame-hooks)
+;; (require 'init-frame-hooks)
 
 (autoload 'mwheel-install "mwheel")
 
@@ -55,11 +55,11 @@
   (xterm-mouse-mode 1) ; Mouse in a terminal (Use shift to paste with middle button)
   (mwheel-install))
 
-;; TODO: explain why this is needed
+;; TODO: still necessary?
 (global-set-key [mouse-4] (lambda () (interactive) (scroll-down 1)))
 (global-set-key [mouse-5] (lambda () (interactive) (scroll-up 1)))
 
-(add-hook 'after-make-console-frame-hooks 'cmx/console-frame-setup)
+;; (add-hook 'after-make-console-frame-hooks 'cmx/console-frame-setup)
 
 (provide 'init-xterm)
 ;;; init-xterm.el ends here

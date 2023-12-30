@@ -106,7 +106,8 @@
 
 ;;; Displays + Appearance
 
-(require 'init-frame-hooks)
+;; FIXME: for science: prevent startup warnings?
+;; (require 'init-frame-hooks)
 (require 'init-xterm)
 (require 'init-frame)
 
