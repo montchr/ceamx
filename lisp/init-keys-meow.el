@@ -168,18 +168,16 @@
   (setopt meow-keypad-ctrl-meta-prefix nil)
 
   ;; Improve state indicator appearance (e.g. in modeline).
-  (setopt meow-replace-state-name-list '((normal . "🅝")
-                                         (beacon . "🅑")
-                                         (insert . "🅘")
-                                         (motion . "🅜")
-                                         (keypad . "🅚")))
+  (setopt meow-replace-state-name-list '( (normal . "🅝")
+                                          (beacon . "🅑")
+                                          (insert . "🅘")
+                                          (motion . "🅜")
+                                          (keypad . "🅚")))
 
-  ;; NOTE: There does not seem to be a `meow-insert-overwrite-define-key' like
-  ;; the other states. I am not sure whether that is intentional or what.
-  ;; (define-keymap :keymap meow-insert-state-keymap
-  ;;   "C-g" #'meow-insert-exit
-  ;;   "ESC" 'esc-map)
+  ;; Don't pass through keys that aren't in keypad.
+  (setopt meow-keypad-self-insert-undefined nil)
 
+  ;; Activate Meow.
   (meow-global-mode +1))
 
 
