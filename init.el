@@ -36,12 +36,6 @@
   "User-configurable options for Ceamx."
   :group 'file)
 
-;; TODO: describe
-(defcustom cmx-init-debug-flag nil
-  "Whether to enable initialization debug flag (this is it)."
-  :group 'ceamx
-  :type '(boolean))
-
 ;;; Configure load path.
 (dolist (subdir '("autoloads" "lisp" "lisp/lib"))
   (let ((dir (expand-file-name subdir user-emacs-directory)))
