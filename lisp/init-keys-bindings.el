@@ -487,9 +487,9 @@
   "C-." #'avy-resume
   "M-j" #'avy-goto-char-timer
   "C-x u" #'vundo
-  "C-x SPC" #'hydra-rectangle/body
-
-  "<remap> <keyboard-quit>" #'cmx/escape)
+  ;; TODO: find a better place
+  ;; "C-x SPC" #'hydra-rectangle/body
+  )
 
 
 ;;
