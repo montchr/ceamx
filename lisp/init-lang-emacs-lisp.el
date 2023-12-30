@@ -59,10 +59,6 @@
 ;;; Configuration
 ;;
 
-;;; `eldoc' (internal)
-(use-feature! eldoc
-  :blackout)
-
 ;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
 ;;  discover elisp functions that do what you want,
 ;;  brought to you by enumerative program synthesis
