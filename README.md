@@ -62,6 +62,8 @@ First, invoke `(elpaca-write-lockfile)`. In the output file, `defvar` its conten
 Assuming `(defvar cmx-elpaca-packages ...)`, then:
 
 ```emacs-lisp
+;; FIXME: rewrite without llama
+(use-package llama)
 (kill-new (mapconcat (##symbol-name (car %1)) cmx-elpaca-packages "\n"))
 ```
 

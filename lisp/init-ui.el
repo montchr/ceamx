@@ -26,8 +26,10 @@
 
 (require 'lib-hydras)
 
-;; Required as a dependency for many packages, including some (like
-;; `nix-mode') who don't seem to declare it.
+;; Required as dependencies for many packages, either as more recent versions
+;; than those available in Emacs (e.g. `transient 'IIRC), or, including some
+;; (like `nix-mode') who don't seem to declare them.
+(use-package transient)
 (use-package magit-section)
 
 ;;; popon :: <https://codeberg.org/akib/emacs-popon>

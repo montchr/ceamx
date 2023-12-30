@@ -31,6 +31,10 @@
 
 (setopt vc-follow-symlinks t)
 
+(use-package git-commit
+  :defer t
+  :after (transient))
+
 (after! 'evil
   (add-hook 'git-commit-mode-hook #'evil-insert-state))
 (after! 'meow

@@ -48,8 +48,7 @@
 (defun cmx-prog--ielm-init-h ()
   "Sensible defaults for `ielm'."
   (run-hooks 'cmx-interactive-lisp-prog-init-hook)
-  (after! 'eldoc
-    (eldoc-mode +1)))
+  (eldoc-mode +1))
 
 (defvar cmx-prog-ielm-init-hook #'cmx-prog--ielm-init-h)
 

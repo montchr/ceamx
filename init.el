@@ -61,24 +61,14 @@
 ;;; Libraries
 ;;
 
-;;; Bundled with Emacs
-(require 'cl-lib)
-(require 'map)
-
-;;; Latest versions of Emacs internals.
+;;; Latest versions of Emacs internals, required by some packages.
 ;;  Prevents Elpaca errors for packages that expect later versions available.
-;;  TODO: This could be caused by the currently-mixed state of Elpaca-managed
-;;  and Nixpkgs packages.
-(use-package eldoc)
-(use-package jsonrpc)
+(use-package eldoc
+  :defer t)
+(use-package jsonrpc
+  :defer t)
 
-(elpaca-wait)
-
-;;; Install common library packages
-(use-package s)     ; strings => <https://github.com/magnars/s.el>
-(use-package dash)  ; lists => <https://github.com/magnars/dash.el>
-(use-package f)     ; files => <https://github.com/rejeep/f.el>
-(use-package ht)    ; hash tables => <https://github.com/Wilfred/ht.el>
+;; FIXME: remove or alias (`##' is very difficult to search for)
 (use-package llama) ;  `##' lambda shorthand => <https://git.sr.ht/~tarsius/llama>
 
 ;;; Ceamx basic libraries
@@ -97,7 +87,7 @@
 (prependq! load-path (subdirs! cmx-site-lisp-dir))
 
 ;;; site-lisp packages
-
+;; TODO: nothing here, placeholder
 
 ;;
 ;;; Configuration

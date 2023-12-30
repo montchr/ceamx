@@ -28,6 +28,7 @@
 
 (use-package magit
   :defer t
+  :after (git-commit)
 
   :config
   ;; TODO: is this still necessary?
