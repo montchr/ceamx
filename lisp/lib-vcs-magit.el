@@ -1,4 +1,4 @@
-;;; lib-magit.el --- Autoloads for magit -*- lexical-binding: t -*-
+;;; lib-vcs-magit.el --- Helpers for Magit -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2014-2022  Henrik Lissner
 ;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
@@ -37,9 +37,11 @@
 
 ;;; Commentary:
 
+;;  <https://magit.vc/>
+
 ;;  Autoloaded functions for magit, lifted from Doom Emacs.
 ;;
-;;  - <2023-01-22>: <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/tools/magit/autoload.el>
+;;  <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/tools/magit/autoload.el>
 
 ;;; Code:
 
@@ -83,6 +85,7 @@
 This differs from `display-buffer-in-direction' in one way: it will try to use a
 window that already exists in that direction. It will split otherwise."
   (let ((direction (or (alist-get 'direction alist)
+                     ;; FIXME: undefined
                        +magit-open-windows-in-direction))
         (origin-window (selected-window)))
     (if-let (window (window-in-direction direction))
@@ -180,5 +183,5 @@ kill all magit buffers for this repo."
             (kill-process process)
             (kill-buffer buf)))))))
 
-(provide 'lib-magit)
-;;; lib-magit.el ends here
+(provide 'lib-vcs-magit)
+;;; lib-vcs-magit.el ends here

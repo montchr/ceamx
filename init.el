@@ -199,18 +199,22 @@
 (require 'init-help)
 
 ;;; Actions
+;; TODO: move these towards the end since they should be deferred until needed
 (require 'init-embark)
 (require 'init-wgrep)
 
-;;; Editing, buffers, files
-(require 'init-editor)
+;; Projects / Files
+(require 'init-projects)
+(require 'init-diff)
+(require 'init-vcs)
+(require 'init-vcs-magit)
 (require 'init-files)
 (require 'init-dired)
 
-;;; Projects
-(require 'init-vcs)
+;;; Editing
+(require 'init-editor)
 (require 'init-templates)
-(require 'init-projects)
+
 
 ;;; Memex
 
