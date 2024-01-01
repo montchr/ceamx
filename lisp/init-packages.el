@@ -99,7 +99,7 @@
 
 ;; When non-nil, improves performance and effectiveness of byte-compilation,
 ;; but decreases introspectability.
-;; TODO: switch to enabled when ready for byte-comp
+;; If byte-compiling user configurations, this should be non-nil.
 (setopt use-package-expand-minimally nil)
 
 ;;; Support for Emacs init introspection.
