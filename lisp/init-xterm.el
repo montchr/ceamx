@@ -47,8 +47,6 @@
 
 ;;; Code:
 
-;; (require 'init-frame-hooks)
-
 (autoload 'mwheel-install "mwheel")
 
 (defun cmx/console-frame-setup ()
