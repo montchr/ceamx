@@ -37,9 +37,15 @@
 (use-feature! winner
   :config (winner-mode))
 
-;;; `olivetti-mode'
-(use-package olivetti :defer t
-  :hook (org-mode . olivetti-mode))
+;;; `olivetti-mode' :: <https://github.com/rnkn/olivetti>
+(use-package olivetti
+  :commands (olivetti-mode)
+
+  :init
+  (add-hook 'org-mode-hook #'olivetti-mode)
+
+  :config
+  (setopt olivetti-style 'fancy))
 
 ;;; popper -- <https://github.com/karthink/popper>
 ;;  "minor-mode to summon and dismiss buffers easily."
