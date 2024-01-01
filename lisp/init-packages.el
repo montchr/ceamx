@@ -36,6 +36,12 @@
 
 ;;; elpaca
 
+;; Prevent "unable to determine `elpaca-core-date'" warnings on init.
+;; <https://github.com/progfolio/elpaca/issues/222>
+;; This *must* be set prior to loading `elpaca' in order to take effect.
+;; This is the recommended value from the maintainer.
+(setq elpaca-core-date '(20231211))
+
 (defvar elpaca-installer-version 0.6)
 (defvar elpaca-directory (expand-file-name "elpaca/" cmx-packages-dir))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
