@@ -80,14 +80,12 @@
 (elpaca `(,@elpaca-order))
 
 ;;
-;;; `use-package'
+;;; `use-package' :: <https://github.com/jwiegley/use-package>
 ;;  <https://www.gnu.org/software/emacs/manual/html_mono/use-package.html>
-;;  <https://github.com/jwiegley/use-package>
 
 (elpaca use-package
-        :demand t)
+  (require 'use-package))
 (elpaca-wait)
-
 
 ;; Install use-package support
 (elpaca elpaca-use-package
