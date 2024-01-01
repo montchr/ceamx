@@ -39,7 +39,7 @@ with its default modeline)."
            (const :tag "The `telephone-line' module" telephone)
            (const :tag "Do not load a modeline module" nil)))
 
-(defcustom cmx-theme-family 'modus
+(defcustom cmx-theme-family 'ef
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
 reference the `ef-themes', `modus-themes', and `standard-themes',
@@ -69,6 +69,12 @@ theme)."
 ;;   :group 'ceamx
 ;;   :type '(symbol))
 
+;; TODO: use these
+(defvar cmx-ui-light-theme-alist '((modus . modus-operandi)
+                                (ef . ef-elea-light)))
+(defvar cmx-ui-dark-theme-alist '((modus . modus-vivendi)
+                                  (ef . ef-elea-dark)))
+;; (defun cmx-ui-theme-preferred ())
 ;; FIXME: defcustom
 (defvar cmx-ui-theme-dark 'modus-vivendi "Preferred dark theme.")
 (defvar cmx-ui-theme-light 'modus-operandi "Preferred light theme.")

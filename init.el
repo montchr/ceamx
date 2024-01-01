@@ -119,11 +119,13 @@
 (require 'init-ui-theme)
 ;; TODO: probably not for tty?
 (pcase cmx-theme-family
+  ('ef
+   (require 'init-ui-ef-themes))
   ('modus
-    (require 'init-ui-modus-themes))
+   (require 'init-ui-modus-themes))
   ('nano
-    ;; NOTE: this is probably very broken -- so is the upstream project :/
-    (require 'init-ui-nano-theme)))
+   ;; NOTE: this is probably very broken -- so is the upstream project :/
+   (require 'init-ui-nano-theme)))
 
 
 ;;;; Typography + Iconography
