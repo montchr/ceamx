@@ -39,11 +39,20 @@
 (defun cmx-prog--lisp-init-h ()
   "Initialize defaults for Lisp programming modes."
 
-  ;; FIXME: move to appropriate place
   ;; FIXME: `pp-buffer' is broken (at least for elisp)
-  ;;        <https://mail.gnu.org/archive/html/emacs-diffs/2023-07/
+  ;;        <https://mail.gnu.org/archive/html/emacs-diffs/2023-07/>
+  ;;
+  ;; NOTE: will cause cause excessive lisp nesting when both of these statements
+  ;;       are uncommented! only one can be adjusted. i haven't looked into why,
+  ;;       but considering that these functions are already known to be
+  ;;       maybe-broken, it's not worth bothering.
+  ;;
+  ;;       an easy way to reproduce the issue is using `lispy-tab' at the end of
+  ;;       an expression and pressing "i". it may also have some interaction
+  ;;       with `consult' with `use-package:config' but that could be a separate
+  ;;       issue i haven't been able to track down.
   (setopt pp-max-width fill-column)
-  (setopt pp-use-max-width t)
+  ;; (setopt pp-use-max-width t)
 
   (after! 'smartparens
     (smartparens-strict-mode 1))
@@ -115,13 +124,13 @@
   :init
   ;; NOTE: `setopt' throws warning on mismatched type
   (setq lispyville-key-theme
-        '((operators normal)
-          c-w
-          (prettify insert)
-          (atom-movement t)
-          slurp/barf-lispy
-          additional
-          additional-insert))
+    '((operators normal)
+       c-w
+       (prettify insert)
+       (atom-movement t)
+       slurp/barf-lispy
+       additional
+       additional-insert))
   (add-hook 'lispy-mode-hook #'lispyville-mode)
 
   :config
@@ -129,7 +138,7 @@
 
   (add-hook! 'evil-escape-inhibit-functions
     (defun +lispy-inhibit-evil-escape-fn ()
-       (and lispy-mode (evil-insert-state-p)))))
+      (and lispy-mode (evil-insert-state-p)))))
 
 
 (provide 'init-lisp)
