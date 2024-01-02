@@ -64,13 +64,27 @@
   (setopt calendar-latitude 39.96)
   (setopt calendar-longitude -75.13))
 
-(use-package circadian
-  :after solar
+(use-package theme-buffet
+  ;; NOTE: Since `modus-themes' is bundled with Emacs, this condition is
+  ;;       basically redundant. It is declared regardless to indicate the actual
+  ;;       dependencies.
+  :after (modus-themes ef-themes)
+  :commands (theme-buffet-modus-ef)
+  :defines (theme-buffet-menu)
+
+  :init
+  (setq theme-buffet-menu 'modus-ef)
+
   :config
-  ;; FIXME: based on theme selected by `cmx-ui-theme-dark'
-  (setopt circadian-themes '((:sunrise . modus-operandi)
-                             (:sunset  . modus-vivendi)))
-  (circadian-setup))
+  (theme-buffet-modus-ef))
+
+;; (use-package circadian
+;;   :after solar
+;;   :config
+;;   ;; FIXME: based on theme selected by `cmx-ui-theme-dark'
+;;   (setopt circadian-themes '((:sunrise . modus-operandi)
+;;                              (:sunset  . modus-vivendi)))
+;;   (circadian-setup))
 
 (provide 'init-after-ui)
 ;;; init-after-ui.el ends here
