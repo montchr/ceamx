@@ -26,26 +26,27 @@
 
 ;;; Code:
 
+(require 'lib-common)
+
 ;;; `spacious-padding' :: <https://protesilaos.com/emacs/spacious-padding>
 ;;  TODO: track upstream git repo by tag since this is in rapid development
 (use-package spacious-padding
-  :defer 1
+  :demand t
   :commands (spacious-padding-mode)
   :defines (spacious-padding-widths)
 
   :init
-  ;; These are the defaults, but I keep it here for visibility.
   (setopt spacious-padding-widths
-          '(
-            ;; NOTE: Currently breaks `tab-bar-mode' display on Emacs 29.
-            ;;       Fixed in master branch.
-            ;; <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-            :internal-border-width 15
-            :header-line-width 4
-            :mode-line-width 6
-            :tab-width 4
-            :right-divider-width 30
-            :scroll-bar-width 8))
+    '(
+       ;; NOTE: `:internal-border-width' currently breaks `tab-bar-mode'
+       ;;       display on Emacs 29. Fixed in master branch.
+       ;;       <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+       :internal-border-width 15
+       :header-line-width 4
+       :mode-line-width 6
+       :tab-width 4
+       :right-divider-width 30
+       :scroll-bar-width 8))
 
   :config
 
