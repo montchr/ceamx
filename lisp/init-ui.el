@@ -32,12 +32,6 @@
 (use-package transient)
 (use-package magit-section)
 
-;;; popon :: <https://codeberg.org/akib/emacs-popon>
-;;  "Pop" floating text "on" a window
-(use-package popon
-  :autoload (popon-create
-             popon-kill
-             popon-x-y-at-pos))
 
 ;;
 ;;; Hydra
