@@ -51,13 +51,7 @@
   ;; Load the theme of choice:
   ;; (load-theme 'ef-elea-dark :no-confirm)
   ;; OR use this to load the theme which also calls `ef-themes-post-load-hook':
-  ;;
-  ;; TODO: handle more gracefully -- disabled so as not to conflict with
-  ;; `theme-buffet' (though i am not positive that such a conflict exists, it
-  ;; seems like `theme-buffet' is intended to handle theme-loading.
-  ;;
-  ;; (ef-themes-select 'ef-elea-dark)
-  )
+  (ef-themes-select 'ef-elea-dark))
 
 (provide 'init-ui-ef-themes)
 ;;; init-ui-ef-themes.el ends here

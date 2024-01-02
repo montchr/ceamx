@@ -69,9 +69,15 @@ theme)."
 ;;   :group 'ceamx
 ;;   :type '(symbol))
 
+;; FIXME: doesn't seem to have desired effect?
+(defvar cmx-ui-theme-family-package
+  (alist-get cmx-theme-family '((ef . ef-themes)
+                                 (modus . modus-themes)
+                                 (nano . nano-theme))))
+
 ;; TODO: use these
 (defvar cmx-ui-light-theme-alist '((modus . modus-operandi)
-                                (ef . ef-elea-light)))
+                                    (ef . ef-elea-light)))
 (defvar cmx-ui-dark-theme-alist '((modus . modus-vivendi)
                                   (ef . ef-elea-dark)))
 ;; (defun cmx-ui-theme-preferred ())

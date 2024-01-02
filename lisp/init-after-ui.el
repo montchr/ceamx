@@ -68,7 +68,7 @@
   ;; NOTE: Since `modus-themes' is bundled with Emacs, this condition is
   ;;       basically redundant. It is declared regardless to indicate the actual
   ;;       dependencies.
-  :after (modus-themes ef-themes)
+  :after (ef-themes)
   :commands (theme-buffet-modus-ef)
   :defines (theme-buffet-menu)
 
