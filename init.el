@@ -156,9 +156,11 @@
 (require 'init-ui-treemacs)
 
 ;;; Keyboard support
+(require 'config-keys)
 (require 'init-keys)
-;; (require 'init-keys-evil)
-;; (require 'init-keys-meow)
+(pcase ceamx-keybinding-scheme
+  ('evil (require 'init-keys-evil))
+  ('meow (require 'init-keys-meow)))
 
 ;;; Window
 (require 'init-window)

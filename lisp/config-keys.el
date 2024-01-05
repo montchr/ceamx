@@ -43,6 +43,21 @@
 ;;; Options
 ;;
 
+(defcustom ceamx-keybinding-scheme 'meow
+  "Keybinding scheme.
+Valid values are the symbols `evil', `meow', and `emacs',
+corresponding to the `evil-mode' modal vim-emulation scheme, the
+`meow' modal scheme, or the Emacs default keybinding scheme.
+
+A nil value, in addition to `emacs', also means retain
+vanilla Emacs keybindings."
+  :group 'ceamx
+  :type '(choice :tag "Keybinding scheme to use." :value meow
+           (const :tag "The `evil' vim-like modal keybinding scheme" evil)
+           (const :tag "The `meow' kakoune- and Emacs-like modal keybinding scheme" meow)
+           (const :tag "The vanilla Emacs keybinding scheme" emacs)
+           (const :tag "Do not load an additional keybinding scheme" nil)))
+
 (defcustom cmx-leader-key "SPC"
   "Leader prefix key sequence for use in modal schemes."
   :type '(key)
@@ -67,6 +82,7 @@ of Emacs."
 
 ;;; Interceptions
 
+;; FIXME: Mode removed, delete.
 (defvar-keymap cmx-intercept-mode-map
   :doc "High-precedence user-defined keymap.")
 
