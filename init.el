@@ -134,6 +134,7 @@
 (require 'init-ui-icons)
 
 ;;;; Modeline
+(require 'config-ui)
 (require 'init-ui-modeline)
 ;; TODO: why not tty?
 (when (display-graphic-p)
