@@ -189,24 +189,79 @@ Original source: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0
   "Execute BODY after FEATURE has been loaded.
 
 FEATURE may be any one of:
-    'evil            => (with-eval-after-load 'evil BODY)
-    \"evil-autoloads\" => (with-eval-after-load \"evil-autolaods\" BODY)
-    [evil cider]     => (with-eval-after-load 'evil
-                          (with-eval-after-load 'cider
-                            BODY))"
+    \\='evil            => (with-eval-after-load \\='evil BODY)
+    \"evil-autoloads\" => (with-eval-after-load \"evil-autoloads\" BODY)
+    [evil cider]     => (with-eval-after-load \\='evil
+                          (with-eval-after-load \\='cider
+                            BODY))
+
+Source: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
+
+This implementation is preferred over Doom's because we prefer
+standard syntaxes (e.g. quoted lists, vectors) over magical
+`use-package'-style sugars like unquoted lists of symbols which
+would normally be evaluated as a function with arguments.
+
+TODO: That said, Doom's implementation is more flexible and handles
+undefined symbols. Some new macro supporting standard input types
+and the features of Doom's version would probably be ideal."
   (declare (indent 1))
   (cond
-   ((vectorp feature)
-    (let ((prog (macroexp-progn body)))
-      (cl-loop for f across feature
-               do
-               (progn
-                 (setq prog (append `(',f) `(,prog)))
-                 (setq prog (append '(with-eval-after-load) prog))))
-      prog))
-   (t
-    `(with-eval-after-load ,feature ,@body))))
+    ((vectorp feature)
+      (let ((prog (macroexp-progn body)))
+        (cl-loop for f across feature
+          do
+          (progn
+            (setq prog (append `(',f) `(,prog)))
+            (setq prog (append '(with-eval-after-load) prog))))
+        prog))
+    (t
+      `(with-eval-after-load ,feature ,@body))))
 
+;; via <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
+(defmacro defer-until! (condition &rest body)
+  "Run BODY when CONDITION is non-nil.
+Leverages checks via `after-load-functions'.
+Meant to serve as a predicated alternative to `after!'."
+  (declare (indent defun) (debug t))
+  `(if ,condition
+     (progn ,@body)
+     ,(let ((fn (intern (format "ceamx--delay-form-%s-h" (sxhash (cons condition body))))))
+        `(progn
+           (fset ',fn (lambda (&rest args)
+                        (when ,(or condition t)
+                          (remove-hook 'after-load-functions #',fn)
+                          (unintern ',fn nil)
+                          (ignore args)
+                          ,@body)))
+           (put ',fn 'permanent-local-hook t)
+           (add-hook 'after-load-functions #',fn)))))
+
+;; via <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L703-L725>
+;; TODO: use this to fix `eldoc' + `elpaca' warnings on init
+(defmacro defer-feature! (feature &rest fns)
+  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook or FNS run.
+
+Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
+startup, which will prematurely trigger `after!' (and `with-eval-after-load')
+blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
+then wait until FEATURE-hook (or any of FNS, if FNS are provided) is triggered
+to reverse this and trigger `after!' blocks at a more reasonable time."
+  (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature)))
+         (fns (or fns (list feature))))
+    `(progn
+       (delq! ',feature features)
+       (defadvice! ,advice-fn (&rest _)
+         :before ',fns
+         ;; Some plugins (like yasnippet) will invoke a fn early to parse
+         ;; code, which would prematurely trigger this. In those cases, well
+         ;; behaved plugins will use `delay-mode-hooks', which we can check for:
+         (unless delay-mode-hooks
+           ;; ...Otherwise, announce to the world this package has been loaded,
+           ;; so `after!' handlers can react.
+           (provide ',feature)
+           (dolist (fn ',fns)
+             (advice-remove fn #',advice-fn)))))))
 
 ;;; Variables
 
@@ -223,7 +278,8 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
                      ,list)))
 
 ;; TODO: another version to test car of alist so that new additions with the
-;; same car will override the existing list
+;;       same car will override the existing list
+;;       [2024-01-03]: does this macro not already do this?
 (defmacro pushnew! (place &rest values)
   "Push VALUES sequentially into PLACE, if they aren't already present.
 This is a variadic `cl-pushnew'."
@@ -235,7 +291,7 @@ This is a variadic `cl-pushnew'."
   "Prepend LISTS to SYM in place."
   `(setq ,sym (append ,@lists ,sym)))
 
-
+;;
 ;;; Filesystem
 
 (defun cmx-subdirs (parent-dir)
@@ -282,13 +338,13 @@ advice, like in `advice-add'. PLACE should be sharp-quoted.
 DOCSTRING and BODY are as in `defun'."
   (declare (indent 2)
     (obsolete "defadvice!" "2023-12-28")
-           (doc-string 5))
+    (doc-string 5))
   (unless (stringp docstring)
     (error "Ceamx: advice `%S' not documented'" name))
   (unless (and (listp place)
-               (= 2 (length place))
-               (eq (nth 0 place) 'function)
-               (symbolp (nth 1 place)))
+            (= 2 (length place))
+            (eq (nth 0 place) 'function)
+            (symbolp (nth 1 place)))
     (error "Ceamx: advice `%S' does not sharp-quote place `%S'" name place))
   `(progn
      ;; NOTE(Radian):
@@ -306,14 +362,14 @@ DOCSTRING and BODY are as in `defun'."
      ;; > similar (see below).
      (defun ,name ,arglist
        ,(let ((article (if (string-match-p "^:[aeiou]" (symbol-name where))
-                           "an"
+                         "an"
                          "a")))
           (format "%s\n\nThis is %s `%S' advice for\n`%S'."
-                  docstring article where
-                  (if (and (listp place)
-                           (memq (car place) ''function))
-                      (cadr place)
-                    place)))
+            docstring article where
+            (if (and (listp place)
+                  (memq (car place) ''function))
+              (cadr place)
+              place)))
        ,@body)
      (eval-when-compile
        (declare-function ,name nil))

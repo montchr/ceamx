@@ -139,12 +139,9 @@
 ;; TODO: why not tty?
 (when (display-graphic-p)
   (pcase cmx-modeline-provider
-    ('doom
-      (require 'init-ui-modeline-doom))
-    ('nano
-      (require 'init-ui-modeline-nano))
-    ('telephone
-      (require 'init-ui-modeline-telephone-line))))
+    ('doom (require 'init-ui-modeline-doom))
+    ('nano (require 'init-ui-modeline-nano))
+    ('telephone (require 'init-ui-modeline-telephone-line))))
 
 (require 'init-after-ui)
 
