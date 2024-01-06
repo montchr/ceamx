@@ -47,8 +47,7 @@
 
 ;;; Sources:
 
-;; TODO: add doom lib, others
-
+;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
 ;; <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
 
 ;;; Code:
@@ -166,7 +165,26 @@ COMMAND. This macro is meant to be used as a target for keybinds (e.g. with
            #'call-interactively)
         ,command ,@args))))
 
-;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
+;;
+;;; Loading
+
+(defmacro add-load-paths! (&rest dirs)
+  "Add DIRS to `load-path', relative to the current file.
+The current file is the file from which `add-load-paths!' is used.
+
+This macro is identical to Doom\\='s `add-load-path!' macro
+except in name and docstring. The name of the macro has been
+changed to clarify that this is a variadic macro. This docstring
+also corrects an apparent typo in the original, which referred to
+a non-existent macro.
+
+Original source: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L620-L626>"
+  `(let ((default-directory (dir!))
+          file-name-handler-alist)
+     (dolist (dir (list ,@dirs))
+       (cl-pushnew (expand-file-name dir) load-path :test #'string=))))
+
+;; FIXME: invalid lint warning for long URL in docstring
 (defmacro after! (feature &rest body)
   "Execute BODY after FEATURE has been loaded.
 
@@ -253,16 +271,7 @@ This is a variadic `cl-pushnew'."
 Simple wrapper around `cmx-subdirs'."
   `(cmx-subdirs ,parent-dir))
 
-;;; Loading
-
-(defmacro add-load-paths! (&rest dirs)
-  "Add DIRS to `load-path', relative to the current file.
-The current file is the file from which `add-to-load-path!' is used."
-  `(let ((default-directory (dir!))
-         file-name-handler-alist)
-     (dolist (dir (list ,@dirs))
-       (cl-pushnew (expand-file-name dir) load-path :test #'string=))))
-
+;;
 ;;; Advice
 
 (defmacro def-advice! (name arglist where place docstring &rest body)
