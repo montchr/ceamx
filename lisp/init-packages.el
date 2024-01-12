@@ -22,6 +22,8 @@
 
 ;; Initialize package.el and `use-package' (from bundled version).
 
+;; TODO: <https://github.com/ashlineldridge/.config/blob/main/emacs/elpaca-bootstrap.el>
+
 ;;; Code:
 
 (require 'cl-lib)

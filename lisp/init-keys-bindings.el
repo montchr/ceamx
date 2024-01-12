@@ -21,6 +21,7 @@
 ;;; Commentary:
 
 ;; TODO: quikgrok descriptions for `cmx-window-map' defs
+;; TODO: vim-like case invert! <https://gitlab.com/slotThe/dotfiles/-/blob/77393d030021a3524c03f22bbb4a4ca75965a9fd/emacs/.config/emacs/lisp/keybindings.el#L79-92>
 
 ;;; Code:
 
