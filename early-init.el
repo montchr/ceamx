@@ -65,12 +65,7 @@
 ;;; Directories:
 
 ;; Load settings describing well-known paths.
-(load (concat (file-name-directory load-file-name)
-              "ceamx-paths")
-      nil (not init-file-debug))
-;; (require 'ceamx-paths
-;;   (concat (file-name-directory load-file-name)
-;;                         "ceamx-paths.el"))
+(load (concat user-emacs-directory "ceamx-paths.el"))
 
 ;; Use preferred cache directories for native-comp.
 (startup-redirect-eln-cache cmx-eln-dir)
