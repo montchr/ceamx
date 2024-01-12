@@ -148,7 +148,7 @@
   ;; changed.
   (setopt meow-expand-hint-remove-delay 10.0)
 
-  (setopt meow-keypad-leader-dispatch nil)
+  (setopt meow-keypad-leader-dispatch "C-c")
 
   ;; TODO: investigate effects -- copied from <https://github.com/chuxubank/cat-emacs/blob/65155f642b336d14ca63f010ff45eea2c18cfdce/cats/%2Bmeow.el>
   ;; (setopt meow-expand-exclude-mode-list nil)
