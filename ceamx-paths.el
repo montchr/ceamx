@@ -59,11 +59,16 @@ external dependencies or long-term shared data.")
   "Directory for volatile storage.
 Use this for files that change often, like data and cache files.")
 
+(defvar cmx-eln-dir (convert-standard-filename
+                      (file-name-as-directory
+                        (expand-file-name "eln/" cmx-var-dir)))
+  "Directory for natively-compiled eln files.")
+
 (defvar cmx-packages-dir
   (expand-file-name (format "packages/%s.%s/"
-                            emacs-major-version
-                            emacs-minor-version)
-                    cmx-local-dir)
+                      emacs-major-version
+                      emacs-minor-version)
+    cmx-local-dir)
   "Where packages are stored.
 See also `package-user-dir'.
 Packages will be stored in subdirectories based on the current

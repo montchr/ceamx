@@ -73,9 +73,8 @@
 ;;                         "ceamx-paths.el"))
 
 ;; Use preferred cache directories for native-comp.
-(startup-redirect-eln-cache (convert-standard-filename (expand-file-name "eln/" cmx-var-dir)))
-(add-to-list 'native-comp-eln-load-path (expand-file-name "eln/" cmx-var-dir))
-
+(startup-redirect-eln-cache cmx-eln-dir)
+(add-to-list 'native-comp-eln-load-path cmx-eln-dir)
 
 ;;
 ;;; PERF: Avoid complex regexp matching in load path during startup.
