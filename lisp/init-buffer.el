@@ -28,11 +28,13 @@
 
 ;;; Code:
 
+(require 'lib-common)
 (require 'lib-keys)
+(require 'lib-packages)
 
-;; Remember location in a file when saving files.
-(setq save-place-file (expand-file-name "saveplace" cmx-local-dir))
-(save-place-mode 1)
+(use-feature! saveplace
+  :init
+  (save-place-mode))
 
 ;; Disable buffer line wrapping by default.
 (set-default 'truncate-lines t)
