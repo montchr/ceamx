@@ -27,12 +27,12 @@
 
 ;;; Code:
 
-;;
-;;; Formatting
-;;
-
 (require 'lib-common)
 (require 'lib-editor)
+(require 'lib-packages)
+
+;;
+;;; Formatting
 
 ;; Don't consider camelCaseWORDs as separate words.
 (global-subword-mode -1)

@@ -279,7 +279,6 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
 
 ;; TODO: another version to test car of alist so that new additions with the
 ;;       same car will override the existing list
-;;       [2024-01-03]: does this macro not already do this?
 (defmacro pushnew! (place &rest values)
   "Push VALUES sequentially into PLACE, if they aren't already present.
 This is a variadic `cl-pushnew'."

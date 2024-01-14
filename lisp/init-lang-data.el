@@ -24,9 +24,11 @@
 
 ;;; Code:
 
+(require 'lib-packages)
+
 (use-feature! nxml-mode
-  :mode "\\.p\\(?:list\\|om\\)\\'" ; plist, pom
-  :mode "\\.xs\\(?:d\\|lt\\)\\'"   ; xslt, xsd
+  :mode "\\.p\\(?:list\\|om\\)\\'"      ; plist, pom
+  :mode "\\.xs\\(?:d\\|lt\\)\\'"        ; xslt, xsd
   :mode "\\.rss\\'"
 
   :config

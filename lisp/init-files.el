@@ -27,9 +27,8 @@
 
 ;;; Code:
 
-(autoload 'cmx/delete-this-file "lib-files" nil t)
-(autoload 'cmx/copy-this-file "lib-files" nil t)
-(autoload 'cmx/move-this-file "lib-files" nil t)
+(require 'lib-files)
+(require 'lib-packages)
 
 ;; Create missing directories when we open a file that doesn't exist under a
 ;; directory tree that may not exist.

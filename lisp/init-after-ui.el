@@ -27,6 +27,7 @@
 ;;; Code:
 
 (require 'lib-common)
+(require 'lib-packages)
 
 ;;; `spacious-padding' :: <https://protesilaos.com/emacs/spacious-padding>
 ;;  TODO: track upstream git repo by tag since this is in rapid development

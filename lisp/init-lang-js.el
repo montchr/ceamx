@@ -27,6 +27,7 @@
 ;;; Code:
 
 (require 'lib-common)
+(require 'lib-packages)
 
 (defun cmx-init-javascript-modes ()
   (setopt js-indent-level 2)
@@ -35,7 +36,7 @@
     (lsp-deferred)
     (lsp-lens-mode)
     (dolist (hook '(lsp-format-buffer
-                    lsp-organize-imports))
+                     lsp-organize-imports))
       (add-hook 'before-save-hook hook nil t))))
 
 ;; TODO: must happen before `treesit-auto' so it can override

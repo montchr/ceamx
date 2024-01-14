@@ -58,6 +58,8 @@
 
 ;;; Code:
 
+(require 'lib-packages)
+
 (use-feature! treesit
   :demand t)
 

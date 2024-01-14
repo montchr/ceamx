@@ -30,6 +30,7 @@
 ;;; Code:
 
 (require 'lib-frame)
+(require 'lib-packages)
 
 (use-feature! emacs
   :config

@@ -27,7 +27,9 @@
 
 ;;; Code:
 
-(autoload 'after! "lib-common" t)
+(require 'lib-common)
+(require 'lib-packages)
+
 (autoload 'reformatter-define "reformatter" t)
 
 (use-package nix-mode

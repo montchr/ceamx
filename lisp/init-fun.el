@@ -23,6 +23,8 @@
 
 ;;; Code:
 
+(require 'lib-packages)
+
 ;; <https://www.emacswiki.org/emacs/ZoneMode>
 (use-feature! zone
   :defer t
@@ -36,10 +38,10 @@
   (defun zone-choose (pgm)
     "Choose a PGM to run for `zone'."
     (interactive
-     (list
-      (completing-read
-       "Program: "
-       (mapcar 'symbol-name zone-programs))))
+      (list
+        (completing-read
+          "Program: "
+          (mapcar 'symbol-name zone-programs))))
     (let ((zone-programs (list (intern pgm))))
       (zone))))
 

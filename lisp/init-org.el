@@ -27,10 +27,13 @@
 
 ;;; Code:
 
+(require 'lib-packages)
+
 (require 'config-notes)
 (require 'config-org)
 
 ;; Must be set before loading Org-Mode.
+;; TODO: move to `config-org'?
 (defvar org-directory cmx-notes-dir)
 
 (unless (file-directory-p org-directory)
@@ -71,8 +74,7 @@
             (800 1000 1200 1400 1600 1800 2000)
             " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (setopt org-agenda-current-time-string
-          "⭠ now ─────────────────────────────────────────────────")
-)
+          "⭠ now ─────────────────────────────────────────────────"))
 
 (use-package doct
   :defer t
@@ -90,7 +92,7 @@
                  :headline "Inbox"
                  :type entry
                  :template ("* TODO %?"
-                            "%i %a"))))))
+                             "%i %a"))))))
 
 ;;; org-modern <https://github.com/minad/org-modern>
 (use-package org-modern
