@@ -71,7 +71,9 @@
               link-hint-open-link-at-point)
   :config
   (after! [evil]
-    (evil-define-key '(normal) 'global "gO" #'link-hint-open-link)))
+    (declare-function evil-define-key "evil")
+    (evil-define-key '(normal) 'global
+      "gO" #'link-hint-open-link)))
 
 ;; FIXME: how to bind to leader map??? no idea how the mode's internal keybinding works despite looking at source...
 (use-feature! outline
