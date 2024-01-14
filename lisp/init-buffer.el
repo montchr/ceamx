@@ -32,9 +32,7 @@
 (require 'lib-keys)
 (require 'lib-packages)
 
-(use-feature! saveplace
-  :init
-  (save-place-mode))
+
 
 ;; Disable buffer line wrapping by default.
 (set-default 'truncate-lines t)
@@ -82,7 +80,7 @@
   (setq-default outline-minor-mode t)
 
   ;; Corresponds to default binding of `C-c @'.
-  ;; FIXME: doesn't work
+  ;; FIXME: doesn't work -- conflict?
   ;; (keymap-set mode-specific-map "@" '("(outline)" . outline-mode-prefix-map))
   )
 

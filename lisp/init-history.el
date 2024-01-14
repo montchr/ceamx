@@ -32,6 +32,8 @@
 (require 'lib-packages)
 
 ;;; `savehist' (internal)
+;;  Save history for the values of arbitrary variables, but most notably
+;;  completion queries.
 (use-feature! savehist
   :init
   (savehist-mode)
@@ -44,7 +46,14 @@
 
   (setopt savehist-autosave-interval 60))
 
+;;; `saveplace' (internal)
+;;  Save position in buffers.
+(use-feature! saveplace
+  :init
+  (save-place-mode))
+
 ;;; `recentf' (internal)
+;;  Store recently-accessed files.
 (use-feature! recentf
   :init
   (recentf-mode)
@@ -52,9 +61,12 @@
   :config
   (setopt recentf-max-saved-items 50)   ; default => 20
   (setopt recentf-max-menu-items 15)    ; default => 10
+
   ;; Disable recentf-cleanup on Emacs start, because it can cause
   ;; problems with remote files.
   (setopt recentf-auto-cleanup 'never)
+
+  ;; Exclude internal plumbing files.
   (dolist (path '(cmx-etc-dir cmx-var-dir))
     (add-to-list 'recentf-exclude path)))
 
