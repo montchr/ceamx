@@ -185,7 +185,8 @@
 
   (evil-mode 1))
 
-(elpaca-wait)
+(when (fboundp 'elpaca-wait)
+  (elpaca-wait))
 
 ;; FIXME: this is terrible -- must be loaded after evil -- needs autoloads internally
 (require 'lib-keys-evil)

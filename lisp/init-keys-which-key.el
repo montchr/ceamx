@@ -54,6 +54,8 @@
   (setopt which-key-sort-uppercase-first nil)
 
   (which-key-mode 1))
+(when (fboundp 'elpaca-wait)
+  (elpaca-wait))
 
 (provide 'init-keys-which-key)
 ;;; init-keys-which-key.el ends here

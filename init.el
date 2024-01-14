@@ -270,9 +270,9 @@
   (add-hook 'elpaca-after-init-hook #'cmx-load-custom-file-after-init-h))
 
 ;; Wait for all packages to initialize in non-interactive mode.
-(when noninteractive
-  (with-eval-after-load 'elpaca
-    (elpaca-wait)))
+(when (and noninteractive
+           (fboundp 'elpaca-wait))
+  (elpaca-wait))
 
 (provide 'init)
 ;;; init.el ends here
