@@ -80,7 +80,7 @@ See `leader-key!' for more info about leader behavior."
   `(progn
      (define-prefix-command (quote ,keymap))
      (define-keymap :keymap ,keymap ,@defs)
-     (leader-key! ,key (cons ,description ,keymap))))
+     (leader-key! ,key '(,description . ,keymap))))
 
 ;; TODO: not yet practical or functional
 ;; (defmacro def-mode-arm! (mode description &rest defs)
