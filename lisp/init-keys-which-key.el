@@ -51,7 +51,9 @@
   ;; Sort non-prefix-keys above prefix keys.
   (setopt which-key-sort-order 'which-key-prefix-then-key-order)
 
-  (setopt which-key-sort-uppercase-first nil))
+  (setopt which-key-sort-uppercase-first nil)
+
+  (which-key-mode 1))
 
 (provide 'init-keys-which-key)
 ;;; init-keys-which-key.el ends here
