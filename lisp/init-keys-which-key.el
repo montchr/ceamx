@@ -31,29 +31,40 @@
 ;; recall. I suspect this has something to do with key translations, a subject
 ;; with which I am currently unfamiliar.
 
+;; 2024-01-13 UPDATE: My previous note about `which-key' and `meow' interaction
+;; makes me wonder if in fact the behavior I was describing was actually Meow's
+;; broken `which-key'-like popups. Still, I have seen the described behavior
+;; from both packages.
+
+;; I would much rather have some slightly-more-manual method of compiling these
+;; "cheatsheets" for specific maps in a hydra-like UI. But I don't want to
+;; entirely sacrifice the usage of builtin keymap functionality for the
+;; abstractions of hydra. Perhaps there's a way to shadow the keymaps similarly
+;; to what `which-key' does, maybe? (i'm guessing) but with more control?
+
 ;;; Code:
 
-;;
-;;; which-key
-;;
-
 (use-package which-key
+  :demand t
   :blackout t
-  :commands ( which-key-mode
+  :commands (which-key-mode
               which-key-setup-side-window-right-bottom)
+
+  :init
+  ;; Activate after all other keybinding stuff (hopefully).
+  (after-init! #'which-key-mode)
 
   :config
   ;; Determine whether keys have been rebound, considering the active keymaps.
   ;; NOTE: Does not seem to work reliably -- see Commentary section above.
   (setopt which-key-compute-remaps t)
-  (setopt which-key-idle-delay 1.00)
+  (setopt which-key-idle-delay 1.0)
 
   ;; Sort non-prefix-keys above prefix keys.
   (setopt which-key-sort-order 'which-key-prefix-then-key-order)
 
-  (setopt which-key-sort-uppercase-first nil)
+  (setopt which-key-sort-uppercase-first nil))
 
-  (which-key-mode 1))
 (when (fboundp 'elpaca-wait)
   (elpaca-wait))
 
