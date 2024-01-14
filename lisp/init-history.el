@@ -25,29 +25,40 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
+(require 'ceamx-paths)
+(require 'lib-common)
+(require 'lib-packages)
+
 ;;; `savehist' (internal)
 (use-feature! savehist
+  :init
+  (savehist-mode)
+
   :config
-  (setopt savehist-autosave-interval 60)
   ;; NOTE: Also configured by `no-littering'.
   (setopt savehist-file (expand-file-name "savehist" cmx-local-dir))
-  (savehist-mode +1))
   (cl-dolist (save '(kill-ring
                       regexp-search-ring
                       search-ring))
     (cl-pushnew save savehist-additional-variables))
 
+  (setopt savehist-autosave-interval 60))
+
 ;;; `recentf' (internal)
 (use-feature! recentf
+  :init
+  (recentf-mode)
+
   :config
-  (setopt recentf-max-saved-items 50) ; default => 20
-  (setopt recentf-max-menu-items 15)   ; default => 10
+  (setopt recentf-max-saved-items 50)   ; default => 20
+  (setopt recentf-max-menu-items 15)    ; default => 10
   ;; Disable recentf-cleanup on Emacs start, because it can cause
   ;; problems with remote files.
   (setopt recentf-auto-cleanup 'never)
   (dolist (path '(cmx-etc-dir cmx-var-dir))
-    (add-to-list 'recentf-exclude path))
-  (recentf-mode +1))
+    (add-to-list 'recentf-exclude path)))
 
 ;;
 ;;; Undo/redo
