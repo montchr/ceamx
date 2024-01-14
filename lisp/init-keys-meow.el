@@ -84,7 +84,7 @@
     '("A" . meow-open-below)
     '("b" . meow-back-word)
     '("B" . meow-back-symbol)
-    '("c" . meow-change-save)         ; default: `meow-change'
+    '("c" . meow-change-save)           ; default: `meow-change'
     '("d" . meow-delete)
     '("D" . meow-backward-delete)
     '("e" . meow-next-word)

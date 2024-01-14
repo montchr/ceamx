@@ -196,11 +196,13 @@
   "F" #'describe-face
   "h" #'helpful-at-point
   ;; TODO: add as command
+  ;; FIXME: create directory if not exists
   "H" `("cheatsheet..." . ,(cmd!!
                              #'ido-find-file-in-dir
                              current-prefix-arg
                              cmx-cheatsheets-dir))
   ;; NOTE: currently `meow-describe-key'
+  ;; TODO: move corresponding meow binding here with fallback to default
   ;; "k" #'describe-key
   "K" #'describe-key-briefly
   "l" #'find-library
@@ -214,9 +216,11 @@
   ;;        <https://github.com/Wilfred/helpful/issues/329>
   "v" #'helpful-variable
 
-  ;; Primarily for Meow keypad.
-  "C-h" "h"
-  "C-o" "o")
+  ;; Parity with the corresponding unmodded keys.
+  ;; Primarily for Meow keypad, but also sometimes feels more natural to keep
+  ;; holding Ctrl anyway.
+  "C-h" #'helpful-at-point
+  "C-o" #'helpful-symbol)
 
 
 ;;
