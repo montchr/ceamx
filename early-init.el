@@ -70,7 +70,7 @@
     (add-to-list 'load-path dir)))
 
 ;; Load settings describing well-known paths.
-(load (concat user-emacs-directory "ceamx-paths.el"))
+(require 'ceamx-paths)
 
 ;; Use preferred cache directories for native-comp.
 (startup-redirect-eln-cache cmx-eln-dir)
