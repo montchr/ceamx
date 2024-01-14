@@ -148,9 +148,17 @@
 ;; TODO: figure out how to load as late as possible?
 (require 'init-ui-treemacs)
 
-;;; Keyboard support
+;;;; Keyboard support
+
 (require 'config-keys)
 (require 'init-keys)
+
+;; Ideally `which-key' would be loaded later to ensure the accuracy of its
+;; menus, but `meow' does not seem to recognize `which-key' as being enabled
+;; when it loads, which means that it uses its (broken) custom functionality to
+;; do the same as `which-key'.
+(require 'init-keys-which-key)
+
 (pcase ceamx-keybinding-scheme
   ('evil (require 'init-keys-evil))
   ('meow (require 'init-keys-meow)))
@@ -241,7 +249,6 @@
 
 ;;; Keybindings
 (require 'init-keys-bindings)
-(require 'init-keys-which-key)
 
 ;;
 ;;; Postlude

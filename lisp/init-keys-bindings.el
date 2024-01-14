@@ -203,6 +203,7 @@
                              cmx-cheatsheets-dir))
   ;; NOTE: currently `meow-describe-key'
   ;; TODO: move corresponding meow binding here with fallback to default
+  ;;       example:   (cl-find-if #'fboundp '(harper-dad-joint helpful-at-point describe-key))
   ;; "k" #'describe-key
   "K" #'describe-key-briefly
   "l" #'find-library
