@@ -55,9 +55,7 @@
     '("9" . meow-digit-argument)
     '("0" . meow-digit-argument)
     '("/" . meow-keypad-describe-key)
-    '("?" . meow-cheatsheet)
-    '("u" . meow-universal-argument)    ; custom
-    )
+    '("?" . meow-cheatsheet))
 
   (meow-motion-overwrite-define-key
     '("j" . meow-next)
