@@ -1,6 +1,6 @@
 ;;; init-frame.el --- Frame modifications -*- lexical-binding: t -*-
 
-;; Copyright (c) 2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx

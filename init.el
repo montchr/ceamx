@@ -1,6 +1,6 @@
 ;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t -*-
 
-;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx

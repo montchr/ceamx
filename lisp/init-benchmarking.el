@@ -1,6 +1,6 @@
 ;;; init-benchmarking.el --- Measure startup and require times -*- lexical-binding: t -*-
 
-;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
 ;; This file is NOT part of GNU Emacs.
 

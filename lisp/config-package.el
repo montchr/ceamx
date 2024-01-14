@@ -1,6 +1,6 @@
 ;;; config-package.el --- Settings relating to package management  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023  Chris Montgomery
+;; Copyright (C) 2023-2024  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; Keywords: local

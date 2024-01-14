@@ -1,6 +1,6 @@
 ;;; init-frame-hooks.el --- Provide specific hooks for GUI/TTY frame creation  -*- lexical-binding: t; -*-
 
-;; Copyright (c) 2023 Chris Montgomery
+;; Copyright (c) 2023-2024 Chris Montgomery
 ;; Copyright (c) 2006-2021 Steve Purcell
 
 ;; Author: Steve Purcell

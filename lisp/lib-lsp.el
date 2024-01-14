@@ -1,6 +1,6 @@
 ;;; lib-lsp.el --- LSP library functions -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2022-2024  Chris Montgomery <chris@cdom.io>
 ;; Copyright (C) 2014-2023  Henrik Lissner
 ;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT
 

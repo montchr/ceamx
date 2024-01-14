@@ -1,6 +1,6 @@
 ;;; lib-hydras.el --- Hydra helpers -*- lexical-binding: t -*-
 
-;; Copyright (c) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 ;; Copyright (c) 2016-2023  John Kitchin <jkitchin@andrew.cmu.edu> and the Scimax contributors
 
 ;; Maintainer:  Chris Montgomery <chris@cdom.io>

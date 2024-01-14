@@ -1,6 +1,6 @@
 ;;; lib-ui-treemacs.el --- Treemacs library functions+macros  -*- lexical-binding: t; -*-
 
-;; Copyright (c) 2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
 ;; Copyright (c) 2014-2022  Henrik Lissner
 ;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT
 

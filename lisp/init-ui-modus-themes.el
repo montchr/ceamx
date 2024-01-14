@@ -1,6 +1,6 @@
 ;;; init-ui-modus-themes.el ---Modus Themes initialization  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023  Chris Montgomery
+;; Copyright (C) 2023-2024  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; Keywords:

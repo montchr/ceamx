@@ -1,6 +1,6 @@
 ;;; lib-common.el --- Common library functions -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2023-2024  Chris Montgomery <chris@cdom.io>
 ;; Copyright (C) 2016–2022  Radian LLC and contributors
 ;; Copyright (C) 2014-2023  Henrik Lissner
 ;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>

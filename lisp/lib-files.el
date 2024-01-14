@@ -1,6 +1,6 @@
 ;;; lib-files.el --- File helpers -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022-2023  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2022-2024  Chris Montgomery <chris@cdom.io>
 ;; Copyright (C) 2014-2022  Henrik Lissner
 ;; Copyright (C) 2006-2021  Steve Purcell
 ;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause

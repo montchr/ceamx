@@ -1,6 +1,6 @@
 ;;; init-xterm.el --- Integrate with terminals such as xterm -*- lexical-binding: t -*-
 
-;; Copyright (c) 2023 Chris Montgomery
+;; Copyright (c) 2023-2024 Chris Montgomery
 ;; Copyright (c) 2006-2021 Steve Purcell
 
 ;; Author: Steve Purcell

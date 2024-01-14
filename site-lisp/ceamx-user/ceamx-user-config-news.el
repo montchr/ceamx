@@ -1,6 +1,6 @@
 ;;; ceamx-user-config-news.el --- Configuration for news feed subscriptions  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023  Chris Montgomery
+;; Copyright (C) 2023-2024  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; Keywords: local, data, news

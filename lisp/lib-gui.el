@@ -1,6 +1,6 @@
 ;;; lib-gui.el --- GUI-only helpers -*- lexical-binding: t -*-
 
-;; Copyright (c) 2023 Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2023-2024 Chris Montgomery <chris@cdom.io>
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;; Author:  Chris Montgomery <chris@cdom.io>
