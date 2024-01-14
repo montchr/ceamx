@@ -29,6 +29,8 @@
 
 ;;; Code:
 
+(require 'ceamx-paths)
+
 ;;; `no-littering' :: <https://github.com/emacscollective/no-littering>
 ;;  Help keeping ~/.emacs.d clean
 (use-package no-littering

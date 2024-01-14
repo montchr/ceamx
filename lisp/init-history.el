@@ -28,13 +28,14 @@
 ;;; `savehist' (internal)
 (use-feature! savehist
   :config
-  (setopt savehist-additional-variables '( search-ring
-                                           regexp-search-ring
-                                           kill-ring))
   (setopt savehist-autosave-interval 60)
   ;; NOTE: Also configured by `no-littering'.
   (setopt savehist-file (expand-file-name "savehist" cmx-local-dir))
   (savehist-mode +1))
+  (cl-dolist (save '(kill-ring
+                      regexp-search-ring
+                      search-ring))
+    (cl-pushnew save savehist-additional-variables))
 
 ;;; `recentf' (internal)
 (use-feature! recentf
