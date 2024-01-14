@@ -37,8 +37,6 @@
   (savehist-mode)
 
   :config
-  ;; NOTE: Also configured by `no-littering'.
-  (setopt savehist-file (expand-file-name "savehist" cmx-local-dir))
   (cl-dolist (save '(kill-ring
                       regexp-search-ring
                       search-ring))
