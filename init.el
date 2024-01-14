@@ -36,11 +36,6 @@
   "User-configurable options for Ceamx."
   :group 'file)
 
-;;; Configure load path.
-(dolist (subdir '("autoloads" "lisp" "lisp/lib"))
-  (let ((dir (expand-file-name subdir user-emacs-directory)))
-    (add-to-list 'load-path dir)))
-
 ;;; Configure customization file.
 (setopt custom-file (expand-file-name "custom.el" user-emacs-directory))
 

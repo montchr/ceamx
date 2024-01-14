@@ -64,6 +64,11 @@
 ;;
 ;;; Directories:
 
+;;; Configure load path.
+(dolist (subdir '("autoloads" "lisp" "lisp/core" "lisp/lib"))
+  (let ((dir (expand-file-name subdir user-emacs-directory)))
+    (add-to-list 'load-path dir)))
+
 ;; Load settings describing well-known paths.
 (load (concat user-emacs-directory "ceamx-paths.el"))
 
