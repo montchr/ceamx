@@ -53,6 +53,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'seq)
 
 ;;;; Helpers
 
@@ -64,11 +65,11 @@ list is returned as-is."
   (declare (pure t) (side-effect-free t))
   (let ((hook-list (ensure-list (cmx-unquote hooks))))
     (if (eq (car-safe hooks) 'quote)
-        hook-list
+      hook-list
       (cl-loop for hook in hook-list
-               if (eq (car-safe hook) 'quote)
-               collect (cadr hook)
-               else collect (intern (format "%s-hook" (symbol-name hook)))))))
+        if (eq (car-safe hook) 'quote)
+        collect (cadr hook)
+        else collect (intern (format "%s-hook" (symbol-name hook)))))))
 
 ;; TODO: seems probably excessive
 (defun cmx--setq-hook-fns (hooks rest &optional singles)
@@ -262,6 +263,25 @@ to reverse this and trigger `after!' blocks at a more reasonable time."
            (provide ',feature)
            (dolist (fn ',fns)
              (advice-remove fn #',advice-fn)))))))
+
+(defmacro after-init! (func)
+  "Add FUNC to the appropriate after-init hook.
+Intended to allow graceful switching between `after-init-hook'
+and the `elpaca' async hook `elpaca-after-init-hook'.
+
+Example:
+
+  (after-init! #\\='which-key-mode)
+  ;; with elpaca:
+  => (add-hook \\='elpaca-after-init-hook #\\='which-key-mode)
+  ;; default:
+  => (add-hook \\='after-init-hook #\\='which-key-mode)"
+  (declare (indent defun))
+  (let* ((sequence [elpaca-after-init-hook after-init-hook])
+          (hook (seq-find #'boundp sequence)))
+    (cl-assert (fboundp (cmx-unquote func)))
+    `(add-hook ',hook ,func)))
+
 
 ;;; Variables
 
