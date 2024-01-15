@@ -76,21 +76,22 @@ list is returned as-is."
   (unless (or singles (= 0 (% (length rest) 2)))
     (signal 'wrong-number-of-arguments (list #'cl-evenp (length rest))))
   (cl-loop with vars = (let ((args rest)
-                             vars)
+                              vars)
                          (while args
                            (push (if singles
-                                     (list (pop args))
+                                   (list (pop args))
                                    (cons (pop args) (pop args)))
-                                 vars))
+                             vars))
                          (nreverse vars))
-           for hook in (cmx--resolve-hook-forms hooks)
-           for mode = (string-remove-suffix "-hook" (symbol-name hook))
-           append
-           (cl-loop for (var . val) in vars
-                    collect
-                    (list var val hook
-                          (intern (format "cmx--setq-%s-for-%s-h"
-                                          var mode))))))
+    ;; TODO: use `derived-mode-hook-name'
+    for hook in (cmx--resolve-hook-forms hooks)
+    for mode = (string-remove-suffix "-hook" (symbol-name hook))
+    append
+    (cl-loop for (var . val) in vars
+      collect
+      (list var val hook
+        (intern (format "cmx--setq-%s-for-%s-h"
+                  var mode))))))
 
 ;;; Generic
 
@@ -478,15 +479,16 @@ This macro accepts, in order:
 
 \(fn HOOKS [:append :local [:depth N]] FUNCTIONS-OR-FORMS...)"
   (declare (obsolete "def-hook!" "2023-11-10")
-           (indent (lambda (indent-point state)
-                     (goto-char indent-point)
-                     (when (looking-at-p "\\s-*(")
-                       (lisp-indent-defform state indent-point))))
-           (debug t))
+    (indent (lambda (indent-point state)
+              (goto-char indent-point)
+              (when (looking-at-p "\\s-*(")
+                (lisp-indent-defform state indent-point))))
+    (debug t))
+  ;; TODO: use `derived-mode-hook-name'
   (let* ((hook-forms (cmx--resolve-hook-forms hooks))
-         (func-forms ())
-         (defn-forms ())
-         append-p local-p remove-p depth)
+          (func-forms ())
+          (defn-forms ())
+          append-p local-p remove-p depth)
     (while (keywordp (car rest))
       (pcase (pop rest)
         (:append (setq append-p t))
@@ -495,28 +497,28 @@ This macro accepts, in order:
         (:remove (setq remove-p t))))
     (while rest
       (let* ((next (pop rest))
-             (first (car-safe next)))
+              (first (car-safe next)))
         (push (cond ((memq first '(function nil))
-                     next)
-                    ((eq first 'quote)
-                     (let ((quoted (cadr next)))
-                       (if (atom quoted)
-                           next
-                         (when (cdr quoted)
-                           (setq rest (cons (list first (cdr quoted)) rest)))
-                         (list first (car quoted)))))
-                    ((memq first '(defun cl-defun))
-                     (push next defn-forms)
-                     (list 'function (cadr next)))
-                    ((prog1 `(lambda (&rest _) ,@(cons next rest))
-                       (setq rest nil))))
-              func-forms)))
+                      next)
+                ((eq first 'quote)
+                  (let ((quoted (cadr next)))
+                    (if (atom quoted)
+                      next
+                      (when (cdr quoted)
+                        (setq rest (cons (list first (cdr quoted)) rest)))
+                      (list first (car quoted)))))
+                ((memq first '(defun cl-defun))
+                  (push next defn-forms)
+                  (list 'function (cadr next)))
+                ((prog1 `(lambda (&rest _) ,@(cons next rest))
+                   (setq rest nil))))
+          func-forms)))
     `(progn
        ,@defn-forms
        (dolist (hook (nreverse ',hook-forms))
          (dolist (func (list ,@func-forms))
            ,(if remove-p
-                `(remove-hook hook func ,local-p)
+              `(remove-hook hook func ,local-p)
               `(add-hook hook func ,(or depth append-p) ,local-p)))))))
 
 (defmacro remove-hook! (hooks &rest rest)

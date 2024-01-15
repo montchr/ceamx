@@ -69,11 +69,15 @@
     ;; Since the project likely now contains new files, best we undo the
     ;; projectile cache so it can be regenerated later.
     (after! 'projectile
-       (projectile-invalidate-cache nil))
+      (declare-function projectile-invalidate-cache "projectile")
+      (projectile-invalidate-cache nil))
     ;; Use a more efficient strategy to auto-revert buffers whose git state has
     ;; changed: refresh the visible buffers immediately...
     (+magit-mark-stale-buffers-h))
   ;; ...then refresh the rest only when we switch to them, not all at once.
+  ;;
+  ;; FIXME: many of these in Messages buffer:
+  ;; Error during redisplay: (+magit-revert-buffer-maybe-h #<frame *Warnings* 0x3ae3660>) signaled (wrong-number-of-arguments ((t) nil "Update `vc' and `git-gutter' if out of date." (if +magit--stale-p (progn (+magit--revert-buffer (current-buffer))))) 1)
   (add-hook 'window-buffer-change-functions #'+magit-revert-buffer-maybe-h)
 
   ;; Prevent sudden window position resets when staging/unstaging/discarding/etc
