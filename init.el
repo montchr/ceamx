@@ -241,6 +241,7 @@
 (require 'init-treesitter)
 
 ;;; Miscellaneous
+(require 'init-secrets)
 (require 'init-tools)
 (require 'init-ledger)
 (require 'init-fun)
