@@ -130,12 +130,18 @@
     '("<escape>" . ignore)
     '(":" . avy-goto-char-2))
 
-  ;; FIXME: errors i think (`appendq!' seems broken overall, i haven't found it ever to do what i expected)
-  ;; (appendq! meow-mode-state-list
-  ;;   (diary-mode . normal)
-  ;;   (help-mode . normal)
-  ;;   (eshell-mode . insert)
-  ;;   (comint-mode . insert))
+  (pushnew! meow-mode-state-list
+    ;; shells
+    '(comint-mode . insert)
+    '(eshell-mode . insert)
+    ;; writing
+    '(diary-mode . normal)
+    ;; read-only
+    ;; TODO: how to lock state?
+    ;; TODO: how to set for all read-only modes? `read-only-mode' does not work...
+    '(read-only-mode . motion)
+    '(help-mode . normal))
+
 
   ;; NOTE: This is not a customizable variable, although it is required for meow.
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
@@ -152,7 +158,8 @@
   ;; TODO: investigate effects -- copied from <https://github.com/chuxubank/cat-emacs/blob/65155f642b336d14ca63f010ff45eea2c18cfdce/cats/%2Bmeow.el>
   ;; (setopt meow-expand-exclude-mode-list nil)
 
-  ;; Prevent leader binding collision with `cmx-git-map'.
+  ;; Prevent leader binding collision with `cmx-git-map', which I have bound to
+  ;; "SPC g" because muscle memory.
   (setopt meow-keypad-ctrl-meta-prefix nil)
 
   ;; Improve state indicator appearance (e.g. in modeline).
