@@ -83,7 +83,7 @@
 ;;  See also `popon', the utility library powering the interface.
 (use-package corfu-terminal
   :elpaca (corfu-terminal :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
-  :if (not (display-graphic-p))
+  :unless (display-graphic-p)
   :after (popon corfu)
   :config
   (corfu-terminal-mode +1))
@@ -98,7 +98,7 @@
 ;; (use-package corfu-doc-terminal
 ;;   :elpaca (corfu-doc-terminal :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git")
 ;;   :after (corfu-terminal)
-;;   :if (not (display-graphic-p))
+;;   :unless (display-graphic-p)
 ;;   :config
 ;;   (corfu-doc-terminal-mode +1))
 

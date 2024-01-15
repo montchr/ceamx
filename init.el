@@ -126,21 +126,21 @@
 ;;;; Typography + Iconography
 (when (display-graphic-p)
   (require 'init-ui-font))
+;; Icons *can* work in non-graphical environments, so packages are
+;; enabled/configured based on `display-graphic-p' within.
 (require 'init-ui-icons)
 
 ;;;; Modeline
 (require 'config-ui)
 (require 'init-ui-modeline)
-;; TODO: why not tty?
-(when (display-graphic-p)
-  (pcase cmx-modeline-provider
-    ('doom (require 'init-ui-modeline-doom))
-    ('nano (require 'init-ui-modeline-nano))
-    ('telephone (require 'init-ui-modeline-telephone-line))))
+(pcase cmx-modeline-provider
+  ('doom (require 'init-ui-modeline-doom))
+  ('nano (require 'init-ui-modeline-nano))
+  ('telephone (require 'init-ui-modeline-telephone-line)))
 
 (require 'init-after-ui)
 
-;; Workspace
+;;; Workspace
 (require 'init-workspace)
 
 ;;;; Sidebar
