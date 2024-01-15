@@ -22,12 +22,16 @@
 
 ;; Definitions relating to Emacs Lisp and other supported lispy languages.
 
-;; Support indicated by `cmx-lisp-mode-list'.
+;; Support indicated by `ceamx-lisp-modes-list'.
 
 ;;; Code:
 
-(defvar cmx-lisp-mode-list '(emacs-lisp-mode lisp-mode)
-  "Supported Lisps.")
+(defvar ceamx-lisp-modes-list '(emacs-lisp-mode
+                                ielm-mode
+                                lisp-mode
+                                inferior-lisp-mode
+                                lisp-interaction-mode)
+  "Supported Lisp modes.")
 
 (defvar +emacs-lisp-outline-regexp "[ \t]*;;;\\(;*\\**\\) [^ \t\n]"
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.

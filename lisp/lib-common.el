@@ -219,6 +219,15 @@ and the features of Doom's version would probably be ideal."
     (t
       `(with-eval-after-load ,feature ,@body))))
 
+(defmacro after!! (feature &rest body)
+  "Evaluate BODY after FEATURE and an eponymous mode it provides.
+Wrapper for `after!' with an additional check for a mode named after FEATURE."
+  (declare (indent defun))
+  (let ((mode-sym (intern (format "%s-mode" (symbol-name (cmx-unquote feature))))))
+    `(after! ,feature
+       (when (fboundp ',mode-sym)
+         ,@body))))
+
 ;; via <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is non-nil.

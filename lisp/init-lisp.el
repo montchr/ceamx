@@ -27,84 +27,46 @@
 
 ;;; Code:
 
+(require 'derived)
+
+(require 'lib-common)
+(require 'lib-lisp)
+
 (require 'config-lisp)
 
 ;;
-;;; Mode hooks
+;;; Hooks
 ;;
-
 ;; For managing load order, especially concerning visual enhancements.
-;; Apply to hooks on individual Lisp modes in their respective files.
+;;
+;; Apply to hooks on individual Lisp modes in their respective files so they can
+;; be disabled cleanly.
 
-(defun cmx-prog--lisp-init-h ()
-  "Initialize defaults for Lisp programming modes."
+(add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
 
-  ;; FIXME: `pp-buffer' is broken (at least for elisp)
-  ;;        <https://mail.gnu.org/archive/html/emacs-diffs/2023-07/>
-  ;;
-  ;; NOTE: will cause cause excessive lisp nesting when both of these statements
-  ;;       are uncommented! only one can be adjusted. i haven't looked into why,
-  ;;       but considering that these functions are already known to be
-  ;;       maybe-broken, it's not worth bothering.
-  ;;
-  ;;       an easy way to reproduce the issue is using `lispy-tab' at the end of
-  ;;       an expression and pressing "i". it may also have some interaction
-  ;;       with `consult' with `use-package:config' but that could be a separate
-  ;;       issue i haven't been able to track down.
-  (setopt pp-max-width fill-column)
-  ;; (setopt pp-use-max-width t)
+(after!! 'aggressive-indent
+  (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode))
 
-  (after! 'smartparens
-    (smartparens-strict-mode 1))
-
-  (after! 'rainbow-delimiters
-    (rainbow-delimiters-mode 1))
-
-  ;; `highlight-function-calls-mode' should be invoked after other highlighters
-  ;; (e.g. `rainbow-delimiters-mode'), according to its readme.
-  (after! 'highlight-function-calls
-    (highlight-function-calls-mode 1))
-
-  (after! 'lispy
-    (lispy-mode 1))
-
-  (after! 'lispyville
-    (lispyville-mode 1)))
-
-(setq cmx-prog-lisp-init-hook 'cmx-prog--lisp-init-h)
-
-(defun cmx-prog--interactive-lisp-init-h ()
-  "Initialize defaults for Lisp shells and other interactive modes."
-  (after! 'smartparens
-    (smartparens-strict-mode +1))
-  (after! 'rainbow-delimiters
-    (rainbow-delimiters-mode +1))
-  (whitespace-mode -1))
-
-(setq cmx-prog-interactive-lisp-init-hook 'cmx-prog--interactive-lisp-init-h)
+;; Add hooks to supported Lisp modes.
+(dolist (mode ceamx-lisp-modes-list)
+  (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 
 ;; Always use 2-space indentation in Lisps.
+;; TODO: i don't understand this copypasta
 (dolist (sym '(add-function advice-add plist-put))
   (put sym 'lisp-indent-function 2))
 
+;;
+;;; Packages
+
 ;;; `lispy' :: <https://github.com/abo-abo/lispy>
 (use-package lispy
+  :commands (lispy-mode)
+
   :init
-  (defun cmx-init-lispy-in-eval-expression-h ()
-    "Enable `lispy-mode' in the minibuffer for `eval-expression'."
-    (lispy-mode +1)
-    ;; When `lispy-key-theme' has `parinfer', the TAB key doesn't do
-    ;; completion, neither (kbd "<tab>"/"TAB"/"C-i")/[tab]/"\C-i" works in
-    ;; terminal as tested so remapping is used as a workaround
-    (local-set-key (vector 'remap (lookup-key lispy-mode-map (kbd "TAB"))) #'completion-at-point))
-  (add-hook 'eval-expression-minibuffer-setup-hook #'cmx-init-lispy-in-eval-expression-h)
+  (add-hook 'ceamx-lisp-init-hook #'lispy-mode)
 
   :config
-  (dolist (mode cmx-lisp-mode-list)
-    (let ((hook (intern (format "%S-hook" mode))))
-      ;; FIXME: just add `lispy-mode' directly jeez
-      (add-hook hook (cmd! (lispy-mode +1)))))
-
   ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
   ;; in favor of just moving past the closing quote as I would expect.
   (setopt lispy-close-quotes-at-end-p t)
@@ -122,6 +84,9 @@
   :defines (lispyville-key-theme)
 
   :init
+  ;; Enable `lispyville' when `lispy' is enabled.
+  (add-hook 'lispy-mode-hook #'lispyville-mode)
+
   ;; NOTE: `setopt' throws warning on mismatched type
   (setq lispyville-key-theme
     '((operators normal)
@@ -131,7 +96,7 @@
        slurp/barf-lispy
        additional
        additional-insert))
-  (add-hook 'lispy-mode-hook #'lispyville-mode)
+
 
   :config
   (lispyville-set-key-theme)

@@ -116,8 +116,10 @@
 
 ;;;; Initialize packages adding `use-package' keywords.
 
+;; NOTE: `blackout' is still useful even without `use-package'
 (use-package blackout
-  :demand t)
+  :demand t
+  :autoload (blackout))
 
 (elpaca-wait)
 

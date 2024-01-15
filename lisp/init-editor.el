@@ -45,19 +45,13 @@
 (electric-indent-mode +1)
 (setopt backward-delete-char-untabify-method 'hungry)
 
-(defun cmx-prog-mode--init-defaults-h ()
-  "Intialize common defaults for programming modes.
-In most cases, these modes derive from `prog-mode', but there may be some exceptions."
-  (whitespace-mode 1)
-  (after! [smartparens evil]
-    ;;; Maintain indentation and comments upon newline.
-    ;; I first tried `keymap-local-set' but the binding was overridden by `evil-ret'.
-    ;; TODO: advise `evil-ret'?
-    (keymap-set evil-insert-state-map "RET" #'comment-indent-new-line)))
+;;; Maintain indentation and comments upon newline.
 
-(defvar cmx-prog-mode-init-hook #'cmx-prog-mode--init-defaults-h)
+(after! 'evil
+  (when (boundp 'evil-insert-state-map)
+    (keymap-set evil-insert-state-map
+      "RET" #'comment-indent-new-line)))
 
-(add-hook 'prog-mode-hook (cmd! (run-hooks 'cmx-prog-mode-init-hook)))
 
 ;;; `whitespace-mode' (internal)
 ;;
@@ -68,6 +62,9 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 (use-feature! whitespace
   :defines ( whitespace-style
              whitespace-display-mappings)
+  :init
+  (add-hook 'prog-mode-hook #'whitespace-mode)
+
   :config
   (setopt whitespace-style '(face tabs tab-mark trailing))
   ;; Visualize tabs as a pipe character - "|" (ASCII ID 124)
@@ -105,12 +102,14 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 ;;       chatgpt tells me that smartparens is responsible for that in doom emacs, we shall see...
 ;;       ok i just installed doom in a scratch directory and weirdly enough i'm not seeing the behavior i remember at all
 ;;       but hey, it would be nice, right?
+;;
+;; FIXME: replace with something that isn't so extra e.g. electric-pair-mode and the like
 ;;; `smartparens' :: <https://github.com/Fuco1/smartparens>
 (use-package smartparens
-  :autoload ( sp-local-pair)
-  :commands ( smartparens-mode
-              sp-use-paredit-bindings
-              show-smartparens-global-mode)
+  :autoload (sp-local-pair)
+  :commands (smartparens-mode
+             sp-use-paredit-bindings
+             show-smartparens-global-mode)
   :init
   ;; Load `smartparens' just about everywhere editable.
   (dolist (mode '(prog-mode text-mode markdown-mode git-commit-mode))
@@ -127,12 +126,11 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 
   (sp-use-paredit-bindings)
 
-  (show-smartparens-global-mode +1)
+  (show-smartparens-global-mode 1)
 
   ;;; When pressing RET after inserting a pair, add an extra newline and indent.
   ;;  <https://github.com/radian-software/radian/blob/develop/emacs/radian.el#L2174-L2214>
   ;;  <https://github.com/Fuco1/smartparens/issues/80#issuecomment-18910312>.
-
   (dolist (delim '("(" "[" "{"))
     ;; NOTE: For some reason, the modes must be specified explicitly; that is,
     ;; specifying `fundamental-mode' does not imply all modes will inherit its
@@ -169,7 +167,9 @@ In most cases, these modes derive from `prog-mode', but there may be some except
 
 ;;; `rainbow-delimiters' :: <https://github.com/Fanael/rainbow-delimiters>
 (use-package rainbow-delimiters
-  :commands (rainbow-delimiters-mode))
+  :commands (rainbow-delimiters-mode)
+  :init
+  (add-hook 'ceamx-lisp-init-hook #'rainbow-delimiters-mode))
 
 ;;
 ;;; Mutations
