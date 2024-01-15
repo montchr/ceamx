@@ -197,9 +197,10 @@ keyword to nil.
 Refer to the `use-package' documentation for further information."
   (declare (indent defun))
   `(use-package ,name
-     :ensure nil
-     ,(when (bound-and-true-p elpaca-use-package-mode)
-        :elpaca nil)
+     :elpaca nil
+     ;; FIXME: condition doesn't work
+     ;; ,(when (bound-and-true-p elpaca-use-package-mode)
+     ;;    :elpaca nil)
      ,@args))
 
 ;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
