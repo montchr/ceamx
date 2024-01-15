@@ -30,7 +30,7 @@
 
 (require 'ceamx-paths)
 
-(require 'lib-packages)
+(require 'lib-common)
 
 ;; Package installation will provoke a lot of these, but that's the package
 ;; developers' problem, not ours.

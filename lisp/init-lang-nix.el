@@ -28,7 +28,6 @@
 ;;; Code:
 
 (require 'lib-common)
-(require 'lib-packages)
 
 (autoload 'reformatter-define "reformatter" t)
 

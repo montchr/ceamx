@@ -58,7 +58,7 @@
 
 ;;; Code:
 
-(require 'lib-packages)
+(require 'lib-common)
 
 (use-feature! treesit
   :demand t)

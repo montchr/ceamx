@@ -24,6 +24,7 @@
 
 ;;; Code:
 
+(require 'lib-common)
 (require 'lib-vcs-magit)
 
 (use-package magit

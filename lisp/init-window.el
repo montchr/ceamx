@@ -26,7 +26,6 @@
 ;;; Code:
 
 (require 'lib-common)
-(require 'lib-packages)
 (require 'lib-window)
 
 ;; Hide buffer until there's output.

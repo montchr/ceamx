@@ -185,7 +185,23 @@ Original source: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0
      (dolist (dir (list ,@dirs))
        (cl-pushnew (expand-file-name dir) load-path :test #'string=))))
 
-;; FIXME: invalid lint warning for long URL in docstring
+(defmacro use-feature! (name &rest args)
+  "Simple wrapper for `use-package', passing through NAME and ARGS.
+
+This macro is a wrapper for `use-package'. It disables package
+installation by setting `:ensure' to nil and, if
+`elpaca-use-package-mode' is enabled, by setting the `:elpaca'
+keyword to nil.
+
+Refer to the `use-package' documentation for further information."
+  (declare (indent defun))
+  `(use-package ,name
+     :ensure nil
+     ,(when (bound-and-true-p elpaca-use-package-mode)
+        :elpaca nil)
+     ,@args))
+
+;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
 (defmacro after! (feature &rest body)
   "Execute BODY after FEATURE has been loaded.
 
@@ -196,16 +212,10 @@ FEATURE may be any one of:
                           (with-eval-after-load \\='cider
                             BODY))
 
-Source: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
-
-This implementation is preferred over Doom's because we prefer
-standard syntaxes (e.g. quoted lists, vectors) over magical
-`use-package'-style sugars like unquoted lists of symbols which
-would normally be evaluated as a function with arguments.
-
-TODO: That said, Doom's implementation is more flexible and handles
-undefined symbols. Some new macro supporting standard input types
-and the features of Doom's version would probably be ideal."
+TODO: Doom's implementation is more flexible and handles
+undefined symbols, but does not support quoted FEATURE. Some new
+macro supporting quoted FEATURE and the features of Doom's
+version would probably be ideal."
   (declare (indent 1))
   (cond
     ((vectorp feature)

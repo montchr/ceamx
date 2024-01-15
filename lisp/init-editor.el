@@ -29,7 +29,6 @@
 
 (require 'lib-common)
 (require 'lib-editor)
-(require 'lib-packages)
 
 ;;
 ;;; Formatting

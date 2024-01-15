@@ -29,7 +29,6 @@
 
 (require 'ceamx-paths)
 (require 'lib-common)
-(require 'lib-packages)
 
 ;;; `savehist' (internal)
 ;;  Save history for the values of arbitrary variables, but most notably

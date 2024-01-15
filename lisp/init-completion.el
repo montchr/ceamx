@@ -34,7 +34,7 @@
 ;;; Code:
 
 (require 'lib-completion)
-(require 'lib-packages)
+(require 'lib-common)
 
 ;; TAB cycle if there are only few candidates
 (setopt completion-cycle-threshold 3)

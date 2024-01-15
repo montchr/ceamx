@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(require 'lib-packages)
+(require 'lib-common)
 
 (display-time-mode -1)
 (setopt column-number-mode t)

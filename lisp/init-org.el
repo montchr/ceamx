@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(require 'lib-packages)
+(require 'lib-common)
 
 (require 'config-notes)
 (require 'config-org)

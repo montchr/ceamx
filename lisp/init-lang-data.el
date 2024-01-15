@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(require 'lib-packages)
+(require 'lib-common)
 
 (use-feature! nxml-mode
   :mode "\\.p\\(?:list\\|om\\)\\'"      ; plist, pom

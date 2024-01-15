@@ -27,8 +27,8 @@
 
 ;;; Code:
 
+(require 'lib-common)
 (require 'lib-files)
-(require 'lib-packages)
 
 ;; Create missing directories when we open a file that doesn't exist under a
 ;; directory tree that may not exist.

@@ -26,7 +26,6 @@
 ;;; Code:
 
 (require 'lib-common)
-(require 'lib-packages)
 
 (defvar savehist-additional-variables)
 

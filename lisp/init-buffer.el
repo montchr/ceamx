@@ -30,9 +30,6 @@
 
 (require 'lib-common)
 (require 'lib-keys)
-(require 'lib-packages)
-
-
 
 ;; Disable buffer line wrapping by default.
 (set-default 'truncate-lines t)

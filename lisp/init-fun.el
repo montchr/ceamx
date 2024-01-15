@@ -23,7 +23,7 @@
 
 ;;; Code:
 
-(require 'lib-packages)
+(require 'lib-common)
 
 ;; <https://www.emacswiki.org/emacs/ZoneMode>
 (use-feature! zone

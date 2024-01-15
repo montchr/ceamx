@@ -27,7 +27,6 @@
 ;;; Code:
 
 (require 'lib-common)
-(require 'lib-packages)
 
 (defun cmx-init-javascript-modes ()
   (setopt js-indent-level 2)
