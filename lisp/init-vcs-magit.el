@@ -27,9 +27,12 @@
 (require 'lib-common)
 (require 'lib-vcs-magit)
 
+(use-feature! transient
+  :autoload (transient-quit-one))
+
 (use-package magit
   :defer t
-  :after (git-commit)
+  :after (seq transient git-commit)
 
   :config
   ;; TODO: is this still necessary?
