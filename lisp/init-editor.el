@@ -52,6 +52,10 @@
     (keymap-set evil-insert-state-map
       "RET" #'comment-indent-new-line)))
 
+(after! 'meow
+  (when (boundp 'meow-insert-state-keymap)
+    (keymap-set meow-insert-state-keymap
+      "RET" #'comment-indent-new-line)))
 
 ;;; `whitespace-mode' (internal)
 ;;
