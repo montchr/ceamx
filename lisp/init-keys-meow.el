@@ -163,6 +163,15 @@
                                           (keypad . "🅚")))
 
   (meow-pair! 'angle "a" "<" ">")
+
+  (ceamx-meow-bind-thing 'round "(")
+  (ceamx-meow-bind-thing 'round ")")
+  (ceamx-meow-bind-thing 'curly "{")
+  (ceamx-meow-bind-thing 'curly "}")
+
+  ;; TODO: i don't really thing i want to do this, but here for reference
+  ;; (ceamx-meow-unbind-thing "r")
+
   ;; Don't pass through keys that aren't in keypad.
   (setopt meow-keypad-self-insert-undefined nil)
 
