@@ -162,6 +162,7 @@
                                           (motion . "🅜")
                                           (keypad . "🅚")))
 
+  (meow-pair! 'angle "a" "<" ">")
   ;; Don't pass through keys that aren't in keypad.
   (setopt meow-keypad-self-insert-undefined nil)
 
