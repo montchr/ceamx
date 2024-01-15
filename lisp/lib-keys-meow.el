@@ -88,7 +88,7 @@ and Info node `(elisp) String Conversion' for more info."
   "Add pre-registered THING to `meow-char-thing-table' as CHAR."
   (defvar meow-char-thing-table '())
   (let ((thing (cmx-unquote thing))
-         (char (ceamx-normalize-char ,char)))
+         (char (ceamx-normalize-char char)))
     (add-to-list 'meow-char-thing-table `(,char . ,thing))))
 
 (defun ceamx-meow-unbind-thing (char)
