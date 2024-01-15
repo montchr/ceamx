@@ -24,6 +24,7 @@
 ;;; Code:
 
 (require 'lib-common)
+(require 'lib-keys-meow)
 
 (use-package meow
   :demand t
