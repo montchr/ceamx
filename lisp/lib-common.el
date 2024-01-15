@@ -463,6 +463,20 @@ as in `defun'."
        (dolist (hook ',hooks)
          (add-hook hook ',name)))))
 
+;; FIXME: accept unquoted args
+(defmacro hook! (hooks func)
+  "Add function FUNC to one or more HOOKS.
+HOOKS may be either a single quoted hook symbol, or a list of
+multiple hook symbols.
+
+FUNC may be any quoted function symbol."
+  (declare (indent defun))
+  (setq func (cmx-unquote func))
+  (cl-assert (fboundp func) t)
+  `(dolist (hook (ensure-list ,hooks))
+     (cl-assert (boundp hook) t)
+     (add-hook hook ',func)))
+
 (defmacro add-hook! (hooks &rest rest)
   "A convenience macro for adding N functions to M hooks.
 
