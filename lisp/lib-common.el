@@ -586,6 +586,7 @@ keyword to nil.
 Refer to the `use-package' documentation for further information."
   (declare (indent defun))
   `(use-package ,name
+     :ensure nil
      ;; FIXME: :elpaca nil
      ;; FIXME: condition doesn't work
      ;; ,(when (bound-and-true-p elpaca-use-package-mode)
