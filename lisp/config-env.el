@@ -42,9 +42,17 @@
 (defvar +sys-linux-p
   (eq system-type 'gnu/linux))
 
+;; via <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
+(defvar +sys-wsl-p
+  (and (eq system-type 'gnu/linux)
+    (or (getenv "WSLENV")
+      (getenv "WSL_DISTRO_NAME")))
+  "Whether Emacs is currently running in WSL.")
+
 (defvar +env-dumb-p
   (string= (getenv "TERM") "dumb"))
 
+;; TODO: is this really the way? and is it even necessary?
 (defvar +env-iterm-p
   (string= (getenv "TERM_PROGRAM") "iTerm.app"))
 

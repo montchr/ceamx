@@ -45,6 +45,8 @@
 
 ;;; Load environment-related constants.
 (require 'config-env)
+(when +sys-wsl-p
+  (require 'lib-env-wsl))
 
 ;;
 ;;; Package initialization
