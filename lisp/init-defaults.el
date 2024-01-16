@@ -170,7 +170,6 @@
 (setopt indicate-empty-lines nil)
 
 (setq-default cursor-type '(hbar .  2))
-(setq-default cursor-in-non-selected-windows nil)
 
 (provide 'init-defaults)
 ;;; init-defaults.el ends here
