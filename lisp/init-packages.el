@@ -29,80 +29,106 @@
 (require 'cl-lib)
 
 (require 'ceamx-paths)
-
 (require 'lib-common)
+
+(require 'package)
+
+;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L69-L86>
+;; (defvar ceamx-selected-packages nil
+;;   "Track the packages installed by `ceamx-require-package'.
+;; This aims to avoid potential issues with
+;; `package-selected-packages'.")
+
+;; (defun ceamx-note-selected-package-a (oldfun package &rest args)
+;;   "If OLDFUN reports PACKAGE was successfully installed, note that fact.
+;; The package name is noted by adding it to
+;; `ceamx-selected-packages'.  This function is used as an
+;; advice for `require-package', to which ARGS are passed."
+;;   (let ((available (apply oldfun package args)))
+;;     (prog1
+;;         available
+;;       (when available
+;;         (add-to-list 'ceamx-selected-packages package)))))
+
+;; (advice-add 'ceamx-require-package :around 'ceamx-note-selected-package-a)
+
+;;; Prevent `seq' dependency hell induced by `magit' changes.
+
+;; Work around an issue in Emacs 29 where seq gets implicitly reinstalled via
+;; the rg -> transient dependency chain, but fails to reload cleanly due to not
+;; finding seq-25.el, breaking first-time start-up.
+;;
+;; Source: <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L89-L100>
+;; See: <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=67025>
+;;
+;; TODO: make sure this condition catches unstable versions of emacs 29.1
+;; (when (string= "29.1" emacs-version)
+;;   (defadvice! ceamx-reload-previously-loaded-with-updated-load-path-a (orig pkg-desc)
+;;     "Update the ORIG load-path with PKG-DESC directories.
+;; Intended as a workaround for `seq' dependency hell caused by
+;; recent `magit' changes."
+;;     :around 'package--reload-previously-loaded
+;;     (let ((load-path (cons (package-desc-dir pkg-desc) load-path)))
+;;       (funcall orig pkg-desc))))
+
+;; (when (fboundp 'package--save-selected-packages)
+;;   (ceamx-package 'seq)
+;;   (def-hook! ceamx-merge-selected-package-lists-a () 'after-init-hook
+;;     "Merge the package selections from `package' and `ceamx-selected-packages'."
+;;     (package--save-selected-packages
+;;       (seq-uniq (append ceamx-selected-packages package-selected-packages)))))
 
 ;; Package installation will provoke a lot of these, but that's the package
 ;; developers' problem, not ours.
 (setq byte-compile-warnings nil)
 
-;;; elpaca
+;; Allow upgrading of builtin packages available in ELPA.
+;;
+;; This is *required* for `magit' currently, as it loads a version of `seq'
+;; which is only available in Emacs 30.
+(setopt package-install-upgrade-built-in t)
 
-;; Prevent "unable to determine `elpaca-core-date'" warnings on init.
-;; <https://github.com/progfolio/elpaca/issues/222>
-;; This *must* be set prior to loading `elpaca' in order to take effect.
-;; This is the recommended value from the maintainer.
-(setq elpaca-core-date '(20231211))
+(setopt package-native-compile t)
 
-(defvar elpaca-installer-version 0.6)
-(defvar elpaca-directory (expand-file-name "elpaca/" cmx-packages-dir))
-(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
-(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil
-                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                              :build (:not elpaca--activate-package)))
-(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-       (build (expand-file-name "elpaca/" elpaca-builds-directory))
-       (order (cdr elpaca-order))
-       (default-directory repo))
-  (add-to-list 'load-path (if (file-exists-p build) build repo))
-  (unless (file-exists-p repo)
-    (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
-    (condition-case-unless-debug err
-        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                 ((zerop (call-process "git" nil buffer t "clone"
-                                       (plist-get order :repo) repo)))
-                 ((zerop (call-process "git" nil buffer t "checkout"
-                                       (or (plist-get order :ref) "--"))))
-                 (emacs (concat invocation-directory invocation-name))
-                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                 ((require 'elpaca))
-                 ((elpaca-generate-autoloads "elpaca" repo)))
-            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-          (error "%s" (with-current-buffer buffer (buffer-string))))
-      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-  (unless (require 'elpaca-autoloads nil t)
-    (require 'elpaca)
-    (elpaca-generate-autoloads "elpaca" repo)
-    (load "./elpaca-autoloads")))
-(add-hook 'after-init-hook #'elpaca-process-queues)
-(elpaca `(,@elpaca-order))
+;; Also read: <https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/>
+(setopt package-archives
+      '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
+        ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+        ("melpa" . "https://melpa.org/packages/")))
+
+;; Highest number gets priority (what is not mentioned has priority 0).
+(setopt package-archive-priorities
+      '(("gnu-elpa" . 3)
+        ("melpa" . 2)
+        ("nongnu" . 1)))
+
+;; Begin the process of installing and `require'ing packages selected via
+;; `package-install' or a function which invokes it, including
+;; `ceamx-require-package' or `ceamx-package'.
+;;
+;; When a package is selected for installation by `package-install', its
+;; specification is added to the queue stored in `package-selected-packages'.
+;; Once called, `package-initialize' will process the queued packages.
+;;
+;; If relying on `use-package' for package initialization, `package-initialize'
+;; should not be called. (TODO: verify this)
+;; (package-initialize)
 
 ;;
 ;;; `use-package' :: <https://github.com/jwiegley/use-package>
 ;;  <https://www.gnu.org/software/emacs/manual/html_mono/use-package.html>
 
-(elpaca use-package
-  (require 'use-package))
-(elpaca-wait)
-
-;; Install use-package support
-(elpaca elpaca-use-package
-  ;; Enable :elpaca use-package keyword.
-  (elpaca-use-package-mode)
-  ;; Assume :elpaca t unless otherwise specified.
-  (setq elpaca-use-package-by-default t))
-
-;; Block until current queue processed.
-(elpaca-wait)
+;; (ceamx-package use-package)
 
 ;; When non-nil, improves performance and effectiveness of byte-compilation,
 ;; but decreases introspectability.
 ;; If byte-compiling user configurations, this should be non-nil.
 (setopt use-package-expand-minimally nil)
+
+;; NOTE: If a `use-package' declaration should not use `:ensure', use `use-feature!'
+;; instead, which already handles that.
+(setopt use-package-always-ensure t)
 
 ;;; Support for Emacs init introspection.
 (when (bound-and-true-p init-file-debug)
@@ -120,8 +146,6 @@
 (use-package blackout
   :demand t
   :autoload (blackout))
-
-(elpaca-wait)
 
 (provide 'init-packages)
 ;;; init-packages.el ends here

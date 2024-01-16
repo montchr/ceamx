@@ -263,21 +263,21 @@
   (unless (and (fboundp 'server-running-p)
             (server-running-p))
     (server-start)))
-(add-hook 'elpaca-after-init-hook #'+maybe-start-server)
+(add-hook 'after-init-hook #'+maybe-start-server)
 
 ;; unfortunately
 (defun cmx-after-init-restart-yabai-h ()
-  "Restart the yabai service after Elpaca initialization is complete."
+  "Restart the yabai service after init."
   (after! [exec-path-from-shell]
     (async-shell-command "yabai --restart-service")))
 (when (and +gui-p +sys-mac-p)
-  (add-hook 'elpaca-after-init-hook #'cmx-after-init-restart-yabai-h))
+  (add-hook 'after-init-hook #'cmx-after-init-restart-yabai-h))
 
 ;; Load custom file after all packages have loaded.
 (when (file-exists-p custom-file)
   (defun cmx-load-custom-file-after-init-h ()
     (load custom-file 'noerror))
-  (add-hook 'elpaca-after-init-hook #'cmx-load-custom-file-after-init-h))
+  (add-hook 'after-init-hook #'cmx-load-custom-file-after-init-h))
 
 ;; Wait for all packages to initialize in non-interactive mode.
 (when (and noninteractive

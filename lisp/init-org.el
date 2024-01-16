@@ -40,7 +40,7 @@
   (make-directory org-directory))
 
 (use-package org
-  :elpaca (:autoloads "org-loaddefs.el")
+  ;; FIXME: :elpaca (:autoloads "org-loaddefs.el")
 
   :init
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
@@ -104,7 +104,7 @@
 
 ;; FIXME: not in nixpkgs
 ;;(use-package org-modern-indent
-;;  ;; :elpaca (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
+;;  ;; ;; FIXME: :elpaca (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
  ;; :config
 ;;  (setopt org-startup-indented t)
 ;;  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))

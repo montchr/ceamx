@@ -86,7 +86,7 @@
 ;; NOTE: The double-dashed option names are NOT private, despite the Elisp
 ;; naming convention. Try to ignore it.
 ;; (use-package consult-gh
-;;   :elpaca (consult-gh :host github :repo "armindarvish/consult-gh")
+;;   ;; FIXME: :elpaca (consult-gh :host github :repo "armindarvish/consult-gh")
 ;;   :defines ( consult-gh-default-clone-directory
 ;;              consult-gh-default-orgs-list)
 ;;   :init

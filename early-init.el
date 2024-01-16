@@ -140,7 +140,7 @@ Intended for use as a callback on `after-init-hook'."
 (setq frame-resize-pixelwise t)
 
 ;; There is no place like Emacs.
-(add-hook 'elpaca-after-init-hook (lambda () (set-frame-name "home")))
+(add-hook 'after-init-hook (lambda () (set-frame-name "home")))
 
 (provide 'early-init)
 ;;; early-init.el ends here

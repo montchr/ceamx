@@ -34,7 +34,7 @@
 ;;
 
 (use-package vertico
-  :elpaca (vertico :files (:defaults "extensions/*"))
+  ;; FIXME: :elpaca (vertico :files (:defaults "extensions/*"))
   :demand t
 
   :init

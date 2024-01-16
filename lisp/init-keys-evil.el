@@ -271,7 +271,7 @@
 ;; FIXME: `embrace' and `evil-embrace' don't install properly
 ;; `embrace' :: <https://github.com/cute-jumper/embrace.el>
 ;; (use-package embrace
-;;             :elpaca (embrace :host github :repo "cute-jumper/embrace.el")
+;;             ;; FIXME: :elpaca (embrace :host github :repo "cute-jumper/embrace.el")
 ;;  :commands (embrace-org-mode-hook
 ;;             embrace-ruby-mode-hook
 ;;             embrace-emacs-lisp-mode-hook))
@@ -279,7 +279,7 @@
 ;; `evil-embrace' :: <https://github.com/cute-jumper/evil-embrace.el>
 ;; (use-package evil-embrace
 
-;;             :elpaca (evil-embrace :host github :repo "cute-jumper/evil-embrace.el")
+;;             ;; FIXME: :elpaca (evil-embrace :host github :repo "cute-jumper/evil-embrace.el")
 ;;  :after (evil embrace)
 
 ;;  :commands (embrace-add-pair
