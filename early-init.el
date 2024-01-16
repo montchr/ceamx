@@ -69,6 +69,24 @@
   (add-hook 'elpaca-after-init-hook #'cmx-gc-restore-freq))
 (add-hook 'minibuffer-exit-hook #'cmx-gc-restore-freq)
 
+;;; Simplify filename pattern-matching during init.
+;;  <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
+;;  <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
+
+(defvar cmx-file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+
+(defun cmx-restore-file-name-handler-alist-h ()
+  "Restore the original value of the `file-name-handler-alist' variable.
+Intended for use as a callback on `after-init-hook'."
+  (setq file-name-handler-alist cmx-file-name-handler-alist)
+  (makunbound 'cmx-file-name-handler-alist))
+
+(add-hook 'after-init-hook #'cmx-restore-file-name-handler-alist-h)
+(with-eval-after-load 'elpaca
+  (remove-hook 'after-init-hook #'cmx-restore-file-name-handler-alist-h)
+  (add-hook 'elpaca-after-init-hook #'cmx-restore-file-name-handler-alist-h))
+
 ;;
 ;;; Directories:
 
