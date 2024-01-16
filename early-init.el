@@ -31,7 +31,8 @@
 
 ;;; Code:
 
-;; Disable package.el
+;; Prevent package.el from enabling all packages during init.
+;; This should improve init performance.
 (setq package-enable-at-startup nil)
 
 ;;; PERF: Minimize garbage collection during startup:
