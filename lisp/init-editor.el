@@ -72,6 +72,7 @@
   (setopt whitespace-style '(face tabs tab-mark trailing))
   ;; Visualize tabs as a pipe character - "|" (ASCII ID 124)
   ;; NOTE: the original value is still present at tail
+  ;; TODO: use character constants for clarity
   (cl-pushnew '(tab-mark 9 [124 9] [92 9]) whitespace-display-mappings))
 
 

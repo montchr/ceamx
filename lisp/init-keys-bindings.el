@@ -20,12 +20,15 @@
 
 ;;; Commentary:
 
+;; FIXME: turns out, unsurprisingly, that loading this last means that its
+;; keymaps are unavailable for binding in any prior-loaded file, but i guess
+;; that's kind of a given for this all-in-one-place approach to bindings
+
 ;; TODO: quikgrok descriptions for `cmx-window-map' defs
 ;; TODO: vim-like case invert! <https://gitlab.com/slotThe/dotfiles/-/blob/77393d030021a3524c03f22bbb4a4ca75965a9fd/emacs/.config/emacs/lisp/keybindings.el#L79-92>
 
 ;;; Code:
 
-;; FIXME: come on load path
 (require 'ceamx-paths)
 
 (require 'config-help)

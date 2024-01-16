@@ -592,6 +592,8 @@ Refer to the `use-package' documentation for further information."
      ;;    :elpaca nil)
      ,@args))
 
+;; FIXME: this kinda stinks because the actual installation of packages happens
+;;        as a side effect within a `let*' expression within an `or' condition.
 ;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L31-L60>
 (defun ceamx-require-package (package &optional min-version no-refresh)
   "Install given PACKAGE, optionally requiring MIN-VERSION.

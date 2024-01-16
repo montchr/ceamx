@@ -45,6 +45,7 @@
 
 ;;; Load environment-related constants.
 (require 'config-env)
+;; TODO: see bbatsov/prelude for prior art
 (when +sys-wsl-p
   (require 'lib-env-wsl))
 
