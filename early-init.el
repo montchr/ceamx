@@ -81,22 +81,6 @@
 (add-to-list 'native-comp-eln-load-path cmx-eln-dir)
 
 ;;
-;;; PERF: Avoid complex regexp matching in load path during startup.
-
-(defvar cmx-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
-
-(defun cmx-restore-file-name-handler-alist-h ()
-  "Restore the original value of the `file-name-handler-alist' variable."
-  (setq file-name-handler-alist cmx-file-name-handler-alist)
-  (makunbound 'cmx-file-name-handler-alist))
-
-(add-hook 'emacs-startup-hook #'cmx-restore-file-name-handler-alist-h)
-(with-eval-after-load 'elpaca
-  (remove-hook 'emacs-startup-hook #'cmx-restore-file-name-handler-alist-h)
-  (add-hook 'elpaca-after-init-hook #'cmx-restore-file-name-handler-alist-h))
-
-;;
 ;;; Native compilation:
 
 (setq native-comp-async-report-warnings-errors 'silent)
