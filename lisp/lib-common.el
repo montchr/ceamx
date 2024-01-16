@@ -207,23 +207,6 @@ Original source: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0
      (dolist (dir (list ,@dirs))
        (cl-pushnew (expand-file-name dir) load-path :test #'string=))))
 
-(defmacro use-feature! (name &rest args)
-  "Simple wrapper for `use-package', passing through NAME and ARGS.
-
-This macro is a wrapper for `use-package'. It disables package
-installation by setting `:ensure' to nil and, if
-`elpaca-use-package-mode' is enabled, by setting the `:elpaca'
-keyword to nil.
-
-Refer to the `use-package' documentation for further information."
-  (declare (indent defun))
-  `(use-package ,name
-     :elpaca nil
-     ;; FIXME: condition doesn't work
-     ;; ,(when (bound-and-true-p elpaca-use-package-mode)
-     ;;    :elpaca nil)
-     ,@args))
-
 ;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
 (defmacro after! (feature &rest body)
   "Execute BODY after FEATURE has been loaded.
@@ -591,6 +574,23 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
             collect `(remove-hook ',hook #',fn))))
 
 ;;; Packages
+
+(defmacro use-feature! (name &rest args)
+  "Simple wrapper for `use-package', passing through NAME and ARGS.
+
+This macro is a wrapper for `use-package'. It disables package
+installation by setting `:ensure' to nil and, if
+`elpaca-use-package-mode' is enabled, by setting the `:elpaca'
+keyword to nil.
+
+Refer to the `use-package' documentation for further information."
+  (declare (indent defun))
+  `(use-package ,name
+     :elpaca nil
+     ;; FIXME: condition doesn't work
+     ;; ,(when (bound-and-true-p elpaca-use-package-mode)
+     ;;    :elpaca nil)
+     ,@args))
 
 ;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L31-L60>
 (defun require-package (package &optional min-version no-refresh)
