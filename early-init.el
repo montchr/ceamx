@@ -72,6 +72,9 @@
 ;; Load settings describing well-known paths.
 (require 'ceamx-paths)
 
+;; Store packages in the designated directory.
+(setopt package-user-dir cmx-packages-dir)
+
 ;; Use preferred cache directories for native-comp.
 (startup-redirect-eln-cache cmx-eln-dir)
 (add-to-list 'native-comp-eln-load-path cmx-eln-dir)
