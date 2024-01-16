@@ -22,6 +22,81 @@
 
 ;; Initialize package.el and `use-package' (from bundled version).
 
+;; For more info:
+;; - Info node `(info "(elisp) Packaging Basics")'
+;; - Info node `(info "(emacs) Package Installation")'
+
+;;;; Managing package initialization
+
+;; Configuration for the package installation process must happen in early-init
+;; (if `package-enable-at-startup' is non-nil) or prior to package
+;; initialization (e.g. with `package-initialize'). That means, for example,
+;; configuring `package-archives' and the like.
+;;
+;; Packages are not automatically made available if `package-enable-at-startup'
+;; is set to ‘nil’ in the early init file, so `package-initialize' will need to be
+;; called later during init.
+;;
+;; `package-initialize' will call `package-activate-all', meaning that installed
+;; packages will initialize autoloads, set up customizable options, and then be
+;; byte-compiled. Then the package directory will be added to `load-path'. The
+;; same process will occur when `package-enable-at-startup' is non-nil.
+;;
+;; TODO: confirm (this doesn't sound quite right, but it's a little bit of a
+;; mess): When `package-enable-at-startup' is nil *and* `package-initialize' is
+;; never called, then none of the packages will be available for use whatsoever,
+;; unless this process is managed manually, e.g. by `use-package'.
+
+;; TODO: look into `package-quickstart', which might provide some performance
+;; improvements, but at the cost of more-finicky configuration.
+;;
+;; <https://github.com/redguardtoo/emacs.d/blob/ce199b63b431af400d3bca6c9fca3f1772c5272c/lisp/init-elpa.el>
+;; is one example of using `package-quickstart', with some context. However, it
+;; indicates that some settings will be ignored, like `package-user-dir', which
+;; we don't want.
+
+;;;; Managing selected packages
+
+;; `package-selected-packages' must contain the list of packages selected for
+;; installation when 1) `package-enable-at-startup' is non-nil or 2)
+;; `package-initialize' is never called.
+;;
+;; `package-selected-packages' will be populated automatically when
+;; `package-enable-at-startup' is non-nil or when calling `package-initialize'.
+;; The value of `package-selected-packages' will then, by default, be written to
+;; `custom-file', which is not ideal.
+
+;;;; `use-package' `:ensure' keyword and `package' oddities
+
+;; Surprisingly, when calling the `use-package' macro with a non-nil value for
+;; `:ensure' or when `use-package-always-ensure' is non-nil,
+;; `package-selected-packages' is *NOT* managed, which means that the "ensured"
+;; packages will never be installed unless `package-selected-packages' is
+;; populated either by one of the previously-mentioned methods, or manually.
+;;
+;; While I havent confirmed the following, it is noted somewhat exhastively in a few places:
+;;
+;; - <https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/>
+;; - <https://github.com/jwiegley/use-package/issues/870>
+;; - <https://github.com/jwiegley/use-package/issues/414>
+;; - <https://github.com/jwiegley/use-package/issues/397>
+;;
+;; In a sense, by ignoring `package-selected-packages' entirely, ensuring with
+;; `use-package' ironically results in imperative package installation,
+;; installing and activating packages regardless of whether any mention of such
+;; a package is removed from the init files entirely, leaving seemingly
+;; "deleted" packages lying around, even with `package-autoremove'.
+;;
+;; <https://github.com/jwiegley/use-package/issues/870> has the most up-to-date
+;; info on the issue, and it is still open as of this writing. It seems that
+;; over time, the state of issues with `package-selected-packages' and
+;; `package-autoremove' has fluctuated from one fix to another (same goes for
+;; Emacs versions).
+
+;;; Links:
+
+;; <https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/>
+
 ;;; Code:
 
 (require 'cl-lib)

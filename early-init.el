@@ -23,16 +23,25 @@
 
 ;;; Commentary:
 
-;; Prior to Emacs 27, the `init.el' was supposed to handle the
-;; initialisation of `package.el', by means of calling
-;; `package-initialize'. Starting with Emacs 27, the default
-;; behavior is to start `package.el' before loading the init
-;; file.
+;; Prior to Emacs 27, the `init.el' was supposed to handle the initialisation of
+;; `package.el', by means of calling `package-initialize'. Starting with Emacs
+;; 27, the default behavior is to start `package.el' before loading init.el
+;; after early-init.el.
+
+;;; Links:
+
+;; Helpful guide to early-init configuration for package management:
+;; <https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/>
+;; See also the Commentary in `init-packages' for more context.
 
 ;;; Code:
 
-;; Prevent package.el from enabling all packages during init.
-;; This should improve init performance.
+;; Prevent package.el from enabling all packages before init.
+;;
+;; When nil, `package-initialize' must be invoked in the init process prior to
+;; `require'ing any packages installed with `package-install'.
+;;
+;; When non-nil, there is no need to invoke `package-initialize'.
 (setq package-enable-at-startup nil)
 
 ;;

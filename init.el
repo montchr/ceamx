@@ -49,15 +49,11 @@
 (when +sys-wsl-p
   (require 'lib-env-wsl))
 
-;;
-;;; Package initialization
-;;
-
+;;; Package initialization.
 (require 'init-packages)
 
 ;;
 ;;; Libraries
-;;
 
 ;;; Latest versions of Emacs internals, required by some packages.
 ;;  Prevents Elpaca errors for packages that expect later versions available.
