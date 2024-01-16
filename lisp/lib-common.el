@@ -1,19 +1,20 @@
 ;;; lib-common.el --- Common library functions -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery <chris@cdom.io>
-;; Copyright (C) 2016–2022  Radian LLC and contributors
 ;; Copyright (C) 2014-2023  Henrik Lissner
+;; Copyright (C) 2006-2021  Steve Purcell
+;; Copyright (C) 2016–2022  Radian LLC and contributors
 ;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
 ;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
-;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT
 
 ;; Author: Chris Montgomery <chris@cdom.io>
+;;         Henrik Lissner
+;;         Steve Purcell
 ;;         Radon Rosborough <radon@intuitiveexplanations.com>
 ;;         Bailey Ling <bling@live.ca>
 ;;         7696122 <7696122@gmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Created: 29 January, 2023
-;; Version: 0.1.0
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -40,6 +41,26 @@
 ;;
 ;; The above copyright notice and this permission notice shall be
 ;; included in all copies or substantial portions of the Software.
+
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ;;; Commentary:
 
@@ -570,6 +591,39 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
             collect `(remove-hook ',hook #',fn))))
 
 ;;; Packages
+
+;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L31-L60>
+(defun require-package (package &optional min-version no-refresh)
+  "Install given PACKAGE, optionally requiring MIN-VERSION.
+If NO-REFRESH is non-nil, the available package lists will not be
+re-downloaded in order to locate PACKAGE."
+  (when (stringp min-version)
+    (setq min-version (version-to-list min-version)))
+  (or (package-installed-p package min-version)
+    (let* ((known (cdr (assoc package package-archive-contents)))
+            (best (car (sort known (lambda (a b)
+                                     (version-list-<= (package-desc-version b)
+                                       (package-desc-version a)))))))
+      (if (and best (version-list-<= min-version (package-desc-version best)))
+        (package-install best)
+        (if no-refresh
+          (error "No version of %s >= %S is available" package min-version)
+          (package-refresh-contents)
+          (require-package package min-version t)))
+      (package-installed-p package min-version))))
+
+;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L31-L60>
+(defun maybe-require-package (package &optional min-version no-refresh)
+  "Try to install PACKAGE, and return non-nil if successful.
+In the event of failure, return nil and print a warning message.
+Optionally require MIN-VERSION.  If NO-REFRESH is non-nil, the
+available package lists will not be re-downloaded in order to
+locate PACKAGE."
+  (condition-case err
+    (require-package package min-version no-refresh)
+    (error
+      (message "Couldn't install optional package `%s': %S" package err)
+      nil)))
 
 (provide 'lib-common)
 ;;; lib-common.el ends here
