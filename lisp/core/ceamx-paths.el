@@ -34,18 +34,22 @@
 (defvar cmx-home-dir (file-name-as-directory (getenv "HOME"))
   "Path to user home directory.")
 
-(defvar cmx-config-dir
+(defvar cmx-xdg-config-dir
   (file-name-as-directory
    (or (getenv "XDG_CONFIG_HOME")
-       (concat cmx-home-dir ".config")))
+       (concat cmx-home-dir ".config"))))
+
+(defvar cmx-xdg-cache-dir
+  (file-name-as-directory
+   (or (getenv "XDG_CACHE_HOME")
+       (concat cmx-home-dir ".cache"))))
+
+(defvar cmx-config-dir cmx-xdg-config-dir
   "The root directory for personal configurations.")
 
+;; TODO: rename to something like `cmx-storage-dir' to reduce confusion
 (defvar cmx-local-dir
-  (concat
-   (file-name-as-directory
-    (or (getenv "XDG_CACHE_HOME")
-        (concat cmx-home-dir ".cache")))
-   "ceamx/")
+  (concat cmx-xdg-cache-dir "ceamx/")
   "The root directory for local Emacs files.
 Use this as permanent storage for files that are safe to share
 across systems.")
