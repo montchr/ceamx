@@ -35,7 +35,14 @@
 ;; This should improve init performance.
 (setq package-enable-at-startup nil)
 
-;;; PERF: Minimize garbage collection during startup:
+;;
+;;; Performance
+
+;; Performance improvements for language server JSON-RPC (LSP).
+(when (functionp 'json-serialize)
+  (setq read-process-output-max (* 1024 1024 8)))
+
+;;; Minimize garbage collection during startup.
 
 (defun cmx-gc-reduce-freq ()
   "Reduce the frequency of garbage collection."
@@ -91,10 +98,6 @@
 
 ;;
 ;;; Inhibit annoyances:
-
-;; Performance improvements for language server JSON-RPC (LSP).
-(when (functionp 'json-serialize)
-  (setq read-process-output-max (* 1024 1024 8)))
 
 ;; No bells.
 (setq ring-bell-function #'ignore)
