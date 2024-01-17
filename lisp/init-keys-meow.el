@@ -127,7 +127,7 @@
     '("T" . meow-till-expand)           ; custom addition
     '("u" . meow-undo)
     '("U" . meow-undo-in-selection)
-    '("v" . meow-visit)
+    '("v" . consult-line)               ; default: `meow-visit'
     '("w" . meow-mark-word)
     '("W" . meow-mark-symbol)
     '("x" . meow-line)
