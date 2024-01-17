@@ -156,8 +156,20 @@ Intended for use as a callback on `after-init-hook'."
 ;; Allow resizing the frame to the maximum available space on the desktop.
 (setq frame-resize-pixelwise t)
 
-;; There is no place like Emacs.
-(add-hook 'after-init-hook (lambda () (set-frame-name "home")))
+;;; Rename the default/initial frame:
+
+(defvar ceamx-default-frame-name "home"
+  "Name for the default Emacs frame.")
+
+(defun ceamx-after-init-default-frame-name-h ()
+  "Set the name for the default frame.
+Simple wrapper for a call to `set-frame-name' providing
+`ceamx-default-frame-name' as the NAME argument.
+
+Intended for use as a callback on the `after-init-hook'."
+  (set-frame-name ceamx-default-frame-name))
+
+(add-hook 'after-init-hook #'ceamx-after-init-default-frame-name-h)
 
 (provide 'early-init)
 ;;; early-init.el ends here
