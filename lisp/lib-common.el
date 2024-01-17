@@ -600,8 +600,6 @@ Refer to the `use-package' documentation for further information."
      ;;    :elpaca nil)
      ,@args))
 
-;; FIXME: this kinda stinks because the actual installation of packages happens
-;;        as a side effect within a `let*' expression within an `or' condition.
 ;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L31-L60>
 (defun ceamx-require-package (package &optional min-version no-refresh)
   "Install given PACKAGE, optionally requiring MIN-VERSION.
@@ -623,7 +621,7 @@ re-downloaded in order to locate PACKAGE."
       (package-installed-p package min-version))))
 
 ;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L31-L60>
-(defun ceamx-package (package &optional min-version no-refresh)
+(defun ceamx-maybe-require-package (package &optional min-version no-refresh)
   "Try to install PACKAGE, and return non-nil if successful.
 In the event of failure, return nil and print a warning message.
 Optionally require MIN-VERSION.  If NO-REFRESH is non-nil, the

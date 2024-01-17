@@ -106,26 +106,33 @@
 
 (require 'package)
 
+;;;; Handle `package-selected-packages' oddities:
+
+;; From @purcell:
+;;
+;; "package.el updates the saved version of package-selected-packages correctly only
+;; after custom-file has been loaded, which is a bug. We work around this by adding
+;; the required packages to package-selected-packages after startup is complete."
+
 ;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L69-L86>
-;; (defvar ceamx-selected-packages nil
-;;   "Track the packages installed by `ceamx-require-package'.
-;; This aims to avoid potential issues with
-;; `package-selected-packages'.")
+(defvar ceamx-selected-packages nil
+  "Track the packages installed by `ceamx-require-package'.
+This aims to avoid potential issues with
+`package-selected-packages'.")
 
-;; (defun ceamx-note-selected-package-a (oldfun package &rest args)
-;;   "If OLDFUN reports PACKAGE was successfully installed, note that fact.
-;; The package name is noted by adding it to
-;; `ceamx-selected-packages'.  This function is used as an
-;; advice for `require-package', to which ARGS are passed."
-;;   (let ((available (apply oldfun package args)))
-;;     (prog1
-;;         available
-;;       (when available
-;;         (add-to-list 'ceamx-selected-packages package)))))
+(defadvice! ceamx-note-selected-package-a (oldfun package &rest args)
+  "If OLDFUN reports PACKAGE was successfully installed, note that fact.
+The package name is noted by adding it to
+`ceamx-selected-packages'.  This function is used as an
+advice for `ceamx-require-package', to which ARGS are passed."
+  :around 'ceamx-require-package
+  (let ((available (apply oldfun package args)))
+    (prog1
+        available
+      (when available
+        (add-to-list 'ceamx-selected-packages package)))))
 
-;; (advice-add 'ceamx-require-package :around 'ceamx-note-selected-package-a)
-
-;;; Prevent `seq' dependency hell induced by `magit' changes.
+;;;; Prevent `seq' dependency hell:
 
 ;; Work around an issue in Emacs 29 where seq gets implicitly reinstalled via
 ;; the rg -> transient dependency chain, but fails to reload cleanly due to not
@@ -135,33 +142,29 @@
 ;; See: <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=67025>
 ;;
 ;; TODO: make sure this condition catches unstable versions of emacs 29.1
-;; (when (string= "29.1" emacs-version)
-;;   (defadvice! ceamx-reload-previously-loaded-with-updated-load-path-a (orig pkg-desc)
-;;     "Update the ORIG load-path with PKG-DESC directories.
-;; Intended as a workaround for `seq' dependency hell caused by
-;; recent `magit' changes."
-;;     :around 'package--reload-previously-loaded
-;;     (let ((load-path (cons (package-desc-dir pkg-desc) load-path)))
-;;       (funcall orig pkg-desc))))
+(when (string= "29.1" emacs-version)
+  (defadvice! ceamx-reload-previously-loaded-with-updated-load-path-a (orig pkg-desc)
+    "Update the ORIG load-path with PKG-DESC directories.
+Intended as a workaround for `seq' dependency hell caused by
+recent `magit' changes."
+    :around 'package--reload-previously-loaded
+    (let ((load-path (cons (package-desc-dir pkg-desc) load-path)))
+      (funcall orig pkg-desc))))
 
-;; (when (fboundp 'package--save-selected-packages)
-;;   (ceamx-package 'seq)
-;;   (def-hook! ceamx-merge-selected-package-lists-a () 'after-init-hook
-;;     "Merge the package selections from `package' and `ceamx-selected-packages'."
-;;     (package--save-selected-packages
-;;       (seq-uniq (append ceamx-selected-packages package-selected-packages)))))
+;;;; Pre-initialization settings:
+
+(setopt package-native-compile t)
 
 ;; Package installation will provoke a lot of these, but that's the package
 ;; developers' problem, not ours.
-(setq byte-compile-warnings nil)
+;; FIXME:
+;; (setq byte-compile-warnings nil)
 
 ;; Allow upgrading of builtin packages available in ELPA.
 ;;
 ;; This is *required* for `magit' currently, as it loads a version of `seq'
 ;; which is only available in Emacs 30.
 (setopt package-install-upgrade-built-in t)
-
-(setopt package-native-compile t)
 
 ;; Also read: <https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/>
 (setopt package-archives
@@ -176,31 +179,42 @@
         ("melpa" . 2)
         ("nongnu" . 1)))
 
-;; Begin the process of installing and `require'ing packages selected via
-;; `package-install' or a function which invokes it, including
-;; `ceamx-require-package' or `ceamx-package'.
-;;
-;; When a package is selected for installation by `package-install', its
-;; specification is added to the queue stored in `package-selected-packages'.
-;; Once called, `package-initialize' will process the queued packages.
-;;
-;; If relying on `use-package' for package initialization, `package-initialize'
-;; should not be called. (TODO: verify this)
-;; (package-initialize)
+;; Emacs 30+
+(when (boundp 'package-vc-register-as-project)
+  (setq package-vc-register-as-project nil))
+
+(add-hook 'package-menu-mode-hook #'hl-line-mode)
 
 ;;
-;;; `use-package' :: <https://github.com/jwiegley/use-package>
-;;  <https://www.gnu.org/software/emacs/manual/html_mono/use-package.html>
+;;; Initialize packages:
 
-;; (ceamx-package use-package)
+;; When `package-enable-at-startup' is nil, `package-initialize' must be called
+;; before `require'ing any packages installed using `package'. It should *not*
+;; be called if `package-enable-at-startup' is non-nil, because it would cause a
+;; second initialization (which, I think, will throw a warning).
+(unless package-enable-at-startup
+  (package-initialize))
+
+(unless package-archive-contents
+  (package-refresh-contents))
+
+(ceamx-require-package 'seq)
+(ceamx-require-package 'use-package)
+
+;;; Merge selected package lists.
+(def-hook! ceamx-merge-selected-package-lists-a () 'after-init-hook
+  "Merge the `package-selected-packages' and
+`ceamx-selected-packages' lists."
+  (package--save-selected-packages
+    (seq-uniq (append ceamx-selected-packages package-selected-packages))))
 
 ;; When non-nil, improves performance and effectiveness of byte-compilation,
 ;; but decreases introspectability.
 ;; If byte-compiling user configurations, this should be non-nil.
 (setopt use-package-expand-minimally nil)
 
-;; NOTE: If a `use-package' declaration should not use `:ensure', use `use-feature!'
-;; instead, which already handles that.
+;; NOTE: If a `use-package' declaration should not use `:ensure', use
+;; `use-feature!' instead, which already handles that.
 (setopt use-package-always-ensure t)
 
 ;;; Support for Emacs init introspection.
