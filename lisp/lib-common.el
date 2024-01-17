@@ -188,6 +188,13 @@ COMMAND. This macro is meant to be used as a target for keybinds (e.g. with
            #'call-interactively)
         ,command ,@args))))
 
+;; via <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
+(defmacro noop! (&rest _body)
+  "Do nothing with BODY and return nil.
+Unlike `ignore', produce no side effects."
+  (declare (indent defun))
+  nil)
+
 ;;
 ;;; Loading
 
