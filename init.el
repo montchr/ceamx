@@ -36,9 +36,6 @@
   "User-configurable options for Ceamx."
   :group 'file)
 
-;;; Configure customization file.
-(setopt custom-file (expand-file-name "custom.el" user-emacs-directory))
-
 ;;; Define default user identity.
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
