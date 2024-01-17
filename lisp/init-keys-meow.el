@@ -124,7 +124,7 @@
     '("R" . meow-swap-grab)
     '("s" . meow-kill)
     '("t" . meow-till)
-    ;; '("T" . meow-till-expand)          ; custom addition
+    '("T" . meow-till-expand)           ; custom addition
     '("u" . meow-undo)
     '("U" . meow-undo-in-selection)
     '("v" . meow-visit)
