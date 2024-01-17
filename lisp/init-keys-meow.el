@@ -64,6 +64,15 @@
     '("k" . meow-prev)
     '("<escape>" . ignore))
 
+  (noop!
+    ;; TODO: instead, because meow key definer syntax sucks:
+    ;;
+    ;; see `meow-keymap-alist' for available states (or use the lookup logic
+    ;; from `meow-define-keys': (alist-get state meow-keymap-alist)
+    (define-keymap :keymap meow-insert-state-keymap
+      ;; etc.
+      "0" #'meow-expand-0))
+
   (meow-normal-define-key
     '("0" . meow-expand-0)
     '("9" . meow-expand-9)
@@ -109,6 +118,7 @@
     '("O" . meow-to-block)
     '("p" . meow-yank)
     '("q" . meow-quit)
+    ;; FIXME: duplicated with "X" binding
     '("Q" . meow-goto-line)
     '("r" . meow-replace)
     '("R" . meow-swap-grab)
@@ -121,10 +131,14 @@
     '("w" . meow-mark-word)
     '("W" . meow-mark-symbol)
     '("x" . meow-line)
+    ;; FIXME: duplicated with "Q" binding
     '("X" . meow-goto-line)
     '("y" . meow-save)
     '("Y" . meow-sync-grab)
+    ;; There's no documentation, but this will essentially return to the
+    ;; original position prior to beginning the selection.
     '("z" . meow-pop-selection)
+    ;; TODO: no idea what the difference is at a glance, no docs
     ;; '("Z" . meow-pop-all-selection)    ; custom addition
     '("'" . repeat)
     '("<escape>" . ignore)
