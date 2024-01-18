@@ -164,9 +164,7 @@ future Emacs release, this advice can hopefully be removed."
 ;;
 ;; Source: <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L89-L100>
 ;; See: <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=67025>
-;;
-;; TODO: make sure this condition catches unstable versions of emacs 29.1
-(when (string= "29.1" emacs-version)
+(when (version= (number-to-string emacs-major-version) "29")
   (defadvice! ceamx-reload-previously-loaded-with-updated-load-path-a (orig pkg-desc)
     "Update the ORIG load-path with PKG-DESC directories.
 Intended as a workaround for `seq' dependency hell caused by
