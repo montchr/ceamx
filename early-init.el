@@ -107,10 +107,10 @@ Intended for use as a callback on `after-init-hook'."
 ;; to `custom-file', but by default, when using package.el for package
 ;; management, `package-selected-packages' will always be written to
 ;; `custom-file' if available. See `init-package' for details.
-(setopt custom-file (expand-file-name "custom.el" user-emacs-directory))
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
 ;; Store packages in the designated directory.
-(setopt package-user-dir cmx-packages-dir)
+(setq package-user-dir cmx-packages-dir)
 
 ;; Use preferred cache directories for native-comp.
 (startup-redirect-eln-cache cmx-eln-dir)
