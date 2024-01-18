@@ -155,11 +155,6 @@ recent `magit' changes."
 
 (setopt package-native-compile t)
 
-;; Package installation will provoke a lot of these, but that's the package
-;; developers' problem, not ours.
-;; FIXME:
-;; (setq byte-compile-warnings nil)
-
 ;; Allow upgrading of builtin packages available in ELPA.
 ;;
 ;; This is *required* for `magit' currently, as it loads a version of `seq'

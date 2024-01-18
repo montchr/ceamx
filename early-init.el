@@ -125,6 +125,10 @@ Intended for use as a callback on `after-init-hook'."
 ;; Don't load outdated byte-compiled files. This should not even be an option.
 (setq load-prefer-newer t)
 
+;; Package installation will provoke a lot of warnings from third-party
+;; packages, but there's nothing we can do about those.
+(setq byte-compile-warnings nil)
+
 ;;
 ;;; Inhibit annoyances:
 
