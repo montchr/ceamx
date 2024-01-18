@@ -61,7 +61,6 @@
        "Output\\*$"
        "\\*vc\\*"
        "\\*Warnings\\*"
-       "\\*elpaca-log\\*"
        "\\*Embark Export"
        "\\*lispy-message\\*"        ; `lispy-eval' output
        ;; TODO: not entirely sure if this pattern is correct

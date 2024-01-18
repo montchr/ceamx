@@ -35,7 +35,6 @@
   "Run `check-parens' when the current buffer is saved."
   (add-hook 'after-save-hook #'check-parens nil t))
 
-;; TODO: elpaca package path
 (defun +emacs-lisp--in-package-buffer-p ()
   (let* ((file-path (buffer-file-name (buffer-base-buffer)))
           (file-base (if file-path (file-name-base file-path))))

@@ -71,7 +71,5 @@
         (set-fontset-font t '(#xe000 . #xffdd) font)
       (message "Symbols Nerd Font Mono has not been found on your system"))))
 
-;; FIXME: (elpaca-wait)
-
 (provide 'init-ui-nano-theme)
 ;;; init-ui-nano-theme.el ends here

@@ -52,7 +52,7 @@
 
   :init
   ;; Activate after all other keybinding stuff (hopefully).
-  (after-init! #'which-key-mode)
+  (add-hook 'after-init-hook #'which-key-mode)
 
   :config
   ;; Determine whether keys have been rebound, considering the active keymaps.
@@ -64,9 +64,6 @@
   (setopt which-key-sort-order 'which-key-prefix-then-key-order)
 
   (setopt which-key-sort-uppercase-first nil))
-
-(when (fboundp 'elpaca-wait)
-  (elpaca-wait))
 
 (provide 'init-keys-which-key)
 ;;; init-keys-which-key.el ends here

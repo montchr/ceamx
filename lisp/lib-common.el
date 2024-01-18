@@ -271,7 +271,6 @@ Meant to serve as a predicated alternative to `after!'."
            (add-hook 'after-load-functions #',fn)))))
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L703-L725>
-;; TODO: use this to fix `eldoc' + `elpaca' warnings on init
 (defmacro defer-feature! (feature &rest fns)
   "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook or FNS run.
 
@@ -295,25 +294,6 @@ to reverse this and trigger `after!' blocks at a more reasonable time."
            (provide ',feature)
            (dolist (fn ',fns)
              (advice-remove fn #',advice-fn)))))))
-
-(defmacro after-init! (func)
-  "Add FUNC to the appropriate after-init hook.
-Intended to allow graceful switching between `after-init-hook'
-and the `elpaca' async hook `elpaca-after-init-hook'.
-
-Example:
-
-  (after-init! #\\='which-key-mode)
-  ;; with elpaca:
-  => (add-hook \\='elpaca-after-init-hook #\\='which-key-mode)
-  ;; default:
-  => (add-hook \\='after-init-hook #\\='which-key-mode)"
-  (declare (indent defun))
-  (let* ((sequence [elpaca-after-init-hook after-init-hook])
-          (hook (seq-find #'boundp sequence)))
-    (cl-assert (fboundp (cmx-unquote func)))
-    `(add-hook ',hook ,func)))
-
 
 ;;; Variables
 
@@ -586,18 +566,13 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
   "Simple wrapper for `use-package', passing through NAME and ARGS.
 
 This macro is a wrapper for `use-package'. It disables package
-installation by setting `:ensure' to nil and, if
-`elpaca-use-package-mode' is enabled, by setting the `:elpaca'
-keyword to nil.
+installation by setting `:ensure' to nil, which will override a
+non-nil `use-package-always-ensure' setting.
 
 Refer to the `use-package' documentation for further information."
   (declare (indent defun))
   `(use-package ,name
      :ensure nil
-     ;; FIXME: :elpaca nil
-     ;; FIXME: condition doesn't work
-     ;; ,(when (bound-and-true-p elpaca-use-package-mode)
-     ;;    :elpaca nil)
      ,@args))
 
 ;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L31-L60>

@@ -62,9 +62,6 @@ Selectively runs either `after-make-console-frame-hooks' or
 (defvar cmx/initial-frame (selected-frame)
   "The frame (if any) active during Emacs initialization.")
 
-;; Although in most cases `after-init-hook' should be replaced with
-;; `elpaca-after-init-hook', in this particular case, we do actually want the
-;; callback to run *after* init and *before* packages load.
 (add-hook 'after-init-hook
           (lambda () (when cmx/initial-frame
                        (run-after-make-frame-hooks cmx/initial-frame))))

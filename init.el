@@ -53,7 +53,6 @@
 ;;; Libraries
 
 ;;; Latest versions of Emacs internals, required by some packages.
-;;  Prevents Elpaca errors for packages that expect later versions available.
 (use-package eldoc
   :defer t)
 (use-package jsonrpc
@@ -272,11 +271,6 @@
   (defun cmx-load-custom-file-after-init-h ()
     (load custom-file 'noerror))
   (add-hook 'after-init-hook #'cmx-load-custom-file-after-init-h))
-
-;; Wait for all packages to initialize in non-interactive mode.
-(when (and noninteractive
-           (fboundp 'elpaca-wait))
-  (elpaca-wait))
 
 (provide 'init)
 ;;; init.el ends here

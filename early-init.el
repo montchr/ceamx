@@ -73,9 +73,6 @@
 
 ;; But make it more regular after startup and after closing minibuffer.
 (add-hook 'emacs-startup-hook #'cmx-gc-restore-freq)
-(with-eval-after-load 'elpaca
-  (remove-hook 'emacs-startup-hook #'cmx-gc-restore-freq)
-  (add-hook 'elpaca-after-init-hook #'cmx-gc-restore-freq))
 (add-hook 'minibuffer-exit-hook #'cmx-gc-restore-freq)
 
 ;;; Simplify filename pattern-matching during init.
@@ -92,9 +89,6 @@ Intended for use as a callback on `after-init-hook'."
   (makunbound 'cmx-file-name-handler-alist))
 
 (add-hook 'after-init-hook #'cmx-restore-file-name-handler-alist-h)
-(with-eval-after-load 'elpaca
-  (remove-hook 'after-init-hook #'cmx-restore-file-name-handler-alist-h)
-  (add-hook 'elpaca-after-init-hook #'cmx-restore-file-name-handler-alist-h))
 
 ;;
 ;;; Directories:
