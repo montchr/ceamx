@@ -302,14 +302,15 @@
 
 ;;;; "q p" Package Management
 (def-map! cmx-packages-map
-	"i" `("elpaca manual" . ,(cmd! (info "Elpaca")))
-  "m" #'elpaca-manager
-  "r" #'elpaca-rebuild
-  "s" #'elpaca-status
-  "t" #'elpaca-try
-  "u" #'elpaca-update
-  "U" #'elpaca-update-all
-  "v" #'elpaca-visit)
+  "c" #'package-autoremove
+  "d" #'package-delete
+  "i" #'describe-package
+  "I" #'package-install
+  "p" #'list-packages
+  "r" #'package-refresh-contents
+  "s" #'use-package-report
+  "u" #'package-upgrade
+  "U" #'package-upgrade-all)
 
 
 (def-arm! cmx-session-map "q" "[Session]"
