@@ -26,9 +26,10 @@
 
 ;;; Code:
 
+;; TODO: move to `init-lang-misc'
 
 (use-package nushell-mode
-  :defer t
+
   ;; FIXME: :elpaca (nushell-mode :host github :repo "mrkkrp/nushell-mode")
   )
 

@@ -31,12 +31,11 @@
   :autoload (transient-quit-one))
 
 (use-package magit
-  :defer t
   :after (seq transient git-commit)
 
   :config
-  ;; TODO: is this still necessary?
   (after! [evil-collection]
+    (declare-function evil-collection-init "evil-collection")
     (evil-collection-init 'magit))
 
   (setopt magit-diff-refine-hunk t)     ; show granular diffs in selected hunk

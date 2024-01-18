@@ -100,6 +100,7 @@ and
     (cmx-sp-pair #'markdown-mode "```")))
 
 (use-package evil-markdown
+  :disabled t
   ;; FIXME: :elpaca (evil-markdown :host github :repo "Somelauw/evil-markdown")
   :after (evil evil-collection markdown-mode)
   :commands (evil-markdown-mode)

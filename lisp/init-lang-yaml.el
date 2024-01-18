@@ -22,12 +22,12 @@
 ;;; Code:
 
 (use-package yaml-mode
-  :defer t
+  :commands (yaml-mode)
   :init
-  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
-  (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-mode))
-  (add-to-list 'auto-mode-alist '("Procfile\\'" . yaml-mode)))
+  (dolist (pattern '("\\.yml\\'"
+                     "\\.yaml\\'"
+                     "Procfile\\'"))
+    (add-to-list 'auto-mode-alist `(,pattern . yaml-mode))))
 
 (provide 'init-lang-yaml)
 ;;; init-lang-yaml.el ends here
-

@@ -28,6 +28,7 @@
 
 (use-package meow
   :demand t
+  :after (which-key)
   :commands (meow-global-mode
               meow-insert-exit)
   :autoload (meow-normal-mode

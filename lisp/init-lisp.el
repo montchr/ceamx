@@ -80,6 +80,7 @@
 
 ;; `lispyville' :: <https://github.com/noctuid/lispyville>
 (use-package lispyville
+  :disabled t
   :after (evil lispy)
   :defines (lispyville-key-theme)
 

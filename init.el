@@ -32,6 +32,8 @@
 
 ;;; Code:
 
+(require 'lib-common)
+
 (defgroup ceamx nil
   "User-configurable options for Ceamx."
   :group 'file)
@@ -46,17 +48,28 @@
 (when +sys-wsl-p
   (require 'lib-env-wsl))
 
-;;; Package initialization.
+;;
+;;; Initialize packages:
+
+;;; Add site-lisp directory tree to load path.
+(add-to-list 'load-path cmx-site-lisp-dir)
+(prependq! load-path (subdirs! cmx-site-lisp-dir))
+
 (require 'init-packages)
+
+;;; Essential storage path cleanup for features/packages.
+(use-package no-littering
+  :demand t
+  :init
+  (setq no-littering-etc-directory cmx-etc-dir)
+  (setq no-littering-var-directory cmx-var-dir))
 
 ;;
 ;;; Libraries
 
 ;;; Latest versions of Emacs internals, required by some packages.
-(use-package eldoc
-  :defer t)
-(use-package jsonrpc
-  :defer t)
+(use-package eldoc)
+(use-package jsonrpc)
 
 ;; FIXME: remove or alias (`##' is very difficult to search for)
 (use-package llama) ;  `##' lambda shorthand => <https://git.sr.ht/~tarsius/llama>
@@ -66,18 +79,6 @@
 (when (display-graphic-p)
   (require 'lib-gui))
 (require 'lib-files)
-
-;; FIXME: needs autoloads of its own -- missing dependencies (esp. evil)
-;;        another reason some kind of module-like directory organization
-;;        with its own set of autoloads would allow for better encapsulation
-;; (require 'ceamx-autoloads)
-
-;;; Add site-lisp directory tree to load path.
-(add-to-list 'load-path cmx-site-lisp-dir)
-(prependq! load-path (subdirs! cmx-site-lisp-dir))
-
-;;; site-lisp packages
-;; TODO: nothing here, placeholder
 
 ;;
 ;;; Configuration
@@ -182,7 +183,6 @@
 (require 'init-help)
 
 ;;; Actions
-;; TODO: move these towards the end since they should be deferred until needed
 (require 'init-embark)
 (require 'init-wgrep)
 

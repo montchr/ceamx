@@ -77,7 +77,6 @@
           "⭠ now ─────────────────────────────────────────────────"))
 
 (use-package doct
-  :defer t
   :commands (doct))
 
 (use-feature! org-capture

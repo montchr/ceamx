@@ -28,16 +28,19 @@
 ;;; Code:
 
 (require 'ceamx-paths)
+(require 'lib-common)
 
 (setopt vc-follow-symlinks t)
 
 (use-package git-commit
-  :defer t
   :after (transient))
 
 (after! 'evil
+  (declare-function evil-insert-state "evil")
   (add-hook 'git-commit-mode-hook #'evil-insert-state))
+
 (after! 'meow
+  (declare-function meow-insert-mode "meow")
   (add-hook 'git-commit-mode-hook #'meow-insert-mode))
 
 

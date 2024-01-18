@@ -28,20 +28,16 @@
 
 ;;; Code:
 
-(use-package apache-mode
-  :defer t)
+(use-package apache-mode)
 
-(use-package just-mode
-  :defer t)
+(use-package just-mode)
 
-(use-package robots-txt-mode
-  :defer t)
+(use-package robots-txt-mode)
 
 (use-package vimrc-mode
-  :defer t
+  :commands (vimrc-mode)
   :init
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
-
 
 (provide 'init-lang-misc)
 ;;; init-lang-misc.el ends here

@@ -37,12 +37,18 @@
 
 (use-package kind-icon
   :after (svg-lib corfu)
-  :config
-  (setopt kind-icon-use-icons (display-graphic-p))
-  (setopt kind-icon-default-face 'corfu-default)
+  :commands (kind-icon-reset-cache)
+  :functions (kind-icon-margin-formatter)
+
+  :init
+  (defvar corfu-margin-formatters)
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-  (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache))
+  (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache)
+
+  :config
+  (setopt kind-icon-use-icons (display-graphic-p))
+  (setopt kind-icon-default-face 'corfu-default))
 
 
 (provide 'init-ui-icons)

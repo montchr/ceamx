@@ -28,11 +28,13 @@
 ;; NOTE: Must run `devdocs-install' before use.
 ;; TODO: Install devdocs automatically.
 (use-package devdocs
-  :defer 5
   :commands (devdocs-lookup devdocs-install devdocs-delete devdocs-update-all)
+
+  :init
+  (keymap-global-set "C-h D" #'devdocs-lookup)
+
   :config
-  (devdocs-update-all)
-  (keymap-global-set "C-h D" #'devdocs-lookup))
+  (devdocs-update-all))
 
 ;;; `pandoc-mode' :: <https://joostkremers.github.io/pandoc-mode/>
 (use-package pandoc-mode

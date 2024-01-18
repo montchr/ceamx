@@ -112,9 +112,16 @@ Else create a new file."
 
 (use-package denote-menu
   :after (denote)
+  :commands (list-denotes
+              denote-menu-clear-filters
+              denote-menu-filter
+              denote-menu-filter-by-keyword
+              denote-menu-filter-out-keyword
+              denote-menu-export-to-dired)
   :config
   (keymap-global-set "C-c z" #'list-denotes)
 
+  ;; TODO: `define-keymap'
   (keymap-set denote-menu-mode-map "c" #'denote-menu-clear-filters)
   (keymap-set denote-menu-mode-map "/ r" #'denote-menu-filter)
   (keymap-set denote-menu-mode-map "/ k" #'denote-menu-filter-by-keyword)

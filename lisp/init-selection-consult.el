@@ -188,7 +188,8 @@
 ;; <https://github.com/minad/consult#embark-integration>
 (use-package embark-consult
   :after (embark consult)
-  :hook (embark-collect-mode . consult-preview-at-point-mode))
+  :init
+  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
 
 (provide 'init-selection-consult)

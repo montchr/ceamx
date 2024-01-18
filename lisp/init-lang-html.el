@@ -27,8 +27,10 @@
 ;;; Code:
 
 (use-package web-mode
-  :defer t
-  :config
+  :commands (web-mode)
+
+  :init
+  ;; TODO: refactor
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
@@ -38,10 +40,12 @@
   (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
+  :config
   (setopt web-mode-engines-alist
-        '(("php"    . "\\.phtml\\'")
-          ("blade"  . "\\.blade\\.")))
+          '(("php" . "\\.phtml\\'")
+            ("blade" . "\\.blade\\.")))
 
+  ;; TODO: revisit this...
   ;; NOTE: This method of setting customizations is unusual,
   ;;       but recommended by `web-mode' documentation.
   (defun +web-mode--customization-hook ()

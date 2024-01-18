@@ -104,8 +104,7 @@
 
 ;;; `rainbow-mode' :: <https://elpa.gnu.org/packages/rainbow-mode.html>
 ;;  colorize color names and hexcodes in buffers
-(use-package rainbow-mode
-  :defer t)
+(use-package rainbow-mode)
 
 ;; FIXME: `consult-project-buffer' does not reliably find files! cannot be trusted
 ;; (after! [consult-buffer]

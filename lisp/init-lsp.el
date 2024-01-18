@@ -86,6 +86,7 @@
 
   (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
 
+;; FIXME: needs hook or will not load (i think...?)
 (use-package lsp-ui
   :after (lsp-mode)
   :commands (lsp-ui-mode)
@@ -95,7 +96,7 @@
   ;; obscuring the buffer contents that tend to be most relevant
   ;; as leading up to the thing at point.
   ;; `top' is similarly annoying, and it conflicts with sideline ui.
-	(setopt lsp-ui-doc-position 'bottom) ; alt: top, at-point
+	(setopt lsp-ui-doc-position 'bottom)  ; alt: top, at-point
   ;; Long delay, as the doc is more helpful when I'm pausing in confusion.
   (setopt lsp-ui-doc-delay 1.0)
   ;; TODO: auto determine by window width?
@@ -114,7 +115,8 @@
 (use-package consult-lsp
   :after (lsp-mode consult)
   :commands (consult-lsp-symbols)
-  :config
+  :init
+  ;; FIXME: incorrect rebind syntax -- i think there's some newer function for this
   ;; TODO: only when supported by language server? otherwise results in error
   (keymap-set lsp-mode-map "<remap> <xref-find-apropos>" #'consult-lsp-symbols))
 

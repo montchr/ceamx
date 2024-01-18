@@ -231,14 +231,14 @@
 
 (use-feature! rect
   :after hydra
-  :defer t
+  :functions (defhydra)
 
   :config
   ;; via <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
   (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
-                                       :color pink
-                                       :hint nil
-                                       :post (deactivate-mark))
+                              :color pink
+                              :hint nil
+                              :post (deactivate-mark))
     "
   ^_k_^       _w_ copy      _o_pen       _N_umber-lines            |\\     -,,,--,,_
 _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..  \-;;,_
@@ -258,7 +258,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     ("e" rectangle-exchange-point-and-mark) ;; C-x C-x
     ("N" rectangle-number-lines)            ;; C-x r N
     ("r" (if (region-active-p)
-             (deactivate-mark)
+           (deactivate-mark)
            (rectangle-mark-mode 1)))
     ("u" undo nil)
     ("g" nil)))

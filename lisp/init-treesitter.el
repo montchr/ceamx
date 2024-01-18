@@ -61,6 +61,7 @@
 (require 'lib-common)
 
 (use-feature! treesit
+  ;; TODO: not sure we really need `:demand'?
   :demand t)
 
 ;;; `treesit-auto' <https://github.com/renzmann/treesit-auto>

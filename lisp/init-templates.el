@@ -64,7 +64,7 @@
 ;;  A set of pre-defined templates for `tempel'.
 ;;  <https://github.com/Crandel/tempel-collection/tree/main/templates>
 (use-package tempel-collection
-  :after tempel)
+  :after (tempel))
 
 (provide 'init-templates)
 ;;; init-templates.el ends here

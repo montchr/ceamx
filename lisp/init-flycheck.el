@@ -35,13 +35,21 @@
 
 (use-package flycheck
   :commands (global-flycheck-mode flycheck-mode)
+  :defines (flycheck-emacs-lisp-load-path
+             flycheck-check-syntax-automatically
+             flycheck-global-modes)
   :init
   (setq-default flycheck-emacs-lisp-load-path 'inherit)
+  ;; FIXME: sometimes flycheck seems to randomly stop working and needs to be
+  ;; disabled then re-enabled
+  ;; The default includes `newline', which would happen too frequently.
   (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled))
+  ;; When `global-flycheck-mode' is non-nil, activate in these modes.
   (setq-default flycheck-global-modes '(prog-mode))
   ;; `global-flycheck-mode' seems to have no effect, so load on hook.
   (add-hook 'prog-mode-hook #'flycheck-mode)
   :config
+  ;; TODO: conflict with the other loading mechanisms in `:init'?
   (global-flycheck-mode +1))
 
 (provide 'init-flycheck)

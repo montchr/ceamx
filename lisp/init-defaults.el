@@ -31,14 +31,7 @@
 
 (require 'ceamx-paths)
 (require 'config-env)
-
-;;; `no-littering' :: <https://github.com/emacscollective/no-littering>
-;;  Help keeping ~/.emacs.d clean
-(use-package no-littering
-  :demand t
-  :init
-  (setq no-littering-etc-directory cmx-etc-dir)
-  (setq no-littering-var-directory cmx-var-dir))
+(require 'lib-common)
 
 ;; TODO: re-evaluate these settings
 ;; FIXME: how many of these actually need to use `setq-default'?

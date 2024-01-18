@@ -32,6 +32,7 @@
 ;;        <https://github.com/Wilfred/helpful/issues/329>
 ;;        consider maybe: <https://www.emacswiki.org/emacs/HelpPlus>
 (use-package helpful
+  :defer 2
   :commands ( helpful-at-point helpful-command helpful-callable
               helpful-key helpful-symbol helpful-variable))
 

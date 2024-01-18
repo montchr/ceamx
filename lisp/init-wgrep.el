@@ -34,6 +34,7 @@
   :commands (wgrep-change-to-wgrep-mode)
 
   :init
+  ;; TODO: why in `:init'?
   (setopt wgrep-auto-save-buffer t)
   (setopt wgrep-change-readonly-file t)
 

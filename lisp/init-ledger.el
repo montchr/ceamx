@@ -26,8 +26,7 @@
 
 ;;; Code:
 
-(use-package hledger-mode
-  :defer t)
+(use-package hledger-mode)
 
 (provide 'init-ledger)
 ;;; init-ledger.el ends here

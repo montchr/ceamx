@@ -27,7 +27,6 @@
 
 ;; <https://www.emacswiki.org/emacs/ZoneMode>
 (use-feature! zone
-  :defer t
   :defines (zone-timer)
 
   :config

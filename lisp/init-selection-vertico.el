@@ -65,7 +65,7 @@
 
 ;; Configure directory extension.
 (use-feature! vertico-directory
-  :after vertico
+  :requires vertico
   :commands ( vertico-directory-enter
               vertico-directory-delete-char
               vertico-directory-delete-word

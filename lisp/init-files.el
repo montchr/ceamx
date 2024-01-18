@@ -27,6 +27,7 @@
 
 ;;; Code:
 
+(require 'ceamx-paths)
 (require 'lib-common)
 (require 'lib-files)
 
@@ -62,7 +63,6 @@
 (setopt find-file-visit-truename t)
 
 (use-feature! autorevert
-  :defer 2
   :config
   ;; Automatically revert a buffer if its file has changed on disk.
   (setopt auto-revert-interval 0.01)

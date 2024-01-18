@@ -39,7 +39,6 @@
      (string-suffix-p cand (oref (xref-item-location item) file))) xref-ignored-files))
 
 (use-package php-mode
-  :defer t
   :init
   ;; Render multiline comments using `font-lock-comment-face'.
   (add-hook 'php-mode-hook #'cmx--multiline-comment-face-h)

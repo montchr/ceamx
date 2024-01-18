@@ -43,34 +43,35 @@
   :after (all-the-icons)
 
   :commands (dirvish-override-dired-mode
-             dirvish-peek-mode
-             dirvish-side-follow-mode)
+              dirvish-peek-mode
+              dirvish-side-follow-mode)
 
   :init
   (dirvish-override-dired-mode)
 
   :config
   ;; FIXME: neither of these are working
-  (dirvish-peek-mode) ; Preview files in minibuffer
-  (dirvish-side-follow-mode) ; similar to `treemacs-follow-mode'
+  (dirvish-peek-mode)                   ; Preview files in minibuffer
+  (dirvish-side-follow-mode)            ; similar to `treemacs-follow-mode'
 
   ;; TODO: use consts
+  ;; FIXME: ensure directories exist!
   (setopt dirvish-quick-access-entries
-          '(("c" "~/Documents/cheatsheets/" "Cheatsheets")
-            ("D" "~/Downloads/" "Downloads")
-            ("r" "~/Documents/reference" "Reference")
-            ("n" "~/Documents/notes/" "Notes")))
+    '(("c" "~/Documents/cheatsheets/" "Cheatsheets")
+       ("D" "~/Downloads/" "Downloads")
+       ("r" "~/Documents/reference" "Reference")
+       ("n" "~/Documents/notes/" "Notes")))
 
   (setopt dirvish-mode-line-format
-          '( :left (sort symlink)
-             :right (omit yank index)))
+    '( :left (sort symlink)
+       :right (omit yank index)))
   (setopt dirvish-attributes
-          '(all-the-icons
-            file-time
-            file-size
-            collapse
-            subtree-state
-            vc-state))
+    '(all-the-icons
+       file-time
+       file-size
+       collapse
+       subtree-state
+       vc-state))
 
   ;; <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#mouse-settings>
   (def-hook! cmx--dirvish-no-mouse-follows-link (&rest _)
@@ -88,9 +89,9 @@
     "y"   #'dirvish-yank-menu
     "N"   #'dirvish-narrow
     "^"   #'dirvish-history-last
-    "h"   #'dirvish-history-jump ; remapped `describe-mode'
-    "s"   #'dirvish-quicksort    ; remapped `dired-sort-toggle-or-edit'
-    "v"   #'dirvish-vc-menu      ; remapped `dired-view-file'
+    "h"   #'dirvish-history-jump        ; remapped `describe-mode'
+    "s"   #'dirvish-quicksort           ; remapped `dired-sort-toggle-or-edit'
+    "v"   #'dirvish-vc-menu             ; remapped `dired-view-file'
     "q"   #'dirvish-quit
     "TAB" #'dirvish-subtree-toggle
     "M-f" #'dirvish-history-go-forward

@@ -27,7 +27,6 @@
 (require 'lib-ui-treemacs)
 
 (use-package treemacs
-  :defer t
   :config
   (setopt treemacs-collapse-dirs                   (if treemacs-python-executable 3 0))
   (setopt treemacs-deferred-git-apply-delay        0.5)
@@ -118,7 +117,7 @@
         ("C-x t M-t" . treemacs-find-tag)))
 
 (use-package treemacs-tab-bar
-  :if tab-bar-mode
+  :when tab-bar-mode
   :after (treemacs)
   :config (treemacs-set-scope-type 'Tabs))
 

@@ -26,6 +26,7 @@
 ;; - Info node `(info "(elisp) Packaging Basics")'
 ;; - Info node `(info "(emacs) Package Installation")'
 
+
 ;;;; Managing package initialization
 
 ;; Configuration for the package installation process must happen in early-init
@@ -55,6 +56,7 @@
 ;; indicates that some settings will be ignored, like `package-user-dir', which
 ;; we don't want.
 
+
 ;;;; Managing selected packages
 
 ;; `package-selected-packages' must contain the list of packages selected for
@@ -65,8 +67,18 @@
 ;; `package-enable-at-startup' is non-nil or when calling `package-initialize'.
 ;; The value of `package-selected-packages' will then, by default, be written to
 ;; `custom-file', which is not ideal.
+;;
+;; The `custom-file' behavior is not currently changeable by any configuration
+;; settings. This limitation has been reported as an Emacs bug at least twice:
+;;
+;; - <https://lists.gnu.org/archive/html/bug-gnu-emacs/2022-09/msg00116.html>
+;; - <https://lists.gnu.org/archive/html/emacs-devel/2016-02/msg00958.html>
+
 
 ;;;; `use-package' `:ensure' keyword and `package' oddities
+
+;; DISCLAIMER: I might be misreading these reports, as I haven't yet encountered
+;; these issues (but perhaps only because of lack of experience using package.el).
 
 ;; Surprisingly, when calling the `use-package' macro with a non-nil value for
 ;; `:ensure' or when `use-package-always-ensure' is non-nil,
@@ -123,14 +135,26 @@ This aims to avoid potential issues with
 (defadvice! ceamx-note-selected-package-a (oldfun package &rest args)
   "If OLDFUN reports PACKAGE was successfully installed, note that fact.
 The package name is noted by adding it to
-`ceamx-selected-packages'.  This function is used as an
-advice for `ceamx-require-package', to which ARGS are passed."
+`ceamx-selected-packages'.
+
+This function is used as an advice for `ceamx-require-package',
+to which ARGS are passed. When the behavior of
+`package-selected-packages' is handled in a sane way in some
+future Emacs release, this advice can hopefully be removed."
   :around 'ceamx-require-package
   (let ((available (apply oldfun package args)))
     (prog1
-        available
+      available
       (when available
         (add-to-list 'ceamx-selected-packages package)))))
+
+;;; Merge selected package lists.
+(def-hook! ceamx-merge-selected-package-lists-a () 'after-init-hook
+  "Merge the `package-selected-packages' and
+`ceamx-selected-packages' lists."
+  (package--save-selected-packages
+    (seq-uniq (append ceamx-selected-packages package-selected-packages))))
+
 
 ;;;; Prevent `seq' dependency hell:
 
@@ -196,38 +220,24 @@ recent `magit' changes."
 (ceamx-require-package 'seq)
 (ceamx-require-package 'use-package)
 
-;;; Merge selected package lists.
-(def-hook! ceamx-merge-selected-package-lists-a () 'after-init-hook
-  "Merge the `package-selected-packages' and
-`ceamx-selected-packages' lists."
-  (package--save-selected-packages
-    (seq-uniq (append ceamx-selected-packages package-selected-packages))))
-
-;; When non-nil, improves performance and effectiveness of byte-compilation,
-;; but decreases introspectability.
-;; If byte-compiling user configurations, this should be non-nil.
-(setopt use-package-expand-minimally nil)
-
-;; NOTE: If a `use-package' declaration should not use `:ensure', use
-;; `use-feature!' instead, which already handles that.
 (setopt use-package-always-ensure t)
+(setopt use-package-ensure-function #'ceamx-require-package)
+(setopt use-package-always-defer t)
 
-;;; Support for Emacs init introspection.
+;;;; Improve `use-package' debuggability if necessary:
+
+(setopt use-package-expand-minimally nil)
 (when (bound-and-true-p init-file-debug)
-  ;; NOTE: Most of the options configured below require that the `use-package'
-  ;;       library is explicitly `require'd in files where its macro is
-  ;;       invoked, for various reasons. See their docstrings for more info.
   (require 'use-package)
   (setopt use-package-expand-minimally nil)
   (setopt use-package-verbose t)
   (setopt use-package-compute-statistics t))
 
-;;;; Initialize packages adding `use-package' keywords.
+;;;; Initialize packages adding `use-package' keywords:
 
 ;; NOTE: `blackout' is still useful even without `use-package'
 (use-package blackout
-  :demand t
-  :autoload (blackout))
+  :demand t)
 
 (provide 'init-packages)
 ;;; init-packages.el ends here
