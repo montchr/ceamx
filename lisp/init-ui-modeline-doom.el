@@ -34,6 +34,7 @@
 ;; Note, however, that the nerd-icons package uses the latest font version (v3.0.x)
 ;; This GitHub issue /might/ be relevant: <https://github.com/rainstormstudio/nerd-icons.el/issues/43>
 (use-package doom-modeline
+  :demand t
   :after (nerd-icons)
   :commands (doom-modeline-mode)
   :init
