@@ -38,23 +38,22 @@
 (use-package burly
   :demand t
   :commands (burly-open-last-bookmark)
-  :autoload (burly-bookmark-frames)
+  :autoload (burly-bookmark-frames))
 
-  :init
-  ;; FIXME: `tab-bar-mode' is currently broken due to upstream Emacs 29 bug
-  ;; <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-  ;; (burly-tabs-mode)
+;; TODO: for `burly' -- moved outside of declaration to avoid scary closing parens
+;; :init
+;; FIXME: `tab-bar-mode' is currently broken due to upstream Emacs 29 bug
+;; <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+;; (burly-tabs-mode)
 
-  ;; FIXME: ugh no don't even try
-  ;; Restore previous configuration during init.
+;; FIXME: ugh no don't even try ... wait why? come on past-me, what do you mean?
+;; Restore previous configuration during init.
 ;;   (add-hook 'on-init-ui-hook #'burly-open-last-bookmark)
 
 ;;   (def-hook! +burly-bookmark-frames-on-kill-emacs-h () kill-emacs-hook
 ;;              "Bookmark current frames and windows with `burly-bookmark-frames'
 ;; upon ending the Emacs session."
-  ;;     (burly-bookmark-frames "ceamx-burly-default")))
-  )
-
+;;     (burly-bookmark-frames "ceamx-burly-default")))
 
 
 ;; TODO
