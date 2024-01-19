@@ -30,9 +30,12 @@
   :if (display-graphic-p))
 
 (use-package nerd-icons
-  :custom (nerd-icons-font-family "Symbols Nerd Font Mono"))
+  :demand t
+  :init
+  (setopt nerd-icons-font-family "Symbols Nerd Font Mono"))
 
-(use-package svg-lib)
+(use-package svg-lib
+  :demand t)
 
 (use-package kind-icon
   :after (svg-lib corfu)
