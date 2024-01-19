@@ -70,7 +70,9 @@
 (use-package browse-at-remote
   :commands browse-at-remote
   :init
-  (keymap-set cmx-git-map "o" #'browse-at-remote))
+  ;; FIXME: keymap not available! causes error
+  ;; (keymap-set cmx-git-map "o" #'browse-at-remote)
+  )
 
 ;;
 ;;; `consult-gh' :: <https://github.com/armindarvish/consult-gh>
