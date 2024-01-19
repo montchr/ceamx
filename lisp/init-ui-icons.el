@@ -26,9 +26,6 @@
 
 ;;; Code:
 
-(use-package all-the-icons
-  :if (display-graphic-p))
-
 (use-package nerd-icons
   :demand t
   :init
