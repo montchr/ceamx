@@ -142,7 +142,8 @@
 ;;;; Sidebar
 ;; TODO: should not be considered "ui" -- or rather, "ui" should mean "appearance"
 ;; TODO: figure out how to load as late as possible?
-(require 'init-ui-treemacs)
+;; TODO: just remove it?
+;; (require 'init-ui-treemacs)
 
 ;;;; Keyboard support
 
