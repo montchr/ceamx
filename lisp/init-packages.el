@@ -215,11 +215,13 @@ recent `magit' changes."
 (unless package-archive-contents
   (package-refresh-contents))
 
-(ceamx-require-package 'seq)
-(ceamx-require-package 'use-package)
+(unless (package-installed-p 'seq '(2 25))
+  (package-install 'seq))
+
+(eval-when-compile
+  (require 'use-package))
 
 (setopt use-package-always-ensure t)
-(setopt use-package-ensure-function #'ceamx-require-package)
 (setopt use-package-always-defer t)
 
 ;;;; Improve `use-package' debuggability if necessary:
