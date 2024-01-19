@@ -266,11 +266,5 @@
 (when (and +gui-p +sys-mac-p)
   (add-hook 'after-init-hook #'cmx-after-init-restart-yabai-h))
 
-;; Load custom file after all packages have loaded.
-(when (file-exists-p custom-file)
-  (defun cmx-load-custom-file-after-init-h ()
-    (load custom-file 'noerror))
-  (add-hook 'after-init-hook #'cmx-load-custom-file-after-init-h))
-
 (provide 'init)
 ;;; init.el ends here

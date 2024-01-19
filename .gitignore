@@ -8,3 +8,4 @@ eln-cache
 /dotfield-init.el
 /dotfield-early-init.el
 /TUTORIAL
+/custom.el
