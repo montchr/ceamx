@@ -30,7 +30,6 @@
   :if (display-graphic-p))
 
 (use-package nerd-icons
-  :if (display-graphic-p)
   :custom (nerd-icons-font-family "Symbols Nerd Font Mono"))
 
 (use-package svg-lib)
