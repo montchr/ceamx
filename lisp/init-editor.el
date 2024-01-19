@@ -99,6 +99,7 @@
 (use-package editorconfig
   :config (editorconfig-mode +1))
 
+;; FIXME: audit this -- could explain some indentation conflicts in lisp? also why not just electric-indent
 ;;; `snap-indent' :: <https://github.com/jeffvalk/snap-indent>
 ;;  yet another "simple automatic indentation" package
 (use-package snap-indent
