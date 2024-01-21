@@ -73,6 +73,50 @@ acknowledges this incompatibility."
       (meow-leader-define-key (cons ,key ,def))
     (keymap-set mode-specific-map ,key ,def)))
 
+;; FIXME: while logging something simple works, this does not yet return
+;; anything useful -- it should return a modified version of DEFS
+;; TODO: rework since this doesn't need to be about keydefs
+;; (defun ceamx-map-keydefs (func &rest defs)
+;;   "Apply the function FUNC to key/definition pairs DEFS.
+
+;; FUNC should accept args KEY and DEF. KEY should be a string
+;; matching `key-valid-p'. DEF is anything that can be a key
+;; definition. See the docstring for `keymap-set' for more info on
+;; accepted values for DEF.
+
+;; This function does not validate the validity of each KEY/DEF pair
+;; in DEFS. However, this function will throw when there is an
+;; uneven number of items in DEFS, or when there are duplicate
+;; definitions for KEY.
+
+;; This function is mostly copied from the source of
+;; `define-keymap'."
+;;   (let (seen-keys)
+;;     (while defs
+;;       (let ((key (pop defs)))
+;;         (unless defs
+;;           (error "Uneven number of key/definition pairs"))
+;;         (let ((def (pop defs)))
+;;           (if (member key seen-keys)
+;;               (error "Duplicate definition for key: %S" key)
+;;             (push key seen-keys))
+;;           (funcall func key def))))))
+
+;; (defmacro with-prefix! (prefix &rest defs)
+;;   "Prepend string PREFIX to each key in key/definition pairs DEFS.
+;; PREFIX must satisfy `key-valid-p'. DEFS is composed of keybinding
+;;  pairs of the form accepted by `define-keymap'.
+
+;; When PREFIX is prepended to each key string, a single space will
+;;  be added between PREFIX and the value for the key. If PREFIX
+;;  already includes trailing whitespace, that whitespace will be
+;;  stripped and replaced by a single space unless the trailing
+;;  whitespace is already a single space character."
+;;   (declare (indent defun))
+;;   (let* ((prefix (string-clean-whitespace prefix))
+;;          ;; FIXME: how to return modified KEY and DEF? or find another way...
+;;          (fn (lambda (key def) (format "%s %s" prefix key))))))
+
 (defmacro def-arm! (keymap key description &rest defs)
   "Define KEYMAP with DEFS bound to KEY with DESCRIPTION in the appropriate leader.
 See `leader-key!' for more info about leader behavior."
