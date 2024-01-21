@@ -64,6 +64,9 @@
   (setq no-littering-etc-directory cmx-etc-dir)
   (setq no-littering-var-directory cmx-var-dir))
 
+(use-feature! on
+  :demand t)
+
 ;;
 ;;; Libraries
 
