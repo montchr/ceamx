@@ -100,7 +100,9 @@
 
 ;;; editorconfig :: <https://editorconfig.org>
 (use-package editorconfig
-  :config (editorconfig-mode +1))
+  :commands (editorconfig-mode)
+  :init
+  (add-hook 'on-first-file-hook #'editorconfig-mode))
 
 ;; FIXME: audit this -- could explain some indentation conflicts in lisp? also why not just electric-indent
 ;;; `snap-indent' :: <https://github.com/jeffvalk/snap-indent>
