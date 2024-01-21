@@ -112,6 +112,14 @@
   ;; TODO: consider so-long
   (setopt snap-indent-length-limit 200))
 
+;;; `topsy.el' :: <https://github.com/alphapapa/topsy.el>
+;;  "Simple sticky header showing definition beyond top of window"
+(use-package topsy
+  :commands (topsy-mode)
+  :init
+  (add-hook 'prog-mode-hook #'topsy-mode)
+  (add-hook 'magit-section-mode-hook #'topsy-mode))
+
 ;;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
 (use-package reformatter
   :config
