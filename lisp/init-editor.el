@@ -86,6 +86,7 @@
 ;;  A smarter `fill-paragraph' or `adaptive-fill-mode'.
 ;;  <https://www.emacswiki.org/emacs/FillAdapt>
 (use-package filladapt
+  :disabled
   :commands (filladapt-mode)
 
   :init
