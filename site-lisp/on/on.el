@@ -91,7 +91,7 @@ to nil.
 HOOK-VAR is a quoted hook.
 TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
   (dolist (hook trigger-hooks)
-    (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
+    (let ((fn (intern (format "chain-%s-to-%s-h" hook-var hook))))
       (fset
        fn (lambda (&rest _)
             ;; Only trigger this after Emacs has initialized.
