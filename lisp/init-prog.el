@@ -65,6 +65,10 @@ Intended for use as a hook callback on `prog-mode-hook'."
     ("l" dumb-jump-quick-look "Quick look")
     ("b" dumb-jump-back "Back")))
 
+;;; `highlight-function-calls' :: <https://github.com/alphapapa/highlight-function-calls>
+;; NOTE: Loaded in `ceamx-prog-mode-init-h' to ensure proper load order.
+(use-package highlight-function-calls
+  :commands (highlight-function-calls-mode))
 
 ;;; `repl-toggle' :: <https://git.sr.ht/~tomterl/repl-toggle>
 ;;  Switch between `prog-mode' buffers and their corresponding REPLs.
