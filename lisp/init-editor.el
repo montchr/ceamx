@@ -46,15 +46,17 @@
 
 ;;; Maintain indentation and comments upon newline.
 
-(after! 'evil
-  (when (boundp 'evil-insert-state-map)
-    (keymap-set evil-insert-state-map
-      "RET" #'comment-indent-new-line)))
+;; (after! 'evil
+;;   (when (boundp 'evil-insert-state-map)
+;;     (keymap-set evil-insert-state-map
+;;                 "RET" #'comment-indent-new-line)))
 
-(after! 'meow
-  (when (boundp 'meow-insert-state-keymap)
-    (keymap-set meow-insert-state-keymap
-      "RET" #'comment-indent-new-line)))
+;; FIXME: does not have intended effect -- more like the opposite?
+;;        `lispy-mode' overrides to `lispy-newline-and-indent-plain'
+;; (after! 'meow
+;;   (when (boundp 'meow-insert-state-keymap)
+;;     (keymap-set meow-insert-state-keymap
+;;       "RET" #'comment-indent-new-line)))
 
 ;;; `whitespace-mode' (internal)
 ;;
