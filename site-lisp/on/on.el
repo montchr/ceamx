@@ -83,9 +83,10 @@
   "List of hooks to run when the UI has been initialized.")
 
 (defun on-run-hook-on (hook-var trigger-hooks)
-  "Configure HOOK-VAR to be invoked exactly once when any of the TRIGGER-HOOKS
-are invoked *after* Emacs has initialized (to reduce false positives). Once
-HOOK-VAR is triggered, it is reset to nil.
+  "Configure HOOK-VAR to be called exactly once when TRIGGER-HOOKS are called.
+TRIGGER-HOOKS are only called *after* Emacs has initialized (to
+reduce false positives). Once HOOK-VAR is triggered, it is reset
+to nil.
 
 HOOK-VAR is a quoted hook.
 TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
@@ -93,8 +94,8 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
     (let ((fn (intern (format "%s-init-on-%s-h" hook-var hook))))
       (fset
        fn (lambda (&rest _)
-            ;; Only trigger this after Emacs or, if available, Elpaca have initialized.
-            ;; FIXME: is elpaca really considered here? i don't see it
+            ;; Only trigger this after Emacs has initialized.
+            ;; TODO: does elpaca need any special consideration here?
             (when (and after-init-time
                        (or (daemonp)
                            ;; In some cases, hooks may be lexically unset to
@@ -107,12 +108,12 @@ TRIGGER-HOOK is a list of quoted hooks and/or sharp-quoted functions."
               (run-hooks hook-var)
               (set hook-var nil))))
       (cond ((daemonp)
-              ;; TODO: reconsider
+             ;; TODO: reconsider
              ;; In a daemon session we don't need all these lazy loading
              ;; shenanigans. Just load everything immediately.
-              (if (boundp 'elpaca-after-init-hook)
-                (add-hook 'elpaca-after-init-hook fn 'append))
-              (add-hook 'after-init-hook fn 'append))
+             (if (boundp 'elpaca-after-init-hook)
+                 (add-hook 'elpaca-after-init-hook fn 'append))
+             (add-hook 'after-init-hook fn 'append))
             ((eq hook 'find-file-hook)
              ;; Advise `after-find-file' instead of using `find-file-hook'
              ;; because the latter is triggered too late (after the file has
@@ -144,9 +145,10 @@ triggering hooks during startup."
   (on-run-hook-on 'on-first-buffer-hook
                   '(window-buffer-change-functions server-visit-hook))
 
-  ;; Initialize `on-switch-window-hook' and `on-switch-frame-hook'
+  ;; Initialize `on-switch-window-hook' and `on-switch-frame-hook'.
   (add-hook 'window-selection-change-functions #'on-run-switch-window-or-frame-hooks-h)
-  ;; Initialize `on-switch-buffer-hook'
+
+  ;; Initialize `on-switch-buffer-hook'.
   (add-hook 'window-buffer-change-functions #'on-run-switch-buffer-hooks-h)
   ;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
   (add-hook 'server-visit-hook #'on-run-switch-buffer-hooks-h)
@@ -154,8 +156,10 @@ triggering hooks during startup."
   ;; Only execute this function once.
   (remove-hook 'window-buffer-change-functions #'on-init-ui-h))
 
-;; Initialize UI as late as possible. `window-buffer-change-functions' runs
-;; once, when the scratch/dashboard buffer is first displayed.
+;; Initialize UI as late as possible.
+;;
+;; `window-buffer-change-functions' runs once, when the scratch/dashboard buffer
+;; is first displayed.
 (add-hook 'window-buffer-change-functions #'on-init-ui-h -100)
 
 (unless noninteractive
