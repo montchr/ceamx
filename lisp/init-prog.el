@@ -25,10 +25,26 @@
 ;;; Code:
 
 ;;
-;;; `dumb-jump' :: <https://github.com/jacktasia/dumb-jump>
-;;
-;;  "zero-configuration" jump-to-definition package with support for many langs
+;;; Hooks
 
+(defun ceamx-prog-mode-init-h ()
+  "Enable features and defaults useful in any `prog-mode'-derived major modes.
+This function is especially useful to ensure functions are called
+in a specific order. For this reason, condition checks on
+`boundp'/`fboundp' are preferable to using `after!' or
+`with-eval-after-load', as the latter may result in a
+non-deterministic execution order.
+
+Intended for use as a hook callback on `prog-mode-hook'."
+  ;; `highlight-function-calls-mode' should be enabled after other highlighters
+  ;; (e.g. `rainbow-delimiters-mode'), according to its readme.
+  (when (fboundp 'highlight-function-calls-mode)
+    (highlight-function-calls-mode 1)))
+
+(add-hook 'prog-mode-hook #'ceamx-prog-mode-init-h)
+
+;;; `dumb-jump' :: <https://github.com/jacktasia/dumb-jump>
+;;  "zero-configuration" jump-to-definition package with support for many langs
 (use-package dumb-jump
   :autoload dumb-jump-xref-activate
   :init
