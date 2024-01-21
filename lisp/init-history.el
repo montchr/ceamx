@@ -69,6 +69,33 @@
   (dolist (path '(cmx-etc-dir cmx-var-dir))
     (add-to-list 'recentf-exclude path)))
 
+;;; `dogears' :: <https://github.com/alphapapa/dogears.el>
+;;  Return to previously-visited locations in and across buffers.
+(use-package dogears
+  :commands (dogears-mode
+             dogears-go
+             dogears-back
+             dogears-forward
+             dogears-list
+             dogears-sidebar)
+
+  :init
+  (add-hook 'on-first-buffer-hook #'dogears-mode)
+
+  (define-keymap :keymap (current-global-map)
+    "M-g d" #'dogears-go
+    "M-g M-b" #'dogears-back
+    "M-g M-f" #'dogears-forward
+    "M-g M-d" #'dogears-list
+    "M-g M-D" #'dogears-sidebar)
+
+  :config
+  ;; Persist `dogears-list' between Emacs sessions.
+  ;; via <https://github.com/alphapapa/dogears.el/issues/4>
+  (after! 'savehist
+    (when (boundp 'savehist-additional-variables)
+      (add-to-list 'savehist-additional-variables #'dogears-list))))
+
 ;;
 ;;; Undo/redo
 ;;
