@@ -32,11 +32,12 @@
 ;; Prevents an extra window appearing during init.
 (setopt async-shell-command-display-buffer nil)
 
+;; FIXME: one of these, i think, is responsible for breaking childframes e.g. `embark-act', `Info-mode'
 ;; TODO: what do each of these do?
-(setopt display-buffer-base-action
-        '((display-buffer-reuse-mode-window
-           display-buffer-pop-up-window)
-          (reusable-frames . t)))
+;; (setopt display-buffer-base-action
+;;         '((display-buffer-reuse-mode-window
+;;            display-buffer-pop-up-window)
+;;           (reusable-frames . t)))
 
 (setopt even-window-sizes nil)
 
