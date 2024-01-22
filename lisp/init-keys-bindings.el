@@ -209,7 +209,6 @@
   ;; TODO: move corresponding meow binding here with fallback to default
   ;;       example:   (cl-find-if #'fboundp '(harper-dad-joint helpful-at-point describe-key))
   "k" #'helpful-key
-  "C-k" #'helpful-key
   "K" #'describe-key-briefly
   "l" #'find-library
   "o" #'helpful-symbol
@@ -226,8 +225,11 @@
   ;; Parity with the corresponding unmodded keys.
   ;; Primarily for Meow keypad, but also sometimes feels more natural to keep
   ;; holding Ctrl anyway.
-  "C-h" #'helpful-at-point
-  "C-o" #'helpful-symbol)
+  "C-k" #'helpful-key
+  "C-o" #'helpful-symbol
+
+  ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
+  "C-h" nil)
 
 
 ;;
