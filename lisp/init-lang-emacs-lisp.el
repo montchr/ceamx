@@ -56,6 +56,16 @@
 ;;
 ;;; Packages
 
+;;; `eros' :: <https://github.com/xiongtx/eros>
+
+;;  Evaluation Result OverlayS for Emacs Lisp
+
+(use-package eros
+  :commands (eros-mode eros-eval-last-sexp)
+  :init
+  (add-hook 'emacs-lisp-mode-hook #'eros-mode)
+  (keymap-set emacs-lisp-mode-map "<remap> <eval-last-sexp>" #'eros-eval-last-sexp))
+
 ;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
 ;;  discover elisp functions that do what you want,
 ;;  brought to you by enumerative program synthesis
