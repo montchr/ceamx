@@ -25,6 +25,9 @@
 
 ;;  Keybindings configuration.
 
+;; TODO: <https://github.com/jwiegley/dot-emacs/blob/master/init.org#smart-newline>
+;; TODO: <https://github.com/ainame/smart-newline.el/tree/c50ab035839b307c66d439083b6761cb7db5e972>
+
 ;;; Code:
 
 (require 'lib-common)

@@ -90,9 +90,6 @@
     "M-s k"  #'consult-keep-lines
     "M-s u"  #'consult-focus-lines)
 
-  ;; TODO: may be unnecessary when remapping `yank-pop'?
-  ;; (keymap-global-set "M-y" #'consult-yank-pop)
-
   ;;; `isearch' integration:
   (keymap-global-set "M-s e" #'consult-isearch-history)
   (keymap-set minibuffer-local-map "M-s" #'consult-history) ; orig. next-matching-history-element

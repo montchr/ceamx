@@ -54,6 +54,23 @@
   :config
   (setopt olivetti-style 'fancy))
 
+;; via <https://github.com/jwiegley/dot-emacs/blob/master/init.org#shackle>
+;; (use-package shackle
+;;   :unless alternate-emacs
+;;   :demand t
+;;   :commands shackle-mode
+;;   :custom
+;;   (shackle-default-rule '(:select t))
+;;   (shackle-rules
+;;    '((compilation-mode :select nil :size 0.6)
+;;      ("\\`\\*Messages" :select t :align t :size 0.6)
+;;      ("\\`\\*company-coq:" :regexp t :noselect t)
+;;      ("\\`\\*fetch" :regexp t :size 0.25 :noselect t :align bottom)
+;;      ("\\`\\*Flycheck" :regexp t :size 0.2 :noselect t :align bottom)
+;;      ("\\`\\*?magit-diff" :regexp t :align bottom :noselect t)))
+;;   :config
+;;   (shackle-mode 1))
+
 ;;; popper -- <https://github.com/karthink/popper>
 ;;  "minor-mode to summon and dismiss buffers easily."
 (use-package popper
