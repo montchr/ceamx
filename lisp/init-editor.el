@@ -33,16 +33,22 @@
 ;;
 ;;; Formatting
 
-;; Don't consider camelCaseWORDs as separate words.
-(global-subword-mode -1)
-
 ;; Default indentation: 2 spaces
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 
-;; Automatically maintain indentation while typing.
-(electric-indent-mode +1)
-(setopt backward-delete-char-untabify-method 'hungry)
+(use-feature! emacs
+  :config
+  (setopt indent-tabs-mode nil)
+  ;; TODO: review setting (disable and see what happens)
+  (setopt backward-delete-char-untabify-method 'hungry)
+
+  ;; Don't consider camelCaseWORDs as separate words.
+  (global-subword-mode -1))
+
+(use-feature! electric
+  :config
+  (electric-indent-mode 1))
 
 ;;; Maintain indentation and comments upon newline.
 

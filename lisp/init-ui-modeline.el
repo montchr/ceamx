@@ -29,10 +29,17 @@
 
 (require 'lib-common)
 
-(display-time-mode -1)
-(setopt column-number-mode t)
+(use-feature! emacs
+  :config
+  (setopt line-number-mode t)
+  (setopt column-number-mode t))
+
+(use-feature! time
+  :config
+  (setopt display-time-mode -1))
 
 ;; Show the name of the current function definition in the modeline.
+;; TODO: on hook?
 (use-feature! which-func
   :config
   (which-function-mode 1))
