@@ -22,6 +22,8 @@
 
 ;;; Code:
 
+(require 'lib-common)
+
 (use-package fontaine
   :demand t
   :config
@@ -72,27 +74,21 @@
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
 
+;;; `ligature.el' :: <https://github.com/mickeynp/ligature.el>
+;;  A better implementation of ligature support than `prettify-symbols-mode'.
+;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
 (use-package ligature
-  ;; FIXME: :elpaca (ligature :host github :repo "mickeynp/ligature.el")
   :config
   ;; Enable all Iosevka ligatures in programming modes
   ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
   (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
-                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
-                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
-                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+                                        "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                        "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                        ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
 
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
-
-;; FIXME: results in init errors due to feature not found
-;; (use-feature! prettify-symbols
-;;   :hook prog-mode)
-
-(after! 'fontaine
-  (add-hook 'fontaine-set-preset-hook #'global-prettify-symbols-mode))
-
 
 (provide 'init-ui-font)
 ;;; init-ui-font.el ends here
