@@ -64,5 +64,11 @@
     "s-x" #'kill-region
     "s-q" #'save-buffers-kill-emacs))
 
+(use-feature! repeat
+  :config
+  ;; TODO: make sure this doesn't have some unintended consequences
+  (setopt repeat-exit-key "ESC")
+  (repeat-mode 1))
+
 (provide 'init-keys)
 ;;; init-keys.el ends here
