@@ -307,6 +307,7 @@
 
 ;;;; "q p" Package Management
 (def-map! cmx-packages-map
+  "b" #'embark-browse-package-url
   "c" #'package-autoremove
   "d" #'package-delete
   "i" #'describe-package
