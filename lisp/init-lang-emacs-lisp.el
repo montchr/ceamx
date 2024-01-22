@@ -62,7 +62,8 @@
 (use-package suggest
   :commands (suggest)
   :init
-  (keymap-set emacs-lisp-mode-map "C-c m S" #'suggest))
+  ;; TODO: is C-x binding more appropriate by convention?
+  (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
 
 ;;; `macrostep' :: <https://github.com/emacsorphanage/macrostep>
 ;;  "interactive macro-expander for Emacs"
@@ -70,7 +71,7 @@
   :commands (macrostep-expand)
 
   :init
-  (keymap-set emacs-lisp-mode-map "C-c m E" #'macrostep-expand))
+  (keymap-set emacs-lisp-mode-map "C-c x" #'macrostep-expand))
 
 
 
