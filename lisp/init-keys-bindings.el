@@ -208,11 +208,13 @@
   ;; NOTE: currently `meow-describe-key'
   ;; TODO: move corresponding meow binding here with fallback to default
   ;;       example:   (cl-find-if #'fboundp '(harper-dad-joint helpful-at-point describe-key))
-  ;; "k" #'describe-key
+  "k" #'helpful-key
+  "C-k" #'helpful-key
   "K" #'describe-key-briefly
   "l" #'find-library
   "o" #'helpful-symbol
   "s" #'suggest
+  ;; FIXME: no lambda binding
   "t" `("text-props (pt)" . ,(cmd!!
                                #'describe-text-properties
                                current-prefix-arg
