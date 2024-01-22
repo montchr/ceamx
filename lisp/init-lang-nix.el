@@ -46,9 +46,6 @@
   (reformatter-define nix-format-nixfmt
     :program "nixfmt"))
 
-(after! [nix-mode aggressive-indent]
-  (add-to-list 'aggressive-indent-excluded-modes 'nix-mode))
-
 (after! [nix-mode smartparens]
   (sp-pair "''" "''"))
 

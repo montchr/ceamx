@@ -44,9 +44,6 @@
 
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
 
-(after!! 'aggressive-indent
-  (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode))
-
 ;; Add hooks to supported Lisp modes.
 (dolist (mode ceamx-lisp-modes-list)
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
