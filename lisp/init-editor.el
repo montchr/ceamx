@@ -124,63 +124,27 @@
   ;; Prettier is a commonly-used formatter for several languages.
   (reformatter-define prettier :program "prettier"))
 
-;; FIXME: replace with something that isn't so extra e.g. electric-pair-mode and the like
-;;; `smartparens' :: <https://github.com/Fuco1/smartparens>
-(use-package smartparens
-  :autoload (sp-local-pair)
-  :commands (smartparens-mode
-             sp-use-paredit-bindings
-             show-smartparens-global-mode)
-  :init
-  ;; Load `smartparens' just about everywhere editable.
-  (dolist (mode '(prog-mode text-mode markdown-mode git-commit-mode))
-    (let ((mode-hook (intern (format "%S-hook" mode))))
-      (add-hook mode-hook #'smartparens-mode)))
-
+;;; Blink/show matching pairs.
+;;  See Info node `(info "(emacs) Matching")'
+(use-feature! emacs
   :config
-  ;; Load default package configuration.
-  (require 'smartparens-config)
+;;; Blink matching pairs.
+  (setopt blink-matching-paren 'jump)
+  ;; (setopt blink-matching-paren t)
+  (setopt blink-matching-delay 1)
 
-  (setopt sp-base-key-bindings 'paredit)
-  (setopt sp-autoskip-closing-pair 'always)
-  (setopt sp-hybrid-kill-entire-symbol nil)
+;;; Highlight matching pairs.
+  ;; Avoid "expression" style, which looks too much like a selected region.
+  (setopt show-paren-style 'parenthesis)
+  (show-paren-mode 1)
 
-  (sp-use-paredit-bindings)
-
-  (show-smartparens-global-mode 1)
-
-  ;;; When pressing RET after inserting a pair, add an extra newline and indent.
-  ;;  <https://github.com/radian-software/radian/blob/develop/emacs/radian.el#L2174-L2214>
-  ;;  <https://github.com/Fuco1/smartparens/issues/80#issuecomment-18910312>.
-  (dolist (delim '("(" "[" "{"))
-    ;; NOTE: For some reason, the modes must be specified explicitly; that is,
-    ;; specifying `fundamental-mode' does not imply all modes will inherit its
-    ;; pairs.
-    (dolist (mode '(fundamental-mode
-                    javascript-mode
-                    nix-mode
-                    prog-mode
-                    text-mode))
-      (cmx-sp-pair mode delim)))
-
-  (cmx-sp-pair #'python-mode "\"\"\"")
-
-  ;; Work around https://github.com/Fuco1/smartparens/issues/1036.
-  (when (fboundp 'minibuffer-mode)
-    (sp-local-pair #'minibuffer-mode "`" nil :actions nil)
-    (sp-local-pair #'minibuffer-mode "'" nil :actions nil))
-
-  ;; Work around https://github.com/Fuco1/smartparens/issues/783.
-  (setopt sp-escape-quotes-after-insert nil))
-
-;;
-;;; Visual feedback
-;;
-
-
-;;
-;;; Mutations
-;;
+;;; Insert matching pairs.
+  (setopt electric-pair-preserve-balance t)
+  (setopt electric-pair-delete-adjacent-pairs t)
+  (setopt electric-pair-skip-whitespace t)
+  ;; TODO: evaluating...
+  (setopt electric-pair-open-newline-between-pairs t)
+  (electric-pair-mode 1))
 
 ;;
 ;;; drag-stuff :: <https://github.com/rejeep/drag-stuff.el>
@@ -209,9 +173,9 @@
 (use-package drag-stuff
   :bind
   (([M-up]    . drag-stuff-up)
-   ([M-right] . drag-stuff-right)
-   ([M-down]  . drag-stuff-down)
-   ([M-left]  . drag-stuff-left)))
+    ([M-right] . drag-stuff-right)
+    ([M-down]  . drag-stuff-down)
+    ([M-left]  . drag-stuff-left)))
 
 ;;
 ;;; Rectangle operations

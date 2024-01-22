@@ -39,9 +39,6 @@
     tab-width
     nxml-child-indent)
 
-  (after! 'smartparens
-    (sp-local-pair 'nxml-mode "<" ">" :post-handlers '(("[d1]" "/"))))
-
   (after! 'reformatter
     (reformatter-define xmlfmt
       ;; TODO: ensure available

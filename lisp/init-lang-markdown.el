@@ -92,12 +92,7 @@ usually wrongly fontified as a metadata block. See
 <https://github.com/jrblevin/markdown-mode/issues/328#issuecomment-405361296>
 and
 <https://github.com/radian-software/radian/blob/b2fac3a615186f77de0bdc7e4f06e9aa46c222bb/emacs/radian.el#L3199-L3206>."
-    (ignore (goto-char (point-max))))
-
-  ;; Register code fence pair.
-  (after! [smartparens]
-    (require 'lib-editor)
-    (cmx-sp-pair #'markdown-mode "```")))
+    (ignore (goto-char (point-max)))))
 
 (use-package evil-markdown
   :disabled t

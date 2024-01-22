@@ -99,9 +99,6 @@
   (tooltip-mode -1)
   (scroll-bar-mode -1))
 
-;; Highlight matching parentheses.
-(show-paren-mode t)
-
 ;; Unbind `suspend-frame'.
 ;; TODO: provide more context
 (global-unset-key (kbd "C-x C-z"))

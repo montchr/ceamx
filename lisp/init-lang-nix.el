@@ -46,9 +46,6 @@
   (reformatter-define nix-format-nixfmt
     :program "nixfmt"))
 
-(after! [nix-mode smartparens]
-  (sp-pair "''" "''"))
-
 ;; FIXME: not loading automatically
 (use-feature! eglot
   :after (nix-mode)
