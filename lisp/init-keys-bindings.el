@@ -436,14 +436,6 @@
 ;; (leader-key! "SPC" '("project buffer..." . consult-project-buffer))
 (leader-key! "j"   '("jump: line..." . consult-line))
 
-;; via <https://github.com/mclear-tools/dotemacs/blob/dc18ceebe9b3580b6b4deeb033f282670cb4df8b/cpm-setup-meow.el>
-(leader-key! ")" '("slurp ->" . "C-)"))
-(leader-key! "(" '("<- slurp" . "C-("))
-(leader-key! "}" "C-}")
-(leader-key! "." "M-.")
-(leader-key! ";" #'comment-line)
-(leader-key! "j" #'avy-goto-char-2)
-
 (leader-key! "a" '("agenda..." . consult-org-agenda))
 
 ;; TODO: install
