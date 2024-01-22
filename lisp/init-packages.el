@@ -200,8 +200,6 @@ recent `magit' changes."
 (when (boundp 'package-vc-register-as-project)
   (setq package-vc-register-as-project nil))
 
-(add-hook 'package-menu-mode-hook #'hl-line-mode)
-
 ;;
 ;;; Initialize packages:
 

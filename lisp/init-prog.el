@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(require 'lib-common)
+
 ;;
 ;;; Hooks
 
@@ -43,6 +45,21 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 (add-hook 'prog-mode-hook #'ceamx-prog-mode-init-h)
 
+;;
+;;; Defaults
+
+
+;;
+;;; Packages
+
+;;; hl-todo :: <https://github.com/tarsius/hl-todo>
+;;  Highlight TODO and other codetags in comments and strings
+;;  <https://peps.python.org/pep-0350/#specification>
+(use-package hl-todo
+  :commands (hl-todo-mode)
+  :init
+  (add-hook 'prog-mode-hook #'hl-todo-mode))
+
 ;;; `dumb-jump' :: <https://github.com/jacktasia/dumb-jump>
 ;;  "zero-configuration" jump-to-definition package with support for many langs
 (use-package dumb-jump
@@ -50,6 +67,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
   :init
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
   :config
+  ;; FIXME: make conditional if ripgrep available
   (setopt dumb-jump-force-searcher 'rg))
 
 (after! [hydra dumb-jump]
@@ -69,6 +87,12 @@ Intended for use as a hook callback on `prog-mode-hook'."
 ;; NOTE: Loaded in `ceamx-prog-mode-init-h' to ensure proper load order.
 (use-package highlight-function-calls
   :commands (highlight-function-calls-mode))
+
+;;; `rainbow-delimiters' :: <https://github.com/Fanael/rainbow-delimiters>
+(use-package rainbow-delimiters
+  :commands (rainbow-delimiters-mode)
+  :init
+  (add-hook 'ceamx-lisp-init-hook #'rainbow-delimiters-mode))
 
 ;;; `repl-toggle' :: <https://git.sr.ht/~tomterl/repl-toggle>
 ;;  Switch between `prog-mode' buffers and their corresponding REPLs.

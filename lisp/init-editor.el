@@ -23,7 +23,7 @@
 
 ;;; Commentary:
 
-;;  Basic editor configuration
+;; Configuration applicable across all editable buffers.
 
 ;;; Code:
 
@@ -104,19 +104,6 @@
   :init
   (add-hook 'on-first-file-hook #'editorconfig-mode))
 
-;; FIXME: audit this -- could explain some indentation conflicts in lisp? also why not just electric-indent
-;;; `snap-indent' :: <https://github.com/jeffvalk/snap-indent>
-;;  yet another "simple automatic indentation" package
-(use-package snap-indent
-  :after (editorconfig)
-  :init (add-hook 'prog-mode #'snap-indent-mode)
-  :config
-  (setopt snap-indent-format 'untabify)
-  (setopt snap-indent-on-save t)
-  ;; Prevent issues with long lines with this totally arbitrary number.
-  ;; TODO: consider so-long
-  (setopt snap-indent-length-limit 200))
-
 ;;; `topsy.el' :: <https://github.com/alphapapa/topsy.el>
 ;;  "Simple sticky header showing definition beyond top of window"
 (use-package topsy
@@ -131,11 +118,6 @@
   ;; Prettier is a commonly-used formatter for several languages.
   (reformatter-define prettier :program "prettier"))
 
-;; TODO: TAB back and forth between parens in normal state
-;;       chatgpt tells me that smartparens is responsible for that in doom emacs, we shall see...
-;;       ok i just installed doom in a scratch directory and weirdly enough i'm not seeing the behavior i remember at all
-;;       but hey, it would be nice, right?
-;;
 ;; FIXME: replace with something that isn't so extra e.g. electric-pair-mode and the like
 ;;; `smartparens' :: <https://github.com/Fuco1/smartparens>
 (use-package smartparens
@@ -189,20 +171,6 @@
 ;;; Visual feedback
 ;;
 
-;;; hl-todo :: <https://github.com/tarsius/hl-todo>
-;;  Highlight TODO and other codetags in comments and strings
-;;  <https://peps.python.org/pep-0350/#specification>
-(use-package hl-todo
-  :hook (prog-mode . hl-todo-mode))
-
-;; Highlight current line.
-(global-hl-line-mode +1)
-
-;;; `rainbow-delimiters' :: <https://github.com/Fanael/rainbow-delimiters>
-(use-package rainbow-delimiters
-  :commands (rainbow-delimiters-mode)
-  :init
-  (add-hook 'ceamx-lisp-init-hook #'rainbow-delimiters-mode))
 
 ;;
 ;;; Mutations

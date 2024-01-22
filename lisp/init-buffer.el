@@ -34,6 +34,12 @@
 ;; Disable buffer line wrapping by default.
 (set-default 'truncate-lines t)
 
+(use-feature! hl-line
+  :commands (hl-line-mode)
+  :init
+  (add-hook 'prog-mode-hook #'hl-line-mode)
+  (add-hook 'package-menu-mode-hook #'hl-line-mode))
+
 ;;
 ;;; `goto-address' (internal)
 ;; Linkify URLs and email addresses in buffers.
