@@ -145,6 +145,7 @@
    '("<escape>" . ignore)
    '(":" . avy-goto-char-2))
 
+  ;; FIXME: prevent rebinding of SPC in Info-mode
   (pushnew! meow-mode-state-list
             ;; shells
             '(comint-mode . insert)
@@ -168,14 +169,14 @@
   ;; changed.
   (setopt meow-expand-hint-remove-delay 10.0)
 
-  (setopt meow-keypad-leader-dispatch "C-c")
+  ;; There are slight differences between these two, take your pick.
+  ;; Default is nil.
+  (setopt meow-keypad-leader-dispatch nil)
+  ;; (setopt meow-keypad-leader-dispatch "C-c")
 
-  ;; TODO: investigate effects -- copied from <https://github.com/chuxubank/cat-emacs/blob/65155f642b336d14ca63f010ff45eea2c18cfdce/cats/%2Bmeow.el>
-  ;; (setopt meow-expand-exclude-mode-list nil)
-
-  ;; Prevent leader binding collision with `cmx-git-map', which I have bound to
-  ;; "SPC g" because muscle memory.
-  (setopt meow-keypad-ctrl-meta-prefix nil)
+  ;; Use "SPC G" as "C-M-" prefix, allowing `cmx-git-map' to be mapped to "SPC
+  ;; g" because muscle memory.
+  ;; (setopt meow-keypad-ctrl-meta-prefix ?G)
 
   ;; Improve state indicator appearance (e.g. in modeline).
   (setopt meow-replace-state-name-list '((normal . "🅝")

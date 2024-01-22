@@ -176,16 +176,17 @@
 ;;; "g" => Git
 ;;
 
-(def-arm! cmx-git-map "g" "[Git]"
-  "b" #'magit-branch
-  "B" #'magit-blame
-  "f" #'magit-find-file
-  "g" #'magit-status
-  "G" #'magit-dispatch
-  "l" #'magit-log-buffer-file
-  "s" #'magit-stage-file
-  "S" #'magit-unstage-file
-  "t" #'git-timemachine)
+;; TODO: disabled to try out vanilla keybinds with meow keypad defaults
+;; (def-arm! cmx-git-map "g" "[Git]"
+;;   "b" #'magit-branch
+;;   "B" #'magit-blame
+;;   "f" #'magit-find-file
+;;   "g" #'magit-status
+;;   "G" #'magit-dispatch
+;;   "l" #'magit-log-buffer-file
+;;   "s" #'magit-stage-file
+;;   "S" #'magit-unstage-file
+;;   "t" #'git-timemachine)
 
 ;;
 ;;; "h" => Help
@@ -429,7 +430,8 @@
 
 ;; TODO: why not `other-buffer'?
 (leader-key! "`"   '("other buffer" . mode-line-other-buffer))
-(leader-key! "SPC" '("project buffer..." . consult-project-buffer))
+;; FIXME: conflicts with meow keypad
+;; (leader-key! "SPC" '("project buffer..." . consult-project-buffer))
 (leader-key! "j"   '("jump: line..." . consult-line))
 
 ;; via <https://github.com/mclear-tools/dotemacs/blob/dc18ceebe9b3580b6b4deeb033f282670cb4df8b/cpm-setup-meow.el>

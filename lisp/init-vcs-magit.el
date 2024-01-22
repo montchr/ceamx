@@ -31,6 +31,11 @@
   :autoload (transient-quit-one))
 
 (use-package magit
+  :commands (magit-status
+              magit-dispatch
+              magit-file-dispatch
+              magit-revert
+              magit-discard)
   :after (seq transient git-commit)
 
   :config
@@ -44,11 +49,19 @@
   (setopt magit-process-finish-apply-ansi-colors t) ; render ANSI colors in process output
 
   ;; Close transient with ESC
+  ;; FIXME: move to configuration for `transient'
   (define-key transient-map [escape] #'transient-quit-one)
 
-  ;; FIXME: meow won't allow this?
+  ;; FIXME: meow won't allow
   ;; TODO: what is the default magit binding for "j"?
   ;; (keymap-set magit-status-mode-map "j" nil)
+
+  ;; These should be bound automatically when `magit-define-global-key-bindings'
+  ;; is =default= (which is the default value), but that does not seem to work.
+  (define-keymap :keymap (current-global-map)
+    "C-x g"    #'magit-status
+    "C-x M-g"  #'magit-dispatch
+    "C-c M-g"  #'magit-file-dispatch)
 
   ;; TODO: why does this not have an effect?
   (define-keymap :keymap magit-status-mode-map
