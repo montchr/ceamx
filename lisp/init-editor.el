@@ -215,6 +215,14 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     ("u" undo nil)
     ("g" nil)))
 
+;;; `puni' :: <https://github.com/AmaiKinono/puni>
+;;  Structured editing (soft deletion, expression navigating & manipulating)
+;;  that supports many major modes out of the box.
+(use-package puni
+  :commands (puni-global-mode puni-disable-puni-mode)
+  :init
+  (puni-global-mode)
+  (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 
 (provide 'init-editor)
 ;;; init-editor.el ends here

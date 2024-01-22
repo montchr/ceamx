@@ -72,13 +72,7 @@
   :init
   (keymap-set emacs-lisp-mode-map "C-c m E" #'macrostep-expand))
 
-(after! 'lispy
-  (when (boundp 'lispy-outline)
-    (setq lispy-outline
-      (concat
-        ;; `lispy-mode' requires `lispy-outline' start with ^
-        (unless (string-prefix-p "^" +emacs-lisp-outline-regexp) "^")
-        +emacs-lisp-outline-regexp))))
+
 
 (provide 'init-lang-emacs-lisp)
 ;;; init-lang-emacs-lisp.el ends here
