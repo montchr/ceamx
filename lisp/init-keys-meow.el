@@ -179,11 +179,13 @@
   ;; (setopt meow-keypad-ctrl-meta-prefix ?G)
 
   ;; Improve state indicator appearance (e.g. in modeline).
-  (setopt meow-replace-state-name-list '((normal . "🅝")
-                                         (beacon . "🅑")
-                                         (insert . "🅘")
-                                         (motion . "🅜")
-                                         (keypad . "🅚")))
+  (setopt meow-replace-state-name-list
+    '( (normal . "🅝")
+       (beacon . "🅑")
+       (insert . "🅘")
+       (motion . "🅜")
+       (keypad . "🅚")))
+
 
   (meow-pair! 'angle "a" "<" ">")
 

@@ -42,5 +42,12 @@
       (or (null file-base)
         (locate-file file-base (custom-theme--load-path) '(".elc" ".el"))))))
 
+(defun ceamx/indent-last-sexp ()
+  "Apply indentation to sexp before point."
+  (interactive)
+  (save-excursion
+    (backward-list)
+    (indent-sexp)))
+
 (provide 'lib-lisp)
 ;;; lib-lisp.el ends here

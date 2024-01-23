@@ -53,6 +53,8 @@
 
 (keymap-set emacs-lisp-mode-map "C-c C-c" #'eval-last-sexp)
 
+(keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
+
 ;;
 ;;; Packages
 
@@ -67,8 +69,10 @@
   (keymap-set emacs-lisp-mode-map "<remap> <eval-last-sexp>" #'eros-eval-last-sexp))
 
 ;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
+
 ;;  discover elisp functions that do what you want,
 ;;  brought to you by enumerative program synthesis
+
 (use-package suggest
   :commands (suggest)
   :init
