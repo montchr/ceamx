@@ -49,11 +49,13 @@
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 
 ;; Always use 2-space indentation in Lisps.
-;; TODO: i don't understand this copypasta
 (dolist (sym '(add-function advice-add plist-put))
   (put sym 'lisp-indent-function 2))
 
-;;
+;;; Keybindings
+
+(keymap-set emacs-lisp-mode-map "C-S-t" #'transpose-sexps)
+
 ;;; Packages
 
 (provide 'init-lisp)
