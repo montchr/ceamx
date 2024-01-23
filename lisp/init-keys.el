@@ -35,7 +35,6 @@
 
 (autoload 'burly-bookmark-frames "burly")
 (autoload 'burly-bookmark-windows "burly")
-(autoload 'vundo "vundo")
 
 (autoload 'cmx-hydra/main/body "init-hydras")
 

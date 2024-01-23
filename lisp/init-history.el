@@ -143,9 +143,12 @@
   (undo-fu-session-global-mode))
 
 ;;; vundo (visual undo) :: <https://github.com/casouri/vundo>
+
 (use-package vundo
   :commands (vundo)
   :defines (vundo-unicode-symbols vundo-glyph-alist)
+  :init
+  (keymap-global-set "C-x u" #'vundo)
   :config
   (setopt vundo-glyph-alist vundo-unicode-symbols))
 

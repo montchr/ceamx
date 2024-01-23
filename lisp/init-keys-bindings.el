@@ -495,6 +495,7 @@
   "C-'" #'avy-goto-char-2
   "C-." #'avy-resume
   "M-j" #'avy-goto-char-timer
+  ;; FIXME: does not trigger autoload from use-package
   "C-x u" #'vundo
   ;; TODO: find a better place
   ;; "C-x SPC" #'hydra-rectangle/body
