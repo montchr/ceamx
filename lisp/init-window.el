@@ -77,12 +77,16 @@
   :blackout
   :commands ( popper-mode
               popper-echo-mode
-              popper-group-by-projectile)
+              popper-group-by-projectile
+              popper-toggle
+              popper-toggle-type)
 
   :init
   (setopt popper-reference-buffers
     '("\\*Messages\\*"
        "Output\\*$"
+       "\\*Async-native-compile-log\\*"
+       "\\*Compile-Log\\*"
        "\\*vc\\*"
        "\\*Warnings\\*"
        "\\*Embark Export"
@@ -101,7 +105,7 @@
   (define-keymap :keymap (current-global-map)
     ;; TODO: kinda difficult hand contortion
     "C-`"   #'popper-toggle
-    ;; NOTE: Conflicts with default GNOME keybinding.
+    ;; FIXME(env): Conflicts with default GNOME keybinding.
     "M-`"   #'popper-echo-mode
     "C-M-`" #'popper-toggle-type)
 
