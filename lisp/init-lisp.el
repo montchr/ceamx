@@ -58,5 +58,8 @@
 
 ;;; Packages
 
+(use-package paredit
+  :commands (enable-paredit-mode))
+
 (provide 'init-lisp)
 ;;; init-lisp.el ends here
