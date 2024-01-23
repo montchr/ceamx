@@ -156,26 +156,31 @@
   (setopt comment-auto-fill-only-comments t)
   (auto-fill-mode 1))
 
-;;
+;;; Comments
+
+(use-feature! emacs
+  :config
+  (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment))
+
 ;;; drag-stuff :: <https://github.com/rejeep/drag-stuff.el>
-;;
+
 ;;  Move stuff around in arbitrary directions
-;;
+
 ;;  This package appears to be abandoned since 2017.
 ;;  But, as of <2023-09-06>, it still works well.
-;;
+
 ;;;; Issues
-;;
+
 ;; Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
 ;; recent versions of Emacs:
-;;
+
 ;; <https://github.com/rejeep/drag-stuff.el/issues/36>
-;;
+
 ;;;; Alternatives
-;;
+
 ;; I haven't yet found any other package to move arbitrary regions up/down while
 ;; preserving column position.
-;;
+
 ;; `move-text-mode' <https://github.com/emacsfodder/move-text>, claims to do
 ;; this but fails pretty badly, moving the region/selection to the first column
 ;; regardless of its original position.
