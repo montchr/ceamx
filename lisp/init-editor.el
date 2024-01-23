@@ -128,17 +128,19 @@
 ;;  See Info node `(info "(emacs) Matching")'
 (use-feature! emacs
   :config
-;;; Blink matching pairs.
-  (setopt blink-matching-paren 'jump)
-  ;; (setopt blink-matching-paren t)
+  ;; Display context of matching pair in echo area:
+
+  (setopt blink-matching-paren t)
   (setopt blink-matching-delay 1)
 
-;;; Highlight matching pairs.
+  ;; Highlight matching pairs:
+
   ;; Avoid "expression" style, which looks too much like a selected region.
   (setopt show-paren-style 'parenthesis)
   (show-paren-mode 1)
 
-;;; Insert matching pairs.
+  ;; Insert matching pairs:
+
   (setopt electric-pair-preserve-balance t)
   (setopt electric-pair-delete-adjacent-pairs t)
   (setopt electric-pair-skip-whitespace t)
