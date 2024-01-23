@@ -48,6 +48,8 @@
 (when (boundp 'eval-expression-minibuffer-setup-hook)
   (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
 
+(setopt lisp-indent-function #'common-lisp-indent-function)
+
 ;;
 ;;; Keybinds
 
