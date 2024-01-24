@@ -150,11 +150,14 @@
 
 ;;; auto-fill-mode
 
-(use-feature! emacs
-  :config
-  ;; Also: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1658-L1703>
-  (setopt comment-auto-fill-only-comments t)
-  (auto-fill-mode 1))
+;; FIXME: deferred not working?
+(setopt comment-auto-fill-only-comments t)
+(auto-fill-mode 1)
+;; (use-feature! emacs
+;;   :config
+;;   ;; Also: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1658-L1703>
+;;   (setopt comment-auto-fill-only-comments t)
+;;   (auto-fill-mode 1))
 
 ;;; Comments
 
