@@ -143,7 +143,7 @@ Intended for use as a callback on `after-init-hook'."
 
 ;;;; Rename the default/initial frame
 
-(defvar ceamx-default-frame-name "home"
+(defvar ceamx-default-frame-name "home — [ceamx]"
   "Name for the default Emacs frame.")
 
 (defun ceamx-after-init-default-frame-name-h ()
