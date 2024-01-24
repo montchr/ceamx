@@ -220,7 +220,6 @@ recent `magit' changes."
   (require 'use-package))
 
 (setopt use-package-always-ensure t)
-(setopt use-package-always-defer t)
 
 ;;;; Improve `use-package' debuggability if necessary:
 
