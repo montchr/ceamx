@@ -42,6 +42,8 @@
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
 
+(require 'init-benchmarking)
+
 ;;; Load environment-related constants.
 (require 'config-env)
 ;; TODO: see bbatsov/prelude for prior art
