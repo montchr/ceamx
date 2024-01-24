@@ -58,9 +58,6 @@
 
 ;;; Packages
 
-(use-package paredit
-  :commands (enable-paredit-mode))
-
 ;;;; lispy
 
 ;; <https://oremacs.com/lispy/>
