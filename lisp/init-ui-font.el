@@ -47,9 +47,9 @@
             (medium-alt :default-height 150)
             (large :default-height 180)
             (large-alt :default-height 170
-                       :line-spacing 0.1)
+             :line-spacing 0.1)
             (xlarge :default-height 240
-                    :line-spacing nil)
+             :line-spacing nil)
             (t
              ;; TODO: set values from nix config (or, less ideally, by env vars)
              :default-family "Iosevka Comfy"
@@ -74,10 +74,13 @@
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
 
-;;; `ligature.el' :: <https://github.com/mickeynp/ligature.el>
-;;  A better implementation of ligature support than `prettify-symbols-mode'.
+;;;; `ligature.el' :: <https://github.com/mickeynp/ligature.el>
+
+;; A better implementation of ligature support than `prettify-symbols-mode'.
 ;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
+
 (use-package ligature
+  :demand t
   :config
   ;; Enable all Iosevka ligatures in programming modes
   ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
