@@ -1,7 +1,80 @@
 # ceamx -- an emacs configuration
 
-The vast majority of packages are installed via Nixpkgs.
-Others can be installed with `package.el`.
+> generally no real magic in this world exists
+
+—Eli Zaretskii
+
+## Package Management
+
+Packages are installed with `package.el`.
+
+Previously, I have used Elpaca or Nixpkgs to manage packages.
+
+### Elpaca
+
+While I like Elpaca, I find it has some limitations/oddities that still need to
+be worked out while it is still in its unstable phase of development.
+<progfolio> has acknowledged this and is actively working on Elpaca
+improvements, but right now I would prefer something a little more
+stable/manageable. I am mostly put off by its preference towards rolling-release
+installation of unstable package versions from MELPA, which are generally synced
+from the latest HEAD of the upstream project repositories.
+
+### Nixpkgs
+
+As a longtime Nix user, I actually think this is the easiest approach, with the
+least amount of fiddling necessary. Yes, that's right, I think Nix is *less*
+fiddly than any other approach.
+
+But: I would prefer using standalone/portable Emacs-specific package management
+so Nix is not a hard requirement. This is primarily because I am eagerly
+anticipating the stable release of the official Emacs for Android, or at least
+some established norms/idioms/best-practices for configuration on Android.
+
+Currently I don't see any clear path towards supporting Nix there, at least not
+for a while. I would prefer to have interoperability between Emacs for Android
+and Nix for Android instead of the GNU-signed Termux app, but AFAIK that would
+require building both Emacs and Nix for Android APKs from source to self-sign,
+which I don't want to do right now.
+
+Oh yeah, and there's also WSL when I am forced to use Microsoft Windows for something
+(like Adobe Acrobat). Ideally I would use the NixOS on WSL setup but that's a
+little bit of a project to integrate into my wasteland of a system configuration
+repo.
+
+### package.el
+
+I am currently using package.el because:
+
+1. It is built into Emacs, allowing for portability and predictable behavior
+   across machines. Ostensibily.
+2. I thought using it would be a matter of "back-to-the-basics"/KISS.
+
+But:
+
+While it's built into Emacs, I honestly hate the way it works currently. While
+the documentation seems thorough, I frequently need to dive into its source code
+to figure out why some weird behavior is happening. Several configurations I've
+referenced apply advices to its internal functions to hammer package.el into a
+usable machine.
+
+Somehow, even though both `package.el` and `use-package` are part of Emacs, they
+do not work well together. TODO: add links to issues here
+
+package.el forces the use of `user-custom-file`, with no option to specify a
+different file or otherwise change this behavior. I am absolutely not interested
+in committing `custom.el` whenever the state of my installed packages changes. I
+like the idea of a lockfile, as every package manager should use one (except
+Nix, which transcends such barbaric practices entirely), but the current state
+of this behavior makes that impossible without resorting to hacks. TODO: mention
+the snippet I recently came across (saved to bookmark manager).
+
+I've left a lot of comments throughout this configuration's explaining some of
+`package.el`'s unintutive and sometimes downright terrible or broken behavior.
+
+I imagine one day these issues will be resolved and stabilized in future
+versions of Emacs, but until then, I am only a reluctant user and find myself
+still prone to indecision in this field.
 
 ## Tasks
 
