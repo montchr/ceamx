@@ -27,14 +27,14 @@
 
 ;;; Code:
 
-;; FIXME: errors (incompatible with `eza'? but which command does it actually run? depends on $PATH or no?)
-;; (setopt dired-listing-switches
-;;       "-l --almost-all --human-readable --group-directories-first --no-group")
-(setopt dired-kill-when-opening-new-dired-buffer t)
+(require 'lib-common)
 
-;; Mouse/drag-and-drop support.
-(setopt dired-mouse-drag-files t)
-(setopt mouse-drag-and-drop-region-cross-program t)
+(use-feature! dired
+  :commands (dired-omit-mode)
+  :config
+  (setopt dired-kill-when-opening-new-dired-buffer t)
+  (setopt dired-mouse-drag-files t)
+  (setopt mouse-drag-and-drop-region-cross-program t))
 
 ;;; `dirvish' :: <https://github.com/alexluigit/dirvish>
 ;;
@@ -45,7 +45,11 @@
               dirvish-side-follow-mode)
 
   :init
-  (dirvish-override-dired-mode)
+  (after! 'dired
+    (dirvish-override-dired-mode))
+
+  ;; Omit "uninteresting" files.
+  (add-hook 'dired-mode-hook #'dired-omit-mode)
 
   :config
   ;; FIXME: neither of these are working
@@ -104,17 +108,17 @@
     "M-t" #'dirvish-layout-toggle
     "M-s" #'dirvish-setup-menu
     "M-e" #'dirvish-emerge-menu
-    "M-j" #'dirvish-fd-jump))
+    "M-j" #'dirvish-fd-jump)
 
-;; Addtional syntax highlighting for dired
-(use-package diredfl
-  :hook
-  ((dired-mode . diredfl-mode)
-   ;; highlight parent and directory preview as well
-   (dirvish-directory-view-mode . diredfl-mode))
+  ;; Addtional syntax highlighting for dired
+  (use-package diredfl
+    :hook
+    ((dired-mode . diredfl-mode)
+     ;; highlight parent and directory preview as well
+     (dirvish-directory-view-mode . diredfl-mode))
 
-  :config
-  (set-face-attribute 'diredfl-dir-name nil :bold t))
+    :config
+    (set-face-attribute 'diredfl-dir-name nil :bold t)))
 
 (provide 'init-dired)
 ;;; init-dired.el ends here
