@@ -89,6 +89,28 @@ still prone to indecision in this field.
 
 ## Notes
 
+### Garbage Collection
+
+While browsing many other user configs, I have noticed several slightly
+different approaches to managing garbage collection, especially with the intent
+of reducing startup time.
+
+One approach is to offload this configuration to a package, safely hiding the
+details away. This package is `gcmh`.
+
+As it turns out, as a direct response to a Reddit thread sharing `gcmh`, Eli
+Zaretskii recommends caution in this field. The package creator also weighs in.
+Basically, Zaretskii recommends not overthinking things.
+
+[eli-zaretskii comments on Garbage Collector Magic Hack](https://old.reddit.com/r/emacs/comments/bg85qm/garbage_collector_magic_hack/eln27qh/):
+
+> My problem with the advice to make the GC threshold at such high values begins
+> the moment you start publishing your personal tweaks as general advice to
+> others. IMO, this requires at least a lot of caveats, because your advice is
+> likely to be followed by people whose workflows and system configurations are
+> very different. Simply put, you might get others in trouble by promoting your
+> personal hacks as "magic".
+
 ### `magit-delta`
 
 As of <2023-06-20 Tue>, removed primarily because of the massive hit to performance.

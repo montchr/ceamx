@@ -51,31 +51,17 @@
 (when (functionp 'json-serialize)
   (setq read-process-output-max (* 1024 1024 8)))
 
-;;; Minimize garbage collection during startup.
+;;;; Minimize garbage collection during startup.
 
-(defun cmx-gc-reduce-freq ()
-  "Reduce the frequency of garbage collection."
-  (setq gc-cons-threshold most-positive-fixnum)
-  (setq gc-cons-percentage 0.6))
+;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
 
-(defun cmx-gc-restore-freq ()
-  "Restore the frequency of garbage collection."
-  ;; FIXME: these appear to be arbitrary values
-  (setq gc-cons-threshold 16777216)
-  (setq gc-cons-percentage 0.1))
+(setq gc-cons-percentage 0.5)
+(setq gc-cons-threshold (* 128 1024 1024))
 
-;; Make GC more rare during init (i.e. right now), while minibuffer is active,
-;; and when shutting down. In the latter two cases, we try doing the reduction
-;; early in the hook.
-(cmx-gc-reduce-freq)
-(add-hook 'minibuffer-setup-hook #'cmx-gc-reduce-freq -50)
-(add-hook 'kill-emacs-hook #'cmx-gc-reduce-freq -50)
+(add-hook 'after-init-hook #'garbage-collect t)
 
-;; But make it more regular after startup and after closing minibuffer.
-(add-hook 'emacs-startup-hook #'cmx-gc-restore-freq)
-(add-hook 'minibuffer-exit-hook #'cmx-gc-restore-freq)
+;;;; Simplify filename pattern-matching during init
 
-;;; Simplify filename pattern-matching during init.
 ;;  <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
 ;;  <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
 
