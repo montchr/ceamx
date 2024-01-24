@@ -172,10 +172,10 @@
 
 (use-package puni
   :disabled
-  :commands ( puni-global-mode
-              puni-disable-puni-mode
-              puni-backward-sexp-or-up-list
-              puni-forward-sexp-or-up-list)
+  :commands (puni-global-mode
+             puni-disable-puni-mode
+             puni-backward-sexp-or-up-list
+             puni-forward-sexp-or-up-list)
 
   :init
   (define-keymap :keymap puni-mode-map
@@ -210,10 +210,10 @@
 
 (use-package drag-stuff
   :bind
-  (([M-up]    . drag-stuff-up)
-    ([M-right] . drag-stuff-right)
-    ([M-down]  . drag-stuff-down)
-    ([M-left]  . drag-stuff-left)))
+  (([M-up] . drag-stuff-up)
+   ([M-right] . drag-stuff-right)
+   ([M-down] . drag-stuff-down)
+   ([M-left] . drag-stuff-left)))
 
 ;;
 ;;; Rectangle operations

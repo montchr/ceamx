@@ -41,8 +41,8 @@
 ;;  <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#Sample-config>
 (use-package dirvish
   :commands (dirvish-override-dired-mode
-              dirvish-peek-mode
-              dirvish-side-follow-mode)
+             dirvish-peek-mode
+             dirvish-side-follow-mode)
 
   :init
   (after! 'dired
@@ -59,25 +59,25 @@
   ;; TODO: use consts
   ;; FIXME: ensure directories exist!
   (setopt dirvish-quick-access-entries
-    '(("c" "~/Documents/cheatsheets/" "Cheatsheets")
-       ("D" "~/Downloads/" "Downloads")
-       ("r" "~/Documents/reference" "Reference")
-       ("n" "~/Documents/notes/" "Notes")))
+          '(("c" "~/Documents/cheatsheets/" "Cheatsheets")
+            ("D" "~/Downloads/" "Downloads")
+            ("r" "~/Documents/reference" "Reference")
+            ("n" "~/Documents/notes/" "Notes")))
 
   (setopt dirvish-mode-line-format
-    '( :left (sort symlink)
-       :right (omit yank index)))
+          '( :left (sort symlink)
+             :right (omit yank index)))
 
   ;; previous value, in case:
   ;; (setopt dirvish-attributes '(all-the-icons file-time file-size collapse subtree-state vc-state))
   (setopt dirvish-attributes
-    '(vc-state
-       subtree-state
-       nerd-icons
-       collapse
-       git-msg
-       file-time
-       file-size))
+          '(vc-state
+            subtree-state
+            nerd-icons
+            collapse
+            git-msg
+            file-time
+            file-size))
   (setopt dirvish-subtree-state-style 'nerd)
 
   ;; <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#mouse-settings>
@@ -91,15 +91,15 @@
     "<mouse-1>" #'dirvish-subtree-toggle-or-open
     "<mouse-2>" #'dired-mouse-find-file-other-window
     "<mouse-3>" #'dired-mouse-find-file
-    "a"   #'dirvish-quick-access
-    "f"   #'dirvish-file-info-menu
-    "y"   #'dirvish-yank-menu
-    "N"   #'dirvish-narrow
-    "^"   #'dirvish-history-last
-    "h"   #'dirvish-history-jump        ; remapped `describe-mode'
-    "s"   #'dirvish-quicksort           ; remapped `dired-sort-toggle-or-edit'
-    "v"   #'dirvish-vc-menu             ; remapped `dired-view-file'
-    "q"   #'dirvish-quit
+    "a" #'dirvish-quick-access
+    "f" #'dirvish-file-info-menu
+    "y" #'dirvish-yank-menu
+    "N" #'dirvish-narrow
+    "^" #'dirvish-history-last
+    "h" #'dirvish-history-jump          ; remapped `describe-mode'
+    "s" #'dirvish-quicksort             ; remapped `dired-sort-toggle-or-edit'
+    "v" #'dirvish-vc-menu               ; remapped `dired-view-file'
+    "q" #'dirvish-quit
     "TAB" #'dirvish-subtree-toggle
     "M-f" #'dirvish-history-go-forward
     "M-b" #'dirvish-history-go-backward
