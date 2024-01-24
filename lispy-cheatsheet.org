@@ -1,0 +1,160 @@
+:PROPERTIES:
+:VISIBILITY: all
+:END:
+#+TITLE: Lispy Cheatsheet
+
+<https://github.com/abo-abo/lispy/issues/553#issuecomment-792278110>
+
+Originally compiled by Adam Spiers (aspiers), with some formatting contributions from Adam Porter (alphapapa).
+
+* Movement / navigation
+
+*** into special mode
+
+    | =[=   | backward                     |
+    | =]=   | forward                      |
+    | =M-o= | left-maybe                   |
+    | =C-3= | right                        |
+    | ="=   | right-no-string              |
+    | =C-8= | insert () after current sexp |
+
+    See also [[*Deleting / killing][Deleting / killing]]
+
+*** by list structure
+
+    | =f=     | forward down level into list     |
+    | =h / l= | left / right up level            |
+    | =j / k= | down / up at same level          |
+    | =d=     | different (opposite end of sexp) |
+    | =)=     | up level and right               |
+
+*** beginning / end
+
+    | =C-a / C-e= | beginning / end of line |
+    | =A=         | beginning of defun      |
+
+*** marking a region
+
+    | =m= | mark sexp |
+    | =a= | ace mark symbol within top-level form |
+
+*** grow / shrink region
+
+    | =h / l= | mark parent with point on left/right |
+    | =< / >= | shrink / extend sexp                 |
+
+*** unmarking a region
+
+    | =m= | unmark region |
+
+*** by definitions / symbols / tags
+
+    | =g / G=   | jump to tag in dir/file |
+    | =F / M-.= | jump to symbol          |
+
+*** by occurrence
+
+    | =q= | ace-jump to paren within top-level form   |
+    | =Q= | ace-jump to char within top-level form    |
+    | =-= | quickjump to subword within top-level form |
+
+*** by previous navigation history
+
+    | =b=       | move back in history  |
+    | =D / M-,= | jump back from symbol |
+
+*** by comment outline
+    | =J / K= | down / up heading |
+    | =L=     | goto child        |
+    | =N / W= | narrow / widen    |
+* Insertion
+
+*** structure
+
+    | =(=  | parens   |
+    | ={=  | braces   |
+    | =}=  | brackets |
+    | ="=  | quotes   |
+    | =:=  | ?        |
+    | =\^= | ?        |
+
+*** whitespace
+
+    | =SPC= | intelligent space insertion |
+    | =C-m= | newline and indent          |
+
+*** code
+
+    | =xb= | (let () ...) |
+
+* Deleting / killing
+
+  | =C-k=   | kill               |
+  | =M-d=   | kill word          |
+  | =C-,=   | kill sexp at point |
+  | =M-k=   | kill sentence      |
+  | =M-DEL= | backward kill word |
+
+* Modifying sexp structure
+
+  | =r=         | raise                                               |
+  | =s / w=     | move down / up                                      |
+  | =z=         | "knight"                                            |
+  | =< / >=     | barf / slurp                                        |
+  | =M-j / +=   | split / join                                        |
+  | =c=         | clone                                               |
+  | =C=         | convolute                                           |
+  | =xr=        | eval and replace                                    |
+  | =S / C-u "= | stringify / quotes                                  |
+  | =; / C-u ;= | comment / uncomment                                 |
+  | =xR=        | reverse list                                        |
+  | =H=         | quick jump and replace symbol within top-level form |
+  | =t=         | teleport current sexp/region somewhere else         |
+
+* Refactorings / code operations
+
+  | =xb= | let-bind variable           |
+  | =xc= | (if ...) => (cond ...)      |
+  | =xi= | (cond ...) => (if ...)      |
+  | =xd= | (lambda ...) => (defun ...) |
+  | =xl= | (defun ...) => (lambda ...) |
+  | =xf= | inline function / macro     |
+  | =xF= | let-flatten                 |
+  | =xt= | view test                   |
+  | =xu= | unbind let-bound variable   |
+
+* Copy / paste
+
+  | =n=   | copy region preserving it          |
+  | =P=   | destructive paste replacing region |
+
+* Modifying appearance
+
+  | =i=     | indent (prettify)         |
+  | =I=     | shift-tab                 |
+  | =v=     | recenter current sexp     |
+  | =O / M= | oneline / multiline       |
+  | =N / W= | narrow / widen            |
+  | =y=     | occur                     |
+
+* Help
+
+  | =C-1= | show docs                |
+  | =C-2= | show fn arguments inline |
+  | =xh=  | describe                 |
+
+* Version control
+
+  | =B= |                   |
+  | =u= | undo last command |
+
+* Execution
+
+  | =e=      | eval                                         |
+  | =p=      | eval in other window's context               |
+  | =xr=     | eval and replace                             |
+  | =E=      | eval and insert                              |
+  | =edebug= | xe                                           |
+  | =Z=      | exit edebug                                  |
+  | =xj=     | prepare to debug current function invocation |
+  | =xT=     | ert                                          |

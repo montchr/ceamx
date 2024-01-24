@@ -61,5 +61,43 @@
 (use-package paredit
   :commands (enable-paredit-mode))
 
+;;;; lispy
+
+;; <https://oremacs.com/lispy/>
+;; <https://github.com/abo-abo/lispy>
+
+(use-package lispy
+  :commands (lispy-mode)
+
+  :init
+  (add-hook 'ceamx-lisp-init-hook #'lispy-mode)
+
+  :config
+  ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
+  ;; in favor of just moving past the closing quote as I would expect.
+  (setopt lispy-close-quotes-at-end-p t)
+
+  (setopt lispy-completion-method 'default)
+
+  ;; The overlay style is very confusing (nothing like `eros').
+  ;; FIXME: conflicts with `eros'?
+  (setopt lispy-eval-display-style 'message)
+
+  ;; Possibly the most annoying thing about lispy defaults.
+  (setopt lispy-move-after-commenting nil)
+
+  ;; via <https://github.com/abo-abo/lispy/pull/619>
+  (keymap-set lispy-mode-map "`" #'self-insert-command)
+
+  (use-feature! macrostep
+    :config
+    (push 'macrostep lispy-compat))
+
+  (use-feature! popper
+    :defines (popper-reference-buffers)
+    :config
+    (push "\\*lispy-message\\*" popper-reference-buffers)))
+
+
 (provide 'init-lisp)
 ;;; init-lisp.el ends here
