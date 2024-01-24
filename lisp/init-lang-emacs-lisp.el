@@ -66,7 +66,14 @@
   :commands (eros-mode eros-eval-last-sexp)
   :init
   (add-hook 'emacs-lisp-mode-hook #'eros-mode)
-  (keymap-set emacs-lisp-mode-map "<remap> <eval-last-sexp>" #'eros-eval-last-sexp))
+  (keymap-set emacs-lisp-mode-map "<remap> <eval-last-sexp>" #'eros-eval-last-sexp)
+
+  (use-feature! lispy
+    :init
+    (def-hook! +lispy-use-eros-eval-h () 'lispy-mode-hook
+      "Use `eros-eval-last-sexp' in place of `lispy-eval' bindings."
+      (declare-function lispy-define-key "lispy")
+      (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
 
 ;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
 
