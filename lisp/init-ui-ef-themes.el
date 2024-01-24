@@ -27,7 +27,7 @@
 (use-package ef-themes
   :demand t
   :config
-  (setopt ef-themes-to-toggle '(ef-elea-light ef-elea-dark))
+  (setopt ef-themes-to-toggle '(ef-frost ef-winter))
 
   (setopt ef-themes-headings         ; read the manual's entry or the doc string
     '((0 variable-pitch light 1.9)
@@ -51,7 +51,7 @@
   ;; Load the theme of choice:
   ;; (load-theme 'ef-elea-dark :no-confirm)
   ;; OR use this to load the theme which also calls `ef-themes-post-load-hook':
-  (ef-themes-select 'ef-elea-dark))
+  (ef-themes-select 'ef-winter))
 
 (provide 'init-ui-ef-themes)
 ;;; init-ui-ef-themes.el ends here
