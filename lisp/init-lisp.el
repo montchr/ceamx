@@ -34,13 +34,7 @@
 
 (require 'config-lisp)
 
-;;
 ;;; Hooks
-;;
-;; For managing load order, especially concerning visual enhancements.
-;;
-;; Apply to hooks on individual Lisp modes in their respective files so they can
-;; be disabled cleanly.
 
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
 
@@ -51,6 +45,12 @@
 ;; Always use 2-space indentation in Lisps.
 (dolist (sym '(add-function advice-add plist-put))
   (put sym 'lisp-indent-function 2))
+
+;;; Advices
+
+;; Prevent `calculate-lisp-indent' from indenting quoted lists as functions.
+;; See `lib-lisp' and <https://emacs.stackexchange.com/a/52789/40956>
+(advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
 
 ;;; Keybindings
 
