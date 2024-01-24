@@ -77,9 +77,9 @@ Intended for use as a callback on `after-init-hook'."
 (add-hook 'after-init-hook #'cmx-restore-file-name-handler-alist-h)
 
 ;;
-;;; Directories:
+;;; Directories
 
-;;; Configure load path.
+;; Configure load path
 (dolist (subdir '("autoloads" "lisp" "lisp/core" "lisp/lib"))
   (let ((dir (expand-file-name subdir user-emacs-directory)))
     (add-to-list 'load-path dir)))
@@ -103,7 +103,7 @@ Intended for use as a callback on `after-init-hook'."
 (add-to-list 'native-comp-eln-load-path cmx-eln-dir)
 
 ;;
-;;; Native compilation:
+;;; Native compilation
 
 (setq native-comp-async-report-warnings-errors 'silent)
 (setq native-compile-prune-cache t)
@@ -116,12 +116,13 @@ Intended for use as a callback on `after-init-hook'."
 (setq byte-compile-warnings nil)
 
 ;;
-;;; Inhibit annoyances:
+;;; Inhibit annoyances
 
 ;; No bells.
 (setq ring-bell-function #'ignore)
 
 ;; Display scratch buffer on startup.
+;; TODO: replace with dashboard
 (setq inhibit-startup-screen t)
 
 ;; No littering.
@@ -129,7 +130,7 @@ Intended for use as a callback on `after-init-hook'."
 (setq create-lockfiles nil)
 
 ;;
-;;; Frames:
+;;; Frames
 
 ;; Prevent X11 from taking control of visual behavior and appearance.
 (setq inhibit-x-resources t)
@@ -140,7 +141,7 @@ Intended for use as a callback on `after-init-hook'."
 ;; Allow resizing the frame to the maximum available space on the desktop.
 (setq frame-resize-pixelwise t)
 
-;;; Rename the default/initial frame:
+;;;; Rename the default/initial frame
 
 (defvar ceamx-default-frame-name "home"
   "Name for the default Emacs frame.")
