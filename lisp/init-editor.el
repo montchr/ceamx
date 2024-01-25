@@ -33,56 +33,84 @@
 ;;
 ;;; Formatting
 
-;; Default indentation: 2 spaces
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 2)
-
 (use-feature! emacs
   :config
+
+;;;; auto-fill-mode
+
+  ;; When a mode defines a comment syntax, then only wrap those comments. In all
+  ;; other modes (primarily `text-mode' derivatives), activating
+  ;; `auto-fill-mode' will apply to all lines.
+  (setopt comment-auto-fill-only-comments t)
+
+  (dolist (mode-hook '(prog-mode-hook text-mode-hook))
+    (add-hook mode-hook #'auto-fill-mode))
+
+;;;; comments
+
+  (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
+
+;;;;; Maintain indentation and comments upon newline.
+
+  ;; (after! 'evil
+  ;;   (when (boundp 'evil-insert-state-map)
+  ;;     (keymap-set evil-insert-state-map
+  ;;                 "RET" #'comment-indent-new-line)))
+
+  ;; FIXME: does not have intended effect -- more like the opposite?
+  ;;        `lispy-mode' overrides to `lispy-newline-and-indent-plain'
+  ;; (after! 'meow
+  ;;   (when (boundp 'meow-insert-state-keymap)
+  ;;     (keymap-set meow-insert-state-keymap
+  ;;       "RET" #'comment-indent-new-line)))
+
+;;;; indentation
+
+  (setq-default indent-tabs-mode nil)
+  (setq-default tab-width 2)
   (setopt indent-tabs-mode nil)
   (setopt backward-delete-char-untabify-method 'untabify)
 
+  (electric-indent-mode 1)
+
+;;;; pair handling :: `(info "Matching")'
+
+  (setopt blink-matching-paren t)
+  (setopt blink-matching-delay 0)
+  (setopt show-paren-delay 0)
+  ;; Avoid "expression" style, which looks too much like a selected region.
+  (setopt show-paren-style 'parenthesis)
+
+  (setopt electric-pair-preserve-balance t)
+  (setopt electric-pair-delete-adjacent-pairs t)
+  (setopt electric-pair-skip-whitespace t)
+  ;; TODO: evaluating...
+  (setopt electric-pair-open-newline-between-pairs t)
+
+  (electric-pair-mode 1)
+  (show-paren-mode 1)
+
+;;;; symbols
 
   ;; Don't consider camelCaseWORDs as separate words.
-  (global-subword-mode -1))
+  (global-subword-mode -1)
 
-(use-feature! electric
-  :config
-  (electric-indent-mode 1))
+;;;; whitespace indicators
 
-;;; Maintain indentation and comments upon newline.
+  ;;  Show all problematic whitespace as configured by `whitespace-style'.
 
-;; (after! 'evil
-;;   (when (boundp 'evil-insert-state-map)
-;;     (keymap-set evil-insert-state-map
-;;                 "RET" #'comment-indent-new-line)))
+  ;;  This mode is buffer-local. It might be undesireable in some cases, so enable
+  ;;  it selectively.
 
-;; FIXME: does not have intended effect -- more like the opposite?
-;;        `lispy-mode' overrides to `lispy-newline-and-indent-plain'
-;; (after! 'meow
-;;   (when (boundp 'meow-insert-state-keymap)
-;;     (keymap-set meow-insert-state-keymap
-;;       "RET" #'comment-indent-new-line)))
-
-;;; `whitespace-mode' (internal)
-;;
-;;  Show all problematic whitespace as configured by `whitespace-style'.
-;;
-;;  This mode is buffer-local. It might be undesireable in some cases,
-;;  so consider enabling it selectively.
-(use-feature! whitespace
-  :defines ( whitespace-style
-             whitespace-display-mappings)
-  :init
   (add-hook 'prog-mode-hook #'whitespace-mode)
 
-  :config
   (setopt whitespace-style '(face tabs tab-mark trailing))
-  ;; Visualize tabs as a pipe character - "|" (ASCII ID 124)
-  ;; NOTE: the original value is still present at tail
-  ;; TODO: use character constants for clarity
-  (cl-pushnew '(tab-mark 9 [124 9] [92 9]) whitespace-display-mappings))
 
+  (when (boundp 'whitespace-display-mappings)
+    ;; Visualize tabs as a pipe character - "|" (ASCII ID 124)
+    ;; NOTE: the original value is still present at tail
+    ;; TODO: use character constants for clarity
+    (cl-pushnew '(tab-mark 9 [124 9] [92 9]) whitespace-display-mappings)))
 
 ;;
 ;;; Packages
@@ -129,47 +157,6 @@
   :config
   ;; Prettier is a commonly-used formatter for several languages.
   (reformatter-define prettier :program "prettier"))
-
-;;; Blink/show matching pairs.
-;;  See Info node `(info "(emacs) Matching")'
-(use-feature! emacs
-  :config
-  ;; Display context of matching pair in echo area:
-
-  (setopt blink-matching-paren t)
-  (setopt blink-matching-delay 1)
-
-  ;; Highlight matching pairs:
-
-  ;; Avoid "expression" style, which looks too much like a selected region.
-  (setopt show-paren-style 'parenthesis)
-  (show-paren-mode 1)
-
-  ;; Insert matching pairs:
-
-  (setopt electric-pair-preserve-balance t)
-  (setopt electric-pair-delete-adjacent-pairs t)
-  (setopt electric-pair-skip-whitespace t)
-  ;; TODO: evaluating...
-  (setopt electric-pair-open-newline-between-pairs t)
-  (electric-pair-mode 1))
-
-;;; auto-fill-mode
-
-;; FIXME: deferred not working?
-(setopt comment-auto-fill-only-comments t)
-(auto-fill-mode 1)
-;; (use-feature! emacs
-;;   :config
-;;   ;; Also: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1658-L1703>
-;;   (setopt comment-auto-fill-only-comments t)
-;;   (auto-fill-mode 1))
-
-;;; Comments
-
-(use-feature! emacs
-  :config
-  (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment))
 
 ;;;; `puni' :: <https://github.com/AmaiKinono/puni>
 
