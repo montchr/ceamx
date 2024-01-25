@@ -88,9 +88,11 @@
 ;;; Packages
 
 ;; FIXME : does not seem to handle comments properly wtf that's the whole reason i installed it...
-;;; `filladapt' :: <http://elpa.gnu.org/packages/filladapt.html>
+;;;; `filladapt' :: <http://elpa.gnu.org/packages/filladapt.html>
+
 ;;  A smarter `fill-paragraph' or `adaptive-fill-mode'.
 ;;  <https://www.emacswiki.org/emacs/FillAdapt>
+
 (use-package filladapt
   :disabled
   :commands (filladapt-mode)
@@ -104,21 +106,25 @@
   (hook! '(text-mode-hook prog-mode-hook) #'filladapt-mode)
   (hook! 'emacs-lisp-mode-hook #'filladapt-mode))
 
-;;; editorconfig :: <https://editorconfig.org>
+;;;; editorconfig :: <https://editorconfig.org>
+
 (use-package editorconfig
   :commands (editorconfig-mode)
   :init
   (add-hook 'on-first-file-hook #'editorconfig-mode))
 
-;;; `topsy.el' :: <https://github.com/alphapapa/topsy.el>
+;;;; `topsy.el' :: <https://github.com/alphapapa/topsy.el>
+
 ;;  "Simple sticky header showing definition beyond top of window"
+
 (use-package topsy
   :commands (topsy-mode)
   :init
   (add-hook 'prog-mode-hook #'topsy-mode)
   (add-hook 'magit-section-mode-hook #'topsy-mode))
 
-;;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
+;;;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
+
 (use-package reformatter
   :config
   ;; Prettier is a commonly-used formatter for several languages.
@@ -165,7 +171,7 @@
   :config
   (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment))
 
-;;; `puni' :: <https://github.com/AmaiKinono/puni>
+;;;; `puni' :: <https://github.com/AmaiKinono/puni>
 
 ;;  Structured editing (soft deletion, expression navigating & manipulating)
 ;;  that supports many major modes out of the box.
@@ -185,21 +191,21 @@
   (puni-global-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 
-;;; drag-stuff :: <https://github.com/rejeep/drag-stuff.el>
+;;;; drag-stuff :: <https://github.com/rejeep/drag-stuff.el>
 
 ;;  Move stuff around in arbitrary directions
 
 ;;  This package appears to be abandoned since 2017.
 ;;  But, as of <2023-09-06>, it still works well.
 
-;;;; Issues
+;;;;; Issues
 
 ;; Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
 ;; recent versions of Emacs:
 
 ;; <https://github.com/rejeep/drag-stuff.el/issues/36>
 
-;;;; Alternatives
+;;;;; Alternatives
 
 ;; I haven't yet found any other package to move arbitrary regions up/down while
 ;; preserving column position.
@@ -217,10 +223,10 @@
 
 ;;
 ;;; Rectangle operations
-;;
 
 (use-feature! rect
   :after hydra
+  ;; FIXME: this is not correct. `rect' does not include `defhydra'
   :functions (defhydra)
 
   :config
