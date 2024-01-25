@@ -22,6 +22,7 @@
 
 ;;; Code:
 
+(require 'config-env)
 (require 'lib-common)
 
 (use-package fontaine
