@@ -40,8 +40,8 @@
 (use-feature! emacs
   :config
   (setopt indent-tabs-mode nil)
-  ;; TODO: review setting (disable and see what happens)
-  (setopt backward-delete-char-untabify-method 'hungry)
+  (setopt backward-delete-char-untabify-method 'untabify)
+
 
   ;; Don't consider camelCaseWORDs as separate words.
   (global-subword-mode -1))
