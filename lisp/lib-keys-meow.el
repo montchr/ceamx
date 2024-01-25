@@ -72,7 +72,7 @@ and Info node `(elisp) String Conversion' for more info."
   (cl-assert (char-or-string-p char) t)
   (cl-assert (stringp begin) t)
   (cl-assert (stringp end) t)
-  (let* ((sym (cmx-unquote thing))
+  (let* ((sym (ceamx-unquote thing))
           (char (ceamx-normalize-char char))
           (open (list begin))
           (close (list end))
@@ -87,7 +87,7 @@ and Info node `(elisp) String Conversion' for more info."
 (defun ceamx-meow-bind-thing (thing char)
   "Add pre-registered THING to `meow-char-thing-table' as CHAR."
   (defvar meow-char-thing-table '())
-  (let ((thing (cmx-unquote thing))
+  (let ((thing (ceamx-unquote thing))
          (char (ceamx-normalize-char char)))
     (add-to-list 'meow-char-thing-table `(,char . ,thing))))
 

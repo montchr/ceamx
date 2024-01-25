@@ -25,12 +25,12 @@
 
 (require 'config-notes)
 
-(unless (file-directory-p cmx-notes-dir)
-  (make-directory cmx-notes-dir))
+(unless (file-directory-p ceamx-notes-dir)
+  (make-directory ceamx-notes-dir))
 
 (use-package denote
   :config
-  (setopt denote-directory cmx-notes-dir)
+  (setopt denote-directory ceamx-notes-dir)
   (setopt denote-known-keywords '("emacs"))
   (setopt denote-infer-keywords t)
   (setopt denote-sort-keywords t)

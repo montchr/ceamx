@@ -26,7 +26,7 @@
 
 ;;; Code:
 
-(defun cmx-reapply-themes ()
+(defun ceamx-reapply-themes ()
   "Forcibly load the themes listed in `custom-enabled-themes'."
   (dolist (theme custom-enabled-themes)
     (unless (custom-theme-p theme)
@@ -36,21 +36,21 @@
 (defun light ()
   "Activate a light color theme."
   (interactive)
-  (setq custom-enabled-themes `(,cmx-ui-theme-light))
-  (cmx-reapply-themes))
+  (setq custom-enabled-themes `(,ceamx-ui-theme-light))
+  (ceamx-reapply-themes))
 
 (defun dark ()
   "Activate a dark color theme."
   (interactive)
-  (setq custom-enabled-themes `(,cmx-ui-theme-dark))
-  (cmx-reapply-themes))
+  (setq custom-enabled-themes `(,ceamx-ui-theme-dark))
+  (ceamx-reapply-themes))
 
 ;; via prot-emacs (needs link/credit)
-(defun cmx-theme-re-enable-in-frame (_frame)
+(defun ceamx-theme-re-enable-in-frame (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
 Add this to `after-make-frame-functions' so that new frames do
 not retain the generic background set by the function
-`cmx-theme-no-bright-flash'."
+`ceamx-theme-no-bright-flash'."
   (when-let ((theme (car custom-enabled-themes)))
     (enable-theme theme)))
 

@@ -49,17 +49,17 @@
     ;;
     ;; NOTE: It seems that frame decorations are also necessary now...? See above.
     (progn
-      (defun cmx--restore-gui-menu-bar-hook (&optional frame)
+      (defun ceamx--restore-gui-menu-bar-hook (&optional frame)
         (when-let (frame (or frame (selected-frame)))
           (when (display-graphic-p frame)
             (set-frame-parameter frame 'menu-bar-lines 1))))
-      (add-hook 'window-setup-hook #'cmx--restore-gui-menu-bar-hook)
-      (add-hook 'after-make-frame-functions #'cmx--restore-gui-menu-bar-hook))
+      (add-hook 'window-setup-hook #'ceamx--restore-gui-menu-bar-hook)
+      (add-hook 'after-make-frame-functions #'ceamx--restore-gui-menu-bar-hook))
   ;; Hide window decorations.
   (add-to-list 'default-frame-alist '(undecorated . t)))
 
 ;; macOS: Stop C-z from minimizing windows.
-(keymap-global-set "C-z" #'cmx/maybe-suspend-frame)
+(keymap-global-set "C-z" #'ceamx/maybe-suspend-frame)
 
 (provide 'init-frame)
 ;;; init-frame.el ends here

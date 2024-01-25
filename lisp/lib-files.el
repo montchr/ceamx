@@ -69,7 +69,7 @@
 
 ;; FIXME: is this supposed to work on save? not working in either magit or projectile
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L369-L391>
-(defun cmx-files--update-refs (&rest files)
+(defun ceamx-files--update-refs (&rest files)
   "Ensure FILES are updated in `recentf', `magit' and `save-place'."
   (let (toplevels)
     (dolist (file files)
@@ -102,7 +102,7 @@
 ;;
 
 ;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L3325-L3332>
-(defun cmx/file-edit (file &optional bang)
+(defun ceamx/file-edit (file &optional bang)
   "Open FILE.
 If no FILE is specified, reload the current buffer from disk."
   :repeat nil
@@ -112,19 +112,19 @@ If no FILE is specified, reload the current buffer from disk."
     (revert-buffer bang (or bang (not (buffer-modified-p))) t)))
 
 ;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L4652-L4660>
-(defun cmx/buffer-new (&optional file)
+(defun ceamx/buffer-new (&optional file)
   "Edit a new unnamed buffer or FILE."
   :repeat nil
   (interactive "<f>")
   (if file
-      (cmx/file-edit file)
+      (ceamx/file-edit file)
     (let ((buffer (generate-new-buffer "*new*")))
       (set-buffer-major-mode buffer)
       (set-window-buffer nil buffer))))
 
 ;; FIXME: this does not actually kill its buffers -- buffer must be deleted manually
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L397-L424>
-(defun cmx/delete-this-file (&optional path force-p)
+(defun ceamx/delete-this-file (&optional path force-p)
   "Delete PATH, kill its buffers and expunge it from vc/magit cache.
 If PATH is not specified, default to the current buffer's file.
 If FORCE-P, delete without confirmation."
@@ -150,11 +150,11 @@ If FORCE-P, delete without confirmation."
           ;; (doom/kill-this-buffer-in-all-windows buf t)
           ;; TODO: remove when the above is implemented -- `kill-this-buffer' only removes the one buffer
           (kill-this-buffer)
-          (cmx-files--update-refs path)
+          (ceamx-files--update-refs path)
           (message "Deleted %S" short-path))))))
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
-(defun cmx/copy-this-file (new-path &optional force-p)
+(defun ceamx/copy-this-file (new-path &optional force-p)
   "Copy current buffer's file to NEW-PATH.
 If FORCE-P, overwrite the destination file if it exists, without confirmation."
   (interactive
@@ -166,12 +166,12 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
         (new-path (expand-file-name new-path)))
     (make-directory (file-name-directory new-path) 't)
     (copy-file old-path new-path (or force-p 1))
-    (cmx-files--update-refs old-path new-path)
+    (ceamx-files--update-refs old-path new-path)
     (message "File copied to %S" (abbreviate-file-name new-path))))
 
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
-(defun cmx/move-this-file (new-path &optional force-p)
+(defun ceamx/move-this-file (new-path &optional force-p)
   "Move current buffer's file to NEW-PATH.
 If FORCE-P, overwrite the destination file if it exists, without confirmation."
   (interactive
@@ -186,11 +186,11 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (make-directory (file-name-directory new-path) 't)
     (rename-file old-path new-path (or force-p 1))
     (set-visited-file-name new-path t t)
-    (cmx-files--update-refs old-path new-path)
+    (ceamx-files--update-refs old-path new-path)
     (message "File moved to %S" (abbreviate-file-name new-path))))
 
 ;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
-(defun cmx/kill-this-buffer ()
+(defun ceamx/kill-this-buffer ()
   "`kill-this-buffer' with no menu-bar checks.
 `kill-this-buffer' is supposed to be called from the menu bar.
 See <https://www.reddit.com/r/emacs/comments/64xb3q/killthisbuffer_sometimes_just_stops_working/>."
@@ -199,7 +199,7 @@ See <https://www.reddit.com/r/emacs/comments/64xb3q/killthisbuffer_sometimes_jus
       (abort-recursive-edit)
     (kill-buffer (current-buffer))))
 
-(defun cmx/diff-with-file (&optional arg)
+(defun ceamx/diff-with-file (&optional arg)
   (interactive "P")
   (let ((buffer (when arg (current-buffer))))
     (diff-buffer-with-file buffer)))

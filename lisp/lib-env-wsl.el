@@ -29,7 +29,7 @@
 
 (require 'config-env)
 
-(defun cmx-wsl/copy-selected-text (start end)
+(defun ceamx-wsl/copy-selected-text (start end)
   "In WSL, copy text region with START and END to the host clipboard."
   (interactive "r")
   (if (use-region-p)

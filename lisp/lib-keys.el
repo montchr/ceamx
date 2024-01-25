@@ -42,7 +42,7 @@
 
 ;; TODO: account for remapping (don't prefix)
 ;; TODO: validate final result
-(defun cmx-key--normalize-with-prefix (prefix key)
+(defun ceamx-key--normalize-with-prefix (prefix key)
   "Produce a normalized key sequence from the concatenation of PREFIX and KEY."
   (cl-assert (key-valid-p prefix))
   (cl-assert (key-valid-p key))
@@ -133,7 +133,7 @@ See `leader-key!' for more info about leader behavior."
 ;;            (indent defun))
 ;;   (progn
 ;;     (let* ((mode-name (symbol-name mode))
-;;            (keymap-sym (intern (format "cmx-%s-specific-map" mode-name)))
+;;            (keymap-sym (intern (format "ceamx-%s-specific-map" mode-name)))
 ;;            (description description)
 ;;            (defs (or defs nil)))
 ;;       `(def-arm! ,keymap-sym "m"

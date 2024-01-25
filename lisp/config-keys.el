@@ -58,12 +58,12 @@ vanilla Emacs keybindings."
            (const :tag "The vanilla Emacs keybinding scheme" emacs)
            (const :tag "Do not load an additional keybinding scheme" nil)))
 
-(defcustom cmx-leader-key "SPC"
+(defcustom ceamx-leader-key "SPC"
   "Leader prefix key sequence for use in modal schemes."
   :type '(key)
   :group 'ceamx)
 
-(defcustom cmx-leader-alt-key "M-SPC"
+(defcustom ceamx-leader-alt-key "M-SPC"
   "Alternative leader prefix key sequence.
 Note that the default value conflicts with a keybinding in the
 GNOME desktop environment. This conflict must be resolved outside
@@ -71,7 +71,7 @@ of Emacs."
   :type '(key)
   :group 'ceamx)
 
-(defcustom cmx-mode-specific-arm-key "m"
+(defcustom ceamx-mode-specific-arm-key "m"
   "Key sequence for major-mode-specific leader arm maps, relative to leader."
   :type '(key)
   :group 'ceamx)
@@ -83,14 +83,14 @@ of Emacs."
 ;;; Interceptions
 
 ;; FIXME: Mode removed, delete.
-(defvar-keymap cmx-intercept-mode-map
+(defvar-keymap ceamx-intercept-mode-map
   :doc "High-precedence user-defined keymap.")
 
 ;;; Leader
 
-(unless (commandp 'cmx-leader-map)
-  (define-prefix-command 'cmx-leader-map))
-(defvar-keymap cmx-leader-map
+(unless (commandp 'ceamx-leader-map)
+  (define-prefix-command 'ceamx-leader-map))
+(defvar-keymap ceamx-leader-map
   :doc "User-defined leader keymap."
   :parent mode-specific-map)
 

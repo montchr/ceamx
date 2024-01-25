@@ -78,13 +78,13 @@
 
 ;;;; Helpers
 
-(defun cmx--resolve-hook-forms (hooks)
+(defun ceamx--resolve-hook-forms (hooks)
   "Convert a list of modes into a list of hook symbols.
 
 If a mode is quoted, it is left as is. If the entire HOOKS list is quoted, the
 list is returned as-is."
   (declare (pure t) (side-effect-free t))
-  (let ((hook-list (ensure-list (cmx-unquote hooks))))
+  (let ((hook-list (ensure-list (ceamx-unquote hooks))))
     (if (eq (car-safe hooks) 'quote)
       hook-list
       (cl-loop for hook in hook-list
@@ -93,7 +93,7 @@ list is returned as-is."
         else collect (intern (format "%s-hook" (symbol-name hook)))))))
 
 ;; TODO: seems probably excessive
-(defun cmx--setq-hook-fns (hooks rest &optional singles)
+(defun ceamx--setq-hook-fns (hooks rest &optional singles)
   (unless (or singles (= 0 (% (length rest) 2)))
     (signal 'wrong-number-of-arguments (list #'cl-evenp (length rest))))
   (cl-loop with vars = (let ((args rest)
@@ -105,38 +105,38 @@ list is returned as-is."
                              vars))
                          (nreverse vars))
     ;; TODO: use `derived-mode-hook-name'
-    for hook in (cmx--resolve-hook-forms hooks)
+    for hook in (ceamx--resolve-hook-forms hooks)
     for mode = (string-remove-suffix "-hook" (symbol-name hook))
     append
     (cl-loop for (var . val) in vars
       collect
       (list var val hook
-        (intern (format "cmx--setq-%s-for-%s-h"
+        (intern (format "ceamx--setq-%s-for-%s-h"
                   var mode))))))
 
 ;;; Generic
 
-(defun cmx-unquote (exp)
+(defun ceamx-unquote (exp)
   "Return EXP unquoted."
   (declare (pure t) (side-effect-free t))
   (while (memq (car-safe exp) '(quote function))
     (setq exp (cadr exp)))
   exp)
 
-;; (defun cmx-keyword-intern (str)
+;; (defun ceamx-keyword-intern (str)
 ;;   "Convert STR (a string) into a keyword (`keywordp')."
 ;;   (declare (pure t) (side-effect-free t))
 ;;   (cl-check-type str string)
 ;;   (intern (concat ":" str)))
 
-;; (defun cmx-keyword-name (keyword)
+;; (defun ceamx-keyword-name (keyword)
 ;;   "Return the string name of KEYWORD (`keywordp') minus the leading colon."
 ;;   (declare (pure t) (side-effect-free t))
 ;;   (cl-check-type keyword keyword)
 ;;   (substring (symbol-name keyword) 1))
 
-(defalias 'cmx-partial #'apply-partially)
-(defun cmx-rpartial (fn &rest args)
+(defalias 'ceamx-partial #'apply-partially)
+(defun ceamx-rpartial (fn &rest args)
   "Return a partial application of FN to right-hand ARGS.
 
 ARGS is a list of the last N arguments to pass to FN. The result is a new
@@ -146,12 +146,12 @@ at the values with which this function was called."
   (lambda (&rest pre-args)
     (apply fn (append pre-args args))))
 
-(defun cmx-lookup-key (keys &rest keymaps)
+(defun ceamx-lookup-key (keys &rest keymaps)
   "Lookup KEYS in the active or specified KEYMAPS.
 
 Like `lookup-key', but search active keymaps if KEYMAPS is omitted."
   (if keymaps
-      (cl-some (cmx-rpartial #'lookup-key keys) keymaps)
+      (cl-some (ceamx-rpartial #'lookup-key keys) keymaps)
     (cl-loop for keymap
              in (append (cl-loop for alist in emulation-mode-map-alists
                                  append (mapcar #'cdr
@@ -246,7 +246,7 @@ version would probably be ideal."
   "Evaluate BODY after FEATURE and an eponymous mode it provides.
 Wrapper for `after!' with an additional check for a mode named after FEATURE."
   (declare (indent defun))
-  (let ((mode-sym (intern (format "%s-mode" (symbol-name (cmx-unquote feature))))))
+  (let ((mode-sym (intern (format "%s-mode" (symbol-name (ceamx-unquote feature))))))
     `(after! ,feature
        (when (fboundp ',mode-sym)
          ,@body))))
@@ -325,7 +325,7 @@ This is a variadic `cl-pushnew'."
 ;;
 ;;; Filesystem
 
-(defun cmx-subdirs (parent-dir)
+(defun ceamx-subdirs (parent-dir)
   "Return every non-hidden subdirectory of PARENT-DIR."
   (cl-remove-if-not
    #'file-directory-p
@@ -333,7 +333,7 @@ This is a variadic `cl-pushnew'."
     (expand-file-name parent-dir) t "^[^\\.]")))
 
 ;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
-(cl-defun cmx-basename (&optional (file (buffer-file-name)))
+(cl-defun ceamx-basename (&optional (file (buffer-file-name)))
   "Return the basename of FILE."
   (file-name-sans-extension (file-name-nondirectory file)))
 
@@ -355,8 +355,8 @@ This is a variadic `cl-pushnew'."
 
 (defmacro subdirs! (parent-dir)
   "Return non-hidden subdirectories of PARENT-DIR.
-Simple wrapper around `cmx-subdirs'."
-  `(cmx-subdirs ,parent-dir))
+Simple wrapper around `ceamx-subdirs'."
+  `(ceamx-subdirs ,parent-dir))
 
 ;;
 ;;; Advice
@@ -438,7 +438,7 @@ add the function, or just a single hook. DOCSTRING and BODY are
 as in `defun'."
   (declare (indent 2)
            (doc-string 4))
-  (setq hooks (ensure-list (cmx-unquote hooks)))
+  (setq hooks (ensure-list (ceamx-unquote hooks)))
   (dolist (hook hooks)
     (unless (string-match-p "-\\(hook\\|functions\\)$" (symbol-name hook))
       (error "Symbol `%S' is not a hook" hook)))
@@ -463,7 +463,7 @@ multiple hook symbols.
 
 FUNC may be any quoted function symbol."
   (declare (indent defun))
-  (setq func (cmx-unquote func))
+  (setq func (ceamx-unquote func))
   (cl-assert (fboundp func) t)
   `(dolist (hook (ensure-list ,hooks))
      (cl-assert (boundp hook) t)
@@ -491,7 +491,7 @@ This macro accepts, in order:
                 (lisp-indent-defform state indent-point))))
     (debug t))
   ;; TODO: use `derived-mode-hook-name'
-  (let* ((hook-forms (cmx--resolve-hook-forms hooks))
+  (let* ((hook-forms (ceamx--resolve-hook-forms hooks))
           (func-forms ())
           (defn-forms ())
           append-p local-p remove-p depth)
@@ -544,7 +544,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
 \(fn HOOKS &rest [SYM VAL]...)"
   (declare (indent 1))
   (macroexp-progn
-   (cl-loop for (var val hook fn) in (cmx--setq-hook-fns hooks var-vals)
+   (cl-loop for (var val hook fn) in (ceamx--setq-hook-fns hooks var-vals)
             collect `(defun ,fn (&rest _)
                        ,(format "%s = %s" var (pp-to-string val))
                        (setq-local ,var ,val))
@@ -557,7 +557,7 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
   (declare (indent 1))
   (macroexp-progn
    (cl-loop for (_var _val hook fn)
-            in (cmx--setq-hook-fns hooks vars 'singles)
+            in (ceamx--setq-hook-fns hooks vars 'singles)
             collect `(remove-hook ',hook #',fn))))
 
 ;;; Packages

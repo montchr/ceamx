@@ -28,7 +28,7 @@
 ;;; Code:
 
 ;; TODO: clean this up (remove all the extraneous nils inserted by `newsticker')
-(defvar cmx-news-feed-url-list
+(defvar ceamx-news-feed-url-list
     '(("Human Transit" "https://humantransit.org/feed" nil nil nil)
        ("Hacker News" "https://news.ycombinator.com/rss" nil nil nil)
        ("The Next Web" "https://feeds2.feedburner.com/thenextweb" nil nil nil)

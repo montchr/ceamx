@@ -34,7 +34,7 @@
 
 ;; Must be set before loading Org-Mode.
 ;; TODO: move to `config-org'?
-(defvar org-directory cmx-notes-dir)
+(defvar org-directory ceamx-notes-dir)
 
 (unless (file-directory-p org-directory)
   (make-directory org-directory))

@@ -66,7 +66,7 @@
   (setopt recentf-auto-cleanup 'never)
 
   ;; Exclude internal plumbing files.
-  (dolist (path '(cmx-etc-dir cmx-var-dir))
+  (dolist (path '(ceamx-etc-dir ceamx-var-dir))
     (add-to-list 'recentf-exclude path)))
 
 ;;; `dogears' :: <https://github.com/alphapapa/dogears.el>
@@ -133,7 +133,7 @@
   :after undo-fu
 
   :init
-  (setopt undo-fu-session-directory (expand-file-name "undo-fu-session" cmx-var-dir))
+  (setopt undo-fu-session-directory (expand-file-name "undo-fu-session" ceamx-var-dir))
 
   :config
   (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))

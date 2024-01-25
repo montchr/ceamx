@@ -137,7 +137,7 @@
 
 ;; Ensure secrets and auth credentials are not stored in plaintext (the default).
 ;; Requires GnuPG configuration.
-(setopt auth-sources (list (file-name-concat cmx-var-dir "authinfo.gpg")
+(setopt auth-sources (list (file-name-concat ceamx-var-dir "authinfo.gpg")
                          "~/.authinfo.gpg"))
 
 ;; "More performant rapid scrolling over unfontified regions. May cause brief

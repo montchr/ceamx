@@ -27,21 +27,21 @@
 ;;; Code:
 
 ;;;###autoload
-(defvar cmx-point-in-comment-functions ()
+(defvar ceamx-point-in-comment-functions ()
   "List of functions to run to determine if point is in a comment.
 
 Each function takes one argument: the position of the point. Stops on the first
 function to return non-nil.
 
-Used by `cmx-point-in-comment-p'.")
+Used by `ceamx-point-in-comment-p'.")
 
 ;;;###autoload
-(defun cmx-point-in-comment-p (&optional pos)
+(defun ceamx-point-in-comment-p (&optional pos)
   "Return non-nil if POS is in a comment.
 POS defaults to the current position."
   (let ((pos (or pos (point))))
-    (if cmx-point-in-comment-functions
-        (run-hook-with-args-until-success 'cmx-point-in-comment-functions pos)
+    (if ceamx-point-in-comment-functions
+        (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
       (nth 4 (syntax-ppss pos)))))
 
 (provide 'lib-text)

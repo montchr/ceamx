@@ -26,9 +26,9 @@
 
 ;;; Code:
 
-(defvar cmx-loaded-packages nil)
+(defvar ceamx-loaded-packages nil)
 
-(defcustom cmx-exclude-packages nil
+(defcustom ceamx-exclude-packages nil
   "List of package names to exclude from loading.
 This instructs the relevant macros to not `require' the given
 package."

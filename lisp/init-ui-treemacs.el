@@ -54,7 +54,7 @@
   (setopt treemacs-no-delete-other-windows         t)
   (setopt treemacs-project-follow-cleanup          t)
   ;; FIXME: should already be handled by `no-littering', but needs confirmation
-  ;; treemacs-persist-file                    (expand-file-name "treemacs-persist" cmx-local-dir)
+  ;; treemacs-persist-file                    (expand-file-name "treemacs-persist" ceamx-local-dir)
   (setopt treemacs-position                        'left)
   (setopt treemacs-read-string-input               'from-child-frame)
   (setopt treemacs-recenter-distance               0.1)

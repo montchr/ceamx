@@ -74,7 +74,7 @@
   :init
   ;; TODO: what for, exactly? needs binding?
   ;; via <https://github.com/minad/vertico/wiki#additions-for-moving-up-and-down-directories-in-find-file>
-  ;; (defun cmx/vertico-directory-delete-entry ()
+  ;; (defun ceamx/vertico-directory-delete-entry ()
   ;;   "Delete directory or entire entry before point."
   ;;   (interactive)
   ;;   (when (and (> (point) (minibuffer-prompt-end))

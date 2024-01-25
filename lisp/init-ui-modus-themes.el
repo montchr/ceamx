@@ -32,7 +32,7 @@
   ;; (setopt modus-themes-common-palette-overrides
   ;;       '((fringe unspecified)))
 
-  ;; (defun cmx-modus-themes--custom-faces ()
+  ;; (defun ceamx-modus-themes--custom-faces ()
   ;;   (modus-themes-with-colors
   ;;     (custom-set-faces
   ;;      ;; Add "padding" to modeline.
@@ -40,7 +40,7 @@
   ;;                              :color ,bg-mode-line-active))))
   ;;      `(mode-line-inactive ((,c :box ( :line-width 10
   ;;                                       :color ,bg-mode-line-inactive)))))))
-  ;; (add-hook 'modus-themes-after-load-theme-hook #'cmx-modus-themes--custom-faces)
+  ;; (add-hook 'modus-themes-after-load-theme-hook #'ceamx-modus-themes--custom-faces)
 
   (load-theme 'modus-vivendi :no-confirm))
 

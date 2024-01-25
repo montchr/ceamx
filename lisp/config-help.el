@@ -26,9 +26,9 @@
 
 (require 'ceamx-paths)
 
-(defvar cmx-cheatsheets-dir
+(defvar ceamx-cheatsheets-dir
   (file-name-as-directory
-   (concat cmx-home-dir "Documents/cheatsheets"))
+   (concat ceamx-home-dir "Documents/cheatsheets"))
   "Absolute path to the directory containing user cheatsheets.")
 
 (provide 'config-help)

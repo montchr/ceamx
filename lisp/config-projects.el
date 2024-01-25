@@ -24,10 +24,10 @@
 
 (require 'ceamx-paths)
 
-(defvar cmx-projects-dir
+(defvar ceamx-projects-dir
   (file-name-as-directory
    (or (getenv "XDG_PROJECTS_DIR")
-       (concat cmx-home-dir "Developer")))
+       (concat ceamx-home-dir "Developer")))
   "The root directory for projects.")
 
 (provide 'config-projects)

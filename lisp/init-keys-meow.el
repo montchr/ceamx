@@ -174,7 +174,7 @@
   (setopt meow-keypad-leader-dispatch nil)
   ;; (setopt meow-keypad-leader-dispatch "C-c")
 
-  ;; Use "SPC G" as "C-M-" prefix, allowing `cmx-git-map' to be mapped to "SPC
+  ;; Use "SPC G" as "C-M-" prefix, allowing `ceamx-git-map' to be mapped to "SPC
   ;; g" because muscle memory.
   ;; (setopt meow-keypad-ctrl-meta-prefix ?G)
 

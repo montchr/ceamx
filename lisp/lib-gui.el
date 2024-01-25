@@ -41,34 +41,34 @@
 ;;; Code:
 
 ;;; source: <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
-(defun cmx/default-monitor-geometry ()
+(defun ceamx/default-monitor-geometry ()
   "Return geometry for the first monitor in `display-monitor-attributes-list'."
   (let* ((first-monitor (car (display-monitor-attributes-list))))
     (alist-get 'geometry first-monitor)))
 
 ;;; source: <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
-(defun cmx/default-monitor-width ()
+(defun ceamx/default-monitor-width ()
   "Return the width of the first monitor in `display-monitor-attributes-list'."
-  (nth 2 (cmx/default-monitor-geometry)))
+  (nth 2 (ceamx/default-monitor-geometry)))
 
 ;;; source: <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
-(defun cmx/default-monitor-height ()
+(defun ceamx/default-monitor-height ()
   "Return the height of the first monitor in `display-monitor-attributes-list'."
-  (nth 3 (cmx/default-monitor-geometry)))
+  (nth 3 (ceamx/default-monitor-geometry)))
 
 ;;; source: <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
-(defun cmx/border-width ()
+(defun ceamx/border-width ()
   "Return the width to use for borders.
 Uses 4 pixels FHD and 8 on 4k."
-  (round (* 0.00208333333 (cmx/default-monitor-width))))
+  (round (* 0.00208333333 (ceamx/default-monitor-width))))
 
 ;;; source: <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
-(defun cmx/posframe-poshandler-frame-near-top-center (info)
+(defun ceamx/posframe-poshandler-frame-near-top-center (info)
   "Handler to display posframe centered near the top."
   (cons (/ (- (plist-get info :parent-frame-width)
               (plist-get info :posframe-width))
            2)
-        (round (* 0.02 (cmx/default-monitor-height)))))
+        (round (* 0.02 (ceamx/default-monitor-height)))))
 
 (provide 'lib-gui)
 ;;; lib-gui.el ends here

@@ -140,7 +140,7 @@
 
   :config
   (evil-ex-define-cmd "q" #'kill-this-buffer)
-  (evil-ex-define-cmd "wq" #'cmx/save-and-kill-this-buffer)
+  (evil-ex-define-cmd "wq" #'ceamx/save-and-kill-this-buffer)
 
   ;; Assign initial evil state to some specific major modes.
   ;; Note that this approach will not work for minor modes,
@@ -308,7 +308,7 @@
 ;;  (add-hook 'ruby-mode-hook #'embrace-ruby-mode-hook)
 ;;  (add-hook 'emacs-lisp-mode-hook #'embrace-emacs-lisp-mode-hook)
 
-;;  (dolist (mode cmx-lisp-mode-list)
+;;  (dolist (mode ceamx-lisp-mode-list)
 ;;    (add-hook mode #'+evil-embrace-lisp-mode-hook-h))
 
 ;;  (dolist (mode '(typescript-mode rustic-mode c++-ts-mode))
@@ -369,7 +369,7 @@
   :after evil
   :commands evil-exchange
   :config
-  (add-hook! 'cmx-escape-hook
+  (add-hook! 'ceamx-escape-hook
     (defun +evil--escape-exchange-h ()
       (when evil-exchange--overlays
         (evil-exchange-cancel)

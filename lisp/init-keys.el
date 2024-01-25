@@ -36,7 +36,7 @@
 (autoload 'burly-bookmark-frames "burly")
 (autoload 'burly-bookmark-windows "burly")
 
-(autoload 'cmx-hydra/main/body "init-hydras")
+(autoload 'ceamx-hydra/main/body "init-hydras")
 
 (defvar +sys-mac-p)
 

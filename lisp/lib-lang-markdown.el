@@ -25,7 +25,7 @@
 ;;; Code:
 
 ;;;###autoload
-(defun cmx-markdown-compile (beg end output-buffer)
+(defun ceamx-markdown-compile (beg end output-buffer)
   "Compile Markdown with pandoc if available.
 Returns process exit code."
   (when (executable-find "pandoc")

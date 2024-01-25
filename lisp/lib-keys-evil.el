@@ -65,7 +65,7 @@
 (defvar evil-vsplit-window-right)
 
 ;;;###autoload
-(defun cmx/save-and-kill-this-buffer ()
+(defun ceamx/save-and-kill-this-buffer ()
   "Save and kill the current buffer."
   (interactive)
   (save-buffer)
@@ -137,19 +137,19 @@ the only window, use evil-window-move-* (e.g. `evil-window-move-far-left')."
       (select-window that-window))))
 
 ;;;###autoload
-(defun cmx/evil/window-move-left ()
+(defun ceamx/evil/window-move-left ()
   "Swap windows to the left."
   (interactive) (+evil--window-swap 'left))
 ;;;###autoload
-(defun cmx/evil/window-move-right ()
+(defun ceamx/evil/window-move-right ()
   "Swap windows to the right"
   (interactive) (+evil--window-swap 'right))
 ;;;###autoload
-(defun cmx/evil/window-move-up ()
+(defun ceamx/evil/window-move-up ()
   "Swap windows upward."
   (interactive) (+evil--window-swap 'up))
 ;;;###autoload
-(defun cmx/evil/window-move-down ()
+(defun ceamx/evil/window-move-down ()
   "Swap windows downward."
   (interactive) (+evil--window-swap 'down))
 

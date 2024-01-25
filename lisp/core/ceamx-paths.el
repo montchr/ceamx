@@ -27,52 +27,52 @@
 
 ;;; Code:
 
-(defvar cmx-site-lisp-dir
+(defvar ceamx-site-lisp-dir
   (concat user-emacs-directory "site-lisp/")
   "Absolute path to the site-lisp directory.")
 
-(defvar cmx-home-dir (file-name-as-directory (getenv "HOME"))
+(defvar ceamx-home-dir (file-name-as-directory (getenv "HOME"))
   "Path to user home directory.")
 
-(defvar cmx-xdg-config-dir
+(defvar ceamx-xdg-config-dir
   (file-name-as-directory
    (or (getenv "XDG_CONFIG_HOME")
-       (concat cmx-home-dir ".config"))))
+       (concat ceamx-home-dir ".config"))))
 
-(defvar cmx-xdg-cache-dir
+(defvar ceamx-xdg-cache-dir
   (file-name-as-directory
    (or (getenv "XDG_CACHE_HOME")
-       (concat cmx-home-dir ".cache"))))
+       (concat ceamx-home-dir ".cache"))))
 
-(defvar cmx-config-dir cmx-xdg-config-dir
+(defvar ceamx-config-dir ceamx-xdg-config-dir
   "The root directory for personal configurations.")
 
-;; TODO: rename to something like `cmx-storage-dir' to reduce confusion
-(defvar cmx-local-dir
-  (concat cmx-xdg-cache-dir "ceamx/")
+;; TODO: rename to something like `ceamx-storage-dir' to reduce confusion
+(defvar ceamx-local-dir
+  (concat ceamx-xdg-cache-dir "ceamx/")
   "The root directory for local Emacs files.
 Use this as permanent storage for files that are safe to share
 across systems.")
 
-(defvar cmx-etc-dir (concat cmx-local-dir "etc/")
+(defvar ceamx-etc-dir (concat ceamx-local-dir "etc/")
   "Directory for non-volatile storage.
 Use this for files that don't change much, like servers binaries,
 external dependencies or long-term shared data.")
 
-(defvar cmx-var-dir (concat cmx-local-dir "var/")
+(defvar ceamx-var-dir (concat ceamx-local-dir "var/")
   "Directory for volatile storage.
 Use this for files that change often, like data and cache files.")
 
-(defvar cmx-eln-dir (convert-standard-filename
+(defvar ceamx-eln-dir (convert-standard-filename
                       (file-name-as-directory
-                        (expand-file-name "eln/" cmx-var-dir)))
+                        (expand-file-name "eln/" ceamx-var-dir)))
   "Directory for natively-compiled eln files.")
 
-(defvar cmx-packages-dir
+(defvar ceamx-packages-dir
   (expand-file-name (format "packages/%s.%s/"
                       emacs-major-version
                       emacs-minor-version)
-    cmx-local-dir)
+    ceamx-local-dir)
   "Where packages are stored.
 Intended for setting the value of `package-user-dir'.
 

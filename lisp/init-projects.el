@@ -46,13 +46,13 @@
 
   :config
   (define-keymap :keymap projectile-mode-map
-    ;; NOTE: Overrides default `cmx-project-map' binding.
+    ;; NOTE: Overrides default `ceamx-project-map' binding.
     "C-c p" '("project" . projectile-command-map))
 
   (keymap-global-set "<remap> <project-find-file>" #'projectile-find-file)
 
 
-  ;; TODO: use `cmx-projects-dir'
+  ;; TODO: use `ceamx-projects-dir'
   (setopt projectile-project-search-path '(("~/Developer/sources/" . 1)
                                            ("~/Developer/contrib/" . 2)
                                            ("~/Developer/work/" . 3)))

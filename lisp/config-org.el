@@ -26,9 +26,9 @@
 
 (require 'config-notes)
 
-(defvar cmx-org-capture-default-file
+(defvar ceamx-org-capture-default-file
   (expand-file-name
-   (concat cmx-notes-dir "inbox.org"))
+   (concat ceamx-notes-dir "inbox.org"))
   "Path to default inbox file for new org-capture entries.")
 
 (provide 'config-org)

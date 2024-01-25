@@ -49,7 +49,7 @@
 
 (autoload 'mwheel-install "mwheel")
 
-(defun cmx/console-frame-setup ()
+(defun ceamx/console-frame-setup ()
   (xterm-mouse-mode 1) ; Mouse in a terminal (Use shift to paste with middle button)
   (mwheel-install))
 
@@ -57,7 +57,7 @@
 (global-set-key [mouse-4] (lambda () (interactive) (scroll-down 1)))
 (global-set-key [mouse-5] (lambda () (interactive) (scroll-up 1)))
 
-;; (add-hook 'after-make-console-frame-hooks 'cmx/console-frame-setup)
+;; (add-hook 'after-make-console-frame-hooks 'ceamx/console-frame-setup)
 
 (provide 'init-xterm)
 ;;; init-xterm.el ends here

@@ -28,7 +28,7 @@
 
 (require 'lib-common)
 
-(defun cmx-init-javascript-modes ()
+(defun ceamx-init-javascript-modes ()
   (setopt js-indent-level 2)
 
   (after! [lsp-mode]
@@ -46,7 +46,7 @@
 
 (use-feature! typescript-ts-mode
   :init
-  (add-hook 'typescript-ts-base-mode #'cmx-init-javascript-modes))
+  (add-hook 'typescript-ts-base-mode #'ceamx-init-javascript-modes))
 
 (provide 'init-lang-js)
 ;;; init-lang-js.el ends here

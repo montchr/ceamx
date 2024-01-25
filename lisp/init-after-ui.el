@@ -80,7 +80,7 @@
 ;; (use-package circadian
 ;;   :after solar
 ;;   :config
-;;   ;; FIXME: based on theme selected by `cmx-ui-theme-dark'
+;;   ;; FIXME: based on theme selected by `ceamx-ui-theme-dark'
 ;;   (setopt circadian-themes '((:sunrise . modus-operandi)
 ;;                              (:sunset  . modus-vivendi)))
 ;;   (circadian-setup))

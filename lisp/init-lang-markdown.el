@@ -55,7 +55,7 @@
   ;;      <https://github.com/jrblevin/markdown-mode/issues/578>
   (defvar markdown-nested-imenu-heading-index (not (ignore-errors (native-comp-available-p))))
 
-  (defvar markdown-command #'cmx-markdown-compile)
+  (defvar markdown-command #'ceamx-markdown-compile)
 
   ;; This is set to `nil' by default, which causes a wrong-type-arg error
   ;; when you use `markdown-open'. These are more sensible defaults.
@@ -83,7 +83,7 @@
     (add-to-list 'org-src-lang-modes '("md" . markdown)))
 
   :config
-  (def-advice! cmx--disable-markdown-front-matter-fontification (&rest _)
+  (def-advice! ceamx--disable-markdown-front-matter-fontification (&rest _)
     :override #'markdown-match-generic-metadata
     "Prevent fontification of YAML metadata blocks in `markdown-mode'.
 This prevents a mis-feature wherein if the first line of a

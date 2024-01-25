@@ -71,7 +71,7 @@
   :commands browse-at-remote
   :init
   ;; FIXME: keymap not available! causes error
-  ;; (keymap-set cmx-git-map "o" #'browse-at-remote)
+  ;; (keymap-set ceamx-git-map "o" #'browse-at-remote)
   )
 
 ;;
@@ -105,7 +105,7 @@
 ;;   ;; Set the default folder for cloning repositories. By default Consult-GH will
 ;;   ;; confirm this before cloning.
 ;;   (setopt consult-gh-default-clone-directory
-;;     (concat cmx-projects-dir "repos")))
+;;     (concat ceamx-projects-dir "repos")))
 
 (provide 'init-vcs)
 ;;; init-vcs.el ends here

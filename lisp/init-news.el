@@ -30,7 +30,7 @@
 ;; (require 'ceamx-user)
 
 ;; (use-feature! [newsticker]
-;;   (setopt newsticker-url-list cmx-news-feed-url-list))
+;;   (setopt newsticker-url-list ceamx-news-feed-url-list))
 
 
 

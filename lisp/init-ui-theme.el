@@ -39,15 +39,15 @@
 ;; effects from early-init frame flash workaround.
 ;; TODO: also some other link i can't find now
 ;; <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
-(add-hook 'after-make-frame-functions #'cmx-theme-re-enable-in-frame)
+(add-hook 'after-make-frame-functions #'ceamx-theme-re-enable-in-frame)
 
 ;; Set up `after-enable-theme-hook'.
 ;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-(defvar cmx-after-enable-theme-hook nil)
-(defun cmx-after-enable-theme-hook (&rest _args)
+(defvar ceamx-after-enable-theme-hook nil)
+(defun ceamx-after-enable-theme-hook (&rest _args)
   "Hook to run after enabling theme."
-  (run-hooks 'cmx-after-enable-theme-hook))
-(advice-add 'enable-theme :after #'cmx-after-enable-theme-hook)
+  (run-hooks 'ceamx-after-enable-theme-hook))
+(advice-add 'enable-theme :after #'ceamx-after-enable-theme-hook)
 
 ;; TODO: why? also move to `init-ui-font'
 (setopt font-lock-maximum-decoration t)

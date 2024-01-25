@@ -24,9 +24,9 @@
 
 (require 'ceamx-paths)
 
-(defvar cmx-notes-dir
+(defvar ceamx-notes-dir
   (file-name-as-directory
-   (concat cmx-home-dir "Documents/notes"))
+   (concat ceamx-home-dir "Documents/notes"))
   "Base directory for note storage.")
 
 (provide 'config-notes)

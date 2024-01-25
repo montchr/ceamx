@@ -24,12 +24,6 @@
 
 ;;  Personal Emacs configuration file.
 
-;; FIXME: cannot load some packages (namely `spacious-padding' in tty session)
-
-;;; Sources:
-
-;; - <https://git.sr.ht/~protesilaos/dotfiles/tree/e21affc0153e556e06a28813efb252c7757b6aff/item/emacs/.emacs.d/init.el>
-
 ;;; Code:
 
 (require 'lib-common)
@@ -54,8 +48,8 @@
 ;;; Initialize packages:
 
 ;;; Add site-lisp directory tree to load path.
-(add-to-list 'load-path cmx-site-lisp-dir)
-(prependq! load-path (subdirs! cmx-site-lisp-dir))
+(add-to-list 'load-path ceamx-site-lisp-dir)
+(prependq! load-path (subdirs! ceamx-site-lisp-dir))
 
 (require 'init-packages)
 
@@ -63,8 +57,8 @@
 (use-package no-littering
   :demand t
   :init
-  (setq no-littering-etc-directory cmx-etc-dir)
-  (setq no-littering-var-directory cmx-var-dir))
+  (setq no-littering-etc-directory ceamx-etc-dir)
+  (setq no-littering-var-directory ceamx-var-dir))
 
 (use-feature! on
   :demand t)
@@ -114,7 +108,7 @@
 ;;;; Theme
 (require 'init-ui-theme)
 ;; TODO: probably not for tty?
-(pcase cmx-theme-family
+(pcase ceamx-theme-family
   ('ef
    (require 'init-ui-ef-themes))
   ('modus
@@ -134,7 +128,7 @@
 ;;;; Modeline
 (require 'config-ui)
 (require 'init-ui-modeline)
-(pcase cmx-modeline-provider
+(pcase ceamx-modeline-provider
   ('doom (require 'init-ui-modeline-doom))
   ('nano (require 'init-ui-modeline-nano))
   ('telephone (require 'init-ui-modeline-telephone-line)))
@@ -180,7 +174,7 @@
 (require 'config-completion)
 (require 'init-completion)
 ;; TODO: this
-;; (pcase cmx-completion-at-point-ui
+;; (pcase ceamx-completion-at-point-ui
 ;;   (`lsp-bridge (require 'init-lsp-bridge))
 ;;   ;; FIXME: rename/restruct feature to be specific to corfu, separate generalities
 ;;   (`corfu      (require 'init-completion)))
@@ -265,12 +259,12 @@
 (add-hook 'after-init-hook #'+maybe-start-server)
 
 ;; unfortunately
-(defun cmx-after-init-restart-yabai-h ()
+(defun ceamx-after-init-restart-yabai-h ()
   "Restart the yabai service after init."
   (after! [exec-path-from-shell]
     (async-shell-command "yabai --restart-service")))
 (when (and +gui-p +sys-mac-p)
-  (add-hook 'after-init-hook #'cmx-after-init-restart-yabai-h))
+  (add-hook 'after-init-hook #'ceamx-after-init-restart-yabai-h))
 
 (provide 'init)
 ;;; init.el ends here

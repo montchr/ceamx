@@ -129,11 +129,11 @@ The naming for booleans and predicates is different.
 #### Example
 
 ```elisp
-(defvar cmx-foo-flag t)
-(defvar cmx-is-foo-enabled t)
-(defun cmx-foo-p ()
+(defvar ceamx-foo-flag t)
+(defvar ceamx-is-foo-enabled t)
+(defun ceamx-foo-p ()
   ;; sketchy logic (don't do this)
-  (or cmx-foo-flag cmx-is-foo-enabled))
+  (or ceamx-foo-flag ceamx-is-foo-enabled))
 ```
 
 #### Explanation
@@ -154,12 +154,12 @@ From [Coding Conventions (GNU Emacs Lisp Reference Manual)](https://www.gnu.org/
 
 First, invoke `(elpaca-write-lockfile)`. In the output file, `defvar` its contents.
 
-Assuming `(defvar cmx-elpaca-packages ...)`, then:
+Assuming `(defvar ceamx-elpaca-packages ...)`, then:
 
 ```emacs-lisp
 ;; FIXME: rewrite without llama
 (use-package llama)
-(kill-new (mapconcat (##symbol-name (car %1)) cmx-elpaca-packages "\n"))
+(kill-new (mapconcat (##symbol-name (car %1)) ceamx-elpaca-packages "\n"))
 ```
 
 ### Avoid `add-to-list`; prefer `push` or `cl-pushnew`

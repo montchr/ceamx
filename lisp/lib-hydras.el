@@ -49,32 +49,32 @@
 
 ;;; Code:
 
-(defvar cmx-hydra-stack '())
+(defvar ceamx-hydra-stack '())
 
-(defun cmx-hydra-push (expr)
+(defun ceamx-hydra-push (expr)
   "Push an EXPR onto the stack."
-  (push expr cmx-hydra-stack))
+  (push expr ceamx-hydra-stack))
 
-(defun cmx-hydra-pop ()
+(defun ceamx-hydra-pop ()
   "Pop an expression off the stack and call it."
   (interactive)
-  (let ((x (pop cmx-hydra-stack)))
+  (let ((x (pop ceamx-hydra-stack)))
     (when x
 	    (call-interactively x))))
 
-(defun cmx-hydra-show ()
+(defun ceamx-hydra-show ()
   "Show the current stack."
   (interactive)
   (with-help-window (help-buffer)
-    (princ "cmx-hydra-stack\n")
-    (pp cmx-hydra-stack)))
+    (princ "ceamx-hydra-stack\n")
+    (pp ceamx-hydra-stack)))
 
-(defun cmx-hydra-reset ()
+(defun ceamx-hydra-reset ()
   "Reset the stack to empty."
   (interactive)
-  (setq cmx-hydra-stack '()))
+  (setq ceamx-hydra-stack '()))
 
-(defun cmx-hydra-help ()
+(defun ceamx-hydra-help ()
   "Show help buffer for current hydra."
   (interactive)
   (with-help-window (help-buffer)
@@ -138,7 +138,7 @@
   "Push current HYDRA to a stack.
 This is a macro so I don't have to quote the hydra name."
   `(progn
-     (cmx-hydra-push hydra-curr-body-fn)
+     (ceamx-hydra-push hydra-curr-body-fn)
      (call-interactively ',hydra)))
 
 

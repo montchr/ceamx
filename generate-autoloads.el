@@ -26,33 +26,33 @@
 
 (require 'f)
 
-(defvar-local cmx-autoloads-sources-dir
+(defvar-local ceamx-autoloads-sources-dir
     (f-join user-emacs-directory "lisp"))
 
-(defvar-local cmx-autoloads-excludes
-    (append (f-glob "config-*.el" cmx-autoloads-sources-dir)
-            (f-glob "init-*.el" cmx-autoloads-sources-dir)))
+(defvar-local ceamx-autoloads-excludes
+    (append (f-glob "config-*.el" ceamx-autoloads-sources-dir)
+            (f-glob "init-*.el" ceamx-autoloads-sources-dir)))
 
-(defvar-local cmx-autoloads-dir
+(defvar-local ceamx-autoloads-dir
     (f-join user-emacs-directory "autoloads"))
 
-(defvar-local cmx-autoloads-defs-file
-    (f-join cmx-autoloads-dir "ceamx-autoloads.el"))
+(defvar-local ceamx-autoloads-defs-file
+    (f-join ceamx-autoloads-dir "ceamx-autoloads.el"))
 
-(message "%s" cmx-autoloads-excludes)
-(message "%s" cmx-autoloads-dir)
-(message "%s" cmx-autoloads-defs-file)
+(message "%s" ceamx-autoloads-excludes)
+(message "%s" ceamx-autoloads-dir)
+(message "%s" ceamx-autoloads-defs-file)
 
-(defun cmx-autoloads--ensure-dir ()
+(defun ceamx-autoloads--ensure-dir ()
   "Ensure the target directory exists."
-  (unless (f-dir-p cmx-autoloads-dir)
-    (f-mkdir cmx-autoloads-dir)))
+  (unless (f-dir-p ceamx-autoloads-dir)
+    (f-mkdir ceamx-autoloads-dir)))
 
 (progn
-  (cmx-autoloads--ensure-dir)
-  (loaddefs-generate cmx-autoloads-sources-dir
-                     cmx-autoloads-defs-file
-                     cmx-autoloads-excludes))
+  (ceamx-autoloads--ensure-dir)
+  (loaddefs-generate ceamx-autoloads-sources-dir
+                     ceamx-autoloads-defs-file
+                     ceamx-autoloads-excludes))
 
 (provide 'generate-autoloads)
 ;;; generate-autoloads.el ends here

@@ -28,50 +28,54 @@
 (use-package fontaine
   :demand t
   :config
-  (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" cmx-var-dir))
+  (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
   ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
   ;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
   ;;        at least i think that's what's causing the inconsistencies...
-  ;;        update: this might also be happening on NixOS running on
-  ;;        old MacBookPro hardware, so could be a general ppi issue
+  ;;        - update: this might also be happening on NixOS running on
+  ;;        old MacBookPro hardware (hodgepodge system), so could be a general
+  ;;        ppi issue -- but i've had the preset set to `small' for a while and
+  ;;        haven't noticed any issues since then
   (setopt fontaine-presets
-          `(
-            ;; FIXME: ligatures at some sizes sometimes broken -- but not everywhere...?
-            ;;        test case (double-colons, should not have a visual space between)
-            ;;        => ::
-            (xsmall :default-height 100)
-            (small :default-height 110) ; FIXME: liga broken?
-            ;; FIXME: does this override default preset?
-            (regular :default-height 140) ; FIXME: liga broken?
-            (regular-alt :default-height 130)
-            (medium :default-height 160)
-            (medium-alt :default-height 150)
-            (large :default-height 180)
-            (large-alt :default-height 170
-             :line-spacing 0.1)
-            (xlarge :default-height 240
-             :line-spacing nil)
-            (t
-             ;; TODO: set values from nix config (or, less ideally, by env vars)
-             :default-family "Iosevka Comfy"
-             :default-weight ,(if +sys-mac-p 'medium 'regular)
-             :default-height 100
-             :fixed-pitch-family "Iosevka Comfy"
-             :fixed-pitch-weight nil
-             :fixed-pitch-height 1.0
-             :fixed-pitch-serif-family "Iosevka Comfy Motion"
-             :fixed-pitch-serif-weight nil
-             ;; :variable-pitch-family "Inter"
-             ;; TODO: probably worth trying one of the others, maybe not-wide
-             :variable-pitch-family "Iosevka Comfy Wide Duo"
-             :variable-pitch-weight nil
-             :variable-pitch-height 0.9
-             :bold-family nil
-             :bold-weight ,(if +sys-mac-p 'bold 'semibold)
-             :italic-family nil
-             :italic-slant italic
-             :line-spacing 0.1)))
+    `(
+       ;; FIXME: ligatures at some sizes sometimes broken -- but not everywhere...?
+       ;;        test case (double-colons, should not have a visual space between)
+       ;;        => ::
+       (xsmall :default-height 100)
+       (small :default-height 110)      ; FIXME: liga broken?
+       (regular :default-height 140)    ; FIXME: liga broken?
+       (regular-alt :default-height 130)
+       (medium :default-height 160)
+       (medium-alt :default-height 150)
+       (large :default-height 180)
+       (large-alt :default-height 170
+         :line-spacing 0.1)
+       (xlarge :default-height 240
+         :line-spacing nil)
+       (t
+         ;; TODO: set values from nix config (or, less ideally, by env vars)
+         :default-family "Iosevka Comfy"
+         :default-weight ,(if +sys-mac-p 'medium 'regular)
+         :default-height 100
+         :fixed-pitch-family "Iosevka Comfy"
+         :fixed-pitch-weight nil
+         :fixed-pitch-height 1.0
+         :fixed-pitch-serif-family "Iosevka Comfy Motion"
+         :fixed-pitch-serif-weight nil
+         :variable-pitch-family "Inter"
+         ;; TODO: probably worth trying one of the others, maybe not-wide
+         ;; :variable-pitch-family "Iosevka Comfy Wide Duo"
+         :variable-pitch-weight nil
+         :variable-pitch-height 0.9
+         :bold-family nil
+         :bold-weight ,(if +sys-mac-p 'bold 'semibold)
+         :italic-family nil
+         :italic-slant italic
+         :line-spacing nil
+         ;; :line-spacing 0.1
+         )))
 
+  ;; Persist latest preset across sessions.
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
 

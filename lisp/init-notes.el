@@ -35,7 +35,7 @@
 
 ;; via <https://github.com/mclear-tools/consult-notes#embark-support>
 ;; (after! [consult-notes embark]
-;; 	(defun cmx/consult-notes-embark-action (cand)
+;; 	(defun ceamx/consult-notes-embark-action (cand)
 ;;     "Do something with CAND."
 ;;     (interactive "fNote: ")
 ;;     ;; FIXME: needs function
@@ -50,7 +50,7 @@
 ;;   (defvar-keymap consult-notes-map
 ;;     :doc "Keymap for Embark notes actions."
 ;;     :parent embark-file-map
-;;     "m" #'cmx/consult-notes-embark-action)
+;;     "m" #'ceamx/consult-notes-embark-action)
 
 ;;   (add-to-list 'embark-keymap-alist `(,consult-notes-category . consult-notes-map))
 

@@ -25,7 +25,7 @@
 ;;; Code:
 
 ;; TODO: why?
-(defun cmx/maybe-suspend-frame ()
+(defun ceamx/maybe-suspend-frame ()
   (interactive)
   (unless (and +sys-mac-p window-system)
     (suspend-frame)))

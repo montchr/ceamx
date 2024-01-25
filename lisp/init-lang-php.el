@@ -41,7 +41,7 @@
 (use-package php-mode
   :init
   ;; Render multiline comments using `font-lock-comment-face'.
-  (add-hook 'php-mode-hook #'cmx--multiline-comment-face-h)
+  (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
   :config
   (setopt php-mode-template-compatibility nil)
 

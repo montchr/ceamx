@@ -24,7 +24,7 @@
 ;; keymaps are unavailable for binding in any prior-loaded file, but i guess
 ;; that's kind of a given for this all-in-one-place approach to bindings
 
-;; TODO: quikgrok descriptions for `cmx-window-map' defs
+;; TODO: quikgrok descriptions for `ceamx-window-map' defs
 ;; TODO: vim-like case invert! <https://gitlab.com/slotThe/dotfiles/-/blob/77393d030021a3524c03f22bbb4a4ca75965a9fd/emacs/.config/emacs/lisp/keybindings.el#L79-92>
 
 ;;; Code:
@@ -52,7 +52,7 @@
 
 ;;; Navigation maps
 
-;; TODO: merge both `cmx-go-prev-map' and `cmx-go-next-map' into the
+;; TODO: merge both `ceamx-go-prev-map' and `ceamx-go-next-map' into the
 ;;       appropriate leaderless evil motion state bindings e.g. "[" and "]" in
 ;;       normal state. i tried doing that quickly but am not sure how to
 ;;       determine what is bound to "[" or "]" directly. i would have thought
@@ -60,7 +60,7 @@
 
 ;;;; Previous
 
-(def-arm! cmx-go-prev-map "[" "[Prev]"
+(def-arm! ceamx-go-prev-map "[" "[Prev]"
   "TAB" #'tab-previous
   "["   #'previous-buffer
   "b"   #'previous-buffer
@@ -70,7 +70,7 @@
 
 ;;;; Next
 
-(def-arm! cmx-go-next-map "]" "[Next]"
+(def-arm! ceamx-go-next-map "]" "[Next]"
   "TAB" #'tab-next
   "]"   #'next-buffer
   "b"   #'next-buffer
@@ -80,7 +80,7 @@
 
 ;; TODO: make this more convenient
 ;;;; Goto
-(def-map! cmx-goto-map
+(def-map! ceamx-goto-map
   "d" '("definition" . xref-find-definitions)
   "r" '("references" . xref-find-references))
 
@@ -88,7 +88,7 @@
 ;;; "B" => Bookmarks
 ;;
 
-(def-arm! cmx-bookmark-map "B" "[Bookmarks]"
+(def-arm! ceamx-bookmark-map "B" "[Bookmarks]"
   "F" #'burly-bookmark-frames
   "W" #'burly-bookmark-windows)
 
@@ -96,7 +96,7 @@
 ;;; "b" => Buffers
 ;;
 
-(def-arm! cmx-buffer-map "b" "[Buffer]"
+(def-arm! ceamx-buffer-map "b" "[Buffer]"
   ;; FIXME: only consider file-visiting buffers, or perhaps buffers i am editing (recent)
   "[" '("prev" . previous-buffer)
   "]" '("next" . next-buffer)
@@ -120,7 +120,7 @@
 ;;; "c" => Code
 ;;
 
-(def-arm! cmx-code-map "C" "Code"
+(def-arm! ceamx-code-map "C" "Code"
   "a" '("action.." . eglot-code-actions)
   "d" #'xref-find-definitions
   "h" #'helpful-at-point
@@ -131,7 +131,7 @@
 ;;; "e" => Eval
 ;;
 
-(def-arm! cmx-eval-map "e" "[Eval]"
+(def-arm! ceamx-eval-map "e" "[Eval]"
   "b" #'eval-buffer
   "d" #'eval-defun
   "e" #'eval-last-sexp
@@ -143,18 +143,18 @@
 ;;; "f" => Files
 ;;
 
-(def-arm! cmx-file-map "f" "[File]"
+(def-arm! ceamx-file-map "f" "[File]"
   ;; TODO
   ;; "u" #'+sudo-find-file
   ;; "U" #'+sudo-this-file
   ;; "y" #'+yank-this-file-name
-  "C" '("copy..." . cmx/copy-this-file)
-  "d" '("diff with..." . cmx/diff-with-file)
+  "C" '("copy..." . ceamx/copy-this-file)
+  "d" '("diff with..." . ceamx/diff-with-file)
   ;; FIXME: kill buffer on file deletion
-  "D" '("delete" . cmx/delete-this-file)
+  "D" '("delete" . ceamx/delete-this-file)
   ;; TODO: show dirvish preview instead of dired preview
   "f" '("find (g)..." . find-file)
-  "R" '("rename/move..." . cmx/move-this-file)
+  "R" '("rename/move..." . ceamx/move-this-file)
   "s" '("save" . save-buffer)
   "S" '("save as..." . write-file))
 
@@ -162,7 +162,7 @@
 ;;; "F" => Frames
 ;;
 
-(def-arm! cmx-frame-map "F" "[Frame]"
+(def-arm! ceamx-frame-map "F" "[Frame]"
   "b" '("save layout..." . burly-bookmark-frames)
 	"F" '("switch to..." . select-frame-by-name)
   "n" '("create" . make-frame-on-current-monitor)
@@ -177,7 +177,7 @@
 ;;
 
 ;; TODO: disabled to try out vanilla keybinds with meow keypad defaults
-;; (def-arm! cmx-git-map "g" "[Git]"
+;; (def-arm! ceamx-git-map "g" "[Git]"
 ;;   "b" #'magit-branch
 ;;   "B" #'magit-blame
 ;;   "f" #'magit-find-file
@@ -204,7 +204,7 @@
   "H" `("cheatsheet..." . ,(cmd!!
                              #'ido-find-file-in-dir
                              current-prefix-arg
-                             cmx-cheatsheets-dir))
+                             ceamx-cheatsheets-dir))
   ;; NOTE: currently `meow-describe-key'
   ;; TODO: move corresponding meow binding here with fallback to default
   ;;       example:   (cl-find-if #'fboundp '(harper-dad-joint helpful-at-point describe-key))
@@ -236,7 +236,7 @@
 ;;; "i" => Insertions
 ;;
 
-(def-arm! cmx-insert-map "i" "[Insert]"
+(def-arm! ceamx-insert-map "i" "[Insert]"
   "t"  #'tempel-insert
   "y"  #'yank-from-kill-ring)
 
@@ -245,18 +245,18 @@
 ;;
 
 ;;;; "X" / "n o c" => Org-Capture
-(def-arm! cmx-capture-map "X" "[Capture]"
+(def-arm! ceamx-capture-map "X" "[Capture]"
   "X" '("capture..." . org-capture))
 
 ;;;; "o" / "n o" => Org-Mode
-(def-arm! cmx-org-map "o" "[Org-Mode]"
+(def-arm! ceamx-org-map "o" "[Org-Mode]"
   "a" #'org-agenda
-  "c" '("capture..." . cmx-capture-map)
+  "c" '("capture..." . ceamx-capture-map)
   "l" #'org-store-link
   "t" '("todos" . org-todo-list))
 
 ;;;; "n" => Notes
-(def-arm! cmx-notes-map "n" "[Note]"
+(def-arm! ceamx-notes-map "n" "[Note]"
   "b" #'denote-backlinks
   "c" #'org-capture
   "d" #'denote-date
@@ -268,7 +268,7 @@
   "j" #'my-denote-journal               ; our custom command
   "n" #'denote
   "N" #'denote-type
-  "o" '("[Org-Mode]" . cmx-org-map)
+  "o" '("[Org-Mode]" . ceamx-org-map)
   ;; Note that `denote-rename-file' can work from any context, not just
   ;; Dired buffers.  That is why we bind it here to the `global-map'.
   "r" #'denote-rename-file
@@ -282,7 +282,7 @@
 ;;; "O" => Open
 ;;
 
-(def-arm! cmx-open-map "o" "[Open]"
+(def-arm! ceamx-open-map "o" "[Open]"
   "d" #'dired
   "e" #'eshell
   "l" '("link-at-point" . link-hint-open-link-at-point)
@@ -295,7 +295,7 @@
 ;;; "p" => Projects
 ;;
 
-(def-arm! cmx-project-map "p" "[Project]"
+(def-arm! ceamx-project-map "p" "[Project]"
   "a" '("add..." . projectile-add-known-project)
   "f" '("find file..." . projectile-find-file)
   "i" '("invalidate cache" . projectile-invalidate-cache)
@@ -306,7 +306,7 @@
 ;;
 
 ;;;; "q p" Package Management
-(def-map! cmx-packages-map
+(def-map! ceamx-packages-map
   "b" #'embark-browse-package-url
   "c" #'package-autoremove
   "d" #'package-delete
@@ -319,9 +319,9 @@
   "U" #'package-upgrade-all)
 
 
-(def-arm! cmx-session-map "q" "[Session]"
+(def-arm! ceamx-session-map "q" "[Session]"
   "f" '("font..." . fontaine-set-preset)
-  "p" '("packages" . cmx-packages-map)
+  "p" '("packages" . ceamx-packages-map)
   "q" '("close frame" . delete-frame)
   "Q" '("save+quit" . save-buffers-kill-emacs)
   "r" '("restart" . restart-emacs)
@@ -331,7 +331,7 @@
 ;;; "s" => Search
 ;;
 
-(def-arm! cmx-search-map "s" "[Search]"
+(def-arm! ceamx-search-map "s" "[Search]"
   "d" `("directory..." . ,(cmd! (consult-ripgrep
                                  (file-name-directory buffer-file-name))))
   "h" '("history..." . consult-isearch-history)
@@ -355,7 +355,7 @@
 ;;; "t" => Toggles
 ;;
 
-(def-arm! cmx-toggle-map "t" "[Toggle]"
+(def-arm! ceamx-toggle-map "t" "[Toggle]"
   "l" #'display-line-numbers-mode
   "L" #'line-number-mode
   "f" #'flycheck-mode
@@ -368,7 +368,7 @@
 ;; Largely based on Doom bindings, which are based on `evil-window-map'.
 
 ;; FIXME: assumes `evil'
-(def-arm! cmx-window-map "w" "[Window]"
+(def-arm! ceamx-window-map "w" "[Window]"
   ;;; default
   "w" #'ace-window
 
@@ -389,10 +389,10 @@
   "C-w"    #'other-window
 
   ;;; swap
-  ;; "H"      #'cmx/evil/window-move-left
-  ;; "J"      #'cmx/evil/window-move-down
-  ;; "K"      #'cmx/evil/window-move-up
-  ;; "L"      #'cmx/evil/window-move-right
+  ;; "H"      #'ceamx/evil/window-move-left
+  ;; "J"      #'ceamx/evil/window-move-down
+  ;; "K"      #'ceamx/evil/window-move-up
+  ;; "L"      #'ceamx/evil/window-move-right
   ;; "r"      #'evil-window-rotate-downwards
   ;; "R"      #'evil-window-rotate-upwards
   "C-S-w"  #'ace-swap-window
@@ -413,14 +413,14 @@
 ;;; "y" => Copy / Evil Yank
 ;;
 
-(def-arm! cmx-yank-map "y" "[Yank]"
+(def-arm! ceamx-yank-map "y" "[Yank]"
   "l" '("link (visible)" . link-hint-copy-link))
 
 ;;
 ;;; "TAB" => Tabs
 ;;
 
-(def-arm! cmx-tab-map "TAB" "[Tab]"
+(def-arm! ceamx-tab-map "TAB" "[Tab]"
   "TAB"  '("other" . tab-recent)
   "d"    '("delete" . tab-close)
   "h"    '("prev" . tab-previous)
@@ -456,16 +456,16 @@
 ;;   ;; "z"
 ;;   )
 
-(keymap-global-set cmx-leader-alt-key 'mode-specific-command-prefix)
+(keymap-global-set ceamx-leader-alt-key 'mode-specific-command-prefix)
 (keymap-global-set "<f12>" 'mode-specific-command-prefix)
 
 (after! [evil]
   ;; Bind leader key to existing leader map.
   (evil-define-key* '(normal visual motion) 'global
-    (kbd cmx-leader-key) 'mode-specific-command-prefix)
+    (kbd ceamx-leader-key) 'mode-specific-command-prefix)
   (after! [magit]
     (keymap-set magit-mode-map
-      cmx-leader-key #'mode-specific-command-prefix))
+      ceamx-leader-key #'mode-specific-command-prefix))
 
   ;; Bind leader to `,' (comma).
   (evil-define-key* '(normal visual motion) 'global

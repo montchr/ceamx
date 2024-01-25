@@ -34,7 +34,7 @@
 ;; Create missing directories when we open a file that doesn't exist under a
 ;; directory tree that may not exist.
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
-(defun cmx-create-missing-directories-h ()
+(defun ceamx-create-missing-directories-h ()
   "Automatically create missing directories when creating new files."
   (unless (file-remote-p buffer-file-name)
     (let ((parent-directory (file-name-directory buffer-file-name)))
@@ -43,7 +43,7 @@
                              parent-directory))
            (progn (make-directory parent-directory 'parents)
                   t)))))
-(add-hook 'find-file-not-found-functions #'cmx-create-missing-directories-h)
+(add-hook 'find-file-not-found-functions #'ceamx-create-missing-directories-h)
 
 ;; Add file headers to new files.
 (use-feature! autoinsert
@@ -54,7 +54,7 @@
 
 (setopt backup-by-copying t)
 (setopt backup-directory-alist `((".*" . ,(expand-file-name
-                                           (concat cmx-local-dir "backups")))))
+                                           (concat ceamx-local-dir "backups")))))
 (setopt delete-old-versions t)
 (setopt kept-new-versions 5)
 (setopt kept-old-versions 5)

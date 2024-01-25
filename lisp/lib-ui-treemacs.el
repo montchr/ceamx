@@ -32,7 +32,7 @@
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/7a7503045850ea83f205de6e71e6d886187f4a22/modules/ui/treemacs/autoload.el>
 ;;;###autoload
-(defun cmx/treemacs/toggle ()
+(defun ceamx/treemacs/toggle ()
   "Initialize or toggle treemacs.
 
 Ensures that only the current project is present and all other projects have

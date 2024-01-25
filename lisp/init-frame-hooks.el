@@ -59,12 +59,12 @@ Selectively runs either `after-make-console-frame-hooks' or
                  'after-make-console-frame-hooks))))
 (add-hook 'after-make-frame-functions 'run-after-make-frame-hooks)
 
-(defvar cmx/initial-frame (selected-frame)
+(defvar ceamx/initial-frame (selected-frame)
   "The frame (if any) active during Emacs initialization.")
 
 (add-hook 'after-init-hook
-          (lambda () (when cmx/initial-frame
-                       (run-after-make-frame-hooks cmx/initial-frame))))
+          (lambda () (when ceamx/initial-frame
+                       (run-after-make-frame-hooks ceamx/initial-frame))))
 
 
 (provide 'init-frame-hooks)
