@@ -24,6 +24,12 @@
 
 ;;  Personal Emacs configuration file.
 
+;; TODO: <https://github.com/Genivia/ugrep#using-ugrep-within-emacs>
+;;       <https://manueluberti.eu/posts/2022-08-07-emacs-ugrep/#fn:3>
+;;       <https://manueluberti.eu/posts/2023-10-01-embark-ugrep/>
+;;       <https://manueluberti.eu/posts/2021-09-10-rgrep-and-vc-git-grep/>
+;; TODO: <https://elpa.gnu.org/packages/xr.html>
+
 ;;; Code:
 
 (require 'lib-common)
