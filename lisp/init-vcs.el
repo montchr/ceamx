@@ -30,10 +30,11 @@
 (require 'ceamx-paths)
 (require 'lib-common)
 
-(setopt vc-follow-symlinks t)
 (use-feature! vc
   :demand t
   :config
+  (setopt vc-follow-symlinks t)
+
 
   ;; NOTE: According to the documentation for `diff-hl', the diff algorithm
   ;; cannot be determined based on the user's global git config =diff.algorithm=
