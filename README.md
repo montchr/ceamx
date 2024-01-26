@@ -148,6 +148,30 @@ From [Coding Conventions (GNU Emacs Lisp Reference Manual)](https://www.gnu.org/
 > bound to a predicate function; instead, use a `-flag` suffix or names like
 > `is-foo`.
 
+## Resources
+
+### Emacs Lisp Manual: Tips and Conventions
+
+[Tips (GNU Emacs Lisp Reference Manual)](https://www.gnu.org/software/emacs/manual/html_node/elisp/Tips.html)
+
+> - [Emacs Lisp Coding Conventions]
+> - [Key Binding Conventions]
+> - [Emacs Programming Tips]
+> - [Tips for Making Compiled Code Fast]
+> - [Tips for Avoiding Compiler Warnings]
+> - [Tips for Documentation Strings]
+> - [Tips on Writing Comments]
+> - [Conventional Headers for Emacs Libraries]
+>
+> [Emacs Lisp Coding Conventions]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html
+> [Key Binding Conventions]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Key-Binding-Conventions.html
+> [Emacs Programming Tips]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Programming-Tips.html
+> [Tips for Making Compiled Code Fast]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Compilation-Tips.html
+> [Tips for Avoiding Compiler Warnings]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Warning-Tips.html
+> [Tips for Documentation Strings]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Documentation-Tips.html
+> [Tips on Writing Comments]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Comment-Tips.html
+> [Conventional Headers for Emacs Libraries]: https://www.gnu.org/software/emacs/manual/html_node/elisp/Library-Headers.html
+
 ## Tips
 
 ### Copy the list of packages installed by elpaca as string
