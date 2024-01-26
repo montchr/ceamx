@@ -188,7 +188,6 @@
 
 ;; Projects / Files
 (require 'init-projects)
-(require 'init-diff)
 (require 'init-vcs)
 (require 'init-vcs-magit)
 (require 'init-files)

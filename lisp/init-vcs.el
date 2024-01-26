@@ -44,6 +44,50 @@
   ;; page available. So I have not verified this for certain.
   (setopt vc-git-diff-switches '("--histogram")))
 
+;;;; `diff-hl' :: <https://github.com/dgutov/diff-hl>
+
+;; <https://github.com/purcell/emacs.d/blob/master/lisp/init-vc.el>
+
+;; NOTE: Fringe indicators will conflict with Flycheck.
+
+(use-package diff-hl
+  :commands (global-diff-hl-mode
+             diff-hl-next-hunk
+             diff-hl-previous-hunk)
+  :autoload (diff-hl-magit-pre-refresh diff-hl-magit-post-refresh)
+  :defines (diff-hl-mode-map)
+
+  :init
+  (add-hook 'after-init-hook #'global-diff-hl-mode)
+
+  ;; Committing changes using a package other than `vc' requires integration.
+  ;; <https://github.com/dgutov/diff-hl#integration>
+  (use-feature! magit
+    :init
+    (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh)
+    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
+
+  ;; Display indicators in margins instead of fringes.
+  ;; This will work in terminal sessions and also avoid the fringe conflict with
+  ;; other indicators like Flycheck errors.
+  (add-hook 'after-init-hook #'diff-hl-margin-mode)
+
+  ;; Enable `dired' integration.
+  (use-feature! dired
+    :config
+    (add-hook 'dired-mode-hook #'diff-hl-dired-mode))
+
+  ;; Support mouse click on indicator to show hunk.
+  (when (display-graphic-p)
+    (add-hook 'after-init-hook #'diff-hl-show-hunk-mouse-mode))
+
+  :config
+
+;;;;; Keybindings
+
+  (keymap-set diff-hl-mode-map "C-M-]" #'diff-hl-next-hunk)
+  (keymap-set diff-hl-mode-map "C-M-[" #'diff-hl-previous-hunk))
+
 (use-package git-commit
   :after (transient))
 
