@@ -69,7 +69,8 @@
 
   )
 
-(after! 'lsp-mode
+(use-feature! lsp-mode
+  :init
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\vendor")
 
   ;; FIXME: move these to lsp module?
