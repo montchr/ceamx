@@ -195,7 +195,8 @@
 ;; NOTE: This only modifies the existing `help-map' bound to C-h.
 
 (define-keymap :keymap help-map
-  "c" #'helpful-command
+  "c" #'helpful-callable
+  "C" #'helpful-command
   "f" #'helpful-function
   "F" #'describe-face
   "h" #'helpful-at-point
