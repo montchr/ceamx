@@ -31,6 +31,15 @@
 (require 'lib-common)
 
 (setopt vc-follow-symlinks t)
+(use-feature! vc
+  :demand t
+  :config
+
+  ;; NOTE: According to the documentation for `diff-hl', the diff algorithm
+  ;; cannot be determined based on the user's global git config =diff.algorithm=
+  ;; setting. The website source they linked to has disappeared with no archived
+  ;; page available. So I have not verified this for certain.
+  (setopt vc-git-diff-switches '("--histogram")))
 
 (use-package git-commit
   :after (transient))
