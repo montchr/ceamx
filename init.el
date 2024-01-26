@@ -135,7 +135,7 @@
 
 (require 'init-after-ui)
 
-;;; Workspace
+;;;; Workspace
 (require 'init-workspace)
 
 ;;;; Sidebar
@@ -148,23 +148,17 @@
 
 (require 'config-keys)
 (require 'init-keys)
-
-;; Ideally `which-key' would be loaded later to ensure the accuracy of its
-;; menus, but `meow' does not seem to recognize `which-key' as being enabled
-;; when it loads, which means that it uses its (broken) custom functionality to
-;; do the same as `which-key'.
 (require 'init-keys-which-key)
+(require 'init-keys-meow)
 
-(pcase ceamx-keybinding-scheme
-  ('evil (require 'init-keys-evil))
-  ('meow (require 'init-keys-meow)))
+;;;; Window
 
-;;; Window
 (require 'init-window)
 (require 'init-buffer)
 (require 'init-history)
 
-;;; Selection
+;;;; Selection
+
 (require 'init-selection-vertico)
 (require 'init-selection-orderless)
 (require 'init-selection-marginalia)
