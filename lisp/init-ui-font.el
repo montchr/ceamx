@@ -32,18 +32,19 @@
   ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
   ;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
   ;;        at least i think that's what's causing the inconsistencies...
+  ;;
+  ;;        ligatures at some sizes sometimes broken -- but not everywhere...?
+  ;;        test case (double-colons, should not have a visual space between)
+  ;;        => ::
+  ;;
   ;;        - update: this might also be happening on NixOS running on
   ;;        old MacBookPro hardware (hodgepodge system), so could be a general
   ;;        ppi issue -- but i've had the preset set to `small' for a while and
   ;;        haven't noticed any issues since then
   (setopt fontaine-presets
-    `(
-       ;; FIXME: ligatures at some sizes sometimes broken -- but not everywhere...?
-       ;;        test case (double-colons, should not have a visual space between)
-       ;;        => ::
-       (xsmall :default-height 100)
-       (small :default-height 110)      ; FIXME: liga broken?
-       (regular :default-height 140)    ; FIXME: liga broken?
+    `((xsmall :default-height 100)
+       (small :default-height 110)
+       (regular :default-height 140)
        (regular-alt :default-height 130)
        (medium :default-height 160)
        (medium-alt :default-height 150)
@@ -66,6 +67,7 @@
          ;; TODO: probably worth trying one of the others, maybe not-wide
          ;; :variable-pitch-family "Iosevka Comfy Wide Duo"
          :variable-pitch-weight nil
+         ;; TODO: why this value and not 1.0 ?
          :variable-pitch-height 0.9
          :bold-family nil
          :bold-weight ,(if +sys-mac-p 'bold 'semibold)
