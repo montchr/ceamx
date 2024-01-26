@@ -88,16 +88,21 @@
   (keymap-set diff-hl-mode-map "C-M-]" #'diff-hl-next-hunk)
   (keymap-set diff-hl-mode-map "C-M-[" #'diff-hl-previous-hunk))
 
+;;;; git-commit :: <https://magit.vc/>
+
 (use-package git-commit
-  :after (transient))
+  :after (transient)
+  :commands (global-git-commit-mode)
 
-(after! 'evil
-  (declare-function evil-insert-state "evil")
-  (add-hook 'git-commit-mode-hook #'evil-insert-state))
+  :init
 
-(after! 'meow
-  (declare-function meow-insert-mode "meow")
-  (add-hook 'git-commit-mode-hook #'meow-insert-mode))
+  (after! 'evil
+    (declare-function evil-insert-state "evil")
+    (add-hook 'git-commit-mode-hook #'evil-insert-state))
+
+  (after! 'meow
+    (declare-function meow-insert-mode "meow")
+    (add-hook 'git-commit-mode-hook #'meow-insert-mode)))
 
 
 ;;; git-timemachine :: <https://codeberg.org/pidu/git-timemachine>
