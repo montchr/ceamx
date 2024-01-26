@@ -28,8 +28,8 @@
 ;; (require 'lib-ui)
 
 ;; FIXME: append, don't define a new var entirely
-(defvar xref-ignored-files '("_ide_helper_models.php" "_ide_helper.php")
-  "List of files to be ignored by `xref'.")
+;; (defvar xref-ignored-files '("_ide_helper_models.php" "_ide_helper.php")
+;;   "List of files to be ignored by `xref'.")
 
 ;; FIXME: relocate this... somewhere...
 (defun xref-ignored-file-p (item)
