@@ -40,6 +40,8 @@
 
 ;; Add hooks to supported Lisp modes.
 (dolist (mode ceamx-lisp-modes-list)
+  ;; FIXME: `derived-mode-hook-name' does not look up mode hooks, it infers
+  ;;        them, so can be fallible
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 
 ;; Always use 2-space indentation in Lisps.
