@@ -25,25 +25,32 @@
 
 (require 'lib-common)
 
+;;;; `zone' [builtin]
+
 ;; <https://www.emacswiki.org/emacs/ZoneMode>
+
 (use-feature! zone
   :defines (zone-timer)
 
   :config
-  ;; Zone out after one minute.
-  (setopt zone-timer (run-with-idle-timer 60 t 'zone))
 
-  ;; FIXME: likely broken
-  (defun zone-choose (pgm)
-    "Choose a PGM to run for `zone'."
-    (interactive
-      (list
-        (completing-read
-          "Program: "
-          (mapcar 'symbol-name zone-programs))))
-    (let ((zone-programs (list (intern pgm))))
-      (zone))))
+  ;; NOTE: If you want to change the `zone-timer' interval without restarting
+  ;; the Emacs session, you'll have to remove the old timer -- the value of
+  ;; `zone-timer'. The most straightforward way of doing that is by calling
+  ;; `cancel-timer' with `zone-timer' as argument before you eval any changes.
+  (setopt zone-timer (run-with-idle-timer (* 60 5) t 'zone)))
 
+;; FIXME: broken: wrong type argument arrayp (for pgm arg)
+;;        (where did this even come from? emacswiki?)
+;; (defun zone-choose (pgm)
+;;   "Choose a PGM to run for `zone'."
+;;   (interactive
+;;     (list
+;;       (completing-read
+;;         "Program: "
+;;         (mapcar 'symbol-name zone-programs))))
+;;   (let ((zone-programs (list (intern pgm))))
+;;     (zone)))
 
 (provide 'init-fun)
 ;;; init-fun.el ends here
