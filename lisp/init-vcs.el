@@ -35,6 +35,8 @@
   :config
   (setopt vc-follow-symlinks t)
 
+  ;; No need for all that other nonsense.
+  (setopt vc-handled-backends '(Git))
 
   ;; NOTE: According to the documentation for `diff-hl', the diff algorithm
   ;; cannot be determined based on the user's global git config =diff.algorithm=
