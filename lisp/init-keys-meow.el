@@ -186,6 +186,8 @@
        (motion . "🅜")
        (keypad . "🅚")))
 
+  ;; <https://github.com/meow-edit/meow/issues/543>
+  (setopt meow-use-clipboard t)
 
   (meow-pair! 'angle "a" "<" ">")
 
