@@ -95,6 +95,7 @@
   :commands (global-git-commit-mode)
 
   :init
+  (global-git-commit-mode 1)
 
   (after! 'evil
     (declare-function evil-insert-state "evil")
