@@ -69,7 +69,7 @@
   (keymap-set emacs-lisp-mode-map "<remap> <eval-last-sexp>" #'eros-eval-last-sexp)
 
   (use-feature! lispy
-    :init
+    :config
     (def-hook! +lispy-use-eros-eval-h () 'lispy-mode-hook
       "Use `eros-eval-last-sexp' in place of `lispy-eval' bindings."
       (declare-function lispy-define-key "lispy")
