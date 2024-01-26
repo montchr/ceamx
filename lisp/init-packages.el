@@ -132,29 +132,27 @@
 This aims to avoid potential issues with
 `package-selected-packages'.")
 
-(defadvice! ceamx-note-selected-package-a (oldfun package &rest args)
-  "If OLDFUN reports PACKAGE was successfully installed, note that fact.
-The package name is noted by adding it to
+(def-advice! +package--note-selected-package-a (oldfun package &rest args)
+  :around #'ceamx-require-package
+  "Note whether OLDFUN reports PACKAGE was successfully installed.
+The PACKAGE name is noted by adding it to
 `ceamx-selected-packages'.
 
-This function is used as an advice for `ceamx-require-package',
-to which ARGS are passed. When the behavior of
-`package-selected-packages' is handled in a sane way in some
-future Emacs release, this advice can hopefully be removed."
-  :around 'ceamx-require-package
+When the behavior of `package-selected-packages' is handled in a
+sane way in some future Emacs release, this advice can hopefully
+be removed."
   (let ((available (apply oldfun package args)))
     (prog1
       available
       (when available
         (add-to-list 'ceamx-selected-packages package)))))
 
-;;; Merge selected package lists.
-(def-hook! ceamx-merge-selected-package-lists-a () 'after-init-hook
+(def-hook! +package--merge-selected-package-lists-h ()
+  'after-init-hook
   "Merge the `package-selected-packages' and
 `ceamx-selected-packages' lists."
   (package--save-selected-packages
     (seq-uniq (append ceamx-selected-packages package-selected-packages))))
-
 
 ;;;; Prevent `seq' dependency hell:
 
@@ -165,11 +163,11 @@ future Emacs release, this advice can hopefully be removed."
 ;; Source: <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L89-L100>
 ;; See: <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=67025>
 (when (version= (number-to-string emacs-major-version) "29")
-  (defadvice! ceamx-reload-previously-loaded-with-updated-load-path-a (orig pkg-desc)
+  (def-advice! ceamx-reload-previously-loaded-with-updated-load-path-a (orig pkg-desc)
+    :around #'package--reload-previously-loaded
     "Update the ORIG load-path with PKG-DESC directories.
 Intended as a workaround for `seq' dependency hell caused by
 recent `magit' changes."
-    :around 'package--reload-previously-loaded
     (let ((load-path (cons (package-desc-dir pkg-desc) load-path)))
       (funcall orig pkg-desc))))
 

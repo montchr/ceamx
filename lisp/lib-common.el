@@ -270,31 +270,6 @@ Meant to serve as a predicated alternative to `after!'."
            (put ',fn 'permanent-local-hook t)
            (add-hook 'after-load-functions #',fn)))))
 
-;; via <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L703-L725>
-(defmacro defer-feature! (feature &rest fns)
-  "Pretend FEATURE hasn't been loaded yet, until FEATURE-hook or FNS run.
-
-Some packages (like `elisp-mode' and `lisp-mode') are loaded immediately at
-startup, which will prematurely trigger `after!' (and `with-eval-after-load')
-blocks. To get around this we make Emacs believe FEATURE hasn't been loaded yet,
-then wait until FEATURE-hook (or any of FNS, if FNS are provided) is triggered
-to reverse this and trigger `after!' blocks at a more reasonable time."
-  (let ((advice-fn (intern (format "doom--defer-feature-%s-a" feature)))
-         (fns (or fns (list feature))))
-    `(progn
-       (delq! ',feature features)
-       (defadvice! ,advice-fn (&rest _)
-         :before ',fns
-         ;; Some plugins (like yasnippet) will invoke a fn early to parse
-         ;; code, which would prematurely trigger this. In those cases, well
-         ;; behaved plugins will use `delay-mode-hooks', which we can check for:
-         (unless delay-mode-hooks
-           ;; ...Otherwise, announce to the world this package has been loaded,
-           ;; so `after!' handlers can react.
-           (provide ',feature)
-           (dolist (fn ',fns)
-             (advice-remove fn #',advice-fn)))))))
-
 ;;; Variables
 
 (defmacro appendq! (sym &rest lists)
@@ -363,12 +338,12 @@ Simple wrapper around `ceamx-subdirs'."
 
 (defmacro def-advice! (name arglist where place docstring &rest body)
   "Define an advice called NAME and add it to a function.
-ARGLIST is as in `defun'. WHERE is a keyword as passed to
-`advice-add', and PLACE is the function to which to add the
-advice, like in `advice-add'. PLACE should be sharp-quoted.
-DOCSTRING and BODY are as in `defun'."
+ARGLIST, DOCSTRING, and BODY are as in `defun'.
+
+WHERE is a keyword as passed to `advice-add', and PLACE is the
+function to which to add the advice, like in `advice-add'. PLACE
+should be sharp-quoted."
   (declare (indent 2)
-    (obsolete "defadvice!" "2023-12-28")
     (doc-string 5))
   (unless (stringp docstring)
     (error "Ceamx: advice `%S' not documented'" name))
@@ -378,19 +353,6 @@ DOCSTRING and BODY are as in `defun'."
             (symbolp (nth 1 place)))
     (error "Ceamx: advice `%S' does not sharp-quote place `%S'" name place))
   `(progn
-     ;; NOTE(Radian):
-     ;;
-     ;; > You'd think I would put an `eval-and-compile' around this. It
-     ;; > turns out that doing so breaks the ability of
-     ;; > `elisp-completion-at-point' to complete on function arguments
-     ;; > to the advice. I know, right? Apparently this is because the
-     ;; > code that gets the list of lexically bound symbols at point
-     ;; > tries to `macroexpand-all', and apparently macroexpanding
-     ;; > `eval-and-compile' goes ahead and evals the thing and returns
-     ;; > only the function symbol. No good. But the compiler does still
-     ;; > want to know the function is defined (this is a Gilardi
-     ;; > scenario), so we pacify it by `eval-when-compile'ing something
-     ;; > similar (see below).
      (defun ,name ,arglist
        ,(let ((article (if (string-match-p "^:[aeiou]" (symbol-name where))
                          "an"
@@ -406,28 +368,6 @@ DOCSTRING and BODY are as in `defun'."
        (declare-function ,name nil))
      (advice-add ,place ',where #',name)
      ',name))
-
-(defmacro defadvice! (symbol arglist &optional docstring &rest body)
-  "Define an advice called SYMBOL and add it to PLACES.
-ARGLIST is as in `defun'. WHERE is a keyword as passed to `advice-add', and
-PLACE is the function to which to add the advice, like in `advice-add'.
-DOCSTRING and BODY are as in `defun'.
-\(fn SYMBOL ARGLIST &optional DOCSTRING &rest [WHERE PLACES...] BODY\)"
-  (declare
-    (doc-string 3)
-    (indent defun))
-  (unless (stringp docstring)
-    (push docstring body)
-    (setq docstring nil))
-  (let (where-alist)
-    (while (keywordp (car body))
-      (push `(cons ,(pop body) (ensure-list ,(pop body)))
-        where-alist))
-    `(progn
-       (defun ,symbol ,arglist ,docstring ,@body)
-       (dolist (targets (list ,@(nreverse where-alist)))
-         (dolist (target (cdr targets))
-           (advice-add target (car targets) #',symbol))))))
 
 ;;; Hooks
 

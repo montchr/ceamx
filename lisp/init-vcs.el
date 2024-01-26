@@ -106,29 +106,28 @@
     (add-hook 'git-commit-mode-hook #'meow-insert-mode)))
 
 
-;;; git-timemachine :: <https://codeberg.org/pidu/git-timemachine>
-;;  <https://github.com/emacsmirror/git-timemachine>
+;;;; git-timemachine :: <https://codeberg.org/pidu/git-timemachine>
+
 (use-package git-timemachine
-  :config
+  :autoload (git-timemachine--show-minibuffer-details)
 
-  ;; Show revision details in `header-line-format' instead of the minibuffer,
-  ;; for better visibility.
+  :init
   ;; via <https://github.com/doomemacs/doomemacs/blob/07fca786154551f90f36535bfb21f8ca4abd5027/modules/emacs/vc/config.el#L76C1-L90C47>
-  (setopt git-timemachine-show-minibuffer-details t)
-  (defadvice! +vc-update-header-line-a (revision)
-    "Show revision details in the header-line, instead of the minibuffer."
+  (def-advice! +git-timemachine--details-in-header-line-a (revision)
     :override #'git-timemachine--show-minibuffer-details
+    "Show REVISION details in the header-line instead of the minibuffer."
     (let* ((date-relative (nth 3 revision))
-           (date-full (nth 4 revision))
-           (author (if git-timemachine-show-author (concat (nth 6 revision) ": ") ""))
-           (sha-or-subject (if (eq git-timemachine-minibuffer-detail 'commit) (car revision) (nth 5 revision))))
+            (date-full (nth 4 revision))
+            (author (if git-timemachine-show-author (concat (nth 6 revision) ": ") ""))
+            (sha-or-subject (if (eq git-timemachine-minibuffer-detail 'commit) (car revision) (nth 5 revision))))
       (setq header-line-format
-            (format "%s%s [%s (%s)]"
-                    (propertize author 'face 'git-timemachine-minibuffer-author-face)
-                    (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
-                    date-full date-relative)))))
+        (format "%s%s [%s (%s)]"
+          (propertize author 'face 'git-timemachine-minibuffer-author-face)
+          (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
+          date-full date-relative)))))
 
-;;; `browse-at-remote' :: <https://github.com/rmuslimov/browse-at-remote>
+;;;; `browse-at-remote' :: <https://github.com/rmuslimov/browse-at-remote>
+
 (use-package browse-at-remote
   :commands browse-at-remote
   :init
@@ -136,9 +135,7 @@
   ;; (keymap-set ceamx-git-map "o" #'browse-at-remote)
   )
 
-;;
-;;; `consult-gh' :: <https://github.com/armindarvish/consult-gh>
-;;
+;;;; `consult-gh' :: <https://github.com/armindarvish/consult-gh>
 
 ;; TODO: look through readme and review settings, add config as desired
 ;;

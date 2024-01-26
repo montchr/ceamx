@@ -24,8 +24,7 @@
 
 ;;; Code:
 
-;; FIXME: doesn't exist -- why is it here?
-;; (require 'lib-ui)
+(require 'lib-common)
 
 ;; FIXME: append, don't define a new var entirely
 ;; (defvar xref-ignored-files '("_ide_helper_models.php" "_ide_helper.php")
@@ -74,13 +73,15 @@
   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\vendor")
 
   ;; FIXME: move these to lsp module?
-  (defadvice! +lsp--ignored-locations-to-xref-items-a (items)
-    "Remove ignored files from list of xref-items."
+
+  (def-advice! +lsp-ignored-locations-to-xref-items-a (items)
     :filter-return #'lsp--locations-to-xref-items
-    (cl-remove-if #'xref-ignored-file-p items))
-  (defadvice! +lsp-ui-peek--ignored-locations-a (items)
     "Remove ignored files from list of xref-items."
+    (cl-remove-if #'xref-ignored-file-p items))
+
+  (def-advice! +lsp-ui-peek--ignored-locations-a (items)
     :filter-return #'lsp-ui-peek--get-references
+    "Remove ignored files from list of xref-items."
     (cl-remove-if #'xref-ignored-file-p items)))
 
 (after! 'projectile

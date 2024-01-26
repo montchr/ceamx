@@ -75,9 +75,10 @@
   ;; NOTE: Overrides default binding of `magit-reset-quickly'.
   (keymap-set magit-status-mode-map "x" #'magit-discard)
 
-  (defadvice! +magit-revert-repo-buffers-deferred-a (&rest _)
+  ;; FIXME: move to `:init'
+  ;; via doomemacs (exact location forgotten)
+  (defun +magit--revert-repo-buffers-deferred-a (&rest _)
     "Revert repo buffers and invalidate caches upon checkout."
-    :after '(magit-checkout magit-branch-and-checkout)
     ;; Since the project likely now contains new files, best we undo the
     ;; projectile cache so it can be regenerated later.
     (after! 'projectile
@@ -86,11 +87,14 @@
     ;; Use a more efficient strategy to auto-revert buffers whose git state has
     ;; changed: refresh the visible buffers immediately...
     (+magit-mark-stale-buffers-h))
+  (advice-add 'magit-checkout :after #'+magit--revert-repo-buffers-deferred-a)
+  (advice-add 'magit-branch-and-checkout :after #'+magit--revert-repo-buffers-deferred-a)
   ;; ...then refresh the rest only when we switch to them, not all at once.
   (add-hook 'on-switch-buffer-hook #'+magit-revert-buffer-maybe-h)
 
   ;; Prevent sudden window position resets when staging/unstaging/discarding/etc
   ;; hunks in `magit-status-mode' buffers.
+  ;; FIXME: these are a really uniquely terrible way of defining hook functions...
   (defvar +magit--pos nil)
   (add-hook 'magit-pre-refresh-hook
     (defun +magit--set-window-state-h ()
