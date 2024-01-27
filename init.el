@@ -157,9 +157,10 @@
 (require 'init-keys-which-key)
 (require 'init-keys-meow)
 
-;;;; Window
+;;;; Windows
 
 (require 'init-window)
+(require 'init-window-popups)
 (require 'init-buffer)
 (require 'init-history)
 
