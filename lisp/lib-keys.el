@@ -40,13 +40,21 @@
 ;; deferring until maps are defined if necessary. see
 ;; <https://github.com/casouri/lunarymacs/blob/master/site-lisp/luna-key.el>
 
+;; FIXME: interface still doesn't feel right...
 ;; TODO: account for remapping (don't prefix)
-;; TODO: validate final result
-(defun ceamx-key--normalize-with-prefix (prefix key)
-  "Produce a normalized key sequence from the concatenation of PREFIX and KEY."
+(defun ceamx--key-with-prefix (prefix key &optional sep)
+  "Return a key sequence string with PREFIX prepended to KEY.
+The arguments PREFIX and KEY must be strings satisfying `key-valid-p'.
+
+The optional argument SEP may specify a separator between PREFIX
+and KEY. If nil, a single whitespace character will be used as
+the default separator."
   (cl-assert (key-valid-p prefix))
   (cl-assert (key-valid-p key))
-  (format "%s %s" prefix key))
+  (let* ((sep (or sep " "))
+          (prefixed-key (concat prefix sep key)))
+    (cl-assert (key-valid-p prefixed-key))
+    prefixed-key))
 
 (defmacro def-map! (command &rest defs)
   "Define a new keymap and prefix COMMAND composed of keybindings DEFS."
