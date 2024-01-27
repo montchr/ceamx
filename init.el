@@ -170,6 +170,8 @@
 (require 'init-selection-marginalia)
 (require 'init-selection-consult)
 
+(require 'init-search)
+
 ;;; Completion-At-Point
 (require 'config-completion)
 (require 'init-completion)
