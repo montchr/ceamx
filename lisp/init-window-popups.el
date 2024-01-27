@@ -70,11 +70,6 @@
   (after! 'shackle
     (setopt popper-display-control nil))
 
-  ;; Disable mode-line in popups.
-  ;;
-  ;; TIP: Use `buffer-name' to get a buffer's name for customization.
-  (setopt popper-mode-line nil)
-
   (after! [projectile]
     (setopt popper-group-function #'popper-group-by-projectile)))
 
