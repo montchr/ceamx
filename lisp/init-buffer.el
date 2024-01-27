@@ -72,6 +72,10 @@
   :after (avy)
   :commands ( link-hint-open-link
               link-hint-open-link-at-point)
+
+  :init
+  (keymap-global-set "M-s u" #'link-hint-open-link)
+
   :config
   (after! [evil]
     (declare-function evil-define-key "evil")
@@ -86,6 +90,7 @@
 
   ;; Corresponds to default binding of `C-c @'.
   ;; FIXME: doesn't work -- conflict?
+  ;;        what if it just needs to be global map with C-c ?
   ;; (keymap-set mode-specific-map "@" '("(outline)" . outline-mode-prefix-map))
   )
 
