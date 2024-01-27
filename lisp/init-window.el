@@ -98,8 +98,8 @@
        +popper-current-buffer-popup-p
        ))
 
-  (popper-mode +1)
-  (popper-echo-mode +1)                 ; For echo area hints
+  (add-hook 'emacs-startup-hook #'popper-mode)
+  (add-hook 'emacs-startup-hook #'popper-echo-mode)
 
   :config
   (define-keymap :keymap (current-global-map)
