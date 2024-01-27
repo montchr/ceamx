@@ -1,4 +1,4 @@
-;;; init-xterm.el --- Integrate with terminals such as xterm -*- lexical-binding: t -*-
+;;; init-env-tty.el --- TTY environment support -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2023-2024 Chris Montgomery
 ;; Copyright (c) 2006-2021 Steve Purcell
@@ -43,6 +43,9 @@
 
 ;;; Commentary:
 
+;; Specialized configurations for Emacs running in a TTY / terminal emulator
+;; environment.
+
 ;; FIXME: most of this should be loaded conditionally
 
 ;;; Code:
@@ -50,14 +53,14 @@
 (autoload 'mwheel-install "mwheel")
 
 (defun ceamx/console-frame-setup ()
-  (xterm-mouse-mode 1) ; Mouse in a terminal (Use shift to paste with middle button)
+  (xterm-mouse-mode 1)
   (mwheel-install))
 
-;; TODO: still necessary?
+;; Make the mouse wheel scroll.
 (global-set-key [mouse-4] (lambda () (interactive) (scroll-down 1)))
 (global-set-key [mouse-5] (lambda () (interactive) (scroll-up 1)))
 
 ;; (add-hook 'after-make-console-frame-hooks 'ceamx/console-frame-setup)
 
-(provide 'init-xterm)
-;;; init-xterm.el ends here
+(provide 'init-env-tty)
+;;; init-env-tty.el ends here

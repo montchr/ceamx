@@ -104,7 +104,7 @@
 
 ;; FIXME: for science: prevent startup warnings?
 ;; (require 'init-frame-hooks)
-(require 'init-xterm)
+(require 'init-env-tty)
 (require 'init-frame)
 
 ;; TODO: no need to import `config-ui' i think?
