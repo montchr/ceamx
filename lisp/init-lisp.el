@@ -78,7 +78,6 @@
 
   (setopt lispy-completion-method 'default)
 
-  ;; The overlay style is very confusing (nothing like `eros').
   (setopt lispy-eval-display-style 'message)
 
   ;; Possibly the most annoying thing about lispy defaults.

@@ -69,10 +69,16 @@
   (keymap-set emacs-lisp-mode-map "<remap> <eval-last-sexp>" #'eros-eval-last-sexp)
 
   (use-feature! lispy
+    :autoload (lispy-define-key)
     :config
     (def-hook! +lispy-use-eros-eval-h () 'lispy-mode-hook
       "Use `eros-eval-last-sexp' in place of `lispy-eval' bindings."
-      (declare-function lispy-define-key "lispy")
+      ;; FIXME: there is currently no way to hide lispy-eval output.
+      ;;        nil results in an error.
+      ;;        because of this, output is duplicated in the minibuffer and the
+      ;;        eros overlay...
+      ;;
+      ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
 
 ;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
