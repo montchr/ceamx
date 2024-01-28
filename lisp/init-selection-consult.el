@@ -178,7 +178,7 @@
 
   ;; By default `consult-project-function' uses `project-root' from project.el.
   (with-eval-after-load 'projectile
-    (autoload 'projectile-project-root "projectile")
+    (declare-function projectile-project-root "projectile")
     (setopt consult-project-function (lambda (_) (projectile-project-root)))))
 
 

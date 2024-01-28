@@ -25,6 +25,8 @@
 
 ;;; Code:
 
+(require 'lib-common)
+
 (use-package marginalia
   :defines (marginalia-annotators)
   :init
@@ -37,11 +39,14 @@
   ;; enabled right away. Note that this forces loading the package.
   (marginalia-mode)
 
-  (with-eval-after-load 'projectile
-    (add-to-list 'marginalia-command-categories '(projectile-find-file . file)))
-
   :config
-  (keymap-set minibuffer-local-map "M-A" #'marginalia-cycle))
+  (keymap-set minibuffer-local-map "M-A" #'marginalia-cycle)
+
+  ;; TODO: ensure this doesn't error or load unintentionally
+  (use-feature! projectile
+    :commands (projectile-find-file)
+    :config
+    (add-to-list 'marginalia-command-categories '(projectile-find-file . file))))
 
 (provide 'init-selection-marginalia)
 ;;; init-selection-marginalia.el ends here

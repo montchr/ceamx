@@ -296,11 +296,11 @@
 ;;; "p" => Projects
 ;;
 
-(def-arm! ceamx-project-map "p" "[Project]"
-  "a" '("add..." . projectile-add-known-project)
-  "f" '("find file..." . projectile-find-file)
-  "i" '("invalidate cache" . projectile-invalidate-cache)
-  "p" '("switch..." . projectile-switch-project))
+;; (def-arm! ceamx-project-map "p" "[Project]"
+;;   "a" '("add..." . projectile-add-known-project)
+;;   "f" '("find file..." . projectile-find-file)
+;;   "i" '("invalidate cache" . projectile-invalidate-cache)
+;;   "p" '("switch..." . projectile-switch-project))
 
 ;;
 ;;; "q" => Session
@@ -345,12 +345,15 @@
                             #'find-library))))
   "o" '("outline (f)..." . consult-outline)
   ;; TODO: use thing-at-point as default value like `projectile-ripgrep' (which cannot find ripgrep)
+
   "p" '("grep (p)..." . consult-ripgrep)
-  "R" '("replace (p)..." . projectile-replace)
+  "R" #'project-query-replace-regexp
+  ;; "R" '("replace (p)..." . projectile-replace)
   "s" '("line (f)..." . consult-line)
   "v" '("variable" . find-variable-at-point)
   "V" '("variable..." . find-variable)
-  "x" '("refs (p)" . projectile-find-references))
+  ;; "x" '("refs (p)" . projectile-find-references)
+  )
 
 ;;
 ;;; "t" => Toggles

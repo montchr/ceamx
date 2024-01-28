@@ -190,7 +190,8 @@
 (require 'init-wgrep)
 
 ;; Projects / Files
-(require 'init-projects)
+(require 'init-project)
+;; (require 'init-project-projectile)
 (require 'init-vcs)
 (require 'init-vcs-magit)
 (require 'init-files)
