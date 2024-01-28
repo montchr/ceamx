@@ -1,4 +1,4 @@
-;;; init-projects.el --- Projects configuration -*- lexical-binding: t -*-
+;;; init-project-projectile.el --- Projectile configuration -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -23,16 +23,14 @@
 
 ;;; Commentary:
 
-;;  Configuration for project awareness.
-
-;; TODO: consider whether we can get by with `project.el'
+;; Configuration for Projectile.
 
 ;;; Code:
 
 (require 'config-projects)
 
-;;
 ;;; projectile :: <https://github.com/bbatsov/projectile>
+
 ;;  <https://docs.projectile.mx>
 
 (use-package projectile
@@ -54,8 +52,8 @@
 
   ;; TODO: use `ceamx-projects-dir'
   (setopt projectile-project-search-path '(("~/Developer/sources/" . 1)
-                                           ("~/Developer/contrib/" . 2)
-                                           ("~/Developer/work/" . 3)))
+                                            ("~/Developer/contrib/" . 2)
+                                            ("~/Developer/work/" . 3)))
   (setopt projectile-require-project-root t)
   (setopt projectile-sort-order 'recently-active)
   (setopt projectile-switch-project-action #'projectile-find-file)
@@ -66,5 +64,5 @@
 (use-package treemacs-projectile
   :after (treemacs projectile))
 
-(provide 'init-projects)
-;;; init-projects.el ends here
+(provide 'init-project-projectile)
+;;; init-project-projectile.el ends here
