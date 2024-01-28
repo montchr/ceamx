@@ -66,6 +66,9 @@
 
   (setopt which-key-sort-uppercase-first nil)
 
+  ;; The default (0) is difficult to read.
+  (setopt which-key-add-column-padding 2)
+
   ;; FIXME: no effect?
   (setopt which-key-show-remaining-keys t))
 
