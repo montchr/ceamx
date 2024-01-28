@@ -55,6 +55,7 @@
   (add-hook 'after-init-hook #'which-key-mode)
 
   :config
+
   ;; Determine whether keys have been rebound, considering the active keymaps.
   ;; NOTE: Does not seem to work reliably -- see Commentary section above.
   (setopt which-key-compute-remaps t)
@@ -63,7 +64,10 @@
   ;; Sort non-prefix-keys above prefix keys.
   (setopt which-key-sort-order 'which-key-prefix-then-key-order)
 
-  (setopt which-key-sort-uppercase-first nil))
+  (setopt which-key-sort-uppercase-first nil)
+
+  ;; FIXME: no effect?
+  (setopt which-key-show-remaining-keys t))
 
 (provide 'init-keys-which-key)
 ;;; init-keys-which-key.el ends here
