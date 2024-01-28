@@ -190,9 +190,9 @@ recent `magit' changes."
 
 ;; Highest number gets priority (what is not mentioned has priority 0).
 (setopt package-archive-priorities
-      '(("gnu-elpa" . 3)
-        ("melpa" . 2)
-        ("nongnu" . 1)))
+  '(("melpa" . 3)
+    ("gnu-elpa" . 2)
+    ("nongnu" . 1)))
 
 ;; Emacs 30+
 (when (boundp 'package-vc-register-as-project)
