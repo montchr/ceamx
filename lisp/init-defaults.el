@@ -55,7 +55,6 @@
   show-help-function t                  ; Enable help text everywhere
   uniquify-buffer-name-style 'forward   ; Uniquify buffer names
   use-short-answers t                   ; Replace yes/no prompts with y/n
-  window-combination-resize t           ; Resize windows proportionally
   x-stretch-cursor t)                    ; Stretch cursor to the glyph width
 
 (blink-cursor-mode 1)                   ; Prefer a blinking cursor
