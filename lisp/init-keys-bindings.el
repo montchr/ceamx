@@ -37,18 +37,13 @@
 (require 'lib-common)
 (require 'lib-keys)
 
-;;
-;;; Mouse/trackpad support
-;;
 
-;;; Horizontal scroll support (without scrollbars).
+;;; Mouse/trackpad support
+
+;;;; Horizontal scroll support (without scrollbars)
+
 (keymap-global-set "<wheel-left>" #'scroll-left)
 (keymap-global-set "<wheel-right>" #'scroll-right)
-
-
-;;
-;;; Leader maps
-;;
 
 ;;; Navigation maps
 
@@ -78,23 +73,21 @@
   "F"   #'next-window-any-frame
   "t"   #'tab-next)
 
-;; TODO: make this more convenient
 ;;;; Goto
+
+;; TODO: make this more convenient
+
 (def-map! ceamx-goto-map
   "d" '("definition" . xref-find-definitions)
   "r" '("references" . xref-find-references))
 
-;;
 ;;; "B" => Bookmarks
-;;
 
 (def-arm! ceamx-bookmark-map "B" "[Bookmarks]"
   "F" #'burly-bookmark-frames
   "W" #'burly-bookmark-windows)
 
-;;
 ;;; "b" => Buffers
-;;
 
 (def-arm! ceamx-buffer-map "b" "[Buffer]"
   ;; FIXME: only consider file-visiting buffers, or perhaps buffers i am editing (recent)
@@ -116,9 +109,7 @@
   "x" '("*scratch*" . scratch-buffer)
   "X" `("*scratch* (m)" . ,(cmd! (scratch major-mode))))
 
-;;
 ;;; "c" => Code
-;;
 
 (def-arm! ceamx-code-map "C" "Code"
   "a" '("action.." . eglot-code-actions)
@@ -127,9 +118,7 @@
   "i" #'iedit-mode
   "r" '("rename..." . eglot-rename))
 
-;;
 ;;; "e" => Eval
-;;
 
 (def-arm! ceamx-eval-map "e" "[Eval]"
   "b" #'eval-buffer
@@ -139,28 +128,28 @@
   "i" #'ielm
   "r" #'eval-region)
 
-;;
 ;;; "f" => Files
-;;
 
 (def-arm! ceamx-file-map "f" "[File]"
   ;; TODO
   ;; "u" #'+sudo-find-file
   ;; "U" #'+sudo-this-file
   ;; "y" #'+yank-this-file-name
+
   "C" '("copy..." . ceamx/copy-this-file)
   "d" '("diff with..." . ceamx/diff-with-file)
+
   ;; FIXME: kill buffer on file deletion
   "D" '("delete" . ceamx/delete-this-file)
+
   ;; TODO: show dirvish preview instead of dired preview
   "f" '("find (g)..." . find-file)
+
   "R" '("rename/move..." . ceamx/move-this-file)
   "s" '("save" . save-buffer)
   "S" '("save as..." . write-file))
 
-;;
 ;;; "F" => Frames
-;;
 
 (def-arm! ceamx-frame-map "F" "[Frame]"
   "b" '("save layout..." . burly-bookmark-frames)
@@ -172,9 +161,7 @@
   "[" '("prev" . previous-window-any-frame)
   "]" '("next" . next-window-any-frame))
 
-;;
 ;;; "g" => Git
-;;
 
 ;; TODO: disabled to try out vanilla keybinds with meow keypad defaults
 ;; (def-arm! ceamx-git-map "g" "[Git]"
@@ -188,11 +175,7 @@
 ;;   "S" #'magit-unstage-file
 ;;   "t" #'git-timemachine)
 
-;;
-;;; "h" => Help
-;;
-
-;; NOTE: This only modifies the existing `help-map' bound to C-h.
+;;; Help -- "C-h"
 
 (define-keymap :keymap help-map
   "c" #'helpful-callable
@@ -219,8 +202,6 @@
                                #'describe-text-properties
                                current-prefix-arg
                                (point)))
-  ;; FIXME: `helpful' is not very helpful when it errors out on so many occasions
-  ;;        <https://github.com/Wilfred/helpful/issues/329>
   "v" #'helpful-variable
 
   ;; Parity with the corresponding unmodded keys.
@@ -232,18 +213,13 @@
   ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
   "C-h" nil)
 
-
-;;
 ;;; "i" => Insertions
-;;
 
 (def-arm! ceamx-insert-map "i" "[Insert]"
   "t"  #'tempel-insert
   "y"  #'yank-from-kill-ring)
 
-;;
 ;;; Notes / Org-Mode
-;;
 
 ;;;; "X" / "n o c" => Org-Capture
 (def-arm! ceamx-capture-map "X" "[Capture]"
@@ -280,8 +256,8 @@
   "z" #'denote-signature)
 
 ;;
+
 ;;; "O" => Open
-;;
 
 (def-arm! ceamx-open-map "o" "[Open]"
   "d" #'dired
@@ -292,9 +268,7 @@
   "n" '("news" . newsticker-show-news)
   "s" #'suggest)
 
-;;
 ;;; "p" => Projects
-;;
 
 ;; (def-arm! ceamx-project-map "p" "[Project]"
 ;;   "a" '("add..." . projectile-add-known-project)
@@ -302,9 +276,7 @@
 ;;   "i" '("invalidate cache" . projectile-invalidate-cache)
 ;;   "p" '("switch..." . projectile-switch-project))
 
-;;
 ;;; "q" => Session
-;;
 
 ;;;; "q p" Package Management
 (def-map! ceamx-packages-map
@@ -328,9 +300,7 @@
   "r" '("restart" . restart-emacs)
   "t" '("theme..." . consult-theme))
 
-;;
 ;;; "s" => Search
-;;
 
 (def-arm! ceamx-search-map "s" "[Search]"
   "d" `("directory..." . ,(cmd! (consult-ripgrep
@@ -355,9 +325,7 @@
   ;; "x" '("refs (p)" . projectile-find-references)
   )
 
-;;
 ;;; "t" => Toggles
-;;
 
 (def-arm! ceamx-toggle-map "t" "[Toggle]"
   "l" #'display-line-numbers-mode
@@ -366,9 +334,7 @@
   "t" #'treemacs
   "w" '("side windows" . window-toggle-side-windows))
 
-;;
 ;;; "w" => Window
-;;
 
 ;; Largely based on Doom bindings, which are based on `evil-window-map'.
 
@@ -414,16 +380,12 @@
   "C-r"    #'winner-redo
   "C-u"    #'winner-undo)
 
-;;
 ;;; "y" => Copy / Evil Yank
-;;
 
 (def-arm! ceamx-yank-map "y" "[Yank]"
   "l" '("link (visible)" . link-hint-copy-link))
 
-;;
 ;;; "TAB" => Tabs
-;;
 
 (def-arm! ceamx-tab-map "TAB" "[Tab]"
   "TAB"  '("other" . tab-recent)
@@ -434,9 +396,7 @@
   "t"    '("other" . tab-recent)
   "x"    '("close" . tab-close))
 
-;;
 ;;; Top-level leader map
-;;
 
 ;; TODO: why not `other-buffer'?
 (leader-key! "`"   '("other buffer" . mode-line-other-buffer))
@@ -476,9 +436,7 @@
   (evil-define-key* '(normal visual motion) 'global
     "," 'mode-specific-command-prefix))
 
-;;
 ;;; Global Bindings
-;;
 
 ;; Wrap text in supported symbols.
 (dolist (pair '("[" "{" "\"" "'" "`"))
