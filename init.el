@@ -29,6 +29,7 @@
 ;;       <https://manueluberti.eu/posts/2023-10-01-embark-ugrep/>
 ;;       <https://manueluberti.eu/posts/2021-09-10-rgrep-and-vc-git-grep/>
 ;; TODO: <https://elpa.gnu.org/packages/xr.html>
+;; TODO: <https://github.com/leoliu/easy-kill>
 
 ;;; Code:
 
