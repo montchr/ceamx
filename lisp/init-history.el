@@ -31,8 +31,10 @@
 (require 'lib-common)
 
 ;;; `savehist' (internal)
+
 ;;  Save history for the values of arbitrary variables, but most notably
 ;;  completion queries.
+
 (use-feature! savehist
   :init
   (savehist-mode)
@@ -46,13 +48,17 @@
   (setopt savehist-autosave-interval 60))
 
 ;;; `saveplace' (internal)
+
 ;;  Save position in buffers.
+
 (use-feature! saveplace
   :init
   (save-place-mode))
 
 ;;; `recentf' (internal)
+
 ;;  Store recently-accessed files.
+
 (use-feature! recentf
   :init
   (recentf-mode)
@@ -70,7 +76,9 @@
     (add-to-list 'recentf-exclude path)))
 
 ;;; `dogears' :: <https://github.com/alphapapa/dogears.el>
+
 ;;  Return to previously-visited locations in and across buffers.
+
 (use-package dogears
   :commands (dogears-mode
              dogears-go
@@ -98,7 +106,6 @@
 
 ;;
 ;;; Undo/redo
-;;
 
 ;; Advice from the author of `undo-fu':
 ;;
@@ -116,8 +123,10 @@
 (setopt undo-strong-limit 100663296) ; 96mb.
 (setopt undo-outer-limit 1006632960) ; 960mb.
 
-;;; undo-fu :: <https://codeberg.org/ideasman42/emacs-undo-fu>
-;;  Simple, stable linear undo with redo for Emacs.
+;;;; undo-fu :: <https://codeberg.org/ideasman42/emacs-undo-fu>
+
+;; Simple, stable linear undo with redo for Emacs.
+
 (use-package undo-fu
   :config
   (keymap-global-unset "C-z")
@@ -127,12 +136,15 @@
   (after! [evil]
     (setopt evil-undo-system 'undo-fu)))
 
-;;; undo-fu-session :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
+;;;; undo-fu-session :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
+
 ;;  Save & recover undo steps between Emacs sessions.
+
 (use-package undo-fu-session
   :after undo-fu
 
   :init
+  ;; FIXME: defer to `no-littering' if necessary
   (setopt undo-fu-session-directory (expand-file-name "undo-fu-session" ceamx-var-dir))
 
   :config
@@ -142,13 +154,17 @@
 
   (undo-fu-session-global-mode))
 
-;;; vundo (visual undo) :: <https://github.com/casouri/vundo>
+;;;; vundo (visual undo) :: <https://github.com/casouri/vundo>
+
+;; Visualize the Emacs undo tree.
 
 (use-package vundo
   :commands (vundo)
   :defines (vundo-unicode-symbols vundo-glyph-alist)
+
   :init
   (keymap-global-set "C-x u" #'vundo)
+
   :config
   (setopt vundo-glyph-alist vundo-unicode-symbols))
 

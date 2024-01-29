@@ -118,7 +118,9 @@
 
 (require 'package)
 
-;;;; Handle `package-selected-packages' oddities:
+;;; Workarounds
+
+;;;; Handle `package-selected-packages' oddities
 
 ;; From @purcell:
 ;;
@@ -171,7 +173,7 @@ recent `magit' changes."
     (let ((load-path (cons (package-desc-dir pkg-desc) load-path)))
       (funcall orig pkg-desc))))
 
-;;;; Pre-initialization settings:
+;;; Settings
 
 (setopt package-native-compile t)
 
@@ -198,8 +200,7 @@ recent `magit' changes."
 (when (boundp 'package-vc-register-as-project)
   (setq package-vc-register-as-project nil))
 
-;;
-;;; Initialize packages:
+;;; Initialize
 
 ;; When `package-enable-at-startup' is nil, `package-initialize' must be called
 ;; before `require'ing any packages installed using `package'. It should *not*
