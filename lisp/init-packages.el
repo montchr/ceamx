@@ -211,8 +211,39 @@ recent `magit' changes."
 (unless package-archive-contents
   (package-refresh-contents))
 
+;;; Essential Dependencies
+
+;;;; `auto-compile' :: <https://github.com/emacscollective/auto-compile>
+
+;; > Starting with Emacs version 24.4, setting `load-prefer-newer` to `t`
+;; > prevents outdated byte code files from being loaded. However this does not
+;; > cause re-compilation of the source file, to actually do that
+;; > `auto-compile-on-load-mode` is still required.
+
+;; This issue will likely present itself every time a package is upgraded...
+
+(unless (package-installed-p 'auto-compile)
+  (package-install 'auto-compile))
+
+(require 'auto-compile)
+(auto-compile-on-load-mode)
+;; NOTE: This will not affect user init files as long as `no-byte-compile' is
+;; non-nil in `early-init' or `init'. It is a best practice to include this
+;; file-local variable in all user init files (which `autoinsert' will take care
+;; of by default).
+(auto-compile-on-save-mode)
+
+;;; `seq' [builtin]
+
+;; Ensure we load the latest version of `seq' available in GNU ELPA, which is
+;; required as a `magit' dependency in Emacs 29 and lower. We are better off
+;; installing this updated version as early as possible, since will likely be
+;; used by other packages/libraries before `magit' loads.
+
 (unless (package-installed-p 'seq '(2 25))
   (package-install 'seq))
+
+;;; `use-package' [builtin]
 
 (eval-when-compile
   (require 'use-package))

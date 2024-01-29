@@ -108,7 +108,12 @@ Intended for use as a callback on `after-init-hook'."
 (setq native-comp-async-report-warnings-errors 'silent)
 (setq native-compile-prune-cache t)
 
-;; Don't load outdated byte-compiled files. This should not even be an option.
+;; Don't load outdated byte-compiled files.
+;;
+;; NOTE: This does not handle *recompiling* the outdated files.
+;; That will need to be handled during init.
+;;
+;; More info: <https://github.com/emacscollective/auto-compile/blob/main/README.org>
 (setq load-prefer-newer t)
 
 ;; Package installation will provoke a lot of warnings from third-party
