@@ -336,54 +336,46 @@
 
 ;;; "w" => Window
 
-;; Largely based on Doom bindings, which are based on `evil-window-map'.
+;; TODO: how to properly prevent package-lint warnings?
+;; (when (fboundp 'ceamx-window-movement/body)
+;;   (leader-key! "w" #'ceamx-window-movement/body)
+;;   (keymap-global-set "C-x w" '("[Window]" . ceamx-window-movement/body)))
 
-;; FIXME: assumes `evil'
-(def-arm! ceamx-window-map "w" "[Window]"
-  ;;; default
+(define-prefix-command 'ceamx-window-prefix-map)
+(defvar-keymap ceamx-window-prefix-map
+  :parent window-prefix-map
+  :keymap ceamx-window-prefix-map
+
+  ;; TODO: maybe original C-x w as parent if it's a map
+  ;; :parent
+  :repeat (:exit (other-window))
+
+  "TAB" #'other-window
+  "d" #'ace-delete-window
+  "D" #'ace-delete-other-windows
+
+  ;; FIXME: very unreliable -- was stuck in fullscreen for a while until
+  ;; calling `toggle-frame-maximized' first...
+  ;; "F" '("toggle fullscreen" . toggle-frame-fullscreen)
+  "o" #'ace-window
+  "s" #'ace-swap-window
   "w" #'ace-window
+  "|" #'split-window-right
+  "_" #'split-window-below
+  "=" #'balance-windows)
 
-  ;;; tune
-  "="  #'balance-windows
-  ;; ">"  #'evil-window-increase-width
-  ;; "<"  #'evil-window-decrease-width
+(keymap-global-set "C-x w" #'ceamx-window-prefix-map)
 
-  ;;; navigate
-  ;; "h"      #'evil-window-left
-  ;; "j"      #'evil-window-down
-  ;; "k"      #'evil-window-up
-  ;; "l"      #'evil-window-right
-  ;; "C-h"    #'evil-window-left
-  ;; "C-j"    #'evil-window-down
-  ;; "C-k"    #'evil-window-up
-  ;; "C-l"    #'evil-window-right
-  "C-w"    #'other-window
-
-  ;;; swap
-  ;; "H"      #'ceamx/evil/window-move-left
-  ;; "J"      #'ceamx/evil/window-move-down
-  ;; "K"      #'ceamx/evil/window-move-up
-  ;; "L"      #'ceamx/evil/window-move-right
-  ;; "r"      #'evil-window-rotate-downwards
-  ;; "R"      #'evil-window-rotate-upwards
-  "C-S-w"  #'ace-swap-window
-
-  ;;; mutate
-  ;; "d"      #'evil-window-delete
-  ;; "n"      #'evil-window-new
-  "o"      #'delete-other-windows
-  ;; "s"      #'evil-window-split
-  "T"      #'tear-off-window
-  "u"      #'winner-undo
-  ;; "v"      #'evil-window-vsplit
-  "C-c"    #'ace-delete-window
-  "C-r"    #'winner-redo
-  "C-u"    #'winner-undo)
+(define-keymap :keymap (current-global-map)
+  "C-x o" #'ace-window
+  "C-x =" #'balance-windows ; prev: C-x +
+  "C-x +" nil               ; TODO: replace
+  )
 
 ;;; "y" => Copy / Evil Yank
 
-(def-arm! ceamx-yank-map "y" "[Yank]"
-  "l" '("link (visible)" . link-hint-copy-link))
+;; (def-arm! ceamx-yank-map "y" "[Yank]"
+;;   "l" '("link (visible)" . link-hint-copy-link))
 
 ;;; "TAB" => Tabs
 
