@@ -30,6 +30,23 @@
 (require 'ceamx-paths)
 (require 'lib-common)
 
+;;; `desktop' [internal]
+
+(use-feature! desktop
+  :commands (desktop-save-mode)
+  :config
+  (setopt desktop-base-file-name "desktop")
+  (setopt desktop-auto-save-timeout (* 60 5))
+  ;; If the desktop file is still locked, that probably means something went
+  ;; wrong during the previous Emacs session because each session should remove
+  ;; its locks when exiting. Play it safe and do nothing.
+  (setopt desktop-load-locked-desktop nil)
+  (setopt desktop-missing-file-warning nil)
+  (setopt desktop-restore-eager 20)
+  (setopt desktop-restore-frames t)
+  (setopt dekstop-save 'ask-if-new)
+  (desktop-save-mode 1))
+
 ;;; `savehist' (internal)
 
 ;;  Save history for the values of arbitrary variables, but most notably
@@ -81,11 +98,11 @@
 
 (use-package dogears
   :commands (dogears-mode
-             dogears-go
-             dogears-back
-             dogears-forward
-             dogears-list
-             dogears-sidebar)
+              dogears-go
+              dogears-back
+              dogears-forward
+              dogears-list
+              dogears-sidebar)
 
   :init
   (add-hook 'on-first-buffer-hook #'dogears-mode)
