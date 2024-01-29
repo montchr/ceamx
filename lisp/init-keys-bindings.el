@@ -89,25 +89,25 @@
 
 ;;; "b" => Buffers
 
-(def-arm! ceamx-buffer-map "b" "[Buffer]"
-  ;; FIXME: only consider file-visiting buffers, or perhaps buffers i am editing (recent)
-  "[" '("prev" . previous-buffer)
-  "]" '("next" . next-buffer)
+;; (def-arm! ceamx-buffer-map "b" "[Buffer]"
+;;   ;; FIXME: only consider file-visiting buffers, or perhaps buffers i am editing (recent)
+;;   "[" '("prev" . previous-buffer)
+;;   "]" '("next" . next-buffer)
 
-  "b" `("switch..." . consult-project-buffer)
-  "B" '("switch (any)..." . consult-buffer)
-  "d" '("close" . kill-current-buffer)
-  "k" '("close (+win)" . kill-this-buffer)
-  "M" '("*Messages*" . view-echo-area-messages)
-  "o" '("other" . mode-line-other-buffer)
-  "r" '("revert" . revert-buffer)
-  "R" '("rename..." . rename-buffer)
-  "s" '("save" . save-buffer)
-  "S" '("save all..." . save-some-buffers)
-  ;; TODO: maybe find a better place for this binding
-  "u" '("visual undo..." . vundo)
-  "x" '("*scratch*" . scratch-buffer)
-  "X" `("*scratch* (m)" . ,(cmd! (scratch major-mode))))
+;;   "b" `("switch..." . consult-project-buffer)
+;;   "B" '("switch (any)..." . consult-buffer)
+;;   "d" '("close" . kill-current-buffer)
+;;   "k" '("close (+win)" . kill-this-buffer)
+;;   "M" '("*Messages*" . view-echo-area-messages)
+;;   "o" '("other" . mode-line-other-buffer)
+;;   "r" '("revert" . revert-buffer)
+;;   "R" '("rename..." . rename-buffer)
+;;   "s" '("save" . save-buffer)
+;;   "S" '("save all..." . save-some-buffers)
+;;   ;; TODO: maybe find a better place for this binding
+;;   "u" '("visual undo..." . vundo)
+;;   "x" '("*scratch*" . scratch-buffer)
+;;   "X" `("*scratch* (m)" . ,(cmd! (scratch major-mode))))
 
 ;;; "c" => Code
 
@@ -151,15 +151,15 @@
 
 ;;; "F" => Frames
 
-(def-arm! ceamx-frame-map "F" "[Frame]"
-  "b" '("save layout..." . burly-bookmark-frames)
-	"F" '("switch to..." . select-frame-by-name)
-  "n" '("create" . make-frame-on-current-monitor)
-  "N" '("create on monitor..." . make-frame-on-monitor)
-  "o" '("other" . other-frame)
-  "R" '("rename..." . set-frame-name)
-  "[" '("prev" . previous-window-any-frame)
-  "]" '("next" . next-window-any-frame))
+;; (def-arm! ceamx-frame-map "F" "[Frame]"
+;;   "b" '("save layout..." . burly-bookmark-frames)
+;; 	"F" '("switch to..." . select-frame-by-name)
+;;   "n" '("create" . make-frame-on-current-monitor)
+;;   "N" '("create on monitor..." . make-frame-on-monitor)
+;;   "o" '("other" . other-frame)
+;;   "R" '("rename..." . set-frame-name)
+;;   "[" '("prev" . previous-window-any-frame)
+;;   "]" '("next" . next-window-any-frame))
 
 ;;; "g" => Git
 
@@ -185,13 +185,11 @@
   "h" #'helpful-at-point
   ;; TODO: add as command
   ;; FIXME: create directory if not exists
-  "H" `("cheatsheet..." . ,(cmd!!
-                             #'ido-find-file-in-dir
-                             current-prefix-arg
-                             ceamx-cheatsheets-dir))
-  ;; NOTE: currently `meow-describe-key'
-  ;; TODO: move corresponding meow binding here with fallback to default
-  ;;       example:   (cl-find-if #'fboundp '(harper-dad-joint helpful-at-point describe-key))
+  ;; "H" `("cheatsheet..." . ,(cmd!!
+  ;;                            #'ido-find-file-in-dir
+  ;;                            current-prefix-arg
+  ;;                            ceamx-cheatsheets-dir))
+  ;; TODO:      example:   (cl-find-if #'fboundp '(harper-dad-joint helpful-at-point describe-key))
   "k" #'helpful-key
   "K" #'describe-key-briefly
   "l" #'find-library
@@ -215,47 +213,48 @@
 
 ;;; "i" => Insertions
 
-(def-arm! ceamx-insert-map "i" "[Insert]"
-  "t"  #'tempel-insert
-  "y"  #'yank-from-kill-ring)
+;; (def-arm! ceamx-insert-map "i" "[Insert]"
+;;   "t"  #'tempel-insert
+;;   "y"  #'yank-from-kill-ring)
 
 ;;; Notes / Org-Mode
 
 ;;;; "X" / "n o c" => Org-Capture
-(def-arm! ceamx-capture-map "X" "[Capture]"
-  "X" '("capture..." . org-capture))
+
+;; (def-arm! ceamx-capture-map "X" "[Capture]"
+;;   "X" '("capture..." . org-capture))
 
 ;;;; "o" / "n o" => Org-Mode
-(def-arm! ceamx-org-map "o" "[Org-Mode]"
-  "a" #'org-agenda
-  "c" '("capture..." . ceamx-capture-map)
-  "l" #'org-store-link
-  "t" '("todos" . org-todo-list))
+
+;; (def-arm! ceamx-org-map "o" "[Org-Mode]"
+;;   "a" #'org-agenda
+;;   "c" '("capture..." . ceamx-capture-map)
+;;   "l" #'org-store-link
+;;   "t" '("todos" . org-todo-list))
 
 ;;;; "n" => Notes
-(def-arm! ceamx-notes-map "n" "[Note]"
-  "b" #'denote-backlinks
-  "c" #'org-capture
-  "d" #'denote-date
-  "f" '("[find]" . (keymap))
-  "f f" #'denote-find-link
-  "f b" #'denote-find-backlink
-  "i" #'denote-link                     ; "insert" mnemonic
-  "I" #'denote-add-links
-  "j" #'my-denote-journal               ; our custom command
-  "n" #'denote
-  "N" #'denote-type
-  "o" '("[Org-Mode]" . ceamx-org-map)
-  ;; Note that `denote-rename-file' can work from any context, not just
-  ;; Dired buffers.  That is why we bind it here to the `global-map'.
-  "r" #'denote-rename-file
-  "R" #'denote-rename-file-using-front-matter
-  "s" #'denote-subdirectory
-  "t" #'denote-template
-  ;; "zettelkasten" mnemonic
-  "z" #'denote-signature)
 
-;;
+;; (def-arm! ceamx-notes-map "n" "[Note]"
+;;   "b" #'denote-backlinks
+;;   "c" #'org-capture
+;;   "d" #'denote-date
+;;   "f" '("[find]" . (keymap))
+;;   "f f" #'denote-find-link
+;;   "f b" #'denote-find-backlink
+;;   "i" #'denote-link                     ; "insert" mnemonic
+;;   "I" #'denote-add-links
+;;   "j" #'my-denote-journal               ; our custom command
+;;   "n" #'denote
+;;   "N" #'denote-type
+;;   "o" '("[Org-Mode]" . ceamx-org-map)
+;;   ;; Note that `denote-rename-file' can work from any context, not just
+;;   ;; Dired buffers.  That is why we bind it here to the `global-map'.
+;;   "r" #'denote-rename-file
+;;   "R" #'denote-rename-file-using-front-matter
+;;   "s" #'denote-subdirectory
+;;   "t" #'denote-template
+;;   ;; "zettelkasten" mnemonic
+;;   "z" #'denote-signature)
 
 ;;; "O" => Open
 
@@ -279,40 +278,41 @@
 ;;; "q" => Session
 
 ;;;; "q p" Package Management
-(def-map! ceamx-packages-map
-  "b" #'embark-browse-package-url
-  "c" #'package-autoremove
-  "d" #'package-delete
-  "i" #'describe-package
-  "I" #'package-install
-  "p" #'list-packages
-  "r" #'package-refresh-contents
-  "s" #'use-package-report
-  "u" #'package-upgrade
-  "U" #'package-upgrade-all)
+
+;; (def-map! ceamx-packages-map
+;;   "b" #'embark-browse-package-url
+;;   "c" #'package-autoremove
+;;   "d" #'package-delete
+;;   "i" #'describe-package
+;;   "I" #'package-install
+;;   "p" #'list-packages
+;;   "r" #'package-refresh-contents
+;;   "s" #'use-package-report
+;;   "u" #'package-upgrade
+;;   "U" #'package-upgrade-all)
 
 
-(def-arm! ceamx-session-map "q" "[Session]"
-  "f" '("font..." . fontaine-set-preset)
-  "p" '("packages" . ceamx-packages-map)
-  "q" '("close frame" . delete-frame)
-  "Q" '("save+quit" . save-buffers-kill-emacs)
-  "r" '("restart" . restart-emacs)
-  "t" '("theme..." . consult-theme))
+;; (def-arm! ceamx-session-map "q" "[Session]"
+;;   "f" '("font..." . fontaine-set-preset)
+;;   "p" '("packages" . ceamx-packages-map)
+;;   "q" '("close frame" . delete-frame)
+;;   "Q" '("save+quit" . save-buffers-kill-emacs)
+;;   "r" '("restart" . restart-emacs)
+;;   "t" '("theme..." . consult-theme))
 
 ;;; "s" => Search
 
 (def-arm! ceamx-search-map "s" "[Search]"
   "d" `("directory..." . ,(cmd! (consult-ripgrep
-                                 (file-name-directory buffer-file-name))))
+                                  (file-name-directory buffer-file-name))))
   "h" '("history..." . consult-isearch-history)
   "j" '("symbols (f)..." . consult-lsp-file-symbols)
   "J" '("symbols (g)..." . consult-lsp-symbols)
   "l" '("library..." . (lambda () (interactive "P")
                          (call-interactively
-                          (if %
-                              #'find-library-other-window
-                            #'find-library))))
+                           (if %
+                             #'find-library-other-window
+                             #'find-library))))
   "o" '("outline (f)..." . consult-outline)
   ;; TODO: use thing-at-point as default value like `projectile-ripgrep' (which cannot find ripgrep)
 
