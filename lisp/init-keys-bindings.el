@@ -400,8 +400,6 @@
 
 ;; TODO: why not `other-buffer'?
 (leader-key! "`"   '("other buffer" . mode-line-other-buffer))
-;; FIXME: conflicts with meow keypad
-;; (leader-key! "SPC" '("project buffer..." . consult-project-buffer))
 (leader-key! "j"   '("jump: line..." . consult-line))
 
 (leader-key! "a" '("agenda..." . consult-org-agenda))
@@ -420,9 +418,6 @@
 ;;   ;; "v"
 ;;   ;; "z"
 ;;   )
-
-(keymap-global-set ceamx-leader-alt-key 'mode-specific-command-prefix)
-(keymap-global-set "<f12>" 'mode-specific-command-prefix)
 
 (after! [evil]
   ;; Bind leader key to existing leader map.
