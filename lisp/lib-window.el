@@ -3,6 +3,8 @@
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
+;;         Vegard Øye <vegard_oye at hotmail.com>
+
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -21,6 +23,11 @@
 ;;; Commentary:
 
 ;; Helper functions for `init-window'.
+
+;;; Sources:
+
+;; <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
+;; <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 
 ;;; Code:
 
@@ -93,6 +100,8 @@ such alists."
             (unless (cdr (assq 'inhibit-switch-frame alist))
               (window--maybe-raise-frame (window-frame window)))))))))
 
+;;; Interactive
+
 ;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 ;;;###autoload
 (defun ceamx/display-buffer-at-bottom ()
@@ -110,6 +119,67 @@ didactic purposes."
                  (lambda (win)
                    (fit-window-to-buffer
                     win (/ (frame-height) 3)))))))))
+
+(defun ceamx/split-window (&optional count direction file)
+  "TODO"
+  (interactive "P\nS\nf")
+  (select-window
+   (split-window (selected-window)
+                 (when count (- count))
+                 direction))
+  ;; (when (and (not count)
+  ;;         ceamx-window-auto-balance)
+  ;;   (balance-windows (window-parent)))
+  (when file
+    (find-file file)))
+
+(defun ceamx/split-window-with-buffer (buffer)
+  "Split window and switch to BUFFER.
+If BUFFER is not the name of an existing buffer, then a new
+buffer will be created with that name."
+  (interactive "B")
+  (ceamx/split-window)
+  (switch-to-buffer buffer))
+
+(defun ceamx/split-window-with-next-buffer ()
+  "Split window and switch to the next buffer in the buffer list."
+  (interactive)
+  (ceamx/split-window-with-buffer (next-buffer)))
+
+(defun ceamx/split-window-with-prev-buffer ()
+  "Split window and switch to the previous buffer in the buffer list."
+  (interactive)
+  (ceamx/split-window-with-buffer (previous-buffer)))
+
+(defun ceamx/buffer-create (&optional file)
+  "Edit a new unnamed buffer or open FILE.
+When called interactively, prompt the user for FILE."
+  (interactive "F")
+  (if file
+    (find-file file)
+    (let ((buffer (generate-new-buffer "*new*")))
+      (set-buffer-major-mode buffer)
+      (set-window-buffer nil buffer))))
+
+(defun ceamx/window-increase-height (count)
+  "Increase window height by COUNT."
+  (interactive "p")
+  (enlarge-window count))
+
+(defun ceamx/window-decrease-height (count)
+  "Decrease window height by COUNT."
+  (interactive "p")
+  (enlarge-window (- count)))
+
+(defun ceamx/window-increase-width (count)
+  "Increase window width by COUNT."
+  (interactive "p")
+  (enlarge-window count t))
+
+(defun ceamx/window-decrease-width (count)
+  "Decrease window width by COUNT."
+  (interactive "p")
+  (enlarge-window (- count) t))
 
 (provide 'lib-window)
 ;;; lib-window.el ends here
