@@ -336,40 +336,15 @@
 
 ;;; "w" => Window
 
-;; TODO: how to properly prevent package-lint warnings?
-;; (when (fboundp 'ceamx-window-movement/body)
-;;   (leader-key! "w" #'ceamx-window-movement/body)
-;;   (keymap-global-set "C-x w" '("[Window]" . ceamx-window-movement/body)))
-
-(define-prefix-command 'ceamx-window-prefix-map)
-(defvar-keymap ceamx-window-prefix-map
-  :parent window-prefix-map
-  :keymap ceamx-window-prefix-map
-
-  ;; TODO: maybe original C-x w as parent if it's a map
-  ;; :parent
-  :repeat (:exit (other-window))
-
-  "TAB" #'other-window
-  "d" #'ace-delete-window
-  "D" #'ace-delete-other-windows
-
-  ;; FIXME: very unreliable -- was stuck in fullscreen for a while until
-  ;; calling `toggle-frame-maximized' first...
-  ;; "F" '("toggle fullscreen" . toggle-frame-fullscreen)
-  "o" #'ace-window
-  "s" #'ace-swap-window
-  "w" #'ace-window
-  "|" #'split-window-right
-  "_" #'split-window-below
-  "=" #'balance-windows)
-
-(keymap-global-set "C-x w" #'ceamx-window-prefix-map)
+(use-feature! init-window
+  :commands (ceamx/transient-window)
+  :config
+  (keymap-global-set "C-x w" #'ceamx/transient-window))
 
 (define-keymap :keymap (current-global-map)
   "C-x o" #'ace-window
-  "C-x =" #'balance-windows ; prev: C-x +
-  "C-x +" nil               ; TODO: replace
+  "C-x =" #'balance-windows             ; prev: C-x +
+  "C-x +" nil                           ; TODO: replace
   )
 
 ;;; "y" => Copy / Evil Yank
