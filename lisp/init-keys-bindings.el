@@ -55,37 +55,37 @@
 
 ;;;; Previous
 
-(def-arm! ceamx-go-prev-map "[" "[Prev]"
-  "TAB" #'tab-previous
-  "["   #'previous-buffer
-  "b"   #'previous-buffer
-  "e"   #'flycheck-previous-error
-  "F"   #'previous-window-any-frame
-  "t"   #'tab-previous)
+;; (def-arm! ceamx-go-prev-map "[" "[Prev]"
+;;   "TAB" #'tab-previous
+;;   "["   #'previous-buffer
+;;   "b"   #'previous-buffer
+;;   "e"   #'flycheck-previous-error
+;;   "F"   #'previous-window-any-frame
+;;   "t"   #'tab-previous)
 
 ;;;; Next
 
-(def-arm! ceamx-go-next-map "]" "[Next]"
-  "TAB" #'tab-next
-  "]"   #'next-buffer
-  "b"   #'next-buffer
-  "e"   #'flycheck-next-error
-  "F"   #'next-window-any-frame
-  "t"   #'tab-next)
+;; (def-arm! ceamx-go-next-map "]" "[Next]"
+;;   "TAB" #'tab-next
+;;   "]"   #'next-buffer
+;;   "b"   #'next-buffer
+;;   "e"   #'flycheck-next-error
+;;   "F"   #'next-window-any-frame
+;;   "t"   #'tab-next)
 
 ;;;; Goto
 
 ;; TODO: make this more convenient
 
-(def-map! ceamx-goto-map
-  "d" '("definition" . xref-find-definitions)
-  "r" '("references" . xref-find-references))
+;; (def-map! ceamx-goto-map
+;;   "d" '("definition" . xref-find-definitions)
+;;   "r" '("references" . xref-find-references))
 
 ;;; "B" => Bookmarks
 
-(def-arm! ceamx-bookmark-map "B" "[Bookmarks]"
-  "F" #'burly-bookmark-frames
-  "W" #'burly-bookmark-windows)
+;; (def-arm! ceamx-bookmark-map "B" "[Bookmarks]"
+;;   "F" #'burly-bookmark-frames
+;;   "W" #'burly-bookmark-windows)
 
 ;;; "b" => Buffers
 
@@ -111,22 +111,22 @@
 
 ;;; "c" => Code
 
-(def-arm! ceamx-code-map "C" "Code"
-  "a" '("action.." . eglot-code-actions)
-  "d" #'xref-find-definitions
-  "h" #'helpful-at-point
-  "i" #'iedit-mode
-  "r" '("rename..." . eglot-rename))
+;; (def-arm! ceamx-code-map "C" "Code"
+;;   "a" '("action.." . eglot-code-actions)
+;;   "d" #'xref-find-definitions
+;;   "h" #'helpful-at-point
+;;   "i" #'iedit-mode
+;;   "r" '("rename..." . eglot-rename))
 
 ;;; "e" => Eval
 
-(def-arm! ceamx-eval-map "e" "[Eval]"
-  "b" #'eval-buffer
-  "d" #'eval-defun
-  "e" #'eval-last-sexp
-  "E" #'eval-expression
-  "i" #'ielm
-  "r" #'eval-region)
+;; (def-arm! ceamx-eval-map "e" "[Eval]"
+;;   "b" #'eval-buffer
+;;   "d" #'eval-defun
+;;   "e" #'eval-last-sexp
+;;   "E" #'eval-expression
+;;   "i" #'ielm
+;;   "r" #'eval-region)
 
 ;;; "f" => Files
 
@@ -258,14 +258,14 @@
 
 ;;; "O" => Open
 
-(def-arm! ceamx-open-map "o" "[Open]"
-  "d" #'dired
-  "e" #'eshell
-  "l" '("link-at-point" . link-hint-open-link-at-point)
-  "L" '("link..." . link-hint-open-link)
-  "m" '("mail" . compose-mail)
-  "n" '("news" . newsticker-show-news)
-  "s" #'suggest)
+;; (def-arm! ceamx-open-map "o" "[Open]"
+;;   "d" #'dired
+;;   "e" #'eshell
+;;   "l" '("link-at-point" . link-hint-open-link-at-point)
+;;   "L" '("link..." . link-hint-open-link)
+;;   "m" '("mail" . compose-mail)
+;;   "n" '("news" . newsticker-show-news)
+;;   "s" #'suggest)
 
 ;;; "p" => Projects
 
@@ -327,12 +327,12 @@
 
 ;;; "t" => Toggles
 
-(def-arm! ceamx-toggle-map "t" "[Toggle]"
-  "l" #'display-line-numbers-mode
-  "L" #'line-number-mode
-  "f" #'flycheck-mode
-  "t" #'treemacs
-  "w" '("side windows" . window-toggle-side-windows))
+;; (def-arm! ceamx-toggle-map "t" "[Toggle]"
+;;   "l" #'display-line-numbers-mode
+;;   "L" #'line-number-mode
+;;   "f" #'flycheck-mode
+;;   "t" #'treemacs
+;;   "w" '("side windows" . window-toggle-side-windows))
 
 ;;; "w" => Window
 
@@ -354,22 +354,22 @@
 
 ;;; "TAB" => Tabs
 
-(def-arm! ceamx-tab-map "TAB" "[Tab]"
-  "TAB"  '("other" . tab-recent)
-  "d"    '("delete" . tab-close)
-  "h"    '("prev" . tab-previous)
-  "l"    '("next" . tab-next)
-  "n"    '("new" . tab-new)
-  "t"    '("other" . tab-recent)
-  "x"    '("close" . tab-close))
+;; (def-arm! ceamx-tab-map "TAB" "[Tab]"
+;;   "TAB"  '("other" . tab-recent)
+;;   "d"    '("delete" . tab-close)
+;;   "h"    '("prev" . tab-previous)
+;;   "l"    '("next" . tab-next)
+;;   "n"    '("new" . tab-new)
+;;   "t"    '("other" . tab-recent)
+;;   "x"    '("close" . tab-close))
 
 ;;; Top-level leader map
 
 ;; TODO: why not `other-buffer'?
 (leader-key! "`"   '("other buffer" . mode-line-other-buffer))
-(leader-key! "j"   '("jump: line..." . consult-line))
+;; (leader-key! "j"   '("jump: line..." . consult-line))
 
-(leader-key! "a" '("agenda..." . consult-org-agenda))
+;; (leader-key! "a" '("agenda..." . consult-org-agenda))
 
 ;; TODO: install
 ;; (leader-key! "?"   #'consult-apropos)
