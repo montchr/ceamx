@@ -58,17 +58,14 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'treesit)
 
-(use-feature! treesit
-  ;; TODO: not sure we really need `:demand'?
-  :demand t)
+(require 'lib-common)
 
 ;;; `treesit-auto' <https://github.com/renzmann/treesit-auto>
 (use-package treesit-auto
-  :after (treesit)
   :commands (global-treesit-auto-mode)
-  ;; FIXME: Package has bad autoloads
+  ;; FIXME: Package has bad autoloads, so `:commands' won't work.
   ;; <https://github.com/renzmann/treesit-auto/issues/44>
   :autoload (treesit-auto-add-to-auto-mode-alist)
 
@@ -77,8 +74,8 @@
   (setopt treesit-auto-install nil)
 
   (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode +1))
 
+  (global-treesit-auto-mode))
 
 (provide 'init-treesitter)
 ;;; init-treesitter.el ends here
