@@ -29,15 +29,31 @@
 
 (require 'lib-common)
 
-(autoload 'reformatter-define "reformatter" t)
+;;; Packages
+
+;;;; `nix-mode' :: <https://github.com/NixOS/nix-mode>
 
 (use-package nix-mode
+  :unless (treesit-language-available-p 'nix)
+
   ;; NOTE: `magit-section' is a hard dependency (but why?),
   ;;       but does not install automatically with `nix-mode'
   :after (magit-section)
   :functions (nix-mode-hook))
 
-(after! [nix-mode reformatter]
+;;;; `nix-ts-mode' :: <https://github.com/remi-gelinas/nix-ts-mode>
+
+(use-package nix-ts-mode
+  :when (treesit-language-available-p 'nix)
+
+  :config
+  (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode)))
+
+;;; Integrations
+
+(use-feature! reformatter
+  :config
   ;; <https://github.com/kamadorueda/alejandra>
   (reformatter-define nix-format-alejandra
     :program "alejandra")
@@ -46,10 +62,12 @@
   (reformatter-define nix-format-nixfmt
     :program "nixfmt"))
 
-;; FIXME: not loading automatically
 (use-feature! eglot
-  :after (nix-mode)
   :defines (eglot-server-programs)
+
+  :init
+  (add-hook 'nix-mode-hook #'eglot)
+  (add-hook 'nix-ts-mode-hook #'eglot)
 
   :config
   (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nil"))))
@@ -58,6 +76,7 @@
 (use-feature! lsp-nix
   :after (lsp-mode)
   :defines (lsp-nix-nil-formatter)
+
   :config
   (setopt lsp-nix-nil-formatter nil))
 
