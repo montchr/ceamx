@@ -361,13 +361,15 @@
         ["Resize"
           ("=" "balance" balance-windows)
           ("-" "match buffer" fit-window-to-buffer)
-          ;; ("<left>" "X←" tsa/move-splitter-left)
-          ;; ("<down>" "X↓" tsa/move-splitter-down)
-          ;; ("<up>" "X↑" tsa/move-splitter-up)
-          ;; ("<right>" "X→" tsa/move-splitter-right)
+          ;; ("<" "width-" evil-window-decrease-width)
+          ;; (">" "width+" evil-window-increase-width)
+          ;; ("+" "height+" evil-window-increase-height)
+          ;; ("-" "height-" evil-window-decrease-height)
+
           ]
         ["Buffer"
           ("b" "buffer" consult-buffer)
+          ;; TODO: `ffap-other-window' (doom)
           ("f" "file (p)" project-find-file)
           ("F" "file (g)" find-file :transient transient--do-quit-one)
           ("F" "file@other" find-file-other-window)
@@ -382,6 +384,10 @@
           ;; FIXME: cannot eval inside vector -- needs to be a symbol
           ;; ("v" "vertical" (##ceamx/split-window nil 'right))
           ;; ("x" "horizontal" (##ceamx/split-window nil 'below))
+          ("H" "to left" ceamx/window-move-left)
+          ("J" "to below" ceamx/window-move-down)
+          ("K" "to above" ceamx/window-move-up)
+          ("L" "to right" ceamx/window-move-right)
           ("s" "swap" ace-swap-window)]
         ["Scroll"
           ("." "left" scroll-left)
@@ -390,6 +396,7 @@
           ]
         ["Window Lifecycle"
           ("d" "delete" ace-delete-window)
+          ;; ("n" "new" evil-window-new)
           ("O" "delete others" ace-delete-other-windows)
           ("q" "quit" transient-quit-all)
           ("z" "winner ⮐" winner-undo)
