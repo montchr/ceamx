@@ -336,73 +336,68 @@
   :autoload (aw-split-window-fair
               aw-split-window-horz
               aw-split-window-vert
-              aw-flip-window)
+              aw-flip-window))
 
+(use-feature! transient
+  :after (ace-window)
   :config
 
-  (use-feature! transient
-    :config
-    ;; via <https://tech.toryanderson.com/2023/08/19/how-can-i-define-transient-color-per-command-like-hydra/>
-    (transient-define-prefix ceamx/transient-window ()
-      "Window navigation transient."
-      :transient-suffix 'transient--do-stay
-      [["Movement"
-         ;; FIXME: unicode arrows cause space offset
-         ;; ("h" "focus ←" windmove-left)
-         ;; ("k" "focus ↓" windmove-down)
-         ;; ("j" "focus ↑" windmove-up)
-         ;; ("l" "focus →" windmove-right)
-         ("h" "left" windmove-left)
-         ("k" "down" windmove-down)
-         ("j" "up" windmove-up)
-         ("l" "right" windmove-right)
-         ("o" "other" aw-flip-window)   ; previously-selected
-         ("w" "select" ace-window)]
-        ["Resize"
-          ("=" "balance" balance-windows)
-          ("-" "match buffer" fit-window-to-buffer)
-          ;; ("<" "width-" evil-window-decrease-width)
-          ;; (">" "width+" evil-window-increase-width)
-          ;; ("+" "height+" evil-window-increase-height)
-          ;; ("-" "height-" evil-window-decrease-height)
+  ;; via <https://tech.toryanderson.com/2023/08/19/how-can-i-define-transient-color-per-command-like-hydra/>
+  (transient-define-prefix ceamx/transient-window ()
+    "Window navigation transient."
+    :transient-suffix 'transient--do-stay
+    [["Movement"
+       ;; FIXME: unicode arrows cause space offset
+       ;; ("h" "focus ←" windmove-left)
+       ;; ("k" "focus ↓" windmove-down)
+       ;; ("j" "focus ↑" windmove-up)
+       ;; ("l" "focus →" windmove-right)
+       ("h" "left" windmove-left)
+       ("k" "down" windmove-down)
+       ("j" "up" windmove-up)
+       ("l" "right" windmove-right)
+       ("o" "other" aw-flip-window)     ; previously-selected
+       ("w" "select" ace-window)]
+      ["Resize"
+        ("=" "balance" balance-windows)
+        ("-" "match buffer" fit-window-to-buffer)
+        ;; ("<" "width-" evil-window-decrease-width)
+        ;; (">" "width+" evil-window-increase-width)
+        ;; ("+" "height+" evil-window-increase-height)
+        ;; ("-" "height-" evil-window-decrease-height)
 
-          ]
-        ["Buffer"
-          ("b" "buffer" consult-buffer)
-          ;; TODO: `ffap-other-window' (doom)
-          ("f" "file (p)" project-find-file)
-          ("F" "file (g)" find-file :transient transient--do-quit-one)
-          ("F" "file@other" find-file-other-window)
-          ;; ("F" "follow" follow-mode)
-          ("g" "grep" consult-ripgrep :transient transient--do-quit-one)
+        ]
+      ["Buffer"
+        ("b" "buffer" consult-buffer)
+        ;; TODO: `ffap-other-window' (doom)
+        ("f" "file (p)" project-find-file)
+        ("F" "file (g)" find-file :transient transient--do-quit-one)
+        ("F" "file@other" find-file-other-window)
+        ("g" "grep" consult-ripgrep :transient transient--do-quit-one)]
+      ["Split"
+        ;; FIXME: no effect unless called interactively
+        ("H" "to left" ceamx/window-move-left)
+        ("J" "to below" ceamx/window-move-down)
+        ("K" "to above" ceamx/window-move-up)
+        ("L" "to right" ceamx/window-move-right)
+        ("s" "swap" ace-swap-window)]
+      ["Scroll"
+        ;; NOTE: These are the correct scroll direction commands, which might
+        ;; appear to be reversed when comparing with labels.
+        ("." "left" scroll-right)
+        ("," "right" scroll-left)
+        ("SPC" "down" scroll-up)
+        ("DEL" "up" scroll-down)]
+      ["Window Lifecycle"
+        ("d" "delete" ace-delete-window)
+        ("D" "delete others" delete-other-windows)
+        ;; FIXME:
+        ;; ("n" "new" evil-window-new)
+        ("u" "winner ⮐" winner-undo)
+        ("U" "winner ⮑" winner-redo)
+        ("S" "toggle sides" window-toggle-side-windows)
 
-          ;; ("a" "ace 1" transient-ace-cmd)
-          ;; ("&" "sub emacs" tsa/sub-emacs :transient transient--do-quit-one)
-          ]
-        ["Split"
-          ;; TODO: customize direction via infix
-          ;; FIXME: cannot eval inside vector -- needs to be a symbol
-          ;; ("v" "vertical" (##ceamx/split-window nil 'right))
-          ;; ("x" "horizontal" (##ceamx/split-window nil 'below))
-          ("H" "to left" ceamx/window-move-left)
-          ("J" "to below" ceamx/window-move-down)
-          ("K" "to above" ceamx/window-move-up)
-          ("L" "to right" ceamx/window-move-right)
-          ("s" "swap" ace-swap-window)]
-        ["Scroll"
-          ("." "left" scroll-left)
-          ("," "right" scroll-right)
-          ;; ("4" "quad view" tsa/split-window-4)
-          ]
-        ["Window Lifecycle"
-          ("d" "delete" ace-delete-window)
-          ;; ("n" "new" evil-window-new)
-          ("O" "delete others" ace-delete-other-windows)
-          ("q" "quit" transient-quit-all)
-          ("z" "winner ⮐" winner-undo)
-          ("Z" "winner ⮑" winner-redo)
-          ("S" "toggle sides" window-toggle-side-windows)
-          ("SPC" "quit" transient-quit-all)]])))
+        ("q" "quit" transient-quit-all)]]))
 
 (provide 'init-window)
 ;;; init-window.el ends here
