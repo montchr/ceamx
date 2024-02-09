@@ -66,8 +66,8 @@
   :defines (eglot-server-programs)
 
   :init
-  (add-hook 'nix-mode-hook #'eglot)
-  (add-hook 'nix-ts-mode-hook #'eglot)
+  (add-hook 'nix-mode-hook #'eglot-ensure)
+  (add-hook 'nix-ts-mode-hook #'eglot-ensure)
 
   :config
   (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nil"))))
