@@ -96,7 +96,8 @@ different approaches to managing garbage collection, especially with the intent
 of reducing startup time.
 
 One approach is to offload this configuration to a package, safely hiding the
-details away. This package is `gcmh`.
+details away. This package is `gcmh`, written by Andrea Corallo, perhaps better
+known for gccemacs / native-comp.
 
 As it turns out, as a direct response to a Reddit thread sharing `gcmh`, Eli
 Zaretskii recommends caution in this field. The package creator also weighs in.
@@ -110,6 +111,28 @@ Basically, Zaretskii recommends not overthinking things.
 > likely to be followed by people whose workflows and system configurations are
 > very different. Simply put, you might get others in trouble by promoting your
 > personal hacks as "magic".
+
+And, again, with more detail about fiddling carelessly with `gc-cons-threshold`:
+
+[eli-zaretskii comments on An easy trick I found to improve Emacs start-up time](https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/)
+
+> The GC threshold setting after init is too high, IMNSHO, and its value seems
+> arbitrary.
+>
+> If the OP thinks that Emacs will GC as soon as it allocates 100 MiB, then
+> that's a grave mistake! What really happens is the first time Emacs _considers
+> doing GC_, if at that time more than 100 MiB have been allocated for Lisp
+> objects, Emacs will GC. And since neither Lisp programs nor the user have
+> _any_ control on how soon Emacs will decide to check whether GC is needed, the
+> actual amount of memory by the time Emacs checks could be many times the value
+> of the threshold.
+>
+> My advice is to spend some time measuring the effect of increased GC threshold
+> on operations that you care about and that take a long enough time to annoy,
+> and use the lowest threshold value which produces a tangible improvement.
+> Start with the default value, then enlarge it by a factor of 2 until you see
+> only insignificant speedups. I would not expect the value you arrive at to be
+> as high as 100 MiB.
 
 ### `magit-delta`
 
