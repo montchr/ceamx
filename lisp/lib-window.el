@@ -31,8 +31,12 @@
 
 ;;; Code:
 
-(declare-function 'popper-popup-status "popper")
-(declare-function 'popper-toggle "popper")
+(require 'windmove)
+
+(require 'config-window)
+
+;; (declare-function 'popper-popup-status "popper")
+;; (declare-function 'popper-toggle "popper")
 
 ;; TODO: add buffers tracking files in nix store, which are only useful for
 ;; reference purposes, often invoked when viewing definition of low-level
@@ -40,14 +44,14 @@
 (defun +popper-current-buffer-popup-p (buf)
   "Whether the buffer BUF should be considered a popup.
 This is intended for use as a predicate in `popper-reference-buffers'."
-    (with-current-buffer buf
-      (and (derived-mode-p 'fundamental-mode)
-           (not (bound-and-true-p scratch-buffer))
-           ;; Less than `max-lines' but not empty.
-           (let ((lines (count-lines (point-min) (point-max)))
-                 (max-lines 10))
-             (and (not (zerop lines))
-               (< lines max-lines))))))
+  (with-current-buffer buf
+    (and (derived-mode-p 'fundamental-mode)
+      (not (bound-and-true-p scratch-buffer))
+      ;; Less than `max-lines' but not empty.
+      (let ((lines (count-lines (point-min) (point-max)))
+             (max-lines 10))
+        (and (not (zerop lines))
+          (< lines max-lines))))))
 
 (defun +popper-close-focused (&rest _)
   "Close any focused `popper' popup.
@@ -100,31 +104,7 @@ such alists."
             (unless (cdr (assq 'inhibit-switch-frame alist))
               (window--maybe-raise-frame (window-frame window)))))))))
 
-;;; Interactive
-
-;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
-;;;###autoload
-(defun ceamx/display-buffer-at-bottom ()
-  "Move the current buffer to the bottom of the frame.
-This is useful to take a buffer out of a side window.
-
-The window parameters of this function are provided mostly for
-didactic purposes."
-  (interactive)
-  (let ((buffer (current-buffer)))
-    (with-current-buffer buffer
-      (delete-window)
-      (display-buffer-at-bottom
-       buffer '((window-height .
-                 (lambda (win)
-                   (fit-window-to-buffer
-                    win (/ (frame-height) 3)))))))))
-
-(defcustom ceamx-fallback-buffer-name "*scratch*"
-  "The name of the buffer to fall back to if no other buffers exist.
-The buffer will be created if it does not exist."
-  :group 'ceamx
-  :type '(string))
+;;; Macros
 
 (defmacro with-safe-side-windows! (&rest body)
   "Toggle side windows, evaluate BODY, restore side windows.
@@ -141,6 +121,26 @@ Copied from the `evil' macro `evil-save-side-windows'."
          (progn ,@body)
          (when ,sides
            (window-toggle-side-windows))))))
+
+;;; Interactive
+
+;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+;;;###autoload
+(defun ceamx/display-buffer-at-bottom ()
+  "Move the current buffer to the bottom of the frame.
+This is useful to take a buffer out of a side window.
+
+The window parameters of this function are provided mostly for
+didactic purposes."
+  (interactive)
+  (let ((buffer (current-buffer)))
+    (with-current-buffer buffer
+      (delete-window)
+      (display-buffer-at-bottom
+        buffer '((window-height .
+                   (lambda (win)
+                     (fit-window-to-buffer
+                       win (/ (frame-height) 3)))))))))
 
 ;; TODO: this seems very similar to `windmove-swap-states-in-direction'...?
 (defun ceamx-move-window (side)
@@ -182,8 +182,6 @@ When WINDOW is nil, the currently-selected will be used. See
                              ('up 'above)
                              ('down 'below)
                              (_ direction))))
-
-(require 'windmove)
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/ff33ec8f7a89d168ca533612e2562883c89e029f/modules/editor/evil/autoload/evil.el#L42-L73>
 (defun ceamx--window-swap-or-split (direction)
