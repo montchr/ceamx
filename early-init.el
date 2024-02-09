@@ -62,21 +62,19 @@
 ;; > only insignificant speedups. I would not expect the value you arrive at to be
 ;; > as high as 100 MiB.
 ;;
-;; via
-;;<https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/>
+;; via <https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/>
 
 ;; See also:
 
 ;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
 
-;; TODO: remove probably
-;; (setq gc-cons-percentage 0.5)
+;; Provide insight into garbage-collection activity to inform tuning decisions.
+;; TODO: will a `init-file-debug' check work here?
+(setq garbage-collection-messages t)
 
-(setq gc-cons-threshold (* 8 1024 1024)) ; 8MiB (default)
-;; (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB (huge!! not recommended)
-
-
-(add-hook 'after-init-hook #'garbage-collect t)
+;; Prevent garbage-collection during init.
+;; NOTE: Either use `gcmh' or make sure to reset this later. Or else!
+(setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
 
 ;;;; Simplify filename pattern-matching during init
 

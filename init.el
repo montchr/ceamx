@@ -60,13 +60,33 @@
 
 (require 'init-packages)
 
-;;; Essential storage path cleanup for features/packages.
+;;;; Essential storage path cleanup for features/packages.
+
 (use-package no-littering
   :demand t
   :init
   (setq no-littering-etc-directory ceamx-etc-dir)
   (setq no-littering-var-directory ceamx-var-dir))
 
+;;;; Run garbage collection on idle.
+
+;; <https://gitlab.com/koral/gcmh>
+;; <https://akrl.sdf.org/>
+
+;; During normal use, the GC threshold will be set to a high value.
+;; When idle, GC will be triggered with a low threshold.
+
+(use-package gcmh
+  :blackout
+  :commands (gcmh-mode)
+  :init
+  (add-hook 'emacs-startup-hook #'gcmh-mode)
+  (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
+
+;;
+;;; site-lisp packages
+
+;;;; Custom hooks, largely derived from Doom.
 (use-feature! on
   :demand t)
 

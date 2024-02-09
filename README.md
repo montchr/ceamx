@@ -112,6 +112,9 @@ Basically, Zaretskii recommends not overthinking things.
 > very different. Simply put, you might get others in trouble by promoting your
 > personal hacks as "magic".
 
+From what I gather, `gcmh` has evolved a bit, so the previous criticism no
+longer applies.
+
 And, again, with more detail about fiddling carelessly with `gc-cons-threshold`:
 
 [eli-zaretskii comments on An easy trick I found to improve Emacs start-up time](https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/)
