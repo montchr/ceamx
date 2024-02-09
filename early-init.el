@@ -51,6 +51,8 @@
 
 ;; <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
 
+(setenv "LSP_USE_PLISTS" "true")
+
 ;; Read JSON streams in 1MiB chunks instead of the default 4kB.
 ;;
 ;; Language server responses tend to be in the 800kB to 3MB range,
