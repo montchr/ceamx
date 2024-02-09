@@ -85,11 +85,6 @@ Intended for use as a hook callback on `prog-mode-hook'."
     ("l" dumb-jump-quick-look "Quick look")
     ("b" dumb-jump-back "Back")))
 
-;;; `highlight-function-calls' :: <https://github.com/alphapapa/highlight-function-calls>
-;; NOTE: Loaded in `ceamx-prog-mode-init-h' to ensure proper load order.
-(use-package highlight-function-calls
-  :commands (highlight-function-calls-mode))
-
 ;;; `rainbow-delimiters' :: <https://github.com/Fanael/rainbow-delimiters>
 (use-package rainbow-delimiters
   :commands (rainbow-delimiters-mode)
