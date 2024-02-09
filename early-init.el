@@ -47,9 +47,18 @@
 ;;
 ;;; Performance
 
-;; Performance improvements for language server JSON-RPC (LSP).
+;;;; Language servers
+
+;; <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
+
+;; Read JSON streams in 1MiB chunks instead of the default 4kB.
+;;
+;; Language server responses tend to be in the 800kB to 3MB range,
+;; according to the lsp-mode documentation (linked above).
+;;
+;; This is a general LSP concern, not specific to any particular implementation.
 (when (functionp 'json-serialize)
-  (setq read-process-output-max (* 1024 1024 8)))
+  (setq read-process-output-max (* 1024 1024)))
 
 ;;;; Minimize garbage collection during startup.
 
