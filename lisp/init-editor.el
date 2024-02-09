@@ -145,7 +145,10 @@
 
 ;;  "Simple sticky header showing definition beyond top of window"
 
+;; TODO: remove or use -- it seems more confusing than helpful though.
+
 (use-package topsy
+  :disabled
   :commands (topsy-mode)
   :init
   (add-hook 'prog-mode-hook #'topsy-mode)
@@ -163,12 +166,14 @@
 ;;  Structured editing (soft deletion, expression navigating & manipulating)
 ;;  that supports many major modes out of the box.
 
+;; TODO: remove or use
+
 (use-package puni
   :disabled
   :commands (puni-global-mode
-             puni-disable-puni-mode
-             puni-backward-sexp-or-up-list
-             puni-forward-sexp-or-up-list)
+              puni-disable-puni-mode
+              puni-backward-sexp-or-up-list
+              puni-forward-sexp-or-up-list)
 
   :init
   (define-keymap :keymap puni-mode-map
