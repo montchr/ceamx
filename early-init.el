@@ -53,10 +53,28 @@
 
 ;;;; Minimize garbage collection during startup.
 
+;; From Eli Zaretskii:
+;;
+;; > My advice is to spend some time measuring the effect of increased GC threshold
+;; > on operations that you care about and that take a long enough time to annoy,
+;; > and use the lowest threshold value which produces a tangible improvement.
+;; > Start with the default value, then enlarge it by a factor of 2 until you see
+;; > only insignificant speedups. I would not expect the value you arrive at to be
+;; > as high as 100 MiB.
+;;
+;; via
+;;<https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/>
+
+;; See also:
+
 ;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
 
-(setq gc-cons-percentage 0.5)
-(setq gc-cons-threshold (* 128 1024 1024))
+;; TODO: remove probably
+;; (setq gc-cons-percentage 0.5)
+
+(setq gc-cons-threshold (* 8 1024 1024)) ; 8MiB (default)
+;; (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB (huge!! not recommended)
+
 
 (add-hook 'after-init-hook #'garbage-collect t)
 
