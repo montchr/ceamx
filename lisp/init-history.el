@@ -107,6 +107,7 @@
   :init
   (add-hook 'on-first-buffer-hook #'dogears-mode)
 
+  ;; Also see `ceamx/dogears-transient'.
   (define-keymap :keymap (current-global-map)
     "M-g d" #'dogears-go
     "M-g M-b" #'dogears-back
@@ -120,6 +121,18 @@
   (after! 'savehist
     (when (boundp 'savehist-additional-variables)
       (add-to-list 'savehist-additional-variables #'dogears-list))))
+
+(after! [transient dogears]
+  (transient-define-prefix ceamx/dogears-transient ()
+    "Transient menu for `dogears' history navigation commands."
+    [["Navigate"
+       ("b" "back" dogears-back :transient transient--do-stay)
+       ("f" "forward" dogears-forward :transient transient--do-stay)]
+      ;; TODO: when quit one of these Find commands, return to transient
+      ["Find"
+        ("d" "go..." dogears-go)
+        ("l" "list" dogears-list)
+        ("S" "sidebar" dogears-sidebar)]]))
 
 ;;
 ;;; Undo/redo
