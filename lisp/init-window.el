@@ -336,7 +336,15 @@
   :autoload (aw-split-window-fair
               aw-split-window-horz
               aw-split-window-vert
-              aw-flip-window))
+              aw-flip-window)
+
+  :config
+
+  ;; Same frame only. While it'd be nice to use the default (global), I really
+  ;; dislike that it orders window numbers leads to jarring gaps in window
+  ;; numbers in the same frame. For example, frame A might have windows numbered
+  ;; 1 and 3 and frame B will have window 2.
+  (setopt aw-scope 'frame))
 
 (use-feature! transient
   :after (ace-window)
