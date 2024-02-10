@@ -29,10 +29,34 @@
 
 (require 'lib-common)
 
+;;
+;;; Packages
+
+;;;; `devdocs' :: <https://github.com/astoff/devdocs.el>
+
+;; NOTE: Must run `devdocs-install' before use.
+
+;; TODO: Install devdocs automatically.
+;;       See `lib-help' for progress.
+
+(use-package devdocs
+  :commands (devdocs-lookup devdocs-install devdocs-delete devdocs-update-all)
+
+  :config
+  (define-keymap :keymap help-map
+    ;; Replace default `apropos-documentation' binding.
+    "d" #'devdocs-lookup
+    "D" #'apropos-documentation)
+
+
+  (devdocs-update-all))
+
+;;;; `helpful' :: <https://github.com/Wilfred/helpful>
+
 ;; NOTE: there are some blocking bugs that have gone unfixed for quite a while
 ;;        some symbols' helpful pages cannot be displayed.
 ;;        <https://github.com/Wilfred/helpful/issues/329>
-;;        consider maybe: <https://www.emacswiki.org/emacs/HelpPlus>
+
 (use-package helpful
   :defer 2
   :commands ( helpful-at-point helpful-command helpful-callable
@@ -55,8 +79,10 @@ ElDoc. A better approach is to simply check to see if a message
 was printed, and only have ElDoc display if one wasn't.\""
     (member (current-message) (list nil eldoc-last-message))))
 
-;;; `elisp-demos' :: <https://github.com/xuchunyang/elisp-demos>
+;;;; `elisp-demos' :: <https://github.com/xuchunyang/elisp-demos>
+
 ;;  Display usage examples inside help buffers for Emacs Lisp callables.
+
 (use-package elisp-demos
   :after (helpful)
   :autoload (elisp-demos-advice-helpful-update)

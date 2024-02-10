@@ -24,19 +24,8 @@
 
 ;;; Code:
 
-;;; <https://github.com/astoff/devdocs.el>
-;; NOTE: Must run `devdocs-install' before use.
-;; TODO: Install devdocs automatically.
-(use-package devdocs
-  :commands (devdocs-lookup devdocs-install devdocs-delete devdocs-update-all)
-
-  :config
-  (define-keymap :keymap help-map
-    ;; Replace default `apropos-documentation' binding.
-    "d" #'devdocs-lookup
-    "D" #'apropos-documentation)
-
-  (devdocs-update-all))
+;;
+;;; Packages
 
 ;;; `pandoc-mode' :: <https://joostkremers.github.io/pandoc-mode/>
 (use-package pandoc-mode
