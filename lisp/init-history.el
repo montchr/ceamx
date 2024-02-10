@@ -109,7 +109,8 @@
 
   ;; Also see `ceamx/dogears-transient'.
   (define-keymap :keymap (current-global-map)
-    "M-g d" #'dogears-go
+    ;; TODO: find a new binding maybe
+    ;; "M-g d" #'dogears-go
     "M-g M-b" #'dogears-back
     "M-g M-f" #'dogears-forward
     "M-g M-d" #'dogears-list
@@ -122,6 +123,8 @@
     (when (boundp 'savehist-additional-variables)
       (add-to-list 'savehist-additional-variables #'dogears-list))))
 
+;; TODO: provide a little more context in transient (label for dogears, links maybe...)
+;; TODO: this might not bind consistently due to timing/defers etc
 (after! [transient dogears]
   (transient-define-prefix ceamx/dogears-transient ()
     "Transient menu for `dogears' history navigation commands."
@@ -132,7 +135,9 @@
       ["Find"
         ("d" "go..." dogears-go)
         ("l" "list" dogears-list)
-        ("S" "sidebar" dogears-sidebar)]]))
+        ("S" "sidebar" dogears-sidebar)]])
+
+  (keymap-global-set "M-g d" #'ceamx/dogears-transient))
 
 ;;
 ;;; Undo/redo
