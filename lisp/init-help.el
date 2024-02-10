@@ -88,7 +88,9 @@ was printed, and only have ElDoc display if one wasn't.\""
   :after (helpful)
   :autoload (elisp-demos-advice-helpful-update)
   :init
-  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)
+  :config
+  (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory))))
 
 (provide 'init-help)
 ;;; init-help.el ends here

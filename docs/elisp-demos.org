@@ -1,0 +1,28 @@
+#+TITLE: Ceamx Library Examples
+#+PROPERTY: header-args:elisp :results pp :exports both :eval never-export
+
+* ceamx-devdocs-doc-installed-p
+
+#+begin_src emacs-lisp
+  (ceamx-devdocs-doc-installed-p "nix")
+#+end_src
+
+#+RESULTS:
+: Nix
+
+
+
+* ceamx/devdocs-ensure-doc
+
+#+begin_src elisp
+(ceamx/devdocs-ensure-doc "nix")
+#+end_src
+
+#+RESULTS:
+: "Nix"
+
+* ceamx/devdocs-ensure-docs
+
+#+begin_src emacs-lisp
+  (ceamx/devdocs-ensure-docs '("js" "ts" "nix"))
+#+end_src
