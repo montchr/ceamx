@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'lib-common)
+(require 'lib-help)
 
 ;;
 ;;; Packages
