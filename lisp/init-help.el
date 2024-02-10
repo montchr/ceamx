@@ -49,6 +49,10 @@
     "d" #'devdocs-lookup
     "D" #'apropos-documentation)
 
+  (def-hook! +devdocs-install-nix-docs ()
+    '(nix-mode-hook nix-ts-mode-hook)
+    "Install `devdocs' documents for the Nix language."
+    (ceamx/devdocs-ensure-doc "nix"))
 
   (devdocs-update-all))
 
