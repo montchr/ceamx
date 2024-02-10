@@ -40,9 +40,14 @@
 
 ;;; `pandoc-mode' :: <https://joostkremers.github.io/pandoc-mode/>
 (use-package pandoc-mode
-  :commands pandoc-mode
+  :commands (pandoc-mode)
+  :autoload (pandoc-load-default-settings)
+
   :init
-  (add-hook 'markdown-mode-hook #'pandoc-mode))
+  (add-hook 'markdown-mode-hook #'pandoc-mode)
+
+  ;; Load default major-mode-specific settings.
+  (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 
 (provide 'init-tools)
 ;;; init-tools.el ends here
