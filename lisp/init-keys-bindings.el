@@ -183,13 +183,7 @@
   "f" #'helpful-function
   "F" #'describe-face
   "h" #'helpful-at-point
-  ;; TODO: add as command
-  ;; FIXME: create directory if not exists
-  ;; "H" `("cheatsheet..." . ,(cmd!!
-  ;;                            #'ido-find-file-in-dir
-  ;;                            current-prefix-arg
-  ;;                            ceamx-cheatsheets-dir))
-  ;; TODO:      example:   (cl-find-if #'fboundp '(harper-dad-joint helpful-at-point describe-key))
+  "i" #'consult-info                    ; overrides default `info' bind
   "k" #'helpful-key
   "K" #'describe-key-briefly
   "l" #'find-library
@@ -207,6 +201,15 @@
   ;; holding Ctrl anyway.
   "C-k" #'helpful-key
   "C-o" #'helpful-symbol
+
+  ;; TODO: add as command
+  ;; FIXME: create directory if not exists
+  ;; "H" `("cheatsheet..." . ,(cmd!!
+  ;;                            #'ido-find-file-in-dir
+  ;;                            current-prefix-arg
+  ;;                            ceamx-cheatsheets-dir))
+  ;; TODO:      example:   (cl-find-if #'fboundp '(harper-dad-joint
+  ;; helpful-at-point describe-key))
 
   ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
   "C-h" nil)
