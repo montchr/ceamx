@@ -30,10 +30,12 @@
 (use-package devdocs
   :commands (devdocs-lookup devdocs-install devdocs-delete devdocs-update-all)
 
-  :init
-  (keymap-global-set "C-h D" #'devdocs-lookup)
-
   :config
+  (define-keymap :keymap help-map
+    ;; Replace default `apropos-documentation' binding.
+    "d" #'devdocs-lookup
+    "D" #'apropos-documentation)
+
   (devdocs-update-all))
 
 ;;; `pandoc-mode' :: <https://joostkremers.github.io/pandoc-mode/>
