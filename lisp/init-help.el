@@ -63,7 +63,9 @@
 ;;        <https://github.com/Wilfred/helpful/issues/329>
 
 (use-package helpful
-  :defer 2
+  ;; Avoid a first-time lag when asking for help, which often happens before an
+  ;; idle timer has the chance to run.
+  :demand t
   :commands ( helpful-at-point helpful-command helpful-callable
               helpful-key helpful-symbol helpful-variable))
 
