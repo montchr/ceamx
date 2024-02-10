@@ -1,5 +1,7 @@
 ;;; templates/nix-mode.eld
 
+;; FIXME: `nix-ts-mode' also
+
 nix-mode
 
 (inherit "inherit (" p ") " p ";")

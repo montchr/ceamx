@@ -422,7 +422,7 @@
   "M-j" #'avy-goto-char-timer
   ;; FIXME: does not trigger autoload from use-package
   "C-x u" #'vundo
-  ;; TODO: find a better place
+  ;; TODO: find a better place -- shadows default for `rectangle-mark-mode'
   ;; "C-x SPC" #'hydra-rectangle/body
   )
 
