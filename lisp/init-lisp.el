@@ -80,8 +80,9 @@
 
   (setopt lispy-eval-display-style 'message)
 
-  ;; Possibly the most annoying thing about lispy defaults.
-  (setopt lispy-move-after-commenting nil)
+  ;; I have mixed feelings about this one because it can be jarring and easily
+  ;; lead to mass-commenting expressions. Default is non-nil.
+  (setopt lispy-move-after-commenting t)
 
   ;; via <https://github.com/abo-abo/lispy/pull/619>
   (keymap-set lispy-mode-map "`" #'self-insert-command)
