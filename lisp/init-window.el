@@ -83,6 +83,8 @@
 
 ;;; Code:
 
+(require 'transient)
+
 (require 'lib-common)
 (require 'lib-window)
 
@@ -348,66 +350,58 @@
   ;; 1 and 3 and frame B will have window 2.
   (setopt aw-scope 'frame))
 
-(use-feature! transient
-  :after (ace-window)
-  :config
+(transient-define-prefix ceamx/transient-window ()
+  "Window management transient."
+  :transient-suffix 'transient--do-stay
+  [["Movement"
+     ("h" "left" windmove-left :transient t)
+     ("k" "down" windmove-down :transient t)
+     ("j" "up" windmove-up :transient t)
+     ("l" "right" windmove-right :transient t)
+     ("o" "other" aw-flip-window :transient t) ; previously-selected
+     ("w" "select" ace-window)]
+    ["Resize"
+      ("=" "balance" balance-windows)
+      ("-" "match buffer" fit-window-to-buffer)
+      ;; TODO:
+      ;; ("<" "width-" evil-window-decrease-width)
+      ;; (">" "width+" evil-window-increase-width)
+      ;; ("+" "height+" evil-window-increase-height)
+      ;; ("-" "height-" evil-window-decrease-height)
 
-  ;; via <https://tech.toryanderson.com/2023/08/19/how-can-i-define-transient-color-per-command-like-hydra/>
-  (transient-define-prefix ceamx/transient-window ()
-    "Window navigation transient."
-    :transient-suffix 'transient--do-stay
-    [["Movement"
-       ;; FIXME: unicode arrows cause space offset
-       ;; ("h" "focus ←" windmove-left)
-       ;; ("k" "focus ↓" windmove-down)
-       ;; ("j" "focus ↑" windmove-up)
-       ;; ("l" "focus →" windmove-right)
-       ("h" "left" windmove-left)
-       ("k" "down" windmove-down)
-       ("j" "up" windmove-up)
-       ("l" "right" windmove-right)
-       ("o" "other" aw-flip-window)     ; previously-selected
-       ("w" "select" ace-window)]
-      ["Resize"
-        ("=" "balance" balance-windows)
-        ("-" "match buffer" fit-window-to-buffer)
-        ;; ("<" "width-" evil-window-decrease-width)
-        ;; (">" "width+" evil-window-increase-width)
-        ;; ("+" "height+" evil-window-increase-height)
-        ;; ("-" "height-" evil-window-decrease-height)
+      ]
+    ["Buffer"
+      ("b" "buffer" consult-buffer :transient nil)
+      ;; TODO: `ffap-other-window' (doom)
+      ("f" "file (p)" project-find-file :transient nil)
+      ("F" "file (g)" find-file :transient nil)
+      ("F" "file@other" find-file-other-window)
+      ("g" "grep" consult-ripgrep :transient nil)]
+    ["Split"
+      ;; FIXME: no effect with non-nil / `transient--do-stay'
+      ("H" "to left" ceamx/window-move-left :transient nil)
+      ("J" "to below" ceamx/window-move-down :transient nil)
+      ("K" "to above" ceamx/window-move-up :transient nil)
+      ("L" "to right" ceamx/window-move-right :transient nil)
+      ("s" "swap" ace-swap-window)]
+    ["Scroll"
+      ;; NOTE: These are the correct scroll direction commands, which might
+      ;; appear to be reversed when comparing with labels.
+      ("." "left" scroll-right)
+      ("," "right" scroll-left)
+      ("SPC" "down" scroll-up)
+      ("DEL" "up" scroll-down)]
+    ["Window Lifecycle"
+      ("d" "delete" ace-delete-window)
+      ("D" "delete others" delete-other-windows :transient nil)
+      ;; FIXME:
+      ;; ("n" "new" evil-window-new)
+      ("u" "winner ⮐" winner-undo)
+      ("U" "winner ⮑" winner-redo)
+      ("S" "toggle sides" window-toggle-side-windows)
 
-        ]
-      ["Buffer"
-        ("b" "buffer" consult-buffer)
-        ;; TODO: `ffap-other-window' (doom)
-        ("f" "file (p)" project-find-file)
-        ("F" "file (g)" find-file :transient transient--do-quit-one)
-        ("F" "file@other" find-file-other-window)
-        ("g" "grep" consult-ripgrep :transient transient--do-quit-one)]
-      ["Split"
-        ;; FIXME: no effect unless called interactively
-        ("H" "to left" ceamx/window-move-left)
-        ("J" "to below" ceamx/window-move-down)
-        ("K" "to above" ceamx/window-move-up)
-        ("L" "to right" ceamx/window-move-right)
-        ("s" "swap" ace-swap-window)]
-      ["Scroll"
-        ;; NOTE: These are the correct scroll direction commands, which might
-        ;; appear to be reversed when comparing with labels.
-        ("." "left" scroll-right)
-        ("," "right" scroll-left)
-        ("SPC" "down" scroll-up)
-        ("DEL" "up" scroll-down)]
-      ["Window Lifecycle"
-        ("d" "delete" ace-delete-window)
-        ("D" "delete others" delete-other-windows)
-        ;; FIXME:
-        ;; ("n" "new" evil-window-new)
-        ("u" "winner ⮐" winner-undo)
-        ("U" "winner ⮑" winner-redo)
-        ("S" "toggle sides" window-toggle-side-windows)
+      ("q" "quit" transient-quit-all)]])
 
-        ("q" "quit" transient-quit-all)]]))
 ;; TODO: Ideally this would be bound in a more visible place but it's here to
 ;; avoid lint errors.
 (keymap-global-set "C-x w" #'ceamx/transient-window)
