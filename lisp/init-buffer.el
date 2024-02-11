@@ -68,14 +68,19 @@
   (setopt uniquify-ignore-buffers-re "^\\*"))
 
 ;;; `link-hint' :: <https://github.com/noctuid/link-hint.el>
+
 ;;  avy-based link jumping
+
 (use-package link-hint
   :after (avy)
   :commands ( link-hint-open-link
-              link-hint-open-link-at-point)
+              link-hint-open-link-at-point
+              link-hint-copy-link)
 
   :init
-  (keymap-global-set "M-s u" #'link-hint-open-link)
+  (define-keymap :keymap (current-global-map)
+    "M-s u" #'link-hint-open-link
+    "M-s U" #'link-hint-copy-link)
 
   :config
   (after! [evil]
