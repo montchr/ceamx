@@ -340,10 +340,16 @@
 ;;; "w" => Window
 
 (define-keymap :keymap (current-global-map)
+  ;; I mistakenly hit this sequence frequently instead of C-x C-f, but have never
+  ;; once needed to configure `fill-column' on-demand (that should be configured
+  ;; explicitly, or simply call `set-fill-column' with M-x).
+  "C-x f" #'find-file
+
   "C-x o" #'ace-window
+
   "C-x =" #'balance-windows             ; prev: C-x +
-  "C-x +" nil                           ; TODO: replace
-  )
+  ;; TODO: rebind
+  "C-x +" nil)
 
 ;;; "y" => Copy / Evil Yank
 
