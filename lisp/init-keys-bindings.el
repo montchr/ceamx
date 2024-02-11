@@ -339,11 +339,6 @@
 
 ;;; "w" => Window
 
-(use-feature! init-window
-  :commands (ceamx/transient-window)
-  :config
-  (keymap-global-set "C-x w" #'ceamx/transient-window))
-
 (define-keymap :keymap (current-global-map)
   "C-x o" #'ace-window
   "C-x =" #'balance-windows             ; prev: C-x +

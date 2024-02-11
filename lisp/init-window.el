@@ -406,6 +406,9 @@
         ("S" "toggle sides" window-toggle-side-windows)
 
         ("q" "quit" transient-quit-all)]]))
+;; TODO: Ideally this would be bound in a more visible place but it's here to
+;; avoid lint errors.
+(keymap-global-set "C-x w" #'ceamx/transient-window)
 
 (provide 'init-window)
 ;;; init-window.el ends here
