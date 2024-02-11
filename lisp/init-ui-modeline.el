@@ -36,7 +36,7 @@
 
 (use-feature! time
   :config
-  (setopt display-time-mode -1))
+  (setopt display-time-24hr-format t))
 
 ;; Show the name of the current function definition in the modeline.
 ;; TODO: on hook?
