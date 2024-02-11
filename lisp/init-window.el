@@ -120,11 +120,11 @@
        (preserve-size . (nil . t))
        (window-parameters . ((mode-line-format . nil))))
 
-     ("\\*Buffer List\\*"
-       (display-buffer-in-side-window)
-       (side . top)
-       (slot . 0)
-       (window-height . shrink-window-if-larger-than-buffer))
+     ;; ("\\*Buffer List\\*"
+     ;;   (display-buffer-in-side-window)
+     ;;   (side . top)
+     ;;   (slot . 0)
+     ;;   (window-height . shrink-window-if-larger-than-buffer))
 
      ((lambda (buf act) (member (ceamx-buffer-mode buf) ceamx-occur-grep-modes-list))
        (display-buffer-reuse-mode-window
@@ -192,11 +192,12 @@
      ;;   (slot . -3)
      ;;   (window-parameters . ((no-other-window . t))))
 
-     ("\\*Completions\\*"
-       (display-buffer-in-side-window)
-       (window-height . 0.20)
-       (side . bottom)
-       (slot . -2))
+     ;; FIXME: messed up sizing
+     ;; ("\\*Completions\\*"
+     ;;   (display-buffer-in-side-window)
+     ;;   (window-height . 0.20)
+     ;;   (side . bottom)
+     ;;   (slot . -2))
 
      ("\\*Apropos\\*"
        (display-buffer-in-side-window)
@@ -223,6 +224,7 @@
        (side . bottom)
        (slot . 1))
 
+     ;; FIXME: too tall
      ((lambda (buf act)
         (member (ceamx-buffer-mode buf) ceamx-help-modes-list))
        (display-buffer-reuse-window
@@ -268,15 +270,15 @@
        (side . bottom)
        (slot . 2))
 
-        ;; ((lambda (buf act) (with-current-buffer buf view-mode))
-        ;;  (display-buffer-in-side-window)
-        ;;  (window-height . (/ (frame-height) 3))
-        ;;  (side . bottom)
-        ;;  (slot . 10)
-        ;;  ;; (window-parameters . (;; (no-other-window . t)
-        ;;  ;;                       ;; (mode-line-format . (:eval (ceamx-helper-window-mode-line-format)))
-        ;;  ;;                       ))
-        ;;  )
+     ;; ((lambda (buf act) (with-current-buffer buf view-mode))
+     ;;  (display-buffer-in-side-window)
+     ;;  (window-height . (/ (frame-height) 3))
+     ;;  (side . bottom)
+     ;;  (slot . 10)
+     ;;  ;; (window-parameters . (;; (no-other-window . t)
+     ;;  ;;                       ;; (mode-line-format . (:eval (ceamx-helper-window-mode-line-format)))
+     ;;  ;;                       ))
+     ;;  )
 
      ))
 
