@@ -266,6 +266,7 @@
 
 (require 'init-secrets)
 (require 'init-tools)
+(require 'init-term)
 (require 'init-ledger)
 (require 'init-fun)
 ;; TODO: nothing here yet
