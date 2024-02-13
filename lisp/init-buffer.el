@@ -78,6 +78,7 @@
               link-hint-copy-link)
 
   :init
+  ;; FIXME: unavailable initially (probably due to `:after')
   (define-keymap :keymap (current-global-map)
     "M-s u" #'link-hint-open-link
     "M-s U" #'link-hint-copy-link)

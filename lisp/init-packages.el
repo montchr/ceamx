@@ -268,6 +268,44 @@ recent `magit' changes."
   (setq no-littering-etc-directory ceamx-etc-dir)
   (setq no-littering-var-directory ceamx-var-dir))
 
+;;;; Use `quelpa' for managing Elisp packages from source
+
+;; <https://github.com/quelpa/quelpa>
+
+;; Some packages are not published to the various package repositories. Until
+;; `package-vc-install' is usable for this purpose (in Emacs 29, it's terrible),
+;; `quelpa' is the best option when using Emacs' builtin package manager.
+;; Otherwise, `straight' and `elpaca' have their own approaches to this problem.
+
+;; Note that quelpa uses its own commands, separate from the package.el
+;; commands. See `quelpa-upgrade', `quelpa-upgrade-all', and `quelpa'. By
+;; default, upgrades will be disabled entirely.
+;; <https://github.com/quelpa/quelpa?tab=readme-ov-file#upgrading-packages>
+
+;; NOTE: quelpa boolean settings seem to misuse the "-p" suffix, which is
+;; conventionally intended for predicate functions only.
+
+(use-package quelpa
+  :demand t
+  :preface
+  ;; By default, Quelpa updates a local clone of the MELPA repo on every session
+  ;; startup, which causes a very-noticeable delay. We have no interest in using
+  ;; Quelpa for working with MELPA repos, so disable this entirely before load.
+  ;; <https://github.com/quelpa/quelpa?tab=readme-ov-file#prevent-updating-of-melpa-repo-on-emacs-startup>
+  (setq quelpa-checkout-melpa-p nil)
+  ;; Misbehaving...
+  (setq quelpa-dir (expand-file-name (ceamx-format-version-subdir "quelpa")
+                     ceamx-local-dir)))
+
+;; Add the use-package integration and `:quelpa' keyword.
+(use-package quelpa-use-package
+  :demand t
+  :functions (quelpa-use-package-activate-advice)
+  :config
+  ;; Prevent catastrophic conflicts with `:ensure'.
+  (quelpa-use-package-activate-advice))
+
+;;; Initialize miscellaneous packages adding `use-package' keywords
 
 ;; NOTE: `blackout' is still useful even without `use-package'
 (use-package blackout
