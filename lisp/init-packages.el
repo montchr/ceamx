@@ -260,7 +260,7 @@ recent `magit' changes."
   (setopt use-package-verbose t)
   (setopt use-package-compute-statistics t))
 
-;;;; Essential storage path cleanup for features/packages
+;;; Essential storage path cleanup for features/packages
 
 (use-package no-littering
   :demand t
@@ -268,7 +268,7 @@ recent `magit' changes."
   (setq no-littering-etc-directory ceamx-etc-dir)
   (setq no-littering-var-directory ceamx-var-dir))
 
-;;;; Use `quelpa' for managing Elisp packages from source
+;;; Use `quelpa' for managing Elisp packages from source
 
 ;; <https://github.com/quelpa/quelpa>
 

@@ -42,6 +42,9 @@
 (defun ceamx-lisp-init ()
   "Enable features useful in any Lisp mode."
   (lispy-mode)
+  ;; `outli' overrides some `lispy' features.
+  ;; <https://github.com/jdtsmith/outli?tab=readme-ov-file#configuration>
+  (outli-mode)
   (run-hooks 'ceamx-lisp-init-hook))
 
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
@@ -75,9 +78,6 @@
 
 (use-package lispy
   :commands (lispy-mode)
-
-  :init
-  (add-hook 'ceamx-lisp-init-hook #'lispy-mode)
 
   :config
   ;; Prevent `lispy' from inserting escaped quotes when already inside a string,

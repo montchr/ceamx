@@ -108,9 +108,24 @@
   (keymap-global-set "C-=" #'er/expand-region))
 
 ;;; `scratch' :: <https://codeberg.org/emacs-weirdware/scratch>
+
 ;;  Mode-specific scratch buffers.
+
 (use-package scratch
   :commands scratch)
+
+;;; `outli' :: <https://github.com/jdtsmith/outli>
+
+;; Simple comment-based outlines
+
+(use-package outli
+  :quelpa (outli :fetcher github :repo "jdtsmith/outli")
+
+  :init
+  (add-hook 'text-mode-hook #'outli-mode)
+
+  :config
+  (keymap-set outli-mode-map "C-c C-p" (cmd! outline-back-to-heading)))
 
 
 ;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
