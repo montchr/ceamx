@@ -60,14 +60,6 @@
 
 (require 'init-packages)
 
-;;;; Essential storage path cleanup for features/packages.
-
-(use-package no-littering
-  :demand t
-  :init
-  (setq no-littering-etc-directory ceamx-etc-dir)
-  (setq no-littering-var-directory ceamx-var-dir))
-
 ;;;; Run garbage collection on idle.
 
 ;; <https://gitlab.com/koral/gcmh>

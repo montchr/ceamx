@@ -251,7 +251,7 @@ recent `magit' changes."
 
 (setopt use-package-always-ensure t)
 
-;;;; Improve `use-package' debuggability if necessary:
+;;;; Improve `use-package' debuggability if necessary
 
 (setopt use-package-expand-minimally nil)
 (when (bound-and-true-p init-file-debug)
@@ -260,7 +260,14 @@ recent `magit' changes."
   (setopt use-package-verbose t)
   (setopt use-package-compute-statistics t))
 
-;;;; Initialize packages adding `use-package' keywords:
+;;;; Essential storage path cleanup for features/packages
+
+(use-package no-littering
+  :demand t
+  :init
+  (setq no-littering-etc-directory ceamx-etc-dir)
+  (setq no-littering-var-directory ceamx-var-dir))
+
 
 ;; NOTE: `blackout' is still useful even without `use-package'
 (use-package blackout
