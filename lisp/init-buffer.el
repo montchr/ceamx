@@ -35,6 +35,9 @@
 ;; Disable buffer line wrapping by default.
 (set-default 'truncate-lines t)
 
+;; Add a margin when scrolling vertically
+(setq-default scroll-margin 4)
+
 (use-feature! hl-line
   :commands (hl-line-mode)
   :init

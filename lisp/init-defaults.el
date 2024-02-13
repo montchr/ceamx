@@ -48,7 +48,6 @@
   read-process-output-max (* 1024 1024) ; Increase read size for data chunks
   recenter-positions '(5 bottom)        ; Set re-centering positions
   scroll-conservatively 101             ; Avoid recentering when scrolling far
-  scroll-margin 1                       ; Add a margin when scrolling vertically
   ;; FIXME: probably does not work with `meow', which uses `meow-use-clipboard'
   select-enable-clipboard t             ; Merge system's and Emacs' clipboard
   sentence-end-double-space nil         ; Use a single space after dots
