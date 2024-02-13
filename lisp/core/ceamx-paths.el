@@ -27,6 +27,19 @@
 
 ;;; Code:
 
+;;
+;;; Functions
+
+(defun ceamx-format-version-subdir (parent)
+  "Return a path-like string for a subdirectory of PARENT based on the current Emacs version."
+  (format "%s/%s.%s/"
+    parent
+    emacs-major-version
+    emacs-minor-version))
+
+;;
+;;; Variables
+
 (defvar ceamx-site-lisp-dir
   (concat user-emacs-directory "site-lisp/")
   "Absolute path to the site-lisp directory.")
@@ -69,15 +82,16 @@ Use this for files that change often, like data and cache files.")
   "Directory for natively-compiled eln files.")
 
 (defvar ceamx-packages-dir
-  (expand-file-name (format "packages/%s.%s/"
-                      emacs-major-version
-                      emacs-minor-version)
+  (expand-file-name (ceamx-format-version-subdir "packages")
     ceamx-local-dir)
   "Where packages are stored.
 Intended for setting the value of `package-user-dir'.
 
 Packages will be stored in subdirectories based on the current
 Emacs version to prevent bytecode incompatibility.")
+
+(defvar ceamx-quelpa-dir
+  )
 
 (provide 'ceamx-paths)
 ;;; ceamx-paths.el ends here
