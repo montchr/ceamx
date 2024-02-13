@@ -24,13 +24,6 @@
 
 ;;; Code:
 
-(defvar ceamx-lisp-init-hook '()
-  "Hook to run in all supported Lisp modes.")
-
-(defun ceamx-lisp-init ()
-  "Enable features useful in any Lisp mode."
-  (run-hooks 'ceamx-lisp-init-hook))
-
 (defun ceamx-enable-check-parens-on-save ()
   "Run `check-parens' when the current buffer is saved."
   (add-hook 'after-save-hook #'check-parens nil t))

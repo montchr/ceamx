@@ -36,6 +36,14 @@
 
 ;;; Hooks
 
+(defvar ceamx-lisp-init-hook '()
+  "Hook to run in all supported Lisp modes.")
+
+(defun ceamx-lisp-init ()
+  "Enable features useful in any Lisp mode."
+  (lispy-mode)
+  (run-hooks 'ceamx-lisp-init-hook))
+
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
 
 ;; Add hooks to supported Lisp modes.
