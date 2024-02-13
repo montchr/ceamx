@@ -132,7 +132,11 @@
   (add-hook 'text-mode-hook #'outli-mode)
 
   :config
-  (keymap-set outli-mode-map "C-c C-p" (cmd! outline-back-to-heading)))
+  (define-keymap :keymap outli-mode-map
+    "C-c C-n" #'outline-next-heading
+    "C-c C-p" #'outline-previous-heading
+    "C-c M-h" #'outline-promote
+    "C-c M-l" #'outline-demote))
 
 
 ;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
