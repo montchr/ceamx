@@ -39,28 +39,29 @@
   "User-configurable options for Ceamx."
   :group 'file)
 
-;;; Define default user identity.
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
 
 (require 'init-benchmarking)
 
-;;; Load environment-related constants.
+;;
+;;; Load environment-related constants
+
 (require 'config-env)
 ;; TODO: see bbatsov/prelude for prior art
 (when +sys-wsl-p
   (require 'lib-env-wsl))
 
 ;;
-;;; Initialize packages:
+;;; Initialize packages
 
-;;; Add site-lisp directory tree to load path.
+;; Add site-lisp directory tree to load path.
 (add-to-list 'load-path ceamx-site-lisp-dir)
 (prependq! load-path (subdirs! ceamx-site-lisp-dir))
 
 (require 'init-packages)
 
-;;;; Run garbage collection on idle.
+;;;; Run garbage collection on idle
 
 ;; <https://gitlab.com/koral/gcmh>
 ;; <https://akrl.sdf.org/>
@@ -76,23 +77,24 @@
   (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
 
 ;;
-;;; site-lisp packages
+;;; Local packages
 
-;;;; Custom hooks, largely derived from Doom.
 (use-feature! on
   :demand t)
 
 ;;
 ;;; Libraries
 
-;;; Latest versions of Emacs internals, required by some packages.
+;;;; Latest versions of Emacs internals, required by some packages.
+
 (use-package eldoc)
 (use-package jsonrpc)
 
 ;; FIXME: remove or alias (`##' is very difficult to search for)
 (use-package llama) ;  `##' lambda shorthand => <https://git.sr.ht/~tarsius/llama>
 
-;;; Ceamx basic libraries
+;;;; Ceamx basic libraries
+
 (require 'lib-common)
 (when (display-graphic-p)
   (require 'lib-gui))
@@ -100,10 +102,9 @@
 
 ;;
 ;;; Configuration
-;;
 
 ;; Generally sorted in order of likelihood of first user interaction.
-;;
+
 ;; An interaction can be one-way or two-way:
 ;; keep in mind that perception is still a (one-way) interaction,
 ;; so legibility of displayed information is important immediately,
@@ -113,7 +114,7 @@
 
 (require 'init-env)
 
-;;; Displays + Appearance
+;;;; Displays + Appearance
 
 ;; FIXME: for science: prevent startup warnings?
 ;; (require 'init-frame-hooks)
@@ -125,6 +126,7 @@
 (require 'init-ui)
 
 ;;;; Theme
+
 (require 'init-ui-theme)
 ;; TODO: probably not for tty?
 (pcase ceamx-theme-family
@@ -138,6 +140,7 @@
 
 
 ;;;; Typography + Iconography
+
 (when (display-graphic-p)
   (require 'init-ui-font))
 ;; Icons *can* work in non-graphical environments, so packages are
@@ -145,6 +148,7 @@
 (require 'init-ui-icons)
 
 ;;;; Modeline
+
 (require 'config-ui)
 (require 'init-ui-modeline)
 (pcase ceamx-modeline-provider
@@ -158,6 +162,7 @@
 (require 'init-workspace)
 
 ;;;; Sidebar
+
 ;; TODO: should not be considered "ui" -- or rather, "ui" should mean "appearance"
 ;; TODO: figure out how to load as late as possible?
 ;; TODO: just remove it?
@@ -186,7 +191,8 @@
 
 (require 'init-search)
 
-;;; Completion-At-Point
+;;;; Completion-At-Point
+
 (require 'config-completion)
 (require 'init-completion)
 ;; TODO: this
@@ -195,10 +201,12 @@
 ;;   ;; FIXME: rename/restruct feature to be specific to corfu, separate generalities
 ;;   (`corfu      (require 'init-completion)))
 
-;;; Help
+;;;; Help
+
 (require 'init-help)
 
-;;; Actions
+;;;; Actions
+
 (require 'init-embark)
 (require 'init-wgrep)
 
@@ -210,11 +218,12 @@
 (require 'init-files)
 (require 'init-dired)
 
-;;; Editing
+;;;; Editing
+
 (require 'init-editor)
 (require 'init-templates)
 
-;;; Memex
+;;;; Memex
 
 ;; TODO: move after syntaxes? org-mode is heavy
 
@@ -222,7 +231,7 @@
 (require 'init-notes)
 (require 'init-notes-denote)
 
-;;; Language/syntax support
+;;;; Language/syntax support
 
 (require 'init-prog)
 (require 'init-lisp)
@@ -245,13 +254,16 @@
 (require 'init-eglot)
 ;; (require 'init-lsp)
 
-;;; Linting
+;;;; Linting
+
 (require 'init-flycheck)
 
-;;; Tree-Sitter
+;;;; Tree-Sitter
+
 (require 'init-treesitter)
 
-;;; Miscellaneous
+;;;; Miscellaneous
+
 (require 'init-secrets)
 (require 'init-tools)
 (require 'init-ledger)
@@ -259,12 +271,12 @@
 ;; TODO: nothing here yet
 ;; (require 'init-news)
 
-;;; Keybindings
+;;;; Keybindings
+
 (require 'init-keys-bindings)
 
 ;;
 ;;; Postlude
-;;
 
 (defun +maybe-start-server ()
   "Auto-start Emacs daemon if not already running."

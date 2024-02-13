@@ -43,6 +43,7 @@
 
 ;;
 ;;; `goto-address' (internal)
+
 ;; Linkify URLs and email addresses in buffers.
 
 (use-feature! goto-addr
@@ -57,7 +58,9 @@
     ))
 
 ;;; `uniquify' (internal)
+
 ;;  Disambiguate identically-named buffers.
+
 (use-feature! uniquify
   :config
   (setopt uniquify-buffer-name-style 'forward)
@@ -102,6 +105,7 @@
   )
 
 ;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
+
 (use-package expand-region
   :commands er/expand-region
   :config
@@ -129,21 +133,20 @@
 
 
 ;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
+
 ;;  Make form-feed (page-break) characters serve their purpose, visually.
+
 (use-package page-break-lines
   :commands (global-page-break-lines-mode)
   :config
+  ;; FIXME: no effect in buffer despite being enabled -- once toggled, it works
   (global-page-break-lines-mode))
 
 ;;; `rainbow-mode' :: <https://elpa.gnu.org/packages/rainbow-mode.html>
-;;  colorize color names and hexcodes in buffers
-(use-package rainbow-mode)
 
-;; FIXME: `consult-project-buffer' does not reliably find files! cannot be trusted
-;; (after! [consult-buffer]
-;;   ;; TODO:
-;;   ;; (setopt consult-buffer-filter ...)
-;;   )
+;; Colorize color names and hexcodes in buffers
+
+(use-package rainbow-mode)
 
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
