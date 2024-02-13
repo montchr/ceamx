@@ -53,129 +53,49 @@
 ;;       determine what is bound to "[" or "]" directly. i would have thought
 ;;       prefix mapped to keymap, but maybe evil is weirder than that...
 
-;;;; Previous
+;;;; Buffers
 
-;; (def-arm! ceamx-go-prev-map "[" "[Prev]"
-;;   "TAB" #'tab-previous
-;;   "["   #'previous-buffer
-;;   "b"   #'previous-buffer
-;;   "e"   #'flycheck-previous-error
-;;   "F"   #'previous-window-any-frame
-;;   "t"   #'tab-previous)
+(require 'lib-buffer)
 
-;;;; Next
+;; Remove the default binding to `elisp-byte-compile-buffer' since we are not
+;; byte-compiling init files at this time.
+(keymap-unset emacs-lisp-mode-map "C-c C-b" t)
 
-;; (def-arm! ceamx-go-next-map "]" "[Next]"
-;;   "TAB" #'tab-next
-;;   "]"   #'next-buffer
-;;   "b"   #'next-buffer
-;;   "e"   #'flycheck-next-error
-;;   "F"   #'next-window-any-frame
-;;   "t"   #'tab-next)
+(define-keymap :keymap (current-global-map)
+  "C-c [" #'previous-buffer
+  "C-c ]" #'next-buffer
+  "C-c b" #'scratch-buffer)
 
-;;;; Goto
+;;;; Code
 
-;; TODO: make this more convenient
+(keymap-set goto-map "c" #'xref-find-definitions)
 
-;; (def-map! ceamx-goto-map
-;;   "d" '("definition" . xref-find-definitions)
-;;   "r" '("references" . xref-find-references))
+(defvar-keymap ceamx-code-map
+  "a" '("action.." . eglot-code-actions)
+  "d" #'xref-find-definitions
+  "r" '("rename..." . eglot-rename))
 
-;;; "B" => Bookmarks
 
-;; (def-arm! ceamx-bookmark-map "B" "[Bookmarks]"
-;;   "F" #'burly-bookmark-frames
-;;   "W" #'burly-bookmark-windows)
+;;;; Files
 
-;;; "b" => Buffers
-
-;; (def-arm! ceamx-buffer-map "b" "[Buffer]"
-;;   ;; FIXME: only consider file-visiting buffers, or perhaps buffers i am editing (recent)
-;;   "[" '("prev" . previous-buffer)
-;;   "]" '("next" . next-buffer)
-
-;;   "b" `("switch..." . consult-project-buffer)
-;;   "B" '("switch (any)..." . consult-buffer)
-;;   "d" '("close" . kill-current-buffer)
-;;   "k" '("close (+win)" . kill-this-buffer)
-;;   "M" '("*Messages*" . view-echo-area-messages)
-;;   "o" '("other" . mode-line-other-buffer)
-;;   "r" '("revert" . revert-buffer)
-;;   "R" '("rename..." . rename-buffer)
-;;   "s" '("save" . save-buffer)
-;;   "S" '("save all..." . save-some-buffers)
-;;   ;; TODO: maybe find a better place for this binding
-;;   "u" '("visual undo..." . vundo)
-;;   "x" '("*scratch*" . scratch-buffer)
-;;   "X" `("*scratch* (m)" . ,(cmd! (scratch major-mode))))
-
-;;; "c" => Code
-
-;; (def-arm! ceamx-code-map "C" "Code"
-;;   "a" '("action.." . eglot-code-actions)
-;;   "d" #'xref-find-definitions
-;;   "h" #'helpful-at-point
-;;   "i" #'iedit-mode
-;;   "r" '("rename..." . eglot-rename))
-
-;;; "e" => Eval
-
-;; (def-arm! ceamx-eval-map "e" "[Eval]"
-;;   "b" #'eval-buffer
-;;   "d" #'eval-defun
-;;   "e" #'eval-last-sexp
-;;   "E" #'eval-expression
-;;   "i" #'ielm
-;;   "r" #'eval-region)
-
-;;; "f" => Files
-
-(def-arm! ceamx-file-map "f" "[File]"
+(defvar-keymap ceamx-file-map
   ;; TODO
   ;; "u" #'+sudo-find-file
   ;; "U" #'+sudo-this-file
   ;; "y" #'+yank-this-file-name
 
-  "C" '("copy..." . ceamx/copy-this-file)
-  "d" '("diff with..." . ceamx/diff-with-file)
-
-  ;; FIXME: kill buffer on file deletion
-  "D" '("delete" . ceamx/delete-this-file)
-
-  ;; TODO: show dirvish preview instead of dired preview
+  "c" '("copy..." . ceamx/copy-this-file)
+  "d" '("delete" . ceamx/delete-this-file)
   "f" '("find (g)..." . find-file)
-
-  "R" '("rename/move..." . ceamx/move-this-file)
+  "r" '("rename/move..." . ceamx/move-this-file)
   "s" '("save" . save-buffer)
-  "S" '("save as..." . write-file))
+  "S" '("save as..." . write-file)
 
-;;; "F" => Frames
+  "C-d" '("diff with..." . ceamx/diff-with-file))
 
-;; (def-arm! ceamx-frame-map "F" "[Frame]"
-;;   "b" '("save layout..." . burly-bookmark-frames)
-;; 	"F" '("switch to..." . select-frame-by-name)
-;;   "n" '("create" . make-frame-on-current-monitor)
-;;   "N" '("create on monitor..." . make-frame-on-monitor)
-;;   "o" '("other" . other-frame)
-;;   "R" '("rename..." . set-frame-name)
-;;   "[" '("prev" . previous-window-any-frame)
-;;   "]" '("next" . next-window-any-frame))
+(keymap-global-set "C-c e" ceamx-file-map)
 
-;;; "g" => Git
-
-;; TODO: disabled to try out vanilla keybinds with meow keypad defaults
-;; (def-arm! ceamx-git-map "g" "[Git]"
-;;   "b" #'magit-branch
-;;   "B" #'magit-blame
-;;   "f" #'magit-find-file
-;;   "g" #'magit-status
-;;   "G" #'magit-dispatch
-;;   "l" #'magit-log-buffer-file
-;;   "s" #'magit-stage-file
-;;   "S" #'magit-unstage-file
-;;   "t" #'git-timemachine)
-
-;;; Help -- "C-h"
+;;;; Help
 
 (define-keymap :keymap help-map
   "c" #'helpful-callable
@@ -202,133 +122,11 @@
   "C-k" #'helpful-key
   "C-o" #'helpful-symbol
 
-  ;; TODO: add as command
-  ;; FIXME: create directory if not exists
-  ;; "H" `("cheatsheet..." . ,(cmd!!
-  ;;                            #'ido-find-file-in-dir
-  ;;                            current-prefix-arg
-  ;;                            ceamx-cheatsheets-dir))
-  ;; TODO:      example:   (cl-find-if #'fboundp '(harper-dad-joint
-  ;; helpful-at-point describe-key))
 
   ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
   "C-h" nil)
 
-;;; "i" => Insertions
-
-;; (def-arm! ceamx-insert-map "i" "[Insert]"
-;;   "t"  #'tempel-insert
-;;   "y"  #'yank-from-kill-ring)
-
-;;; Notes / Org-Mode
-
-;;;; "X" / "n o c" => Org-Capture
-
-;; (def-arm! ceamx-capture-map "X" "[Capture]"
-;;   "X" '("capture..." . org-capture))
-
-;;;; "o" / "n o" => Org-Mode
-
-;; (def-arm! ceamx-org-map "o" "[Org-Mode]"
-;;   "a" #'org-agenda
-;;   "c" '("capture..." . ceamx-capture-map)
-;;   "l" #'org-store-link
-;;   "t" '("todos" . org-todo-list))
-
-;;;; "n" => Notes
-
-;; (def-arm! ceamx-notes-map "n" "[Note]"
-;;   "b" #'denote-backlinks
-;;   "c" #'org-capture
-;;   "d" #'denote-date
-;;   "f" '("[find]" . (keymap))
-;;   "f f" #'denote-find-link
-;;   "f b" #'denote-find-backlink
-;;   "i" #'denote-link                     ; "insert" mnemonic
-;;   "I" #'denote-add-links
-;;   "j" #'my-denote-journal               ; our custom command
-;;   "n" #'denote
-;;   "N" #'denote-type
-;;   "o" '("[Org-Mode]" . ceamx-org-map)
-;;   ;; Note that `denote-rename-file' can work from any context, not just
-;;   ;; Dired buffers.  That is why we bind it here to the `global-map'.
-;;   "r" #'denote-rename-file
-;;   "R" #'denote-rename-file-using-front-matter
-;;   "s" #'denote-subdirectory
-;;   "t" #'denote-template
-;;   ;; "zettelkasten" mnemonic
-;;   "z" #'denote-signature)
-
-;;; "O" => Open
-
-;; (def-arm! ceamx-open-map "o" "[Open]"
-;;   "d" #'dired
-;;   "e" #'eshell
-;;   "l" '("link-at-point" . link-hint-open-link-at-point)
-;;   "L" '("link..." . link-hint-open-link)
-;;   "m" '("mail" . compose-mail)
-;;   "n" '("news" . newsticker-show-news)
-;;   "s" #'suggest)
-
-;;; "p" => Projects
-
-;; (def-arm! ceamx-project-map "p" "[Project]"
-;;   "a" '("add..." . projectile-add-known-project)
-;;   "f" '("find file..." . projectile-find-file)
-;;   "i" '("invalidate cache" . projectile-invalidate-cache)
-;;   "p" '("switch..." . projectile-switch-project))
-
-;;; "q" => Session
-
-;;;; "q p" Package Management
-
-;; (def-map! ceamx-packages-map
-;;   "b" #'embark-browse-package-url
-;;   "c" #'package-autoremove
-;;   "d" #'package-delete
-;;   "i" #'describe-package
-;;   "I" #'package-install
-;;   "p" #'list-packages
-;;   "r" #'package-refresh-contents
-;;   "s" #'use-package-report
-;;   "u" #'package-upgrade
-;;   "U" #'package-upgrade-all)
-
-
-;; (def-arm! ceamx-session-map "q" "[Session]"
-;;   "f" '("font..." . fontaine-set-preset)
-;;   "p" '("packages" . ceamx-packages-map)
-;;   "q" '("close frame" . delete-frame)
-;;   "Q" '("save+quit" . save-buffers-kill-emacs)
-;;   "r" '("restart" . restart-emacs)
-;;   "t" '("theme..." . consult-theme))
-
-;;; "s" => Search
-
-(def-arm! ceamx-search-map "s" "[Search]"
-  "d" `("directory..." . ,(cmd! (consult-ripgrep
-                                  (file-name-directory buffer-file-name))))
-  "h" '("history..." . consult-isearch-history)
-  "j" '("symbols (f)..." . consult-lsp-file-symbols)
-  "J" '("symbols (g)..." . consult-lsp-symbols)
-  "l" '("library..." . (lambda () (interactive "P")
-                         (call-interactively
-                           (if %
-                             #'find-library-other-window
-                             #'find-library))))
-  "o" '("outline (f)..." . consult-outline)
-  ;; TODO: use thing-at-point as default value like `projectile-ripgrep' (which cannot find ripgrep)
-
-  "p" '("grep (p)..." . consult-ripgrep)
-  "R" #'project-query-replace-regexp
-  ;; "R" '("replace (p)..." . projectile-replace)
-  "s" '("line (f)..." . consult-line)
-  "v" '("variable" . find-variable-at-point)
-  "V" '("variable..." . find-variable)
-  ;; "x" '("refs (p)" . projectile-find-references)
-  )
-
-;;; "t" => Toggles
+;;;; Toggles
 
 ;; (def-arm! ceamx-toggle-map "t" "[Toggle]"
 ;;   "l" #'display-line-numbers-mode
@@ -337,7 +135,7 @@
 ;;   "t" #'treemacs
 ;;   "w" '("side windows" . window-toggle-side-windows))
 
-;;; "w" => Window
+;;;; Window
 
 (define-keymap :keymap (current-global-map)
   ;; I mistakenly hit this sequence frequently instead of C-x C-f, but have never
@@ -351,44 +149,13 @@
   ;; TODO: rebind
   "C-x +" nil)
 
-;;; "y" => Copy / Evil Yank
-
-;; (def-arm! ceamx-yank-map "y" "[Yank]"
-;;   "l" '("link (visible)" . link-hint-copy-link))
-
-;;; "TAB" => Tabs
-
-;; (def-arm! ceamx-tab-map "TAB" "[Tab]"
-;;   "TAB"  '("other" . tab-recent)
-;;   "d"    '("delete" . tab-close)
-;;   "h"    '("prev" . tab-previous)
-;;   "l"    '("next" . tab-next)
-;;   "n"    '("new" . tab-new)
-;;   "t"    '("other" . tab-recent)
-;;   "x"    '("close" . tab-close))
-
-;;; Top-level leader map
+;;; Leader Bindings
 
 ;; TODO: why not `other-buffer'?
 (leader-key! "`"   '("other buffer" . mode-line-other-buffer))
-;; (leader-key! "j"   '("jump: line..." . consult-line))
-
-;; (leader-key! "a" '("agenda..." . consult-org-agenda))
 
 ;; TODO: install
 ;; (leader-key! "?"   #'consult-apropos)
-
-;; (define-keymap :keymap mode-specific-map
-;;   ;; TODO: "a" => Agenda (in progress)
-;;   ;; TODO: "d"
-;;   ;; "k"
-;;   ;; "l"
-;;   ;; "m" => RESERVED for mode-specific local maps
-;;   ;; "r"
-;;   ;; "u"
-;;   ;; "v"
-;;   ;; "z"
-;;   )
 
 (after! [evil]
   ;; Bind leader key to existing leader map.
