@@ -79,6 +79,8 @@ of Emacs."
 ;;
 ;;; Keymaps
 
+(defvar-keymap ceamx-code-map)
+(defvar-keymap ceamx-file-map)
 
 (provide 'config-keys)
 ;;; config-keys.el ends here

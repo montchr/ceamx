@@ -60,17 +60,18 @@
 
 ;;;; Code
 
+;; TODO: consider something more mnemonic?
 (keymap-set goto-map "c" #'xref-find-definitions)
 
-(defvar-keymap ceamx-code-map
+(define-keymap :keymap ceamx-code-map
   "a" '("action.." . eglot-code-actions)
+  ;; "c" #'eglot
   "d" #'xref-find-definitions
   "r" '("rename..." . eglot-rename))
 
-
 ;;;; Files
 
-(defvar-keymap ceamx-file-map
+(define-keymap :keymap ceamx-file-map
   ;; TODO
   ;; "u" #'+sudo-find-file
   ;; "U" #'+sudo-this-file
