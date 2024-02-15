@@ -67,6 +67,7 @@
       '("Output\\*$"
          "\\*Async-native-compile-log\\*"
          "\\*Compile-Log\\*"
+         "\\*compilation\\*"     ; not necessarily covered by `compilation-mode'
          "\\*vc\\*"
          "\\*Warnings\\*"
          "\\*Embark Export"

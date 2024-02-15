@@ -268,6 +268,7 @@
 
 (require 'init-tools)
 (require 'init-tools-ledger)
+(require 'init-tools-pdf)
 
 (require 'init-term)
 
