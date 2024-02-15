@@ -265,12 +265,13 @@
 ;;;; Miscellaneous
 
 (require 'init-secrets)
+
 (require 'init-tools)
+(require 'init-tools-ledger)
+
 (require 'init-term)
-(require 'init-ledger)
+
 (require 'init-fun)
-;; TODO: nothing here yet
-;; (require 'init-news)
 
 ;;;; Keybindings
 
