@@ -72,5 +72,16 @@
   (setopt repeat-exit-key "ESC")
   (repeat-mode 1))
 
+;;; free-keys :: <https://github.com/Fuco1/free-keys>
+
+;;  Show free keybindings for modkeys or prefixes.
+
+;; > If called with prefix argument C-u, you can specify a prefix map to be
+;; > used, such as C-c or C-c C-x (these are specified as a string).
+
+(use-package free-keys
+  :defer t
+  :commands (free-keys))
+
 (provide 'init-keys)
 ;;; init-keys.el ends here
