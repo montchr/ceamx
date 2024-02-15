@@ -78,21 +78,7 @@ of Emacs."
 
 ;;
 ;;; Keymaps
-;;
 
-;;; Interceptions
-
-;; FIXME: Mode removed, delete.
-(defvar-keymap ceamx-intercept-mode-map
-  :doc "High-precedence user-defined keymap.")
-
-;;; Leader
-
-(unless (commandp 'ceamx-leader-map)
-  (define-prefix-command 'ceamx-leader-map))
-(defvar-keymap ceamx-leader-map
-  :doc "User-defined leader keymap."
-  :parent mode-specific-map)
 
 (provide 'config-keys)
 ;;; config-keys.el ends here

@@ -45,14 +45,6 @@
 (keymap-global-set "<wheel-left>" #'scroll-left)
 (keymap-global-set "<wheel-right>" #'scroll-right)
 
-;;; Navigation maps
-
-;; TODO: merge both `ceamx-go-prev-map' and `ceamx-go-next-map' into the
-;;       appropriate leaderless evil motion state bindings e.g. "[" and "]" in
-;;       normal state. i tried doing that quickly but am not sure how to
-;;       determine what is bound to "[" or "]" directly. i would have thought
-;;       prefix mapped to keymap, but maybe evil is weirder than that...
-
 ;;;; Buffers
 
 (require 'lib-buffer)
