@@ -63,6 +63,7 @@
 ;; TODO: consider something more mnemonic?
 (keymap-set goto-map "c" #'xref-find-definitions)
 
+(keymap-global-set "M-C" #'ceamx-code-map)
 (define-keymap :keymap ceamx-code-map
   "a" '("action.." . eglot-code-actions)
   ;; "c" #'eglot
