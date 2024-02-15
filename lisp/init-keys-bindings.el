@@ -71,6 +71,8 @@
 
 ;;;; Files
 
+(keymap-global-set "C-c f" ceamx-file-map)
+(keymap-global-set "C-c C-f" ceamx-file-map)
 (define-keymap :keymap ceamx-file-map
   ;; TODO
   ;; "u" #'+sudo-find-file
@@ -85,8 +87,6 @@
   "S" '("save as..." . write-file)
 
   "C-d" '("diff with..." . ceamx/diff-with-file))
-
-(keymap-global-set "C-c e" ceamx-file-map)
 
 ;;;; Help
 
