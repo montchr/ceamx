@@ -184,6 +184,8 @@
   "C-'" #'avy-goto-char-2
 
   "M-j" #'avy-goto-char-timer
+  ;; Logical progression from M-f for `forward-word'.
+  "M-F" #'forward-symbol
 
   ;; FIXME: does not trigger autoload from use-package
   "C-x u" #'vundo
