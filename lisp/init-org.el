@@ -85,7 +85,6 @@
   :commands (doct))
 
 (use-feature! org-capture
-  :after (org doct)
   :config
   (setopt org-capture-templates
         (doct `(("Personal todo"
