@@ -97,6 +97,14 @@
                  :template ("* TODO %?"
                              "%i %a"))))))
 
+;;; org-ql :: <https://github.com/alphapapa/org-ql>
+
+;; > A searching tool for Org-mode, including custom query languages, commands,
+;; > saved searches and agenda-like views, etc.
+
+(use-package org-ql
+  :commands (org-ql-find org-ql-search))
+
 ;;; org-modern <https://github.com/minad/org-modern>
 (use-package org-modern
   :after (org)
