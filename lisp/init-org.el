@@ -87,15 +87,15 @@
 (use-feature! org-capture
   :config
   (setopt org-capture-templates
-        (doct `(("Personal todo"
-                 :keys "t"
-                 :icon ("checklist" :set "octicon" :color "green")
-                 :file +org-capture-default-file
-                 :prepend t
-                 :headline "Inbox"
-                 :type entry
-                 :template ("* TODO %?"
-                             "%i %a"))))))
+          (doct `(("Inbox"
+                   :keys "t"
+                   :icon ("checklist" :set "octicon" :color "green")
+                   :file ceamx-org-capture-default-file
+                   :prepend t
+                   :headline "Inbox"
+                   :type entry
+                   :template ("* TODO %?"
+                              "%i %a"))))))
 
 ;;; org-ql :: <https://github.com/alphapapa/org-ql>
 
