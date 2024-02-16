@@ -25,17 +25,14 @@
 
 (require 'config-notes)
 
-(unless (file-directory-p ceamx-notes-dir)
-  (make-directory ceamx-notes-dir))
-
 (use-package denote
   :config
-  (setopt denote-directory ceamx-notes-dir)
+  (setopt denote-directory ceamx-notes-default-dir)
   (setopt denote-known-keywords '("emacs"))
   (setopt denote-infer-keywords t)
   (setopt denote-sort-keywords t)
   (setopt denote-prompts '(title keywords))
-  ;; TODO: exclude gtd
+  ;; TODO: exclude ".archive"
   ;; (setopt denote-excluded-directories-regexp nil)
   (setopt denote-excluded-keywords-regexp nil)
   ;; Pick dates, where relevant, with Org's advanced interface:
@@ -52,8 +49,8 @@
   (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
   ;; We use different ways to specify a path for demo purposes.
   (setopt denote-dired-directories
-          (list denote-directory
-                (thread-last denote-directory (expand-file-name "attachments"))))
+    (list denote-directory
+      (thread-last denote-directory (expand-file-name "attachments"))))
   (add-hook 'dired-mode-hook #'denote-dired-mode)
   ;; Alternatively:
   ;; (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)

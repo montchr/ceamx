@@ -22,12 +22,28 @@
 
 ;;; Code:
 
+(require 'f)
+
 (require 'ceamx-paths)
 
 (defvar ceamx-notes-dir
-  (file-name-as-directory
-   (concat ceamx-home-dir "Documents/notes"))
+  (f-join ceamx-home-dir "Documents/notes")
   "Base directory for note storage.")
+
+(defvar ceamx-agenda-dir
+  (f-join ceamx-notes-dir "g2d"))
+
+(defvar ceamx-dailies-dir
+  (f-join ceamx-notes-dir "daily"))
+
+(defvar ceamx-notes-default-dir
+  (f-join ceamx-notes-dir "default"))
+
+(defvar ceamx-journal-dir
+  (f-join ceamx-notes-dir "journal"))
+
+(defvar ceamx-work-notes-dir
+  (f-join ceamx-notes-dir "work"))
 
 (provide 'config-notes)
 ;;; config-notes.el ends here

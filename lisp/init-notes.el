@@ -24,14 +24,21 @@
 
 ;;; Code:
 
+(require 'f)
+
+(require 'config-notes)
+
+;; Create all required directories if not already present.
+(dolist (dir (list ceamx-notes-dir ceamx-journal-dir ceamx-agenda-dir))
+  (f-mkdir-full-path dir))
+
 ;;
 ;;; consult-notes <https://github.com/mclear-tools/consult-notes>
-;;
 
 (use-package consult-notes
   ;; FIXME: :elpaca (:host github :repo "mclear-tools/consult-notes")
   :commands (consult-notes
-             consult-notes-search-in-all-notes))
+              consult-notes-search-in-all-notes))
 
 ;; via <https://github.com/mclear-tools/consult-notes#embark-support>
 ;; (after! [consult-notes embark]

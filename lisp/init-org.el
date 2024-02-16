@@ -32,21 +32,26 @@
 (require 'config-notes)
 (require 'config-org)
 
+;; Most notes will be stored in `ceamx-notes-dir'.
+;;
+;; The value of `org-directory' will be used as a default destination for new
+;; notes, especially as they relate to tasks and agendas. For that reason, use
+;; the `ceamx-agenda-dir'.
+;;
 ;; Must be set before loading Org-Mode.
-;; TODO: move to `config-org'?
-(defvar org-directory ceamx-notes-dir)
-
-(unless (file-directory-p org-directory)
-  (make-directory org-directory))
+(defvar org-directory ceamx-agenda-dir)
+(f-mkdir-full-path org-directory)
 
 (use-package org
-  ;; FIXME: :elpaca (:autoloads "org-loaddefs.el")
-
   :init
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
   (add-hook 'org-mode-hook #'visual-line-mode)
 
   :config
+  (setopt org-agenda-files
+    (append
+      (f-glob "*.org" ceamx-agenda-dir)
+      (f-glob "*.org" ceamx-work-notes-dir)))
 
   ;; via <https://github.com/minad/org-modern#configuration>
   ;; Editing settings
