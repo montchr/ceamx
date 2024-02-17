@@ -54,6 +54,13 @@ theme)."
                  (const :tag "The `standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
+(defcustom ceamx-font-height-multiplier 1.0
+  "Multiplier for display font size.
+Intended for use as a per-system (or, ideally, per-display)
+accommodation for varying pixel densities."
+  :group 'ceamx
+  :type '(float))
+
 ;; TODO: implement
 ;;       see `modus-themes-items' for available options source for that theme family
 
@@ -72,8 +79,8 @@ theme)."
 ;; FIXME: doesn't seem to have desired effect?
 (defvar ceamx-ui-theme-family-package
   (alist-get ceamx-theme-family '((ef . ef-themes)
-                                 (modus . modus-themes)
-                                 (nano . nano-theme))))
+                                   (modus . modus-themes)
+                                   (nano . nano-theme))))
 
 ;; TODO: use these
 (defvar ceamx-ui-light-theme-alist '((modus . modus-operandi)

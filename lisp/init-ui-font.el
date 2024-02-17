@@ -23,7 +23,9 @@
 ;;; Code:
 
 (require 'config-env)
+
 (require 'lib-common)
+(require 'lib-ui-font)
 
 (use-package fontaine
   :demand t
@@ -41,41 +43,49 @@
   ;;        old MacBookPro hardware (hodgepodge system), so could be a general
   ;;        ppi issue -- but i've had the preset set to `small' for a while and
   ;;        haven't noticed any issues since then
+
+  ;; original values from earlier settings:
+  ;;        (xsmall :default-height 100)
+  ;; (small :default-height 110)
+  ;; (regular :default-height 140)
+  ;; (regular-alt :default-height 130)
+  ;; (medium :default-height 160)
+  ;; (medium-alt :default-height 150)
+  ;; (large :default-height 180)
+  ;; (large-alt :default-height 170
+  ;;   :line-spacing 0.1)
+  ;; (xlarge :default-height 240
+  ;;   :line-spacing nil)
+
   (setopt fontaine-presets
-    `((xsmall :default-height 100)
-       (small :default-height 110)
-       (regular :default-height 140)
-       (regular-alt :default-height 130)
-       (medium :default-height 160)
-       (medium-alt :default-height 150)
-       (large :default-height 180)
-       (large-alt :default-height 170
-         :line-spacing 0.1)
-       (xlarge :default-height 240
-         :line-spacing nil)
+    `((regular
+        :default-height ,(ceamx-font-height 100))
+       (medium
+         :default-height ,(ceamx-font-height 120))
+       (large
+         :default-weight semilight
+         :default-height ,(ceamx-font-height 140)
+         :bold-weight extrabold)
+
        (t
-         ;; TODO: set values from nix config (or, less ideally, by env vars)
          :default-family "Iosevka Comfy"
-         :default-weight ,(if +sys-mac-p 'medium 'regular)
-         :default-height 100
-         :fixed-pitch-family "Iosevka Comfy"
+         :default-family "Monospace"
+         :default-weight regular
+         :default-height ,(ceamx-font-height 100)
+         :fixed-pitch-family nil
          :fixed-pitch-weight nil
          :fixed-pitch-height 1.0
          :fixed-pitch-serif-family "Iosevka Comfy Motion"
          :fixed-pitch-serif-weight nil
+         :fixed-pitch-serif-height 1.0
          :variable-pitch-family "Inter"
-         ;; TODO: probably worth trying one of the others, maybe not-wide
-         ;; :variable-pitch-family "Iosevka Comfy Wide Duo"
          :variable-pitch-weight nil
-         ;; TODO: why this value and not 1.0 ?
-         :variable-pitch-height 0.9
+         :variable-pitch-height 1.0
          :bold-family nil
-         :bold-weight ,(if +sys-mac-p 'bold 'semibold)
+         :bold-weight bold
          :italic-family nil
          :italic-slant italic
-         :line-spacing nil
-         ;; :line-spacing 0.1
-         )))
+         :line-spacing nil)))
 
   ;; Persist latest preset across sessions.
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
