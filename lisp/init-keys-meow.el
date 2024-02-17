@@ -149,7 +149,9 @@
   ;; FIXME: prevent rebinding of SPC in Info-mode
   (pushnew! meow-mode-state-list
             ;; shells
+            ;; TODO: use `ceamx-repl-modes-list'
             '(comint-mode . insert)
+            '(eat-mode . insert)
             '(eshell-mode . insert)
             ;; writing
             '(diary-mode . normal)
