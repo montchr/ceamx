@@ -38,7 +38,12 @@
   (setopt dired-kill-when-opening-new-dired-buffer t)
   (setopt dired-listing-switches "-al --group-directories-first")
   (setopt dired-mouse-drag-files t)
-  (setopt mouse-drag-and-drop-region-cross-program t))
+
+  (setopt mouse-drag-and-drop-region-cross-program t)
+
+  (define-keymap :keymap dired-mode-map
+    ;; NOTE: Overrides global binding for completion-at-point/cape commands.
+    "M-p" #'dired-up-directory))
 
 ;;; `dirvish' :: <https://github.com/alexluigit/dirvish>
 ;;
