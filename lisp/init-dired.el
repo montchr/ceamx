@@ -80,13 +80,12 @@
   ;; previous value, in case:
   ;; (setopt dirvish-attributes '(all-the-icons file-time file-size collapse subtree-state vc-state))
   (setopt dirvish-attributes
-          '(vc-state
-            subtree-state
-            nerd-icons
-            collapse
-            git-msg
-            file-time
-            file-size))
+    '(vc-state
+       subtree-state
+       nerd-icons
+       collapse
+       file-time
+       file-size))
   (setopt dirvish-subtree-state-style 'nerd)
 
   ;; <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#mouse-settings>
