@@ -50,32 +50,32 @@
 ;;  <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#Sample-config>
 (use-package dirvish
   :commands (dirvish-override-dired-mode
-             dirvish-peek-mode
-             dirvish-side-follow-mode)
+              dirvish-peek-mode
+              dirvish-side-follow-mode)
 
   :init
   (after! 'dired
     (dirvish-override-dired-mode))
 
   ;; Omit "uninteresting" files.
+  ;; TODO: what?
   (add-hook 'dired-mode-hook #'dired-omit-mode)
 
   :config
-  ;; FIXME: neither of these are working
   (dirvish-peek-mode)                   ; Preview files in minibuffer
   (dirvish-side-follow-mode)            ; similar to `treemacs-follow-mode'
 
   ;; TODO: use consts
   ;; FIXME: ensure directories exist!
   (setopt dirvish-quick-access-entries
-          '(("c" "~/Documents/cheatsheets/" "Cheatsheets")
-            ("D" "~/Downloads/" "Downloads")
-            ("r" "~/Documents/reference" "Reference")
-            ("n" "~/Documents/notes/" "Notes")))
+    '(("c" "~/Documents/cheatsheets/" "Cheatsheets")
+       ("D" "~/Downloads/" "Downloads")
+       ("r" "~/Documents/reference" "Reference")
+       ("n" "~/Documents/notes/" "Notes")))
 
   (setopt dirvish-mode-line-format
-          '( :left (sort symlink)
-             :right (omit yank index)))
+    '( :left (sort symlink)
+       :right (omit yank index)))
 
   ;; previous value, in case:
   ;; (setopt dirvish-attributes '(all-the-icons file-time file-size collapse subtree-state vc-state))
@@ -122,8 +122,8 @@
   (use-package diredfl
     :hook
     ((dired-mode . diredfl-mode)
-     ;; highlight parent and directory preview as well
-     (dirvish-directory-view-mode . diredfl-mode))
+      ;; highlight parent and directory preview as well
+      (dirvish-directory-view-mode . diredfl-mode))
 
     :config
     (set-face-attribute 'diredfl-dir-name nil :bold t)))

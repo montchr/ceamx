@@ -141,6 +141,7 @@
   (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
 
   :config
+  ;; FIXME: bind to a real prefix map
   (keymap-global-set "M-p p" #'completion-at-point) ;; capf
   (keymap-global-set "M-p t" #'complete-tag)        ;; etags
   (keymap-global-set "M-p d" #'cape-dabbrev)        ;; or dabbrev-completion

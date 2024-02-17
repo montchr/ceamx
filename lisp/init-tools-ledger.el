@@ -111,7 +111,7 @@
 
   (define-keymap :keymap hledger-mode-map
     "C-c e" #'hledger-jentry
-    ;; FIXME: conflicts with completion prefix (if that matters)
+    ;; NOTE: Overrides global binding for completion-at-point/cape commands.
     "M-p" #'ceamx/hledger-prev-entry
     "M-n" #'ceamx/hledger-next-entry))
 
