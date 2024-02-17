@@ -23,7 +23,10 @@
 
 ;;; Commentary:
 
-;;  Configuration for Dired
+;;  Configuration for Dired and extensions.
+
+;; FIXME: Hide directories like ".git" and ".direnv" by default...
+;;        eza/fd/rg/etc. do this by default but dired should prob use GNU ls
 
 ;;; Code:
 
@@ -33,6 +36,7 @@
   :commands (dired-omit-mode)
   :config
   (setopt dired-kill-when-opening-new-dired-buffer t)
+  (setopt dired-listing-switches "-al --group-directories-first")
   (setopt dired-mouse-drag-files t)
   (setopt mouse-drag-and-drop-region-cross-program t))
 
