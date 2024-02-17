@@ -32,6 +32,8 @@
 (require 'lib-keys)
 (require 'lib-buffer)
 
+;;; General
+
 ;; Disable buffer line wrapping by default.
 (set-default 'truncate-lines t)
 
@@ -44,7 +46,11 @@
   (add-hook 'prog-mode-hook #'hl-line-mode)
   (add-hook 'package-menu-mode-hook #'hl-line-mode))
 
-;;
+;;;; Keybindings
+
+;; Never have I once wanted to kill a different buffer than the one in which I ask.
+(keymap-global-set "C-x k" #'ceamx/kill-this-buffer)
+
 ;;; `goto-address' (internal)
 
 ;; Linkify URLs and email addresses in buffers.
