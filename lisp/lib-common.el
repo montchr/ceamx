@@ -503,17 +503,30 @@ If N and M = 1, there's no benefit to using this macro over `remove-hook'.
 ;;; Packages
 
 (defmacro use-feature! (name &rest args)
-  "Simple wrapper for `use-package', passing through NAME and ARGS.
+  "Configuration-only wrapper for `use-package', passing through NAME and ARGS.
 
-This macro is a wrapper for `use-package'. It disables package
-installation by setting `:ensure' to nil, which will override a
-non-nil `use-package-always-ensure' setting.
+This macro is a wrapper for `use-package' disabling package
+installation by setting package installation keywords to nil. The
+supported keywords are `:ensure' (for package.el and recent
+versions of `elpaca'), `:straight', `:quelpa', and `:elpaca' (for
+older versions of `elpaca').
 
-Refer to the `use-package' documentation for further information."
+As an example, if `use-package-always-ensure' is non-nil, its
+effect will be ignored in the `use-package' macro expansion
+because `:ensure' will be nil.
+
+For further information, refer to the `use-package' documentation
+or the documentation for the respective package manager."
   (declare (indent defun))
-  `(use-package ,name
-     :ensure nil
-     ,@args))
+  (let ((quelpa-keyword-maybe (when (fboundp 'use-package-handler/:quelpa) '(:quelpa nil)))
+         (straight-keyword-maybe (when (fboundp 'use-package-handler/:straight) '(:straight nil)))
+         (elpaca-keyword-maybe (when (fboundp 'use-package-handler/:elpaca) '(:elpaca nil))))
+    `(use-package ,name
+       :ensure nil
+       ,@elpaca-keyword-maybe
+       ,@quelpa-keyword-maybe
+       ,@straight-keyword-maybe
+       ,@args)))
 
 ;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L31-L60>
 (defun ceamx-require-package (package &optional min-version no-refresh)
