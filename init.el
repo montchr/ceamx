@@ -114,6 +114,9 @@
 
 (require 'init-env)
 
+;; Site-specific configuration, to be ignored by version control.
+(require 'site-config (file-name-concat user-emacs-directory "site-config") t)
+
 ;;;; Displays + Appearance
 
 ;; FIXME: for science: prevent startup warnings?

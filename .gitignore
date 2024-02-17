@@ -9,3 +9,4 @@ eln-cache
 /dotfield-early-init.el
 /TUTORIAL
 /custom.el
+/site-config.el
