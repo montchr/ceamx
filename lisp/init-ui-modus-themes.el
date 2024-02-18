@@ -41,7 +41,13 @@
   ;;                              :color ,bg-mode-line-active))))
   ;;      `(mode-line-inactive ((,c :box ( :line-width 10
   ;;                                       :color ,bg-mode-line-inactive)))))))
-  ;; (add-hook 'modus-themes-after-load-theme-hook #'ceamx-modus-themes--custom-faces)
+  ;; (add-hook 'modus-themes-after-load-theme-hook
+  ;;   #'ceamx-modus-themes--custom-faces)
+
+  ;; Do not extend `region' background past the end of the line.
+  ;; <https://protesilaos.com/emacs/modus-themes#h:a5140c9c-18b2-45db-8021-38d0b5074116>
+  (custom-set-faces
+    '(region ((t :extend nil))))
 
   (load-theme 'modus-vivendi :no-confirm))
 
