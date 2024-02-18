@@ -32,20 +32,18 @@
 
 ;;; `desktop' [internal]
 
-(use-feature! desktop
-  :demand t
-  :config
-  (setopt desktop-base-file-name "desktop")
-  (setopt desktop-auto-save-timeout (* 60 5))
+  ;; (setopt desktop-base-file-name "desktop")
+  ;; (setopt desktop-auto-save-timeout (* 60 5))
+
   ;; If the desktop file is still locked, that probably means something went
   ;; wrong during the previous Emacs session because each session should remove
   ;; its locks when exiting. Play it safe and do nothing.
-  (setopt desktop-load-locked-desktop nil)
-  (setopt desktop-missing-file-warning nil)
-  (setopt desktop-restore-eager 20)
-  (setopt desktop-restore-frames t)
-  (setopt desktop-save 'ask-if-new)
-  (desktop-save-mode 1))
+  ;; (setopt desktop-load-locked-desktop nil)
+  ;; (setopt desktop-missing-file-warning nil)
+  ;; (setopt desktop-restore-eager 20)
+  ;; (setopt desktop-restore-frames t)
+  (setopt desktop-save t)
+  (desktop-save-mode 1)
 
 ;;; `savehist' (internal)
 
