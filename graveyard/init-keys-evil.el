@@ -346,7 +346,6 @@
 
   :init
   (setopt evil-escape-excluded-states '(normal visual multiedit emacs motion))
-  (setopt evil-escape-excluded-major-modes '(neotree-mode treemacs-mode vterm-mode))
   (setopt evil-escape-key-sequence "jk")
   (setopt evil-escape-delay 0.15)
 

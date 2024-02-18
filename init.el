@@ -277,13 +277,6 @@
 ;;;; Workspace
 (require 'init-workspace)
 
-;;;; Sidebar
-
-;; TODO: should not be considered "ui" -- or rather, "ui" should mean "appearance"
-;; TODO: figure out how to load as late as possible?
-;; TODO: just remove it?
-;; (require 'init-ui-treemacs)
-
 ;;;; Keyboard support
 
 (require 'config-keys)

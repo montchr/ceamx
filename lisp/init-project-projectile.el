@@ -60,9 +60,5 @@
 
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 
-;; TODO: how is it activated when deferred by default?
-(use-package treemacs-projectile
-  :after (treemacs projectile))
-
 (provide 'init-project-projectile)
 ;;; init-project-projectile.el ends here

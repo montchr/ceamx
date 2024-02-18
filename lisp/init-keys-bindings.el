@@ -128,7 +128,6 @@
 ;;   "l" #'display-line-numbers-mode
 ;;   "L" #'line-number-mode
 ;;   "f" #'flycheck-mode
-;;   "t" #'treemacs
 ;;   "w" '("side windows" . window-toggle-side-windows))
 
 ;;;; Window

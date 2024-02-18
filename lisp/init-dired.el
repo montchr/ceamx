@@ -62,8 +62,8 @@
   (add-hook 'dired-mode-hook #'dired-omit-mode)
 
   :config
-  (dirvish-peek-mode)                   ; Preview files in minibuffer
-  (dirvish-side-follow-mode)            ; similar to `treemacs-follow-mode'
+  (dirvish-peek-mode)                   ; Preview minibuffer file selections
+  (dirvish-side-follow-mode)
 
   ;; TODO: use consts
   ;; FIXME: ensure directories exist!
