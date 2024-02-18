@@ -26,29 +26,31 @@
 
 ;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org>
 
+;; FIXME: install via nixpkgs b/c binary neee
+
 ;; TODO: <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
 
 ;;; Code:
 
-(use-package pdf-tools
-  :commands (pdf-tools-install)
+;; (use-package pdf-tools
+;;   :commands (pdf-tools-install)
 
-  :init
-  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
-  (add-to-list 'magic-mode-alist '("%PDF" . pdf-view-mode))
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
+;;   (add-to-list 'magic-mode-alist '("%PDF" . pdf-view-mode))
 
-  (setopt pdf-tools-handle-upgrades nil)
-  :config
-  (dolist
-    (pkg
-      '(pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
-         pdf-links pdf-misc pdf-occur pdf-outline pdf-sync
-         pdf-util pdf-view pdf-virtual))
-    (require pkg))
-  (pdf-tools-install))
+;;   (setopt pdf-tools-handle-upgrades nil)
+;;   :config
+;;   (dolist
+;;     (pkg
+;;       '(pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
+;;          pdf-links pdf-misc pdf-occur pdf-outline pdf-sync
+;;          pdf-util pdf-view pdf-virtual))
+;;     (require pkg))
+;;   (pdf-tools-install))
 
-(use-package saveplace-pdf-view
-  :defer 5)
+;; (use-package saveplace-pdf-view
+;;   :defer 5)
 
 (provide 'init-tools-pdf)
 ;;; init-tools-pdf.el ends here
