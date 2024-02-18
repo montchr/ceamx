@@ -33,7 +33,9 @@
 (use-package lua-mode
   :config
   (setq-default lua-indent-level 2)
-  (after! [reformatter]
+
+  (use-feature! reformatter
+    :config
     (reformatter-define lua-format
       :program "lua-format"
       :args '("--indent-width=2" "--no-use-tab"))))

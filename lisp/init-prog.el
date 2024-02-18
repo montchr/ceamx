@@ -22,8 +22,6 @@
 
 ;; When programming happens, here we are.
 
-;; TODO: <https://github.com/jdtsmith/outli>
-
 ;;; Code:
 
 (require 'lib-common)
@@ -40,6 +38,7 @@ in a specific order. For this reason, condition checks on
 non-deterministic execution order.
 
 Intended for use as a hook callback on `prog-mode-hook'."
+
   ;; `highlight-function-calls-mode' should be enabled after other highlighters
   ;; (e.g. `rainbow-delimiters-mode'), according to its readme.
   (when (fboundp 'highlight-function-calls-mode)

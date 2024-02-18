@@ -27,6 +27,8 @@
 
 ;;; Code:
 
+(require 'elpaca)
+
 (require 'lib-common)
 (require 'lib-editor)
 
@@ -156,9 +158,12 @@
 
 ;;;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
 
-(use-package reformatter
-  :commands (prettier-format-region prettier-format-buffer)
-  :config
+;; NOTE: Does not seem to play well with `use-package'! Should be fixed upstream
+;; either in elpaca or this package...?
+
+(elpaca reformatter
+  (require 'reformatter)
+
   ;; Prettier is a commonly-used formatter for several languages.
   (reformatter-define prettier :program "prettier"))
 

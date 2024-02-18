@@ -53,6 +53,7 @@
 ;;; Integrations
 
 (use-feature! reformatter
+  :commands (nix-format-alejandra nix-format-nixfmt)
   :config
   ;; <https://github.com/kamadorueda/alejandra>
   (reformatter-define nix-format-alejandra

@@ -39,12 +39,20 @@
     tab-width
     nxml-child-indent)
 
-  (after! 'reformatter
+  (use-feature! reformatter
+    ;; TODO: install keyword
+    ;; :ensure-system-package xmlfmt
+
+    :commands (xmlfmt-on-save-mode)
+
+    :init
+    (add-hook 'nxml-mode-hook #'xmlfmt-on-save-mode)
+
+    :config
     (reformatter-define xmlfmt
       ;; TODO: ensure available
       :program "xmllint"
-      :args '("--format" "-"))
-    (add-hook 'nxml-mode-hook #'xmlfmt-on-save-mode)))
+      :args '("--format" "-"))))
 
 (use-package csv-mode
   :commands ( csv-align-fields
