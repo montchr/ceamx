@@ -112,6 +112,8 @@
 
 (setopt use-package-always-ensure t)
 
+(elpaca use-package)
+
 (elpaca elpaca-use-package
   (elpaca-use-package-mode))
 
