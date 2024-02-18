@@ -62,6 +62,7 @@ Selectively runs either `after-make-console-frame-hooks' or
 (defvar ceamx/initial-frame (selected-frame)
   "The frame (if any) active during Emacs initialization.")
 
+;; NOTE: Should not use `elpaca-after-init-hook'.
 (add-hook 'after-init-hook
           (lambda () (when ceamx/initial-frame
                        (run-after-make-frame-hooks ceamx/initial-frame))))

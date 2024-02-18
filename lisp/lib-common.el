@@ -518,48 +518,20 @@ because `:ensure' will be nil.
 For further information, refer to the `use-package' documentation
 or the documentation for the respective package manager."
   (declare (indent defun))
-  (let ((quelpa-keyword-maybe (when (fboundp 'use-package-handler/:quelpa) '(:quelpa nil)))
-         (straight-keyword-maybe (when (fboundp 'use-package-handler/:straight) '(:straight nil)))
-         (elpaca-keyword-maybe (when (fboundp 'use-package-handler/:elpaca) '(:elpaca nil))))
+  (let (
+         ;; FIXME: check if :ensure keyworr compat available
+
+         ;;(quelpa-keyword-maybe (when (fboundp 'use-package-handler/:quelpa) '(:quelpa nil)))
+         ;;(straight-keyword-maybe (when (fboundp 'use-package-handler/:straight) '(:straight nil)))
+
+         ;; (elpaca-keyword-maybe (when (fboundp 'use-package-handler/:elpaca) '(:elpaca nil)))
+         )
     `(use-package ,name
        :ensure nil
-       ,@elpaca-keyword-maybe
-       ,@quelpa-keyword-maybe
-       ,@straight-keyword-maybe
+       ;; ,@elpaca-keyword-maybe
+       ;;,@quelpa-keyword-maybe
+       ;; ,@straight-keyword-maybe
        ,@args)))
-
-;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L31-L60>
-(defun ceamx-require-package (package &optional min-version no-refresh)
-  "Install given PACKAGE, optionally requiring MIN-VERSION.
-If NO-REFRESH is non-nil, the available package lists will not be
-re-downloaded in order to locate PACKAGE."
-  (when (stringp min-version)
-    (setq min-version (version-to-list min-version)))
-  (or (package-installed-p package min-version)
-    (let* ((known (cdr (assoc package package-archive-contents)))
-            (best (car (sort known (lambda (a b)
-                                     (version-list-<= (package-desc-version b)
-                                       (package-desc-version a)))))))
-      (if (and best (version-list-<= min-version (package-desc-version best)))
-        (package-install best)
-        (if no-refresh
-          (error "No version of %s >= %S is available" package min-version)
-          (package-refresh-contents)
-          (ceamx-require-package package min-version t)))
-      (package-installed-p package min-version))))
-
-;; via <https://github.com/purcell/emacs.d/blob/45dc1f21cce59d6f5d61364ff56943d42c8b8ba7/lisp/init-elpa.el#L31-L60>
-(defun ceamx-maybe-require-package (package &optional min-version no-refresh)
-  "Try to install PACKAGE, and return non-nil if successful.
-In the event of failure, return nil and print a warning message.
-Optionally require MIN-VERSION.  If NO-REFRESH is non-nil, the
-available package lists will not be re-downloaded in order to
-locate PACKAGE."
-  (condition-case err
-    (ceamx-require-package package min-version no-refresh)
-    (error
-      (message "Couldn't install optional package `%s': %S" package err)
-      nil)))
 
 (provide 'lib-common)
 ;;; lib-common.el ends here

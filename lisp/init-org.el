@@ -82,13 +82,15 @@
           "⭠ now ─────────────────────────────────────────────────"))
 
 (use-package doct
-  :commands (doct))
+  :demand t)
 
 (use-feature! org-capture
+  :after (doct)
   :config
   (setopt org-capture-templates
           (doct `(("Inbox"
                    :keys "t"
+                   ;; TODO: make sure this icon spec is up to date with 2024
                    :icon ("checklist" :set "octicon" :color "green")
                    :file ceamx-org-capture-default-file
                    :prepend t

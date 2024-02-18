@@ -208,6 +208,7 @@
   ;; Activate Meow.
   (meow-global-mode 1))
 
+(elpaca-wait)
 
 (provide 'init-keys-meow)
 ;;; init-keys-meow.el ends here

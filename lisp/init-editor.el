@@ -157,6 +157,7 @@
 ;;;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
 
 (use-package reformatter
+  :commands (prettier-format-region prettier-format-buffer)
   :config
   ;; Prettier is a commonly-used formatter for several languages.
   (reformatter-define prettier :program "prettier"))

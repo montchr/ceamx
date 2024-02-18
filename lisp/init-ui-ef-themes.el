@@ -54,5 +54,7 @@
   ;; OR use this to load the theme which also calls `ef-themes-post-load-hook':
   (ef-themes-select 'ef-winter))
 
+(elpaca-wait)
+
 (provide 'init-ui-ef-themes)
 ;;; init-ui-ef-themes.el ends here

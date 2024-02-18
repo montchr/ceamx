@@ -91,6 +91,8 @@
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
 
+(elpaca-wait)
+
 ;;;; `ligature.el' :: <https://github.com/mickeynp/ligature.el>
 
 ;; A better implementation of ligature support than `prettify-symbols-mode'.

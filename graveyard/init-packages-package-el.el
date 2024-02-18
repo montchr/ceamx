@@ -268,6 +268,8 @@ recent `magit' changes."
   (setq no-littering-etc-directory ceamx-etc-dir)
   (setq no-littering-var-directory ceamx-var-dir))
 
+(elpaca-wait)
+
 ;;; Use `quelpa' for managing Elisp packages from source
 
 ;; <https://github.com/quelpa/quelpa>

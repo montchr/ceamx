@@ -45,7 +45,6 @@
   :after (exec-path-from-shell))
 
 (use-package envrc
-  :demand t
   :after (exec-path-from-shell)
   ;; FIXME: because exec-path-from-shell doesn't start reliably, this never happens
   ;; :when (executable-find "direnv")
@@ -64,7 +63,7 @@
   ;;(add-hook 'envrc-global-mode-hook #'+direnv-init-global-mode-earlier-h)
   )
 
-
+(elpaca-wait)
 
 (provide 'init-env)
 ;;; init-env.el ends here

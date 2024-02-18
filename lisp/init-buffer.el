@@ -132,7 +132,7 @@
 ;; Simple comment-based outlines
 
 (use-package outli
-  :quelpa (outli :fetcher github :repo "jdtsmith/outli")
+  :straight (:host github :repo "jdtsmith/outli")
 
   :init
   (add-hook 'text-mode-hook #'outli-mode)

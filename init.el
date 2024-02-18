@@ -33,6 +33,10 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
+(require 'ceamx-paths)
+
 (require 'lib-common)
 
 (defgroup ceamx nil
@@ -55,11 +59,106 @@
 ;;
 ;;; Initialize packages
 
+;; Third-party package managers should be configured in init.el directly instead
+;; of within a `require'd file so that they may be re-initialized properly.
+
 ;; Add site-lisp directory tree to load path.
 (add-to-list 'load-path ceamx-site-lisp-dir)
 (prependq! load-path (subdirs! ceamx-site-lisp-dir))
 
-(require 'init-packages)
+;;;; Preface
+
+
+;;;; Bootstrap
+
+(defvar elpaca-installer-version 0.6)
+(defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (< emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                 ((zerop (call-process "git" nil buffer t "clone"
+                                       (plist-get order :repo) repo)))
+                 ((zerop (call-process "git" nil buffer t "checkout"
+                                       (or (plist-get order :ref) "--"))))
+                 (emacs (concat invocation-directory invocation-name))
+                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                 ((require 'elpaca))
+                 ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (load "./elpaca-autoloads")))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
+
+;;;; Latest versions of Emacs builtins
+
+(elpaca eldoc)
+(elpaca jsonrpc)
+
+;; Ensure we load the latest available version of `seq' because v2.25 is
+;; required as a `magit' dependency in Emacs 29 and lower. We are better off
+;; installing this updated version as early as possible, since the library will
+;; likely be used by other packages/libraries before `magit' loads.
+(elpaca seq)
+
+;;;; Install latest use-package version and configure elpaca integration
+
+(elpaca elpaca-use-package
+        (elpaca-use-package-mode))
+
+(elpaca-wait)
+
+(setopt use-package-always-ensure t)
+
+;;;; Improve `use-package' debuggability if necessary
+
+(setopt use-package-expand-minimally nil)
+(when (bound-and-true-p init-file-debug)
+  (require 'use-package)
+  (setopt use-package-expand-minimally nil)
+  (setopt use-package-verbose t)
+  (setopt use-package-compute-statistics t))
+
+(add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
+(add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
+
+;;;; Essential storage path cleanup for features/packages
+
+;; <https://github.com/emacscollective/no-littering/>
+
+(use-package no-littering
+  :demand t
+  :init
+  (setq no-littering-etc-directory ceamx-etc-dir)
+  (setq no-littering-var-directory ceamx-var-dir))
+
+(elpaca-wait)
+
+;;;; Initialize miscellaneous packages adding `use-package' keywords
+
+;; NOTE: `blackout' is still useful even without `use-package'
+(use-package blackout
+  :demand t)
+
+(elpaca-wait)
 
 ;;;; Run garbage collection on idle
 
@@ -73,7 +172,7 @@
   :blackout
   :commands (gcmh-mode)
   :init
-  (add-hook 'emacs-startup-hook #'gcmh-mode)
+  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
   (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
 
 ;;
@@ -82,20 +181,16 @@
 (use-feature! on
   :demand t)
 
+(elpaca-wait)
+
 ;;
 ;;; Libraries
-
-;;;; Latest versions of Emacs internals, required by some packages.
-
-(use-package eldoc)
-(use-package jsonrpc)
 
 ;; FIXME: remove or alias (`##' is very difficult to search for)
 (use-package llama) ;  `##' lambda shorthand => <https://git.sr.ht/~tarsius/llama>
 
-;;;; Ceamx basic libraries
-
 (require 'lib-common)
+
 (when (display-graphic-p)
   (require 'lib-gui))
 (require 'lib-files)
@@ -284,21 +379,19 @@
 ;;
 ;;; Postlude
 
-(defun +maybe-start-server ()
+(def-hook! ceamx-maybe-start-emacs-server-h () 'ceamx-after-init-hook
   "Auto-start Emacs daemon if not already running."
   (require 'server)
   (unless (and (fboundp 'server-running-p)
             (server-running-p))
     (server-start)))
-(add-hook 'after-init-hook #'+maybe-start-server)
 
 ;; unfortunately
-(defun ceamx-after-init-restart-yabai-h ()
+(when (and +gui-p +sys-mac-p)
+(def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
   "Restart the yabai service after init."
   (after! [exec-path-from-shell]
-    (async-shell-command "yabai --restart-service")))
-(when (and +gui-p +sys-mac-p)
-  (add-hook 'after-init-hook #'ceamx-after-init-restart-yabai-h))
+    (async-shell-command "yabai --restart-service"))))
 
 (provide 'init)
 ;;; init.el ends here

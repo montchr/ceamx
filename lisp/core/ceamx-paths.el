@@ -85,13 +85,11 @@ Use this for files that change often, like data and cache files.")
   (expand-file-name (ceamx-format-version-subdir "packages")
     ceamx-local-dir)
   "Where packages are stored.
-Intended for setting the value of `package-user-dir'.
+Intended for setting the value of `package-user-dir' or the
+equivalent settings for third-party package managers.
 
 Packages will be stored in subdirectories based on the current
 Emacs version to prevent bytecode incompatibility.")
-
-(defvar ceamx-quelpa-dir
-  )
 
 (provide 'ceamx-paths)
 ;;; ceamx-paths.el ends here

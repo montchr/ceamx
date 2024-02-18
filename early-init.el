@@ -23,26 +23,31 @@
 
 ;;; Commentary:
 
-;; Prior to Emacs 27, the `init.el' was supposed to handle the initialisation of
-;; `package.el', by means of calling `package-initialize'. Starting with Emacs
-;; 27, the default behavior is to start `package.el' before loading init.el
-;; after early-init.el.
-
 ;;; Links:
 
 ;; Helpful guide to early-init configuration for package management:
 ;; <https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/>
-;; See also the Commentary in `init-packages' for more context.
 
 ;;; Code:
 
 ;; Prevent package.el from enabling all packages before init.
 ;;
-;; When nil, `package-initialize' must be invoked in the init process prior to
-;; `require'ing any packages installed with `package-install'.
+;; When nil and using the builtin package manager, `package-initialize' must be
+;; invoked in the init process prior to `require'ing any packages installed with
+;; `package-install'.
 ;;
 ;; When non-nil, there is no need to invoke `package-initialize'.
 (setq package-enable-at-startup nil)
+
+;;; Indirect init/startup hooks
+
+(defvar ceamx-after-init-hook '())
+(defun ceamx-after-init-hook ()
+  (run-hooks 'ceamx-after-init-hook))
+
+(defvar ceamx-emacs-startup-hook '())
+(defun ceamx-emacs-startup-hook ()
+  (run-hooks 'ceamx-emacs-startup-hook))
 
 ;;
 ;;; Performance
@@ -97,11 +102,11 @@
 
 (defun ceamx-restore-file-name-handler-alist-h ()
   "Restore the original value of the `file-name-handler-alist' variable.
-Intended for use as a callback on `after-init-hook'."
+Intended for use as a callback on `ceamx-after-init-hook'."
   (setq file-name-handler-alist ceamx-file-name-handler-alist)
   (makunbound 'ceamx-file-name-handler-alist))
 
-(add-hook 'after-init-hook #'ceamx-restore-file-name-handler-alist-h)
+(add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
 
 ;;
 ;;; Directories
@@ -183,10 +188,10 @@ Intended for use as a callback on `after-init-hook'."
 Simple wrapper for a call to `set-frame-name' providing
 `ceamx-default-frame-name' as the NAME argument.
 
-Intended for use as a callback on the `after-init-hook'."
+Intended for use as a callback on the `ceamx-after-init-hook'."
   (set-frame-name ceamx-default-frame-name))
 
-(add-hook 'after-init-hook #'ceamx-after-init-default-frame-name-h)
+(add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 
 (provide 'early-init)
 ;;; early-init.el ends here

@@ -108,7 +108,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
   (message "init completed in %.2fms"
     (ceamx-time-subtract-millis after-init-time before-init-time)))
 
-(add-hook 'after-init-hook #'ceamx-show-init-time)
+(add-hook 'ceamx-after-init-hook #'ceamx-show-init-time)
 
 (provide 'init-benchmarking)
 ;;; init-benchmarking.el ends here

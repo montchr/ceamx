@@ -58,8 +58,6 @@
 
 ;; TODO
 ;; (use-package bufler
-;; :quelpa (bufler :fetcher github :repo "alphapapa/bufler.el"
-;;                 :files (:defaults (:exclude "helm-bufler.el"))))
 ;; FIXME: exclude "helm-bufler.el"
 ;; FIXME: install
 ;; (use-package bufler
