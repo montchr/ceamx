@@ -97,10 +97,20 @@
 (use-package macrostep
   :commands (macrostep-expand)
 
+  :preface
+  ;; <https://github.com/joddie/macrostep/issues/11>
+  ;; <https://github.com/emacsorphanage/macrostep/issues/8>
+  (defun ceamx/macrostep-expand ()
+    "Wrapper for `macrostep-expand' providing workaround for errors.
+The original function fails in the presence of whitespace after a sexp."
+    (interactive)
+    (when (and (= ?\n (char-after))
+            (= (point) (cdr (bounds-of-thing-at-point 'sexp))))
+      (backward-char))
+    (macrostep-expand))
+
   :init
-  (keymap-set emacs-lisp-mode-map "C-c x" #'macrostep-expand))
-
-
+  (keymap-set emacs-lisp-mode-map "C-c x" #'ceamx/macrostep-expand))
 
 (provide 'init-lang-emacs-lisp)
 ;;; init-lang-emacs-lisp.el ends here
