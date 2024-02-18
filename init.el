@@ -108,25 +108,14 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
-;;;; Latest versions of Emacs builtins
-
-(elpaca eldoc)
-(elpaca jsonrpc)
-
-;; Ensure we load the latest available version of `seq' because v2.25 is
-;; required as a `magit' dependency in Emacs 29 and lower. We are better off
-;; installing this updated version as early as possible, since the library will
-;; likely be used by other packages/libraries before `magit' loads.
-(elpaca seq)
-
-;;;; Install latest use-package version and configure elpaca integration
-
-(elpaca elpaca-use-package
-        (elpaca-use-package-mode))
-
-(elpaca-wait)
+;;;; Configure elpaca use-package integration
 
 (setopt use-package-always-ensure t)
+
+(elpaca elpaca-use-package
+  (elpaca-use-package-mode))
+
+(elpaca-wait)
 
 ;;;; Improve `use-package' debuggability if necessary
 
@@ -149,6 +138,36 @@
   :init
   (setq no-littering-etc-directory ceamx-etc-dir)
   (setq no-littering-var-directory ceamx-var-dir))
+
+(elpaca-wait)
+
+;;;; Latest versions of builtin libraries
+
+;; The builtin libraries must be unloaded before loading the newer version. This
+;; will prevent warnings like "eldoc loaded before Elpaca activation".
+
+;; `magit' requires a more recent version of `seq' than the version included in
+;; Emacs 29.
+;;
+;; FIXME: prevent "seq loaded before Elpaca activation" warning
+;;        but `unload-feature' causes error since seq is used earlier in init
+(use-package seq
+  :ensure t
+  :demand t)
+
+;; Required by (and originally extracted from) `eglot'.
+(use-package jsonrpc)
+
+(use-package eglot
+  :after (jsonrpc)
+  :preface
+  (when (featurep 'eglot)
+    (unload-feature 'eglot)))
+
+(use-package org
+  :preface
+  (when (featurep 'org)
+    (unload-feature 'org)))
 
 (elpaca-wait)
 

@@ -29,16 +29,11 @@
 
 (require 'lib-common)
 
-;; FIXME: make sure this is loaded up by some hook or other mechanism due to the
-;; combination of `use-package-always-defer' and `:after'
-
-;; NOTE: This will grab the latest version of Eglot, not the version bundled with Emacs.
-(use-package eglot
+(use-feature! eglot
   :after (jsonrpc)
   :commands (eglot eglot-ensure)
 
   :init
-  ;; FIXME: does not seem to work reliably -- e.g. nix files
   (def-advice! +eglot--ensure-available-mode (fn)
     :around #'eglot-ensure
     "Run `eglot-ensure' in supported modes."

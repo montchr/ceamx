@@ -42,7 +42,7 @@
 (defvar org-directory ceamx-agenda-dir)
 (f-mkdir-full-path org-directory)
 
-(use-package org
+(use-feature! org
   :init
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
   (add-hook 'org-mode-hook #'visual-line-mode)
