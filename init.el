@@ -245,7 +245,6 @@
 ;;;; Theme
 
 (require 'init-ui-theme)
-;; TODO: probably not for tty?
 (pcase ceamx-theme-family
   ('ef
    (require 'init-ui-ef-themes))

@@ -39,7 +39,7 @@ with its default modeline)."
            (const :tag "The `telephone-line' module" telephone)
            (const :tag "Do not load a modeline module" nil)))
 
-(defcustom ceamx-theme-family 'ef
+(defcustom ceamx-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
 reference the `ef-themes', `modus-themes', and `standard-themes',

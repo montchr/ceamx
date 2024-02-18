@@ -25,6 +25,7 @@
 ;;; Code:
 
 (use-package modus-themes
+  :ensure t
   :demand t
   :config
   (setopt modus-themes-italic-constructs t)
