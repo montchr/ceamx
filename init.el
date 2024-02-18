@@ -158,10 +158,26 @@
   :demand t)
 
 ;; Required by (and originally extracted from) `eglot'.
-(use-package jsonrpc)
+(use-package jsonrpc
+  :ensure t
+  :demand t)
+
+;; Unfortunately, this requires a delicate workaround:
+;; <https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
+(use-package eldoc
+  :ensure t
+  :demand t
+
+  :preface
+  (unload-feature 'eldoc t)
+  (setq custom-delayed-init-variables '())
+  (defvar global-eldoc-mode nil)
+
+  :config
+  (global-eldoc-mode))
 
 (use-package eglot
-  :after (jsonrpc)
+  :after (eldoc jsonrpc)
   :preface
   (when (featurep 'eglot)
     (unload-feature 'eglot)))
