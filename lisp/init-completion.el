@@ -102,19 +102,26 @@
 ;;   :config
 ;;   (corfu-doc-terminal-mode +1))
 
+;;; kind-icon :: <https://github.com/jdtsmith/kind-icon>
+
+;; Colorful icons for completion-at-point interfaces
+
 (use-package kind-icon
+  :demand t
   :after (svg-lib corfu)
   :commands (kind-icon-reset-cache)
-  :functions (kind-icon-margin-formatter)
+  :autoload (kind-icon-margin-formatter)
 
   :init
-  (defvar corfu-margin-formatters)
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache)
 
   :config
+  (defvar corfu-margin-formatters)
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+
   (setopt kind-icon-use-icons (display-graphic-p))
+  (setopt kind-icon-blend-background t)
   (setopt kind-icon-default-face 'corfu-default))
 
 (use-feature! dabbrev
