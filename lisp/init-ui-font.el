@@ -73,7 +73,6 @@
          :bold-weight extrabold)
        (t
          :default-family "Iosevka Comfy"
-         :default-family "Monospace"
          :default-weight regular
          :default-height ,(ceamx-font-height 100)
          :fixed-pitch-family nil
