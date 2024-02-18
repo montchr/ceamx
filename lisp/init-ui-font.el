@@ -53,9 +53,11 @@
   :config
   (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
 
+  ;; FIXME: these really do vary wildly across displays. sizing/weights should
+  ;; be configured with that in mind.
   (setopt fontaine-presets
     `((regular
-         :default-height ,(ceamx-font-height 100))
+        :default-height ,(ceamx-font-height 100))
        (tiny
          :default-height ,(ceamx-font-height 70)
          :bold-weight semibold)
@@ -66,11 +68,18 @@
          :default-height ,(ceamx-font-height 90)
          :bold-weight semibold)
        (medium
-         :default-height ,(ceamx-font-height 120))
+         :default-height ,(ceamx-font-height 120)
+         :bold-weight semibold          ; boschic
+         )
        (large
-         :default-weight semilight
          :default-height ,(ceamx-font-height 140)
-         :bold-weight extrabold)
+         :bold-weight semibold          ; on boschic
+         )
+       (xlarge
+         :default-weight semilight
+         :default-height ,(ceamx-font-height 160)
+         :bold-weight extrabold
+         )
        (t
          :default-family "Iosevka Comfy"
          :default-weight regular
