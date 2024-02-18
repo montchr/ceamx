@@ -20,8 +20,26 @@
 
 ;;; Commentary:
 
+;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
+
+;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
+;;        at least i think that's what's causing the inconsistencies...
+;;
+;;        ligatures at some sizes sometimes broken -- but not everywhere...?
+;;        test case (double-colons, should not have a visual space between)
+;;        => ::
+;;
+;;        - update: this might also be happening on NixOS running on
+;;        old MacBookPro hardware (hodgepodge system), so could be a general
+;;        ppi issue -- but i've had the preset set to `small' for a while and
+;;        haven't noticed any issues since then
+
+
 ;;; Code:
 
+(require 'elpaca)
+
+(require 'ceamx-paths)
 (require 'config-env)
 
 (require 'lib-common)
@@ -29,44 +47,30 @@
 
 (use-package fontaine
   :demand t
+  :commands (fontaine-set-preset
+              fontaine-store-latest-preset
+              fontaine-restore-latest-preset)
   :config
   (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
-  ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
-  ;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
-  ;;        at least i think that's what's causing the inconsistencies...
-  ;;
-  ;;        ligatures at some sizes sometimes broken -- but not everywhere...?
-  ;;        test case (double-colons, should not have a visual space between)
-  ;;        => ::
-  ;;
-  ;;        - update: this might also be happening on NixOS running on
-  ;;        old MacBookPro hardware (hodgepodge system), so could be a general
-  ;;        ppi issue -- but i've had the preset set to `small' for a while and
-  ;;        haven't noticed any issues since then
-
-  ;; original values from earlier settings:
-  ;;        (xsmall :default-height 100)
-  ;; (small :default-height 110)
-  ;; (regular :default-height 140)
-  ;; (regular-alt :default-height 130)
-  ;; (medium :default-height 160)
-  ;; (medium-alt :default-height 150)
-  ;; (large :default-height 180)
-  ;; (large-alt :default-height 170
-  ;;   :line-spacing 0.1)
-  ;; (xlarge :default-height 240
-  ;;   :line-spacing nil)
 
   (setopt fontaine-presets
     `((regular
-        :default-height ,(ceamx-font-height 100))
+         :default-height ,(ceamx-font-height 100))
+       (tiny
+         :default-height ,(ceamx-font-height 70)
+         :bold-weight semibold)
+       (xsmall
+         :default-height ,(ceamx-font-height 80)
+         :bold-weight semibold)
+       (small
+         :default-height ,(ceamx-font-height 90)
+         :bold-weight semibold)
        (medium
          :default-height ,(ceamx-font-height 120))
        (large
          :default-weight semilight
          :default-height ,(ceamx-font-height 140)
          :bold-weight extrabold)
-
        (t
          :default-family "Iosevka Comfy"
          :default-family "Monospace"
