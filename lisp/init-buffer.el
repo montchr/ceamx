@@ -132,7 +132,7 @@
 ;; Simple comment-based outlines
 
 (use-package outli
-  :straight (:host github :repo "jdtsmith/outli")
+  :ensure (:host github :repo "jdtsmith/outli")
 
   :init
   (add-hook 'text-mode-hook #'outli-mode)
