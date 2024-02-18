@@ -33,7 +33,7 @@
 ;;; `desktop' [internal]
 
 (use-feature! desktop
-  :commands (desktop-save-mode)
+  :demand t
   :config
   (setopt desktop-base-file-name "desktop")
   (setopt desktop-auto-save-timeout (* 60 5))
