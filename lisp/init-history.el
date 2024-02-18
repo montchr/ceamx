@@ -44,7 +44,7 @@
   (setopt desktop-missing-file-warning nil)
   (setopt desktop-restore-eager 20)
   (setopt desktop-restore-frames t)
-  (setopt dekstop-save 'ask-if-new)
+  (setopt desktop-save 'ask-if-new)
   (desktop-save-mode 1))
 
 ;;; `savehist' (internal)
