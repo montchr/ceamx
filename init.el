@@ -253,6 +253,7 @@
   ('nano
    ;; NOTE: this is probably very broken -- so is the upstream project :/
    (require 'init-ui-nano-theme)))
+(require 'init-ui-circadian)
 
 
 ;;;; Typography + Iconography
