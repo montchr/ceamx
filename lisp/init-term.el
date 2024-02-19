@@ -27,6 +27,7 @@
 
 ;;; Code:
 
+(require 'config-keys)
 (require 'lib-common)
 
 ;;; `eat' :: <https://codeberg.org/akib/emacs-eat/>
@@ -42,6 +43,8 @@
   (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode)
 
   :config
+  (keymap-set ceamx-launch-map "t" #'eat)
+
   (use-feature! popper
     :config
     (defvar popper-reference-buffers)
