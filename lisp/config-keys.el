@@ -66,6 +66,7 @@ of Emacs."
 (defvar-keymap ceamx-code-map)
 (defvar-keymap ceamx-file-map)
 (defvar-keymap ceamx-launch-map)
+(defvar-keymap ceamx-toggle-map)
 
 (provide 'config-keys)
 ;;; config-keys.el ends here

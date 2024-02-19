@@ -130,11 +130,12 @@
 
 ;;;; Toggles
 
-;; (def-arm! ceamx-toggle-map "t" "[Toggle]"
-;;   "l" #'display-line-numbers-mode
-;;   "L" #'line-number-mode
-;;   "f" #'flycheck-mode
-;;   "w" '("side windows" . window-toggle-side-windows))
+(keymap-global-set "C-c C-t" ceamx-toggle-map)
+(keymap-global-set "C-c t" ceamx-toggle-map)
+
+(define-keymap :keymap ceamx-toggle-map
+  "l" #'display-line-numbers-mode
+  "w" '("side windows" . window-toggle-side-windows))
 
 ;;;; Window
 
@@ -152,7 +153,6 @@
 
 ;;; Leader Bindings
 
-;; TODO: why not `other-buffer'?
 (leader-key! "`"   '("other buffer" . mode-line-other-buffer))
 
 ;; TODO: install
