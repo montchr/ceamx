@@ -174,8 +174,8 @@
 
   ;; There are slight differences between these two, take your pick.
   ;; Default is nil.
-  (setopt meow-keypad-leader-dispatch nil)
-  ;; (setopt meow-keypad-leader-dispatch "C-c")
+  ;; (setopt meow-keypad-leader-dispatch nil)
+  (setopt meow-keypad-leader-dispatch "C-c")
 
   ;; Use "SPC G" as "C-M-" prefix, allowing `ceamx-git-map' to be mapped to "SPC
   ;; g" because muscle memory.
