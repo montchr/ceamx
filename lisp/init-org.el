@@ -47,6 +47,10 @@
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
   (add-hook 'org-mode-hook #'visual-line-mode)
 
+  (def-hook! +org-mode-init-keys-h () 'org-mode-hook
+    "Adjust global keybindings in `org-mode' buffers."
+    (keymap-global-set "M-g o" #'consult-org-heading))
+
   :config
   (setopt org-agenda-files
     (append

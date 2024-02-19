@@ -25,64 +25,85 @@
 
 ;; <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
 
-;; `fd' is intentionally excluded from `consult' core.
-;; however, support can be added manually: <https://github.com/minad/consult/wiki#find-files-using-fd>
-
 ;;; Code:
 
+(require 'lib-selection)
+
 (use-package consult
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
+  :commands '(consult-preview-at-point-mode
+             consult-register-format
+             consult-register-window
+             consult-xref
+             consult-mode-command
+             consult-history
+             consult-kmacro
+             consult-man
+             consult-info
+             consult-complex-command
+             consult-buffer
+             consult-buffer-other-window
+             consult-buffer-other-frame
+             consult-buffer-other-tab
+             consult-bookmark
+             consult-project-buffer)
 
   :init
+
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
+  (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
+
+  ;; Improve previews for `consult-register' and other register commands.
   (setopt register-preview-delay 0.5)
   (setopt register-preview-function #'consult-register-format)
-  (setopt xref-show-definitions-function #'consult-xref)
-  (setopt xref-show-xrefs-function #'consult-xref)
   (advice-add #'register-preview :override #'consult-register-window)
 
-  :config
-  ;; FIXME: define these keys in the maps they intersect
-	(define-keymap :keymap global-map
-    "<remap> <bookmark-jump>"                   #'consult-bookmark
-    "<remap> <repeat-complex-command>"          #'consult-complex-command
-    "<remap> <goto-line>"                       #'consult-goto-line
-    "<remap> <imenu>"                           #'consult-imenu
-    "<remap> <isearch-edit-string>"             #'consult-isearch-history
-    "<remap> <locate>"                          #'consult-locate
-    "<remap> <load-theme>"                      #'consult-theme
-    "<remap> <man>"                             #'consult-man
-    "<remap> <recentf-open-files>"              #'consult-recent-file
-    "<remap> <switch-to-buffer>"                #'consult-buffer
-    "<remap> <switch-to-buffer-other-window>"   #'consult-buffer-other-window
-    "<remap> <switch-to-buffer-other-frame>"    #'consult-buffer-other-frame
-    "<remap> <yank-pop>"                        #'consult-yank-pop
-    "<remap> <project-switch-to-buffer>"        #'consult-project-buffer
+  ;; Display xref locations with previews.
+  (setopt xref-show-definitions-function #'consult-xref)
+  (setopt xref-show-xrefs-function #'consult-xref)
 
-    ;; C-c bindings (mode-specific-map)
+  (define-keymap :keymap global-map
+    "C-c M-x" #'consult-mode-command
+    "C-c h"   #'consult-history
+    "C-c k" #'consult-kmacro
+    "C-c m" #'consult-man
+    "C-c i" #'consult-info
     ;; FIXME: use a keymap for s prefix
-    "C-c s h"  #'consult-history
-    "C-c s m"  #'consult-mode-command
-    "C-c s k"  #'consult-kmacro
+    ;; "C-c s h"  #'consult-history
+    ;; "C-c s m"  #'consult-mode-command
+    ;; "C-c s k"  #'consult-kmacro
+
+    "<remap> <Info-search>" #'consult-info
+
+    "C-x M-:" #'consult-complex-command     ; orig. `repeat-complex-command'
+    "C-x b" #'consult-buffer                ; orig. `switch-to-buffer'
+    "C-x 4 b" #'consult-buffer-other-window ; orig. `switch-to-buffer-other-window'
+    "C-x 5 b" #'consult-buffer-other-frame ; orig. `switch-to-buffer-other-frame'
+    "C-x t b" #'consult-buffer-other-tab   ; orig. `switch-to-buffer-other-tab'
+    "C-x r"  #'consult-bookmark            ; orig. `bookmark-jump'
+    "C-x p b" #'consult-project-buffer     ; orig. `project-switch-to-buffer'
 
     ;; Custom M-# bindings for fast register access
     "M-#"    #'consult-register-load
     "M-'"    #'consult-register-store
     "C-M-#"  #'consult-register
 
+    ;; Miscellaneous
+    "M-y" #'consult-yank-pop            ; orig. `yank-pop'
+
     ;; M-g bindings (goto-map)
     "M-g e"  #'consult-compile-error
-    "M-g f"  #'consult-flymake               ;; Alternative: consult-flycheck
-    "M-g o"  #'consult-outline               ;; Alternative: consult-org-heading
+    "M-g f"  #'consult-flymake ;; Alternative: consult-flycheck
+    "M-g g" #'consult-goto-line
+    "M-g M-g" #'consult-goto-line
+    "M-g o"  #'consult-outline ;; Alternative: consult-org-heading
     "M-g m"  #'consult-mark
     "M-g k"  #'consult-global-mark
     "M-g i"  #'consult-imenu
     "M-g I"  #'consult-imenu-multi
 
-
     ;; M-s bindings (search-map)
-    "M-s d"  #'consult-find
+    "M-s d"  #'consult-fd               ; or `consult-find'
     "M-s D"  #'consult-locate
     "M-s g"  #'consult-ripgrep
     "M-s G"  #'consult-git-grep
@@ -91,13 +112,24 @@
     "M-s k"  #'consult-keep-lines
     "M-s u"  #'consult-focus-lines)
 
-  ;;; `isearch' integration:
+;;;; `isearch' integration
+
   (keymap-global-set "M-s e" #'consult-isearch-history)
+
+  ;; Needed by consult-line to detect isearch.
+  (define-keymap :keymap isearch-mode-map
+    "M-e" #'consult-isearch-history
+    "M-s e" #'consult-isearch-history
+    "M-s l" #'consult-line
+    "M-s L" #'consult-line-multi)
+
+;;;; minibuffer integration
+
   (keymap-set minibuffer-local-map "M-s" #'consult-history) ; orig. next-matching-history-element
   (keymap-set minibuffer-local-map "M-r" #'consult-history) ; orig. previous-matching-history-element
-  ;; Needed by consult-line to detect isearch.
-  (keymap-set isearch-mode-map "M-s l" #'consult-line)
-  (keymap-set isearch-mode-map "M-s L" #'consult-line-multi)
+
+
+  :config
 
   (setopt consult-preview-key 'any)
 
@@ -114,81 +146,21 @@
 
   ;; Configure the narrowing key.
   ;; Both < and C-+ work reasonably well.
-  (setopt consult-narrow-key "<") ;; (kbd "C-+")
+  (setopt consult-narrow-key "<") ;; "C-+"
 
   ;; Make narrowing help available in the minibuffer.
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'embark-prefix-help-command)
-
-  ;;; Use Orderless as pattern compiler for consult-grep/ripgrep/find.
-  ;;; via <https://github.com/minad/consult/wiki#use-orderless-as-pattern-compiler-for-consult-grepripgrepfind>
-  ;;; FIXME: both options break!
-
-  ;; (defun +consult--orderless-regexp-compiler (input type &rest _config)
-  ;;   (setq input (orderless-pattern-compiler input))
-  ;;   (cons
-  ;;    (mapcar (lambda (r) (consult--convert-regexp r type)) input)
-  ;;    (lambda (str) (orderless--highlight input str))))
-
-  ;; OPTION 1: Activate globally for all consult-grep/ripgrep/find/...
-  ;; (setopt consult--regexp-compiler #'consult--orderless-regexp-compiler)
-
-  ;; OPTION 2: Activate only for some commands, e.g., consult-ripgrep!
-  ;; (defun +consult--with-orderless (&rest args)
-  ;;   (minibuffer-with-setup-hook
-  ;;       (lambda ()
-  ;;         (setq-local consult--regexp-compiler #'+consult--orderless-regexp-compiler))
-  ;;     (apply args)))
-  ;; (advice-add #'consult-ripgrep :around #'+consult--with-orderless)
-
-  ;;; --- buffers ---
-
-  ;;; Pre-select nearest heading for `consult-org-heading' and `consult-outline'
-  ;;; <https://github.com/minad/consult/wiki#pre-select-nearest-heading-for-consult-org-heading-and-consult-outline-using-vertico>
-
-  (defvar +consult--previous-point nil
-    "Location of point before entering minibuffer.
-  Used to preselect nearest headings and imenu items.")
-
-  (defun +consult--set-previous-point ()
-    "Save location of point. Used before entering the minibuffer."
-    (setq +consult--previous-point (point)))
-
-  (defun +consult-vertico--update-choose (&rest _)
-    "Pick the nearest candidate rather than the first after updating candidates."
-    (when (and +consult--previous-point
-               (memq current-minibuffer-command
-                     '(consult-org-heading consult-outline)))
-      (setq vertico--index
-            (max 0 ; if none above, choose the first below
-                 (1- (or (seq-position
-                          vertico--candidates
-                          +consult--previous-point
-                          (lambda (cand point-pos) ; counts on candidate list being sorted
-                            (> (cl-case current-minibuffer-command
-                                 (consult-outline
-                                  (car (consult--get-location cand)))
-                                 (consult-org-heading
-                                  (get-text-property 0 'consult--candidate cand)))
-                               point-pos)))
-                         (length vertico--candidates))))))
-    (setq +consult--previous-point nil))
-
-  (advice-add #'consult-org-heading :before #'+consult--set-previous-point)
-  (advice-add #'consult-outline :before #'+consult--set-previous-point)
-  (advice-add #'vertico--update :after #'+consult-vertico--update-choose)
 
   ;; By default `consult-project-function' uses `project-root' from project.el.
   (with-eval-after-load 'projectile
     (declare-function projectile-project-root "projectile")
     (setopt consult-project-function (lambda (_) (projectile-project-root)))))
 
-
 ;; <https://github.com/minad/consult#embark-integration>
 (use-package embark-consult
   :after (embark consult)
   :init
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
-
 
 (provide 'init-selection-consult)
 ;;; init-selection-consult.el ends here

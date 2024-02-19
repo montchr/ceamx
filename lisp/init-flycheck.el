@@ -38,6 +38,8 @@
 
 (require 'config-keys)
 
+(require 'lib-common)
+
 (use-package flycheck
   :commands (global-flycheck-mode flycheck-mode)
   :defines (flycheck-emacs-lisp-load-path
@@ -50,11 +52,17 @@
   (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled))
   ;; When `global-flycheck-mode' is non-nil, activate in these modes.
   (setq-default flycheck-global-modes '(prog-mode))
+
   ;; `global-flycheck-mode' seems to have no effect, so load on hook.
   (add-hook 'prog-mode-hook #'flycheck-mode)
 
   :config
-  (keymap-set ceamx-toggle-map "f" #'flycheck-mode))
+  (keymap-set ceamx-toggle-map "f" #'flycheck-mode)
+
+  (use-feature! consult
+    :commands (consult-flycheck)
+    :config
+    (keymap-global-set "M-g f" #'consult-flycheck)))
 
 (provide 'init-flycheck)
 ;;; init-flycheck.el ends here
