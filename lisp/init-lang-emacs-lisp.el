@@ -31,7 +31,6 @@
 
 (declare-function blackout "blackout")
 
-
 ;;
 ;;; Hooks
 
@@ -58,7 +57,7 @@
 ;;
 ;;; Packages
 
-;;; `eros' :: <https://github.com/xiongtx/eros>
+;;;; `eros' :: <https://github.com/xiongtx/eros>
 
 ;;  Evaluation Result OverlayS for Emacs Lisp
 
@@ -81,7 +80,7 @@
       ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
 
-;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
+;;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
 
 ;;  discover elisp functions that do what you want,
 ;;  brought to you by enumerative program synthesis
@@ -92,8 +91,10 @@
   ;; TODO: is C-x binding more appropriate by convention?
   (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
 
-;;; `macrostep' :: <https://github.com/emacsorphanage/macrostep>
+;;;; `macrostep' :: <https://github.com/emacsorphanage/macrostep>
+
 ;;  "interactive macro-expander for Emacs"
+
 (use-package macrostep
   :commands (macrostep-expand)
 
