@@ -27,18 +27,26 @@
 
 ;;; Code:
 
+(require 'lib-common)
+
 ;;; `eat' :: <https://codeberg.org/akib/emacs-eat/>
 
 ;; "Emulate A Terminal"
 
 (use-package eat
   :commands (eat
-             eat-eshell-mode
-             eat-eshell-visual-command-mode)
+              eat-eshell-mode
+              eat-eshell-visual-command-mode)
   :init
   (add-hook 'eshell-load-hook #'eat-eshell-mode)
-  (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
+  (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode)
 
+  :config
+  (use-feature! popper
+    :config
+    (defvar popper-reference-buffers)
+    (setopt popper-reference-buffers
+      (append popper-reference-buffers '("\\*eat\\*")))))
 
 (provide 'init-term)
 ;;; init-term.el ends here
