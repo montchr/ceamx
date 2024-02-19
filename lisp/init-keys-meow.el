@@ -170,7 +170,7 @@
   ;; Because I'm still getting the hang of meow again. I'm not fast enough to
   ;; remember exactly what to do. Once this delay feels too long, then it can be
   ;; changed.
-  (setopt meow-expand-hint-remove-delay 10.0)
+  (setopt meow-expand-hint-remove-delay 4.0)
 
   ;; There are slight differences between these two, take your pick.
   ;; Default is nil.
