@@ -122,6 +122,12 @@
   ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
   "C-h" nil)
 
+;;;; Launcher
+
+(keymap-global-set "C-c C-o" ceamx-launch-map)
+(keymap-global-set "C-c o" ceamx-launch-map)
+;; (define-keymap :keymap ceamx-launch-map)
+
 ;;;; Toggles
 
 ;; (def-arm! ceamx-toggle-map "t" "[Toggle]"
