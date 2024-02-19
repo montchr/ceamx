@@ -1,8 +1,6 @@
 ;;; templates/nix-mode.eld
 
-;; FIXME: `nix-ts-mode' also
-
-nix-mode
+nix-mode nix-ts-mode
 
 (inherit "inherit (" p ") " p ";")
 (letin "let" n> r> n "in ")

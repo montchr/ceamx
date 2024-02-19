@@ -1,4 +1,6 @@
-nix-mode
+;;; templates/nix-program-module.eld
+
+nix-mode nix-ts-mode
 
 (modprog "\
 {
