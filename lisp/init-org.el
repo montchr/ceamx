@@ -82,7 +82,8 @@
           "⭠ now ─────────────────────────────────────────────────"))
 
 (use-package doct
-  :demand t)
+  :demand t
+  :autoload (doct))
 
 (use-feature! org-capture
   :after (doct)
