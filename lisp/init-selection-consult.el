@@ -43,6 +43,7 @@
   (advice-add #'register-preview :override #'consult-register-window)
 
   :config
+  ;; FIXME: define these keys in the maps they intersect
 	(define-keymap :keymap global-map
     "<remap> <bookmark-jump>"                   #'consult-bookmark
     "<remap> <repeat-complex-command>"          #'consult-complex-command
@@ -60,7 +61,7 @@
     "<remap> <project-switch-to-buffer>"        #'consult-project-buffer
 
     ;; C-c bindings (mode-specific-map)
-    ;; TODO: verify
+    ;; FIXME: use a keymap for s prefix
     "C-c s h"  #'consult-history
     "C-c s m"  #'consult-mode-command
     "C-c s k"  #'consult-kmacro

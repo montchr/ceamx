@@ -31,6 +31,7 @@
 
 (require 'ceamx-paths)
 
+(require 'config-env)
 (require 'config-help)
 (require 'config-keys)
 
@@ -66,16 +67,17 @@
 (keymap-set goto-map "c" #'xref-find-definitions)
 
 (keymap-global-set "M-C" ceamx-code-map)
+
 (define-keymap :keymap ceamx-code-map
   "a" '("action.." . eglot-code-actions)
-  ;; "c" #'eglot
   "d" #'xref-find-definitions
   "r" '("rename..." . eglot-rename))
 
 ;;;; Files
 
-(keymap-global-set "C-c f" ceamx-file-map)
-(keymap-global-set "C-c C-f" ceamx-file-map)
+(keymap-global-set "C-c f" '("[ File ]" . ceamx-file-map))
+(keymap-global-set "C-c C-f" '("[ File ]" . ceamx-file-map))
+
 (define-keymap :keymap ceamx-file-map
   ;; TODO
   ;; "u" #'+sudo-find-file
@@ -124,14 +126,15 @@
 
 ;;;; Launcher
 
-(keymap-global-set "C-c C-o" ceamx-launch-map)
-(keymap-global-set "C-c o" ceamx-launch-map)
+(keymap-global-set "C-c C-o" '("[ Launch ]" . ceamx-launch-map))
+(keymap-global-set "C-c o" '("[ Launch ]" . ceamx-launch-map))
+
 ;; (define-keymap :keymap ceamx-launch-map)
 
 ;;;; Toggles
 
-(keymap-global-set "C-c C-t" ceamx-toggle-map)
-(keymap-global-set "C-c t" ceamx-toggle-map)
+(keymap-global-set "C-c C-t" '("[ Toggle ]" . ceamx-toggle-map))
+(keymap-global-set "C-c t" '("[ Toggle ]" . ceamx-toggle-map))
 
 (define-keymap :keymap ceamx-toggle-map
   "l" #'display-line-numbers-mode
@@ -172,6 +175,7 @@
 
 ;;; Global Bindings
 
+;; TODO: hydra/transient?
 ;; Wrap text in supported symbols.
 (dolist (pair '("[" "{" "\"" "'" "`"))
   (let ((key (format "M-%s" pair)))
