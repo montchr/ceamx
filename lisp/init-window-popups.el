@@ -43,14 +43,14 @@
   :preface
 
   (defun +popper-select-below-fn (buffer &optional _alist)
-      (funcall (if (> (frame-width) 170)
-                 ;; #'display-buffer-in-direction
-                 #'popper-select-popup-at-bottom
-                 #'display-buffer-at-bottom)
-        buffer
-        `((window-height . ,popper-window-height)
-           (direction . below)
-           (body-function . ,#'select-window))))
+    (funcall (if (> (frame-width) 170)
+               ;; #'display-buffer-in-direction
+               #'popper-select-popup-at-bottom
+               #'display-buffer-at-bottom)
+      buffer
+      `((window-height . ,popper-window-height)
+         (direction . below)
+         (body-function . ,#'select-window))))
 
   :init
   (setopt popper-reference-buffers
