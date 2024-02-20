@@ -46,7 +46,6 @@
   mouse-yank-at-point t                 ; Yank at point rather than pointer
   ;; TODO: make sure this is correct
   read-process-output-max (* 1024 1024) ; Increase read size for data chunks
-  recenter-positions '(5 bottom)        ; Set re-centering positions
   scroll-conservatively 101             ; Avoid recentering when scrolling far
   ;; FIXME: probably does not work with `meow', which uses `meow-use-clipboard'
   select-enable-clipboard t             ; Merge system's and Emacs' clipboard

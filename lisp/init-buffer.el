@@ -34,6 +34,9 @@
 
 ;;; General
 
+;; Available cycle positions for `recenter-top-bottom'.
+(setopt recenter-positions '(middle top bottom))
+
 ;; Disable buffer line wrapping by default.
 (set-default 'truncate-lines t)
 
