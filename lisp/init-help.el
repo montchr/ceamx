@@ -56,6 +56,28 @@
 
   (devdocs-update-all))
 
+;;;; elmacro :: <https://github.com/Silex/elmacro>
+
+;; Display keyboard macros or latest interactive commands as Elisp.
+
+(use-package elmacro
+  :commands (elmacro-mode)
+
+  :init
+  (add-hook 'ceamx-emacs-startup-hook #'elmacro-mode)
+
+  :config
+  (setopt elmacro-show-last-commands-default 30)
+
+  ;; <https://github.com/Silex/elmacro/blob/master/README.md#org-mode-smartparens-etc>
+  ;; <https://github.com/Silex/elmacro/blob/master/README.md#elmacro-processor-prettify-inserts>
+  (setopt elmacro-processor-prettify-inserts (unless (or (bound-and-true-p lispy-mode) ; not actually sure about lispy-mode
+                                                       (bound-and-true-p smartparens-mode)
+                                                       (bound-and-true-p org-mode))))
+
+  ;; "a" "b" "c" => "abc"
+  (setopt elmacro-processor-concatenate-inserts t))
+
 ;;;; `helpful' :: <https://github.com/Wilfred/helpful>
 
 ;; NOTE: there are some blocking bugs that have gone unfixed for quite a while
