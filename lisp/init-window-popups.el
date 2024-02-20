@@ -84,8 +84,8 @@
          "\\*Completions\\*"
          "[Oo]utput\\*")))
 
-  (add-hook 'emacs-startup-hook #'popper-mode)
-  (add-hook 'emacs-startup-hook #'popper-echo-mode)
+  (add-hook 'ceamx-emacs-startup-hook #'popper-mode)
+  (add-hook 'ceamx-emacs-startup-hook #'popper-echo-mode)
 
   :config
   (define-keymap :keymap (current-global-map)
