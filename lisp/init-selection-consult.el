@@ -29,6 +29,8 @@
 
 (require 'lib-selection)
 
+(require 'lib-keys)
+
 (use-package consult
   :commands ( consult-bookmark consult-buffer consult-buffer-other-frame consult-buffer-other-tab
               consult-buffer-other-window consult-compile-error consult-complex-command
@@ -56,7 +58,7 @@
   (setopt xref-show-definitions-function #'consult-xref)
   (setopt xref-show-xrefs-function #'consult-xref)
 
-  (define-keymap :keymap global-map
+  (global-keys!
     "C-c M-x" #'consult-mode-command
     "C-c h"   #'consult-history
     "C-c k" #'consult-kmacro
