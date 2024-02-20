@@ -30,22 +30,16 @@
 (require 'lib-selection)
 
 (use-package consult
-  :commands '(consult-preview-at-point-mode
-             consult-register-format
-             consult-register-window
-             consult-xref
-             consult-mode-command
-             consult-history
-             consult-kmacro
-             consult-man
-             consult-info
-             consult-complex-command
-             consult-buffer
-             consult-buffer-other-window
-             consult-buffer-other-frame
-             consult-buffer-other-tab
-             consult-bookmark
-             consult-project-buffer)
+  :commands ( consult-bookmark consult-buffer consult-buffer-other-frame consult-buffer-other-tab
+              consult-buffer-other-window consult-compile-error consult-complex-command
+              consult-fd consult-flycheck consult-flymake consult-focus-lines consult-git-grep
+              consult-global-mark consult-goto-line consult-history consult-imenu
+              consult-imenu-multi consult-info consult-keep-lines consult-kmacro
+              consult-line consult-line-multi consult-locate consult-man consult-mark
+              consult-mode-command consult-outline consult-preview-at-point-mode
+              consult-project-buffer consult-register consult-register-format consult-register-load
+              consult-register-store consult-register-window consult-ripgrep consult-xref
+              consult-yank-pop)
 
   :init
 
@@ -136,13 +130,13 @@
   ;; For some commands and buffer sources it is useful to configure the
   ;; :preview-key on a per-command basis using the `consult-customize' macro.
   (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file
-   ;; :preview-key (kbd "M-.")
-   :preview-key '(:debounce 0.4 any))
+    consult-theme :preview-key '(:debounce 0.2 any)
+    consult-ripgrep consult-git-grep consult-grep
+    consult-bookmark consult-recent-file consult-xref
+    consult--source-bookmark consult--source-file-register
+    consult--source-recent-file consult--source-project-recent-file
+    ;; :preview-key (kbd "M-.")
+    :preview-key '(:debounce 0.4 any))
 
   ;; Configure the narrowing key.
   ;; Both < and C-+ work reasonably well.
