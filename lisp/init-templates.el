@@ -57,7 +57,13 @@
                          (cons #'tempel-expand
                                completion-at-point-functions)))
 
-  (global-tempel-abbrev-mode +1))
+  (global-tempel-abbrev-mode +1)
+
+  :config
+
+  (define-keymap :keymap tempel-map
+    "TAB" #'tempel-next
+    "S-TAB" #'tempel-previous))
 
 
 ;;; `tempel-collection' :: <https://github.com/Crandel/tempel-collection>
