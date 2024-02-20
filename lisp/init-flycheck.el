@@ -39,6 +39,7 @@
 (require 'config-keys)
 
 (require 'lib-common)
+(require 'lib-keys)
 
 (use-package flycheck
   :commands (global-flycheck-mode flycheck-mode)
@@ -57,7 +58,7 @@
   (add-hook 'prog-mode-hook #'flycheck-mode)
 
   :config
-  (keymap-set ceamx-toggle-map "f" #'flycheck-mode)
+  (defmap! ceamx-toggle-map "f" #'flycheck-mode)
 
   (use-feature! consult
     :commands (consult-flycheck)

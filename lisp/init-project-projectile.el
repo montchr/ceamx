@@ -44,7 +44,6 @@
 
   :config
   (define-keymap :keymap projectile-mode-map
-    ;; NOTE: Overrides default `ceamx-project-map' binding.
     "C-c p" '("project" . projectile-command-map))
 
   (keymap-global-set "<remap> <project-find-file>" #'projectile-find-file)

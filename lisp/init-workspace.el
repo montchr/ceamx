@@ -28,7 +28,6 @@
 
 (autoload 'consult-customize "consult")
 
-;; (defvar ceamx-buffer-map)
 (defvar consult--source-buffer)
 (defvar consult-buffer-sources)
 ;; (defvar persp-consult-source)
