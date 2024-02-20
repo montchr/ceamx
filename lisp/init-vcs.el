@@ -130,11 +130,9 @@
 ;;;; `browse-at-remote' :: <https://github.com/rmuslimov/browse-at-remote>
 
 (use-package browse-at-remote
-  :commands browse-at-remote
+  :commands (browse-at-remote)
   :init
-  ;; FIXME: keymap not available! causes error
-  ;; (keymap-set ceamx-git-map "o" #'browse-at-remote)
-  )
+  (keymap-set vc-prefix-map "o" #'browse-at-remote))
 
 ;;;; `consult-gh' :: <https://github.com/armindarvish/consult-gh>
 
