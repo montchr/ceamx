@@ -195,7 +195,9 @@
 (define-keymap :keymap (current-global-map)
   "C-'" #'avy-goto-char-2
 
-  "M-j" #'avy-goto-char-timer
+  ;; "C-'" #'avy-goto-char-2
+
+  "M-j" #'avy-goto-char-2
   ;; Logical progression from M-f for `forward-word'.
   "M-F" #'forward-symbol
 
