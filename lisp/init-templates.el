@@ -32,13 +32,7 @@
 ;;; Code:
 
 (use-package tempel
-  ;; :custom
-  ;;
-  ;; Require trigger prefix before template name when completing.
-  ;; (tempel-trigger-prefix "<")
-
-  :bind (("M-+" . tempel-complete) ;; Alternative tempel-expand
-         ("M-*" . tempel-insert))
+  :commands (tempel-complete tempel-insert)
 
   :init
   (setopt tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
@@ -60,6 +54,13 @@
   (global-tempel-abbrev-mode +1)
 
   :config
+
+  ;; Require trigger prefix before template name when completing.
+  ;; (setopt tempel-trigger-prefix "<")
+
+  (global-keys!
+    "M-+" #'tempel-complete
+    "M-*" #'tempel-insert)
 
   (define-keymap :keymap tempel-map
     "TAB" #'tempel-next
