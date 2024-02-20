@@ -192,8 +192,9 @@
     "s-{" #'tab-previous
     "s-}" #'tab-next))
 
-(define-keymap :keymap (current-global-map)
-  "C-'" #'avy-goto-char-2
+(global-keys!
+  ;; TODO: find a better place -- shadows default for `rectangle-mark-mode'
+  ;; "C-x SPC" #'hydra-rectangle/body
 
   ;; "C-'" #'avy-goto-char-2
 
@@ -202,10 +203,7 @@
   "M-F" #'forward-symbol
 
   ;; FIXME: does not trigger autoload from use-package
-  "C-x u" #'vundo
-  ;; TODO: find a better place -- shadows default for `rectangle-mark-mode'
-  ;; "C-x SPC" #'hydra-rectangle/body
-  )
+  "C-x u" #'vundo)
 
 (provide 'init-keys-bindings)
 ;;; init-keys-bindings.el ends here

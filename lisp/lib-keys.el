@@ -27,18 +27,17 @@
 ;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
 ;; <https://github.com/casouri/lunarymacs/blob/cd1f34449038e5ec371b1277941c529ea1fb4e9e/site-lisp/luna-key.el>
 
+;; TODO: add utility to apply prefix to provided keys and bind in maps,
+;; deferring until maps are defined if necessary. see
+;; <https://github.com/casouri/lunarymacs/blob/master/site-lisp/luna-key.el>
+
 ;;; Code:
 
 (require 'cl-lib)
 
 (require 'config-keys)
 
-;;
-;;; Keybindings
-
-;; TODO: add utility to apply prefix to provided keys and bind in maps,
-;; deferring until maps are defined if necessary. see
-;; <https://github.com/casouri/lunarymacs/blob/master/site-lisp/luna-key.el>
+;;; Internal functions
 
 ;; FIXME: interface still doesn't feel right...
 ;; TODO: account for remapping (don't prefix)
@@ -88,8 +87,8 @@ the documentation for `meow-keypad-describe-keymap-function'
 acknowledges this incompatibility."
   (declare (indent defun))
   `(if (fboundp 'meow-leader-define-key)
-      (meow-leader-define-key (cons ,key ,def))
-    (keymap-set mode-specific-map ,key ,def)))
+       (meow-leader-define-key (cons ,key ,def))
+     (keymap-set mode-specific-map ,key ,def)))
 
 ;; FIXME: while logging something simple works, this does not yet return
 ;; anything useful -- it should return a modified version of DEFS
@@ -134,29 +133,6 @@ acknowledges this incompatibility."
 ;;   (let* ((prefix (string-clean-whitespace prefix))
 ;;          ;; FIXME: how to return modified KEY and DEF? or find another way...
 ;;          (fn (lambda (key def) (format "%s %s" prefix key))))))
-
-(defmacro def-arm! (keymap key description &rest defs)
-  "Define KEYMAP with DEFS bound to KEY with DESCRIPTION in the appropriate leader.
-See `leader-key!' for more info about leader behavior."
-  (declare (indent defun))
-  `(progn
-     (define-prefix-command (quote ,keymap))
-     (define-keymap :keymap ,keymap ,@defs)
-     (leader-key! ,key '(,description . ,keymap))))
-
-;; TODO: not yet practical or functional
-;; (defmacro def-mode-arm! (mode description &rest defs)
-;;   "Define the mode-specific leader arm for MODE with DESCRIPTION and bindings DEFS."
-;;   (declare (doc-string 2)
-;;            (indent defun))
-;;   (progn
-;;     (let* ((mode-name (symbol-name mode))
-;;            (keymap-sym (intern (format "ceamx-%s-specific-map" mode-name)))
-;;            (description description)
-;;            (defs (or defs nil)))
-;;       `(def-arm! ,keymap-sym "m"
-;;          ,description
-;;          ,@defs))))
 
 (provide 'lib-keys)
 ;;; lib-keys.el ends here

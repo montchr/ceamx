@@ -30,15 +30,11 @@
 
 ;;; Code:
 
+(require 'config-env)
 (require 'lib-common)
 (require 'lib-keys)
 
-(autoload 'burly-bookmark-frames "burly")
-(autoload 'burly-bookmark-windows "burly")
-
-(autoload 'ceamx-hydra/main/body "init-hydras")
-
-(defvar +sys-mac-p)
+;; FIXME: move to bindings file
 
 ;; Common system hotkeys, complicated for cross-platform usability.
 ;;
@@ -49,6 +45,7 @@
   "C-S-v" #'yank
   "C-S-x" #'kill-region)
 
+;; FIXME: move to bindings file
 ;; macOS: Remap modifier keys.
 (when (and +sys-mac-p (display-graphic-p))
   (setopt mac-control-modifier 'control)
