@@ -260,7 +260,7 @@
 (require 'config-ui)
 (require 'init-ui)
 
-;;;; Theme
+;;;;; Theme
 
 (require 'init-ui-theme)
 (pcase ceamx-theme-family
@@ -274,7 +274,7 @@
 (require 'init-ui-circadian)
 
 
-;;;; Typography + Iconography
+;;;;; Typography + Iconography
 
 (when (display-graphic-p)
   (require 'init-ui-font))
@@ -282,7 +282,7 @@
 ;; enabled/configured based on `display-graphic-p' within.
 (require 'init-ui-icons)
 
-;;;; Modeline
+;;;;; Modeline
 
 (require 'config-ui)
 (require 'init-ui-modeline)
@@ -299,6 +299,7 @@
 ;;;; Keyboard support
 
 (require 'config-keys)
+
 (require 'init-keys)
 (require 'init-keys-which-key)
 (require 'init-keys-meow)
@@ -308,6 +309,8 @@
 (require 'init-window)
 (require 'init-window-popups)
 (require 'init-buffer)
+
+;; FIXME: load earlier / in another section
 (require 'init-history)
 
 ;;;; Selection
@@ -418,10 +421,10 @@
 
 ;; unfortunately
 (when (and +gui-p +sys-mac-p)
-(def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
-  "Restart the yabai service after init."
-  (after! [exec-path-from-shell]
-    (async-shell-command "yabai --restart-service"))))
+  (def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
+             "Restart the yabai service after init."
+             (after! [exec-path-from-shell]
+               (async-shell-command "yabai --restart-service"))))
 
 (provide 'init)
 ;;; init.el ends here
