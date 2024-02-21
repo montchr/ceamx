@@ -44,5 +44,22 @@
                              (:sunset . ,ceamx-ui-theme-dark)))
   (circadian-setup))
 
+;;;; theme-buffet :: <https://git.sr.ht/~bboal/theme-buffet>
+
+;; > The theme-buffet package arranges to automatically change themes during
+;; > specific times of the day or at fixed intervals. The collection of themes
+;; > is customisable, with the default options covering the built-in Emacs
+;; > themes as well as Prot's modus-themes and ef-themes.
+
+(use-package theme-buffet
+  :commands (theme-buffet-modus-ef)
+  :defines (theme-buffet-menu)
+
+  :init
+  (setopt theme-buffet-menu 'modus-ef)
+
+  :config
+  (theme-buffet-modus-ef))
+
 (provide 'init-ui-circadian)
 ;;; init-ui-circadian.el ends here

@@ -256,40 +256,45 @@
 (require 'init-env-tty)
 (require 'init-frame)
 
-;; TODO: no need to import `config-ui' i think?
+;; Load configuration settings for conditional loading.
 (require 'config-ui)
+
 (require 'init-ui)
 
 ;;;;; Theme
 
 (require 'init-ui-theme)
+
 (pcase ceamx-theme-family
   ('ef
-   (require 'init-ui-ef-themes))
+    (require 'init-ui-ef-themes))
   ('modus
-   (require 'init-ui-modus-themes))
+    (require 'init-ui-modus-themes))
   ('nano
-   ;; NOTE: this is probably very broken -- so is the upstream project :/
-   (require 'init-ui-nano-theme)))
-(require 'init-ui-circadian)
+    ;; NOTE: this is probably very broken -- so is the upstream project :/
+    (require 'init-ui-nano-theme)))
 
 
 ;;;;; Typography + Iconography
 
 (when (display-graphic-p)
   (require 'init-ui-font))
+
 ;; Icons *can* work in non-graphical environments, so packages are
 ;; enabled/configured based on `display-graphic-p' within.
 (require 'init-ui-icons)
 
 ;;;;; Modeline
 
-(require 'config-ui)
 (require 'init-ui-modeline)
 (pcase ceamx-modeline-provider
   ('doom (require 'init-ui-modeline-doom))
   ('nano (require 'init-ui-modeline-nano))
   ('telephone (require 'init-ui-modeline-telephone-line)))
+
+;;;;; Integrations for visual consistency
+
+(require 'init-ui-circadian)
 
 (require 'init-after-ui)
 
