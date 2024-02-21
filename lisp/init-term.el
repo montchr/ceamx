@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(require 'config-keys)
+(require 'ceamx-keymaps)
 (require 'lib-common)
 
 ;;; `eat' :: <https://codeberg.org/akib/emacs-eat/>
@@ -35,14 +35,13 @@
 ;; "Emulate A Terminal"
 
 (use-package eat
-  :commands (eat
+  :commands ( eat
               eat-eshell-mode
               eat-eshell-visual-command-mode)
   :init
   (add-hook 'eshell-load-hook #'eat-eshell-mode)
   (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode)
 
-  :config
   (keymap-set ceamx-launch-map "t" #'eat)
 
   (use-feature! popper
