@@ -298,7 +298,9 @@
 
 (require 'init-after-ui)
 
-;;;; Workspace
+;;;; Sessions and workspaces
+
+(require 'init-session-start)
 (require 'init-workspace)
 
 ;;;; Keyboard support
