@@ -65,8 +65,6 @@
 (put 'upcase-region 'disabled nil)      ; Enable `upcase-region'
 
 ;; Improve initial scratch buffer load time
-;; FIXME: "variable without a source file"
-(setq default-major-mode #'text-mode)
 (setopt initial-major-mode #'text-mode)
 
 (setopt fill-column 80)
