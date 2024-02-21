@@ -20,9 +20,7 @@
 
 ;;; Commentary:
 
-;; FIXME: should not be `const's! see <https://www.gnu.org/software/emacs/manual/html_node/elisp/Defining-Variables.html#index-defconst>
-
-;; Where am I?
+;; Where are we?
 
 ;;; Code:
 

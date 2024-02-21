@@ -163,11 +163,12 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (setq inhibit-startup-screen t)
 
 ;; No littering.
+;; TODO: consider enabling these for TRAMP?
 (setq make-backup-files nil)
 (setq create-lockfiles nil)
 
 ;;
-;;; Frames
+;;; Frames and window-system integration
 
 ;; Prevent X11 from taking control of visual behavior and appearance.
 (setq inhibit-x-resources t)
@@ -177,6 +178,10 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 
 ;; Allow resizing the frame to the maximum available space on the desktop.
 (setq frame-resize-pixelwise t)
+
+;; Remove some unnecessary frame elements by default.
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
 
 ;;;; Rename the default/initial frame
 

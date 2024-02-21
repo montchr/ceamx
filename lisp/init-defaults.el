@@ -87,15 +87,6 @@
 ;; Improve visual contrast between focused/non-focused windows.
 (setopt highlight-nonselected-windows nil)
 
-;; Disable extraneous OS window chrome.
-(when (window-system)
-  (tool-bar-mode -1)
-  (toggle-scroll-bar -1)
-  ;; Display help text in echo area, not in a popup.
-  ;; TODO: why?
-  (tooltip-mode -1)
-  (scroll-bar-mode -1))
-
 ;; Unbind `suspend-frame'.
 ;; TODO: provide more context
 (global-unset-key (kbd "C-x C-z"))
