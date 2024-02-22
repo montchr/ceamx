@@ -261,21 +261,12 @@
 
 (require 'init-ui)
 
-;;;;; Theme
-
 (require 'init-ui-theme)
-
 (require 'init-ui-ef-themes)
 (require 'init-ui-modus-themes)
 
-;;;;; Typography + Iconography
-
 (when (display-graphic-p)
   (require 'init-ui-font))
-
-;; Icons *can* work in non-graphical environments, so packages are
-;; enabled/configured based on `display-graphic-p' within.
-(require 'init-ui-icons)
 
 ;;;;; Modeline
 

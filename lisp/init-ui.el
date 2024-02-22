@@ -32,15 +32,19 @@
 (use-package transient)
 (use-package magit-section)
 
+(use-package nerd-icons
+  :demand t
+  :init
+  (setopt nerd-icons-font-family "Symbols Nerd Font Mono"))
 
-;;
-;;; Hydra
-;;
+(use-package svg-lib
+  :demand t)
 
 (use-package hydra
   :commands defhydra)
 
 ;;; pretty-hydra :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
+
 (use-package pretty-hydra
   :after (hydra))
 
