@@ -24,8 +24,13 @@
 
 ;;; Code:
 
+(require 'elpaca)
+
 (use-package ef-themes
+  :ensure t
   :demand t
+  :commands (ef-themes-select)
+
   :config
   (setopt ef-themes-to-toggle '(ef-frost ef-winter))
 
