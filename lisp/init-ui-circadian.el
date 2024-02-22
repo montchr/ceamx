@@ -79,45 +79,35 @@
   (setopt theme-buffet-menu 'end-user)
 
   (setopt theme-buffet-end-user
-    '(:night (ef-autumn
-               ef-duo-dark
-               ef-night
-               ef-tritanopia-dark
-               ef-winter
-               ef-dark
-               ;; modus-vivendi-deuteranopia
-               )
-       :twilight (ef-bio
-                   ef-cherie
-                   modus-vivendi
-                   modus-vivendi-tritanopia)
-       :morning (
-                  ef-elea-light
-                  ef-maris-light
-                  ef-spring
-                  ef-tritanopia-light
-                  modus-operandi-tritanopia)
-       :day (ef-deuteranopia-light
-              ef-frost
-              ef-light
-              ef-trio-light
-              modus-operandi
-              modus-operandi-deuteranopia)
-       :afternoon (ef-cyprus
-                    ef-arbutus
-                    ef-day
-                    ef-duo-light
-                    ef-kassio
-                    ef-melissa-light
-                    ef-summer
-                    modus-operandi-tinted)
-       :evening (ef-deuteranopia-dark
-                  ef-elea-dark
-                  ef-maris-dark
-                  ef-melissa-dark
-                  ef-symbiosis
-                  ef-trio-dark
-                  modus-vivendi-tinted)))
+          '(:night (ef-autumn
+                    ef-duo-dark
+                    ef-night
+                    ef-winter
+                    ef-dark)
+            :twilight (ef-bio
+                       ef-cherie
+                       modus-vivendi)
+            :morning (ef-elea-light
+                      ef-maris-light
+                      ef-spring)
+            :day (ef-frost
+                  ef-light
+                  ef-trio-light
+                  modus-operandi)
+            :afternoon (ef-cyprus
+                        ef-arbutus
+                        ef-day
+                        ef-duo-light
+                        ef-kassio
+                        ef-melissa-light
+                        ef-summer
+                        modus-operandi-tinted)
+            :evening (ef-elea-dark
+                      ef-maris-dark
+                      ef-melissa-dark
+                      ef-symbiosis
+                      ef-trio-dark
+                      modus-vivendi-tinted)))
 
   :config
 
