@@ -29,6 +29,7 @@
 (defmap! ceamx-code-map)
 (defmap! ceamx-file-map)
 (defmap! ceamx-launch-map)
+(defmap! ceamx-replace-map)
 (defmap! ceamx-toggle-map)
 
 (provide 'ceamx-keymaps)

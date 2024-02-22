@@ -132,6 +132,12 @@
 
 ;; (define-keymap :keymap ceamx-launch-map)
 
+;;;; Search
+
+;; TODO: Consider also/alternativately "M-#" as suggested by manual (currently
+;; occupied by `consult-register-load')
+(keys! search-map "r" '("replace..." . ceamx-replace-map))
+
 ;;;; Toggles
 
 (keymap-global-set "C-c C-t" '("[ Toggle ]" . ceamx-toggle-map))
