@@ -57,18 +57,20 @@
     "Configurate custom faces for the `modus-themes'."
     (modus-themes-with-colors
       (custom-set-faces
-       ;; Add "padding" to the mode lines.
-       `(mode-line ((,c :box (:line-width 10
-                              :color ,bg-mode-line-active))))
-       `(mode-line-inactive ((,c :box (:line-width 10
-                                       :color ,bg-mode-line-inactive)))))))
+        ;; Add "padding" to the mode lines.
+        `(mode-line ((,c :box (:line-width 10
+                                :color ,bg-mode-line-active))))
+        `(mode-line-inactive ((,c :box (:line-width 10
+                                         :color ,bg-mode-line-inactive)))))))
 
   ;; Do not extend `region' background past the end of the line.
   ;; <https://protesilaos.com/emacs/modus-themes#h:a5140c9c-18b2-45db-8021-38d0b5074116>
   (custom-set-faces
     '(region ((t :extend nil))))
 
-  (load-theme 'modus-vivendi-tinted :no-confirm))
+  ;; NOTE: Loaded in `init-ui-circadian'.
+  ;; (load-theme 'modus-vivendi-tinted :no-confirm)
+  )
 
 (provide 'init-ui-modus-themes)
 ;;; init-ui-modus-themes.el ends here

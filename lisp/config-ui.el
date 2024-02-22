@@ -54,6 +54,17 @@ theme)."
                  (const :tag "The `standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
+(defcustom ceamx-theme-circadian-interval 'buffet
+  "The circadian theme switching interval.
+Value may be either `period' or `solar', corresponding
+respectively to period-based switching with `theme-buffet' or
+sunrise/sunset toggling from the combination of the `solar'
+library and the `circadian' package."
+  :group 'ceamx
+  :type '(choice :tag "Circadian theme switching interval" :value buffet
+          (const :tag "Time periods via `theme-buffet'" :value buffet)
+          (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
+
 (defcustom ceamx-font-height-multiplier 1.0
   "Multiplier for display font size.
 Intended for use as a per-system (or, ideally, per-display)

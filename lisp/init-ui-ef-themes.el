@@ -57,9 +57,9 @@
   ;; Load the theme of choice:
   ;; (load-theme 'ef-elea-dark :no-confirm)
   ;; OR use this to load the theme which also calls `ef-themes-post-load-hook':
-  (ef-themes-select 'ef-winter))
-
-(elpaca-wait)
+  ;; (ef-themes-select 'ef-winter)
+  ;; OR use some other method of loading a theme in `init-ui-circadian'
+  )
 
 (provide 'init-ui-ef-themes)
 ;;; init-ui-ef-themes.el ends here
