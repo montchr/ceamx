@@ -68,7 +68,8 @@
   :commands (theme-buffet-modus-ef)
   :defines (theme-buffet-menu)
 
-  :config
+  :init
+
   ;; Take Daylight Savings Time offset into account for time period boundaries.
   ;; I am not sure why the additional `1+' is necessary, but this is copied from
   ;; the author's recommendation.
@@ -118,7 +119,12 @@
                   ef-trio-dark
                   modus-vivendi-tinted)))
 
-  (theme-buffet-end-user))
+  :config
+
+  (theme-buffet-end-user)
+
+  ;; Activate some theme in the current period.
+  (theme-buffet-a-la-carte))
 
 (provide 'init-ui-circadian)
 ;;; init-ui-circadian.el ends here
