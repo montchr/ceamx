@@ -32,7 +32,10 @@
 
 ;;; Code:
 
+(require 'ceamx-keymaps)
+
 (require 'lib-common)
+(require 'lib-keys)
 
 ;;; `isearch' [builtin]
 
@@ -96,6 +99,30 @@
     "M-e" nil)
 
   (keymap-set minibuffer-local-isearch-map "M-/" #'isearch-complete-edit))
+
+;;; Efficiently replace targets in the buffer or context with `substitute'
+
+;; <https://protesilaos.com/emacs/substitute>
+
+(use-package substitute
+  :commands (substitute-target-above-point
+              substitute-target-below-point
+              substitute-target-in-buffer
+              substitute-target-in-defun)
+  :defines (substitute-post-replace-functions)
+
+  :init
+  ;; Provide messages reporting on matches changed in the context.
+  (add-hook 'substitute-post-replace-functions #'substitute-report-operation)
+
+  (keys! ceamx-replace-map
+    "b" #'substitute-target-in-buffer
+    "d" #'substitute-target-in-defun
+    "r" #'substitute-target-above-point
+    "s" #'substitute-target-below-point)
+
+  :config
+  (setopt substitute-hightlight t))
 
 (provide 'init-search)
 ;;; init-search.el ends here
