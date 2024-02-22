@@ -30,6 +30,30 @@
 
 (require 'lib-common)
 
+(use-package dashboard
+  :ensure t
+  :after (nerd-icons)
+
+  :preface
+  (setopt initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+
+  :init
+  (add-hook 'ceamx-after-init-hook #'dashboard-insert-startupify-lists)
+  (add-hook 'ceamx-after-init-hook #'dashboard-initialize)
+
+  :config
+  (setopt dashboard-banner-logo-title "C E A M X")
+  (setopt dashboard-startup-banner 'official)
+  (setopt dashboard-projects-backend 'project-el)
+  (setopt dashboard-center-content t)
+  (setopt dashboard-display-icons-p t)
+  (setopt dashboard-icon-type 'nerd-icons)
+  (setopt dashboard-items '((recents  . 5)
+                             (bookmarks . 5)
+                             (projects . 5)
+                             (agenda . 5)
+                             (registers . 5)))
+  (dashboard-setup-startup-hook))
 
 (provide 'init-session-start)
 ;;; init-session-start.el ends here
