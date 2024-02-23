@@ -1,9 +1,11 @@
 ;;; lib-ui-theme.el --- Theme library functions and macros  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (C) 2024  Protesilaos Stavrou
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords:
+;;         Protesilaos Stavrou <info@protesilaos.com>
+;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -45,7 +47,7 @@
   (setq custom-enabled-themes `(,ceamx-ui-theme-dark))
   (ceamx-reapply-themes))
 
-;; via prot-emacs (needs link/credit)
+;; via prot-emacs
 (defun ceamx-theme-re-enable-in-frame (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
 Add this to `after-make-frame-functions' so that new frames do
