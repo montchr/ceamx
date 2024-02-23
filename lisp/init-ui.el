@@ -65,8 +65,10 @@
   :config
   (setopt avy-all-windows t)
   (setopt avy-all-windows-alt t)
+  ;; Prevent conflicts with themes.
   (setopt avy-background nil)
-  (setopt avy-style 'de-bruijn)
+  (setopt avy-style 'at-full)
+  ;; (setopt avy-style 'de-bruijn)
   (setopt avy-timeout-seconds 0.2))
 
 (provide 'init-ui)
