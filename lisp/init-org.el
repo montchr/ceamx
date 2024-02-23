@@ -64,6 +64,9 @@
   (setopt org-catch-invisible-edits 'show-and-error)
   (setopt org-special-ctrl-a/e t)
   (setopt org-insert-heading-respect-content t)
+  ;; Indenting code blocks by default is unnecessary and confusing.
+  (setopt org-edit-src-content-indentation 0)
+  (setopt org-src-preserve-indentation t)
 
   ;; Org styling, hide markup etc.
   (setopt org-ellipsis "…")
