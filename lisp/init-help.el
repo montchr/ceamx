@@ -60,11 +60,15 @@
 
 ;; Display keyboard macros or latest interactive commands as Elisp.
 
+;; Avoid enabling this mode globally. It may cause some recurring errors, and
+;; the package has not been updated in years. By nature, it is also quite
+;; invasive, and should probably only be used as a development tool as needed.
+
+;; FIXME: Its user options do not seem to be available immediately?
+
 (use-package elmacro
   :commands (elmacro-mode)
-
-  :init
-  (add-hook 'ceamx-emacs-startup-hook #'elmacro-mode)
+  :defines (elmacro-show-last-commands-default elmacro-processor-prettify-inserts elmacro-processor-concatenate-inserts)
 
   :config
   (setopt elmacro-show-last-commands-default 30)
@@ -76,6 +80,7 @@
                                                        (bound-and-true-p org-mode))))
 
   ;; "a" "b" "c" => "abc"
+  ;; FIXME: maybe causes errors?
   (setopt elmacro-processor-concatenate-inserts t))
 
 ;;;; `helpful' :: <https://github.com/Wilfred/helpful>
