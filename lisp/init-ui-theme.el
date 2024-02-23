@@ -27,6 +27,7 @@
 
 ;;; Code:
 
+(require 'config-env)
 (require 'config-ui)
 (require 'lib-ui-theme)
 
