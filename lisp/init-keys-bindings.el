@@ -202,9 +202,6 @@
   ;; TODO: find a better place -- shadows default for `rectangle-mark-mode'
   ;; "C-x SPC" #'hydra-rectangle/body
 
-  ;; "C-'" #'avy-goto-char-2
-
-  "M-j" #'avy-goto-char-2
   ;; Logical progression from M-f for `forward-word'.
   "M-F" #'forward-symbol
 

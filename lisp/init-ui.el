@@ -59,6 +59,9 @@
   :commands ( avy-goto-char
               avy-goto-char-2
               avy-goto-char-timer)
+  :init
+  (keymap-global-set "M-j" #'avy-goto-char-2)
+
   :config
   (setopt avy-all-windows t)
   (setopt avy-all-windows-alt t)
