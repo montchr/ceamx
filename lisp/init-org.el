@@ -72,6 +72,7 @@
   (setopt org-ellipsis "…")
   (setopt org-hide-emphasis-markers t)
   (setopt org-image-actual-width 300)
+  (setopt org-indent-indentation-per-level 2)
   (setopt org-pretty-entities t)
   (setopt org-startup-folded 'show2levels)
   (setopt org-startup-indented t)
