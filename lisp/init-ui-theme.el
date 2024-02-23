@@ -49,13 +49,9 @@
   (run-hooks 'ceamx-after-enable-theme-hook))
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme-hook)
 
-;; TODO: why? also move to `init-ui-font'
-(setopt font-lock-maximum-decoration t)
-
 (when +sys-mac-p
   ;; `undecorated-round' is macOS-specific.
   (add-to-list 'default-frame-alist '(undecorated-round . t)))
-
 
 (provide 'init-ui-theme)
 ;;; init-ui-theme.el ends here
