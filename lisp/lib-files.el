@@ -3,12 +3,14 @@
 ;; Copyright (C) 2022-2024  Chris Montgomery <chris@cdom.io>
 ;; Copyright (C) 2014-2022  Henrik Lissner
 ;; Copyright (C) 2006-2021  Steve Purcell
+;; Copyright (C) 2008-2024  Jonas Bernoulli
 ;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause
 
 ;; Author: Henrik Lissner
 ;;         Vegard Øye <vegard_oye at hotmail.com>
 ;;         Steve Purcell
 ;;         Chris Montgomery <chris@cdom.io>
+;;         Jonas Bernoulli <jonas@bernoul.li>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Created: 23 January 2023
 ;; Version: 0.1.0
@@ -204,53 +206,24 @@ See <https://www.reddit.com/r/emacs/comments/64xb3q/killthisbuffer_sometimes_jus
   (let ((buffer (when arg (current-buffer))))
     (diff-buffer-with-file buffer)))
 
-;;; <https://github.com/doomemacs/doomemacs/blob/7a7503045850ea83f205de6e71e6d886187f4a22/lisp/lib/files.el#L464-L518>
-
-;; (defun doom--sudo-file-path (file)
-;;   (let ((host (or (file-remote-p file 'host) "localhost")))
-;;     (concat "/" (when (file-remote-p file)
-;;                   (concat (file-remote-p file 'method) ":"
-;;                           (if-let (user (file-remote-p file 'user))
-;;                               (concat user "@" host)
-;;                             host)
-;;                           "|"))
-;;             "sudo:root@" host
-;;             ":" (or (file-remote-p file 'localname)
-;;                     file))))
-
-;; ;;;###autoload
-;; (defun doom/sudo-find-file (file)
-;;   "Open FILE as root."
-;;   (interactive "FOpen file as root: ")
-;;   (find-file (doom--sudo-file-path file)))
-
-;; ;;;###autoload
-;; (defun doom/sudo-this-file ()
-;;   "Open the current file as root."
-;;   (interactive)
-;;   (find-file
-;;    (doom--sudo-file-path
-;;     (or buffer-file-name
-;;         (when (or (derived-mode-p 'dired-mode)
-;;                   (derived-mode-p 'wdired-mode))
-;;           default-directory)))))
-
-;; ;;;###autoload
-;; (defun doom/sudo-save-buffer ()
-;;   "Save this file as root."
-;;   (interactive)
-;;   (let ((file (doom--sudo-file-path buffer-file-name)))
-;;     (if-let (buffer (find-file-noselect file))
-;;         (let ((origin (current-buffer)))
-;;           (copy-to-buffer buffer (point-min) (point-max))
-;;           (unwind-protect
-;;               (with-current-buffer buffer
-;;                 (save-buffer))
-;;             (unless (eq origin buffer)
-;;               (kill-buffer buffer))
-;;             (with-current-buffer origin
-;;               (revert-buffer t t))))
-;;       (user-error "Unable to open %S" file))))
+;; via <https://github.com/tarsius/fwb-cmds/blob/88e823809067983acfaeafa57d0bb6e889429ad2/fwb-cmds.el#L140C1-L156C78>
+;;;###autoload
+(defun ceamx/sudo-find-file (&optional arg)
+  "Edit the visited file as \"root\".
+If the current buffer does not visit a file, the visited file is
+writable or with a prefix argument, then read a file to visit."
+  (interactive "P")
+  (require 'tramp)
+  (if (or arg
+        (not buffer-file-name)
+        (file-writable-p buffer-file-name))
+    (let ((default-directory
+            (concat "/sudo:root@localhost:" default-directory)))
+      (apply #'find-file
+        (find-file-read-args
+          "Find file: "
+          (confirm-nonexistent-file-or-buffer))))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
 ;; ;;;###autoload
 ;; (defun doom/remove-recent-file (file)
