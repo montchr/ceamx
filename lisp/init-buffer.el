@@ -51,8 +51,10 @@
 
 ;;;; Keybindings
 
-;; Never have I once wanted to kill a different buffer than the one in which I ask.
-(keymap-global-set "C-x k" #'ceamx/kill-this-buffer)
+;; FIXME: accept universal-argument to kill some other buffer
+;;        this may indeed be useful at times, like killing an info buffer in a
+;;        side window when `display-buffer' rules are wonked
+;; (keymap-global-set "C-x k" #'ceamx/kill-this-buffer)
 
 ;;; `goto-address' (internal)
 
