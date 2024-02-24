@@ -180,8 +180,9 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (setq frame-resize-pixelwise t)
 
 ;; Remove some unnecessary frame elements by default.
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
+(when (display-graphic-p)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1))
 
 ;;;; Rename the default/initial frame
 

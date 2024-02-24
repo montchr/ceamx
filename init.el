@@ -274,10 +274,10 @@
 ;;;;; Modeline
 
 (require 'init-ui-modeline)
-(pcase ceamx-modeline-provider
-  ('doom (require 'init-ui-modeline-doom))
-  ('nano (require 'init-ui-modeline-nano))
-  ('telephone (require 'init-ui-modeline-telephone-line)))
+;; (pcase ceamx-modeline-provider
+;;   ('doom (require 'init-ui-modeline-doom))
+;;   ('nano (require 'init-ui-modeline-nano))
+;;   ('telephone (require 'init-ui-modeline-telephone-line)))
 
 ;;;;; Integrations for visual consistency
 
@@ -406,6 +406,7 @@
 ;;
 ;;; Postlude
 
+;; FIXME: some problems with mouse / org-mode maybe
 (def-hook! ceamx-maybe-start-emacs-server-h () 'ceamx-after-init-hook
   "Auto-start Emacs daemon if not already running."
   (require 'server)
@@ -416,9 +417,9 @@
 ;; unfortunately
 (when (and +gui-p +sys-mac-p)
   (def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
-             "Restart the yabai service after init."
-             (after! [exec-path-from-shell]
-               (async-shell-command "yabai --restart-service"))))
+    "Restart the yabai service after init."
+    (after! [exec-path-from-shell]
+      (async-shell-command "yabai --restart-service"))))
 
 (provide 'init)
 ;;; init.el ends here
