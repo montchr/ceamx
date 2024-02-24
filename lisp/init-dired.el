@@ -26,11 +26,13 @@
 ;;  Configuration for Dired and extensions.
 
 ;; FIXME: Hide directories like ".git" and ".direnv" by default...
-;;        eza/fd/rg/etc. do this by default but dired should prob use GNU ls
+;;        eza/fd/rg/etc. do this by default but Dired should prob use GNU ls
 
 ;;; Code:
 
 (require 'lib-common)
+
+;;; Dired, the Directory Editor
 
 (use-feature! dired
   :commands (dired-omit-mode)
@@ -45,9 +47,11 @@
     ;; NOTE: Overrides global binding for completion-at-point/cape commands.
     "M-p" #'dired-up-directory))
 
-;;; `dirvish' :: <https://github.com/alexluigit/dirvish>
-;;
+;;; Provide Dired with polished interface and feature enhancements with `dirvish'
+
+;;  <https://github.com/alexluigit/dirvish>
 ;;  <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#Sample-config>
+
 (use-package dirvish
   :commands (dirvish-override-dired-mode
               dirvish-peek-mode
@@ -58,7 +62,7 @@
     (dirvish-override-dired-mode))
 
   ;; Omit "uninteresting" files.
-  ;; TODO: what?
+  ;; See `dired-omit-files', `dired-omit-lines', `dired-omit-extensions'
   (add-hook 'dired-mode-hook #'dired-omit-mode)
 
   :config
