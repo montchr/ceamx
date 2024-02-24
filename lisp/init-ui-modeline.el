@@ -38,11 +38,30 @@
   :config
   (setopt display-time-24hr-format t))
 
-;; Show the name of the current function definition in the modeline.
-;; TODO: on hook?
-(use-feature! which-func
+(use-package minions
+  :commands (minions-mode)
   :config
-  (which-function-mode 1))
+  (minions-mode 1))
+
+;;;; Show current command and its binding with `keycast'
+
+;; <https://github.com/tarsius/keycast>
+
+;; Supports display in the mode-line, header-line, tab-bar, and as messages in a
+;; dedicated frame.
+
+(use-package keycast
+  :commands (keycast-mode-line-mode)
+
+  :init
+  (add-hook 'ceamx-emacs-startup-hook #'keycast-mode-line-mode)
+
+  :config
+  (dolist (input '(self-insert-command org-self-insert-command))
+    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
+
+  (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
+    (add-to-list 'keycast-substitute-alist `(,event nil))))
 
 (provide 'init-ui-modeline)
 ;;; init-ui-modeline.el ends here
