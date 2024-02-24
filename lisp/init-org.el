@@ -25,6 +25,11 @@
 
 ;;  Configuration for `org-mode'.
 
+;;; Investigate:
+
+;; TODO: <https://orgmode.org/worg/org-contrib/org-choose.html>
+;; TODO: <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
+
 ;;; Code:
 
 (require 'lib-common)

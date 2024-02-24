@@ -25,6 +25,10 @@
 
 ;; Configuration applicable across all editable buffers.
 
+;;; Investigate:
+
+;; TODO: <https://github.com/tarsius/killer/blob/ace0547944933440384ceeb5876b1f68c082d540/killer.el>
+
 ;;; Code:
 
 (require 'lib-common)
