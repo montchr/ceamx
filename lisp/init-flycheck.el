@@ -24,9 +24,6 @@
 
 ;; <https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
 
-;; FIXME: sometimes flycheck seems to randomly stop working and needs to be
-;; disabled then re-enabled
-
 ;;; Code:
 
 (require 'config-keys)
