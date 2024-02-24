@@ -224,7 +224,10 @@
 ;;; Libraries
 
 ;; FIXME: remove or alias (`##' is very difficult to search for)
-(use-package llama) ;  `##' lambda shorthand => <https://git.sr.ht/~tarsius/llama>
+(use-package llama) ;  `##' lambda shorthand =>
+                                        ;  <https://git.sr.ht/~tarsius/llama>
+
+(use-package f)
 
 (require 'lib-common)
 
