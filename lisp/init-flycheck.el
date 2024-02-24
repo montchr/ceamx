@@ -53,11 +53,11 @@
   (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled))
   ;; When `global-flycheck-mode' is non-nil, activate in these modes.
   (setq-default flycheck-global-modes '(prog-mode))
+  (defmap! ceamx-toggle-map "f" #'flycheck-mode)
 
   (add-hook 'on-first-buffer-hook #'global-flycheck-mode)
 
   :config
-  (defmap! ceamx-toggle-map "f" #'flycheck-mode)
 
   (setopt flycheck-idle-change-delay 1.0)
   (setopt flycheck-display-errors-delay 0.25)
