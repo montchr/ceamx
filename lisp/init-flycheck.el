@@ -57,12 +57,15 @@
   (add-hook 'on-first-buffer-hook #'global-flycheck-mode)
 
   :config
-  (defmap! ceamx-toggle-map "f" #'flycheck-mode)
+  (defmap! ceamx-toggle-map "f" #'flycheck-mode))
 
-  (use-feature! consult
-    :commands (consult-flycheck)
-    :config
-    (keymap-global-set "M-g f" #'consult-flycheck)))
+;;; Enable Flycheck integration with Consult via the `consult-flycheck' extension
+
+(use-package consult-flycheck
+  :after (consult flycheck)
+  :commands (consult-flycheck)
+  :init
+  (keymap-global-set "M-g f" #'consult-flycheck))
 
 (provide 'init-flycheck)
 ;;; init-flycheck.el ends here

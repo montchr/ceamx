@@ -34,7 +34,7 @@
 (use-package consult
   :commands ( consult-bookmark consult-buffer consult-buffer-other-frame consult-buffer-other-tab
               consult-buffer-other-window consult-compile-error consult-complex-command
-              consult-fd consult-flycheck consult-flymake consult-focus-lines consult-git-grep
+              consult-fd consult-flymake consult-focus-lines consult-git-grep
               consult-global-mark consult-goto-line consult-history consult-imenu
               consult-imenu-multi consult-info consult-keep-lines consult-kmacro
               consult-line consult-line-multi consult-locate consult-man consult-mark
