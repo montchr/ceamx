@@ -40,6 +40,10 @@
   :init
   (add-hook 'ceamx-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'ceamx-after-init-hook #'dashboard-initialize)
+  ;; HACK: Work around <https://github.com/emacs-dashboard/emacs-dashboard/issues/499>
+  ;; (dashboard-setup-startup-hook)
+  (add-hook 'window-size-change-functions #'dashboard-resize-on-hook 100)
+  (add-hook 'window-setup-hook #'dashboard-resize-on-hook)
 
   :config
   (setopt dashboard-banner-logo-title "C E A M X")
@@ -48,12 +52,15 @@
   (setopt dashboard-center-content t)
   (setopt dashboard-display-icons-p t)
   (setopt dashboard-icon-type 'nerd-icons)
+  ;; NOTE: This value results in a warning because `dashboard-items' specifies an
+  ;; incorrect `:type'. The value should be an alist, not a list of alists. At
+  ;; the time of writing, the value is copied directly from the package README.
+  ;; <https://github.com/emacs-dashboard/emacs-dashboard/issues/489>
   (setopt dashboard-items '((recents  . 5)
                              (bookmarks . 5)
                              (projects . 5)
                              (agenda . 5)
-                             (registers . 5)))
-  (dashboard-setup-startup-hook))
+                             (registers . 5))))
 
 (provide 'init-session-start)
 ;;; init-session-start.el ends here
