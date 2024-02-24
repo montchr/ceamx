@@ -41,7 +41,13 @@
 
 (defgroup ceamx nil
   "User-configurable options for Ceamx."
+  ;; TODO: is this group appropriate?
   :group 'file)
+
+(defcustom ceamx-load-custom-file nil
+  "Whether to load the user `custom-file' (custom.el)."
+  :group 'ceamx
+  :type '(boolean))
 
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
@@ -413,6 +419,15 @@
              "Restart the yabai service after init."
              (after! [exec-path-from-shell]
                (async-shell-command "yabai --restart-service"))))
+
+;; Optionally load custom file after all packages have loaded.
+(when (and ceamx-load-custom-file
+           (file-exists-p custom-file))
+  (def-hook! ceamx-after-init-load-custom-file-h ()
+    'ceamx-after-init-hook
+    "Load the user `custom-file'.
+Keep in mind that the custom file is ignored in version control."
+    (load custom-file 'noerror)))
 
 (provide 'init)
 ;;; init.el ends here
