@@ -271,13 +271,7 @@
 (when (display-graphic-p)
   (require 'init-ui-font))
 
-;;;;; Modeline
-
 (require 'init-ui-modeline)
-(pcase ceamx-modeline-provider
-  ('doom (require 'init-ui-modeline-doom))
-  ('nano (require 'init-ui-modeline-nano))
-  ('telephone (require 'init-ui-modeline-telephone-line)))
 
 ;;;;; Integrations for visual consistency
 
