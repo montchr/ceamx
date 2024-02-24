@@ -80,8 +80,6 @@
 ;;;; pair handling :: `(info "Matching")'
 
   (setopt blink-matching-paren t)
-  (setopt blink-matching-delay 0)
-  (setopt show-paren-delay 0)
   ;; Avoid "expression" style, which looks too much like a selected region.
   (setopt show-paren-style 'parenthesis)
 
