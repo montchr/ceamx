@@ -20,6 +20,8 @@
 
 ;;; Commentary:
 
+;; <https://www.flycheck.org/en/latest/index.html>
+
 ;; If you are ever wonder "why do you need `flycheck'? Why not just use
 ;; `flymake'?" The answer is that `flymake' is pretty terrible compared to
 ;; `flycheck'.
@@ -48,9 +50,10 @@
              flycheck-global-modes)
 
   :init
-  (setq-default flycheck-emacs-lisp-load-path 'inherit)
+  (setopt flycheck-emacs-lisp-load-path 'inherit)
   ;; The default includes `newline', which would happen too frequently.
-  (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled))
+  (setopt flycheck-check-syntax-automatically '(save idle-change mode-enabled))
+
   (defmap! ceamx-toggle-map "f" #'flycheck-mode)
 
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode)
