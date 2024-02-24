@@ -54,8 +54,7 @@
   ;; When `global-flycheck-mode' is non-nil, activate in these modes.
   (setq-default flycheck-global-modes '(prog-mode))
 
-  ;; `global-flycheck-mode' seems to have no effect, so load on hook.
-  (add-hook 'prog-mode-hook #'flycheck-mode)
+  (add-hook 'on-first-buffer-hook #'global-flycheck-mode)
 
   :config
   (defmap! ceamx-toggle-map "f" #'flycheck-mode)
