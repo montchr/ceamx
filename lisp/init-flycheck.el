@@ -51,11 +51,9 @@
   (setq-default flycheck-emacs-lisp-load-path 'inherit)
   ;; The default includes `newline', which would happen too frequently.
   (setq-default flycheck-check-syntax-automatically '(save idle-change mode-enabled))
-  ;; When `global-flycheck-mode' is non-nil, activate in these modes.
-  (setq-default flycheck-global-modes '(prog-mode))
   (defmap! ceamx-toggle-map "f" #'flycheck-mode)
 
-  (add-hook 'on-first-buffer-hook #'global-flycheck-mode)
+  (add-hook 'ceamx-after-init-hook #'global-flycheck-mode)
 
   :config
 
