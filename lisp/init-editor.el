@@ -115,25 +115,6 @@
 ;;
 ;;; Packages
 
-;; FIXME : does not seem to handle comments properly wtf that's the whole reason i installed it...
-;;;; `filladapt' :: <http://elpa.gnu.org/packages/filladapt.html>
-
-;;  A smarter `fill-paragraph' or `adaptive-fill-mode'.
-;;  <https://www.emacswiki.org/emacs/FillAdapt>
-
-(use-package filladapt
-  :disabled
-  :commands (filladapt-mode)
-
-  :init
-  ;; According to its commentary, the package cannot be autoloaded, as it
-  ;; advises core Emacs functions. If the package were not `require'd directly,
-  ;; its core functionality would not take effect.
-  (require 'filladapt)
-
-  (hook! '(text-mode-hook prog-mode-hook) #'filladapt-mode)
-  (hook! 'emacs-lisp-mode-hook #'filladapt-mode))
-
 ;;;; editorconfig :: <https://editorconfig.org>
 
 (use-package editorconfig
