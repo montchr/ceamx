@@ -84,8 +84,9 @@
          "\\*Completions\\*"
          "[Oo]utput\\*")))
 
-  (add-hook 'ceamx-emacs-startup-hook #'popper-mode)
-  (add-hook 'ceamx-emacs-startup-hook #'popper-echo-mode)
+  ;; Load as early as possible to catch popups during startup.
+  (add-hook 'ceamx-after-init-hook #'popper-mode)
+  (add-hook 'ceamx-after-init-hook #'popper-echo-mode)
 
   :config
   (define-keymap :keymap (current-global-map)
