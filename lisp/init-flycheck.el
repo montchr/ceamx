@@ -57,7 +57,11 @@
   (add-hook 'on-first-buffer-hook #'global-flycheck-mode)
 
   :config
-  (defmap! ceamx-toggle-map "f" #'flycheck-mode))
+  (defmap! ceamx-toggle-map "f" #'flycheck-mode)
+
+  (setopt flycheck-idle-change-delay 1.0)
+  (setopt flycheck-display-errors-delay 0.25)
+  (setopt flycheck-buffer-switch-check-intermediate-buffers t))
 
 ;;; Enable Flycheck integration with Consult via the `consult-flycheck' extension
 
