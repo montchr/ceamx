@@ -48,6 +48,26 @@
   (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
 
 ;;
+;;; Advices
+
+;; via <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
+(def-advice! +emacs-lisp-append-value-to-eldoc-a (fn sym)
+  :around #'elisp-get-var-docstring
+  "Display variable value next to documentation in eldoc."
+  (when-let (ret (funcall fn sym))
+    (if (boundp sym)
+      (concat ret " "
+        (let* ((truncated " [...]")
+                (print-escape-newlines t)
+                (str (symbol-value sym))
+                (str (prin1-to-string str))
+                (limit (- (frame-width) (length ret) (length truncated) 1)))
+          (format (format "%%0.%ds%%s" (max limit 0))
+            (propertize str 'face 'warning)
+            (if (< (length str) limit) "" truncated))))
+      ret)))
+
+;;
 ;;; Keybinds
 
 (keymap-set emacs-lisp-mode-map "C-c C-c" #'eval-last-sexp)
