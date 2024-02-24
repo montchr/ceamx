@@ -120,17 +120,20 @@
     "M-t" #'dirvish-layout-toggle
     "M-s" #'dirvish-setup-menu
     "M-e" #'dirvish-emerge-menu
-    "M-j" #'dirvish-fd-jump)
+    "M-j" #'dirvish-fd-jump))
 
-  ;; Addtional syntax highlighting for dired
-  (use-package diredfl
-    :hook
-    ((dired-mode . diredfl-mode)
-      ;; highlight parent and directory preview as well
-      (dirvish-directory-view-mode . diredfl-mode))
+;;; Provide addtional syntax highlighting for Dired with `diredfl'
 
-    :config
-    (set-face-attribute 'diredfl-dir-name nil :bold t)))
+;; <https://github.com/purcell/diredfl>
+
+(use-package diredfl
+  :hook
+  ((dired-mode . diredfl-mode)
+    ;; highlight parent and directory preview as well
+    (dirvish-directory-view-mode . diredfl-mode))
+
+  :config
+  (set-face-attribute 'diredfl-dir-name nil :bold t))
 
 (provide 'init-dired)
 ;;; init-dired.el ends here
