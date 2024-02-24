@@ -37,8 +37,6 @@
 
 ;;; Code:
 
-(require 'elpaca)
-
 (require 'ceamx-paths)
 (require 'config-env)
 

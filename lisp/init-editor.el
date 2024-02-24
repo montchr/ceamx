@@ -27,8 +27,6 @@
 
 ;;; Code:
 
-(require 'elpaca)
-
 (require 'lib-common)
 (require 'lib-editor)
 

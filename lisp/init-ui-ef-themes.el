@@ -24,8 +24,6 @@
 
 ;;; Code:
 
-(require 'elpaca)
-
 (use-package ef-themes
   :ensure t
   :demand t
