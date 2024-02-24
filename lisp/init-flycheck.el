@@ -22,15 +22,6 @@
 
 ;; <https://www.flycheck.org/en/latest/index.html>
 
-;; If you are ever wonder "why do you need `flycheck'? Why not just use
-;; `flymake'?" The answer is that `flymake' is pretty terrible compared to
-;; `flycheck'.
-;;
-;; `flymake' does not even come anywhere close, especially in terms of language
-;; support. At the time of writing, Flycheck's comparison states that Flymake
-;; only supports 10 languages by default, with little option for expansion in
-;; terms of third-party package support.
-;;
 ;; <https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
 
 ;; FIXME: sometimes flycheck seems to randomly stop working and needs to be
