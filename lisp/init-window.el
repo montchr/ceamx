@@ -260,11 +260,6 @@
 ;; <https://github.com/rnkn/olivetti>
 
 (use-package olivetti
-  :commands (olivetti-mode)
-
-  :init
-  (add-hook 'org-mode-hook #'olivetti-mode)
-
   :config
   (setopt olivetti-style 'fancy))
 
