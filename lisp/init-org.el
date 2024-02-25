@@ -68,6 +68,7 @@
   (setopt org-tags-column 0)
   (setopt org-catch-invisible-edits 'show-and-error)
   (setopt org-special-ctrl-a/e t)
+  ;; Do not insert new headings after current subtree.
   (setopt org-insert-heading-respect-content t)
   ;; Indenting code blocks by default is unnecessary and confusing.
   (setopt org-edit-src-content-indentation 0)
@@ -119,13 +120,11 @@
 ;; > A searching tool for Org-mode, including custom query languages, commands,
 ;; > saved searches and agenda-like views, etc.
 
-(use-package org-ql
-  :commands (org-ql-find org-ql-search))
+(use-package org-ql)
 
 ;;; org-modern <https://github.com/minad/org-modern>
+
 (use-package org-modern
-  :after (org)
-  :commands (org-modern-mode org-modern-agenda)
   :init
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
@@ -137,14 +136,32 @@
 ;;  (setopt org-startup-indented t)
 ;;  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
-;;; `org-rich-yank' :: <https://github.com/unhammer/org-rich-yank>
-;;
-;;  Automatically surround code in src block markup upon paste.
+;;; Support drag-and-drop images to org-mode
 
-;; TODO: bindings
+;; <https://github.com/abo-abo/org-download>
+
+(use-package org-download
+  :ensure t
+  :demand t
+  :init
+  (require 'org-download)
+  (add-hook 'dired-mode-hook #'org-download-enable))
+
+;;; Automatically surround pasted code with source block markup via `org-rich-yank'
+
+;; <https://github.com/unhammer/org-rich-yank>
+
 (use-package org-rich-yank
-  :after org
-  :commands org-rich-yank)
+  :ensure t
+  :demand t                             ; See README as to why
+  :after (org-download)
+  :config
+  (keymap-set org-mode-map "C-M-y" #'org-rich-yank))
+
+;;; Use `org-web-tools' to view, capture, and archive webpages in org-mode
+
+(use-package org-web-tools
+  :defer t)
 
 (provide 'init-org)
 ;;; init-org.el ends here
