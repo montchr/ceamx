@@ -152,10 +152,7 @@
 ;;  Structured editing (soft deletion, expression navigating & manipulating)
 ;;  that supports many major modes out of the box.
 
-;; TODO: remove or use
-
 (use-package puni
-  :disabled
   :commands (puni-global-mode
               puni-disable-puni-mode
               puni-backward-sexp-or-up-list
@@ -166,7 +163,7 @@
     "C-M-[" #'puni-backward-sexp-or-up-list
     "C-M-]" #'puni-forward-sexp-or-up-list)
 
-  (puni-global-mode)
+  ;; (puni-global-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 
 ;;;; drag-stuff :: <https://github.com/rejeep/drag-stuff.el>
