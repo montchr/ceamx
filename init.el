@@ -359,6 +359,14 @@
 (require 'init-notes)
 (require 'init-notes-denote)
 
+;;;; Linting
+
+(require 'init-flycheck)
+
+;;;; Tree-Sitter
+
+(require 'init-treesitter)
+
 ;;;; Language/syntax support
 
 (require 'init-prog)
@@ -383,13 +391,6 @@
 (require 'init-eglot)
 ;; (require 'init-lsp)
 
-;;;; Linting
-
-(require 'init-flycheck)
-
-;;;; Tree-Sitter
-
-(require 'init-treesitter)
 
 ;;;; Miscellaneous
 
