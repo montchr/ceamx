@@ -75,6 +75,36 @@ With optional argument FRAME, return the list of buffers of FRAME."
         :state ,#'consult--buffer-state))
     (add-to-list 'consult-buffer-sources '+beframe-consult-source)))
 
+;;; Introduce an `activities'-based workflow for frame/tab/window/buffer management
+
+(use-package activities
+  :commands ( activities-mode activities-tabs-mode activities-new activities-resume activities-suspend
+              activities-kill activities-switch activities-revert activities-list)
+
+  :preface
+  (defmap! ceamx-activities-map)
+    (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+
+  :init
+  (activities-mode)
+
+  ;; Unfortunately, due to the `tab-bar-mode' display bug in Emacs 29 (see
+  ;; `init-workspace'), I will be leaving this disabled for the time being.
+  ;; (unless tab-bar-mode
+  ;;   (activities-tabs-mode))
+
+  (keymap-global-set "C-x C-a" '("[ Activities ]"))
+
+  (keys! ceamx-activities-map
+    "C-n" #'activities-new
+    "C-a" #'activities-resume
+    "C-s" #'activities-suspend
+    "C-k" #'activities-kill
+    "RET" #'activities-switch
+
+    "g" #'activities-revert
+    "l" #'activities-list))
+
 ;; TODO: <https://github.com/alphapapa/ap.el/blob/0831e0bb603cf3fe1cdeaa9f1c97b02f681c1f74/init.el#L395>
 ;; (use-package bufler
 ;;   :ensure (:files (:defaults (:exclude "helm-bufler.el")))
