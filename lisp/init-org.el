@@ -77,10 +77,11 @@
   (setopt org-ellipsis "…")
   (setopt org-hide-emphasis-markers t)
   (setopt org-image-actual-width 300)
-  (setopt org-indent-indentation-per-level 2)
+  ;; (setopt org-indent-indentation-per-level 2)
   (setopt org-pretty-entities t)
   (setopt org-startup-folded 'show2levels)
-  (setopt org-startup-indented t)
+  ;; Avoid unnecessary indentation effects unless specified in file header.
+  (setopt org-startup-indented nil)
   (setopt org-startup-with-inline-images t)
 
   ;; Agenda styling

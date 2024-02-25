@@ -71,7 +71,6 @@
 ;;;; indentation
 
   (setq-default indent-tabs-mode nil)
-  (setq-default tab-width 2)
   (setopt indent-tabs-mode nil)
   (setopt backward-delete-char-untabify-method 'untabify)
 
