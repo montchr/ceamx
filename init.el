@@ -373,6 +373,7 @@
 (require 'init-lang-markdown)
 (require 'init-lang-nix)
 (require 'init-lang-php)
+(require 'init-lang-shell)
 (require 'init-lang-yaml)
 (require 'init-lang-misc)
 
