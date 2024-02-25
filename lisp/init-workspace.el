@@ -22,17 +22,14 @@
 
 ;; Overwork and perspipritaction.
 
+;; FIXME: `tab-bar-mode' is currently broken due to upstream Emacs 29 bug
+;; <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+;; For this reason, avoid `burly-tabs-mode' on Emacs 29.
+
+
 ;;; Code:
 
 (require 'lib-common)
-
-(autoload 'consult-customize "consult")
-
-(defvar consult--source-buffer)
-(defvar consult-buffer-sources)
-;; (defvar persp-consult-source)
-
-;; TODO: restore https://github.com/alphapapa/bufler.el
 
 (use-package burly
   :demand t
@@ -54,14 +51,17 @@
 ;; upon ending the Emacs session."
 ;;     (burly-bookmark-frames "ceamx-burly-default")))
 
-
-;; TODO
+;; TODO: <https://github.com/alphapapa/ap.el/blob/0831e0bb603cf3fe1cdeaa9f1c97b02f681c1f74/init.el#L395>
 ;; (use-package bufler
-;; FIXME: exclude "helm-bufler.el"
-;; FIXME: install
-;; (use-package bufler
+;;   :ensure (:files (:defaults (:exclude "helm-bufler.el")))
 ;;   :config
-;;   (bufler-mode +1))
+;;   (global-keys!
+;;     "C-x b" #'bufler-switch-buffer
+;;     "C-x B" #'bufler-workspace-focus-buffer
+;;     "C-x C-b" #'bufler)
+;;   (setopt bufler-groups
+;;     (bufler-defgroups
+;;       (group (auto-workspace)))))
 
 (provide 'init-workspace)
 ;;; init-workspace.el ends here
