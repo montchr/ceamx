@@ -1,4 +1,4 @@
-;;; init-session-start.el --- Session startup customizations  -*- lexical-binding: t; -*-
+;;; init-dashboard.el --- Dashboard support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
 
@@ -20,9 +20,7 @@
 
 ;;; Commentary:
 
-;; What happens when Emacs starts?
-
-;; Here we configure things like `desktop-save-mode' and the dashboard.
+;; <https://github.com/emacs-dashboard/emacs-dashboard>
 
 ;;; Code:
 
@@ -32,6 +30,7 @@
 
 (use-package dashboard
   :ensure t
+  :demand t
   :after (nerd-icons)
 
   :preface
@@ -62,5 +61,5 @@
                              (agenda . 5)
                              (registers . 5))))
 
-(provide 'init-session-start)
-;;; init-session-start.el ends here
+(provide 'init-dashboard)
+;;; init-dashboard.el ends here

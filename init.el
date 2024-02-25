@@ -287,7 +287,6 @@
 
 ;;;; Sessions and workspaces
 
-(require 'init-session-start)
 (require 'init-workspace)
 
 ;;;; Keyboard support
@@ -306,6 +305,10 @@
 
 ;; FIXME: load earlier / in another section
 (require 'init-history)
+
+;;;; Dashboard
+
+(require 'init-dashboard)
 
 ;;;; Selection
 
