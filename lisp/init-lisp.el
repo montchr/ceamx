@@ -41,13 +41,20 @@
 
 (defun ceamx-lisp-init ()
   "Enable features useful in any Lisp mode."
+  ;; FIXME: conditional
+  ;; FIXME: errors on startup (before loaded)
   (lispy-mode)
   ;; `outli' overrides some `lispy' features.
   ;; <https://github.com/jdtsmith/outli?tab=readme-ov-file#configuration>
+  ;; FIXME: conditional
   (outli-mode)
   (run-hooks 'ceamx-lisp-init-hook))
 
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
+
+(use-feature! flycheck
+  :config
+  (add-hook 'ceamx-lisp-init-hook #'flycheck-mode))
 
 ;; Add hooks to supported Lisp modes.
 (dolist (mode ceamx-lisp-modes-list)
