@@ -57,8 +57,7 @@
 
 (define-keymap :keymap (current-global-map)
   "C-c [" #'previous-buffer
-  "C-c ]" #'next-buffer
-  "C-c b" #'scratch-buffer)
+  "C-c ]" #'next-buffer)
 
 ;;;; Code
 

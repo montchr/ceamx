@@ -36,20 +36,42 @@
   :commands (burly-open-last-bookmark)
   :autoload (burly-bookmark-frames))
 
-;; TODO: for `burly' -- moved outside of declaration to avoid scary closing parens
-;; :init
-;; FIXME: `tab-bar-mode' is currently broken due to upstream Emacs 29 bug
-;; <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-;; (burly-tabs-mode)
+(use-package beframe
+  :ensure t
+  :demand t
 
-;; FIXME: ugh no don't even try ... wait why? come on past-me, what do you mean?
-;; Restore previous configuration during init.
-;;   (add-hook 'on-init-ui-hook #'burly-open-last-bookmark)
+  :preface
+  (defface +beframe-buffer
+    '((t :inherit font-lock-string-face))
+    "Face for `consult' framed buffers.")
 
-;;   (def-hook! +burly-bookmark-frames-on-kill-emacs-h () kill-emacs-hook
-;;              "Bookmark current frames and windows with `burly-bookmark-frames'
-;; upon ending the Emacs session."
-;;     (burly-bookmark-frames "ceamx-burly-default")))
+  (defun +beframe-buffer-names-sorted (&optional frame)
+    "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+With optional argument FRAME, return the list of buffers of FRAME."
+    (declare-function beframe-buffer-names "beframe")
+    (declare-function beframe-buffer-sort-visibility "beframe")
+    (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+
+
+  :config
+  ;; FIXME: still listed as frame buffers
+  (setopt beframe-global-buffers '("\\*scratch\\*" "\\*Messages\\*" "\\*Backtrace\\*"))
+
+  (keymap-global-set "C-c b" beframe-prefix-map)
+  (beframe-mode 1)
+
+  (after! 'consult
+    (declare-function consult--buffer-state "consult")
+    (defvar +beframe-consult-source
+      `( :name  "Frame-specific buffers (current frame)"
+         :narrow ?F
+         :category buffer
+         :face +beframe-buffer
+         :history beframe-history
+         :items ,#'+beframe-buffer-names-sorted
+         :action ,#'switch-to-buffer
+         :state ,#'consult--buffer-state))
+    (add-to-list 'consult-buffer-sources '+beframe-consult-source)))
 
 ;; TODO: <https://github.com/alphapapa/ap.el/blob/0831e0bb603cf3fe1cdeaa9f1c97b02f681c1f74/init.el#L395>
 ;; (use-package bufler
