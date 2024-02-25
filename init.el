@@ -285,10 +285,6 @@
 
 (require 'init-after-ui)
 
-;;;; Sessions and workspaces
-
-(require 'init-workspace)
-
 ;;;; Keyboard support
 
 (require 'config-keys)
@@ -345,6 +341,10 @@
 (require 'init-vcs-magit)
 (require 'init-files)
 (require 'init-dired)
+
+;;;; Workspaces + activities + contexts
+
+(require 'init-workspace)
 
 ;;;; Editing
 

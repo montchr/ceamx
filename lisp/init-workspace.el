@@ -30,6 +30,9 @@
 ;;; Code:
 
 (require 'lib-common)
+(require 'lib-keys)
+
+(defvar edebug-inhibit-emacs-lisp-mode-bindings)
 
 (use-package burly
   :demand t
@@ -52,7 +55,6 @@ With optional argument FRAME, return the list of buffers of FRAME."
     (declare-function beframe-buffer-sort-visibility "beframe")
     (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
 
-
   :config
   ;; FIXME: still listed as frame buffers
   (setopt beframe-global-buffers '("\\*scratch\\*" "\\*Messages\\*" "\\*Backtrace\\*"))
@@ -60,17 +62,17 @@ With optional argument FRAME, return the list of buffers of FRAME."
   (keymap-global-set "C-c b" beframe-prefix-map)
   (beframe-mode 1)
 
-  (after! 'consult
+  (use-feature! consult
     (declare-function consult--buffer-state "consult")
     (defvar +beframe-consult-source
-      `( :name  "Frame-specific buffers (current frame)"
-         :narrow ?F
-         :category buffer
-         :face +beframe-buffer
-         :history beframe-history
-         :items ,#'+beframe-buffer-names-sorted
-         :action ,#'switch-to-buffer
-         :state ,#'consult--buffer-state))
+      `(:name "Frame-specific buffers (current frame)"
+        :narrow ?F
+        :category buffer
+        :face +beframe-buffer
+        :history beframe-history
+        :items ,#'+beframe-buffer-names-sorted
+        :action ,#'switch-to-buffer
+        :state ,#'consult--buffer-state))
     (add-to-list 'consult-buffer-sources '+beframe-consult-source)))
 
 ;; TODO: <https://github.com/alphapapa/ap.el/blob/0831e0bb603cf3fe1cdeaa9f1c97b02f681c1f74/init.el#L395>
