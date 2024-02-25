@@ -69,7 +69,8 @@
   (dirvish-peek-mode)                   ; Preview minibuffer file selections
   (dirvish-side-follow-mode)
 
-  ;; TODO: use consts
+  ;; TODO: use consts; there's no straightforward way to access these values
+  ;; without custom elisp afaik
   ;; FIXME: ensure directories exist!
   (setopt dirvish-quick-access-entries
     '(("c" "~/Documents/cheatsheets/" "Cheatsheets")
