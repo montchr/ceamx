@@ -46,6 +46,8 @@
 
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode)
 
+  (add-hook 'ceamx-lisp-init-hook #'flycheck-mode)
+
   :config
 
   (setopt flycheck-idle-change-delay 1.0)
