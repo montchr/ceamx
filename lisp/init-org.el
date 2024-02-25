@@ -137,17 +137,6 @@
 ;;  (setopt org-startup-indented t)
 ;;  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
-;;
-;;; org-cliplink :: <https://github.com/rexim/org-cliplink>
-;;
-
-;; NOTE: abandoned, many open issues, likely unreliable
-
-(use-package org-cliplink
-  :after org
-  :commands org-cliplink)
-
-;;
 ;;; `org-rich-yank' :: <https://github.com/unhammer/org-rich-yank>
 ;;
 ;;  Automatically surround code in src block markup upon paste.
