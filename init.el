@@ -258,6 +258,8 @@
 ;; Site-specific configuration, to be ignored by version control.
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 
+(require 'init-secrets)
+
 ;;;; Displays + Appearance
 
 ;; FIXME: for science: prevent startup warnings?
@@ -393,8 +395,6 @@
 
 
 ;;;; Miscellaneous
-
-(require 'init-secrets)
 
 (require 'init-tools)
 (require 'init-tools-ledger)
