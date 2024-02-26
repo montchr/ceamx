@@ -130,13 +130,6 @@
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 
-;; FIXME: not in nixpkgs
-;;(use-package org-modern-indent
-;;  ;; ;; FIXME: :elpaca (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
- ;; :config
-;;  (setopt org-startup-indented t)
-;;  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
-
 ;;; Support drag-and-drop images to org-mode
 
 ;; <https://github.com/abo-abo/org-download>
