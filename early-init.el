@@ -183,6 +183,14 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 
+;; `tooltip-mode' is broken for me in pgtk -- might be an Emacs bug, causes
+;; constant errors when moving mouse over modeline.
+;;
+;; FIXME: actually, this is behaving inconsistently: disabling it does not
+;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
+;; normally... maybe needs to happen later in init?
+(tooltip-mode -1)
+
 ;;;; Rename the default/initial frame
 
 (defvar ceamx-default-frame-name "home — [ceamx]"
