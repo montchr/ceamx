@@ -402,6 +402,8 @@
 
 (require 'init-term)
 
+(require 'init-printing)
+
 (require 'init-fun)
 
 ;;;; Keybindings
