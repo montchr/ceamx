@@ -64,9 +64,6 @@
 (put 'scroll-left 'disabled nil)        ; Enable `scroll-left'
 (put 'upcase-region 'disabled nil)      ; Enable `upcase-region'
 
-;; Improve initial scratch buffer load time
-(setopt initial-major-mode #'text-mode)
-
 (setopt fill-column 80)
 
 ;; Increase number of messages saved in log.
