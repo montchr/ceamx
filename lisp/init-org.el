@@ -105,15 +105,16 @@
   :config
   (setopt org-capture-templates
           (doct `(("Inbox"
-                   :keys "t"
-                   ;; TODO: make sure this icon spec is up to date with 2024
-                   :icon ("checklist" :set "octicon" :color "green")
-                   :file ceamx-org-capture-default-file
-                   :prepend t
-                   :headline "Inbox"
-                   :type entry
-                   :template ("* TODO %?"
-                              "%i %a"))))))
+                    :keys "t"
+                    ;; TODO: make sure this icon spec is up to date with 2024
+                    :icon ("checklist" :set "octicon" :color "green")
+                    ;; TODO: should this be evaled/expanded?
+                    :file ceamx-org-capture-default-file
+                    :prepend t
+                    :headline "Inbox"
+                    :type entry
+                    :template ("* TODO %?"
+                                "%i %a"))))))
 
 ;;; org-ql :: <https://github.com/alphapapa/org-ql>
 

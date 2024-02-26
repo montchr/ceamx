@@ -28,8 +28,8 @@
 
 (defvar ceamx-org-capture-default-file
   (expand-file-name
-   (concat ceamx-notes-dir "inbox.org"))
-  "Path to default inbox file for new org-capture entries.")
+    (concat (file-name-as-directory ceamx-agenda-dir) "inbox.org"))
+  "Path to default inbox file for new `org-capture' entries.")
 
 (provide 'config-org)
 ;;; config-org.el ends here
