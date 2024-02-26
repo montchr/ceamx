@@ -398,6 +398,7 @@
 ;;;; Miscellaneous
 
 (require 'init-tools)
+(require 'init-tools-ai)
 (require 'init-tools-ledger)
 (require 'init-tools-pdf)
 
