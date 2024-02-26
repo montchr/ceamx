@@ -111,14 +111,6 @@
 ;; version of Emacs.
 (setopt ffap-machine-p-known 'reject)
 
-;; Throttle UI refreshing slightly.
-(setopt idle-update-delay 1.0)  ; default is 0.5
-
-;; PGTK-only: Improve childframe responsiveness (e.g. `lsp-ui').
-;; See emacs-lsp/lsp-ui#613.
-(when (boundp 'pgtk-wait-for-event-timeout)
-  (setq pgtk-wait-for-event-timeout 0.001))
-
 ;; Ensure secrets and auth credentials are not stored in plaintext (the default).
 ;; Requires GnuPG configuration.
 (setopt auth-sources (list (file-name-concat ceamx-var-dir "authinfo.gpg")
@@ -128,12 +120,6 @@
 ;; spells of inaccurate fontification immediately after scrolling."
 ;; TODO: move to `init-ui'?
 (setopt fast-but-imprecise-scrolling t)
-
-;; Don’t compact font caches during garbage collection.
-;; NOTE: Set pre-emptively, anticipating lag from `doom-modeline',
-;;       as recommended in its readme.
-;;       <https://github.com/seagle0128/doom-modeline#faq>
-(setq inhibit-compacting-font-caches t)
 
 ;; TODO: move to `init-editor'
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
