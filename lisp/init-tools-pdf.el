@@ -26,11 +26,27 @@
 
 ;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org>
 
-;; FIXME: install via nixpkgs b/c binary neee
+;; `pdf-tools' should be installed installed via Nixpkgs because it requires
+;; some separate binaries.
 
 ;; TODO: <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
 
 ;;; Code:
+
+(require 'lib-common)
+
+(use-feature! pdf-tools
+  :magic ("%PDF" . pdf-view-mode)
+  :custom
+  (pdf-tools-handle-upgrades nil)
+  :config
+  (dolist
+    (pkg
+      '(pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
+         pdf-links pdf-misc pdf-occur pdf-outline pdf-sync
+         pdf-util pdf-view pdf-virtual))
+    (require pkg))
+  (pdf-tools-install))
 
 ;; (use-package pdf-tools
 ;;   :commands (pdf-tools-install)
