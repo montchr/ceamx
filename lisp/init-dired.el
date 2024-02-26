@@ -96,7 +96,7 @@
 
   ;; <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#mouse-settings>
   (def-hook! ceamx--dirvish-no-mouse-follows-link (&rest _)
-    dirvish-find-entry-hook
+    'dirvish-find-entry-hook
     "Disable `mouse-1-click-follows-link' in `dirvish' buffers."
     (setopt mouse-1-click-follows-link nil))
 
