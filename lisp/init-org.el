@@ -125,6 +125,7 @@
 ;;; org-modern <https://github.com/minad/org-modern>
 
 (use-package org-modern
+  :commands (org-modern-mode org-modern-agenda)
   :init
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
