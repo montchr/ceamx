@@ -70,13 +70,11 @@
 (setopt fill-column 80)
 
 ;; Increase number of messages saved in log.
-;; TODO: this is a lot! when will this ever be necessary?
 (setq message-log-max 10000)
 
 ;; Default to UTF-8 for all of the things.
 (set-language-environment "UTF-8")
 ;; `set-language-environment' also presumptively sets `default-input-method'.
-;; TODO: remove? this seems to be the default value
 (setopt default-input-method nil)
 
 ;; Prevent unnecessary rendering/line scanning in non-focused windows.
@@ -137,7 +135,6 @@
 ;;       <https://github.com/seagle0128/doom-modeline#faq>
 (setq inhibit-compacting-font-caches t)
 
-;; FIXME: Ideally, this action should only affect edited lines.
 ;; TODO: move to `init-editor'
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 

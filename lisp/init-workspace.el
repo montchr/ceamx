@@ -34,6 +34,8 @@
 
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
 
+;; FIXME: restoring bookmark results in stray mini childframe (like that old
+;; embark issue)
 (use-package burly
   :demand t
   :commands (burly-open-last-bookmark)

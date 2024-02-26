@@ -41,6 +41,7 @@
   (setopt dired-listing-switches "-al --group-directories-first")
   (setopt dired-mouse-drag-files t)
 
+  ;; TODO: does this really belong here?
   (setopt mouse-drag-and-drop-region-cross-program t)
 
   (define-keymap :keymap dired-mode-map
