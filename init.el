@@ -341,6 +341,7 @@
 ;; (require 'init-project-projectile)
 (require 'init-vcs)
 (require 'init-vcs-magit)
+(require 'init-vcs-forge)
 (require 'init-files)
 (require 'init-dired)
 
