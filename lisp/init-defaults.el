@@ -108,11 +108,6 @@
 ;; version of Emacs.
 (setopt ffap-machine-p-known 'reject)
 
-;; Ensure secrets and auth credentials are not stored in plaintext (the default).
-;; Requires GnuPG configuration.
-(setopt auth-sources (list (file-name-concat ceamx-var-dir "authinfo.gpg")
-                         "~/.authinfo.gpg"))
-
 ;; "More performant rapid scrolling over unfontified regions. May cause brief
 ;; spells of inaccurate fontification immediately after scrolling."
 ;; TODO: move to `init-ui'?

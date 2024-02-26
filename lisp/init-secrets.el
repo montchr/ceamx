@@ -26,6 +26,12 @@
 ;;; Code:
 
 (require 'epg)
+;; Ensure secrets and auth credentials are not stored in plaintext (the default).
+;;
+;; It's best to list only a single file here to avoid confusion about where
+;; secrets might be stored.
+(setopt auth-sources (list "~/.authinfo.gpg"))
+
 
 (setopt epg-pinentry-mode 'loopback)
 
