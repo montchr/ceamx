@@ -68,7 +68,6 @@
   (setopt org-tags-column 0)
   (setopt org-catch-invisible-edits 'show-and-error)
   (setopt org-special-ctrl-a/e t)
-  ;; Do not insert new headings after current subtree.
   (setopt org-insert-heading-respect-content t)
   ;; Indenting code blocks by default is unnecessary and confusing.
   (setopt org-edit-src-content-indentation 0)
