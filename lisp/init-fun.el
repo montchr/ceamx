@@ -30,18 +30,16 @@
 ;; <https://www.emacswiki.org/emacs/ZoneMode>
 
 (use-feature! zone
+  :autoload (zone-when-idle)
   :defines (zone-timer)
 
   :config
-
-  ;; NOTE: If you want to change the `zone-timer' interval without restarting
-  ;; the Emacs session, you'll have to remove the old timer -- the value of
-  ;; `zone-timer'.
-  ;;
-  ;; The most straightforward way of doing that is by calling
-  ;; `cancel-timer' with `zone-timer' as argument before you eval any changes:
-  ;; Eval: (cancel-timer zone-timer)
-  (setopt zone-timer (run-with-idle-timer (* 60 10) t 'zone)))
+  ;; TODO: verify
+  (def-hook! ceamx-zone-when-idle-h ()
+    'ceamx-emacs-startup-hook
+    "Zone out when idle.
+Return the new `zone' timer."
+    (zone-when-idle (* 60 10))))
 
 ;; FIXME: broken: wrong type argument arrayp (for pgm arg)
 ;;        (where did this even come from? emacswiki?)
