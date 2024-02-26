@@ -65,6 +65,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
   (beframe-mode 1)
 
   (use-feature! consult
+    :config
     (declare-function consult--buffer-state "consult")
     (defvar +beframe-consult-source
       `(:name "Frame-specific buffers (current frame)"
