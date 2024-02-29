@@ -109,6 +109,8 @@
   ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
   (setopt magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
 
+  (transient-append-suffix 'magit-commit "-n"
+    '("-S" "Disable GPG signing" "--no-gpg"))
   (transient-append-suffix 'magit-fetch "-p"
     '("-t" "Fetch all tags" ("-t" "--tags")))
   (transient-append-suffix 'magit-pull "-r"
