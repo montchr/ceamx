@@ -140,6 +140,7 @@
 
 ;; NOTE: Does not seem to play well with `use-package'! Should be fixed upstream
 ;; either in elpaca or this package...?
+;; <https://github.com/purcell/emacs-reformatter/issues/29>
 
 (elpaca reformatter
   (require 'reformatter)
