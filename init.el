@@ -327,6 +327,7 @@
   (require 'init-ui-font))
 
 (require 'init-ui-modeline)
+(require 'init-ui-modeline-doom)
 
 ;;;;; Integrations for visual consistency
 
