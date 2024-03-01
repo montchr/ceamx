@@ -59,6 +59,8 @@
 
 (use-feature! org
   :demand t
+  :commands (org-priority-up org-priority-down)
+
   :init
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
@@ -108,6 +110,22 @@
         "|"
         "DONE(d!)"
         "CANCELLED(x@/!)")))
+
+;;;; Keybinding settings
+
+  (setopt org-return-follows-link t)
+
+  (keys! org-mode-map
+    "C-c <up>" #'org-priority-up
+    "C-c <down>" #'org-priority-down
+    "C-c a" #'org-agenda
+    "C-c l" #'org-store-link
+    "C-c c" #'org-capture)
+
+;;;; Agenda settings
+
+;;;;; Agenda appearance
+
   (setopt org-agenda-tags-column 0)
   (setopt org-agenda-block-separator ?─)
   (setopt org-agenda-time-grid
