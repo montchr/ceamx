@@ -149,10 +149,29 @@
 
 (elpaca-wait)
 
-;;;; Latest versions of builtin libraries
+;;;; Use latest versions of some Emacs builtins to satisfy bleeding-edge packages
 
-;; The builtin libraries must be unloaded before loading the newer version. This
-;; will prevent warnings like "eldoc loaded before Elpaca activation".
+;; Installing the latest development versions of `eglot' and `magit' (for
+;; example) comes with the significant caveat that their dependencies often
+;; track the latest versions of builtin Emacs libraries. Those can be installed
+;; via GNU ELPA.
+;;
+;; Since core libraries like `seq' are often dependencies of many other packages
+;; or otherwise loaded immediately (like `eldoc'), installation and activation
+;; of the newer versions needs to happen upfront to avoid version conflicts and
+;; mismatches. For example, we do not want some package loaded earlier in init
+;; to think it is using the builtin version of `seq', while a package loaded
+;; later in init uses a differnt version. I am not sure how realistic such a
+;; scenario might be, or whether it would truly pose a problem, but the point is
+;; that we should aim for consistency.
+;;
+;; Oftentimes, these builtins must be unloaded before loading the newer version.
+;; This applies especially to core libraries like `seq' or the
+;; enabled-by-default `global-eldoc-mode' provided by `eldoc', but not
+;; `jsonrpc', since its functionality is specific to more niche features like
+;; inter-process communication in the case of `eglot'.
+
+;;;;; Install the latest version of `seq' builtin library, carefully
 
 ;; `magit' requires a more recent version of `seq' than the version included in
 ;; Emacs 29.
@@ -162,14 +181,21 @@
 (use-package seq
   :ensure t
   :demand t)
+;;;;; Install the latest version of `jsonrpc' builtin library
 
 ;; Required by (and originally extracted from) `eglot'.
+
 (use-package jsonrpc
   :ensure t
   :demand t)
 
-;; Unfortunately, this requires a delicate workaround:
+;;;;; Install the latest version of `eldoc' builtin library, carefully
+
+;; Required by `eglot'.
+
+;; `eldoc' requires a delicate workaround to avoid catastrophy.
 ;; <https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
+
 (use-package eldoc
   :ensure t
   :demand t
