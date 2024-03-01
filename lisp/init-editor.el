@@ -166,13 +166,14 @@
     (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
       (funcall func)))
 
-  (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h)
-
   ;; "We need to do this both before and after Apheleia is loaded
   ;; because the autoloading is set up such that the minor mode
   ;; definition is evaluated twice."
   ;; <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2272C1-L2275>
-  (blackout 'apheleia-mode ceamx-apheleia-lighter))
+  (blackout 'apheleia-mode ceamx-apheleia-lighter)
+
+  :config
+  (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h))
 
 ;;;; `puni' :: <https://github.com/AmaiKinono/puni>
 
