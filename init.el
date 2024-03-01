@@ -232,6 +232,8 @@
 ;;;;; Install the latest version of Org-Mode (`org')
 
 (use-package org
+  :defer t
+  :ensure (:autoloads "org-loaddefs.el")
   :preface
   (when (featurep 'org)
     (unload-feature 'org)))
