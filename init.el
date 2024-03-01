@@ -82,9 +82,9 @@
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil
-                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                              :build (:not elpaca--activate-package)))
+                       :ref nil
+                       :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                       :build (:not elpaca--activate-package)))
 (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
        (build (expand-file-name "elpaca/" elpaca-builds-directory))
        (order (cdr elpaca-order))
@@ -182,16 +182,22 @@
   :config
   (global-eldoc-mode))
 
+;;;;; Install the latest version of the builtin `eglot' package
+
 (use-package eglot
   :after (eldoc jsonrpc)
   :preface
   (when (featurep 'eglot)
     (unload-feature 'eglot)))
 
+;;;;; Install the latest version of Org-Mode (`org')
+
 (use-package org
   :preface
   (when (featurep 'org)
     (unload-feature 'org)))
+
+;;;;; Ensure the previously-queued package requests have completed
 
 (elpaca-wait)
 
@@ -262,7 +268,7 @@
 
 ;;;; Displays + Appearance
 
-;; FIXME: for science: prevent startup warnings?
+;; TODO: re-enable
 ;; (require 'init-frame-hooks)
 (require 'init-env-tty)
 (require 'init-frame)
@@ -321,11 +327,6 @@
 
 (require 'config-completion)
 (require 'init-completion)
-;; TODO: this
-;; (pcase ceamx-completion-at-point-ui
-;;   (`lsp-bridge (require 'init-lsp-bridge))
-;;   ;; FIXME: rename/restruct feature to be specific to corfu, separate generalities
-;;   (`corfu      (require 'init-completion)))
 
 ;;;; Help
 

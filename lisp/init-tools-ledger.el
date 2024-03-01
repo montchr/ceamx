@@ -74,14 +74,14 @@
   (defun +hledger-accounts-completions ()
     "Return completion candidates for hledger accounts."
     (when-let ((bounds (and (boundp 'hledger-accounts-cache)
-                         (bounds-of-thing-at-point 'symbol))))
+                            (bounds-of-thing-at-point 'symbol))))
       (list (car bounds) (point) hledger-accounts-cache)))
 
   :init
 
   (def-hook! +hledger-accounts-capf-h () '(hledger-mode-hook)
-    "Add hledger accounts to completion-at-point functions."
-    (add-hook 'completion-at-point-functions 'hledger-completion-accounts))
+             "Add hledger accounts to completion-at-point functions."
+             (add-hook 'completion-at-point-functions 'hledger-completion-accounts))
 
   (setopt hledger-jfile (file-name-concat ceamx-ledger-dir "main.journal"))
 
@@ -97,13 +97,13 @@
   ;;     my-hledger-service-fetch-url))
 
   (dolist (fn '(hl-line-mode
-                 ;; FIXME: possibly performance issue? emacs at constant 20% but
-                 ;; probably unrelated
-                 ;; +hledger-view-mode-hl-freq-accts-h
+                ;; FIXME: possibly performance issue? emacs at constant 20% but
+                ;; probably unrelated
+                ;; +hledger-view-mode-hl-freq-accts-h
 
-                 ;; TODO: ???
-                 ;; center-text-for-reading
-                 ))
+                ;; TODO: ???
+                ;; center-text-for-reading
+                ))
     (add-hook 'hledger-view-mode-hook fn))
 
   :config

@@ -181,9 +181,9 @@
 
 (use-package puni
   :commands (puni-global-mode
-              puni-disable-puni-mode
-              puni-backward-sexp-or-up-list
-              puni-forward-sexp-or-up-list)
+             puni-disable-puni-mode
+             puni-backward-sexp-or-up-list
+             puni-forward-sexp-or-up-list)
 
   :init
   (define-keymap :keymap puni-mode-map

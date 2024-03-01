@@ -25,6 +25,10 @@
 
 ;;  Configuration for `org-mode'.
 
+;;;; Resources
+
+;; <https://github.com/james-stoup/emacs-org-mode-tutorial>
+
 ;;; Investigate:
 
 ;; TODO: <https://orgmode.org/worg/org-contrib/org-choose.html>
@@ -37,6 +41,8 @@
 (require 'config-notes)
 (require 'config-org)
 
+;;; Configuration of important paths
+
 ;; Most notes will be stored in `ceamx-notes-dir'.
 ;;
 ;; The value of `org-directory' will be used as a default destination for new
@@ -46,6 +52,10 @@
 ;; Must be set before loading Org-Mode.
 (defvar org-directory ceamx-agenda-dir)
 (f-mkdir-full-path org-directory)
+
+;;; Configure general Org-Mode settings
+
+;; <https://github.com/minad/org-modern#configuration>
 
 (use-feature! org
   :init
@@ -62,8 +72,8 @@
       (f-glob "*.org" ceamx-agenda-dir)
       (f-glob "*.org" ceamx-work-notes-dir)))
 
-  ;; via <https://github.com/minad/org-modern#configuration>
-  ;; Editing settings
+;;;; Editing settings
+
   (setopt org-auto-align-tags nil)
   (setopt org-tags-column 0)
   (setopt org-catch-invisible-edits 'show-and-error)
@@ -73,7 +83,8 @@
   (setopt org-edit-src-content-indentation 0)
   (setopt org-src-preserve-indentation t)
 
-  ;; Org styling, hide markup etc.
+;;;; Appearance settings
+
   (setopt org-ellipsis "…")
   (setopt org-hide-emphasis-markers t)
   (setopt org-image-actual-width 300)
@@ -95,6 +106,10 @@
   (setopt org-agenda-current-time-string
     "⭠ now ─────────────────────────────────────────────────"))
 
+;;; Configurate `org-capture' templates with the help of `doct'
+
+;; <https://github.com/progfolio/doct>
+
 (use-package doct
   :demand t
   :autoload (doct))
@@ -103,17 +118,17 @@
   :after (doct)
   :config
   (setopt org-capture-templates
-          (doct `(("Inbox"
-                    :keys "t"
-                    ;; TODO: make sure this icon spec is up to date with 2024
-                    :icon ("checklist" :set "octicon" :color "green")
-                    ;; TODO: should this be evaled/expanded?
-                    :file ceamx-org-capture-default-file
-                    :prepend t
-                    :headline "Inbox"
-                    :type entry
-                    :template ("* TODO %?"
-                                "%i %a"))))))
+    (doct `(("Inbox"
+              :keys "t"
+              ;; TODO: make sure this icon spec is up to date with 2024
+              :icon ("checklist" :set "octicon" :color "green")
+              ;; TODO: should this be evaled/expanded?
+              :file ceamx-org-capture-default-file
+              :prepend t
+              :headline "Inbox"
+              :type entry
+              :template ("* TODO %?"
+                          "%i %a"))))))
 
 ;;; org-ql :: <https://github.com/alphapapa/org-ql>
 

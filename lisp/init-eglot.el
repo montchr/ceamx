@@ -38,10 +38,10 @@
     :around #'eglot-ensure
     "Run `eglot-ensure' in supported modes."
     (when (alist-get major-mode eglot-server-programs nil nil
-            (lambda (modes key)
-              (if (listp modes)
-                (member key modes)
-                (eq key modes))))
+                     (lambda (modes key)
+                       (if (listp modes)
+                           (member key modes)
+                         (eq key modes))))
       (funcall fn)))
 
   (setopt eglot-sync-connect 1)
@@ -61,7 +61,7 @@
     (defvar popper-reference-buffers)
     ;; TODO: make this a macro?
     (setopt popper-reference-buffers
-      (append popper-reference-buffers '("^\\*eglot-help")))))
+            (append popper-reference-buffers '("^\\*eglot-help")))))
 
 
 ;; TODO: <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/lsp/%2Beglot.el>
@@ -89,13 +89,16 @@
 
 
 ;; FIXME: install package
+
 ;; (use-package flycheck-eglot
 ;;   :after (flycheck eglot)
 ;;   :init
 ;;   (add-hook 'eglot-managed-mode-hook #'flycheck-eglot-mode))
 
-;; FIXME: install package
 ;;; `consult-eglot' :: <https://github.com/mohkale/consult-eglot>
+
+;; FIXME: install package
+
 ;; (use-package consult-eglot
 ;;   :after (consult eglot))
 
