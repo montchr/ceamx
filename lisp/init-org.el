@@ -95,8 +95,19 @@
   (setopt org-startup-indented nil)
   (setopt org-startup-with-inline-images t)
 
-  ;; Agenda styling
-  ;; via <https://github.com/minad/org-modern#configuration>
+;;;; Workflow and state settings
+
+  (setopt org-log-done 'time)
+  (setopt org-todo-keywords
+    '((sequence
+        "TODO(t)"
+        "INPRG(i@/!)"
+        "BLOCKED(b@)"
+        "HOLD(h@)"
+        "PROJ(p)"
+        "|"
+        "DONE(d!)"
+        "CANCELLED(x@/!)")))
   (setopt org-agenda-tags-column 0)
   (setopt org-agenda-block-separator ?─)
   (setopt org-agenda-time-grid
