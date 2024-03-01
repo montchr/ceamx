@@ -58,6 +58,7 @@
 ;; <https://github.com/minad/org-modern#configuration>
 
 (use-feature! org
+  :demand t
   :init
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
   (add-hook 'org-mode-hook #'visual-line-mode)
