@@ -117,9 +117,13 @@
 
 (use-package flycheck-hledger
   :after (flycheck hledger-mode)
-  :demand t
+
   :init
-  (add-hook 'hledger-mode-hook #'flycheck-mode)
+  (use-feature! flycheck
+    :commands (flycheck-mode)
+    :init
+    (add-hook 'hledger-mode-hook #'flycheck-mode))
+
   :config
   (setopt flycheck-hledger-strict t))
 

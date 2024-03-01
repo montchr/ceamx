@@ -53,7 +53,8 @@
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
 
 (use-feature! flycheck
-  :config
+  :commands (flycheck-mode)
+  :init
   (add-hook 'ceamx-lisp-init-hook #'flycheck-mode))
 
 ;; Add hooks to supported Lisp modes.
