@@ -50,11 +50,14 @@
 ;; Supports display in the mode-line, header-line, tab-bar, and as messages in a
 ;; dedicated frame.
 
+;; NOTE: Incompatible with kitchen-sink modeline packages like `doom-modeline'
+;; and `telephone-line'.
+
 (use-package keycast
   :commands (keycast-mode-line-mode)
 
-  :init
-  (add-hook 'ceamx-emacs-startup-hook #'keycast-mode-line-mode)
+  ;; :init
+  ;; (add-hook 'ceamx-emacs-startup-hook #'keycast-mode-line-mode)
 
   :config
   (dolist (input '(self-insert-command org-self-insert-command))
