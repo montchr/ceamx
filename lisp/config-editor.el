@@ -1,9 +1,9 @@
-;;; init-lang-lua.el --- Lua language support        -*- lexical-binding: t; -*-
+;;; config-editor.el --- Settings for the editor     -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (C) 2024  Chris Montgomery
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: languages, local
+;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -20,19 +20,20 @@
 
 ;;; Commentary:
 
-;; Lua language support.
-
-;;;; Sources:
-
-;; - <https://github.com/purcell/emacs.d/blob/28194a035ca9a259030ba7ef58089561078c4893/lisp/init-lua.el>
+;;
 
 ;;; Code:
 
-(require 'lib-common)
+(defcustom ceamx-format-on-save-disabled-modes
+  '(emacs-lisp-mode                     ; conflict with `lispy' indent
+    org-msg-edit-mode)
+  "A list of major modes in which to not reformat the buffer upon saving.
+When nil, buffers will always be formatted upon save. When
+non-nil, buffers will never be formatted upon save."
+  :group 'ceamx
+  :type '(choice boolean (repeat symbol)))
 
-(use-package lua-mode
-  :config
-  (setq-default lua-indent-level 2))
+(defvar ceamx-apheleia-lighter " Aph")
 
-(provide 'init-lang-lua)
-;;; init-lang-lua.el ends here
+(provide 'config-editor)
+;;; config-editor.el ends here

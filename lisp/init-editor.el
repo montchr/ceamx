@@ -31,6 +31,7 @@
 
 ;;; Code:
 
+(require 'config-editor)
 (require 'lib-common)
 (require 'lib-editor)
 
@@ -136,17 +137,42 @@
   (add-hook 'prog-mode-hook #'topsy-mode)
   (add-hook 'magit-section-mode-hook #'topsy-mode))
 
-;;;; emacs-reformatter :: <https://github.com/purcell/emacs-reformatter>
+;;;; Apply code reformatting with `apheleia'
 
-;; NOTE: Does not seem to play well with `use-package'! Should be fixed upstream
-;; either in elpaca or this package...?
-;; <https://github.com/purcell/emacs-reformatter/issues/29>
+;; <https://github.com/radian-software/apheleia>
 
-(elpaca reformatter
-  (require 'reformatter)
+;; In case you run into issues with `web-mode' not updating syntax highlighting
+;; after formatting (or other arbitrary modifications):
+;; <https://github.com/doomemacs/doomemacs/blob/35dc13632b3177b9efedad212f2180f69e756853/modules/editor/format/config.el#L74-L83>
 
-  ;; Prettier is a commonly-used formatter for several languages.
-  (reformatter-define prettier :program "prettier"))
+(use-package apheleia
+  :blackout ceamx-apheleia-lighter
+  :preface
+
+  (defun +apheleia-format-maybe-inhibit-h ()
+    "Check if formatting should be disabled for current buffer."
+    (or (eq major-mode 'fundamental-mode)
+        (string-blank-p (buffer-name))
+        (eq ceamx-format-on-save-disabled-modes t)
+        (not (null (memq major-mode ceamx-format-on-save-disabled-modes)))))
+
+  :init
+  (apheleia-global-mode 1)
+
+  ;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
+  (def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
+    :around #'save-buffer
+    "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
+    (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
+      (funcall func)))
+
+  (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h)
+
+  ;; "We need to do this both before and after Apheleia is loaded
+  ;; because the autoloading is set up such that the minor mode
+  ;; definition is evaluated twice."
+  ;; <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2272C1-L2275>
+  (blackout 'apheleia-mode ceamx-apheleia-lighter))
 
 ;;;; `puni' :: <https://github.com/AmaiKinono/puni>
 

@@ -35,24 +35,7 @@
   (setq nxml-slash-auto-complete-flag t)
   (setq nxml-auto-insert-xml-declaration-flag t)
 
-  (setq-hook! 'nxml-mode-hook
-    tab-width
-    nxml-child-indent)
-
-  (use-feature! reformatter
-    ;; TODO: install keyword
-    ;; :ensure-system-package xmlfmt
-
-    :commands (xmlfmt-on-save-mode)
-
-    :init
-    (add-hook 'nxml-mode-hook #'xmlfmt-on-save-mode)
-
-    :config
-    (reformatter-define xmlfmt
-      ;; TODO: ensure available
-      :program "xmllint"
-      :args '("--format" "-"))))
+  (setq-hook! 'nxml-mode-hook tab-width nxml-child-indent))
 
 (use-package csv-mode
   :commands ( csv-align-fields

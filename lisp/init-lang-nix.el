@@ -48,20 +48,13 @@
 
   :config
   (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode)))
+  (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode))
+
+  (use-feature! apheleia
+    :config
+    (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt))))
 
 ;;; Integrations
-
-(use-feature! reformatter
-  :commands (nix-format-alejandra nix-format-nixfmt)
-  :config
-  ;; <https://github.com/kamadorueda/alejandra>
-  (reformatter-define nix-format-alejandra
-    :program "alejandra")
-
-  ;; <https://github.com/serokell/nixfmt>
-  (reformatter-define nix-format-nixfmt
-    :program "nixfmt"))
 
 (use-feature! eglot
   :defines (eglot-server-programs)
