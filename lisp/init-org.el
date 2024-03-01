@@ -174,6 +174,11 @@
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 
+;;; Provide agenda improvements with `org-super-agenda'
+
+(use-package org-super-agenda
+  :demand t)
+
 ;;; Support drag-and-drop images to org-mode
 
 ;; <https://github.com/abo-abo/org-download>
