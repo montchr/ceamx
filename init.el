@@ -175,12 +175,25 @@
 
 ;; `magit' requires a more recent version of `seq' than the version included in
 ;; Emacs 29.
-;;
-;; FIXME: prevent "seq loaded before Elpaca activation" warning
-;;        but `unload-feature' causes error since seq is used earlier in init
+
+;; Requires special care because unloading it can make other libraries freak out.
+;; <https://github.com/progfolio/elpaca/issues/216#issuecomment-1868444883>
+
+(defun +elpaca-unload-seq (e)
+  "Unload the builtin version of `seq' and continue the `elpaca' build E."
+  (and (featurep 'seq) (unload-feature 'seq t))
+  (elpaca--continue-build e))
+
+(defun +elpaca-seq-build-steps ()
+  "Update the `elpaca' build-steps to activate the latest version of the builtin `seq' package."
+  (append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
+                       elpaca--pre-built-steps
+                     elpaca-build-steps))
+          (list '+elpaca-unload-seq 'elpaca--activate-package)))
+
 (use-package seq
-  :ensure t
-  :demand t)
+  :ensure `(seq :build ,(+elpaca-seq-build-steps)))
+
 ;;;;; Install the latest version of `jsonrpc' builtin library
 
 ;; Required by (and originally extracted from) `eglot'.
