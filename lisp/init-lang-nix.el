@@ -52,6 +52,7 @@
 
   (use-feature! apheleia
     :config
+    (add-to-list 'apheleia-formatters '(alejandra "alejandra"))
     (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt))))
 
 ;;; Integrations
