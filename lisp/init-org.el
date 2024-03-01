@@ -86,7 +86,7 @@
 ;;;; Appearance settings
 
   (setopt org-ellipsis "…")
-  (setopt org-hide-emphasis-markers t)
+  (setopt org-hide-emphasis-markers nil)
   (setopt org-image-actual-width 300)
   ;; (setopt org-indent-indentation-per-level 2)
   (setopt org-pretty-entities t)
