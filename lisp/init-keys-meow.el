@@ -146,21 +146,22 @@
    '("<escape>" . ignore)
    '(":" . avy-goto-char-2))
 
-  ;; FIXME: prevent rebinding of SPC in Info-mode
   (pushnew! meow-mode-state-list
-            ;; shells
-            ;; TODO: use `ceamx-repl-modes-list'
-            '(comint-mode . insert)
-            '(eat-mode . insert)
-            '(eshell-mode . insert)
-            ;; writing
-            '(diary-mode . normal)
-            ;; read-only
-            ;; TODO: how to lock state?
-            ;; TODO: how to set for all read-only modes? `read-only-mode' does not work...
-            '(read-only-mode . motion)
-            '(help-mode . normal))
+    ;; shells
+    ;; TODO: use `ceamx-repl-modes-list'
+    '(comint-mode . insert)
+    '(eat-mode . insert)
+    '(eshell-mode . insert)
 
+    ;; writing
+    '(diary-mode . normal)
+
+    ;; read-only
+    ;; TODO: how to lock state? i.e. dont allow switching
+    ;; TODO: set for all read-only buffers?
+    '(Info-mode-hook . motion)
+    '(read-only-mode . motion)
+    '(help-mode . motion))
 
   ;; NOTE: This is not a customizable variable, although it is required for meow.
   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
