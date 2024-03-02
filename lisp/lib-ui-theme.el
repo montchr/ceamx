@@ -47,6 +47,28 @@
   (setq custom-enabled-themes `(,ceamx-ui-theme-dark))
   (ceamx-reapply-themes))
 
+(defun ceamx/gnome-set-theme (theme)
+  "Set the GNOME/GTK theme to THEME."
+  ;; FIXME: prompt with completion
+  (interactive "s")
+  (let* ((value (pcase theme
+                  ((rx (optional "prefer-") "dark") "prefer-dark")
+                  ((rx (optional "prefer-") "light") "prefer-light")
+                  (_ "prefer-dark")))
+          (namespace "org.gnome.desktop.interface")
+          (cmd (format "gsettings set %s color-scheme %s" namespace value)))
+    (shell-command cmd)))
+
+(defun ceamx/gnome-dark-theme ()
+  "Enable the dark GNOME/GTK theme."
+  (interactive)
+  (ceamx/gnome-set-theme "dark"))
+
+(defun ceamx/gnome-light-theme ()
+  "Enable the light GNOME/GTK theme."
+  (interactive)
+  (ceamx/gnome-set-theme "light"))
+
 ;; via prot-emacs
 (defun ceamx-theme-re-enable-in-frame (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
