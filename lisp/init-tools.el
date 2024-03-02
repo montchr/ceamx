@@ -38,5 +38,19 @@
   ;; Load default major-mode-specific settings.
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 
+;;; Install the `unpackaged' library of useful yet unsubstantial Emacs Lisp code
+
+;; <https://github.com/alphapapa/unpackaged.el>
+
+;; Of particular note:
+;;
+;; - Functions to convert Elisp to Org format:
+;;   <https://github.com/alphapapa/unpackaged.el/blob/master/README.org#convert-elisp-to-org-format>
+
+(use-package unpackaged
+  :ensure (:host github :repo "alphapapa/unpackaged.el")
+  :defer t
+  :commands (unpackaged/elisp-to-org))
+
 (provide 'init-tools)
 ;;; init-tools.el ends here
