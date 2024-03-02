@@ -124,5 +124,21 @@
   :config
   (setopt substitute-hightlight t))
 
+;;; Configure `re-builder', the builtin regular expression builder
+
+;; <https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder>
+;; <https://francismurillo.github.io/2017-03-30-Exploring-Emacs-rx-Macro/>
+
+;; Unfortunately, `re-builder' itself is poorly-documented.
+
+(use-feature! re-builder
+  :commands (re-builder)
+  :config
+  ;; "string" => recommended: \\(foo\\\|bar\\)
+  ;; "rx"     => recommended; advanced sexp regexp engine
+  ;; "read"   => default, avoid: backslash hell
+  (setopt reb-re-syntax 'string))
+
+
 (provide 'init-search)
 ;;; init-search.el ends here
