@@ -26,26 +26,5 @@
 
 ;;; Functions
 
-;;;; Pre-defined filters for `consult-info' searches
 
-(declare-function consult-info "consult")
-
-;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
-(defun ceamx/consult-info-emacs ()
-  "Search through Emacs info pages."
-  (interactive)
-  (consult-info "emacs" "efaq" "elisp" "cl" "compat"))
-
-(defun ceamx/consult-info-org ()
-  "Search through the Org info page."
-  (interactive)
-  (consult-info "org"))
-
-(defun ceamx/consult-info-completion ()
-  "Search through completion info pages."
-  (interactive)
-  (consult-info "vertico" "consult" "marginalia" "orderless" "embark"
-                "corfu" "cape" "tempel"))
-
-(provide 'lib-selection)
 ;;; lib-selection.el ends here

@@ -26,8 +26,29 @@
 
 (require 'lib-common)
 
+(declare-function consult-info "consult")
+
 ;;
 ;;; Functions
+
+;;;; Pre-defined filters for `consult-info' searches
+
+;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
+(defun ceamx/emacs-info ()
+  "Search through Emacs info pages."
+  (interactive)
+  (consult-info "emacs" "efaq" "elisp" "cl"))
+
+(defun ceamx/org-info ()
+  "Search through the Org info page."
+  (interactive)
+  (consult-info "org"))
+
+(defun ceamx/completion-info ()
+  "Search through completion info pages."
+  (interactive)
+  (consult-info "vertico" "consult" "marginalia" "orderless" "embark"
+                "corfu" "cape" "tempel"))
 
 ;;;; `devdocs' support
 

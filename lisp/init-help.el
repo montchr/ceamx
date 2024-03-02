@@ -29,6 +29,17 @@
 
 (require 'lib-common)
 (require 'lib-help)
+(require 'lib-keys)
+
+;;; Bind commands to call `consult-info' filtered by commonly-used manual collections
+
+;; Remove the default binding for the `describe-input-method' command.
+(keymap-global-unset "C-h I" t)
+
+(global-keys!
+  "C-h I c"  #'ceamx/completion-info
+  "C-h I e"  #'ceamx/emacs-info
+  "C-h I o"  #'ceamx/org-info)
 
 ;;
 ;;; Packages
