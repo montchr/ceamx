@@ -76,75 +76,80 @@
       "0" #'meow-expand-0))
 
   (meow-normal-define-key
-   '("0" . meow-expand-0)
-   '("9" . meow-expand-9)
-   '("8" . meow-expand-8)
-   '("7" . meow-expand-7)
-   '("6" . meow-expand-6)
-   '("5" . meow-expand-5)
-   '("4" . meow-expand-4)
-   '("3" . meow-expand-3)
-   '("2" . meow-expand-2)
-   '("1" . meow-expand-1)
-   '("-" . negative-argument)
-   '(";" . meow-reverse)
-   '("," . meow-inner-of-thing)
-   '("." . meow-bounds-of-thing)
-   '("[" . meow-beginning-of-thing)
-   '("]" . meow-end-of-thing)
-   '("a" . meow-append)
-   '("A" . meow-open-below)
-   '("b" . meow-back-word)
-   '("B" . meow-back-symbol)
-   '("c" . meow-change-save)            ; default: `meow-change'
-   '("d" . meow-delete)
-   '("D" . meow-backward-delete)
-   '("e" . meow-next-word)
-   '("E" . meow-next-symbol)
-   '("f" . meow-find)
-   '("g" . meow-cancel-selection)
-   '("G" . meow-grab)
-   '("h" . meow-left)
-   '("H" . meow-left-expand)
-   '("i" . meow-insert)
-   '("I" . meow-open-above)
-   '("j" . meow-next)
-   '("J" . meow-next-expand)
-   '("k" . meow-prev)
-   '("K" . meow-prev-expand)
-   '("l" . meow-right)
-   '("L" . meow-right-expand)
-   '("m" . meow-join)
-   '("n" . meow-search)
-   '("o" . meow-block)
-   '("O" . meow-to-block)
-   '("p" . meow-yank)
-   '("q" . meow-quit)
-   ;; FIXME: duplicated with "X" binding
-   '("Q" . meow-goto-line)
-   '("r" . meow-replace)
-   '("R" . meow-swap-grab)
-   '("s" . meow-kill)
-   '("t" . meow-till)
-   '("T" . meow-till-expand)            ; custom addition
-   '("u" . meow-undo)
-   '("U" . meow-undo-in-selection)
-   '("v" . meow-visit)
-   '("w" . meow-mark-word)
-   '("W" . meow-mark-symbol)
-   '("x" . meow-line)
-   ;; FIXME: duplicated with "Q" binding
-   '("X" . meow-goto-line)
-   '("y" . meow-save)
-   '("Y" . meow-sync-grab)
-   ;; There's no documentation, but this will essentially return to the
-   ;; original position prior to beginning the selection.
-   '("z" . meow-pop-selection)
-   ;; TODO: no idea what the difference is at a glance, no docs
-   ;; '("Z" . meow-pop-all-selection)    ; custom addition
-   '("'" . repeat)
-   '("<escape>" . ignore)
-   '(":" . avy-goto-char-2))
+    '("0" . meow-expand-0)
+    '("9" . meow-expand-9)
+    '("8" . meow-expand-8)
+    '("7" . meow-expand-7)
+    '("6" . meow-expand-6)
+    '("5" . meow-expand-5)
+    '("4" . meow-expand-4)
+    '("3" . meow-expand-3)
+    '("2" . meow-expand-2)
+    '("1" . meow-expand-1)
+    '("-" . negative-argument)
+    '(";" . meow-reverse)
+    '("," . meow-inner-of-thing)
+    '("." . meow-bounds-of-thing)
+    '("[" . meow-beginning-of-thing)
+    '("]" . meow-end-of-thing)
+    '("a" . meow-append)
+    '("A" . meow-open-below)
+    '("b" . meow-back-word)
+    '("B" . meow-back-symbol)
+    '("c" . meow-change-save)           ; default: `meow-change'
+    '("d" . meow-delete)
+    '("D" . meow-backward-delete)
+    '("e" . meow-next-word)
+    '("E" . meow-next-symbol)
+    '("f" . meow-find)
+    '("g" . meow-cancel-selection)
+    '("G" . meow-grab)
+    '("h" . meow-left)
+    '("H" . meow-left-expand)
+    '("i" . meow-insert)
+    '("I" . meow-open-above)
+    '("j" . meow-next)
+    '("J" . meow-next-expand)
+    '("k" . meow-prev)
+    '("K" . meow-prev-expand)
+    '("l" . meow-right)
+    '("L" . meow-right-expand)
+    '("m" . meow-join)
+    '("n" . meow-search)
+    '("o" . meow-block)
+    '("O" . meow-to-block)
+    '("p" . meow-yank)
+    '("q" . meow-quit)
+    ;; FIXME: duplicated with "X" binding
+    '("Q" . meow-goto-line)
+    '("r" . meow-replace)
+    '("R" . meow-swap-grab)
+    '("s" . meow-kill)
+    '("t" . meow-till)
+    '("T" . meow-till-expand)           ; custom addition
+    '("u" . meow-undo)
+    '("U" . meow-undo-in-selection)
+    '("v" . meow-visit)
+    '("w" . meow-mark-word)
+    '("W" . meow-mark-symbol)
+    '("x" . meow-line)
+    ;; FIXME: duplicated with "Q" binding
+    '("X" . meow-goto-line)
+    '("y" . meow-save)
+    '("Y" . meow-sync-grab)
+    ;; There's no documentation, but this will essentially return to the
+    ;; original position prior to beginning the selection.
+    '("z" . meow-pop-selection)
+    ;; TODO: no idea what the difference is at a glance, no docs
+    ;; '("Z" . meow-pop-all-selection)    ; custom addition
+    '("'" . repeat)
+    '("<escape>" . ignore)
+    '(":" . avy-goto-char-2))
+
+  ;; NOTE: This is not a customizable variable, although it is required for meow.
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+
+  :config
 
   (pushnew! meow-mode-state-list
     ;; shells
@@ -162,11 +167,6 @@
     '(Info-mode-hook . motion)
     '(read-only-mode . motion)
     '(help-mode . motion))
-
-  ;; NOTE: This is not a customizable variable, although it is required for meow.
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-
-  :config
 
   ;; Avoid the default binding for `meow-keypad' in motion state.
   (keymap-unset meow-motion-state-keymap "SPC" t)
