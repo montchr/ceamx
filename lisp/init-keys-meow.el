@@ -164,7 +164,7 @@
     ;; read-only
     ;; TODO: how to lock state? i.e. dont allow switching
     ;; TODO: set for all read-only buffers?
-    '(Info-mode-hook . motion)
+    '(Info-mode . motion)
     '(read-only-mode . motion)
     '(help-mode . motion))
 
