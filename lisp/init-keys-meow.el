@@ -168,6 +168,9 @@
 
   :config
 
+  ;; Avoid the default binding for `meow-keypad' in motion state.
+  (keymap-unset meow-motion-state-keymap "SPC" t)
+
   ;; Because I'm still getting the hang of meow again. I'm not fast enough to
   ;; remember exactly what to do. Once this delay feels too long, then it can be
   ;; changed.
