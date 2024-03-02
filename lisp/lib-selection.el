@@ -27,4 +27,5 @@
 ;;; Functions
 
 
+(provide 'lib-selection)
 ;;; lib-selection.el ends here
