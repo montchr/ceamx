@@ -181,10 +181,6 @@
   ;; (setopt meow-keypad-leader-dispatch nil)
   (setopt meow-keypad-leader-dispatch "C-c")
 
-  ;; Use "SPC G" as "C-M-" prefix, allowing `ceamx-git-map' to be mapped to "SPC
-  ;; g" because muscle memory.
-  ;; (setopt meow-keypad-ctrl-meta-prefix ?G)
-
   ;; Improve state indicator appearance (e.g. in modeline).
   (setopt meow-replace-state-name-list
     '( (normal . "🅝")
