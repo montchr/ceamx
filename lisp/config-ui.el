@@ -20,9 +20,15 @@
 
 ;;; Commentary:
 
-;; FIXME: defcustom with preset options
-
 ;;; Code:
+
+(defconst ceamx-gnome-ui-namespace "org.gnome.desktop.interface")
+
+(defconst ceamx-theme-buffet-dark-periods
+  '(:night :twilight :evening))
+
+(defconst ceamx-theme-buffet-light-periods
+  '(:morning :day :afternoon))
 
 (defcustom ceamx-modeline-provider 'doom
   "Modeline provider to load.
@@ -71,38 +77,6 @@ Intended for use as a per-system (or, ideally, per-display)
 accommodation for varying pixel densities."
   :group 'ceamx
   :type '(float))
-
-;; TODO: implement
-;;       see `modus-themes-items' for available options source for that theme family
-
-;; (defcustom ceamx-theme-dark nil
-;;   "Preferred dark theme.
-;; A nil value means functionality relying on this will be unavailable."
-;;   :group 'ceamx
-;;   :type '(symbol))
-
-;; (defcustom ceamx-theme-light nil
-;;   "Preferred light theme.
-;; A nil value means functionality relying on this will be unavailable."
-;;   :group 'ceamx
-;;   :type '(symbol))
-
-;; FIXME: doesn't seem to have desired effect?
-(defvar ceamx-ui-theme-family-package
-  (alist-get ceamx-theme-family '((ef . ef-themes)
-                                   (modus . modus-themes)
-                                   (nano . nano-theme))))
-
-;; TODO: use these
-(defvar ceamx-ui-light-theme-alist '((modus . modus-operandi)
-                                    (ef . ef-elea-light)))
-(defvar ceamx-ui-dark-theme-alist '((modus . modus-vivendi)
-                                  (ef . ef-elea-dark)))
-;; (defun ceamx-ui-theme-preferred ())
-;; FIXME: defcustom
-(defvar ceamx-ui-theme-dark 'modus-vivendi "Preferred dark theme.")
-(defvar ceamx-ui-theme-light 'modus-operandi "Preferred light theme.")
-
 
 (provide 'config-ui)
 ;;; config-ui.el ends here

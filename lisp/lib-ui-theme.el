@@ -24,39 +24,60 @@
 
 ;; Theme library functions and macros.
 
-;; TODO: revisit this approach
-
 ;;; Code:
 
-(defun ceamx-reapply-themes ()
-  "Forcibly load the themes listed in `custom-enabled-themes'."
-  (dolist (theme custom-enabled-themes)
-    (unless (custom-theme-p theme)
-      (load-theme theme)))
-  (custom-set-variables `(custom-enabled-themes (quote ,custom-enabled-themes))))
+(require 'config-ui)
 
-(defun light ()
-  "Activate a light color theme."
-  (interactive)
-  (setq custom-enabled-themes `(,ceamx-ui-theme-light))
-  (ceamx-reapply-themes))
+(require 'lib-common)
 
-(defun dark ()
-  "Activate a dark color theme."
-  (interactive)
-  (setq custom-enabled-themes `(,ceamx-ui-theme-dark))
-  (ceamx-reapply-themes))
+(declare-function theme-buffet--load-random "theme-buffet")
+
+;;; Helpers
+
+(defun +theme-buffet--load-random-from-periods (periods)
+  "Load a random theme from the specified `theme-buffet' PERIODS.
+PERIODS can be a single keyword or list of keywords. Each keyword
+must be a valid `theme-buffet' period as defined in
+`theme-buffet--keywords'."
+  (let ((period (if (listp periods) (seq-random-elt periods) periods)))
+    (theme-buffet--load-random period)))
+
+;;; Functions
+
+;; via prot-emacs
+(defun ceamx-theme-re-enable-in-frame (_frame)
+  "Re-enable active theme, if any, upon FRAME creation.
+Add this to `after-make-frame-functions' so that new frames do
+not retain the generic background set by the function
+`ceamx-theme-no-bright-flash'."
+  (when-let ((theme (car custom-enabled-themes)))
+    (enable-theme theme)))
+
+(defun ceamx-gnome-theme ()
+  "Get the currently-active GNOME/GTK color scheme."
+  (shell-command (format "gsettings get %s color-scheme"
+                         ceamx-gnome-ui-namespace)))
+
+(defun ceamx-gnome-theme-dark-p ()
+  "Whether GNOME/GTK are using a theme with a dark color scheme."
+  (string-match-p "dark" (ceamx-gnome-theme)))
+
+;;; Commands
+
+;;;; Desktop environment commands
 
 (defun ceamx/gnome-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
   ;; FIXME: prompt with completion
   (interactive "s")
-  (let* ((value (pcase theme
-                  ((rx (optional "prefer-") "dark") "prefer-dark")
-                  ((rx (optional "prefer-") "light") "prefer-light")
+  (let* ((namespace ceamx-gnome-ui-namespace)
+         (value (pcase theme
+                  ((rx (optional "prefer-") "dark")
+                    "prefer-dark")
+                  ((rx (optional "prefer-") "light")
+                    "prefer-light")
                   (_ "prefer-dark")))
-          (namespace "org.gnome.desktop.interface")
-          (cmd (format "gsettings set %s color-scheme %s" namespace value)))
+         (cmd (format "gsettings set %s color-scheme %s" namespace value)))
     (shell-command cmd)))
 
 (defun ceamx/gnome-dark-theme ()
@@ -69,16 +90,33 @@
   (interactive)
   (ceamx/gnome-set-theme "light"))
 
-;; via prot-emacs
-(defun ceamx-theme-re-enable-in-frame (_frame)
-  "Re-enable active theme, if any, upon FRAME creation.
-Add this to `after-make-frame-functions' so that new frames do
-not retain the generic background set by the function
-`ceamx-theme-no-bright-flash'."
-  (when-let ((theme (car custom-enabled-themes)))
-    (enable-theme theme)))
+;;;; Emacs-specific commands
 
+(defun ceamx/load-dark-theme ()
+  "Load a random dark theme."
+  (interactive)
+  (+theme-buffet--load-random-from-periods
+    ceamx-theme-buffet-dark-periods))
 
+(defun ceamx/load-light-theme ()
+  "Load a random light theme."
+  (interactive)
+  (+theme-buffet--load-random-from-periods
+    ceamx-theme-buffet-light-periods))
+
+;;;; Global commands
+
+(defun ceamx/light ()
+  "Activate a light theme globally."
+  (interactive)
+  (ceamx/gnome-light-theme)
+  (ceamx/load-light-theme))
+
+(defun ceamx/dark ()
+  "Activate a dark theme globally."
+  (interactive)
+  (ceamx/gnome-dark-theme)
+  (ceamx/load-dark-theme))
 
 (provide 'lib-ui-theme)
 ;;; lib-ui-theme.el ends here
