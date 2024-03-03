@@ -339,37 +339,36 @@ Simple wrapper around `ceamx-subdirs'."
 ;;
 ;;; Advice
 
-(defmacro def-advice! (name arglist where place docstring &rest body)
+(defmacro def-advice! (name arglist how symbol docstring &rest body)
   "Define an advice called NAME and add it to a function.
 ARGLIST, DOCSTRING, and BODY are as in `defun'.
 
-WHERE is a keyword as passed to `advice-add', and PLACE is the
-function to which to add the advice, like in `advice-add'. PLACE
-should be sharp-quoted."
+HOW and SYMBOL are as in `advice-add'. HOW describes how to add
+the newly-defined advice. SYMBOL is the function to be advised."
   (declare (indent 2)
     (doc-string 5))
   (unless (stringp docstring)
     (error "Ceamx: advice `%S' not documented'" name))
-  (unless (and (listp place)
-            (= 2 (length place))
-            (eq (nth 0 place) 'function)
-            (symbolp (nth 1 place)))
-    (error "Ceamx: advice `%S' does not sharp-quote place `%S'" name place))
+  (unless (and (listp symbol)
+            (= 2 (length symbol))
+            (eq (nth 0 symbol) 'function)
+            (symbolp (nth 1 symbol)))
+    (error "Ceamx: advice `%S' does not sharp-quote symbol `%S'" name symbol))
   `(progn
      (defun ,name ,arglist
-       ,(let ((article (if (string-match-p "^:[aeiou]" (symbol-name where))
+       ,(let ((article (if (string-match-p "^:[aeiou]" (symbol-name how))
                          "an"
                          "a")))
           (format "%s\n\nThis is %s `%S' advice for\n`%S'."
-            docstring article where
-            (if (and (listp place)
-                  (memq (car place) ''function))
-              (cadr place)
-              place)))
+            docstring article how
+            (if (and (listp symbol)
+                  (memq (car symbol) ''function))
+              (cadr symbol)
+              symbol)))
        ,@body)
      (eval-when-compile
        (declare-function ,name nil))
-     (advice-add ,place ',where #',name)
+     (advice-add ,symbol ',how #',name)
      ',name))
 
 ;;; Hooks
