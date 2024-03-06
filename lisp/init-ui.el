@@ -24,7 +24,14 @@
 
 ;;; Code:
 
+(require 'lib-common)
 (require 'lib-hydras)
+
+(use-feature! emacs
+  :config
+  ;; Modal keybinding systems will change the cursor dynamically to indicate current state.
+  ;; This default value matches what I expect in an "insert" mode.
+  (setq-default cursor-type 'bar))
 
 ;; Required as dependencies for many packages, either as more recent versions
 ;; than those available in Emacs (e.g. `transient 'IIRC), or, including some

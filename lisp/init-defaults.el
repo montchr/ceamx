@@ -120,7 +120,5 @@
 (setopt use-dialog-box nil)
 (setopt indicate-empty-lines nil)
 
-(setq-default cursor-type '(hbar .  2))
-
 (provide 'init-defaults)
 ;;; init-defaults.el ends here
