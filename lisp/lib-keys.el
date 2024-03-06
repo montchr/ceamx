@@ -64,19 +64,16 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
   `(define-keymap :keymap (current-global-map)
      ,@keys))
 
-(defmacro keys! (keymap &rest definitions)
-  "Define KEY/DEFINITION pairs as key bindings in KEYMAP.
-Shorthand wrapper for `define-keymap', which see. KEYMAP will be
-provided as the `:keymap' keyword argument value. DEFINITIONS
-will be passed through to `define-keymap' directly.
+(defmacro keys! (symbol &rest definitions)
+  "Define KEY/DEFINITION pairs as key bindings in the keymap SYMBOL.
+If SYMBOL is not already an existing keymap, then SYMBOL will be
+initialized as a prefix command with `define-prefix-command'.
 
-\(fn KEYMAP &rest [KEY DEFINITION])"
-  (declare (indent defun) (debug t))
-  `(define-keymap :keymap ,keymap
-     ,@definitions))
+SYMBOL will then be provided to `define-keymap' as the value for
+`:keymap'. DEFINITIONS will be passed through as the remaining
+arguments to `define-keymap'.
 
-(defmacro defmap! (symbol &rest defs)
-  "Define a new keymap and prefix command SYMBOL composed of keybindings DEFS."
+\(fn SYMBOL &rest [KEY DEFINITION])"
   (declare (indent defun) (debug t))
   `(progn
      (defvar ,symbol)
@@ -84,7 +81,7 @@ will be passed through to `define-keymap' directly.
        (define-prefix-command ',symbol ',symbol))
      (define-keymap
        :keymap ,symbol
-       ,@defs)))
+       ,@definitions)))
 
 (defmacro leader-key! (key def)
   "Bind DEF to KEY in the leader map.

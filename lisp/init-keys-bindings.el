@@ -142,7 +142,7 @@
 (keymap-global-set "C-c C-t" '("[ Toggle ]" . ceamx-toggle-map))
 (keymap-global-set "C-c t" '("[ Toggle ]" . ceamx-toggle-map))
 
-(defmap! ceamx-toggle-map
+(keys! ceamx-toggle-map
   "l" #'display-line-numbers-mode
   "w" '("side windows" . window-toggle-side-windows))
 

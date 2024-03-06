@@ -42,7 +42,7 @@
   ;; The default includes `newline', which would happen too frequently.
   (setopt flycheck-check-syntax-automatically '(save idle-change mode-enabled))
 
-  (defmap! ceamx-toggle-map "f" #'flycheck-mode)
+  (keys! ceamx-toggle-map "f" #'flycheck-mode)
 
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode)
 

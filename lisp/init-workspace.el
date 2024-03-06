@@ -85,7 +85,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
               activities-kill activities-switch activities-revert activities-list)
 
   :preface
-  (defmap! ceamx-activities-map)
+  (keys! ceamx-activities-map)
     (setq edebug-inhibit-emacs-lisp-mode-bindings t)
 
   :init
