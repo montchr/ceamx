@@ -71,12 +71,13 @@
 ;;; Keybinds
 
 (keymap-set emacs-lisp-mode-map "C-c C-c" #'eval-last-sexp)
+(keymap-set emacs-lisp-mode-map "C-S-t" #'transpose-sexps)
+
+(keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
 
 ;; Remove default binding for `byte-compile-current-file' to free up space for
 ;; something else.
 (keymap-unset emacs-lisp-mode-map "C-c C-f")
-
-(keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
 
 ;;
 ;;; Packages

@@ -73,10 +73,6 @@
 ;; See `lib-lisp' and <https://emacs.stackexchange.com/a/52789/40956>
 (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
 
-;;; Keybindings
-
-(keymap-set emacs-lisp-mode-map "C-S-t" #'transpose-sexps)
-
 ;;; Packages
 
 ;;;; lispy
