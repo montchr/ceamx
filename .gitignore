@@ -1,11 +1,7 @@
 /result
 .direnv
-.std
-eln-cache
 
-/site-lisp/norang-org-mode/*
-!/site-lisp/norang-org-mode/org-mode.org
 /dotfield-init.el
 /dotfield-early-init.el
-/TUTORIAL
+
 /site-config.el
