@@ -170,6 +170,8 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;;
 ;;; Frames and window-system integration
 
+;; FIXME: seems to behave inconsistently when server is running?
+
 ;; Prevent X11 from taking control of visual behavior and appearance.
 (setq inhibit-x-resources t)
 
