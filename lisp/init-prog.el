@@ -24,7 +24,10 @@
 
 ;;; Code:
 
+;;; Requirements
+
 (require 'lib-common)
+(require 'lib-lisp)
 
 ;;
 ;;; Hooks

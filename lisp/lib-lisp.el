@@ -24,6 +24,24 @@
 
 ;;; Code:
 
+;;;; Variables
+
+(defvar ceamx-lisp-init-hook '()
+  "Hook to run in all supported Lisp modes.")
+
+;;;; Functions
+
+(defun ceamx-lisp-init ()
+  "Enable features useful in any Lisp mode."
+  ;; FIXME: conditional
+  ;; FIXME: errors on startup (before loaded)
+  (lispy-mode)
+  ;; `outli' overrides some `lispy' features.
+  ;; <https://github.com/jdtsmith/outli?tab=readme-ov-file#configuration>
+  ;; FIXME: conditional
+  (outli-mode)
+  (run-hooks 'ceamx-lisp-init-hook))
+
 (defun ceamx-enable-check-parens-on-save ()
   "Run `check-parens' when the current buffer is saved."
   (add-hook 'after-save-hook #'check-parens nil t))
@@ -34,6 +52,8 @@
     (and (derived-mode-p 'emacs-lisp-mode)
       (or (null file-base)
         (locate-file file-base (custom-theme--load-path) '(".elc" ".el"))))))
+
+;;;; Commands
 
 (defun ceamx/indent-last-sexp ()
   "Apply indentation to sexp before point."
@@ -223,7 +243,6 @@ lists."
           (desired-indent)
           (t
             normal-indent))))))
-
 
 (provide 'lib-lisp)
 ;;; lib-lisp.el ends here
