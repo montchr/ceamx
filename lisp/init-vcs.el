@@ -29,6 +29,7 @@
 
 (require 'ceamx-paths)
 (require 'lib-common)
+(require 'lib-keys)
 
 (use-feature! vc
   :demand t
@@ -110,9 +111,43 @@
 ;;;; git-timemachine :: <https://codeberg.org/pidu/git-timemachine>
 
 (use-package git-timemachine
-  :autoload (git-timemachine--show-minibuffer-details)
+  :defer t
+  :commands (git-timemachine
+              git-timemachine-show-previous-revision
+              git-timemachine-show-next-revision
+              git-timemachine-blame
+              git-timemachine-show-commit)
 
   :init
+  (keymap-global-set "C-x v t" #'git-timemachine)
+
+  ;; XXX: broken, see `ceamx/git-timemachine-transient'
+  ;; (add-hook 'git-timemachine-mode-hook #'ceamx/git-timemachine-transient)
+
+  :config
+
+  (keys! git-timemachine-mode-map
+    "M-p" #'git-timemachine-show-previous-revision
+    "M-n" #'git-timemachine-show-next-revision
+    "M-b" #'git-timemachine-blame
+    "M-c" #'git-timemachine-show-commit)
+
+  ;; FIXME: like `ceamx/transient-window', this breaks because the commands
+  ;; should be run in the original buffer/window
+  (transient-define-prefix ceamx/git-timemachine-transient ()
+    "Transient menu for `git-timemachine-mode'."
+    ;; :transient-suffix 'transient--do-stack
+    [["Navigation"
+       ("p" "previous revision" git-timemachine-show-previous-revision :transient t)
+       ("n" "next revision" git-timemachine-show-next-revision :transient t)]
+      ["Display"
+        ("b" "blame" git-timemachine-blame)
+        ("c" "commit" git-timemachine-show-commit )]
+      [""
+        ("q" "quit" git-timemachine-quit :transient nil)]])
+
+  (declare-function git-timemachine--show-minibuffer-details "git-timemachine")
+
   ;; via <https://github.com/doomemacs/doomemacs/blob/07fca786154551f90f36535bfb21f8ca4abd5027/modules/emacs/vc/config.el#L76C1-L90C47>
   (def-advice! +git-timemachine--details-in-header-line-a (revision)
     :override #'git-timemachine--show-minibuffer-details
