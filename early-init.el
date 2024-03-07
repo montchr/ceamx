@@ -153,7 +153,7 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (setq byte-compile-warnings nil)
 
 ;;
-;;; Inhibit annoyances
+;;; Inhibit early annoyances
 
 ;; No bells.
 (setq ring-bell-function #'ignore)
