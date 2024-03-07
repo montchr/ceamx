@@ -279,8 +279,8 @@
   :transient-suffix 'transient--do-stay
   [["Movement"
      ("h" "left" windmove-left :transient t)
-     ("k" "down" windmove-down :transient t)
-     ("j" "up" windmove-up :transient t)
+     ("j" "down" windmove-down :transient t)
+     ("k" "up" windmove-up :transient t)
      ("l" "right" windmove-right :transient t)
      ("o" "other" aw-flip-window :transient t) ; previously-selected
      ("w" "select" ace-window)]
