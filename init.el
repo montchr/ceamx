@@ -468,19 +468,20 @@
 ;;
 ;;; Postlude
 
-(def-hook! ceamx-maybe-start-emacs-server-h () 'ceamx-after-init-hook
-  "Auto-start Emacs daemon if not already running."
-  (require 'server)
-  (unless (and (fboundp 'server-running-p)
-            (server-running-p))
-    (server-start)))
+;; FIXME: causes some errors / inconsistencies
+;; (def-hook! ceamx-maybe-start-emacs-server-h () 'ceamx-after-init-hook
+;;   "Auto-start Emacs daemon if not already running."
+;;   (require 'server)
+;;   (unless (and (fboundp 'server-running-p)
+;;             (server-running-p))
+;;     (server-start)))
 
 ;; unfortunately
 (when (and +gui-p +sys-mac-p)
   (def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
-             "Restart the yabai service after init."
-             (after! [exec-path-from-shell]
-               (async-shell-command "yabai --restart-service"))))
+    "Restart the yabai service after init."
+    (after! [exec-path-from-shell]
+      (async-shell-command "yabai --restart-service"))))
 
 ;; Optionally load custom file after all packages have loaded.
 (when (and ceamx-load-custom-file
