@@ -44,7 +44,7 @@
   ;; TODO: is this group appropriate?
   :group 'file)
 
-(defcustom ceamx-load-custom-file nil
+(defcustom ceamx-load-custom-file t
   "Whether to load the user `custom-file' (custom.el)."
   :group 'ceamx
   :type '(boolean))
