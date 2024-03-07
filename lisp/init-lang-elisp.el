@@ -1,4 +1,4 @@
-;;; init-lang-emacs-lisp.el --- Emacs Lisp development support  -*- lexical-binding: t; -*-
+;;; init-lang-elisp.el --- Emacs Lisp development support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
@@ -137,5 +137,5 @@ The original function fails in the presence of whitespace after a sexp."
   :init
   (keymap-set emacs-lisp-mode-map "C-c x" #'ceamx/macrostep-expand))
 
-(provide 'init-lang-emacs-lisp)
-;;; init-lang-emacs-lisp.el ends here
+(provide 'init-lang-elisp)
+;;; init-lang-elisp.el ends here

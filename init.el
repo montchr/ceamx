@@ -423,7 +423,7 @@
 (require 'init-lisp)
 
 (require 'init-lang-data)
-(require 'init-lang-emacs-lisp)
+(require 'init-lang-elisp)
 (require 'init-lang-html)
 (require 'init-lang-js)
 (require 'init-lang-json)
