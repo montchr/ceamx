@@ -31,6 +31,11 @@
 (require 'lib-common)
 (require 'lib-keys)
 
+(use-feature! ediff
+  :config
+  ;; Keep the Ediff control panel in the same frame.
+  (setopt ediff-window-setup-function #'ediff-setup-windows-plain))
+
 (use-feature! vc
   :demand t
   :config
