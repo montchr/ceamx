@@ -162,11 +162,6 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; TODO: replace with dashboard
 (setq inhibit-startup-screen t)
 
-;; No littering.
-;; TODO: consider enabling these for TRAMP?
-(setq make-backup-files nil)
-(setq create-lockfiles nil)
-
 ;;
 ;;; Frames and window-system integration
 

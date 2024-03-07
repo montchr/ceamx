@@ -31,6 +31,15 @@
 (require 'lib-help)
 (require 'lib-keys)
 
+;;; Configure window behavior for help buffers
+
+;; Focus newly-opened help windows.
+(setopt help-window-select t)
+
+;; Also focus newly-opened manpages, which still do not follow `display-buffer'
+;; rules (as of <2024-03-06>).
+(setopt Man-notify-method 'aggressive)
+
 ;;; Bind commands to call `consult-info' filtered by commonly-used manual collections
 
 ;; Remove the default binding for the `describe-input-method' command.

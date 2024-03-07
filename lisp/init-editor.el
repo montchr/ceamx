@@ -35,13 +35,28 @@
 (require 'lib-common)
 (require 'lib-editor)
 
-;;
-;;; Formatting
+;;; Enable some commands that Emacs disables by default
+
+(dolist (cmd '(downcase-region
+                scroll-left
+                upcase-region))
+  (put cmd 'disabled nil))
+
+;;; Configure builtin features
 
 (use-feature! emacs
   :config
 
-;;;; auto-fill-mode
+  (setopt sentence-end-double-space nil)
+  (setopt require-final-newline t)
+
+  ;; Replace region when inserting text.
+  (delete-selection-mode 1)
+
+  ;; Don't consider camelCaseWORDs as separate words.
+  (global-subword-mode -1)
+
+;;;; Automatically wrap text at `fill-column' in some contexts
 
   ;; When a mode defines a comment syntax, then only wrap those comments. In all
   ;; other modes (primarily `text-mode' derivatives), activating
@@ -55,21 +70,7 @@
 
   (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
 
-;;;;; Maintain indentation and comments upon newline.
-
-  ;; (after! 'evil
-  ;;   (when (boundp 'evil-insert-state-map)
-  ;;     (keymap-set evil-insert-state-map
-  ;;                 "RET" #'comment-indent-new-line)))
-
-  ;; FIXME: does not have intended effect -- more like the opposite?
-  ;;        `lispy-mode' overrides to `lispy-newline-and-indent-plain'
-  ;; (after! 'meow
-  ;;   (when (boundp 'meow-insert-state-keymap)
-  ;;     (keymap-set meow-insert-state-keymap
-  ;;       "RET" #'comment-indent-new-line)))
-
-;;;; indentation
+;;;; Handle automatic indentation
 
   (setq-default indent-tabs-mode nil)
   (setopt indent-tabs-mode nil)
@@ -77,7 +78,9 @@
 
   (electric-indent-mode 1)
 
-;;;; pair handling :: `(info "Matching")'
+;;;; Handle character pairs
+
+  ;; See `(info "Matching")' for more details.
 
   (setopt blink-matching-paren t)
   ;; Avoid "expression" style, which looks too much like a selected region.
@@ -92,52 +95,29 @@
   (electric-pair-mode 1)
   (show-paren-mode 1)
 
-;;;; symbols
+;;;; Trim whitespace upon save
 
-  ;; Don't consider camelCaseWORDs as separate words.
-  (global-subword-mode -1)
+  (add-hook 'before-save-hook #'delete-trailing-whitespace)
 
-;;;; whitespace indicators
-
-  ;;  Show all problematic whitespace as configured by `whitespace-style'.
+;;;; Display whitespace visualization with `whitespace-mode'
 
   ;;  This mode is buffer-local. It might be undesireable in some cases, so enable
   ;;  it selectively.
 
   (add-hook 'prog-mode-hook #'whitespace-mode)
 
-  (setopt whitespace-style '(face tabs tab-mark trailing))
+  (setopt whitespace-style '(face tabs tab-mark trailing)))
 
-  (when (boundp 'whitespace-display-mappings)
-    ;; Visualize tabs as a pipe character - "|" (ASCII ID 124)
-    ;; NOTE: the original value is still present at tail
-    ;; TODO: use character constants for clarity
-    (cl-pushnew '(tab-mark 9 [124 9] [92 9]) whitespace-display-mappings)))
+;;; Add support for EditorConfig
 
-;;
-;;; Packages
-
-;;;; editorconfig :: <https://editorconfig.org>
+;; <https://editorconfig.org>
 
 (use-package editorconfig
   :commands (editorconfig-mode)
   :init
   (add-hook 'on-first-file-hook #'editorconfig-mode))
 
-;;;; `topsy.el' :: <https://github.com/alphapapa/topsy.el>
-
-;;  "Simple sticky header showing definition beyond top of window"
-
-;; TODO: remove or use -- it seems more confusing than helpful though.
-
-(use-package topsy
-  :disabled
-  :commands (topsy-mode)
-  :init
-  (add-hook 'prog-mode-hook #'topsy-mode)
-  (add-hook 'magit-section-mode-hook #'topsy-mode))
-
-;;;; Apply code reformatting with `apheleia'
+;;; Apply opinionated code reformatting with `apheleia'
 
 ;; <https://github.com/radian-software/apheleia>
 
@@ -175,16 +155,15 @@
   :config
   (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h))
 
-;;;; `puni' :: <https://github.com/AmaiKinono/puni>
+;;; Enable structured editing with `puni'
 
-;;  Structured editing (soft deletion, expression navigating & manipulating)
-;;  that supports many major modes out of the box.
+;; <https://github.com/AmaiKinono/puni>
 
 (use-package puni
   :commands (puni-global-mode
-             puni-disable-puni-mode
-             puni-backward-sexp-or-up-list
-             puni-forward-sexp-or-up-list)
+              puni-disable-puni-mode
+              puni-backward-sexp-or-up-list
+              puni-forward-sexp-or-up-list)
 
   :init
   (define-keymap :keymap puni-mode-map
@@ -194,14 +173,14 @@
   ;; (puni-global-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 
-;;;; drag-stuff :: <https://github.com/rejeep/drag-stuff.el>
+;;; Drag stuff around in arbitrary directions with `drag-stuff'
 
-;;  Move stuff around in arbitrary directions
+;; <https://github.com/rejeep/drag-stuff.el>
 
 ;;  This package appears to be abandoned since 2017.
 ;;  But, as of <2023-09-06>, it still works well.
 
-;;;;; Issues
+;;;; Issues
 
 ;; Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
 ;; recent versions of Emacs:
@@ -220,12 +199,11 @@
 (use-package drag-stuff
   :bind
   (([M-up] . drag-stuff-up)
-   ([M-right] . drag-stuff-right)
-   ([M-down] . drag-stuff-down)
-   ([M-left] . drag-stuff-left)))
+    ([M-right] . drag-stuff-right)
+    ([M-down] . drag-stuff-down)
+    ([M-left] . drag-stuff-left)))
 
-;;
-;;; Rectangle operations
+;;; Operate on a buffer rectangularly
 
 (use-feature! rect
   :config

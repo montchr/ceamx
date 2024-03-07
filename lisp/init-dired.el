@@ -36,7 +36,10 @@
 
 (use-feature! dired
   :commands (dired-omit-mode)
+
   :config
+  (setopt dired-auto-revert-buffer t)
+  (setopt dired-dwim-target t)
   (setopt dired-kill-when-opening-new-dired-buffer t)
   (setopt dired-listing-switches "-al --group-directories-first")
   (setopt dired-mouse-drag-files t)
@@ -45,7 +48,6 @@
   (setopt mouse-drag-and-drop-region-cross-program t)
 
   (define-keymap :keymap dired-mode-map
-    ;; NOTE: Overrides global binding for completion-at-point/cape commands.
     "M-p" #'dired-up-directory))
 
 ;;; Provide Dired with polished interface and feature enhancements with `dirvish'

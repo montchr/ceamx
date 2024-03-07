@@ -90,19 +90,20 @@
 
 ;;; Buffer Display
 
-(use-feature! emacs
-  :config
-  (setopt switch-to-buffer-in-dedicated-window 'pop)
-  ;; Ensure interactive buffer switching behaves according to expectations.
-  (setopt switch-to-buffer-obey-display-actions t))
+(setopt switch-to-buffer-in-dedicated-window 'pop)
+
+;; Ensure interactive buffer switching behaves according to expectations.
+(setopt switch-to-buffer-obey-display-actions t)
 
 ;; Hide buffer until there's output.
 ;; Prevents an extra window appearing during init.
 (setopt async-shell-command-display-buffer nil)
 
+
 (setopt display-buffer-base-action
   '((display-buffer-reuse-window
       display-buffer-in-previous-window)))
+
 ;; FIXME: one of these, i think, is responsible for breaking childframes e.g. `embark-act', `Info-mode'
 ;; TODO: what do each of these do? doesn't quite make sense...
 ;; (setopt display-buffer-base-action

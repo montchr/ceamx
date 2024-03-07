@@ -288,21 +288,29 @@
 
 (when (display-graphic-p)
   (require 'lib-gui))
+
 (require 'lib-files)
 
 ;;
 ;;; Configuration
 
-;; Generally sorted in order of likelihood of first user interaction.
+;; Increase number of messages saved in log.
+(setq message-log-max 10000)
 
-;; An interaction can be one-way or two-way:
-;; keep in mind that perception is still a (one-way) interaction,
-;; so legibility of displayed information is important immediately,
-;; even if the interface cannot respond to input.
+;; Unbind `suspend-frame'.
+;; TODO: provide more context
+(global-unset-key (kbd "C-x C-z"))
 
-(require 'init-defaults)
+;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
+(setopt auto-mode-case-fold nil)
+
+;; Prevent Emacs from pinging domain names unexpectedly.
+(setopt ffap-machine-p-known 'reject)
+
+;;;; Environment
 
 (require 'init-env)
+(require 'init-input-methods)
 
 ;; Site-specific configuration, to be ignored by version control.
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)

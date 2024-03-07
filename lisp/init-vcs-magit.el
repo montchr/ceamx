@@ -27,8 +27,7 @@
 (require 'lib-common)
 (require 'lib-vcs-magit)
 
-(use-feature! transient
-  :autoload (transient-quit-one))
+(use-feature! transient)
 
 (use-package magit
   :commands (magit-status

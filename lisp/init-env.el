@@ -27,6 +27,14 @@
 
 ;;; Code:
 
+(require 'config-env)
+
+;; Disable unnecessary OS-specific command-line options.
+(unless +sys-mac-p
+  (setq command-line-ns-option-alist nil))
+(unless +sys-linux-p
+  (setq command-line-x-option-alist nil))
+
 (use-package exec-path-from-shell
   :demand t
   :commands (exec-path-from-shell-initialize)

@@ -30,6 +30,10 @@
 (require 'ceamx-keymaps)
 (require 'lib-common)
 
+(use-feature! eshell
+  :config
+  (setopt eshell-scroll-to-bottom-on-input 'this))
+
 ;;; `eat' :: <https://codeberg.org/akib/emacs-eat/>
 
 ;; "Emulate A Terminal"

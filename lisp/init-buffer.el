@@ -24,8 +24,6 @@
 
 ;; TODO: <https://github.com/abo-abo/avy/wiki/custom-commands>
 
-;; See also `init-ui' for initial `avy' configuration.
-
 ;;; Code:
 
 (require 'lib-common)
@@ -33,6 +31,9 @@
 (require 'lib-buffer)
 
 ;;; General
+
+(setq-default indicate-empty-lines nil)
+(setq-default fill-column 80)
 
 (use-feature! emacs
   :config
@@ -42,9 +43,6 @@
 
   ;; Disable buffer line wrapping by default.
   (set-default 'truncate-lines t)
-
-  ;; Add a margin when scrolling vertically
-  (setq-default scroll-margin 4)
 
 ;;;; Auto-revert buffers
 

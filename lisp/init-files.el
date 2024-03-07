@@ -31,53 +31,73 @@
 (require 'lib-common)
 (require 'lib-files)
 
-;; Create missing directories when we open a file that doesn't exist under a
-;; directory tree that may not exist.
-;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
-(defun ceamx-create-missing-directories-h ()
-  "Automatically create missing directories when creating new files."
-  (unless (file-remote-p buffer-file-name)
-    (let ((parent-directory (file-name-directory buffer-file-name)))
-      (and (not (file-directory-p parent-directory))
-           (y-or-n-p (format "Directory `%s' does not exist! Create it?"
-                             parent-directory))
-           (progn (make-directory parent-directory 'parents)
-                  t)))))
-(add-hook 'find-file-not-found-functions #'ceamx-create-missing-directories-h)
+;;; Manage backup files and prevent file-lock clutter
 
-;; Add file headers to new files.
+;; TODO: enable file locks in TRAMP?
+
+(setopt create-lockfiles nil)
+
+(setopt make-backup-files t)
+(setopt backup-by-copying t)
+(setopt version-control t)
+(setopt delete-old-versions t)
+(setopt kept-new-versions 5)
+(setopt kept-old-versions 5)
+
+(setopt delete-by-moving-to-trash t)
+
+;;; Add file headers to new files
+
 (use-feature! autoinsert
   :config
   (auto-insert-mode t))
 
+;;; Configure finding of files
+
 (setopt find-file-suppress-same-file-warnings t)
 
-(setopt backup-by-copying t)
-(setopt backup-directory-alist `((".*" . ,(expand-file-name
-                                           (concat ceamx-local-dir "backups")))))
-(setopt delete-old-versions t)
-(setopt kept-new-versions 5)
-(setopt kept-old-versions 5)
-(setopt require-final-newline t)
-(setopt version-control t)
 (setopt find-file-visit-truename t)
 
+;; TODO: move elsewhere
 (use-feature! xref
   :config
   ;; Always find references of symbol at point.
   (setopt xref-prompt-for-identifier nil))
 
-;;
-;;; Autosaves
-;;
+;;;; Prompt to create missing parent directories for not-found files
 
-(setopt auto-save-interval 300)          ; input events before autosave
-(setopt auto-save-visited-interval 30)   ; idle interval for all file-visiting buffers
-(setopt auto-save-timeout 30)         ; idle interval before autosave
+;; <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
 
-;; Don't create auto-save ~ files.
+(defun ceamx-create-missing-directories-h ()
+  "Automatically create missing directories when creating new files."
+  (unless (file-remote-p buffer-file-name)
+    (let ((parent-directory (file-name-directory buffer-file-name)))
+      (and (not (file-directory-p parent-directory))
+        (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                    parent-directory))
+        (progn (make-directory parent-directory 'parents)
+          t)))))
+
+(add-hook 'find-file-not-found-functions #'ceamx-create-missing-directories-h)
+
+;;; Configure auto-saving of file-visiting buffers
+
+;; Prevent creation of the list of all auto-saved files.
+(setopt auto-save-list-file-prefix nil)
+
+;; Number of input events before autosave
+(setopt auto-save-interval 300)
+
+;; Idle interval for all file-visiting buffers
+(setopt auto-save-visited-interval 30)
+
+;; Idle interval before autosave
+(setopt auto-save-timeout 30)
+
+;; Don't create auto-save "~" files.
 (setopt auto-save-default nil)
 
+;; Save file-visiting buffers according to the configured timers.
 (auto-save-visited-mode)
 
 (provide 'init-files)

@@ -27,16 +27,29 @@
 (require 'lib-common)
 (require 'lib-hydras)
 
-(use-feature! emacs
-  :config
-  ;; Modal keybinding systems will change the cursor dynamically to indicate current state.
-  ;; This default value matches what I expect in an "insert" mode.
-  (setq-default cursor-type 'bar))
+;;; General
+
+;; Modal keybinding systems will change the cursor dynamically to indicate current state.
+;; This default value matches what I expect in an "insert" mode.
+(setq-default cursor-type 'bar)
+
+;; Enable cursor blinking.
+(blink-cursor-mode 1)
+
+;; Seeing a cursor in a window other than the active window is pretty confusing.
+(setq-default cursor-in-non-selected-windows nil)
+
+;; Improve visual contrast between focused/non-focused windows.
+(setopt highlight-nonselected-windows nil)
+
+;;; Provide commonly-used interface libraries
 
 ;; Required as dependencies for many packages, either as more recent versions
 ;; than those available in Emacs (e.g. `transient 'IIRC), or, including some
 ;; (like `nix-mode') who don't seem to declare them.
+
 (use-package transient)
+
 (use-package magit-section)
 
 (use-package nerd-icons
