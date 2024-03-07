@@ -85,10 +85,14 @@
 
 (require 'transient)
 
+(require 'config-buffer)
+(require 'config-window)
+
 (require 'lib-common)
+(require 'lib-buffer)
 (require 'lib-window)
 
-;;; Buffer Display
+;;; General buffer display settings
 
 (setopt switch-to-buffer-in-dedicated-window 'pop)
 
@@ -98,210 +102,6 @@
 ;; Hide buffer until there's output.
 ;; Prevents an extra window appearing during init.
 (setopt async-shell-command-display-buffer nil)
-
-(setopt display-buffer-base-action
-  '((display-buffer-reuse-window
-      display-buffer-in-previous-window)))
-
-;; FIXME: one of these, i think, is responsible for breaking childframes e.g. `embark-act', `Info-mode'
-;; TODO: what do each of these do? doesn't quite make sense...
-;; (setopt display-buffer-base-action
-;;         '((display-buffer-reuse-mode-window
-;;            display-buffer-pop-up-window)
-;;           (reusable-frames . t)))
-
-;; TODO: make sure popper configuration is updated accordingly
-(setopt display-buffer-alist
-  '(
-     ("^\\*[Ee]shell [Ee]xport: .*\\*$"
-       (display-buffer-reuse-window display-buffer-use-some-window))
-
-;;;; @Top
-
-     ("\\*\\(?:Org Select\\|Agenda Commands\\)\\*"
-       (display-buffer-below-selected
-         display-buffer-in-side-window)
-       (body-function . select-window)
-       (window-height . (lambda (win) (fit-window-to-buffer win nil 12)))
-       (side . top)
-       (slot . -2)
-       (preserve-size . (nil . t))
-       (window-parameters . ((mode-line-format . nil))))
-
-     ;; ("\\*Buffer List\\*"
-     ;;   (display-buffer-in-side-window)
-     ;;   (side . top)
-     ;;   (slot . 0)
-     ;;   (window-height . shrink-window-if-larger-than-buffer))
-
-     ((lambda (buf act) (member (ceamx-buffer-mode buf) ceamx-occur-grep-modes-list))
-       (display-buffer-reuse-mode-window
-         display-buffer-in-direction
-         display-buffer-in-side-window)
-       (side . top)
-       (slot . 5)
-       (window-height . (lambda (win) (fit-window-to-buffer win 20 10)))
-       (direction . above)
-       (body-function . select-window))
-
-     ("\\*\\(Flycheck\\|Package-Lint\\).*"
-       (display-buffer-in-direction
-         display-buffer-in-side-window)
-       (direction . above)
-       (window-height . shrink-window-if-larger-than-buffer)
-       ;; (window-height . 0.16)
-       (side . top)
-       (slot . 1)
-       (window-parameters . ((no-other-window . t))))
-
-;;;; @Side
-
-;;;; @Bottom
-
-     ((lambda (buf act) (member (ceamx-buffer-mode buf) ceamx-message-modes-list))
-       (display-buffer-at-bottom
-         display-buffer-in-side-window)
-       (window-height . 0.25)
-       (side . bottom)
-       (slot . -6))
-
-     ("\\*\\(?:Warnings\\|Compile-Log\\|Messages\\)\\*"
-       (display-buffer-at-bottom
-         display-buffer-in-side-window
-         display-buffer-in-direction)
-       (window-height . (lambda (win) (fit-window-to-buffer
-                                        win
-                                        (floor (frame-height) 5))))
-       (side . bottom)
-       (direction . below)
-       (slot . -5)
-       (window-parameters . ((split-window . #'ignore)
-                              ;; (no-other-window . t)
-                              )))
-
-     ("[Oo]utput\\*"
-       display-buffer-in-side-window
-       (window-height . (lambda (win)
-                          (fit-window-to-buffer win (floor (frame-height) 2.5))))
-       (side . bottom)
-       (slot . -4))
-
-     ("\\*Async Shell Command\\*"
-       display-buffer-in-side-window
-       (window-height . 0.20)
-       (side . bottom)
-       (slot . -4)
-       (window-parameters . ((no-other-window . t))))
-
-     ;; ("\\*\\(Register Preview\\).*"
-     ;;   (display-buffer-in-side-window)
-     ;;   (window-height . 0.20)
-     ;;   (side . bottom)
-     ;;   (slot . -3)
-     ;;   (window-parameters . ((no-other-window . t))))
-
-     ;; FIXME: messed up sizing
-     ;; ("\\*Completions\\*"
-     ;;   (display-buffer-in-side-window)
-     ;;   (window-height . 0.20)
-     ;;   (side . bottom)
-     ;;   (slot . -2))
-
-     ("\\*Apropos\\*"
-       (display-buffer-in-side-window)
-       ;; (window-height . 0.40)
-       (window-width . 65)
-       (side . right)
-       (slot . -2))
-
-
-     ((lambda (buf act) (or (seq-some (lambda (regex) (string-match-p regex buf))
-                              ceamx-repl-names-list)
-                          (seq-some (lambda (mode)
-                                      (equal
-                                        (ceamx-buffer-mode buf)
-                                        mode))
-                            ceamx-repl-modes-list)))
-       (display-buffer-reuse-window
-         display-buffer-in-direction
-         display-buffer-in-side-window)
-       (body-function . select-window)
-       (window-height . .35)
-       (window-width .  .40)
-       (direction . below)
-       (side . bottom)
-       (slot . 1))
-
-     ;; FIXME: too tall
-     ((lambda (buf act)
-        (member (ceamx-buffer-mode buf) ceamx-help-modes-list))
-       (display-buffer-reuse-window
-         display-buffer-in-direction
-         display-buffer-in-side-window)
-       (body-function . select-window)
-       ;; (direction . bottom)
-       ;; (window-height . (lambda (win) (fit-window-to-buffer win 25 14)))
-       (window-width . 77)
-       ;; (window-width . (lambda (win) (fit-window-to-buffer win nil nil 75 65)))
-       (direction . below)
-       (side . right)
-       (slot . 2)
-       (window-parameters . ((split-window . #'ignore))))
-
-     ("^\\*eldoc.*\\*$"
-       (display-buffer-reuse-window
-         display-buffer-in-direction
-         display-buffer-in-side-window)
-       ;; (body-function . select-window)
-       ;; (direction . bottom)
-       ;; (window-height . (lambda (win) (fit-window-to-buffer win 25 14)))
-       (window-width . 82)
-       ;; (window-width . (lambda (win) (fit-window-to-buffer win nil nil 75 65)))
-       (direction . below)
-       (side . below)
-       (slot . 2)
-       (window-parameters . ((split-window . #'ignore)
-                              (no-other-window . t)
-                              (mode-line-format . none))))
-
-
-     ((lambda (buf act)
-        (member (ceamx-buffer-mode buf)
-          '(ibuffer-mode bookmark-bmenu-mode)))
-       (display-buffer-below-selected)
-       (body-function . select-window)
-       (direction . below)
-       (window-height . (lambda (win) (fit-window-to-buffer win 30 7)))
-       ;; (dedicated . t)
-       ;; (window-width . (lambda (win) (fit-window-to-buffer win nil nil 85 55)))
-       ;; (direction . right)
-       (side . bottom)
-       (slot . 2))
-
-     ;; ((lambda (buf act) (with-current-buffer buf view-mode))
-     ;;  (display-buffer-in-side-window)
-     ;;  (window-height . (/ (frame-height) 3))
-     ;;  (side . bottom)
-     ;;  (slot . 10)
-     ;;  ;; (window-parameters . (;; (no-other-window . t)
-     ;;  ;;                       ;; (mode-line-format . (:eval (ceamx-helper-window-mode-line-format)))
-     ;;  ;;                       ))
-     ;;  )
-
-     ))
-
-
-
-;; FIXME: not achieving the desired affect
-;; via https://github.com/doomemacs/doomemacs/blob/dca4e4a8ed41e0a025d41500297d6fa662d8e22b/modules/ui/popup/%2Bhacks.el>
-;; (def-advice! +info-lookup-symbol-focus-window-a (&rest _)
-;;   :after #'info-lookup-symbol
-;;   "Focus the window opened by `info-lookup-symbol'."
-;;   (declare-function popper-popup-p "popper")
-;;   (when-let* ((buf (get-buffer "*info*"))
-;;                (buf-popup-p (popper-popup-p buf))
-;;                (win (get-buffer-window buf)))
-;;     (select-window win)))
 
 ;; TODO: causes which-key squishing against tiny window maybe?
 (setopt fit-window-to-buffer-horizontally t)
@@ -315,14 +115,130 @@
 (setopt window-sides-vertical nil)
 (setopt window-resize-pixelwise t)
 
-;;; Features
+(setopt display-buffer-base-action
+  '((display-buffer-reuse-window
+      display-buffer-in-previous-window)))
+
+;;; Declare rules for displaying buffers with `display-buffer-alist'
+
+(setopt display-buffer-alist
+  '(
+     ("\\*\\(?:Org Select\\|Agenda Commands\\)\\*"
+       (display-buffer-below-selected
+         display-buffer-in-side-window)
+       (body-function . select-window)
+       (window-parameters . ((mode-line-format . nil))))
+
+     ("\\*\\(Flycheck\\|Package-Lint\\).*"
+       (display-buffer-in-direction
+         display-buffer-in-side-window)
+       (window-parameters . ((no-other-window . t))))
+
+     ((lambda (buf act) (member (ceamx-buffer-mode buf) ceamx-message-modes-list))
+       (display-buffer-at-bottom
+         display-buffer-in-side-window))
+
+     ("\\*\\(?:Warnings\\|Compile-Log\\|Messages\\)\\*"
+       (display-buffer-at-bottom
+         display-buffer-in-side-window
+         display-buffer-in-direction))))
+
+;; FIXME: not achieving the desired affect
+;; via https://github.com/doomemacs/doomemacs/blob/dca4e4a8ed41e0a025d41500297d6fa662d8e22b/modules/ui/popup/%2Bhacks.el>
+;; (def-advice! +info-lookup-symbol-focus-window-a (&rest _)
+;;   :after #'info-lookup-symbol
+;;   "Focus the window opened by `info-lookup-symbol'."
+;;   (declare-function popper-popup-p "popper")
+;;   (when-let* ((buf (get-buffer "*info*"))
+;;                (buf-popup-p (popper-popup-p buf))
+;;                (win (get-buffer-window buf)))
+;;     (select-window win)))
+
+;;; Summon and dismiss "popup" windows with `popper'
+
+;; <https://github.com/karthink/popper>
+
+(use-package popper
+  :blackout
+  :functions (popper-select-popup-at-bottom)
+
+  :preface
+
+  (defun +popper-select-below-fn (buffer &optional _alist)
+    (funcall (if (> (frame-width) 170)
+               ;; #'display-buffer-in-direction
+               #'popper-select-popup-at-bottom
+               #'display-buffer-at-bottom)
+      buffer
+      `((window-height . ,popper-window-height)
+         (direction . below)
+         (body-function . ,#'select-window))))
+
+  :init
+
+  (setopt popper-reference-buffers
+    (append
+      ceamx-help-modes-list
+      ceamx-help-buffer-names-list
+      ceamx-manual-modes-list
+      ceamx-repl-modes-list
+      ceamx-repl-buffer-names-list
+      ceamx-occur-grep-modes-list
+      '(+popper-current-buffer-popup-p)
+      '(Custom-mode
+         compilation-mode
+         messages-buffer-mode)
+      '("\\*Async-native-compile-log\\*"
+         "\\*Compile-Log\\*"
+         "\\*compilation\\*"     ; not necessarily covered by `compilation-mode'
+         "\\*vc\\*"
+         "\\*Warnings\\*"
+         "\\*Embark Export"
+         "^\\*Backtrace\\*"
+         ;; TODO: not entirely sure if this pattern is correct
+         "Profiler-Report"             ; report generated by `profiler' workflow
+
+         "^Calc:"
+         "\\*Shell Command Output\\*"
+         ("\\*Async Shell Command\\*" . hide)
+         ("\\*Detached Shell Command\\*" . hide)
+         ("Output\\*$" . hide)
+         "\\*Completions\\*")))
+
+  ;; Load as early as possible to catch popups during startup.
+  (popper-mode)
+  (popper-echo-mode)
+
+  :config
+
+  (define-keymap :keymap (current-global-map)
+    "C-`"   #'popper-toggle
+    "C-~"   #'popper-cycle
+    "C-M-`" #'popper-toggle-type)
+  ;; "M-`"   #'popper-echo-mode
+
+  (defvar-keymap popper-repeat-map
+    :repeat t
+    "`" #'popper-cycle
+    "~" #'popper-cycle-backwards)
+
+  ;; Prevent conflict with custom `display-buffer' rules.
+  ;; <https://github.com/karthink/popper?tab=readme-ov-file#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
+  (setopt popper-display-control nil)
+
+  (setopt popper-display-function #'+popper-select-below-fn)
+
+  (after! [projectile]
+    (setopt popper-group-function #'popper-group-by-projectile)))
+
+;;; Restore previous window configurations with `winner-mode' [builtin]
 
 (use-feature! winner
   :config (winner-mode))
 
-;;; Packages
+;;; Add "distraction-free" editing with `olivetti-mode'
 
-;;;; `olivetti-mode' :: <https://github.com/rnkn/olivetti>
+;; <https://github.com/rnkn/olivetti>
 
 (use-package olivetti
   :commands (olivetti-mode)
@@ -333,7 +249,9 @@
   :config
   (setopt olivetti-style 'fancy))
 
-;;;; `ace-window' :: <https://github.com/abo-abo/ace-window>
+;;; Interactively manage windows with `ace-window'
+
+;; <https://github.com/abo-abo/ace-window>
 
 (use-package ace-window
   :after (avy)

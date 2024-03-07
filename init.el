@@ -356,7 +356,6 @@
 ;;;; Windows
 
 (require 'init-window)
-(require 'init-window-popups)
 (require 'init-buffer)
 
 ;; FIXME: load earlier / in another section

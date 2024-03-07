@@ -41,7 +41,7 @@
     nix-repl-mode)
   "List of major-modes used in REPL buffers.")
 
-(defvar ceamx-repl-names-list
+(defvar ceamx-repl-buffer-names-list
   '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
     "\\*.*REPL.*\\*"
     "\\*Inferior .*\\*$"
@@ -55,6 +55,11 @@
      eldoc-mode)
   "List of major-modes used in documentation buffers.")
 
+(defvar ceamx-help-buffer-names-list
+  '("^\\*Apropos"
+     "^\\*eldoc\\*")
+  "List of buffer names used in help buffers.")
+
 (defvar ceamx-manual-modes-list '(Man-mode woman-mode)
   "List of major-modes used in Man-type buffers.")
 
@@ -62,10 +67,6 @@
   '(compilation-mode
     edebug-eval-mode)
   "List of major-modes used in message buffers.")
-
-
-
-
 
 (provide 'config-buffer)
 ;;; config-buffer.el ends here
