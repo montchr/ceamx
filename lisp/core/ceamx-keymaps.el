@@ -26,11 +26,11 @@
 
 (require 'lib-keys)
 
-(keys! ceamx-code-map)
-(keys! ceamx-file-map)
-(keys! ceamx-launch-map)
-(keys! ceamx-replace-map)
-(keys! ceamx-toggle-map)
+(defmap! ceamx-code-map)
+(defmap! ceamx-file-map)
+(defmap! ceamx-launch-map)
+(defmap! ceamx-replace-map)
+(defmap! ceamx-toggle-map)
 
 (provide 'ceamx-keymaps)
 ;;; ceamx-keymaps.el ends here
