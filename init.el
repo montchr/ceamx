@@ -267,9 +267,8 @@
 
 ;;; Site-lisp packages
 
+(require 'on)
 
-(use-feature! on
-  :demand t)
 
 (elpaca-wait)
 
