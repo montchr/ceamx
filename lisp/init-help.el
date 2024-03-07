@@ -27,6 +27,8 @@
 
 ;;; Code:
 
+(require 'elpaca-autoloads)
+
 (require 'lib-common)
 (require 'lib-help)
 (require 'lib-keys)
@@ -50,21 +52,17 @@
   "C-h I e"  #'ceamx/emacs-info
   "C-h I o"  #'ceamx/org-info)
 
+;;; Peruse local `devdocs' docsets corresponding to the current major-mode
+
+;; <https://github.com/astoff/devdocs.el>
+
+;; NOTE: Must run `devdocs-install' before a docset is available for reference.
 ;;
-;;; Packages
+;; TODO: Install docsets automatically.
+;;       See `lib-help' for WIP.
 
-;;;; `devdocs' :: <https://github.com/astoff/devdocs.el>
-
-;; NOTE: Must run `devdocs-install' before use.
-
-;; TODO: Install devdocs automatically.
-;;       See `lib-help' for progress.
-
-(use-package devdocs
-  :commands (devdocs-lookup devdocs-install devdocs-delete devdocs-update-all)
-
-  :config
-  (define-keymap :keymap help-map
+(elpaca devdocs
+  (keys! help-map
     ;; Replace default `apropos-documentation' binding.
     "d" #'devdocs-lookup
     "D" #'apropos-documentation)
@@ -76,45 +74,42 @@
 
   (devdocs-update-all))
 
-;;;; elmacro :: <https://github.com/Silex/elmacro>
+;;; Display keyboard macros or latest interactive commands as Elisp via `elmacro'
 
-;; Display keyboard macros or latest interactive commands as Elisp.
+;; <https://github.com/Silex/elmacro>
 
 ;; Avoid enabling this mode globally. It may cause some recurring errors, and
 ;; the package has not been updated in years. By nature, it is also quite
 ;; invasive, and should probably only be used as a development tool as needed.
 
-;; FIXME: Its user options do not seem to be available immediately?
-
-(use-package elmacro
-  :commands (elmacro-mode)
-  :defines (elmacro-show-last-commands-default elmacro-processor-prettify-inserts elmacro-processor-concatenate-inserts)
-
-  :config
+(elpaca elmacro
   (setopt elmacro-show-last-commands-default 30)
 
   ;; <https://github.com/Silex/elmacro/blob/master/README.md#org-mode-smartparens-etc>
   ;; <https://github.com/Silex/elmacro/blob/master/README.md#elmacro-processor-prettify-inserts>
-  (setopt elmacro-processor-prettify-inserts (unless (or (bound-and-true-p lispy-mode) ; not actually sure about lispy-mode
-                                                       (bound-and-true-p smartparens-mode)
-                                                       (bound-and-true-p org-mode))))
+  (setopt elmacro-processor-prettify-inserts
+          (unless (or (bound-and-true-p lispy-mode) ; not actually sure about lispy-mode
+                      (bound-and-true-p smartparens-mode)
+                      (bound-and-true-p org-mode))))
 
   ;; "a" "b" "c" => "abc"
   ;; FIXME: maybe causes errors?
   (setopt elmacro-processor-concatenate-inserts t))
 
-;;;; `helpful' :: <https://github.com/Wilfred/helpful>
+;;; Provide improved alternatives to the builtin `describe-*' utilities with `helpful'
+
+;; <https://github.com/Wilfred/helpful>
 
 ;; NOTE: there are some blocking bugs that have gone unfixed for quite a while
 ;;        some symbols' helpful pages cannot be displayed.
 ;;        <https://github.com/Wilfred/helpful/issues/329>
 
-(use-package helpful
+(elpaca helpful
   ;; Avoid a first-time lag when asking for help, which often happens before an
   ;; idle timer has the chance to run.
-  :demand t
-  :commands ( helpful-at-point helpful-command helpful-callable
-              helpful-key helpful-symbol helpful-variable))
+  (require 'helpful))
+
+;;; Tune the contexts in which Eldoc displays its messages
 
 (use-feature! eldoc
   :config
@@ -133,17 +128,15 @@ ElDoc. A better approach is to simply check to see if a message
 was printed, and only have ElDoc display if one wasn't.\""
     (member (current-message) (list nil eldoc-last-message))))
 
-;;;; `elisp-demos' :: <https://github.com/xuchunyang/elisp-demos>
+;;; Display usage examples for Elisp callables inside their help buffers
 
-;;  Display usage examples inside help buffers for Emacs Lisp callables.
+;; <https://github.com/xuchunyang/elisp-demos>
 
-(use-package elisp-demos
-  :after (helpful)
-  :autoload (elisp-demos-advice-helpful-update)
-  :init
-  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)
-  :config
-  (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory))))
+(after! 'helpful
+  (elpaca elisp-demos
+    (require 'elisp-demos)
+    (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
+    (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)))
 
 (provide 'init-help)
 ;;; init-help.el ends here
