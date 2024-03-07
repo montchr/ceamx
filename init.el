@@ -54,7 +54,6 @@
 
 (require 'init-benchmarking)
 
-;;
 ;;; Load environment-related constants
 
 (require 'config-env)
@@ -62,7 +61,6 @@
 (when +sys-wsl-p
   (require 'lib-env-wsl))
 
-;;
 ;;; Initialize packages
 
 ;; Third-party package managers should be configured in init.el directly instead
@@ -267,15 +265,14 @@
   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
   (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
 
-;;
-;;; Local packages
+;;; Site-lisp packages
+
 
 (use-feature! on
   :demand t)
 
 (elpaca-wait)
 
-;;
 ;;; Libraries
 
 ;; FIXME: remove or alias (`##' is very difficult to search for)
@@ -291,7 +288,6 @@
 
 (require 'lib-files)
 
-;;
 ;;; Configuration
 
 ;; Increase number of messages saved in log.
@@ -464,7 +460,6 @@
 
 (require 'init-keys-bindings)
 
-;;
 ;;; Postlude
 
 ;; FIXME: causes some errors / inconsistencies
