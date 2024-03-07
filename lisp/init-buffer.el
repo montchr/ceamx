@@ -34,14 +34,37 @@
 
 ;;; General
 
-;; Available cycle positions for `recenter-top-bottom'.
-(setopt recenter-positions '(middle top bottom))
+(use-feature! emacs
+  :config
 
-;; Disable buffer line wrapping by default.
-(set-default 'truncate-lines t)
+  ;; Available cycle positions for `recenter-top-bottom'.
+  (setopt recenter-positions '(middle top bottom))
 
-;; Add a margin when scrolling vertically
-(setq-default scroll-margin 4)
+  ;; Disable buffer line wrapping by default.
+  (set-default 'truncate-lines t)
+
+  ;; Add a margin when scrolling vertically
+  (setq-default scroll-margin 4)
+
+;;;; Auto-revert buffers
+
+  ;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For
+  ;; example, this will cause Dired to refresh a file list when the directory
+  ;; contents have changed.
+  (setopt global-auto-revert-non-file-buffers t)
+
+  ;; (setopt auto-revert-interval 0.01)
+
+  ;; Automatically revert a buffer if its file has changed on disk.
+  (global-auto-revert-mode t)
+
+;;;; Buffer selection
+
+  (keymap-global-set "<remap> <list-buffers>" #'ibuffer-list-buffers)
+
+  (setopt ibuffer-movement-cycle t))
+
+;;; Enable highlighting of the current line with `hl-line' [builtin]
 
 (use-feature! hl-line
   :commands (hl-line-mode)
@@ -49,31 +72,13 @@
   (add-hook 'prog-mode-hook #'hl-line-mode)
   (add-hook 'package-menu-mode-hook #'hl-line-mode))
 
-;;;; Keybindings
-
-;; FIXME: accept universal-argument to kill some other buffer
-;;        this may indeed be useful at times, like killing an info buffer in a
-;;        side window when `display-buffer' rules are wonked
-;; (keymap-global-set "C-x k" #'ceamx/kill-this-buffer)
-
-;;; `goto-address' (internal)
-
-;; Linkify URLs and email addresses in buffers.
+;;; Linkify URLs and email addresses in buffers with `goto-address' [builtin]
 
 (use-feature! goto-addr
   :config
-  (add-hook 'prog-mode-hook #'goto-address-prog-mode)
+  (add-hook 'prog-mode-hook #'goto-address-prog-mode))
 
-  (after! [evil]
-    ;; TODO: allow graceful fail if not at URL
-    ;; FIXME: breaks help buffer behavior -- thinks files are URLs to open in browser
-    ;; (evil-define-key '(normal) 'global (kbd "<return>") #'goto-address-at-point)
-
-    ))
-
-;;; `uniquify' (internal)
-
-;;  Disambiguate identically-named buffers.
+;;; Disambiguate identically-named buffers with `uniquify' [builtin]
 
 (use-feature! uniquify
   :config
