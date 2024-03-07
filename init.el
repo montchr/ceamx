@@ -286,6 +286,7 @@
   (require 'lib-gui))
 
 (require 'lib-files)
+(require 'lib-elisp)
 
 ;;; Configuration
 
