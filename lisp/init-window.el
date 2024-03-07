@@ -99,7 +99,6 @@
 ;; Prevents an extra window appearing during init.
 (setopt async-shell-command-display-buffer nil)
 
-
 (setopt display-buffer-base-action
   '((display-buffer-reuse-window
       display-buffer-in-previous-window)))
