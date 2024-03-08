@@ -156,6 +156,8 @@
         (outli-mode))))
 
   :config
+  (advice-add 'load-theme :after #'outli-reset-all-faces)
+
   (define-keymap :keymap outli-mode-map
     "C-c C-n" #'outline-next-heading
     "C-c C-p" #'outline-previous-heading
