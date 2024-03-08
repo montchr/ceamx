@@ -37,64 +37,109 @@
 
 ;;; Code:
 
+;;;; Requirements
+
+(require 'elpaca-autoloads)
+
 (require 'ceamx-paths)
 (require 'config-env)
 
 (require 'lib-common)
 (require 'lib-ui-font)
 
-(use-package fontaine
-  :demand t
-  :commands (fontaine-set-preset
-              fontaine-store-latest-preset
-              fontaine-restore-latest-preset)
-  :config
+;;;; General
+
+(setq x-underline-at-descent-line nil)
+
+(setq-default text-scale-remap-header-line t)
+
+;;;; Use the `fontaine' package for configuring and managing font presets
+
+;; <https://protesilaos.com/emacs/fontaine>
+
+(elpaca fontaine
+  (require 'fontaine)
+
   (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
 
-  ;; FIXME: these really do vary wildly across displays. sizing/weights should
-  ;; be configured with that in mind.
+  ;; For some reason I do not yet understand, according to some hearsay, font
+  ;; sizes best scale in multiples of 3-point increments. So, each height value
+  ;; is a multiple of 3.
   (setopt fontaine-presets
-    `((regular
-        :default-height ,(ceamx-font-height 100))
-       (tiny
-         :default-height ,(ceamx-font-height 70)
-         :bold-weight semibold)
-       (xsmall
-         :default-height ,(ceamx-font-height 80)
-         :bold-weight semibold)
-       (small
-         :default-height ,(ceamx-font-height 90)
-         :bold-weight semibold)
+    `( (small
+         :default-height ,(ceamx-font-height 90))
+       (regular)
        (medium
-         :default-height ,(ceamx-font-height 120)
-         :bold-weight semibold          ; boschic
-         )
+         :default-height ,(ceamx-font-height 120))
        (large
-         :default-height ,(ceamx-font-height 140)
-         :bold-weight semibold          ; on boschic
-         )
+         :default-height ,(ceamx-font-height 144))
        (xlarge
+         :default-height ,(ceamx-font-height 156))
+       (big-mclarge-huge
          :default-weight semilight
-         :default-height ,(ceamx-font-height 160)
-         :bold-weight extrabold
-         )
+         :default-height ,(ceamx-font-height 180)
+         :bold-weight extrabold)
        (t
          :default-family "Iosevka Comfy"
-         :default-weight regular
-         :default-height ,(ceamx-font-height 100)
-         :fixed-pitch-family nil
+         :default-weight nil
+         :default-slant normal
+         :default-height ,(ceamx-font-height 105)
+
+         :fixed-pitch-family "Iosevka Comfy"
          :fixed-pitch-weight nil
+         :fixed-pitch-slant nil
          :fixed-pitch-height 1.0
-         :fixed-pitch-serif-family "Iosevka Comfy Motion"
+
+         :fixed-pitch-serif-family nil
          :fixed-pitch-serif-weight nil
+         :fixed-pitch-serif-slant nil
          :fixed-pitch-serif-height 1.0
-         :variable-pitch-family "Inter"
+
+         :variable-pitch-family "Iosevka Comfy Motion"
          :variable-pitch-weight nil
+         :variable-pitch-slant nil
          :variable-pitch-height 1.0
+
+         :header-line-family nil
+         :header-line-height 1.0
+         :header-line-slant nil
+         :header-line-weight nil
+
+         :line-number-family nil
+         :line-number-height 1.0
+         :line-number-slant nil
+         :line-number-weight nil
+
+         :mode-line-active-family nil
+         :mode-line-active-weight nil
+         :mode-line-active-slant nil
+         :mode-line-active-height 1.0
+
+         :mode-line-inactive-family nil
+         :mode-line-inactive-weight nil
+         :mode-line-inactive-slant nil
+         :mode-line-inactive-height 1.0
+
+         :tab-bar-family nil
+         :tab-bar-weight nil
+         :tab-bar-slant nil
+         :tab-bar-height 1.0
+
+         :tab-line-family nil
+         :tab-line-weight nil
+         :tab-line-slant nil
+         :tab-line-height 1.0
+
          :bold-family nil
-         :bold-weight bold
+         :bold-weight semibold
+         :bold-slant nil
+         :bold-height 1.0
+
          :italic-family nil
+         :italic-weight nil
          :italic-slant italic
+         :italic-height 1.0
+
          :line-spacing nil)))
 
   ;; Persist latest preset across sessions.
@@ -103,14 +148,16 @@
 
 (elpaca-wait)
 
-;;;; `ligature.el' :: <https://github.com/mickeynp/ligature.el>
+;;;; Enable improved ligature support with the `ligature.el' package
 
-;; A better implementation of ligature support than `prettify-symbols-mode'.
+;; <https://github.com/mickeynp/ligature.el>
+
+;; A better implementation of ligature support than the builtin `prettify-symbols-mode'.
 ;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
 
-(use-package ligature
-  :demand t
-  :config
+(elpaca ligature
+  (require 'ligature)
+
   ;; Enable all Iosevka ligatures in programming modes
   ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
   (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
