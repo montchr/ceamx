@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(require 'elpaca-autoloads)
+
 (require 'lib-common)
 (require 'lib-hydras)
 
@@ -48,14 +50,13 @@
 ;; than those available in Emacs (e.g. `transient 'IIRC), or, including some
 ;; (like `nix-mode') who don't seem to declare them.
 
-(use-package transient)
+(elpaca transient)
 
-(use-package magit-section)
+(elpaca magit-section)
 
-(use-package nerd-icons
-  :demand t
-  :init
-  (setopt nerd-icons-font-family "Symbols Nerd Font Mono"))
+(elpaca nerd-icons
+  (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
+  (require 'nerd-icons))
 
 (use-package svg-lib
   :demand t)
