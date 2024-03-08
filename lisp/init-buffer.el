@@ -26,11 +26,15 @@
 
 ;;; Code:
 
+;;;; Requirements
+
+(require 'elpaca-autoloads)
+
 (require 'lib-common)
 (require 'lib-keys)
 (require 'lib-buffer)
 
-;;; General
+;;;; General
 
 (setq-default indicate-empty-lines nil)
 (setq-default fill-column 80)
@@ -44,7 +48,7 @@
   ;; Disable buffer line wrapping by default.
   (set-default 'truncate-lines t)
 
-;;;; Auto-revert buffers
+;;;;; Auto-revert buffers
 
   ;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For
   ;; example, this will cause Dired to refresh a file list when the directory
@@ -56,13 +60,13 @@
   ;; Automatically revert a buffer if its file has changed on disk.
   (global-auto-revert-mode t)
 
-;;;; Buffer selection
+;;;;; Buffer selection
 
   (keymap-global-set "<remap> <list-buffers>" #'ibuffer-list-buffers)
 
   (setopt ibuffer-movement-cycle t))
 
-;;; Enable highlighting of the current line with `hl-line' [builtin]
+;;;; Enable highlighting of the current line with `hl-line' [builtin]
 
 (use-feature! hl-line
   :commands (hl-line-mode)
@@ -70,13 +74,13 @@
   (add-hook 'prog-mode-hook #'hl-line-mode)
   (add-hook 'package-menu-mode-hook #'hl-line-mode))
 
-;;; Linkify URLs and email addresses in buffers with `goto-address' [builtin]
+;;;; Linkify URLs and email addresses in buffers with `goto-address' [builtin]
 
 (use-feature! goto-addr
   :config
   (add-hook 'prog-mode-hook #'goto-address-prog-mode))
 
-;;; Disambiguate identically-named buffers with `uniquify' [builtin]
+;;;; Disambiguate identically-named buffers with `uniquify' [builtin]
 
 (use-feature! uniquify
   :config
@@ -87,99 +91,53 @@
   ;; Don't muck with special buffers.
   (setopt uniquify-ignore-buffers-re "^\\*"))
 
-;;; `link-hint' :: <https://github.com/noctuid/link-hint.el>
+;;;; Activate links in buffer with an `avy'-like UI via the `link-hint' package
 
-;;  avy-based link jumping
+;; <https://github.com/noctuid/link-hint.el>
 
-(use-package link-hint
-  :after (avy)
-  :commands ( link-hint-open-link
-              link-hint-open-link-at-point
-              link-hint-copy-link)
+(after! 'avy
+  (elpaca link-hint
+    (global-keys!
+      "M-s u" #'link-hint-open-link
+      "M-s U" #'link-hint-copy-link)))
 
-  :init
-  ;; FIXME: unavailable initially (probably due to `:after')
-  (define-keymap :keymap (current-global-map)
-    "M-s u" #'link-hint-open-link
-    "M-s U" #'link-hint-copy-link)
+;;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
 
-  :config
-  (after! [evil]
-    (declare-function evil-define-key "evil")
-    (evil-define-key '(normal) 'global
-      "gO" #'link-hint-open-link)))
-
-;; FIXME: how to bind to leader map??? no idea how the mode's internal keybinding works despite looking at source...
-(use-feature! outline
-  :defines (outline-minor-mode-map)
-  :config
-  (setq-default outline-minor-mode t)
-
-  ;; Corresponds to default binding of `C-c @'.
-  ;; FIXME: doesn't work -- conflict?
-  ;;        what if it just needs to be global map with C-c ?
-  ;; (keymap-set mode-specific-map "@" '("(outline)" . outline-mode-prefix-map))
-  )
-
-;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
-
-(use-package expand-region
-  :commands er/expand-region
-  :config
+(elpaca expand-region
   (keymap-global-set "C-=" #'er/expand-region))
 
-;;; `scratch' :: <https://codeberg.org/emacs-weirdware/scratch>
+;;;; Enable simple comment-based outline features in many modes with `outli'
 
-;;  Mode-specific scratch buffers.
-
-(use-package scratch
-  :commands scratch)
-
-;;; `outli' :: <https://github.com/jdtsmith/outli>
-
-;; Simple comment-based outlines
+;; <https://github.com/jdtsmith/outli>
 
 ;; NOTE: In `emacs-lisp-mode' buffers, `outli-mode' should be enabled *after*
 ;; `lispy-mode'. See the package configuration for `lispy'.
 
-(use-package outli
-  :ensure (:host github :repo "jdtsmith/outli")
-
-  :init
+(elpaca (outli :host github :repo "jdtsmith/outli")
   (def-hook! +outli-mode-maybe-enable-h ()
     '(prog-mode-hook text-mode-hook)
     "Enable `outli-mode' conditionally, excluding some modes."
     (let ((exclude-modes '(emacs-lisp-mode))
-          (excludep (lambda (excluded-mode)
-                      (eq major-mode excluded-mode))))
+           (excludep (lambda (excluded-mode)
+                       (eq major-mode excluded-mode))))
       (unless (seq-some excludep exclude-modes)
         (outli-mode))))
 
-  :config
-  (advice-add 'load-theme :after #'outli-reset-all-faces)
+  (after! 'outli
+    ;; FIXME: function definition is void
+    ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
 
-  (define-keymap :keymap outli-mode-map
-    "C-c C-n" #'outline-next-heading
-    "C-c C-p" #'outline-previous-heading
-    "C-c M-h" #'outline-promote
-    "C-c M-l" #'outline-demote))
+    (define-keymap :keymap outli-mode-map
+      "C-c C-n" #'outline-next-heading
+      "C-c C-p" #'outline-previous-heading
+      "C-c M-h" #'outline-promote
+      "C-c M-l" #'outline-demote)))
 
-
-;;; page-break-lines :: <https://github.com/purcell/page-break-lines>
+;;; Colorize color names and hexcodes in buffers via `rainbow-mode'
 
-;;  Make form-feed (page-break) characters serve their purpose, visually.
+;; <https://elpa.gnu.org/packages/rainbow-mode.html>
 
-(use-package page-break-lines
-  :commands (global-page-break-lines-mode)
-  :config
-  ;; FIXME: no effect in buffer despite being enabled -- once toggled, it works
-  (global-page-break-lines-mode))
-
-;;; `rainbow-mode' :: <https://elpa.gnu.org/packages/rainbow-mode.html>
-
-;; Colorize color names and hexcodes in buffers
-
-(use-package rainbow-mode)
+(elpaca rainbow-mode)
 
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
