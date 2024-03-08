@@ -139,11 +139,21 @@
 
 ;; Simple comment-based outlines
 
+;; NOTE: In `emacs-lisp-mode' buffers, `outli-mode' should be enabled *after*
+;; `lispy-mode'. See the package configuration for `lispy'.
+
 (use-package outli
   :ensure (:host github :repo "jdtsmith/outli")
 
   :init
-  (add-hook 'text-mode-hook #'outli-mode)
+  (def-hook! +outli-mode-maybe-enable-h ()
+    '(prog-mode-hook text-mode-hook)
+    "Enable `outli-mode' conditionally, excluding some modes."
+    (let ((exclude-modes '(emacs-lisp-mode))
+          (excludep (lambda (excluded-mode)
+                      (eq major-mode excluded-mode))))
+      (unless (seq-some excludep exclude-modes)
+        (outli-mode))))
 
   :config
   (define-keymap :keymap outli-mode-map
