@@ -53,12 +53,12 @@
   "Return the pixel pitch for FRAME in millimeters.
 When FRAME is nil, the current frame will be used as default.
 
-Pixel pitch describes the density of a display as a measure of
-the distance from the center of a pixel to the center of its
-adjacent pixel."
+Pixel pitch is the distance from the center of a pixel to the
+center of its adjacent pixel."
   (let ((monitor-attrs (frame-monitor-attributes frame)))
-    (* 1000 (/ (float (nth 1 (assoc 'mm-size monitor-attrs)))
-               (nth 3 (assoc 'geometry monitor-attrs))))))
+    (/ (float (nth 1 (assoc 'mm-size monitor-attrs)))
+      (nth 3 (assoc 'geometry monitor-attrs)))))
+
 
 (defun ceamx-font-height (number &optional multiplier)
   "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
