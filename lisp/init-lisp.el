@@ -30,74 +30,74 @@
 ;;;; Requirements
 
 (require 'derived)
+(require 'elpaca-autoloads)
 
 (require 'lib-common)
+(require 'lib-keys)
 (require 'lib-lisp)
 
 (require 'config-lisp)
 
+;;;; Configure behavior for all Lisp modes with `ceamx-lisp-init-hook'
 
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
 
-(use-feature! flycheck
-  :commands (flycheck-mode)
-  :init
+(after! 'flycheck
+  (declare-function flycheck-mode "flycheck")
   (add-hook 'ceamx-lisp-init-hook #'flycheck-mode))
 
 ;; Add hooks to supported Lisp modes.
 (dolist (mode ceamx-lisp-modes-list)
-  ;; FIXME: `derived-mode-hook-name' does not look up mode hooks, it infers
-  ;;        them, so can be fallible
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 
-;; Always use 2-space indentation in Lisps.
+;; Use two-space indentation always.
 (dolist (sym '(add-function advice-add plist-put))
   (put sym 'lisp-indent-function 2))
 
-;;; Advices
-
 ;; Prevent `calculate-lisp-indent' from indenting quoted lists as functions.
-;; See `lib-lisp' and <https://emacs.stackexchange.com/a/52789/40956>
+;; <https://emacs.stackexchange.com/a/52789/40956>
 (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
 
-;;; Packages
-
-;;;; lispy
+;;;; Configuration for `lispy', a structural expression editing experience
 
 ;; <https://oremacs.com/lispy/>
 ;; <https://github.com/abo-abo/lispy>
 
-(use-package lispy
-  :commands (lispy-mode)
+(elpaca lispy
+  (add-hook 'ceamx-lisp-init-hook #'lispy-mode)
 
-  :config
-  ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
-  ;; in favor of just moving past the closing quote as I would expect.
-  (setopt lispy-close-quotes-at-end-p t)
+  (after! 'lispy
+    ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
+    ;; in favor of just moving past the closing quote as I would expect.
+    ;;
+    ;; FIXME: This actually results in creating the quote pair *after* the
+    ;; closing quote. "for example:"" "
+    (setopt lispy-close-quotes-at-end-p t)
 
-  (setopt lispy-completion-method 'default)
+    (setopt lispy-completion-method 'default)
 
-  (setopt lispy-eval-display-style 'message)
+    (setopt lispy-eval-display-style 'message)
 
-  ;; I have mixed feelings about this one because it can be jarring and easily
-  ;; lead to mass-commenting expressions. Default is non-nil.
-  (setopt lispy-move-after-commenting t)
+    ;; I have mixed feelings about this one because it can be jarring and easily
+    ;; lead to mass-commenting expressions. Default is non-nil.
+    (setopt lispy-move-after-commenting t)
 
-  (define-keymap :keymap lispy-mode-map
-    "M-j" nil                           ; shadows custom binding
+    (keys! lispy-mode-map
+      "M-j" nil                         ; shadows custom binding
 
-    ;; via <https://github.com/abo-abo/lispy/pull/619>
-    "`" #'self-insert-command)
+      ;; via <https://github.com/abo-abo/lispy/pull/619>
+      "`" #'self-insert-command)
 
-  (use-feature! macrostep
-    :config
-    (push 'macrostep lispy-compat))
+    (after! 'outli
+      ;; `outli-mode' overrides `lispy-mode' outline functionality, so it must
+      ;; be activated afterwards.
+      (add-hook 'ceamx-lisp-init-hook #'outli-mode))
 
-  (use-feature! popper
-    :defines (popper-reference-buffers)
-    :config
-    (push "\\*lispy-message\\*" popper-reference-buffers)))
+    (after! 'macrostep
+      (push 'macrostep lispy-compat))
 
+    (after! 'popper
+      (push "\\*lispy-message\\*" popper-reference-buffers))))
 
 (provide 'init-lisp)
 ;;; init-lisp.el ends here
