@@ -45,7 +45,7 @@
 (require 'config-env)
 
 (require 'lib-common)
-(require 'lib-ui-font)
+(require 'lib-ui)
 
 ;;;; General
 
