@@ -40,6 +40,10 @@
 (defvar +sys-linux-p
   (eq system-type 'gnu/linux))
 
+(defvar +env-pgtk-p
+  (bound-and-true-p pgtk-initialized)
+  "Whether Emacs is running with pure-GTK windowing.")
+
 ;; via <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
 (defvar +sys-wsl-p
   (and (eq system-type 'gnu/linux)
