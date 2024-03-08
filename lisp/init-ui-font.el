@@ -22,19 +22,6 @@
 
 ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
 
-;; FIXME: macOS forces sub-pixel rendering which can cause distortion at various sizes? or
-;;        at least i think that's what's causing the inconsistencies...
-;;
-;;        ligatures at some sizes sometimes broken -- but not everywhere...?
-;;        test case (double-colons, should not have a visual space between)
-;;        => ::
-;;
-;;        - update: this might also be happening on NixOS running on
-;;        old MacBookPro hardware (hodgepodge system), so could be a general
-;;        ppi issue -- but i've had the preset set to `small' for a while and
-;;        haven't noticed any issues since then
-
-
 ;;; Code:
 
 ;;;; Requirements
