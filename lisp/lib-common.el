@@ -117,7 +117,11 @@ list is returned as-is."
         (intern (format "ceamx--setq-%s-for-%s-h"
                   var mode))))))
 
-;;; Generic
+;;; General
+
+(defun ceamx-host-p (name)
+  "Whether Emacs is running on the machine NAME."
+  (string= name (system-name)))
 
 (defun ceamx-unquote (exp)
   "Return EXP unquoted."
