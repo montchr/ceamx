@@ -57,7 +57,9 @@
          :default-height ,(ceamx-font-height 90))
        (regular)
        (medium
-         :default-height ,(ceamx-font-height 120))
+         :default-height ,(pcase (system-name)
+                            ("boschic" 124)
+                            (_ 120)))
        (large
          :default-height ,(ceamx-font-height 144))
        (xlarge
