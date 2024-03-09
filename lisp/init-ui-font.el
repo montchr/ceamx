@@ -54,25 +54,40 @@
   ;; is a multiple of 3.
   (setopt fontaine-presets
     `( (small
-         :default-height ,(ceamx-font-height 90))
+         :default-height ,(pcase (system-name)
+                            (_ 90)))
        (regular)
        (medium
          :default-height ,(pcase (system-name)
                             ("boschic" 124)
+                            ("tuvok"
+                              120
+                              ;; 115
+
+                              )
                             (_ 120)))
        (large
-         :default-height ,(ceamx-font-height 144))
+         :default-height ,(pcase (system-name)
+                            ;; ("tuvok" 140)
+                            (_ 144))
+         :default-weight semilight
+         :bold-weight semibold)
        (xlarge
-         :default-height ,(ceamx-font-height 156))
+         :default-height ,(pcase (system-name)
+                            (_ 156))
+         :bold-weight bold)
        (big-mclarge-huge
          :default-weight semilight
-         :default-height ,(ceamx-font-height 180)
+         :default-height ,(pcase (system-name)
+                            (_ 180))
          :bold-weight extrabold)
        (t
          :default-family "Iosevka Comfy"
-         :default-weight nil
+         :default-weight regular
          :default-slant normal
-         :default-height ,(ceamx-font-height 105)
+         :default-height ,(pcase (system-name)
+                            ("tuvok" 100)
+                            (_ 105))
 
          :fixed-pitch-family "Iosevka Comfy"
          :fixed-pitch-weight nil
@@ -120,7 +135,8 @@
          :tab-line-height 1.0
 
          :bold-family nil
-         :bold-weight semibold
+         :bold-weight medium
+         ;; :bold-weight semibold
          :bold-slant nil
          :bold-height 1.0
 
@@ -129,7 +145,7 @@
          :italic-slant italic
          :italic-height 1.0
 
-         :line-spacing nil)))
+         :line-spacing 1)))
 
   ;; Persist latest preset across sessions.
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
