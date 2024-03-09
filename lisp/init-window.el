@@ -226,11 +226,14 @@
     "`" #'popper-cycle
     "~" #'popper-cycle-backwards)
 
-  ;; Prevent conflict with custom `display-buffer' rules.
-  ;; <https://github.com/karthink/popper?tab=readme-ov-file#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
+  ;; Configure popup display control rules manually.
+  ;; <https://github.com/karthink/popper/blob/master/README.org#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
   (setopt popper-display-control nil)
 
-  (setopt popper-display-function #'+popper-select-below-fn)
+  (prependopt! display-buffer-alist
+    '((popper-display-control-p
+        (ceamx-window-display-popup)
+        (window-height . ,popper-window-height))))
 
   (after! [projectile]
     (setopt popper-group-function #'popper-group-by-projectile)))

@@ -1,9 +1,11 @@
 ;;; lib-window.el --- Helpers for window management  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (C) 2023 Free Software Foundation, Inc.
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;;         Vegard Øye <vegard_oye at hotmail.com>
+;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
 
 ;; Keywords: local
 
@@ -28,8 +30,11 @@
 
 ;; <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
 ;; <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+;; <https://github.com/karthink/popper/blob/master/popper.el#L265-L283>
 
 ;;; Code:
+
+;;;; Requirements
 
 (require 'windmove)
 
@@ -37,6 +42,29 @@
 
 ;; (declare-function 'popper-popup-status "popper")
 ;; (declare-function 'popper-toggle "popper")
+
+;;;; Popups
+
+;; <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
+
+(defun ceamx-window-display-popup-at-bottom (buffer &optional alist)
+  "Display popup-buffer BUFFER at the bottom of the screen.
+ALIST is an association list of action symbols and values.  See
+Info node `(elisp) Buffer Display Action Alists' for details of
+such alists."
+  (display-buffer-in-side-window
+    buffer
+    (append alist
+      `((side . bottom)
+         (slot . 1)))))
+
+(defun ceamx-window-display-popup (buffer &optional alist)
+  "Display and switch to popup-buffer BUFFER at the bottom of the screen.
+ALIST is an association list of action symbols and values.  See
+Info node `(elisp) Buffer Display Action Alists' for details of
+such alists."
+  (let ((window (ceamx-window-display-popup-at-bottom buffer alist)))
+    (select-window window)))
 
 ;; TODO: add buffers tracking files in nix store, which are only useful for
 ;; reference purposes, often invoked when viewing definition of low-level
@@ -124,6 +152,7 @@ Copied from the `evil' macro `evil-save-side-windows'."
 
 ;;; Interactive
 
+;; FIXME: "display-buffer" is misleading
 ;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 ;;;###autoload
 (defun ceamx/display-buffer-at-bottom ()
