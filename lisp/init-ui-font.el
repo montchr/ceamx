@@ -86,7 +86,7 @@
          :default-weight regular
          :default-slant normal
          :default-height ,(pcase (system-name)
-                            ("tuvok" 100)
+                            ("tuvok" 102)
                             (_ 105))
 
          :fixed-pitch-family "Iosevka Comfy"
