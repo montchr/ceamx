@@ -287,6 +287,16 @@ Meant to serve as a predicated alternative to `after!'."
   "Prepend LISTS to SYM in place."
   `(setq ,sym (append ,@lists ,sym)))
 
+(defmacro appendopt! (variable &rest lists)
+  "Append LISTS to the existing user option VARIABLE.
+This uses `setopt' to set the new value of VARIABLE."
+  `(setopt ,variable (append ,variable ,@lists)))
+
+(defmacro prependopt! (variable &rest lists)
+  "Prepend LISTS to the existing user option VARIABLE.
+This uses `setopt' to set the new value of VARIABLE."
+  `(setopt ,variable (append ,@lists ,variable)))
+
 (defmacro delq! (elt list &optional fetcher)
   "`delq' ELT from LIST in-place.
 If FETCHER is a function, ELT is used as the key in LIST (an alist)."
