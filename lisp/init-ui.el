@@ -82,6 +82,10 @@
               avy-goto-char-timer)
   :init
   (keymap-global-set "M-j" #'avy-goto-char-2)
+  (after! 'lispy
+    (defvar lispy-mode-map)
+    (declare-function lispy-join "lispy")
+    (keymap-set lispy-mode-map "M-J" #'lispy-join))
 
   :config
   (setopt avy-all-windows t)
