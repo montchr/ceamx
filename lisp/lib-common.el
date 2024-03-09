@@ -283,6 +283,10 @@ Meant to serve as a predicated alternative to `after!'."
   "Append LISTS to SYM in place."
   `(setq ,sym (append ,sym ,@lists)))
 
+(defmacro prependq! (sym &rest lists)
+  "Prepend LISTS to SYM in place."
+  `(setq ,sym (append ,@lists ,sym)))
+
 (defmacro delq! (elt list &optional fetcher)
   "`delq' ELT from LIST in-place.
 If FETCHER is a function, ELT is used as the key in LIST (an alist)."
@@ -299,10 +303,6 @@ This is a variadic `cl-pushnew'."
   (let ((var (make-symbol "result")))
     `(dolist (,var (list ,@values) (with-no-warnings ,place))
        (cl-pushnew ,var ,place :test #'equal))))
-
-(defmacro prependq! (sym &rest lists)
-  "Prepend LISTS to SYM in place."
-  `(setq ,sym (append ,@lists ,sym)))
 
 ;;
 ;;; Filesystem
