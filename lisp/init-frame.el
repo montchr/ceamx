@@ -57,6 +57,7 @@
 
   ;; GUI menu bar is necessary otherwise Emacs will be treated as a
   ;; non-application OS window (e.g. no focus capture).
+  ;; <https://github.com/doomemacs/doomemacs/blob/d657be1744a1481dc4646d0b62d5ee1d3e75d1d8/lisp/doom-start.el#L118-L128>
   (def-hook! ceamx-frame--maybe-restore-gui-menu-bar-h (&optional frame)
     '(after-make-frame-functions window-setup-hook)
     "TODO: Provide source for this approach (Doom?), and why it does what it does."
