@@ -104,7 +104,6 @@
       (add-to-list 'savehist-additional-variables #'dogears-list))))
 
 ;; TODO: provide a little more context in transient (label for dogears, links maybe...)
-;; TODO: this might not bind consistently due to timing/defers etc
 (after! [transient dogears]
   (transient-define-prefix ceamx/dogears-transient ()
     "Transient menu for `dogears' history navigation commands."
@@ -117,7 +116,8 @@
         ("l" "list" dogears-list)
         ("S" "sidebar" dogears-sidebar)]])
 
-  (keymap-global-set "M-g d" #'ceamx/dogears-transient))
+  (defer-until! (fboundp 'ceamx/dogears-transient)
+    (keymap-global-set "M-g d" #'ceamx/dogears-transient)))
 
 ;;; Undo/redo
 
