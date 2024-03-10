@@ -22,14 +22,17 @@
 
 ;;; Code:
 
-;;
-;;; `json-navigator' :: <https://github.com/DamienCassou/json-navigator>
-;;
+;;; Requirements
+
+(require 'elpaca-autoloads)
+
+;;; Navigate arborescent JSON structures with `json-navigator'
+
+;; <https://github.com/DamienCassou/json-navigator>
 
 ;; TODO: add bindings
-(use-package json-navigator
-  :commands (json-navigator-navigate-after-point
-             json-navigator-navigate-region))
+
+(elpaca json-navigator)
 
 (provide 'init-lang-json)
 ;;; init-lang-json.el ends here
