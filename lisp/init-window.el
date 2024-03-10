@@ -288,10 +288,10 @@
   "Window management transient."
   :transient-suffix 'transient--do-stay
   [["Move"
-     ("h" "lt" windmove-left)
-     ("j" "dn" windmove-down)
+     ("h" "left" windmove-left)
+     ("j" "down" windmove-down)
      ("k" "up" windmove-up )
-     ("l" "rt" windmove-right)
+     ("l" "right" windmove-right)
      ("w" "sel" ace-window)]
 
     ["Resize"
@@ -302,32 +302,32 @@
     ["Buffer"
       ("b" "buf" consult-buffer)
       ;; ("f" "ff: p" project-find-file)
-      ("f" "ff" find-file )
-      ("F" "ff@ow" find-file-other-window)
-      ("g" "gr" consult-ripgrep)]
+      ("f" "file" find-file )
+      ("F" "file" find-file-other-window)
+      ("g" "grep" consult-ripgrep)]
 
     ["Swarp"
-      ("H" "lt" ceamx/window-move-left)
-      ("J" "dn" ceamx/window-move-down)
+      ("H" "left" ceamx/window-move-left)
+      ("J" "down" ceamx/window-move-down)
       ("K" "up" ceamx/window-move-up)
-      ("L" "rt" ceamx/window-move-right)
-      ("s" "swp" ace-swap-window)
-      ("2" "sp: dn" split-window-below)
-      ("3" "sp: rt" split-window-right)]
+      ("L" "right" ceamx/window-move-right)
+      ("s" "swap" ace-swap-window)
+      ("2" "spl: dn" split-window-below)
+      ("3" "spl: rt" split-window-right)]
 
     ["Scroll"
       ;; TODO: allow selecting a window (with infix?) to act upon
       ;; NOTE: These are the correct scroll direction commands, which might
       ;; appear to be reversed when comparing with labels.
-      ("." "lt" scroll-right)
-      ("," "rt" scroll-left)
-      ("SPC" "dn" scroll-up)
+      ("." "left" scroll-right)
+      ("," "right" scroll-left)
+      ("SPC" "down" scroll-up)
       ("DEL" "up" scroll-down)]
 
     ["Lifecycle"
       ("0" "del" delete-window)
-      ("1" "del: o" delete-other-windows)
-      ("d" "del" ace-delete-window)
+      ("1" "del other" delete-other-windows)
+      ("d" "del sel" ace-delete-window)
       ;; ("D" "del: o" delete-other-windows :transient nil)
       ("u" "undo" winner-undo)
       ("U" "redo" winner-redo)
