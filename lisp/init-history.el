@@ -20,20 +20,21 @@
 
 ;;; Commentary:
 
+;; " Nothing here now but the recordings... "
+
 ;; Configuration for session history like undo/redo, edits, kill-ring,
 ;; recent files, and so on.
 
 ;;; Code:
+
+;;; Requirements
 
 (require 'cl-lib)
 
 (require 'ceamx-paths)
 (require 'lib-common)
 
-;;; `savehist' (internal)
-
-;;  Save history for the values of arbitrary variables, but most notably
-;;  completion queries.
+;;; Record some variables' values with `savehist' [builtin]
 
 (use-feature! savehist
   :init
@@ -47,17 +48,13 @@
 
   (setopt savehist-autosave-interval 60))
 
-;;; `saveplace' (internal)
-
-;;  Save position in buffers.
+;;; Record point position in buffers with `saveplace' [builtin]
 
 (use-feature! saveplace
   :init
   (save-place-mode))
 
-;;; `recentf' (internal)
-
-;;  Store recently-accessed files.
+;;; Record recently-accessed files with `recentf' [builtin]
 
 (use-feature! recentf
   :init
@@ -75,9 +72,9 @@
   (dolist (path '(ceamx-etc-dir ceamx-var-dir))
     (add-to-list 'recentf-exclude path)))
 
-;;; `dogears' :: <https://github.com/alphapapa/dogears.el>
+;;; Return to previously-visited locations in and across buffers with `dogears'
 
-;;  Return to previously-visited locations in and across buffers.
+;; <https://github.com/alphapapa/dogears.el>
 
 (use-package dogears
   :commands (dogears-mode
@@ -122,7 +119,6 @@
 
   (keymap-global-set "M-g d" #'ceamx/dogears-transient))
 
-;;
 ;;; Undo/redo
 
 ;; Advice from the author of `undo-fu':
@@ -141,9 +137,9 @@
 (setopt undo-strong-limit 100663296) ; 96mb.
 (setopt undo-outer-limit 1006632960) ; 960mb.
 
-;;;; undo-fu :: <https://codeberg.org/ideasman42/emacs-undo-fu>
+;;;; Support the option for a traditional linear undo/redo system with `undo-fu'
 
-;; Simple, stable linear undo with redo for Emacs.
+;; <https://codeberg.org/ideasman42/emacs-undo-fu>
 
 (use-package undo-fu
   :config
@@ -154,9 +150,9 @@
   (after! [evil]
     (setopt evil-undo-system 'undo-fu)))
 
-;;;; undo-fu-session :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
+;;;; Record undo/redo steps across Emacs sessions with `undo-fu-session'
 
-;;  Save & recover undo steps between Emacs sessions.
+;; <https://codeberg.org/ideasman42/emacs-undo-fu-session>
 
 (use-package undo-fu-session
   :after undo-fu
@@ -172,9 +168,9 @@
 
   (undo-fu-session-global-mode))
 
-;;;; vundo (visual undo) :: <https://github.com/casouri/vundo>
+;;;; Visualize the Emacs undo tree with `vundo' (visual undo)
 
-;; Visualize the Emacs undo tree.
+;; <https://github.com/casouri/vundo>
 
 (use-package vundo
   :commands (vundo)
