@@ -31,6 +31,8 @@
 
 (require 'cl-lib)
 
+(require 'elpaca-autoloads)
+
 (require 'ceamx-paths)
 (require 'lib-common)
 
@@ -72,23 +74,15 @@
   (dolist (path '(ceamx-etc-dir ceamx-var-dir))
     (add-to-list 'recentf-exclude path)))
 
-;;; Return to previously-visited locations in and across buffers with `dogears'
+;;; Return to previously-visited buffer positions with `dogears'
 
 ;; <https://github.com/alphapapa/dogears.el>
 
-(use-package dogears
-  :commands (dogears-mode
-              dogears-go
-              dogears-back
-              dogears-forward
-              dogears-list
-              dogears-sidebar)
-
-  :init
+(elpaca dogears
   (add-hook 'on-first-buffer-hook #'dogears-mode)
 
   ;; Also see `ceamx/dogears-transient'.
-  (define-keymap :keymap (current-global-map)
+  (global-keys!
     ;; TODO: find a new binding maybe
     ;; "M-g d" #'dogears-go
     "M-g M-b" #'dogears-back
@@ -96,7 +90,6 @@
     "M-g M-d" #'dogears-list
     "M-g M-D" #'dogears-sidebar)
 
-  :config
   ;; Persist `dogears-list' between Emacs sessions.
   ;; via <https://github.com/alphapapa/dogears.el/issues/4>
   (after! 'savehist
@@ -121,6 +114,8 @@
 
 ;;; Undo/redo
 
+;;;; Increase undo history limits
+
 ;; Advice from the author of `undo-fu':
 ;;
 ;; > The default undo limits for emacs are quite low _(0.15mb at time of
@@ -132,36 +127,31 @@
 ;; > limit and 10x (960mb) for the outer limit. Emacs uses 100x for the
 ;; > outer limit but this may be too high when using increased limits.
 ;;
-;; via <https://github.com/emacsmirror/undo-fu?tab=readme-ov-file#undo-limits>
+;; via <https://codeberg.org/ideasman42/emacs-undo-fu#undo-limits>
+
 (setopt undo-limit 67108864) ; 64mb.
 (setopt undo-strong-limit 100663296) ; 96mb.
 (setopt undo-outer-limit 1006632960) ; 960mb.
 
-;;;; Support the option for a traditional linear undo/redo system with `undo-fu'
+;;;; Support optional linear undo/redo with `undo-fu'
 
 ;; <https://codeberg.org/ideasman42/emacs-undo-fu>
 
-(use-package undo-fu
-  :config
-  (keymap-global-unset "C-z")
+(elpaca undo-fu
   (keymap-global-set "C-z" #'undo-fu-only-undo)
-  (keymap-global-set "C-S-z" #'undo-fu-only-redo)
-
-  (after! [evil]
-    (setopt evil-undo-system 'undo-fu)))
+  (keymap-global-set "C-S-z" #'undo-fu-only-redo))
 
 ;;;; Record undo/redo steps across Emacs sessions with `undo-fu-session'
 
 ;; <https://codeberg.org/ideasman42/emacs-undo-fu-session>
 
-(use-package undo-fu-session
-  :after undo-fu
+;; NOTE: This is *NOT* just for use with `undo-fu'! It's an essential
+;; enhancement to the builtin Emacs undo system as well.
 
-  :init
-  ;; FIXME: defer to `no-littering' if necessary
-  (setopt undo-fu-session-directory (expand-file-name "undo-fu-session" ceamx-var-dir))
+(defvar undo-fu-session-directory
+  (expand-file-name "undo-fu-session" ceamx-var-dir))
 
-  :config
+(elpaca undo-fu-session
   (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
   (setopt undo-fu-session-ignore-temp-files t)
   (setopt undo-fu-session-ignore-encrypted-files t)
@@ -172,14 +162,11 @@
 
 ;; <https://github.com/casouri/vundo>
 
-(use-package vundo
-  :commands (vundo)
-  :defines (vundo-unicode-symbols vundo-glyph-alist)
+(elpaca vundo
+  (keymap-global-set "C-x u" #'vundo))
 
-  :init
-  (keymap-global-set "C-x u" #'vundo)
-
-  :config
+(after! 'vundo
+  (defvar vundo-unicode-symbols)
   (setopt vundo-glyph-alist vundo-unicode-symbols))
 
 (provide 'init-history)
