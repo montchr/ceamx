@@ -47,8 +47,8 @@
   :commands (circadian-setup)
 
   :init
-  (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
-                             (:sunset . ,ceamx-ui-theme-dark)))
+  (setopt circadian-themes `((:sunrise . ,ceamx-theme-default-light)
+                             (:sunset . ,ceamx-theme-default-dark)))
   (circadian-setup))
 
 ;;;; Phase-of-day interval via `theme-buffet'
@@ -79,11 +79,12 @@
   (setopt theme-buffet-menu 'end-user)
 
   (setopt theme-buffet-end-user
-          '(:night (ef-autumn
-                    ef-duo-dark
-                    ef-night
-                    ef-winter
-                    ef-dark)
+          '(:night (;; ef-autumn
+                     ef-duo-dark
+                     ef-trio-dark
+                     ef-night
+                     ef-winter
+                     ef-dark)
             :twilight (ef-bio
                        ef-cherie
                        modus-vivendi)

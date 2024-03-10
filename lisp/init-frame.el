@@ -52,6 +52,9 @@
 ;;;; Handle macOS-specific workarounds
 
 (when +sys-mac-p
+  ;; `undecorated-round' is macOS-specific.
+  (add-to-list 'default-frame-alist '(undecorated-round . t))
+
   ;; GUI menu bar is necessary otherwise Emacs will be treated as a
   ;; non-application OS window (e.g. no focus capture).
   (def-hook! ceamx-frame--maybe-restore-gui-menu-bar-h (&optional frame)

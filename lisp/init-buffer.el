@@ -123,7 +123,7 @@
         (outli-mode))))
 
   (after! 'outli
-    ;; FIXME: function definition is void
+    ;; FIXME: function definition is void -- from readme:
     ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
 
     (define-keymap :keymap outli-mode-map

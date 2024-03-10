@@ -30,6 +30,16 @@
 (defconst ceamx-theme-buffet-light-periods
   '(:morning :day :afternoon))
 
+(defcustom ceamx-theme-default-light 'modus-operandi
+  "The default light theme."
+  :group 'ceamx
+  :type 'symbol)
+
+(defcustom ceamx-theme-default-dark 'modus-vivendi
+  "The default dark theme."
+  :group 'ceamx
+  :type 'symbol)
+
 (defcustom ceamx-modeline-provider 'doom
   "Modeline provider to load.
 Valid values are the symbols `doom', `nano', and `telephone'
@@ -60,14 +70,14 @@ theme)."
                  (const :tag "The `standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
-(defcustom ceamx-theme-circadian-interval 'buffet
+(defcustom ceamx-theme-circadian-interval 'solar
   "The circadian theme switching interval.
 Value may be either `period' or `solar', corresponding
 respectively to period-based switching with `theme-buffet' or
 sunrise/sunset toggling from the combination of the `solar'
 library and the `circadian' package."
   :group 'ceamx
-  :type '(choice :tag "Circadian theme switching interval" :value buffet
+  :type '(choice :tag "Circadian theme switching interval" :value solar
           (const :tag "Time periods via `theme-buffet'" :value buffet)
           (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
 

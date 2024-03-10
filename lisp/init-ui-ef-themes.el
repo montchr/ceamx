@@ -24,13 +24,22 @@
 
 ;;; Code:
 
+;;; Requirements
+
+(require 'config-ui)
+
+;;; Configuration
+
 (use-package ef-themes
   :ensure t
   :demand t
   :commands (ef-themes-select)
 
   :config
-  (setopt ef-themes-to-toggle '(ef-frost ef-winter))
+  (setopt ceamx-theme-default-dark 'ef-trio-dark)
+  (setopt ceamx-theme-default-light 'ef-frost)
+
+  (setopt ef-themes-to-toggle (list ceamx-theme-default-dark ceamx-theme-default-light))
 
   (setopt ef-themes-headings nil)
   ;; (setopt ef-themes-headings         ; read the manual's entry or the doc string
@@ -48,6 +57,7 @@
   ;;         ef-themes-variable-pitch-ui t)
 
   ;; Disable all other themes to avoid awkward blending:
+  ;; TODO: how does this help when using theme-buffet-mode
   (mapc #'disable-theme custom-enabled-themes)
 
   ;; The themes we provide are recorded in the `ef-themes-dark-themes',

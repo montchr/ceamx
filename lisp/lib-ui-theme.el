@@ -95,14 +95,22 @@ not retain the generic background set by the function
 (defun ceamx/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
-  (+theme-buffet--load-random-from-periods
-    ceamx-theme-buffet-dark-periods))
+  (pcase ceamx-theme-circadian-interval
+    ('buffet
+      (+theme-buffet--load-random-from-periods
+        ceamx-theme-buffet-dark-periods))
+    (_
+      (load-theme ceamx-theme-default-dark :no-confirm))))
 
 (defun ceamx/load-light-theme ()
   "Load a random light theme."
   (interactive)
-  (+theme-buffet--load-random-from-periods
-    ceamx-theme-buffet-light-periods))
+  (pcase ceamx-theme-circadian-interval
+    ('buffet
+      (+theme-buffet--load-random-from-periods
+        ceamx-theme-buffet-light-periods))
+    (_
+      (load-theme ceamx-theme-default-light :no-confirm))))
 
 ;;;; Global commands
 
