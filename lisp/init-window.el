@@ -292,11 +292,13 @@
      ("j" "down" windmove-down :transient t)
      ("k" "up" windmove-up :transient t)
      ("l" "right" windmove-right :transient t)
-     ("o" "other" aw-flip-window :transient t) ; previously-selected
-     ("w" "select" ace-window)]
+     ;; TODO: is this supposed to be a rotator?
+     ("o" "other..." aw-flip-window :transient t) ; previously-selected
+     ("w" "select..." ace-window)]
     ["Resize"
       ("=" "balance" balance-windows)
-      ("-" "match buffer" fit-window-to-buffer)
+      ("+" "balance (area)" balance-windows-area)
+      ("-" "fit buffer" fit-window-to-buffer)
       ;; TODO:
       ;; ("<" "width-" evil-window-decrease-width)
       ;; (">" "width+" evil-window-increase-width)
@@ -311,14 +313,13 @@
       ("F" "file (g)" find-file :transient nil)
       ("F" "file@other" find-file-other-window)
       ("g" "grep" consult-ripgrep :transient nil)]
-    ["Split"
-      ;; FIXME: no effect with non-nil / `transient--do-stay'
-      ("H" "to left" ceamx/window-move-left :transient nil)
-      ("J" "to below" ceamx/window-move-down :transient nil)
-      ("K" "to above" ceamx/window-move-up :transient nil)
-      ("L" "to right" ceamx/window-move-right :transient nil)
-      ("s" "swap" ace-swap-window)]
+    ["Swap"
+      ("H" "left" windmove-swap-states-left)
+      ("J" "down" windmove-swap-states-down)
+      ("K" "up" windmove-swap-states-up)
+      ("L" "right" windmove-swap-states-right)]
     ["Scroll"
+      ;; TODO: allow selecting a window (with infix?) to act upon
       ;; NOTE: These are the correct scroll direction commands, which might
       ;; appear to be reversed when comparing with labels.
       ("." "left" scroll-right)
@@ -328,11 +329,10 @@
     ["Window Lifecycle"
       ("d" "delete" ace-delete-window)
       ("D" "delete others" delete-other-windows :transient nil)
-      ;; FIXME:
-      ;; ("n" "new" evil-window-new)
       ("u" "winner ⮐" winner-undo)
       ("U" "winner ⮑" winner-redo)
       ("S" "toggle sides" window-toggle-side-windows)
+      ("`" "toggle popups" popper-toggle)
 
       ("q" "quit" transient-quit-all)]])
 
@@ -342,10 +342,22 @@
   "C-x o" #'ace-window
   "C-x w" #'ceamx/window-dispatch
 
-  "C-x =" #'balance-windows             ; prev: C-x +
-  ;; TODO: rebind
-  "C-x +" nil)
+  "C-x =" #'balance-windows
+  "C-x +" #'balance-windows-area
 
+  "C-x C-n" #'next-buffer
+  "C-x C-p" #'previous-buffer
+
+  "C-x <up>" #'enlarge-window           ; also: C-x ^
+  "C-x <down>" #'shrink-window
+  "C-x <left>" #'shrink-window-horizontally
+  "C-x <right>" #'enlarge-window-horizontally)
+
+(keys! resize-window-repeat-map
+  "<up>" #'enlarge-window
+  "<down>" #'shrink-window
+  "<left>" #'shrink-window-horizontally
+  "<right>" #'enlarge-window-horizontally)
 
 (provide 'init-window)
 ;;; init-window.el ends here
