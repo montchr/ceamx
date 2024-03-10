@@ -29,37 +29,40 @@
 
 ;;; Code:
 
+;;; Requirements
+
+(require 'config-env)
+
 (require 'lib-frame)
 (require 'lib-common)
+
+;;; Menu Bar
 
 (use-feature! emacs
   :config
   ;; Disable menu bar by default.
   (menu-bar-mode -1))
 
-;; macOS has terrible window management UX and it always has.
-;; and it is only getting *worse*.
-;; this used to be fine, but then they introduced
-;; "stage manager", a crippling load of unusable horseshit.
-;; it's a wonder that yabai is still possible!
-(if +sys-mac-p
-    ;; GUI menu bar is necessary otherwise Emacs will be treated as a
-    ;; non-application OS window (e.g. no focus capture). Menu bar is, however,
-    ;; ugly in terminal frames.
-    ;;
-    ;; NOTE: It seems that frame decorations are also necessary now...? See above.
-    (progn
-      (defun ceamx--restore-gui-menu-bar-hook (&optional frame)
-        (when-let (frame (or frame (selected-frame)))
-          (when (display-graphic-p frame)
-            (set-frame-parameter frame 'menu-bar-lines 1))))
-      (add-hook 'window-setup-hook #'ceamx--restore-gui-menu-bar-hook)
-      (add-hook 'after-make-frame-functions #'ceamx--restore-gui-menu-bar-hook))
+;;; Frame Decorations
+
+(unless +sys-mac-p
   ;; Hide window decorations.
   (add-to-list 'default-frame-alist '(undecorated . t)))
 
-;; macOS: Stop C-z from minimizing windows.
-(keymap-global-set "C-z" #'ceamx/maybe-suspend-frame)
+;;;; Handle macOS-specific workarounds
+
+(when +sys-mac-p
+  ;; GUI menu bar is necessary otherwise Emacs will be treated as a
+  ;; non-application OS window (e.g. no focus capture).
+  (def-hook! ceamx-frame--maybe-restore-gui-menu-bar-h (&optional frame)
+    '(after-make-frame-functions window-setup-hook)
+    "TODO: Provide source for this approach (Doom?), and why it does what it does."
+    (when-let (frame (or frame (selected-frame)))
+      (when (display-graphic-p frame)
+        (set-frame-parameter frame 'menu-bar-lines 1))))
+
+  ;; Stop C-z from minimizing windows.
+  (keymap-global-unset "C-z" t))
 
 (provide 'init-frame)
 ;;; init-frame.el ends here
