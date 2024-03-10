@@ -287,52 +287,52 @@
 (transient-define-prefix ceamx/window-dispatch ()
   "Window management transient."
   :transient-suffix 'transient--do-stay
-  [["Movement"
-     ("h" "left" windmove-left :transient t)
-     ("j" "down" windmove-down :transient t)
-     ("k" "up" windmove-up :transient t)
-     ("l" "right" windmove-right :transient t)
-     ;; TODO: is this supposed to be a rotator?
-     ("o" "other..." aw-flip-window :transient t) ; previously-selected
-     ("w" "select..." ace-window)]
-    ["Resize"
-      ("=" "balance" balance-windows)
-      ("+" "balance (area)" balance-windows-area)
-      ("-" "fit buffer" fit-window-to-buffer)
-      ;; TODO:
-      ;; ("<" "width-" evil-window-decrease-width)
-      ;; (">" "width+" evil-window-increase-width)
-      ;; ("+" "height+" evil-window-increase-height)
-      ;; ("-" "height-" evil-window-decrease-height)
+  [["Move"
+     ("h" "lt" windmove-left)
+     ("j" "dn" windmove-down)
+     ("k" "up" windmove-up )
+     ("l" "rt" windmove-right)
+     ("w" "sel" ace-window)]
 
-      ]
+    ["Resize"
+      ("=" "bal" balance-windows)
+      ("+" "bal: area" balance-windows-area)
+      ("-" "fit: buffer" fit-window-to-buffer)]
+
     ["Buffer"
-      ("b" "buffer" consult-buffer :transient nil)
-      ;; TODO: `ffap-other-window' (doom)
-      ("f" "file (p)" project-find-file :transient nil)
-      ("F" "file (g)" find-file :transient nil)
-      ("F" "file@other" find-file-other-window)
-      ("g" "grep" consult-ripgrep :transient nil)]
-    ["Swap"
-      ("H" "left" windmove-swap-states-left)
-      ("J" "down" windmove-swap-states-down)
-      ("K" "up" windmove-swap-states-up)
-      ("L" "right" windmove-swap-states-right)]
+      ("b" "buf" consult-buffer)
+      ;; ("f" "ff: p" project-find-file)
+      ("f" "ff" find-file )
+      ("F" "ff@ow" find-file-other-window)
+      ("g" "gr" consult-ripgrep)]
+
+    ["Swarp"
+      ("H" "lt" ceamx/window-move-left)
+      ("J" "dn" ceamx/window-move-down)
+      ("K" "up" ceamx/window-move-up)
+      ("L" "rt" ceamx/window-move-right)
+      ("s" "swp" ace-swap-window)
+      ("2" "sp: dn" split-window-below)
+      ("3" "sp: rt" split-window-right)]
+
     ["Scroll"
       ;; TODO: allow selecting a window (with infix?) to act upon
       ;; NOTE: These are the correct scroll direction commands, which might
       ;; appear to be reversed when comparing with labels.
-      ("." "left" scroll-right)
-      ("," "right" scroll-left)
-      ("SPC" "down" scroll-up)
+      ("." "lt" scroll-right)
+      ("," "rt" scroll-left)
+      ("SPC" "dn" scroll-up)
       ("DEL" "up" scroll-down)]
-    ["Window Lifecycle"
-      ("d" "delete" ace-delete-window)
-      ("D" "delete others" delete-other-windows :transient nil)
-      ("u" "winner ⮐" winner-undo)
-      ("U" "winner ⮑" winner-redo)
-      ("S" "toggle sides" window-toggle-side-windows)
-      ("`" "toggle popups" popper-toggle)
+
+    ["Lifecycle"
+      ("0" "del" delete-window)
+      ("1" "del: o" delete-other-windows)
+      ("d" "del" ace-delete-window)
+      ;; ("D" "del: o" delete-other-windows :transient nil)
+      ("u" "undo" winner-undo)
+      ("U" "redo" winner-redo)
+      ("S" "[ ] sides" window-toggle-side-windows)
+      ("`" "[ ] popups" popper-toggle)
 
       ("q" "quit" transient-quit-all)]])
 
