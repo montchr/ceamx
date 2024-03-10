@@ -97,8 +97,8 @@
 
 (elpaca link-hint
   (global-keys!
-    "M-s u" #'link-hint-open-link
-    "M-s U" #'link-hint-copy-link))
+    "M-g u" #'link-hint-open-link
+    "M-g U" #'link-hint-copy-link))
 
 ;;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
 
