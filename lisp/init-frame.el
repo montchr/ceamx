@@ -36,14 +36,7 @@
 (require 'lib-frame)
 (require 'lib-common)
 
-;;; Menu Bar
-
-(use-feature! emacs
-  :config
-  ;; Disable menu bar by default.
-  (menu-bar-mode -1))
-
-;;; Frame Decorations
+;;; Configure frame decorations
 
 (unless +sys-mac-p
   ;; Hide window decorations.
@@ -67,6 +60,17 @@
 
   ;; Stop C-z from minimizing windows.
   (keymap-global-unset "C-z" t))
+
+
+;;; General frame configuration
+
+;;;; Disable the frame menu bar by default
+
+(menu-bar-mode -1)
+
+;;;; Enable the resurrection of frames with `undelete-frame'
+
+(undelete-frame-mode 1)
 
 (provide 'init-frame)
 ;;; init-frame.el ends here
