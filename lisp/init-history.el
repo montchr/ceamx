@@ -156,6 +156,8 @@
   (setopt undo-fu-session-ignore-temp-files t)
   (setopt undo-fu-session-ignore-encrypted-files t)
 
+  (setopt undo-fu-session-compression 'zst)
+
   (undo-fu-session-global-mode))
 
 ;;;; Visualize the Emacs undo tree with `vundo' (visual undo)
