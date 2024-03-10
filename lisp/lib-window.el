@@ -198,56 +198,20 @@ Copied from the `evil' function `evil-move-window'."
               (select-window new-window)))))
       (balance-windows))))
 
-(defun ceamx--split-window-in-direction (direction &optional window)
-  "Split WINDOW in DIRECTION.
-DIRECTION may be one of the DIRECTION arguments accepted by
-`split-window'. Additionally, when DIRECTION is the symbol `up'
-or `down', the direction argument passed to `split-window' will
-be translated to `above' or `below', respectively.
-
-When WINDOW is nil, the currently-selected will be used. See
-`split-window' for details."
-  (split-window window nil (pcase direction
-                             ('up 'above)
-                             ('down 'below)
-                             (_ direction))))
-
 ;; via <https://github.com/doomemacs/doomemacs/blob/ff33ec8f7a89d168ca533612e2562883c89e029f/modules/editor/evil/autoload/evil.el#L42-L73>
 (defun ceamx--window-swap-or-split (direction)
   "Move current window to the next window in DIRECTION.
 If there are no windows in DIRECTION and there is only one window
 in the current frame, split the window in DIRECTION and place
 this window there."
-  (when (window-dedicated-p)
-    (user-error "Cannot swap/split a dedicated window"))
   (let* ((this-window (selected-window))
-         ;; FIXME: unused, even in the original.
-         (this-buffer (current-buffer))
-         (that-window (window-in-direction direction nil this-window))
-         (that-buffer (window-buffer that-window)))
-    (when (or (minibufferp that-buffer)
-              ;; FIXME: wouldn't this case never be true, since calling
-              ;; `window-dedicated-p' with no argument is the same as calling it
-              ;; with `this-window' (`selected-window') as argument?
-              (window-dedicated-p this-window))
-      (setq that-buffer nil)
-      (setq that-window nil))
-    (if (not (or that-window (one-window-p t)))
-      ;; TODO: note original usage of evil-window-move-* functions which are
-      ;; literally just calls to evil-move-window with a direction specified. we
-      ;; don't need that level of indirection.
-      (ceamx-move-window direction)
-      ;; TODO: not working, but it'd be nice to use internal libraries if possible/appropriate
-      ;; (windmove-swap-states-in-direction direction)
-      (unless that-window
-        (setq that-window (ceamx--split-window-in-direction direction this-window))
-        (with-selected-window that-window
-          (switch-to-buffer ceamx-fallback-buffer-name))
-        (setq that-buffer (window-buffer that-window)))
-      ;; FIXME: something is happening towards the end here where the new window
-      ;; is not selected
-      (window-swap-states this-window that-window)
-      (select-window that-window))))
+         (that-window (window-in-direction direction this-window)))
+    (unless that-window
+      (setq that-window (split-window this-window nil direction))
+      (with-selected-window that-window
+        (switch-to-buffer ceamx-fallback-buffer-name)))
+    (window-swap-states this-window that-window)
+    (select-window that-window)))
 
 (defun ceamx/window-move-left ()
   "Swap or move selected window to the left."
@@ -269,7 +233,6 @@ this window there."
   (interactive)
   (ceamx--window-swap-or-split 'down))
 
-
 (defun ceamx/split-window (&optional count direction file)
   "TODO"
   (interactive "P\nS\nf")
@@ -287,7 +250,7 @@ this window there."
   "Split window and switch to BUFFER.
 If BUFFER is not the name of an existing buffer, then a new
 buffer will be created with that name."
-  (interactive "B")
+  (interactive "b")
   (ceamx/split-window)
   (switch-to-buffer buffer))
 
