@@ -83,6 +83,8 @@
 
 ;;; Code:
 
+;;; Requirements
+
 (require 'transient)
 
 (require 'config-buffer)
@@ -90,6 +92,7 @@
 
 (require 'lib-common)
 (require 'lib-buffer)
+(require 'lib-keys)
 (require 'lib-window)
 
 ;;; General buffer display settings
@@ -333,9 +336,16 @@
 
       ("q" "quit" transient-quit-all)]])
 
-;; TODO: Ideally this would be bound in a more visible place but it's here to
-;; avoid lint errors.
-(keymap-global-set "C-x w" #'ceamx/window-dispatch)
+;;; Bind keys for window management
+
+(global-keys!
+  "C-x o" #'ace-window
+  "C-x w" #'ceamx/window-dispatch
+
+  "C-x =" #'balance-windows             ; prev: C-x +
+  ;; TODO: rebind
+  "C-x +" nil)
+
 
 (provide 'init-window)
 ;;; init-window.el ends here

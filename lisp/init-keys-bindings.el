@@ -75,8 +75,14 @@
 
 ;;;; Files
 
-(keymap-global-set "C-c f" '("[ File ]" . ceamx-file-map))
-(keymap-global-set "C-c C-f" '("[ File ]" . ceamx-file-map))
+(global-keys!
+  "C-c f" '("[ File ]" . ceamx-file-map)
+  "C-c C-f" '("[ File ]" . ceamx-file-map)
+
+  ;; I mistakenly hit this sequence frequently instead of C-x C-f, but have never
+  ;; once needed to configure `fill-column' on-demand (that should be configured
+  ;; explicitly, or simply call `set-fill-column' with M-x).
+  "C-x f" #'find-file)
 
 (define-keymap :keymap ceamx-file-map
   ;; TODO
@@ -145,20 +151,6 @@
 (defmap! ceamx-toggle-map
   "l" #'display-line-numbers-mode
   "w" '("side windows" . window-toggle-side-windows))
-
-;;;; Window
-
-(define-keymap :keymap (current-global-map)
-  ;; I mistakenly hit this sequence frequently instead of C-x C-f, but have never
-  ;; once needed to configure `fill-column' on-demand (that should be configured
-  ;; explicitly, or simply call `set-fill-column' with M-x).
-  "C-x f" #'find-file
-
-  "C-x o" #'ace-window
-
-  "C-x =" #'balance-windows             ; prev: C-x +
-  ;; TODO: rebind
-  "C-x +" nil)
 
 ;;; Leader Bindings
 
