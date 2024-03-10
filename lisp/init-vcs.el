@@ -126,8 +126,8 @@
   :init
   (keymap-global-set "C-x v t" #'git-timemachine)
 
-  ;; XXX: broken, see `ceamx/git-timemachine-transient'
-  ;; (add-hook 'git-timemachine-mode-hook #'ceamx/git-timemachine-transient)
+  ;; XXX: broken, see `ceamx/git-timemachine-dispatch'
+  ;; (add-hook 'git-timemachine-mode-hook #'ceamx/git-timemachine-dispatch)
 
   :config
 
@@ -137,9 +137,9 @@
     "M-b" #'git-timemachine-blame
     "M-c" #'git-timemachine-show-commit)
 
-  ;; FIXME: like `ceamx/transient-window', this breaks because the commands
+  ;; FIXME: like `ceamx/window-dispatch', this breaks because the commands
   ;; should be run in the original buffer/window
-  (transient-define-prefix ceamx/git-timemachine-transient ()
+  (transient-define-prefix ceamx/git-timemachine-dispatch ()
     "Transient menu for `git-timemachine-mode'."
     ;; :transient-suffix 'transient--do-stack
     [["Navigation"

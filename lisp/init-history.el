@@ -81,7 +81,7 @@
 (elpaca dogears
   (add-hook 'on-first-buffer-hook #'dogears-mode)
 
-  ;; Also see `ceamx/dogears-transient'.
+  ;; Also see `ceamx/dogears-dispatch'.
   (global-keys!
     ;; TODO: find a new binding maybe
     ;; "M-g d" #'dogears-go
@@ -98,7 +98,7 @@
 
 ;; TODO: provide a little more context in transient (label for dogears, links maybe...)
 (after! [transient dogears]
-  (transient-define-prefix ceamx/dogears-transient ()
+  (transient-define-prefix ceamx/dogears-dispatch ()
     "Transient menu for `dogears' history navigation commands."
     [["Navigate"
        ("b" "back" dogears-back :transient transient--do-stay)
@@ -109,8 +109,8 @@
         ("l" "list" dogears-list)
         ("S" "sidebar" dogears-sidebar)]])
 
-  (defer-until! (fboundp 'ceamx/dogears-transient)
-    (keymap-global-set "M-g d" #'ceamx/dogears-transient)))
+  (defer-until! (fboundp 'ceamx/dogears-dispatch)
+    (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
 
 ;;; Undo/redo
 

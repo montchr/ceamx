@@ -281,7 +281,7 @@
   ;; 1 and 3 and frame B will have window 2.
   (setopt aw-scope 'frame))
 
-(transient-define-prefix ceamx/transient-window ()
+(transient-define-prefix ceamx/window-dispatch ()
   "Window management transient."
   :transient-suffix 'transient--do-stay
   [["Movement"
@@ -335,7 +335,7 @@
 
 ;; TODO: Ideally this would be bound in a more visible place but it's here to
 ;; avoid lint errors.
-(keymap-global-set "C-x w" #'ceamx/transient-window)
+(keymap-global-set "C-x w" #'ceamx/window-dispatch)
 
 (provide 'init-window)
 ;;; init-window.el ends here
