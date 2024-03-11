@@ -246,6 +246,15 @@
 (use-feature! winner
   :config (winner-mode))
 
+;;; Toggle a window's "dedicated" flag with `dedicated-mode'
+
+;; <https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
+
+(use-package dedicated
+  :defer 5
+  :init
+  (keymap-global-set "C-c W" #'dedicated-mode))
+
 ;;; Add "distraction-free" editing with `olivetti-mode'
 
 ;; <https://github.com/rnkn/olivetti>
