@@ -277,6 +277,16 @@ Meant to serve as a predicated alternative to `after!'."
            (put ',fn 'permanent-local-hook t)
            (add-hook 'after-load-functions #',fn)))))
 
+(defmacro autoload-macro! (macro file)
+  "Define MACRO to autoload from FILE.
+MACRO and FILE are as in `autoload', which see.
+
+This provides `autoload' with nil values for its DESCRIPTION and
+INTERACTIVE arguments. Its TYPE argument is non-nil, indicating
+that the symbol to be autoload is actually a macro."
+  (declare (debug t))
+  `(autoload ,macro ,file nil nil t))
+
 ;;; Variables
 
 (defmacro appendq! (sym &rest lists)
