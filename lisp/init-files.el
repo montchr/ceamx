@@ -36,13 +36,13 @@
 ;; TODO: enable file locks in TRAMP?
 
 (setopt create-lockfiles nil)
+(setopt make-backup-files nil)
 
-(setopt make-backup-files t)
-(setopt backup-by-copying t)
-(setopt version-control t)
-(setopt delete-old-versions t)
-(setopt kept-new-versions 5)
-(setopt kept-old-versions 5)
+(when make-backup-files
+  (setopt version-control t)
+  (setopt delete-old-versions t)
+  (setopt kept-new-versions 5)
+  (setopt kept-old-versions 5))
 
 (setopt delete-by-moving-to-trash t)
 
