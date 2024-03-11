@@ -20,6 +20,8 @@
 
 ;;; Commentary:
 
+;; TODO: better JSONC support
+
 ;;; Code:
 
 ;;; Requirements
