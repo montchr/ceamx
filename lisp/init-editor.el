@@ -31,9 +31,14 @@
 
 ;;; Code:
 
+;;; Requirements
+
 (require 'config-editor)
+
 (require 'lib-common)
 (require 'lib-editor)
+(require 'lib-keys)
+(require 'lib-simple)
 
 ;;; Enable some commands that Emacs disables by default
 
@@ -292,7 +297,11 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       ("<drag-mouse-1>" ignore)
       ("q" nil))))
 
+;;; Configure global editing keybindings
 
+(global-keys!
+  "C-=" #'ceamx/insert-date
+  "C-<" #'ceamx/escape-url-dwim)
 
 (provide 'init-editor)
 ;;; init-editor.el ends here
