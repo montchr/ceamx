@@ -184,9 +184,6 @@
     "s-}" #'tab-next))
 
 (global-keys!
-  ;; TODO: find a better place -- shadows default for `rectangle-mark-mode'
-  ;; "C-x SPC" #'hydra-rectangle/body
-
   ;; Logical progression from M-f for `forward-word'.
   "M-F" #'forward-symbol
 

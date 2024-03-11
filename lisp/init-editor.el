@@ -255,7 +255,13 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
                (deactivate-mark)
              (rectangle-mark-mode 1)))
       ("u" undo nil)
-      ("g" nil))))
+      ("g" nil))
+
+    (when (fboundp 'hydra-rectangle/body)
+      (keymap-global-set "C-x M-r" #'hydra-rectangle/body))
+
+    ;; Free up its original coveted C-x SPC binding.
+    (keymap-global-set "C-x M-R" #'rectangle-mark-mode)))
 
 ;;; Add support for Sublime-like multi-cursor editing with `multiple-cursors'
 

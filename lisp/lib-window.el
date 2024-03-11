@@ -294,5 +294,22 @@ When called interactively, prompt the user for FILE."
   (interactive "p")
   (enlarge-window (- count) t))
 
+;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-simple.el#L800C1-L814C68>
+;;;###autoload
+(defun ceamx/swap-or-rotate-windows (counter)
+  "Swap states of live buffers.
+With two windows, transpose their buffers.  With more windows,
+perform a clockwise rotation.  Do not alter the window layout.
+Just move the buffers around.
+
+With COUNTER as a prefix argument, do the rotation
+counter-clockwise."
+  (interactive "P")
+  (when-let* ((winlist (if counter (reverse (window-list)) (window-list)))
+               (wincount (count-windows))
+               ((> wincount 1)))
+    (dotimes (i (- wincount 1))
+      (window-swap-states (elt winlist i) (elt winlist (+ i 1))))))
+
 (provide 'lib-window)
 ;;; lib-window.el ends here

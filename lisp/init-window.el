@@ -320,9 +320,11 @@
       ("J" "down" ceamx/window-move-down)
       ("K" "up" ceamx/window-move-up)
       ("L" "right" ceamx/window-move-right)
+      ""
       ("s" "swap" ace-swap-window)
       ("2" "spl: dn" split-window-below)
-      ("3" "spl: rt" split-window-right)]
+      ("3" "spl: rt" split-window-right)
+      ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
 
     ["Scroll"
       ;; TODO: allow selecting a window (with infix?) to act upon
@@ -334,15 +336,17 @@
       ("DEL" "up" scroll-down)]
 
     ["Lifecycle"
-      ("0" "del" delete-window)
-      ("1" "del other" delete-other-windows)
       ("d" "del sel" ace-delete-window)
       ;; ("D" "del: o" delete-other-windows :transient nil)
       ("u" "undo" winner-undo)
       ("U" "redo" winner-redo)
+      ""
+      ("0" "del" delete-window)
+      ("1" "del other" delete-other-windows)
+      ""
       ("S" "[ ] sides" window-toggle-side-windows)
       ("`" "[ ] popups" popper-toggle)
-
+      ""
       ("q" "quit" transient-quit-all)]])
 
 ;;; Bind keys for window management
@@ -360,7 +364,10 @@
   "C-x <up>" #'enlarge-window           ; also: C-x ^
   "C-x <down>" #'shrink-window
   "C-x <left>" #'shrink-window-horizontally
-  "C-x <right>" #'enlarge-window-horizontally)
+  "C-x <right>" #'enlarge-window-horizontally
+
+  ;; TODO: repeat-mode
+  "C-x SPC" #'ceamx/swap-or-rotate-windows)
 
 (keys! resize-window-repeat-map
   "<up>" #'enlarge-window
