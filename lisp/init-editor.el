@@ -95,6 +95,20 @@
   (electric-pair-mode 1)
   (show-paren-mode 1)
 
+;;;;; Register a `transient' dispatcher for `insert-pair'
+
+  ;; TODO: what's a good binding for this?
+
+  (use-feature! transient
+    :config
+    (transient-define-prefix ceamx/insert-pair-dispatch ()
+      "Insert or wrap the active region by way of `insert-pair'."
+      [ ("[" "square brackets" insert-pair)
+        ("{" "curly braces" insert-pair)
+        ("\"" "double-quotes" insert-pair)
+        ("'" "single-quotes" insert-pair)
+        ("`" "inline code" insert-pair)]))
+
 ;;;; Trim whitespace upon save
 
   (add-hook 'before-save-hook #'delete-trailing-whitespace)

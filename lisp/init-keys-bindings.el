@@ -173,12 +173,6 @@
 
 ;;; Global Bindings
 
-;; TODO: hydra/transient?
-;; Wrap text in supported symbols.
-(dolist (pair '("[" "{" "\"" "'" "`"))
-  (let ((key (format "M-%s" pair)))
-    (keymap-global-set key #'insert-pair)))
-
 ;; macOS muscle-memory habits
 (when +sys-mac-p
   (define-keymap :keymap (current-global-map)
