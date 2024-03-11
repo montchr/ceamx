@@ -49,85 +49,91 @@
 
 ;;; Configure builtin features
 
-(use-feature! emacs
-  :config
+;; Replace region when inserting text.
+(delete-selection-mode 1)
 
-  (setopt sentence-end-double-space nil)
-  (setopt require-final-newline t)
+;;;; Boundaries
 
-  ;; Replace region when inserting text.
-  (delete-selection-mode 1)
+(setopt sentence-end-double-space nil)
 
-  ;; Don't consider camelCaseWORDs as separate words.
-  (global-subword-mode -1)
+;; Don't consider camelCaseWORDs as separate words.
+(global-subword-mode -1)
 
-;;;; Automatically wrap text at `fill-column' in some contexts
+;;;; Hard-Wrapping
 
-  ;; When a mode defines a comment syntax, then only wrap those comments. In all
-  ;; other modes (primarily `text-mode' derivatives), activating
-  ;; `auto-fill-mode' will apply to all lines.
-  (setopt comment-auto-fill-only-comments t)
+;;;;; Automatically wrap text at `fill-column' in some contexts
 
-  (dolist (mode-hook '(prog-mode-hook text-mode-hook))
-    (add-hook mode-hook #'auto-fill-mode))
+;; When a mode defines a comment syntax, then only wrap those comments. In all
+;; other modes (primarily `text-mode' derivatives), activating
+;; `auto-fill-mode' will apply to all lines.
+(setopt comment-auto-fill-only-comments t)
 
-;;;; comments
+(dolist (mode-hook '(prog-mode-hook text-mode-hook))
+  (add-hook mode-hook #'auto-fill-mode))
 
-  (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
+;;;; Comments
 
-;;;; Handle automatic indentation
+(keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
 
-  (setq-default indent-tabs-mode nil)
-  (setopt indent-tabs-mode nil)
-  (setopt backward-delete-char-untabify-method 'untabify)
+;;;; Semantic Pair Matching
 
-  (electric-indent-mode 1)
+;; See `(info "Matching")' for more details.
 
-;;;; Handle character pairs
+(setopt blink-matching-paren t)
+;; Avoid "expression" style, which looks too much like a selected region.
+(setopt show-paren-style 'parenthesis)
 
-  ;; See `(info "Matching")' for more details.
+(setopt electric-pair-preserve-balance t)
+(setopt electric-pair-delete-adjacent-pairs t)
+(setopt electric-pair-skip-whitespace t)
+;; TODO: evaluating...
+(setopt electric-pair-open-newline-between-pairs t)
 
-  (setopt blink-matching-paren t)
-  ;; Avoid "expression" style, which looks too much like a selected region.
-  (setopt show-paren-style 'parenthesis)
-
-  (setopt electric-pair-preserve-balance t)
-  (setopt electric-pair-delete-adjacent-pairs t)
-  (setopt electric-pair-skip-whitespace t)
-  ;; TODO: evaluating...
-  (setopt electric-pair-open-newline-between-pairs t)
-
-  (electric-pair-mode 1)
-  (show-paren-mode 1)
+(electric-pair-mode 1)
+(show-paren-mode 1)
 
 ;;;;; Register a `transient' dispatcher for `insert-pair'
 
-  ;; TODO: what's a good binding for this?
+;; TODO: what's a good binding for this?
 
-  (use-feature! transient
-    :config
-    (transient-define-prefix ceamx/insert-pair-dispatch ()
-      "Insert or wrap the active region by way of `insert-pair'."
-      [ ("[" "square brackets" insert-pair)
-        ("{" "curly braces" insert-pair)
-        ("\"" "double-quotes" insert-pair)
-        ("'" "single-quotes" insert-pair)
-        ("`" "inline code" insert-pair)]))
+(use-feature! transient
+  :config
+  (transient-define-prefix ceamx/insert-pair-dispatch ()
+    "Insert or wrap the active region by way of `insert-pair'."
+    [ ("[" "square brackets" insert-pair)
+      ("{" "curly braces" insert-pair)
+      ("\"" "double-quotes" insert-pair)
+      ("'" "single-quotes" insert-pair)
+      ("`" "inline code" insert-pair)]))
 
-;;;; Trim whitespace upon save
+;;; Formatting
 
-  (add-hook 'before-save-hook #'delete-trailing-whitespace)
+(setopt require-final-newline t)
 
-;;;; Display whitespace visualization with `whitespace-mode'
+;;;; Visualize whitespace with `whitespace-mode'
 
-  ;;  This mode is buffer-local. It might be undesireable in some cases, so enable
-  ;;  it selectively.
+;;  This mode is buffer-local. It might be undesireable in some cases, so enable
+;;  it selectively.
 
-  (add-hook 'prog-mode-hook #'whitespace-mode)
+(add-hook 'prog-mode-hook #'whitespace-mode)
 
-  (setopt whitespace-style '(face tabs tab-mark trailing)))
+(setopt whitespace-style '(face tabs tab-mark trailing))
 
-;;; Add support for EditorConfig
+;;;; Indentation
+
+(setq-default indent-tabs-mode nil)
+(setopt indent-tabs-mode nil)
+(setopt backward-delete-char-untabify-method 'untabify)
+
+;;;;; Handle automatic indentation with `electric-indent-mode'
+
+(electric-indent-mode 1)
+
+;;;; Trailing whitespace
+
+(add-hook 'before-save-hook #'delete-trailing-whitespace)
+
+;;;; Add support for EditorConfig
 
 ;; <https://editorconfig.org>
 
@@ -136,7 +142,7 @@
   :init
   (add-hook 'on-first-file-hook #'editorconfig-mode))
 
-;;; Apply opinionated code reformatting with `apheleia'
+;;;; Apply opinionated code reformatting with `apheleia'
 
 ;; <https://github.com/radian-software/apheleia>
 
@@ -186,27 +192,37 @@
 
   :init
   (define-keymap :keymap puni-mode-map
+    "C-M-f" #'puni-forward-sexp
+    "C-M-b" #'puni-backward-sexp
+    "C-M-a" #'puni-beginning-of-sexp
+    "C-M-e" #'puni-end-of-sexp
     "C-M-[" #'puni-backward-sexp-or-up-list
-    "C-M-]" #'puni-forward-sexp-or-up-list)
+    "C-M-]" #'puni-forward-sexp-or-up-list
+
+    "M-(" #'puni-syntactic-forward-punct
+    "M-)" #'puni-syntactic-backward-punct
+    )
 
   ;; (puni-global-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 
-;;; Drag stuff around in arbitrary directions with `drag-stuff'
+;;; Transposition
+
+;;;; Drag stuff around in arbitrary directions with `drag-stuff'
 
 ;; <https://github.com/rejeep/drag-stuff.el>
 
 ;;  This package appears to be abandoned since 2017.
 ;;  But, as of <2023-09-06>, it still works well.
 
-;;;; Issues
+;;;;; Issues
 
 ;; Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
 ;; recent versions of Emacs:
 
 ;; <https://github.com/rejeep/drag-stuff.el/issues/36>
 
-;;;;; Alternatives
+;;;;;; Alternatives
 
 ;; I haven't yet found any other package to move arbitrary regions up/down while
 ;; preserving column position.
@@ -303,7 +319,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       ("<drag-mouse-1>" ignore)
       ("q" nil))))
 
-;;; Configure global editing keybindings
+;;; Keybindings
 
 (global-keys!
   "C-=" #'ceamx/insert-date
