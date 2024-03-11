@@ -132,8 +132,8 @@ was printed, and only have ElDoc display if one wasn't.\""
 
 ;; <https://github.com/xuchunyang/elisp-demos>
 
-(after! 'helpful
-  (elpaca elisp-demos
+(elpaca elisp-demos
+  (after! 'helpful
     (require 'elisp-demos)
     (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
     (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)))
