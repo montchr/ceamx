@@ -323,7 +323,11 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 (global-keys!
   "C-=" #'ceamx/insert-date
-  "C-<" #'ceamx/escape-url-dwim)
+  "C-<" #'ceamx/escape-url-dwim
+
+    ;; Logical progression from M-f for `forward-word'.
+  ;; See also `forward-sexp'
+  "M-F" #'forward-symbol)
 
 (provide 'init-editor)
 ;;; init-editor.el ends here

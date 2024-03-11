@@ -107,7 +107,29 @@
 (elpaca helpful
   ;; Avoid a first-time lag when asking for help, which often happens before an
   ;; idle timer has the chance to run.
-  (require 'helpful))
+  (require 'helpful)
+  (define-keymap :keymap help-map
+    "c" #'helpful-callable
+    "C" #'helpful-command
+    "f" #'helpful-function              ; orig: `describe-face'
+    "h" #'helpful-at-point
+    ;; TODO: consider swapping with the original as a trial?
+    "k" #'helpful-key                   ; orig: `describe-key-briefly'
+    "o" #'helpful-symbol
+    "v" #'helpful-variable
+
+    ;; Parity with the corresponding unmodded keys.
+    ;; Primarily for Meow keypad, but also sometimes feels more natural to keep
+    ;; holding Ctrl anyway.
+    "C-k" #'helpful-key
+    "C-o" #'helpful-symbol
+
+    ;; Rebind the originals
+    "F" #'describe-face
+    "K" #'describe-key-briefly
+
+    ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
+    "C-h" nil))
 
 ;;; Tune the contexts in which Eldoc displays its messages
 
@@ -137,6 +159,25 @@ was printed, and only have ElDoc display if one wasn't.\""
     (require 'elisp-demos)
     (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
     (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)))
+
+;;; Keybindings
+
+(after! 'consult
+  (declare-function consult-info "consult")
+  ;; overrides default `info' bind
+  (keymap-set help-map "i" #'consult-info))
+
+(define-keymap :keymap help-map
+  "l" #'find-library
+
+  ;; FIXME: no lambda binding
+  "t" `("text-props (pt)" . ,(cmd!!
+                               #'describe-text-properties
+                               current-prefix-arg
+                               (point)))
+
+  ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
+  "C-h" nil)
 
 (provide 'init-help)
 ;;; init-help.el ends here

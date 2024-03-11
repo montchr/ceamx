@@ -456,9 +456,7 @@
 
 (require 'init-fun)
 
-;;;; Keybindings
-
-(require 'init-keys-bindings)
+(require 'init-controls)
 
 ;;; Postlude
 

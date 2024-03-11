@@ -150,5 +150,12 @@
 
 (elpaca rainbow-mode)
 
+;;; Global Keybindings
+
+(global-keys!
+  "C-c [" #'previous-buffer
+  "C-c ]" #'next-buffer
+  "C-c `" #'mode-line-other-buffer)
+
 (provide 'init-buffer)
 ;;; init-buffer.el ends here

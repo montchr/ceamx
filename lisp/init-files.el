@@ -27,9 +27,14 @@
 
 ;;; Code:
 
+;;; Requirements
+
+(require 'ceamx-keymaps)
 (require 'ceamx-paths)
+
 (require 'lib-common)
 (require 'lib-files)
+(require 'lib-keys)
 
 ;;; Manage backup files and prevent file-lock clutter
 
@@ -99,6 +104,32 @@
 
 ;; Save file-visiting buffers according to the configured timers.
 (auto-save-visited-mode)
+
+;;; Keybindings
+
+(global-keys!
+  "C-c f" '("[ File ]" . ceamx-file-map)
+  "C-c C-f" '("[ File ]" . ceamx-file-map)
+
+  ;; I mistakenly hit this sequence frequently instead of C-x C-f, but have never
+  ;; once needed to configure `fill-column' on-demand (that should be configured
+  ;; explicitly, or simply call `set-fill-column' with M-x).
+  "C-x f" #'find-file)
+
+(keys! ceamx-file-map
+  ;; TODO
+  ;; "u" #'+sudo-find-file
+  ;; "U" #'+sudo-this-file
+  ;; "y" #'+yank-this-file-name
+
+  "c" '("copy..." . ceamx/copy-this-file)
+  "d" '("delete" . ceamx/delete-this-file)
+  "f" '("find (g)..." . find-file)
+  "r" '("rename/move..." . ceamx/move-this-file)
+  "s" '("save" . save-buffer)
+  "S" '("save as..." . write-file)
+
+  "C-d" '("diff with..." . ceamx/diff-with-file))
 
 (provide 'init-files)
 ;;; init-files.el ends here

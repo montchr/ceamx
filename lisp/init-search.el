@@ -139,6 +139,9 @@
   ;; "read"   => default, avoid: backslash hell
   (setopt reb-re-syntax 'string))
 
+;;; Global Keybindings
+
+(keys! search-map "r" '("replace..." . ceamx-replace-map))
 
 (provide 'init-search)
 ;;; init-search.el ends here

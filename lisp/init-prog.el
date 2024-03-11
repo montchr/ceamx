@@ -26,10 +26,11 @@
 
 ;;; Requirements
 
+(require 'ceamx-keymaps)
+
 (require 'lib-common)
 (require 'lib-lisp)
 
-;;
 ;;; Hooks
 
 (defun ceamx-prog-mode-init-h ()
@@ -104,6 +105,12 @@ Intended for use as a hook callback on `prog-mode-hook'."
 ;;                                 (emacs-lisp-mode . ielm)
 ;;                                 (nix-mode . nix-repl))))
 
+;;; Keybindings
+
+(keymap-global-set "M-C" ceamx-code-map)
+
+(keys! ceamx-code-map
+  "d" #'xref-find-definitions)
 
 (provide 'init-prog)
 ;;; init-prog.el ends here

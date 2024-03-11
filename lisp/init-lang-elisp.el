@@ -20,18 +20,18 @@
 
 ;;; Commentary:
 
-;;
-
 ;;; Code:
+
+;;; Requirements
 
 (require 'config-lisp)
 
 (require 'lib-common)
+(require 'lib-keys)
 (require 'lib-lisp)
 
 (declare-function blackout "blackout")
 
-;;
 ;;; Hooks
 
 (defun ceamx-emacs-lisp-init ()
@@ -47,7 +47,6 @@
 (when (boundp 'eval-expression-minibuffer-setup-hook)
   (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
 
-;;
 ;;; Advices
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
@@ -67,19 +66,17 @@
             (if (< (length str) limit) "" truncated))))
       ret)))
 
-;;
 ;;; Keybinds
-
-(keymap-set emacs-lisp-mode-map "C-c C-c" #'eval-last-sexp)
-(keymap-set emacs-lisp-mode-map "C-S-t" #'transpose-sexps)
 
 (keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
 
-;; Remove default binding for `byte-compile-current-file' to free up space for
-;; something else.
-(keymap-unset emacs-lisp-mode-map "C-c C-f")
+(keys! emacs-lisp-mode-map
+  "C-c C-f" nil                         ; `byte-compile-current-file'
+  "C-c C-b" nil                         ; `elisp-byte-compile-buffer'
 
-;;
+  "C-c C-c" #'eval-last-sexp
+  "C-S-t" #'transpose-sexps)
+
 ;;; Packages
 
 ;;;; `eros' :: <https://github.com/xiongtx/eros>
@@ -113,7 +110,6 @@
 (use-package suggest
   :commands (suggest)
   :init
-  ;; TODO: is C-x binding more appropriate by convention?
   (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
 
 ;;;; `macrostep' :: <https://github.com/emacsorphanage/macrostep>
