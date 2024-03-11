@@ -48,6 +48,18 @@
   ;; Disable buffer line wrapping by default.
   (set-default 'truncate-lines t)
 
+;;;;; Scrolling
+
+  (setopt scroll-error-top-bottom t)
+
+  (global-keys!
+    ;; The default bindings feel backwards to me.
+    "C-x <" #'scroll-right
+    "C-x >" #'scroll-left
+
+    "<wheel-left>" #'scroll-left
+    "<wheel-right>" #'scroll-right)
+
 ;;;;; Auto-revert buffers
 
   ;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For

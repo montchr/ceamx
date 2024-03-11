@@ -39,14 +39,6 @@
 (require 'lib-common)
 (require 'lib-keys)
 
-
-;;; Mouse/trackpad support
-
-;;;; Horizontal scroll support (without scrollbars)
-
-(keymap-global-set "<wheel-left>" #'scroll-left)
-(keymap-global-set "<wheel-right>" #'scroll-right)
-
 ;;;; Buffers
 
 (require 'lib-buffer)
