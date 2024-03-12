@@ -30,6 +30,8 @@
 (require 'lib-keys)
 (require 'lib-lisp)
 
+(autoload-macro! 'elpaca "elpaca")
+
 (declare-function blackout "blackout")
 
 ;;; Hooks
@@ -133,6 +135,14 @@ The original function fails in the presence of whitespace after a sexp."
 
   :init
   (keymap-set emacs-lisp-mode-map "C-c x" #'ceamx/macrostep-expand))
+
+;;; Install `xr' to convert string regexps to `rx' forms
+
+;; <https://github.com/mattiase/xr>
+
+;; TODO: keybindings...
+
+(elpaca xr)
 
 (provide 'init-lang-elisp)
 ;;; init-lang-elisp.el ends here
