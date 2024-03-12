@@ -435,7 +435,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 #+end_src
 
 
-** Manifest
+* Manifest
 
 #+BEGIN_SRC elisp :tangle init.el
 ;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t -*-
@@ -928,4 +928,3635 @@ Keep in mind that the custom file is ignored in version control."
 ;;; init.el ends here
 #+END_SRC
 
-*
+** Measure startup times
+
+#+begin_src emacs-lisp :tangle lisp/init-benchmarking.el
+;;; init-benchmarking.el --- Measure startup and require times -*- lexical-binding: t -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;; Copyright (c) 2006-2021, Steve Purcell
+;; All rights reserved.
+
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+;;; Commentary:
+;;; Code:
+
+(defun ceamx-time-subtract-millis (b a)
+  (* 1000.0 (float-time (time-subtract b a))))
+
+(defvar ceamx-require-times nil
+  "A list of (FEATURE LOAD-START-TIME LOAD-DURATION).
+LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
+
+(defun ceamx-require-times-wrapper (orig feature &rest args)
+  "Note in `ceamx-require-times' the time taken to require each feature."
+  (let* ((already-loaded (memq feature features))
+         (require-start-time (and (not already-loaded) (current-time))))
+    (prog1
+        (apply orig feature args)
+      (when (and (not already-loaded) (memq feature features))
+        (let ((time (ceamx-time-subtract-millis (current-time) require-start-time)))
+          (add-to-list 'ceamx-require-times
+                       (list feature require-start-time time)
+                       t))))))
+
+(advice-add 'require :around 'ceamx-require-times-wrapper)
+
+(define-derived-mode ceamx-require-times-mode tabulated-list-mode "Require-Times"
+  "Show times taken to `require' packages."
+  (setq tabulated-list-format
+    [("Start time (ms)" 20 ceamx-require-times-sort-by-start-time-pred)
+      ("Feature" 30 t)
+      ("Time (ms)" 12 ceamx-require-times-sort-by-load-time-pred)])
+  (setq tabulated-list-sort-key (cons "Start time (ms)" nil))
+  (setq tabulated-list-padding 2)
+  (setq tabulated-list-entries #'ceamx-require-times-tabulated-list-entries)
+  (tabulated-list-init-header)
+  (when (fboundp 'tablist-minor-mode)
+    (tablist-minor-mode)))
+
+(defun ceamx-require-times-sort-by-start-time-pred (entry1 entry2)
+  (< (string-to-number (elt (nth 1 entry1) 0))
+     (string-to-number (elt (nth 1 entry2) 0))))
+
+(defun ceamx-require-times-sort-by-load-time-pred (entry1 entry2)
+  (> (string-to-number (elt (nth 1 entry1) 2))
+    (string-to-number (elt (nth 1 entry2) 2))))
+
+(defun ceamx-require-times-tabulated-list-entries ()
+  (cl-loop for (feature start-time millis) in ceamx-require-times
+           with order = 0
+           do (cl-incf order)
+           collect (list order
+                         (vector
+                          (format "%.3f" (ceamx-time-subtract-millis start-time before-init-time))
+                          (symbol-name feature)
+                          (format "%.3f" millis)))))
+
+(defun ceamx-require-times ()
+  "Show a tabular view of how long various libraries took to load."
+  (interactive)
+  (with-current-buffer (get-buffer-create "*Require Times*")
+    (ceamx-require-times-mode)
+    (tabulated-list-revert)
+    (display-buffer (current-buffer))))
+
+;; FIXME: show in echo area, not just messages buffer -- maybe idk `inhibit-startup-message' ?
+(defun ceamx-show-init-time ()
+  (message "init completed in %.2fms"
+    (ceamx-time-subtract-millis after-init-time before-init-time)))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-show-init-time)
+
+(provide 'init-benchmarking)
+;;; init-benchmarking.el ends here
+#+end_src
+
+* Configure
+
+** Common
+
+#+begin_src emacs-lisp :tangle lisp/config-common.el
+;;; config-common.el --- Common and miscellaneous configuration settings  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+;; Copyright (C) 2020-2023  Protesilaos Stavrou
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;;         Protesilaos Stavrou <info@protesilaos.com>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Sources:
+
+;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
+
+;;; Code:
+
+;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
+(defvar ceamx-common-url-regexp
+  (concat
+    "~?\\<\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]*\\)"
+    "[.@]"
+    "\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]+\\)\\>/?")
+  "Regular expression to match (most?) URLs or email addresses.")
+
+(provide 'config-common)
+;;; config-common.el ends here
+#+end_src
+
+** Environment
+
+#+begin_src emacs-lisp :tangle lisp/config-env.el
+;;; config-env.el --- Variables regarding the environment  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Where are we?
+
+;;; Code:
+
+(defvar +gui-p
+  (display-graphic-p))
+
+(defvar +xorg-p
+  (memq window-system '(x)))
+
+(defvar +user-root-p
+  (string-equal "root" (getenv "USER")))
+
+(defvar +sys-mac-p
+  (or (memq window-system '(mac ns))
+      (eq system-type 'darwin)))
+
+(defvar +sys-linux-p
+  (eq system-type 'gnu/linux))
+
+(defvar +env-pgtk-p
+  (bound-and-true-p pgtk-initialized)
+  "Whether Emacs is running with pure-GTK windowing.")
+
+;; via <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
+(defvar +sys-wsl-p
+  (and (eq system-type 'gnu/linux)
+    (or (getenv "WSLENV")
+      (getenv "WSL_DISTRO_NAME")))
+  "Whether Emacs is currently running in WSL.")
+
+(defvar +env-dumb-p
+  (string= (getenv "TERM") "dumb"))
+
+;; TODO: is this really the way? and is it even necessary?
+(defvar +env-iterm-p
+  (string= (getenv "TERM_PROGRAM") "iTerm.app"))
+
+(defvar +env-xterm-p
+  (not (string-empty-p (getenv "XTERM_VERSION"))))
+
+(defvar +env-gnome-terminal-p
+  (string= (getenv "COLORTERM") "gnome-terminal"))
+
+(defvar +env-konsole-p
+  (not (string-empty-p (getenv "KONSOLE_PROFILE_NAME"))))
+
+(defvar +env-apple-terminal-p
+  (string= (getenv "TERM_PROGRAM") "Apple_Terminal"))
+
+(provide 'config-env)
+;;; config-env.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-env.el
+;;; init-env.el --- Environment configuration -*- lexical-binding: t -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;  Ensure proper integration with the user environment.
+
+;;; Code:
+
+(require 'elpaca-autoloads)
+
+(require 'config-env)
+
+(require 'lib-common)
+
+;; Disable unnecessary OS-specific command-line options.
+(unless +sys-mac-p
+  (setq command-line-ns-option-alist nil))
+(unless +sys-linux-p
+  (setq command-line-x-option-alist nil))
+
+(elpaca exec-path-from-shell
+  (require 'exec-path-from-shell)
+  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"))
+    (add-to-list 'exec-path-from-shell-variables var))
+  (exec-path-from-shell-initialize))
+
+;;; Make temporary buffers inherit buffer-local environment variables with `inheritenv'
+
+;; <https://github.com/purcell/inheritenv>
+
+(after! 'exec-path-from-shell
+  (elpaca inheritenv
+    (require 'inheritenv)))
+
+;;; Support integration with Direnv via the `envrc' package
+
+;; <https://github.com/purcell/envrc>
+;; <https://direnv.net/>
+;; <https://github.com/direnv/direnv>
+
+;; > Q: How does this differ from `direnv.el`?
+;;
+;; > <https://github.com/wbolster/emacs-direnv> repeatedly changes the global
+;; > Emacs environment, based on tracking what buffer you're working on.
+;;
+;; > Instead, `envrc.el` simply sets and stores the right environment in each
+;; > buffer, as a buffer-local variable.
+
+(after! 'exec-path-from-shell
+  (elpaca envrc
+    (envrc-global-mode)))
+
+(elpaca-wait)
+
+(provide 'init-env)
+;;; init-env.el ends here
+#+end_src
+
+*** Terminal/TTY Support
+
+#+begin_src emacs-lisp :tangle lisp/init-env-tty.el
+;;; init-env-tty.el --- TTY environment support -*- lexical-binding: t -*-
+
+;; Copyright (c) 2023-2024 Chris Montgomery
+;; Copyright (c) 2006-2021 Steve Purcell
+
+;; Author: Steve Purcell
+;;         Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Created: 20 July 2023
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+;;; Commentary:
+
+;; Specialized configurations for Emacs running in a TTY / terminal emulator
+;; environment.
+
+;; FIXME: most of this should be loaded conditionally
+
+;;; Code:
+
+(autoload 'mwheel-install "mwheel")
+
+(defun ceamx/console-frame-setup ()
+  (xterm-mouse-mode 1)
+  (mwheel-install))
+
+;; Make the mouse wheel scroll.
+(global-set-key [mouse-4] (lambda () (interactive) (scroll-down 1)))
+(global-set-key [mouse-5] (lambda () (interactive) (scroll-up 1)))
+
+;; (add-hook 'after-make-console-frame-hooks 'ceamx/console-frame-setup)
+
+(provide 'init-env-tty)
+;;; init-env-tty.el ends here
+#+end_src
+
+** Frame
+
+#+begin_src emacs-lisp :tangle lisp/init-frame.el
+;;; init-frame.el --- Frame modifications -*- lexical-binding: t -*-
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; FIXME: unreadable childframes sometimes. e.g. command output, embark.
+;; at least make sure these childframes seriously have modeline disabled and
+;; their padding reduced
+
+;;; Code:
+
+;;; Requirements
+
+(require 'config-env)
+
+(require 'lib-frame)
+(require 'lib-common)
+
+;;; Configure frame decorations
+
+(unless +sys-mac-p
+  ;; Hide window decorations.
+  (add-to-list 'default-frame-alist '(undecorated . t)))
+
+;;;; Handle macOS-specific workarounds
+
+(when +sys-mac-p
+  ;; `undecorated-round' is macOS-specific.
+  (add-to-list 'default-frame-alist '(undecorated-round . t))
+
+  ;; GUI menu bar is necessary otherwise Emacs will be treated as a
+  ;; non-application OS window (e.g. no focus capture).
+  ;; <https://github.com/doomemacs/doomemacs/blob/d657be1744a1481dc4646d0b62d5ee1d3e75d1d8/lisp/doom-start.el#L118-L128>
+  (def-hook! ceamx-frame--maybe-restore-gui-menu-bar-h (&optional frame)
+    '(after-make-frame-functions window-setup-hook)
+    "TODO: Provide source for this approach (Doom?), and why it does what it does."
+    (when-let (frame (or frame (selected-frame)))
+      (when (display-graphic-p frame)
+        (set-frame-parameter frame 'menu-bar-lines 1))))
+
+  ;; Stop C-z from minimizing windows.
+  (keymap-global-unset "C-z" t))
+
+
+;;; General frame configuration
+
+;;;; Disable the frame menu bar by default
+
+(menu-bar-mode -1)
+
+;;;; Enable the resurrection of frames with `undelete-frame'
+
+(undelete-frame-mode 1)
+
+(provide 'init-frame)
+;;; init-frame.el ends here
+#+end_src
+
+
+*** Frame Hooks
+
+#+begin_src emacs-lisp :tangle lisp/init-frame-hooks.el
+;;; init-frame-hooks.el --- Provide specific hooks for GUI/TTY frame creation  -*- lexical-binding: t; -*-
+
+;; Copyright (c) 2023-2024 Chris Montgomery
+;; Copyright (c) 2006-2021 Steve Purcell
+
+;; Author: Steve Purcell
+;;         Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Created: 20 July 2023
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+;;; Commentary:
+;;; Code:
+
+(defvar after-make-console-frame-hooks '()
+  "Hooks to run after creating a new TTY frame.")
+(defvar after-make-window-system-frame-hooks '()
+  "Hooks to run after creating a new window-system frame.")
+
+(defun run-after-make-frame-hooks (frame)
+  "Run configured hooks in response to the newly-created FRAME.
+Selectively runs either `after-make-console-frame-hooks' or
+`after-make-window-system-frame-hooks'"
+  (with-selected-frame frame
+    (run-hooks (if window-system
+                   'after-make-window-system-frame-hooks
+                 'after-make-console-frame-hooks))))
+(add-hook 'after-make-frame-functions 'run-after-make-frame-hooks)
+
+(defvar ceamx/initial-frame (selected-frame)
+  "The frame (if any) active during Emacs initialization.")
+
+;; NOTE: Should not use `elpaca-after-init-hook'.
+(add-hook 'after-init-hook
+          (lambda () (when ceamx/initial-frame
+                       (run-after-make-frame-hooks ceamx/initial-frame))))
+
+
+(provide 'init-frame-hooks)
+;;; init-frame-hooks.el ends here
+#+end_src
+
+** Appearance
+
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
+;;; config-ui.el --- General UI settings             -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+
+(defconst ceamx-gnome-ui-namespace "org.gnome.desktop.interface")
+
+(defconst ceamx-theme-buffet-dark-periods
+  '(:night :twilight :evening))
+
+(defconst ceamx-theme-buffet-light-periods
+  '(:morning :day :afternoon))
+
+(defcustom ceamx-theme-default-light 'modus-operandi
+  "The default light theme."
+  :group 'ceamx
+  :type 'symbol)
+
+(defcustom ceamx-theme-default-dark 'modus-vivendi
+  "The default dark theme."
+  :group 'ceamx
+  :type 'symbol)
+
+(defcustom ceamx-modeline-provider 'doom
+  "Modeline provider to load.
+Valid values are the symbols `doom', `nano', and `telephone'
+which reference the `doom-modeline', `nano-modeline', and
+`telephone-line' modules respectively.
+
+A nil value will not load any modeline customizations (use Emacs
+with its default modeline)."
+  :group 'ceamx
+  :type '(choice :tag "Modeline to load" :value doom
+           (const :tag "The `doom-modeline' module" doom)
+           (const :tag "The `nano-modeline' module" nano)
+           (const :tag "The `telephone-line' module" telephone)
+           (const :tag "Do not load a modeline module" nil)))
+
+(defcustom ceamx-theme-family 'modus
+  "Set of themes to load.
+Valid values are the symbols `ef', `modus', and `standard', which
+reference the `ef-themes', `modus-themes', and `standard-themes',
+respectively.
+
+A nil value does not load any of the above (use Emacs without a
+theme)."
+  :group 'ceamx
+  :type '(choice :tag "Set of themes to load" :value modus
+                 (const :tag "The `ef-themes' module" ef)
+                 (const :tag "The `modus-themes' module" modus)
+                 (const :tag "The `standard-themes' module" standard)
+                 (const :tag "Do not load a theme module" nil)))
+
+(defcustom ceamx-theme-circadian-interval 'solar
+  "The circadian theme switching interval.
+Value may be either `period' or `solar', corresponding
+respectively to period-based switching with `theme-buffet' or
+sunrise/sunset toggling from the combination of the `solar'
+library and the `circadian' package."
+  :group 'ceamx
+  :type '(choice :tag "Circadian theme switching interval" :value solar
+          (const :tag "Time periods via `theme-buffet'" :value buffet)
+          (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
+
+(defcustom ceamx-font-height-multiplier 1.0
+  "Multiplier for display font size.
+Intended for use as a per-system (or, ideally, per-display)
+accommodation for varying pixel densities."
+  :group 'ceamx
+  :type '(float))
+
+(provide 'config-ui)
+;;; config-ui.el ends here
+#+end_src
+
+*** Integrating the preceding interfaces
+
+#+begin_src emacs-lisp :tangle lisp/init-after-ui.el
+;;; init-after-ui.el --- Late UI configuration       -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Configuration to load after all other user interface customizations.
+
+;; For features depending on the state of all other `init-ui-*' modules.
+
+;;; Code:
+
+(require 'lib-common)
+
+;;; `spacious-padding' :: <https://protesilaos.com/emacs/spacious-padding>
+(use-package spacious-padding
+  :demand t
+  :commands (spacious-padding-mode)
+  :defines (spacious-padding-widths)
+
+  :init
+  (setopt spacious-padding-widths
+    '(
+       ;; NOTE: `:internal-border-width' currently breaks `tab-bar-mode'
+       ;;       display on Emacs 29. Fixed in master branch.
+       ;;       <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+       :internal-border-width 15
+       :header-line-width 4
+       :mode-line-width 4
+       :tab-width 4
+       :right-divider-width 30
+       :scroll-bar-width 8))
+
+  :config
+
+  ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
+  ;; is very flexible.
+  ;; TODO: v0.3.0 standardizes this a bit
+  ;; (setq spacious-padding-subtle-mode-line
+  ;;       `(:mode-line-active default     ; NOTE: assumes `modus-themes'
+  ;;                           :mode-line-inactive vertical-border))
+
+  (spacious-padding-mode 1))
+
+(provide 'init-after-ui)
+;;; init-after-ui.el ends here
+#+end_src
+
+
+
+** Window
+
+#+begin_src emacs-lisp :tangle lisp/config-window.el
+;;; config-window.el --- Settings for window management  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Variables and options for window management configurations.
+
+;;; Code:
+
+(defcustom ceamx-fallback-buffer-name "*scratch*"
+  "The name of the buffer to fall back to if no other buffers exist.
+The buffer will be created if it does not exist."
+  :group 'ceamx
+  :type '(string))
+
+(provide 'config-window)
+;;; config-window.el ends here
+#+end_src
+
+** Buffer
+
+#+begin_src emacs-lisp :tangle lisp/config-buffer.el
+;;; config-buffer.el --- Variables relating to buffers and modes  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Sources:
+
+;; <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+
+;;; Code:
+
+(defvar ceamx-occur-grep-modes-list
+  '(occur-mode
+     grep-mode
+     xref--xref-buffer-mode
+     flymake-diagnostics-buffer-mode)
+  "List of major-modes used in occur-type buffers.")
+
+(defvar ceamx-repl-modes-list
+  '(eshell-mode
+    inferior-emacs-lisp-mode            ; ielm
+    shell-mode
+    eat-mode
+    nix-repl-mode)
+  "List of major-modes used in REPL buffers.")
+
+(defvar ceamx-repl-buffer-names-list
+  '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
+    "\\*.*REPL.*\\*"
+    "\\*Inferior .*\\*$"
+    "\\*ielm\\*"
+    "\\*edebug\\*")
+  "List of buffer names used in REPL buffers.")
+
+(defvar ceamx-help-modes-list
+  '(helpful-mode
+     help-mode
+     eldoc-mode)
+  "List of major-modes used in documentation buffers.")
+
+(defvar ceamx-help-buffer-names-list
+  '("^\\*Apropos"
+     "^\\*eldoc\\*")
+  "List of buffer names used in help buffers.")
+
+(defvar ceamx-manual-modes-list '(Man-mode woman-mode)
+  "List of major-modes used in Man-type buffers.")
+
+(defvar ceamx-message-modes-list
+  '(compilation-mode
+    edebug-eval-mode)
+  "List of major-modes used in message buffers.")
+
+(provide 'config-buffer)
+;;; config-buffer.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-buffer.el
+;;; init-buffer.el --- Buffers configuration         -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Buffers of all shapes and sizes.
+
+;; TODO: <https://github.com/abo-abo/avy/wiki/custom-commands>
+
+;;; Code:
+
+;;;; Requirements
+
+(require 'elpaca-autoloads)
+
+(require 'lib-common)
+(require 'lib-keys)
+(require 'lib-buffer)
+
+;;;; General
+
+(setq-default indicate-empty-lines nil)
+(setq-default fill-column 80)
+
+(use-feature! emacs
+  :config
+
+  ;; Available cycle positions for `recenter-top-bottom'.
+  (setopt recenter-positions '(middle top bottom))
+
+  ;; Disable buffer line wrapping by default.
+  (set-default 'truncate-lines t)
+
+;;;;; Scrolling
+
+  (setopt scroll-error-top-bottom t)
+
+  (global-keys!
+    ;; The default bindings feel backwards to me.
+    "C-x <" #'scroll-right
+    "C-x >" #'scroll-left
+
+    "<wheel-left>" #'scroll-left
+    "<wheel-right>" #'scroll-right)
+
+;;;;; Auto-revert buffers
+
+  ;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For
+  ;; example, this will cause Dired to refresh a file list when the directory
+  ;; contents have changed.
+  (setopt global-auto-revert-non-file-buffers t)
+
+  ;; (setopt auto-revert-interval 0.01)
+
+  ;; Automatically revert a buffer if its file has changed on disk.
+  (global-auto-revert-mode t)
+
+;;;;; Buffer selection
+
+  (keymap-global-set "<remap> <list-buffers>" #'ibuffer-list-buffers)
+
+  (setopt ibuffer-movement-cycle t))
+
+;;;; Enable highlighting of the current line with `hl-line' [builtin]
+
+(use-feature! hl-line
+  :commands (hl-line-mode)
+  :init
+  (add-hook 'prog-mode-hook #'hl-line-mode)
+  (add-hook 'package-menu-mode-hook #'hl-line-mode))
+
+;;;; Linkify URLs and email addresses in buffers with `goto-address' [builtin]
+
+(use-feature! goto-addr
+  :config
+  (add-hook 'prog-mode-hook #'goto-address-prog-mode))
+
+;;;; Disambiguate identically-named buffers with `uniquify' [builtin]
+
+(use-feature! uniquify
+  :config
+  (setopt uniquify-buffer-name-style 'forward)
+  (setopt uniquify-separator "/")
+  ;; Rename after killing uniquified buffer.
+  (setopt uniquify-after-kill-buffer-p t)
+  ;; Don't muck with special buffers.
+  (setopt uniquify-ignore-buffers-re "^\\*"))
+
+;;;; Activate links in buffer with an `avy'-like UI via the `link-hint' package
+
+;; <https://github.com/noctuid/link-hint.el>
+
+(elpaca link-hint
+  (global-keys!
+    "M-g u" #'link-hint-open-link
+    "M-g U" #'link-hint-copy-link))
+
+;;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
+
+(elpaca expand-region
+  (keymap-global-set "C-=" #'er/expand-region))
+
+;;;; Enable simple comment-based outline features in many modes with `outli'
+
+;; <https://github.com/jdtsmith/outli>
+
+;; NOTE: In `emacs-lisp-mode' buffers, `outli-mode' should be enabled *after*
+;; `lispy-mode'. See the package configuration for `lispy'.
+
+(elpaca (outli :host github :repo "jdtsmith/outli")
+  (def-hook! +outli-mode-maybe-enable-h ()
+    '(prog-mode-hook text-mode-hook)
+    "Enable `outli-mode' conditionally, excluding some modes."
+    (let ((exclude-modes '(emacs-lisp-mode))
+           (excludep (lambda (excluded-mode)
+                       (eq major-mode excluded-mode))))
+      (unless (seq-some excludep exclude-modes)
+        (outli-mode))))
+
+  (after! 'outli
+    ;; FIXME: function definition is void -- from readme:
+    ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
+
+    (define-keymap :keymap outli-mode-map
+      "C-c C-n" #'outline-next-heading
+      "C-c C-p" #'outline-previous-heading
+      "C-c M-h" #'outline-promote
+      "C-c M-l" #'outline-demote)))
+
+;;; Colorize color names and hexcodes in buffers via `rainbow-mode'
+
+;; <https://elpa.gnu.org/packages/rainbow-mode.html>
+
+(elpaca rainbow-mode)
+
+;;; Global Keybindings
+
+(global-keys!
+  "C-c [" #'previous-buffer
+  "C-c ]" #'next-buffer
+  "C-c `" #'mode-line-other-buffer)
+
+(provide 'init-buffer)
+;;; init-buffer.el ends here
+#+end_src
+
+** Editor
+
+#+begin_src emacs-lisp :tangle lisp/config-editor.el
+;;; config-editor.el --- Settings for the editor     -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(defcustom ceamx-format-on-save-disabled-modes
+  '(emacs-lisp-mode                     ; conflict with `lispy' indent
+    org-msg-edit-mode)
+  "A list of major modes in which to not reformat the buffer upon saving.
+When nil, buffers will always be formatted upon save. When
+non-nil, buffers will never be formatted upon save."
+  :group 'ceamx
+  :type '(choice boolean (repeat symbol)))
+
+(defvar ceamx-apheleia-lighter " Aph")
+
+(provide 'config-editor)
+;;; config-editor.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-editor.el
+;;; init-editor.el --- Editing --- -*- lexical-binding: t -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Configuration applicable across all editable buffers.
+
+;;; Investigate:
+
+;; TODO: <https://github.com/tarsius/killer/blob/ace0547944933440384ceeb5876b1f68c082d540/killer.el>
+
+;;; Code:
+
+;;; Requirements
+
+(require 'config-editor)
+
+(require 'lib-common)
+(require 'lib-editor)
+(require 'lib-keys)
+(require 'lib-simple)
+
+;;; Enable some commands that Emacs disables by default
+
+(dolist (cmd '(downcase-region
+                scroll-left
+                upcase-region))
+  (put cmd 'disabled nil))
+
+;;; Configure builtin features
+
+;; Replace region when inserting text.
+(delete-selection-mode 1)
+
+;;;; Boundaries
+
+(setopt sentence-end-double-space nil)
+
+;; Don't consider camelCaseWORDs as separate words.
+(global-subword-mode -1)
+
+;;;; Hard-Wrapping
+
+;;;;; Automatically wrap text at `fill-column' in some contexts
+
+;; When a mode defines a comment syntax, then only wrap those comments. In all
+;; other modes (primarily `text-mode' derivatives), activating
+;; `auto-fill-mode' will apply to all lines.
+(setopt comment-auto-fill-only-comments t)
+
+(dolist (mode-hook '(prog-mode-hook text-mode-hook))
+  (add-hook mode-hook #'auto-fill-mode))
+
+;;;; Comments
+
+(keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
+
+;;;; Semantic Pair Matching
+
+;; See `(info "Matching")' for more details.
+
+(setopt blink-matching-paren t)
+;; Avoid "expression" style, which looks too much like a selected region.
+(setopt show-paren-style 'parenthesis)
+
+(setopt electric-pair-preserve-balance t)
+(setopt electric-pair-delete-adjacent-pairs t)
+(setopt electric-pair-skip-whitespace t)
+;; TODO: evaluating...
+(setopt electric-pair-open-newline-between-pairs t)
+
+(electric-pair-mode 1)
+(show-paren-mode 1)
+
+;;;;; Register a `transient' dispatcher for `insert-pair'
+
+;; TODO: what's a good binding for this?
+
+(use-feature! transient
+  :config
+  (transient-define-prefix ceamx/insert-pair-dispatch ()
+    "Insert or wrap the active region by way of `insert-pair'."
+    [ ("[" "square brackets" insert-pair)
+      ("{" "curly braces" insert-pair)
+      ("\"" "double-quotes" insert-pair)
+      ("'" "single-quotes" insert-pair)
+      ("`" "inline code" insert-pair)]))
+
+;;; Formatting
+
+(setopt require-final-newline t)
+
+;;;; Visualize whitespace with `whitespace-mode'
+
+;;  This mode is buffer-local. It might be undesireable in some cases, so enable
+;;  it selectively.
+
+(add-hook 'prog-mode-hook #'whitespace-mode)
+
+(setopt whitespace-style '(face tabs tab-mark trailing))
+
+;;;; Indentation
+
+(setq-default indent-tabs-mode nil)
+(setopt indent-tabs-mode nil)
+(setopt backward-delete-char-untabify-method 'untabify)
+
+;;;;; Handle automatic indentation with `electric-indent-mode'
+
+(electric-indent-mode 1)
+
+;;;; Trailing whitespace
+
+(add-hook 'before-save-hook #'delete-trailing-whitespace)
+
+;;;; Add support for EditorConfig
+
+;; <https://editorconfig.org>
+
+(use-package editorconfig
+  :commands (editorconfig-mode)
+  :init
+  (add-hook 'on-first-file-hook #'editorconfig-mode))
+
+;;;; Apply opinionated code reformatting with `apheleia'
+
+;; <https://github.com/radian-software/apheleia>
+
+;; In case you run into issues with `web-mode' not updating syntax highlighting
+;; after formatting (or other arbitrary modifications):
+;; <https://github.com/doomemacs/doomemacs/blob/35dc13632b3177b9efedad212f2180f69e756853/modules/editor/format/config.el#L74-L83>
+
+(use-package apheleia
+  :blackout ceamx-apheleia-lighter
+  :preface
+
+  (defun +apheleia-format-maybe-inhibit-h ()
+    "Check if formatting should be disabled for current buffer."
+    (or (eq major-mode 'fundamental-mode)
+        (string-blank-p (buffer-name))
+        (eq ceamx-format-on-save-disabled-modes t)
+        (not (null (memq major-mode ceamx-format-on-save-disabled-modes)))))
+
+  :init
+  (apheleia-global-mode 1)
+
+  ;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
+  (def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
+    :around #'save-buffer
+    "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
+    (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
+      (funcall func)))
+
+  ;; "We need to do this both before and after Apheleia is loaded
+  ;; because the autoloading is set up such that the minor mode
+  ;; definition is evaluated twice."
+  ;; <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2272C1-L2275>
+  (blackout 'apheleia-mode ceamx-apheleia-lighter)
+
+  :config
+  (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h))
+
+;;; Enable structured editing with `puni'
+
+;; <https://github.com/AmaiKinono/puni>
+
+(use-package puni
+  :commands (puni-global-mode
+              puni-disable-puni-mode
+              puni-backward-sexp-or-up-list
+              puni-forward-sexp-or-up-list)
+
+  :init
+  (define-keymap :keymap puni-mode-map
+    "C-M-f" #'puni-forward-sexp
+    "C-M-b" #'puni-backward-sexp
+    "C-M-a" #'puni-beginning-of-sexp
+    "C-M-e" #'puni-end-of-sexp
+    "C-M-[" #'puni-backward-sexp-or-up-list
+    "C-M-]" #'puni-forward-sexp-or-up-list
+
+    "M-(" #'puni-syntactic-forward-punct
+    "M-)" #'puni-syntactic-backward-punct
+    )
+
+  ;; (puni-global-mode)
+  (add-hook 'term-mode-hook #'puni-disable-puni-mode))
+
+;;; Transposition
+
+;;;; Drag stuff around in arbitrary directions with `drag-stuff'
+
+;; <https://github.com/rejeep/drag-stuff.el>
+
+;;  This package appears to be abandoned since 2017.
+;;  But, as of <2023-09-06>, it still works well.
+
+;;;;; Issues
+
+;; Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
+;; recent versions of Emacs:
+
+;; <https://github.com/rejeep/drag-stuff.el/issues/36>
+
+;;;;;; Alternatives
+
+;; I haven't yet found any other package to move arbitrary regions up/down while
+;; preserving column position.
+
+;; `move-text-mode' <https://github.com/emacsfodder/move-text>, claims to do
+;; this but fails pretty badly, moving the region/selection to the first column
+;; regardless of its original position.
+
+(use-package drag-stuff
+  :bind
+  (([M-up] . drag-stuff-up)
+    ([M-right] . drag-stuff-right)
+    ([M-down] . drag-stuff-down)
+    ([M-left] . drag-stuff-left)))
+
+;;; Operate on a buffer rectangularly
+
+(use-feature! rect
+  :config
+  (use-feature! hydra
+    :config
+    ;; via <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
+    (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
+                                         :color pink
+                                         :hint nil
+                                         :post (deactivate-mark))
+      "
+  ^_k_^       _w_ copy      _o_pen       _N_umber-lines            |\\     -,,,--,,_
+_h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..  \-;;,_
+  ^_j_^       _d_ kill      _c_lear      _r_eset-region-mark      |,4-  ) )_   .;.(  `'-'
+^^^^          _u_ndo        _g_ quit     ^ ^                     '---''(./..)-'(_\_)
+"
+      ("k" rectangle-previous-line)
+      ("j" rectangle-next-line)
+      ("h" rectangle-backward-char)
+      ("l" rectangle-forward-char)
+      ("d" kill-rectangle)               ;; C-x r k
+      ("y" yank-rectangle)               ;; C-x r y
+      ("w" copy-rectangle-as-kill)       ;; C-x r M-w
+      ("o" open-rectangle)               ;; C-x r o
+      ("t" string-rectangle)             ;; C-x r t
+      ("c" clear-rectangle)              ;; C-x r c
+      ("e" rectangle-exchange-point-and-mark) ;; C-x C-x
+      ("N" rectangle-number-lines)            ;; C-x r N
+      ("r" (if (region-active-p)
+               (deactivate-mark)
+             (rectangle-mark-mode 1)))
+      ("u" undo nil)
+      ("g" nil))
+
+    (when (fboundp 'hydra-rectangle/body)
+      (keymap-global-set "C-x M-r" #'hydra-rectangle/body))
+
+    ;; Free up its original coveted C-x SPC binding.
+    (keymap-global-set "C-x M-R" #'rectangle-mark-mode)))
+
+;;; Add support for Sublime-like multi-cursor editing with `multiple-cursors'
+
+;; <https://github.com/magnars/multiple-cursors.el>
+
+(use-package multiple-cursors
+  :demand t
+  ;; :autoload (mc/num-cursors)
+
+  :config
+
+  (use-feature! hydra
+    :config
+
+    ;; TODO: convert to transient
+    (defhydra hydra-multiple-cursors (:hint nil)
+      "
+ Up^^             Down^^           Miscellaneous           % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
+------------------------------------------------------------------
+ [_p_]   Next     [_n_]   Next     [_l_] Edit lines  [_0_] Insert numbers
+ [_P_]   Skip     [_N_]   Skip     [_a_] Mark all    [_A_] Insert letters
+ [_M-p_] Unmark   [_M-n_] Unmark   [_s_] Search      [_q_] Quit
+ [_|_] Align with input CHAR       [Click] Cursor at point"
+      ("l" mc/edit-lines :exit t)
+      ("a" mc/mark-all-like-this :exit t)
+      ("n" mc/mark-next-like-this)
+      ("N" mc/skip-to-next-like-this)
+      ("M-n" mc/unmark-next-like-this)
+      ("p" mc/mark-previous-like-this)
+      ("P" mc/skip-to-previous-like-this)
+      ("M-p" mc/unmark-previous-like-this)
+      ("|" mc/vertical-align)
+      ("s" mc/mark-all-in-region-regexp :exit t)
+      ("0" mc/insert-numbers :exit t)
+      ("A" mc/insert-letters :exit t)
+      ("<mouse-1>" mc/add-cursor-on-click)
+      ;; Help with click recognition in this hydra
+      ("<down-mouse-1>" ignore)
+      ("<drag-mouse-1>" ignore)
+      ("q" nil))))
+
+;;; Keybindings
+
+(global-keys!
+  "C-=" #'ceamx/insert-date
+  "C-<" #'ceamx/escape-url-dwim
+
+    ;; Logical progression from M-f for `forward-word'.
+  ;; See also `forward-sexp'
+  "M-F" #'forward-symbol)
+
+(provide 'init-editor)
+;;; init-editor.el ends here
+#+end_src
+
+** Files
+
+#+begin_src emacs-lisp :tangle lisp/init-files.el
+;;; init-files.el --- File handling -*- lexical-binding: t -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;  Configuration for file handling
+
+;;; Code:
+
+;;; Requirements
+
+(require 'ceamx-keymaps)
+(require 'ceamx-paths)
+
+(require 'lib-common)
+(require 'lib-files)
+(require 'lib-keys)
+
+;;; Manage backup files and prevent file-lock clutter
+
+;; TODO: enable file locks in TRAMP?
+
+(setopt create-lockfiles nil)
+(setopt make-backup-files nil)
+
+(when make-backup-files
+  (setopt version-control t)
+  (setopt delete-old-versions t)
+  (setopt kept-new-versions 5)
+  (setopt kept-old-versions 5))
+
+(setopt delete-by-moving-to-trash t)
+
+;;; Add file headers to new files
+
+(use-feature! autoinsert
+  :config
+  (auto-insert-mode t))
+
+;;; Configure finding of files
+
+(setopt find-file-suppress-same-file-warnings t)
+
+(setopt find-file-visit-truename t)
+
+;; TODO: move elsewhere
+(use-feature! xref
+  :config
+  ;; Always find references of symbol at point.
+  (setopt xref-prompt-for-identifier nil))
+
+;;;; Prompt to create missing parent directories for not-found files
+
+;; <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
+
+(defun ceamx-create-missing-directories-h ()
+  "Automatically create missing directories when creating new files."
+  (unless (file-remote-p buffer-file-name)
+    (let ((parent-directory (file-name-directory buffer-file-name)))
+      (and (not (file-directory-p parent-directory))
+        (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                    parent-directory))
+        (progn (make-directory parent-directory 'parents)
+          t)))))
+
+(add-hook 'find-file-not-found-functions #'ceamx-create-missing-directories-h)
+
+;;; Configure auto-saving of file-visiting buffers
+
+;; Prevent creation of the list of all auto-saved files.
+(setopt auto-save-list-file-prefix nil)
+
+;; Number of input events before autosave
+(setopt auto-save-interval 300)
+
+;; Idle interval for all file-visiting buffers
+(setopt auto-save-visited-interval 30)
+
+;; Idle interval before autosave
+(setopt auto-save-timeout 30)
+
+;; Don't create auto-save "~" files.
+(setopt auto-save-default nil)
+
+;; Save file-visiting buffers according to the configured timers.
+(auto-save-visited-mode)
+
+;;; Keybindings
+
+(global-keys!
+  "C-c f" '("[ File ]" . ceamx-file-map)
+  "C-c C-f" '("[ File ]" . ceamx-file-map)
+
+  ;; I mistakenly hit this sequence frequently instead of C-x C-f, but have never
+  ;; once needed to configure `fill-column' on-demand (that should be configured
+  ;; explicitly, or simply call `set-fill-column' with M-x).
+  "C-x f" #'find-file)
+
+(keys! ceamx-file-map
+  ;; TODO
+  ;; "u" #'+sudo-find-file
+  ;; "U" #'+sudo-this-file
+  ;; "y" #'+yank-this-file-name
+
+  "c" '("copy..." . ceamx/copy-this-file)
+  "d" '("delete" . ceamx/delete-this-file)
+  "f" '("find (g)..." . find-file)
+  "r" '("rename/move..." . ceamx/move-this-file)
+  "s" '("save" . save-buffer)
+  "S" '("save as..." . write-file)
+
+  "C-d" '("diff with..." . ceamx/diff-with-file))
+
+(provide 'init-files)
+;;; init-files.el ends here
+#+end_src
+** Help
+
+#+begin_src emacs-lisp :tangle lisp/config-help.el
+;;; config-help.el --- Help settings                 -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local, help
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Settings for helping.
+
+;;; Code:
+
+(require 'ceamx-paths)
+
+(defvar ceamx-cheatsheets-dir
+  (file-name-as-directory
+   (concat ceamx-home-dir "Documents/cheatsheets"))
+  "Absolute path to the directory containing user cheatsheets.")
+
+(provide 'config-help)
+;;; config-help.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-help.el
+;;; init-help.el --- Help -*- lexical-binding: t; -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; "It looks like you're writing an Emacs. Would you like help?"
+
+;;; Code:
+
+(require 'elpaca-autoloads)
+
+(require 'lib-common)
+(require 'lib-help)
+(require 'lib-keys)
+
+;;; Configure window behavior for help buffers
+
+;; Focus newly-opened help windows.
+(setopt help-window-select t)
+
+;; Also focus newly-opened manpages, which still do not follow `display-buffer'
+;; rules (as of <2024-03-06>).
+(setopt Man-notify-method 'aggressive)
+
+;;; Bind commands to call `consult-info' filtered by commonly-used manual collections
+
+;; Remove the default binding for the `describe-input-method' command.
+(keymap-global-unset "C-h I" t)
+
+(global-keys!
+  "C-h I c"  #'ceamx/completion-info
+  "C-h I e"  #'ceamx/emacs-info
+  "C-h I o"  #'ceamx/org-info)
+
+;;; Peruse local `devdocs' docsets corresponding to the current major-mode
+
+;; <https://github.com/astoff/devdocs.el>
+
+;; NOTE: Must run `devdocs-install' before a docset is available for reference.
+;;
+;; TODO: Install docsets automatically.
+;;       See `lib-help' for WIP.
+
+(elpaca devdocs
+  (keys! help-map
+    ;; Replace default `apropos-documentation' binding.
+    "d" #'devdocs-lookup
+    "D" #'apropos-documentation)
+
+  (def-hook! +devdocs-install-nix-docs ()
+    '(nix-mode-hook nix-ts-mode-hook)
+    "Install `devdocs' documents for the Nix language."
+    (ceamx/devdocs-ensure-doc "nix"))
+
+  (devdocs-update-all))
+
+;;; Display keyboard macros or latest interactive commands as Elisp via `elmacro'
+
+;; <https://github.com/Silex/elmacro>
+
+;; Avoid enabling this mode globally. It may cause some recurring errors, and
+;; the package has not been updated in years. By nature, it is also quite
+;; invasive, and should probably only be used as a development tool as needed.
+
+(elpaca elmacro
+  (setopt elmacro-show-last-commands-default 30)
+
+  ;; <https://github.com/Silex/elmacro/blob/master/README.md#org-mode-smartparens-etc>
+  ;; <https://github.com/Silex/elmacro/blob/master/README.md#elmacro-processor-prettify-inserts>
+  (setopt elmacro-processor-prettify-inserts
+          (unless (or (bound-and-true-p lispy-mode) ; not actually sure about lispy-mode
+                      (bound-and-true-p smartparens-mode)
+                      (bound-and-true-p org-mode))))
+
+  ;; "a" "b" "c" => "abc"
+  ;; FIXME: maybe causes errors?
+  (setopt elmacro-processor-concatenate-inserts t))
+
+;;; Provide improved alternatives to the builtin `describe-*' utilities with `helpful'
+
+;; <https://github.com/Wilfred/helpful>
+
+;; NOTE: there are some blocking bugs that have gone unfixed for quite a while
+;;        some symbols' helpful pages cannot be displayed.
+;;        <https://github.com/Wilfred/helpful/issues/329>
+
+(elpaca helpful
+  ;; Avoid a first-time lag when asking for help, which often happens before an
+  ;; idle timer has the chance to run.
+  (require 'helpful)
+  (define-keymap :keymap help-map
+    "c" #'helpful-callable
+    "C" #'helpful-command
+    "f" #'helpful-function              ; orig: `describe-face'
+    "h" #'helpful-at-point
+    ;; TODO: consider swapping with the original as a trial?
+    "k" #'helpful-key                   ; orig: `describe-key-briefly'
+    "o" #'helpful-symbol
+    "v" #'helpful-variable
+
+    ;; Parity with the corresponding unmodded keys.
+    ;; Primarily for Meow keypad, but also sometimes feels more natural to keep
+    ;; holding Ctrl anyway.
+    "C-k" #'helpful-key
+    "C-o" #'helpful-symbol
+
+    ;; Rebind the originals
+    "F" #'describe-face
+    "K" #'describe-key-briefly
+
+    ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
+    "C-h" nil))
+
+;;; Tune the contexts in which Eldoc displays its messages
+
+(use-feature! eldoc
+  :config
+  ;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2800-L2810>
+  (def-advice! +eldoc-better-display-message-p-a (&rest _)
+    :override #'eldoc--message-command-p
+    "Make ElDoc smarter about when to display its messages.
+From the original author:
+
+\"By default ElDoc has a customizable whitelist of commands that
+it will display its messages after. The idea of this is to not
+trample on messages that other commands may have printed.
+However, this is a hopeless endeavour because there are a
+virtually unlimited number of commands that don't conflict with
+ElDoc. A better approach is to simply check to see if a message
+was printed, and only have ElDoc display if one wasn't.\""
+    (member (current-message) (list nil eldoc-last-message))))
+
+;;; Display usage examples for Elisp callables inside their help buffers
+
+;; <https://github.com/xuchunyang/elisp-demos>
+
+(elpaca elisp-demos
+  (after! 'helpful
+    (require 'elisp-demos)
+    (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
+    (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)))
+
+;;; Keybindings
+
+(after! 'consult
+  (declare-function consult-info "consult")
+  ;; overrides default `info' bind
+  (keymap-set help-map "i" #'consult-info))
+
+(define-keymap :keymap help-map
+  "l" #'find-library
+
+  ;; FIXME: no lambda binding
+  "t" `("text-props (pt)" . ,(cmd!!
+                               #'describe-text-properties
+                               current-prefix-arg
+                               (point)))
+
+  ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
+  "C-h" nil)
+
+(provide 'init-help)
+;;; init-help.el ends here
+#+end_src
+** History
+
+#+begin_src emacs-lisp :tangle lisp/init-history.el
+;;; init-history.el --- History management           -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local, lisp
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; " Nothing here now but the recordings... "
+
+;; Configuration for session history like undo/redo, edits, kill-ring,
+;; recent files, and so on.
+
+;;; Code:
+
+;;; Requirements
+
+(require 'cl-lib)
+
+(require 'elpaca-autoloads)
+
+(require 'ceamx-paths)
+(require 'lib-common)
+
+;;; Record some variables' values with `savehist' [builtin]
+
+(use-feature! savehist
+  :init
+  (savehist-mode)
+
+  :config
+  (cl-dolist (save '(kill-ring
+                      regexp-search-ring
+                      search-ring))
+    (cl-pushnew save savehist-additional-variables))
+
+  (setopt savehist-autosave-interval 60))
+
+;;; Record point position in buffers with `saveplace' [builtin]
+
+(use-feature! saveplace
+  :init
+  (save-place-mode))
+
+;;; Record recently-accessed files with `recentf' [builtin]
+
+(use-feature! recentf
+  :init
+  (recentf-mode)
+
+  :config
+  (setopt recentf-max-saved-items 50)   ; default => 20
+  (setopt recentf-max-menu-items 15)    ; default => 10
+
+  ;; Disable recentf-cleanup on Emacs start, because it can cause
+  ;; problems with remote files.
+  (setopt recentf-auto-cleanup 'never)
+
+  ;; Exclude internal plumbing files.
+  (dolist (path '(ceamx-etc-dir ceamx-var-dir))
+    (add-to-list 'recentf-exclude path)))
+
+;;; Return to previously-visited buffer positions with `dogears'
+
+;; <https://github.com/alphapapa/dogears.el>
+
+(elpaca dogears
+  (add-hook 'on-first-buffer-hook #'dogears-mode)
+
+  ;; Also see `ceamx/dogears-dispatch'.
+  (global-keys!
+    ;; TODO: find a new binding maybe
+    ;; "M-g d" #'dogears-go
+    "M-g M-b" #'dogears-back
+    "M-g M-f" #'dogears-forward
+    "M-g M-d" #'dogears-list
+    "M-g M-D" #'dogears-sidebar)
+
+  ;; Persist `dogears-list' between Emacs sessions.
+  ;; via <https://github.com/alphapapa/dogears.el/issues/4>
+  (after! 'savehist
+    (when (boundp 'savehist-additional-variables)
+      (add-to-list 'savehist-additional-variables #'dogears-list))))
+
+;; TODO: provide a little more context in transient (label for dogears, links maybe...)
+(after! [transient dogears]
+  (transient-define-prefix ceamx/dogears-dispatch ()
+    "Transient menu for `dogears' history navigation commands."
+    [["Navigate"
+       ("b" "back" dogears-back :transient transient--do-stay)
+       ("f" "forward" dogears-forward :transient transient--do-stay)]
+      ;; TODO: when quit one of these Find commands, return to transient
+      ["Find"
+        ("d" "go..." dogears-go)
+        ("l" "list" dogears-list)
+        ("S" "sidebar" dogears-sidebar)]])
+
+  (defer-until! (fboundp 'ceamx/dogears-dispatch)
+    (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
+
+;;; Undo/redo
+
+;;;; Increase undo history limits
+
+;; Advice from the author of `undo-fu':
+;;
+;; > The default undo limits for emacs are quite low _(0.15mb at time of
+;; > writing)_ undo-tree for example increases these limits.
+;; >
+;; > On modern systems you may wish to use much higher limits.
+;; >
+;; > This example sets the limit to 64mb, 1.5x (96mb) for the strong
+;; > limit and 10x (960mb) for the outer limit. Emacs uses 100x for the
+;; > outer limit but this may be too high when using increased limits.
+;;
+;; via <https://codeberg.org/ideasman42/emacs-undo-fu#undo-limits>
+
+(setopt undo-limit 67108864) ; 64mb.
+(setopt undo-strong-limit 100663296) ; 96mb.
+(setopt undo-outer-limit 1006632960) ; 960mb.
+
+;;;; Support optional linear undo/redo with `undo-fu'
+
+;; <https://codeberg.org/ideasman42/emacs-undo-fu>
+
+(elpaca undo-fu
+  (keymap-global-set "C-z" #'undo-fu-only-undo)
+  (keymap-global-set "C-S-z" #'undo-fu-only-redo))
+
+;;;; Record undo/redo steps across Emacs sessions with `undo-fu-session'
+
+;; <https://codeberg.org/ideasman42/emacs-undo-fu-session>
+
+;; NOTE: This is *NOT* just for use with `undo-fu'! It's an essential
+;; enhancement to the builtin Emacs undo system as well.
+
+(defvar undo-fu-session-directory
+  (expand-file-name "undo-fu-session" ceamx-var-dir))
+
+(elpaca undo-fu-session
+  (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+  (setopt undo-fu-session-ignore-temp-files t)
+  (setopt undo-fu-session-ignore-encrypted-files t)
+
+  (setopt undo-fu-session-compression 'zst)
+
+  (undo-fu-session-global-mode))
+
+;;;; Visualize the Emacs undo tree with `vundo' (visual undo)
+
+;; <https://github.com/casouri/vundo>
+
+(elpaca vundo
+  (keymap-global-set "C-x u" #'vundo))
+
+(after! 'vundo
+  (defvar vundo-unicode-symbols)
+  (setopt vundo-glyph-alist vundo-unicode-symbols))
+
+(provide 'init-history)
+;;; init-history.el ends here
+#+end_src
+** Input Methods
+
+#+begin_src emacs-lisp :tangle lisp/init-input-methods.el
+;;; init-input-methods.el --- Configuration for input methods  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+;;
+;;; Language environment
+
+(set-language-environment "UTF-8")
+
+;; `set-language-environment' also presumptively sets `default-input-method'.
+(setopt default-input-method nil)
+
+;; Disable bidirectional text scanning, because I don't need it.
+(setq-default bidi-display-reordering 'left-to-right)
+(setq-default bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
+
+;;
+;;; Mouse input
+
+(setopt mouse-yank-at-point t)
+(setopt scroll-conservatively 1)        ; or: 101
+(setopt scroll-preserve-screen-position t)
+
+;; Add a margin when scrolling vertically (or don't).
+(setq-default scroll-margin 0)
+
+;; Avoid collision of mouse with point.
+(mouse-avoidance-mode 'exile)
+
+;; "More performant rapid scrolling over unfontified regions. May cause brief
+;; spells of inaccurate fontification immediately after scrolling."
+(setopt fast-but-imprecise-scrolling t)
+
+(setopt use-file-dialog nil)
+(setopt use-dialog-box nil)
+
+(provide 'init-input-methods)
+;;; init-input-methods.el ends here
+#+end_src
+
+
+** Keys
+
+#+begin_src emacs-lisp :tangle lisp/config-keys.el
+;;; config-keys.el --- Keybindings variables         -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Keybindings something something.
+
+;;; Code:
+
+;;
+;;; Options
+
+(defcustom ceamx-keybinding-scheme 'meow
+  "Keybinding scheme.
+Valid values are the symbols `evil', `meow', and `emacs',
+corresponding to the `evil-mode' modal vim-emulation scheme, the
+`meow' modal scheme, or the Emacs default keybinding scheme.
+
+A nil value, in addition to `emacs', also means retain
+vanilla Emacs keybindings."
+  :group 'ceamx
+  :type '(choice :tag "Keybinding scheme to use." :value meow
+           (const :tag "The `evil' vim-like modal keybinding scheme" evil)
+           (const :tag "The `meow' kakoune- and Emacs-like modal keybinding scheme" meow)
+           (const :tag "The vanilla Emacs keybinding scheme" emacs)
+           (const :tag "Do not load an additional keybinding scheme" nil)))
+
+(defcustom ceamx-leader-key "SPC"
+  "Leader prefix key sequence for use in modal schemes."
+  :type '(key)
+  :group 'ceamx)
+
+(defcustom ceamx-leader-alt-key "M-SPC"
+  "Alternative leader prefix key sequence.
+Note that the default value conflicts with a keybinding in the
+GNOME desktop environment. This conflict must be resolved outside
+of Emacs."
+  :type '(key)
+  :group 'ceamx)
+
+(defcustom ceamx-mode-specific-arm-key "m"
+  "Key sequence for major-mode-specific leader arm maps, relative to leader."
+  :type '(key)
+  :group 'ceamx)
+
+;;
+;;; Keymaps
+
+(provide 'config-keys)
+;;; config-keys.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-keys.el
+;;; init-keys.el --- Keybindings -*- lexical-binding: t -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;  Keybindings configuration.
+
+;; TODO: <https://github.com/jwiegley/dot-emacs/blob/master/init.org#smart-newline>
+;; TODO: <https://github.com/ainame/smart-newline.el/tree/c50ab035839b307c66d439083b6761cb7db5e972>
+
+;;; Code:
+
+(require 'config-env)
+(require 'lib-common)
+(require 'lib-keys)
+
+;; FIXME: move to bindings file
+
+;; Common system hotkeys, complicated for cross-platform usability.
+;;
+;; "C-S" prefix is inspired by the use of this mod combo in terminals, where
+;; `C-c' for example would kill the current process.
+(define-keymap :keymap (current-global-map)
+  "C-S-c" #'kill-ring-save
+  "C-S-v" #'yank
+  "C-S-x" #'kill-region)
+
+;; FIXME: move to bindings file
+;; macOS: Remap modifier keys.
+(when (and +sys-mac-p (display-graphic-p))
+  (setopt mac-control-modifier 'control)
+  (setopt mac-option-modifier 'meta)
+  (setopt ns-option-modifier 'meta)
+  (setopt mac-command-modifier 'super)
+  (setopt ns-command-modifier 'super)
+  ;; Free up the right-side option key for character composition.
+  (setopt mac-right-option-modifier 'none)
+  (setopt ns-right-option-modifier 'none)
+  ;; Common system hotkeys.
+  (define-keymap :keymap (current-global-map)
+    "s-c" #'kill-ring-save
+    "s-v" #'yank
+    "s-x" #'kill-region
+    "s-q" #'save-buffers-kill-emacs))
+
+(use-feature! repeat
+  :config
+  ;; TODO: make sure this doesn't have some unintended consequences
+  (setopt repeat-exit-key "ESC")
+  (repeat-mode 1))
+
+;;; free-keys :: <https://github.com/Fuco1/free-keys>
+
+;;  Show free keybindings for modkeys or prefixes.
+
+;; > If called with prefix argument C-u, you can specify a prefix map to be
+;; > used, such as C-c or C-c C-x (these are specified as a string).
+
+(use-package free-keys
+  :defer t
+  :commands (free-keys))
+
+(provide 'init-keys)
+;;; init-keys.el ends here
+#+end_src
+
+
+
+*** Meow modal keybindings
+
+#+begin_src emacs-lisp :tangle lisp/init-keys-meow.el
+;;; init-keys-meow.el --- Meow support               -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; TODO: <https://github.com/meow-edit/meow/discussions/368#discussioncomment-4219587>
+
+;;; Code:
+
+(require 'lib-common)
+(require 'lib-keys-meow)
+
+(use-package meow
+  :demand t
+  :after (which-key)
+  :commands (meow-global-mode
+              meow-insert-exit)
+  :autoload (meow-normal-mode
+              meow-leader-define-key
+              meow-motion-overwrite-define-key
+              meow-normal-define-key)
+  :defines (meow-cheatsheet-layout-qwerty)
+
+  :init
+  ;; TODO: necessary? i don't think so
+  (require 'meow)
+
+  (meow-leader-define-key
+    ;; SPC j/k will run the original command in MOTION state.
+    '("j" . "H-j")
+    '("k" . "H-k")
+
+    ;; Use SPC (0-9) for digit arguments.
+    '("1" . meow-digit-argument)
+    '("2" . meow-digit-argument)
+    '("3" . meow-digit-argument)
+    '("4" . meow-digit-argument)
+    '("5" . meow-digit-argument)
+    '("6" . meow-digit-argument)
+    '("7" . meow-digit-argument)
+    '("8" . meow-digit-argument)
+    '("9" . meow-digit-argument)
+    '("0" . meow-digit-argument)
+    '("/" . meow-keypad-describe-key)
+    '("?" . meow-cheatsheet))
+
+  (meow-motion-overwrite-define-key
+    '("j" . meow-next)
+    '("k" . meow-prev)
+    '("<escape>" . ignore))
+
+  (noop!
+    ;; TODO: instead, because meow key definer syntax sucks:
+    ;;
+    ;; see `meow-keymap-alist' for available states (or use the lookup logic
+    ;; from `meow-define-keys': (alist-get state meow-keymap-alist)
+    (define-keymap :keymap meow-insert-state-keymap
+      ;; etc.
+      "0" #'meow-expand-0))
+
+  (meow-normal-define-key
+    '("0" . meow-expand-0)
+    '("9" . meow-expand-9)
+    '("8" . meow-expand-8)
+    '("7" . meow-expand-7)
+    '("6" . meow-expand-6)
+    '("5" . meow-expand-5)
+    '("4" . meow-expand-4)
+    '("3" . meow-expand-3)
+    '("2" . meow-expand-2)
+    '("1" . meow-expand-1)
+    '("-" . negative-argument)
+    '(";" . meow-reverse)
+    '("," . meow-inner-of-thing)
+    '("." . meow-bounds-of-thing)
+    '("[" . meow-beginning-of-thing)
+    '("]" . meow-end-of-thing)
+    '("a" . meow-append)
+    '("A" . meow-open-below)
+    '("b" . meow-back-word)
+    '("B" . meow-back-symbol)
+    '("c" . meow-change-save)           ; default: `meow-change'
+    '("d" . meow-delete)
+    '("D" . meow-backward-delete)
+    '("e" . meow-next-word)
+    '("E" . meow-next-symbol)
+    '("f" . meow-find)
+    '("g" . meow-cancel-selection)
+    '("G" . meow-grab)
+    '("h" . meow-left)
+    '("H" . meow-left-expand)
+    '("i" . meow-insert)
+    '("I" . meow-open-above)
+    '("j" . meow-next)
+    '("J" . meow-next-expand)
+    '("k" . meow-prev)
+    '("K" . meow-prev-expand)
+    '("l" . meow-right)
+    '("L" . meow-right-expand)
+    '("m" . meow-join)
+    '("n" . meow-search)
+    '("o" . meow-block)
+    '("O" . meow-to-block)
+    '("p" . meow-yank)
+    '("q" . meow-quit)
+    ;; FIXME: duplicated with "X" binding
+    '("Q" . meow-goto-line)
+    '("r" . meow-replace)
+    '("R" . meow-swap-grab)
+    '("s" . meow-kill)
+    '("t" . meow-till)
+    '("T" . meow-till-expand)           ; custom addition
+    '("u" . meow-undo)
+    '("U" . meow-undo-in-selection)
+    '("v" . meow-visit)
+    '("w" . meow-mark-word)
+    '("W" . meow-mark-symbol)
+    '("x" . meow-line)
+    ;; FIXME: duplicated with "Q" binding
+    '("X" . meow-goto-line)
+    '("y" . meow-save)
+    '("Y" . meow-sync-grab)
+    ;; There's no documentation, but this will essentially return to the
+    ;; original position prior to beginning the selection.
+    '("z" . meow-pop-selection)
+    ;; TODO: no idea what the difference is at a glance, no docs
+    ;; '("Z" . meow-pop-all-selection)    ; custom addition
+    '("'" . repeat)
+    '("<escape>" . ignore)
+    '(":" . avy-goto-char-2))
+
+  ;; NOTE: This is not a customizable variable, although it is required for meow.
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+
+  :config
+
+  (pushnew! meow-mode-state-list
+    ;; shells
+    ;; TODO: use `ceamx-repl-modes-list'
+    '(comint-mode . insert)
+    '(eat-mode . insert)
+    '(eshell-mode . insert)
+
+    ;; writing
+    '(diary-mode . normal)
+
+    ;; read-only
+    ;; TODO: how to lock state? i.e. dont allow switching
+    ;; TODO: set for all read-only buffers?
+    '(Info-mode . motion)
+    '(read-only-mode . motion)
+    '(help-mode . motion))
+
+  ;; Avoid the default binding for `meow-keypad' in motion state.
+  ;; (keymap-unset meow-motion-state-keymap "SPC" t)
+
+  ;; Because I'm still getting the hang of meow again. I'm not fast enough to
+  ;; remember exactly what to do. Once this delay feels too long, then it can be
+  ;; changed.
+  (setopt meow-expand-hint-remove-delay 4.0)
+
+  ;; There are slight differences between these two, take your pick.
+  ;; Default is nil.
+  (setopt meow-keypad-leader-dispatch nil)
+  ;; (setopt meow-keypad-leader-dispatch "C-c")
+
+  ;; Improve state indicator appearance (e.g. in modeline).
+  (setopt meow-replace-state-name-list
+    '( (normal . "🅝")
+       (beacon . "🅑")
+       (insert . "🅘")
+       (motion . "🅜")
+       (keypad . "🅚")))
+
+  ;; <https://github.com/meow-edit/meow/issues/543>
+  (setopt meow-use-clipboard t)
+
+  (meow-pair! 'angle "a" "<" ">")
+
+  (ceamx-meow-bind-thing 'round "(")
+  (ceamx-meow-bind-thing 'round ")")
+  (ceamx-meow-bind-thing 'curly "{")
+  (ceamx-meow-bind-thing 'curly "}")
+
+  ;; TODO: i don't really thing i want to do this, but here for reference
+  ;; (ceamx-meow-unbind-thing "r")
+
+  ;; Don't pass through keys that aren't in keypad.
+  (setopt meow-keypad-self-insert-undefined nil)
+
+  ;; Activate Meow.
+  (meow-global-mode 1))
+
+(elpaca-wait)
+
+(provide 'init-keys-meow)
+;;; init-keys-meow.el ends here
+#+end_src
+
+
+*** Which-Key
+
+#+begin_src emacs-lisp :tangle lisp/init-keys-which-key.el
+;;; init-keys-which-key.el --- Support for which-key  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local, help
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; This configuration file is intended to be loaded after every keybinding is in
+;; place, in an effort to help these packages reference the final state of all
+;; keybindings.
+
+;; For example, `which-key' does not seem to like the way that `meow' handles
+;; keybindings -- see the documentation for
+;; `meow-keypad-describe-keymap-function' -- displaying only
+;; `which-key-prefix-prefix'. `general.el' behaves similarly, from what I can
+;; recall. I suspect this has something to do with key translations, a subject
+;; with which I am currently unfamiliar.
+
+;; 2024-01-13 UPDATE: My previous note about `which-key' and `meow' interaction
+;; makes me wonder if in fact the behavior I was describing was actually Meow's
+;; broken `which-key'-like popups. Still, I have seen the described behavior
+;; from both packages.
+
+;; I would much rather have some slightly-more-manual method of compiling these
+;; "cheatsheets" for specific maps in a hydra-like UI. But I don't want to
+;; entirely sacrifice the usage of builtin keymap functionality for the
+;; abstractions of hydra. Perhaps there's a way to shadow the keymaps similarly
+;; to what `which-key' does, maybe? (i'm guessing) but with more control?
+
+;;; Code:
+
+(use-package which-key
+  :demand t
+  :blackout t
+  :commands (which-key-mode
+              which-key-setup-side-window-right-bottom)
+
+  :init
+  ;; Activate after all other keybinding stuff (hopefully).
+  (add-hook 'after-init-hook #'which-key-mode)
+
+  :config
+
+  ;; Determine whether keys have been rebound, considering the active keymaps.
+  ;; NOTE: Does not seem to work reliably -- see Commentary section above.
+  (setopt which-key-compute-remaps t)
+  (setopt which-key-idle-delay 1.0)
+
+  ;; Sort non-prefix-keys above prefix keys.
+  (setopt which-key-sort-order 'which-key-prefix-then-key-order)
+
+  (setopt which-key-sort-uppercase-first nil)
+
+  ;; The default (0) is difficult to read.
+  (setopt which-key-add-column-padding 2)
+
+  ;; FIXME: no effect?
+  (setopt which-key-show-remaining-keys t))
+
+(provide 'init-keys-which-key)
+;;; init-keys-which-key.el ends here
+#+end_src
+
+
+** Completion
+
+#+begin_src emacs-lisp :tangle lisp/config-completion.el
+;;; config-completion.el --- Completion-at-point settings  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(defcustom ceamx-completion-at-point-ui 'corfu
+  "Choose `completion-at-point' UI between `corfu' or `lsp-bridge'."
+  :group 'ceamx
+  :type '(choice :tag "completion-at-point user interface"
+           (const :tag "The `corfu' module" corfu)
+           (const :tag "The `lsp-bridge' module" lsp-bridge)))
+
+;; TODO: implement? should move to sleection
+;; (defcustom ceamx-completion-ui 'vertico
+;;   "Choose minibuffer completion UI between `mct' or `vertico'."
+;;   :group 'ceamx
+;;   :type '(choice :tag "Minibuffer user interface"
+;;                  (const :tag "The `mct' module" mct)
+;;                  (const :tag "The `vertico' module" vertico)))
+
+
+(provide 'config-completion)
+;;; config-completion.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-completion.el
+;;; init-completion.el --- Completion interfaces -*- lexical-binding: t; -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;  Configuration for completion-at-point.
+
+;; TODO: Some interesting maybe-useful stuff in here: <https://github.com/doomemacs/doomemacs/pull/7002/files>
+
+;; - <https://github.com/minad/corfu>
+;; - <https://github.com/minad/cape>
+;; - <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
+
+;;; Code:
+
+(require 'lib-completion)
+(require 'lib-common)
+
+;; Always resize mini-windows to fit their contents.
+(setopt resize-mini-windows t)
+
+;; Allow answering yes/no questions with y/n.
+(setopt read-answer-short t)
+
+;; TAB cycle if there are only few candidates
+(setopt completion-cycle-threshold 3)
+
+;; Hide commands in M-x which do not apply to the current mode.
+;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+(setopt read-extended-command-predicate #'command-completion-default-include-p)
+
+;; Don't let `completion-at-point' interfere with indentation.
+(setopt tab-always-indent t)
+
+;; `completion-at-point' is often bound to M-TAB, but that conflicts with OS behavior.
+;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
+(keymap-global-set "C-S-SPC" #'completion-at-point)
+
+(after! [evil]
+  ;; Since we now know `evil' is loaded, it's reasonable to overwrite the mark binding.
+  (keymap-set evil-insert-state-map "C-SPC" #'completion-at-point)
+  ;; But we don't want to lose mark capabilities entirely.
+  (keymap-set evil-insert-state-map "C-S-SPC" #'set-mark-command))
+
+;; FIXME: evil escape does not quit completion when `evil-disable-insert-state-bindings' is t
+;; <https://github.com/emacs-evil/evil-collection/issues/676>
+(use-package corfu
+  ;; FIXME: :elpaca (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
+
+  ;; Enable Corfu only for certain modes.
+  :hook ((prog-mode . corfu-mode))
+
+  :config
+  ;; Stay out of my way!
+  (setopt corfu-quit-at-boundary t)
+  (setopt corfu-quit-no-match 'separator)
+  ;; (setopt corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (setopt corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  ;; (setopt corfu-scroll-margin 5)        ;; Use scroll margin
+  (setopt corfu-cycle t)
+  (setopt corfu-auto t)
+  (setopt corfu-auto-delay 0.2)
+  (setopt corfu-separator ?\s)
+  ;; TODO: maybe enable when invoked manually?
+  (setopt corfu-preview-current nil))
+
+;;; `corfu-terminal' :: <https://codeberg.org/akib/emacs-corfu-terminal>
+;;  Corfu-endorsed solution to making it usable in terminal.
+;;  See also `popon', the utility library powering the interface.
+(use-package corfu-terminal
+  ;; FIXME: :elpaca (corfu-terminal :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
+  :unless (display-graphic-p)
+  :after (popon corfu)
+  :config
+  (corfu-terminal-mode +1))
+
+;;; `corfu-doc-terminal' :: <https://codeberg.org/akib/emacs-corfu-doc-terminal>
+;;  Support for completion candidate documentation flyouts in terminal.
+;;
+;;  FIXME: missing `corfu-doc' dependency -- that package was integrated into
+;;  corfu core, but still not available. since this is a non-essential
+;;  enhancement, it will probably be removed.
+;;
+;; (use-package corfu-doc-terminal
+;;   ;; FIXME: :elpaca (corfu-doc-terminal :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git")
+;;   :after (corfu-terminal)
+;;   :unless (display-graphic-p)
+;;   :config
+;;   (corfu-doc-terminal-mode +1))
+
+;;; kind-icon :: <https://github.com/jdtsmith/kind-icon>
+
+;; Colorful icons for completion-at-point interfaces
+
+(use-package kind-icon
+  :demand t
+  :after (svg-lib corfu)
+  :commands (kind-icon-reset-cache)
+  :autoload (kind-icon-margin-formatter)
+
+  :init
+  ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+  (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache)
+
+  :config
+  (defvar corfu-margin-formatters)
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
+
+  (setopt kind-icon-use-icons (display-graphic-p))
+  (setopt kind-icon-blend-background t)
+  (setopt kind-icon-default-face 'corfu-default))
+
+(use-feature! dabbrev
+  :config
+  ;; Swap M-/ and C-M-/
+  (keymap-global-set "M-/"    #'dabbrev-completion)
+  (keymap-global-set "C-M-/"  #'dabbrev-expand)
+
+  ;; TODO: look into using `rx' for easier building of regexps
+  (setopt dabbrev-ignored-buffer-regexps
+          '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+
+(use-package cape
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  ;;(add-to-list 'completion-at-point-functions #'cape-history)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
+  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+
+  :config
+  ;; FIXME: bind to a real prefix map
+  (keymap-global-set "M-p p" #'completion-at-point) ;; capf
+  (keymap-global-set "M-p t" #'complete-tag)        ;; etags
+  (keymap-global-set "M-p d" #'cape-dabbrev)        ;; or dabbrev-completion
+  (keymap-global-set "M-p h" #'cape-history)
+  (keymap-global-set "M-p f" #'cape-file)
+  (keymap-global-set "M-p k" #'cape-keyword)
+  (keymap-global-set "M-p s" #'cape-elisp-symbol)
+  (keymap-global-set "M-p a" #'cape-abbrev)
+  (keymap-global-set "M-p l" #'cape-line)
+  (keymap-global-set "M-p w" #'cape-dict)
+  ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
+  (keymap-global-set "M-p r" #'cape-rfc1345))
+
+(provide 'init-completion)
+;;; init-completion.el ends here
+#+end_src
+
+** Embark
+
+#+begin_src emacs-lisp :tangle lisp/init-embark.el
+;;; init-embark.el --- Configuration for Embark  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; "Emacs Mini-Buffer Actions Rooted in Keymaps"
+;;
+;;  <https://github.com/oantolin/embark>
+
+;;; Code:
+
+(use-package embark
+  :commands (embark-act
+             embark-dwim
+             embark-export
+             embark-prefix-help-command)
+  :init
+  ;; Replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none))))
+
+  :bind
+  (("C-;" . embark-act)
+   ("M-." . embark-dwim)))
+
+(provide 'init-embark)
+;;; init-embark.el ends here
+#+end_src
+** Projects
+
+#+begin_src emacs-lisp :tangle lisp/config-projects.el
+;;; config-projects.el --- Project settings          -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+
+(require 'ceamx-paths)
+
+(defvar ceamx-projects-dir
+  (file-name-as-directory
+   (or (getenv "XDG_PROJECTS_DIR")
+       (concat ceamx-home-dir "Developer")))
+  "The root directory for projects.")
+
+(provide 'config-projects)
+;;; config-projects.el ends here
+#+end_src
+
+
+** Checkers (Flycheck + Flymake)
+
+#+begin_src emacs-lisp :tangle lisp/init-flycheck.el
+;;; init-flycheck.el --- Flycheck support            -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; <https://www.flycheck.org/en/latest/index.html>
+
+;; <https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
+
+;;; Code:
+
+(require 'config-keys)
+
+(require 'lib-common)
+(require 'lib-keys)
+
+(use-package flycheck
+  :commands (global-flycheck-mode flycheck-mode)
+  :defines (flycheck-emacs-lisp-load-path
+             flycheck-check-syntax-automatically
+             flycheck-global-modes)
+
+  :init
+  (setopt flycheck-emacs-lisp-load-path 'inherit)
+  ;; The default includes `newline', which would happen too frequently.
+  (setopt flycheck-check-syntax-automatically '(save idle-change mode-enabled))
+
+  (defmap! ceamx-toggle-map "f" #'flycheck-mode)
+
+  (add-hook 'ceamx-after-init-hook #'global-flycheck-mode)
+
+  :config
+
+  (setopt flycheck-idle-change-delay 1.0)
+  (setopt flycheck-display-errors-delay 0.25)
+  (setopt flycheck-buffer-switch-check-intermediate-buffers t))
+
+;;; Enable Flycheck integration with Consult via the `consult-flycheck' extension
+
+(use-package consult-flycheck
+  :after (consult flycheck)
+  :commands (consult-flycheck)
+  :init
+  (keymap-global-set "M-g f" #'consult-flycheck))
+
+(provide 'init-flycheck)
+;;; init-flycheck.el ends here
+#+end_src
+
+
+** Language Support
+
+*** General Programming (=prog-mode= derived modes)
+
+*** General LISPs
+
+#+begin_src emacs-lisp :tangle lisp/config-lisp.el
+;;; config-lisp.el --- Lispy variable definitions  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Definitions relating to Emacs Lisp and other supported lispy languages.
+
+;; Support indicated by `ceamx-lisp-modes-list'.
+
+;;; Code:
+
+(defvar ceamx-lisp-modes-list '(emacs-lisp-mode
+                                ielm-mode
+                                lisp-mode
+                                inferior-lisp-mode
+                                lisp-interaction-mode)
+  "Supported Lisp modes.")
+
+(defvar +emacs-lisp-outline-regexp "[ \t]*;;;\\(;*\\**\\) [^ \t\n]"
+  "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
+This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
+
+(provide 'config-lisp)
+;;; config-lisp.el ends here
+#+end_src
+
+*** Emacs Lisp
+
+#+begin_src emacs-lisp :tangle lisp/init-lang-elisp.el
+;;; init-lang-elisp.el --- Emacs Lisp development support  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local, lisp
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+
+;;; Requirements
+
+(require 'config-lisp)
+
+(require 'lib-common)
+(require 'lib-keys)
+(require 'lib-lisp)
+
+(autoload-macro! 'elpaca "elpaca")
+
+(declare-function blackout "blackout")
+
+;;; Hooks
+
+(defun ceamx-emacs-lisp-init ()
+  "Sensible defaults for `emacs-lisp-mode'."
+  (ceamx-lisp-init)
+  (eldoc-mode 1)
+  ;; TODO: do we really want this for `ielm' and other derived modes as well?
+  (blackout "EL"))
+
+(add-hook 'emacs-lisp-mode-hook #'ceamx-emacs-lisp-init)
+(add-hook 'ielm-mode-hook #'ceamx-emacs-lisp-init)
+
+(when (boundp 'eval-expression-minibuffer-setup-hook)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
+
+;;; Advices
+
+;; via <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
+(def-advice! +emacs-lisp-append-value-to-eldoc-a (fn sym)
+  :around #'elisp-get-var-docstring
+  "Display variable value next to documentation in eldoc."
+  (when-let (ret (funcall fn sym))
+    (if (boundp sym)
+      (concat ret " "
+        (let* ((truncated " [...]")
+                (print-escape-newlines t)
+                (str (symbol-value sym))
+                (str (prin1-to-string str))
+                (limit (- (frame-width) (length ret) (length truncated) 1)))
+          (format (format "%%0.%ds%%s" (max limit 0))
+            (propertize str 'face 'warning)
+            (if (< (length str) limit) "" truncated))))
+      ret)))
+
+;;; Keybinds
+
+(keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
+
+(keys! emacs-lisp-mode-map
+  "C-c C-f" nil                         ; `byte-compile-current-file'
+  "C-c C-b" nil                         ; `elisp-byte-compile-buffer'
+
+  "C-c C-c" #'eval-last-sexp
+  "C-S-t" #'transpose-sexps)
+
+;;; Packages
+
+;;;; `eros' :: <https://github.com/xiongtx/eros>
+
+;;  Evaluation Result OverlayS for Emacs Lisp
+
+(use-package eros
+  :commands (eros-mode eros-eval-last-sexp)
+  :init
+  (add-hook 'emacs-lisp-mode-hook #'eros-mode)
+  (keymap-set emacs-lisp-mode-map "<remap> <eval-last-sexp>" #'eros-eval-last-sexp)
+
+  (use-feature! lispy
+    :autoload (lispy-define-key)
+    :config
+    (def-hook! +lispy-use-eros-eval-h () 'lispy-mode-hook
+      "Use `eros-eval-last-sexp' in place of `lispy-eval' bindings."
+      ;; FIXME: there is currently no way to hide lispy-eval output.
+      ;;        nil results in an error.
+      ;;        because of this, output is duplicated in the minibuffer and the
+      ;;        eros overlay...
+      ;;
+      ;; (setopt lispy-eval-display-style nil)
+      (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
+
+;;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
+
+;;  discover elisp functions that do what you want,
+;;  brought to you by enumerative program synthesis
+
+(use-package suggest
+  :commands (suggest)
+  :init
+  (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
+
+;;;; `macrostep' :: <https://github.com/emacsorphanage/macrostep>
+
+;;  "interactive macro-expander for Emacs"
+
+(use-package macrostep
+  :commands (macrostep-expand)
+
+  :preface
+  ;; <https://github.com/joddie/macrostep/issues/11>
+  ;; <https://github.com/emacsorphanage/macrostep/issues/8>
+  (defun ceamx/macrostep-expand ()
+    "Wrapper for `macrostep-expand' providing workaround for errors.
+The original function fails in the presence of whitespace after a sexp."
+    (interactive)
+    (when (and (= ?\n (char-after))
+            (= (point) (cdr (bounds-of-thing-at-point 'sexp))))
+      (backward-char))
+    (macrostep-expand))
+
+  :init
+  (keymap-set emacs-lisp-mode-map "C-c x" #'ceamx/macrostep-expand))
+
+;;; Install `xr' to convert string regexps to `rx' forms
+
+;; <https://github.com/mattiase/xr>
+
+;; TODO: keybindings...
+
+(elpaca xr)
+
+(provide 'init-lang-elisp)
+;;; init-lang-elisp.el ends here
+#+end_src
+
+
+*** Eglot
+
+#+begin_src emacs-lisp :tangle lisp/init-eglot.el
+;;; init-eglot.el --- Eglot support                  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Configure Eglot.
+
+;; TODO: Consider implementing Doom's approach to handling performance.
+;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/modules/tools/lsp/config.el>
+
+;;; Code:
+
+;;; Requirements
+
+(require 'ceamx-keymaps)
+
+(require 'lib-common)
+(require 'lib-keys)
+
+(autoload-macro! 'elpaca "elpaca")
+
+;;; Configure
+
+(setopt eglot-sync-connect 1)
+(setopt eglot-autoshutdown t)
+(setopt eglot-send-changes-idle-time 0.5)
+
+;; Disable events buffer, which poses performance issues over time as the
+;; buffer grows in a longer-running Emacs instance.
+(setopt eglot-events-buffer-size 0)
+
+;; Prevent frequent focus-stealing.
+(setopt eglot-auto-display-help-buffer nil)
+
+(keys! ceamx-code-map
+  "a" '("action.." . eglot-code-actions)
+  "r" '("rename..." . eglot-rename))
+
+(after! 'eglot
+  (defvar eglot-server-programs)
+
+  (def-advice! +eglot--ensure-available-mode (fn)
+    :around #'eglot-ensure
+    "Run `eglot-ensure' in supported modes."
+    (when (alist-get major-mode eglot-server-programs nil nil
+            (lambda (modes key)
+              (if (listp modes)
+                (member key modes)
+                (eq key modes))))
+      (funcall fn)))
+
+  ;; Register eglot help buffers as popup windows.
+  (after! [popper]
+    (defvar popper-reference-buffers)
+    (add-to-list 'popper-reference-buffers "^\\*eglot-help")))
+
+;;; Configure Flycheck integration
+
+(elpaca flycheck-eglot
+  (add-hook 'eglot-managed-mode-hook #'flycheck-eglot-mode))
+
+;;; `consult-eglot' :: <https://github.com/mohkale/consult-eglot>
+
+(elpaca consult-eglot
+  (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
+
+(provide 'init-eglot)
+;;; init-eglot.el ends here
+#+end_src
+
+*** Data Formats (XML, CSV...)
+
+#+begin_src emacs-lisp :tangle lisp/init-lang-data.el
+;;; init-lang-data.el --- Data format support        -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: data, local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Support for working with data files like CSV and XML.
+
+;;; Code:
+
+(require 'lib-common)
+
+(use-feature! nxml-mode
+  :mode "\\.p\\(?:list\\|om\\)\\'"      ; plist, pom
+  :mode "\\.xs\\(?:d\\|lt\\)\\'"        ; xslt, xsd
+  :mode "\\.rss\\'"
+
+  :config
+  (setq nxml-slash-auto-complete-flag t)
+  (setq nxml-auto-insert-xml-declaration-flag t)
+
+  (setq-hook! 'nxml-mode-hook tab-width nxml-child-indent))
+
+(use-package csv-mode
+  :commands ( csv-align-fields
+              csv-unalign-fields
+              csv-sort-fields
+              csv-sort-numeric-fields
+              csv-kill-fields
+              csv-transpose)
+  :config
+  (define-keymap :keymap csv-mode-map
+    "a" #'csv-align-fields
+    "u" #'csv-unalign-fields
+    "s" #'csv-sort-fields
+    "S" #'csv-sort-numeric-fields
+    "k" #'csv-kill-fields
+    "t" #'csv-transpose))
+
+
+(provide 'init-lang-data)
+;;; init-lang-data.el ends here
+#+end_src
+
+
+
+***
+** Notetaking
+
+#+begin_src emacs-lisp :tangle lisp/config-notes.el
+;;; config-notes.el --- Notes settings               -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+
+(require 'f)
+
+(require 'ceamx-paths)
+
+(defvar ceamx-notes-dir
+  (f-join ceamx-home-dir "Documents/notes")
+  "Base directory for note storage.")
+
+(defvar ceamx-agenda-dir
+  (f-join ceamx-notes-dir "g2d"))
+
+(defvar ceamx-dailies-dir
+  (f-join ceamx-notes-dir "daily"))
+
+(defvar ceamx-notes-default-dir
+  (f-join ceamx-notes-dir "default"))
+
+(defvar ceamx-journal-dir
+  (f-join ceamx-notes-dir "journal"))
+
+(defvar ceamx-work-notes-dir
+  (f-join ceamx-notes-dir "work"))
+
+(provide 'config-notes)
+;;; config-notes.el ends here
+#+end_src
+
+** Org-Mode
+
+#+begin_src emacs-lisp :tangle lisp/config-org.el
+;;; config-org.el --- org-mode variables             -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords:
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(require 'config-notes)
+
+(defvar ceamx-org-capture-default-file
+  (expand-file-name
+    (concat (file-name-as-directory ceamx-agenda-dir) "inbox.org"))
+  "Path to default inbox file for new `org-capture' entries.")
+
+(provide 'config-org)
+;;; config-org.el ends here
+#+end_src
+
+** Controls
+
+#+begin_src emacs-lisp :tangle lisp/init-controls.el
+;;; init-controls.el --- Controlling various subsystems  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; " Is Control controlled by its need to control? "
+
+;;; Code:
+
+;;; Requirements
+
+(require 'ceamx-keymaps)
+
+(require 'lib-keys)
+
+;;; Launch
+
+(keymap-global-set "C-c C-o" '("[ Launch ]" . ceamx-launch-map))
+(keymap-global-set "C-c o" '("[ Launch ]" . ceamx-launch-map))
+
+;; (define-keymap :keymap ceamx-launch-map)
+
+;;; Toggle
+
+(keymap-global-set "C-c C-t" '("[ Toggle ]" . ceamx-toggle-map))
+(keymap-global-set "C-c t" '("[ Toggle ]" . ceamx-toggle-map))
+
+(defmap! ceamx-toggle-map
+  "l" #'display-line-numbers-mode
+  "w" '("side windows" . window-toggle-side-windows))
+
+
+(provide 'init-controls)
+;;; init-controls.el ends here
+#+end_src
+
+** Dashboard
+
+#+begin_src emacs-lisp :tangle lisp/init-dashboard.el
+;;; init-dashboard.el --- Dashboard support  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; <https://github.com/emacs-dashboard/emacs-dashboard>
+
+;;; Code:
+
+(require 'ceamx-paths)
+
+(require 'lib-common)
+
+(use-package dashboard
+  :ensure t
+  :demand t
+  :after (nerd-icons)
+
+  :preface
+  (setopt initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+
+  :init
+  (add-hook 'ceamx-after-init-hook #'dashboard-insert-startupify-lists)
+  (add-hook 'ceamx-after-init-hook #'dashboard-initialize)
+  ;; HACK: Work around <https://github.com/emacs-dashboard/emacs-dashboard/issues/499>
+  ;; (dashboard-setup-startup-hook)
+  (add-hook 'window-size-change-functions #'dashboard-resize-on-hook 100)
+  (add-hook 'window-setup-hook #'dashboard-resize-on-hook)
+
+  :config
+  (setopt dashboard-banner-logo-title "C E A M X")
+  (setopt dashboard-startup-banner 'official)
+  (setopt dashboard-projects-backend 'project-el)
+  (setopt dashboard-center-content t)
+  (setopt dashboard-display-icons-p t)
+  (setopt dashboard-icon-type 'nerd-icons)
+  ;; NOTE: This value results in a warning because `dashboard-items' specifies an
+  ;; incorrect `:type'. The value should be an alist, not a list of alists. At
+  ;; the time of writing, the value is copied directly from the package README.
+  ;; <https://github.com/emacs-dashboard/emacs-dashboard/issues/489>
+  (setopt dashboard-items '((recents  . 5)
+                             (bookmarks . 5)
+                             (projects . 5)
+                             (agenda . 5)
+                             (registers . 5))))
+
+(provide 'init-dashboard)
+;;; init-dashboard.el ends here
+#+end_src
+
+** Dired, the Directory Editor
+
+#+begin_src emacs-lisp :tangle lisp/init-dired.el
+;;; init-dired.el --- Dired -*- lexical-binding: t -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;  Configuration for Dired and extensions.
+
+;; FIXME: Hide directories like ".git" and ".direnv" by default...
+;;        eza/fd/rg/etc. do this by default but Dired should prob use GNU ls
+
+;;; Code:
+
+(require 'lib-common)
+
+;;; Dired, the Directory Editor
+
+(use-feature! dired
+  :commands (dired-omit-mode)
+
+  :config
+  (setopt dired-auto-revert-buffer t)
+  (setopt dired-dwim-target t)
+  (setopt dired-kill-when-opening-new-dired-buffer t)
+  (setopt dired-listing-switches "-al --group-directories-first")
+  (setopt dired-mouse-drag-files t)
+
+  ;; TODO: does this really belong here?
+  (setopt mouse-drag-and-drop-region-cross-program t)
+
+  (define-keymap :keymap dired-mode-map
+    "M-p" #'dired-up-directory))
+
+;;; Provide Dired with polished interface and feature enhancements with `dirvish'
+
+;;  <https://github.com/alexluigit/dirvish>
+;;  <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#Sample-config>
+
+(use-package dirvish
+  :commands (dirvish-override-dired-mode
+              dirvish-peek-mode
+              dirvish-side-follow-mode)
+
+  :init
+  (after! 'dired
+    (dirvish-override-dired-mode))
+
+  ;; Omit "uninteresting" files.
+  ;; See `dired-omit-files', `dired-omit-lines', `dired-omit-extensions'
+  (add-hook 'dired-mode-hook #'dired-omit-mode)
+
+  :config
+  (dirvish-peek-mode)                   ; Preview minibuffer file selections
+  (dirvish-side-follow-mode)
+
+  ;; TODO: use consts; there's no straightforward way to access these values
+  ;; without custom elisp afaik
+  ;; FIXME: ensure directories exist!
+  (setopt dirvish-quick-access-entries
+    '(("c" "~/Documents/cheatsheets/" "Cheatsheets")
+       ("D" "~/Downloads/" "Downloads")
+       ("r" "~/Documents/reference" "Reference")
+       ("n" "~/Documents/notes/" "Notes")))
+
+  (setopt dirvish-mode-line-format
+    '( :left (sort symlink)
+       :right (omit yank index)))
+
+  ;; previous value, in case:
+  ;; (setopt dirvish-attributes '(all-the-icons file-time file-size collapse subtree-state vc-state))
+  (setopt dirvish-attributes
+    '(vc-state
+       subtree-state
+       nerd-icons
+       collapse
+       file-time
+       file-size))
+  (setopt dirvish-subtree-state-style 'nerd)
+
+  ;; <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#mouse-settings>
+  (def-hook! ceamx--dirvish-no-mouse-follows-link (&rest _)
+    'dirvish-find-entry-hook
+    "Disable `mouse-1-click-follows-link' in `dirvish' buffers."
+    (setopt mouse-1-click-follows-link nil))
+
+  (define-keymap :keymap dirvish-mode-map
+    ;; NOTE: `mouse-1-click-follows-link' must be nil (see above)
+    "<mouse-1>" #'dirvish-subtree-toggle-or-open
+    "<mouse-2>" #'dired-mouse-find-file-other-window
+    "<mouse-3>" #'dired-mouse-find-file
+    "a" #'dirvish-quick-access
+    "f" #'dirvish-file-info-menu
+    "y" #'dirvish-yank-menu
+    "N" #'dirvish-narrow
+    "^" #'dirvish-history-last
+    "h" #'dirvish-history-jump          ; remapped `describe-mode'
+    "s" #'dirvish-quicksort             ; remapped `dired-sort-toggle-or-edit'
+    "v" #'dirvish-vc-menu               ; remapped `dired-view-file'
+    "q" #'dirvish-quit
+    "TAB" #'dirvish-subtree-toggle
+    "M-f" #'dirvish-history-go-forward
+    "M-b" #'dirvish-history-go-backward
+    "M-l" #'dirvish-ls-switches-menu
+    "M-m" #'dirvish-mark-menu
+    "M-t" #'dirvish-layout-toggle
+    "M-s" #'dirvish-setup-menu
+    "M-e" #'dirvish-emerge-menu
+    "M-j" #'dirvish-fd-jump))
+
+;;; Provide addtional syntax highlighting for Dired with `diredfl'
+
+;; <https://github.com/purcell/diredfl>
+
+(use-package diredfl
+  :hook
+  ((dired-mode . diredfl-mode)
+    ;; highlight parent and directory preview as well
+    (dirvish-directory-view-mode . diredfl-mode))
+
+  :config
+  (set-face-attribute 'diredfl-dir-name nil :bold t))
+
+(provide 'init-dired)
+;;; init-dired.el ends here
+#+end_src
+
+**
+
+** Fun
+
+#+begin_src emacs-lisp :tangle lisp/init-fun.el
+;;; init-fun.el --- Configure the fun                -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; It's fun.
+
+;;; Code:
+
+(require 'lib-common)
+
+;;;; `zone' [builtin]
+
+;; <https://www.emacswiki.org/emacs/ZoneMode>
+
+(use-feature! zone
+  :autoload (zone-when-idle)
+  :defines (zone-timer)
+
+  :config
+  ;; TODO: verify
+  (def-hook! ceamx-zone-when-idle-h ()
+    'ceamx-emacs-startup-hook
+    "Zone out when idle.
+Return the new `zone' timer."
+    (zone-when-idle (* 60 10))))
+
+;; FIXME: broken: wrong type argument arrayp (for pgm arg)
+;;        (where did this even come from? emacswiki?)
+;; (defun zone-choose (pgm)
+;;   "Choose a PGM to run for `zone'."
+;;   (interactive
+;;     (list
+;;       (completing-read
+;;         "Program: "
+;;         (mapcar 'symbol-name zone-programs))))
+;;   (let ((zone-programs (list (intern pgm))))
+;;     (zone)))
+
+(provide 'init-fun)
+;;; init-fun.el ends here
+#+end_src
