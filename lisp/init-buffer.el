@@ -51,6 +51,12 @@
 ;;;;; Scrolling
 
   (setopt scroll-error-top-bottom t)
+  ;; (setopt scroll-preserve-screen-position t)
+  ;;(setopt scroll-conservatively 101)
+  ;;(setopt scroll-preserve-screen-position nil)
+
+  ;; Add a margin when scrolling vertically (or don't).
+  (setq-default scroll-margin 4)
 
   (global-keys!
     ;; The default bindings feel backwards to me.
@@ -129,8 +135,8 @@
     '(prog-mode-hook text-mode-hook)
     "Enable `outli-mode' conditionally, excluding some modes."
     (let ((exclude-modes '(emacs-lisp-mode))
-           (excludep (lambda (excluded-mode)
-                       (eq major-mode excluded-mode))))
+          (excludep (lambda (excluded-mode)
+                      (eq major-mode excluded-mode))))
       (unless (seq-some excludep exclude-modes)
         (outli-mode))))
 

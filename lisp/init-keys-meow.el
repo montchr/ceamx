@@ -31,11 +31,11 @@
   :demand t
   :after (which-key)
   :commands (meow-global-mode
-             meow-insert-exit)
+              meow-insert-exit)
   :autoload (meow-normal-mode
-             meow-leader-define-key
-             meow-motion-overwrite-define-key
-             meow-normal-define-key)
+              meow-leader-define-key
+              meow-motion-overwrite-define-key
+              meow-normal-define-key)
   :defines (meow-cheatsheet-layout-qwerty)
 
   :init
@@ -43,28 +43,28 @@
   (require 'meow)
 
   (meow-leader-define-key
-   ;; SPC j/k will run the original command in MOTION state.
-   '("j" . "H-j")
-   '("k" . "H-k")
+    ;; SPC j/k will run the original command in MOTION state.
+    '("j" . "H-j")
+    '("k" . "H-k")
 
-   ;; Use SPC (0-9) for digit arguments.
-   '("1" . meow-digit-argument)
-   '("2" . meow-digit-argument)
-   '("3" . meow-digit-argument)
-   '("4" . meow-digit-argument)
-   '("5" . meow-digit-argument)
-   '("6" . meow-digit-argument)
-   '("7" . meow-digit-argument)
-   '("8" . meow-digit-argument)
-   '("9" . meow-digit-argument)
-   '("0" . meow-digit-argument)
-   '("/" . meow-keypad-describe-key)
-   '("?" . meow-cheatsheet))
+    ;; Use SPC (0-9) for digit arguments.
+    '("1" . meow-digit-argument)
+    '("2" . meow-digit-argument)
+    '("3" . meow-digit-argument)
+    '("4" . meow-digit-argument)
+    '("5" . meow-digit-argument)
+    '("6" . meow-digit-argument)
+    '("7" . meow-digit-argument)
+    '("8" . meow-digit-argument)
+    '("9" . meow-digit-argument)
+    '("0" . meow-digit-argument)
+    '("/" . meow-keypad-describe-key)
+    '("?" . meow-cheatsheet))
 
   (meow-motion-overwrite-define-key
-   '("j" . meow-next)
-   '("k" . meow-prev)
-   '("<escape>" . ignore))
+    '("j" . meow-next)
+    '("k" . meow-prev)
+    '("<escape>" . ignore))
 
   (noop!
     ;; TODO: instead, because meow key definer syntax sucks:

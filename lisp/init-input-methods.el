@@ -41,18 +41,13 @@
 ;;; Mouse input
 
 (setopt mouse-yank-at-point t)
-(setopt scroll-conservatively 1)        ; or: 101
-(setopt scroll-preserve-screen-position t)
-
-;; Add a margin when scrolling vertically (or don't).
-(setq-default scroll-margin 0)
 
 ;; Avoid collision of mouse with point.
 (mouse-avoidance-mode 'exile)
 
 ;; "More performant rapid scrolling over unfontified regions. May cause brief
 ;; spells of inaccurate fontification immediately after scrolling."
-(setopt fast-but-imprecise-scrolling t)
+;;(setopt fast-but-imprecise-scrolling nil)
 
 (setopt use-file-dialog nil)
 (setopt use-dialog-box nil)

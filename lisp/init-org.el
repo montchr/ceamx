@@ -64,6 +64,7 @@
   :init
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
+
   (def-hook! +org-mode-init-keys-h () 'org-mode-hook
     "Adjust global keybindings in `org-mode' buffers."
     (keymap-global-set "M-g o" #'consult-org-heading))
@@ -79,7 +80,7 @@
   (setopt org-auto-align-tags nil)
   (setopt org-tags-column 0)
   (setopt org-catch-invisible-edits 'show-and-error)
-  (setopt org-special-ctrl-a/e t)
+  (setopt org-special-ctrl-a/e nil)
   (setopt org-insert-heading-respect-content t)
   ;; Indenting code blocks by default is unnecessary and confusing.
   (setopt org-edit-src-content-indentation 0)
@@ -90,7 +91,7 @@
   (setopt org-ellipsis "…")
   (setopt org-hide-emphasis-markers nil)
   (setopt org-image-actual-width 300)
-  ;; (setopt org-indent-indentation-per-level 2)
+  (setopt org-indent-indentation-per-level 4)
   (setopt org-pretty-entities t)
   (setopt org-startup-folded 'show2levels)
   ;; Avoid unnecessary indentation effects unless specified in file header.
@@ -168,11 +169,11 @@
 
 ;;; org-modern <https://github.com/minad/org-modern>
 
-(use-package org-modern
-  :commands (org-modern-mode org-modern-agenda)
-  :init
-  (add-hook 'org-mode-hook #'org-modern-mode)
-  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+;; (use-package org-modern
+;;   :commands (org-modern-mode org-modern-agenda)
+;;   :init
+;;   (add-hook 'org-mode-hook #'org-modern-mode)
+;;   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 
 ;;; Provide agenda improvements with `org-super-agenda'
 
