@@ -44,6 +44,10 @@
 
 ;; <https://protesilaos.com/emacs/fontaine>
 
+;; TIP: You can test out alterations quickly with, for example:
+;;      (internal-set-lisp-face-attribute 'default :weight 'semilight)
+
+
 (elpaca fontaine
   (require 'fontaine)
 
@@ -54,8 +58,12 @@
   ;; is a multiple of 3.
   (setopt fontaine-presets
     `( (small
+         :bold-weight medium
          :default-height ,(pcase (system-name)
-                            (_ 90)))
+                            (_ 90))
+         :default-weight ,(pcase (system-name)
+                            ("tuvok" 'semilight)
+                            (_ 'regular)))
        (regular)
        (medium
          :default-height ,(pcase (system-name)
