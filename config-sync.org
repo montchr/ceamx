@@ -1,0 +1,931 @@
+#+title: Ceamx: An Emacs Configuration
+#+author: Chris Montgomery
+#+email: chmont@proton.me
+#+language: en
+#+property: header-args:emacs-lisp
+#+property: header-args:elisp :results replace :exports code
+#+property: header-args :mkdirp yes :tangle no :tangle-mode: #o444 :results silent :noweb yes
+#+archive: graveyard/%s::datetree/
+#+startup: showall
+#+macro: latest-export-date (eval (format-time-string "%F %T %z"))
+#+macro: word-count (eval (count-words (point-min) (point-max)))
+
+*Last revised and exported on {{{latest-export-date}}} with a word
+count of {{{word-count}}}.*
+
+#+begin_src emacs-lisp :tangle no :results none
+(org-babel-tangle)
+#+end_src
+
+* To Investigate
+
+- <https://github.com/Genivia/ugrep#using-ugrep-within-emacs>
+- <https://manueluberti.eu/posts/2022-08-07-emacs-ugrep/#fn:3>
+- <https://manueluberti.eu/posts/2023-10-01-embark-ugrep/>
+- <https://manueluberti.eu/posts/2021-09-10-rgrep-and-vc-git-grep/>
+- <https://elpa.gnu.org/packages/xr.html>
+- <https://github.com/leoliu/easy-kill>
+
+** Issues
+
+*** TODO org-mode needs ~tab-width~ set to 8 otherwise constant errors
+
+
+* Partials
+:PROPERTIES:
+:header-args: :noweb no
+:END:
+
+** TODO File-level ~:noweb yes~ does not seem to have an effect
+
+Setting this on a heading works.
+
+
+** File header
+
+#+name: file-header
+#+begin_src emacs-lisp :noweb no
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+#+end_src
+
+
+
+* The Beginning
+
+
+** Early Core Deps
+
+*** Common Paths
+
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el
+;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords:
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Define variables pointing to commonly-used paths.
+
+;; Path variables relating to specific modules should be defined in a
+;; feature-specific file i.e. `config-<module>'.
+
+;;; Code:
+
+;;
+;;; Functions
+
+(defun ceamx-format-version-subdir (parent)
+  "Return a path-like string for a subdirectory of PARENT based on the current Emacs version."
+  (format "%s/%s.%s/"
+    parent
+    emacs-major-version
+    emacs-minor-version))
+
+;;
+;;; Variables
+
+(defvar ceamx-site-lisp-dir
+  (concat user-emacs-directory "site-lisp/")
+  "Absolute path to the site-lisp directory.")
+
+(defvar ceamx-home-dir (file-name-as-directory (getenv "HOME"))
+  "Path to user home directory.")
+
+(defvar ceamx-xdg-config-dir
+  (file-name-as-directory
+   (or (getenv "XDG_CONFIG_HOME")
+       (concat ceamx-home-dir ".config"))))
+
+(defvar ceamx-xdg-cache-dir
+  (file-name-as-directory
+   (or (getenv "XDG_CACHE_HOME")
+       (concat ceamx-home-dir ".cache"))))
+
+(defvar ceamx-config-dir ceamx-xdg-config-dir
+  "The root directory for personal configurations.")
+
+;; TODO: rename to something like `ceamx-storage-dir' to reduce confusion
+(defvar ceamx-local-dir
+  (concat ceamx-xdg-cache-dir "ceamx/")
+  "The root directory for local Emacs files.
+Use this as permanent storage for files that are safe to share
+across systems.")
+
+(defvar ceamx-etc-dir (concat ceamx-local-dir "etc/")
+  "Directory for non-volatile storage.
+Use this for files that don't change much, like servers binaries,
+external dependencies or long-term shared data.")
+
+(defvar ceamx-var-dir (concat ceamx-local-dir "var/")
+  "Directory for volatile storage.
+Use this for files that change often, like data and cache files.")
+
+(defvar ceamx-eln-dir (convert-standard-filename
+                      (file-name-as-directory
+                        (expand-file-name "eln/" ceamx-var-dir)))
+  "Directory for natively-compiled eln files.")
+
+(defvar ceamx-packages-dir
+  (expand-file-name (ceamx-format-version-subdir "packages")
+    ceamx-local-dir)
+  "Where packages are stored.
+Intended for setting the value of `package-user-dir' or the
+equivalent settings for third-party package managers.
+
+Packages will be stored in subdirectories based on the current
+Emacs version to prevent bytecode incompatibility.")
+
+(provide 'ceamx-paths)
+;;; ceamx-paths.el ends here
+
+;; Local Variables:
+;; no-byte-compile: t
+;; no-native-compile: t
+;; no-update-autoloads: t
+;; End:
+#+end_src
+
+
+*** Common Keymaps
+
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el
+;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
+
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(require 'lib-keys)
+
+(defmap! ceamx-code-map)
+(defmap! ceamx-file-map)
+(defmap! ceamx-launch-map)
+(defmap! ceamx-replace-map)
+(defmap! ceamx-toggle-map)
+
+(provide 'ceamx-keymaps)
+;;; ceamx-keymaps.el ends here
+#+end_src
+
+** Early init take 3
+
+#+begin_src elisp :tangle early-init-3.el
+;;; early-init-3.el --- Early Init File  -*- no-byte-compile: t; -*-
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Links:
+
+;; Helpful guide to early-init configuration for package management:
+;; <https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/>
+
+;;; Code:
+
+;; Prevent package.el from enabling all packages before init.
+;;
+;; When nil and using the builtin package manager, `package-initialize' must be
+;; invoked in the init process prior to `require'ing any packages installed with
+;; `package-install'.
+;;
+;; When non-nil, there is no need to invoke `package-initialize'.
+(setq package-enable-at-startup nil)
+
+;;; Indirect init/startup hooks
+
+(defvar ceamx-after-init-hook '())
+(defun ceamx-after-init-hook ()
+  (run-hooks 'ceamx-after-init-hook))
+
+(defvar ceamx-emacs-startup-hook '())
+(defun ceamx-emacs-startup-hook ()
+  (run-hooks 'ceamx-emacs-startup-hook))
+
+;;
+;;; Performance
+
+;;;; Language servers
+
+;; <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
+
+(setenv "LSP_USE_PLISTS" "true")
+
+;; Read JSON streams in 1MiB chunks instead of the default 4kB.
+;;
+;; Language server responses tend to be in the 800kB to 3MB range,
+;; according to the lsp-mode documentation (linked above).
+;;
+;; This is a general LSP concern, not specific to any particular implementation.
+(when (functionp 'json-serialize)
+  (setq read-process-output-max (* 1024 1024)))
+
+;;;; Minimize garbage collection during startup.
+
+;; From Eli Zaretskii:
+;;
+;; > My advice is to spend some time measuring the effect of increased GC threshold
+;; > on operations that you care about and that take a long enough time to annoy,
+;; > and use the lowest threshold value which produces a tangible improvement.
+;; > Start with the default value, then enlarge it by a factor of 2 until you see
+;; > only insignificant speedups. I would not expect the value you arrive at to be
+;; > as high as 100 MiB.
+;;
+;; via <https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/>
+
+;; See also:
+
+;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
+
+;; Provide insight into garbage-collection activity to inform tuning decisions.
+;; TODO: will a `init-file-debug' check work here?
+(setq garbage-collection-messages t)
+
+;; Prevent garbage-collection during init.
+;; NOTE: Either use `gcmh' or make sure to reset this later. Or else!
+(setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
+
+;;;; Simplify filename pattern-matching during init
+
+;;  <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
+;;  <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
+
+(defvar ceamx-file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+
+(defun ceamx-restore-file-name-handler-alist-h ()
+  "Restore the original value of the `file-name-handler-alist' variable.
+Intended for use as a callback on `ceamx-after-init-hook'."
+  (setq file-name-handler-alist ceamx-file-name-handler-alist)
+  (makunbound 'ceamx-file-name-handler-alist))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
+
+;;
+;;; Directories
+
+;; Configure load path
+(dolist (subdir '("autoloads" "lisp" "lisp/core" "lisp/lib"))
+  (let ((dir (expand-file-name subdir user-emacs-directory)))
+    (add-to-list 'load-path dir)))
+
+;; Load settings describing well-known paths.
+(require 'ceamx-paths)
+
+;; Configure customization file location.
+;;
+;; Normally, options configured in `user-init-file' won't need to be persisted
+;; to `custom-file', but by default, when using package.el for package
+;; management, `package-selected-packages' will always be written to
+;; `custom-file' if available. See `init-package' for details.
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+;; Store packages in the designated directory.
+(setq package-user-dir ceamx-packages-dir)
+
+;; Use preferred cache directories for native-comp.
+(startup-redirect-eln-cache ceamx-eln-dir)
+(add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
+
+;;
+;;; Native compilation
+
+(setq native-comp-async-report-warnings-errors 'silent)
+(setq native-compile-prune-cache t)
+
+;; Don't load outdated byte-compiled files.
+;;
+;; NOTE: This does not handle *recompiling* the outdated files.
+;; That will need to be handled during init.
+;;
+;; More info: <https://github.com/emacscollective/auto-compile/blob/main/README.org>
+(setq load-prefer-newer t)
+
+;; Package installation will provoke a lot of warnings from third-party
+;; packages, but there's nothing we can do about those.
+(setq byte-compile-warnings nil)
+
+;;
+;;; Inhibit early annoyances
+
+;; No bells.
+(setq ring-bell-function #'ignore)
+
+;; Display scratch buffer on startup.
+;; TODO: replace with dashboard
+(setq inhibit-startup-screen t)
+
+;;
+;;; Frames and window-system integration
+
+;; FIXME: seems to behave inconsistently when server is running?
+
+;; Prevent X11 from taking control of visual behavior and appearance.
+(setq inhibit-x-resources t)
+
+;; Avoid expensive frame resizing.
+(setq frame-inhibit-implied-resize t)
+
+;; Allow resizing the frame to the maximum available space on the desktop.
+(setq frame-resize-pixelwise t)
+
+;; Remove some unnecessary frame elements by default.
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+
+;; `tooltip-mode' is broken for me in pgtk -- might be an Emacs bug, causes
+;; constant errors when moving mouse over modeline.
+;;
+;; FIXME: actually, this is behaving inconsistently: disabling it does not
+;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
+;; normally... maybe needs to happen later in init?
+(tooltip-mode -1)
+
+;;;; Rename the default/initial frame
+
+(defvar ceamx-default-frame-name "home — [ceamx]"
+  "Name for the default Emacs frame.")
+
+(defun ceamx-after-init-default-frame-name-h ()
+  "Set the name for the default frame.
+Simple wrapper for a call to `set-frame-name' providing
+`ceamx-default-frame-name' as the NAME argument.
+
+Intended for use as a callback on the `ceamx-after-init-hook'."
+  (set-frame-name ceamx-default-frame-name))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
+
+(provide 'early-init-3)
+;;; early-init-3.el ends here
+#+end_src
+
+
+** Manifest
+
+#+BEGIN_SRC elisp :tangle init.el
+;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;  Personal Emacs configuration file.
+
+;; TODO: <https://github.com/Genivia/ugrep#using-ugrep-within-emacs>
+;;       <https://manueluberti.eu/posts/2022-08-07-emacs-ugrep/#fn:3>
+;;       <https://manueluberti.eu/posts/2023-10-01-embark-ugrep/>
+;;       <https://manueluberti.eu/posts/2021-09-10-rgrep-and-vc-git-grep/>
+;; TODO: <https://elpa.gnu.org/packages/xr.html>
+;; TODO: <https://github.com/leoliu/easy-kill>
+
+;;; Code:
+
+(require 'cl-lib)
+
+(require 'ceamx-paths)
+
+(require 'lib-common)
+
+(defgroup ceamx nil
+  "User-configurable options for Ceamx."
+  ;; TODO: is this group appropriate?
+  :group 'file)
+
+(defcustom ceamx-load-custom-file t
+  "Whether to load the user `custom-file' (custom.el)."
+  :group 'ceamx
+  :type '(boolean))
+
+(setq-default user-full-name "Chris Montgomery"
+              user-mail-address "chris@cdom.io")
+
+(require 'init-benchmarking)
+
+;;; Load environment-related constants
+
+(require 'config-env)
+;; TODO: see bbatsov/prelude for prior art
+(when +sys-wsl-p
+  (require 'lib-env-wsl))
+
+;;; Initialize packages
+
+;; Third-party package managers should be configured in init.el directly instead
+;; of within a `require'd file so that they may be re-initialized properly.
+
+;; Add site-lisp directory tree to load path.
+(add-to-list 'load-path ceamx-site-lisp-dir)
+(prependq! load-path (subdirs! ceamx-site-lisp-dir))
+
+;;;; Preface
+
+
+;;;; Bootstrap
+
+(defvar elpaca-installer-version 0.7)
+(defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                              :ref nil :depth 1
+                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                              :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (< emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                 ,@(when-let ((depth (plist-get order :depth)))
+                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                 ,(plist-get order :repo) ,repo))))
+                 ((zerop (call-process "git" nil buffer t "checkout"
+                                       (or (plist-get order :ref) "--"))))
+                 (emacs (concat invocation-directory invocation-name))
+                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                 ((require 'elpaca))
+                 ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (load "./elpaca-autoloads")))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
+
+;;;; Configure elpaca use-package integration
+
+(setopt use-package-always-ensure t)
+
+(elpaca use-package)
+
+(elpaca elpaca-use-package
+  (elpaca-use-package-mode))
+
+(elpaca-wait)
+
+;;;; Improve `use-package' debuggability if necessary
+
+(setopt use-package-expand-minimally nil)
+(when (bound-and-true-p init-file-debug)
+  (require 'use-package)
+  (setopt use-package-expand-minimally nil)
+  (setopt use-package-verbose t)
+  (setopt use-package-compute-statistics t))
+
+(add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
+(add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
+
+;;;; Essential storage path cleanup for features/packages
+
+;; <https://github.com/emacscollective/no-littering/>
+
+(use-package no-littering
+  :demand t
+  :init
+  (setq no-littering-etc-directory ceamx-etc-dir)
+  (setq no-littering-var-directory ceamx-var-dir))
+
+(elpaca-wait)
+
+;;;; Use latest versions of some Emacs builtins to satisfy bleeding-edge packages
+
+;; Installing the latest development versions of `eglot' and `magit' (for
+;; example) comes with the significant caveat that their dependencies often
+;; track the latest versions of builtin Emacs libraries. Those can be installed
+;; via GNU ELPA.
+;;
+;; Since core libraries like `seq' are often dependencies of many other packages
+;; or otherwise loaded immediately (like `eldoc'), installation and activation
+;; of the newer versions needs to happen upfront to avoid version conflicts and
+;; mismatches. For example, we do not want some package loaded earlier in init
+;; to think it is using the builtin version of `seq', while a package loaded
+;; later in init uses a differnt version. I am not sure how realistic such a
+;; scenario might be, or whether it would truly pose a problem, but the point is
+;; that we should aim for consistency.
+;;
+;; Oftentimes, these builtins must be unloaded before loading the newer version.
+;; This applies especially to core libraries like `seq' or the
+;; enabled-by-default `global-eldoc-mode' provided by `eldoc', but not
+;; `jsonrpc', since its functionality is specific to more niche features like
+;; inter-process communication in the case of `eglot'.
+
+;;;;; Install the latest version of `seq' builtin library, carefully
+
+;; `magit' requires a more recent version of `seq' than the version included in
+;; Emacs 29.
+
+;; Requires special care because unloading it can make other libraries freak out.
+;; <https://github.com/progfolio/elpaca/issues/216#issuecomment-1868444883>
+
+(defun +elpaca-unload-seq (e)
+  "Unload the builtin version of `seq' and continue the `elpaca' build E."
+  (and (featurep 'seq) (unload-feature 'seq t))
+  (elpaca--continue-build e))
+
+(defun +elpaca-seq-build-steps ()
+  "Update the `elpaca' build-steps to activate the latest version of the builtin `seq' package."
+  (append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
+                       elpaca--pre-built-steps
+                     elpaca-build-steps))
+          (list '+elpaca-unload-seq 'elpaca--activate-package)))
+
+(use-package seq
+  :ensure `(seq :build ,(+elpaca-seq-build-steps)))
+
+;;;;; Install the latest version of `jsonrpc' builtin library
+
+;; Required by (and originally extracted from) `eglot'.
+
+(use-package jsonrpc
+  :ensure t
+  :demand t)
+
+;;;;; Install the latest version of `eldoc' builtin library, carefully
+
+;; Required by `eglot'.
+
+;; `eldoc' requires a delicate workaround to avoid catastrophy.
+;; <https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
+
+(use-package eldoc
+  :ensure t
+  :demand t
+
+  :preface
+  (unload-feature 'eldoc t)
+  (setq custom-delayed-init-variables '())
+  (defvar global-eldoc-mode nil)
+
+  :config
+  (global-eldoc-mode))
+
+;;;;; Install the latest version of the builtin `eglot' package
+
+(use-package eglot
+  :after (eldoc jsonrpc)
+  :preface
+  (when (featurep 'eglot)
+    (unload-feature 'eglot)))
+
+;;;;; Install the latest version of Org-Mode (`org')
+
+(use-package org
+  :defer t
+  :ensure (:autoloads "org-loaddefs.el")
+  :preface
+  (when (featurep 'org)
+    (unload-feature 'org)))
+
+;;;;; Ensure the previously-queued package requests have completed
+
+(elpaca-wait)
+
+;;;; Initialize miscellaneous packages adding `use-package' keywords
+
+;; NOTE: `blackout' is still useful even without `use-package'
+(use-package blackout
+  :demand t)
+
+(elpaca-wait)
+
+;;;; Run garbage collection on idle
+
+;; <https://gitlab.com/koral/gcmh>
+;; <https://akrl.sdf.org/>
+
+;; During normal use, the GC threshold will be set to a high value.
+;; When idle, GC will be triggered with a low threshold.
+
+(use-package gcmh
+  :blackout
+  :commands (gcmh-mode)
+  :init
+  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
+  (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
+
+;;; Site-lisp packages
+
+(require 'on)
+
+
+(elpaca-wait)
+
+;;; Libraries
+
+;; FIXME: remove or alias (`##' is very difficult to search for)
+(use-package llama) ;  `##' lambda shorthand =>
+                                        ;  <https://git.sr.ht/~tarsius/llama>
+
+(use-package f)
+
+(require 'lib-common)
+
+(when (display-graphic-p)
+  (require 'lib-gui))
+
+(require 'lib-files)
+(require 'lib-elisp)
+
+;;; Configuration
+
+;; Increase number of messages saved in log.
+(setq message-log-max 10000)
+
+;; Unbind `suspend-frame'.
+;; TODO: provide more context
+(global-unset-key (kbd "C-x C-z"))
+
+;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
+(setopt auto-mode-case-fold nil)
+
+;; Prevent Emacs from pinging domain names unexpectedly.
+(setopt ffap-machine-p-known 'reject)
+
+;;;; Environment
+
+(require 'init-env)
+(require 'init-input-methods)
+
+;; Site-specific configuration, to be ignored by version control.
+(require 'site-config (file-name-concat user-emacs-directory "site-config") t)
+
+(require 'init-secrets)
+
+;;;; Displays + Appearance
+
+;; TODO: re-enable
+;; (require 'init-frame-hooks)
+(require 'init-env-tty)
+(require 'init-frame)
+
+;; Load configuration settings for conditional loading.
+(require 'config-ui)
+
+(require 'init-ui)
+
+(require 'init-ui-theme)
+(require 'init-ui-ef-themes)
+(require 'init-ui-modus-themes)
+
+(when (display-graphic-p)
+  (require 'init-ui-font))
+
+(require 'init-ui-modeline)
+(require 'init-ui-modeline-doom)
+
+;;;;; Integrations for visual consistency
+
+(require 'init-ui-circadian)
+
+(require 'init-after-ui)
+
+;;;; Keyboard support
+
+(require 'config-keys)
+
+(require 'init-keys)
+(require 'init-keys-which-key)
+(require 'init-keys-meow)
+
+;;;; Windows
+
+(require 'init-window)
+(require 'init-buffer)
+
+;; FIXME: load earlier / in another section
+(require 'init-history)
+
+;;;; Dashboard
+
+(require 'init-dashboard)
+
+;;;; Selection
+
+(require 'init-selection-vertico)
+(require 'init-selection-orderless)
+(require 'init-selection-marginalia)
+(require 'init-selection-consult)
+
+(require 'init-search)
+
+;;;; Completion-At-Point
+
+(require 'config-completion)
+(require 'init-completion)
+
+;;;; Help
+
+(require 'init-help)
+
+;;;; Actions
+
+(require 'init-embark)
+(require 'init-wgrep)
+
+;; Projects / Files
+(require 'init-project)
+;; (require 'init-project-projectile)
+(require 'init-vcs)
+(require 'init-vcs-magit)
+(require 'init-vcs-forge)
+(require 'init-files)
+(require 'init-dired)
+
+;;;; Workspaces + activities + contexts
+
+(require 'init-workspace)
+
+;;;; Editing
+
+(require 'init-editor)
+(require 'init-templates)
+
+;;;; Memex
+
+;; TODO: move after syntaxes? org-mode is heavy
+
+(require 'init-org)
+(require 'init-notes)
+(require 'init-notes-denote)
+
+;;;; Linting
+
+(require 'init-flycheck)
+
+;;;; Tree-Sitter
+
+(require 'init-treesitter)
+
+;;;; Language/syntax support
+
+(require 'init-prog)
+(require 'init-lisp)
+
+(require 'init-lang-data)
+(require 'init-lang-elisp)
+(require 'init-lang-html)
+(require 'init-lang-js)
+(require 'init-lang-json)
+(require 'init-lang-lua)
+(require 'init-lang-markdown)
+(require 'init-lang-nix)
+(require 'init-lang-php)
+(require 'init-lang-shell)
+(require 'init-lang-yaml)
+(require 'init-lang-misc)
+
+;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
+(require 'init-shell-nu)
+
+(require 'init-eglot)
+;; (require 'init-lsp)
+
+
+;;;; Miscellaneous
+
+(require 'init-tools)
+(require 'init-tools-ai)
+(require 'init-tools-ledger)
+(require 'init-tools-pdf)
+
+(require 'init-term)
+
+(require 'init-printing)
+
+(require 'init-fun)
+
+(require 'init-controls)
+
+;;; Postlude
+
+;; FIXME: causes some errors / inconsistencies
+;; (def-hook! ceamx-maybe-start-emacs-server-h () 'ceamx-after-init-hook
+;;   "Auto-start Emacs daemon if not already running."
+;;   (require 'server)
+;;   (unless (and (fboundp 'server-running-p)
+;;             (server-running-p))
+;;     (server-start)))
+
+;; unfortunately
+(when (and +gui-p +sys-mac-p)
+  (def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
+    "Restart the yabai service after init."
+    (after! [exec-path-from-shell]
+      (async-shell-command "yabai --restart-service"))))
+
+;; Optionally load custom file after all packages have loaded.
+(when (and ceamx-load-custom-file
+           (file-exists-p custom-file))
+  (def-hook! ceamx-after-init-load-custom-file-h ()
+    'ceamx-after-init-hook
+    "Load the user `custom-file'.
+Keep in mind that the custom file is ignored in version control."
+    (load custom-file 'noerror)))
+
+(provide 'init)
+;;; init.el ends here
+#+END_SRC
+
+*
