@@ -3254,7 +3254,7 @@ of Emacs."
     '(help-mode . motion))
 
   ;; Avoid the default binding for `meow-keypad' in motion state.
-  ;; (keymap-unset meow-motion-state-keymap "SPC" t)
+  (keymap-unset meow-motion-state-keymap "SPC" t)
 
   ;; Because I'm still getting the hang of meow again. I'm not fast enough to
   ;; remember exactly what to do. Once this delay feels too long, then it can be
@@ -3262,7 +3262,8 @@ of Emacs."
   (setopt meow-expand-hint-remove-delay 4.0)
 
   ;; There are slight differences between these two, take your pick.
-  ;; Default is nil.
+  ;; Default is nil, which is generally easier to use for Emacs integration.
+  ;; C-c might be better for leader-centric bindings a la Doom/Spacemacs
   (setopt meow-keypad-leader-dispatch nil)
   ;; (setopt meow-keypad-leader-dispatch "C-c")
 

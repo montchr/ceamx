@@ -177,9 +177,10 @@
   (setopt meow-expand-hint-remove-delay 4.0)
 
   ;; There are slight differences between these two, take your pick.
-  ;; Default is nil.
-  ;; (setopt meow-keypad-leader-dispatch nil)
-  (setopt meow-keypad-leader-dispatch "C-c")
+  ;; Default is nil, which is generally easier to use for Emacs integration.
+  ;; C-c might be better for leader-centric bindings a la Doom/Spacemacs
+  (setopt meow-keypad-leader-dispatch nil)
+  ;; (setopt meow-keypad-leader-dispatch "C-c")
 
   ;; Improve state indicator appearance (e.g. in modeline).
   (setopt meow-replace-state-name-list
