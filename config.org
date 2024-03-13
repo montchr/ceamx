@@ -17,58 +17,6 @@ count of {{{word-count}}}.*
 (org-babel-tangle)
 #+end_src
 
-* To Investigate
-
-- <https://github.com/Genivia/ugrep#using-ugrep-within-emacs>
-- <https://manueluberti.eu/posts/2022-08-07-emacs-ugrep/#fn:3>
-- <https://manueluberti.eu/posts/2023-10-01-embark-ugrep/>
-- <https://manueluberti.eu/posts/2021-09-10-rgrep-and-vc-git-grep/>
-- <https://elpa.gnu.org/packages/xr.html>
-- <https://github.com/leoliu/easy-kill>
-
-** Issues
-
-*** TODO org-mode needs ~tab-width~ set to 8 otherwise constant errors
-
-
-* Partials
-:PROPERTIES:
-:header-args: :noweb no
-:END:
-
-** TODO File-level ~:noweb yes~ does not seem to have an effect
-
-Setting this on a heading works.
-
-
-** File header
-
-#+name: file-header
-#+begin_src emacs-lisp :noweb no
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-#+end_src
-
-
-
 * The Beginning
 
 
@@ -11931,3 +11879,53 @@ POS defaults to the current position."
 (provide 'lib-text)
 ;;; lib-text.el ends here
 #+end_src
+
+* Partials
+:PROPERTIES:
+:header-args: :noweb no
+:END:
+
+** TODO File-level ~:noweb yes~ does not seem to have an effect
+
+Setting this on a heading works.
+
+
+** File header
+
+#+name: file-header
+#+begin_src emacs-lisp :noweb no
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+#+end_src
+
+
+* To Investigate
+
+- <https://github.com/Genivia/ugrep#using-ugrep-within-emacs>
+- <https://manueluberti.eu/posts/2022-08-07-emacs-ugrep/#fn:3>
+- <https://manueluberti.eu/posts/2023-10-01-embark-ugrep/>
+- <https://manueluberti.eu/posts/2021-09-10-rgrep-and-vc-git-grep/>
+- <https://elpa.gnu.org/packages/xr.html>
+- <https://github.com/leoliu/easy-kill>
+
+** Issues
+
+*** TODO org-mode needs ~tab-width~ set to 8 otherwise constant errors
