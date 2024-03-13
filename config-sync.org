@@ -437,6 +437,585 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 #+end_src
 
 
+** Core Library (=lib-common.el=)
+
+This library is a requirement of just about every customization and library
+file. It is loaded early during initialization.
+
+#+begin_src emacs-lisp :tangle lisp/lib-common.el
+;;; lib-common.el --- Common library functions -*- lexical-binding: t -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2014-2023  Henrik Lissner
+;; Copyright (C) 2006-2021  Steve Purcell
+;; Copyright (C) 2016–2022  Radian LLC and contributors
+;; Copyright (C) 2018  Adam Porter
+;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
+;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;;         Henrik Lissner
+;;         Steve Purcell
+;;         Radon Rosborough <radon@intuitiveexplanations.com>
+;;         Adam Porter <adam@alphapapa.net>
+;;         Bailey Ling <bling@live.ca>
+;;         7696122 <7696122@gmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Created: 29 January, 2023
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+;;; Commentary:
+
+;; General, common, and generic library functions.
+
+;;; Sources:
+
+;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
+;; <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
+
+;;; Code:
+
+(require 'cl-lib)
+(require 'map)
+(require 'seq)
+
+;;;; Helpers
+
+(defun ceamx--resolve-hook-forms (hooks)
+  "Convert a list of modes into a list of hook symbols.
+
+If a mode is quoted, it is left as is. If the entire HOOKS list is quoted, the
+list is returned as-is."
+  (declare (pure t) (side-effect-free t))
+  (let ((hook-list (ensure-list (ceamx-unquote hooks))))
+    (if (eq (car-safe hooks) 'quote)
+      hook-list
+      (cl-loop for hook in hook-list
+        if (eq (car-safe hook) 'quote)
+        collect (cadr hook)
+        else collect (intern (format "%s-hook" (symbol-name hook)))))))
+
+;; TODO: seems probably excessive
+(defun ceamx--setq-hook-fns (hooks rest &optional singles)
+  (unless (or singles (= 0 (% (length rest) 2)))
+    (signal 'wrong-number-of-arguments (list #'cl-evenp (length rest))))
+  (cl-loop with vars = (let ((args rest)
+                              vars)
+                         (while args
+                           (push (if singles
+                                   (list (pop args))
+                                   (cons (pop args) (pop args)))
+                             vars))
+                         (nreverse vars))
+    ;; TODO: use `derived-mode-hook-name'
+    for hook in (ceamx--resolve-hook-forms hooks)
+    for mode = (string-remove-suffix "-hook" (symbol-name hook))
+    append
+    (cl-loop for (var . val) in vars
+      collect
+      (list var val hook
+        (intern (format "ceamx--setq-%s-for-%s-h"
+                  var mode))))))
+
+;;; General
+
+(defun ceamx-host-p (name)
+  "Whether Emacs is running on the machine NAME."
+  (string= name (system-name)))
+
+(defun ceamx-unquote (exp)
+  "Return EXP unquoted."
+  (declare (pure t) (side-effect-free t))
+  (while (memq (car-safe exp) '(quote function))
+    (setq exp (cadr exp)))
+  exp)
+
+;; (defun ceamx-keyword-intern (str)
+;;   "Convert STR (a string) into a keyword (`keywordp')."
+;;   (declare (pure t) (side-effect-free t))
+;;   (cl-check-type str string)
+;;   (intern (concat ":" str)))
+
+;; (defun ceamx-keyword-name (keyword)
+;;   "Return the string name of KEYWORD (`keywordp') minus the leading colon."
+;;   (declare (pure t) (side-effect-free t))
+;;   (cl-check-type keyword keyword)
+;;   (substring (symbol-name keyword) 1))
+
+(defalias 'ceamx-partial #'apply-partially)
+(defun ceamx-rpartial (fn &rest args)
+  "Return a partial application of FN to right-hand ARGS.
+
+ARGS is a list of the last N arguments to pass to FN. The result is a new
+function which does the same as FN, except that the last N arguments are fixed
+at the values with which this function was called."
+  (declare (side-effect-free t))
+  (lambda (&rest pre-args)
+    (apply fn (append pre-args args))))
+
+(defun ceamx-lookup-key (keys &rest keymaps)
+  "Lookup KEYS in the active or specified KEYMAPS.
+
+Like `lookup-key', but search active keymaps if KEYMAPS is omitted."
+  (if keymaps
+      (cl-some (ceamx-rpartial #'lookup-key keys) keymaps)
+    (cl-loop for keymap
+             in (append (cl-loop for alist in emulation-mode-map-alists
+                                 append (mapcar #'cdr
+                                                (if (symbolp alist)
+                                                    (if (boundp alist) (symbol-value alist))
+                                                  alist)))
+                        (list (current-local-map))
+                        (mapcar #'cdr minor-mode-overriding-map-alist)
+                        (mapcar #'cdr minor-mode-map-alist)
+                        (list (current-global-map)))
+             if (keymapp keymap)
+             if (lookup-key keymap keys)
+             return it)))
+
+(defmacro cmd! (&rest body)
+  "Return (lambda () (interactive) ,@BODY)
+
+A factory for quickly producing interaction commands, particularly for keybinds
+or aliases."
+  (declare (doc-string 1) (pure t) (side-effect-free t))
+  `(lambda (&rest _) (interactive) ,@body))
+
+(defmacro cmd!! (command &optional prefix-arg &rest args)
+  "Return a closure to interactively invoke COMMAND with ARGS and PREFIX-ARG.
+
+Like `cmd!', but allows you to change `current-prefix-arg' or pass arguments to
+COMMAND. This macro is meant to be used as a target for keybinds (e.g. with
+`define-key')."
+  (declare (doc-string 1) (pure t) (side-effect-free t))
+  `(lambda (arg &rest _) (interactive "P")
+     (let ((current-prefix-arg (or ,prefix-arg arg)))
+       (,(if args
+             #'funcall-interactively
+           #'call-interactively)
+        ,command ,@args))))
+
+;; via <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
+(defmacro noop! (&rest _body)
+  "Do nothing with BODY and return nil.
+Unlike `ignore', produce no side effects."
+  (declare (indent defun))
+  nil)
+
+;;
+;;; Loading
+
+(defmacro add-load-paths! (&rest dirs)
+  "Add DIRS to `load-path', relative to the current file.
+The current file is the file from which `add-load-paths!' is used.
+
+This macro is identical to Doom\\='s `add-load-path!' macro
+except in name and docstring. The name of the macro has been
+changed to clarify that this is a variadic macro. This docstring
+also corrects an apparent typo in the original, which referred to
+a non-existent macro.
+
+Original source: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L620-L626>"
+  `(let ((default-directory (dir!))
+          file-name-handler-alist)
+     (dolist (dir (list ,@dirs))
+       (cl-pushnew (expand-file-name dir) load-path :test #'string=))))
+
+;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
+(defmacro after! (feature &rest body)
+  "Execute BODY after FEATURE has been loaded.
+
+FEATURE may be any one of:
+    \\='evil            => (with-eval-after-load \\='evil BODY)
+    \"evil-autoloads\" => (with-eval-after-load \"evil-autoloads\" BODY)
+    [evil cider]     => (with-eval-after-load \\='evil
+                          (with-eval-after-load \\='cider
+                            BODY))
+
+TODO: Doom's implementation is more flexible and handles
+undefined symbols, but does not support quoted FEATURE. Some new
+macro supporting quoted FEATURE and the features of Doom's
+version would probably be ideal."
+  (declare (indent 1))
+  (cond
+    ((vectorp feature)
+      (let ((prog (macroexp-progn body)))
+        (cl-loop for f across feature
+          do
+          (progn
+            (setq prog (append `(',f) `(,prog)))
+            (setq prog (append '(with-eval-after-load) prog))))
+        prog))
+    (t
+      `(with-eval-after-load ,feature ,@body))))
+
+(defmacro after!! (feature &rest body)
+  "Evaluate BODY after FEATURE and an eponymous mode it provides.
+Wrapper for `after!' with an additional check for a mode named after FEATURE."
+  (declare (indent defun))
+  (let ((mode-sym (intern (format "%s-mode" (symbol-name (ceamx-unquote feature))))))
+    `(after! ,feature
+       (when (fboundp ',mode-sym)
+         ,@body))))
+
+;; via <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
+(defmacro defer-until! (condition &rest body)
+  "Run BODY when CONDITION is non-nil.
+Leverages checks via `after-load-functions'.
+Meant to serve as a predicated alternative to `after!'."
+  (declare (indent defun) (debug t))
+  `(if ,condition
+     (progn ,@body)
+     ,(let ((fn (intern (format "ceamx--delay-form-%s-h" (sxhash (cons condition body))))))
+        `(progn
+           (fset ',fn (lambda (&rest args)
+                        (when ,(or condition t)
+                          (remove-hook 'after-load-functions #',fn)
+                          (unintern ',fn nil)
+                          (ignore args)
+                          ,@body)))
+           (put ',fn 'permanent-local-hook t)
+           (add-hook 'after-load-functions #',fn)))))
+
+(defmacro autoload-macro! (macro file)
+  "Define MACRO to autoload from FILE.
+MACRO and FILE are as in `autoload', which see.
+
+This provides `autoload' with nil values for its DESCRIPTION and
+INTERACTIVE arguments. Its TYPE argument is non-nil, indicating
+that the symbol to be autoload is actually a macro."
+  (declare (debug t))
+  `(autoload ,macro ,file nil nil t))
+
+;;; Variables
+
+(defmacro appendq! (sym &rest lists)
+  "Append LISTS to SYM in place."
+  `(setq ,sym (append ,sym ,@lists)))
+
+(defmacro prependq! (sym &rest lists)
+  "Prepend LISTS to SYM in place."
+  `(setq ,sym (append ,@lists ,sym)))
+
+(defmacro appendopt! (variable &rest lists)
+  "Append LISTS to the existing user option VARIABLE.
+This uses `setopt' to set the new value of VARIABLE."
+  `(setopt ,variable (append ,variable ,@lists)))
+
+(defmacro prependopt! (variable &rest lists)
+  "Prepend LISTS to the existing user option VARIABLE.
+This uses `setopt' to set the new value of VARIABLE."
+  `(setopt ,variable (append ,@lists ,variable)))
+
+(defmacro delq! (elt list &optional fetcher)
+  "`delq' ELT from LIST in-place.
+If FETCHER is a function, ELT is used as the key in LIST (an alist)."
+  `(setq ,list (delq ,(if fetcher
+                          `(funcall ,fetcher ,elt ,list)
+                        elt)
+                     ,list)))
+
+;; TODO: another version to test car of alist so that new additions with the
+;;       same car will override the existing list
+(defmacro pushnew! (place &rest values)
+  "Push VALUES sequentially into PLACE, if they aren't already present.
+This is a variadic `cl-pushnew'."
+  (let ((var (make-symbol "result")))
+    `(dolist (,var (list ,@values) (with-no-warnings ,place))
+       (cl-pushnew ,var ,place :test #'equal))))
+
+;;
+;;; Filesystem
+
+(defun ceamx-subdirs (parent-dir)
+  "Return every non-hidden subdirectory of PARENT-DIR."
+  (cl-remove-if-not
+   #'file-directory-p
+   (directory-files
+    (expand-file-name parent-dir) t "^[^\\.]")))
+
+;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
+(cl-defun ceamx-basename (&optional (file (buffer-file-name)))
+  "Return the basename of FILE."
+  (file-name-sans-extension (file-name-nondirectory file)))
+
+(defmacro file! ()
+  "Return the path of the file this macro was called."
+  (or
+   ;; REVIEW: Use `macroexp-file-name' once 27 support is dropped.
+   (let ((file (car (last current-load-list))))
+     (if (stringp file) file))
+   (bound-and-true-p byte-compile-current-file)
+   load-file-name
+   buffer-file-name                     ; for `eval'
+   (error "file!: cannot deduce the current file path")))
+
+(defmacro dir! ()
+  "Return the directory of the file this macro was called."
+   (let (file-name-handler-alist)
+     (file-name-directory (macroexpand '(file!)))))
+
+(defmacro subdirs! (parent-dir)
+  "Return non-hidden subdirectories of PARENT-DIR.
+Simple wrapper around `ceamx-subdirs'."
+  `(ceamx-subdirs ,parent-dir))
+
+;;
+;;; Advice
+
+(defmacro def-advice! (name arglist how symbol docstring &rest body)
+  "Define an advice called NAME and add it to a function.
+ARGLIST, DOCSTRING, and BODY are as in `defun'.
+
+HOW and SYMBOL are as in `advice-add'. HOW describes how to add
+the newly-defined advice. SYMBOL is the function to be advised."
+  (declare (indent 2)
+    (doc-string 5))
+  (unless (stringp docstring)
+    (error "Ceamx: advice `%S' not documented'" name))
+  (unless (and (listp symbol)
+            (= 2 (length symbol))
+            (eq (nth 0 symbol) 'function)
+            (symbolp (nth 1 symbol)))
+    (error "Ceamx: advice `%S' does not sharp-quote symbol `%S'" name symbol))
+  `(progn
+     (defun ,name ,arglist
+       ,(let ((article (if (string-match-p "^:[aeiou]" (symbol-name how))
+                         "an"
+                         "a")))
+          (format "%s\n\nThis is %s `%S' advice for\n`%S'."
+            docstring article how
+            (if (and (listp symbol)
+                  (memq (car symbol) ''function))
+              (cadr symbol)
+              symbol)))
+       ,@body)
+     (eval-when-compile
+       (declare-function ,name nil))
+     (advice-add ,symbol ',how #',name)
+     ',name))
+
+;;; Hooks
+
+(defmacro def-hook! (name arglist hooks docstring &rest body)
+  "Define function NAME and add it to HOOKS.
+ARGLIST is as in `defun'. HOOKS is a list of hooks to which to
+add the function, or just a single hook. DOCSTRING and BODY are
+as in `defun'."
+  (declare (indent 2)
+           (doc-string 4))
+  (setq hooks (ensure-list (ceamx-unquote hooks)))
+  (dolist (hook hooks)
+    (unless (string-match-p "-\\(hook\\|functions\\)$" (symbol-name hook))
+      (error "Symbol `%S' is not a hook" hook)))
+  (unless (stringp docstring)
+    (error "Ceamx: no docstring provided for `def-hook!'"))
+  (let ((hooks-str (format "`%S'" (car hooks))))
+    (dolist (hook (cdr hooks))
+      (setq hooks-str (format "%s\nand `%S'" hooks-str hook)))
+    `(progn
+       (defun ,name ,arglist
+         ,(format "%s\n\nThis function is for use in %s."
+                  docstring hooks-str)
+         ,@body)
+       (dolist (hook ',hooks)
+         (add-hook hook ',name)))))
+
+;; FIXME: accept unquoted args
+(defmacro hook! (hooks func)
+  "Add function FUNC to one or more HOOKS.
+HOOKS may be either a single quoted hook symbol, or a list of
+multiple hook symbols.
+
+FUNC may be any quoted function symbol."
+  (declare (indent defun))
+  (setq func (ceamx-unquote func))
+  (cl-assert (fboundp func) t)
+  `(dolist (hook (ensure-list ,hooks))
+     (cl-assert (boundp hook) t)
+     (add-hook hook ',func)))
+
+(defmacro add-hook! (hooks &rest rest)
+  "A convenience macro for adding N functions to M hooks.
+
+This macro accepts, in order:
+
+  1. The mode(s) or hook(s) to add to. This is either an unquoted mode, an
+     unquoted list of modes, a quoted hook variable or a quoted list of hook
+     variables.
+  2. Optional properties :local, :append, and/or :depth [N], which will make the
+     hook buffer-local or append to the list of hooks (respectively),
+  3. The function(s) to be added: this can be a quoted function, a quoted list
+     thereof, a list of `defun' or `cl-defun' forms, or arbitrary forms (will
+     implicitly be wrapped in a lambda).
+
+\(fn HOOKS [:append :local [:depth N]] FUNCTIONS-OR-FORMS...)"
+  (declare (obsolete "def-hook!" "2023-11-10")
+    (indent (lambda (indent-point state)
+              (goto-char indent-point)
+              (when (looking-at-p "\\s-*(")
+                (lisp-indent-defform state indent-point))))
+    (debug t))
+  ;; TODO: use `derived-mode-hook-name'
+  (let* ((hook-forms (ceamx--resolve-hook-forms hooks))
+          (func-forms ())
+          (defn-forms ())
+          append-p local-p remove-p depth)
+    (while (keywordp (car rest))
+      (pcase (pop rest)
+        (:append (setq append-p t))
+        (:depth  (setq depth (pop rest)))
+        (:local  (setq local-p t))
+        (:remove (setq remove-p t))))
+    (while rest
+      (let* ((next (pop rest))
+              (first (car-safe next)))
+        (push (cond ((memq first '(function nil))
+                      next)
+                ((eq first 'quote)
+                  (let ((quoted (cadr next)))
+                    (if (atom quoted)
+                      next
+                      (when (cdr quoted)
+                        (setq rest (cons (list first (cdr quoted)) rest)))
+                      (list first (car quoted)))))
+                ((memq first '(defun cl-defun))
+                  (push next defn-forms)
+                  (list 'function (cadr next)))
+                ((prog1 `(lambda (&rest _) ,@(cons next rest))
+                   (setq rest nil))))
+          func-forms)))
+    `(progn
+       ,@defn-forms
+       (dolist (hook (nreverse ',hook-forms))
+         (dolist (func (list ,@func-forms))
+           ,(if remove-p
+              `(remove-hook hook func ,local-p)
+              `(add-hook hook func ,(or depth append-p) ,local-p)))))))
+
+(defmacro remove-hook! (hooks &rest rest)
+  "A convenience macro for removing N functions from M hooks.
+
+Takes the same arguments as `add-hook!'.
+
+If N and M = 1, there's no benefit to using this macro over `remove-hook'.
+
+\(fn HOOKS [:append :local] FUNCTIONS)"
+  (declare (indent defun) (debug t))
+  `(add-hook! ,hooks :remove ,@rest))
+
+(defmacro setq-hook! (hooks &rest var-vals)
+  "Sets buffer-local variables on HOOKS.
+
+\(fn HOOKS &rest [SYM VAL]...)"
+  (declare (indent 1))
+  (macroexp-progn
+   (cl-loop for (var val hook fn) in (ceamx--setq-hook-fns hooks var-vals)
+            collect `(defun ,fn (&rest _)
+                       ,(format "%s = %s" var (pp-to-string val))
+                       (setq-local ,var ,val))
+            collect `(add-hook ',hook #',fn -90))))
+
+(defmacro unsetq-hook! (hooks &rest vars)
+  "Unbind setq hooks on HOOKS for VARS.
+
+\(fn HOOKS &rest [SYM VAL]...)"
+  (declare (indent 1))
+  (macroexp-progn
+   (cl-loop for (_var _val hook fn)
+            in (ceamx--setq-hook-fns hooks vars 'singles)
+            collect `(remove-hook ',hook #',fn))))
+
+;;; Packages
+
+(defmacro use-feature! (name &rest args)
+  "Configuration-only wrapper for `use-package', passing through NAME and ARGS.
+
+This macro is a wrapper for `use-package' disabling package
+installation by setting package installation keywords to nil. The
+supported keywords are `:ensure' (for package.el and recent
+versions of `elpaca'), `:straight', `:quelpa', and `:elpaca' (for
+older versions of `elpaca').
+
+As an example, if `use-package-always-ensure' is non-nil, its
+effect will be ignored in the `use-package' macro expansion
+because `:ensure' will be nil.
+
+For further information, refer to the `use-package' documentation
+or the documentation for the respective package manager."
+  (declare (indent defun))
+  (let (
+         ;; FIXME: check if :ensure keyworr compat available
+
+         ;;(quelpa-keyword-maybe (when (fboundp 'use-package-handler/:quelpa) '(:quelpa nil)))
+         ;;(straight-keyword-maybe (when (fboundp 'use-package-handler/:straight) '(:straight nil)))
+
+         ;; (elpaca-keyword-maybe (when (fboundp 'use-package-handler/:elpaca) '(:elpaca nil)))
+         )
+    `(use-package ,name
+       :ensure nil
+       ;; ,@elpaca-keyword-maybe
+       ;;,@quelpa-keyword-maybe
+       ;; ,@straight-keyword-maybe
+       ,@args)))
+
+
+
+
+(provide 'lib-common)
+;;; lib-common.el ends here
+#+end_src
+
+*** Tasks
+
+**** TODO Consider moving to =lisp/core/ceamx-lib.el=
+
+
 ** Manifest
 
 #+BEGIN_SRC elisp :tangle init.el
@@ -1105,6 +1684,8 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 ** Environment
 
+*** Options / Variables
+
 #+begin_src emacs-lisp :tangle lisp/config-env.el
 ;;; config-env.el --- Variables regarding the environment  -*- lexical-binding: t; -*-
 
@@ -1181,6 +1762,8 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 (provide 'config-env)
 ;;; config-env.el ends here
 #+end_src
+
+*** Customizations
 
 #+begin_src emacs-lisp :tangle lisp/init-env.el
 ;;; init-env.el --- Environment configuration -*- lexical-binding: t -*-
@@ -1262,6 +1845,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;;; init-env.el ends here
 #+end_src
 
+
 *** Terminal/TTY Support
 
 #+begin_src emacs-lisp :tangle lisp/init-env-tty.el
@@ -1331,6 +1915,52 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 (provide 'init-env-tty)
 ;;; init-env-tty.el ends here
+#+end_src
+
+
+*** WSL Support
+
+#+begin_src emacs-lisp :tangle lisp/lib-env-wsl.el
+;;; lib-env-wsl.el --- Helpers for WSL environments  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Sources:
+
+;; <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
+;; <https://emacsredux.com/blog/2021/12/19/using-emacs-on-windows-11-with-wsl2/>
+
+;;; Code:
+
+(require 'config-env)
+
+(defun ceamx-wsl/copy-selected-text (start end)
+  "In WSL, copy text region with START and END to the host clipboard."
+  (interactive "r")
+  (if (use-region-p)
+    (let ((text (buffer-substring-no-properties start end)))
+      (shell-command (concat "echo '" text "' | clip.exe")))))
+
+(provide 'lib-env-wsl)
+;;; lib-env-wsl.el ends here
 #+end_src
 
 
@@ -1427,6 +2057,8 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 
 ** Frame
+
+*** Customizations
 
 #+begin_src emacs-lisp :tangle lisp/init-frame.el
 ;;; init-frame.el --- Frame modifications -*- lexical-binding: t -*-
@@ -1585,6 +2217,46 @@ Selectively runs either `after-make-console-frame-hooks' or
 ;;; init-frame-hooks.el ends here
 #+end_src
 
+
+*** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-frame.el
+;;; lib-frame.el --- Frame functions                 -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+;; TODO: why?
+(defun ceamx/maybe-suspend-frame ()
+  (interactive)
+  (unless (and +sys-mac-p window-system)
+    (suspend-frame)))
+
+
+(provide 'lib-frame)
+;;; lib-frame.el ends here
+#+end_src
 
 ** Appearance
 
@@ -2896,6 +3568,8 @@ The buffer will be created if it does not exist."
 
 ** Buffer
 
+*** Customizations
+
 #+begin_src emacs-lisp :tangle lisp/init-buffer.el
 ;;; init-buffer.el --- Buffers configuration         -*- lexical-binding: t; -*-
 
@@ -3066,7 +3740,7 @@ The buffer will be created if it does not exist."
 ;;; init-buffer.el ends here
 #+end_src
 
-*** Buffer functions
+*** Library
 
 #+begin_src emacs-lisp :tangle lisp/lib-buffer.el
 ;;; lib-buffer.el --- Helpers for buffers            -*- lexical-binding: t; -*-
@@ -3186,47 +3860,7 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 
 ** Editor
 
-#+begin_src emacs-lisp :tangle lisp/config-editor.el
-;;; config-editor.el --- Settings for the editor     -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
-
-(defcustom ceamx-format-on-save-disabled-modes
-  '(emacs-lisp-mode                     ; conflict with `lispy' indent
-    org-msg-edit-mode)
-  "A list of major modes in which to not reformat the buffer upon saving.
-When nil, buffers will always be formatted upon save. When
-non-nil, buffers will never be formatted upon save."
-  :group 'ceamx
-  :type '(choice boolean (repeat symbol)))
-
-(defvar ceamx-apheleia-lighter " Aph")
-
-(provide 'config-editor)
-;;; config-editor.el ends here
-#+end_src
+*** Customizations
 
 #+begin_src emacs-lisp :tangle lisp/init-editor.el
 ;;; init-editor.el --- Editing --- -*- lexical-binding: t -*-
@@ -3565,7 +4199,131 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 #+end_src
 
 
+*** User Options
+
+#+begin_src emacs-lisp :tangle lisp/config-editor.el
+;;; config-editor.el --- Settings for the editor     -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(defcustom ceamx-format-on-save-disabled-modes
+  '(emacs-lisp-mode                     ; conflict with `lispy' indent
+    org-msg-edit-mode)
+  "A list of major modes in which to not reformat the buffer upon saving.
+When nil, buffers will always be formatted upon save. When
+non-nil, buffers will never be formatted upon save."
+  :group 'ceamx
+  :type '(choice boolean (repeat symbol)))
+
+(defvar ceamx-apheleia-lighter " Aph")
+
+(provide 'config-editor)
+;;; config-editor.el ends here
+#+end_src
+
+
+*** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-editor.el
+;;; lib-editor.el --- Editor library functions       -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (C) 2016–2022  Radian LLC and contributors
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;;         Radon Rosborough <radon@intuitiveexplanations.com>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;; Permission is hereby granted, free of charge, to any person obtaining a copy
+;; of this software and associated documentation files (the "Software"), to deal
+;; in the Software without restriction, including without limitation the rights
+;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;; copies of the Software, and to permit persons to whom the Software is
+;; furnished to do so, subject to the following conditions:
+
+;; The above copyright notice and this permission notice shall be included in
+;; all copies or substantial portions of the Software.
+
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+;; SOFTWARE.
+
+;;; Commentary:
+
+;; Functions for general editor configuration.
+
+;;; Sources:
+
+;; - <https://github.com/radian-software/radian/blob/develop/emacs/radian.el#L2174-L2214>
+
+;;; Code:
+
+;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
+(defun ceamx/continue-comment ()
+  "Continue current comment, preserving trailing whitespace.
+This differs from `default-indent-new-line' in the following way:
+
+If you have a comment like \";; Some text\" with point at the end
+of the line, then running `default-indent-new-line' will get you
+a new line with \";; \", but running it again will get you a line
+with only \";;\" (no trailing whitespace). This is annoying for
+inserting a new paragraph in a comment. With this command, the
+two inserted lines are the same."
+  (interactive)
+  ;; `default-indent-new-line' uses `delete-horizontal-space'
+  ;; because in auto-filling we want to avoid the space character at
+  ;; the end of the line from being put at the beginning of the next
+  ;; line. But when continuing a comment it's not desired.
+  (cl-letf (((symbol-function #'delete-horizontal-space) #'ignore))
+    (default-indent-new-line)))
+
+(provide 'lib-editor)
+;;; lib-editor.el ends here
+#+end_src
+
+
 ** Files
+
+*** Customizations
 
 #+begin_src emacs-lisp :tangle lisp/init-files.el
 ;;; init-files.el --- File handling -*- lexical-binding: t -*-
@@ -3706,6 +4464,251 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 #+end_src
 
 
+*** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-files.el
+;;; lib-files.el --- File helpers -*- lexical-binding: t -*-
+
+;; Copyright (C) 2022-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2014-2022  Henrik Lissner
+;; Copyright (C) 2006-2021  Steve Purcell
+;; Copyright (C) 2008-2024  Jonas Bernoulli
+;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause
+
+;; Author: Henrik Lissner
+;;         Vegard Øye <vegard_oye at hotmail.com>
+;;         Steve Purcell
+;;         Chris Montgomery <chris@cdom.io>
+;;         Jonas Bernoulli <jonas@bernoul.li>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Created: 23 January 2023
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+;;; Commentary:
+
+;;  Helper functions for working with files.
+
+;;; Code:
+
+(require 'cl-lib)
+
+;; FIXME: is this supposed to work on save? not working in either magit or projectile
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L369-L391>
+(defun ceamx-files--update-refs (&rest files)
+  "Ensure FILES are updated in `recentf', `magit' and `save-place'."
+  (let (toplevels)
+    (dolist (file files)
+      (when (featurep 'vc)
+        (vc-file-clearprops file)
+        (when-let (buffer (get-file-buffer file))
+          (with-current-buffer buffer
+            (vc-refresh-state))))
+      (when (featurep 'magit)
+        (when-let (default-directory (magit-toplevel (file-name-directory file)))
+          (cl-pushnew default-directory toplevels)))
+      (unless (file-readable-p file)
+        (when (bound-and-true-p recentf-mode)
+          (recentf-remove-if-non-kept file))
+        (when (and
+               (bound-and-true-p projectile-mode)
+               ;; FIXME: de-doom
+               ;; (doom-project-p)
+               ;; (projectile-file-cached-p file (doom-project-root))
+               )
+          (projectile-purge-file-from-cache file)))
+      )
+    (dolist (default-directory toplevels)
+      (magit-refresh))
+    (when (bound-and-true-p save-place-mode)
+      (save-place-forget-unreadable-files))))
+
+;;
+;;; Commands
+;;
+
+;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L3325-L3332>
+(defun ceamx/file-edit (file &optional bang)
+  "Open FILE.
+If no FILE is specified, reload the current buffer from disk."
+  :repeat nil
+  (interactive "<f><!>")
+  (if file
+      (find-file file)
+    (revert-buffer bang (or bang (not (buffer-modified-p))) t)))
+
+;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L4652-L4660>
+(defun ceamx/buffer-new (&optional file)
+  "Edit a new unnamed buffer or FILE."
+  :repeat nil
+  (interactive "<f>")
+  (if file
+      (ceamx/file-edit file)
+    (let ((buffer (generate-new-buffer "*new*")))
+      (set-buffer-major-mode buffer)
+      (set-window-buffer nil buffer))))
+
+;; FIXME: this does not actually kill its buffers -- buffer must be deleted manually
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L397-L424>
+(defun ceamx/delete-this-file (&optional path force-p)
+  "Delete PATH, kill its buffers and expunge it from vc/magit cache.
+If PATH is not specified, default to the current buffer's file.
+If FORCE-P, delete without confirmation."
+  (interactive
+   (list (buffer-file-name (buffer-base-buffer))
+         current-prefix-arg))
+  (let* ((path (or path (buffer-file-name (buffer-base-buffer))))
+         (short-path (and path (abbreviate-file-name path))))
+    (unless path
+      (user-error "Buffer is not visiting any file"))
+    (unless (file-exists-p path)
+      (error "File doesn't exist: %s" path))
+    (unless (or force-p (y-or-n-p (format "Really delete %S?" short-path)))
+      (user-error "Aborted"))
+    (let ((buf (current-buffer)))
+      (unwind-protect
+          (progn (delete-file path t) t)
+        (if (file-exists-p path)
+            (error "Failed to delete %S" short-path)
+          ;; Ensures that windows displaying this buffer will be switched to
+          ;; real buffers (`doom-real-buffer-p')
+          ;; FIXME: implement -- invent the universe -- but the stuff within is very useful to us (e.g. doom-real-buffer-p and filtering buffers)...
+          ;; (doom/kill-this-buffer-in-all-windows buf t)
+          ;; TODO: remove when the above is implemented -- `kill-this-buffer' only removes the one buffer
+          (kill-this-buffer)
+          (ceamx-files--update-refs path)
+          (message "Deleted %S" short-path))))))
+
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
+(defun ceamx/copy-this-file (new-path &optional force-p)
+  "Copy current buffer's file to NEW-PATH.
+If FORCE-P, overwrite the destination file if it exists, without confirmation."
+  (interactive
+   (list (read-file-name "Copy file to: ")
+         current-prefix-arg))
+  (unless (and buffer-file-name (file-exists-p buffer-file-name))
+    (user-error "Buffer is not visiting any file"))
+  (let ((old-path (buffer-file-name (buffer-base-buffer)))
+        (new-path (expand-file-name new-path)))
+    (make-directory (file-name-directory new-path) 't)
+    (copy-file old-path new-path (or force-p 1))
+    (ceamx-files--update-refs old-path new-path)
+    (message "File copied to %S" (abbreviate-file-name new-path))))
+
+
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
+(defun ceamx/move-this-file (new-path &optional force-p)
+  "Move current buffer's file to NEW-PATH.
+If FORCE-P, overwrite the destination file if it exists, without confirmation."
+  (interactive
+   (list (read-file-name "Move file to: ")
+         current-prefix-arg))
+  (unless (and buffer-file-name (file-exists-p buffer-file-name))
+    (user-error "Buffer is not visiting any file"))
+  (let ((old-path (buffer-file-name (buffer-base-buffer)))
+        (new-path (expand-file-name new-path)))
+    (when (directory-name-p new-path)
+      (setq new-path (concat new-path (file-name-nondirectory old-path))))
+    (make-directory (file-name-directory new-path) 't)
+    (rename-file old-path new-path (or force-p 1))
+    (set-visited-file-name new-path t t)
+    (ceamx-files--update-refs old-path new-path)
+    (message "File moved to %S" (abbreviate-file-name new-path))))
+
+;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
+(defun ceamx/kill-this-buffer ()
+  "`kill-this-buffer' with no menu-bar checks.
+`kill-this-buffer' is supposed to be called from the menu bar.
+See <https://www.reddit.com/r/emacs/comments/64xb3q/killthisbuffer_sometimes_just_stops_working/>."
+  (interactive)
+  (if (minibufferp)
+      (abort-recursive-edit)
+    (kill-buffer (current-buffer))))
+
+(defun ceamx/diff-with-file (&optional arg)
+  (interactive "P")
+  (let ((buffer (when arg (current-buffer))))
+    (diff-buffer-with-file buffer)))
+
+;; via <https://github.com/tarsius/fwb-cmds/blob/88e823809067983acfaeafa57d0bb6e889429ad2/fwb-cmds.el#L140C1-L156C78>
+;;;###autoload
+(defun ceamx/sudo-find-file (&optional arg)
+  "Edit the visited file as \"root\".
+If the current buffer does not visit a file, the visited file is
+writable or with a prefix argument, then read a file to visit."
+  (interactive "P")
+  (require 'tramp)
+  (if (or arg
+        (not buffer-file-name)
+        (file-writable-p buffer-file-name))
+    (let ((default-directory
+            (concat "/sudo:root@localhost:" default-directory)))
+      (apply #'find-file
+        (find-file-read-args
+          "Find file: "
+          (confirm-nonexistent-file-or-buffer))))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
+;; ;;;###autoload
+;; (defun doom/remove-recent-file (file)
+;;   "Remove FILE from your recently-opened-files list."
+;;   (interactive
+;;    (list (completing-read "Remove recent file: " recentf-list
+;;                           nil t)))
+;;   (setq recentf-list (delete file recentf-list))
+;;   (recentf-save-list)
+;;   (message "Removed %S from `recentf-list'" (abbreviate-file-name file)))
+
+(provide 'lib-files)
+;;; lib-files.el ends here
+#+end_src
+
+
 ** Workspace
 
 #+begin_src emacs-lisp :tangle lisp/init-workspace.el
@@ -3838,6 +4841,8 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
 ** Help
 
+*** Options / Variables
+
 #+begin_src emacs-lisp :tangle lisp/config-help.el
 ;;; config-help.el --- Help settings                 -*- lexical-binding: t; -*-
 
@@ -3875,6 +4880,9 @@ With optional argument FRAME, return the list of buffers of FRAME."
 (provide 'config-help)
 ;;; config-help.el ends here
 #+end_src
+
+
+*** Customizations
 
 #+begin_src emacs-lisp :tangle lisp/init-help.el
 ;;; init-help.el --- Help -*- lexical-binding: t; -*-
@@ -4062,6 +5070,100 @@ was printed, and only have ElDoc display if one wasn't.\""
 ;;; init-help.el ends here
 #+end_src
 
+
+*** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-help.el
+;;; lib-help.el --- Helpers for help and documentation  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local, help
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; We all need help sometimes.
+
+;;; Code:
+
+(require 'lib-common)
+
+(declare-function consult-info "consult")
+
+;;
+;;; Functions
+
+;;;; Pre-defined filters for `consult-info' searches
+
+;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
+(defun ceamx/emacs-info ()
+  "Search through Emacs info pages."
+  (interactive)
+  (consult-info "emacs" "efaq" "elisp" "cl"))
+
+(defun ceamx/org-info ()
+  "Search through the Org info page."
+  (interactive)
+  (consult-info "org"))
+
+(defun ceamx/completion-info ()
+  "Search through completion info pages."
+  (interactive)
+  (consult-info "vertico" "consult" "marginalia" "orderless" "embark"
+                "corfu" "cape" "tempel"))
+
+;;;; `devdocs' support
+
+;; FIXME: return t/nil
+(defun ceamx-devdocs-doc-installed-p (doc)
+  "Whether `devdocs' documentation set DOC is installed."
+  ;; TODO: return value or t? check elisp docs
+  (when (fboundp 'devdocs--doc-title)
+    ;; FIXME: prevent errors, which *will* happen when doc is not present
+    ;; <https://www.gnu.org/software/emacs/manual/html_node/elisp/Handling-Errors.html>
+    (devdocs--doc-title doc)))
+
+;; FIXME: return t if exists, whatever if new, otherwise throw
+(defun ceamx/devdocs-ensure-doc (doc)
+  "Install the `devdocs' documentation set for DOC if not already installed.
+DOC is a `devdocs' documentation identifier of the form accepted
+by `devdocs-install'."
+  ;; TODO: prompt for selecting from available docs (see `devdocs-install')
+  (interactive "s")
+  (devdocs-install doc)
+  ;; FIXME: `ceamx-devdocs-doc-installed-p'
+  (noop!
+    (unless (ceamx-devdocs-doc-installed-p doc)
+      (devdocs-install doc))
+    ;; TODO: is there another way without calling twice?
+    (ceamx-devdocs-doc-installed-p doc)))
+
+(defun ceamx/devdocs-ensure-docs (docs)
+  "Install each `devdocs' documentation set in DOCS if not already installed.
+DOCS is a quoted list of `devdocs' documentation identifiers as
+accepted by `ceamx/devdocs-ensure-doc'."
+  ;; FIXME: what is the proper code for a list? "x" didn't work
+  (interactive)
+  (dolist (doc docs)
+    (ceamx/devdocs-ensure-doc doc)))
+
+(provide 'lib-help)
+;;; lib-help.el ends here
+#+end_src
 
 ** History
 
@@ -4527,6 +5629,8 @@ was printed, and only have ElDoc display if one wasn't.\""
 
 ** Keys
 
+*** Options / Variables
+
 #+begin_src emacs-lisp :tangle lisp/config-keys.el
 ;;; config-keys.el --- Keybindings variables         -*- lexical-binding: t; -*-
 
@@ -4596,6 +5700,9 @@ of Emacs."
 (provide 'config-keys)
 ;;; config-keys.el ends here
 #+end_src
+
+
+*** General Customizations
 
 #+begin_src emacs-lisp :tangle lisp/init-keys.el
 ;;; init-keys.el --- Keybindings -*- lexical-binding: t -*-
@@ -4685,8 +5792,164 @@ of Emacs."
 #+end_src
 
 
+**** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-keys.el
+;;; lib-keys.el --- Keybinding helpers               -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; FIXME: add copyright+license
+
+;; Helper functions and macros for keybindings.
+
+;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
+;; <https://github.com/casouri/lunarymacs/blob/cd1f34449038e5ec371b1277941c529ea1fb4e9e/site-lisp/luna-key.el>
+
+;; TODO: add utility to apply prefix to provided keys and bind in maps,
+;; deferring until maps are defined if necessary. see
+;; <https://github.com/casouri/lunarymacs/blob/master/site-lisp/luna-key.el>
+
+;;; Code:
+
+(require 'cl-lib)
+
+(require 'config-keys)
+
+;;; Internal functions
+
+;; FIXME: interface still doesn't feel right...
+;; TODO: account for remapping (don't prefix)
+(defun ceamx--key-with-prefix (prefix key &optional sep)
+  "Return a key sequence string with PREFIX prepended to KEY.
+The arguments PREFIX and KEY must be strings satisfying `key-valid-p'.
+
+The optional argument SEP may specify a separator between PREFIX
+and KEY. If nil, a single whitespace character will be used as
+the default separator."
+  (cl-assert (key-valid-p prefix))
+  (cl-assert (key-valid-p key))
+  (let* ((sep (or sep " "))
+          (prefixed-key (concat prefix sep key)))
+    (cl-assert (key-valid-p prefixed-key))
+    prefixed-key))
+
+;;; Macros
+
+(defmacro global-keys! (&rest keys)
+  "Define keybindings KEYS in the global keymap.
+Wrapper for `define-keymap' with `current-global-map' as target keymap."
+  (declare (indent defun) (debug t))
+  `(define-keymap :keymap (current-global-map)
+     ,@keys))
+
+(defmacro keys! (keymap &rest definitions)
+  "Define KEY/DEFINITION pairs as key bindings in KEYMAP.
+Shorthand wrapper for `define-keymap', which see. KEYMAP will be
+provided as the `:keymap' keyword argument value. DEFINITIONS
+will be passed through to `define-keymap' directly.
+
+\(fn KEYMAP &rest [KEY DEFINITION])"
+  (declare (indent defun) (debug t))
+  `(define-keymap :keymap ,keymap
+     ,@definitions))
+
+(defmacro defmap! (symbol &rest defs)
+  "Define a new keymap and prefix command SYMBOL composed of keybindings DEFS."
+  (declare (indent defun) (debug t))
+  `(progn
+     (defvar ,symbol)
+     (unless (keymapp ',symbol)
+       (define-prefix-command ',symbol ',symbol))
+     (define-keymap
+       :keymap ,symbol
+       ,@defs)))
+
+(defmacro leader-key! (key def)
+  "Bind DEF to KEY in the leader map.
+If `meow-leader-define-key' is available, then that function will
+handle the binding. Otherwise, binding will be handled with
+`keymap-set' into `mode-specific-map'.
+
+Note that as of writing, `meow' bindings do not seem to support
+descriptions in a way that is comprehensible to `which-key' --
+the documentation for `meow-keypad-describe-keymap-function'
+acknowledges this incompatibility."
+  (declare (indent defun))
+  `(if (fboundp 'meow-leader-define-key)
+       (meow-leader-define-key (cons ,key ,def))
+     (keymap-set mode-specific-map ,key ,def)))
+
+;; FIXME: while logging something simple works, this does not yet return
+;; anything useful -- it should return a modified version of DEFS
+;; TODO: rework since this doesn't need to be about keydefs
+;; (defun ceamx-map-keydefs (func &rest defs)
+;;   "Apply the function FUNC to key/definition pairs DEFS.
+
+;; FUNC should accept args KEY and DEF. KEY should be a string
+;; matching `key-valid-p'. DEF is anything that can be a key
+;; definition. See the docstring for `keymap-set' for more info on
+;; accepted values for DEF.
+
+;; This function does not validate the validity of each KEY/DEF pair
+;; in DEFS. However, this function will throw when there is an
+;; uneven number of items in DEFS, or when there are duplicate
+;; definitions for KEY.
+
+;; This function is mostly copied from the source of
+;; `define-keymap'."
+;;   (let (seen-keys)
+;;     (while defs
+;;       (let ((key (pop defs)))
+;;         (unless defs
+;;           (error "Uneven number of key/definition pairs"))
+;;         (let ((def (pop defs)))
+;;           (if (member key seen-keys)
+;;               (error "Duplicate definition for key: %S" key)
+;;             (push key seen-keys))
+;;           (funcall func key def))))))
+
+;; (defmacro with-prefix! (prefix &rest defs)
+;;   "Prepend string PREFIX to each key in key/definition pairs DEFS.
+;; PREFIX must satisfy `key-valid-p'. DEFS is composed of keybinding
+;;  pairs of the form accepted by `define-keymap'.
+
+;; When PREFIX is prepended to each key string, a single space will
+;;  be added between PREFIX and the value for the key. If PREFIX
+;;  already includes trailing whitespace, that whitespace will be
+;;  stripped and replaced by a single space unless the trailing
+;;  whitespace is already a single space character."
+;;   (declare (indent defun))
+;;   (let* ((prefix (string-clean-whitespace prefix))
+;;          ;; FIXME: how to return modified KEY and DEF? or find another way...
+;;          (fn (lambda (key def) (format "%s %s" prefix key))))))
+
+(provide 'lib-keys)
+;;; lib-keys.el ends here
+#+end_src
+
 
 *** Meow modal keybindings
+
+***
 
 #+begin_src emacs-lisp :tangle lisp/init-keys-meow.el
 ;;; init-keys-meow.el --- Meow support               -*- lexical-binding: t; -*-
@@ -5719,6 +6982,46 @@ Minibuffer candidate annotations.
 ;;; init-completion.el ends here
 #+end_src
 
+*** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-completion.el
+;;; lib-completion.el --- Completion helper functions  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
+
+(defvar corfu--frame)
+
+;; via <https://github.com/doomemacs/doomemacs/pull/7002>
+(defun +corfu-visible-p ()
+  "Predicate whether Corfu is active/visible."
+  (or (and (frame-live-p corfu--frame)
+           (frame-visible-p corfu--frame))
+      (and (featurep 'corfu-terminal)
+           (popon-live-p corfu-terminal--popon))))
+
+(provide 'lib-completion)
+;;; lib-completion.el ends here
+#+end_src
 ** Embark
 
 #+begin_src emacs-lisp :tangle lisp/init-embark.el
@@ -6586,6 +7889,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 ;;; init-treesitter.el ends here
 #+end_src
 
+
 *** General LISPs
 
 #+begin_src emacs-lisp :tangle lisp/config-lisp.el
@@ -6742,6 +8046,8 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 *** Emacs Lisp
 
+**** Customizations
+
 #+begin_src emacs-lisp :tangle lisp/init-lang-elisp.el
 ;;; init-lang-elisp.el --- Emacs Lisp development support  -*- lexical-binding: t; -*-
 
@@ -6894,7 +8200,131 @@ The original function fails in the presence of whitespace after a sexp."
 #+end_src
 
 
+**** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-elisp.el
+;;; lib-elisp.el --- Helper utilities for Emacs Lisp development and language support  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+;; Copyright (C) 2018  Adam Porter
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;;         Adam Porter <adam@alphapapa.net>
+;; Keywords: local, lisp, tools, internal, convenience
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Sources:
+
+;; <https://github.com/alphapapa/emacs-package-dev-handbook/blob/4a78d753e965bc2cb87f72a72974a4514c4d18dd/README.org#emacs-lisp-macroreplace>
+
+;;; Code:
+
+;;; Macros
+
+;; via <https://github.com/alphapapa/emacs-package-dev-handbook/blob/master/README.org#debug-warn-macro>
+(cl-defmacro debug-warn! (&rest args)
+  "Display a debug warning showing the runtime value of ARGS.
+The warning automatically includes the name of the containing
+function, and it is only displayed if `warning-minimum-log-level'
+is `:debug' at expansion time (otherwise the macro expands to nil
+and is eliminated by the byte-compiler).  When debugging, the
+form also returns nil so, e.g. it may be used in a conditional in
+place of nil.
+
+Each of ARGS may be a string, which is displayed as-is, or a
+symbol, the value of which is displayed prefixed by its name, or
+a Lisp form, which is displayed prefixed by its first symbol.
+
+Before the actual ARGS arguments, you can write keyword
+arguments, i.e. alternating keywords and values.  The following
+keywords are supported:
+
+  :buffer BUFFER   Name of buffer to pass to `display-warning'.
+  :level  LEVEL    Level passed to `display-warning', which see.
+                   Default is :debug."
+  ;; TODO: Can we use a compiler macro to handle this more elegantly?
+  (pcase-let* ((fn-name (when byte-compile-current-buffer
+                          (with-current-buffer byte-compile-current-buffer
+                            ;; This is a hack, but a nifty one.
+                            (save-excursion
+                              (beginning-of-defun)
+                              (cl-second (read (current-buffer)))))))
+                (plist-args (cl-loop while (keywordp (car args))
+                              collect (pop args)
+                              collect (pop args)))
+                ((map (:buffer buffer) (:level level)) plist-args)
+                (level (or level :debug))
+                (string (cl-loop for arg in args
+                          concat (pcase arg
+                                   ((pred stringp) "%S ")
+                                   ((pred symbolp)
+                                     (concat (upcase (symbol-name arg)) ":%S "))
+                                   ((pred listp)
+                                     (concat "(" (upcase (symbol-name (car arg)))
+                                       (pcase (length arg)
+                                         (1 ")")
+                                         (_ "...)"))
+                                       ":%S "))))))
+    ;; FIXME: ensure available (from where?) or just defvar
+    (when (eq :debug warning-minimum-log-level)
+      `(let ((fn-name ,(if fn-name
+                         `',fn-name
+                         ;; In an interpreted function: use `backtrace-frame' to get the
+                         ;; function name (we have to use a little hackery to figure out
+                         ;; how far up the frame to look, but this seems to work).
+                         `(cl-loop for frame in (backtrace-frames)
+                            for fn = (cl-second frame)
+                            when (not (or (subrp fn)
+                                        (special-form-p fn)
+                                        (eq 'backtrace-frames fn)))
+                            return (make-symbol (format "%s [interpreted]" fn))))))
+         (display-warning fn-name (format ,string ,@args) ,level ,buffer)
+         nil))))
+
+;;; Commands
+
+;;;###autoload
+(defun ceamx/emacs-lisp-macroreplace ()
+  "Replace macro form before or after point with its expansion."
+  (interactive)
+  (if-let* ((beg (point))
+             (end t)
+             (form (or (ignore-errors
+                         (save-excursion
+                           (prog1 (read (current-buffer))
+                             (setq end (point)))))
+                     (ignore-errors
+                       (forward-sexp -1)
+                       (setq beg (point))
+                       (prog1 (read (current-buffer))
+                         (setq end (point))))))
+             (expansion (macroexpand-all form)))
+    ;; FIXME: replace obsolete function with what?
+    (setf (buffer-substring beg end) (pp-to-string expansion))
+    (user-error "Unable to expand")))
+
+(provide 'lib-elisp)
+;;; lib-elisp.el ends here
+#+end_src
+
+
 *** Eglot
+
+**** Customizations
 
 #+begin_src emacs-lisp :tangle lisp/init-eglot.el
 ;;; init-eglot.el --- Eglot support                  -*- lexical-binding: t; -*-
@@ -6983,6 +8413,7 @@ The original function fails in the presence of whitespace after a sexp."
 (provide 'init-eglot)
 ;;; init-eglot.el ends here
 #+end_src
+
 
 *** Data Formats (XML, CSV...)
 :PROPERTIES:
@@ -7230,7 +8661,12 @@ The original function fails in the presence of whitespace after a sexp."
 (provide 'init-lang-lua)
 ;;; init-lang-lua.el ends here
 #+end_src
+
+
 *** Markdown
+
+
+**** Customization
 
 #+begin_src emacs-lisp :tangle lisp/init-lang-markdown.el
 ;;; init-lang-markdown.el --- Markdown support customizations  -*- lexical-binding: t; -*-
@@ -7359,6 +8795,12 @@ and
 (provide 'init-lang-markdown)
 ;;; init-lang-markdown.el ends here
 #+end_src
+
+
+**** Library
+
+
+
 *** Nix
 
 #+begin_src emacs-lisp :tangle lisp/init-lang-nix.el
@@ -8255,6 +9697,46 @@ Else create a new file."
 #+end_src
 
 
+*** User Options
+
+#+begin_src emacs-lisp :tangle lisp/config-org.el
+;;; config-org.el --- org-mode variables             -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords:
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(require 'config-notes)
+
+(defvar ceamx-org-capture-default-file
+  (expand-file-name
+    (concat (file-name-as-directory ceamx-agenda-dir) "inbox.org"))
+  "Path to default inbox file for new `org-capture' entries.")
+
+(provide 'config-org)
+;;; config-org.el ends here
+#+end_src
+
 
 ** Controls
 
@@ -8311,6 +9793,7 @@ Else create a new file."
 (provide 'init-controls)
 ;;; init-controls.el ends here
 #+end_src
+
 
 ** Dashboard
 
@@ -8381,6 +9864,7 @@ Else create a new file."
 (provide 'init-dashboard)
 ;;; init-dashboard.el ends here
 #+end_src
+
 
 ** Dired, the Directory Editor
 
@@ -8532,6 +10016,7 @@ Else create a new file."
 
 **
 
+
 ** Printing
 #+begin_src emacs-lisp :tangle lisp/init-printing.el
 ;;; init-printing.el --- Support for printing documents  -*- lexical-binding: t; -*-
@@ -8578,6 +10063,7 @@ Else create a new file."
 
 
 **
+
 ** DISABLED Newsreader
 
 
@@ -9080,3 +10566,8 @@ Return the new `zone' timer."
 (provide 'init-fun)
 ;;; init-fun.el ends here
 #+end_src
+
+
+* Extras
+
+Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
