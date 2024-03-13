@@ -76,7 +76,6 @@
   "C-c C-f" nil                         ; `byte-compile-current-file'
   "C-c C-b" nil                         ; `elisp-byte-compile-buffer'
 
-  "C-c C-c" #'eval-last-sexp
   "C-S-t" #'transpose-sexps)
 
 ;;; Packages
