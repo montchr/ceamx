@@ -282,9 +282,6 @@
 
 (require 'lib-common)
 
-(when (display-graphic-p)
-  (require 'lib-gui))
-
 (require 'lib-files)
 (require 'lib-elisp)
 

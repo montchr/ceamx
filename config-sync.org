@@ -225,10 +225,11 @@ Emacs version to prevent bytecode incompatibility.")
 #+end_src
 
 
-** Early init take 3
+** Early init
 
-#+begin_src elisp :tangle early-init-3.el
-;;; early-init-3.el --- Early Init File  -*- no-byte-compile: t; -*-
+#+begin_src elisp :tangle early-init.el
+;;; early-init.el --- Early Init File  -*- no-byte-compile: t; -*-
+
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
@@ -432,8 +433,8 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 
-(provide 'early-init-3)
-;;; early-init-3.el ends here
+(provide 'early-init)
+;;; early-init.el ends here
 #+end_src
 
 
@@ -1303,9 +1304,6 @@ or the documentation for the respective package manager."
 
 (require 'lib-common)
 
-(when (display-graphic-p)
-  (require 'lib-gui))
-
 (require 'lib-files)
 (require 'lib-elisp)
 
@@ -1966,6 +1964,8 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 ** Secrets
 
+*** Customizations
+
 #+begin_src emacs-lisp :tangle lisp/init-secrets.el
 ;;; init-secrets.el --- Support for secretive operations  -*- lexical-binding: t; -*-
 
@@ -2055,6 +2055,55 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;;; init-secrets.el ends here
 #+end_src
 
+*** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-secrets.el
+;;; lib-secrets.el --- Helpers for secrets           -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(eval-when-compile
+  (require 'auth-source)
+  (require 'auth-source-pass))
+
+;; via <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#lookup-a-password-using-auth-source>
+(defun ceamx-lookup-password (host user port)
+  (require 'auth-source)
+  (require 'auth-source-pass)
+  (let ((auth (auth-source-search :host host :user user :port port)))
+    (if auth
+      (let ((secretf (plist-get (car auth) :secret)))
+        (if secretf
+          (funcall secretf)
+          (error "Auth entry for %s@%s:%s has no secret!"
+            user host port)))
+      (error "No auth entry found for %s@%s:%s" user host port))))
+
+(provide 'lib-secrets)
+;;; lib-secrets.el ends here
+#+end_src
 
 ** Frame
 
@@ -2385,7 +2434,6 @@ accommodation for varying pixel densities."
 (require 'elpaca-autoloads)
 
 (require 'lib-common)
-(require 'lib-hydras)
 
 ;;; General
 
@@ -2460,6 +2508,7 @@ accommodation for varying pixel densities."
 
 
 *** Themes
+
 **** Modus Themes
 
 #+begin_src emacs-lisp :tangle lisp/init-ui-modus-themes.el
@@ -2735,6 +2784,142 @@ accommodation for varying pixel densities."
 
 (provide 'init-ui-circadian)
 ;;; init-ui-circadian.el ends here
+#+end_src
+
+
+**** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-ui-theme.el
+;;; lib-ui-theme.el --- Theme library functions and macros  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (C) 2024  Protesilaos Stavrou
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;;         Protesilaos Stavrou <info@protesilaos.com>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Theme library functions and macros.
+
+;;; Code:
+
+(require 'config-ui)
+
+(require 'lib-common)
+
+(declare-function theme-buffet--load-random "theme-buffet")
+
+;;; Helpers
+
+(defun +theme-buffet--load-random-from-periods (periods)
+  "Load a random theme from the specified `theme-buffet' PERIODS.
+PERIODS can be a single keyword or list of keywords. Each keyword
+must be a valid `theme-buffet' period as defined in
+`theme-buffet--keywords'."
+  (let ((period (if (listp periods) (seq-random-elt periods) periods)))
+    (theme-buffet--load-random period)))
+
+;;; Functions
+
+;; via prot-emacs
+(defun ceamx-theme-re-enable-in-frame (_frame)
+  "Re-enable active theme, if any, upon FRAME creation.
+Add this to `after-make-frame-functions' so that new frames do
+not retain the generic background set by the function
+`ceamx-theme-no-bright-flash'."
+  (when-let ((theme (car custom-enabled-themes)))
+    (enable-theme theme)))
+
+(defun ceamx-gnome-theme ()
+  "Get the currently-active GNOME/GTK color scheme."
+  (shell-command (format "gsettings get %s color-scheme"
+                         ceamx-gnome-ui-namespace)))
+
+(defun ceamx-gnome-theme-dark-p ()
+  "Whether GNOME/GTK are using a theme with a dark color scheme."
+  (string-match-p "dark" (ceamx-gnome-theme)))
+
+;;; Commands
+
+;;;; Desktop environment commands
+
+(defun ceamx/gnome-set-theme (theme)
+  "Set the GNOME/GTK theme to THEME."
+  ;; FIXME: prompt with completion
+  (interactive "s")
+  (let* ((namespace ceamx-gnome-ui-namespace)
+         (value (pcase theme
+                  ((rx (optional "prefer-") "dark")
+                    "prefer-dark")
+                  ((rx (optional "prefer-") "light")
+                    "prefer-light")
+                  (_ "prefer-dark")))
+         (cmd (format "gsettings set %s color-scheme %s" namespace value)))
+    (shell-command cmd)))
+
+(defun ceamx/gnome-dark-theme ()
+  "Enable the dark GNOME/GTK theme."
+  (interactive)
+  (ceamx/gnome-set-theme "dark"))
+
+(defun ceamx/gnome-light-theme ()
+  "Enable the light GNOME/GTK theme."
+  (interactive)
+  (ceamx/gnome-set-theme "light"))
+
+;;;; Emacs-specific commands
+
+(defun ceamx/load-dark-theme ()
+  "Load a random dark theme."
+  (interactive)
+  (pcase ceamx-theme-circadian-interval
+    ('buffet
+      (+theme-buffet--load-random-from-periods
+        ceamx-theme-buffet-dark-periods))
+    (_
+      (load-theme ceamx-theme-default-dark :no-confirm))))
+
+(defun ceamx/load-light-theme ()
+  "Load a random light theme."
+  (interactive)
+  (pcase ceamx-theme-circadian-interval
+    ('buffet
+      (+theme-buffet--load-random-from-periods
+        ceamx-theme-buffet-light-periods))
+    (_
+      (load-theme ceamx-theme-default-light :no-confirm))))
+
+;;;; Global commands
+
+(defun ceamx/light ()
+  "Activate a light theme globally."
+  (interactive)
+  (ceamx/gnome-light-theme)
+  (ceamx/load-light-theme))
+
+(defun ceamx/dark ()
+  "Activate a dark theme globally."
+  (interactive)
+  (ceamx/gnome-dark-theme)
+  (ceamx/load-dark-theme))
+
+(provide 'lib-ui-theme)
+;;; lib-ui-theme.el ends here
 #+end_src
 
 
@@ -3149,7 +3334,86 @@ accommodation for varying pixel densities."
 #+end_src
 
 
+*** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
+;;; lib-ui.el --- General user interface library     -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; <https://photo.stackexchange.com/questions/18494/what-is-the-difference-between-pixel-pitch-and-pixel-density>
+;; <https://insights.samsung.com/2023/10/05/what-is-pixel-pitch-understanding-fine-pixel-pitch-led-displays/>
+
+;;; Sources:
+
+;; <https://github.com/noctuid/dotfiles/blob/master/emacs/.emacs.d/awaken.org#gui-related>
+
+;;; Code:
+
+;;;; Requirements
+
+(require 'config-ui)
+
+;;;; Constants
+
+(defconst ceamx-inch-as-mm 25.4
+  "One inch in millimeters.")
+
+(defconst ceamx-pt-as-mm 0.353
+  "One typographic point in millimeters.")
+
+;;;; Functions
+
+(defun ceamx-default-monitor-geometry ()
+  "Return geometry for the first monitor in `display-monitor-attributes-list'."
+  (let* ((first-monitor (car (display-monitor-attributes-list))))
+    (alist-get 'geometry first-monitor)))
+
+;; via <https://www.reddit.com/r/emacs/comments/7hzxb8/comment/dqywyqc/>
+(defun ceamx-pixel-pitch (&optional frame)
+  "Return the pixel pitch for FRAME in millimeters.
+When FRAME is nil, the current frame will be used as default.
+
+Pixel pitch is the distance from the center of a pixel to the
+center of its adjacent pixel."
+  (let ((monitor-attrs (frame-monitor-attributes frame)))
+    (/ (float (nth 1 (assoc 'mm-size monitor-attrs)))
+      (nth 3 (assoc 'geometry monitor-attrs)))))
+
+
+(defun ceamx-font-height (number &optional multiplier)
+  "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
+NUMBER should be a whole number. MULTIPLIER should be a float.
+
+If MULTIPLIER is nil, the value of `ceamx-font-height-multiplier'
+will be used as default."
+  (truncate (* number (or multiplier ceamx-font-height-multiplier))))
+
+(provide 'lib-ui)
+;;; lib-ui.el ends here
+#+end_src
+
 ** Window
+
+*** Customization
 
 #+begin_src emacs-lisp :tangle lisp/config-window.el
 ;;; config-window.el --- Settings for window management  -*- lexical-binding: t; -*-
@@ -3565,6 +3829,326 @@ The buffer will be created if it does not exist."
 ;;; init-window.el ends here
 #+end_src
 
+
+*** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-window.el
+;;; lib-window.el --- Helpers for window management  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (C) 2023 Free Software Foundation, Inc.
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;;         Vegard Øye <vegard_oye at hotmail.com>
+;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
+
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Helper functions for `init-window'.
+
+;;; Sources:
+
+;; <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
+;; <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+;; <https://github.com/karthink/popper/blob/master/popper.el#L265-L283>
+
+;;; Code:
+
+;;;; Requirements
+
+(require 'windmove)
+
+(require 'config-window)
+
+;; (declare-function 'popper-popup-status "popper")
+;; (declare-function 'popper-toggle "popper")
+
+;;;; Popups
+
+;; <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
+
+(defun ceamx-window-display-popup-at-bottom (buffer &optional alist)
+  "Display popup-buffer BUFFER at the bottom of the screen.
+ALIST is an association list of action symbols and values.  See
+Info node `(elisp) Buffer Display Action Alists' for details of
+such alists."
+  (display-buffer-in-side-window
+    buffer
+    (append alist
+      `((side . bottom)
+         (slot . 1)))))
+
+(defun ceamx-window-display-popup (buffer &optional alist)
+  "Display and switch to popup-buffer BUFFER at the bottom of the screen.
+ALIST is an association list of action symbols and values.  See
+Info node `(elisp) Buffer Display Action Alists' for details of
+such alists."
+  (let ((window (ceamx-window-display-popup-at-bottom buffer alist)))
+    (select-window window)))
+
+;; TODO: add buffers tracking files in nix store, which are only useful for
+;; reference purposes, often invoked when viewing definition of low-level
+;; Emacs internals defined in C code (e.g. `string-equal')
+(defun +popper-current-buffer-popup-p (buf)
+  "Whether the buffer BUF should be considered a popup.
+This is intended for use as a predicate in `popper-reference-buffers'."
+  (with-current-buffer buf
+    (and (derived-mode-p 'fundamental-mode)
+      (not (bound-and-true-p scratch-buffer))
+      ;; Less than `max-lines' but not empty.
+      (let ((lines (count-lines (point-min) (point-max)))
+             (max-lines 10))
+        (and (not (zerop lines))
+          (< lines max-lines))))))
+
+(defun +popper-close-focused (&rest _)
+  "Close any focused `popper' popup.
+Intended as a general hook function."
+  (declare-function popper-toggle "popper")
+  (when (bound-and-true-p popper-popup-status)
+    (popper-toggle)))
+
+;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+(defun +display-buffer-reuse-minor-mode-window (buffer alist)
+  "Return a window sharing a minor mode with BUFFER.
+ALIST is an association list of action symbols and values.  See
+Info node \"(elisp) Buffer Display Action Alists\" for details of
+such alists."
+  (let* ((alist-entry (assq 'reusable-frames alist))
+         (alist-mode-entry (assq 'minor-mode alist))
+         (frames (cond (alist-entry (cdr alist-entry))
+                       ((if (eq pop-up-frames 'graphic-only)
+                            (display-graphic-p)
+                          pop-up-frames)
+                        0)
+                       ;; TODO: remove or note the intention here -- not a call but
+                       ;; a condition check to maintain support for the deprecated
+                       ;; function. but really should be removed.
+                       ;; (display-buffer-reuse-frames 0)
+                       (t (last-nonminibuffer-frame))))
+         (inhibit-same-window-p (cdr (assq 'inhibit-same-window alist)))
+         (windows (window-list-1 nil 'nomini frames))
+         (allowed-modes (if alist-mode-entry
+                            (cdr alist-mode-entry)))
+         (curwin (selected-window))
+         (curframe (selected-frame)))
+    (unless (listp allowed-modes)
+      (setq allowed-modes (list allowed-modes)))
+    (let ((same-mode-same-frame)
+          (same-mode-other-frame))
+      (dolist (window windows)
+        (let ((mode?
+               (with-current-buffer (window-buffer window)
+                 (cl-some (lambda (m) (and (boundp m) (symbol-value m) 'same))
+                          allowed-modes))))
+          (when (and mode? (not (and inhibit-same-window-p (eq window curwin))))
+            (push window (if (eq curframe (window-frame window))
+                             same-mode-same-frame
+                           same-mode-other-frame)))))
+      (let ((window (car (nconc same-mode-same-frame
+                                same-mode-other-frame))))
+        (when (window-live-p window)
+          (prog1 (window--display-buffer buffer window 'reuse alist)
+            (unless (cdr (assq 'inhibit-switch-frame alist))
+              (window--maybe-raise-frame (window-frame window)))))))))
+
+;;; Macros
+
+(defmacro with-safe-side-windows! (&rest body)
+  "Toggle side windows, evaluate BODY, restore side windows.
+Copied from the `evil' macro `evil-save-side-windows'."
+  (declare (indent defun)
+    (debug (&rest form)))
+  (let ((sides (make-symbol "sidesvar")))
+    `(let ((,sides (and (fboundp 'window-toggle-side-windows)
+                     (window-with-parameter 'window-side))))
+       ;; (declare-function window-toggle-side-windows "window")
+       (when ,sides
+         (window-toggle-side-windows))
+       (unwind-protect
+         (progn ,@body)
+         (when ,sides
+           (window-toggle-side-windows))))))
+
+;;; Interactive
+
+;; FIXME: "display-buffer" is misleading
+;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+;;;###autoload
+(defun ceamx/display-buffer-at-bottom ()
+  "Move the current buffer to the bottom of the frame.
+This is useful to take a buffer out of a side window.
+
+The window parameters of this function are provided mostly for
+didactic purposes."
+  (interactive)
+  (let ((buffer (current-buffer)))
+    (with-current-buffer buffer
+      (delete-window)
+      (display-buffer-at-bottom
+        buffer '((window-height .
+                   (lambda (win)
+                     (fit-window-to-buffer
+                       win (/ (frame-height) 3)))))))))
+
+;; TODO: this seems very similar to `windmove-swap-states-in-direction'...?
+(defun ceamx-move-window (side)
+  "Move the `selected-window' to SIDE.
+The state of the `selected-window' is saved along with the state
+of the window tree consisting of all the other windows. Then, all
+windows are deleted, the remaining window is split according to
+DIRECTION, the state of the window in DIRECTION is replace with
+the saved state of the `selected-window', and, finally, the state
+of the saved window tree is reconstructed on the opposite side.
+
+SIDE has the same meaning as in `split-window'.
+
+Copied from the `evil' function `evil-move-window'."
+  (with-safe-side-windows!
+    (unless (one-window-p)
+      (save-excursion
+        (let ((this-window-state (window-state-get (selected-window))))
+          (delete-window)
+          (let ((window-tree (window-state-get)))
+            (delete-other-windows)
+            (let ((sub-window (selected-window))
+                  (new-window (ceamx--split-window-in-direction side)))
+              (window-state-put window-tree sub-window)
+              (window-state-put this-window-state new-window)
+              (select-window new-window)))))
+      (balance-windows))))
+
+;; via <https://github.com/doomemacs/doomemacs/blob/ff33ec8f7a89d168ca533612e2562883c89e029f/modules/editor/evil/autoload/evil.el#L42-L73>
+(defun ceamx--window-swap-or-split (direction)
+  "Move current window to the next window in DIRECTION.
+If there are no windows in DIRECTION and there is only one window
+in the current frame, split the window in DIRECTION and place
+this window there."
+  (let* ((this-window (selected-window))
+         (that-window (window-in-direction direction this-window)))
+    (unless that-window
+      (setq that-window (split-window this-window nil direction))
+      (with-selected-window that-window
+        (switch-to-buffer ceamx-fallback-buffer-name)))
+    (window-swap-states this-window that-window)
+    (select-window that-window)))
+
+(defun ceamx/window-move-left ()
+  "Swap or move selected window to the left."
+  (interactive)
+  (ceamx--window-swap-or-split 'left))
+
+(defun ceamx/window-move-right ()
+  "Swap or move selected window to the right."
+  (interactive)
+  (ceamx--window-swap-or-split 'right))
+
+(defun ceamx/window-move-up ()
+  "Swap or move selected window upwards."
+  (interactive)
+  (ceamx--window-swap-or-split 'up))
+
+(defun ceamx/window-move-down ()
+  "Swap or move selected window downwards."
+  (interactive)
+  (ceamx--window-swap-or-split 'down))
+
+(defun ceamx/split-window (&optional count direction file)
+  "TODO"
+  (interactive "P\nS\nf")
+  (select-window
+    (split-window (selected-window)
+      (when count (- count))
+      direction))
+  ;; (when (and (not count)
+  ;;         ceamx-window-auto-balance)
+  ;;   (balance-windows (window-parent)))
+  (when file
+    (find-file file)))
+
+(defun ceamx/split-window-with-buffer (buffer)
+  "Split window and switch to BUFFER.
+If BUFFER is not the name of an existing buffer, then a new
+buffer will be created with that name."
+  (interactive "b")
+  (ceamx/split-window)
+  (switch-to-buffer buffer))
+
+(defun ceamx/split-window-with-next-buffer ()
+  "Split window and switch to the next buffer in the buffer list."
+  (interactive)
+  (ceamx/split-window-with-buffer (next-buffer)))
+
+(defun ceamx/split-window-with-prev-buffer ()
+  "Split window and switch to the previous buffer in the buffer list."
+  (interactive)
+  (ceamx/split-window-with-buffer (previous-buffer)))
+
+(defun ceamx/buffer-create (&optional file)
+  "Edit a new unnamed buffer or open FILE.
+When called interactively, prompt the user for FILE."
+  (interactive "F")
+  (if file
+    (find-file file)
+    (let ((buffer (generate-new-buffer "*new*")))
+      (set-buffer-major-mode buffer)
+      (set-window-buffer nil buffer))))
+
+(defun ceamx/window-increase-height (count)
+  "Increase window height by COUNT."
+  (interactive "p")
+  (enlarge-window count))
+
+(defun ceamx/window-decrease-height (count)
+  "Decrease window height by COUNT."
+  (interactive "p")
+  (enlarge-window (- count)))
+
+(defun ceamx/window-increase-width (count)
+  "Increase window width by COUNT."
+  (interactive "p")
+  (enlarge-window count t))
+
+(defun ceamx/window-decrease-width (count)
+  "Decrease window width by COUNT."
+  (interactive "p")
+  (enlarge-window (- count) t))
+
+;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-simple.el#L800C1-L814C68>
+;;;###autoload
+(defun ceamx/swap-or-rotate-windows (counter)
+  "Swap states of live buffers.
+With two windows, transpose their buffers.  With more windows,
+perform a clockwise rotation.  Do not alter the window layout.
+Just move the buffers around.
+
+With COUNTER as a prefix argument, do the rotation
+counter-clockwise."
+  (interactive "P")
+  (when-let* ((winlist (if counter (reverse (window-list)) (window-list)))
+               (wincount (count-windows))
+               ((> wincount 1)))
+    (dotimes (i (- wincount 1))
+      (window-swap-states (elt winlist i) (elt winlist (+ i 1))))))
+
+(provide 'lib-window)
+;;; lib-window.el ends here
+#+end_src
 
 ** Buffer
 
@@ -5500,6 +6084,8 @@ accepted by `ceamx/devdocs-ensure-doc'."
 
 *** Writable grep buffers with =wgrep=
 
+**** Customization
+
 #+begin_src emacs-lisp :tangle lisp/init-wgrep.el
 ;;; init-wgrep.el --- Configuration for writable minibuffer grep  -*- lexical-binding: t; -*-
 
@@ -5564,6 +6150,59 @@ accepted by `ceamx/devdocs-ensure-doc'."
 ;;; init-wgrep.el ends here
 #+end_src
 
+**** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-wgrep.el
+;;; lib-wgrep.el --- wgrep helpers                   -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;;         Henrik Lissner
+;; Keywords: tools, local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
+;;;###autoload
+(defun +vertico/embark-export-write ()
+  "Export the current vertico results to a writable buffer if possible.
+Supports exporting consult-grep to wgrep, file to wdeired,
+and consult-location to occur-edit."
+  (interactive)
+  (require 'embark)
+  (require 'wgrep)
+  (let* ((edit-command
+          (pcase-let ((`(,type . ,candidates)
+                        (run-hook-with-args-until-success 'embark-candidate-collectors)))
+            (pcase type
+              ('consult-grep #'wgrep-change-to-wgrep-mode)
+              ('file #'wdired-change-to-wdired-mode)
+              ('consult-location #'occur-edit-mode)
+              (x (user-error "Embark category %S doesn't support writable export" x)))))
+          (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
+    (embark-export)))
+
+(provide 'lib-wgrep)
+;;; lib-wgrep.el ends here
+#+end_src
 
 ** Input Methods
 
@@ -5629,7 +6268,7 @@ accepted by `ceamx/devdocs-ensure-doc'."
 
 ** Keys
 
-*** Options / Variables
+*** Options & Variables
 
 #+begin_src emacs-lisp :tangle lisp/config-keys.el
 ;;; config-keys.el --- Keybindings variables         -*- lexical-binding: t; -*-
@@ -6430,8 +7069,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 ;;; Code:
 
-(require 'lib-selection)
-
 (require 'lib-keys)
 
 (use-package consult
@@ -7022,6 +7659,7 @@ Minibuffer candidate annotations.
 (provide 'lib-completion)
 ;;; lib-completion.el ends here
 #+end_src
+
 ** Embark
 
 #+begin_src emacs-lisp :tangle lisp/init-embark.el
@@ -7355,6 +7993,8 @@ Minibuffer candidate annotations.
 
 *** Magit
 
+**** Customization
+
 #+begin_src emacs-lisp :tangle lisp/init-vcs-magit.el
 ;;; init-vcs-magit.el --- Magit support              -*- lexical-binding: t; -*-
 
@@ -7481,6 +8121,199 @@ Minibuffer candidate annotations.
 (provide 'init-vcs-magit)
 ;;; init-vcs-magit.el ends here
 #+end_src
+
+**** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-vcs-magit.el
+;;; lib-vcs-magit.el --- Helpers for Magit -*- lexical-binding: t -*-
+
+;; Copyright (c) 2014-2022  Henrik Lissner
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT
+
+;; Author: Henrik Lissner
+;; URL: https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/tools/magit/autoload.el
+;; Created: 22 January, 2023
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+
+;;; Commentary:
+
+;;  <https://magit.vc/>
+
+;;  Autoloaded functions for magit, lifted from Doom Emacs.
+;;
+;;  <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/tools/magit/autoload.el>
+
+;;; Code:
+
+(defun +magit-display-buffer-fn (buffer)
+  "Same as `magit-display-buffer-traditional', except...
+
+- If opened from a commit window, it will open below it.
+- Magit process windows are always opened in small windows below the current.
+- Everything else will reuse the same window."
+  (let ((buffer-mode (buffer-local-value 'major-mode buffer)))
+    (display-buffer
+     buffer (cond
+             ((and (eq buffer-mode 'magit-status-mode)
+                   (get-buffer-window buffer))
+              '(display-buffer-reuse-window))
+             ;; Any magit buffers opened from a commit window should open below
+             ;; it. Also open magit process windows below.
+             ((or (bound-and-true-p git-commit-mode)
+                  (eq buffer-mode 'magit-process-mode))
+              (let ((size (if (eq buffer-mode 'magit-process-mode)
+                              0.35
+                            0.7)))
+                `(display-buffer-below-selected
+                  . ((window-height . ,(truncate (* (window-height) size)))))))
+
+             ;; Everything else should reuse the current window.
+             ((or (not (derived-mode-p 'magit-mode))
+                  (not (memq (with-current-buffer buffer major-mode)
+                             '(magit-process-mode
+                               magit-revision-mode
+                               magit-diff-mode
+                               magit-stash-mode
+                               magit-status-mode))))
+              '(display-buffer-same-window))
+
+             ('(+magit--display-buffer-in-direction))))))
+
+(defun +magit--display-buffer-in-direction (buffer alist)
+  "`display-buffer-alist' handler that opens BUFFER in a direction.
+
+This differs from `display-buffer-in-direction' in one way: it will try to use a
+window that already exists in that direction. It will split otherwise."
+  (let ((direction (or (alist-get 'direction alist)
+                     ;; FIXME: undefined
+                       +magit-open-windows-in-direction))
+        (origin-window (selected-window)))
+    (if-let (window (window-in-direction direction))
+        (unless magit-display-buffer-noselect
+          (select-window window))
+      (if-let (window (and (not (one-window-p))
+                           (window-in-direction
+                            (pcase direction
+                              (`right 'left)
+                              (`left 'right)
+                              ((or `up `above) 'down)
+                              ((or `down `below) 'up)))))
+        (unless magit-display-buffer-noselect
+          (select-window window))
+        (let ((window (split-window nil nil direction)))
+          (when (and (not magit-display-buffer-noselect)
+                     (memq direction '(right down below)))
+            (select-window window))
+          (display-buffer-record-window 'reuse window buffer)
+          (set-window-buffer window buffer)
+          (set-window-parameter window 'quit-restore (list 'window 'window origin-window buffer))
+          (set-window-prev-buffers window nil))))
+    (unless magit-display-buffer-noselect
+      (switch-to-buffer buffer t t)
+      (selected-window))))
+
+
+;;
+;;; Auto-revert
+
+(defvar +magit--stale-p nil)
+
+(defun +magit--revert-buffer (buffer)
+  (with-current-buffer buffer
+    (kill-local-variable '+magit--stale-p)
+    (when (and buffer-file-name (file-exists-p buffer-file-name))
+      (if (buffer-modified-p (current-buffer))
+          (when (bound-and-true-p vc-mode)
+            (vc-refresh-state)
+            (force-mode-line-update))
+        (revert-buffer t t t)))))
+
+(defun +magit-mark-stale-buffers-h ()
+  "Revert all visible buffers and mark buried buffers as stale.
+
+Stale buffers are reverted when they are switched to, assuming they haven't been
+modified."
+  (dolist (buffer (buffer-list))
+    (when (buffer-live-p buffer)
+      (if (get-buffer-window buffer)
+          (+magit--revert-buffer buffer)
+        (with-current-buffer buffer
+          (setq-local +magit--stale-p t))))))
+
+(defun +magit-revert-buffer-maybe-h ()
+  "Update `vc' and `git-gutter' if out of date."
+  (when +magit--stale-p
+    (+magit--revert-buffer (current-buffer))))
+
+
+;;
+;;; Commands
+
+(defun +magit/quit (&optional kill-buffer)
+  "Bury the current magit buffer.
+
+If KILL-BUFFER, kill this buffer instead of burying it.
+If the buried/killed magit buffer was the last magit buffer open for this repo,
+kill all magit buffers for this repo."
+  (interactive "P")
+  (let ((topdir (magit-toplevel)))
+    (funcall magit-bury-buffer-function kill-buffer)
+    (or (cl-find-if (lambda (win)
+                      (with-selected-window win
+                        (and (derived-mode-p 'magit-mode)
+                             (equal magit--default-directory topdir))))
+                    (window-list))
+        (+magit/quit-all))))
+
+(defun +magit/quit-all ()
+  "Kill all magit buffers for the current repository."
+  (interactive)
+  (mapc #'+magit--kill-buffer (magit-mode-get-buffers))
+  (+magit-mark-stale-buffers-h))
+
+(defun +magit--kill-buffer (buf)
+  "TODO"
+  (when (and (bufferp buf) (buffer-live-p buf))
+    (let ((process (get-buffer-process buf)))
+      (if (not (processp process))
+          (kill-buffer buf)
+        (with-current-buffer buf
+          (if (process-live-p process)
+              (run-with-timer 5 nil #'+magit--kill-buffer buf)
+            (kill-process process)
+            (kill-buffer buf)))))))
+
+(provide 'lib-vcs-magit)
+;;; lib-vcs-magit.el ends here
+#+end_src
+
 
 *** Forge Integrations
 
@@ -7892,6 +8725,8 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 *** General LISPs
 
+**** Options & Variables
+
 #+begin_src emacs-lisp :tangle lisp/config-lisp.el
 ;;; config-lisp.el --- Lispy variable definitions  -*- lexical-binding: t; -*-
 
@@ -7935,6 +8770,8 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 (provide 'config-lisp)
 ;;; config-lisp.el ends here
 #+end_src
+
+**** Customizations
 
 #+begin_src emacs-lisp :tangle lisp/init-lisp.el
 ;;; init-lisp.el --- Emacs Lisp language configuration -*- lexical-binding: t -*-
@@ -8042,6 +8879,258 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 ;;; init-lisp.el ends here
 #+end_src
 
+**** Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-lisp.el
+;;; lib-lisp.el --- Lisp library functions           -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+;;;; Variables
+
+(defvar ceamx-lisp-init-hook '()
+  "Hook to run in all supported Lisp modes.")
+
+;;;; Functions
+
+(defun ceamx-lisp-init ()
+  "Enable features useful in any Lisp mode."
+  ;; FIXME: conditional
+  ;; FIXME: errors on startup (before loaded)
+  (lispy-mode)
+  ;; `outli' overrides some `lispy' features.
+  ;; <https://github.com/jdtsmith/outli?tab=readme-ov-file#configuration>
+  ;; FIXME: conditional
+  (outli-mode)
+  (run-hooks 'ceamx-lisp-init-hook))
+
+(defun ceamx-enable-check-parens-on-save ()
+  "Run `check-parens' when the current buffer is saved."
+  (add-hook 'after-save-hook #'check-parens nil t))
+
+(defun +emacs-lisp--in-package-buffer-p ()
+  (let* ((file-path (buffer-file-name (buffer-base-buffer)))
+          (file-base (if file-path (file-name-base file-path))))
+    (and (derived-mode-p 'emacs-lisp-mode)
+      (or (null file-base)
+        (locate-file file-base (custom-theme--load-path) '(".elc" ".el"))))))
+
+;;;; Commands
+
+(defun ceamx/indent-last-sexp ()
+  "Apply indentation to sexp before point."
+  (interactive)
+  (save-excursion
+    (backward-list)
+    (indent-sexp)))
+
+;; Source: <https://emacs.stackexchange.com/a/52789/40956>
+;; SPDX-License-Identifier: CC-BY-SA-4.0
+(defun ceamx-calculate-lisp-indent-a (&optional parse-start)
+  "Calculate Lisp indentation from PARSE-START with proper quoted list handling.
+Intended as overriding advice to `calculate-lisp-indent'.
+
+This function improves upon `calculate-lisp-indent' by fixing
+longstanding bugs with its handling of quoted and backquoted
+lists."
+  ;; This line because `calculate-lisp-indent-last-sexp` was defined with `defvar`
+  ;; with it's value ommited, marking it special and only defining it locally. So
+  ;; if you don't have this, you'll get a void variable error.
+  (defvar calculate-lisp-indent-last-sexp)
+  (save-excursion
+    (beginning-of-line)
+    (let ((indent-point (point))
+           state
+           ;; setting this to a number inhibits calling hook
+           (desired-indent nil)
+           (retry t)
+           calculate-lisp-indent-last-sexp containing-sexp)
+      (cond ((or (markerp parse-start) (integerp parse-start))
+              (goto-char parse-start))
+        ((null parse-start) (beginning-of-defun))
+        (t (setq state parse-start)))
+      (unless state
+        ;; Find outermost containing sexp
+        (while (< (point) indent-point)
+          (setq state (parse-partial-sexp (point) indent-point 0))))
+      ;; Find innermost containing sexp
+      (while (and retry
+               state
+               (> (elt state 0) 0))
+        (setq retry nil)
+        (setq calculate-lisp-indent-last-sexp (elt state 2))
+        (setq containing-sexp (elt state 1))
+        ;; Position following last unclosed open.
+        (goto-char (1+ containing-sexp))
+        ;; Is there a complete sexp since then?
+        (if (and calculate-lisp-indent-last-sexp
+              (> calculate-lisp-indent-last-sexp (point)))
+          ;; Yes, but is there a containing sexp after that?
+          (let ((peek (parse-partial-sexp calculate-lisp-indent-last-sexp
+                        indent-point 0)))
+            (if (setq retry (car (cdr peek))) (setq state peek)))))
+      (if retry
+        nil
+        ;; Innermost containing sexp found
+        (goto-char (1+ containing-sexp))
+        (if (not calculate-lisp-indent-last-sexp)
+          ;; indent-point immediately follows open paren.
+          ;; Don't call hook.
+          (setq desired-indent (current-column))
+          ;; Find the start of first element of containing sexp.
+          (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
+          (cond ((looking-at "\\s(")
+                  ;; First element of containing sexp is a list.
+                  ;; Indent under that list.
+                  )
+            ((> (save-excursion (forward-line 1) (point))
+               calculate-lisp-indent-last-sexp)
+              ;; This is the first line to start within the containing sexp.
+              ;; It's almost certainly a function call.
+              (if (or
+                    ;; Containing sexp has nothing before this line
+                    ;; except the first element. Indent under that element.
+                    (= (point) calculate-lisp-indent-last-sexp)
+
+                    ;; First sexp after `containing-sexp' is a keyword. This
+                    ;; condition is more debatable. It's so that I can have
+                    ;; unquoted plists in macros. It assumes that you won't
+                    ;; make a function whose name is a keyword.
+                    ;; (when-let (char-after (char-after (1+ containing-sexp)))
+                    ;;   (char-equal char-after ?:))
+
+                    ;; Check for quotes or backquotes around.
+                    (let* ((positions (elt state 9))
+                            (last (car (last positions)))
+                            (rest (reverse (butlast positions)))
+                            (any-quoted-p nil)
+                            (point nil))
+                      (or
+                        (when-let (char (char-before last))
+                          (or (char-equal char ?')
+                            (char-equal char ?`)))
+                        (progn
+                          (while (and rest (not any-quoted-p))
+                            (setq point (pop rest))
+                            (setq any-quoted-p
+                              (or
+                                (when-let (char (char-before point))
+                                  (or (char-equal char ?')
+                                    (char-equal char ?`)))
+                                (save-excursion
+                                  (goto-char (1+ point))
+                                  (looking-at-p
+                                    "\\(?:back\\)?quote[\t\n\f\s]+(")))))
+                          any-quoted-p))))
+                ;; Containing sexp has nothing before this line
+                ;; except the first element.  Indent under that element.
+                nil
+                ;; Skip the first element, find start of second (the first
+                ;; argument of the function call) and indent under.
+                (progn (forward-sexp 1)
+                  (parse-partial-sexp (point)
+                    calculate-lisp-indent-last-sexp
+                    0 t)))
+              (backward-prefix-chars))
+            (t
+              ;; Indent beneath first sexp on same line as
+              ;; `calculate-lisp-indent-last-sexp'.  Again, it's
+              ;; almost certainly a function call.
+              (goto-char calculate-lisp-indent-last-sexp)
+              (beginning-of-line)
+              (parse-partial-sexp (point) calculate-lisp-indent-last-sexp
+                0 t)
+              (backward-prefix-chars)))))
+      ;; Point is at the point to indent under unless we are inside a string.
+      ;; Call indentation hook except when overridden by lisp-indent-offset
+      ;; or if the desired indentation has already been computed.
+      (let ((normal-indent (current-column)))
+        (cond ((elt state 3)
+                ;; Inside a string, don't change indentation.
+                nil)
+          ((and (integerp lisp-indent-offset) containing-sexp)
+            ;; Indent by constant offset
+            (goto-char containing-sexp)
+            (+ (current-column) lisp-indent-offset))
+          ;; in this case calculate-lisp-indent-last-sexp is not nil
+          (calculate-lisp-indent-last-sexp
+            (or
+              ;; try to align the parameters of a known function
+              (and lisp-indent-function
+                (not retry)
+                (funcall lisp-indent-function indent-point state))
+              ;; If the function has no special alignment
+              ;; or it does not apply to this argument,
+              ;; try to align a constant-symbol under the last
+              ;; preceding constant symbol, if there is such one of
+              ;; the last 2 preceding symbols, in the previous
+              ;; uncommented line.
+              (and (save-excursion
+                     (goto-char indent-point)
+                     (skip-chars-forward " \t")
+                     (looking-at ":"))
+                ;; The last sexp may not be at the indentation
+                ;; where it begins, so find that one, instead.
+                (save-excursion
+                  (goto-char calculate-lisp-indent-last-sexp)
+                  ;; Handle prefix characters and whitespace
+                  ;; following an open paren.  (Bug#1012)
+                  (backward-prefix-chars)
+                  (while (not (or (looking-back "^[ \t]*\\|([ \t]+"
+                                    (line-beginning-position))
+                                (and containing-sexp
+                                  (>= (1+ containing-sexp) (point)))))
+                    (forward-sexp -1)
+                    (backward-prefix-chars))
+                  (setq calculate-lisp-indent-last-sexp (point)))
+                (> calculate-lisp-indent-last-sexp
+                  (save-excursion
+                    (goto-char (1+ containing-sexp))
+                    (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
+                    (point)))
+                (let ((parse-sexp-ignore-comments t)
+                       indent)
+                  (goto-char calculate-lisp-indent-last-sexp)
+                  (or (and (looking-at ":")
+                        (setq indent (current-column)))
+                    (and (< (line-beginning-position)
+                           (prog2 (backward-sexp) (point)))
+                      (looking-at ":")
+                      (setq indent (current-column))))
+                  indent))
+              ;; another symbols or constants not preceded by a constant
+              ;; as defined above.
+              normal-indent))
+          ;; in this case calculate-lisp-indent-last-sexp is nil
+          (desired-indent)
+          (t
+            normal-indent))))))
+
+(provide 'lib-lisp)
+;;; lib-lisp.el ends here
+#+end_src
 
 
 *** Emacs Lisp
@@ -8799,7 +9888,46 @@ and
 
 **** Library
 
+#+begin_src emacs-lisp :tangle lisp/lib-lang-markdown.el
+;;; lib-lang-markdown.el --- Markdown helpers        -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: languages, local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+;;;###autoload
+(defun ceamx-markdown-compile (beg end output-buffer)
+  "Compile Markdown with pandoc if available.
+Returns process exit code."
+  (when (executable-find "pandoc")
+    (call-process-region beg end "pandoc" nil output-buffer nil
+      "-f" "markdown"
+      "-t" "html"
+      "--highlight-style=pygments")))
+
+(provide 'lib-lang-markdown)
+;;; lib-lang-markdown.el ends here
+#+end_src
 
 *** Nix
 
@@ -10606,3 +11734,201 @@ Return the new `zone' timer."
 * Extras
 
 Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
+
+** Tasks
+
+*** TODO Consolidate =lib-simple= and =lib-text=
+
+
+** "Simple" Library =lib-simple.el=
+
+#+begin_src emacs-lisp :tangle lisp/lib-simple.el
+;;; lib-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+;; Copyright (C) 2020-2023  Protesilaos Stavrou
+;; Copyright (c) 2023  Bruno Boal <egomet@bboal.com>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;;         Protesilaos Stavrou <info@protesilaos.com>
+;;         Bruno Boal <egomet@bboal.com>
+;; Keywords: local, convenience
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Sources:
+
+;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/ceamx-lisp/ceamx-simple.el>
+;; <https://github.com/BBoal/emacs-config/blob/95520648c5f2ed0784d42e98afff035a6964fd2f/bb-lisp/bb-simple.el>
+
+;;; Code:
+
+;;; Requirements
+
+(require 'config-common)
+
+;;; Variables
+
+(defgroup ceamx-simple ()
+  "Generic utilities for editing."
+  :group 'editing)
+
+(defcustom ceamx-simple-date-specifier "%F"
+  "Date specifier for `format-time-string'.
+Used by `ceamx/insert-date'."
+  :type 'string
+  :group 'ceamx-simple)
+
+(defcustom ceamx-simple-time-specifier "%R %z"
+  "Time specifier for `format-time-string'.
+Used by `ceamx/insert-date'."
+  :type 'string
+  :group 'ceamx-simple)
+
+;;; Commands
+
+;;;###autoload
+(defun ceamx/insert-date (&optional arg)
+  "Insert the current date as `ceamx-simple-date-specifier'.
+
+With optional prefix ARG (\\[universal-argument]) also append the
+current time understood as `ceamx-simple-time-specifier'.
+
+When region is active, delete the highlighted text and replace it
+with the specified date."
+  (interactive "P")
+  (let* ((date ceamx-simple-date-specifier)
+          (time ceamx-simple-time-specifier)
+          (format (if arg (format "%s %s" date time) date)))
+    (when (use-region-p)
+      (delete-region (region-beginning) (region-end)))
+    (insert (format-time-string format))))
+
+(defun ceamx-simple--pos-url-on-line (char)
+  "Return position of `ceamx-common-url-regexp' at CHAR."
+  (when (integer-or-marker-p char)
+    (save-excursion
+      (goto-char char)
+      (re-search-forward ceamx-common-url-regexp (line-end-position) :noerror))))
+
+;;;###autoload
+(defun ceamx/escape-url-line (char)
+  "Escape all URLs or email addresses on the current line.
+When called from Lisp CHAR is a buffer position to operate from
+until the end of the line.  In interactive use, CHAR corresponds
+to `line-beginning-position'."
+  (interactive
+   (list
+    (if current-prefix-arg
+        (re-search-forward
+         ceamx-common-url-regexp
+         (line-end-position) :no-error
+         (prefix-numeric-value current-prefix-arg))
+      (line-beginning-position))))
+  (when-let ((regexp-end (ceamx-simple--pos-url-on-line char)))
+    (goto-char regexp-end)
+    (unless (looking-at ">")
+      (insert ">")
+      (when (search-backward "\s" (line-beginning-position) :noerror)
+        (forward-char 1))
+      (insert "<"))
+    (ceamx/escape-url-line (1+ regexp-end)))
+  (goto-char (line-end-position)))
+
+;;;###autoload
+(defun ceamx/escape-url-region (&optional beg end)
+  "Apply `ceamx/escape-url-line' on region lines between BEG and END."
+  (interactive
+   (if (region-active-p)
+       (list (region-beginning) (region-end))
+     (error "There is no region!")))
+  (let ((beg (min beg end))
+        (end (max beg end)))
+    (save-excursion
+      (goto-char beg)
+      (setq beg (line-beginning-position))
+      (while (<= beg end)
+        (ceamx/escape-url-line beg)
+        (beginning-of-line 2)
+        (setq beg (point))))))
+
+;;;###autoload
+(defun ceamx/escape-url-dwim ()
+  "Escape URL on the current line or lines implied by the active region.
+Call the commands `ceamx/escape-url-line' and
+`ceamx/escape-url-region' ."
+  (interactive)
+  (if (region-active-p)
+    (ceamx/escape-url-region (region-beginning) (region-end))
+    (ceamx/escape-url-line (line-beginning-position))))
+
+(provide 'lib-simple)
+;;; lib-simple.el ends here
+#+end_src
+
+
+** General Text Library
+
+#+begin_src emacs-lisp :tangle lisp/lib-text.el
+;;; lib-text.el --- Text utilities                   -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;;; Sources:
+
+;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/lib/text.el>
+
+;;; Code:
+
+;;;###autoload
+(defvar ceamx-point-in-comment-functions ()
+  "List of functions to run to determine if point is in a comment.
+
+Each function takes one argument: the position of the point. Stops on the first
+function to return non-nil.
+
+Used by `ceamx-point-in-comment-p'.")
+
+;;;###autoload
+(defun ceamx-point-in-comment-p (&optional pos)
+  "Return non-nil if POS is in a comment.
+POS defaults to the current position."
+  (let ((pos (or pos (point))))
+    (if ceamx-point-in-comment-functions
+        (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
+      (nth 4 (syntax-ppss pos)))))
+
+(provide 'lib-text)
+;;; lib-text.el ends here
+#+end_src

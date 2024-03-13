@@ -64,16 +64,16 @@
   :init
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
-
-  (def-hook! +org-mode-init-keys-h () 'org-mode-hook
-             "Adjust global keybindings in `org-mode' buffers."
-             (keymap-global-set "M-g o" #'consult-org-heading))
+  (def-hook! +org-mode-init-keys-h ()
+    'org-mode-hook
+    "Adjust global keybindings in `org-mode' buffers."
+    (keymap-global-set "M-g o" #'consult-org-heading))
 
   :config
   (setopt org-agenda-files
-          (append
-           (f-glob "*.org" ceamx-agenda-dir)
-           (f-glob "*.org" ceamx-work-notes-dir)))
+    (append
+      (f-glob "*.org" ceamx-agenda-dir)
+      (f-glob "*.org" ceamx-work-notes-dir)))
 
 ;;;; Editing settings
 
@@ -131,15 +131,15 @@
 
   (setopt org-log-done 'time)
   (setopt org-todo-keywords
-          '((sequence
-             "TODO(t)"
-             "INPRG(i@/!)"
-             "BLOCKED(b@)"
-             "HOLD(h@)"
-             "PROJ(p)"
-             "|"
-             "DONE(d!)"
-             "CANCELLED(x@/!)")))
+    '((sequence
+        "TODO(t)"
+        "INPRG(i@/!)"
+        "BLOCKED(b@)"
+        "HOLD(h@)"
+        "PROJ(p)"
+        "|"
+        "DONE(d!)"
+        "CANCELLED(x@/!)")))
 
 ;;;; Keybinding settings
 
@@ -179,11 +179,11 @@
   (setopt org-agenda-tags-column 0)
   (setopt org-agenda-block-separator ?─)
   (setopt org-agenda-time-grid
-          '((daily today require-timed)
-            (800 1000 1200 1400 1600 1800 2000)
-            " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+    '((daily today require-timed)
+       (800 1000 1200 1400 1600 1800 2000)
+       " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (setopt org-agenda-current-time-string
-          "⭠ now ─────────────────────────────────────────────────"))
+    "⭠ now ─────────────────────────────────────────────────"))
 
 ;;; Configurate `org-capture' templates with the help of `doct'
 

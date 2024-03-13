@@ -27,8 +27,6 @@
 
 ;;; Code:
 
-(require 'lib-selection)
-
 (require 'lib-keys)
 
 (use-package consult

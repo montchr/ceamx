@@ -27,7 +27,6 @@
 (require 'elpaca-autoloads)
 
 (require 'lib-common)
-(require 'lib-hydras)
 
 ;;; General
 
