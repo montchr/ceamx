@@ -1909,7 +1909,7 @@ accommodation for varying pixel densities."
   :commands (ef-themes-select)
 
   :config
-  (setopt ceamx-theme-default-dark 'ef-trio-dark)
+  (setopt ceamx-theme-default-dark 'ef-night)
   (setopt ceamx-theme-default-light 'ef-frost)
 
   (setopt ef-themes-to-toggle (list ceamx-theme-default-dark ceamx-theme-default-light))
