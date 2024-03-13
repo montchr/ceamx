@@ -66,51 +66,80 @@
 
 
   (def-hook! +org-mode-init-keys-h () 'org-mode-hook
-    "Adjust global keybindings in `org-mode' buffers."
-    (keymap-global-set "M-g o" #'consult-org-heading))
+             "Adjust global keybindings in `org-mode' buffers."
+             (keymap-global-set "M-g o" #'consult-org-heading))
 
   :config
   (setopt org-agenda-files
-    (append
-      (f-glob "*.org" ceamx-agenda-dir)
-      (f-glob "*.org" ceamx-work-notes-dir)))
+          (append
+           (f-glob "*.org" ceamx-agenda-dir)
+           (f-glob "*.org" ceamx-work-notes-dir)))
 
 ;;;; Editing settings
 
+;;;;; Tags
+
   (setopt org-auto-align-tags nil)
   (setopt org-tags-column 0)
-  (setopt org-catch-invisible-edits 'show-and-error)
-  (setopt org-special-ctrl-a/e nil)
-  (setopt org-insert-heading-respect-content t)
+
+  (setopt org-fold-catch-invisible-edits 'smart)
+
+;;;;; Headings / List Items
+
+  ;; Prevent TAB behavior oddities at the end of headlines.
+  ;; When nil, pressing TAB at the end of a headline whose content is folded
+  ;; will act on the folded (non-visible) area instead of the headline, which
+  ;; may cause unexpected changes to the content (depending on the setting of `org-catch-invisible-edits'.
+  (setopt org-special-ctrl-a/e t)
+
+  ;; Instead of forcing this always, use the function
+  ;; `org-insert-heading-respect-content' directly, bound to [C-<return>].
+  (setopt org-insert-heading-respect-content nil)
+
+  (setopt org-M-RET-may-split-line nil)
+  (setopt org-cycle-emulate-tab t)
+  (setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
+
+;;;;; Source code blocks
+
   ;; Indenting code blocks by default is unnecessary and confusing.
   (setopt org-edit-src-content-indentation 0)
   (setopt org-src-preserve-indentation t)
 
 ;;;; Appearance settings
 
+;;;;; Text formatting
+
   (setopt org-ellipsis "…")
   (setopt org-hide-emphasis-markers nil)
-  (setopt org-image-actual-width 300)
-  (setopt org-indent-indentation-per-level 4)
   (setopt org-pretty-entities t)
-  (setopt org-startup-folded 'show2levels)
+
+;;;;; Images
+
+  (setopt org-image-actual-width 300)
+  (setopt org-startup-with-inline-images t)
+
+;;;;; Folding and indentation
+
+  (setopt org-indent-indentation-per-level 4)
+  (setopt org-startup-folded 'content)
+
   ;; Avoid unnecessary indentation effects unless specified in file header.
   (setopt org-startup-indented nil)
-  (setopt org-startup-with-inline-images t)
 
 ;;;; Workflow and state settings
 
   (setopt org-log-done 'time)
   (setopt org-todo-keywords
-    '((sequence
-        "TODO(t)"
-        "INPRG(i@/!)"
-        "BLOCKED(b@)"
-        "HOLD(h@)"
-        "PROJ(p)"
-        "|"
-        "DONE(d!)"
-        "CANCELLED(x@/!)")))
+          '((sequence
+             "TODO(t)"
+             "INPRG(i@/!)"
+             "BLOCKED(b@)"
+             "HOLD(h@)"
+             "PROJ(p)"
+             "|"
+             "DONE(d!)"
+             "CANCELLED(x@/!)")))
 
 ;;;; Keybinding settings
 
@@ -121,7 +150,27 @@
     "C-c <down>" #'org-priority-down
     "C-c a" #'org-agenda
     "C-c l" #'org-store-link
-    "C-c c" #'org-capture)
+    "C-c c" #'org-capture
+
+    ;; Swap these around, as I am more likely to adjust subtree than insert an
+    ;; arbitrary date from the calendar.
+    "C-c <" #'org-promote-subtree
+    "C-c C-<" #'org-date-from-calendar
+    "C-c >" #'org-demote-subtree
+    "C-c C->" #'org-goto-calendar)
+
+  (def-hook! +meow-org-mode-bindings-h ()
+    'org-mode-hook
+    "Meow keybindings adjustments for Org-Mode."
+    (after! 'meow
+      (defvar meow-normal-state-keymap)
+      (declare-function org-next-visible-heading "org")
+      (declare-function org-previous-visible-heading "org")
+
+      (define-keymap :keymap meow-normal-state-keymap
+        "n" #'org-next-visible-heading
+        "p" #'org-previous-visible-heading)))
+
 
 ;;;; Agenda settings
 
