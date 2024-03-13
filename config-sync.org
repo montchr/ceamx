@@ -893,7 +893,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 (require 'init-tools-pdf)
 
 (require 'init-term)
-
+(require 'init-eww)
 (require 'init-printing)
 
 (require 'init-fun)
@@ -8630,6 +8630,87 @@ Else create a new file."
 
 
 *** TODO Feature name =init-feeds= does not match the filename =init-news.el=
+
+
+** Surfing the Wild Web of Words (EWW)
+
+#+begin_src emacs-lisp :tangle lisp/init-eww.el
+;;; init-eww.el --- Surfing the Wild Web of Words  -*- lexical-binding: t; -*-
+
+;; TODO: headers
+
+;;; Commentary:
+
+;;; Code:
+
+;;; Requirements
+
+(require 'ceamx-keymaps)
+(require 'lib-keys)
+
+(autoload 'eww "eww")
+
+;;; Configuration
+#+end_src
+
+
+*** DISABLED Tell Emacs we want its Web Wowser to handle URL browsing by default
+
+Currently, since so many URLs point to GitHub, and GitHub will not function
+without JavaScript, it does not make sense to use EWW by default.
+
+#+begin_src emacs-lisp :tangle lisp/init-eww.el
+;; (setopt browse-url-browser-function 'eww-browse-url)
+#+end_src
+
+
+**** TODO Use a different browser for some domains
+
+
+*** Configure EWW settings before loading
+
+#+begin_src emacs-lisp :tangle lisp/init-eww.el
+(setopt shr-use-colors t)
+(setopt shr-folding-mode t)
+(setopt shr-bullet "• ")
+
+(setopt eww-search-prefix "https://duckduckgo.com/html?q=")
+
+;; HTTP headers may contain user information, which we can limit as needed.
+;; When providing a list of symbols, the symbols indicate what NOT to send.
+;; TODO: Move this elsewhere, as it probably affects other HTTP requests.
+(setopt url-privacy-level '(email lastloc))
+#+end_src
+
+
+*** EWW: Keybindings
+
+#+begin_src emacs-lisp :tangle lisp/init-eww.el
+(keys! ceamx-launch-map
+  "b" #'eww)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-eww.el
+(provide 'init-eww)
+;;; init-eww.el ends here
+#+end_src
+
+
+*** EWW: Sources
+
+**** [[https://gitlab.com/howardabrams/spacemacs.d/-/blob/51196e861da9a76a02f1159397ba85b936cdfe27/layers/ha-eww/funcs.el][layers/ha-eww/funcs.el · 51196e861da9a76a02f1159397ba85b936cdfe27 · Howard Abrams / spacemacs.d · GitLab]]
+
+Includes some old but maybe still useful functions to clean up websites like
+Wikipedia, Reddit, and GitHub.
+
+However, I know that GitHub has become completely unusable without JavaScript in
+the past year or so, so it is likely impossible to access it directly in Emacs
+without using its API.
+
+In a general sense, a method for quickly browsing other people's projects on
+GitHub within a minimal format is something I am still seeking out.
+
+
 ** Tools
 #+begin_src emacs-lisp :tangle lisp/init-tools.el
 ;;; init-tools.el --- Tools and utilities            -*- lexical-binding: t; -*-
@@ -8707,6 +8788,8 @@ Else create a new file."
 (provide 'init-tools)
 ;;; init-tools.el ends here
 #+end_src
+
+
 *** Budgeting
 #+begin_src emacs-lisp :tangle lisp/init-tools-ledger.el
 ;;; init-tools-ledger.el --- Support for ledger      -*- lexical-binding: t; -*-

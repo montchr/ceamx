@@ -451,7 +451,7 @@
 (require 'init-tools-pdf)
 
 (require 'init-term)
-
+(require 'init-eww)
 (require 'init-printing)
 
 (require 'init-fun)
