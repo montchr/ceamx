@@ -20,7 +20,7 @@ count of {{{word-count}}}.*
 * The Beginning
 
 
-** Early init
+** Early Init
 
 #+begin_src elisp :tangle early-init.el
 ;;; early-init.el --- Early Init File  -*- no-byte-compile: t; -*-
@@ -1581,7 +1581,6 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 * Configure
 
-
 ** Common
 
 #+begin_src emacs-lisp :tangle lisp/config-common.el
@@ -2053,6 +2052,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;;; lib-secrets.el ends here
 #+end_src
 
+
 ** Frame
 
 *** Customizations
@@ -2254,6 +2254,7 @@ Selectively runs either `after-make-console-frame-hooks' or
 (provide 'lib-frame)
 ;;; lib-frame.el ends here
 #+end_src
+
 
 ** Appearance
 
@@ -3359,6 +3360,7 @@ will be used as default."
 ;;; lib-ui.el ends here
 #+end_src
 
+
 ** Window
 
 *** Customization
@@ -4097,6 +4099,7 @@ counter-clockwise."
 (provide 'lib-window)
 ;;; lib-window.el ends here
 #+end_src
+
 
 ** Buffer
 
@@ -5697,6 +5700,7 @@ accepted by `ceamx/devdocs-ensure-doc'."
 ;;; lib-help.el ends here
 #+end_src
 
+
 ** History
 
 #+begin_src emacs-lisp :tangle lisp/init-history.el
@@ -6151,6 +6155,7 @@ and consult-location to occur-edit."
 (provide 'lib-wgrep)
 ;;; lib-wgrep.el ends here
 #+end_src
+
 
 ** Input Methods
 
@@ -7608,6 +7613,7 @@ Minibuffer candidate annotations.
 ;;; lib-completion.el ends here
 #+end_src
 
+
 ** Embark
 
 #+begin_src emacs-lisp :tangle lisp/init-embark.el
@@ -7661,6 +7667,7 @@ Minibuffer candidate annotations.
 (provide 'init-embark)
 ;;; init-embark.el ends here
 #+end_src
+
 
 ** Terminal Emulation
 
@@ -7724,6 +7731,7 @@ Minibuffer candidate annotations.
 (provide 'init-term)
 ;;; init-term.el ends here
 #+end_src
+
 
 ** Version Control
 
@@ -8312,6 +8320,7 @@ kill all magit buffers for this repo."
 (provide 'init-vcs-forge)
 ;;; init-vcs-forge.el ends here
 #+end_src
+
 
 ** Projects
 
@@ -11174,6 +11183,7 @@ headline.
 
 **
 
+
 ** DISABLED Newsreader
 
 
@@ -11615,6 +11625,7 @@ GitHub within a minimal format is something I am still seeking out.
 (provide 'init-tools-pdf)
 ;;; init-tools-pdf.el ends here
 #+end_src
+
 ** Fun
 
 #+begin_src emacs-lisp :tangle lisp/init-fun.el
@@ -11879,6 +11890,7 @@ POS defaults to the current position."
 (provide 'lib-text)
 ;;; lib-text.el ends here
 #+end_src
+
 
 * Partials
 :PROPERTIES:
