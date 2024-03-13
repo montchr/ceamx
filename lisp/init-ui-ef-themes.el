@@ -42,11 +42,11 @@
   (setopt ef-themes-to-toggle (list ceamx-theme-default-dark ceamx-theme-default-light))
 
   (setopt ef-themes-headings
-    '(;;(0 variable-pitch medium 1.7)
-       (1 variable-pitch 1.5)
-       (2 variable-pitch 1.3)
-;;       (3 variable-pitch 1.1)
-       (t variable-pitch 1.1)))
+    '((0 variable-pitch medium 1.7)
+      (1 variable-pitch 1.2)
+      (2 variable-pitch 1.1)
+      (3 variable-pitch medium 1.1)
+      (t variable-pitch 1.0)))
 
   (setopt ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil)
