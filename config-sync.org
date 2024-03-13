@@ -11406,28 +11406,28 @@ GitHub within a minimal format is something I am still seeking out.
 
 (elpaca (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 
-;;; Install `org-tanglesync' to sync tangled source code blocks
+;;; DISABLED Install `org-tanglesync' to sync tangled source code blocks
 
-(elpaca org-tanglesync
-  ;; FIXME: try to not do this
-  (require 'org-tanglesync)
+;; (elpaca org-tanglesync
+;;   ;; FIXME: try to not do this
+;;   (require 'org-tanglesync)
 
-  (add-hook 'org-mode-hook #'org-tanglesync-mode)
-  ;; (remove-hook 'org-mode-hook #'org-tanglesync-mode)
+;;   (add-hook 'org-mode-hook #'org-tanglesync-mode)
+;;   ;; (remove-hook 'org-mode-hook #'org-tanglesync-mode)
 
-  (add-hook 'prog-mode-hook #'org-tanglesync-watch-mode)
-  ;; (remove-hook 'prog-mode-hook #'org-tanglesync-watch-mode)
+;;   (add-hook 'prog-mode-hook #'org-tanglesync-watch-mode)
+;;   ;; (remove-hook 'prog-mode-hook #'org-tanglesync-watch-mode)
 
-  ;; (add-hook 'text-mode-hook #'org-tanglesync-watch-mode)
-  ;; (remove-hook 'text-mode-hook #'org-tanglesync-watch-mode)
+;;   ;; (add-hook 'text-mode-hook #'org-tanglesync-watch-mode)
+;;   ;; (remove-hook 'text-mode-hook #'org-tanglesync-watch-mode)
 
-  (setopt org-tanglesync-watch-files
-    (seq-map (apply-partially #'file-name-concat user-emacs-directory)
-      '("config-sync.org")))
+;;   (setopt org-tanglesync-watch-files
+;;     (seq-map (apply-partially #'file-name-concat user-emacs-directory)
+;;       '("config-sync.org")))
 
-  (global-keys!
-    "C-c M-i" #'org-tanglesync-process-buffer-interactive
-    "C-c M-a" #'org-tanglesync-process-buffer-automatic))
+;;   (global-keys!
+;;     "C-c M-i" #'org-tanglesync-process-buffer-interactive
+;;     "C-c M-a" #'org-tanglesync-process-buffer-automatic))
 
 (provide 'init-tools)
 ;;; init-tools.el ends here
