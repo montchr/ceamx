@@ -2258,6 +2258,8 @@ Selectively runs either `after-make-console-frame-hooks' or
 
 ** Appearance
 
+*** Options / Variables
+
 #+begin_src emacs-lisp :tangle lisp/config-ui.el
 ;;; config-ui.el --- General UI settings             -*- lexical-binding: t; -*-
 
@@ -2352,6 +2354,9 @@ accommodation for varying pixel densities."
 (provide 'config-ui)
 ;;; config-ui.el ends here
 #+end_src
+
+
+*** Customization
 
 #+begin_src emacs-lisp :tangle lisp/init-ui.el
 ;;; init-ui.el --- General user interface customizations  -*- lexical-binding: t; -*-
@@ -2458,7 +2463,75 @@ accommodation for varying pixel densities."
 
 *** Themes
 
+**** General Customization
+
+#+BEGIN_SRC emacs-lisp :tangle lisp/init-ui-theme.el
+;;; init-ui-theme.el --- Theme Initalization -*- lexical-binding: t -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;  Load the theme configurations.
+
+;;; Code:
+
+;;; Requirements
+
+(require 'config-env)
+(require 'config-ui)
+(require 'lib-ui-theme)
+
+;;; General Configuration
+
+;; Don't prompt to confirm theme safety.
+(setopt custom-safe-themes t)
+
+;;; Ensure themes are applied in new frames to prevent flashing
+
+;; TODO: also some other link i can't find now
+;; <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
+(add-hook 'after-make-frame-functions #'ceamx-theme-re-enable-in-frame)
+
+;;; Add a custom hook to run after enabling a theme
+
+;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+
+(defvar ceamx-after-enable-theme-hook nil)
+
+(defun ceamx-after-enable-theme (&rest _args)
+  "Hook to run after enabling theme."
+  (run-hooks 'ceamx-after-enable-theme-hook))
+
+(advice-add 'enable-theme :after #'ceamx-after-enable-theme)
+
+(provide 'init-ui-theme)
+;;; init-ui-theme.el ends here
+#+END_SRC
+
+
 **** Modus Themes
+
+***** Customization
 
 #+begin_src emacs-lisp :tangle lisp/init-ui-modus-themes.el
 ;;; init-ui-modus-themes.el ---Modus Themes initialization  -*- lexical-binding: t; -*-
@@ -2538,7 +2611,12 @@ accommodation for varying pixel densities."
 (provide 'init-ui-modus-themes)
 ;;; init-ui-modus-themes.el ends here
 #+end_src
+
+
 **** Ef-Themes
+
+
+***** Customization
 
 #+begin_src emacs-lisp :tangle lisp/init-ui-ef-themes.el
 ;;; init-ui-ef-themes.el --- Support for the Ef theme family  -*- lexical-binding: t; -*-
@@ -2609,6 +2687,8 @@ accommodation for varying pixel densities."
 (provide 'init-ui-ef-themes)
 ;;; init-ui-ef-themes.el ends here
 #+end_src
+
+
 **** Circadian Theme Phasing
 
 #+begin_src emacs-lisp :tangle lisp/init-ui-circadian.el
@@ -2872,6 +2952,7 @@ not retain the generic background set by the function
 #+end_src
 
 
+
 *** Fonts/Typography
 
 #+begin_src emacs-lisp :tangle lisp/init-ui-font.el
@@ -3064,6 +3145,7 @@ not retain the generic background set by the function
 #+end_src
 
 
+
 *** Modeline
 
 #+begin_src emacs-lisp :tangle lisp/init-ui-modeline.el
@@ -3215,6 +3297,7 @@ not retain the generic background set by the function
 #+end_src
 
 
+
 *** Integrating the preceding interfaces
 
 #+begin_src emacs-lisp :tangle lisp/init-after-ui.el
@@ -3281,6 +3364,7 @@ not retain the generic background set by the function
 (provide 'init-after-ui)
 ;;; init-after-ui.el ends here
 #+end_src
+
 
 
 *** Library
@@ -6294,6 +6378,7 @@ of Emacs."
 #+end_src
 
 
+
 *** General Customizations
 
 #+begin_src emacs-lisp :tangle lisp/init-keys.el
@@ -6539,9 +6624,10 @@ acknowledges this incompatibility."
 #+end_src
 
 
+
 *** Meow modal keybindings
 
-***
+**** Customization
 
 #+begin_src emacs-lisp :tangle lisp/init-keys-meow.el
 ;;; init-keys-meow.el --- Meow support               -*- lexical-binding: t; -*-
@@ -6760,6 +6846,121 @@ acknowledges this incompatibility."
 (provide 'init-keys-meow)
 ;;; init-keys-meow.el ends here
 #+end_src
+
+
+**** Library
+
+#+BEGIN_SRC emacs-lisp :tangle lisp/lib-keys-meow.el
+;;; lib-keys-meow.el --- Helpers for Meow            -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(require 'lib-common)
+
+(defun ceamx-normalize-char (char)
+  "Normalize CHAR to a valid character matching `characterp'.
+CHAR may either be a valid character or a string convertable to a
+character with `string-to-char'. If CHAR is already a character
+matching `characterp', then it will be returned as-is.
+
+When CHAR is a string containing more than one character, only
+the first character will be transformed. See `string-to-char' for
+more info.
+
+This function is impure because the interpretation of CHAR can
+vary based on... various reasons?"
+  (declare (side-effect-free t))
+  (cl-assert (char-or-string-p char) t)
+  (if (stringp char)
+    (cond ((length= char 0)
+            (user-error "Character string `%s' is empty" char))
+      ((length> char 1)
+        (user-error "Character string `%s' should only contain a single character" char))
+      (t
+        (string-to-char char)))
+    char))
+
+(defmacro meow-pair! (thing char begin end)
+  "Register a new Meow THING as a pair of BEGIN and END, and map it to CHAR.
+This macro simplifies `meow-thing-register' by assuming that the
+INNER and BOUNDS arguments of `meow-thing-register' will be an
+identical pair expression. This macro also handles the additional
+and necessary step of adding the newly-registered THING to
+`meow-char-thing-table' as CHAR.
+
+THING is a symbol for registering the new thing with
+`meow-thing-register'. It may be quoted or unquoted.
+
+BEGIN is a string delimiting the beginning or opening of the pair
+while END is a string delimiting the end or closing of the pair.
+
+The THING will be added to `meow-char-thing-table' as CHAR. CHAR
+may either be a character constant matching `characterp' (e.g.
+`?a' or `97'), or a string which can be converted to a character
+with `string-to-char'. See Info node `(elisp) Basic Char Syntax)'
+and Info node `(elisp) String Conversion' for more info."
+  (declare (indent defun))
+  (cl-assert (char-or-string-p char) t)
+  (cl-assert (stringp begin) t)
+  (cl-assert (stringp end) t)
+  (let* ((sym (ceamx-unquote thing))
+          (char (ceamx-normalize-char char))
+          (open (list begin))
+          (close (list end))
+          (pair `(pair ,open ,close)))
+    (cl-assert (symbolp sym) t)
+    `(progn
+       (meow-thing-register ',sym
+         ',pair
+         ',pair)
+       (ceamx-meow-bind-thing ',sym ,char))))
+
+(defun ceamx-meow-bind-thing (thing char)
+  "Add pre-registered THING to `meow-char-thing-table' as CHAR."
+  (defvar meow-char-thing-table '())
+  (let ((thing (ceamx-unquote thing))
+         (char (ceamx-normalize-char char)))
+    (add-to-list 'meow-char-thing-table `(,char . ,thing))))
+
+(defun ceamx-meow-unbind-thing (char)
+  "Remove the character association for character CHAR.
+This function will destructively modify the alist
+`meow-char-thing-table' by removing the association whose key
+matches CHAR.
+
+Note that despite its name, `meow-char-thing-table' is an alist,
+not a character table.
+
+CHAR may be a string or character constant, which will be passed
+as the CHAR argument to `ceamx-normalize-char'."
+  (defvar meow-char-thing-table '())
+  (assoc-delete-all (ceamx-normalize-char char) meow-char-thing-table #'eq))
+
+(provide 'lib-keys-meow)
+;;; lib-keys-meow.el ends here
+#+END_SRC
 
 
 *** Which-Key
@@ -8468,6 +8669,102 @@ lel
 #+end_src
 
 
+** Snippets & Templates
+
+*** Customization
+
+#+BEGIN_SRC emacs-lisp :tangle lisp/init-templates.el
+;;; init-templates.el --- Snippets and file templates  -*- lexical-binding: t; no-byte-compile: t -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;  Configuration for file templates and snippet expansion.
+
+;; NOTE: `tempel' does not seem to pick up changes to files even after
+;;       re-evalling the `use-package' declaration. However, it does
+;;       pick up newly-added templates.
+
+;;; Code:
+
+(use-package tempel
+  :commands (tempel-complete tempel-insert)
+
+  :init
+
+  (setopt tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
+
+  ;; Setup completion at point for Tempel templates.
+  (def-hook! +tempel-setup-capf-h () (conf-mode-hook prog-mode-hook text-mode-hook)
+    "Add the Tempel Capf to `completion-at-point-functions'.
+
+    `tempel-expand' only triggers on exact matches. Alternatively use
+    `tempel-complete' if you want to see all matches, but then you
+    should also configure `tempel-trigger-prefix', such that Tempel
+    does not trigger too often when you don't expect it. NOTE: We add
+    `tempel-expand' *before* the main programming mode Capf, such
+    that it will be tried first."
+    (setq-local completion-at-point-functions
+      (cons #'tempel-expand
+        completion-at-point-functions)))
+
+  (global-tempel-abbrev-mode +1)
+
+  :config
+
+  ;; Require trigger prefix before template name when completing.
+  ;; (setopt tempel-trigger-prefix "<")
+
+  (global-keys!
+    "M-+" #'tempel-complete
+    "M-*" #'tempel-insert)
+
+  (define-keymap :keymap tempel-map
+    "TAB" #'tempel-next
+    "S-TAB" #'tempel-previous))
+
+
+;;;; `tempel-collection' :: <https://github.com/Crandel/tempel-collection>
+
+;;  A set of pre-defined templates for `tempel'.
+
+;;  <https://github.com/Crandel/tempel-collection/tree/main/templates>
+
+;; TODO: consider integrating personally-useful templates into this project
+
+(use-package tempel-collection
+  :after (tempel))
+
+(provide 'init-templates)
+;;; init-templates.el ends here
+#+END_SRC
+
+
+*** Tasks
+
+**** TODO Rename the existing feature to =init-snippets=
+
+
 ** Language Support
 
 *** General Programming (=prog-mode= derived modes)
@@ -9662,6 +9959,53 @@ keywords are supported:
 
 
 *** JSON
+
+
+**** Customization
+
+#+begin_src emacs-lisp :tangle lisp/init-lang-json.el
+;;; init-lang-json.el --- JSON language support      -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local, languages
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; TODO: better JSONC support
+
+;;; Code:
+
+;;; Requirements
+
+(require 'elpaca-autoloads)
+
+;;; Navigate arborescent JSON structures with `json-navigator'
+
+;; <https://github.com/DamienCassou/json-navigator>
+
+;; TODO: add bindings
+
+(elpaca json-navigator)
+
+(provide 'init-lang-json)
+;;; init-lang-json.el ends here
+#+end_src
+
 
 **** TODO Merge with [[*Data Formats (XML, CSV...)]]
 *** Lua
@@ -11313,6 +11657,11 @@ GitHub within a minimal format is something I am still seeking out.
 
 
 ** Tools
+
+*** General
+
+**** Customization
+
 #+begin_src emacs-lisp :tangle lisp/init-tools.el
 ;;; init-tools.el --- Tools and utilities            -*- lexical-binding: t; -*-
 
@@ -11389,6 +11738,51 @@ GitHub within a minimal format is something I am still seeking out.
 (provide 'init-tools)
 ;;; init-tools.el ends here
 #+end_src
+
+
+*** Augementated Intelligentry [=init-tools-ai.el=]
+
+Providing integrations with LLMs and other simulation machines.
+
+**** Customization
+
+#+BEGIN_SRC emacs-lisp :tangle lisp/init-tools-ai.el
+;;; init-tools-ai.el --- Support for AI/LLM interaction  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; <https://github.com/xenodium/chatgpt-shell/blob/main/README.org>
+
+;;; Code:
+
+(use-package chatgpt-shell
+  :ensure t
+  :config
+  (setopt chatgpt-shell-openai-key
+    (lambda ()
+      (auth-source-pass-get 'secret "openai-key"))))
+
+(provide 'init-tools-ai)
+;;; init-tools-ai.el ends here
+#+END_SRC
 
 
 *** Budgeting
@@ -11550,6 +11944,7 @@ GitHub within a minimal format is something I am still seeking out.
 (provide 'init-tools-ledger)
 ;;; init-tools-ledger.el ends here
 #+end_src
+
 *** PDF-Tools
 #+begin_src emacs-lisp :tangle lisp/init-tools-pdf.el
 ;;; init-tools-pdf.el --- Support for working with PDF files  -*- lexical-binding: t; -*-
