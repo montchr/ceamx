@@ -163,19 +163,6 @@
     "C-c >" #'org-demote-subtree
     "C-c C->" #'org-goto-calendar)
 
-  (def-hook! +meow-org-mode-bindings-h ()
-    'org-mode-hook
-    "Meow keybindings adjustments for Org-Mode."
-    (after! 'meow
-      (defvar meow-normal-state-keymap)
-      (declare-function org-next-visible-heading "org")
-      (declare-function org-previous-visible-heading "org")
-
-      (define-keymap :keymap meow-normal-state-keymap
-        "n" #'org-next-visible-heading
-        "p" #'org-previous-visible-heading)))
-
-
 ;;;; Agenda settings
 
 ;;;;; Agenda appearance
