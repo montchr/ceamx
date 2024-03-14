@@ -105,6 +105,11 @@
 ;; Save file-visiting buffers according to the configured timers.
 (auto-save-visited-mode)
 
+;;; Set the list of safe local variable values
+
+(setopt safe-local-variable-values
+        '((eval load-file "./ceamx-dev-loader.el")))
+
 ;;; Keybindings
 
 (global-keys!

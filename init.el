@@ -170,6 +170,20 @@
 ;; enabled-by-default `global-eldoc-mode' provided by `eldoc', but not
 ;; `jsonrpc', since its functionality is specific to more niche features like
 ;; inter-process communication in the case of `eglot'.
+;;
+;; A feature must only be unloaded once, *before* loading the version installed
+;; by Elpaca. Normally, that is not an issue because the init file is only
+;; loaded once on session startup. But when you are re-loading the init file
+;; inside a running session, you'd actually end up unloading the version that
+;; Elpaca loaded. To prevent that, the unloading should happen only once --
+;; during session startup -- so we check for a non-nil value of `after-init-time'.
+;;
+;; I don't understand why the Elpaca-installed feature/package only seems to be
+;; loaded during the initial session startup? Unless the unloading happens
+;; conditionally based on `after-init-time' as described above, every time the
+;; init file is reloaded and `elpaca-process-queues' runs in
+;; `+auto-tangle-reload-init-h', I get a bunch of errors (not warnings!) about
+;; `eglot' and `org' as missing dependencies.
 
 ;;;;; Install the latest version of `seq' builtin library, carefully
 
@@ -191,16 +205,14 @@
                      elpaca-build-steps))
           (list '+elpaca-unload-seq 'elpaca--activate-package)))
 
-(use-package seq
-  :ensure `(seq :build ,(+elpaca-seq-build-steps)))
+(elpaca `(seq :build ,(+elpaca-seq-build-steps)))
 
 ;;;;; Install the latest version of `jsonrpc' builtin library
 
 ;; Required by (and originally extracted from) `eglot'.
 
-(use-package jsonrpc
-  :ensure t
-  :demand t)
+(elpaca jsonrpc
+  (require 'jsonrpc))
 
 ;;;;; Install the latest version of `eldoc' builtin library, carefully
 
@@ -209,34 +221,30 @@
 ;; `eldoc' requires a delicate workaround to avoid catastrophy.
 ;; <https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
 
-(use-package eldoc
-  :ensure t
-  :demand t
-
-  :preface
+(unless after-init-time
   (unload-feature 'eldoc t)
   (setq custom-delayed-init-variables '())
-  (defvar global-eldoc-mode nil)
+  (defvar global-eldoc-mode nil))
 
-  :config
+(elpaca eldoc
+  (require 'eldoc)
   (global-eldoc-mode))
 
 ;;;;; Install the latest version of the builtin `eglot' package
 
-(use-package eglot
-  :after (eldoc jsonrpc)
-  :preface
+(unless after-init-time
   (when (featurep 'eglot)
     (unload-feature 'eglot)))
 
+(elpaca eglot)
+
 ;;;;; Install the latest version of Org-Mode (`org')
 
-(use-package org
-  :defer t
-  :ensure (:autoloads "org-loaddefs.el")
-  :preface
+(unless after-init-time
   (when (featurep 'org)
     (unload-feature 'org)))
+
+(elpaca (org :autoloads "org-loaddefs.el"))
 
 ;;;;; Ensure the previously-queued package requests have completed
 

@@ -36,10 +36,14 @@
 
 ;;; Code:
 
+;;; Requirements
+
 (require 'lib-common)
 
 (require 'config-notes)
 (require 'config-org)
+
+(autoload-macro! 'elpaca "elpaca")
 
 ;;; Configuration of important paths
 
@@ -255,6 +259,13 @@
 
 (use-package org-web-tools
   :defer t)
+
+;;; Automatically tangle literate Org files with `auto-tangle-mode'
+
+(elpaca (auto-tangle-mode
+         :host github
+         :repo "progfolio/auto-tangle-mode.el")
+  (autoload 'auto-tangle-mode "auto-tangle-mode"))
 
 (provide 'init-org)
 ;;; init-org.el ends here
