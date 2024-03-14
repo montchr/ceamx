@@ -11,6 +11,8 @@
 (require 'ceamx-keymaps)
 (require 'lib-keys)
 
+(require 'lib-eww)
+
 (autoload 'eww "eww")
 
 ;;; Configuration
@@ -29,7 +31,16 @@
 (setopt url-privacy-level '(email lastloc))
 
 (keys! ceamx-launch-map
-  "b" #'eww)
+  "b" #'eww
+  "W" #'ceamx/eww-wiki)
+
+(after! 'eww
+  (keys! eww-mode-map
+    "," '("scroll down" . scroll-up-command)
+    "." '("scroll up" . scroll-down-command)
+    "o" '("open link" . link-hint-open-link)))
+
+(add-hook 'eww-after-render-hook #'ceamx-eww-rerender)
 
 (provide 'init-eww)
 ;;; init-eww.el ends here
