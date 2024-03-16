@@ -4,30 +4,57 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.apparat.url = "sourcehut:~montchr/apparat";
   inputs.devshell.url = "github:numtide/devshell";
+  # FIXME: remove once new version is available in nixpkgs
+  inputs.nixfmt.url = "github:NixOS/nixfmt/master";
 
-  outputs = inputs@{ flake-parts, ... }:
+  outputs =
+    inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [ inputs.devshell.flakeModule ];
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
-      perSystem = { config, self', inputs', pkgs, system, ... }: {
-        # packages.default = pkgs.hello;
-
-        formatter.default = pkgs.nixfmt;
-        devshells.default = let
-          cat =
-            inputs.apparat.lib.devshell.categorised [ "formatters" "tools" ];
-          formatter = cat.formatters.pkg;
-        in {
-          commands = [
-            (formatter pkgs.nixfmt)
-            # {
-            #   package = pkgs.nixfmt;
-            #   category = "formatter";
-            # }
-          ];
-          devshell.name = "ceamx";
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "aarch64-darwin"
+      ];
+      perSystem =
+        {
+          config,
+          self',
+          inputs',
+          pkgs,
+          system,
+          ...
+        }:
+        let
+          inherit (inputs) apparat;
+          inherit (inputs') nixfmt;
+        in
+        {
+          formatter.default = nixfmt.packages.nixfmt;
+          devshells.default =
+            let
+              cats = apparat.lib.devshell.categorised [
+                "formatters"
+                "tools"
+              ];
+              formatter = cats.formatters.pkg;
+              tool = cats.tools.pkg;
+            in
+            {
+              devshell.name = "Ceamx";
+              commands = [
+                (tool pkgs.just)
+                (formatter nixfmt.packages.nixfmt)
+              ];
+              env = [
+                {
+                  name = "NIXFMT_MAX_WIDTH";
+                  value = 80;
+                }
+              ];
+              devshell.packages = [ pkgs.fd ];
+            };
         };
-      };
       flake = { };
     };
 
