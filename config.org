@@ -10284,56 +10284,61 @@ Returns process exit code."
 
 (require 'lib-common)
 
-;;; Packages
+;;; Install and configure `nix-mode'
 
-;;;; `nix-mode' :: <https://github.com/NixOS/nix-mode>
+;; <https://github.com/NixOS/nix-mode>
 
-(use-package nix-mode
-  :unless (treesit-language-available-p 'nix)
+(package! nix-mode
+  (unless (treesit-language-available-p 'nix)
+    (require 'nix-mode)
 
-  ;; NOTE: `magit-section' is a hard dependency (but why?),
-  ;;       but does not install automatically with `nix-mode'
-  :after (magit-section)
-  :functions (nix-mode-hook))
+    (add-hook 'nix-mode-hook #'eglot-ensure)))
 
-;;;; `nix-ts-mode' :: <https://github.com/remi-gelinas/nix-ts-mode>
+;;; Install and configure `nix-ts-mode'
 
-(use-package nix-ts-mode
-  :when (treesit-language-available-p 'nix)
+;; <https://github.com/remi-gelinas/nix-ts-mode>
 
-  :config
-  (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode))
+(package! nix-ts-mode
+  (when (treesit-language-available-p 'nix)
+    (require 'nix-ts-mode)
 
-  (use-feature! apheleia
-    :config
-    (add-to-list 'apheleia-formatters '(alejandra "alejandra"))
+    (add-hook 'nix-ts-mode-hook #'eglot-ensure)
+
+    (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
+    (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode))))
+
+;;; Configure formatters
+
+;;;; Set the official formatter (=nixfmt=) as the default formatter
+
+(with-eval-after-load 'apheleia
+  (defvar apheleia-mode-alist)
+  (with-eval-after-load 'nix-ts-mode
     (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt))))
 
-;;; Integrations
+;;;; Register =alejandra= as an additional formatter
 
-(use-feature! eglot
-  :defines (eglot-server-programs)
+(with-eval-after-load 'apheleia
+  (defvar apheleia-formatters)
+  (add-to-list 'apheleia-formatters '(alejandra "alejandra")))
 
-  :init
-  (add-hook 'nix-mode-hook #'eglot-ensure)
-  (add-hook 'nix-ts-mode-hook #'eglot-ensure)
+;;; Configure Nix language servers
 
-  :config
+(with-eval-after-load 'eglot
+  (defvar eglot-server-programs)
   (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nil"))))
 
 ;; via `lsp-mode' package
-(use-feature! lsp-nix
-  :after (lsp-mode)
-  :defines (lsp-nix-nil-formatter)
-
-  :config
+(with-eval-after-load 'lsp-nix
   (setopt lsp-nix-nil-formatter nil))
 
 (provide 'init-lang-nix)
 ;;; init-lang-nix.el ends here
 #+end_src
+
+
 *** Nushell
+
 #+begin_src emacs-lisp :tangle lisp/init-shell-nu.el
 ;;; init-shell-nu.el --- Nushell support             -*- lexical-binding: t; -*-
 
