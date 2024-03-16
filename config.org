@@ -955,8 +955,14 @@ or the documentation for the respective package manager."
        ;; ,@straight-keyword-maybe
        ,@args)))
 
-
-
+(defmacro package! (order &rest body)
+  "Declare a package ORDER and its initial configuration BODY.
+Provides the necessary autoloads so that we can declare packages
+without needing to declare autoloads for `elpaca' in every file."
+  (declare (indent defun))
+  `(progn
+     (autoload 'elpaca "elpaca" nil nil t)
+     (elpaca ,order ,@body)))
 
 (provide 'lib-common)
 ;;; lib-common.el ends here
@@ -1761,7 +1767,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 (unless +sys-linux-p
   (setq command-line-x-option-alist nil))
 
-(elpaca exec-path-from-shell
+(package! exec-path-from-shell
   (require 'exec-path-from-shell)
   (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"))
     (add-to-list 'exec-path-from-shell-variables var))
@@ -1772,7 +1778,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;; <https://github.com/purcell/inheritenv>
 
 (after! 'exec-path-from-shell
-  (elpaca inheritenv
+  (package! inheritenv
     (require 'inheritenv)))
 
 ;;; Support integration with Direnv via the `envrc' package
@@ -1790,7 +1796,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;; > buffer, as a buffer-local variable.
 
 (after! 'exec-path-from-shell
-  (elpaca envrc
+  (package! envrc
     (envrc-global-mode)))
 
 (elpaca-wait)
@@ -2419,11 +2425,11 @@ accommodation for varying pixel densities."
 ;; than those available in Emacs (e.g. `transient 'IIRC), or, including some
 ;; (like `nix-mode') who don't seem to declare them.
 
-(elpaca transient)
+(package! transient)
 
-(elpaca magit-section)
+(package! magit-section)
 
-(elpaca nerd-icons
+(package! nerd-icons
   (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
   (require 'nerd-icons))
 
@@ -3015,7 +3021,7 @@ not retain the generic background set by the function
 ;;      (internal-set-lisp-face-attribute 'default :weight 'semilight)
 
 
-(elpaca fontaine
+(package! fontaine
   (require 'fontaine)
 
   (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
@@ -3135,7 +3141,7 @@ not retain the generic background set by the function
 ;; A better implementation of ligature support than the builtin `prettify-symbols-mode'.
 ;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
 
-(elpaca ligature
+(package! ligature
   (require 'ligature)
 
   ;; Enable all Iosevka ligatures in programming modes
@@ -4314,14 +4320,14 @@ counter-clockwise."
 
 ;; <https://github.com/noctuid/link-hint.el>
 
-(elpaca link-hint
+(package! link-hint
   (global-keys!
     "M-g u" #'link-hint-open-link
     "M-g U" #'link-hint-copy-link))
 
 ;;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
 
-(elpaca expand-region
+(package! expand-region
   (keymap-global-set "C-=" #'er/expand-region))
 
 ;;;; Enable simple comment-based outline features in many modes with `outli'
@@ -4331,7 +4337,7 @@ counter-clockwise."
 ;; NOTE: In `emacs-lisp-mode' buffers, `outli-mode' should be enabled *after*
 ;; `lispy-mode'. See the package configuration for `lispy'.
 
-(elpaca (outli :host github :repo "jdtsmith/outli")
+(package! (outli :host github :repo "jdtsmith/outli")
   (def-hook! +outli-mode-maybe-enable-h ()
     '(prog-mode-hook text-mode-hook)
     "Enable `outli-mode' conditionally, excluding some modes."
@@ -4355,7 +4361,7 @@ counter-clockwise."
 
 ;; <https://elpa.gnu.org/packages/rainbow-mode.html>
 
-(elpaca rainbow-mode)
+(package! rainbow-mode)
 
 ;;; Global Keybindings
 
@@ -5586,7 +5592,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 ;; TODO: Install docsets automatically.
 ;;       See `lib-help' for WIP.
 
-(elpaca devdocs
+(package! devdocs
   (keys! help-map
     ;; Replace default `apropos-documentation' binding.
     "d" #'devdocs-lookup
@@ -5607,7 +5613,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 ;; the package has not been updated in years. By nature, it is also quite
 ;; invasive, and should probably only be used as a development tool as needed.
 
-(elpaca elmacro
+(package! elmacro
   (setopt elmacro-show-last-commands-default 30)
 
   ;; <https://github.com/Silex/elmacro/blob/master/README.md#org-mode-smartparens-etc>
@@ -5629,7 +5635,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 ;;        some symbols' helpful pages cannot be displayed.
 ;;        <https://github.com/Wilfred/helpful/issues/329>
 
-(elpaca helpful
+(package! helpful
   ;; Avoid a first-time lag when asking for help, which often happens before an
   ;; idle timer has the chance to run.
   (require 'helpful)
@@ -5679,7 +5685,7 @@ was printed, and only have ElDoc display if one wasn't.\""
 
 ;; <https://github.com/xuchunyang/elisp-demos>
 
-(elpaca elisp-demos
+(package! elisp-demos
   (after! 'helpful
     (require 'elisp-demos)
     (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
@@ -5887,7 +5893,7 @@ accepted by `ceamx/devdocs-ensure-doc'."
 
 ;; <https://github.com/alphapapa/dogears.el>
 
-(elpaca dogears
+(package! dogears
   (add-hook 'on-first-buffer-hook #'dogears-mode)
 
   ;; Also see `ceamx/dogears-dispatch'.
@@ -5946,7 +5952,7 @@ accepted by `ceamx/devdocs-ensure-doc'."
 
 ;; <https://codeberg.org/ideasman42/emacs-undo-fu>
 
-(elpaca undo-fu
+(package! undo-fu
   (keymap-global-set "C-z" #'undo-fu-only-undo)
   (keymap-global-set "C-S-z" #'undo-fu-only-redo))
 
@@ -5960,7 +5966,7 @@ accepted by `ceamx/devdocs-ensure-doc'."
 (defvar undo-fu-session-directory
   (expand-file-name "undo-fu-session" ceamx-var-dir))
 
-(elpaca undo-fu-session
+(package! undo-fu-session
   (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
   (setopt undo-fu-session-ignore-temp-files t)
   (setopt undo-fu-session-ignore-encrypted-files t)
@@ -5973,7 +5979,7 @@ accepted by `ceamx/devdocs-ensure-doc'."
 
 ;; <https://github.com/casouri/vundo>
 
-(elpaca vundo
+(package! vundo
   (keymap-global-set "C-x u" #'vundo))
 
 (after! 'vundo
@@ -9112,7 +9118,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 ;; <https://oremacs.com/lispy/>
 ;; <https://github.com/abo-abo/lispy>
 
-(elpaca lispy
+(package! lispy
   (add-hook 'ceamx-lisp-init-hook #'lispy-mode)
 
   (after! 'lispy
@@ -9443,8 +9449,6 @@ lists."
 (require 'lib-keys)
 (require 'lib-lisp)
 
-(autoload-macro! 'elpaca "elpaca")
-
 (declare-function blackout "blackout")
 
 ;;; Hooks
@@ -9554,7 +9558,7 @@ The original function fails in the presence of whitespace after a sexp."
 
 ;; TODO: keybindings...
 
-(elpaca xr)
+(package! xr)
 
 (provide 'init-lang-elisp)
 ;;; init-lang-elisp.el ends here
@@ -9724,8 +9728,6 @@ keywords are supported:
 (require 'lib-common)
 (require 'lib-keys)
 
-(autoload-macro! 'elpaca "elpaca")
-
 ;;; Configure
 
 (setopt eglot-sync-connect 1)
@@ -9763,12 +9765,12 @@ keywords are supported:
 
 ;;; Configure Flycheck integration
 
-(elpaca flycheck-eglot
+(package! flycheck-eglot
   (add-hook 'eglot-managed-mode-hook #'flycheck-eglot-mode))
 
 ;;; `consult-eglot' :: <https://github.com/mohkale/consult-eglot>
 
-(elpaca consult-eglot
+(package! consult-eglot
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
 
 (provide 'init-eglot)
@@ -10019,7 +10021,7 @@ keywords are supported:
 
 ;; TODO: add bindings
 
-(elpaca json-navigator)
+(package! json-navigator)
 
 (provide 'init-lang-json)
 ;;; init-lang-json.el ends here
@@ -10961,8 +10963,6 @@ headline.
 (require 'config-notes)
 (require 'config-org)
 
-(autoload-macro! 'elpaca "elpaca")
-
 ;;; Configuration of important paths
 
 ;; Most notes will be stored in `ceamx-notes-dir'.
@@ -11167,7 +11167,7 @@ headline.
 
 ;;; Automatically tangle literate Org files with `auto-tangle-mode'
 
-(elpaca (auto-tangle-mode
+(package! (auto-tangle-mode
          :host github
          :repo "progfolio/auto-tangle-mode.el")
   (autoload 'auto-tangle-mode "auto-tangle-mode"))
@@ -11912,13 +11912,11 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 
 (require 'lib-common)
 
-(autoload-macro! 'elpaca "elpaca")
-
 ;;; Install `pandoc-mode'
 
 ;; <https://joostkremers.github.io/pandoc-mode/>
 
-(elpaca pandoc-mode
+(package! pandoc-mode
   (add-hook 'markdown-mode-hook #'pandoc-mode)
 
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
@@ -11927,11 +11925,11 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 
 ;; <https://github.com/alphapapa/unpackaged.el>
 
-(elpaca (unpackaged :host github :repo "alphapapa/unpackaged.el"))
+(package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 
 ;;; DISABLED Install `org-tanglesync' to sync tangled source code blocks
 
-;; (elpaca org-tanglesync
+;; (package! org-tanglesync
 ;;   ;; FIXME: try to not do this
 ;;   (require 'org-tanglesync)
 

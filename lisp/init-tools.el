@@ -30,13 +30,11 @@
 
 (require 'lib-common)
 
-(autoload-macro! 'elpaca "elpaca")
-
 ;;; Install `pandoc-mode'
 
 ;; <https://joostkremers.github.io/pandoc-mode/>
 
-(elpaca pandoc-mode
+(package! pandoc-mode
   (add-hook 'markdown-mode-hook #'pandoc-mode)
 
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
@@ -45,11 +43,11 @@
 
 ;; <https://github.com/alphapapa/unpackaged.el>
 
-(elpaca (unpackaged :host github :repo "alphapapa/unpackaged.el"))
+(package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 
 ;;; DISABLED Install `org-tanglesync' to sync tangled source code blocks
 
-;; (elpaca org-tanglesync
+;; (package! org-tanglesync
 ;;   ;; FIXME: try to not do this
 ;;   (require 'org-tanglesync)
 

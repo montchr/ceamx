@@ -34,7 +34,7 @@
 
 ;; TODO: add bindings
 
-(elpaca json-navigator)
+(package! json-navigator)
 
 (provide 'init-lang-json)
 ;;; init-lang-json.el ends here

@@ -78,7 +78,7 @@
 
 ;; <https://github.com/alphapapa/dogears.el>
 
-(elpaca dogears
+(package! dogears
   (add-hook 'on-first-buffer-hook #'dogears-mode)
 
   ;; Also see `ceamx/dogears-dispatch'.
@@ -137,7 +137,7 @@
 
 ;; <https://codeberg.org/ideasman42/emacs-undo-fu>
 
-(elpaca undo-fu
+(package! undo-fu
   (keymap-global-set "C-z" #'undo-fu-only-undo)
   (keymap-global-set "C-S-z" #'undo-fu-only-redo))
 
@@ -151,7 +151,7 @@
 (defvar undo-fu-session-directory
   (expand-file-name "undo-fu-session" ceamx-var-dir))
 
-(elpaca undo-fu-session
+(package! undo-fu-session
   (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
   (setopt undo-fu-session-ignore-temp-files t)
   (setopt undo-fu-session-ignore-encrypted-files t)
@@ -164,7 +164,7 @@
 
 ;; <https://github.com/casouri/vundo>
 
-(elpaca vundo
+(package! vundo
   (keymap-global-set "C-x u" #'vundo))
 
 (after! 'vundo

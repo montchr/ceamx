@@ -48,7 +48,7 @@
 ;;      (internal-set-lisp-face-attribute 'default :weight 'semilight)
 
 
-(elpaca fontaine
+(package! fontaine
   (require 'fontaine)
 
   (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
@@ -168,7 +168,7 @@
 ;; A better implementation of ligature support than the builtin `prettify-symbols-mode'.
 ;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
 
-(elpaca ligature
+(package! ligature
   (require 'ligature)
 
   ;; Enable all Iosevka ligatures in programming modes

@@ -30,8 +30,6 @@
 (require 'lib-keys)
 (require 'lib-lisp)
 
-(autoload-macro! 'elpaca "elpaca")
-
 (declare-function blackout "blackout")
 
 ;;; Hooks
@@ -141,7 +139,7 @@ The original function fails in the presence of whitespace after a sexp."
 
 ;; TODO: keybindings...
 
-(elpaca xr)
+(package! xr)
 
 (provide 'init-lang-elisp)
 ;;; init-lang-elisp.el ends here

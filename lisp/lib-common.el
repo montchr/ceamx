@@ -559,8 +559,14 @@ or the documentation for the respective package manager."
        ;; ,@straight-keyword-maybe
        ,@args)))
 
-
-
+(defmacro package! (order &rest body)
+  "Declare a package ORDER and its initial configuration BODY.
+Provides the necessary autoloads so that we can declare packages
+without needing to declare autoloads for `elpaca' in every file."
+  (declare (indent defun))
+  `(progn
+     (autoload 'elpaca "elpaca" nil nil t)
+     (elpaca ,order ,@body)))
 
 (provide 'lib-common)
 ;;; lib-common.el ends here

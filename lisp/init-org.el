@@ -43,8 +43,6 @@
 (require 'config-notes)
 (require 'config-org)
 
-(autoload-macro! 'elpaca "elpaca")
-
 ;;; Configuration of important paths
 
 ;; Most notes will be stored in `ceamx-notes-dir'.
@@ -249,7 +247,7 @@
 
 ;;; Automatically tangle literate Org files with `auto-tangle-mode'
 
-(elpaca (auto-tangle-mode
+(package! (auto-tangle-mode
          :host github
          :repo "progfolio/auto-tangle-mode.el")
   (autoload 'auto-tangle-mode "auto-tangle-mode"))

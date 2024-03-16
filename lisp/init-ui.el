@@ -49,11 +49,11 @@
 ;; than those available in Emacs (e.g. `transient 'IIRC), or, including some
 ;; (like `nix-mode') who don't seem to declare them.
 
-(elpaca transient)
+(package! transient)
 
-(elpaca magit-section)
+(package! magit-section)
 
-(elpaca nerd-icons
+(package! nerd-icons
   (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
   (require 'nerd-icons))
 

@@ -63,7 +63,7 @@
 ;; <https://oremacs.com/lispy/>
 ;; <https://github.com/abo-abo/lispy>
 
-(elpaca lispy
+(package! lispy
   (add-hook 'ceamx-lisp-init-hook #'lispy-mode)
 
   (after! 'lispy

@@ -61,7 +61,7 @@
 ;; TODO: Install docsets automatically.
 ;;       See `lib-help' for WIP.
 
-(elpaca devdocs
+(package! devdocs
   (keys! help-map
     ;; Replace default `apropos-documentation' binding.
     "d" #'devdocs-lookup
@@ -82,7 +82,7 @@
 ;; the package has not been updated in years. By nature, it is also quite
 ;; invasive, and should probably only be used as a development tool as needed.
 
-(elpaca elmacro
+(package! elmacro
   (setopt elmacro-show-last-commands-default 30)
 
   ;; <https://github.com/Silex/elmacro/blob/master/README.md#org-mode-smartparens-etc>
@@ -104,7 +104,7 @@
 ;;        some symbols' helpful pages cannot be displayed.
 ;;        <https://github.com/Wilfred/helpful/issues/329>
 
-(elpaca helpful
+(package! helpful
   ;; Avoid a first-time lag when asking for help, which often happens before an
   ;; idle timer has the chance to run.
   (require 'helpful)
@@ -154,7 +154,7 @@ was printed, and only have ElDoc display if one wasn't.\""
 
 ;; <https://github.com/xuchunyang/elisp-demos>
 
-(elpaca elisp-demos
+(package! elisp-demos
   (after! 'helpful
     (require 'elisp-demos)
     (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))

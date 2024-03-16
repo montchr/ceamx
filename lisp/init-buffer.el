@@ -113,14 +113,14 @@
 
 ;; <https://github.com/noctuid/link-hint.el>
 
-(elpaca link-hint
+(package! link-hint
   (global-keys!
     "M-g u" #'link-hint-open-link
     "M-g U" #'link-hint-copy-link))
 
 ;;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
 
-(elpaca expand-region
+(package! expand-region
   (keymap-global-set "C-=" #'er/expand-region))
 
 ;;;; Enable simple comment-based outline features in many modes with `outli'
@@ -130,7 +130,7 @@
 ;; NOTE: In `emacs-lisp-mode' buffers, `outli-mode' should be enabled *after*
 ;; `lispy-mode'. See the package configuration for `lispy'.
 
-(elpaca (outli :host github :repo "jdtsmith/outli")
+(package! (outli :host github :repo "jdtsmith/outli")
   (def-hook! +outli-mode-maybe-enable-h ()
     '(prog-mode-hook text-mode-hook)
     "Enable `outli-mode' conditionally, excluding some modes."
@@ -154,7 +154,7 @@
 
 ;; <https://elpa.gnu.org/packages/rainbow-mode.html>
 
-(elpaca rainbow-mode)
+(package! rainbow-mode)
 
 ;;; Global Keybindings
 

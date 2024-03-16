@@ -34,8 +34,6 @@
 (require 'lib-common)
 (require 'lib-keys)
 
-(autoload-macro! 'elpaca "elpaca")
-
 ;;; Configure
 
 (setopt eglot-sync-connect 1)
@@ -73,12 +71,12 @@
 
 ;;; Configure Flycheck integration
 
-(elpaca flycheck-eglot
+(package! flycheck-eglot
   (add-hook 'eglot-managed-mode-hook #'flycheck-eglot-mode))
 
 ;;; `consult-eglot' :: <https://github.com/mohkale/consult-eglot>
 
-(elpaca consult-eglot
+(package! consult-eglot
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
 
 (provide 'init-eglot)

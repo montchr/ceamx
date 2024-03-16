@@ -39,7 +39,7 @@
 (unless +sys-linux-p
   (setq command-line-x-option-alist nil))
 
-(elpaca exec-path-from-shell
+(package! exec-path-from-shell
   (require 'exec-path-from-shell)
   (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"))
     (add-to-list 'exec-path-from-shell-variables var))
@@ -50,7 +50,7 @@
 ;; <https://github.com/purcell/inheritenv>
 
 (after! 'exec-path-from-shell
-  (elpaca inheritenv
+  (package! inheritenv
     (require 'inheritenv)))
 
 ;;; Support integration with Direnv via the `envrc' package
@@ -68,7 +68,7 @@
 ;; > buffer, as a buffer-local variable.
 
 (after! 'exec-path-from-shell
-  (elpaca envrc
+  (package! envrc
     (envrc-global-mode)))
 
 (elpaca-wait)
