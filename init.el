@@ -431,7 +431,6 @@
 (require 'init-lang-elisp)
 (require 'init-lang-html)
 (require 'init-lang-js)
-(require 'init-lang-json)
 (require 'init-lang-lua)
 (require 'init-lang-markdown)
 (require 'init-lang-nix)

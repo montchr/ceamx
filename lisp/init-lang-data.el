@@ -20,11 +20,23 @@
 
 ;;; Commentary:
 
-;; Support for working with data files like CSV and XML.
+;; Support for working with data files like JSON, TOML, CSV, XML, etc.
 
 ;;; Code:
 
 (require 'lib-common)
+
+;;; JSON
+
+;;;; Navigate arborescent JSON structures with `json-navigator'
+
+;; <https://github.com/DamienCassou/json-navigator>
+
+;; TODO: add bindings
+
+(package! json-navigator)
+
+;;; XML
 
 (use-feature! nxml-mode
   :mode "\\.p\\(?:list\\|om\\)\\'"      ; plist, pom
@@ -35,7 +47,10 @@
   (setq nxml-slash-auto-complete-flag t)
   (setq nxml-auto-insert-xml-declaration-flag t)
 
+  ;; FIXME: prob broken?
   (setq-hook! 'nxml-mode-hook tab-width nxml-child-indent))
+
+;;; CSV/TSV
 
 (use-package csv-mode
   :commands ( csv-align-fields
