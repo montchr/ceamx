@@ -30,6 +30,7 @@
 (defmap! ceamx-code-map)
 (defmap! ceamx-file-map)
 (defmap! ceamx-launch-map)
+(defmap! ceamx-pairs-map)
 (defmap! ceamx-replace-map)
 (defmap! ceamx-toggle-map)
 

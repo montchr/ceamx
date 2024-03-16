@@ -33,6 +33,8 @@
 
 ;;; Requirements
 
+(require 'ceamx-keymaps)
+
 (require 'config-editor)
 
 (require 'lib-common)
@@ -92,19 +94,22 @@
 (electric-pair-mode 1)
 (show-paren-mode 1)
 
-;;;;; Register a `transient' dispatcher for `insert-pair'
+;;;;; Set up a keymap for common usages of `insert-pair'
 
-;; TODO: what's a good binding for this?
+(keys! ceamx-pairs-map
+  "(" '("paren" . insert-pair)
+  "[" '("square-b" . insert-pair)
+  "{" '("curly-b" . insert-pair)
+  "<" '("angle-b" . insert-pair)
+  "'" '("s-quote" . insert-pair)
+  "\"" '("d-quote" . insert-pair)
+  "`" '("b-tick" . insert-pair)
+  "_" '("u-score" . insert-pair)
+  "*" '("star" . insert-pair)
+  "=" '("equals" . insert-pair)
+  ":" '("colon" . insert-pair))
 
-(use-feature! transient
-  :config
-  (transient-define-prefix ceamx/insert-pair-dispatch ()
-    "Insert or wrap the active region by way of `insert-pair'."
-    [ ("[" "square brackets" insert-pair)
-      ("{" "curly braces" insert-pair)
-      ("\"" "double-quotes" insert-pair)
-      ("'" "single-quotes" insert-pair)
-      ("`" "inline code" insert-pair)]))
+(keymap-global-set "C-c i" ceamx-pairs-map)
 
 ;;; Formatting
 
