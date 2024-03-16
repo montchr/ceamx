@@ -49,8 +49,8 @@
 
 ;; <https://github.com/purcell/inheritenv>
 
-(after! 'exec-path-from-shell
-  (package! inheritenv
+(package! inheritenv
+  (with-eval-after-load 'exec-path-from-shell
     (require 'inheritenv)))
 
 ;;; Support integration with Direnv via the `envrc' package
@@ -67,8 +67,8 @@
 ;; > Instead, `envrc.el` simply sets and stores the right environment in each
 ;; > buffer, as a buffer-local variable.
 
-(after! 'exec-path-from-shell
-  (package! envrc
+(package! envrc
+  (with-eval-after-load 'exec-path-from-shell
     (envrc-global-mode)))
 
 (elpaca-wait)
