@@ -85,9 +85,7 @@
 ;; > If called with prefix argument C-u, you can specify a prefix map to be
 ;; > used, such as C-c or C-c C-x (these are specified as a string).
 
-(use-package free-keys
-  :defer t
-  :commands (free-keys))
+(package! free-keys)
 
 (provide 'init-keys)
 ;;; init-keys.el ends here
