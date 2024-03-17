@@ -123,16 +123,16 @@
 
 (keys! ceamx-file-map
   ;; TODO
-  ;; "u" #'+sudo-find-file
-  ;; "U" #'+sudo-this-file
   ;; "y" #'+yank-this-file-name
 
   "c" '("copy..." . ceamx/copy-this-file)
   "d" '("delete" . ceamx/delete-this-file)
-  "f" '("find (g)..." . find-file)
+  "f" #'find-file
+  "F" #'find-file-other-window
   "r" '("rename/move..." . ceamx/move-this-file)
-  "s" '("save" . save-buffer)
+  "s" #'save-buffer
   "S" '("save as..." . write-file)
+  "U" #'ceamx/sudo-find-file
 
   "C-d" '("diff with..." . ceamx/diff-with-file))
 
