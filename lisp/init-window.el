@@ -331,18 +331,19 @@
       ("DEL" "up" scroll-down)]
 
     ["Lifecycle"
-      ("d" "del sel" ace-delete-window)
-      ;; ("D" "del: o" delete-other-windows :transient nil)
-      ("u" "undo" winner-undo)
-      ("U" "redo" winner-redo)
-      ""
-      ("0" "del" delete-window)
-      ("1" "del other" delete-other-windows)
-      ""
-      ("S" "[ ] sides" window-toggle-side-windows)
-      ("`" "[ ] popups" popper-toggle)
-      ""
-      ("q" "quit" transient-quit-all)]])
+     ("d" "del (this)" delete-window)
+     ("D" "del (select)" ace-delete-window)
+     ;; ("D" "del: o" delete-other-windows :transient nil)
+     ("u" "undo" winner-undo)
+     ("U" "redo" winner-redo)
+     ""
+     ("0" "del" delete-window)
+     ("1" "del other" delete-other-windows)
+     ""
+     ("S" "[ ] sides" window-toggle-side-windows)
+     ("`" "[ ] popups" popper-toggle)
+     ""
+     ("q" "quit" transient-quit-all)]])
 
 ;;; Bind keys for window management
 
