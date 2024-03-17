@@ -36,37 +36,13 @@
 
 ;;; Code:
 
-;;;; Requirements
+;;; Requirements
 
 (require 'windmove)
 
 (require 'config-window)
 
-;; (declare-function 'popper-popup-status "popper")
-;; (declare-function 'popper-toggle "popper")
-
-;;;; Popups
-
-;; <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
-
-(defun ceamx-window-display-popup-at-bottom (buffer &optional alist)
-  "Display popup-buffer BUFFER at the bottom of the screen.
-ALIST is an association list of action symbols and values.  See
-Info node `(elisp) Buffer Display Action Alists' for details of
-such alists."
-  (display-buffer-in-side-window
-    buffer
-    (append alist
-      `((side . bottom)
-         (slot . 1)))))
-
-(defun ceamx-window-display-popup (buffer &optional alist)
-  "Display and switch to popup-buffer BUFFER at the bottom of the screen.
-ALIST is an association list of action symbols and values.  See
-Info node `(elisp) Buffer Display Action Alists' for details of
-such alists."
-  (let ((window (ceamx-window-display-popup-at-bottom buffer alist)))
-    (select-window window)))
+;;; Helpers for `popper'
 
 ;; TODO: add buffers tracking files in nix store, which are only useful for
 ;; reference purposes, often invoked when viewing definition of low-level
@@ -89,6 +65,29 @@ Intended as a general hook function."
   (declare-function popper-toggle "popper")
   (when (bound-and-true-p popper-popup-status)
     (popper-toggle)))
+
+;;; `display-buffer' functions
+
+;; <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
+
+(defun ceamx-window-display-popup-at-bottom (buffer &optional alist)
+  "Display popup-buffer BUFFER at the bottom of the screen.
+ALIST is an association list of action symbols and values.  See
+Info node `(elisp) Buffer Display Action Alists' for details of
+such alists."
+  (display-buffer-in-side-window
+   buffer
+   (append alist
+           `((side . bottom)
+             (slot . 1)))))
+
+(defun ceamx-window-display-popup (buffer &optional alist)
+  "Display and switch to popup-buffer BUFFER at the bottom of the screen.
+ALIST is an association list of action symbols and values.  See
+Info node `(elisp) Buffer Display Action Alists' for details of
+such alists."
+  (let ((window (ceamx-window-display-popup-at-bottom buffer alist)))
+    (select-window window)))
 
 ;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 (defun +display-buffer-reuse-minor-mode-window (buffer alist)
