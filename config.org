@@ -10256,11 +10256,12 @@ Returns process exit code."
 
 ;; <https://github.com/NixOS/nix-mode>
 
-(package! nix-mode
-  (unless (treesit-language-available-p 'nix)
-    (require 'nix-mode)
+;; NOTE: `nix-mode' should not be loaded when using `nix-ts-mode'.
 
-    (add-hook 'nix-mode-hook #'eglot-ensure)))
+(package! nix-mode
+  (require 'nix-mode)
+
+  (add-hook 'nix-mode-hook #'eglot-ensure))
 
 ;;; DISABLED Install and configure `nix-ts-mode'
 
