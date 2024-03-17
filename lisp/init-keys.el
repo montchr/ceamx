@@ -30,23 +30,26 @@
 
 ;;; Code:
 
+;;; Requirements
+
 (require 'config-env)
 (require 'lib-common)
 (require 'lib-keys)
 
+;;; Bind some CUA-like hotkeys for editing operations
+
+;; "C-S" prefix is inspired by the use of this mod combo in terminal emulators,
+;; where "C-c" for example would kill the current process.
+
 ;; FIXME: move to bindings file
 
-;; Common system hotkeys, complicated for cross-platform usability.
-;;
-;; "C-S" prefix is inspired by the use of this mod combo in terminals, where
-;; `C-c' for example would kill the current process.
 (define-keymap :keymap (current-global-map)
   "C-S-c" #'kill-ring-save
   "C-S-v" #'yank
   "C-S-x" #'kill-region)
 
-;; FIXME: move to bindings file
-;; macOS: Remap modifier keys.
+;;; macOS: Remap modifier keys for the Apple keyboard layout
+
 (when (and +sys-mac-p (display-graphic-p))
   (setopt mac-control-modifier 'control)
   (setopt mac-option-modifier 'meta)
@@ -63,15 +66,21 @@
     "s-x" #'kill-region
     "s-q" #'save-buffers-kill-emacs))
 
-(use-feature! repeat
-  :config
-  ;; TODO: make sure this doesn't have some unintended consequences
-  (setopt repeat-exit-key "ESC")
-  (repeat-mode 1))
+;;; Enable and configure `repeat-mode'
 
-;;; free-keys :: <https://github.com/Fuco1/free-keys>
+(setopt repeat-exit-key "ESC")
+(setopt repeat-exit-timeout 5)
+(setopt repeat-on-final-keystroke t)
+(setopt repeat-keep-prefix nil)
 
-;;  Show free keybindings for modkeys or prefixes.
+;; Related, but not technically part of `repeat-mode'.
+(setopt set-mark-command-repeat-pop t)
+
+(repeat-mode 1)
+
+;;; Show free keybindings for modkeys or prefixes with `free-keys'
+
+;; <https://github.com/Fuco1/free-keys>
 
 ;; > If called with prefix argument C-u, you can specify a prefix map to be
 ;; > used, such as C-c or C-c C-x (these are specified as a string).
