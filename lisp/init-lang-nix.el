@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'lib-common)
+(require 'lib-help)
 
 ;;; Install and configure `nix-mode'
 
@@ -82,6 +83,13 @@
 ;; via `lsp-mode' package
 (with-eval-after-load 'lsp-nix
   (setopt lsp-nix-nil-formatter nil))
+
+;;; Install `devdocs' Nix docset
+
+(def-hook! +devdocs-install-nix-docs ()
+  '(nix-mode-hook nix-ts-mode-hook)
+  "Install `devdocs' documents for the Nix language."
+  (+devdocs-maybe-install "nix"))
 
 (provide 'init-lang-nix)
 ;;; init-lang-nix.el ends here

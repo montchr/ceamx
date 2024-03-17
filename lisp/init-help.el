@@ -67,11 +67,7 @@
     "d" #'devdocs-lookup
     "D" #'apropos-documentation)
 
-  (def-hook! +devdocs-install-nix-docs ()
-    '(nix-mode-hook nix-ts-mode-hook)
-    "Install `devdocs' documents for the Nix language."
-    (ceamx/devdocs-ensure-doc "nix"))
-
+  ;; FIXME: on a stale timer! every week! not every session...
   (devdocs-update-all))
 
 ;;; Display keyboard macros or latest interactive commands as Elisp via `elmacro'

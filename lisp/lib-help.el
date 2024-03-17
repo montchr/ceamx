@@ -26,9 +26,10 @@
 
 (require 'lib-common)
 
+(defvar devdocs-data-dir)
+
 (declare-function consult-info "consult")
 
-;;
 ;;; Functions
 
 ;;;; Pre-defined filters for `consult-info' searches
@@ -52,38 +53,39 @@
 
 ;;;; `devdocs' support
 
-;; FIXME: return t/nil
-(defun ceamx-devdocs-doc-installed-p (doc)
-  "Whether `devdocs' documentation set DOC is installed."
-  ;; TODO: return value or t? check elisp docs
-  (when (fboundp 'devdocs--doc-title)
-    ;; FIXME: prevent errors, which *will* happen when doc is not present
-    ;; <https://www.gnu.org/software/emacs/manual/html_node/elisp/Handling-Errors.html>
-    (devdocs--doc-title doc)))
+(defun +devdocs--doc-directory-exists-p (slug)
+  "Whether the directory for the doc SLUG exists."
+  (file-directory-p (expand-file-name slug devdocs-data-dir)))
 
-;; FIXME: return t if exists, whatever if new, otherwise throw
-(defun ceamx/devdocs-ensure-doc (doc)
+(defun +devdocs--doc-installed-p (slug)
+  "Whether the document named SLUG is installed.
+Installation can be defined as whether there exists a metadata
+file inside a directory named SLUG within `devdocs-data-dir'."
+  (defvar devdocs-data-dir)
+  (let ((file (expand-file-name (concat slug "/metadata") devdocs-data-dir)))
+    (file-exists-p file)))
+
+(defun +devdocs-maybe-install (doc)
   "Install the `devdocs' documentation set for DOC if not already installed.
-DOC is a `devdocs' documentation identifier of the form accepted
-by `devdocs-install'."
-  ;; TODO: prompt for selecting from available docs (see `devdocs-install')
-  (interactive "s")
-  (devdocs-install doc)
-  ;; FIXME: `ceamx-devdocs-doc-installed-p'
-  (noop!
-    (unless (ceamx-devdocs-doc-installed-p doc)
-      (devdocs-install doc))
-    ;; TODO: is there another way without calling twice?
-    (ceamx-devdocs-doc-installed-p doc)))
+DOC is as in `devdocs-install'."
+  (declare-function devdocs-install "devdocs")
+  (unless (+devdocs--doc-installed-p doc)
+    (devdocs-install doc)))
 
-(defun ceamx/devdocs-ensure-docs (docs)
+(defun +devdocs-maybe-install-docs (docs)
   "Install each `devdocs' documentation set in DOCS if not already installed.
 DOCS is a quoted list of `devdocs' documentation identifiers as
-accepted by `ceamx/devdocs-ensure-doc'."
-  ;; FIXME: what is the proper code for a list? "x" didn't work
-  (interactive)
+accepted by `+devdocs-maybe-install'."
   (dolist (doc docs)
-    (ceamx/devdocs-ensure-doc doc)))
+    (+devdocs-maybe-install doc)))
+
+;; FIXME: return t if exists, whatever if new, otherwise throw
+(defun ceamx/devdocs-maybe-install (doc)
+  "Install the `devdocs' documentation set for DOC if not already installed.
+DOC is as in `devdocs-install'."
+  ;; TODO: prompt for selecting from available docs (see `devdocs-install')
+  (interactive "s")
+  (+devdocs-maybe-install doc))
 
 (provide 'lib-help)
 ;;; lib-help.el ends here
