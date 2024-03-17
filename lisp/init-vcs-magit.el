@@ -24,36 +24,42 @@
 
 ;;; Code:
 
+;;; Requirements
+
 (require 'lib-common)
-(require 'lib-vcs-magit)
 
-(use-feature! transient)
+;; FIXME: move to configuration for `transient'
+(with-eval-after-load 'transient
+  (defvar transient-map)
+  (declare-function transient-quit-one "transient")
 
-(use-package magit
-  :commands (magit-status
-              magit-dispatch
-              magit-file-dispatch
-              magit-revert
-              magit-discard)
-  :after (seq transient git-commit)
+  ;; Always close transient with ESC
+  (keymap-set transient-map "ESC" #'transient-quit-one))
 
-  :config
-  (after! [evil-collection]
-    (declare-function evil-collection-init "evil-collection")
-    (evil-collection-init 'magit))
+;;; Configure Magit
+
+(package! magit)
+
+(with-eval-after-load 'magit
+  (defvar magit-mode-map)
+  (defvar magit-status-mode-map)
+
+  (declare-function magit-discard "magit-apply")
+  (declare-function magit-dispatch "magit")
+  (declare-function magit-display-buffer-fullframe-status-v1 "magit-mode")
+  (declare-function magit-file-dispatch "magit-files")
+  (declare-function magit-restore-window-configuration "magit-mode")
+  (declare-function magit-revert "magit-sequence")
+  (declare-function magit-status "magit-status")
 
   (setopt magit-diff-refine-hunk t)     ; show granular diffs in selected hunk
   (setopt magit-save-repository-buffers nil) ; avoid side-effects (e.g. auto-format)
-  (setopt magit-revision-insert-related-refs nil) ; parent/related refs: rarely useful
+  ;; (setopt magit-revision-insert-related-refs nil) ; parent/related refs: rarely useful
   (setopt magit-process-finish-apply-ansi-colors t) ; render ANSI colors in process output
 
-  ;; Close transient with ESC
-  ;; FIXME: move to configuration for `transient'
-  (define-key transient-map [escape] #'transient-quit-one)
-
-  ;; FIXME: meow won't allow
-  ;; TODO: what is the default magit binding for "j"?
-  ;; (keymap-set magit-status-mode-map "j" nil)
+  (setopt magit-bury-buffer-function #'magit-restore-window-configuration)
+  ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
+  (setopt magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
 
   ;; These should be bound automatically when `magit-define-global-key-bindings'
   ;; is =default= (which is the default value), but that does not seem to work.
@@ -74,51 +80,12 @@
   ;; NOTE: Overrides default binding of `magit-reset-quickly'.
   (keymap-set magit-status-mode-map "x" #'magit-discard)
 
-  ;; FIXME: move to `:init'
-  ;; via doomemacs (exact location forgotten)
-  (defun +magit--revert-repo-buffers-deferred-a (&rest _)
-    "Revert repo buffers and invalidate caches upon checkout."
-    ;; Since the project likely now contains new files, best we undo the
-    ;; projectile cache so it can be regenerated later.
-    (after! 'projectile
-      (declare-function projectile-invalidate-cache "projectile")
-      (projectile-invalidate-cache nil))
-    ;; Use a more efficient strategy to auto-revert buffers whose git state has
-    ;; changed: refresh the visible buffers immediately...
-    (+magit-mark-stale-buffers-h))
-  (advice-add 'magit-checkout :after #'+magit--revert-repo-buffers-deferred-a)
-  (advice-add 'magit-branch-and-checkout :after #'+magit--revert-repo-buffers-deferred-a)
-  ;; ...then refresh the rest only when we switch to them, not all at once.
-  (add-hook 'on-switch-buffer-hook #'+magit-revert-buffer-maybe-h)
-
-  ;; Prevent sudden window position resets when staging/unstaging/discarding/etc
-  ;; hunks in `magit-status-mode' buffers.
-  ;; FIXME: these are a really uniquely terrible way of defining hook functions...
-  (defvar +magit--pos nil)
-  (add-hook 'magit-pre-refresh-hook
-    (defun +magit--set-window-state-h ()
-      (setq-local +magit--pos (list (current-buffer) (point) (window-start)))))
-  (add-hook 'magit-post-refresh-hook
-    (defun +magit--restore-window-state-h ()
-      (when (and +magit--pos (eq (current-buffer) (car +magit--pos)))
-        (goto-char (cadr +magit--pos))
-        (set-window-start nil (caddr +magit--pos) t)
-        (kill-local-variable '+magit--pos))))
-
-  ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
-  (setopt magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
-
   (transient-append-suffix 'magit-commit "-n"
     '("-S" "Disable GPG signing" "--no-gpg"))
   (transient-append-suffix 'magit-fetch "-p"
     '("-t" "Fetch all tags" ("-t" "--tags")))
   (transient-append-suffix 'magit-pull "-r"
-    '("-a" "Autostash" "--autostash"))
-
-  ;; Clean up after magit by killing leftover magit buffers and reverting
-  ;; affected buffers (or at least marking them as need-to-be-reverted).
-  (define-key magit-mode-map "q" #'+magit/quit)
-  (define-key magit-mode-map "Q" #'+magit/quit-all))
+    '("-a" "Autostash" "--autostash")))
 
 (provide 'init-vcs-magit)
 ;;; init-vcs-magit.el ends here
