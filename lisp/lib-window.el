@@ -2,10 +2,12 @@
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 ;; Copyright (C) 2023 Free Software Foundation, Inc.
+;; Copyright (C) 2024  Protesilaos Stavrou
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;;         Vegard Øye <vegard_oye at hotmail.com>
 ;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
+;;         Protesilaos Stavrou <public@protesilaos.com>
 
 ;; Keywords: local
 
@@ -150,7 +152,7 @@ Copied from the `evil' macro `evil-save-side-windows'."
          (when ,sides
            (window-toggle-side-windows))))))
 
-;;; Interactive
+;;; Interactive window management
 
 ;; FIXME: "display-buffer" is misleading
 ;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
@@ -310,6 +312,20 @@ counter-clockwise."
                ((> wincount 1)))
     (dotimes (i (- wincount 1))
       (window-swap-states (elt winlist i) (elt winlist (+ i 1))))))
+
+;; via <https://github.com/protesilaos/dotfiles/blob/24670bf47f7aaefc9bb2613d090cc9113acd6d48/emacs/.emacs.d/prot-lisp/prot-simple.el#L590C1-L601C41>
+;;;###autoload
+(defun ceamx/other-window ()
+  "Wrapper for `other-window' and `next-multiframe-window'.
+If there is only one window and multiple frames, call
+`next-multiframe-window'.  Otherwise, call `other-window'."
+  (interactive)
+  (if (and (one-window-p) (length> (frame-list) 1))
+      (progn
+        (call-interactively #'next-multiframe-window)
+        (setq this-command #'next-multiframe-window))
+    (call-interactively #'other-window)
+    (setq this-command #'other-window)))
 
 (provide 'lib-window)
 ;;; lib-window.el ends here

@@ -347,7 +347,8 @@
 ;;; Bind keys for window management
 
 (global-keys!
-  "C-x o" #'ace-window
+  "C-x o" #'ceamx/other-window
+  "C-x O" #'ace-window
   "C-x w" #'ceamx/window-dispatch
 
   "C-x =" #'balance-windows
