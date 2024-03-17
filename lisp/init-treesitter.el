@@ -62,14 +62,19 @@
 
 (require 'lib-common)
 
-;;; `treesit-auto' <https://github.com/renzmann/treesit-auto>
-(use-package treesit-auto
-  :commands (global-treesit-auto-mode)
-  ;; FIXME: Package has bad autoloads, so `:commands' won't work.
-  ;; <https://github.com/renzmann/treesit-auto/issues/44>
-  :autoload (treesit-auto-add-to-auto-mode-alist)
+;;; Automatically use available `treesit' modes via `treesit-auto'
 
-  :config
+;; <https://github.com/renzmann/treesit-auto>
+
+;; NOTE: This package does *not* automatically manage mode-hook translation.
+;; Those should be managed manually on a case-by-case basis. For example,
+;; `nix-ts-mode-hook' does not currently inherit the value of `nix-mode-hook'.
+;; Some Tree-Sitter modes, however, still derive from their non-Tree-Sitter
+;; predecessor, and so will also run that mode's hooks in addition to its own.
+
+(package! treesit-auto
+  (require 'treesit-auto)
+
   ;; Grammars should be installed via Nixpkgs.
   (setopt treesit-auto-install nil)
 
