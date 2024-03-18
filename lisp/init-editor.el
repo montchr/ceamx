@@ -58,16 +58,22 @@
 ;; Replace region when inserting text.
 (delete-selection-mode 1)
 
-;;;; Boundaries
+;;;; Improve sentence legibility and parsing with double-spaced ending
 
-(setopt sentence-end-double-space nil)
+;; Yes, it may appear strange and archaic, and yet... I realized that I actually
+;; do *prefer* this for readability.  And so, I am giving it a shot.  My
+;; grandfather, who was an English teacher for most of the 20th century, would
+;; be very proud.  Though even writing this paragraph has been difficult.
 
-;; Don't consider camelCaseWORDs as separate words.
+(setopt sentence-end-double-space t)
+
+(keymap-global-set "M-Q" #'repunctuate-sentences)
+
+;;;; Don't consider camelCaseWORDs as separate words
+
 (global-subword-mode -1)
 
-;;;; Hard-Wrapping
-
-;;;;; Automatically wrap text at `fill-column' in some contexts
+;;;; Automatically wrap text at `fill-column' in some contexts
 
 ;; When a mode defines a comment syntax, then only wrap those comments. In all
 ;; other modes (primarily `text-mode' derivatives), activating
