@@ -43,6 +43,14 @@
 ;; Improve visual contrast between focused/non-focused windows.
 (setopt highlight-nonselected-windows nil)
 
+;;; Customization buffer and menu interface
+
+(setopt custom-theme-allow-multiple-selections nil)
+
+(setopt custom-unlispify-menu-entries nil)
+(setopt custom-unlispify-tag-names nil)
+(setopt custom-unlispify-remove-prefixes nil)
+
 ;;; Provide commonly-used interface libraries
 
 ;; Required as dependencies for many packages, either as more recent versions
