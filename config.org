@@ -9885,106 +9885,59 @@ keywords are supported:
 
 ;;; Commentary:
 
-;; FIXME: no asteriks pair
-
 ;;; Code:
 
+;;; Requirements
+
 (require 'config-env)
+
 (require 'lib-common)
-(require 'lib-editor)
-(require 'lib-lang-markdown)
 
-(defvar org-src-lang-modes)
+;;; Install `markdown-mode'
 
-;; TODO: why not?
-(define-keymap :keymap markdown-mode-map
-  "C-c i l" #'markdown-insert-link
-  ;; FIXME: pop latest kill
-  "C-c i q" #'markdown-insert-blockquote)
+;; <https://github.com/jrblevin/markdown-mode>
 
-;;; `markdown-mode' :: <https://github.com/jrblevin/markdown-mode>
-(use-package markdown-mode
-  :commands (markdown-mode)
-  :autoload (markdown-match-generic-metadata)
-
-  :init
-  (defvar markdown-enable-wiki-links t)
-  (defvar markdown-italic-underscore t)
-  (defvar markdown-asymmetric-header t)
-  (defvar markdown-gfm-additional-languages '("sh"))
-  (defvar markdown-make-gfm-checkboxes-buttons t)
-  (defvar markdown-fontify-whole-heading-line t)
+(package! markdown-mode
+  (setopt markdown-enable-wiki-links t)
+  (setopt markdown-italic-underscore t)
+  (setopt markdown-asymmetric-header t)
+  (setopt markdown-gfm-additional-languages '("sh"))
+  (setopt markdown-make-gfm-checkboxes-buttons t)
+  (setopt markdown-fontify-whole-heading-line t)
 
   ;; HACK Due to jrblevin/markdown-mode#578, invoking `imenu' throws a
   ;;      'wrong-type-argument consp nil' error if you use native-comp.
   ;;      <https://github.com/jrblevin/markdown-mode/issues/578>
-  (defvar markdown-nested-imenu-heading-index (not (ignore-errors (native-comp-available-p))))
-
-  (defvar markdown-command #'ceamx-markdown-compile)
+  (setopt markdown-nested-imenu-heading-index (not (ignore-errors (native-comp-available-p))))
 
   ;; This is set to `nil' by default, which causes a wrong-type-arg error
   ;; when you use `markdown-open'. These are more sensible defaults.
-  ;; TODO: make this a globally-usable variable, since it always holds true.
-  (defvar
-    markdown-open-command
-    (cond (+sys-mac-p "open")
-          (+sys-linux-p "xdg-open")))
+  (setopt markdown-open-command (cond
+                                 (+sys-mac-p "open")
+                                 (+sys-linux-p "xdg-open")))
 
-  ;; A sensible and simple default preamble for markdown exports that
-  ;; takes after the github asthetic (plus highlightjs syntax coloring).
-  ;; via <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/modules/lang/markdown/config.el>
-  (defvar markdown-content-type "application/xhtml+xml")
-  (defvar markdown-css-paths
-    '("https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"
-      "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.min.css"))
-  (defvar markdown-xhtml-header-content
-    (concat "<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>"
-      "<style> body { box-sizing: border-box; max-width: 740px; width: 100%; margin: 40px auto; padding: 0 10px; } </style>"
-      "<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script>"
-      "<script src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'></script>"
-      "<script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); }); document.querySelectorAll('pre > code').forEach((code) => { hljs.highlightBlock(code); }); });</script>"))
+  (with-eval-after-load 'org-src
+    (add-to-list 'org-src-lang-modes '("md" . markdown))))
 
-  (after! 'org-src
-    (add-to-list 'org-src-lang-modes '("md" . markdown)))
+(with-eval-after-load 'markdown-mode
+  (defvar markdown-mode-map)
+  (declare-function markdown-match-generic-metadata "markdown-mode")
+  (declare-function markdown-insert-link "markdown-mode")
+  (declare-function markdown-insert-blockquote "markdown-mode")
 
-  :config
-  (def-advice! ceamx--disable-markdown-front-matter-fontification (&rest _)
+  (define-keymap :keymap markdown-mode-map
+    "C-c i l" #'markdown-insert-link
+    "C-c i q" #'markdown-insert-blockquote)
+
+  ;; <https://github.com/jrblevin/markdown-mode/issues/328#issuecomment-405361296>
+  ;; <https://github.com/radian-software/radian/blob/b2fac3a615186f77de0bdc7e4f06e9aa46c222bb/emacs/radian.el#L3199-L3206>.
+  (def-advice! +markdown-disable-front-matter-fontification-a (&rest _)
     :override #'markdown-match-generic-metadata
     "Prevent fontification of YAML metadata blocks in `markdown-mode'.
 This prevents a mis-feature wherein if the first line of a
 Markdown document has a colon in it, then it's distractingly and
-usually wrongly fontified as a metadata block. See
-<https://github.com/jrblevin/markdown-mode/issues/328#issuecomment-405361296>
-and
-<https://github.com/radian-software/radian/blob/b2fac3a615186f77de0bdc7e4f06e9aa46c222bb/emacs/radian.el#L3199-L3206>."
+usually wrongly fontified as a metadata block."
     (ignore (goto-char (point-max)))))
-
-(use-package evil-markdown
-  :disabled t
-  ;; FIXME: :elpaca (evil-markdown :host github :repo "Somelauw/evil-markdown")
-  :after (evil evil-collection markdown-mode)
-  :commands (evil-markdown-mode)
-  :defines (evil-markdown-mode-map)
-
-  :init
-  (add-hook 'markdown-mode-hook #'evil-markdown-mode)
-
-  (evil-define-key '(normal) 'evil-markdown-mode-map
-    (kbd "M-r") #'browse-url-of-file)
-
-  (evil-define-key '(insert) 'evil-markdown-mode-map
-    (kbd "M-*") #'markdown-insert-list-item
-    (kbd "M-b") #'markdown-insert-bold
-    (kbd "M-i") #'markdown-insert-italic
-    (kbd "M--") #'markdown-insert-hr)
-
-  (evil-define-key '(motion) 'evil-markdown-mode-map
-    "[h" #'markdown-previous-visible-heading
-    "]h" #'markdown-next-visible-heading
-    "[p" #'markdown-promote
-    "]p" #'markdown-demote
-    "[l" #'markdown-previous-link
-    "]l" #'markdown-next-link))
 
 (provide 'init-lang-markdown)
 ;;; init-lang-markdown.el ends here
