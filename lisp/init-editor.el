@@ -49,6 +49,10 @@
                 upcase-region))
   (put cmd 'disabled nil))
 
+;;; Bind the insertable keymap
+
+(keymap-global-set "C-c i" #'ceamx-insert-map)
+
 ;;; Configure builtin features
 
 ;; Replace region when inserting text.
@@ -109,7 +113,7 @@
   "=" '("equals" . insert-pair)
   ":" '("colon" . insert-pair))
 
-(keymap-global-set "C-c i" ceamx-pairs-map)
+(keymap-set ceamx-insert-map "P" ceamx-pairs-map)
 
 ;;; Formatting
 
@@ -325,6 +329,8 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       ("q" nil))))
 
 ;;; Keybindings
+
+(keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
 
 (global-keys!
   "C-=" #'ceamx/insert-date

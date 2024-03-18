@@ -378,6 +378,7 @@ Emacs version to prevent bytecode incompatibility.")
 
 (defmap! ceamx-code-map)
 (defmap! ceamx-file-map)
+(defmap! ceamx-insert-map)
 (defmap! ceamx-launch-map)
 (defmap! ceamx-pairs-map)
 (defmap! ceamx-replace-map)
@@ -4564,6 +4565,10 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
                 upcase-region))
   (put cmd 'disabled nil))
 
+;;; Bind the insertable keymap
+
+(keymap-global-set "C-c i" #'ceamx-insert-map)
+
 ;;; Configure builtin features
 
 ;; Replace region when inserting text.
@@ -4624,7 +4629,7 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   "=" '("equals" . insert-pair)
   ":" '("colon" . insert-pair))
 
-(keymap-global-set "C-c i" ceamx-pairs-map)
+(keymap-set ceamx-insert-map "P" ceamx-pairs-map)
 
 ;;; Formatting
 
@@ -4840,6 +4845,8 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       ("q" nil))))
 
 ;;; Keybindings
+
+(keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
 
 (global-keys!
   "C-=" #'ceamx/insert-date
@@ -7300,10 +7307,11 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
   (global-keys!
     "C-c M-x" #'consult-mode-command
-    "C-c h"   #'consult-history
-    "C-c k" #'consult-kmacro
-    "C-c m" #'consult-man
-    "C-c i" #'consult-info
+    ;; TODO: needs configuration? see `consult-mode-histories'
+    ;; "C-c h"   #'consult-history
+    "C-c K" #'consult-kmacro
+    "C-c M" #'consult-man
+
     ;; FIXME: use a keymap for s prefix
     ;; "C-c s h"  #'consult-history
     ;; "C-c s m"  #'consult-mode-command
@@ -9878,10 +9886,10 @@ keywords are supported:
 (defvar org-src-lang-modes)
 
 ;; TODO: why not?
-;; (define-keymap :keymap markdown-mode-map
-;; 	"C-c i l" #'markdown-insert-link
-;; 	;; FIXME: pop latest kill
-;; 	"C-c i q" #'markdown-insert-blockquote)
+(define-keymap :keymap markdown-mode-map
+  "C-c i l" #'markdown-insert-link
+  ;; FIXME: pop latest kill
+  "C-c i q" #'markdown-insert-blockquote)
 
 ;;; `markdown-mode' :: <https://github.com/jrblevin/markdown-mode>
 (use-package markdown-mode

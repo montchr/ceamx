@@ -58,10 +58,11 @@
 
   (global-keys!
     "C-c M-x" #'consult-mode-command
-    "C-c h"   #'consult-history
-    "C-c k" #'consult-kmacro
-    "C-c m" #'consult-man
-    "C-c i" #'consult-info
+    ;; TODO: needs configuration? see `consult-mode-histories'
+    ;; "C-c h"   #'consult-history
+    "C-c K" #'consult-kmacro
+    "C-c M" #'consult-man
+
     ;; FIXME: use a keymap for s prefix
     ;; "C-c s h"  #'consult-history
     ;; "C-c s m"  #'consult-mode-command

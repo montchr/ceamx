@@ -32,10 +32,10 @@
 (defvar org-src-lang-modes)
 
 ;; TODO: why not?
-;; (define-keymap :keymap markdown-mode-map
-;; 	"C-c i l" #'markdown-insert-link
-;; 	;; FIXME: pop latest kill
-;; 	"C-c i q" #'markdown-insert-blockquote)
+(define-keymap :keymap markdown-mode-map
+  "C-c i l" #'markdown-insert-link
+  ;; FIXME: pop latest kill
+  "C-c i q" #'markdown-insert-blockquote)
 
 ;;; `markdown-mode' :: <https://github.com/jrblevin/markdown-mode>
 (use-package markdown-mode

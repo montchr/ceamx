@@ -29,6 +29,7 @@
 
 (defmap! ceamx-code-map)
 (defmap! ceamx-file-map)
+(defmap! ceamx-insert-map)
 (defmap! ceamx-launch-map)
 (defmap! ceamx-pairs-map)
 (defmap! ceamx-replace-map)
