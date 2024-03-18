@@ -162,6 +162,10 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; TODO: replace with dashboard
 (setq inhibit-startup-screen t)
 
+;; Allow answering yes/no questions with y/n.
+(setq use-short-answers t)              ; affects `yes-or-no-p'
+(setq read-answer-short t)              ; affects `read-answer' (completion)
+
 ;;
 ;;; Frames and window-system integration
 

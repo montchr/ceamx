@@ -39,9 +39,6 @@
 ;; Always resize mini-windows to fit their contents.
 (setopt resize-mini-windows t)
 
-;; Allow answering yes/no questions with y/n.
-(setopt read-answer-short t)
-
 ;; TAB cycle if there are only few candidates
 (setopt completion-cycle-threshold 3)
 
