@@ -68,7 +68,7 @@
 
 ;; Add site-lisp directory tree to load path.
 (add-to-list 'load-path ceamx-site-lisp-dir)
-(prependq! load-path (subdirs! ceamx-site-lisp-dir))
+(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
 
 ;;;; Preface
 
