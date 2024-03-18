@@ -167,10 +167,10 @@ was printed, and only have ElDoc display if one wasn't.\""
   "l" #'find-library
 
   ;; FIXME: no lambda binding
-  "t" `("text-props (pt)" . ,(cmd!!
-                               #'describe-text-properties
-                               current-prefix-arg
-                               (point)))
+  ;; "t" `("text-props (pt)" . ,(cmd!!
+  ;;                              #'describe-text-properties
+  ;;                              current-prefix-arg
+  ;;                              (point)))
 
   ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
   "C-h" nil)

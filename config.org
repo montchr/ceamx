@@ -570,28 +570,6 @@ Like `lookup-key', but search active keymaps if KEYMAPS is omitted."
              if (lookup-key keymap keys)
              return it)))
 
-(defmacro cmd! (&rest body)
-  "Return (lambda () (interactive) ,@BODY)
-
-A factory for quickly producing interaction commands, particularly for keybinds
-or aliases."
-  (declare (doc-string 1) (pure t) (side-effect-free t))
-  `(lambda (&rest _) (interactive) ,@body))
-
-(defmacro cmd!! (command &optional prefix-arg &rest args)
-  "Return a closure to interactively invoke COMMAND with ARGS and PREFIX-ARG.
-
-Like `cmd!', but allows you to change `current-prefix-arg' or pass arguments to
-COMMAND. This macro is meant to be used as a target for keybinds (e.g. with
-`define-key')."
-  (declare (doc-string 1) (pure t) (side-effect-free t))
-  `(lambda (arg &rest _) (interactive "P")
-     (let ((current-prefix-arg (or ,prefix-arg arg)))
-       (,(if args
-             #'funcall-interactively
-           #'call-interactively)
-        ,command ,@args))))
-
 ;; via <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
 (defmacro noop! (&rest _body)
   "Do nothing with BODY and return nil.
@@ -5732,10 +5710,10 @@ was printed, and only have ElDoc display if one wasn't.\""
   "l" #'find-library
 
   ;; FIXME: no lambda binding
-  "t" `("text-props (pt)" . ,(cmd!!
-                               #'describe-text-properties
-                               current-prefix-arg
-                               (point)))
+  ;; "t" `("text-props (pt)" . ,(cmd!!
+  ;;                              #'describe-text-properties
+  ;;                              current-prefix-arg
+  ;;                              (point)))
 
   ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
   "C-h" nil)
