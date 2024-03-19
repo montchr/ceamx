@@ -27,187 +27,174 @@
 (require 'lib-common)
 (require 'lib-keys-meow)
 
-(use-package meow
-  :demand t
-  :after (which-key)
-  :commands (meow-global-mode
-              meow-insert-exit)
-  :autoload (meow-normal-mode
-              meow-leader-define-key
-              meow-motion-overwrite-define-key
-              meow-normal-define-key)
-  :defines (meow-cheatsheet-layout-qwerty)
+(package! meow
+  (with-eval-after-load 'which-key
+    (require 'meow)
 
-  :init
-  ;; TODO: necessary? i don't think so
-  (require 'meow)
+    (meow-leader-define-key
+     ;; SPC j/k will run the original command in MOTION state.
+     '("j" . "H-j")
+     '("k" . "H-k")
 
-  (meow-leader-define-key
-    ;; SPC j/k will run the original command in MOTION state.
-    '("j" . "H-j")
-    '("k" . "H-k")
+     ;; Use SPC (0-9) for digit arguments.
+     '("1" . meow-digit-argument)
+     '("2" . meow-digit-argument)
+     '("3" . meow-digit-argument)
+     '("4" . meow-digit-argument)
+     '("5" . meow-digit-argument)
+     '("6" . meow-digit-argument)
+     '("7" . meow-digit-argument)
+     '("8" . meow-digit-argument)
+     '("9" . meow-digit-argument)
+     '("0" . meow-digit-argument)
+     '("/" . meow-keypad-describe-key)
+     '("?" . meow-cheatsheet))
 
-    ;; Use SPC (0-9) for digit arguments.
-    '("1" . meow-digit-argument)
-    '("2" . meow-digit-argument)
-    '("3" . meow-digit-argument)
-    '("4" . meow-digit-argument)
-    '("5" . meow-digit-argument)
-    '("6" . meow-digit-argument)
-    '("7" . meow-digit-argument)
-    '("8" . meow-digit-argument)
-    '("9" . meow-digit-argument)
-    '("0" . meow-digit-argument)
-    '("/" . meow-keypad-describe-key)
-    '("?" . meow-cheatsheet))
+    (meow-motion-overwrite-define-key
+     '("j" . meow-next)
+     '("k" . meow-prev)
+     '("<escape>" . ignore))
 
-  (meow-motion-overwrite-define-key
-    '("j" . meow-next)
-    '("k" . meow-prev)
-    '("<escape>" . ignore))
+    (noop!
+      ;; TODO: instead, because meow key definer syntax sucks:
+      ;;
+      ;; see `meow-keymap-alist' for available states (or use the lookup logic
+      ;; from `meow-define-keys': (alist-get state meow-keymap-alist)
+      (define-keymap :keymap meow-insert-state-keymap
+        ;; etc.
+        "0" #'meow-expand-0))
 
-  (noop!
-    ;; TODO: instead, because meow key definer syntax sucks:
-    ;;
-    ;; see `meow-keymap-alist' for available states (or use the lookup logic
-    ;; from `meow-define-keys': (alist-get state meow-keymap-alist)
-    (define-keymap :keymap meow-insert-state-keymap
-      ;; etc.
-      "0" #'meow-expand-0))
+    (meow-normal-define-key
+     '("0" . meow-expand-0)
+     '("9" . meow-expand-9)
+     '("8" . meow-expand-8)
+     '("7" . meow-expand-7)
+     '("6" . meow-expand-6)
+     '("5" . meow-expand-5)
+     '("4" . meow-expand-4)
+     '("3" . meow-expand-3)
+     '("2" . meow-expand-2)
+     '("1" . meow-expand-1)
+     '("-" . negative-argument)
+     '(";" . meow-reverse)
+     '("," . meow-inner-of-thing)
+     '("." . meow-bounds-of-thing)
+     '("[" . meow-beginning-of-thing)
+     '("]" . meow-end-of-thing)
+     '("a" . meow-append)
+     '("A" . meow-open-below)
+     '("b" . meow-back-word)
+     '("B" . meow-back-symbol)
+     '("c" . meow-change-save)          ; default: `meow-change'
+     '("d" . meow-delete)
+     '("D" . meow-backward-delete)
+     '("e" . meow-next-word)
+     '("E" . meow-next-symbol)
+     '("f" . meow-find)
+     '("g" . meow-cancel-selection)
+     '("G" . meow-grab)
+     '("h" . meow-left)
+     '("H" . meow-left-expand)
+     '("i" . meow-insert)
+     '("I" . meow-open-above)
+     '("j" . meow-next)
+     '("J" . meow-next-expand)
+     '("k" . meow-prev)
+     '("K" . meow-prev-expand)
+     '("l" . meow-right)
+     '("L" . meow-right-expand)
+     '("m" . meow-join)
+     '("n" . meow-search)
+     '("o" . meow-block)
+     '("O" . meow-to-block)
+     '("p" . meow-yank)
+     '("q" . meow-quit)
+     ;; FIXME: duplicated with "X" binding
+     '("Q" . meow-goto-line)
+     '("r" . meow-replace)
+     '("R" . meow-swap-grab)
+     '("s" . meow-kill)
+     '("t" . meow-till)
+     '("T" . meow-till-expand)          ; custom addition
+     '("u" . meow-undo)
+     '("U" . meow-undo-in-selection)
+     '("v" . meow-visit)
+     '("w" . meow-mark-word)
+     '("W" . meow-mark-symbol)
+     '("x" . meow-line)
+     ;; FIXME: duplicated with "Q" binding
+     '("X" . meow-goto-line)
+     '("y" . meow-save)
+     '("Y" . meow-sync-grab)
+     ;; There's no documentation, but this will essentially return to the
+     ;; original position prior to beginning the selection.
+     '("z" . meow-pop-selection)
+     ;; TODO: no idea what the difference is at a glance, no docs
+     ;; '("Z" . meow-pop-all-selection)    ; custom addition
+     '("'" . repeat)
+     '("<escape>" . ignore)
+     '(":" . avy-goto-char-2))
 
-  (meow-normal-define-key
-    '("0" . meow-expand-0)
-    '("9" . meow-expand-9)
-    '("8" . meow-expand-8)
-    '("7" . meow-expand-7)
-    '("6" . meow-expand-6)
-    '("5" . meow-expand-5)
-    '("4" . meow-expand-4)
-    '("3" . meow-expand-3)
-    '("2" . meow-expand-2)
-    '("1" . meow-expand-1)
-    '("-" . negative-argument)
-    '(";" . meow-reverse)
-    '("," . meow-inner-of-thing)
-    '("." . meow-bounds-of-thing)
-    '("[" . meow-beginning-of-thing)
-    '("]" . meow-end-of-thing)
-    '("a" . meow-append)
-    '("A" . meow-open-below)
-    '("b" . meow-back-word)
-    '("B" . meow-back-symbol)
-    '("c" . meow-change-save)           ; default: `meow-change'
-    '("d" . meow-delete)
-    '("D" . meow-backward-delete)
-    '("e" . meow-next-word)
-    '("E" . meow-next-symbol)
-    '("f" . meow-find)
-    '("g" . meow-cancel-selection)
-    '("G" . meow-grab)
-    '("h" . meow-left)
-    '("H" . meow-left-expand)
-    '("i" . meow-insert)
-    '("I" . meow-open-above)
-    '("j" . meow-next)
-    '("J" . meow-next-expand)
-    '("k" . meow-prev)
-    '("K" . meow-prev-expand)
-    '("l" . meow-right)
-    '("L" . meow-right-expand)
-    '("m" . meow-join)
-    '("n" . meow-search)
-    '("o" . meow-block)
-    '("O" . meow-to-block)
-    '("p" . meow-yank)
-    '("q" . meow-quit)
-    ;; FIXME: duplicated with "X" binding
-    '("Q" . meow-goto-line)
-    '("r" . meow-replace)
-    '("R" . meow-swap-grab)
-    '("s" . meow-kill)
-    '("t" . meow-till)
-    '("T" . meow-till-expand)           ; custom addition
-    '("u" . meow-undo)
-    '("U" . meow-undo-in-selection)
-    '("v" . meow-visit)
-    '("w" . meow-mark-word)
-    '("W" . meow-mark-symbol)
-    '("x" . meow-line)
-    ;; FIXME: duplicated with "Q" binding
-    '("X" . meow-goto-line)
-    '("y" . meow-save)
-    '("Y" . meow-sync-grab)
-    ;; There's no documentation, but this will essentially return to the
-    ;; original position prior to beginning the selection.
-    '("z" . meow-pop-selection)
-    ;; TODO: no idea what the difference is at a glance, no docs
-    ;; '("Z" . meow-pop-all-selection)    ; custom addition
-    '("'" . repeat)
-    '("<escape>" . ignore)
-    '(":" . avy-goto-char-2))
+    ;; NOTE: This is not a customizable variable, although it is required for meow.
+    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
 
-  ;; NOTE: This is not a customizable variable, although it is required for meow.
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+    (pushnew! meow-mode-state-list
+              ;; shells
+              ;; TODO: use `ceamx-repl-modes-list'
+              '(comint-mode . insert)
+              '(eat-mode . insert)
+              '(eshell-mode . insert)
 
-  :config
+              ;; writing
+              '(diary-mode . normal)
 
-  (pushnew! meow-mode-state-list
-    ;; shells
-    ;; TODO: use `ceamx-repl-modes-list'
-    '(comint-mode . insert)
-    '(eat-mode . insert)
-    '(eshell-mode . insert)
+              ;; read-only
+              ;; TODO: how to lock state? i.e. dont allow switching
+              ;; TODO: set for all read-only buffers?
+              '(Info-mode . motion)
+              '(read-only-mode . motion)
+              '(help-mode . motion))
 
-    ;; writing
-    '(diary-mode . normal)
+    ;; Avoid the default binding for `meow-keypad' in motion state.
+    (keymap-unset meow-motion-state-keymap "SPC" t)
 
-    ;; read-only
-    ;; TODO: how to lock state? i.e. dont allow switching
-    ;; TODO: set for all read-only buffers?
-    '(Info-mode . motion)
-    '(read-only-mode . motion)
-    '(help-mode . motion))
+    ;; Because I'm still getting the hang of meow again. I'm not fast enough to
+    ;; remember exactly what to do. Once this delay feels too long, then it can be
+    ;; changed.
+    (setopt meow-expand-hint-remove-delay 4.0)
 
-  ;; Avoid the default binding for `meow-keypad' in motion state.
-  (keymap-unset meow-motion-state-keymap "SPC" t)
+    ;; There are slight differences between these two, take your pick.
+    ;; Default is nil, which is generally easier to use for Emacs integration.
+    ;; C-c might be better for leader-centric bindings a la Doom/Spacemacs
+    (setopt meow-keypad-leader-dispatch nil)
+    ;; (setopt meow-keypad-leader-dispatch "C-c")
 
-  ;; Because I'm still getting the hang of meow again. I'm not fast enough to
-  ;; remember exactly what to do. Once this delay feels too long, then it can be
-  ;; changed.
-  (setopt meow-expand-hint-remove-delay 4.0)
+    ;; Improve state indicator appearance (e.g. in modeline).
+    (setopt meow-replace-state-name-list
+            '( (normal . "🅝")
+               (beacon . "🅑")
+               (insert . "🅘")
+               (motion . "🅜")
+               (keypad . "🅚")))
 
-  ;; There are slight differences between these two, take your pick.
-  ;; Default is nil, which is generally easier to use for Emacs integration.
-  ;; C-c might be better for leader-centric bindings a la Doom/Spacemacs
-  (setopt meow-keypad-leader-dispatch nil)
-  ;; (setopt meow-keypad-leader-dispatch "C-c")
+    ;; <https://github.com/meow-edit/meow/issues/543>
+    (setopt meow-use-clipboard t)
 
-  ;; Improve state indicator appearance (e.g. in modeline).
-  (setopt meow-replace-state-name-list
-    '( (normal . "🅝")
-       (beacon . "🅑")
-       (insert . "🅘")
-       (motion . "🅜")
-       (keypad . "🅚")))
+    (meow-pair! 'angle "a" "<" ">")
 
-  ;; <https://github.com/meow-edit/meow/issues/543>
-  (setopt meow-use-clipboard t)
+    (ceamx-meow-bind-thing 'round "(")
+    (ceamx-meow-bind-thing 'round ")")
+    (ceamx-meow-bind-thing 'curly "{")
+    (ceamx-meow-bind-thing 'curly "}")
 
-  (meow-pair! 'angle "a" "<" ">")
+    ;; TODO: i don't really thing i want to do this, but here for reference
+    ;; (ceamx-meow-unbind-thing "r")
 
-  (ceamx-meow-bind-thing 'round "(")
-  (ceamx-meow-bind-thing 'round ")")
-  (ceamx-meow-bind-thing 'curly "{")
-  (ceamx-meow-bind-thing 'curly "}")
+    ;; Don't pass through keys that aren't in keypad.
+    (setopt meow-keypad-self-insert-undefined nil)
 
-  ;; TODO: i don't really thing i want to do this, but here for reference
-  ;; (ceamx-meow-unbind-thing "r")
-
-  ;; Don't pass through keys that aren't in keypad.
-  (setopt meow-keypad-self-insert-undefined nil)
-
-  ;; Activate Meow.
-  (meow-global-mode 1))
+    ;; Activate Meow.
+    (meow-global-mode 1)))
 
 (elpaca-wait)
 
