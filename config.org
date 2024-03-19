@@ -4,7 +4,6 @@
 #+email: chmont@proton.me
 #+language: en
 #+property: header-args:emacs-lisp
-#+property: header-args:elisp :results replace :exports code
 #+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :results silent :noweb yes
 #+archive: graveyard/%s::datetree/
 #+startup: showall
