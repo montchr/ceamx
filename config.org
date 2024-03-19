@@ -1,11 +1,11 @@
-# -*- eval: (load-file "./ceamx-dev-loader.el"); tab-width: 8;   -*-
+# -*- eval: (load-file "./ceamx-dev-loader.el"); -*-
 #+title: Ceamx: An Emacs Configuration
 #+author: Chris Montgomery
 #+email: chmont@proton.me
 #+language: en
 #+property: header-args:emacs-lisp
 #+property: header-args:elisp :results replace :exports code
-#+property: header-args :mkdirp yes :tangle no :tangle-mode: #o444 :results silent :noweb yes
+#+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :results silent :noweb yes
 #+archive: graveyard/%s::datetree/
 #+startup: showall
 #+macro: latest-export-date (eval (format-time-string "%F %T %z"))
@@ -12000,8 +12000,12 @@ POS defaults to the current position."
 :header-args: :noweb no
 :END:
 
-** TODO File-level ~:noweb yes~ does not seem to have an effect
+** DONE File-level ~:noweb yes~ does not seem to have an effect
+CLOSED: [2024-03-18 Mon 23:40]
 
+- Note taken on [2024-03-18 Mon 23:40] \\
+  Turns out there was a syntax error in this line, where a arg name had a colon at the end in addition to the beginning.
+- State "DONE"       from "TODO"       [2024-03-18 Mon 23:40]
 Setting this on a heading works.
 
 
