@@ -46,10 +46,13 @@
 ;; Remove the default binding for the `describe-input-method' command.
 (keymap-global-unset "C-h I" t)
 
-(global-keys!
-  "C-h I c"  #'ceamx/completion-info
-  "C-h I e"  #'ceamx/emacs-info
-  "C-h I o"  #'ceamx/org-info)
+(with-eval-after-load 'consult-info
+  (global-keys!
+    "C-h i"    #'ceamx/consult-info-dwim
+    "C-h I c"  #'ceamx/completion-info
+    "C-h I e"  #'ceamx/emacs-info
+    "C-h I i"  #'consult-info
+    "C-h I o"  #'ceamx/org-info))
 
 ;;; Peruse local `devdocs' docsets corresponding to the current major-mode
 
@@ -156,11 +159,6 @@ was printed, and only have ElDoc display if one wasn't.\""
     (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)))
 
 ;;; Keybindings
-
-(after! 'consult
-  (declare-function consult-info "consult")
-  ;; overrides default `info' bind
-  (keymap-set help-map "i" #'consult-info))
 
 (define-keymap :keymap help-map
   "l" #'find-library

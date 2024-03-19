@@ -51,6 +51,19 @@
   (consult-info "vertico" "consult" "marginalia" "orderless" "embark"
                 "corfu" "cape" "tempel"))
 
+(defun ceamx/consult-info-dwim (&optional buffer)
+  "Search Info manuals appropriate to BUFFER's major-mode."
+  (interactive)
+  (with-current-buffer (or buffer (current-buffer))
+    (let* ((mode major-mode)
+           (fn (pcase mode
+                 ((pred (lambda (x) (memq x '(emacs-lisp-mode))))
+                  #'ceamx/emacs-info)
+                 ((pred (lambda (x) (memq x '(org-mode org-agenda-mode))))
+                  #'ceamx/org-info)
+                 (_ #'consult-info))))
+      (command-execute fn))))
+
 ;;;; `devdocs' support
 
 (defun +devdocs--doc-directory-exists-p (slug)
