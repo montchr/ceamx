@@ -10447,8 +10447,11 @@ Else create a new file."
 
 **** TODO Meow overwrites repeat-mode?
 
-**** TODO Fix no-cycle when press TAB at headline EOL
+**** CANCELLED Fix no-cycle when press TAB at headline EOL
+CLOSED: [2024-03-18 Mon 23:53]
 
+- State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:53] \\
+  Works as intended.
 I think this happens because when there is folded content EOL is considered
 part of that folded content, so the TAB press is technically not on the
 headline.
@@ -10456,13 +10459,34 @@ headline.
 
 **** TODO Repeat-mode for navigating tree
 
-**** TODO Bind =org-insert-subheading=
 
-**** TODO Figure out why completion is broken
 
-**** TODO Figure out why Elisp source blocks are broken
+- Note taken on [2024-03-18 Mon 23:52] \\
+  I saw some post on Reddit about an integration with Meow for this purpose the
+  other day... not sure if I saved it though.
+
+**** TODO [#B] Bind =org-insert-subheading=
+
+**** DONE Figure out why completion is broken
+CLOSED: [2024-03-18 Mon 23:51]
+
+- State "DONE"       from "TODO"       [2024-03-18 Mon 23:51]
+Answer: I was expecting Corfu's Elisp completion in this Org file buffer, but
+mode-specific completion will only work once opening the src block in an
+indirect buffer with =org-edit-src-code=.
+
+However, it would still be nice if I could get symbol completion inside of
+inline code markup.
+
+
+**** CANCELLED Figure out why Elisp source blocks are broken
+CLOSED: [2024-03-18 Mon 23:52]
+
+- State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:52] \\
+  Not "broken", just misunderstood.
 
 **** TODO Electric-pair for equals-sign
+
 
 
 *** Customizations
@@ -10578,6 +10602,21 @@ headline.
   (setopt org-edit-src-content-indentation 0)
   (setopt org-src-preserve-indentation t)
 
+  (setq org-src-preserve-indentation t)
+
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+
+  (setopt org-structure-template-alist
+          '(("s" . "src")
+            ("e" . "src emacs-lisp")
+            ("E" . "src emacs-lisp :results value code :lexical t")
+            ("t" . "src emacs-lisp :tangle FILENAME")
+            ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+            ("x" . "example")
+            ("X" . "export")
+            ("q" . "quote")))
+
 ;;;; Appearance settings
 
 ;;;;; Text formatting
@@ -10677,11 +10716,9 @@ headline.
 
 ;;; org-modern <https://github.com/minad/org-modern>
 
-;; (use-package org-modern
-;;   :commands (org-modern-mode org-modern-agenda)
-;;   :init
-;;   (add-hook 'org-mode-hook #'org-modern-mode)
-;;   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+(package! org-modern
+  (add-hook 'org-mode-hook #'org-modern-mode)
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 
 ;;; Provide agenda improvements with `org-super-agenda'
 

@@ -108,6 +108,21 @@
   (setopt org-edit-src-content-indentation 0)
   (setopt org-src-preserve-indentation t)
 
+  (setq org-src-preserve-indentation t)
+
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+
+  (setopt org-structure-template-alist
+          '(("s" . "src")
+            ("e" . "src emacs-lisp")
+            ("E" . "src emacs-lisp :results value code :lexical t")
+            ("t" . "src emacs-lisp :tangle FILENAME")
+            ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+            ("x" . "example")
+            ("X" . "export")
+            ("q" . "quote")))
+
 ;;;; Appearance settings
 
 ;;;;; Text formatting
@@ -207,11 +222,9 @@
 
 ;;; org-modern <https://github.com/minad/org-modern>
 
-;; (use-package org-modern
-;;   :commands (org-modern-mode org-modern-agenda)
-;;   :init
-;;   (add-hook 'org-mode-hook #'org-modern-mode)
-;;   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+(package! org-modern
+  (add-hook 'org-mode-hook #'org-modern-mode)
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 
 ;;; Provide agenda improvements with `org-super-agenda'
 
