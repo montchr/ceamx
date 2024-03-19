@@ -1,4 +1,4 @@
-# -*- eval: (load-file "./ceamx-dev-loader.el");   -*-
+# -*- eval: (load-file "./ceamx-dev-loader.el"); tab-width: 8;   -*-
 #+title: Ceamx: An Emacs Configuration
 #+author: Chris Montgomery
 #+email: chmont@proton.me
