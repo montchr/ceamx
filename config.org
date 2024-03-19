@@ -6,7 +6,7 @@
 #+property: header-args:emacs-lisp :comments both
 #+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :results silent :noweb yes
 #+archive: graveyard/%s::datetree/
-#+startup: showall
+#+startup: showall indent
 
 #+begin_src emacs-lisp :tangle no :results none
 (org-babel-tangle)
