@@ -104,15 +104,12 @@
 
 ;;;;; Source code blocks
 
-  ;; Indenting code blocks by default is unnecessary and confusing.
+  ;; Changing the indentation of source code is unhelpful and destructive.
   (setopt org-edit-src-content-indentation 0)
+
+  (setopt org-src-fontify-natively t)
   (setopt org-src-preserve-indentation t)
-
-  (setq org-src-preserve-indentation t)
-
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-
+  (setopt org-src-tab-acts-natively t)
   (setopt org-structure-template-alist
           '(("s" . "src")
             ("e" . "src emacs-lisp")
@@ -148,15 +145,15 @@
 
   (setopt org-log-done 'time)
   (setopt org-todo-keywords
-    '((sequence
-        "TODO(t)"
-        "INPRG(i@/!)"
-        "BLOCKED(b@)"
-        "HOLD(h@)"
-        "PROJ(p)"
-        "|"
-        "DONE(d!)"
-        "CANCELLED(x@/!)")))
+          '((sequence
+             "TODO(t)"
+             "INPRG(i@/!)"
+             "BLOCKED(b@)"
+             "HOLD(h@)"
+             "PROJ(p)"
+             "|"
+             "DONE(d!)"
+             "CANCELLED(x@/!)")))
 
 ;;;; Keybinding settings
 
@@ -183,11 +180,11 @@
   (setopt org-agenda-tags-column 0)
   (setopt org-agenda-block-separator ?─)
   (setopt org-agenda-time-grid
-    '((daily today require-timed)
-       (800 1000 1200 1400 1600 1800 2000)
-       " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+          '((daily today require-timed)
+            (800 1000 1200 1400 1600 1800 2000)
+            " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (setopt org-agenda-current-time-string
-    "⭠ now ─────────────────────────────────────────────────"))
+          "⭠ now ─────────────────────────────────────────────────"))
 
 ;;; Configurate `org-capture' templates with the help of `doct'
 
