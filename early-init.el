@@ -23,24 +23,25 @@
 
 ;;; Commentary:
 
-;;; Links:
-
-;; Helpful guide to early-init configuration for package management:
-;; <https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/>
-
 ;;; Code:
 
-;; Prevent package.el from enabling all packages before init.
-;;
+;; Prevent package.el from enabling all packages before init
+
 ;; When nil and using the builtin package manager, `package-initialize' must be
 ;; invoked in the init process prior to `require'ing any packages installed with
 ;; `package-install'.
-;;
+
 ;; When non-nil, there is no need to invoke `package-initialize'.
+
+
+;; [[file:config.org::*Prevent package.el from enabling all packages before init][Prevent package.el from enabling all packages before init:1]]
 (setq package-enable-at-startup nil)
+;; Prevent package.el from enabling all packages before init:1 ends here
 
-;;; Indirect init/startup hooks
+;; Set up indirect init/startup hooks
 
+
+;; [[file:config.org::*Set up indirect init/startup hooks][Set up indirect init/startup hooks:1]]
 (defvar ceamx-after-init-hook '())
 (defun ceamx-after-init-hook ()
   (run-hooks 'ceamx-after-init-hook))
@@ -48,14 +49,14 @@
 (defvar ceamx-emacs-startup-hook '())
 (defun ceamx-emacs-startup-hook ()
   (run-hooks 'ceamx-emacs-startup-hook))
+;; Set up indirect init/startup hooks:1 ends here
 
-;;
-;;; Performance
-
-;;;; Language servers
+;; Language servers
 
 ;; <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
 
+
+;; [[file:config.org::*Language servers][Language servers:1]]
 (setenv "LSP_USE_PLISTS" "true")
 
 ;; Read JSON streams in 1MiB chunks instead of the default 4kB.
@@ -66,37 +67,31 @@
 ;; This is a general LSP concern, not specific to any particular implementation.
 (when (functionp 'json-serialize)
   (setq read-process-output-max (* 1024 1024)))
+;; Language servers:1 ends here
 
-;;;; Minimize garbage collection during startup.
+;; Provide insight into garbage-collection activity to inform tuning decisions
 
-;; From Eli Zaretskii:
-;;
-;; > My advice is to spend some time measuring the effect of increased GC threshold
-;; > on operations that you care about and that take a long enough time to annoy,
-;; > and use the lowest threshold value which produces a tangible improvement.
-;; > Start with the default value, then enlarge it by a factor of 2 until you see
-;; > only insignificant speedups. I would not expect the value you arrive at to be
-;; > as high as 100 MiB.
-;;
-;; via <https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/>
 
-;; See also:
-
-;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
-
-;; Provide insight into garbage-collection activity to inform tuning decisions.
+;; [[file:config.org::*Provide insight into garbage-collection activity to inform tuning decisions][Provide insight into garbage-collection activity to inform tuning decisions:1]]
 ;; TODO: will a `init-file-debug' check work here?
 (setq garbage-collection-messages t)
+;; Provide insight into garbage-collection activity to inform tuning decisions:1 ends here
 
-;; Prevent garbage-collection during init.
+;; Prevent garbage-collection during init
+
+
+;; [[file:config.org::*Prevent garbage-collection during init][Prevent garbage-collection during init:1]]
 ;; NOTE: Either use `gcmh' or make sure to reset this later. Or else!
 (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
+;; Prevent garbage-collection during init:1 ends here
 
-;;;; Simplify filename pattern-matching during init
+;; Simplify filename pattern-matching during init
 
-;;  <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
-;;  <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
+;; - <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
+;; - <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
 
+
+;; [[file:config.org::*Simplify filename pattern-matching during init][Simplify filename pattern-matching during init:1]]
 (defvar ceamx-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
@@ -107,43 +102,62 @@ Intended for use as a callback on `ceamx-after-init-hook'."
   (makunbound 'ceamx-file-name-handler-alist))
 
 (add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
+;; Simplify filename pattern-matching during init:1 ends here
 
-;;
-;;; Directories
+;; Add directories to load path
 
+
+;; [[file:config.org::*Add directories to load path][Add directories to load path:1]]
 ;; Configure load path
 (dolist (subdir '("autoloads" "lisp" "lisp/core" "lisp/lib"))
   (let ((dir (expand-file-name subdir user-emacs-directory)))
     (add-to-list 'load-path dir)))
+;; Add directories to load path:1 ends here
 
-;; Load settings describing well-known paths.
+;; Load custom constants describing well-known paths
+
+
+;; [[file:config.org::*Load custom constants describing well-known paths][Load custom constants describing well-known paths:1]]
 (require 'ceamx-paths)
+;; Load custom constants describing well-known paths:1 ends here
 
-;; Configure customization file location.
-;;
+;; Configure =custom-file= location
+
+
+;; [[file:config.org::*Configure =custom-file= location][Configure =custom-file= location:1]]
 ;; Normally, options configured in `user-init-file' won't need to be persisted
 ;; to `custom-file', but by default, when using package.el for package
 ;; management, `package-selected-packages' will always be written to
 ;; `custom-file' if available. See `init-package' for details.
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+;; Configure =custom-file= location:1 ends here
 
-;; Store packages in the designated directory.
+;; Store packages in the designated directory
+
+
+;; [[file:config.org::*Store packages in the designated directory][Store packages in the designated directory:1]]
 (setq package-user-dir ceamx-packages-dir)
+;; Store packages in the designated directory:1 ends here
 
-;; Use preferred cache directories for native-comp.
+;; Use preferred cache directories for native-comp
+
+
+;; [[file:config.org::*Use preferred cache directories for native-comp][Use preferred cache directories for native-comp:1]]
 (startup-redirect-eln-cache ceamx-eln-dir)
 (add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
+;; Use preferred cache directories for native-comp:1 ends here
 
-;;
-;;; Native compilation
+;; Native compilation settings
 
+
+;; [[file:config.org::*Native compilation settings][Native compilation settings:1]]
 (setq native-comp-async-report-warnings-errors 'silent)
 (setq native-compile-prune-cache t)
 
 ;; Don't load outdated byte-compiled files.
 ;;
 ;; NOTE: This does not handle *recompiling* the outdated files.
-;; That will need to be handled during init.
+;; That would need to be handled during init.
 ;;
 ;; More info: <https://github.com/emacscollective/auto-compile/blob/main/README.org>
 (setq load-prefer-newer t)
@@ -151,10 +165,12 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; Package installation will provoke a lot of warnings from third-party
 ;; packages, but there's nothing we can do about those.
 (setq byte-compile-warnings nil)
+;; Native compilation settings:1 ends here
 
-;;
-;;; Inhibit early annoyances
+;; Inhibit early annoyances
 
+
+;; [[file:config.org::*Inhibit early annoyances][Inhibit early annoyances:1]]
 ;; No bells.
 (setq ring-bell-function #'ignore)
 
@@ -165,12 +181,14 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; Allow answering yes/no questions with y/n.
 (setq use-short-answers t)              ; affects `yes-or-no-p'
 (setq read-answer-short t)              ; affects `read-answer' (completion)
+;; Inhibit early annoyances:1 ends here
 
-;;
-;;; Frames and window-system integration
+;; Frames and window-system integration
 
-;; FIXME: seems to behave inconsistently when server is running?
+;; ;; FIXME: seems to behave inconsistently when server is running?
 
+
+;; [[file:config.org::*Frames and window-system integration][Frames and window-system integration:1]]
 ;; Prevent X11 from taking control of visual behavior and appearance.
 (setq inhibit-x-resources t)
 
@@ -191,9 +209,12 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
 ;; normally... maybe needs to happen later in init?
 (tooltip-mode -1)
+;; Frames and window-system integration:1 ends here
 
-;;;; Rename the default/initial frame
+;; Rename the default/initial frame
 
+
+;; [[file:config.org::*Rename the default/initial frame][Rename the default/initial frame:1]]
 (defvar ceamx-default-frame-name "home — [ceamx]"
   "Name for the default Emacs frame.")
 
@@ -206,6 +227,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
   (set-frame-name ceamx-default-frame-name))
 
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
+;; Rename the default/initial frame:1 ends here
 
 (provide 'early-init)
 ;;; early-init.el ends here

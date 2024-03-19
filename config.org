@@ -48,25 +48,34 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+#+end_src
 
-;;; Links:
 
-;; Helpful guide to early-init configuration for package management:
-;; <https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/>
+*** Links
 
+- [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
+
+
+#+begin_src emacs-lisp :comments no
 ;;; Code:
+#+end_src
 
-;; Prevent package.el from enabling all packages before init.
-;;
-;; When nil and using the builtin package manager, `package-initialize' must be
-;; invoked in the init process prior to `require'ing any packages installed with
-;; `package-install'.
-;;
-;; When non-nil, there is no need to invoke `package-initialize'.
+
+**** Prevent package.el from enabling all packages before init
+
+When nil and using the builtin package manager, `package-initialize' must be
+invoked in the init process prior to `require'ing any packages installed with
+`package-install'.
+
+When non-nil, there is no need to invoke `package-initialize'.
+
+#+begin_src emacs-lisp
 (setq package-enable-at-startup nil)
+#+end_src
 
-;;; Indirect init/startup hooks
+**** Set up indirect init/startup hooks
 
+#+begin_src emacs-lisp
 (defvar ceamx-after-init-hook '())
 (defun ceamx-after-init-hook ()
   (run-hooks 'ceamx-after-init-hook))
@@ -74,14 +83,17 @@
 (defvar ceamx-emacs-startup-hook '())
 (defun ceamx-emacs-startup-hook ()
   (run-hooks 'ceamx-emacs-startup-hook))
+#+end_src
 
-;;
-;;; Performance
 
-;;;; Language servers
+**** Performance
 
-;; <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
 
+***** Language servers
+
+<https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
+
+#+begin_src emacs-lisp
 (setenv "LSP_USE_PLISTS" "true")
 
 ;; Read JSON streams in 1MiB chunks instead of the default 4kB.
@@ -92,37 +104,49 @@
 ;; This is a general LSP concern, not specific to any particular implementation.
 (when (functionp 'json-serialize)
   (setq read-process-output-max (* 1024 1024)))
+#+end_src
 
-;;;; Minimize garbage collection during startup.
 
-;; From Eli Zaretskii:
-;;
-;; > My advice is to spend some time measuring the effect of increased GC threshold
-;; > on operations that you care about and that take a long enough time to annoy,
-;; > and use the lowest threshold value which produces a tangible improvement.
-;; > Start with the default value, then enlarge it by a factor of 2 until you see
-;; > only insignificant speedups. I would not expect the value you arrive at to be
-;; > as high as 100 MiB.
-;;
-;; via <https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/>
+***** Minimize garbage collection during startup
 
-;; See also:
+[[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii comments on An easy trick I found to improve Emacs start-up time]]:
 
-;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
+#+begin_quote
+My advice is to spend some time measuring the effect of increased GC threshold
+on operations that you care about and that take a long enough time to annoy,
+and use the lowest threshold value which produces a tangible improvement.
+Start with the default value, then enlarge it by a factor of 2 until you see
+only insignificant speedups. I would not expect the value you arrive at to be
+as high as 100 MiB.
+#+end_quote
 
-;; Provide insight into garbage-collection activity to inform tuning decisions.
+See also:
+
+<https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
+
+
+***** Provide insight into garbage-collection activity to inform tuning decisions
+
+#+begin_src emacs-lisp
 ;; TODO: will a `init-file-debug' check work here?
 (setq garbage-collection-messages t)
+#+end_src
 
-;; Prevent garbage-collection during init.
+
+***** Prevent garbage-collection during init
+
+#+begin_src emacs-lisp
 ;; NOTE: Either use `gcmh' or make sure to reset this later. Or else!
 (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
+#+end_src
 
-;;;; Simplify filename pattern-matching during init
 
-;;  <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
-;;  <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
+***** Simplify filename pattern-matching during init
 
+- <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
+- <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
+
+#+begin_src emacs-lisp
 (defvar ceamx-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
@@ -133,43 +157,64 @@ Intended for use as a callback on `ceamx-after-init-hook'."
   (makunbound 'ceamx-file-name-handler-alist))
 
 (add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
+#+end_src
 
-;;
-;;; Directories
 
+**** Directories and well-known-files
+
+***** Add directories to load path
+
+#+begin_src emacs-lisp
 ;; Configure load path
 (dolist (subdir '("autoloads" "lisp" "lisp/core" "lisp/lib"))
   (let ((dir (expand-file-name subdir user-emacs-directory)))
     (add-to-list 'load-path dir)))
+#+end_src
 
-;; Load settings describing well-known paths.
+
+***** Load custom constants describing well-known paths
+
+#+begin_src emacs-lisp
 (require 'ceamx-paths)
+#+end_src
 
-;; Configure customization file location.
-;;
+
+***** Configure =custom-file= location
+
+#+begin_src emacs-lisp
 ;; Normally, options configured in `user-init-file' won't need to be persisted
 ;; to `custom-file', but by default, when using package.el for package
 ;; management, `package-selected-packages' will always be written to
 ;; `custom-file' if available. See `init-package' for details.
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+#+end_src
 
-;; Store packages in the designated directory.
+
+***** Store packages in the designated directory
+
+#+begin_src emacs-lisp
 (setq package-user-dir ceamx-packages-dir)
+#+end_src
 
-;; Use preferred cache directories for native-comp.
+
+***** Use preferred cache directories for native-comp
+
+#+begin_src emacs-lisp
 (startup-redirect-eln-cache ceamx-eln-dir)
 (add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
+#+end_src
 
-;;
-;;; Native compilation
 
+**** Native compilation settings
+
+#+begin_src emacs-lisp
 (setq native-comp-async-report-warnings-errors 'silent)
 (setq native-compile-prune-cache t)
 
 ;; Don't load outdated byte-compiled files.
 ;;
 ;; NOTE: This does not handle *recompiling* the outdated files.
-;; That will need to be handled during init.
+;; That would need to be handled during init.
 ;;
 ;; More info: <https://github.com/emacscollective/auto-compile/blob/main/README.org>
 (setq load-prefer-newer t)
@@ -177,10 +222,12 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; Package installation will provoke a lot of warnings from third-party
 ;; packages, but there's nothing we can do about those.
 (setq byte-compile-warnings nil)
+#+end_src
 
-;;
-;;; Inhibit early annoyances
 
+*** Inhibit early annoyances
+
+#+begin_src emacs-lisp
 ;; No bells.
 (setq ring-bell-function #'ignore)
 
@@ -191,12 +238,14 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; Allow answering yes/no questions with y/n.
 (setq use-short-answers t)              ; affects `yes-or-no-p'
 (setq read-answer-short t)              ; affects `read-answer' (completion)
+#+end_src
 
-;;
-;;; Frames and window-system integration
+
+*** Frames and window-system integration
 
 ;; FIXME: seems to behave inconsistently when server is running?
 
+#+begin_src emacs-lisp
 ;; Prevent X11 from taking control of visual behavior and appearance.
 (setq inhibit-x-resources t)
 
@@ -217,9 +266,12 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
 ;; normally... maybe needs to happen later in init?
 (tooltip-mode -1)
+#+end_src
 
-;;;; Rename the default/initial frame
 
+**** Rename the default/initial frame
+
+#+begin_src emacs-lisp
 (defvar ceamx-default-frame-name "home — [ceamx]"
   "Name for the default Emacs frame.")
 
@@ -232,7 +284,12 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
   (set-frame-name ceamx-default-frame-name))
 
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
+#+end_src
 
+
+*** Footer
+
+#+begin_src emacs-lisp :comments no
 (provide 'early-init)
 ;;; early-init.el ends here
 #+end_src
