@@ -7,11 +7,6 @@
 #+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :results silent :noweb yes
 #+archive: graveyard/%s::datetree/
 #+startup: showall
-#+macro: latest-export-date (eval (format-time-string "%F %T %z"))
-#+macro: word-count (eval (count-words (point-min) (point-max)))
-
-*Last revised and exported on {{{latest-export-date}}} with a word
-count of {{{word-count}}}.*
 
 #+begin_src emacs-lisp :tangle no :results none
 (org-babel-tangle)
