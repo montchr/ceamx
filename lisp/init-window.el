@@ -92,7 +92,6 @@
 
 (require 'lib-common)
 (require 'lib-buffer)
-(require 'lib-keys)
 (require 'lib-window)
 
 ;;; General buffer display settings

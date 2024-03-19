@@ -37,69 +37,24 @@
 
 (require 'config-keys)
 
-;;; Internal functions
+;; NOTE: all in-use definitions have been moved to `lib-common'
+(require 'lib-common)
 
 ;; FIXME: interface still doesn't feel right...
 ;; TODO: account for remapping (don't prefix)
-(defun ceamx--key-with-prefix (prefix key &optional sep)
-  "Return a key sequence string with PREFIX prepended to KEY.
-The arguments PREFIX and KEY must be strings satisfying `key-valid-p'.
+;; (defun ceamx--key-with-prefix (prefix key &optional sep)
+;;   "Return a key sequence string with PREFIX prepended to KEY.
+;; The arguments PREFIX and KEY must be strings satisfying `key-valid-p'.
 
-The optional argument SEP may specify a separator between PREFIX
-and KEY. If nil, a single whitespace character will be used as
-the default separator."
-  (cl-assert (key-valid-p prefix))
-  (cl-assert (key-valid-p key))
-  (let* ((sep (or sep " "))
-          (prefixed-key (concat prefix sep key)))
-    (cl-assert (key-valid-p prefixed-key))
-    prefixed-key))
-
-;;; Macros
-
-(defmacro global-keys! (&rest keys)
-  "Define keybindings KEYS in the global keymap.
-Wrapper for `define-keymap' with `current-global-map' as target keymap."
-  (declare (indent defun) (debug t))
-  `(define-keymap :keymap (current-global-map)
-     ,@keys))
-
-(defmacro keys! (keymap &rest definitions)
-  "Define KEY/DEFINITION pairs as key bindings in KEYMAP.
-Shorthand wrapper for `define-keymap', which see. KEYMAP will be
-provided as the `:keymap' keyword argument value. DEFINITIONS
-will be passed through to `define-keymap' directly.
-
-\(fn KEYMAP &rest [KEY DEFINITION])"
-  (declare (indent defun) (debug t))
-  `(define-keymap :keymap ,keymap
-     ,@definitions))
-
-(defmacro defmap! (symbol &rest defs)
-  "Define a new keymap and prefix command SYMBOL composed of keybindings DEFS."
-  (declare (indent defun) (debug t))
-  `(progn
-     (defvar ,symbol)
-     (unless (keymapp ',symbol)
-       (define-prefix-command ',symbol ',symbol))
-     (define-keymap
-       :keymap ,symbol
-       ,@defs)))
-
-(defmacro leader-key! (key def)
-  "Bind DEF to KEY in the leader map.
-If `meow-leader-define-key' is available, then that function will
-handle the binding. Otherwise, binding will be handled with
-`keymap-set' into `mode-specific-map'.
-
-Note that as of writing, `meow' bindings do not seem to support
-descriptions in a way that is comprehensible to `which-key' --
-the documentation for `meow-keypad-describe-keymap-function'
-acknowledges this incompatibility."
-  (declare (indent defun))
-  `(if (fboundp 'meow-leader-define-key)
-       (meow-leader-define-key (cons ,key ,def))
-     (keymap-set mode-specific-map ,key ,def)))
+;; The optional argument SEP may specify a separator between PREFIX
+;; and KEY. If nil, a single whitespace character will be used as
+;; the default separator."
+;;   (cl-assert (key-valid-p prefix))
+;;   (cl-assert (key-valid-p key))
+;;   (let* ((sep (or sep " "))
+;;           (prefixed-key (concat prefix sep key)))
+;;     (cl-assert (key-valid-p prefixed-key))
+;;     prefixed-key))
 
 ;; FIXME: while logging something simple works, this does not yet return
 ;; anything useful -- it should return a modified version of DEFS

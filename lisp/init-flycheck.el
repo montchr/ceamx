@@ -26,10 +26,7 @@
 
 ;;; Code:
 
-(require 'config-keys)
-
 (require 'lib-common)
-(require 'lib-keys)
 
 (use-package flycheck
   :commands (global-flycheck-mode flycheck-mode)

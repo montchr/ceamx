@@ -31,7 +31,6 @@
 
 (require 'lib-common)
 (require 'lib-help)
-(require 'lib-keys)
 
 ;;; Configure window behavior for help buffers
 

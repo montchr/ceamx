@@ -34,7 +34,6 @@
 
 (require 'lib-common)
 (require 'lib-files)
-(require 'lib-keys)
 
 ;;; Manage backup files and prevent file-lock clutter
 

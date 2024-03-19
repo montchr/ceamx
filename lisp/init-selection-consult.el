@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(require 'lib-keys)
+(require 'lib-common)
 
 (use-package consult
   :commands ( consult-bookmark consult-buffer consult-buffer-other-frame consult-buffer-other-tab

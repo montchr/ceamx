@@ -29,7 +29,6 @@
 
 (require 'ceamx-paths)
 (require 'lib-common)
-(require 'lib-keys)
 
 (use-feature! ediff
   :config

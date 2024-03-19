@@ -35,7 +35,6 @@
 (require 'ceamx-keymaps)
 
 (require 'lib-common)
-(require 'lib-keys)
 
 ;;; `isearch' [builtin]
 

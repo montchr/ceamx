@@ -31,7 +31,6 @@
 (require 'elpaca-autoloads)
 
 (require 'lib-common)
-(require 'lib-keys)
 (require 'lib-buffer)
 
 ;;;; General

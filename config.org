@@ -435,7 +435,7 @@ Emacs version to prevent bytecode incompatibility.")
 
 ;;; Code:
 
-(require 'lib-keys)
+(require 'lib-common)
 
 (defmap! ceamx-code-map)
 (defmap! ceamx-file-map)
@@ -533,6 +533,8 @@ file. It is loaded early during initialization.
 
 ;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
 ;; <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
+;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
+;; <https://github.com/casouri/lunarymacs/blob/cd1f34449038e5ec371b1277941c529ea1fb4e9e/site-lisp/luna-key.el>
 
 ;;; Code:
 
@@ -752,6 +754,75 @@ without needing to declare autoloads for `elpaca' in every file."
   `(progn
      (autoload 'elpaca "elpaca" nil nil t)
      (elpaca ,order ,@body)))
+
+;;; Input and Keybindings
+
+(defun ceamx-normalize-char (char)
+  "Normalize CHAR to a valid character matching `characterp'.
+CHAR may either be a valid character or a string convertable to a
+character with `string-to-char'.  If CHAR is already a character
+matching `characterp', then it will be returned as-is.
+
+When CHAR is a string containing more than one character, only
+the first character will be transformed.  See `string-to-char' for
+more info.
+
+This function is impure because the interpretation of CHAR can
+vary based on... various reasons?"
+  (declare (side-effect-free t))
+  (cl-assert (char-or-string-p char) t)
+  (if (stringp char)
+    (cond ((length= char 0)
+            (user-error "Character string `%s' is empty" char))
+      ((length> char 1)
+        (user-error "Character string `%s' should only contain a single character" char))
+      (t
+        (string-to-char char)))
+    char))
+
+(defmacro global-keys! (&rest keys)
+  "Define keybindings KEYS in the global keymap.
+Wrapper for `define-keymap' with `current-global-map' as target keymap."
+  (declare (indent defun) (debug t))
+  `(define-keymap :keymap (current-global-map)
+     ,@keys))
+
+(defmacro keys! (keymap &rest definitions)
+  "Define KEY/DEFINITION pairs as key bindings in KEYMAP.
+Shorthand wrapper for `define-keymap', which see. KEYMAP will be
+provided as the `:keymap' keyword argument value. DEFINITIONS
+will be passed through to `define-keymap' directly.
+
+\(fn KEYMAP &rest [KEY DEFINITION])"
+  (declare (indent defun) (debug t))
+  `(define-keymap :keymap ,keymap
+     ,@definitions))
+
+(defmacro defmap! (symbol &rest defs)
+  "Define a new keymap and prefix command SYMBOL composed of keybindings DEFS."
+  (declare (indent defun) (debug t))
+  `(progn
+     (defvar ,symbol)
+     (unless (keymapp ',symbol)
+       (define-prefix-command ',symbol ',symbol))
+     (define-keymap
+       :keymap ,symbol
+       ,@defs)))
+
+(defmacro leader-key! (key def)
+  "Bind DEF to KEY in the leader map.
+If `meow-leader-define-key' is available, then that function will
+handle the binding. Otherwise, binding will be handled with
+`keymap-set' into `mode-specific-map'.
+
+Note that as of writing, `meow' bindings do not seem to support
+descriptions in a way that is comprehensible to `which-key' --
+the documentation for `meow-keypad-describe-keymap-function'
+acknowledges this incompatibility."
+  (declare (indent defun))
+  `(if (fboundp 'meow-leader-define-key)
+       (meow-leader-define-key (cons ,key ,def))
+     (keymap-set mode-specific-map ,key ,def)))
 
 (provide 'lib-common)
 ;;; lib-common.el ends here
@@ -1114,8 +1185,6 @@ without needing to declare autoloads for `elpaca' in every file."
 (require 'init-after-ui)
 
 ;;;; Keyboard support
-
-(require 'config-keys)
 
 (require 'init-keys)
 (require 'init-keys-which-key)
@@ -3392,7 +3461,6 @@ The buffer will be created if it does not exist."
 
 (require 'lib-common)
 (require 'lib-buffer)
-(require 'lib-keys)
 (require 'lib-window)
 
 ;;; General buffer display settings
@@ -4051,7 +4119,6 @@ If there is only one window and multiple frames, call
 (require 'elpaca-autoloads)
 
 (require 'lib-common)
-(require 'lib-keys)
 (require 'lib-buffer)
 
 ;;;; General
@@ -4351,7 +4418,6 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 
 (require 'lib-common)
 (require 'lib-editor)
-(require 'lib-keys)
 (require 'lib-simple)
 
 ;;; Enable some commands that Emacs disables by default
@@ -4831,7 +4897,6 @@ two inserted lines are the same."
 
 (require 'lib-common)
 (require 'lib-files)
-(require 'lib-keys)
 
 ;;; Manage backup files and prevent file-lock clutter
 
@@ -5218,7 +5283,6 @@ writable or with a prefix argument, then read a file to visit."
 ;;; Code:
 
 (require 'lib-common)
-(require 'lib-keys)
 
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
 
@@ -5392,7 +5456,6 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
 (require 'lib-common)
 (require 'lib-help)
-(require 'lib-keys)
 
 ;;; Configure window behavior for help buffers
 
@@ -5859,7 +5922,6 @@ DOC is as in `devdocs-install'."
 (require 'ceamx-keymaps)
 
 (require 'lib-common)
-(require 'lib-keys)
 
 ;;; `isearch' [builtin]
 
@@ -6158,80 +6220,6 @@ and consult-location to occur-edit."
 
 ** Keys
 
-*** Options & Variables
-
-#+begin_src emacs-lisp :comments no :tangle lisp/config-keys.el
-;;; config-keys.el --- Keybindings variables         -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Keybindings something something.
-
-;;; Code:
-
-;;
-;;; Options
-
-(defcustom ceamx-keybinding-scheme 'meow
-  "Keybinding scheme.
-Valid values are the symbols `evil', `meow', and `emacs',
-corresponding to the `evil-mode' modal vim-emulation scheme, the
-`meow' modal scheme, or the Emacs default keybinding scheme.
-
-A nil value, in addition to `emacs', also means retain
-vanilla Emacs keybindings."
-  :group 'ceamx
-  :type '(choice :tag "Keybinding scheme to use." :value meow
-           (const :tag "The `evil' vim-like modal keybinding scheme" evil)
-           (const :tag "The `meow' kakoune- and Emacs-like modal keybinding scheme" meow)
-           (const :tag "The vanilla Emacs keybinding scheme" emacs)
-           (const :tag "Do not load an additional keybinding scheme" nil)))
-
-(defcustom ceamx-leader-key "SPC"
-  "Leader prefix key sequence for use in modal schemes."
-  :type '(key)
-  :group 'ceamx)
-
-(defcustom ceamx-leader-alt-key "M-SPC"
-  "Alternative leader prefix key sequence.
-Note that the default value conflicts with a keybinding in the
-GNOME desktop environment. This conflict must be resolved outside
-of Emacs."
-  :type '(key)
-  :group 'ceamx)
-
-(defcustom ceamx-mode-specific-arm-key "m"
-  "Key sequence for major-mode-specific leader arm maps, relative to leader."
-  :type '(key)
-  :group 'ceamx)
-
-;;
-;;; Keymaps
-
-(provide 'config-keys)
-;;; config-keys.el ends here
-#+end_src
-
-
-
 *** General Customizations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-keys.el
@@ -6271,7 +6259,6 @@ of Emacs."
 
 (require 'config-env)
 (require 'lib-common)
-(require 'lib-keys)
 
 ;;; Bind some CUA-like hotkeys for editing operations
 
@@ -6329,111 +6316,38 @@ of Emacs."
 #+end_src
 
 
-**** Library
+**** DISABLED Library
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-keys.el
-;;; lib-keys.el --- Keybinding helpers               -*- lexical-binding: t; -*-
+Diabetic experiments with syntactic sugar.
 
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; FIXME: add copyright+license
+#+begin_src emacs-lisp :comments no :tangle no
 
 ;; Helper functions and macros for keybindings.
 
-;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
-;; <https://github.com/casouri/lunarymacs/blob/cd1f34449038e5ec371b1277941c529ea1fb4e9e/site-lisp/luna-key.el>
 
 ;; TODO: add utility to apply prefix to provided keys and bind in maps,
 ;; deferring until maps are defined if necessary. see
 ;; <https://github.com/casouri/lunarymacs/blob/master/site-lisp/luna-key.el>
 
-;;; Code:
-
 (require 'cl-lib)
 
-(require 'config-keys)
-
-;;; Internal functions
+;; NOTE: all in-use definitions have been moved to `lib-common'
 
 ;; FIXME: interface still doesn't feel right...
 ;; TODO: account for remapping (don't prefix)
-(defun ceamx--key-with-prefix (prefix key &optional sep)
-  "Return a key sequence string with PREFIX prepended to KEY.
-The arguments PREFIX and KEY must be strings satisfying `key-valid-p'.
+;; (defun ceamx--key-with-prefix (prefix key &optional sep)
+;;   "Return a key sequence string with PREFIX prepended to KEY.
+;; The arguments PREFIX and KEY must be strings satisfying `key-valid-p'.
 
-The optional argument SEP may specify a separator between PREFIX
-and KEY. If nil, a single whitespace character will be used as
-the default separator."
-  (cl-assert (key-valid-p prefix))
-  (cl-assert (key-valid-p key))
-  (let* ((sep (or sep " "))
-          (prefixed-key (concat prefix sep key)))
-    (cl-assert (key-valid-p prefixed-key))
-    prefixed-key))
-
-;;; Macros
-
-(defmacro global-keys! (&rest keys)
-  "Define keybindings KEYS in the global keymap.
-Wrapper for `define-keymap' with `current-global-map' as target keymap."
-  (declare (indent defun) (debug t))
-  `(define-keymap :keymap (current-global-map)
-     ,@keys))
-
-(defmacro keys! (keymap &rest definitions)
-  "Define KEY/DEFINITION pairs as key bindings in KEYMAP.
-Shorthand wrapper for `define-keymap', which see. KEYMAP will be
-provided as the `:keymap' keyword argument value. DEFINITIONS
-will be passed through to `define-keymap' directly.
-
-\(fn KEYMAP &rest [KEY DEFINITION])"
-  (declare (indent defun) (debug t))
-  `(define-keymap :keymap ,keymap
-     ,@definitions))
-
-(defmacro defmap! (symbol &rest defs)
-  "Define a new keymap and prefix command SYMBOL composed of keybindings DEFS."
-  (declare (indent defun) (debug t))
-  `(progn
-     (defvar ,symbol)
-     (unless (keymapp ',symbol)
-       (define-prefix-command ',symbol ',symbol))
-     (define-keymap
-       :keymap ,symbol
-       ,@defs)))
-
-(defmacro leader-key! (key def)
-  "Bind DEF to KEY in the leader map.
-If `meow-leader-define-key' is available, then that function will
-handle the binding. Otherwise, binding will be handled with
-`keymap-set' into `mode-specific-map'.
-
-Note that as of writing, `meow' bindings do not seem to support
-descriptions in a way that is comprehensible to `which-key' --
-the documentation for `meow-keypad-describe-keymap-function'
-acknowledges this incompatibility."
-  (declare (indent defun))
-  `(if (fboundp 'meow-leader-define-key)
-       (meow-leader-define-key (cons ,key ,def))
-     (keymap-set mode-specific-map ,key ,def)))
+;; The optional argument SEP may specify a separator between PREFIX
+;; and KEY. If nil, a single whitespace character will be used as
+;; the default separator."
+;;   (cl-assert (key-valid-p prefix))
+;;   (cl-assert (key-valid-p key))
+;;   (let* ((sep (or sep " "))
+;;           (prefixed-key (concat prefix sep key)))
+;;     (cl-assert (key-valid-p prefixed-key))
+;;     prefixed-key))
 
 ;; FIXME: while logging something simple works, this does not yet return
 ;; anything useful -- it should return a modified version of DEFS
@@ -6478,9 +6392,6 @@ acknowledges this incompatibility."
 ;;   (let* ((prefix (string-clean-whitespace prefix))
 ;;          ;; FIXME: how to return modified KEY and DEF? or find another way...
 ;;          (fn (lambda (key def) (format "%s %s" prefix key))))))
-
-(provide 'lib-keys)
-;;; lib-keys.el ends here
 #+end_src
 
 
@@ -6738,29 +6649,6 @@ acknowledges this incompatibility."
 ;;; Code:
 
 (require 'lib-common)
-
-(defun ceamx-normalize-char (char)
-  "Normalize CHAR to a valid character matching `characterp'.
-CHAR may either be a valid character or a string convertable to a
-character with `string-to-char'. If CHAR is already a character
-matching `characterp', then it will be returned as-is.
-
-When CHAR is a string containing more than one character, only
-the first character will be transformed. See `string-to-char' for
-more info.
-
-This function is impure because the interpretation of CHAR can
-vary based on... various reasons?"
-  (declare (side-effect-free t))
-  (cl-assert (char-or-string-p char) t)
-  (if (stringp char)
-    (cond ((length= char 0)
-            (user-error "Character string `%s' is empty" char))
-      ((length> char 1)
-        (user-error "Character string `%s' should only contain a single character" char))
-      (t
-        (string-to-char char)))
-    char))
 
 (defmacro meow-pair! (thing char begin end)
   "Register a new Meow THING as a pair of BEGIN and END, and map it to CHAR.
@@ -7083,7 +6971,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 ;;; Code:
 
-(require 'lib-keys)
+(require 'lib-common)
 
 (use-package consult
   :commands ( consult-bookmark consult-buffer consult-buffer-other-frame consult-buffer-other-tab
@@ -7826,7 +7714,6 @@ Minibuffer candidate annotations.
 
 (require 'ceamx-paths)
 (require 'lib-common)
-(require 'lib-keys)
 
 (use-feature! ediff
   :config
@@ -8262,10 +8149,7 @@ lel
 
 ;;; Code:
 
-(require 'config-keys)
-
 (require 'lib-common)
-(require 'lib-keys)
 
 (use-package flycheck
   :commands (global-flycheck-mode flycheck-mode)
@@ -8700,7 +8584,6 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 (require 'elpaca-autoloads)
 
 (require 'lib-common)
-(require 'lib-keys)
 (require 'lib-lisp)
 
 (require 'config-lisp)
@@ -9058,7 +8941,6 @@ lists."
 (require 'config-lisp)
 
 (require 'lib-common)
-(require 'lib-keys)
 (require 'lib-lisp)
 
 (declare-function blackout "blackout")
@@ -9338,7 +9220,6 @@ keywords are supported:
 (require 'ceamx-keymaps)
 
 (require 'lib-common)
-(require 'lib-keys)
 
 ;;; Configure
 
@@ -10838,7 +10719,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 (require 'ceamx-keymaps)
 
-(require 'lib-keys)
+(require 'lib-common)
 
 ;;; Launch
 
@@ -11195,8 +11076,8 @@ CLOSED: [2024-03-18 Mon 23:52]
 ;;; Requirements
 
 (require 'ceamx-keymaps)
-(require 'lib-keys)
 
+(require 'lib-common)
 (require 'lib-eww)
 
 (autoload 'eww "eww")

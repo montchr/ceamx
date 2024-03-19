@@ -39,7 +39,6 @@
 
 (require 'lib-common)
 (require 'lib-editor)
-(require 'lib-keys)
 (require 'lib-simple)
 
 ;;; Enable some commands that Emacs disables by default

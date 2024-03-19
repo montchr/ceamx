@@ -348,8 +348,6 @@
 
 ;;;; Keyboard support
 
-(require 'config-keys)
-
 (require 'init-keys)
 (require 'init-keys-which-key)
 (require 'init-keys-meow)

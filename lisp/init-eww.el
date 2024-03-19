@@ -9,8 +9,8 @@
 ;;; Requirements
 
 (require 'ceamx-keymaps)
-(require 'lib-keys)
 
+(require 'lib-common)
 (require 'lib-eww)
 
 (autoload 'eww "eww")

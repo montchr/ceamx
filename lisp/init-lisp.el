@@ -33,7 +33,6 @@
 (require 'elpaca-autoloads)
 
 (require 'lib-common)
-(require 'lib-keys)
 (require 'lib-lisp)
 
 (require 'config-lisp)

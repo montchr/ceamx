@@ -75,6 +75,8 @@
 
 ;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
 ;; <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
+;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
+;; <https://github.com/casouri/lunarymacs/blob/cd1f34449038e5ec371b1277941c529ea1fb4e9e/site-lisp/luna-key.el>
 
 ;;; Code:
 
@@ -294,6 +296,75 @@ without needing to declare autoloads for `elpaca' in every file."
   `(progn
      (autoload 'elpaca "elpaca" nil nil t)
      (elpaca ,order ,@body)))
+
+;;; Input and Keybindings
+
+(defun ceamx-normalize-char (char)
+  "Normalize CHAR to a valid character matching `characterp'.
+CHAR may either be a valid character or a string convertable to a
+character with `string-to-char'.  If CHAR is already a character
+matching `characterp', then it will be returned as-is.
+
+When CHAR is a string containing more than one character, only
+the first character will be transformed.  See `string-to-char' for
+more info.
+
+This function is impure because the interpretation of CHAR can
+vary based on... various reasons?"
+  (declare (side-effect-free t))
+  (cl-assert (char-or-string-p char) t)
+  (if (stringp char)
+    (cond ((length= char 0)
+            (user-error "Character string `%s' is empty" char))
+      ((length> char 1)
+        (user-error "Character string `%s' should only contain a single character" char))
+      (t
+        (string-to-char char)))
+    char))
+
+(defmacro global-keys! (&rest keys)
+  "Define keybindings KEYS in the global keymap.
+Wrapper for `define-keymap' with `current-global-map' as target keymap."
+  (declare (indent defun) (debug t))
+  `(define-keymap :keymap (current-global-map)
+     ,@keys))
+
+(defmacro keys! (keymap &rest definitions)
+  "Define KEY/DEFINITION pairs as key bindings in KEYMAP.
+Shorthand wrapper for `define-keymap', which see. KEYMAP will be
+provided as the `:keymap' keyword argument value. DEFINITIONS
+will be passed through to `define-keymap' directly.
+
+\(fn KEYMAP &rest [KEY DEFINITION])"
+  (declare (indent defun) (debug t))
+  `(define-keymap :keymap ,keymap
+     ,@definitions))
+
+(defmacro defmap! (symbol &rest defs)
+  "Define a new keymap and prefix command SYMBOL composed of keybindings DEFS."
+  (declare (indent defun) (debug t))
+  `(progn
+     (defvar ,symbol)
+     (unless (keymapp ',symbol)
+       (define-prefix-command ',symbol ',symbol))
+     (define-keymap
+       :keymap ,symbol
+       ,@defs)))
+
+(defmacro leader-key! (key def)
+  "Bind DEF to KEY in the leader map.
+If `meow-leader-define-key' is available, then that function will
+handle the binding. Otherwise, binding will be handled with
+`keymap-set' into `mode-specific-map'.
+
+Note that as of writing, `meow' bindings do not seem to support
+descriptions in a way that is comprehensible to `which-key' --
+the documentation for `meow-keypad-describe-keymap-function'
+acknowledges this incompatibility."
+  (declare (indent defun))
+  `(if (fboundp 'meow-leader-define-key)
+       (meow-leader-define-key (cons ,key ,def))
+     (keymap-set mode-specific-map ,key ,def)))
 
 (provide 'lib-common)
 ;;; lib-common.el ends here

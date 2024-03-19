@@ -30,7 +30,6 @@
 ;;; Code:
 
 (require 'lib-common)
-(require 'lib-keys)
 
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
 

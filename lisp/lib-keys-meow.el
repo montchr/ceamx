@@ -26,29 +26,6 @@
 
 (require 'lib-common)
 
-(defun ceamx-normalize-char (char)
-  "Normalize CHAR to a valid character matching `characterp'.
-CHAR may either be a valid character or a string convertable to a
-character with `string-to-char'. If CHAR is already a character
-matching `characterp', then it will be returned as-is.
-
-When CHAR is a string containing more than one character, only
-the first character will be transformed. See `string-to-char' for
-more info.
-
-This function is impure because the interpretation of CHAR can
-vary based on... various reasons?"
-  (declare (side-effect-free t))
-  (cl-assert (char-or-string-p char) t)
-  (if (stringp char)
-    (cond ((length= char 0)
-            (user-error "Character string `%s' is empty" char))
-      ((length> char 1)
-        (user-error "Character string `%s' should only contain a single character" char))
-      (t
-        (string-to-char char)))
-    char))
-
 (defmacro meow-pair! (thing char begin end)
   "Register a new Meow THING as a pair of BEGIN and END, and map it to CHAR.
 This macro simplifies `meow-thing-register' by assuming that the

@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(require 'lib-keys)
+(require 'lib-common)
 
 (defmap! ceamx-code-map)
 (defmap! ceamx-file-map)

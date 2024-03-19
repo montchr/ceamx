@@ -28,7 +28,7 @@
 
 (require 'ceamx-keymaps)
 
-(require 'lib-keys)
+(require 'lib-common)
 
 ;;; Launch
 

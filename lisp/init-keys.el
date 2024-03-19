@@ -34,7 +34,6 @@
 
 (require 'config-env)
 (require 'lib-common)
-(require 'lib-keys)
 
 ;;; Bind some CUA-like hotkeys for editing operations
 
