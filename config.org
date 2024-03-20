@@ -560,7 +560,7 @@ Unlike `ignore', produce no side effects."
   (declare (indent defun))
   nil)
 
-;;; Loading
+;;; Loading and Evalling
 
 ;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
 (defmacro after! (feature &rest body)
@@ -590,6 +590,15 @@ version would probably be ideal."
     (t
       `(with-eval-after-load ,feature ,@body))))
 
+;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
+(defmacro defer! (secs &rest body)
+  "Run BODY when Emacs is idle for SECS seconds."
+  (declare (indent defun) (debug t))
+  `(run-with-idle-timer
+    ,secs
+    nil
+    (lambda () ,@body)))
+
 ;; via <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is non-nil.
@@ -597,17 +606,17 @@ Leverages checks via `after-load-functions'.
 Meant to serve as a predicated alternative to `after!'."
   (declare (indent defun) (debug t))
   `(if ,condition
-     (progn ,@body)
+       (progn ,@body)
      ,(let ((fn (intern (format "ceamx--delay-form-%s-h" (sxhash (cons condition body))))))
-        `(progn
-           (fset ',fn (lambda (&rest args)
-                        (when ,(or condition t)
-                          (remove-hook 'after-load-functions #',fn)
-                          (unintern ',fn nil)
-                          (ignore args)
-                          ,@body)))
-           (put ',fn 'permanent-local-hook t)
-           (add-hook 'after-load-functions #',fn)))))
+       `(progn
+          (fset ',fn (lambda (&rest args)
+                       (when ,(or condition t)
+                        (remove-hook 'after-load-functions #',fn)
+                        (unintern ',fn nil)
+                        (ignore args)
+                        ,@body)))
+          (put ',fn 'permanent-local-hook t)
+          (add-hook 'after-load-functions #',fn)))))
 
 (defmacro autoload-macro! (macro file)
   "Define MACRO to autoload from FILE.
