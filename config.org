@@ -7783,7 +7783,20 @@ Minibuffer candidate annotations.
 
 ** Embark
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-embark.el
+#+begin_quote
+Emacs Mini-Buffer Actions Rooted in Keymaps
+#+end_quote
+
+<https://github.com/oantolin/embark>
+
+
+*** Customizations
+:PROPERTIES:
+:header-args: emacs-lisp :tangle lisp/init-embark.el
+:END:
+
+
+#+begin_src emacs-lisp :comments no
 ;;; init-embark.el --- Configuration for Embark  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -7805,32 +7818,51 @@ Minibuffer candidate annotations.
 
 ;;; Commentary:
 
-;; "Emacs Mini-Buffer Actions Rooted in Keymaps"
-;;
-;;  <https://github.com/oantolin/embark>
 
 ;;; Code:
+#+end_src
 
-(use-package embark
-  :commands (embark-act
-             embark-dwim
-             embark-export
-             embark-prefix-help-command)
-  :init
-  ;; Replace the key help with a completing-read interface
-  (setq prefix-help-command #'embark-prefix-help-command)
+**** Install and pre-configure the Embark package
 
-  :config
+#+begin_src emacs-lisp
+(require 'lib-common)
+
+(package! embark
+  <<embark-help-key-completion>>
+  <<embark-keybindings>>)
+#+end_src
+
+**** Use Embark's completion UI for displaying available key help
+
+#+name: embark-help-key-completion
+#+begin_src emacs-lisp
+(setopt prefix-help-command #'embark-prefix-help-command)
+#+end_src
+
+**** Keybindings
+
+#+name: embark-keybindings
+#+begin_src emacs-lisp
+(keymap-global-set "C-;" #'embark-act)
+(keymap-global-set "M-." #'embark-dwim)
+#+end_src
+
+**** Appearance
+
+***** Configure =display-buffer-alist= rules for Embark windows
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'embark
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
-                 (window-parameters (mode-line-format . none))))
+                 (window-parameters (mode-line-format . none)))))
+#+end_src
 
-  :bind
-  (("C-;" . embark-act)
-   ("M-." . embark-dwim)))
+**** Footer
 
+#+begin_src emacs-lisp :comments no
 (provide 'init-embark)
 ;;; init-embark.el ends here
 #+end_src

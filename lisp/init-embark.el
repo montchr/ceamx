@@ -19,31 +19,48 @@
 
 ;;; Commentary:
 
-;; "Emacs Mini-Buffer Actions Rooted in Keymaps"
-;;
-;;  <https://github.com/oantolin/embark>
 
 ;;; Code:
 
-(use-package embark
-  :commands (embark-act
-             embark-dwim
-             embark-export
-             embark-prefix-help-command)
-  :init
-  ;; Replace the key help with a completing-read interface
-  (setq prefix-help-command #'embark-prefix-help-command)
+;; Install and pre-configure the Embark package
 
-  :config
+
+;; [[file:../config.org::*Install and pre-configure the Embark package][Install and pre-configure the Embark package:1]]
+(require 'lib-common)
+
+(package! embark
+  <<embark-help-key-completion>>
+  <<embark-keybindings>>)
+;; Install and pre-configure the Embark package:1 ends here
+
+;; Use Embark's completion UI for displaying available key help
+
+;; #+name: embark-help-key-completion
+
+;; [[file:../config.org::embark-help-key-completion][embark-help-key-completion]]
+(setopt prefix-help-command #'embark-prefix-help-command)
+;; embark-help-key-completion ends here
+
+;; Keybindings
+
+;; #+name: embark-keybindings
+
+;; [[file:../config.org::embark-keybindings][embark-keybindings]]
+(keymap-global-set "C-;" #'embark-act)
+(keymap-global-set "M-." #'embark-dwim)
+;; embark-keybindings ends here
+
+;; Configure =display-buffer-alist= rules for Embark windows
+
+
+;; [[file:../config.org::*Configure =display-buffer-alist= rules for Embark windows][Configure =display-buffer-alist= rules for Embark windows:1]]
+(with-eval-after-load 'embark
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
-                 (window-parameters (mode-line-format . none))))
-
-  :bind
-  (("C-;" . embark-act)
-   ("M-." . embark-dwim)))
+                 (window-parameters (mode-line-format . none)))))
+;; Configure =display-buffer-alist= rules for Embark windows:1 ends here
 
 (provide 'init-embark)
 ;;; init-embark.el ends here
