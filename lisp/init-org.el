@@ -291,5 +291,12 @@
            :repo "progfolio/auto-tangle-mode.el")
   (autoload 'auto-tangle-mode "auto-tangle-mode"))
 
+;;; Provide a sidebar for Org buffers
+
+;; <https://github.com/alphapapa/org-sidebar>
+
+(package! org-sidebar
+  (add-hook 'org-mode-hook #'org-sidebar-tree))
+
 (provide 'init-org)
 ;;; init-org.el ends here
