@@ -2,6 +2,13 @@
 
 emacs-lisp-mode
 
+(kb "(keymap-set " (s map) " \"" (s key) "\" #'" (s cmd) ")" q)
+(kbg "(keymap-global-set \"" (s key) "\" #'" (s cmd) q ")" q)
+(kbs "(define-keymap :keymap " (p "(current-global-map)" map) n>
+        "\"" p "\" #'" p ")" q)
+(weal "(with-eval-after-load '" (s feature) n>
+         r ")")
+
 (pkg ";;" n
      ";;; `" (s name) "' :: <" (s url) ">" n
      ";;" n
