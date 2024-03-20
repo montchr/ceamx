@@ -75,7 +75,8 @@
 ;; Related, but not technically part of `repeat-mode'.
 (setopt set-mark-command-repeat-pop t)
 
-(repeat-mode 1)
+;; Avoid running mode-hooks too early.
+(add-hook 'ceamx-after-init-hook #'repeat-mode)
 
 ;;; Show free keybindings for modkeys or prefixes with `free-keys'
 

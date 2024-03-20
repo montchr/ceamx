@@ -157,6 +157,26 @@ was printed, and only have ElDoc display if one wasn't.\""
     (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
     (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)))
 
+;;; Improve display of hints in an active `repeat-mode' keymap
+
+;; <https://github.com/karthink/repeat-help>
+
+;; Essential reading for context and usage ideas:
+;; <https://karthinks.com/software/it-bears-repeating/>
+
+(package! repeat-help
+  (setopt repeat-help-auto t)
+
+  ;; BUG: If `repeat-help' detects `which-key' because `embark' has not yet
+  ;; loaded, then its default popup type will be `which-key', not `embark'. This
+  ;; does not quite line up with the intended behavior as stated in the
+  ;; `repeat-help' README.
+  ;; <https://github.com/karthink/repeat-help/issues/10>
+  (with-eval-after-load 'embark
+    (setopt repeat-help-popup-type 'embark))
+
+  (add-hook 'repeat-mode-hook #'repeat-help-mode))
+
 ;;; Keybindings
 
 (define-keymap :keymap help-map
