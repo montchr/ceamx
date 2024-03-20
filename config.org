@@ -6406,7 +6406,6 @@ Diabetic experiments with syntactic sugar.
 #+end_src
 
 
-
 *** Meow modal keybindings
 
 **** Customization
@@ -6706,8 +6705,11 @@ See the helper functions/macros.
 
 
 **** Library
+:PROPERTIES:
+:header-args: emacs-lisp :tangle lisp/lib-keys-meow.el
+:END:
 
-#+BEGIN_SRC emacs-lisp :comments no :tangle lisp/lib-keys-meow.el
+#+begin_src emacs-lisp :comments no
 ;;; lib-keys-meow.el --- Helpers for Meow            -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -6729,8 +6731,6 @@ See the helper functions/macros.
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;
 
 ;;; Code:
 
@@ -6760,22 +6760,22 @@ and Info node `(elisp) String Conversion' for more info."
   (cl-assert (stringp begin) t)
   (cl-assert (stringp end) t)
   (let* ((sym (ceamx-unquote thing))
-          (char (ceamx-normalize-char char))
-          (open (list begin))
-          (close (list end))
-          (pair `(pair ,open ,close)))
+         (char (ceamx-normalize-char char))
+         (open (list begin))
+         (close (list end))
+         (pair `(pair ,open ,close)))
     (cl-assert (symbolp sym) t)
     `(progn
        (meow-thing-register ',sym
-         ',pair
-         ',pair)
+        ',pair
+        ',pair)
        (ceamx-meow-bind-thing ',sym ,char))))
 
 (defun ceamx-meow-bind-thing (thing char)
   "Add pre-registered THING to `meow-char-thing-table' as CHAR."
   (defvar meow-char-thing-table '())
   (let ((thing (ceamx-unquote thing))
-         (char (ceamx-normalize-char char)))
+        (char (ceamx-normalize-char char)))
     (add-to-list 'meow-char-thing-table `(,char . ,thing))))
 
 (defun ceamx-meow-unbind-thing (char)
@@ -6794,7 +6794,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 
 (provide 'lib-keys-meow)
 ;;; lib-keys-meow.el ends here
-#+END_SRC
+#+end_src
 
 
 *** Which-Key

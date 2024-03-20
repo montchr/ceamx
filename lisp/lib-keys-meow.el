@@ -20,8 +20,6 @@
 
 ;;; Commentary:
 
-;;
-
 ;;; Code:
 
 (require 'lib-common)
@@ -50,22 +48,22 @@ and Info node `(elisp) String Conversion' for more info."
   (cl-assert (stringp begin) t)
   (cl-assert (stringp end) t)
   (let* ((sym (ceamx-unquote thing))
-          (char (ceamx-normalize-char char))
-          (open (list begin))
-          (close (list end))
-          (pair `(pair ,open ,close)))
+         (char (ceamx-normalize-char char))
+         (open (list begin))
+         (close (list end))
+         (pair `(pair ,open ,close)))
     (cl-assert (symbolp sym) t)
     `(progn
        (meow-thing-register ',sym
-         ',pair
-         ',pair)
+        ',pair
+        ',pair)
        (ceamx-meow-bind-thing ',sym ,char))))
 
 (defun ceamx-meow-bind-thing (thing char)
   "Add pre-registered THING to `meow-char-thing-table' as CHAR."
   (defvar meow-char-thing-table '())
   (let ((thing (ceamx-unquote thing))
-         (char (ceamx-normalize-char char)))
+        (char (ceamx-normalize-char char)))
     (add-to-list 'meow-char-thing-table `(,char . ,thing))))
 
 (defun ceamx-meow-unbind-thing (char)
