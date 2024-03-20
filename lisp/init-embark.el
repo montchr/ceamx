@@ -29,26 +29,11 @@
 (require 'lib-common)
 
 (package! embark
-  <<embark-help-key-completion>>
-  <<embark-keybindings>>)
+  (setopt prefix-help-command #'embark-prefix-help-command)
+
+  (keymap-global-set "C-;" #'embark-act)
+  (keymap-global-set "M-." #'embark-dwim))
 ;; Install and pre-configure the Embark package:1 ends here
-
-;; Use Embark's completion UI for displaying available key help
-
-;; #+name: embark-help-key-completion
-
-;; [[file:../config.org::embark-help-key-completion][embark-help-key-completion]]
-(setopt prefix-help-command #'embark-prefix-help-command)
-;; embark-help-key-completion ends here
-
-;; Keybindings
-
-;; #+name: embark-keybindings
-
-;; [[file:../config.org::embark-keybindings][embark-keybindings]]
-(keymap-global-set "C-;" #'embark-act)
-(keymap-global-set "M-." #'embark-dwim)
-;; embark-keybindings ends here
 
 ;; Configure =display-buffer-alist= rules for Embark windows
 

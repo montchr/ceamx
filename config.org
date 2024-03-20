@@ -7824,25 +7824,24 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
 **** Install and pre-configure the Embark package
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb yes
 (require 'lib-common)
 
 (package! embark
   <<embark-help-key-completion>>
+
   <<embark-keybindings>>)
 #+end_src
 
-**** Use Embark's completion UI for displaying available key help
+***** Use Embark's completion UI for displaying available key help
 
-#+name: embark-help-key-completion
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb-ref embark-help-key-completion :tangle no
 (setopt prefix-help-command #'embark-prefix-help-command)
 #+end_src
 
-**** Keybindings
+***** Keybindings
 
-#+name: embark-keybindings
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb-ref embark-keybindings :tangle no
 (keymap-global-set "C-;" #'embark-act)
 (keymap-global-set "M-." #'embark-dwim)
 #+end_src
