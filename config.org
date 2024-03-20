@@ -6634,6 +6634,96 @@ Default is =nil=, which is generally easier to use for Emacs integration.
 ;; (setopt meow-keypad-leader-dispatch "C-c")
 #+end_src
 
+***** Customize the appearance of the mode-line indicator for the current Meow state
+
+This should happen before defining any new states so that they may provide their
+own values upon definition.
+
+#+begin_src emacs-lisp
+(setopt meow-replace-state-name-list
+        '( (normal . "🅝")
+           (beacon . "🅑")
+           (insert . "🅘")
+           (motion . "🅜")
+           (keypad . "🅚")))
+#+end_src
+
+***** DISABLED Define a new state for navigating Org-Mode trees
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+Unfortunately, this is unusable. I lose access to "M-v" and even the "ESC"
+binding doesn't work.
+
+Perhaps a Transient menu is a better option.
+
+Credit for the idea goes to this blog post:
+
+[[https://aatmunbaxi.netlify.app/comp/meow_state_org_speed/][A meow-state for speedy org structure navigation | Aatmun Baxi]]
+
+I made some adjustments for the sake of maintaining consistency with the default
+bindings. I would rather not mix up the motions switching between this state and
+the defaults.
+
+#+begin_src emacs-lisp
+(defvar-keymap meow-org-motion-keymap
+
+  "ESC" #'meow-normal-mode
+
+  "i" #'meow-insert-mode
+  "g" #'meow-normal-mode
+  "u" #'meow-undo
+
+  ;; Move between headings
+  "p" #'org-previous-visible-heading
+  "n" #'org-next-visible-heading
+  ;; FIXME: find an available spot
+  ;; "C-M-p" #'org-previous-block
+  ;; "C-M-n" #'org-next-block
+
+  ;; Narrowing/widening
+  "N" #'org-narrow-to-subtree
+  "W" #'widen
+
+  ;; Move between headings at same-level
+  "b" #'org-backward-heading-same-level
+  "f" #'org-forward-heading-same-level
+
+  ;; Drag subtrees up/down
+  "K" #'org-subtree-up
+  "J" #'org-subtree-down
+
+  ;; Promote/demote subtrees
+  "L" #'org-demote-subtree
+  "H" #'org-promote-subtree
+
+  ;; Search
+  "v" #'consult-org-heading
+
+  ;; Setting subtree metadata
+  "l" #'org-set-property-and-value
+  "t" #'org-todo
+  "d" #'org-deadline
+  "s" #'org-schedule
+  "e" #'org-set-effort)
+#+end_src
+
+Define the state itself, using the keymap we just initialized:
+
+#+begin_src emacs-lisp
+(meow-define-state org-motion
+  "Org-Mode tree navigation"
+  :lighter "🅞"
+  :keymap meow-org-motion-keymap)
+#+end_src
+
+And provide access to this state:
+
+#+begin_src emacs-lisp
+(keymap-set meow-normal-state-keymap "O" #'meow-org-motion-mode)
+#+end_src
+
 ***** Map preferred initial Meow states for some additional major-modes
 
 #+begin_src emacs-lisp
@@ -6653,17 +6743,6 @@ Default is =nil=, which is generally easier to use for Emacs integration.
           '(Info-mode . motion)
           '(read-only-mode . motion)
           '(help-mode . motion))
-#+end_src
-
-***** Customize the appearance of the mode-line indicator for the current Meow state
-
-#+begin_src emacs-lisp
-(setopt meow-replace-state-name-list
-        '( (normal . "🅝")
-           (beacon . "🅑")
-           (insert . "🅘")
-           (motion . "🅜")
-           (keypad . "🅚")))
 #+end_src
 
 ***** Improve Meow integration with the default Emacs kill-ring and system clipboard

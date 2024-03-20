@@ -211,6 +211,21 @@
 ;; (setopt meow-keypad-leader-dispatch "C-c")
 ;; Determine the target for the Meow-Keypad/Leader:1 ends here
 
+;; Customize the appearance of the mode-line indicator for the current Meow state
+
+;; This should happen before defining any new states so that they may provide their
+;; own values upon definition.
+
+
+;; [[file:../config.org::*Customize the appearance of the mode-line indicator for the current Meow state][Customize the appearance of the mode-line indicator for the current Meow state:1]]
+(setopt meow-replace-state-name-list
+        '( (normal . "🅝")
+           (beacon . "🅑")
+           (insert . "🅘")
+           (motion . "🅜")
+           (keypad . "🅚")))
+;; Customize the appearance of the mode-line indicator for the current Meow state:1 ends here
+
 ;; Map preferred initial Meow states for some additional major-modes
 
 
@@ -232,18 +247,6 @@
           '(read-only-mode . motion)
           '(help-mode . motion))
 ;; Map preferred initial Meow states for some additional major-modes:1 ends here
-
-;; Customize the appearance of the mode-line indicator for the current Meow state
-
-
-;; [[file:../config.org::*Customize the appearance of the mode-line indicator for the current Meow state][Customize the appearance of the mode-line indicator for the current Meow state:1]]
-(setopt meow-replace-state-name-list
-        '( (normal . "🅝")
-           (beacon . "🅑")
-           (insert . "🅘")
-           (motion . "🅜")
-           (keypad . "🅚")))
-;; Customize the appearance of the mode-line indicator for the current Meow state:1 ends here
 
 ;; Improve Meow integration with the default Emacs kill-ring and system clipboard
 
