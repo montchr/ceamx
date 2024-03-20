@@ -138,7 +138,7 @@
 
 ;;;;; Folding and indentation
 
-  (setopt org-indent-indentation-per-level 4)
+  (setopt org-indent-indentation-per-level 2)
   (setopt org-startup-folded 'content)
 
   ;; Avoid unnecessary indentation effects unless specified in file header.
