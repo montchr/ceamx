@@ -188,28 +188,31 @@
 (setopt meow-keypad-self-insert-undefined nil)
 ;; Configure the Keypad:1 ends here
 
-;; Avoid the default binding for `meow-keypad' in motion state
+;; Avoid the default binding for =meow-keypad= in motion state
 
 ;; The goal here is to preserve the established SPC/DEL keybindings to scroll in Info mode and some other similar modes.
 
 
-;; [[file:../config.org::*Avoid the default binding for `meow-keypad' in motion state][Avoid the default binding for `meow-keypad' in motion state:1]]
+;; [[file:../config.org::*Avoid the default binding for =meow-keypad= in motion state][Avoid the default binding for =meow-keypad= in motion state:1]]
 (keymap-unset meow-motion-state-keymap "SPC" t)
-;; Avoid the default binding for `meow-keypad' in motion state:1 ends here
+;; Avoid the default binding for =meow-keypad= in motion state:1 ends here
 
-;; Determine the target for the Meow-Keypad/Leader
+;; ACTIVE Leader keymap from =meow-keymap-alist= (default)
 
-;; There are slight differences between these two, take your pick.
+;; When =meow-keypad-leader-dispatch= is nil, the leader will dispatch to the
+;; leader keymap in =meow-keymap-alist=.
 
-;; Default is =nil=, which is generally easier to use for Emacs integration.
+;; This is the default behavior.
 
-;; =C-c= might be better for leader-centric bindings a la Doom/Spacemacs.
+;; | Pros                                               | Cons                                              |
+;; |----------------------------------------------------+---------------------------------------------------|
+;; | Filters out noise                                  | Requires additional keystroke =c= to get to =C-c= |
+;; | With =c= press, Ctrl mod is primed (i.e. =C-c C-=) |                                                   |
 
 
-;; [[file:../config.org::*Determine the target for the Meow-Keypad/Leader][Determine the target for the Meow-Keypad/Leader:1]]
+;; [[file:../config.org::*ACTIVE Leader keymap from =meow-keymap-alist= (default)][ACTIVE Leader keymap from =meow-keymap-alist= (default):1]]
 (setopt meow-keypad-leader-dispatch nil)
-;; (setopt meow-keypad-leader-dispatch "C-c")
-;; Determine the target for the Meow-Keypad/Leader:1 ends here
+;; ACTIVE Leader keymap from =meow-keymap-alist= (default):1 ends here
 
 ;; Customize the appearance of the mode-line indicator for the current Meow state
 

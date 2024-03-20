@@ -6613,7 +6613,7 @@ I am not sure what I was doing here:
 (setopt meow-keypad-self-insert-undefined nil)
 #+end_src
 
-****** Avoid the default binding for `meow-keypad' in motion state
+****** Avoid the default binding for =meow-keypad= in motion state
 
 The goal here is to preserve the established SPC/DEL keybindings to scroll in Info mode and some other similar modes.
 
@@ -6621,17 +6621,44 @@ The goal here is to preserve the established SPC/DEL keybindings to scroll in In
 (keymap-unset meow-motion-state-keymap "SPC" t)
 #+end_src
 
-****** Determine the target for the Meow-Keypad/Leader
+****** Determine the dispatch target for the leader keymap with =meow-keypad-leader-dispatch=
 
-There are slight differences between these two, take your pick.
+I will maintain sections on both options, tangling only one at a time.
 
-Default is =nil=, which is generally easier to use for Emacs integration.
+I have not yet found a configuration with which I am completely comfortable -- I
+tend to switch between the two. Part of the reason for that is that I have not
+kept a record of my assessment of the benefits and drawbacks of the different
+values I have tried. So, here I will do just that.
 
-=C-c= might be better for leader-centric bindings a la Doom/Spacemacs.
+******* ACTIVE Leader keymap from =meow-keymap-alist= (default)
+
+When =meow-keypad-leader-dispatch= is nil, the leader will dispatch to the
+leader keymap in =meow-keymap-alist=.
+
+This is the default behavior.
+
+| Pros                                               | Cons                                              |
+|----------------------------------------------------+---------------------------------------------------|
+| Filters out noise                                  | Requires additional keystroke =c= to get to =C-c= |
+| With =c= press, Ctrl mod is primed (i.e. =C-c C-=) |                                                   |
 
 #+begin_src emacs-lisp
 (setopt meow-keypad-leader-dispatch nil)
-;; (setopt meow-keypad-leader-dispatch "C-c")
+#+end_src
+
+******* Leader dispatch to =mode-specific-map= ("C-c")
+
+| Pros                                | Cons                                                                             |
+|-------------------------------------+----------------------------------------------------------------------------------|
+| Direct access, no need to press =c= | Noisy, especially in Org-Mode                                                    |
+| Direct access to Org-Mode keys      | Next keypress is unmodded, e.g. in Org: =SPC t= is "C-c t"                       |
+|                                     | *To access main Org bindings under =C-c C-<CHAR>=, you still need to press =c=!* |
+|                                     |                                                                                  |
+
+=C-c= might be better for leader-centric bindings a la Doom/Spacemacs.
+
+#+begin_src emacs-lisp :tangle no
+(setopt meow-keypad-leader-dispatch "C-c")
 #+end_src
 
 ***** Customize the appearance of the mode-line indicator for the current Meow state
