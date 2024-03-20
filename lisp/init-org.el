@@ -295,8 +295,7 @@
 
 ;; <https://github.com/alphapapa/org-sidebar>
 
-(package! org-sidebar
-  (add-hook 'org-mode-hook #'org-sidebar-tree))
+(package! org-sidebar)
 
 (provide 'init-org)
 ;;; init-org.el ends here
