@@ -23,11 +23,9 @@
 
 ;;; Commentary:
 
-;; "It looks like you're writing an Emacs. Would you like help?"
+;; "It looks like you're writing an Emacs.  Would you like help?"
 
 ;;; Code:
-
-(require 'elpaca-autoloads)
 
 (require 'lib-common)
 (require 'lib-help)
@@ -43,16 +41,17 @@
 
 ;;; Bind commands to call `consult-info' filtered by commonly-used manual collections
 
+(declare-function consult-info "consult-info")
+
 ;; Remove the default binding for the `describe-input-method' command.
 (keymap-global-unset "C-h I" t)
 
-(with-eval-after-load 'consult-info
-  (global-keys!
-    "C-h i"    #'ceamx/consult-info-dwim
-    "C-h I c"  #'ceamx/completion-info
-    "C-h I e"  #'ceamx/emacs-info
-    "C-h I i"  #'consult-info
-    "C-h I o"  #'ceamx/org-info))
+(global-keys!
+  "C-h i"    #'ceamx/consult-info-dwim
+  "C-h I c"  #'ceamx/completion-info
+  "C-h I e"  #'ceamx/emacs-info
+  "C-h I i"  #'consult-info
+  "C-h I o"  #'ceamx/org-info)
 
 ;;; Peruse local `devdocs' docsets corresponding to the current major-mode
 
