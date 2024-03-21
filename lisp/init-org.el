@@ -87,7 +87,7 @@
 (setopt org-auto-align-tags nil)
 (setopt org-tags-column 0)
 
-(setopt org-fold-catch-invisible-edits 'smart)
+(setopt org-fold-catch-invisible-edits 'error) ; default: smart
 
 ;;;;; Headings / List Items
 
