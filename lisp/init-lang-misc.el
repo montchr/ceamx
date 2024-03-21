@@ -56,5 +56,15 @@
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
 ;; Language support for =vimrc= syntax:1 ends here
 
+;; Language support for =kmonad= configuration
+
+;; [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
+;; [[https://github.com/kmonad/kmonad][GitHub - kmonad/kmonad: An advanced keyboard manager]]
+
+
+;; [[file:../config.org::*Language support for =kmonad= configuration][Language support for =kmonad= configuration:1]]
+(package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
+;; Language support for =kmonad= configuration:1 ends here
+
 (provide 'init-lang-misc)
 ;;; init-lang-misc.el ends here

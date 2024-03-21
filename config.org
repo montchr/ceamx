@@ -10479,6 +10479,15 @@ their own initialization files.
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
 #+end_src
 
+***** Language support for =kmonad= configuration
+
+[[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
+[[https://github.com/kmonad/kmonad][GitHub - kmonad/kmonad: An advanced keyboard manager]]
+
+#+begin_src emacs-lisp
+(package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
+#+end_src
+
 ***** Footer
 
 #+begin_src emacs-lisp :comments no
