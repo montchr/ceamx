@@ -12430,11 +12430,11 @@ Setting this on a heading works.
 
 * To Investigate
 
+- Merged: [[https://github.com/doomemacs/doomemacs/pull/7002][module: Add corfu by LuigiPiucco · Pull Request #7002 · doomemacs/doomemacs · GitHub]]
 - <https://github.com/Genivia/ugrep#using-ugrep-within-emacs>
 - <https://manueluberti.eu/posts/2022-08-07-emacs-ugrep/#fn:3>
 - <https://manueluberti.eu/posts/2023-10-01-embark-ugrep/>
 - <https://manueluberti.eu/posts/2021-09-10-rgrep-and-vc-git-grep/>
-- <https://elpa.gnu.org/packages/xr.html>
 - <https://github.com/leoliu/easy-kill>
 
 ** Issues
