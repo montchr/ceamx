@@ -5600,10 +5600,12 @@ was printed, and only have ElDoc display if one wasn't.\""
 (package! repeat-help
   (setopt repeat-help-auto t)
 
-  ;; BUG: If `repeat-help' detects `which-key' because `embark' has not yet
-  ;; loaded, then its default popup type will be `which-key', not `embark'. This
-  ;; does not quite line up with the intended behavior as stated in the
-  ;; `repeat-help' README.
+  ;; If `repeat-help' detects `which-key' because `embark' has not yet loaded,
+  ;; then its default popup type will be `which-key', not `embark'. This does
+  ;; not quite line up with the intended behavior as stated in the `repeat-help'
+  ;; README.
+  ;; Note, also, that Embark will not be loaded until one of its autoloaded
+  ;; commands are invoked.
   ;; <https://github.com/karthink/repeat-help/issues/10>
   (with-eval-after-load 'embark
     (setopt repeat-help-popup-type 'embark))
@@ -7830,7 +7832,9 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 (package! embark
   <<embark-help-key-completion>>
 
-  <<embark-keybindings>>)
+  <<embark-keybindings>>
+
+  <<embark-load>>)
 #+end_src
 
 ***** Use Embark's completion UI for displaying available key help
@@ -7844,6 +7848,29 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 #+begin_src emacs-lisp :noweb-ref embark-keybindings :tangle no
 (keymap-global-set "C-;" #'embark-act)
 (keymap-global-set "M-." #'embark-dwim)
+#+end_src
+
+***** Load Embark after an idle delay
+
+<2024-03-20 Wed> Embark weighs in at nearly 5k lines-of-code at the time of
+writing, so loading it immediately would probably cause a noticeable lag in
+session startup.
+
+Embark, like any package with autoloaded commands, will not load until one of
+its autoloads is invoked. That has a few consequences, since Embark is versatile
+enough to be used as glue for some other, more niche packages.
+
+The =repeat-help= package defaults to using Embark's key help facilities before
+falling back to =which-key=. I'd like to try out the Embark UI, as it seems more
+legible.
+
+Another benefit to a deferred load is a faster initial display in response to
+invoking a command. If the feature needs to be loaded in response to invoking an
+autoloaded command e.g. =embark-act=, there will be a multi-second delay.
+
+#+begin_src emacs-lisp :noweb-ref embark-load :tangle no
+(defer! 2
+  (require 'embark))
 #+end_src
 
 **** Appearance

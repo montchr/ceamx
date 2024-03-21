@@ -32,7 +32,10 @@
   (setopt prefix-help-command #'embark-prefix-help-command)
 
   (keymap-global-set "C-;" #'embark-act)
-  (keymap-global-set "M-." #'embark-dwim))
+  (keymap-global-set "M-." #'embark-dwim)
+
+  (defer! 2
+    (require 'embark)))
 ;; Install and pre-configure the Embark package:1 ends here
 
 ;; Configure =display-buffer-alist= rules for Embark windows
