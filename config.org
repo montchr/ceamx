@@ -4124,8 +4124,6 @@ If there is only one window and multiple frames, call
 
 ;;;; Requirements
 
-(require 'elpaca-autoloads)
-
 (require 'lib-common)
 (require 'lib-buffer)
 
@@ -4134,73 +4132,66 @@ If there is only one window and multiple frames, call
 (setq-default indicate-empty-lines nil)
 (setq-default fill-column 80)
 
-(use-feature! emacs
-  :config
+;; Available cycle positions for `recenter-top-bottom'.
+(setopt recenter-positions '(middle top bottom))
 
-  ;; Available cycle positions for `recenter-top-bottom'.
-  (setopt recenter-positions '(middle top bottom))
-
-  ;; Disable buffer line wrapping by default.
-  (set-default 'truncate-lines t)
+;; Disable buffer line wrapping by default.
+(setq-default truncate-lines t)
 
 ;;;;; Scrolling
 
-  (setopt scroll-error-top-bottom t)
-  ;; (setopt scroll-preserve-screen-position t)
-  ;;(setopt scroll-conservatively 101)
-  ;;(setopt scroll-preserve-screen-position nil)
+(setopt scroll-error-top-bottom t)
+;; (setopt scroll-preserve-screen-position t)
+;; (setopt scroll-conservatively 101)
 
-  ;; Add a margin when scrolling vertically (or don't).
-  (setq-default scroll-margin 4)
+;; Add a margin when scrolling vertically (or don't).
+(setq-default scroll-margin 4)
 
-  (global-keys!
-    ;; The default bindings feel backwards to me.
-    "C-x <" #'scroll-right
-    "C-x >" #'scroll-left
+(define-keymap :keymap (current-global-map)
+  ;; The default bindings feel backwards to me.
+  "C-x <" #'scroll-right
+  "C-x >" #'scroll-left
 
-    "<wheel-left>" #'scroll-left
-    "<wheel-right>" #'scroll-right)
+  "<wheel-left>" #'scroll-left
+  "<wheel-right>" #'scroll-right)
 
 ;;;;; Auto-revert buffers
 
-  ;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For
-  ;; example, this will cause Dired to refresh a file list when the directory
-  ;; contents have changed.
-  (setopt global-auto-revert-non-file-buffers t)
+;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For
+;; example, this will cause Dired to refresh a file list when the directory
+;; contents have changed.
+(setopt global-auto-revert-non-file-buffers t)
 
-  ;; (setopt auto-revert-interval 0.01)
-
-  ;; Automatically revert a buffer if its file has changed on disk.
-  (global-auto-revert-mode t)
+;; Automatically revert a buffer if its file has changed on disk.
+(add-hook 'ceamx-after-init-hook #'global-auto-revert-mode)
 
 ;;;;; Buffer selection
 
-  (keymap-global-set "<remap> <list-buffers>" #'ibuffer-list-buffers)
+;; FIXME: don't remap -- set explicitly to C-x C-b
+(keymap-global-set "<remap> <list-buffers>" #'ibuffer-list-buffers)
 
-  (setopt ibuffer-movement-cycle t))
+(setopt ibuffer-movement-cycle t)
 
 ;;;; Enable highlighting of the current line with `hl-line' [builtin]
 
-(use-feature! hl-line
-  :commands (hl-line-mode)
-  :init
-  (add-hook 'prog-mode-hook #'hl-line-mode)
-  (add-hook 'package-menu-mode-hook #'hl-line-mode))
+(add-hook 'prog-mode-hook #'hl-line-mode)
+(add-hook 'package-menu-mode-hook #'hl-line-mode)
 
 ;;;; Linkify URLs and email addresses in buffers with `goto-address' [builtin]
 
-(use-feature! goto-addr
-  :config
-  (add-hook 'prog-mode-hook #'goto-address-prog-mode))
+(autoload 'goto-address-prog-mode "goto-addr")
+
+(add-hook 'prog-mode-hook #'goto-address-prog-mode)
 
 ;;;; Disambiguate identically-named buffers with `uniquify' [builtin]
 
-(use-feature! uniquify
-  :config
+(with-eval-after-load 'uniquify
   (setopt uniquify-buffer-name-style 'forward)
   (setopt uniquify-separator "/")
+
   ;; Rename after killing uniquified buffer.
   (setopt uniquify-after-kill-buffer-p t)
+
   ;; Don't muck with special buffers.
   (setopt uniquify-ignore-buffers-re "^\\*"))
 
@@ -4233,17 +4224,23 @@ If there is only one window and multiple frames, call
           (excludep (lambda (excluded-mode)
                       (eq major-mode excluded-mode))))
       (unless (seq-some excludep exclude-modes)
-        (outli-mode))))
+        (outli-mode)))))
 
-  (after! 'outli
-    ;; FIXME: function definition is void -- from readme:
-    ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
+(with-eval-after-load 'outli
+  (defvar outli-mode-map)
+  (declare-function outline-next-heading "outline")
+  (declare-function outline-previous-heading "outline")
+  (declare-function outline-promote "outline")
+  (declare-function outline-demote "outline")
 
-    (define-keymap :keymap outli-mode-map
-      "C-c C-n" #'outline-next-heading
-      "C-c C-p" #'outline-previous-heading
-      "C-c M-h" #'outline-promote
-      "C-c M-l" #'outline-demote)))
+  ;; FIXME: function definition is void -- from readme:
+  ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
+
+  (define-keymap :keymap outli-mode-map
+    "C-c C-n" #'outline-next-heading
+    "C-c C-p" #'outline-previous-heading
+    "C-c M-h" #'outline-promote
+    "C-c M-l" #'outline-demote))
 
 ;;; Colorize color names and hexcodes in buffers via `rainbow-mode'
 
