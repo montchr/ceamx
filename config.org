@@ -4279,11 +4279,37 @@ If there is only one window and multiple frames, call
 #+end_src
 
 **** Global Keybindings
+
 #+begin_src emacs-lisp
 (global-keys!
   "C-c [" #'previous-buffer
   "C-c ]" #'next-buffer
   "C-c `" #'mode-line-other-buffer)
+#+end_src
+
+**** DISABLED =repeat-map= for basic buffer navigation commands
+
+<https://www.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/>
+
+It seemed like a great idea, but I had quite a few issues.
+
+- [ ] Disable =repeat-help-auto= for these
+- [ ] Does not work with Meow. See [[*Meow overwrites repeat-mode?]]
+- [ ] Pauses between every single movement command not specified in the repeat map
+
+#+begin_src emacs-lisp :tangle no
+(defvar-keymap ceamx-buffer-movement-repeat-map
+  :repeat t
+  ;; :repeat (:enter '(next-line previous-line forward-word))
+
+  "n" #'next-line
+  "p" #'previous-line
+  "f" #'forward-word
+  "b" #'backward-word
+
+  ;; FIXME: inconsistent with established binding mnemonics
+  "u" #'scroll-down-command
+  "d" #'scroll-up-command)
 #+end_src
 
 **** Footer

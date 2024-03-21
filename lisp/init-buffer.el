@@ -191,6 +191,7 @@
 
 ;; Global Keybindings
 
+
 ;; [[file:../config.org::*Global Keybindings][Global Keybindings:1]]
 (global-keys!
   "C-c [" #'previous-buffer
