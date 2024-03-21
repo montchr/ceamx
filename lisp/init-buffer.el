@@ -38,7 +38,7 @@
 (setq-default fill-column 80)
 
 ;; Available cycle positions for `recenter-top-bottom'.
-(setopt recenter-positions '(middle top bottom))
+(setopt recenter-positions '(top middle bottom))
 
 ;; Disable buffer line wrapping by default.
 (setq-default truncate-lines t)
