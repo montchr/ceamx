@@ -45,7 +45,10 @@
 ;;;;; Scrolling
 
 (setopt scroll-error-top-bottom t)
-;; (setopt scroll-preserve-screen-position t)
+
+;; Prevent unwanted horizontal scrolling upon navigation.
+(setopt scroll-preserve-screen-position t)
+
 ;; (setopt scroll-conservatively 101)
 
 ;; Add a margin when scrolling vertically (or don't).
@@ -71,10 +74,9 @@
 
 ;;;;; Buffer selection
 
-;; FIXME: don't remap -- set explicitly to C-x C-b
-(keymap-global-set "<remap> <list-buffers>" #'ibuffer-list-buffers)
-
 (setopt ibuffer-movement-cycle t)
+
+(keymap-global-set "C-x C-b" #'ibuffer-list-buffers)
 
 ;;;; Enable highlighting of the current line with `hl-line' [builtin]
 
