@@ -5647,27 +5647,31 @@ was printed, and only have ElDoc display if one wasn't.\""
     (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
     (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)))
 
-;;; Improve display of hints in an active `repeat-mode' keymap
+;;; DISABLED Improve display of hints in an active `repeat-mode' keymap
 
 ;; <https://github.com/karthink/repeat-help>
 
 ;; Essential reading for context and usage ideas:
 ;; <https://karthinks.com/software/it-bears-repeating/>
 
-(package! repeat-help
-  (setopt repeat-help-auto t)
+;; DISABLED:
+;; - C-h binding prevented normal C-h usage
+;; - No straightforward way to disable or customize per-map
 
-  ;; If `repeat-help' detects `which-key' because `embark' has not yet loaded,
-  ;; then its default popup type will be `which-key', not `embark'. This does
-  ;; not quite line up with the intended behavior as stated in the `repeat-help'
-  ;; README.
-  ;; Note, also, that Embark will not be loaded until one of its autoloaded
-  ;; commands are invoked.
-  ;; <https://github.com/karthink/repeat-help/issues/10>
-  (with-eval-after-load 'embark
-    (setopt repeat-help-popup-type 'embark))
+;; (package! repeat-help
+;;   (setopt repeat-help-auto nil)
 
-  (add-hook 'repeat-mode-hook #'repeat-help-mode))
+;;   ;; If `repeat-help' detects `which-key' because `embark' has not yet loaded,
+;;   ;; then its default popup type will be `which-key', not `embark'. This does
+;;   ;; not quite line up with the intended behavior as stated in the `repeat-help'
+;;   ;; README.
+;;   ;; Note, also, that Embark will not be loaded until one of its autoloaded
+;;   ;; commands are invoked.
+;;   ;; <https://github.com/karthink/repeat-help/issues/10>
+;;   ;; (with-eval-after-load 'embark
+;;   ;;   (setopt repeat-help-popup-type 'embark))
+
+;;   (add-hook 'repeat-mode-hook #'repeat-help-mode))
 
 ;;; Keybindings
 
