@@ -53,6 +53,23 @@
   (with-eval-after-load 'exec-path-from-shell
     (require 'inheritenv)))
 
+;;; =with-editor=: Ensure shell/term modes use session as =$EDITOR=
+
+(package! with-editor
+  (keymap-global-set "<remap> <async-shell-command>"
+                     #'with-editor-async-shell-command)
+  (keymap-global-set "<remap> <shell-command>"
+                     #'with-editor-shell-command)
+
+  (add-hook 'shell-mode-hook #'with-editor-export-editor)
+  (add-hook 'eshell-mode-hook #'with-editor-export-editor)
+  (add-hook 'term-exec-hook #'with-editor-export-editor)
+
+  ;; Make sure that `eat' does not break `magit-commit'.
+  ;; <https://codeberg.org/akib/emacs-eat/issues/55#issuecomment-871388>
+  (with-eval-after-load 'eat
+    (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
+
 ;;; Support integration with Direnv via the `envrc' package
 
 ;; <https://github.com/purcell/envrc>
