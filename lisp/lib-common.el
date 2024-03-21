@@ -125,16 +125,16 @@ macro supporting quoted FEATURE and the features of Doom's
 version would probably be ideal."
   (declare (indent 1))
   (cond
-    ((vectorp feature)
-      (let ((prog (macroexp-progn body)))
-        (cl-loop for f across feature
-          do
-          (progn
-            (setq prog (append `(',f) `(,prog)))
-            (setq prog (append '(with-eval-after-load) prog))))
-        prog))
-    (t
-      `(with-eval-after-load ,feature ,@body))))
+   ((vectorp feature)
+    (let ((prog (macroexp-progn body)))
+      (cl-loop for f across feature
+               do
+               (progn
+                 (setq prog (append `(',f) `(,prog)))
+                 (setq prog (append '(with-eval-after-load) prog))))
+      prog))
+   (t
+    `(with-eval-after-load ,feature ,@body))))
 
 ;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
 (defmacro defer! (secs &rest body)
@@ -200,7 +200,7 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
   `(setq ,list (delq ,(if fetcher
                           `(funcall ,fetcher ,elt ,list)
                         elt)
-                     ,list)))
+                ,list)))
 
 ;; TODO: another version to test car of alist so that new additions with the
 ;;       same car will override the existing list
@@ -209,7 +209,7 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
 This is a variadic `cl-pushnew'."
   (let ((var (make-symbol "result")))
     `(dolist (,var (list ,@values) (with-no-warnings ,place))
-       (cl-pushnew ,var ,place :test #'equal))))
+      (cl-pushnew ,var ,place :test #'equal))))
 
 ;;; Filesystem
 
@@ -230,26 +230,26 @@ ARGLIST, DOCSTRING, and BODY are as in `defun'.
 HOW and SYMBOL are as in `advice-add'.  HOW describes how to add
 the newly-defined advice.  SYMBOL is the function to be advised."
   (declare (indent 2)
-    (doc-string 5))
+           (doc-string 5))
   (unless (stringp docstring)
     (error "Ceamx: advice `%S' not documented'" name))
   (unless (and (listp symbol)
-            (= 2 (length symbol))
-            (eq (nth 0 symbol) 'function)
-            (symbolp (nth 1 symbol)))
+               (= 2 (length symbol))
+               (eq (nth 0 symbol) 'function)
+               (symbolp (nth 1 symbol)))
     (error "Ceamx: advice `%S' does not sharp-quote symbol `%S'" name symbol))
   `(progn
      (defun ,name ,arglist
-       ,(let ((article (if (string-match-p "^:[aeiou]" (symbol-name how))
-                         "an"
-                         "a")))
-          (format "%s\n\nThis is %s `%S' advice for\n`%S'."
-            docstring article how
-            (if (and (listp symbol)
-                  (memq (car symbol) ''function))
-              (cadr symbol)
-              symbol)))
-       ,@body)
+      ,(let ((article (if (string-match-p "^:[aeiou]" (symbol-name how))
+                          "an"
+                        "a")))
+        (format "%s\n\nThis is %s `%S' advice for\n`%S'."
+         docstring article how
+         (if (and (listp symbol)
+              (memq (car symbol) ''function))
+             (cadr symbol)
+           symbol)))
+      ,@body)
      (eval-when-compile
        (declare-function ,name nil))
      (advice-add ,symbol ',how #',name)
@@ -275,11 +275,11 @@ as in `defun'."
       (setq hooks-str (format "%s\nand `%S'" hooks-str hook)))
     `(progn
        (defun ,name ,arglist
-         ,(format "%s\n\nThis function is for use in %s."
-                  docstring hooks-str)
-         ,@body)
+        ,(format "%s\n\nThis function is for use in %s."
+          docstring hooks-str)
+        ,@body)
        (dolist (hook ',hooks)
-         (add-hook hook ',name)))))
+        (add-hook hook ',name)))))
 
 ;;; Packages
 
@@ -323,12 +323,12 @@ vary based on... various reasons?"
   (declare (side-effect-free t))
   (cl-assert (char-or-string-p char) t)
   (if (stringp char)
-    (cond ((length= char 0)
-            (user-error "Character string `%s' is empty" char))
-      ((length> char 1)
-        (user-error "Character string `%s' should only contain a single character" char))
-      (t
-        (string-to-char char)))
+      (cond ((length= char 0)
+             (user-error "Character string `%s' is empty" char))
+            ((length> char 1)
+             (user-error "Character string `%s' should only contain a single character" char))
+            (t
+             (string-to-char char)))
     char))
 
 (defmacro global-keys! (&rest keys)
@@ -355,7 +355,7 @@ will be passed through to `define-keymap' directly.
   `(progn
      (defvar ,symbol)
      (unless (keymapp ',symbol)
-       (define-prefix-command ',symbol ',symbol))
+      (define-prefix-command ',symbol ',symbol))
      (define-keymap
        :keymap ,symbol
        ,@defs)))
