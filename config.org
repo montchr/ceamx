@@ -10412,8 +10412,18 @@ Returns process exit code."
 
 
 *** Miscellaneous Languages
+:PROPERTIES:
+:header-args: :tangle lisp/init-lang-misc.el
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-misc.el
+Configuration for miscellaneous languages that don't warrant
+their own initialization files.
+
+**** Customizations
+
+***** File Header
+
+#+begin_src emacs-lisp :comments no
 ;;; init-lang-misc.el --- Miscellaneous language support -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -10439,22 +10449,39 @@ Returns process exit code."
 
 ;;; Commentary:
 
-;;  Configuration for miscellaneous languages that don't warrant
-;;  their own initialization files.
-
 ;;; Code:
 
-(use-package apache-mode)
+(require 'lib-common)
+#+end_src
 
-(use-package just-mode)
+***** Language support for Apache Web Server configuration files
 
-(use-package robots-txt-mode)
+#+begin_src emacs-lisp
+(package! apache-mode)
+#+end_src
 
-(use-package vimrc-mode
-  :commands (vimrc-mode)
-  :init
+***** Language support for the Just task runner configuration files
+
+#+begin_src emacs-lisp
+(package! just-mode)
+#+end_src
+
+***** Syntax highlighting for robots.txt files
+
+#+begin_src emacs-lisp
+(package! robots-txt-mode)
+#+end_src
+
+***** Language support for =vimrc= syntax
+
+#+begin_src emacs-lisp
+(package! vimrc-mode
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
+#+end_src
 
+***** Footer
+
+#+begin_src emacs-lisp :comments no
 (provide 'init-lang-misc)
 ;;; init-lang-misc.el ends here
 #+end_src
