@@ -10663,52 +10663,6 @@ Else create a new file."
 
 ** Org-Mode
 
-*** Tasks
-
-**** TODO Meow overwrites repeat-mode?
-
-**** CANCELLED Fix no-cycle when press TAB at headline EOL
-CLOSED: [2024-03-18 Mon 23:53]
-
-- State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:53] \\
-  Works as intended.
-I think this happens because when there is folded content EOL is considered
-part of that folded content, so the TAB press is technically not on the
-headline.
-
-
-**** TODO Repeat-mode for navigating tree
-
-
-
-- Note taken on [2024-03-18 Mon 23:52] \\
-  I saw some post on Reddit about an integration with Meow for this purpose the
-  other day... not sure if I saved it though.
-
-**** TODO [#B] Bind =org-insert-subheading=
-
-**** DONE Figure out why completion is broken
-CLOSED: [2024-03-18 Mon 23:51]
-
-- State "DONE"       from "TODO"       [2024-03-18 Mon 23:51]
-Answer: I was expecting Corfu's Elisp completion in this Org file buffer, but
-mode-specific completion will only work once opening the src block in an
-indirect buffer with =org-edit-src-code=.
-
-However, it would still be nice if I could get symbol completion inside of
-inline code markup.
-
-
-**** CANCELLED Figure out why Elisp source blocks are broken
-CLOSED: [2024-03-18 Mon 23:52]
-
-- State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:52] \\
-  Not "broken", just misunderstood.
-
-**** TODO Electric-pair for equals-sign
-
-
-
 *** Customizations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-org.el
@@ -11055,6 +11009,52 @@ CLOSED: [2024-03-18 Mon 23:52]
 (provide 'config-org)
 ;;; config-org.el ends here
 #+end_src
+
+
+*** Tasks
+
+**** TODO Meow overwrites repeat-mode?
+
+**** CANCELLED Fix no-cycle when press TAB at headline EOL
+CLOSED: [2024-03-18 Mon 23:53]
+
+- State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:53] \\
+  Works as intended.
+I think this happens because when there is folded content EOL is considered
+part of that folded content, so the TAB press is technically not on the
+headline.
+
+
+**** TODO Repeat-mode for navigating tree
+
+
+
+- Note taken on [2024-03-18 Mon 23:52] \\
+  I saw some post on Reddit about an integration with Meow for this purpose the
+  other day... not sure if I saved it though.
+
+**** TODO [#B] Bind =org-insert-subheading=
+
+**** DONE Figure out why completion is broken
+CLOSED: [2024-03-18 Mon 23:51]
+
+- State "DONE"       from "TODO"       [2024-03-18 Mon 23:51]
+Answer: I was expecting Corfu's Elisp completion in this Org file buffer, but
+mode-specific completion will only work once opening the src block in an
+indirect buffer with =org-edit-src-code=.
+
+However, it would still be nice if I could get symbol completion inside of
+inline code markup.
+
+
+**** CANCELLED Figure out why Elisp source blocks are broken
+CLOSED: [2024-03-18 Mon 23:52]
+
+- State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:52] \\
+  Not "broken", just misunderstood.
+
+**** TODO Electric-pair for equals-sign
+
 
 
 ** Controls
