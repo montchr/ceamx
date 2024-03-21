@@ -4091,9 +4091,13 @@ If there is only one window and multiple frames, call
 
 ** Buffer
 
-*** Customizations
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-buffer.el
+*** Customizations
+:PROPERTIES:
+:header-args: :tangle lisp/init-buffer.el
+:END:
+
+#+begin_src emacs-lisp :comments no
 ;;; init-buffer.el --- Buffers configuration         -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -4116,19 +4120,19 @@ If there is only one window and multiple frames, call
 
 ;;; Commentary:
 
-;; Buffers of all shapes and sizes.
-
-;; TODO: <https://github.com/abo-abo/avy/wiki/custom-commands>
-
 ;;; Code:
+#+end_src
 
-;;;; Requirements
+**** Requirements
 
+#+begin_src emacs-lisp
 (require 'lib-common)
 (require 'lib-buffer)
+#+end_src
 
-;;;; General
+**** General
 
+#+begin_src emacs-lisp
 (setq-default indicate-empty-lines nil)
 (setq-default fill-column 80)
 
@@ -4137,9 +4141,11 @@ If there is only one window and multiple frames, call
 
 ;; Disable buffer line wrapping by default.
 (setq-default truncate-lines t)
+#+end_src
 
-;;;;; Scrolling
+**** Scrolling
 
+#+begin_src emacs-lisp
 (setopt scroll-error-top-bottom t)
 
 ;; Prevent unwanted horizontal scrolling upon navigation.
@@ -4157,9 +4163,11 @@ If there is only one window and multiple frames, call
 
   "<wheel-left>" #'scroll-left
   "<wheel-right>" #'scroll-right)
+#+end_src
 
-;;;;; Auto-revert buffers
+**** Auto-revert buffers
 
+#+begin_src emacs-lisp
 ;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For
 ;; example, this will cause Dired to refresh a file list when the directory
 ;; contents have changed.
@@ -4167,26 +4175,34 @@ If there is only one window and multiple frames, call
 
 ;; Automatically revert a buffer if its file has changed on disk.
 (add-hook 'ceamx-after-init-hook #'global-auto-revert-mode)
+#+end_src
 
-;;;;; Buffer selection
+**** Buffer selection
 
+#+begin_src emacs-lisp
 (setopt ibuffer-movement-cycle t)
 
 (keymap-global-set "C-x C-b" #'ibuffer-list-buffers)
+#+end_src
 
-;;;; Enable highlighting of the current line with `hl-line' [builtin]
+**** =hl-line=: Enable highlighting of the current line
 
+#+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'hl-line-mode)
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
+#+end_src
 
-;;;; Linkify URLs and email addresses in buffers with `goto-address' [builtin]
+**** =goto-address=: Linkify URLs and email addresses in buffers [builtin]
 
+#+begin_src emacs-lisp
 (autoload 'goto-address-prog-mode "goto-addr")
 
 (add-hook 'prog-mode-hook #'goto-address-prog-mode)
+#+end_src
 
-;;;; Disambiguate identically-named buffers with `uniquify' [builtin]
+**** =uniquify=: Disambiguate identically-named buffers [builtin]
 
+#+begin_src emacs-lisp
 (with-eval-after-load 'uniquify
   (setopt uniquify-buffer-name-style 'forward)
   (setopt uniquify-separator "/")
@@ -4196,29 +4212,38 @@ If there is only one window and multiple frames, call
 
   ;; Don't muck with special buffers.
   (setopt uniquify-ignore-buffers-re "^\\*"))
+#+end_src
 
-;;;; Activate links in buffer with an `avy'-like UI via the `link-hint' package
+**** =link-hint=: Activate links in buffer with =avy=
 
-;; <https://github.com/noctuid/link-hint.el>
+<https://github.com/noctuid/link-hint.el>
 
+#+begin_src emacs-lisp
 (package! link-hint
   (global-keys!
     "M-g u" #'link-hint-open-link
     "M-g U" #'link-hint-copy-link))
+#+end_src
 
-;;;; `expand-region' :: <https://github.com/magnars/expand-region.el>
+**** =expand-region=: Expand your regions
 
+<https://github.com/magnars/expand-region.el>
+
+#+begin_src emacs-lisp
 (package! expand-region
   (keymap-global-set "C-=" #'er/expand-region))
+#+end_src
 
-;;;; Enable simple comment-based outline features in many modes with `outli'
+**** =outli=: Enable simple comment-based outline features in many modes
 
-;; <https://github.com/jdtsmith/outli>
+<https://github.com/jdtsmith/outli>
 
+#+begin_src emacs-lisp
 ;; NOTE: In `emacs-lisp-mode' buffers, `outli-mode' should be enabled *after*
 ;; `lispy-mode'. See the package configuration for `lispy'.
 
 (package! (outli :host github :repo "jdtsmith/outli")
+
   (def-hook! +outli-mode-maybe-enable-h ()
     '(prog-mode-hook text-mode-hook)
     "Enable `outli-mode' conditionally, excluding some modes."
@@ -4243,20 +4268,27 @@ If there is only one window and multiple frames, call
     "C-c C-p" #'outline-previous-heading
     "C-c M-h" #'outline-promote
     "C-c M-l" #'outline-demote))
+#+end_src
 
-;;; Colorize color names and hexcodes in buffers via `rainbow-mode'
+**** =rainbow-mode=: Colorize color names and hexcodes in buffers
 
-;; <https://elpa.gnu.org/packages/rainbow-mode.html>
+<https://elpa.gnu.org/packages/rainbow-mode.html>
 
+#+begin_src emacs-lisp
 (package! rainbow-mode)
+#+end_src
 
-;;; Global Keybindings
-
+**** Global Keybindings
+#+begin_src emacs-lisp
 (global-keys!
   "C-c [" #'previous-buffer
   "C-c ]" #'next-buffer
   "C-c `" #'mode-line-other-buffer)
+#+end_src
 
+**** Footer
+
+#+begin_src emacs-lisp :comments no
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
 #+end_src
