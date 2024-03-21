@@ -833,6 +833,21 @@ acknowledges this incompatibility."
      (keymap-set mode-specific-map ,key ,def)))
 #+end_src
 
+***** A function to convert a regular keymap to a repeat-map
+
+[[https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/][oantolin comments on Repeat-mode is awesome, share you useful configs]]
+
+#+begin_src emacs-lisp :tangle lisp/lib-common.el
+(defun ceamx-repeatify-keymap (repeat-map)
+  "Set the `repeat-map' property on all commands bound in REPEAT-MAP."
+  (named-let process ((keymap (symbol-value repeat-map)))
+    (map-keymap
+     (lambda (_key cmd)
+       (cond
+        ((symbolp cmd) (put cmd 'repeat-map repeat-map))
+        ((keymapp cmd) (process cmd))))
+     keymap)))
+#+end_src
 
 
 *** Footer
@@ -6439,6 +6454,39 @@ and consult-location to occur-edit."
 ;; > used, such as C-c or C-c C-x (these are specified as a string).
 
 (package! free-keys)
+
+;;; Expand the existing repeat-map for outline navigation
+
+(define-keymap :keymap outline-navigation-repeat-map
+
+  "C-x"  #'foldout-exit-fold
+  "x"    #'foldout-exit-fold
+  "C-z"  #'foldout-zoom-subtree
+  "z"    #'foldout-zoom-subtree
+  "C-a"  #'outline-show-all
+  "a"    #'outline-show-all
+  "C-c"  #'outline-hide-entry
+  "c"    #'outline-hide-entry
+  "C-d"  #'outline-hide-subtree
+  "C-e"  #'outline-show-entry
+  "e"    #'outline-show-entry
+  "TAB"  #'outline-show-children
+  "C-k"  #'outline-show-branches
+  "k"    #'outline-show-branches
+  "C-l"  #'outline-hide-leaves
+  "l"    #'outline-hide-leaves
+  "RET"  #'outline-insert-heading
+  "C-o"  #'outline-hide-other
+  "o"    #'outline-hide-other
+  "C-q"  #'outline-hide-sublevels
+  "q"    #'outline-hide-sublevels
+  "C-s"  #'outline-show-subtree
+  "s"    #'outline-show-subtree
+  "C-t"  #'outline-hide-body
+  "t"    #'outline-hide-body
+  "@"    #'outline-mark-subtree)
+
+(ceamx-repeatify-keymap 'outline-navigation-repeat-map)
 
 (provide 'init-keys)
 ;;; init-keys.el ends here

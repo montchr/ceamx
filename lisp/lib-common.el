@@ -306,8 +306,10 @@ without needing to declare autoloads for `elpaca' in every file."
      (autoload 'elpaca "elpaca" nil nil t)
      (elpaca ,order ,@body)))
 
-;;; Input and Keybindings
+;; Input and Keybindings
 
+
+;; [[file:../config.org::*Input and Keybindings][Input and Keybindings:1]]
 (defun ceamx-normalize-char (char)
   "Normalize CHAR to a valid character matching `characterp'.
 CHAR may either be a valid character or a string convertable to a
@@ -374,6 +376,24 @@ acknowledges this incompatibility."
   `(if (fboundp 'meow-leader-define-key)
        (meow-leader-define-key (cons ,key ,def))
      (keymap-set mode-specific-map ,key ,def)))
+;; Input and Keybindings:1 ends here
+
+;; A function to convert a regular keymap to a repeat-map
+
+;; [[https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/][oantolin comments on Repeat-mode is awesome, share you useful configs]]
+
+
+;; [[file:../config.org::*A function to convert a regular keymap to a repeat-map][A function to convert a regular keymap to a repeat-map:1]]
+(defun ceamx-repeatify-keymap (repeat-map)
+  "Set the `repeat-map' property on all commands bound in REPEAT-MAP."
+  (named-let process ((keymap (symbol-value repeat-map)))
+    (map-keymap
+     (lambda (_key cmd)
+       (cond
+        ((symbolp cmd) (put cmd 'repeat-map repeat-map))
+        ((keymapp cmd) (process cmd))))
+     keymap)))
+;; A function to convert a regular keymap to a repeat-map:1 ends here
 
 (provide 'lib-common)
 ;;; lib-common.el ends here
