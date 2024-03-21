@@ -105,6 +105,8 @@
 (setopt org-cycle-emulate-tab t)
 (setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
 
+(setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+
 ;;;;; Source code blocks
 
 ;; Changing the indentation of source code is unhelpful and destructive.
