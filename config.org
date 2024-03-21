@@ -6457,36 +6457,36 @@ and consult-location to occur-edit."
 
 ;;; Expand the existing repeat-map for outline navigation
 
-(define-keymap :keymap outline-navigation-repeat-map
+(after! [repeat outline]
+  (define-keymap :keymap outline-navigation-repeat-map
+    "C-x" #'foldout-exit-fold
+    "x" #'foldout-exit-fold
+    "C-z" #'foldout-zoom-subtree
+    "z" #'foldout-zoom-subtree
+    "C-a" #'outline-show-all
+    "a" #'outline-show-all
+    "C-c" #'outline-hide-entry
+    "c" #'outline-hide-entry
+    "C-d" #'outline-hide-subtree
+    "C-e" #'outline-show-entry
+    "e" #'outline-show-entry
+    "TAB" #'outline-show-children
+    "C-k" #'outline-show-branches
+    "k" #'outline-show-branches
+    "C-l" #'outline-hide-leaves
+    "l" #'outline-hide-leaves
+    "RET" #'outline-insert-heading
+    "C-o" #'outline-hide-other
+    "o" #'outline-hide-other
+    "C-q" #'outline-hide-sublevels
+    "q" #'outline-hide-sublevels
+    "C-s" #'outline-show-subtree
+    "s" #'outline-show-subtree
+    "C-t" #'outline-hide-body
+    "t" #'outline-hide-body
+    "@" #'outline-mark-subtree)
 
-  "C-x"  #'foldout-exit-fold
-  "x"    #'foldout-exit-fold
-  "C-z"  #'foldout-zoom-subtree
-  "z"    #'foldout-zoom-subtree
-  "C-a"  #'outline-show-all
-  "a"    #'outline-show-all
-  "C-c"  #'outline-hide-entry
-  "c"    #'outline-hide-entry
-  "C-d"  #'outline-hide-subtree
-  "C-e"  #'outline-show-entry
-  "e"    #'outline-show-entry
-  "TAB"  #'outline-show-children
-  "C-k"  #'outline-show-branches
-  "k"    #'outline-show-branches
-  "C-l"  #'outline-hide-leaves
-  "l"    #'outline-hide-leaves
-  "RET"  #'outline-insert-heading
-  "C-o"  #'outline-hide-other
-  "o"    #'outline-hide-other
-  "C-q"  #'outline-hide-sublevels
-  "q"    #'outline-hide-sublevels
-  "C-s"  #'outline-show-subtree
-  "s"    #'outline-show-subtree
-  "C-t"  #'outline-hide-body
-  "t"    #'outline-hide-body
-  "@"    #'outline-mark-subtree)
-
-(ceamx-repeatify-keymap 'outline-navigation-repeat-map)
+  (ceamx-repeatify-keymap 'outline-navigation-repeat-map))
 
 (provide 'init-keys)
 ;;; init-keys.el ends here
