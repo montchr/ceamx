@@ -161,6 +161,24 @@
   :init
   (add-hook 'on-first-file-hook #'editorconfig-mode))
 
+;;;;; Prevent `editorconfig' from exploding `org-mode' buffers
+
+;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
+
+(defun +editorconfig-enforce-org-mode-tab-width-h (props)
+  "Prevent `editorconfig' from changing `tab-width' in `org-mode'.
+A \"tab-width\" of any value other than 8 is an error state in
+org-mode, so it must not be changed.
+
+PROPS is as in `editorconfig-after-apply-functions'."
+  (when (and (gethash 'indent_size props)
+             (derived-mode-p 'org-mode))
+    (setq tab-width 8)))
+
+(with-eval-after-load 'editorconfig
+  (add-hook 'editorconfig-after-apply-functions
+            #'+editorconfig-enforce-org-mode-tab-width-h))
+
 ;;;; Apply opinionated code reformatting with `apheleia'
 
 ;; <https://github.com/radian-software/apheleia>

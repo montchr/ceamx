@@ -4605,6 +4605,24 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   :init
   (add-hook 'on-first-file-hook #'editorconfig-mode))
 
+;;;;; Prevent `editorconfig' from exploding `org-mode' buffers
+
+;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
+
+(defun +editorconfig-enforce-org-mode-tab-width-h (props)
+  "Prevent `editorconfig' from changing `tab-width' in `org-mode'.
+A \"tab-width\" of any value other than 8 is an error state in
+org-mode, so it must not be changed.
+
+PROPS is as in `editorconfig-after-apply-functions'."
+  (when (and (gethash 'indent_size props)
+             (derived-mode-p 'org-mode))
+    (setq tab-width 8)))
+
+(with-eval-after-load 'editorconfig
+  (add-hook 'editorconfig-after-apply-functions
+            #'+editorconfig-enforce-org-mode-tab-width-h))
+
 ;;;; Apply opinionated code reformatting with `apheleia'
 
 ;; <https://github.com/radian-software/apheleia>
@@ -10748,6 +10766,32 @@ Else create a new file."
 
 (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
+;;; Enforce the correct `tab-width' to prevent errors
+
+;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
+
+(defun +org-mode--local-set-tab-width-h ()
+  "Set the `tab-width' in `org-mode' buffers to 8 columns.
+Any `tab-width' value other than 8 will result in an error.
+
+This should be set as late as possible, after all other
+`org-mode-hook' functions added by packages and
+configurations.  Hence the use of `after-change-major-mode-hook',
+which runs at the very end of major-mode activation.
+
+Intended for use as a local hook function on
+`after-change-major-mode-hook' as added within `org-mode-hook'."
+
+  ;; This check is necessary to handle, for example, `org-edit-src-code', which
+  ;; clones the `org-mode' buffer and changes its major-mode.
+  (when (derived-mode-p 'org-mode)
+    (setq tab-width 8)))
+
+(def-hook! +org-mode-enforce-tab-width-h ()
+  'org-mode-hook
+  "Add a local hook to control `tab-width' on `after-change-major-mode-hook'."
+  (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
+
 ;;;; Editing settings
 
 ;;;;; Tags
@@ -12395,4 +12439,8 @@ Setting this on a heading works.
 
 ** Issues
 
-*** TODO org-mode needs ~tab-width~ set to 8 otherwise constant errors
+*** DONE org-mode needs ~tab-width~ set to 8 otherwise constant errors
+CLOSED: [2024-03-20 Wed 22:43]
+- State "DONE"       from "TODO"       [2024-03-20 Wed 22:43]
+
+  <https://github.com/doomemacs/doomemacs/commit/2757a97a30e7c4a0c2a5d2de13f2214baf09b019>
