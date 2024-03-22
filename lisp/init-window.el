@@ -370,7 +370,9 @@
   "C-x <right>" #'enlarge-window-horizontally
 
   ;; TODO: repeat-mode
-  "C-x SPC" #'ceamx/swap-or-rotate-windows)
+  ;; FIXME: find another binding -- i prefer rectangle here
+  ;; "C-x SPC" #'ceamx/swap-or-rotate-windows
+  )
 
 (keys! resize-window-repeat-map
   "<up>" #'enlarge-window
