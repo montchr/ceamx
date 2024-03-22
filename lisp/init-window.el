@@ -262,6 +262,13 @@
   :config
   (setopt olivetti-style 'fancy))
 
+;;; =golden-ratio.el=: Automatically resize windows accordingly
+
+(package! golden-ratio
+  (setopt golden-ratio-auto-scale t)
+  (setopt golden-ratio-max-width 100)
+  (golden-ratio-mode))
+
 ;;; Interactively manage windows with `ace-window'
 
 ;; <https://github.com/abo-abo/ace-window>
@@ -270,14 +277,14 @@
   :after (avy)
 
   :commands (ace-window
-              ace-delete-window
-              ace-delete-other-windows
-              ace-swap-window)
+             ace-delete-window
+             ace-delete-other-windows
+             ace-swap-window)
 
   :autoload (aw-split-window-fair
-              aw-split-window-horz
-              aw-split-window-vert
-              aw-flip-window)
+             aw-split-window-horz
+             aw-split-window-vert
+             aw-flip-window)
 
   :config
 
