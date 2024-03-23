@@ -206,6 +206,11 @@
     "C-c <up>" #'org-priority-up
     "C-c <down>" #'org-priority-down
 
+    ;; FIXME: " key sequence starts with non-prefix key" -- that is, conflicts
+    ;; with `ceamx-toggle-map'... maybe if that was not a prefix command but
+    ;; instead was just a keymap...?
+    ;; "C-c C-t l" #'org-toggle-link-display
+
     ;; "C-c l" #'org-store-link
 
     ;; Swap these around, as I am more likely to adjust subtree than insert an
