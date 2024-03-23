@@ -4447,6 +4447,17 @@ If there is only one window and multiple frames, call
 (package! rainbow-mode)
 #+end_src
 
+**** =lentic=: Create decoupled views of the same content
+
+#+begin_src emacs-lisp
+(package! lentic
+  (global-lentic-mode))
+
+(with-eval-after-load 'lentic
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+#+end_src
+
+
 **** Global Keybindings
 
 #+begin_src emacs-lisp

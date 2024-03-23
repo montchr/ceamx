@@ -189,6 +189,17 @@
 (package! rainbow-mode)
 ;; =rainbow-mode=: Colorize color names and hexcodes in buffers:1 ends here
 
+;; =lentic=: Create decoupled views of the same content
+
+
+;; [[file:../config.org::*=lentic=: Create decoupled views of the same content][=lentic=: Create decoupled views of the same content:1]]
+(package! lentic
+  (global-lentic-mode))
+
+(with-eval-after-load 'lentic
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+;; =lentic=: Create decoupled views of the same content:1 ends here
+
 ;; Global Keybindings
 
 
