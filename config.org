@@ -9507,6 +9507,10 @@ lists."
 
   "C-S-t" #'transpose-sexps)
 
+(with-eval-after-load 'ielm
+  (defvar ielm-map)
+  (keymap-set ielm-map ceamx-keys-repl-toggle #'quit-window))
+
 ;;; Packages
 
 ;;;; `eros' :: <https://github.com/xiongtx/eros>
