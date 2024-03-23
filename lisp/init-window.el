@@ -374,7 +374,7 @@
   ;; "C-x SPC" #'ceamx/swap-or-rotate-windows
   )
 
-(keys! resize-window-repeat-map
+(define-keymap :keymap resize-window-repeat-map
   "<up>" #'enlarge-window
   "<down>" #'shrink-window
   "<left>" #'shrink-window-horizontally

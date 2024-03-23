@@ -47,12 +47,12 @@
 
 
 ;; [[file:../config.org::*EWW: Keybindings][EWW: Keybindings:1]]
-(keys! ceamx-launch-map
+(define-keymap :keymap ceamx-launch-map
   "b" #'eww
   "W" #'ceamx/eww-wiki)
 
 (after! 'eww
-  (keys! eww-mode-map
+  (define-keymap :keymap eww-mode-map
     "," '("scroll down" . scroll-up-command)
     "." '("scroll up" . scroll-down-command)
     "o" '("open link" . link-hint-open-link)))

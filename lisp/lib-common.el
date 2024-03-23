@@ -344,17 +344,6 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
   `(define-keymap :keymap (current-global-map)
      ,@keys))
 
-(defmacro keys! (keymap &rest definitions)
-  "Define KEY/DEFINITION pairs as key bindings in KEYMAP.
-Shorthand wrapper for `define-keymap', which see. KEYMAP will be
-provided as the `:keymap' keyword argument value. DEFINITIONS
-will be passed through to `define-keymap' directly.
-
-\(fn KEYMAP &rest [KEY DEFINITION])"
-  (declare (indent defun) (debug t))
-  `(define-keymap :keymap ,keymap
-     ,@definitions))
-
 (defmacro defmap! (symbol &rest defs)
   "Define a new keymap and prefix command SYMBOL composed of keybindings DEFS."
   (declare (indent defun) (debug t))

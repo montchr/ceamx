@@ -202,7 +202,7 @@
     "C-c a" #'org-agenda
     "C-c c" #'org-capture)
 
-  (keys! org-mode-map
+  (define-keymap :keymap org-mode-map
     "C-c <up>" #'org-priority-up
     "C-c <down>" #'org-priority-down
 

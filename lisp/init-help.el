@@ -63,7 +63,7 @@
 ;;       See `lib-help' for WIP.
 
 (package! devdocs
-  (keys! help-map
+  (define-keymap :keymap help-map
     ;; Replace default `apropos-documentation' binding.
     "d" #'devdocs-lookup
     "D" #'apropos-documentation)

@@ -81,7 +81,7 @@
     ;; lead to mass-commenting expressions. Default is non-nil.
     (setopt lispy-move-after-commenting t)
 
-    (keys! lispy-mode-map
+    (define-keymap :keymap lispy-mode-map
       "M-j" nil                         ; shadows custom binding
 
       ;; via <https://github.com/abo-abo/lispy/pull/619>

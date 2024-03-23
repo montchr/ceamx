@@ -130,7 +130,7 @@
 
   :config
 
-  (keys! git-timemachine-mode-map
+  (define-keymap :keymap git-timemachine-mode-map
     "M-p" #'git-timemachine-show-previous-revision
     "M-n" #'git-timemachine-show-next-revision
     "M-b" #'git-timemachine-blame

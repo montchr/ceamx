@@ -114,7 +114,7 @@
   ;; Provide messages reporting on matches changed in the context.
   (add-hook 'substitute-post-replace-functions #'substitute-report-operation)
 
-  (keys! ceamx-replace-map
+  (define-keymap :keymap ceamx-replace-map
     "b" #'substitute-target-in-buffer
     "d" #'substitute-target-in-defun
     "r" #'substitute-target-above-point
@@ -138,9 +138,9 @@
   ;; "read"   => default, avoid: backslash hell
   (setopt reb-re-syntax 'string))
 
-;;; Global Keybindings
+;;; Keybindings
 
-(keys! search-map "r" '("replace..." . ceamx-replace-map))
+(keymap-set search-map "r" '("replace..." . ceamx-replace-map))
 
 (provide 'init-search)
 ;;; init-search.el ends here

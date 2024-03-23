@@ -109,7 +109,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 (keymap-global-set "M-C" ceamx-code-map)
 
-(keys! ceamx-code-map
+(define-keymap :keymap ceamx-code-map
   "d" #'xref-find-definitions)
 
 (provide 'init-prog)

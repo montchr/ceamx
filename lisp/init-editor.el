@@ -105,7 +105,7 @@
 
 ;;;;; Set up a keymap for common usages of `insert-pair'
 
-(keys! ceamx-pairs-map
+(define-keymap :keymap ceamx-pairs-map
   "(" '("paren" . insert-pair)
   "[" '("square-b" . insert-pair)
   "{" '("curly-b" . insert-pair)

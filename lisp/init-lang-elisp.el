@@ -70,7 +70,7 @@
 
 (keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
 
-(keys! emacs-lisp-mode-map
+(define-keymap :keymap emacs-lisp-mode-map
   ceamx-keys-repl-toggle #'ielm
 
   "C-c C-f" nil                         ; `byte-compile-current-file'

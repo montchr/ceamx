@@ -123,7 +123,7 @@
   ;; explicitly, or simply call `set-fill-column' with M-x).
   "C-x f" #'find-file)
 
-(keys! ceamx-file-map
+(define-keymap :keymap ceamx-file-map
   ;; TODO
   ;; "y" #'+yank-this-file-name
 

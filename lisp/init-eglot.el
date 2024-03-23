@@ -46,7 +46,7 @@
 ;; Prevent frequent focus-stealing.
 (setopt eglot-auto-display-help-buffer nil)
 
-(keys! ceamx-code-map
+(define-keymap :keymap ceamx-code-map
   "a" '("action.." . eglot-code-actions)
   "r" '("rename..." . eglot-rename))
 

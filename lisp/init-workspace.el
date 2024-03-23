@@ -97,7 +97,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
   (keymap-global-set "C-x C-a" '("[ Activities ]"))
 
-  (keys! ceamx-activities-map
+  (define-keymap :keymap ceamx-activities-map
     "C-n" #'activities-new
     "C-a" #'activities-resume
     "C-s" #'activities-suspend

@@ -838,17 +838,6 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
   `(define-keymap :keymap (current-global-map)
      ,@keys))
 
-(defmacro keys! (keymap &rest definitions)
-  "Define KEY/DEFINITION pairs as key bindings in KEYMAP.
-Shorthand wrapper for `define-keymap', which see. KEYMAP will be
-provided as the `:keymap' keyword argument value. DEFINITIONS
-will be passed through to `define-keymap' directly.
-
-\(fn KEYMAP &rest [KEY DEFINITION])"
-  (declare (indent defun) (debug t))
-  `(define-keymap :keymap ,keymap
-     ,@definitions))
-
 (defmacro defmap! (symbol &rest defs)
   "Define a new keymap and prefix command SYMBOL composed of keybindings DEFS."
   (declare (indent defun) (debug t))
@@ -3794,7 +3783,7 @@ will be used as default."
   ;; "C-x SPC" #'ceamx/swap-or-rotate-windows
   )
 
-(keys! resize-window-repeat-map
+(define-keymap :keymap resize-window-repeat-map
   "<up>" #'enlarge-window
   "<down>" #'shrink-window
   "<left>" #'shrink-window-horizontally
@@ -4641,7 +4630,7 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 
 ;;;;; Set up a keymap for common usages of `insert-pair'
 
-(keys! ceamx-pairs-map
+(define-keymap :keymap ceamx-pairs-map
   "(" '("paren" . insert-pair)
   "[" '("square-b" . insert-pair)
   "{" '("curly-b" . insert-pair)
@@ -5159,7 +5148,7 @@ two inserted lines are the same."
   ;; explicitly, or simply call `set-fill-column' with M-x).
   "C-x f" #'find-file)
 
-(keys! ceamx-file-map
+(define-keymap :keymap ceamx-file-map
   ;; TODO
   ;; "y" #'+yank-this-file-name
 
@@ -5526,7 +5515,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
   (keymap-global-set "C-x C-a" '("[ Activities ]"))
 
-  (keys! ceamx-activities-map
+  (define-keymap :keymap ceamx-activities-map
     "C-n" #'activities-new
     "C-a" #'activities-resume
     "C-s" #'activities-suspend
@@ -5664,7 +5653,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 ;;       See `lib-help' for WIP.
 
 (package! devdocs
-  (keys! help-map
+  (define-keymap :keymap help-map
     ;; Replace default `apropos-documentation' binding.
     "d" #'devdocs-lookup
     "D" #'apropos-documentation)
@@ -6213,7 +6202,7 @@ DOC is as in `devdocs-install'."
   ;; Provide messages reporting on matches changed in the context.
   (add-hook 'substitute-post-replace-functions #'substitute-report-operation)
 
-  (keys! ceamx-replace-map
+  (define-keymap :keymap ceamx-replace-map
     "b" #'substitute-target-in-buffer
     "d" #'substitute-target-in-defun
     "r" #'substitute-target-above-point
@@ -6237,9 +6226,9 @@ DOC is as in `devdocs-install'."
   ;; "read"   => default, avoid: backslash hell
   (setopt reb-re-syntax 'string))
 
-;;; Global Keybindings
+;;; Keybindings
 
-(keys! search-map "r" '("replace..." . ceamx-replace-map))
+(keymap-set search-map "r" '("replace..." . ceamx-replace-map))
 
 (provide 'init-search)
 ;;; init-search.el ends here
@@ -8300,7 +8289,7 @@ autoloaded command e.g. =embark-act=, there will be a multi-second delay.
 
   :config
 
-  (keys! git-timemachine-mode-map
+  (define-keymap :keymap git-timemachine-mode-map
     "M-p" #'git-timemachine-show-previous-revision
     "M-n" #'git-timemachine-show-next-revision
     "M-b" #'git-timemachine-blame
@@ -8910,7 +8899,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 (keymap-global-set "M-C" ceamx-code-map)
 
-(keys! ceamx-code-map
+(define-keymap :keymap ceamx-code-map
   "d" #'xref-find-definitions)
 
 (provide 'init-prog)
@@ -9145,7 +9134,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     ;; lead to mass-commenting expressions. Default is non-nil.
     (setopt lispy-move-after-commenting t)
 
-    (keys! lispy-mode-map
+    (define-keymap :keymap lispy-mode-map
       "M-j" nil                         ; shadows custom binding
 
       ;; via <https://github.com/abo-abo/lispy/pull/619>
@@ -9497,7 +9486,7 @@ lists."
 
 (keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
 
-(keys! emacs-lisp-mode-map
+(define-keymap :keymap emacs-lisp-mode-map
   ceamx-keys-repl-toggle #'ielm
 
   "C-c C-f" nil                         ; `byte-compile-current-file'
@@ -9754,7 +9743,7 @@ keywords are supported:
 ;; Prevent frequent focus-stealing.
 (setopt eglot-auto-display-help-buffer nil)
 
-(keys! ceamx-code-map
+(define-keymap :keymap ceamx-code-map
   "a" '("action.." . eglot-code-actions)
   "r" '("rename..." . eglot-rename))
 
@@ -11108,7 +11097,7 @@ Else create a new file."
     "C-c a" #'org-agenda
     "C-c c" #'org-capture)
 
-  (keys! org-mode-map
+  (define-keymap :keymap org-mode-map
     "C-c <up>" #'org-priority-up
     "C-c <down>" #'org-priority-down
 
@@ -11781,12 +11770,12 @@ without JavaScript, it does not make sense to use EWW by default.
 *** EWW: Keybindings
 
 #+begin_src emacs-lisp :tangle lisp/init-eww.el
-(keys! ceamx-launch-map
+(define-keymap :keymap ceamx-launch-map
   "b" #'eww
   "W" #'ceamx/eww-wiki)
 
 (after! 'eww
-  (keys! eww-mode-map
+  (define-keymap :keymap eww-mode-map
     "," '("scroll down" . scroll-up-command)
     "." '("scroll up" . scroll-down-command)
     "o" '("open link" . link-hint-open-link)))
