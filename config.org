@@ -188,6 +188,7 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 
 **** Directories and well-known-files
 
+
 ***** Add directories to load path
 
 #+begin_src emacs-lisp
@@ -549,6 +550,11 @@ file. It is loaded early during initialization.
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ;;; Commentary:
+#+end_src
+
+** Commentary
+
+#+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
 
 ;; General, common, and generic library functions.
 
@@ -794,6 +800,11 @@ without needing to declare autoloads for `elpaca' in every file."
 
 *** Input and Keybindings
 
+**** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
+
+Usages of this function should be replaced with the result of evaluating
+~string-to-char~.
+
 #+begin_src emacs-lisp :tangle lisp/lib-common.el
 (defun ceamx-normalize-char (char)
   "Normalize CHAR to a valid character matching `characterp'.
@@ -807,7 +818,8 @@ more info.
 
 This function is impure because the interpretation of CHAR can
 vary based on... various reasons?"
-  (declare (side-effect-free t))
+  (declare (side-effect-free t)
+           (obsolete 'string-to-char "2024-03-23"))
   (cl-assert (char-or-string-p char) t)
   (if (stringp char)
       (cond ((length= char 0)
@@ -817,6 +829,7 @@ vary based on... various reasons?"
             (t
              (string-to-char char)))
     char))
+#+end_src
 
 (defmacro global-keys! (&rest keys)
   "Define keybindings KEYS in the global keymap.

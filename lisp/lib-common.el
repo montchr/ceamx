@@ -306,10 +306,13 @@ without needing to declare autoloads for `elpaca' in every file."
      (autoload 'elpaca "elpaca" nil nil t)
      (elpaca ,order ,@body)))
 
-;; Input and Keybindings
+;; ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
+
+;; Usages of this function should be replaced with the result of evaluating
+;; ~string-to-char~.
 
 
-;; [[file:../config.org::*Input and Keybindings][Input and Keybindings:1]]
+;; [[file:../config.org::*~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~][~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~:1]]
 (defun ceamx-normalize-char (char)
   "Normalize CHAR to a valid character matching `characterp'.
 CHAR may either be a valid character or a string convertable to a
@@ -322,7 +325,8 @@ more info.
 
 This function is impure because the interpretation of CHAR can
 vary based on... various reasons?"
-  (declare (side-effect-free t))
+  (declare (side-effect-free t)
+           (obsolete 'string-to-char "2024-03-23"))
   (cl-assert (char-or-string-p char) t)
   (if (stringp char)
       (cond ((length= char 0)
