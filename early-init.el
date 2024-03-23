@@ -85,25 +85,6 @@
 (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
 ;; Prevent garbage-collection during init:1 ends here
 
-;; Simplify filename pattern-matching during init
-
-;; - <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
-;; - <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
-
-
-;; [[file:config.org::*Simplify filename pattern-matching during init][Simplify filename pattern-matching during init:1]]
-(defvar ceamx-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
-
-(defun ceamx-restore-file-name-handler-alist-h ()
-  "Restore the original value of the `file-name-handler-alist' variable.
-Intended for use as a callback on `ceamx-after-init-hook'."
-  (setq file-name-handler-alist ceamx-file-name-handler-alist)
-  (makunbound 'ceamx-file-name-handler-alist))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
-;; Simplify filename pattern-matching during init:1 ends here
-
 ;; Add directories to load path
 
 

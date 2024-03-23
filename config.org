@@ -137,12 +137,42 @@ See also:
 #+end_src
 
 
-***** Simplify filename pattern-matching during init
+***** DISABLED Simplify filename pattern-matching during init
+
+- Note taken on [2024-03-23 Sat 03:24] \\
+  Quick followup: I would not be surprised if this had something to do with adding
+  ~ceamx-restore-file-name-handler-alist-h~ on ~ceamx-after-init-hook~, which is
+  equivalent to ~elpaca-after-init-hook~.
+- Note taken on [2024-03-23 Sat 03:01] \\
+  This snippet appears to cause Emacs to lose track of its own source files in most sessions.
+
+  ~describe-function~ and ~helpful-function~ report symbols "without a source
+  file".  I did not have much to go on until I became aware of ~find-function~.
+  After invoking the latter on a function whose source could not be located, I
+  noticed a clue: ~find-function~ somehow knew about the source file with a =.el=
+  extension.  I investigated the Emacs =lisp/= directory and saw that there are no
+  =.el= files -- only =.elc= and =.el.gz=.  The =.elc= files are unreadable, but
+  Emacs is still able to read the compressed =gz= archives.  I still do not know
+  exactly why it forgot.
+
+  The issue has not been consistent, which likely indicates a race condition.  For
+  a while, I assumed the issue occurred in consecutive sessions after calling
+  ~restart-emacs~, but that was not the case.
+
+  Disabling this hack is the only consistent way I found to help Emacs find
+  itself.  Re-enabling it caused the issue to recur.  In the end, after
+  disabling, I see absolutely no difference in startup performance.
+  Optimization-by-copypasta strikes again.
+
+  This has been a very frustrating regression in many/most of my Emacs sessions.
+  I rely a lot on being able to read Emacs Lisp source code to understand how
+  Emacs works -- that is how I learn.  Without being able to view source, I am
+  left only with a lack of clarity.
 
 - <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
 - <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defvar ceamx-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
