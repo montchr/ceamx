@@ -71,9 +71,7 @@
 ;; this feels strange at the top-level.
 (f-mkdir-full-path org-directory)
 
-(defvar ceamx-agenda-files (f-glob "*.org" ceamx-agenda-dir))
-
-(setopt org-agenda-files ceamx-agenda-files)
+(setopt org-agenda-files ceamx-default-agenda-files)
 
 ;;; Configure general Org-Mode settings
 
@@ -267,7 +265,7 @@ Intended for use as a local hook function on
                    ;; TODO: make sure this icon spec is up to date with 2024
                    :icon ("checklist" :set "octicon" :color "green")
                    ;; TODO: should this be evaled/expanded?
-                   :file ceamx-org-capture-default-file
+                   :file ceamx-default-capture-file
                    :prepend t
                    :headline "Inbox"
                    :type entry

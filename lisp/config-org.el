@@ -26,10 +26,13 @@
 
 (require 'config-notes)
 
-(defvar ceamx-org-capture-default-file
-  (expand-file-name
-    (concat (file-name-as-directory ceamx-agenda-dir) "inbox.org"))
-  "Path to default inbox file for new `org-capture' entries.")
+(defvar ceamx-default-agenda-files
+  (f-glob "*.org" ceamx-agenda-dir)
+  "List of absolute paths of all files that should be included in the agenda.")
+
+(defvar ceamx-default-capture-file
+  (expand-file-name "inbox.org" ceamx-agenda-dir)
+  "Absolute path to default inbox file for new G2D waiting to be processed.")
 
 (provide 'config-org)
 ;;; config-org.el ends here
