@@ -1,10 +1,3 @@
-;; ~config-keys.el~: Variables
-
-
-;; [[file:../config.org::*~config-keys.el~: Variables][~config-keys.el~: Variables:1]]
-(defconst ceamx-keys-repl-toggle "C-:")
-;; ~config-keys.el~: Variables:1 ends here
-
 ;;; config-keys.el --- Key-related variables -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -30,6 +23,13 @@
 ;;; Commentary:
 
 ;;; Code:
+
+;; Code
+
+
+;; [[file:../config.org::*Code][Code:1]]
+(defconst ceamx-keys-repl-toggle "C-:")
+;; Code:1 ends here
 
 (provide 'config-keys)
 ;;; config-keys.el ends here

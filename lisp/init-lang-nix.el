@@ -94,17 +94,23 @@
 
 ;;; Keybindings
 
-;;;; Bind some common Nix snippets to mode maps
+;; These are too annoying to maintain for both `nix-mode' and `nix-ts-mode'
+;; because `nix-ts-mode' does not derive from `nix-mode' and I'm not using it
+;; right now anyway.  So mode-specific keybindings stay in `nix-mode' only.
 
 (autoload-macro! 'tempel-key "tempel")
 
-(def-hook! +nix-mode-tempel-bind-snippets-h ()
-  '(nix-mode-hook nix-ts-mode-hook)
-  "Bind keys for mode-specific Tempel snippets."
-  ;; FIXME: source file?
-  (require 'derived)
-  (let ((keymap (derived-mode-map-name major-mode)))
-    (tempel-key "C-c i t a" modargs keymap)))
+(require 'config-keys)
+
+(with-eval-after-load 'nix-mode
+  (defvar nix-mode-map)
+  (defvar nix-repl-mode-map)
+  (declare-function nix-repl "nix-repl")
+
+  (keymap-set nix-mode-map ceamx-keys-repl-toggle #'nix-repl)
+  (keymap-set nix-repl-mode-map ceamx-keys-repl-toggle #'quit-window)
+
+  (tempel-key "C-c i t a" modargs nix-mode-map))
 
 (provide 'init-lang-nix)
 ;;; init-lang-nix.el ends here

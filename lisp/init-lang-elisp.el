@@ -24,6 +24,7 @@
 
 ;;; Requirements
 
+(require 'config-keys)
 (require 'config-lisp)
 
 (require 'lib-common)
@@ -70,6 +71,8 @@
 (keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
 
 (keys! emacs-lisp-mode-map
+  ceamx-keys-repl-toggle #'ielm
+
   "C-c C-f" nil                         ; `byte-compile-current-file'
   "C-c C-b" nil                         ; `elisp-byte-compile-buffer'
 
