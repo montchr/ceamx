@@ -98,8 +98,6 @@
 ;; because `nix-ts-mode' does not derive from `nix-mode' and I'm not using it
 ;; right now anyway.  So mode-specific keybindings stay in `nix-mode' only.
 
-(autoload-macro! 'tempel-key "tempel")
-
 (require 'config-keys)
 
 (with-eval-after-load 'nix-mode
@@ -110,7 +108,10 @@
   (keymap-set nix-mode-map ceamx-keys-repl-toggle #'nix-repl)
   (keymap-set nix-repl-mode-map ceamx-keys-repl-toggle #'quit-window)
 
-  (tempel-key "C-c i t a" modargs nix-mode-map))
+  ;; FIXME: this is dumb, but the simplest way i found to avoid yelling without use-package
+  (with-eval-after-load 'tempel
+    ;; (eval-when-compile (require 'tempel))
+    (tempel-key "C-c i t a" modargs nix-mode-map)))
 
 (provide 'init-lang-nix)
 ;;; init-lang-nix.el ends here
