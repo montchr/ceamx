@@ -375,7 +375,6 @@
 
 ;;;; Completion-At-Point
 
-(require 'config-completion)
 (require 'init-completion)
 
 ;;;; Help
