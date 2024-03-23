@@ -80,32 +80,6 @@
 
 (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
-;;; Enforce the correct `tab-width' to prevent errors
-
-;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
-
-(defun +org-mode--local-set-tab-width-h ()
-  "Set the `tab-width' in `org-mode' buffers to 8 columns.
-Any `tab-width' value other than 8 will result in an error.
-
-This should be set as late as possible, after all other
-`org-mode-hook' functions added by packages and
-configurations.  Hence the use of `after-change-major-mode-hook',
-which runs at the very end of major-mode activation.
-
-Intended for use as a local hook function on
-`after-change-major-mode-hook' as added within `org-mode-hook'."
-
-  ;; This check is necessary to handle, for example, `org-edit-src-code', which
-  ;; clones the `org-mode' buffer and changes its major-mode.
-  (when (derived-mode-p 'org-mode)
-    (setq tab-width 8)))
-
-(def-hook! +org-mode-enforce-tab-width-h ()
-  'org-mode-hook
-  "Add a local hook to control `tab-width' on `after-change-major-mode-hook'."
-  (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
-
 ;;;; Editing settings
 
 ;;;;; Tags
@@ -235,6 +209,32 @@ Intended for use as a local hook function on
   ;; FIXME: Does not seem to work in `emacs-lisp-mode' Org Src buffers
   ;; (keymap-set org-src-mode-map "M-," #'org-edit-src-exit)
   )
+
+;;; Enforce the correct `tab-width' to prevent errors
+
+;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
+
+(defun +org-mode--local-set-tab-width-h ()
+  "Set the `tab-width' in `org-mode' buffers to 8 columns.
+Any `tab-width' value other than 8 will result in an error.
+
+This should be set as late as possible, after all other
+`org-mode-hook' functions added by packages and
+configurations.  Hence the use of `after-change-major-mode-hook',
+which runs at the very end of major-mode activation.
+
+Intended for use as a local hook function on
+`after-change-major-mode-hook' as added within `org-mode-hook'."
+
+  ;; This check is necessary to handle, for example, `org-edit-src-code', which
+  ;; clones the `org-mode' buffer and changes its major-mode.
+  (when (derived-mode-p 'org-mode)
+    (setq tab-width 8)))
+
+(def-hook! +org-mode-enforce-tab-width-h ()
+  'org-mode-hook
+  "Add a local hook to control `tab-width' on `after-change-major-mode-hook'."
+  (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
 
 ;;; Configurate `org-capture' templates with the help of `doct'
 
