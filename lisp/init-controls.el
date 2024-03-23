@@ -42,10 +42,9 @@
 (keymap-global-set "C-c C-t" '("[ Toggle ]" . ceamx-toggle-map))
 (keymap-global-set "C-c t" '("[ Toggle ]" . ceamx-toggle-map))
 
-(defmap! ceamx-toggle-map
+(define-keymap :keymap ceamx-toggle-map
   "l" #'display-line-numbers-mode
   "w" '("side windows" . window-toggle-side-windows))
-
 
 (provide 'init-controls)
 ;;; init-controls.el ends here

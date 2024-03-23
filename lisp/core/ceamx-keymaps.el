@@ -27,13 +27,14 @@
 
 (require 'lib-common)
 
-(defmap! ceamx-code-map)
-(defmap! ceamx-file-map)
-(defmap! ceamx-insert-map)
-(defmap! ceamx-launch-map)
-(defmap! ceamx-pairs-map)
-(defmap! ceamx-replace-map)
-(defmap! ceamx-toggle-map)
+(defvar-keymap ceamx-activities-map)
+(defvar-keymap ceamx-code-map)
+(defvar-keymap ceamx-file-map)
+(defvar-keymap ceamx-insert-map)
+(defvar-keymap ceamx-launch-map)
+(defvar-keymap ceamx-pairs-map)
+(defvar-keymap ceamx-replace-map)
+(defvar-keymap ceamx-toggle-map)
 
 (provide 'ceamx-keymaps)
 ;;; ceamx-keymaps.el ends here

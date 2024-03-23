@@ -344,17 +344,6 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
   `(define-keymap :keymap (current-global-map)
      ,@keys))
 
-(defmacro defmap! (symbol &rest defs)
-  "Define a new keymap and prefix command SYMBOL composed of keybindings DEFS."
-  (declare (indent defun) (debug t))
-  `(progn
-     (defvar ,symbol)
-     (unless (keymapp ',symbol)
-      (define-prefix-command ',symbol ',symbol))
-     (define-keymap
-       :keymap ,symbol
-       ,@defs)))
-
 (defmacro leader-key! (key def)
   "Bind DEF to KEY in the leader map.
 If `meow-leader-define-key' is available, then that function will

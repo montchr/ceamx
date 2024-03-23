@@ -464,13 +464,14 @@ Emacs version to prevent bytecode incompatibility.")
 
 (require 'lib-common)
 
-(defmap! ceamx-code-map)
-(defmap! ceamx-file-map)
-(defmap! ceamx-insert-map)
-(defmap! ceamx-launch-map)
-(defmap! ceamx-pairs-map)
-(defmap! ceamx-replace-map)
-(defmap! ceamx-toggle-map)
+(defvar-keymap ceamx-activities-map)
+(defvar-keymap ceamx-code-map)
+(defvar-keymap ceamx-file-map)
+(defvar-keymap ceamx-insert-map)
+(defvar-keymap ceamx-launch-map)
+(defvar-keymap ceamx-pairs-map)
+(defvar-keymap ceamx-replace-map)
+(defvar-keymap ceamx-toggle-map)
 
 (provide 'ceamx-keymaps)
 ;;; ceamx-keymaps.el ends here
@@ -837,17 +838,6 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
   (declare (indent defun) (debug t))
   `(define-keymap :keymap (current-global-map)
      ,@keys))
-
-(defmacro defmap! (symbol &rest defs)
-  "Define a new keymap and prefix command SYMBOL composed of keybindings DEFS."
-  (declare (indent defun) (debug t))
-  `(progn
-     (defvar ,symbol)
-     (unless (keymapp ',symbol)
-      (define-prefix-command ',symbol ',symbol))
-     (define-keymap
-       :keymap ,symbol
-       ,@defs)))
 
 (defmacro leader-key! (key def)
   "Bind DEF to KEY in the leader map.
@@ -5502,8 +5492,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
               activities-kill activities-switch activities-revert activities-list)
 
   :preface
-  (defmap! ceamx-activities-map)
-    (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
 
   :init
   (activities-mode)
@@ -8636,7 +8625,7 @@ lel
   ;; The default includes `newline', which would happen too frequently.
   (setopt flycheck-check-syntax-automatically '(save idle-change mode-enabled))
 
-  (defmap! ceamx-toggle-map "f" #'flycheck-mode)
+  (keymap-set ceamx-toggle-map "f" #'flycheck-mode)
 
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode)
 
@@ -11385,10 +11374,9 @@ CLOSED: [2024-03-18 Mon 23:52]
 (keymap-global-set "C-c C-t" '("[ Toggle ]" . ceamx-toggle-map))
 (keymap-global-set "C-c t" '("[ Toggle ]" . ceamx-toggle-map))
 
-(defmap! ceamx-toggle-map
+(define-keymap :keymap ceamx-toggle-map
   "l" #'display-line-numbers-mode
   "w" '("side windows" . window-toggle-side-windows))
-
 
 (provide 'init-controls)
 ;;; init-controls.el ends here
