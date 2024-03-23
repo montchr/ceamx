@@ -30,6 +30,9 @@
 
 ;;; Configuration
 
+(defvar ceamx-font-headings-style-alist)
+
+
 (use-package ef-themes
   :ensure t
   :demand t
@@ -42,11 +45,15 @@
   (setopt ef-themes-to-toggle (list ceamx-theme-default-dark ceamx-theme-default-light))
 
   (setopt ef-themes-headings
-    '((0 variable-pitch medium 1.7)
-      (1 variable-pitch 1.2)
-      (2 variable-pitch 1.1)
-      (3 variable-pitch medium 1.1)
-      (t variable-pitch 1.0)))
+          '((0 . (variable-pitch 1.4))
+            (1 . (variable-pitch 1.3))
+            (2 . (variable-pitch semibold 1.25))
+            (3 . (variable-pitch medium 1.2))
+            (4 . (variable-pitch regular 1.15))
+            (5 . (variable-pitch semilight 1.05))
+            (agenda-date . (semilight 1.5))
+            (agenda-structure . (variable-pitch light 1.4))
+            (t . (variable-pitch 0.9))))
 
   (setopt ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil)
