@@ -92,5 +92,19 @@
   "Install `devdocs' documents for the Nix language."
   (+devdocs-maybe-install "nix"))
 
+;;; Keybindings
+
+;;;; Bind some common Nix snippets to mode maps
+
+(autoload-macro! 'tempel-key "tempel")
+
+(def-hook! +nix-mode-tempel-bind-snippets-h ()
+  '(nix-mode-hook nix-ts-mode-hook)
+  "Bind keys for mode-specific Tempel snippets."
+  ;; FIXME: source file?
+  (require 'derived)
+  (let ((keymap (derived-mode-map-name major-mode)))
+    (tempel-key "C-c i t a" modargs keymap)))
+
 (provide 'init-lang-nix)
 ;;; init-lang-nix.el ends here
