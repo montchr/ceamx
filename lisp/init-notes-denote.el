@@ -130,7 +130,7 @@ Else create a new file."
 ;;
 
 ;; <https://github.com/mclear-tools/consult-notes#denote>
-(after! [denote consult-notes]
+(after! (denote consult-notes)
   (consult-notes-denote-mode)
   ;; Search only for text files in Denote dir.
   (setopt consult-notes-denote-files-function

@@ -42,7 +42,7 @@
   :config
   (keymap-set minibuffer-local-map "M-A" #'marginalia-cycle)
 
-  (after! 'projectile
+  (after! projectile
     (add-to-list 'marginalia-command-categories '(projectile-find-file . file))))
 
 (provide 'init-selection-marginalia)

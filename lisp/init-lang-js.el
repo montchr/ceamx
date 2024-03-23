@@ -31,7 +31,7 @@
 (defun ceamx-init-javascript-modes ()
   (setopt js-indent-level 2)
 
-  (after! [lsp-mode]
+  (after! lsp-mode
     (lsp-deferred)
     (lsp-lens-mode)
     (dolist (hook '(lsp-format-buffer

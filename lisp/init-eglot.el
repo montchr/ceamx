@@ -50,7 +50,7 @@
   "a" '("action.." . eglot-code-actions)
   "r" '("rename..." . eglot-rename))
 
-(after! 'eglot
+(after! eglot
   (defvar eglot-server-programs)
 
   (def-advice! +eglot--ensure-available-mode (fn)
@@ -64,7 +64,7 @@
       (funcall fn)))
 
   ;; Register eglot help buffers as popup windows.
-  (after! [popper]
+  (after! popper
     (defvar popper-reference-buffers)
     (add-to-list 'popper-reference-buffers "^\\*eglot-help")))
 

@@ -472,7 +472,7 @@
 (when (and +gui-p +sys-mac-p)
   (def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
     "Restart the yabai service after init."
-    (after! [exec-path-from-shell]
+    (after! exec-path-from-shell
       (async-shell-command "yabai --restart-service"))))
 
 ;; Optionally load custom file after all packages have loaded.

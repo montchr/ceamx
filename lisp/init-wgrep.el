@@ -40,19 +40,19 @@
 
   (keymap-set minibuffer-local-map "C-c C-e" #'+vertico/embark-export-write)
 
-  (after! 'dired
+  (after! dired
     (keymap-set dired-mode-map "C-c C-e" #'wgrep-change-to-wgrep-mode))
-  (after! 'grep
+  (after! grep
     (keymap-set grep-mode-map "W" #'wgrep-change-to-wgrep-mode))
 
   :config
   ;; FIXME: `wgrep-mode-map' does not exist -- maybe we want `grep-mode-map'?
-  ;; (after! 'evil
+  ;; (after! evil
   ;;   (evil-define-key '(normal motion) 'wgrep-mode-map "q" #'wgrep-exit))
 
   ;; FIXME: wrong num args
   ;; the intention is to close the wgrep popup after abort/finish
-  ;; (after! 'popper
+  ;; (after! popper
   ;;   (advice-add #'wgrep-abort-changes :after #'popper-toggle)
   ;;   (advice-add #'wgrep-finish-edit :after #'popper-toggle))
   )

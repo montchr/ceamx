@@ -41,7 +41,7 @@
 
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
 
-(after! 'flycheck
+(after! flycheck
   (declare-function flycheck-mode "flycheck")
   (add-hook 'ceamx-lisp-init-hook #'flycheck-mode))
 
@@ -65,7 +65,7 @@
 (package! lispy
   (add-hook 'ceamx-lisp-init-hook #'lispy-mode)
 
-  (after! 'lispy
+  (after! lispy
     ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
     ;; in favor of just moving past the closing quote as I would expect.
     ;;
@@ -87,15 +87,15 @@
       ;; via <https://github.com/abo-abo/lispy/pull/619>
       "`" #'self-insert-command)
 
-    (after! 'outli
+    (after! outli
       ;; `outli-mode' overrides `lispy-mode' outline functionality, so it must
       ;; be activated afterwards.
       (add-hook 'ceamx-lisp-init-hook #'outli-mode))
 
-    (after! 'macrostep
+    (after! macrostep
       (push 'macrostep lispy-compat))
 
-    (after! 'popper
+    (after! popper
       (push "\\*lispy-message\\*" popper-reference-buffers))))
 
 (provide 'init-lisp)

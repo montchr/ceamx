@@ -115,35 +115,60 @@ Unlike `ignore', produce no side effects."
 
 ;; ~after!~: Evaluate an expression after the given feature(s) have loaded
 
-;; - source :: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
+;; - Note taken on [2024-03-23 Sat 15:11] \\
+;;   Replaced the existing version with Doom's version for its logical operator
+;;   support. Were it not for the logical operators, ~after!~ would be nothing
+;;   other than a fancy wrapper around ~with-eval-after-load~.
 
-;; - [ ] Doom's implementation is more flexible and handles undefined symbols, but
-;;   does not support quoted FEATURE. Some new macro supporting quoted FEATURE and
-;;   the features of Doom's version would probably be ideal.
+;; - source :: <https://github.com/doomemacs/doomemacs/blob/bbadabda511027e515f02ccd7b70291ed03d8945/lisp/doom-lib.el#L628C1-L673C1>
 
 
 ;; [[file:../config.org::*~after!~: Evaluate an expression after the given feature(s) have loaded][~after!~: Evaluate an expression after the given feature(s) have loaded:1]]
-(defmacro after! (feature &rest body)
-  "Execute BODY after FEATURE has been loaded.
+(require 'cl)
 
-FEATURE may be any one of:
-    \\='evil            => (with-eval-after-load \\='evil BODY)
-    \"evil-autoloads\" => (with-eval-after-load \"evil-autoloads\" BODY)
-    [evil cider]     => (with-eval-after-load \\='evil
-                          (with-eval-after-load \\='cider
-                            BODY))"
-  (declare (indent 1))
-  (cond
-   ((vectorp feature)
-    (let ((prog (macroexp-progn body)))
-      (cl-loop for f across feature
-               do
-               (progn
-                 (setq prog (append `(',f) `(,prog)))
-                 (setq prog (append '(with-eval-after-load) prog))))
-      prog))
-   (t
-    `(with-eval-after-load ,feature ,@body))))
+(defmacro after! (package &rest body)
+  "Evaluate BODY after PACKAGE have loaded.
+
+PACKAGE is a symbol (or list of them) referring to Emacs
+features (aka packages).  PACKAGE may use :or/:any and :and/:all
+operators.  The precise format is:
+
+- An unquoted package symbol (the name of a package)
+    (after! package-a BODY...)
+- An unquoted, nested list of compound package lists, using any combination of
+  :or/:any and :and/:all
+    (after! (:or package-a package-b ...)  BODY...)
+    (after! (:and package-a package-b ...) BODY...)
+    (after! (:and package-a (:or package-b package-c) ...) BODY...)
+- An unquoted list of package symbols (i.e. BODY is evaluated once both magit
+  and git-gutter have loaded)
+    (after! (magit git-gutter) BODY...)
+  If :or/:any/:and/:all are omitted, :and/:all are implied.
+
+This emulates `eval-after-load' with a few key differences:
+
+1. No-ops for package that are disabled by the user (via `package!') or not
+   installed yet.
+2. Supports compound package statements (see :or/:any and :and/:all above).
+
+Since the contents of these blocks will never by byte-compiled, avoid putting
+things you want byte-compiled in them! Like function/macro definitions."
+  (declare (indent defun) (debug t))
+  (if (symbolp package)
+      (list (if (or (not (bound-and-true-p byte-compile-current-file))
+                    (require package nil 'noerror))
+                #'progn
+              #'with-no-warnings)
+            `(with-eval-after-load ',package ,@body))
+    (let ((p (car package)))
+      (cond ((memq p '(:or :any))
+             (macroexp-progn
+              (cl-loop for next in (cdr package)
+                       collect `(after! ,next ,@body))))
+            ((memq p '(:and :all))
+             (dolist (next (reverse (cdr package)) (car body))
+               (setq body `((after! ,next ,@body)))))
+            (`(after! (:and ,@package) ,@body))))))
 ;; ~after!~: Evaluate an expression after the given feature(s) have loaded:1 ends here
 
 ;; ~defer!~: Evaluate an expression after Emacs is idle for some time

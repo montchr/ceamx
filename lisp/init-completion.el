@@ -53,7 +53,7 @@
 ;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
 (keymap-global-set "C-S-SPC" #'completion-at-point)
 
-(after! [evil]
+(after! evil
   ;; Since we now know `evil' is loaded, it's reasonable to overwrite the mark binding.
   (keymap-set evil-insert-state-map "C-SPC" #'completion-at-point)
   ;; But we don't want to lose mark capabilities entirely.

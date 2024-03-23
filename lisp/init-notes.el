@@ -41,7 +41,7 @@
               consult-notes-search-in-all-notes))
 
 ;; via <https://github.com/mclear-tools/consult-notes#embark-support>
-;; (after! [consult-notes embark]
+;; (after! (consult-notes embark)
 ;; 	(defun ceamx/consult-notes-embark-action (cand)
 ;;     "Do something with CAND."
 ;;     (interactive "fNote: ")

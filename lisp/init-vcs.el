@@ -103,11 +103,11 @@
   :init
   (global-git-commit-mode 1)
 
-  (after! 'evil
+  (after! evil
     (declare-function evil-insert-state "evil")
     (add-hook 'git-commit-mode-hook #'evil-insert-state))
 
-  (after! 'meow
+  (after! meow
     (declare-function meow-insert-mode "meow")
     (add-hook 'git-commit-mode-hook #'meow-insert-mode)))
 

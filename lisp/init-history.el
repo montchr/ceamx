@@ -92,12 +92,12 @@
 
   ;; Persist `dogears-list' between Emacs sessions.
   ;; via <https://github.com/alphapapa/dogears.el/issues/4>
-  (after! 'savehist
+  (after! savehist
     (when (boundp 'savehist-additional-variables)
       (add-to-list 'savehist-additional-variables #'dogears-list))))
 
 ;; TODO: provide a little more context in transient (label for dogears, links maybe...)
-(after! [transient dogears]
+(after! (transient dogears)
   (transient-define-prefix ceamx/dogears-dispatch ()
     "Transient menu for `dogears' history navigation commands."
     [["Navigate"
@@ -167,7 +167,7 @@
 (package! vundo
   (keymap-global-set "C-x u" #'vundo))
 
-(after! 'vundo
+(after! vundo
   (defvar vundo-unicode-symbols)
   (setopt vundo-glyph-alist vundo-unicode-symbols))
 

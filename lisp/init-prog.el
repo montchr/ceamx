@@ -75,7 +75,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
   ;; FIXME: make conditional if ripgrep available
   (setopt dumb-jump-force-searcher 'rg))
 
-(after! [hydra dumb-jump]
+(after! (hydra dumb-jump)
   ;; TODO: needs binding
   ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
   (defhydra dumb-jump-hydra (:color blue :columns 3)

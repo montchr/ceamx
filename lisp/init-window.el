@@ -237,7 +237,7 @@
         (ceamx-window-display-popup)
         (window-height . ,popper-window-height))))
 
-  (after! [projectile]
+  (after! projectile
     (setopt popper-group-function #'popper-group-by-projectile)))
 
 ;;; Restore previous window configurations with `winner-mode' [builtin]

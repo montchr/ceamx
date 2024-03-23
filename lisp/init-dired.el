@@ -61,7 +61,7 @@
               dirvish-side-follow-mode)
 
   :init
-  (after! 'dired
+  (after! dired
     (dirvish-override-dired-mode))
 
   ;; Omit "uninteresting" files.

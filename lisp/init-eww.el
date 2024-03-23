@@ -51,7 +51,7 @@
   "b" #'eww
   "W" #'ceamx/eww-wiki)
 
-(after! 'eww
+(after! eww
   (define-keymap :keymap eww-mode-map
     "," '("scroll down" . scroll-up-command)
     "." '("scroll up" . scroll-down-command)

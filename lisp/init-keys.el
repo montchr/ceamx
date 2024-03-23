@@ -89,7 +89,7 @@
 
 ;;; Expand the existing repeat-map for outline navigation
 
-(after! [repeat outline]
+(after! (repeat outline)
   (define-keymap :keymap outline-navigation-repeat-map
     "C-x" #'foldout-exit-fold
     "x" #'foldout-exit-fold

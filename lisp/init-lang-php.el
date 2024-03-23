@@ -85,10 +85,10 @@
 ;;     "Remove ignored files from list of xref-items."
 ;;     (cl-remove-if #'xref-ignored-file-p items)))
 
-(after! 'projectile
+(after! projectile
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 
-(after! 'web-mode
+(after! web-mode
   ;; This should override the default file extension association.
   (pushnew! web-mode-engines-alist '(("blade"  . "\\.blade\\."))))
 
