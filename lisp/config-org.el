@@ -30,6 +30,10 @@
   (f-glob "*.org" ceamx-agenda-dir)
   "List of absolute paths of all files that should be included in the agenda.")
 
+(defvar ceamx-default-todo-file
+  (expand-file-name "todo.org" ceamx-agenda-dir)
+  "Absolute path to default file for active G2D.")
+
 (defvar ceamx-default-capture-file
   (expand-file-name "inbox.org" ceamx-agenda-dir)
   "Absolute path to default inbox file for new G2D waiting to be processed.")

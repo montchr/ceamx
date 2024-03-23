@@ -11023,6 +11023,7 @@ Else create a new file."
 ;;;; Refiling
 
 (setopt org-refile-targets '((org-agenda-files . (:maxlevel . 5))
+                             (ceamx-default-todo-file . (:level . 1))
                              (nil . (:level . 1))))
 
 (setopt org-refile-use-outline-path 'file)
@@ -11222,6 +11223,10 @@ Intended for use as a local hook function on
 (defvar ceamx-default-agenda-files
   (f-glob "*.org" ceamx-agenda-dir)
   "List of absolute paths of all files that should be included in the agenda.")
+
+(defvar ceamx-default-todo-file
+  (expand-file-name "todo.org" ceamx-agenda-dir)
+  "Absolute path to default file for active G2D.")
 
 (defvar ceamx-default-capture-file
   (expand-file-name "inbox.org" ceamx-agenda-dir)

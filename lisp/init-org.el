@@ -178,6 +178,7 @@
 ;;;; Refiling
 
 (setopt org-refile-targets '((org-agenda-files . (:maxlevel . 5))
+                             (ceamx-default-todo-file . (:level . 1))
                              (nil . (:level . 1))))
 
 (setopt org-refile-use-outline-path 'file)
