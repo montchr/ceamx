@@ -262,7 +262,7 @@ the newly-defined advice.  SYMBOL is the function to be advised."
 ARGLIST is as in `defun'.  HOOKS is a list of hooks to which to
 add the function, or just a single hook.  DOCSTRING and BODY are
 as in `defun'."
-  (declare (indent 2)
+  (declare (indent defun)
            (doc-string 4))
   (setq hooks (ensure-list (ceamx-unquote hooks)))
   (dolist (hook hooks)
