@@ -26,6 +26,8 @@
 
 ;;; Code:
 
+(require 'ceamx-paths)
+
 (defvar ceamx-occur-grep-modes-list
   '(occur-mode
      grep-mode
@@ -67,6 +69,10 @@
   '(compilation-mode
     edebug-eval-mode)
   "List of major-modes used in message buffers.")
+
+(defvar ceamx-buffer-read-only-dirs-list
+  (list ceamx-packages-dir)
+  "List of directories whose files should be opened in read-only buffers.")
 
 (provide 'config-buffer)
 ;;; config-buffer.el ends here

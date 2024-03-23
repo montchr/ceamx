@@ -1235,6 +1235,24 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
   (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
 
+;;;; Treat file-visiting-buffers in the package directory as read-only
+
+(require 'config-buffer)
+
+(def-hook! ceamx-register-read-only-buffers-h ()
+  'ceamx-after-init-hook
+  "Use read-only buffers for files in some directories.
+The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
+
+  ;; Define a read-only directory class
+  (dir-locals-set-class-variables
+   'read-only
+   '((nil . ((buffer-read-only . t)))))
+
+  ;; Associate directories with the read-only class
+  (dolist (dir ceamx-buffer-read-only-dirs-list)
+    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
+
 ;;; Site-lisp packages
 
 (require 'on)
@@ -4541,6 +4559,8 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 
 ;;; Code:
 
+(require 'ceamx-paths)
+
 (defvar ceamx-occur-grep-modes-list
   '(occur-mode
      grep-mode
@@ -4582,6 +4602,10 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   '(compilation-mode
     edebug-eval-mode)
   "List of major-modes used in message buffers.")
+
+(defvar ceamx-buffer-read-only-dirs-list
+  (list ceamx-packages-dir)
+  "List of directories whose files should be opened in read-only buffers.")
 
 (provide 'config-buffer)
 ;;; config-buffer.el ends here

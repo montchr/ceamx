@@ -273,6 +273,24 @@
   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
   (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
 
+;;;; Treat file-visiting-buffers in the package directory as read-only
+
+(require 'config-buffer)
+
+(def-hook! ceamx-register-read-only-buffers-h ()
+  'ceamx-after-init-hook
+  "Use read-only buffers for files in some directories.
+The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
+
+  ;; Define a read-only directory class
+  (dir-locals-set-class-variables
+   'read-only
+   '((nil . ((buffer-read-only . t)))))
+
+  ;; Associate directories with the read-only class
+  (dolist (dir ceamx-buffer-read-only-dirs-list)
+    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
+
 ;;; Site-lisp packages
 
 (require 'on)
