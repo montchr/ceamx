@@ -107,7 +107,10 @@
 ;;; Set the list of safe local variable values
 
 (setopt safe-local-variable-values
-        '((eval load-file "./ceamx-dev-loader.el")))
+        '((org-refile-targets quote
+           ((nil :maxlevel . 3)))
+          ;; FIXME: there are better ways, i hope...
+          (eval load-file "./ceamx-dev-loader.el")))
 
 ;;; Keybindings
 
