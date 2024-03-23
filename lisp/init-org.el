@@ -177,6 +177,20 @@
 (setopt org-agenda-current-time-string
         "⭠ now ─────────────────────────────────────────────────")
 
+;;;; Refiling
+
+(setopt org-refile-targets '((org-agenda-files . (:maxlevel . 5))
+                             (nil . (:level . 1))))
+
+(setopt org-refile-use-outline-path 'file)
+(setopt org-outline-path-complete-in-steps nil)
+(setopt org-refile-allow-creating-parent-nodes 'confirm)
+(setopt org-refile-use-cache nil)
+
+;; TODO: move this setting elsewhere
+(setopt org-reverse-note-order t)       ; prepend new notes
+
+
 ;;;; Keybindings
 
 (setopt org-return-follows-link t)

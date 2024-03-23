@@ -11022,6 +11022,20 @@ Else create a new file."
 (setopt org-agenda-current-time-string
         "⭠ now ─────────────────────────────────────────────────")
 
+;;;; Refiling
+
+(setopt org-refile-targets '((org-agenda-files . (:maxlevel . 5))
+                             (nil . (:level . 1))))
+
+(setopt org-refile-use-outline-path 'file)
+(setopt org-outline-path-complete-in-steps nil)
+(setopt org-refile-allow-creating-parent-nodes 'confirm)
+(setopt org-refile-use-cache nil)
+
+;; TODO: move this setting elsewhere
+(setopt org-reverse-note-order t)       ; prepend new notes
+
+
 ;;;; Keybindings
 
 (setopt org-return-follows-link t)
@@ -12605,3 +12619,18 @@ CLOSED: [2024-03-20 Wed 22:43]
 - State "DONE"       from "TODO"       [2024-03-20 Wed 22:43]
 
   <https://github.com/doomemacs/doomemacs/commit/2757a97a30e7c4a0c2a5d2de13f2214baf09b019>
+
+
+** The Literate Configuration Section about the End of the Literate Configuration
+
+The only reason this section exists is so that the file-local variables comment
+at the very end does not get buried in some unrelated subtree when folding.
+
+*** Local Variables
+
+Here are the file-local variables, and after that, the end of the file:
+
+
+# Local Variables:
+# org-refile-targets: ((nil . (:maxlevel . 4)))
+# End:
