@@ -12567,21 +12567,15 @@ POS defaults to the current position."
 #+end_src
 
 
-* Partials
+* Appendix
+
+
+** Partials
 :PROPERTIES:
 :header-args: :noweb no
 :END:
 
-** DONE File-level ~:noweb yes~ does not seem to have an effect
-CLOSED: [2024-03-18 Mon 23:40]
-
-- Note taken on [2024-03-18 Mon 23:40] \\
-  Turns out there was a syntax error in this line, where a arg name had a colon at the end in addition to the beginning.
-- State "DONE"       from "TODO"       [2024-03-18 Mon 23:40]
-Setting this on a heading works.
-
-
-** File header
+*** File header
 
 #+name: file-header
 #+begin_src emacs-lisp :comments no :noweb no
@@ -12608,7 +12602,26 @@ Setting this on a heading works.
 #+end_src
 
 
-* To Investigate
+
+*** DONE File-level ~:noweb yes~ does not seem to have an effect
+CLOSED: [2024-03-18 Mon 23:40]
+
+- Note taken on [2024-03-18 Mon 23:40] \\
+  Turns out there was a syntax error in this line, where a arg name had a colon at the end in addition to the beginning.
+- State "DONE"       from "TODO"       [2024-03-18 Mon 23:40]
+Setting this on a heading works.
+
+
+
+** Styleguide
+
+*** Org-Mode: When to wrap inline text in ~tildes~ vs. =equals=
+
+[[info:(org) Emphasis and Monospace][info (org) Emphasis and Monospace]]
+
+[[https://emacs.stackexchange.com/a/21870][What's the relationship between ~foo~ and =foo= in org-mode? - Emacs Stack Exchange]]
+
+** To Investigate
 
 - Merged: [[https://github.com/doomemacs/doomemacs/pull/7002][module: Add corfu by LuigiPiucco · Pull Request #7002 · doomemacs/doomemacs · GitHub]]
 - <https://github.com/Genivia/ugrep#using-ugrep-within-emacs>
