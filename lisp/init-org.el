@@ -66,13 +66,14 @@
 ;; result in a conflict when Syncthing tries to take control of these paths.
 
 (defvar org-directory ceamx-agenda-dir)
+
 ;; TODO: I would prefer to check for the directory's existence explicitly --
 ;; this feels strange at the top-level.
 (f-mkdir-full-path org-directory)
 
-(setopt org-agenda-files (append
-                          (f-glob "*.org" ceamx-agenda-dir)
-                          (f-glob "*.org" ceamx-work-notes-dir)))
+(defvar ceamx-agenda-files (f-glob "*.org" ceamx-agenda-dir))
+
+(setopt org-agenda-files ceamx-agenda-files)
 
 ;;; Configure general Org-Mode settings
 
