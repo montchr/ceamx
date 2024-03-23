@@ -479,11 +479,16 @@ Emacs version to prevent bytecode incompatibility.")
 
 
 ** Core Library (=lib-common.el=)
+:PROPERTIES:
+:header-args: :tangle lisp/lib-common.el
+:END:
 
 This library is a requirement of just about every customization and library
 file. It is loaded early during initialization.
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
+*** File Headers
+
+#+begin_src emacs-lisp :comments no
 ;;; lib-common.el --- Common library functions -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery <chris@cdom.io>
@@ -553,53 +558,80 @@ file. It is loaded early during initialization.
 ;;; Commentary:
 #+end_src
 
-** Commentary
+*** Commentary
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
-
 ;; General, common, and generic library functions.
 
 ;; Avoid any library dependencies which are not already part of Emacs.  This
 ;; library will be loaded before packages are available.
+#+end_src
 
-;;; Sources:
+*** Tasks
 
-;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
-;; <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
-;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
-;; <https://github.com/casouri/lunarymacs/blob/cd1f34449038e5ec371b1277941c529ea1fb4e9e/site-lisp/luna-key.el>
+**** TODO Consider moving to =lisp/core/ceamx-lib.el=
 
+
+*** Sources
+
+- <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
+- <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
+- <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
+
+*** Code
+
+#+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
 ;;; Code:
 
-;;; Requirements
+;;;; Requirements
 
 (require 'cl-lib)
 (require 'map)
 (require 'seq)
+#+end_src
 
-;;; General
+**** General
+***** ~ceamx-host-p~: Determine whether Emacs is running on a given host
 
+#+begin_src emacs-lisp
 (defun ceamx-host-p (name)
   "Whether Emacs is running on the machine NAME."
   (string= name (system-name)))
+#+end_src
 
+***** ~ceamx-unquote~: Unquote an Elisp expression
+
+#+begin_src emacs-lisp
 (defun ceamx-unquote (exp)
   "Return EXP unquoted."
   (declare (pure t) (side-effect-free t))
   (while (memq (car-safe exp) '(quote function))
     (setq exp (cadr exp)))
   exp)
+#+end_src
 
-;; via <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
+***** ~noop!~: Make the wrapped expression do nothing
+
+- source :: <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
+
+#+begin_src emacs-lisp
 (defmacro noop! (&rest _body)
   "Do nothing with BODY and return nil.
 Unlike `ignore', produce no side effects."
   (declare (indent defun))
   nil)
+#+end_src
 
-;;; Loading and Evalling
+**** Loading and Evalling
+***** ~after!~: Evaluate an expression after the given feature(s) have loaded
 
-;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
+- source :: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L53-L74>
+
+- [ ] Doom's implementation is more flexible and handles undefined symbols, but
+  does not support quoted FEATURE. Some new macro supporting quoted FEATURE and
+  the features of Doom's version would probably be ideal.
+
+#+begin_src emacs-lisp
 (defmacro after! (feature &rest body)
   "Execute BODY after FEATURE has been loaded.
 
@@ -608,12 +640,7 @@ FEATURE may be any one of:
     \"evil-autoloads\" => (with-eval-after-load \"evil-autoloads\" BODY)
     [evil cider]     => (with-eval-after-load \\='evil
                           (with-eval-after-load \\='cider
-                            BODY))
-
-TODO: Doom's implementation is more flexible and handles
-undefined symbols, but does not support quoted FEATURE. Some new
-macro supporting quoted FEATURE and the features of Doom's
-version would probably be ideal."
+                            BODY))"
   (declare (indent 1))
   (cond
    ((vectorp feature)
@@ -626,8 +653,13 @@ version would probably be ideal."
       prog))
    (t
     `(with-eval-after-load ,feature ,@body))))
+#+end_src
 
-;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
+***** ~defer!~: Evaluate an expression after Emacs is idle for some time
+
+- source :: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
+
+#+begin_src emacs-lisp
 (defmacro defer! (secs &rest body)
   "Run BODY when Emacs is idle for SECS seconds."
   (declare (indent defun) (debug t))
@@ -635,8 +667,13 @@ version would probably be ideal."
     ,secs
     nil
     (lambda () ,@body)))
+#+end_src
 
-;; via <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
+***** ~defer-until!~: Evaluate an expression when a condition is non-nil
+
+- source :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
+
+#+begin_src emacs-lisp
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is non-nil.
 Leverages checks via `after-load-functions'.
@@ -654,37 +691,46 @@ Meant to serve as a predicated alternative to `after!'."
                         ,@body)))
           (put ',fn 'permanent-local-hook t)
           (add-hook 'after-load-functions #',fn)))))
+#+end_src
 
-(defmacro autoload-macro! (macro file)
-  "Define MACRO to autoload from FILE.
-MACRO and FILE are as in `autoload', which see.
+**** Variable Mutation
+***** ~appendq!~: Append lists to a symbol in place
 
-This provides `autoload' with nil values for its DESCRIPTION and
-INTERACTIVE arguments. Its TYPE argument is non-nil, indicating
-that the symbol to be autoload is actually a macro."
-  (declare (debug t))
-  `(autoload ,macro ,file nil nil t))
-
-;;; Variables
-
+#+begin_src emacs-lisp
 (defmacro appendq! (sym &rest lists)
   "Append LISTS to SYM in place."
   `(setq ,sym (append ,sym ,@lists)))
+#+end_src
 
+***** ~prependq!~: Prepend lists to a symbol in place
+
+#+begin_src emacs-lisp
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
   `(setq ,sym (append ,@lists ,sym)))
+#+end_src
 
+***** ~appendopt!~ Append lists to an existing user option
+
+#+begin_src emacs-lisp
 (defmacro appendopt! (variable &rest lists)
   "Append LISTS to the existing user option VARIABLE.
 This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,variable ,@lists)))
+#+end_src
 
+***** ~prependopt!~: Prepend lists to an existing user option
+
+#+begin_src emacs-lisp
 (defmacro prependopt! (variable &rest lists)
   "Prepend LISTS to the existing user option VARIABLE.
 This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,@lists ,variable)))
+#+end_src
 
+***** ~delq!~: Delete an element from a list in-place
+
+#+begin_src emacs-lisp
 (defmacro delq! (elt list &optional fetcher)
   "`delq' ELT from LIST in-place.
 If FETCHER is a function, ELT is used as the key in LIST (an alist)."
@@ -692,7 +738,11 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
                           `(funcall ,fetcher ,elt ,list)
                         elt)
                 ,list)))
+#+end_src
 
+***** ~pushnew!~: Push values sequentially into a list uniquely
+
+#+begin_src emacs-lisp
 ;; TODO: another version to test car of alist so that new additions with the
 ;;       same car will override the existing list
 (defmacro pushnew! (place &rest values)
@@ -701,19 +751,24 @@ This is a variadic `cl-pushnew'."
   (let ((var (make-symbol "result")))
     `(dolist (,var (list ,@values) (with-no-warnings ,place))
       (cl-pushnew ,var ,place :test #'equal))))
+#+end_src
 
-;;; Filesystem
+**** Filesystem
+***** ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
 
+#+begin_src emacs-lisp
 (defun ceamx-subdirs (parent-dir)
   "Return every non-hidden subdirectory of PARENT-DIR."
   (cl-remove-if-not
    #'file-directory-p
    (directory-files
     (expand-file-name parent-dir) t "^[^\\.]")))
+#+end_src
 
+**** Hooks & Advice
+***** ~def-advice!~: Macro to define and add advice to a function
 
-;;; Advice
-
+#+begin_src emacs-lisp
 (defmacro def-advice! (name arglist how symbol docstring &rest body)
   "Define an advice called NAME and add it to a function.
 ARGLIST, DOCSTRING, and BODY are as in `defun'.
@@ -745,9 +800,11 @@ the newly-defined advice.  SYMBOL is the function to be advised."
        (declare-function ,name nil))
      (advice-add ,symbol ',how #',name)
      ',name))
+#+end_src
 
-;;; Hooks
+***** ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
 
+#+begin_src emacs-lisp
 (defmacro def-hook! (name arglist hooks docstring &rest body)
   "Define function NAME and add it to HOOKS.
 ARGLIST is as in `defun'.  HOOKS is a list of hooks to which to
@@ -771,9 +828,12 @@ as in `defun'."
         ,@body)
        (dolist (hook ',hooks)
         (add-hook hook ',name)))))
+#+end_src
 
-;;; Packages
+**** Packages & User Configuration
+***** ~use-feature!~: Configuration-only wrapper for ~use-package~
 
+#+begin_src emacs-lisp
 (defmacro use-feature! (name &rest args)
   "Configuration-only wrapper for `use-package', passing through NAME and ARGS.
 
@@ -787,7 +847,13 @@ will be nil."
   `(use-package ,name
      :ensure nil
      ,@args))
+#+end_src
 
+***** ~package!~: Declare a package and its initial configuration
+
+Wrapper for ~elpaca~ to avoid having to declare its autoloads in every file.
+
+#+begin_src emacs-lisp
 (defmacro package! (order &rest body)
   "Declare a package ORDER and its initial configuration BODY.
 Provides the necessary autoloads so that we can declare packages
@@ -798,10 +864,8 @@ without needing to declare autoloads for `elpaca' in every file."
      (elpaca ,order ,@body)))
 #+end_src
 
-
-*** Input and Keybindings
-
-**** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
+**** Input and Keybindings
+***** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
 
 Usages of this function should be replaced with the result of evaluating
 ~string-to-char~.
@@ -832,30 +896,18 @@ vary based on... various reasons?"
     char))
 #+end_src
 
+***** ~global-keys!~: Define multiple global keybindings
+
+#+begin_src emacs-lisp :tangle lisp/lib-common.el
 (defmacro global-keys! (&rest keys)
   "Define keybindings KEYS in the global keymap.
 Wrapper for `define-keymap' with `current-global-map' as target keymap."
   (declare (indent defun) (debug t))
   `(define-keymap :keymap (current-global-map)
      ,@keys))
-
-(defmacro leader-key! (key def)
-  "Bind DEF to KEY in the leader map.
-If `meow-leader-define-key' is available, then that function will
-handle the binding. Otherwise, binding will be handled with
-`keymap-set' into `mode-specific-map'.
-
-Note that as of writing, `meow' bindings do not seem to support
-descriptions in a way that is comprehensible to `which-key' --
-the documentation for `meow-keypad-describe-keymap-function'
-acknowledges this incompatibility."
-  (declare (indent defun))
-  `(if (fboundp 'meow-leader-define-key)
-       (meow-leader-define-key (cons ,key ,def))
-     (keymap-set mode-specific-map ,key ,def)))
 #+end_src
 
-***** A function to convert a regular keymap to a repeat-map
+****** ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
 
 [[https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/][oantolin comments on Repeat-mode is awesome, share you useful configs]]
 
@@ -871,18 +923,12 @@ acknowledges this incompatibility."
      keymap)))
 #+end_src
 
-
 *** Footer
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
 (provide 'lib-common)
 ;;; lib-common.el ends here
 #+end_src
-
-*** Tasks
-
-**** TODO Consider moving to =lisp/core/ceamx-lib.el=
-
 
 ** Manifest
 
