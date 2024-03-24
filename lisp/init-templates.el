@@ -27,11 +27,9 @@
 
 ;;; Code:
 
-(use-package tempel
-  :commands (tempel-complete tempel-insert)
+(require 'lib-common)
 
-  :init
-
+(package! tempel
   (setopt tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
 
   ;; Require trigger prefix before template name when completing.
@@ -53,10 +51,10 @@ Capf, such that it will be tried first."
                 (cons #'tempel-expand
                       completion-at-point-functions)))
 
-  (global-tempel-abbrev-mode)
+  ;; Integrate `tempel' with `abbrev'.
+  (global-tempel-abbrev-mode))
 
-  :config
-
+(after! tempel
   (global-keys!
     "M-+" #'tempel-complete
     "M-*" #'tempel-insert)
@@ -65,17 +63,15 @@ Capf, such that it will be tried first."
     "TAB" #'tempel-next
     "S-TAB" #'tempel-previous))
 
-
 ;;;; `tempel-collection' :: <https://github.com/Crandel/tempel-collection>
 
-;;  A set of pre-defined templates for `tempel'.
+;; A set of pre-defined templates for `tempel'.
 
-;;  <https://github.com/Crandel/tempel-collection/tree/main/templates>
+;; <https://github.com/Crandel/tempel-collection/tree/main/templates>
 
-;; TODO: consider integrating personally-useful templates into this project
-
-(use-package tempel-collection
-  :after (tempel))
+(package! tempel-collection
+  (after! tempel
+    (require 'tempel-collection)))
 
 (provide 'init-templates)
 ;;; init-templates.el ends here
