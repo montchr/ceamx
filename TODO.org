@@ -1,9 +1,0 @@
-#+title: Tasks at Hand
-
-* Packages
-
-** TODO [[https://github.com/emacscollective/auto-compile][GitHub - emacscollective/auto-compile: Automatically compile Emacs Lisp libra...]]
-
-** TODO [[https://github.com/radian-software/ctrlf][GitHub - radian-software/ctrlf: ⌨️ Emacs finally learns how to ctrl+F.]]
-
-Not literally, necessarily, but a gesture towards wishing there was a more direct entry-point to search+replace utilities like that of <insert IDE here>.
