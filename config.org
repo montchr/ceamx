@@ -12805,19 +12805,45 @@ POS defaults to the current position."
 
 ** Partials
 :PROPERTIES:
-:header-args: :noweb no
+:header-args: :results replace
 :END:
 
 *** File header
 
-#+name: file-header
-#+begin_src emacs-lisp :comments no :noweb no
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+#+name: file-header-default-authors-table
+| Chris Montgomery | chmont@proton.me | 2024 |   | GPL-3.0-or-later |
+| Someone Else?    |                  |      |   |                  |
 
+#+name: file-header-skel
+#+begin_src emacs-lisp :noweb yes :var file=""
+<<file-prop-line()>>
+
+;; <<file-authors(table=file-header-default-authors-table)>>
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
+#+end_src
 
+#+name: experimental-file-header
+#+begin_src emacs-lisp :tangle .data/test-file-header.el :noweb yes :comments no
+;; <<file-prop-line(file="test-file-header")>>
+
+;; <<file-authors(table=file-header-default-authors-table)>>
+#+end_src
+
+
+*** File prop line
+
+#+name: file-prop-line
+#+header: :var file="" :var description=""
+#+begin_src emacs-lisp
+(format ";;; %s.el --- %s  -*- lexical-binding: t; -*-" file description)
+#+end_src
+
+*** File License/Disclaimer
+
+#+name: file-license
+#+begin_src emacs-lisp
 ;; This file is NOT part of GNU Emacs.
 
 ;; This file is free software: you can redistribute it and/or modify it
@@ -12845,7 +12871,8 @@ Example table:
 | Félix Guattari | poop@dada.net       |            |          | WTFPL            |
 
 #+name: file-authors
-#+begin_src emacs-lisp :var table=file-authors-example-table
+#+header: :var table=file-authors-example-table
+#+begin_src emacs-lisp
 (defun ceamx--authors-table-sanitize-year (year)
   "TODO"
   (pcase year
@@ -12861,23 +12888,65 @@ Example table:
   (let ((years (list start end)))
     (seq-keep #'ceamx--authors-table-sanitize-year years)))
 
+(defun ceamx-authors-format-attribution (name email)
+""
+  (concat name (and (not (string-empty-p email))
+                    (format " <%s>" email))))
+
+(defun ceamx-authors-format-copyright-line (author years)
+  (format "Copyright (C) %s  %s" years author))
+
 (defun ceamx--authors-table-process-row (row)
   "TODO"
   (seq-let (name email start end license) row
-    (let* ((years (ceamx--authors-table-sanitize-years start end))
+    (let* ((attribution (ceamx-authors-format-attribution name email))
+           (years (ceamx--authors-table-sanitize-years start end))
            (year-range (string-join years "-")))
-      (format "Copyright (C) %s  %s <%s>\n"
-              year-range name email))))
+      (list
+        :attribution attribution
+        :email email
+        :license license
+        :name name
+        :year-initial start
+        :year-latest end
+        :years year-range))))
 
-(mapcar #'ceamx--authors-table-process-row table)
+(defun ceamx-authors-from-table (table)
+  ""
+  (mapcar #'ceamx--authors-table-process-row table))
+
+(require 'subr-x)
+
+(defun ceamx-authors-format-author-lines (authors)
+  ""
+  (let* ((prefix "Author: "))
+                ;; FIXME: omit padding from first entry
+    (concat prefix
+
+            (mapconcat (lambda (author)
+                         (concat (make-string (length prefix) (string-to-char " "))
+                                 (plist-get author :attribution)))
+                       authors "\n"))))
+
+(let ((authors (ceamx-authors-from-table table)))
+  (format "%s\n\n%s"
+          (mapconcat (lambda (author)
+                       (ceamx-authors-format-copyright-line
+                        (plist-get author :attribution)
+                        (plist-get author :years)))
+                     authors "\n")
+          (ceamx-authors-format-author-lines authors)))
+
+;; stop buggin me
 #+end_src
 
 #+RESULTS: file-authors
-| Copyright (C) 1925-1995  Gilles Deleuze <notrees@rhizome.net> |
-| Copyright (C) 1930  Félix Guattari <poop@dada.net>            |
+: Copyright (C) 1925-1995  Gilles Deleuze <notrees@rhizome.net>
+: Copyright (C)   Félix Guattari <poop@dada.net>
 
 
-*** DONE File-level ~:noweb yes~ does not seem to have an effect
+*** Tasks
+**** DONE File-level ~:noweb yes~ does not seem to have an effect
 CLOSED: [2024-03-18 Mon 23:40]
 
 - Note taken on [2024-03-18 Mon 23:40] \\
