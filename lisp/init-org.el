@@ -34,15 +34,7 @@
 ;; TODO: <https://orgmode.org/worg/org-contrib/org-choose.html>
 ;; TODO: <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
 
-;; Code
-;; :PROPERTIES:
-;; :header-args: :tangle lisp/init-org.el
-;; :END:
-
-
-;; [[file:../config.org::*Code][Code:1]]
 ;;; Code:
-;; Code:1 ends here
 
 ;; Requirements
 
