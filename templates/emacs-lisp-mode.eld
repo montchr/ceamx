@@ -18,3 +18,8 @@ emacs-lisp-mode
      ")")
 (seto "(setopt " p " " p ")")
 (sset "(setq " (s name) " " (s val) ")")
+
+(lenticsrc &
+ ";; #+BEGIN_SRC emacs-lisp" n
+ r &
+ ";; #+END_SRC")
