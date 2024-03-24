@@ -1,4 +1,4 @@
-;;; init-templates.el --- Expandable text templates  -*- lexical-binding: t; no-byte-compile: t -*-
+;;; init-templates.el --- Expandable text templates  -*- lexical-binding: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -21,9 +21,12 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
-;;; Commentary:
+;; Commentary
 
 ;; Configuration for expandable file templates and abbrevs.
+
+
+
 
 ;;; Code:
 
@@ -53,6 +56,18 @@ Capf, such that it will be tried first."
 
   ;; Integrate `tempel' with `abbrev'.
   (global-tempel-abbrev-mode))
+
+;; via <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elements>
+(defun +tempel-include (elt)
+  "Tempel user element ELT to include a nested template."
+  (when (eq (car-safe elt) 'i)
+    (if-let (template (alist-get (cadr elt) (tempel--templates)))
+        (cons 'l template)
+      (message "Template %s not found" (cadr elt))
+      nil)))
+
+(after! tempel
+  (add-to-list 'tempel-user-elements #'+tempel-include))
 
 (after! tempel
   (global-keys!

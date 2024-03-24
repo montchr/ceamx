@@ -8780,6 +8780,133 @@ lel
 
 ** Abbrevs & Templates
 
+*** CANCELLED Rename the existing feature to =init-snippets=
+CLOSED: [2024-03-24 Sun 14:44]
+
+
+- State "CANCELLED"  from "TODO"       [2024-03-24 Sun 14:44] \\
+  "Templates" is a more correct term than "snippets".
+
+  Templates may have placeholders to be filled and expanded.
+
+  Snippets are static chunks of text, often "tricks" and easy-to-forget reference
+  material.
+
+  Templates may include a snippet in their expansion.  Snippets in themselves have
+  no relation to templates, unless we are coincidentally talking about a snippet
+  whose subject is templates.  I will say no more on that matter so that we may
+  avoid further confusion.
+
+*** Header
+
+#+begin_src emacs-lisp :tangle lisp/init-templates.el :noweb yes :comments no
+<<file-prop-line(file="init-templates",description="Expandable text templates")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+#+end_src
+
+*** Commentary
+
+Configuration for expandable file templates and abbrevs.
+
+#+begin_src emacs-lisp :comments org :tangle lisp/init-templates.el
+
+#+end_src
+
+*** Code
+:PROPERTIES:
+:header-args: :tangle lisp/init-templates.el
+:END:
+
+#+begin_src emacs-lisp :comments no
+;;; Code:
+
+(require 'lib-common)
+#+end_src
+
+**** =tempel= installation
+
+#+begin_src emacs-lisp
+(package! tempel
+  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
+
+  ;; Require trigger prefix before template name when completing.
+  ;; (setopt tempel-trigger-prefix "<")
+
+  ;; Setup completion at point for Tempel templates.
+  (def-hook! +tempel-setup-capf-h ()
+    '(conf-mode-hook prog-mode-hook text-mode-hook)
+    "Add the Tempel Capf to `completion-at-point-functions'.
+
+`tempel-expand' only triggers on exact matches.  Alternatively
+use `tempel-complete' if you want to see all matches, but then
+you should also configure `tempel-trigger-prefix', such that
+Tempel does not trigger too often when you don't expect it.
+
+NOTE: We add `tempel-expand' *before* the main programming mode
+Capf, such that it will be tried first."
+    (setq-local completion-at-point-functions
+                (cons #'tempel-expand
+                      completion-at-point-functions)))
+
+  ;; Integrate `tempel' with `abbrev'.
+  (global-tempel-abbrev-mode))
+#+end_src
+
+**** ~tempel~: Add user element to include nested templates
+
+See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elements>
+
+#+begin_src emacs-lisp
+(defun +tempel-include (elt)
+  "Tempel user element ELT to include a nested template."
+  (when (eq (car-safe elt) 'i)
+    (if-let (template (alist-get (cadr elt) (tempel--templates)))
+        (cons 'l template)
+      (message "Template %s not found" (cadr elt))
+      nil)))
+
+(after! tempel
+  (add-to-list 'tempel-user-elements #'+tempel-include))
+#+end_src
+
+**** ~tempel~: keybindings
+
+#+begin_src emacs-lisp
+(after! tempel
+  (global-keys!
+    "M-+" #'tempel-complete
+    "M-*" #'tempel-insert)
+
+  (define-keymap :keymap tempel-map
+    "TAB" #'tempel-next
+    "S-TAB" #'tempel-previous))
+#+end_src
+
+**** ~tempel-collection~: install community ~tempel~ templates
+
+<https://github.com/Crandel/tempel-collection>
+<https://github.com/Crandel/tempel-collection/tree/main/templates>
+
+#+begin_src emacs-lisp
+(package! tempel-collection
+  (after! tempel
+    (require 'tempel-collection)))
+#+end_src
+
+*** Footer
+
+#+begin_src emacs-lisp :comments no
+(provide 'init-templates)
+;;; init-templates.el ends here
+#+end_src
+
 *** Reference
 
 **** TempEl Template Syntax
@@ -8810,107 +8937,6 @@ Furthermore Tempel supports syntax extensions:
 - =q=  Quits the containing template when jumped to.
 
 
-*** Customization
-
-#+BEGIN_SRC emacs-lisp :comments no :tangle lisp/init-templates.el
-;;; init-templates.el --- Expandable text templates  -*- lexical-binding: t; no-byte-compile: t -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Configuration for expandable file templates and abbrevs.
-
-;;; Code:
-
-(require 'lib-common)
-
-(package! tempel
-  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
-
-  ;; Require trigger prefix before template name when completing.
-  ;; (setopt tempel-trigger-prefix "<")
-
-  ;; Setup completion at point for Tempel templates.
-  (def-hook! +tempel-setup-capf-h ()
-    '(conf-mode-hook prog-mode-hook text-mode-hook)
-    "Add the Tempel Capf to `completion-at-point-functions'.
-
-`tempel-expand' only triggers on exact matches.  Alternatively
-use `tempel-complete' if you want to see all matches, but then
-you should also configure `tempel-trigger-prefix', such that
-Tempel does not trigger too often when you don't expect it.
-
-NOTE: We add `tempel-expand' *before* the main programming mode
-Capf, such that it will be tried first."
-    (setq-local completion-at-point-functions
-                (cons #'tempel-expand
-                      completion-at-point-functions)))
-
-  ;; Integrate `tempel' with `abbrev'.
-  (global-tempel-abbrev-mode))
-
-(after! tempel
-  (global-keys!
-    "M-+" #'tempel-complete
-    "M-*" #'tempel-insert)
-
-  (define-keymap :keymap tempel-map
-    "TAB" #'tempel-next
-    "S-TAB" #'tempel-previous))
-
-;;;; `tempel-collection' :: <https://github.com/Crandel/tempel-collection>
-
-;; A set of pre-defined templates for `tempel'.
-
-;; <https://github.com/Crandel/tempel-collection/tree/main/templates>
-
-(package! tempel-collection
-  (after! tempel
-    (require 'tempel-collection)))
-
-(provide 'init-templates)
-;;; init-templates.el ends here
-#+END_SRC
-
-
-*** Tasks
-
-**** CANCELLED Rename the existing feature to =init-snippets=
-CLOSED: [2024-03-24 Sun 14:44]
-
-
-- State "CANCELLED"  from "TODO"       [2024-03-24 Sun 14:44] \\
-  "Templates" is a more correct term than "snippets".
-
-  Templates may have placeholders to be filled and expanded.
-
-  Snippets are static chunks of text, often "tricks" and easy-to-forget reference
-  material.
-
-  Templates may include a snippet in their expansion.  Snippets in themselves have
-  no relation to templates, unless we are coincidentally talking about a snippet
-  whose subject is templates.  I will say no more on that matter so that we may
-  avoid further confusion.
 ** Language Support
 
 *** General Programming (=prog-mode= derived modes)
