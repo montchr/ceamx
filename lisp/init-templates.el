@@ -1,4 +1,4 @@
-;;; init-templates.el --- Expandable text templates  -*- lexical-binding: t; -*-
+;;; init-templates.el --- Expandable file templates and abbrevs  -*- lexical-binding: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -21,13 +21,7 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
-;; Commentary
-
-;; Configuration for expandable file templates and abbrevs.
-
-
-
-
+;;; Commentary:
 ;;; Code:
 
 (require 'lib-common)
@@ -56,8 +50,6 @@ Capf, such that it will be tried first."
 
   ;; Integrate `tempel' with `abbrev'.
   (global-tempel-abbrev-mode))
-
-;; via <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elements>
 (defun +tempel-include (elt)
   "Tempel user element ELT to include a nested template."
   (when (eq (car-safe elt) 'i)
@@ -68,7 +60,6 @@ Capf, such that it will be tried first."
 
 (after! tempel
   (add-to-list 'tempel-user-elements #'+tempel-include))
-
 (after! tempel
   (global-keys!
     "M-+" #'tempel-complete
@@ -77,13 +68,6 @@ Capf, such that it will be tried first."
   (define-keymap :keymap tempel-map
     "TAB" #'tempel-next
     "S-TAB" #'tempel-previous))
-
-;;;; `tempel-collection' :: <https://github.com/Crandel/tempel-collection>
-
-;; A set of pre-defined templates for `tempel'.
-
-;; <https://github.com/Crandel/tempel-collection/tree/main/templates>
-
 (package! tempel-collection
   (after! tempel
     (require 'tempel-collection)))

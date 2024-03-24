@@ -8795,6 +8795,8 @@ lel
 
 ** Abbrevs & Templates
 
+Configuration for expandable file templates and abbrevs.
+
 *** CANCELLED Rename the existing feature to =init-snippets=
 CLOSED: [2024-03-24 Sun 14:44]
 
@@ -8812,66 +8814,64 @@ CLOSED: [2024-03-24 Sun 14:44]
   whose subject is templates.  I will say no more on that matter so that we may
   avoid further confusion.
 
-*** Header
 
-#+begin_src emacs-lisp :tangle lisp/init-templates.el :noweb yes :comments no
-<<file-prop-line(file="init-templates",description="Expandable text templates")>>
+*** Target Files
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+#+header: :tangle lisp/init-templates.el
+#+begin_src emacs-lisp :noweb yes :comments no
+  <<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
 
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
+  ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
-<<file-license>>
+  ;; Author: Chris Montgomery <chris@cdom.io>
+  ;; URL: https://git.sr.ht/~montchr/ceamx
+  ;; Version: 0.1.0
+
+  <<file-license>>
+
+  ;;; Commentary:
+  ;;; Code:
+
+  <<init-templates>>
+
+  <<file-footer(feature="init-templates")>>
 #+end_src
 
-*** Commentary
 
-Configuration for expandable file templates and abbrevs.
-
-#+begin_src emacs-lisp :comments org :tangle lisp/init-templates.el
-
-#+end_src
-
-*** Code
+*** ~init-templates~ -- Code
 :PROPERTIES:
-:header-args: :tangle lisp/init-templates.el
+:header-args: :noweb-ref init-templates
 :END:
-
-#+begin_src emacs-lisp :comments no
-;;; Code:
-
-(require 'lib-common)
-#+end_src
 
 **** =tempel= installation
 
 #+begin_src emacs-lisp
-(package! tempel
-  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
+  (require 'lib-common)
 
-  ;; Require trigger prefix before template name when completing.
-  ;; (setopt tempel-trigger-prefix "<")
+  (package! tempel
+    (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
 
-  ;; Setup completion at point for Tempel templates.
-  (def-hook! +tempel-setup-capf-h ()
-    '(conf-mode-hook prog-mode-hook text-mode-hook)
-    "Add the Tempel Capf to `completion-at-point-functions'.
+    ;; Require trigger prefix before template name when completing.
+    ;; (setopt tempel-trigger-prefix "<")
 
-`tempel-expand' only triggers on exact matches.  Alternatively
-use `tempel-complete' if you want to see all matches, but then
-you should also configure `tempel-trigger-prefix', such that
-Tempel does not trigger too often when you don't expect it.
+    ;; Setup completion at point for Tempel templates.
+    (def-hook! +tempel-setup-capf-h ()
+      '(conf-mode-hook prog-mode-hook text-mode-hook)
+      "Add the Tempel Capf to `completion-at-point-functions'.
 
-NOTE: We add `tempel-expand' *before* the main programming mode
-Capf, such that it will be tried first."
-    (setq-local completion-at-point-functions
-                (cons #'tempel-expand
-                      completion-at-point-functions)))
+  `tempel-expand' only triggers on exact matches.  Alternatively
+  use `tempel-complete' if you want to see all matches, but then
+  you should also configure `tempel-trigger-prefix', such that
+  Tempel does not trigger too often when you don't expect it.
 
-  ;; Integrate `tempel' with `abbrev'.
-  (global-tempel-abbrev-mode))
+  NOTE: We add `tempel-expand' *before* the main programming mode
+  Capf, such that it will be tried first."
+      (setq-local completion-at-point-functions
+                  (cons #'tempel-expand
+                        completion-at-point-functions)))
+
+    ;; Integrate `tempel' with `abbrev'.
+    (global-tempel-abbrev-mode))
 #+end_src
 
 **** ~tempel~: Add user element to include nested templates
@@ -8915,12 +8915,7 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
     (require 'tempel-collection)))
 #+end_src
 
-*** Footer
 
-#+begin_src emacs-lisp :comments no
-(provide 'init-templates)
-;;; init-templates.el ends here
-#+end_src
 
 *** Reference
 
@@ -12874,36 +12869,65 @@ POS defaults to the current position."
 :header-args: :results replace
 :END:
 
-*** ~experimental-file-header~
+*** TODO ~file-header~ cannot accept passthrough noweb args?
+
+*** ~file-header~
 
 #+name: file-header-default-authors-table
 | Chris Montgomery | chmont@proton.me | 2024 |   | GPL-3.0-or-later |
 | Someone Else?    |                  |      |   |                  |
 
-#+name: file-header-skel
-#+begin_src emacs-lisp :noweb yes :var file=""
-<<file-prop-line()>>
+#+name: file-header
+#+header: :var feature="file-header-example" :var desc="" :var table=file-header-default-authors-table
+#+begin_src emacs-lisp :tangle .data/file-header-example.el :noweb no :comments no
+  <<file-prop-line(feature,desc)>>
 
-;; <<file-authors(table=file-header-default-authors-table)>>
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-#+end_src
+  ;; <<file-authors(table=table)>>
+  <<file-extra-meta>>
 
-#+name: experimental-file-header
-#+begin_src emacs-lisp :tangle .data/test-file-header.el :noweb yes :comments no
-;; <<file-prop-line(file="test-file-header")>>
+  <<file-license>>
 
-;; <<file-authors(table=file-header-default-authors-table)>>
+  ;;; Commentary:
+  ;;; Code:
 #+end_src
 
 *** ~file-prop-line~
 
 #+name: file-prop-line
-#+header: :var file="" :var description=""
+#+header: :var feature="" :var desc=""
 #+begin_src emacs-lisp
-(format ";;; %s.el --- %s  -*- lexical-binding: t; -*-" file description)
+(format ";;; %s.el --- %s  -*- lexical-binding: t; -*-" feature desc)
 #+end_src
+
+*** ~file-extra-meta~
+
+#+name: file-extra-meta
+#+begin_src emacs-lisp
+;; URL: https://codeberg.org/montchr/ceamx
+;; Version: 0.1.0
+#+end_src
+
+*** ~file-footer~
+
+Emacs calls this the "file trailer" in ~generate-lisp-file-trailer~.
+
+#+name: file-footer
+#+header: :var feature=""
+#+begin_src emacs-lisp
+  (concat
+   (format "(provide '%s)\n" feature)
+   (format ";;; %s.el ends here\n" feature))
+#+end_src
+
+#+RESULTS: file-footer
+: ;;; .el ends here
+
+#+name: file-footer-example-usage
+#+begin_src emacs-lisp :noweb yes
+<<file-footer(feature="file-footer-example")>>
+#+end_src
+
+#+results: file-footer-example-usage
 
 *** ~file-license~
 
