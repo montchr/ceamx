@@ -76,8 +76,13 @@ external dependencies or long-term shared data.")
   "Directory for volatile storage.
 Use this for files that change often, like data and cache files.")
 
+;; FIXME: avoid usage of `expand-file-name', which is incorrect -- read its
+;; documentation / the manual section.  `convert-standard-filename' may also be
+;; removed in this context.  the latter is likely better off used as needed, and
+;; closer to the usage rather than in this declaration.  this declaration *is*
+;; the standard Unix-like filename expected by `convert-standard-filename'.
 (defvar ceamx-eln-dir (convert-standard-filename
-                      (file-name-as-directory
+                       (file-name-as-directory
                         (expand-file-name "eln/" ceamx-var-dir)))
   "Directory for natively-compiled eln files.")
 
@@ -90,6 +95,16 @@ equivalent settings for third-party package managers.
 
 Packages will be stored in subdirectories based on the current
 Emacs version to prevent bytecode incompatibility.")
+
+(defconst ceamx-templates-dir
+  (file-name-as-directory (file-name-concat user-emacs-directory "templates"))
+  "Directory for user-defined expandable templates.
+Templates, in this sense, refer to the primary focus of packages
+like \"tempo\", \"tempel\", and \"yasnippet\".  Care should be
+taken to distinguish this usage of the term \"template\" from the
+similar but essentially different concept of a \"snippet\".  A
+snippet, in our usage, refers to a /non-expandable/ and /static/
+block of saved text lacking a \"templatable\" characteristic.")
 
 (provide 'ceamx-paths)
 ;;; ceamx-paths.el ends here

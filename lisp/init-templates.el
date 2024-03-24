@@ -1,4 +1,4 @@
-;;; init-templates.el --- Snippets and file templates  -*- lexical-binding: t; no-byte-compile: t -*-
+;;; init-templates.el --- Expandable text templates  -*- lexical-binding: t; no-byte-compile: t -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -23,14 +23,14 @@
 
 ;;; Commentary:
 
-;;  Configuration for file templates and snippet expansion.
+;; Configuration for expandable file templates and abbrevs.
 
 ;;; Code:
 
 (require 'lib-common)
 
 (package! tempel
-  (setopt tempel-path (expand-file-name "templates/*.eld" user-emacs-directory))
+  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
 
   ;; Require trigger prefix before template name when completing.
   ;; (setopt tempel-trigger-prefix "<")
