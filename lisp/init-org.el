@@ -135,7 +135,8 @@
 (setopt org-src-preserve-indentation t)
 (setopt org-src-tab-acts-natively t)
 ;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
-(setopt org-src-window-setup 'current-window)
+;; (setopt org-src-window-setup 'current-window)
+(setopt org-src-window-setup 'reorganize-frame)
 (setopt org-structure-template-alist
         '(("s" . "src")
           ("e" . "src emacs-lisp")
