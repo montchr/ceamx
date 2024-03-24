@@ -12854,12 +12854,12 @@ POS defaults to the current position."
 * Appendix
 
 
-** Partials
+** Noweb Partials
 :PROPERTIES:
 :header-args: :results replace
 :END:
 
-*** File header
+*** ~experimental-file-header~
 
 #+name: file-header-default-authors-table
 | Chris Montgomery | chmont@proton.me | 2024 |   | GPL-3.0-or-later |
@@ -12882,8 +12882,7 @@ POS defaults to the current position."
 ;; <<file-authors(table=file-header-default-authors-table)>>
 #+end_src
 
-
-*** File prop line
+*** ~file-prop-line~
 
 #+name: file-prop-line
 #+header: :var file="" :var description=""
@@ -12891,7 +12890,7 @@ POS defaults to the current position."
 (format ";;; %s.el --- %s  -*- lexical-binding: t; -*-" file description)
 #+end_src
 
-*** File License/Disclaimer
+*** ~file-license~
 
 #+name: file-license
 #+begin_src emacs-lisp
@@ -12911,7 +12910,7 @@ POS defaults to the current position."
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 #+end_src
 
-*** File Authors/Copyright
+*** ~file-authors~
 
 Example table:
 
