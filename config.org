@@ -10996,7 +10996,10 @@ Else create a new file."
 
 ** Org-Mode
 
-*** Customizations
+*** Header
+:PROPERTIES:
+:header-args: :tangle lisp/init-org.el
+:END:
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-org.el
 ;;; init-org.el --- org-mode initialisation -*- lexical-binding: t -*-
@@ -11021,7 +11024,11 @@ Else create a new file."
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+#+end_src
 
+*** Commentary
+
+ #+begin_src emacs-lisp :comments no :tangle lisp/init-org.el
 ;;; Commentary:
 
 ;;  Configuration for `org-mode'.
@@ -11030,42 +11037,53 @@ Else create a new file."
 
 ;; <https://github.com/james-stoup/emacs-org-mode-tutorial>
 
-;;; Investigate:
+;;;; Investigate
 
 ;; TODO: <https://orgmode.org/worg/org-contrib/org-choose.html>
 ;; TODO: <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
+#+end_src
 
+*** Code
+:PROPERTIES:
+:header-args: :tangle lisp/init-org.el
+:END:
+
+#+begin_src emacs-lisp :comments no
 ;;; Code:
+#+end_src
 
-;;; Requirements
+**** Requirements
 
+#+BEGIN_SRC emacs-lisp
 (require 'ceamx-keymaps)
 
 (require 'config-notes)
 (require 'config-org)
 
 (require 'lib-common)
+#+END_SRC
 
-;;; Configuration of important files/directories
+**** Configuration of important files/directories
 
-;; Must be set before loading Org-Mode or any of its sub-features are used.
+Must be set before loading Org-Mode or any of its sub-features are used.
 
-;; Most notes will be stored in `ceamx-notes-dir'.
-;;
-;; The value of `org-directory' will be used as a default destination for new
-;; notes, especially as they relate to tasks and agendas.  For that reason, use
-;; the `ceamx-agenda-dir'.
-;;
-;; FIXME: Because these directories are managed by Syncthing, creating them
-;; automatically is not a great idea if they do not already exist.  A better
-;; workaround to the issue of Org-Mode failing to load might be setting the
-;; default target to a subdirectory of `user-emacs-directory'.
-;;
-;; Why?  Because you do not want to end up with two Syncthing entries with the
-;; same intended target path but with different IDs.  If Syncthing is not set up
-;; yet, then any directory created via the Emacs configuration will probably
-;; result in a conflict when Syncthing tries to take control of these paths.
+Most notes will be stored in `ceamx-notes-dir'.
 
+The value of `org-directory' will be used as a default destination for new
+notes, especially as they relate to tasks and agendas.  For that reason, use
+the `ceamx-agenda-dir'.
+
+FIXME: Because these directories are managed by Syncthing, creating them
+automatically is not a great idea if they do not already exist.  A better
+workaround to the issue of Org-Mode failing to load might be setting the
+default target to a subdirectory of `user-emacs-directory'.
+
+Why?  Because you do not want to end up with two Syncthing entries with the
+same intended target path but with different IDs.  If Syncthing is not set up
+yet, then any directory created via the Emacs configuration will probably
+result in a conflict when Syncthing tries to take control of these paths.
+
+#+BEGIN_SRC emacs-lisp
 (defvar org-directory ceamx-agenda-dir)
 
 ;; TODO: I would prefer to check for the directory's existence explicitly --
@@ -11073,30 +11091,40 @@ Else create a new file."
 (f-mkdir-full-path org-directory)
 
 (setopt org-agenda-files ceamx-default-agenda-files)
+#+END_SRC
 
-;;; Configure general Org-Mode settings
+**** General settings
 
-;; <https://github.com/minad/org-modern#configuration>
+<https://github.com/minad/org-modern#configuration>
 
+#+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook #'prettify-symbols-mode)
+#+END_SRC
 
-;;;; Editing settings
+**** Editing settings
 
-;;;;; Tags
+***** Tags
 
+#+BEGIN_SRC emacs-lisp
 (setopt org-auto-align-tags nil)
 (setopt org-tags-column 0)
 
 (setopt org-fold-catch-invisible-edits 'error) ; default: smart
+#+END_SRC
 
-;;;;; Headings / List Items
+***** Headings / List Items
 
-;; Prevent TAB behavior oddities at the end of headlines.
-;; When nil, pressing TAB at the end of a headline whose content is folded
-;; will act on the folded (non-visible) area instead of the headline, which
-;; may cause unexpected changes to the content (depending on the setting of `org-catch-invisible-edits'.
+Prevent TAB behavior oddities at the end of headlines.
+
+When nil, pressing TAB at the end of a headline whose content is folded
+will act on the folded (non-visible) area instead of the headline, which
+may cause unexpected changes to the content (depending on the setting of `org-catch-invisible-edits'.
+
+#+BEGIN_SRC emacs-lisp
 (setopt org-special-ctrl-a/e t)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
 ;; Instead of forcing this always, use the function
 ;; `org-insert-heading-respect-content' directly, bound to [C-<return>].
 (setopt org-insert-heading-respect-content nil)
@@ -11106,9 +11134,11 @@ Else create a new file."
 (setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
 
 (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+#+END_SRC
 
-;;;;; Source code blocks
+***** Source code blocks
 
+#+BEGIN_SRC emacs-lisp
 ;; Changing the indentation of source code is unhelpful and destructive.
 (setopt org-edit-src-content-indentation 0)
 
@@ -11127,30 +11157,38 @@ Else create a new file."
           ("x" . "example")
           ("X" . "export")
           ("q" . "quote")))
+#+END_SRC
 
-;;;; Appearance settings
+**** Appearance settings
 
-;;;;; Text formatting
+***** Text formatting
 
+#+BEGIN_SRC emacs-lisp
 (setopt org-ellipsis "…")
 (setopt org-hide-emphasis-markers nil)
 (setopt org-pretty-entities t)
+#+END_SRC
 
-;;;;; Images
+***** Images
 
+#+BEGIN_SRC emacs-lisp
 (setopt org-image-actual-width 300)
 (setopt org-startup-with-inline-images t)
+#+END_SRC
 
-;;;;; Folding and indentation
+***** Folding and indentation
 
+#+BEGIN_SRC emacs-lisp
 (setopt org-indent-indentation-per-level 2)
 (setopt org-startup-folded 'content)
 
 ;; Avoid unnecessary indentation effects unless specified in file header.
 (setopt org-startup-indented nil)
+#+END_SRC
 
-;;;; Workflow and state settings
+***** Workflow and state settings
 
+#+BEGIN_SRC emacs-lisp
 (setopt org-log-done 'time)
 (setopt org-todo-keywords
         '((sequence
@@ -11162,11 +11200,13 @@ Else create a new file."
            "|"
            "DONE(d!)"
            "CANCELLED(x@/!)")))
+#+END_SRC
 
-;;;; Agenda settings
+**** Agenda settings
 
-;;;;; Agenda appearance
+***** Agenda appearance
 
+#+BEGIN_SRC emacs-lisp
 (setopt org-agenda-tags-column 0)
 (setopt org-agenda-block-separator ?─)
 (setopt org-agenda-time-grid
@@ -11175,9 +11215,11 @@ Else create a new file."
           " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
 (setopt org-agenda-current-time-string
         "⭠ now ─────────────────────────────────────────────────")
+#+END_SRC
 
-;;;; Refiling
+**** Refiling
 
+#+BEGIN_SRC emacs-lisp
 (setopt org-refile-targets '((org-agenda-files . (:maxlevel . 5))
                              (ceamx-default-todo-file . (:level . 1))
                              (nil . (:level . 1))))
@@ -11189,12 +11231,15 @@ Else create a new file."
 
 ;; TODO: move this setting elsewhere
 (setopt org-reverse-note-order t)       ; prepend new notes
+#+END_SRC
 
+**** Keybindings
 
-;;;; Keybindings
-
+#+BEGIN_SRC emacs-lisp
 (setopt org-return-follows-link t)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
 (with-eval-after-load 'org
   (defvar org-mode-map)
   (declare-function consult-org-heading "consult-org")
@@ -11229,11 +11274,13 @@ Else create a new file."
   ;; FIXME: Does not seem to work in `emacs-lisp-mode' Org Src buffers
   ;; (keymap-set org-src-mode-map "M-," #'org-edit-src-exit)
   )
+#+END_SRC
 
-;;; Enforce the correct `tab-width' to prevent errors
+**** Enforce the correct `tab-width' to prevent errors
 
-;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
+<https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
 
+#+BEGIN_SRC emacs-lisp
 (defun +org-mode--local-set-tab-width-h ()
   "Set the `tab-width' in `org-mode' buffers to 8 columns.
 Any `tab-width' value other than 8 will result in an error.
@@ -11255,11 +11302,15 @@ Intended for use as a local hook function on
   'org-mode-hook
   "Add a local hook to control `tab-width' on `after-change-major-mode-hook'."
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
+#+END_SRC
 
-;;; Configurate `org-capture' templates with the help of `doct'
+**** Packages
 
-;; <https://github.com/progfolio/doct>
+***** ~doct~: `org-capture' template definer
 
+<https://github.com/progfolio/doct>
+
+#+BEGIN_SRC emacs-lisp
 (package! doct
   (require 'doct))
 
@@ -11278,76 +11329,98 @@ Intended for use as a local hook function on
                    :type entry
                    :template ("* TODO %?"
                               "%i %a"))))))
+#+END_SRC
 
-;;; Install the `org-ql' library
+***** ~org-ql~
 
-;; <https://github.com/alphapapa/org-ql>
+<https://github.com/alphapapa/org-ql>
 
+#+BEGIN_SRC emacs-lisp
 (package! org-ql)
+#+END_SRC
 
-;;; org-modern <https://github.com/minad/org-modern>
+***** ~org-modern~
 
+<https://github.com/minad/org-modern>
+
+#+BEGIN_SRC emacs-lisp
 (package! org-modern
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+#+END_SRC
 
-;;; Provide agenda improvements with `org-super-agenda'
+***** `org-super-agenda'
 
-;; <https://github.com/alphapapa/org-super-agenda>
+<https://github.com/alphapapa/org-super-agenda>
 
-;; TODO: Configure
+TODO: Configure
 
+#+BEGIN_SRC emacs-lisp
 (package! org-super-agenda
   ;; FIXME: probably can use autoloads instead
   (require 'org-super-agenda))
+#+END_SRC
 
-;;; Support dragging-and-dropping images into Org buffers
+***** `org-download': support dragging-and-dropping images into Org buffers
 
-;; <https://github.com/abo-abo/org-download>
+<https://github.com/abo-abo/org-download>
 
+#+BEGIN_SRC emacs-lisp
 (package! org-download
   (require 'org-download)
   (add-hook 'dired-mode-hook #'org-download-enable))
+#+END_SRC
 
-;;; Surround pasted code with src-block markup
+***** `org-rich-yank': surround pasted code with src-block markup
 
-;; <https://github.com/unhammer/org-rich-yank>
+<https://github.com/unhammer/org-rich-yank>
 
-;; Paraphrasing from the README:
+Paraphrasing from the README:
 
-;; This package should be loaded immediately. We never know when the user will
-;; hit =C-M-y=, so we always have to store the current buffer on kills. You can
-;; remove the `require' and have lazy/deferred loading, but then the first
-;; time you hit =C-M-y= after startup, you’ll get a message that you have to
-;; kill the selection again.
+This package should be loaded immediately. We never know when the user will
+hit =C-M-y=, so we always have to store the current buffer on kills. You can
+remove the `require' and have lazy/deferred loading, but then the first
+time you hit =C-M-y= after startup, you’ll get a message that you have to
+kill the selection again.
 
+#+BEGIN_SRC emacs-lisp
 (package! org-rich-yank
   (with-eval-after-load 'org-download
     (require 'org-rich-yank)
 
     (keymap-set org-mode-map "C-M-y" #'org-rich-yank)))
+#+END_SRC
 
-;;; Use `org-web-tools' to view, capture, and archive webpages in org-mode
+***** `org-web-tools': view, capture, and archive webpages in org-mode
 
+#+BEGIN_SRC emacs-lisp
 (package! org-web-tools
   (keymap-set ceamx-insert-map "l" #'org-web-tools-insert-link-for-url))
+#+END_SRC
 
-;;; Automatically tangle literate Org files with `auto-tangle-mode'
+***** `auto-tangle-mode': automatically tangle literate Org files
 
+#+BEGIN_SRC emacs-lisp
 (package! (auto-tangle-mode
            :host github
            :repo "progfolio/auto-tangle-mode.el")
   (autoload 'auto-tangle-mode "auto-tangle-mode"))
+#+END_SRC
 
-;;; Provide a sidebar for Org buffers
+***** `org-sidebar': provide a sidebar for Org buffers
 
-;; <https://github.com/alphapapa/org-sidebar>
+<https://github.com/alphapapa/org-sidebar>
 
+#+BEGIN_SRC emacs-lisp
 (package! org-sidebar)
+#+END_SRC
 
+**** Footer
+
+#+BEGIN_SRC emacs-lisp :comments no
 (provide 'init-org)
 ;;; init-org.el ends here
-#+end_src
+#+END_SRC
 
 
 *** User Options
