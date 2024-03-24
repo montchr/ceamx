@@ -12834,6 +12834,47 @@ POS defaults to the current position."
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 #+end_src
 
+*** File Authors/Copyright
+
+Example table:
+
+#+name: file-authors-example-table
+| Name           | Email               | Start Year | End Year | License          |
+|----------------+---------------------+------------+----------+------------------|
+| Gilles Deleuze | notrees@rhizome.net |       1925 |     1995 | GPL-3.0-or-later |
+| Félix Guattari | poop@dada.net       |            |          | WTFPL            |
+
+#+name: file-authors
+#+begin_src emacs-lisp :var table=file-authors-example-table
+(defun ceamx--authors-table-sanitize-year (year)
+  "TODO"
+  (pcase year
+    ((pred numberp)
+     (number-to-string year))
+    ((and (pred stringp)
+          (pred string-empty-p))
+     nil)
+    (_ year)))
+
+(defun ceamx--authors-table-sanitize-years (start end)
+  "TODO"
+  (let ((years (list start end)))
+    (seq-keep #'ceamx--authors-table-sanitize-year years)))
+
+(defun ceamx--authors-table-process-row (row)
+  "TODO"
+  (seq-let (name email start end license) row
+    (let* ((years (ceamx--authors-table-sanitize-years start end))
+           (year-range (string-join years "-")))
+      (format "Copyright (C) %s  %s <%s>\n"
+              year-range name email))))
+
+(mapcar #'ceamx--authors-table-process-row table)
+#+end_src
+
+#+RESULTS: file-authors
+| Copyright (C) 1925-1995  Gilles Deleuze <notrees@rhizome.net> |
+| Copyright (C) 1930  Félix Guattari <poop@dada.net>            |
 
 
 *** DONE File-level ~:noweb yes~ does not seem to have an effect
