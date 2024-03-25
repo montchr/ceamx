@@ -1,4 +1,4 @@
-;;; init-lisp.el --- Emacs Lisp language configuration -*- lexical-binding: t -*-
+;;; init-lisp.el --- Lisp support  -*- lexical-binding: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -22,23 +22,14 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;  Configuration for working with Lisps of all kinds.
-
 ;;; Code:
 
-;;;; Requirements
-
 (require 'derived)
-(require 'elpaca-autoloads)
 
 (require 'lib-common)
 (require 'lib-lisp)
 
 (require 'config-lisp)
-
-;;;; Configure behavior for all Lisp modes with `ceamx-lisp-init-hook'
-
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
 
 (after! flycheck
@@ -48,20 +39,10 @@
 ;; Add hooks to supported Lisp modes.
 (dolist (mode ceamx-lisp-modes-list)
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
-
-;; Use two-space indentation always.
 (dolist (sym '(add-function advice-add plist-put))
   (put sym 'lisp-indent-function 2))
 
-;; Prevent `calculate-lisp-indent' from indenting quoted lists as functions.
-;; <https://emacs.stackexchange.com/a/52789/40956>
 (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
-
-;;;; Configuration for `lispy', a structural expression editing experience
-
-;; <https://oremacs.com/lispy/>
-;; <https://github.com/abo-abo/lispy>
-
 (package! lispy
   (add-hook 'ceamx-lisp-init-hook #'lispy-mode)
 
@@ -97,6 +78,7 @@
 
     (after! popper
       (push "\\*lispy-message\\*" popper-reference-buffers))))
+(package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
 
 (provide 'init-lisp)
 ;;; init-lisp.el ends here
