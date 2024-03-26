@@ -8776,38 +8776,43 @@ lel
 
 ** Checkers (Flycheck + Flymake)
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-flycheck.el
-;;; init-flycheck.el --- Flycheck support            -*- lexical-binding: t; -*-
+<https://www.flycheck.org/en/latest/index.html>
+<https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+#+header-args: :tangle lisp/init-flycheck.el
+#+begin_src emacs-lisp :noweb yes :comments no
+<<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+<<file-license>>
 
 ;;; Commentary:
-
-;; <https://www.flycheck.org/en/latest/index.html>
-
-;; <https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
-
 ;;; Code:
 
+<<init-flycheck>>
+
+<<file-footer(feature="init-flycheck")>>
+#+end_src
+
+
+**** Code: =lisp/init-flycheck.el=
+:PROPERTIES:
+:header-args: :noweb-ref init-flycheck
+:END:
+
+#+begin_src emacs-lisp
 (require 'ceamx-keymaps)
 (require 'lib-common)
+#+end_src
 
+***** ~flycheck~: install and configure
+
+#+begin_src emacs-lisp
 (package! flycheck
   (setopt flycheck-emacs-lisp-load-path 'inherit)
 
@@ -8821,17 +8826,16 @@ lel
   (keymap-set ceamx-toggle-map "f" #'flycheck-mode)
 
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
+#+end_src
 
-;;; ~consult-flycheck~: integration with Consult
+***** ~consult-flycheck~: integration with Consult
 
+#+begin_src emacs-lisp
 (package! consult-flycheck
   (keymap-global-set "M-g f" #'consult-flycheck)
 
   (after! (consult flycheck)
     (require 'consult-flycheck)))
-
-(provide 'init-flycheck)
-;;; init-flycheck.el ends here
 #+end_src
 
 
