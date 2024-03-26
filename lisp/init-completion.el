@@ -25,7 +25,10 @@
 
 ;;  Configuration for completion-at-point.
 
-;; TODO: Some interesting maybe-useful stuff in here: <https://github.com/doomemacs/doomemacs/pull/7002/files>
+;; TODO: Doom Emacs now has official Corfu module, check it out
+
+;; FIXME: evil/meow escape does not quit completion
+;; <https://github.com/emacs-evil/evil-collection/issues/676>
 
 ;; - <https://github.com/minad/corfu>
 ;; - <https://github.com/minad/cape>
@@ -53,12 +56,10 @@
 ;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
 (keymap-global-set "C-S-SPC" #'completion-at-point)
 
-;; FIXME: evil/meow escape does not quit completion
-;; <https://github.com/emacs-evil/evil-collection/issues/676>
 (use-package corfu
-
-  ;; Enable Corfu only for certain modes.
-  :hook ((prog-mode . corfu-mode))
+  :init
+  (declare-function global-corfu-mode "corfu")
+  (global-corfu-mode)
 
   :config
   ;; Stay out of my way!
