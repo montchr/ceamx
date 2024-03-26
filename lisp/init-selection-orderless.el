@@ -23,30 +23,46 @@
 ;;
 ;;  <https://github.com/oantolin/orderless>
 
+;; Refer to the following for sources info:
+;; <https://github.com/oantolin/orderless?tab=readme-ov-file#style-dispatchers>
+;; <https://github.com/minad/consult/wiki#minads-orderless-configuration>
+
+
 ;;; Code:
 
-;; (use-package orderless
-;;   :init
+(require 'lib-common)
 
-;;   ;; TODO: Configure a custom style dispatcher (see the Consult wiki)
-;;   ;; (setopt orderless-style-dispatchers '(+orderless-dispatch)
-;;   ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+(package! orderless
+  (require 'orderless)
 
-;;   (setopt completion-styles '(orderless basic)
-;;         completion-category-defaults nil
-;;         completion-category-overrides '((file (styles partial-completion)))))
+  ;; Allow escaping space with backslash.
+  (setopt orderless-component-separator #'orderless-escapable-split-on-space))
 
-(use-package orderless
-  :demand t
-  :config
-  (defvar +orderless-dispatch-alist
-    '((?% . char-fold-to-regexp)
-      (?! . orderless-without-literal)
-      (?`. orderless-initialism)
-      (?= . orderless-literal)
-      (?~ . orderless-flex)))
+;;;; Query syntax additions through style dispatchers
 
-  (defun +orderless--suffix-regexp ()
+;; (defun +orderless-flex-if-twiddle-dispatch (pattern _index _total)
+;;   "Return `orderless-flex' if PATTERN ends in a tilde character.
+;; PATTERN, stripped of its tilde character, will be dispatched as
+;; argument to `orderless-flex'."
+;;   (when (string-suffix-p "~" pattern)
+;;     `(orderless-flex . ,(substring pattern 0 -1))))
+
+;; (defun +orderless-first-initialism-dispatch (_pattern index _total)
+;;   "Return `orderless-initialism' when PATTERN has the initial INDEX value."
+;;   (if (= index 0) 'orderless-initialism))
+
+;; (defun +orderless-not-if-bang-dispatch (pattern _index _total)
+;;   "Return `orderless-not' when PATTERN begins with an exclamation mark.
+;; PATTERN, stripped of its exclamation mark, will be dispatched as
+;; argument to `orderless-not'."
+;;   (cond
+;;    ((equal "!" pattern)
+;;     #'ignore)
+;;    ((string-prefix-p "!" pattern)
+;;     `(orderless-not . ,(substring pattern 1)))))
+
+  (defun +orderless--consult-suffix ()
+    "Regexp which matches the end of string with Consult tofu support."
     (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
         (format "[%c-%c]*$"
                 consult--tofu-char
@@ -54,77 +70,43 @@
       "$"))
 
   ;; Recognizes the following patterns:
-  ;; * ~flex flex~
-  ;; * =literal literal=
-  ;; * %char-fold char-fold%
-  ;; * `initialism initialism`
-  ;; * !without-literal without-literal!
   ;; * .ext (file extension)
   ;; * regexp$ (regexp matching at end)
-  (defun +orderless-dispatch (word _index _total)
+  (defun +orderless-consult-dispatch (word _index _total)
     (cond
      ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
      ((string-suffix-p "$" word)
-      `(orderless-regexp . ,(concat (substring word 0 -1) (+orderless--suffix-regexp))))
+      `(orderless-regexp . ,(concat (substring word 0 -1) (+orderless--consult-suffix))))
      ;; File extensions
      ((and (or minibuffer-completing-file-name
                (derived-mode-p 'eshell-mode))
            (string-match-p "\\`\\.." word))
-      `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--suffix-regexp))))
-     ;; Ignore single !
-     ((equal "!" word) `(orderless-literal . ""))
-     ;; Prefix and suffix
-     ((if-let (x (assq (aref word 0) +orderless-dispatch-alist))
-          (cons (cdr x) (substring word 1))
-        (when-let (x (assq (aref word (1- (length word))) +orderless-dispatch-alist))
-          (cons (cdr x) (substring word 0 -1)))))))
+      `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--consult-suffix))))))
 
-  ;; Define orderless style with initialism by default
+;;;; Define custom completion syntax styles
+
+(after! orderless
   (orderless-define-completion-style +orderless-with-initialism
-    (orderless-matching-styles
-     '(orderless-initialism
-       orderless-literal
-       orderless-regexp)))
+    (orderless-matching-styles '(orderless-initialism
+                                 orderless-literal
+                                 orderless-regexp))))
 
-  ;; You may want to combine the `orderless` style with `substring` and/or `basic`.
-  ;; There are many details to consider, but the following configurations all work well.
-  ;; Personally I (@minad) use option 3 currently. Also note that you may want to configure
-  ;; special styles for special completion categories, e.g., partial-completion for files.
-  ;;
-  ;; 1. (setopt completion-styles '(orderless))
-  ;; This configuration results in a very coherent completion experience,
-  ;; since orderless is used always and exclusively. But it may not work
-  ;; in all scenarios. Prefix expansion with TAB is not possible.
-  ;;
-  ;; 2. (setopt completion-styles '(substring orderless))
-  ;; By trying substring before orderless, TAB expansion is possible.
-  ;; The downside is that you can observe the switch from substring to orderless
-  ;; during completion, less coherent.
-  ;;
-  ;; 3. (setopt completion-styles '(orderless basic))
-  ;; Certain dynamic completion tables (completion-table-dynamic)
-  ;; do not work properly with orderless. One can add basic as a fallback.
-  ;; Basic will only be used when orderless fails, which happens only for
-  ;; these special tables.
-  ;;
-  ;; 4. (setopt completion-styles '(substring orderless basic))
-  ;; Combine substring, orderless and basic.
-  ;;
+;;;; Apply completion settings with Orderless
+
+(after! orderless
   (setopt completion-styles '(orderless basic))
-        (setopt completion-category-defaults nil)
-        ;; Enable partial-completion for files.
-        ;; Either give `orderless' precedence or `partial-completion'.
-        ;; Note that `completion-category-overrides' is not really an override,
-        ;; but rather prepended to the default `completion-styles'.
-        (setopt completion-category-overrides '( ;; (file (styles orderless partial-completion)) ; orderless is tried first
-                                                 (file (styles partial-completion))              ; partial-completion is tried first
-                                                 ;; enable initialism by default for symbols
-                                                 (command (styles +orderless-with-initialism))
-                                                 (variable (styles +orderless-with-initialism))
-                                                 (symbol (styles +orderless-with-initialism))))
-        ;; Allow escaping space with backslash.
-        (setopt orderless-component-separator #'orderless-escapable-split-on-space)
-        (setopt orderless-style-dispatchers '(+orderless-dispatch)))
+  (setopt completion-category-defaults nil)
+  (setopt completion-category-overrides '((file (styles partial-completion))
+                                          (command (styles +orderless-with-initialism))
+                                          (variable (styles +orderless-with-initialism))
+                                          (symbol (styles +orderless-with-initialism))))
+
+  (setopt orderless-matching-styles '(orderless-regexp))
+  (setopt orderless-style-dispatchers (list ;; #'+orderless-first-initialism-dispatch
+                                       ;; #'+orderless-flex-if-twiddle-dispatch
+                                       ;; #'+orderless-not-if-bang-dispatch
+                                       #'+orderless-consult-dispatch
+                                       #'orderless-affix-dispatch)))
 
 (provide 'init-selection-orderless)
 ;;; init-selection-orderless.el ends here

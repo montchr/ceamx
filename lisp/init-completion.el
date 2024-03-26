@@ -64,18 +64,49 @@
 
   (setopt corfu-auto t)
   (setopt corfu-cycle t)
-  ;; Stay out of my way!
   (setopt corfu-quit-at-boundary t)
   (setopt corfu-quit-no-match 'separator)
-  (setopt corfu-separator ?\s)
-  ;; (setopt corfu-preselect 'prompt)      ;; Preselect the prompt
-  ;; (setopt corfu-on-exact-match nil)     ;; Configure handling of exact matches
-  ;; (setopt corfu-scroll-margin 5)        ;; Use scroll margin
-  (setopt corfu-auto-delay 0.2)
+  (setopt corfu-separator ?_)
+  (setopt corfu-preselect 'prompt)
+
+  ;; (setopt corfu-on-exact-match nil)
+  ;; (setopt corfu-scroll-margin 5)
+  (setopt corfu-auto-delay 0.1)
   ;; TODO: maybe enable when invoked manually?
   (setopt corfu-preview-current nil)
 
-  (global-corfu-mode))
+  (global-corfu-mode)
+
+  ;; Default values, unless otherwise stated.
+  (define-keymap :keymap corfu-map
+    "M-g" #'corfu-info-location
+    "M-h" #'corfu-info-documentation))
+
+;;;; ~corfu-echo-mode~: Show candidate docs in echo area
+
+;; Probably redundant when ~corfu-popupinfo-mode~ is in use.
+
+(after! corfu
+  (declare-function corfu-echo-mode "corfu-echo")
+  (setopt corfu-echo-delay '(0.5 . 0.25))
+  (corfu-echo-mode))
+
+;;;; ~corfu-popupinfo~: Display candidate docs or location in popup
+
+(after! corfu
+  (declare-function corfu-popupinfo-mode "corfu-popupinfo")
+  (setopt corfu-popupinfo-delay '(1.0 . 0.5))
+  (corfu-popupinfo-mode))
+
+;;;; ~corfu-history-mode~: Sort candidates by history position
+
+(after! corfu
+  (declare-function corfu-history-mode "corfu-history")
+  (corfu-history-mode))
+
+;; Persist across sessions.
+(after! (savehist corfu-history)
+  (add-to-list 'savehist-additional-variables 'corfu-history))
 
 ;;; ~corfu-terminal~: Terminal support for Corfu
 
