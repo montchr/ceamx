@@ -12936,6 +12936,64 @@ POS defaults to the current position."
 
 * Appendix
 
+** Maintenance
+
+*** Functions to clean and re-tangle Elisp files
+
+#+begin_src emacs-lisp :session ceamx-tangle
+(ceamx/tangle)
+#+end_src
+
+#+name: ceamx-tangle
+#+begin_src emacs-lisp :session ceamx-tangle
+(require 'f)
+(require 'llama)
+
+(require 'ob-tangle)
+
+(defun ceamx-list-tangled-init-files ()
+  "List all tangled files in `user-emacs-directory'.
+Note that this is a crude approximation reflective of our
+expectations but not necessarily files that were truly tangled.
+
+The assumptions are as follows:
+
+-- All Emacs Lisp files within the \"lisp\" subdirectory
+-- early-init.el
+-- init.el
+
+If there are any Emacs Lisp files within the \"lisp\"
+subdirectory that have not been created as a result of tangling,
+they will also be included in the result."
+  (let ((dir user-emacs-directory))
+    (append
+     (mapcar (##f-join dir %) '("early-init.el" "init.el"))
+     (f-files (f-join dir "lisp") (##f-ext-p % "el") t))))
+
+(defun ceamx/purge-tangled-init-files ()
+  "Delete all tangled init files according to `ceamx-list-tangled-init-files'."
+  (interactive)
+  (when (yes-or-no-p "Delete all tangled init files?")
+    (dolist (file (ceamx-list-tangled-init-files))
+      (f-delete file))))
+
+(defvar ceamx-literate-config-file (locate-user-emacs-file "config.org"))
+
+(defun ceamx/tangle (&optional src-file clean)
+  "Tangle the Emacs configuration.
+When SRC-FILE is non-nil, it will be used as the source file to
+be tangled by `org-babel-tangle-file'.  Otherwise, if SRC-FILE is
+nil, the value of `ceamx-literate-config-file' will be the
+default source file.
+
+When CLEAN is non-nil, any previously-tangled init files will be
+deleted before tangling."
+  (interactive)
+  (when clean
+    (ceamx/purge-tangled-init-files))
+  (org-babel-tangle-file
+   (or src-file ceamx-literate-config-file)))
+#+end_src
 
 ** Noweb Partials
 :PROPERTIES:
