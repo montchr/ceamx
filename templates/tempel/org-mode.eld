@@ -31,6 +31,42 @@ org-mode
 (inlsrc "src_" p "{" q "}")
 (title & "#+title: " p n "#+author: " p n "#+language: " p n n)
 
+(cdomat user-full-name " <" user-mail-address ">")
+
+(litfile & "\
+#+header-args: :tangle lisp/" (p "FEATURE-NAME" name) ".el
+#+begin_src emacs-lisp :noweb yes :comments no
+<<file-prop-line(feature=\"" (s name) "\",desc=\"" (p "FEATURE DESCRIPTION" desc) "\")>>
+
+;; Copyright (c) " (format-time-string "%Y") "  " (i cdomat) "
+
+;; Author: " (i cdomat) "
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<" (s name) ">>
+
+<<file-footer(feature=\"" (s name) "\")>>
+#+end_src
+
+
+**** ~" (s name) "~: Code
+:PROPERTIES:
+:header-args: :noweb-ref " (s name) "
+:END:
+
+#+begin_src emacs-lisp
+
+
+#+end_src
+
+")
+
 ;; Local Variables:
 ;; mode: lisp-data
 ;; outline-regexp: "[a-z]"
