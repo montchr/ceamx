@@ -53,16 +53,9 @@
 ;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
 (keymap-global-set "C-S-SPC" #'completion-at-point)
 
-(after! evil
-  ;; Since we now know `evil' is loaded, it's reasonable to overwrite the mark binding.
-  (keymap-set evil-insert-state-map "C-SPC" #'completion-at-point)
-  ;; But we don't want to lose mark capabilities entirely.
-  (keymap-set evil-insert-state-map "C-S-SPC" #'set-mark-command))
-
-;; FIXME: evil escape does not quit completion when `evil-disable-insert-state-bindings' is t
+;; FIXME: evil/meow escape does not quit completion
 ;; <https://github.com/emacs-evil/evil-collection/issues/676>
 (use-package corfu
-  ;; FIXME: :elpaca (corfu :host github :repo "minad/corfu" :files (:defaults "extensions/*"))
 
   ;; Enable Corfu only for certain modes.
   :hook ((prog-mode . corfu-mode))
