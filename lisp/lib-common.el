@@ -124,7 +124,7 @@ Unlike `ignore', produce no side effects."
 
 
 ;; [[file:../config.org::*~after!~: Evaluate an expression after the given feature(s) have loaded][~after!~: Evaluate an expression after the given feature(s) have loaded:1]]
-(require 'cl)
+(require 'cl-lib)
 
 (defmacro after! (package &rest body)
   "Evaluate BODY after PACKAGE have loaded.

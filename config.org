@@ -663,7 +663,7 @@ Unlike `ignore', produce no side effects."
 - source :: <https://github.com/doomemacs/doomemacs/blob/bbadabda511027e515f02ccd7b70291ed03d8945/lisp/doom-lib.el#L628C1-L673C1>
 
 #+begin_src emacs-lisp
-(require 'cl)
+(require 'cl-lib)
 
 (defmacro after! (package &rest body)
   "Evaluate BODY after PACKAGE have loaded.
