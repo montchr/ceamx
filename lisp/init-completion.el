@@ -45,8 +45,9 @@
 ;; TAB cycle if there are only few candidates
 (setopt completion-cycle-threshold 3)
 
-;; Hide commands in M-x which do not apply to the current mode.
-;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+;; Hide commands in M-x which do not apply to the current mode.  Corfu commands
+;; are hidden, since they are not used via M-x.  This setting is useful beyond
+;; Corfu.
 (setopt read-extended-command-predicate #'command-completion-default-include-p)
 
 ;; Don't let `completion-at-point' interfere with indentation.
@@ -56,38 +57,45 @@
 ;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
 (keymap-global-set "C-S-SPC" #'completion-at-point)
 
-(use-package corfu
-  :init
-  (declare-function global-corfu-mode "corfu")
-  (global-corfu-mode)
+;;; ~corfu~: COmpletion in Region FUnction
 
-  :config
+(package! corfu
+  (declare-function global-corfu-mode "corfu")
+
+  (setopt corfu-auto t)
+  (setopt corfu-cycle t)
   ;; Stay out of my way!
   (setopt corfu-quit-at-boundary t)
   (setopt corfu-quit-no-match 'separator)
+  (setopt corfu-separator ?\s)
   ;; (setopt corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (setopt corfu-on-exact-match nil)     ;; Configure handling of exact matches
   ;; (setopt corfu-scroll-margin 5)        ;; Use scroll margin
-  (setopt corfu-cycle t)
-  (setopt corfu-auto t)
   (setopt corfu-auto-delay 0.2)
-  (setopt corfu-separator ?\s)
   ;; TODO: maybe enable when invoked manually?
-  (setopt corfu-preview-current nil))
+  (setopt corfu-preview-current nil)
 
-;;; `corfu-terminal' :: <https://codeberg.org/akib/emacs-corfu-terminal>
+  (global-corfu-mode))
+
+;;; ~corfu-terminal~: Terminal support for Corfu
+
+;; <https://codeberg.org/akib/emacs-corfu-terminal>
+
 ;;  Corfu-endorsed solution to making it usable in terminal.
 ;;  See also `popon', the utility library powering the interface.
-(use-package corfu-terminal
-  ;; FIXME: :elpaca (corfu-terminal :repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
-  :unless (display-graphic-p)
-  :after (popon corfu)
-  :config
-  (corfu-terminal-mode +1))
 
-;;; `corfu-doc-terminal' :: <https://codeberg.org/akib/emacs-corfu-doc-terminal>
+(package! corfu-terminal)
+
+(after! (corfu corfu-terminal)
+  (unless (display-graphic-p)
+    (corfu-terminal-mode 1)))
+
+;;; ~corfu-doc-terminal~: Support doc flyouts in terminal
+
+;; <https://codeberg.org/akib/emacs-corfu-doc-terminal>
+
 ;;  Support for completion candidate documentation flyouts in terminal.
-;;
+
 ;;  FIXME: missing `corfu-doc' dependency -- that package was integrated into
 ;;  corfu core, but still not available. since this is a non-essential
 ;;  enhancement, it will probably be removed.
@@ -99,65 +107,72 @@
 ;;   :config
 ;;   (corfu-doc-terminal-mode +1))
 
-;;; kind-icon :: <https://github.com/jdtsmith/kind-icon>
+;;; ~kind-icon~: Add icons to Corfu candidates
+
+;; <https://github.com/jdtsmith/kind-icon>
 
 ;; Colorful icons for completion-at-point interfaces
 
-(use-package kind-icon
-  :demand t
-  :after (svg-lib corfu)
-  :commands (kind-icon-reset-cache)
-  :autoload (kind-icon-margin-formatter)
-
-  :init
-  ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-  (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache)
-
-  :config
-  (defvar corfu-margin-formatters)
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)
-
+(package! kind-icon
   (setopt kind-icon-use-icons (display-graphic-p))
   (setopt kind-icon-blend-background t)
-  (setopt kind-icon-default-face 'corfu-default))
+  (setopt kind-icon-default-face 'corfu-default)
 
-(use-feature! dabbrev
-  :config
+  (after! (svg-lib corfu)
+    (require 'kind-icon)))
+
+(after! kind-icon
+  ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+  (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache)
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+;;; Configure ~dabbrev~
+
+(after! dabbrev
+  ;; TODO: what does this pattern represent?
+  ;;       why is it not same as eval result: (rx "` ")
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+
   ;; Swap M-/ and C-M-/
-  (keymap-global-set "M-/"    #'dabbrev-completion)
-  (keymap-global-set "C-M-/"  #'dabbrev-expand)
+  (keymap-global-set "M-/" #'dabbrev-completion)
+  (keymap-global-set "C-M-/" #'dabbrev-expand))
 
-  ;; TODO: look into using `rx' for easier building of regexps
-  (setopt dabbrev-ignored-buffer-regexps
-          '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+;;; ~cape~: Completion-At-Point Extensions
 
-(use-package cape
-  :init
+;; <https://github.com/minad/cape/blob/main/README.org>
+
+(package! cape
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
-  ;;(add-to-list 'completion-at-point-functions #'cape-history)
-  (add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
-  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
-  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
-  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
-  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  ;; (add-to-list 'completion-at-point-functions #'cape-history)
+  ;; (add-to-list 'completion-at-point-functions #'cape-keyword)
+  ;; (add-to-list 'completion-at-point-functions #'cape-sgml)
+  ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
+  ;; (add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+  ;; (add-to-list 'completion-at-point-functions #'cape-line)
+  ;; "Character Mnemonics & Character Sets": <https://datatracker.ietf.org/doc/html/rfc1345>
+  ;; (add-to-list 'completion-at-point-functions #'cape-rfc1345)
 
-  :config
-  ;; FIXME: bind to a real prefix map
-  (keymap-global-set "M-p p" #'completion-at-point) ;; capf
-  (keymap-global-set "M-p t" #'complete-tag)        ;; etags
-  (keymap-global-set "M-p d" #'cape-dabbrev)        ;; or dabbrev-completion
-  (keymap-global-set "M-p h" #'cape-history)
-  (keymap-global-set "M-p f" #'cape-file)
-  (keymap-global-set "M-p k" #'cape-keyword)
-  (keymap-global-set "M-p s" #'cape-elisp-symbol)
-  (keymap-global-set "M-p a" #'cape-abbrev)
-  (keymap-global-set "M-p l" #'cape-line)
-  (keymap-global-set "M-p w" #'cape-dict)
-  ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
-  (keymap-global-set "M-p r" #'cape-rfc1345))
+  (global-keys!
+    "M-p p" #'completion-at-point ;; capf
+    "M-p t" #'complete-tag        ;; etags
+    "M-p d" #'cape-dabbrev        ;; or dabbrev-completion
+    "M-p h" #'cape-history
+    "M-p f" #'cape-file
+    "M-p k" #'cape-keyword
+    "M-p s" #'cape-elisp-symbol
+    "M-p e" #'cape-elisp-block
+    "M-p a" #'cape-abbrev
+    "M-p l" #'cape-line
+    "M-p w" #'cape-dict
+    "M-p :" #'cape-emoji
+    "M-p &" #'cape-sgml
+    ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
+    "M-p r" #'cape-rfc1345))
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
