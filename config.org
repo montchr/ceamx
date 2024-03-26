@@ -8805,43 +8805,37 @@ lel
 
 ;;; Code:
 
+(require 'ceamx-keymaps)
 (require 'lib-common)
 
-(use-package flycheck
-  :commands (global-flycheck-mode flycheck-mode)
-  :defines (flycheck-emacs-lisp-load-path
-             flycheck-check-syntax-automatically
-             flycheck-global-modes)
-
-  :init
+(package! flycheck
   (setopt flycheck-emacs-lisp-load-path 'inherit)
-  ;; The default includes `newline', which would happen too frequently.
+
+  ;; The default includes `newline', which is just too often.
   (setopt flycheck-check-syntax-automatically '(save idle-change mode-enabled))
-
-  (keymap-set ceamx-toggle-map "f" #'flycheck-mode)
-
-  (add-hook 'ceamx-after-init-hook #'global-flycheck-mode)
-
-  :config
 
   (setopt flycheck-idle-change-delay 1.0)
   (setopt flycheck-display-errors-delay 0.25)
-  (setopt flycheck-buffer-switch-check-intermediate-buffers t))
+  (setopt flycheck-buffer-switch-check-intermediate-buffers t)
 
-;;; Enable Flycheck integration with Consult via the `consult-flycheck' extension
+  (keymap-set ceamx-toggle-map "f" #'flycheck-mode)
 
-(use-package consult-flycheck
-  :after (consult flycheck)
-  :commands (consult-flycheck)
-  :init
-  (keymap-global-set "M-g f" #'consult-flycheck))
+  (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
+
+;;; ~consult-flycheck~: integration with Consult
+
+(package! consult-flycheck
+  (keymap-global-set "M-g f" #'consult-flycheck)
+
+  (after! (consult flycheck)
+    (require 'consult-flycheck)))
 
 (provide 'init-flycheck)
 ;;; init-flycheck.el ends here
 #+end_src
 
 
-** Abbrevs & Templates
+** Expandable Abbreviations & Templates
 
 Configuration for expandable file templates and abbrevs.
 
