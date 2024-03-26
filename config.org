@@ -9326,14 +9326,31 @@ Even if Emacs core does things differently.
       (push "\\*lispy-message\\*" popper-reference-buffers))))
 #+end_src
 
-***** =kmonad= and =kanata= Lisps
+***** ~kbd-mode~: syntax support for =kmonad= and =kanata= configs
 
 [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
-[[https://github.com/kmonad/kmonad][GitHub - kmonad/kmonad: An advanced keyboard manager]]
 
 #+begin_src emacs-lisp
 (package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
 #+end_src
+
+****** Inhibit formatters
+
+Unfortunately, we need to do this because whitespace is used to convey
+non-syntactic meaning to the reader.
+
+#+begin_src emacs-lisp
+(require 'config-editor)
+(require 'lib-common)
+
+(after! kbd-mode
+  (add-to-list 'ceamx-format-on-save-disabled-modes #'kbd-mode)
+  (after! lispy
+    (add-to-list 'lispy-no-indent-modes #'kbd-mode)))
+#+end_src
+
+****** TODO Add =kanata= symbols to list of fontified
+
 
 **** Options & Variables
 :PROPERTIES:

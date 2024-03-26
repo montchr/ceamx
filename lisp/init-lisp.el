@@ -79,6 +79,13 @@
     (after! popper
       (push "\\*lispy-message\\*" popper-reference-buffers))))
 (package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
+(require 'config-editor)
+(require 'lib-common)
+
+(after! kbd-mode
+  (add-to-list 'ceamx-format-on-save-disabled-modes #'kbd-mode)
+  (after! lispy
+    (add-to-list 'lispy-no-indent-modes #'kbd-mode)))
 
 (provide 'init-lisp)
 ;;; init-lisp.el ends here
