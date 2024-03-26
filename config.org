@@ -7899,6 +7899,32 @@ Minibuffer candidate annotations.
 
 *** Completion-At-Point (=corfu=)
 
+See the following notes on default Corfu keybindings from its readme:
+
+Corfu uses a transient keymap ~corfu-map~ which is active while the popup is
+shown. The keymap defines the following remappings of fundamental commands and
+bindings:
+
+| Binding/Remapping            | Corfu command              |
+|------------------------------+----------------------------|
+| ~move-beginning-of-line~     | ~corfu-prompt-beginning~   |
+| ~move-end-of-line~           | ~corfu-prompt-end~         |
+| ~beginning-of-buffer~        | ~corfu-first~              |
+| ~end-of-buffer~              | ~corfu-last~               |
+| ~scroll-down-command~        | ~corfu-scroll-down~        |
+| ~scroll-up-command~          | ~corfu-scroll-up~          |
+| ~next-line~, =down=, =M-n=   | ~corfu-next~               |
+| ~previous-line~, =up=, =M-p= | ~corfu-previous~           |
+| ~completion-at-point~, =TAB= | ~corfu-complete~           |
+| =M-TAB=                      | ~corfu-expand~             |
+| =RET=                        | ~corfu-insert~             |
+| =M-g=                        | ~corfu-info-location~      |
+| =M-h=                        | ~corfu-info-documentation~ |
+| =M-SPC=                      | ~corfu-insert-separator~   |
+| =C-g=                        | ~corfu-quit~               |
+| ~keyboard-escape-quit~       | ~corfu-reset~              |
+
+
 #+begin_src emacs-lisp :comments no :tangle lisp/init-completion.el
 ;;; init-completion.el --- Completion interfaces -*- lexical-binding: t; -*-
 
