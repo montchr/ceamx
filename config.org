@@ -5014,6 +5014,26 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       ("<drag-mouse-1>" ignore)
       ("q" nil))))
 
+;;; ~easy-kill~
+
+;; <https://github.com/leoliu/easy-kill/blob/master/README.rst>
+
+;; w => word
+;; s => sexp
+;; l => list
+;; d => defun
+;; D => defun name
+;; f => file
+;; b => buffer name
+;;        ->"-": `default-directory'
+;;        ->"+": full path
+;;        ->"0": basename
+
+(package! easy-kill
+  (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
+  (keymap-global-set "C-M-@" #'easy-mark) ; override `mark-sexp'
+  )
+
 ;;; Keybindings
 
 (keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
