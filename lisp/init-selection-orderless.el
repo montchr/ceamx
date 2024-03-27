@@ -91,22 +91,5 @@
                                  orderless-literal
                                  orderless-regexp))))
 
-;;;; Apply completion settings with Orderless
-
-(after! orderless
-  (setopt completion-styles '(orderless basic))
-  (setopt completion-category-defaults nil)
-  (setopt completion-category-overrides '((file (styles partial-completion))
-                                          (command (styles +orderless-with-initialism))
-                                          (variable (styles +orderless-with-initialism))
-                                          (symbol (styles +orderless-with-initialism))))
-
-  (setopt orderless-matching-styles '(orderless-regexp))
-  (setopt orderless-style-dispatchers (list ;; #'+orderless-first-initialism-dispatch
-                                       ;; #'+orderless-flex-if-twiddle-dispatch
-                                       ;; #'+orderless-not-if-bang-dispatch
-                                       #'+orderless-consult-dispatch
-                                       #'orderless-affix-dispatch)))
-
 (provide 'init-selection-orderless)
 ;;; init-selection-orderless.el ends here

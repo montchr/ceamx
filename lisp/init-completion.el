@@ -1,4 +1,4 @@
-;;; init-completion.el --- Completion interfaces -*- lexical-binding: t; -*-
+;;; init-completion.el --- Completion-At-Point enhancements  -*- lexical-binding: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -22,18 +22,6 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;  Configuration for completion-at-point.
-
-;; TODO: Doom Emacs now has official Corfu module, check it out
-
-;; FIXME: evil/meow escape does not quit completion
-;; <https://github.com/emacs-evil/evil-collection/issues/676>
-
-;; - <https://github.com/minad/corfu>
-;; - <https://github.com/minad/cape>
-;; - <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
-
 ;;; Code:
 
 (require 'lib-completion)
@@ -51,23 +39,40 @@
 (setopt read-extended-command-predicate #'command-completion-default-include-p)
 
 ;; Don't let `completion-at-point' interfere with indentation.
-(setopt tab-always-indent t)
+(setopt tab-always-indent 'complete)
 
 ;; `completion-at-point' is often bound to M-TAB, but that conflicts with OS behavior.
 ;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
 (keymap-global-set "C-S-SPC" #'completion-at-point)
 
-;;; ~corfu~: COmpletion in Region FUnction
+(after! orderless
+  (setopt completion-styles '(orderless basic))
+  (setopt completion-category-defaults nil)
+  (setopt completion-category-overrides '((file (styles partial-completion))
+                                          (command (styles +orderless-with-initialism))
+                                          (variable (styles +orderless-with-initialism))
+                                          (symbol (styles +orderless-with-initialism))))
 
+  (setopt orderless-matching-styles '(orderless-regexp))
+  (setopt orderless-style-dispatchers (list ;; #'+orderless-first-initialism-dispatch
+                                       ;; #'+orderless-flex-if-twiddle-dispatch
+                                       ;; #'+orderless-not-if-bang-dispatch
+                                       #'+orderless-consult-dispatch
+                                       #'orderless-affix-dispatch)))
 (package! corfu
   (declare-function global-corfu-mode "corfu")
 
   (setopt corfu-auto t)
+  (setopt corfu-auto-delay 0.1)
   (setopt corfu-cycle t)
-  (setopt corfu-quit-at-boundary t)
+  (setopt corfu-preselect 'prompt)
+  (setopt corfu-count 16)
+  (setopt corfu-max-width 120)
+  (setopt corfu-on-exact-match nil)
+
+  (setopt corfu-quit-at-boundary 'separator)
   (setopt corfu-quit-no-match 'separator)
   (setopt corfu-separator ?_)
-  (setopt corfu-preselect 'prompt)
 
   ;; (setopt corfu-on-exact-match nil)
   ;; (setopt corfu-scroll-margin 5)
@@ -81,25 +86,18 @@
   (define-keymap :keymap corfu-map
     "M-g" #'corfu-info-location
     "M-h" #'corfu-info-documentation))
-
-;;;; ~corfu-echo-mode~: Show candidate docs in echo area
-
-;; Probably redundant when ~corfu-popupinfo-mode~ is in use.
-
+(after! meow
+  (add-hook 'meow-insert-exit-hook #'corfu-quit))
 (after! corfu
   (declare-function corfu-echo-mode "corfu-echo")
   (setopt corfu-echo-delay '(0.5 . 0.25))
   (corfu-echo-mode))
-
-;;;; ~corfu-popupinfo~: Display candidate docs or location in popup
-
 (after! corfu
   (declare-function corfu-popupinfo-mode "corfu-popupinfo")
   (setopt corfu-popupinfo-delay '(1.0 . 0.5))
   (corfu-popupinfo-mode))
 
-;;;; ~corfu-history-mode~: Sort candidates by history position
-
+;;;;
 (after! corfu
   (declare-function corfu-history-mode "corfu-history")
   (corfu-history-mode))
@@ -108,25 +106,12 @@
 (after! (savehist corfu-history)
   (add-to-list 'savehist-additional-variables 'corfu-history))
 
-;;; ~corfu-terminal~: Terminal support for Corfu
-
-;; <https://codeberg.org/akib/emacs-corfu-terminal>
-
-;;  Corfu-endorsed solution to making it usable in terminal.
-;;  See also `popon', the utility library powering the interface.
-
+;;;
 (package! corfu-terminal)
 
 (after! (corfu corfu-terminal)
   (unless (display-graphic-p)
     (corfu-terminal-mode 1)))
-
-;;; ~corfu-doc-terminal~: Support doc flyouts in terminal
-
-;; <https://codeberg.org/akib/emacs-corfu-doc-terminal>
-
-;;  Support for completion candidate documentation flyouts in terminal.
-
 ;;  FIXME: missing `corfu-doc' dependency -- that package was integrated into
 ;;  corfu core, but still not available. since this is a non-essential
 ;;  enhancement, it will probably be removed.
@@ -137,13 +122,6 @@
 ;;   :unless (display-graphic-p)
 ;;   :config
 ;;   (corfu-doc-terminal-mode +1))
-
-;;; ~kind-icon~: Add icons to Corfu candidates
-
-;; <https://github.com/jdtsmith/kind-icon>
-
-;; Colorful icons for completion-at-point interfaces
-
 (package! kind-icon
   (setopt kind-icon-use-icons (display-graphic-p))
   (setopt kind-icon-blend-background t)
@@ -156,13 +134,17 @@
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache)
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
-
-;;; Configure ~dabbrev~
-
 (after! dabbrev
-  ;; TODO: what does this pattern represent?
-  ;;       why is it not same as eval result: (rx "` ")
-  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (setopt dabbrev-ignored-buffer-regexps
+          (list
+           ;; TODO: what does this pattern represent?
+           ;;       why is it not same as eval result: (rx "` ")
+           "\\` "
+           (rx line-start " ")
+           (rx (group (or (seq (opt (or "e" (seq "g" (opt "r")))) "tags")
+                          "gpath"))
+               (optional (group "<" (+ (any numeric)) ">")))))
+
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
 
@@ -170,11 +152,12 @@
   (keymap-global-set "M-/" #'dabbrev-completion)
   (keymap-global-set "C-M-/" #'dabbrev-expand))
 
-;;; ~cape~: Completion-At-Point Extensions
-
-;; <https://github.com/minad/cape/blob/main/README.org>
+;;;
+(require 'lib-common)
 
 (package! cape
+  (setopt cape-dabbrev-check-other-buffers t)
+
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-elisp-block)
@@ -204,6 +187,15 @@
     "M-p &" #'cape-sgml
     ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
     "M-p r" #'cape-rfc1345))
+(after! comint
+  (advice-add #'comint-completion-at-point :around #'cape-wrap-nonexclusive))
+
+(after! eglot
+  (advice-add #'eglot-completion-at-point :around #'cape-wrap-nonexclusive))
+
+(after! lsp-mode
+  (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
+  (advice-add #'lsp-completion-at-point :around #'cape-wrap-nonexclusive))
 
 (provide 'init-completion)
 ;;; init-completion.el ends here

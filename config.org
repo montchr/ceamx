@@ -7858,23 +7858,6 @@ Minibuffer candidate annotations.
                                  orderless-literal
                                  orderless-regexp))))
 
-;;;; Apply completion settings with Orderless
-
-(after! orderless
-  (setopt completion-styles '(orderless basic))
-  (setopt completion-category-defaults nil)
-  (setopt completion-category-overrides '((file (styles partial-completion))
-                                          (command (styles +orderless-with-initialism))
-                                          (variable (styles +orderless-with-initialism))
-                                          (symbol (styles +orderless-with-initialism))))
-
-  (setopt orderless-matching-styles '(orderless-regexp))
-  (setopt orderless-style-dispatchers (list ;; #'+orderless-first-initialism-dispatch
-                                       ;; #'+orderless-flex-if-twiddle-dispatch
-                                       ;; #'+orderless-not-if-bang-dispatch
-                                       #'+orderless-consult-dispatch
-                                       #'orderless-affix-dispatch)))
-
 (provide 'init-selection-orderless)
 ;;; init-selection-orderless.el ends here
 #+end_src
@@ -7909,11 +7892,10 @@ bindings:
 
 **** File Targets
 
-#+header-args: :tangle lisp/init-completion.el
-#+begin_src emacs-lisp :noweb yes :comments no
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-completion.el
 <<file-prop-line(feature="init-completion",desc="Completion-At-Point enhancements")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -7958,11 +7940,33 @@ bindings:
 (setopt read-extended-command-predicate #'command-completion-default-include-p)
 
 ;; Don't let `completion-at-point' interfere with indentation.
-(setopt tab-always-indent t)
+(setopt tab-always-indent 'complete)
 
 ;; `completion-at-point' is often bound to M-TAB, but that conflicts with OS behavior.
 ;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
 (keymap-global-set "C-S-SPC" #'completion-at-point)
+#+end_src
+
+***** Use ~orderless~ completion settings
+
+See [[*Orderless]] for definitions.
+
+#+begin_src emacs-lisp
+
+(after! orderless
+  (setopt completion-styles '(orderless basic))
+  (setopt completion-category-defaults nil)
+  (setopt completion-category-overrides '((file (styles partial-completion))
+                                          (command (styles +orderless-with-initialism))
+                                          (variable (styles +orderless-with-initialism))
+                                          (symbol (styles +orderless-with-initialism))))
+
+  (setopt orderless-matching-styles '(orderless-regexp))
+  (setopt orderless-style-dispatchers (list ;; #'+orderless-first-initialism-dispatch
+                                       ;; #'+orderless-flex-if-twiddle-dispatch
+                                       ;; #'+orderless-not-if-bang-dispatch
+                                       #'+orderless-consult-dispatch
+                                       #'orderless-affix-dispatch)))
 #+end_src
 
 ***** ~corfu~: COmpletion in Region FUnction
@@ -7972,11 +7976,16 @@ bindings:
   (declare-function global-corfu-mode "corfu")
 
   (setopt corfu-auto t)
+  (setopt corfu-auto-delay 0.1)
   (setopt corfu-cycle t)
-  (setopt corfu-quit-at-boundary t)
+  (setopt corfu-preselect 'prompt)
+  (setopt corfu-count 16)
+  (setopt corfu-max-width 120)
+  (setopt corfu-on-exact-match nil)
+
+  (setopt corfu-quit-at-boundary 'separator)
   (setopt corfu-quit-no-match 'separator)
   (setopt corfu-separator ?_)
-  (setopt corfu-preselect 'prompt)
 
   ;; (setopt corfu-on-exact-match nil)
   ;; (setopt corfu-scroll-margin 5)
@@ -7990,6 +7999,13 @@ bindings:
   (define-keymap :keymap corfu-map
     "M-g" #'corfu-info-location
     "M-h" #'corfu-info-documentation))
+#+end_src
+
+***** Ensure Corfu flyout closes when leaving insert state
+
+#+begin_src emacs-lisp
+(after! meow
+  (add-hook 'meow-insert-exit-hook #'corfu-quit))
 #+end_src
 
 ***** ~corfu-echo-mode~: Show candidate docs in echo area
@@ -8041,8 +8057,6 @@ See also ~popon~, the utility library powering the interface.
 (after! (corfu corfu-terminal)
   (unless (display-graphic-p)
     (corfu-terminal-mode 1)))
-
-;;;
 #+end_src
 
 ***** ~corfu-doc-terminal~: Support doc flyouts in terminal
@@ -8087,9 +8101,16 @@ Support for completion candidate documentation flyouts in terminal.
 
 #+begin_src emacs-lisp
 (after! dabbrev
-  ;; TODO: what does this pattern represent?
-  ;;       why is it not same as eval result: (rx "` ")
-  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (setopt dabbrev-ignored-buffer-regexps
+          (list
+           ;; TODO: what does this pattern represent?
+           ;;       why is it not same as eval result: (rx "` ")
+           "\\` "
+           (rx line-start " ")
+           (rx (group (or (seq (opt (or "e" (seq "g" (opt "r")))) "tags")
+                          "gpath"))
+               (optional (group "<" (+ (any numeric)) ">")))))
+
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
 
@@ -8105,7 +8126,11 @@ Support for completion candidate documentation flyouts in terminal.
 <https://github.com/minad/cape/blob/main/README.org>
 
 #+begin_src emacs-lisp
+(require 'lib-common)
+
 (package! cape
+  (setopt cape-dabbrev-check-other-buffers t)
+
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-elisp-block)
@@ -8137,6 +8162,19 @@ Support for completion candidate documentation flyouts in terminal.
     "M-p r" #'cape-rfc1345))
 #+end_src
 
+***** Advise some modes' completion-at-point functions to work alongside ~cape~
+
+#+begin_src emacs-lisp
+(after! comint
+  (advice-add #'comint-completion-at-point :around #'cape-wrap-nonexclusive))
+
+(after! eglot
+  (advice-add #'eglot-completion-at-point :around #'cape-wrap-nonexclusive))
+
+(after! lsp-mode
+  (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
+  (advice-add #'lsp-completion-at-point :around #'cape-wrap-nonexclusive))
+#+end_src
 
 *** Library
 
