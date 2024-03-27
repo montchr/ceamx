@@ -8881,8 +8881,12 @@ CLOSED: [2024-03-24 Sun 14:44]
 
 
 *** Target Files
+:PROPERTIES:
+:header-args: :noweb yes :comments no
+:END:
 
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-templates.el
+#+name: init-templates-file
+#+begin_src emacs-lisp :tangle lisp/init-templates.el :comments no
 <<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
