@@ -8,7 +8,7 @@
 #+archive: graveyard/%s::datetree/
 #+startup: indent
 
-* Early Initialization [ =early-init.el= ]
+* =early-init= :: pre-startup
 :PROPERTIES:
 :header-args: emacs-lisp :tangle early-init.el
 :END:
@@ -290,7 +290,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 - [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
 
 
-* Common Paths [ =lisp/core/ceamx-paths.el= ]
+* =ceamx-paths= :: common path constants
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el :comments no
 ;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
@@ -412,7 +412,7 @@ block of saved text lacking a \"templatable\" characteristic.")
 #+end_src
 
 
-* Common Keymaps [ =lisp/core/ceamx-keymaps.el= ]
+* =ceamx-keymaps= :: common keymaps
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :comments no
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
@@ -473,7 +473,7 @@ block of saved text lacking a \"templatable\" characteristic.")
 #+end_src
 
 
-* Core Library [ =lisp/lib-common.el= ]
+* =lib-common= :: standard library
 :PROPERTIES:
 :header-args: :tangle lisp/lib-common.el
 :END:
@@ -953,7 +953,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 #+end_src
 
 
-* Initialization [ =init.el= ]
+* =init= :: main configuration loader
 
 #+begin_src emacs-lisp :comments no :tangle init.el
 ;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t -*-
