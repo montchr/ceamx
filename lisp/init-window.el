@@ -266,8 +266,7 @@
 
 (package! golden-ratio
   (setopt golden-ratio-auto-scale t)
-  (setopt golden-ratio-max-width 100)
-  (golden-ratio-mode))
+  (setopt golden-ratio-max-width 100))
 
 ;;; Interactively manage windows with `ace-window'
 
