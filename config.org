@@ -9,9 +9,6 @@
 #+startup: indent
 
 * =early-init= :: pre-startup
-:PROPERTIES:
-:header-args: emacs-lisp :tangle early-init.el
-:END:
 
 ** File
 
@@ -37,7 +34,7 @@
 
 ** Code
 :PROPERTIES:
-:header-args: :noweb-ref early-init
+:header-args: :noweb-ref early-init :comments both
 :END:
 
 *** Prevent package.el from enabling all packages before init
@@ -179,6 +176,8 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 #+end_src
 
 **** Load custom constants describing well-known paths
+
+See [[*=ceamx-paths= :: common path constants]]
 
 #+begin_src emacs-lisp
 (require 'ceamx-paths)
