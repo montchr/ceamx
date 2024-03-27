@@ -1,4 +1,4 @@
-;;; init-lisp.el --- Lisp support  -*- lexical-binding: t; -*-
+;;; init-lisp.el --- Lisp support  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 

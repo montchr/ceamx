@@ -8,19 +8,16 @@
 #+archive: graveyard/%s::datetree/
 #+startup: indent
 
-* The Beginning
-
-
-** Early Init
+* Early Initialization [ =early-init.el= ]
 :PROPERTIES:
 :header-args: emacs-lisp :tangle early-init.el
 :END:
 
+** File
 
-*** Customization
-
-#+begin_src emacs-lisp :comments no
-;;; early-init.el --- Early Init File  -*- no-byte-compile: t; -*-
+#+name: early-init-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle early-init.el
+<<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -28,36 +25,22 @@
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+<<file-license>>
 
 ;;; Commentary:
-#+end_src
-
-
-*** Links
-
-- [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
-
-
-#+begin_src emacs-lisp :comments no
 ;;; Code:
+
+<<early-init>>
+
+<<file-footer(feature="early-init")>>
 #+end_src
 
+** Code
+:PROPERTIES:
+:header-args: :noweb-ref early-init
+:END:
 
-**** Prevent package.el from enabling all packages before init
+*** Prevent package.el from enabling all packages before init
 
 When nil and using the builtin package manager, `package-initialize' must be
 invoked in the init process prior to `require'ing any packages installed with
@@ -69,7 +52,7 @@ When non-nil, there is no need to invoke `package-initialize'.
 (setq package-enable-at-startup nil)
 #+end_src
 
-**** Set up indirect init/startup hooks
+*** Set up indirect init/startup hooks
 
 #+begin_src emacs-lisp
 (defvar ceamx-after-init-hook '())
@@ -81,11 +64,10 @@ When non-nil, there is no need to invoke `package-initialize'.
   (run-hooks 'ceamx-emacs-startup-hook))
 #+end_src
 
+*** Performance
 
-**** Performance
 
-
-***** Language servers
+**** Language servers
 
 <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
 
@@ -103,7 +85,7 @@ When non-nil, there is no need to invoke `package-initialize'.
 #+end_src
 
 
-***** Minimize garbage collection during startup
+**** Minimize garbage collection during startup
 
 [[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii comments on An easy trick I found to improve Emacs start-up time]]:
 
@@ -121,7 +103,7 @@ See also:
 <https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
 
 
-***** Provide insight into garbage-collection activity to inform tuning decisions
+**** Provide insight into garbage-collection activity to inform tuning decisions
 
 #+begin_src emacs-lisp
 ;; TODO: will a `init-file-debug' check work here?
@@ -129,7 +111,7 @@ See also:
 #+end_src
 
 
-***** Prevent garbage-collection during init
+**** Prevent garbage-collection during init
 
 #+begin_src emacs-lisp
 ;; NOTE: Either use `gcmh' or make sure to reset this later. Or else!
@@ -137,7 +119,7 @@ See also:
 #+end_src
 
 
-***** DISABLED Simplify filename pattern-matching during init
+**** DISABLED Simplify filename pattern-matching during init
 
 - Note taken on [2024-03-23 Sat 03:24] \\
   Quick followup: I would not be surprised if this had something to do with adding
@@ -185,11 +167,9 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
 #+end_src
 
+*** Directories and well-known-files
 
-**** Directories and well-known-files
-
-
-***** Add directories to load path
+**** Add directories to load path
 
 #+begin_src emacs-lisp
 ;; Configure load path
@@ -198,15 +178,13 @@ Intended for use as a callback on `ceamx-after-init-hook'."
     (add-to-list 'load-path dir)))
 #+end_src
 
-
-***** Load custom constants describing well-known paths
+**** Load custom constants describing well-known paths
 
 #+begin_src emacs-lisp
 (require 'ceamx-paths)
 #+end_src
 
-
-***** Configure =custom-file= location
+**** Configure =custom-file= location
 
 #+begin_src emacs-lisp
 ;; Normally, options configured in `user-init-file' won't need to be persisted
@@ -216,23 +194,20 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 #+end_src
 
-
-***** Store packages in the designated directory
+**** Store packages in the designated directory
 
 #+begin_src emacs-lisp
 (setq package-user-dir ceamx-packages-dir)
 #+end_src
 
-
-***** Use preferred cache directories for native-comp
+**** Use preferred cache directories for native-comp
 
 #+begin_src emacs-lisp
 (startup-redirect-eln-cache ceamx-eln-dir)
 (add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
 #+end_src
 
-
-**** Native compilation settings
+*** Native compilation settings
 
 #+begin_src emacs-lisp
 (setq native-comp-async-report-warnings-errors 'silent)
@@ -251,7 +226,6 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (setq byte-compile-warnings nil)
 #+end_src
 
-
 *** Inhibit early annoyances
 
 #+begin_src emacs-lisp
@@ -266,7 +240,6 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (setq use-short-answers t)              ; affects `yes-or-no-p'
 (setq read-answer-short t)              ; affects `read-answer' (completion)
 #+end_src
-
 
 *** Frames and window-system integration
 
@@ -295,7 +268,6 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (tooltip-mode -1)
 #+end_src
 
-
 **** Rename the default/initial frame
 
 #+begin_src emacs-lisp
@@ -313,19 +285,12 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 #+end_src
 
+** Links
 
-*** Footer
-
-#+begin_src emacs-lisp :comments no
-(provide 'early-init)
-;;; early-init.el ends here
-#+end_src
+- [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
 
 
-** Early Core Deps
-
-
-*** Common Paths
+* Common Paths [ =lisp/core/ceamx-paths.el= ]
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el :comments no
 ;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
@@ -447,7 +412,7 @@ block of saved text lacking a \"templatable\" characteristic.")
 #+end_src
 
 
-*** Common Keymaps
+* Common Keymaps [ =lisp/core/ceamx-keymaps.el= ]
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :comments no
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
@@ -508,7 +473,7 @@ block of saved text lacking a \"templatable\" characteristic.")
 #+end_src
 
 
-** Core Library (=lib-common.el=)
+* Core Library [ =lisp/lib-common.el= ]
 :PROPERTIES:
 :header-args: :tangle lisp/lib-common.el
 :END:
@@ -516,7 +481,7 @@ block of saved text lacking a \"templatable\" characteristic.")
 This library is a requirement of just about every customization and library
 file. It is loaded early during initialization.
 
-*** File Headers
+** File Headers
 
 #+begin_src emacs-lisp :comments no
 ;;; lib-common.el --- Common library functions -*- lexical-binding: t -*-
@@ -588,7 +553,7 @@ file. It is loaded early during initialization.
 ;;; Commentary:
 #+end_src
 
-*** Commentary
+** Commentary
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
 ;; General, common, and generic library functions.
@@ -597,18 +562,18 @@ file. It is loaded early during initialization.
 ;; library will be loaded before packages are available.
 #+end_src
 
-*** Tasks
+** Tasks
 
-**** TODO Consider moving to =lisp/core/ceamx-lib.el=
+*** TODO Consider moving to =lisp/core/ceamx-lib.el=
 
 
-*** Sources
+** Sources
 
 - <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
 - <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
 - <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
 
-*** Code
+** Code
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
 ;;; Code:
@@ -620,8 +585,8 @@ file. It is loaded early during initialization.
 (require 'seq)
 #+end_src
 
-**** General
-***** ~ceamx-host-p~: Determine whether Emacs is running on a given host
+*** General
+**** ~ceamx-host-p~: Determine whether Emacs is running on a given host
 
 #+begin_src emacs-lisp
 (defun ceamx-host-p (name)
@@ -629,7 +594,7 @@ file. It is loaded early during initialization.
   (string= name (system-name)))
 #+end_src
 
-***** ~ceamx-unquote~: Unquote an Elisp expression
+**** ~ceamx-unquote~: Unquote an Elisp expression
 
 #+begin_src emacs-lisp
 (defun ceamx-unquote (exp)
@@ -640,7 +605,7 @@ file. It is loaded early during initialization.
   exp)
 #+end_src
 
-***** ~noop!~: Make the wrapped expression do nothing
+**** ~noop!~: Make the wrapped expression do nothing
 
 - source :: <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
 
@@ -652,8 +617,8 @@ Unlike `ignore', produce no side effects."
   nil)
 #+end_src
 
-**** Loading and Evalling
-***** ~after!~: Evaluate an expression after the given feature(s) have loaded
+*** Loading and Evalling
+**** ~after!~: Evaluate an expression after the given feature(s) have loaded
 
 - Note taken on [2024-03-23 Sat 15:11] \\
   Replaced the existing version with Doom's version for its logical operator
@@ -712,7 +677,7 @@ things you want byte-compiled in them! Like function/macro definitions."
 #+end_src
 
 
-***** ~defer!~: Evaluate an expression after Emacs is idle for some time
+**** ~defer!~: Evaluate an expression after Emacs is idle for some time
 
 - source :: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
 
@@ -726,7 +691,7 @@ things you want byte-compiled in them! Like function/macro definitions."
     (lambda () ,@body)))
 #+end_src
 
-***** ~defer-until!~: Evaluate an expression when a condition is non-nil
+**** ~defer-until!~: Evaluate an expression when a condition is non-nil
 
 - source :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
 
@@ -750,8 +715,8 @@ Meant to serve as a predicated alternative to `after!'."
           (add-hook 'after-load-functions #',fn)))))
 #+end_src
 
-**** Variable Mutation
-***** ~appendq!~: Append lists to a symbol in place
+*** Variable Mutation
+**** ~appendq!~: Append lists to a symbol in place
 
 #+begin_src emacs-lisp
 (defmacro appendq! (sym &rest lists)
@@ -759,7 +724,7 @@ Meant to serve as a predicated alternative to `after!'."
   `(setq ,sym (append ,sym ,@lists)))
 #+end_src
 
-***** ~prependq!~: Prepend lists to a symbol in place
+**** ~prependq!~: Prepend lists to a symbol in place
 
 #+begin_src emacs-lisp
 (defmacro prependq! (sym &rest lists)
@@ -767,7 +732,7 @@ Meant to serve as a predicated alternative to `after!'."
   `(setq ,sym (append ,@lists ,sym)))
 #+end_src
 
-***** ~appendopt!~ Append lists to an existing user option
+**** ~appendopt!~ Append lists to an existing user option
 
 #+begin_src emacs-lisp
 (defmacro appendopt! (variable &rest lists)
@@ -776,7 +741,7 @@ This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,variable ,@lists)))
 #+end_src
 
-***** ~prependopt!~: Prepend lists to an existing user option
+**** ~prependopt!~: Prepend lists to an existing user option
 
 #+begin_src emacs-lisp
 (defmacro prependopt! (variable &rest lists)
@@ -785,7 +750,7 @@ This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,@lists ,variable)))
 #+end_src
 
-***** ~delq!~: Delete an element from a list in-place
+**** ~delq!~: Delete an element from a list in-place
 
 #+begin_src emacs-lisp
 (defmacro delq! (elt list &optional fetcher)
@@ -797,7 +762,7 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
                 ,list)))
 #+end_src
 
-***** ~pushnew!~: Push values sequentially into a list uniquely
+**** ~pushnew!~: Push values sequentially into a list uniquely
 
 #+begin_src emacs-lisp
 ;; TODO: another version to test car of alist so that new additions with the
@@ -810,8 +775,8 @@ This is a variadic `cl-pushnew'."
       (cl-pushnew ,var ,place :test #'equal))))
 #+end_src
 
-**** Filesystem
-***** ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
+*** Filesystem
+**** ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
 
 #+begin_src emacs-lisp
 (defun ceamx-subdirs (parent-dir)
@@ -822,8 +787,8 @@ This is a variadic `cl-pushnew'."
     (expand-file-name parent-dir) t "^[^\\.]")))
 #+end_src
 
-**** Hooks & Advice
-***** ~def-advice!~: Macro to define and add advice to a function
+*** Hooks & Advice
+**** ~def-advice!~: Macro to define and add advice to a function
 
 #+begin_src emacs-lisp
 (defmacro def-advice! (name arglist how symbol docstring &rest body)
@@ -859,7 +824,7 @@ the newly-defined advice.  SYMBOL is the function to be advised."
      ',name))
 #+end_src
 
-***** ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
+**** ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
 
 #+begin_src emacs-lisp
 (defmacro def-hook! (name arglist hooks docstring &rest body)
@@ -887,8 +852,8 @@ as in `defun'."
         (add-hook hook ',name)))))
 #+end_src
 
-**** Packages & User Configuration
-***** ~use-feature!~: Configuration-only wrapper for ~use-package~
+*** Packages & User Configuration
+**** ~use-feature!~: Configuration-only wrapper for ~use-package~
 
 #+begin_src emacs-lisp
 (defmacro use-feature! (name &rest args)
@@ -906,7 +871,7 @@ will be nil."
      ,@args))
 #+end_src
 
-***** ~package!~: Declare a package and its initial configuration
+**** ~package!~: Declare a package and its initial configuration
 
 Wrapper for ~elpaca~ to avoid having to declare its autoloads in every file.
 
@@ -921,8 +886,8 @@ without needing to declare autoloads for `elpaca' in every file."
      (elpaca ,order ,@body)))
 #+end_src
 
-**** Input and Keybindings
-***** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
+*** Input and Keybindings
+**** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
 
 Usages of this function should be replaced with the result of evaluating
 ~string-to-char~.
@@ -953,7 +918,7 @@ vary based on... various reasons?"
     char))
 #+end_src
 
-***** ~global-keys!~: Define multiple global keybindings
+**** ~global-keys!~: Define multiple global keybindings
 
 #+begin_src emacs-lisp :tangle lisp/lib-common.el
 (defmacro global-keys! (&rest keys)
@@ -964,7 +929,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
      ,@keys))
 #+end_src
 
-***** ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
+**** ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
 
 [[https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/][oantolin comments on Repeat-mode is awesome, share you useful configs]]
 
@@ -980,14 +945,15 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
      keymap)))
 #+end_src
 
-*** Footer
+** Footer
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
 (provide 'lib-common)
 ;;; lib-common.el ends here
 #+end_src
 
-** Manifest
+
+* Initialization [ =init.el= ]
 
 #+begin_src emacs-lisp :comments no :tangle init.el
 ;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t -*-
@@ -1499,7 +1465,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 #+END_SRC
 
 
-*** Measure startup times
+** Measure startup times
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-benchmarking.el
 ;;; init-benchmarking.el --- Measure startup and require times -*- lexical-binding: t -*-
@@ -1619,7 +1585,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 #+end_src
 
 
-*** Packages
+** Packages
 
 
 * Configure
@@ -7967,7 +7933,7 @@ bindings:
 (keymap-global-set "C-S-SPC" #'completion-at-point)
 #+end_src
 
-***** Use ~orderless~ completion settings
+***** Use =orderless= completion settings
 
 See [[*Orderless]] for definitions.
 
@@ -7989,7 +7955,7 @@ See [[*Orderless]] for definitions.
                                        #'orderless-affix-dispatch)))
 #+end_src
 
-***** ~corfu~: COmpletion in Region FUnction
+***** =corfu=: COmpletion in Region FUnction
 
 #+begin_src emacs-lisp
 (package! corfu
@@ -8028,7 +7994,7 @@ See [[*Orderless]] for definitions.
   (add-hook 'meow-insert-exit-hook #'corfu-quit))
 #+end_src
 
-***** ~corfu-echo-mode~: Show candidate docs in echo area
+***** =corfu-echo-mode=: Show candidate docs in echo area
 
 Probably redundant when ~corfu-popupinfo-mode~ is in use.
 
@@ -8039,7 +8005,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
   (corfu-echo-mode))
 #+end_src
 
-***** ~corfu-popupinfo~: Display candidate docs or location in popup
+***** =corfu-popupinfo=: Display candidate docs or location in popup
 
 #+begin_src emacs-lisp
 (after! corfu
@@ -8050,7 +8016,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
 ;;;;
 #+end_src
 
-***** ~corfu-history-mode~: Sort candidates by history position
+***** =corfu-history-mode=: Sort candidates by history position
 
 #+begin_src emacs-lisp
 (after! corfu
@@ -8064,7 +8030,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
 ;;;
 #+end_src
 
-***** ~corfu-terminal~: Terminal support for Corfu
+***** =corfu-terminal=: Terminal support for Corfu
 
 <https://codeberg.org/akib/emacs-corfu-terminal>
 
@@ -8079,7 +8045,7 @@ See also ~popon~, the utility library powering the interface.
     (corfu-terminal-mode 1)))
 #+end_src
 
-***** ~corfu-doc-terminal~: Support doc flyouts in terminal
+***** =corfu-doc-terminal=: Support doc flyouts in terminal
 
 <https://codeberg.org/akib/emacs-corfu-doc-terminal>
 
@@ -8098,7 +8064,7 @@ Support for completion candidate documentation flyouts in terminal.
 ;;   (corfu-doc-terminal-mode +1))
 #+end_src
 
-***** ~kind-icon~: Add icons to completion-at-point candidates
+***** =kind-icon=: Add icons to completion-at-point candidates
 
 <https://github.com/jdtsmith/kind-icon>
 
@@ -8117,7 +8083,7 @@ Support for completion candidate documentation flyouts in terminal.
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 #+end_src
 
-***** ~dabbrev~
+***** =dabbrev=
 
 #+begin_src emacs-lisp
 (after! dabbrev
@@ -8141,7 +8107,7 @@ Support for completion candidate documentation flyouts in terminal.
 ;;;
 #+end_src
 
-***** ~cape~: Completion-At-Point Extensions
+***** =cape=: Completion-At-Point Extensions
 
 <https://github.com/minad/cape/blob/main/README.org>
 
@@ -8182,7 +8148,7 @@ Support for completion candidate documentation flyouts in terminal.
     "M-p r" #'cape-rfc1345))
 #+end_src
 
-***** Advise some modes' completion-at-point functions to work alongside ~cape~
+***** Advise some modes' completion-at-point functions to work alongside =cape=
 
 #+begin_src emacs-lisp
 (after! comint
@@ -8887,7 +8853,7 @@ lel
 (require 'lib-common)
 #+end_src
 
-***** ~flycheck~: install and configure
+***** =flycheck=: install and configure
 
 #+begin_src emacs-lisp
 (package! flycheck
@@ -8905,7 +8871,7 @@ lel
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
 #+end_src
 
-***** ~consult-flycheck~: integration with Consult
+***** =consult-flycheck=: integration with Consult
 
 #+begin_src emacs-lisp
 (package! consult-flycheck
@@ -8964,7 +8930,7 @@ CLOSED: [2024-03-24 Sun 14:44]
 #+end_src
 
 
-*** Code: ~init-templates~
+*** Code: =lisp/init-templates.el=
 :PROPERTIES:
 :header-args: :noweb-ref init-templates
 :END:
@@ -9000,7 +8966,7 @@ Capf, such that it will be tried first."
   (global-tempel-abbrev-mode))
 #+end_src
 
-**** ~tempel~: Add user element to include nested templates
+**** =tempel=: Add user element to include nested templates
 
 See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elements>
 
@@ -9017,7 +8983,7 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
   (add-to-list 'tempel-user-elements #'+tempel-include))
 #+end_src
 
-**** ~tempel~: keybindings
+**** =tempel=: keybindings
 
 #+begin_src emacs-lisp
 (after! tempel
@@ -9030,7 +8996,7 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
     "S-TAB" #'tempel-previous))
 #+end_src
 
-**** ~tempel-collection~: install community ~tempel~ templates
+**** =tempel-collection=: install community =tempel= templates
 
 <https://github.com/Crandel/tempel-collection>
 <https://github.com/Crandel/tempel-collection/tree/main/templates>
@@ -9410,7 +9376,7 @@ Even if Emacs core does things differently.
 (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
 #+end_src
 
-***** ~lispy~: the structural expression editing experience
+***** =lispy=: the structural expression editing experience
 
 - Website :: [[https://github.com/abo-abo/lispy][GitHub - abo-abo/lispy: Short and sweet LISP editing]]
 - API Reference :: [[https://oremacs.com/lispy/][lispy.el function reference]]
@@ -9453,7 +9419,7 @@ Even if Emacs core does things differently.
       (push "\\*lispy-message\\*" popper-reference-buffers))))
 #+end_src
 
-***** ~kbd-mode~: syntax support for =kmonad= and =kanata= configs
+***** =kbd-mode=: syntax support for =kmonad= and =kanata= configs
 
 [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
 
@@ -11519,7 +11485,7 @@ Intended for use as a local hook function on
 
 **** Packages
 
-***** ~doct~: `org-capture' template definer
+***** =doct=: `org-capture' template definer
 
 <https://github.com/progfolio/doct>
 
@@ -11544,7 +11510,7 @@ Intended for use as a local hook function on
                               "%i %a"))))))
 #+END_SRC
 
-***** ~org-ql~
+***** =org-ql=
 
 <https://github.com/alphapapa/org-ql>
 
@@ -11552,7 +11518,7 @@ Intended for use as a local hook function on
 (package! org-ql)
 #+END_SRC
 
-***** ~org-modern~
+***** =org-modern=
 
 <https://github.com/minad/org-modern>
 
@@ -11562,7 +11528,7 @@ Intended for use as a local hook function on
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 #+END_SRC
 
-***** `org-super-agenda'
+***** =org-super-agenda=
 
 <https://github.com/alphapapa/org-super-agenda>
 
@@ -11574,7 +11540,7 @@ TODO: Configure
   (require 'org-super-agenda))
 #+END_SRC
 
-***** `org-download': support dragging-and-dropping images into Org buffers
+***** =org-download=: support dragging-and-dropping images into Org buffers
 
 <https://github.com/abo-abo/org-download>
 
@@ -11584,7 +11550,7 @@ TODO: Configure
   (add-hook 'dired-mode-hook #'org-download-enable))
 #+END_SRC
 
-***** `org-rich-yank': surround pasted code with src-block markup
+***** =org-rich-yank=: surround pasted code with src-block markup
 
 <https://github.com/unhammer/org-rich-yank>
 
@@ -11604,14 +11570,14 @@ kill the selection again.
     (keymap-set org-mode-map "C-M-y" #'org-rich-yank)))
 #+END_SRC
 
-***** `org-web-tools': view, capture, and archive webpages in org-mode
+***** =org-web-tools=: view, capture, and archive webpages in org-mode
 
 #+BEGIN_SRC emacs-lisp
 (package! org-web-tools
   (keymap-set ceamx-insert-map "l" #'org-web-tools-insert-link-for-url))
 #+END_SRC
 
-***** `auto-tangle-mode': automatically tangle literate Org files
+***** =auto-tangle-mode=: automatically tangle literate Org files
 
 #+BEGIN_SRC emacs-lisp
 (package! (auto-tangle-mode
@@ -11620,7 +11586,7 @@ kill the selection again.
   (autoload 'auto-tangle-mode "auto-tangle-mode"))
 #+END_SRC
 
-***** `org-sidebar': provide a sidebar for Org buffers
+***** =org-sidebar=: provide a sidebar for Org buffers
 
 <https://github.com/alphapapa/org-sidebar>
 
@@ -13103,10 +13069,14 @@ deleted before tangling."
 
 *** ~file-prop-line~
 
+- Note taken on [2024-03-27 Wed 01:47] \\
+  Added the ~extraprops~ =noweb= variable for additional propline values and file-local
+  variables.
+
 #+name: file-prop-line
-#+header: :var feature="" :var desc=""
+#+header: :var feature="" :var desc="" :var extraprops=""
 #+begin_src emacs-lisp
-(format ";;; %s.el --- %s  -*- lexical-binding: t; -*-" feature desc)
+(format ";;; %s.el --- %s  -*- lexical-binding: t; %s -*-" feature desc extraprops)
 #+end_src
 
 *** ~file-extra-meta~
@@ -13253,8 +13223,6 @@ CLOSED: [2024-03-18 Mon 23:40]
 - State "DONE"       from "TODO"       [2024-03-18 Mon 23:40]
 Setting this on a heading works.
 
-
-
 ** Styleguide
 
 *** Org-Mode: When to wrap inline text in ~tildes~ vs. =equals=
@@ -13272,7 +13240,6 @@ Setting this on a heading works.
 - <https://manueluberti.eu/posts/2021-09-10-rgrep-and-vc-git-grep/>
 - <https://github.com/leoliu/easy-kill>
 
-
 ** Issues
 
 *** DONE org-mode needs ~tab-width~ set to 8 otherwise constant errors
@@ -13282,14 +13249,9 @@ CLOSED: [2024-03-20 Wed 22:43]
   <https://github.com/doomemacs/doomemacs/commit/2757a97a30e7c4a0c2a5d2de13f2214baf09b019>
 
 
-** The Literate Configuration Section about the End of the Literate Configuration
+* Epilogue
 
-The only reason this section exists is so that the file-local variables comment
-at the very end does not get buried in some unrelated subtree when folding.
-
-*** Local Variables
-
-Here are the file-local variables, and after that, the end of the file:
+
 
 # Local Variables:
 # org-refile-targets: ((nil . (:maxlevel . 3)))

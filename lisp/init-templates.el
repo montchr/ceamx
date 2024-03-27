@@ -1,4 +1,4 @@
-;;; init-templates.el --- Expandable file templates and abbrevs  -*- lexical-binding: t; -*-
+;;; init-templates.el --- Expandable file templates and abbrevs  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 

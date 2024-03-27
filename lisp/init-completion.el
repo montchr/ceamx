@@ -1,4 +1,4 @@
-;;; init-completion.el --- Completion-At-Point enhancements  -*- lexical-binding: t; -*-
+;;; init-completion.el --- Completion-At-Point enhancements  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 

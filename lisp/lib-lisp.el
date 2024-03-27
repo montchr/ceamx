@@ -1,4 +1,4 @@
-;;; lib-lisp.el --- Lisp support functions  -*- lexical-binding: t; -*-
+;;; lib-lisp.el --- Lisp support functions  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 

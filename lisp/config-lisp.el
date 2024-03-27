@@ -1,4 +1,4 @@
-;;; config-lisp.el --- Lispy variable definitions  -*- lexical-binding: t; -*-
+;;; config-lisp.el --- Lispy variable definitions  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
 
