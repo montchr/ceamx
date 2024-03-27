@@ -1,4 +1,4 @@
-;;; templates/org-mode.eld
+;;; templates/tempel/org-mode.eld
 
 ;;; Sources:
 ;; <https://github.com/Crandel/tempel-collection>
@@ -31,14 +31,12 @@ org-mode
 (inlsrc "src_" p "{" q "}")
 (title & "#+title: " p n "#+author: " p n "#+language: " p n n)
 
-(cdomat user-full-name " <" user-mail-address ">")
-
 (litfile & "\
-#+header-args: :tangle lisp/" (p "FEATURE-NAME" name) ".el
-#+begin_src emacs-lisp :noweb yes :comments no
-<<file-prop-line(feature=\"" (s name) "\",desc=\"" (p "FEATURE DESCRIPTION" desc) "\")>>
+#+name: " (p "FEATURE-NAME" name) "-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/" name ".el
+<<file-prop-line(feature=\"" name "\",desc=\"" (p "FEATURE DESCRIPTION" desc) "\")>>
 
-;; Copyright (c) " (format-time-string "%Y") "  " (i cdomat) "
+;; Copyright (c) " (p "2022-") (format-time-string "%Y") "  " (i cdomat) "
 
 ;; Author: " (i cdomat) "
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -49,15 +47,15 @@ org-mode
 ;;; Commentary:
 ;;; Code:
 
-<<" (s name) ">>
+<<" name ">>
 
-<<file-footer(feature=\"" (s name) "\")>>
+<<file-footer(feature=\"" name "\")>>
 #+end_src
 
 
-**** ~" (s name) "~: Code
+*** Code: =" name ".el=
 :PROPERTIES:
-:header-args: :noweb-ref " (s name) "
+:header-args: :noweb-ref " name "
 :END:
 
 #+begin_src emacs-lisp
