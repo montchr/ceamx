@@ -103,5 +103,12 @@
   ;; (setopt avy-style 'de-bruijn)
   (setopt avy-timeout-seconds 0.2))
 
+;;; ~page-break-lines~: improve appearance of form feed characters
+
+;; <https://github.com/purcell/page-break-lines/blob/master/README.md>
+
+(package! page-break-lines
+  (global-page-break-lines-mode))
+
 (provide 'init-ui)
 ;;; init-ui.el ends here
