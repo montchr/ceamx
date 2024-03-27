@@ -7907,45 +7907,42 @@ bindings:
 | ~keyboard-escape-quit~       | ~corfu-reset~              |
 
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-completion.el
-;;; init-completion.el --- Completion interfaces -*- lexical-binding: t; -*-
+**** File Targets
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+#+header-args: :tangle lisp/init-completion.el
+#+begin_src emacs-lisp :noweb yes :comments no
+<<file-prop-line(feature="init-completion",desc="Completion-At-Point enhancements")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+<<file-license>>
 
 ;;; Commentary:
-
-;;  Configuration for completion-at-point.
-
-;; TODO: Doom Emacs now has official Corfu module, check it out
-
-;; FIXME: evil/meow escape does not quit completion
-;; <https://github.com/emacs-evil/evil-collection/issues/676>
-
-;; - <https://github.com/minad/corfu>
-;; - <https://github.com/minad/cape>
-;; - <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
-
 ;;; Code:
 
+<<init-completion>>
+
+<<file-footer(feature="init-completion")>>
+#+end_src
+
+
+**** Code: ~init-completion.el~
+:PROPERTIES:
+:header-args: :noweb-ref init-completion
+:END:
+
+- <https://github.com/minad/corfu>
+- <https://github.com/minad/cape>
+- <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
+
+
+***** General completion settings
+
+#+begin_src emacs-lisp
 (require 'lib-completion)
 (require 'lib-common)
 
@@ -7966,9 +7963,11 @@ bindings:
 ;; `completion-at-point' is often bound to M-TAB, but that conflicts with OS behavior.
 ;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
 (keymap-global-set "C-S-SPC" #'completion-at-point)
+#+end_src
 
-;;; ~corfu~: COmpletion in Region FUnction
+***** ~corfu~: COmpletion in Region FUnction
 
+#+begin_src emacs-lisp
 (package! corfu
   (declare-function global-corfu-mode "corfu")
 
@@ -7991,25 +7990,33 @@ bindings:
   (define-keymap :keymap corfu-map
     "M-g" #'corfu-info-location
     "M-h" #'corfu-info-documentation))
+#+end_src
 
-;;;; ~corfu-echo-mode~: Show candidate docs in echo area
+***** ~corfu-echo-mode~: Show candidate docs in echo area
 
-;; Probably redundant when ~corfu-popupinfo-mode~ is in use.
+Probably redundant when ~corfu-popupinfo-mode~ is in use.
 
+#+begin_src emacs-lisp
 (after! corfu
   (declare-function corfu-echo-mode "corfu-echo")
   (setopt corfu-echo-delay '(0.5 . 0.25))
   (corfu-echo-mode))
+#+end_src
 
-;;;; ~corfu-popupinfo~: Display candidate docs or location in popup
+***** ~corfu-popupinfo~: Display candidate docs or location in popup
 
+#+begin_src emacs-lisp
 (after! corfu
   (declare-function corfu-popupinfo-mode "corfu-popupinfo")
   (setopt corfu-popupinfo-delay '(1.0 . 0.5))
   (corfu-popupinfo-mode))
 
-;;;; ~corfu-history-mode~: Sort candidates by history position
+;;;;
+#+end_src
 
+***** ~corfu-history-mode~: Sort candidates by history position
+
+#+begin_src emacs-lisp
 (after! corfu
   (declare-function corfu-history-mode "corfu-history")
   (corfu-history-mode))
@@ -8018,25 +8025,33 @@ bindings:
 (after! (savehist corfu-history)
   (add-to-list 'savehist-additional-variables 'corfu-history))
 
-;;; ~corfu-terminal~: Terminal support for Corfu
+;;;
+#+end_src
 
-;; <https://codeberg.org/akib/emacs-corfu-terminal>
+***** ~corfu-terminal~: Terminal support for Corfu
 
-;;  Corfu-endorsed solution to making it usable in terminal.
-;;  See also `popon', the utility library powering the interface.
+<https://codeberg.org/akib/emacs-corfu-terminal>
 
+Corfu-endorsed solution to making it usable in terminal.
+See also ~popon~, the utility library powering the interface.
+
+#+begin_src emacs-lisp
 (package! corfu-terminal)
 
 (after! (corfu corfu-terminal)
   (unless (display-graphic-p)
     (corfu-terminal-mode 1)))
 
-;;; ~corfu-doc-terminal~: Support doc flyouts in terminal
+;;;
+#+end_src
 
-;; <https://codeberg.org/akib/emacs-corfu-doc-terminal>
+***** ~corfu-doc-terminal~: Support doc flyouts in terminal
 
-;;  Support for completion candidate documentation flyouts in terminal.
+<https://codeberg.org/akib/emacs-corfu-doc-terminal>
 
+Support for completion candidate documentation flyouts in terminal.
+
+#+begin_src emacs-lisp
 ;;  FIXME: missing `corfu-doc' dependency -- that package was integrated into
 ;;  corfu core, but still not available. since this is a non-essential
 ;;  enhancement, it will probably be removed.
@@ -8047,13 +8062,13 @@ bindings:
 ;;   :unless (display-graphic-p)
 ;;   :config
 ;;   (corfu-doc-terminal-mode +1))
+#+end_src
 
-;;; ~kind-icon~: Add icons to Corfu candidates
+***** ~kind-icon~: Add icons to completion-at-point candidates
 
-;; <https://github.com/jdtsmith/kind-icon>
+<https://github.com/jdtsmith/kind-icon>
 
-;; Colorful icons for completion-at-point interfaces
-
+#+begin_src emacs-lisp
 (package! kind-icon
   (setopt kind-icon-use-icons (display-graphic-p))
   (setopt kind-icon-blend-background t)
@@ -8066,9 +8081,11 @@ bindings:
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache)
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+#+end_src
 
-;;; Configure ~dabbrev~
+***** ~dabbrev~
 
+#+begin_src emacs-lisp
 (after! dabbrev
   ;; TODO: what does this pattern represent?
   ;;       why is it not same as eval result: (rx "` ")
@@ -8080,10 +8097,14 @@ bindings:
   (keymap-global-set "M-/" #'dabbrev-completion)
   (keymap-global-set "C-M-/" #'dabbrev-expand))
 
-;;; ~cape~: Completion-At-Point Extensions
+;;;
+#+end_src
 
-;; <https://github.com/minad/cape/blob/main/README.org>
+***** ~cape~: Completion-At-Point Extensions
 
+<https://github.com/minad/cape/blob/main/README.org>
+
+#+begin_src emacs-lisp
 (package! cape
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
@@ -8114,10 +8135,8 @@ bindings:
     "M-p &" #'cape-sgml
     ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
     "M-p r" #'cape-rfc1345))
-
-(provide 'init-completion)
-;;; init-completion.el ends here
 #+end_src
+
 
 *** Library
 
