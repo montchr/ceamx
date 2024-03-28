@@ -6539,7 +6539,7 @@ and consult-location to occur-edit."
 
 ** Keys
 
-*** General Customizations
+*** General
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-keys.el
 ;;; init-keys.el --- Keybindings -*- lexical-binding: t -*-
@@ -6748,54 +6748,69 @@ Diabetic experiments with syntactic sugar.
 #+end_src
 
 
-*** Meow modal keybindings
+*** =meow= modal keybindings
 
-**** Customization
+**** Target Files
 :PROPERTIES:
-:header-args: emacs-lisp :tangle lisp/init-keys-meow.el
+:VISIBILITY: folded
 :END:
 
-#+begin_src emacs-lisp :comments no
-;;; init-keys-meow.el --- Meow support               -*- lexical-binding: t; -*-
+#+name: init-keys-meow-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-keys-meow.el
+<<file-prop-line(feature="init-keys-meow",desc="Meow modal keybindings support")>>
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+<<file-license>>
 
 ;;; Commentary:
-
 ;;; Code:
+
+<<init-keys-meow>>
+
+<<file-footer(feature="init-keys-meow")>>
+#+end_src
+
+#+name: lib-keys-meow-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-keys-meow.el
+<<file-prop-line(feature="lib-keys-meow",desc="Meow helpers")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-keys-meow>>
+
+<<file-footer(feature="lib-keys-meow")>>
 #+end_src
 
 
-***** Requirements
+**** Code: =init-keys-meow.el=
+:PROPERTIES:
+:header-args: :noweb-ref init-keys-meow
+:END:
 
 #+begin_src emacs-lisp
 (require 'lib-common)
 (require 'lib-keys-meow)
 #+end_src
 
-***** Install and load Meow
-
 #+begin_src emacs-lisp
 (package! meow)
 #+end_src
 
-****** Load meow after Which-Key to circumvent Meow-Keypad UI issues
+***** Load meow after Which-Key to circumvent Meow-Keypad UI issues
 
 Meow's leader functionality has a custom keybinding visualization helper that
 looks almost exactly like ~which-key~ except that it is very buggy. It does try
@@ -7144,46 +7159,21 @@ See the helper functions/macros.
 (meow-global-mode 1)
 #+end_src
 
-***** Footer
 
-#+begin_src emacs-lisp :comments no
-(provide 'init-keys-meow)
-;;; init-keys-meow.el ends here
-#+end_src
-
-
-**** Library
+**** Code: =lib-keys-meow.el=
 :PROPERTIES:
-:header-args: emacs-lisp :tangle lisp/lib-keys-meow.el
+:header-args: :noweb-ref lib-keys-meow
 :END:
 
-#+begin_src emacs-lisp :comments no
-;;; lib-keys-meow.el --- Helpers for Meow            -*- lexical-binding: t; -*-
+***** Working with Meow "things"
 
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'lib-common)
+#+end_src
 
+****** ~meow-pair!~
+
+#+begin_src emacs-lisp
 (defmacro meow-pair! (thing char begin end)
   "Register a new Meow THING as a pair of BEGIN and END, and map it to CHAR.
 This macro simplifies `meow-thing-register' by assuming that the
@@ -7218,14 +7208,22 @@ and Info node `(elisp) String Conversion' for more info."
         ',pair
         ',pair)
        (ceamx-meow-bind-thing ',sym ,char))))
+#+end_src
 
+****** ~ceamx-meow-bind-thing~
+
+#+begin_src emacs-lisp
 (defun ceamx-meow-bind-thing (thing char)
   "Add pre-registered THING to `meow-char-thing-table' as CHAR."
   (defvar meow-char-thing-table '())
   (let ((thing (ceamx-unquote thing))
         (char (ceamx-normalize-char char)))
     (add-to-list 'meow-char-thing-table `(,char . ,thing))))
+#+end_src
 
+****** ~ceamx-meow-unbind-thing~
+
+#+begin_src emacs-lisp
 (defun ceamx-meow-unbind-thing (char)
   "Remove the character association for character CHAR.
 This function will destructively modify the alist
@@ -7239,13 +7237,10 @@ CHAR may be a string or character constant, which will be passed
 as the CHAR argument to `ceamx-normalize-char'."
   (defvar meow-char-thing-table '())
   (assoc-delete-all (ceamx-normalize-char char) meow-char-thing-table #'eq))
-
-(provide 'lib-keys-meow)
-;;; lib-keys-meow.el ends here
 #+end_src
 
 
-*** Which-Key
+*** ~which-key~
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-keys-which-key.el
 ;;; init-keys-which-key.el --- Support for which-key  -*- lexical-binding: t; -*-
@@ -7327,7 +7322,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 #+end_src
 
 
-*** config-keys.el: Variables
+*** ~config-keys~ :: variables
 :PROPERTIES:
 :header-args: :tangle lisp/config-keys.el
 :END:
@@ -7377,7 +7372,6 @@ as the CHAR argument to `ceamx-normalize-char'."
 
 
 ** Completion
-
 
 *** Vertico
 
@@ -7519,7 +7513,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (provide 'init-selection-vertico)
 ;;; init-selection-vertico.el ends here
 #+end_src
-
 
 
 *** Consult
@@ -7687,7 +7680,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (provide 'init-selection-consult)
 ;;; init-selection-consult.el ends here
 #+end_src
-
 
 
 *** Marginalia

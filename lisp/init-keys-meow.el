@@ -1,76 +1,35 @@
-;;; init-keys-meow.el --- Meow support               -*- lexical-binding: t; -*-
+;;; init-keys-meow.el --- Meow modal keybindings support  -*- lexical-binding: t;  -*-
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; This file is NOT part of GNU Emacs.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;; Code:
 
-;; Requirements
-
-
-;; [[file:../config.org::*Requirements][Requirements:1]]
 (require 'lib-common)
 (require 'lib-keys-meow)
-;; Requirements:1 ends here
-
-;; Install and load Meow
-
-
-;; [[file:../config.org::*Install and load Meow][Install and load Meow:1]]
 (package! meow)
-;; Install and load Meow:1 ends here
-
-;; Load meow after Which-Key to circumvent Meow-Keypad UI issues
-
-;; Meow's leader functionality has a custom keybinding visualization helper that
-;; looks almost exactly like =which-key= except that it is very buggy. It does try
-;; to smooth over some of the guts of Meow, as =which-key= is cluttered with
-;; keybinding entries for =meow-digit-argument=. But even Meow's maintainers do not
-;; recommend using the custom keypad helper UI.
-
-;; Unfortunately, AFAIK there is no way to disable the UI feature explicitly
-;; without disabling the Keypad entirely. The only way to prevent this feature from
-;; causing workflow issues is by installing =which-key= and letting Meow defer to
-;; =which-key= for this kind of interface.
-
-;; And so, we load Meow after Which-Key:
-
-
-;; [[file:../config.org::*Load meow after Which-Key to circumvent Meow-Keypad UI issues][Load meow after Which-Key to circumvent Meow-Keypad UI issues:1]]
 (with-eval-after-load 'which-key
   (require 'meow))
-;; Load meow after Which-Key to circumvent Meow-Keypad UI issues:1 ends here
-
-
-
-;; And allow Elpaca to finish processing its queues, since everything afterwards depends on Meow.
-
-
-;; [[file:../config.org::*Load meow after Which-Key to circumvent Meow-Keypad UI issues][Load meow after Which-Key to circumvent Meow-Keypad UI issues:2]]
 (elpaca-wait)
-;; Load meow after Which-Key to circumvent Meow-Keypad UI issues:2 ends here
-
-;; Add initial keybindings to the Meow Leader keymap
-
-
-;; [[file:../config.org::*Add initial keybindings to the Meow Leader keymap][Add initial keybindings to the Meow Leader keymap:1]]
 (meow-leader-define-key
  ;; SPC j/k will run the original command in MOTION state.
  '("j" . "H-j")
@@ -94,12 +53,14 @@
  '("j" . meow-next)
  '("k" . meow-prev)
  '("<escape>" . ignore))
-;; Add initial keybindings to the Meow Leader keymap:1 ends here
-
-;; Add initial keybindings to the NORMAL state keymap
-
-
-;; [[file:../config.org::*Add initial keybindings to the NORMAL state keymap][Add initial keybindings to the NORMAL state keymap:1]]
+(noop!
+  ;; TODO: instead, because meow key definer syntax sucks:
+  ;;
+  ;; see `meow-keymap-alist' for available states (or use the lookup logic
+  ;; from `meow-define-keys': (alist-get state meow-keymap-alist)
+  (define-keymap :keymap meow-insert-state-keymap
+    ;; etc.
+    "0" #'meow-expand-0))
 (meow-normal-define-key
  '("0" . meow-expand-0)
  '("9" . meow-expand-9)
@@ -170,69 +131,19 @@
  '("'" . repeat)
  '("<escape>" . ignore)
  '(":" . avy-goto-char-2))
-;; Add initial keybindings to the NORMAL state keymap:1 ends here
-
-;; Tell Meow about our keyboard layout to arrange its cheatsheet
-
-
-;; [[file:../config.org::*Tell Meow about our keyboard layout to arrange its cheatsheet][Tell Meow about our keyboard layout to arrange its cheatsheet:1]]
 ;; NOTE: This is not a customizable variable, although it is required for meow.
 (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-;; Tell Meow about our keyboard layout to arrange its cheatsheet:1 ends here
-
-;; Configure the Keypad
-
-
-;; [[file:../config.org::*Configure the Keypad][Configure the Keypad:1]]
 ;; Don't pass through keys that aren't in keypad.
 (setopt meow-keypad-self-insert-undefined nil)
-;; Configure the Keypad:1 ends here
-
-;; Avoid the default binding for =meow-keypad= in motion state
-
-;; The goal here is to preserve the established SPC/DEL keybindings to scroll in Info mode and some other similar modes.
-
-
-;; [[file:../config.org::*Avoid the default binding for =meow-keypad= in motion state][Avoid the default binding for =meow-keypad= in motion state:1]]
 (keymap-unset meow-motion-state-keymap "SPC" t)
-;; Avoid the default binding for =meow-keypad= in motion state:1 ends here
-
-;; ACTIVE Leader keymap from =meow-keymap-alist= (default)
-
-;; When =meow-keypad-leader-dispatch= is nil, the leader will dispatch to the
-;; leader keymap in =meow-keymap-alist=.
-
-;; This is the default behavior.
-
-;; | Pros                                               | Cons                                              |
-;; |----------------------------------------------------+---------------------------------------------------|
-;; | Filters out noise                                  | Requires additional keystroke =c= to get to =C-c= |
-;; | With =c= press, Ctrl mod is primed (i.e. =C-c C-=) |                                                   |
-
-
-;; [[file:../config.org::*ACTIVE Leader keymap from =meow-keymap-alist= (default)][ACTIVE Leader keymap from =meow-keymap-alist= (default):1]]
 (setopt meow-keypad-leader-dispatch nil)
-;; ACTIVE Leader keymap from =meow-keymap-alist= (default):1 ends here
-
-;; Customize the appearance of the mode-line indicator for the current Meow state
-
-;; This should happen before defining any new states so that they may provide their
-;; own values upon definition.
-
-
-;; [[file:../config.org::*Customize the appearance of the mode-line indicator for the current Meow state][Customize the appearance of the mode-line indicator for the current Meow state:1]]
+(setopt meow-keypad-leader-dispatch "C-c")
 (setopt meow-replace-state-name-list
         '( (normal . "🅝")
            (beacon . "🅑")
            (insert . "🅘")
            (motion . "🅜")
            (keypad . "🅚")))
-;; Customize the appearance of the mode-line indicator for the current Meow state:1 ends here
-
-;; Map preferred initial Meow states for some additional major-modes
-
-
-;; [[file:../config.org::*Map preferred initial Meow states for some additional major-modes][Map preferred initial Meow states for some additional major-modes:1]]
 (pushnew! meow-mode-state-list
           ;; shells
           ;; TODO: use `ceamx-repl-modes-list'
@@ -249,23 +160,7 @@
           '(Info-mode . motion)
           '(read-only-mode . motion)
           '(help-mode . motion))
-;; Map preferred initial Meow states for some additional major-modes:1 ends here
-
-;; Improve Meow integration with the default Emacs kill-ring and system clipboard
-
-;; [[https://github.com/meow-edit/meow/issues/543][Clipboard Confusing Defaults and Documentation · Issue #543 · meow-edit/meow · GitHub]]
-
-
-;; [[file:../config.org::*Improve Meow integration with the default Emacs kill-ring and system clipboard][Improve Meow integration with the default Emacs kill-ring and system clipboard:1]]
 (setopt meow-use-clipboard t)
-;; Improve Meow integration with the default Emacs kill-ring and system clipboard:1 ends here
-
-;; Expand upon the default Meow pair-things
-
-;; See the helper functions/macros.
-
-
-;; [[file:../config.org::*Expand upon the default Meow pair-things][Expand upon the default Meow pair-things:1]]
 (meow-pair! 'angle "a" "<" ">")
 
 (ceamx-meow-bind-thing 'round "(")
@@ -275,14 +170,7 @@
 
 ;; TODO: i don't really thing i want to do this, but here for reference
 ;; (ceamx-meow-unbind-thing "r")
-;; Expand upon the default Meow pair-things:1 ends here
-
-;; Activate Meow
-
-
-;; [[file:../config.org::*Activate Meow][Activate Meow:1]]
 (meow-global-mode 1)
-;; Activate Meow:1 ends here
 
 (provide 'init-keys-meow)
 ;;; init-keys-meow.el ends here

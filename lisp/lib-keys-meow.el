@@ -1,29 +1,30 @@
-;;; lib-keys-meow.el --- Helpers for Meow            -*- lexical-binding: t; -*-
+;;; lib-keys-meow.el --- Meow helpers  -*- lexical-binding: t;  -*-
 
-;; Copyright (C) 2024  Chris Montgomery
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; This file is NOT part of GNU Emacs.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
 ;;; Code:
 
 (require 'lib-common)
-
 (defmacro meow-pair! (thing char begin end)
   "Register a new Meow THING as a pair of BEGIN and END, and map it to CHAR.
 This macro simplifies `meow-thing-register' by assuming that the
@@ -58,14 +59,12 @@ and Info node `(elisp) String Conversion' for more info."
         ',pair
         ',pair)
        (ceamx-meow-bind-thing ',sym ,char))))
-
 (defun ceamx-meow-bind-thing (thing char)
   "Add pre-registered THING to `meow-char-thing-table' as CHAR."
   (defvar meow-char-thing-table '())
   (let ((thing (ceamx-unquote thing))
         (char (ceamx-normalize-char char)))
     (add-to-list 'meow-char-thing-table `(,char . ,thing))))
-
 (defun ceamx-meow-unbind-thing (char)
   "Remove the character association for character CHAR.
 This function will destructively modify the alist
