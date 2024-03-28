@@ -57,6 +57,14 @@
 
 (package! transient)
 
+(with-eval-after-load 'transient
+  (defvar transient-map)
+  (declare-function transient-quit-one "transient")
+
+  ;; Always close transient with ESC
+  ;; FIXME: meow overrides this. waiting until it loads does not help.
+  (keymap-set transient-map "ESC" #'transient-quit-one))
+
 (package! magit-section)
 
 (package! nerd-icons
