@@ -63,12 +63,13 @@
   (declare-function global-corfu-mode "corfu")
 
   (setopt corfu-auto t)
-  (setopt corfu-auto-delay 0.1)
+  (setopt corfu-auto-delay 0.05)
   (setopt corfu-cycle t)
   (setopt corfu-preselect 'prompt)
-  (setopt corfu-count 16)
-  (setopt corfu-max-width 120)
-  (setopt corfu-on-exact-match nil)
+  (setopt corfu-count 8)
+  (setopt corfu-max-width 80)
+  (setopt corfu-on-exact-match 'insert)
+  (setopt corfu-scroll-margin 5)
 
   (setopt corfu-quit-at-boundary 'separator)
   (setopt corfu-quit-no-match 'separator)
@@ -84,8 +85,17 @@
 
   ;; Default values, unless otherwise stated.
   (define-keymap :keymap corfu-map
-    "M-g" #'corfu-info-location
-    "M-h" #'corfu-info-documentation))
+    "TAB" #'corfu-next
+    "S-TAB"  #'corfu-previous
+    "RET" nil
+    "C-h" #'corfu-info-documentation
+    "C-n" nil
+    "C-p" nil
+    "M-RET" #'corfu-insert
+    "M-." #'corfu-show-location
+    "M-g" #'corfu-info-location ; default
+    ;; "M-h" #'corfu-info-documentation    ; default
+    "M-h" nil))
 (after! meow
   (add-hook 'meow-insert-exit-hook #'corfu-quit))
 (after! corfu
@@ -94,10 +104,12 @@
   (corfu-echo-mode))
 (after! corfu
   (declare-function corfu-popupinfo-mode "corfu-popupinfo")
-  (setopt corfu-popupinfo-delay '(1.0 . 0.5))
-  (corfu-popupinfo-mode))
 
-;;;;
+  (setopt corfu-popupinfo-delay '(1.0 . 0.5))
+
+  (corfu-popupinfo-mode)
+
+  (keymap-set corfu-map "C-h" #'corfu-popupinfo-mode))
 (after! corfu
   (declare-function corfu-history-mode "corfu-history")
   (corfu-history-mode))
@@ -112,16 +124,6 @@
 (after! (corfu corfu-terminal)
   (unless (display-graphic-p)
     (corfu-terminal-mode 1)))
-;;  FIXME: missing `corfu-doc' dependency -- that package was integrated into
-;;  corfu core, but still not available. since this is a non-essential
-;;  enhancement, it will probably be removed.
-;;
-;; (use-package corfu-doc-terminal
-;;   ;; FIXME: :elpaca (corfu-doc-terminal :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git")
-;;   :after (corfu-terminal)
-;;   :unless (display-graphic-p)
-;;   :config
-;;   (corfu-doc-terminal-mode +1))
 (package! kind-icon
   (setopt kind-icon-use-icons (display-graphic-p))
   (setopt kind-icon-blend-background t)

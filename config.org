@@ -7952,12 +7952,13 @@ See [[*Orderless]] for definitions.
   (declare-function global-corfu-mode "corfu")
 
   (setopt corfu-auto t)
-  (setopt corfu-auto-delay 0.1)
+  (setopt corfu-auto-delay 0.05)
   (setopt corfu-cycle t)
   (setopt corfu-preselect 'prompt)
-  (setopt corfu-count 16)
-  (setopt corfu-max-width 120)
-  (setopt corfu-on-exact-match nil)
+  (setopt corfu-count 8)
+  (setopt corfu-max-width 80)
+  (setopt corfu-on-exact-match 'insert)
+  (setopt corfu-scroll-margin 5)
 
   (setopt corfu-quit-at-boundary 'separator)
   (setopt corfu-quit-no-match 'separator)
@@ -7973,18 +7974,27 @@ See [[*Orderless]] for definitions.
 
   ;; Default values, unless otherwise stated.
   (define-keymap :keymap corfu-map
-    "M-g" #'corfu-info-location
-    "M-h" #'corfu-info-documentation))
+    "TAB" #'corfu-next
+    "S-TAB"  #'corfu-previous
+    "RET" nil
+    "C-h" #'corfu-info-documentation
+    "C-n" nil
+    "C-p" nil
+    "M-RET" #'corfu-insert
+    "M-." #'corfu-show-location
+    "M-g" #'corfu-info-location ; default
+    ;; "M-h" #'corfu-info-documentation    ; default
+    "M-h" nil))
 #+end_src
 
-***** Ensure Corfu flyout closes when leaving insert state
+****** Ensure Corfu flyout closes when leaving insert state
 
 #+begin_src emacs-lisp
 (after! meow
   (add-hook 'meow-insert-exit-hook #'corfu-quit))
 #+end_src
 
-***** ~corfu-echo-mode~: Show candidate docs in echo area
+****** ~corfu-echo-mode~: Show candidate docs in echo area
 
 Probably redundant when ~corfu-popupinfo-mode~ is in use.
 
@@ -7995,18 +8005,20 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
   (corfu-echo-mode))
 #+end_src
 
-***** ~corfu-popupinfo~: Display candidate docs or location in popup
+****** ~corfu-popupinfo~: Display candidate docs or location in popup
 
 #+begin_src emacs-lisp
 (after! corfu
   (declare-function corfu-popupinfo-mode "corfu-popupinfo")
-  (setopt corfu-popupinfo-delay '(1.0 . 0.5))
-  (corfu-popupinfo-mode))
 
-;;;;
+  (setopt corfu-popupinfo-delay '(1.0 . 0.5))
+
+  (corfu-popupinfo-mode)
+
+  (keymap-set corfu-map "C-h" #'corfu-popupinfo-mode))
 #+end_src
 
-***** ~corfu-history-mode~: Sort candidates by history position
+****** ~corfu-history-mode~: Sort candidates by history position
 
 #+begin_src emacs-lisp
 (after! corfu
@@ -8020,7 +8032,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
 ;;;
 #+end_src
 
-***** ~corfu-terminal~: Terminal support for Corfu
+****** ~corfu-terminal~: Terminal support for Corfu
 
 <https://codeberg.org/akib/emacs-corfu-terminal>
 
@@ -8035,26 +8047,7 @@ See also ~popon~, the utility library powering the interface.
     (corfu-terminal-mode 1)))
 #+end_src
 
-***** ~corfu-doc-terminal~: Support doc flyouts in terminal
-
-<https://codeberg.org/akib/emacs-corfu-doc-terminal>
-
-Support for completion candidate documentation flyouts in terminal.
-
-#+begin_src emacs-lisp
-;;  FIXME: missing `corfu-doc' dependency -- that package was integrated into
-;;  corfu core, but still not available. since this is a non-essential
-;;  enhancement, it will probably be removed.
-;;
-;; (use-package corfu-doc-terminal
-;;   ;; FIXME: :elpaca (corfu-doc-terminal :repo "https://codeberg.org/akib/emacs-corfu-doc-terminal.git")
-;;   :after (corfu-terminal)
-;;   :unless (display-graphic-p)
-;;   :config
-;;   (corfu-doc-terminal-mode +1))
-#+end_src
-
-***** ~kind-icon~: Add icons to completion-at-point candidates
+***** ~kind-icon~: Add icons to candidates
 
 <https://github.com/jdtsmith/kind-icon>
 
@@ -8073,7 +8066,7 @@ Support for completion candidate documentation flyouts in terminal.
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 #+end_src
 
-***** ~dabbrev~
+***** ~dabbrev~: Dynamic Abbreviations
 
 #+begin_src emacs-lisp
 (after! dabbrev
@@ -8138,7 +8131,7 @@ Support for completion candidate documentation flyouts in terminal.
     "M-p r" #'cape-rfc1345))
 #+end_src
 
-***** Advise some modes' completion-at-point functions to work alongside ~cape~
+****** Advise some modes' completion-at-point functions to work alongside ~cape~
 
 #+begin_src emacs-lisp
 (after! comint
