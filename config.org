@@ -2410,8 +2410,6 @@ accommodation for varying pixel densities."
 
 ;;; Code:
 
-(require 'elpaca-autoloads)
-
 (require 'lib-common)
 
 ;;; General
@@ -2451,43 +2449,38 @@ accommodation for varying pixel densities."
   (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
   (require 'nerd-icons))
 
-(use-package svg-lib
-  :demand t)
+(package! svg-lib)
 
-(use-package hydra
-  :commands defhydra)
+(package! hydra)
 
-;;; pretty-hydra :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
+;;; =pretty-hydra=
 
-(use-package pretty-hydra
-  :after (hydra))
+;; <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
-;;
-;;; Avy
+(package! pretty-hydra)
+
+;;; =avy=
 
 ;; <https://github.com/abo-abo/avy>
 
 ;; <https://karthinks.com/software/avy-can-do-anything/>
 
-(use-package avy
-  :commands ( avy-goto-char
-              avy-goto-char-2
-              avy-goto-char-timer)
-  :init
-  (keymap-global-set "M-j" #'avy-goto-char-2)
-  (after! lispy
-    (defvar lispy-mode-map)
-    (declare-function lispy-join "lispy")
-    (keymap-set lispy-mode-map "M-J" #'lispy-join))
-
-  :config
+(package! avy
   (setopt avy-all-windows t)
   (setopt avy-all-windows-alt t)
   ;; Prevent conflicts with themes.
   (setopt avy-background nil)
   (setopt avy-style 'at-full)
   ;; (setopt avy-style 'de-bruijn)
-  (setopt avy-timeout-seconds 0.2))
+  (setopt avy-timeout-seconds 0.2)
+
+  (keymap-global-set "M-j" #'avy-goto-char-2)
+
+  (after! lispy
+    (defvar lispy-mode-map)
+    (declare-function lispy-join "lispy")
+    ;; Prevent conflict with newly-added M-j binding for `avy-goto-char-2'.
+    (keymap-set lispy-mode-map "M-J" #'lispy-join)))
 
 ;;; ~page-break-lines~: improve appearance of form feed characters
 
