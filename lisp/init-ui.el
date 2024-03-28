@@ -67,13 +67,13 @@
 
 (package! hydra)
 
-;;; =pretty-hydra=
+;;; ~pretty-hydra~
 
 ;; <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 (package! pretty-hydra)
 
-;;; =avy=
+;;; ~avy~
 
 ;; <https://github.com/abo-abo/avy>
 

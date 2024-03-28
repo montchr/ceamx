@@ -38,17 +38,17 @@
     (require 'embark)))
 ;; Install and pre-configure the Embark package:1 ends here
 
-;; Configure =display-buffer-alist= rules for Embark windows
+;; Configure ~display-buffer-alist~ rules for Embark windows
 
 
-;; [[file:../config.org::*Configure =display-buffer-alist= rules for Embark windows][Configure =display-buffer-alist= rules for Embark windows:1]]
+;; [[file:../config.org::*Configure ~display-buffer-alist~ rules for Embark windows][Configure ~display-buffer-alist~ rules for Embark windows:1]]
 (with-eval-after-load 'embark
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
                  (window-parameters (mode-line-format . none)))))
-;; Configure =display-buffer-alist= rules for Embark windows:1 ends here
+;; Configure ~display-buffer-alist~ rules for Embark windows:1 ends here
 
 (provide 'init-embark)
 ;;; init-embark.el ends here

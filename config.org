@@ -6,7 +6,7 @@
 #+property: header-args:emacs-lisp :comments both
 #+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :results silent :noweb yes
 #+archive: graveyard/%s::datetree/
-#+startup: indent
+#+startup: indent show2levels
 
 * ~early-init~ :: pre-startup
 
@@ -4314,10 +4314,10 @@ If there is only one window and multiple frames, call
 ;; Prevent unwanted horizontal scrolling upon navigation.
 (setopt scroll-preserve-screen-position t)
 
-;; (setopt scroll-conservatively 101)
+(setopt scroll-conservatively 2)
 
 ;; Add a margin when scrolling vertically (or don't).
-(setq-default scroll-margin 4)
+(setq-default scroll-margin 2)
 
 (define-keymap :keymap (current-global-map)
   ;; The default bindings feel backwards to me.
@@ -7838,7 +7838,7 @@ Minibuffer candidate annotations.
 ;;; init-selection-orderless.el ends here
 #+end_src
 
-*** Completion-At-Point (~corfu~)
+*** Completion-At-Point
 
 See the following notes on default Corfu keybindings from its readme:
 

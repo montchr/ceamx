@@ -53,7 +53,7 @@
   (with-eval-after-load 'exec-path-from-shell
     (require 'inheritenv)))
 
-;;; =with-editor=: Ensure shell/term modes use session as =$EDITOR=
+;;; ~with-editor~: Ensure shell/term modes use session as =$EDITOR=
 
 (package! with-editor
   (keymap-global-set "<remap> <async-shell-command>"

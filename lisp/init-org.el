@@ -297,12 +297,12 @@ Intended for use as a local hook function on
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
 ;; Enforce the correct `tab-width' to prevent errors:1 ends here
 
-;; =doct=: `org-capture' template definer
+;; ~doct~: `org-capture' template definer
 
 ;; <https://github.com/progfolio/doct>
 
 
-;; [[file:../config.org::*=doct=: `org-capture' template definer][=doct=: `org-capture' template definer:1]]
+;; [[file:../config.org::*~doct~: `org-capture' template definer][~doct~: `org-capture' template definer:1]]
 (package! doct
   (require 'doct))
 
@@ -321,53 +321,53 @@ Intended for use as a local hook function on
                    :type entry
                    :template ("* TODO %?"
                               "%i %a"))))))
-;; =doct=: `org-capture' template definer:1 ends here
+;; ~doct~: `org-capture' template definer:1 ends here
 
-;; =org-ql=
+;; ~org-ql~
 
 ;; <https://github.com/alphapapa/org-ql>
 
 
-;; [[file:../config.org::*=org-ql=][=org-ql=:1]]
+;; [[file:../config.org::*~org-ql~][~org-ql~:1]]
 (package! org-ql)
-;; =org-ql=:1 ends here
+;; ~org-ql~:1 ends here
 
-;; =org-modern=
+;; ~org-modern~
 
 ;; <https://github.com/minad/org-modern>
 
 
-;; [[file:../config.org::*=org-modern=][=org-modern=:1]]
+;; [[file:../config.org::*~org-modern~][~org-modern~:1]]
 (package! org-modern
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
-;; =org-modern=:1 ends here
+;; ~org-modern~:1 ends here
 
-;; =org-super-agenda=
+;; ~org-super-agenda~
 
 ;; <https://github.com/alphapapa/org-super-agenda>
 
 ;; TODO: Configure
 
 
-;; [[file:../config.org::*=org-super-agenda=][=org-super-agenda=:1]]
+;; [[file:../config.org::*~org-super-agenda~][~org-super-agenda~:1]]
 (package! org-super-agenda
   ;; FIXME: probably can use autoloads instead
   (require 'org-super-agenda))
-;; =org-super-agenda=:1 ends here
+;; ~org-super-agenda~:1 ends here
 
-;; =org-download=: support dragging-and-dropping images into Org buffers
+;; ~org-download~: support dragging-and-dropping images into Org buffers
 
 ;; <https://github.com/abo-abo/org-download>
 
 
-;; [[file:../config.org::*=org-download=: support dragging-and-dropping images into Org buffers][=org-download=: support dragging-and-dropping images into Org buffers:1]]
+;; [[file:../config.org::*~org-download~: support dragging-and-dropping images into Org buffers][~org-download~: support dragging-and-dropping images into Org buffers:1]]
 (package! org-download
   (require 'org-download)
   (add-hook 'dired-mode-hook #'org-download-enable))
-;; =org-download=: support dragging-and-dropping images into Org buffers:1 ends here
+;; ~org-download~: support dragging-and-dropping images into Org buffers:1 ends here
 
-;; =org-rich-yank=: surround pasted code with src-block markup
+;; ~org-rich-yank~: surround pasted code with src-block markup
 
 ;; <https://github.com/unhammer/org-rich-yank>
 
@@ -380,50 +380,50 @@ Intended for use as a local hook function on
 ;; kill the selection again.
 
 
-;; [[file:../config.org::*=org-rich-yank=: surround pasted code with src-block markup][=org-rich-yank=: surround pasted code with src-block markup:1]]
+;; [[file:../config.org::*~org-rich-yank~: surround pasted code with src-block markup][~org-rich-yank~: surround pasted code with src-block markup:1]]
 (package! org-rich-yank
   (with-eval-after-load 'org-download
     (require 'org-rich-yank)
 
     (keymap-set org-mode-map "C-M-y" #'org-rich-yank)))
-;; =org-rich-yank=: surround pasted code with src-block markup:1 ends here
+;; ~org-rich-yank~: surround pasted code with src-block markup:1 ends here
 
-;; =org-web-tools=: view, capture, and archive webpages in org-mode
+;; ~org-web-tools~: view, capture, and archive webpages in org-mode
 
 
-;; [[file:../config.org::*=org-web-tools=: view, capture, and archive webpages in org-mode][=org-web-tools=: view, capture, and archive webpages in org-mode:1]]
+;; [[file:../config.org::*~org-web-tools~: view, capture, and archive webpages in org-mode][~org-web-tools~: view, capture, and archive webpages in org-mode:1]]
 (package! org-web-tools
   (keymap-set ceamx-insert-map "l" #'org-web-tools-insert-link-for-url))
-;; =org-web-tools=: view, capture, and archive webpages in org-mode:1 ends here
+;; ~org-web-tools~: view, capture, and archive webpages in org-mode:1 ends here
 
-;; =auto-tangle-mode=: automatically tangle literate Org files
+;; ~auto-tangle-mode~: automatically tangle literate Org files
 
 
-;; [[file:../config.org::*=auto-tangle-mode=: automatically tangle literate Org files][=auto-tangle-mode=: automatically tangle literate Org files:1]]
+;; [[file:../config.org::*~auto-tangle-mode~: automatically tangle literate Org files][~auto-tangle-mode~: automatically tangle literate Org files:1]]
 (package! (auto-tangle-mode
            :host github
            :repo "progfolio/auto-tangle-mode.el")
   (autoload 'auto-tangle-mode "auto-tangle-mode"))
-;; =auto-tangle-mode=: automatically tangle literate Org files:1 ends here
+;; ~auto-tangle-mode~: automatically tangle literate Org files:1 ends here
 
-;; =org-sidebar=: provide a sidebar for Org buffers
+;; ~org-sidebar~: provide a sidebar for Org buffers
 
 ;; <https://github.com/alphapapa/org-sidebar>
 
 
-;; [[file:../config.org::*=org-sidebar=: provide a sidebar for Org buffers][=org-sidebar=: provide a sidebar for Org buffers:1]]
+;; [[file:../config.org::*~org-sidebar~: provide a sidebar for Org buffers][~org-sidebar~: provide a sidebar for Org buffers:1]]
 (package! org-sidebar)
-;; =org-sidebar=: provide a sidebar for Org buffers:1 ends here
+;; ~org-sidebar~: provide a sidebar for Org buffers:1 ends here
 
-;; =org-bookmark-heading=: Support heading bookmarks
+;; ~org-bookmark-heading~: Support heading bookmarks
 
 
-;; [[file:../config.org::*=org-bookmark-heading=: Support heading bookmarks][=org-bookmark-heading=: Support heading bookmarks:1]]
+;; [[file:../config.org::*~org-bookmark-heading~: Support heading bookmarks][~org-bookmark-heading~: Support heading bookmarks:1]]
 (package! org-bookmark-heading
   (setopt org-bookmark-jump-indirect t)
   (after! org
     (require 'org-bookmark-heading)))
-;; =org-bookmark-heading=: Support heading bookmarks:1 ends here
+;; ~org-bookmark-heading~: Support heading bookmarks:1 ends here
 
 (provide 'init-org)
 ;;; init-org.el ends here
