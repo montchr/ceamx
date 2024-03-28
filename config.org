@@ -8,7 +8,7 @@
 #+archive: graveyard/%s::datetree/
 #+startup: indent
 
-* =early-init= :: pre-startup
+* ~early-init~ :: pre-startup
 
 ** File
 
@@ -183,7 +183,7 @@ See [[*=ceamx-paths= :: common path constants]]
 (require 'ceamx-paths)
 #+end_src
 
-**** Configure =custom-file= location
+**** Configure ~custom-file~ location
 
 #+begin_src emacs-lisp
 ;; Normally, options configured in `user-init-file' won't need to be persisted
@@ -289,7 +289,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 - [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
 
 
-* =ceamx-paths= :: common path constants
+* ~ceamx-paths~ :: common path constants
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el :comments no
 ;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
@@ -411,7 +411,7 @@ block of saved text lacking a \"templatable\" characteristic.")
 #+end_src
 
 
-* =ceamx-keymaps= :: common keymaps
+* ~ceamx-keymaps~ :: common keymaps
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :comments no
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
@@ -472,7 +472,7 @@ block of saved text lacking a \"templatable\" characteristic.")
 #+end_src
 
 
-* =lib-common= :: standard library
+* ~lib-common~ :: standard library
 :PROPERTIES:
 :header-args: :tangle lisp/lib-common.el
 :END:
@@ -1774,7 +1774,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
   (with-eval-after-load 'exec-path-from-shell
     (require 'inheritenv)))
 
-;;; =with-editor=: Ensure shell/term modes use session as =$EDITOR=
+;;; ~with-editor~: Ensure shell/term modes use session as =$EDITOR=
 
 (package! with-editor
   (keymap-global-set "<remap> <async-shell-command>"
@@ -2453,13 +2453,13 @@ accommodation for varying pixel densities."
 
 (package! hydra)
 
-;;; =pretty-hydra=
+;;; ~pretty-hydra~
 
 ;; <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 (package! pretty-hydra)
 
-;;; =avy=
+;;; ~avy~
 
 ;; <https://github.com/abo-abo/avy>
 
@@ -4348,14 +4348,14 @@ If there is only one window and multiple frames, call
 (keymap-global-set "C-x C-b" #'ibuffer-list-buffers)
 #+end_src
 
-**** =hl-line=: Enable highlighting of the current line
+**** ~hl-line~: Enable highlighting of the current line
 
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'hl-line-mode)
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 #+end_src
 
-**** =goto-address=: Linkify URLs and email addresses in buffers [builtin]
+**** ~goto-address~: Linkify URLs and email addresses in buffers [builtin]
 
 #+begin_src emacs-lisp
 (autoload 'goto-address-prog-mode "goto-addr")
@@ -4363,7 +4363,7 @@ If there is only one window and multiple frames, call
 (add-hook 'prog-mode-hook #'goto-address-prog-mode)
 #+end_src
 
-**** =uniquify=: Disambiguate identically-named buffers [builtin]
+**** ~uniquify~: Disambiguate identically-named buffers [builtin]
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'uniquify
@@ -4377,7 +4377,7 @@ If there is only one window and multiple frames, call
   (setopt uniquify-ignore-buffers-re "^\\*"))
 #+end_src
 
-**** =link-hint=: Activate links in buffer with =avy=
+**** ~link-hint~: Activate links in buffer with ~avy~
 
 <https://github.com/noctuid/link-hint.el>
 
@@ -4388,7 +4388,7 @@ If there is only one window and multiple frames, call
     "M-g U" #'link-hint-copy-link))
 #+end_src
 
-**** =expand-region=: Expand your regions
+**** ~expand-region~: Expand your regions
 
 <https://github.com/magnars/expand-region.el>
 
@@ -4397,7 +4397,7 @@ If there is only one window and multiple frames, call
   (keymap-global-set "C-=" #'er/expand-region))
 #+end_src
 
-**** =outli=: Enable simple comment-based outline features in many modes
+**** ~outli~: Enable simple comment-based outline features in many modes
 
 <https://github.com/jdtsmith/outli>
 
@@ -4433,7 +4433,7 @@ If there is only one window and multiple frames, call
     "C-c M-l" #'outline-demote))
 #+end_src
 
-**** =rainbow-mode=: Colorize color names and hexcodes in buffers
+**** ~rainbow-mode~: Colorize color names and hexcodes in buffers
 
 <https://elpa.gnu.org/packages/rainbow-mode.html>
 
@@ -4441,7 +4441,7 @@ If there is only one window and multiple frames, call
 (package! rainbow-mode)
 #+end_src
 
-**** =lentic=: Create decoupled views of the same content
+**** ~lentic~: Create decoupled views of the same content
 
 #+begin_src emacs-lisp
 (package! lentic
@@ -4461,13 +4461,13 @@ If there is only one window and multiple frames, call
   "C-c `" #'mode-line-other-buffer)
 #+end_src
 
-**** DISABLED =repeat-map= for basic buffer navigation commands
+**** DISABLED ~repeat-map~ for basic buffer navigation commands
 
 <https://www.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/>
 
 It seemed like a great idea, but I had quite a few issues.
 
-- [ ] Disable =repeat-help-auto= for these
+- [ ] Disable ~repeat-help-auto~ for these
 - [ ] Does not work with Meow. See [[*Meow overwrites repeat-mode?]]
 - [ ] Pauses between every single movement command not specified in the repeat map
 
@@ -6352,7 +6352,7 @@ DOC is as in `devdocs-install'."
 ;;; init-search.el ends here
 #+end_src
 
-*** Writable grep buffers with =wgrep=
+*** Writable grep buffers with ~wgrep~
 
 **** Customization
 
@@ -6798,15 +6798,15 @@ Diabetic experiments with syntactic sugar.
 ****** Load meow after Which-Key to circumvent Meow-Keypad UI issues
 
 Meow's leader functionality has a custom keybinding visualization helper that
-looks almost exactly like =which-key= except that it is very buggy. It does try
-to smooth over some of the guts of Meow, as =which-key= is cluttered with
-keybinding entries for =meow-digit-argument=. But even Meow's maintainers do not
+looks almost exactly like ~which-key~ except that it is very buggy. It does try
+to smooth over some of the guts of Meow, as ~which-key~ is cluttered with
+keybinding entries for ~meow-digit-argument~. But even Meow's maintainers do not
 recommend using the custom keypad helper UI.
 
 Unfortunately, AFAIK there is no way to disable the UI feature explicitly
 without disabling the Keypad entirely. The only way to prevent this feature from
-causing workflow issues is by installing =which-key= and letting Meow defer to
-=which-key= for this kind of interface.
+causing workflow issues is by installing ~which-key~ and letting Meow defer to
+~which-key~ for this kind of interface.
 
 And so, we load Meow after Which-Key:
 
@@ -6955,7 +6955,7 @@ I am not sure what I was doing here:
 (setopt meow-keypad-self-insert-undefined nil)
 #+end_src
 
-****** Avoid the default binding for =meow-keypad= in motion state
+****** Avoid the default binding for ~meow-keypad~ in motion state
 
 The goal here is to preserve the established SPC/DEL keybindings to scroll in Info mode and some other similar modes.
 
@@ -6963,7 +6963,7 @@ The goal here is to preserve the established SPC/DEL keybindings to scroll in In
 (keymap-unset meow-motion-state-keymap "SPC" t)
 #+end_src
 
-****** Determine the dispatch target for the leader keymap with =meow-keypad-leader-dispatch=
+****** Determine the dispatch target for the leader keymap with ~meow-keypad-leader-dispatch~
 
 I will maintain sections on both options, tangling only one at a time.
 
@@ -6972,10 +6972,10 @@ tend to switch between the two. Part of the reason for that is that I have not
 kept a record of my assessment of the benefits and drawbacks of the different
 values I have tried. So, here I will do just that.
 
-******* ACTIVE Leader keymap from =meow-keymap-alist= (default)
+******* ACTIVE Leader keymap from ~meow-keymap-alist~ (default)
 
-When =meow-keypad-leader-dispatch= is nil, the leader will dispatch to the
-leader keymap in =meow-keymap-alist=.
+When ~meow-keypad-leader-dispatch~ is nil, the leader will dispatch to the
+leader keymap in ~meow-keymap-alist~.
 
 This is the default behavior.
 
@@ -6988,7 +6988,7 @@ This is the default behavior.
 (setopt meow-keypad-leader-dispatch nil)
 #+end_src
 
-******* Leader dispatch to =mode-specific-map= ("C-c")
+******* Leader dispatch to ~mode-specific-map~ ("C-c")
 
 | Pros                                | Cons                                                                             |
 |-------------------------------------+----------------------------------------------------------------------------------|
@@ -7846,7 +7846,7 @@ Minibuffer candidate annotations.
 ;;; init-selection-orderless.el ends here
 #+end_src
 
-*** Completion-At-Point (=corfu=)
+*** Completion-At-Point (~corfu~)
 
 See the following notes on default Corfu keybindings from its readme:
 
@@ -7931,7 +7931,7 @@ bindings:
 (keymap-global-set "C-S-SPC" #'completion-at-point)
 #+end_src
 
-***** Use =orderless= completion settings
+***** Use ~orderless~ completion settings
 
 See [[*Orderless]] for definitions.
 
@@ -7953,7 +7953,7 @@ See [[*Orderless]] for definitions.
                                        #'orderless-affix-dispatch)))
 #+end_src
 
-***** =corfu=: COmpletion in Region FUnction
+***** ~corfu~: COmpletion in Region FUnction
 
 #+begin_src emacs-lisp
 (package! corfu
@@ -7992,7 +7992,7 @@ See [[*Orderless]] for definitions.
   (add-hook 'meow-insert-exit-hook #'corfu-quit))
 #+end_src
 
-***** =corfu-echo-mode=: Show candidate docs in echo area
+***** ~corfu-echo-mode~: Show candidate docs in echo area
 
 Probably redundant when ~corfu-popupinfo-mode~ is in use.
 
@@ -8003,7 +8003,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
   (corfu-echo-mode))
 #+end_src
 
-***** =corfu-popupinfo=: Display candidate docs or location in popup
+***** ~corfu-popupinfo~: Display candidate docs or location in popup
 
 #+begin_src emacs-lisp
 (after! corfu
@@ -8014,7 +8014,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
 ;;;;
 #+end_src
 
-***** =corfu-history-mode=: Sort candidates by history position
+***** ~corfu-history-mode~: Sort candidates by history position
 
 #+begin_src emacs-lisp
 (after! corfu
@@ -8028,7 +8028,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
 ;;;
 #+end_src
 
-***** =corfu-terminal=: Terminal support for Corfu
+***** ~corfu-terminal~: Terminal support for Corfu
 
 <https://codeberg.org/akib/emacs-corfu-terminal>
 
@@ -8043,7 +8043,7 @@ See also ~popon~, the utility library powering the interface.
     (corfu-terminal-mode 1)))
 #+end_src
 
-***** =corfu-doc-terminal=: Support doc flyouts in terminal
+***** ~corfu-doc-terminal~: Support doc flyouts in terminal
 
 <https://codeberg.org/akib/emacs-corfu-doc-terminal>
 
@@ -8062,7 +8062,7 @@ Support for completion candidate documentation flyouts in terminal.
 ;;   (corfu-doc-terminal-mode +1))
 #+end_src
 
-***** =kind-icon=: Add icons to completion-at-point candidates
+***** ~kind-icon~: Add icons to completion-at-point candidates
 
 <https://github.com/jdtsmith/kind-icon>
 
@@ -8081,7 +8081,7 @@ Support for completion candidate documentation flyouts in terminal.
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 #+end_src
 
-***** =dabbrev=
+***** ~dabbrev~
 
 #+begin_src emacs-lisp
 (after! dabbrev
@@ -8105,7 +8105,7 @@ Support for completion candidate documentation flyouts in terminal.
 ;;;
 #+end_src
 
-***** =cape=: Completion-At-Point Extensions
+***** ~cape~: Completion-At-Point Extensions
 
 <https://github.com/minad/cape/blob/main/README.org>
 
@@ -8146,7 +8146,7 @@ Support for completion candidate documentation flyouts in terminal.
     "M-p r" #'cape-rfc1345))
 #+end_src
 
-***** Advise some modes' completion-at-point functions to work alongside =cape=
+***** Advise some modes' completion-at-point functions to work alongside ~cape~
 
 #+begin_src emacs-lisp
 (after! comint
@@ -8279,13 +8279,13 @@ Embark, like any package with autoloaded commands, will not load until one of
 its autoloads is invoked. That has a few consequences, since Embark is versatile
 enough to be used as glue for some other, more niche packages.
 
-The =repeat-help= package defaults to using Embark's key help facilities before
-falling back to =which-key=. I'd like to try out the Embark UI, as it seems more
+The ~repeat-help~ package defaults to using Embark's key help facilities before
+falling back to ~which-key~. I'd like to try out the Embark UI, as it seems more
 legible.
 
 Another benefit to a deferred load is a faster initial display in response to
 invoking a command. If the feature needs to be loaded in response to invoking an
-autoloaded command e.g. =embark-act=, there will be a multi-second delay.
+autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 
 #+begin_src emacs-lisp :noweb-ref embark-load :tangle no
 (defer! 2
@@ -8294,7 +8294,7 @@ autoloaded command e.g. =embark-act=, there will be a multi-second delay.
 
 **** Appearance
 
-***** Configure =display-buffer-alist= rules for Embark windows
+***** Configure ~display-buffer-alist~ rules for Embark windows
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'embark
@@ -8851,7 +8851,7 @@ lel
 (require 'lib-common)
 #+end_src
 
-***** =flycheck=: install and configure
+***** ~flycheck~: install and configure
 
 #+begin_src emacs-lisp
 (package! flycheck
@@ -8869,7 +8869,7 @@ lel
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
 #+end_src
 
-***** =consult-flycheck=: integration with Consult
+***** ~consult-flycheck~: integration with Consult
 
 #+begin_src emacs-lisp
 (package! consult-flycheck
@@ -8884,7 +8884,7 @@ lel
 
 Configuration for expandable file templates and abbrevs.
 
-*** CANCELLED Rename the existing feature to =init-snippets=
+*** CANCELLED Rename the existing feature to ~init-snippets~
 CLOSED: [2024-03-24 Sun 14:44]
 
 
@@ -8933,7 +8933,7 @@ CLOSED: [2024-03-24 Sun 14:44]
 :header-args: :noweb-ref init-templates
 :END:
 
-**** =tempel= installation
+**** ~tempel~ installation
 
 #+begin_src emacs-lisp
 (require 'lib-common)
@@ -8964,7 +8964,7 @@ Capf, such that it will be tried first."
   (global-tempel-abbrev-mode))
 #+end_src
 
-**** =tempel=: Add user element to include nested templates
+**** ~tempel~: Add user element to include nested templates
 
 See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elements>
 
@@ -8981,7 +8981,7 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
   (add-to-list 'tempel-user-elements #'+tempel-include))
 #+end_src
 
-**** =tempel=: keybindings
+**** ~tempel~: keybindings
 
 #+begin_src emacs-lisp
 (after! tempel
@@ -8994,7 +8994,7 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
     "S-TAB" #'tempel-previous))
 #+end_src
 
-**** =tempel-collection=: install community =tempel= templates
+**** ~tempel-collection~: install community ~tempel~ templates
 
 <https://github.com/Crandel/tempel-collection>
 <https://github.com/Crandel/tempel-collection/tree/main/templates>
@@ -9013,12 +9013,12 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
 
 - Source :: [[https://github.com/minad/tempel/blob/main/README.org#template-syntax][tempel/README.org at main · minad/tempel · GitHub]]
 
-All the Tempo syntax elements are fully supported. The syntax elements are described in detail in the docstring of =tempo-define-template=  in tempo.el. We document the important ones here:
+All the Tempo syntax elements are fully supported. The syntax elements are described in detail in the docstring of ~tempo-define-template~  in tempo.el. We document the important ones here:
 
 - “string” Inserts a string literal.
 - =p=  Inserts an unnamed placeholder field.
 - =n=  Inserts a newline.
-- =>= Indents with =indent-according-to-mode= .
+- =>= Indents with ~indent-according-to-mode~ .
 - =r=  Inserts the current region. If no region is active, quits the containing template when jumped to.
 - =r>= Acts like =r= , but indent region.
 - =n>=  Inserts a newline and indents.
@@ -9039,7 +9039,7 @@ Furthermore Tempel supports syntax extensions:
 
 ** Language Support
 
-*** General Programming (=prog-mode= derived modes)
+*** General Programming (~prog-mode~ derived modes)
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-prog.el
 ;;; init-prog.el --- Programming mode support        -*- lexical-binding: t; -*-
@@ -9374,7 +9374,7 @@ Even if Emacs core does things differently.
 (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
 #+end_src
 
-***** =lispy=: the structural expression editing experience
+***** ~lispy~: the structural expression editing experience
 
 - Website :: [[https://github.com/abo-abo/lispy][GitHub - abo-abo/lispy: Short and sweet LISP editing]]
 - API Reference :: [[https://oremacs.com/lispy/][lispy.el function reference]]
@@ -9417,7 +9417,7 @@ Even if Emacs core does things differently.
       (push "\\*lispy-message\\*" popper-reference-buffers))))
 #+end_src
 
-***** =kbd-mode=: syntax support for =kmonad= and =kanata= configs
+***** ~kbd-mode~: syntax support for =kmonad= and =kanata= configs
 
 [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
 
@@ -11483,7 +11483,7 @@ Intended for use as a local hook function on
 
 **** Packages
 
-***** =doct=: `org-capture' template definer
+***** ~doct~: `org-capture' template definer
 
 <https://github.com/progfolio/doct>
 
@@ -11508,7 +11508,7 @@ Intended for use as a local hook function on
                               "%i %a"))))))
 #+END_SRC
 
-***** =org-ql=
+***** ~org-ql~
 
 <https://github.com/alphapapa/org-ql>
 
@@ -11516,7 +11516,7 @@ Intended for use as a local hook function on
 (package! org-ql)
 #+END_SRC
 
-***** =org-modern=
+***** ~org-modern~
 
 <https://github.com/minad/org-modern>
 
@@ -11526,7 +11526,7 @@ Intended for use as a local hook function on
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 #+END_SRC
 
-***** =org-super-agenda=
+***** ~org-super-agenda~
 
 <https://github.com/alphapapa/org-super-agenda>
 
@@ -11538,7 +11538,7 @@ TODO: Configure
   (require 'org-super-agenda))
 #+END_SRC
 
-***** =org-download=: support dragging-and-dropping images into Org buffers
+***** ~org-download~: support dragging-and-dropping images into Org buffers
 
 <https://github.com/abo-abo/org-download>
 
@@ -11548,7 +11548,7 @@ TODO: Configure
   (add-hook 'dired-mode-hook #'org-download-enable))
 #+END_SRC
 
-***** =org-rich-yank=: surround pasted code with src-block markup
+***** ~org-rich-yank~: surround pasted code with src-block markup
 
 <https://github.com/unhammer/org-rich-yank>
 
@@ -11568,14 +11568,14 @@ kill the selection again.
     (keymap-set org-mode-map "C-M-y" #'org-rich-yank)))
 #+END_SRC
 
-***** =org-web-tools=: view, capture, and archive webpages in org-mode
+***** ~org-web-tools~: view, capture, and archive webpages in org-mode
 
 #+BEGIN_SRC emacs-lisp
 (package! org-web-tools
   (keymap-set ceamx-insert-map "l" #'org-web-tools-insert-link-for-url))
 #+END_SRC
 
-***** =auto-tangle-mode=: automatically tangle literate Org files
+***** ~auto-tangle-mode~: automatically tangle literate Org files
 
 #+BEGIN_SRC emacs-lisp
 (package! (auto-tangle-mode
@@ -11584,7 +11584,7 @@ kill the selection again.
   (autoload 'auto-tangle-mode "auto-tangle-mode"))
 #+END_SRC
 
-***** =org-sidebar=: provide a sidebar for Org buffers
+***** ~org-sidebar~: provide a sidebar for Org buffers
 
 <https://github.com/alphapapa/org-sidebar>
 
@@ -11592,7 +11592,7 @@ kill the selection again.
 (package! org-sidebar)
 #+END_SRC
 
-***** =org-bookmark-heading=: Support heading bookmarks
+***** ~org-bookmark-heading~: Support heading bookmarks
 
 #+begin_src emacs-lisp
 (package! org-bookmark-heading
@@ -11679,7 +11679,7 @@ headline.
   I saw some post on Reddit about an integration with Meow for this purpose the
   other day... not sure if I saved it though.
 
-**** TODO [#B] Bind =org-insert-subheading=
+**** TODO [#B] Bind ~org-insert-subheading~
 
 **** DONE Figure out why completion is broken
 CLOSED: [2024-03-18 Mon 23:51]
@@ -11687,7 +11687,7 @@ CLOSED: [2024-03-18 Mon 23:51]
 - State "DONE"       from "TODO"       [2024-03-18 Mon 23:51]
 Answer: I was expecting Corfu's Elisp completion in this Org file buffer, but
 mode-specific completion will only work once opening the src block in an
-indirect buffer with =org-edit-src-code=.
+indirect buffer with ~org-edit-src-code~.
 
 However, it would still be nice if I could get symbol completion inside of
 inline code markup.
@@ -12075,7 +12075,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 #+end_src
 
 
-*** TODO Feature name =init-feeds= does not match the filename =init-news.el=
+*** TODO Feature name ~init-feeds~ does not match the filename =init-news.el=
 
 
 ** Surfing the Wild Web of Words (EWW)
@@ -12789,7 +12789,7 @@ Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
 
 ** Tasks
 
-*** TODO Consolidate =lib-simple= and =lib-text=
+*** TODO Consolidate ~lib-simple~ and ~lib-text~
 
 
 ** "Simple" Library =lib-simple.el=
