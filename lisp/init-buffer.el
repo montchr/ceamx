@@ -53,10 +53,10 @@
 ;; Prevent unwanted horizontal scrolling upon navigation.
 (setopt scroll-preserve-screen-position t)
 
-(setopt scroll-conservatively 2)
+(setopt scroll-conservatively 1)
 
 ;; Add a margin when scrolling vertically (or don't).
-(setq-default scroll-margin 2)
+(setq-default scroll-margin 4)
 
 (define-keymap :keymap (current-global-map)
   ;; The default bindings feel backwards to me.
