@@ -86,6 +86,7 @@
 ;; [[file:../config.org::*Buffer selection][Buffer selection:1]]
 (setopt ibuffer-movement-cycle t)
 
+;; FIXME: auto-select window
 (keymap-global-set "C-x C-b" #'ibuffer-list-buffers)
 ;; Buffer selection:1 ends here
 

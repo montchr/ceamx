@@ -1589,6 +1589,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 * Configure
 
+
 ** Common
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-common.el
@@ -4353,6 +4354,7 @@ If there is only one window and multiple frames, call
 #+begin_src emacs-lisp
 (setopt ibuffer-movement-cycle t)
 
+;; FIXME: auto-select window
 (keymap-global-set "C-x C-b" #'ibuffer-list-buffers)
 #+end_src
 
@@ -4627,10 +4629,14 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 
 ** Editor
 
-*** Customizations
+*** Target Files
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-editor.el
-;;; init-editor.el --- Editing --- -*- lexical-binding: t -*-
+#+name: init-editor-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-editor.el
+<<file-prop-line(feature="init-editor",desc="Editor customizations")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -4638,33 +4644,92 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+<<file-license>>
 
 ;;; Commentary:
-
-;; Configuration applicable across all editable buffers.
-
-;;; Investigate:
-
-;; TODO: <https://github.com/tarsius/killer/blob/ace0547944933440384ceeb5876b1f68c082d540/killer.el>
-
 ;;; Code:
 
-;;; Requirements
+<<init-editor>>
 
+<<file-footer(feature="init-editor")>>
+#+end_src
+
+
+#+name: lib-editor-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-editor.el
+<<file-prop-line(feature="lib-editor",desc="Editor support library")>>
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (C) 2016–2022  Radian LLC and contributors
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;;         Radon Rosborough <radon@intuitiveexplanations.com>
+;; Keywords: local
+
+
+<<file-license>>
+
+;; Permission is hereby granted, free of charge, to any person obtaining a copy
+;; of this software and associated documentation files (the "Software"), to deal
+;; in the Software without restriction, including without limitation the rights
+;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;; copies of the Software, and to permit persons to whom the Software is
+;; furnished to do so, subject to the following conditions:
+
+;; The above copyright notice and this permission notice shall be included in
+;; all copies or substantial portions of the Software.
+
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+;; SOFTWARE.
+
+
+;;; Commentary:
+;;; Code:
+
+<<lib-editor>>
+
+<<file-footer(feature="lib-editor")>>
+#+end_src
+
+
+#+name: config-editor-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/config-editor.el
+<<file-prop-line(feature="config-editor",desc="User options for editing")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-editor>>
+
+<<file-footer(feature="config-editor")>>
+#+end_src
+
+
+*** ~init-editor~
+:PROPERTIES:
+:header-args: :noweb-ref init-editor
+:END:
+
+**** Requirements
+
+#+begin_src emacs-lisp
 (require 'ceamx-keymaps)
 
 (require 'config-editor)
@@ -4672,25 +4737,34 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 (require 'lib-common)
 (require 'lib-editor)
 (require 'lib-simple)
+#+end_src
 
-;;; Enable some commands that Emacs disables by default
+**** Enable some commands that Emacs disables by default
 
+#+begin_src emacs-lisp
 (dolist (cmd '(downcase-region
-                scroll-left
-                upcase-region))
+               scroll-left
+               upcase-region))
   (put cmd 'disabled nil))
+#+end_src
 
-;;; Bind the insertable keymap
+**** ~ceamx-insert-map~: =C-c i= keymap for inserting insertables
 
+#+begin_src emacs-lisp
 (keymap-global-set "C-c i" #'ceamx-insert-map)
+#+end_src
 
-;;; Configure builtin features
+**** Replace region when inserting text
 
-;; Replace region when inserting text.
+#+begin_src emacs-lisp
 (delete-selection-mode 1)
+#+end_src
 
-;;;; Improve sentence legibility and parsing with double-spaced ending
+***** TODO Meow does not seem to respect ~delete-selection-mode~?
 
+**** Improve sentence legibility and parsing with double-spaced ending
+
+#+begin_src emacs-lisp
 ;; Yes, it may appear strange and archaic, and yet... I realized that I actually
 ;; do *prefer* this for readability.  And so, I am giving it a shot.  My
 ;; grandfather, who was an English teacher for most of the 20th century, would
@@ -4699,13 +4773,17 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 (setopt sentence-end-double-space t)
 
 (keymap-global-set "M-Q" #'repunctuate-sentences)
+#+end_src
 
-;;;; Don't consider camelCaseWORDs as separate words
+**** Don't consider camelCaseWORDs as separate words
 
+#+begin_src emacs-lisp
 (global-subword-mode -1)
+#+end_src
 
-;;;; Automatically wrap text at `fill-column' in some contexts
+**** Automatically wrap text at ~fill-column~ in some contexts
 
+#+begin_src emacs-lisp
 ;; When a mode defines a comment syntax, then only wrap those comments. In all
 ;; other modes (primarily `text-mode' derivatives), activating
 ;; `auto-fill-mode' will apply to all lines.
@@ -4713,15 +4791,20 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 
 (dolist (mode-hook '(prog-mode-hook text-mode-hook))
   (add-hook mode-hook #'auto-fill-mode))
+#+end_src
 
-;;;; Comments
+**** Comments
 
+#+begin_src emacs-lisp
 (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
+#+end_src
 
-;;;; Semantic Pair Matching
+**** Semantic pair matching
 
-;; See `(info "Matching")' for more details.
+See the Info node [[info:emacs#Matching]]
 
+
+#+begin_src emacs-lisp
 (setopt blink-matching-paren t)
 ;; Avoid "expression" style, which looks too much like a selected region.
 (setopt show-paren-style 'parenthesis)
@@ -4734,9 +4817,11 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 
 (electric-pair-mode 1)
 (show-paren-mode 1)
+#+end_src
 
-;;;;; Set up a keymap for common usages of `insert-pair'
+***** Set up a keymap for common usages of `insert-pair'
 
+#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-pairs-map
   "(" '("paren" . insert-pair)
   "[" '("square-b" . insert-pair)
@@ -4751,16 +4836,20 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   ":" '("colon" . insert-pair))
 
 (keymap-set ceamx-insert-map "P" ceamx-pairs-map)
+#+end_src
 
-;;; Formatting
+**** Formatting
 
+#+begin_src emacs-lisp
 (setopt require-final-newline t)
+#+end_src
 
-;;;; Visualize whitespace with `whitespace-mode'
+***** ~whitespace-mode~ [builtin]: visualize whitespace
 
-;;  This mode is buffer-local. It might be undesireable in some cases, so enable
-;;  it selectively.
+This mode is buffer-local. It might be undesireable in some cases, so enable
+it selectively.
 
+#+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'whitespace-mode)
 
 (setopt whitespace-style
@@ -4769,32 +4858,42 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
           tab-mark
           trailing
           missing-newline-at-eof))
+#+end_src
 
-;;;; Indentation
+***** Indentation
 
+#+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
 (setopt indent-tabs-mode nil)
 (setopt backward-delete-char-untabify-method 'untabify)
+#+end_src
 
-;;;;; Handle automatic indentation with `electric-indent-mode'
+****** ~electric-indent-mode~ [builtin]: Emacs' best attempt at automatic indentation
 
+#+begin_src emacs-lisp
 (electric-indent-mode 1)
+#+end_src
 
-;;;; Trailing whitespace
+***** Delete trailing whitespace before saving files
 
+#+begin_src emacs-lisp
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
+#+end_src
 
-;;;; Add support for EditorConfig
+***** ~editorconfig~: EditorConfig integration
 
+#+begin_src emacs-lisp
 ;; <https://editorconfig.org>
 
 (use-package editorconfig
   :commands (editorconfig-mode)
   :init
   (add-hook 'on-first-file-hook #'editorconfig-mode))
+#+end_src
 
-;;;;; Prevent `editorconfig' from exploding `org-mode' buffers
+****** Prevent `editorconfig' from exploding `org-mode' buffers
 
+#+begin_src emacs-lisp
 ;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
 
 (defun +editorconfig-enforce-org-mode-tab-width-h (props)
@@ -4810,15 +4909,17 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (with-eval-after-load 'editorconfig
   (add-hook 'editorconfig-after-apply-functions
             #'+editorconfig-enforce-org-mode-tab-width-h))
+#+end_src
 
-;;;; Apply opinionated code reformatting with `apheleia'
+***** ~apheleia~: opinionated code reformatting
 
-;; <https://github.com/radian-software/apheleia>
+<https://github.com/radian-software/apheleia>
 
-;; In case you run into issues with `web-mode' not updating syntax highlighting
-;; after formatting (or other arbitrary modifications):
-;; <https://github.com/doomemacs/doomemacs/blob/35dc13632b3177b9efedad212f2180f69e756853/modules/editor/format/config.el#L74-L83>
+In case you run into issues with `web-mode' not updating syntax highlighting
+after formatting (or other arbitrary modifications):
+<https://github.com/doomemacs/doomemacs/blob/35dc13632b3177b9efedad212f2180f69e756853/modules/editor/format/config.el#L74-L83>
 
+#+begin_src emacs-lisp
 (use-package apheleia
   :blackout ceamx-apheleia-lighter
   :preface
@@ -4848,16 +4949,18 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
   :config
   (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h))
+#+end_src
 
-;;; Enable structured editing with `puni'
+**** ~puni~: versatile structured editing
 
-;; <https://github.com/AmaiKinono/puni>
+<https://github.com/AmaiKinono/puni>
 
+#+begin_src emacs-lisp
 (use-package puni
   :commands (puni-global-mode
-              puni-disable-puni-mode
-              puni-backward-sexp-or-up-list
-              puni-forward-sexp-or-up-list)
+             puni-disable-puni-mode
+             puni-backward-sexp-or-up-list
+             puni-forward-sexp-or-up-list)
 
   :init
   (define-keymap :keymap puni-mode-map
@@ -4874,46 +4977,52 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
   ;; (puni-global-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
+#+end_src
 
-;;; Transposition
+**** ~drag-stuff~: drag stuff around in arbitrary directions
 
-;;;; Drag stuff around in arbitrary directions with `drag-stuff'
+<https://github.com/rejeep/drag-stuff.el>
 
-;; <https://github.com/rejeep/drag-stuff.el>
+ This package appears to be abandoned since 2017.
+ But, as of <2023-09-06>, it still works well.
 
-;;  This package appears to be abandoned since 2017.
-;;  But, as of <2023-09-06>, it still works well.
 
-;;;;; Issues
-
-;; Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
-;; recent versions of Emacs:
-
-;; <https://github.com/rejeep/drag-stuff.el/issues/36>
-
-;;;;;; Alternatives
-
-;; I haven't yet found any other package to move arbitrary regions up/down while
-;; preserving column position.
-
-;; `move-text-mode' <https://github.com/emacsfodder/move-text>, claims to do
-;; this but fails pretty badly, moving the region/selection to the first column
-;; regardless of its original position.
-
+#+begin_src emacs-lisp
 (use-package drag-stuff
   :bind
   (([M-up] . drag-stuff-up)
-    ([M-right] . drag-stuff-right)
-    ([M-down] . drag-stuff-down)
-    ([M-left] . drag-stuff-left)))
+   ([M-right] . drag-stuff-right)
+   ([M-down] . drag-stuff-down)
+   ([M-left] . drag-stuff-left)))
+#+end_src
 
-;;; Operate on a buffer rectangularly
 
+***** Issues
+
+Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
+recent versions of Emacs:
+
+<https://github.com/rejeep/drag-stuff.el/issues/36>
+
+***** Alternatives
+
+I haven't yet found any other package to move arbitrary regions up/down while
+preserving column position.
+
+`move-text-mode' <https://github.com/emacsfodder/move-text>, claims to do
+this but fails pretty badly, moving the region/selection to the first column
+regardless of its original position.
+#+end_src
+
+**** ~rect~ [builtin]: operate on a buffer rectangularly
+
+<https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
+
+#+begin_src emacs-lisp
 (use-feature! rect
   :config
   (use-feature! hydra
     :config
-    ;; via <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
     (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
                                          :color pink
                                          :hint nil
@@ -4945,11 +5054,13 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     (when (fboundp 'hydra-rectangle/body)
       (keymap-global-set "C-x SPC" #'hydra-rectangle/body)
       (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
+#+end_src
 
-;;; Add support for Sublime-like multi-cursor editing with `multiple-cursors'
+**** ~multiple-cursors~: Sublime-esque multi-cursor editing
 
-;; <https://github.com/magnars/multiple-cursors.el>
+<https://github.com/magnars/multiple-cursors.el>
 
+#+begin_src emacs-lisp
 (use-package multiple-cursors
   :demand t
   ;; :autoload (mc/num-cursors)
@@ -4985,143 +5096,59 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       ("<down-mouse-1>" ignore)
       ("<drag-mouse-1>" ignore)
       ("q" nil))))
+#+end_src
 
-;;; ~easy-kill~
+**** ~easy-kill~
 
-;; <https://github.com/leoliu/easy-kill/blob/master/README.rst>
+<https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
-;; w => word
-;; s => sexp
-;; l => list
-;; d => defun
-;; D => defun name
-;; f => file
-;; b => buffer name
-;;        ->"-": `default-directory'
-;;        ->"+": full path
-;;        ->"0": basename
+#+begin_example
+w => word
+s => sexp
+l => list
+d => defun
+D => defun name
+f => file
+b => buffer name
+       ->"-": `default-directory'
+       ->"+": full path
+       ->"0": basename
+#+end_example
 
+#+begin_src emacs-lisp
 (package! easy-kill
   (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
   (keymap-global-set "C-M-@" #'easy-mark) ; override `mark-sexp'
   )
+#+end_src
 
-;;; Keybindings
+**** Keybindings
 
+#+begin_src emacs-lisp
 (keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
 
 (global-keys!
   "C-=" #'ceamx/insert-date
   "C-<" #'ceamx/escape-url-dwim
 
-    ;; Logical progression from M-f for `forward-word'.
+  ;; Logical progression from M-f for `forward-word'.
   ;; See also `forward-sexp'
   "M-F" #'forward-symbol)
-
-(provide 'init-editor)
-;;; init-editor.el ends here
 #+end_src
 
 
-*** User Options
+*** ~lib-editor~: editor helpers
+:PROPERTIES:
+:header-args: :noweb-ref lib-editor
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/config-editor.el
-;;; config-editor.el --- Settings for the editor     -*- lexical-binding: t; -*-
+Functions for general editor configuration.
 
-;; Copyright (C) 2024  Chris Montgomery
+**** ~ceamx/continue-comment~
 
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
+<https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
-
-(defcustom ceamx-format-on-save-disabled-modes
-  '(emacs-lisp-mode                     ; conflict with `lispy' indent
-    org-msg-edit-mode)
-  "A list of major modes in which to not reformat the buffer upon saving.
-When nil, buffers will always be formatted upon save. When
-non-nil, buffers will never be formatted upon save."
-  :group 'ceamx
-  :type '(choice boolean (repeat symbol)))
-
-(defvar ceamx-apheleia-lighter " Aph")
-
-(provide 'config-editor)
-;;; config-editor.el ends here
-#+end_src
-
-
-*** Library
-
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-editor.el
-;;; lib-editor.el --- Editor library functions       -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-;; Copyright (C) 2016–2022  Radian LLC and contributors
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;;         Radon Rosborough <radon@intuitiveexplanations.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-;; SOFTWARE.
-
-;;; Commentary:
-
-;; Functions for general editor configuration.
-
-;;; Sources:
-
-;; - <https://github.com/radian-software/radian/blob/develop/emacs/radian.el#L2174-L2214>
-
-;;; Code:
-
-;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
+#+begin_src emacs-lisp
 (defun ceamx/continue-comment ()
   "Continue current comment, preserving trailing whitespace.
 This differs from `default-indent-new-line' in the following way:
@@ -5139,9 +5166,28 @@ two inserted lines are the same."
   ;; line. But when continuing a comment it's not desired.
   (cl-letf (((symbol-function #'delete-horizontal-space) #'ignore))
     (default-indent-new-line)))
+#+end_src
 
-(provide 'lib-editor)
-;;; lib-editor.el ends here
+
+
+*** ~config-editor~: editor options
+:PROPERTIES:
+:header-args: :noweb-ref config-editor
+:END:
+
+#+begin_src emacs-lisp
+(defvar ceamx-apheleia-lighter " Aph")
+#+end_src
+
+#+begin_src emacs-lisp
+(defcustom ceamx-format-on-save-disabled-modes
+  '(emacs-lisp-mode                     ; conflict with `lispy' indent
+    org-msg-edit-mode)
+  "A list of major modes in which to not reformat the buffer upon saving.
+When nil, buffers will always be formatted upon save. When
+non-nil, buffers will never be formatted upon save."
+  :group 'ceamx
+  :type '(choice boolean (repeat symbol)))
 #+end_src
 
 
@@ -12352,87 +12398,101 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 
 ** Tools
 
-*** General
+*** Target Files
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
-**** Customization
+#+name: init-tools-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-tools.el
+<<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-tools.el
-;;; init-tools.el --- Tools and utilities            -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords:
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+<<file-license>>
 
 ;;; Commentary:
-
-;; Tools and, of course, utilities.
-
 ;;; Code:
 
-;;; Requirements
+<<init-tools>>
 
+<<file-footer(feature="init-tools")>>
+#+end_src
+
+
+*** ~init-tools~: & utils
+
+**** Code: =init-tools.el=
+:PROPERTIES:
+:header-args: :noweb-ref init-tools
+:END:
+
+#+begin_src emacs-lisp
 (require 'seq)
 
 (require 'lib-common)
+#+end_src
 
-;;; Install `pandoc-mode'
 
-;; <https://joostkremers.github.io/pandoc-mode/>
+***** ~pandoc-mode~
 
+<https://joostkremers.github.io/pandoc-mode/>
+
+#+begin_src emacs-lisp
 (package! pandoc-mode
   (add-hook 'markdown-mode-hook #'pandoc-mode)
 
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
+#+end_src
 
-;;; Install the `unpackaged' library of useful yet unsubstantial Emacs Lisp code
+***** ~unpackaged~: a library of useful yet unsubstantial Emacs Lisp code
 
-;; <https://github.com/alphapapa/unpackaged.el>
+<https://github.com/alphapapa/unpackaged.el>
+
+#+begin_src emacs-lisp
 
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
+#+end_src
 
-;;; DISABLED Install `org-tanglesync' to sync tangled source code blocks
+***** DISABLED ~org-tanglesync~: sync tangled src blocks
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 
-;; (package! org-tanglesync
-;;   ;; FIXME: try to not do this
-;;   (require 'org-tanglesync)
+This mode... works?!  Kind of.  It is actually kind of unpredictable, at least in
+my initial usage of it.  I would only enable it as needed.  It did really help me
+pull in all of the existing =*.el= files to =config.org=!
 
-;;   (add-hook 'org-mode-hook #'org-tanglesync-mode)
-;;   ;; (remove-hook 'org-mode-hook #'org-tanglesync-mode)
+#+begin_src emacs-lisp
+(package! org-tanglesync
+  ;; FIXME: try to not do this
+  (require 'org-tanglesync)
 
-;;   (add-hook 'prog-mode-hook #'org-tanglesync-watch-mode)
-;;   ;; (remove-hook 'prog-mode-hook #'org-tanglesync-watch-mode)
+  (add-hook 'org-mode-hook #'org-tanglesync-mode)
+  ;; (remove-hook 'org-mode-hook #'org-tanglesync-mode)
 
-;;   ;; (add-hook 'text-mode-hook #'org-tanglesync-watch-mode)
-;;   ;; (remove-hook 'text-mode-hook #'org-tanglesync-watch-mode)
+  (add-hook 'prog-mode-hook #'org-tanglesync-watch-mode)
+  ;; (remove-hook 'prog-mode-hook #'org-tanglesync-watch-mode)
 
-;;   (setopt org-tanglesync-watch-files
-;;     (seq-map (apply-partially #'file-name-concat user-emacs-directory)
-;;       '("config-sync.org")))
+  ;; (add-hook 'text-mode-hook #'org-tanglesync-watch-mode)
+  ;; (remove-hook 'text-mode-hook #'org-tanglesync-watch-mode)
 
-;;   (global-keys!
-;;     "C-c M-i" #'org-tanglesync-process-buffer-interactive
-;;     "C-c M-a" #'org-tanglesync-process-buffer-automatic))
+  (setopt org-tanglesync-watch-files
+    (seq-map (apply-partially #'file-name-concat user-emacs-directory)
+      '("config-sync.org")))
 
-(provide 'init-tools)
-;;; init-tools.el ends here
+  (global-keys!
+    "C-c M-i" #'org-tanglesync-process-buffer-interactive
+    "C-c M-a" #'org-tanglesync-process-buffer-automatic))
 #+end_src
 
 
-*** Augementated Intelligentry [=init-tools-ai.el=]
+
+*** ~init-tools-ai~: augementated intelligentry
 
 Providing integrations with LLMs and other simulation machines.
 
@@ -12477,7 +12537,8 @@ Providing integrations with LLMs and other simulation machines.
 #+END_SRC
 
 
-*** Budgeting
+*** ~init-tools-ledger~: budgeting
+
 #+begin_src emacs-lisp :comments no :tangle lisp/init-tools-ledger.el
 ;;; init-tools-ledger.el --- Support for ledger      -*- lexical-binding: t; -*-
 
@@ -12637,7 +12698,9 @@ Providing integrations with LLMs and other simulation machines.
 ;;; init-tools-ledger.el ends here
 #+end_src
 
-*** PDF-Tools
+
+*** ~init-tools-pdf~: PDF-Tools
+
 #+begin_src emacs-lisp :comments no :tangle lisp/init-tools-pdf.el
 ;;; init-tools-pdf.el --- Support for working with PDF files  -*- lexical-binding: t; -*-
 
@@ -12713,7 +12776,8 @@ Providing integrations with LLMs and other simulation machines.
 ;;; init-tools-pdf.el ends here
 #+end_src
 
-** Fun
+
+** ~init-fun~
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-fun.el
 ;;; init-fun.el --- Configure the fun                -*- lexical-binding: t; -*-

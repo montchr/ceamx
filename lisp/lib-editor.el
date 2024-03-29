@@ -1,24 +1,31 @@
-;;; lib-editor.el --- Editor library functions       -*- lexical-binding: t; -*-
+;;; lib-editor.el --- Editor support library  -*- lexical-binding: t;  -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 ;; Copyright (C) 2016–2022  Radian LLC and contributors
 
 ;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; Author: Chris Montgomery <chris@cdom.io>
 ;;         Radon Rosborough <radon@intuitiveexplanations.com>
 ;; Keywords: local
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+;; This file is NOT part of GNU Emacs.
 
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;; Permission is hereby granted, free of charge, to any person obtaining a copy
 ;; of this software and associated documentation files (the "Software"), to deal
@@ -38,17 +45,10 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ;; SOFTWARE.
 
+
 ;;; Commentary:
-
-;; Functions for general editor configuration.
-
-;;; Sources:
-
-;; - <https://github.com/radian-software/radian/blob/develop/emacs/radian.el#L2174-L2214>
-
 ;;; Code:
 
-;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
 (defun ceamx/continue-comment ()
   "Continue current comment, preserving trailing whitespace.
 This differs from `default-indent-new-line' in the following way:
