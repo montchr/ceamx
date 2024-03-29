@@ -3661,13 +3661,7 @@ will be used as default."
 
 ;; <https://github.com/karthink/popper>
 
-(use-package popper
-  :blackout
-  :functions (popper-select-popup-at-bottom)
-
-  :preface
-
-  (defun +popper-select-below-fn (buffer &optional _alist)
+(defun +popper-select-below-fn (buffer &optional _alist)
     (funcall (if (> (frame-width) 170)
                ;; #'display-buffer-in-direction
                #'popper-select-popup-at-bottom
@@ -3677,90 +3671,90 @@ will be used as default."
          (direction . below)
          (body-function . ,#'select-window))))
 
-  :init
+(package! popper
+  (global-keys!
+    "C-`" #'popper-toggle
+    "C-~" #'popper-cycle
+    "C-M-`" #'popper-toggle-type)
 
   (setopt popper-reference-buffers
-    (append
-      ceamx-help-modes-list
-      ceamx-help-buffer-names-list
-      ceamx-manual-modes-list
-      ceamx-repl-modes-list
-      ceamx-repl-buffer-names-list
-      ceamx-occur-grep-modes-list
-      '(+popper-current-buffer-popup-p)
-      '(Custom-mode
-         compilation-mode
-         messages-buffer-mode)
-      (list
-        ceamx-checkers-buffer-names-regexp)
-      `(,(rx "Output*" eol)
-         ,(rx "*" (or
-                    "Async-native-compile-log"
-                    "Backtrace"
-                    "Compile-Log"
-                    "Completions"
-                    "compilation"
+          (append
+           ceamx-help-modes-list
+           ceamx-help-buffer-names-list
+           ceamx-manual-modes-list
+           ceamx-repl-modes-list
+           ceamx-repl-buffer-names-list
+           ceamx-occur-grep-modes-list
+           '(+popper-current-buffer-popup-p)
+           '(Custom-mode
+             compilation-mode
+             messages-buffer-mode)
+           (list
+            ceamx-checkers-buffer-names-regexp)
+           `(,(rx "Output*" eol)
+             ,(rx "*" (or
+                       "Async-native-compile-log"
+                       "Backtrace"
+                       "Compile-Log"
+                       "Completions"
+                       "compilation"
 
-                    "Messages"
-                    "Shell Command Output"
-                    "vc"
-                    "Warnings")
-            "*")
-         "^\\*Embark Export"
-         "^Calc:"
-         "\\*Async Shell Command\\*"
-         ;; ("\\*Async Shell Command\\*" . hide)
-         ("\\*Detached Shell Command\\*" . hide))))
+                       "Messages"
+                       "Shell Command Output"
+                       "vc"
+                       "Warnings")
+               "*")
+             "^\\*Embark Export"
+             "^Calc:"
+             "\\*Async Shell Command\\*"
+             ;; ("\\*Async Shell Command\\*" . hide)
+             ("\\*Detached Shell Command\\*" . hide))))
 
-  ;; Load as early as possible to catch popups during startup.
+  ;; Load as early as possible to catch popups as early as possible.
   (popper-mode)
-  (popper-echo-mode)
+  (popper-echo-mode))
 
-  :config
+;;;; Configure overrides in ~popper-repeat-map~
 
-  (define-keymap :keymap (current-global-map)
-    "C-`"   #'popper-toggle
-    "C-~"   #'popper-cycle
-    "C-M-`" #'popper-toggle-type)
-  ;; "M-`"   #'popper-echo-mode
-
+(after! popper
   (defvar-keymap popper-repeat-map
     :repeat t
     "`" #'popper-cycle
-    "~" #'popper-cycle-backwards)
+    "~" #'popper-cycle-backwards))
 
-  ;; Configure popup display control rules manually.
-  ;; <https://github.com/karthink/popper/blob/master/README.org#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
+;;;; Configure popup display control rules manually
+
+;; <https://github.com/karthink/popper/blob/master/README.org#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
+
+(after! popper
   (setopt popper-display-control nil)
 
   (prependopt! display-buffer-alist
-    '((popper-display-control-p
-        (ceamx-window-display-popup)
-        (window-height . ,popper-window-height))))
+               '((popper-display-control-p
+                  (ceamx-window-display-popup)
+                  (window-height . ,popper-window-height)))))
 
-  (after! projectile
-    (setopt popper-group-function #'popper-group-by-projectile)))
+;;;; Configure ~projectile~ integration
+
+(after! (popper projectile)
+  (setopt popper-group-function #'popper-group-by-projectile))
 
 ;;; Restore previous window configurations with `winner-mode' [builtin]
 
-(use-feature! winner
-  :config (winner-mode))
+(add-hook 'ceamx-after-init-hook #'winner-mode)
 
 ;;; Toggle a window's "dedicated" flag with `dedicated-mode'
 
 ;; <https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
 
-(use-package dedicated
-  :defer 5
-  :init
+(package! dedicated
   (keymap-global-set "C-c W" #'dedicated-mode))
 
 ;;; Add "distraction-free" editing with `olivetti-mode'
 
 ;; <https://github.com/rnkn/olivetti>
 
-(use-package olivetti
-  :config
+(package! olivetti
   (setopt olivetti-style 'fancy))
 
 ;;; =golden-ratio.el=: Automatically resize windows accordingly
@@ -3773,83 +3767,71 @@ will be used as default."
 
 ;; <https://github.com/abo-abo/ace-window>
 
-(use-package ace-window
-  :after (avy)
-
-  :commands (ace-window
-             ace-delete-window
-             ace-delete-other-windows
-             ace-swap-window)
-
-  :autoload (aw-split-window-fair
-             aw-split-window-horz
-             aw-split-window-vert
-             aw-flip-window)
-
-  :config
-
+(package! ace-window
   ;; Same frame only. While it'd be nice to use the default (global), I really
   ;; dislike that it orders window numbers leads to jarring gaps in window
   ;; numbers in the same frame. For example, frame A might have windows numbered
   ;; 1 and 3 and frame B will have window 2.
   (setopt aw-scope 'frame))
 
+;;; Create a Transient menu for window management
+
 (transient-define-prefix ceamx/window-dispatch ()
   "Window management transient."
   :transient-suffix 'transient--do-stay
   [["Move"
-     ("h" "left" windmove-left)
-     ("j" "down" windmove-down)
-     ("k" "up" windmove-up )
-     ("l" "right" windmove-right)
-     ("w" "sel" ace-window)]
+    ("h" "left" windmove-left)
+    ("j" "down" windmove-down)
+    ("k" "up" windmove-up )
+    ("l" "right" windmove-right)
+    ("w" "sel" ace-window)]
 
-    ["Resize"
-      ("=" "bal" balance-windows)
-      ("+" "bal: area" balance-windows-area)
-      ("-" "fit: buffer" fit-window-to-buffer)]
+   ["Resize"
+    ("=" "bal" balance-windows)
+    ("+" "bal: area" balance-windows-area)
+    ("-" "fit: buffer" fit-window-to-buffer)]
 
-    ["Buffer"
-      ("b" "buf" consult-buffer)
-      ;; ("f" "ff: p" project-find-file)
-      ("f" "file" find-file )
-      ("F" "file" find-file-other-window)
-      ("g" "grep" consult-ripgrep)]
+   ["Buffer"
+    ("b" "buf" consult-buffer)
+    ;; ("f" "ff: p" project-find-file)
+    ("f" "file" find-file )
+    ("F" "file" find-file-other-window)
+    ("g" "grep" consult-ripgrep)]
 
-    ["Swarp"
-      ("H" "left" ceamx/window-move-left)
-      ("J" "down" ceamx/window-move-down)
-      ("K" "up" ceamx/window-move-up)
-      ("L" "right" ceamx/window-move-right)
-      ""
-      ("s" "swap" ace-swap-window)
-      ("2" "spl: dn" split-window-below)
-      ("3" "spl: rt" split-window-right)
-      ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
+   ["Swarp"
+    ("H" "left" ceamx/window-move-left)
+    ("J" "down" ceamx/window-move-down)
+    ("K" "up" ceamx/window-move-up)
+    ("L" "right" ceamx/window-move-right)
+    ""
+    ("s" "swap" ace-swap-window)
+    ("2" "spl: dn" split-window-below)
+    ("3" "spl: rt" split-window-right)
+    ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
 
-    ["Scroll"
-      ;; TODO: allow selecting a window (with infix?) to act upon
-      ;; NOTE: These are the correct scroll direction commands, which might
-      ;; appear to be reversed when comparing with labels.
-      ("." "left" scroll-right)
-      ("," "right" scroll-left)
-      ("SPC" "down" scroll-up)
-      ("DEL" "up" scroll-down)]
+   ["Scroll"
+    ;; TODO: allow selecting a window (with infix?) to act upon
+    ;; NOTE: These are the correct scroll direction commands, which might
+    ;; appear to be reversed when comparing with labels.
+    ("." "left" scroll-right)
+    ("," "right" scroll-left)
+    ("SPC" "down" scroll-up)
+    ("DEL" "up" scroll-down)]
 
-    ["Lifecycle"
-     ("d" "del (this)" delete-window)
-     ("D" "del (select)" ace-delete-window)
-     ;; ("D" "del: o" delete-other-windows :transient nil)
-     ("u" "undo" winner-undo)
-     ("U" "redo" winner-redo)
-     ""
-     ("0" "del" delete-window)
-     ("1" "del other" delete-other-windows)
-     ""
-     ("S" "[ ] sides" window-toggle-side-windows)
-     ("`" "[ ] popups" popper-toggle)
-     ""
-     ("q" "quit" transient-quit-all)]])
+   ["Lifecycle"
+    ("d" "del (this)" delete-window)
+    ("D" "del (select)" ace-delete-window)
+    ;; ("D" "del: o" delete-other-windows :transient nil)
+    ("u" "undo" winner-undo)
+    ("U" "redo" winner-redo)
+    ""
+    ("0" "del" delete-window)
+    ("1" "del other" delete-other-windows)
+    ""
+    ("S" "[ ] sides" window-toggle-side-windows)
+    ("`" "[ ] popups" popper-toggle)
+    ""
+    ("q" "quit" transient-quit-all)]])
 
 ;;; Bind keys for window management
 
