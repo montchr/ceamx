@@ -379,5 +379,10 @@
   "<left>" #'shrink-window-horizontally
   "<right>" #'enlarge-window-horizontally)
 
+;;;; Disable confusing repeat behaviors
+
+;; TIP: Use "C-x O" instead, bound to `ace-window' currently.
+(put 'other-window 'repeat-map nil)
+
 (provide 'init-window)
 ;;; init-window.el ends here
