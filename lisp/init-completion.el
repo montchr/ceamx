@@ -44,7 +44,6 @@
 ;; `completion-at-point' is often bound to M-TAB, but that conflicts with OS behavior.
 ;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
 (keymap-global-set "C-S-SPC" #'completion-at-point)
-
 (after! orderless
   (setopt completion-styles '(orderless basic))
   (setopt completion-category-defaults nil)
@@ -59,6 +58,8 @@
                                        ;; #'+orderless-not-if-bang-dispatch
                                        #'+orderless-consult-dispatch
                                        #'orderless-affix-dispatch)))
+(require 'lib-common)
+
 (package! corfu
   (declare-function global-corfu-mode "corfu")
 
@@ -73,13 +74,11 @@
 
   (setopt corfu-quit-at-boundary 'separator)
   (setopt corfu-quit-no-match 'separator)
-  (setopt corfu-separator ?_)
 
-  ;; (setopt corfu-on-exact-match nil)
-  ;; (setopt corfu-scroll-margin 5)
-  (setopt corfu-auto-delay 0.1)
-  ;; TODO: maybe enable when invoked manually?
-  (setopt corfu-preview-current nil)
+  ;; Trigger insertion of the separator with "M-SPC".  The character will appear
+  ;; to be inserted into the buffer.  Upon selecting a candidate (or aborting,
+  ;; or whatver), the extra character will be removed.
+  (setopt corfu-separator ?_)
 
   (global-corfu-mode)
 
@@ -109,6 +108,7 @@
 
   (corfu-popupinfo-mode)
 
+  ;; Overrides previous binding to `corfu-info-documentation'.
   (keymap-set corfu-map "C-h" #'corfu-popupinfo-mode))
 (after! corfu
   (declare-function corfu-history-mode "corfu-history")
@@ -117,8 +117,6 @@
 ;; Persist across sessions.
 (after! (savehist corfu-history)
   (add-to-list 'savehist-additional-variables 'corfu-history))
-
-;;;
 (package! corfu-terminal)
 
 (after! (corfu corfu-terminal)
