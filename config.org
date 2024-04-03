@@ -8010,10 +8010,15 @@ See [[*Orderless]] for definitions.
   ;; or whatver), the extra character will be removed.
   (setopt corfu-separator ?_)
 
+  (global-corfu-mode))
+#+end_src
 
-  (global-corfu-mode)
+***** Customize the ~corfu-map~ transient keybindings
 
-  ;; Default values, unless otherwise stated.
+These will be available when a ~corfu~ prompt is active.
+
+#+begin_src emacs-lisp
+(after! corfu
   (define-keymap :keymap corfu-map
     "TAB" #'corfu-next
     "S-TAB"  #'corfu-previous

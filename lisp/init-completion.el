@@ -80,9 +80,8 @@
   ;; or whatver), the extra character will be removed.
   (setopt corfu-separator ?_)
 
-  (global-corfu-mode)
-
-  ;; Default values, unless otherwise stated.
+  (global-corfu-mode))
+(after! corfu
   (define-keymap :keymap corfu-map
     "TAB" #'corfu-next
     "S-TAB"  #'corfu-previous
