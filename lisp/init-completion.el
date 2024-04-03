@@ -68,7 +68,7 @@
   (setopt corfu-preselect 'prompt)
   (setopt corfu-count 8)
   (setopt corfu-max-width 80)
-  (setopt corfu-on-exact-match 'insert)
+  (setopt corfu-on-exact-match nil)
   (setopt corfu-scroll-margin 5)
 
   (setopt corfu-quit-at-boundary 'separator)
