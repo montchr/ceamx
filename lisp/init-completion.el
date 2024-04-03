@@ -89,7 +89,7 @@
     "C-h" #'corfu-info-documentation
     "C-n" nil
     "C-p" nil
-    "M-RET" #'corfu-insert
+    "C-RET" #'corfu-insert
     "M-." #'corfu-show-location
     "M-g" #'corfu-info-location ; default
     ;; "M-h" #'corfu-info-documentation    ; default
