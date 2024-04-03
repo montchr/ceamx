@@ -124,11 +124,15 @@
 (package! kind-icon
   (setopt kind-icon-use-icons (display-graphic-p))
   (setopt kind-icon-blend-background t)
-  (setopt kind-icon-default-face 'corfu-default)
 
-  (after! (svg-lib corfu)
-    (require 'kind-icon)))
+  (require 'kind-icon)
 
+  (after! corfu
+    (defvar corfu-margin-formatters)
+    (declare-function kind-icon-margin-formatter "kind-icon")
+
+    (setopt kind-icon-default-face 'corfu-default)
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
 (after! kind-icon
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache)
