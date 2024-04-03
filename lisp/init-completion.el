@@ -103,7 +103,7 @@
 (after! corfu
   (declare-function corfu-popupinfo-mode "corfu-popupinfo")
 
-  (setopt corfu-popupinfo-delay '(1.0 . 0.5))
+  (setopt corfu-popupinfo-delay '(2.0 . 1.0))
 
   (corfu-popupinfo-mode)
 
