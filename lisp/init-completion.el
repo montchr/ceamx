@@ -134,6 +134,7 @@
     (setopt kind-icon-default-face 'corfu-default)
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
 (after! kind-icon
+  (plist-put kind-icon-default-style :height 0.9))
 (after! kind-icon
   (declare-function kind-icon-reset-cache "kind-icon")
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>

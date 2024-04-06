@@ -8111,7 +8111,16 @@ See also ~popon~, the utility library powering the interface.
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
 #+end_src
 
+****** Reduce icon size slightly
+
+If you change this value, make sure to call ~kind-icon-reset-cache~ afterwards,
+otherwise the icon size will likely not be accurate.
+
+#+begin_src emacs-lisp
 (after! kind-icon
+  (plist-put kind-icon-default-style :height 0.9))
+#+end_src
+
 ****** Update icon apperance after enabling a theme
 
 #+begin_src emacs-lisp
