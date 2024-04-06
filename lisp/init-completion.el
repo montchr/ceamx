@@ -134,9 +134,10 @@
     (setopt kind-icon-default-face 'corfu-default)
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
 (after! kind-icon
+(after! kind-icon
+  (declare-function kind-icon-reset-cache "kind-icon")
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-  (add-hook 'after-enable-theme-hook #'kind-icon-reset-cache)
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+  (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 (after! dabbrev
   (setopt dabbrev-ignored-buffer-regexps
           (list
