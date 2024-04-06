@@ -8,3 +8,6 @@ nix-mode nix-ts-mode
 (comm "/*" n> > r> " :: " p " -> " p n> > "*/")
 
 (modargs "{ " (r "config, lib, pkgs") ", ... }:" o)
+
+(modbasic (i modargs) n "{" n> q n "}")
+
