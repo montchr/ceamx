@@ -1,9 +1,10 @@
-;;; init.el --- Personal configuration file -*- lexical-binding: t; no-byte-compile: t -*-
+;;; init.el --- Initialize Ceamx  -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
 ;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -21,16 +22,6 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;  Personal Emacs configuration file.
-
-;; TODO: <https://github.com/Genivia/ugrep#using-ugrep-within-emacs>
-;;       <https://manueluberti.eu/posts/2022-08-07-emacs-ugrep/#fn:3>
-;;       <https://manueluberti.eu/posts/2023-10-01-embark-ugrep/>
-;;       <https://manueluberti.eu/posts/2021-09-10-rgrep-and-vc-git-grep/>
-;; TODO: <https://elpa.gnu.org/packages/xr.html>
-;; TODO: <https://github.com/leoliu/easy-kill>
-
 ;;; Code:
 
 (require 'cl-lib)
@@ -38,7 +29,6 @@
 (require 'ceamx-paths)
 
 (require 'lib-common)
-
 (defgroup ceamx nil
   "User-configurable options for Ceamx."
   ;; TODO: is this group appropriate?
@@ -53,14 +43,12 @@
               user-mail-address "chris@cdom.io")
 
 (require 'init-benchmarking)
-
 ;;; Load environment-related constants
 
 (require 'config-env)
 ;; TODO: see bbatsov/prelude for prior art
 (when +sys-wsl-p
   (require 'lib-env-wsl))
-
 ;;; Initialize packages
 
 ;; Third-party package managers should be configured in init.el directly instead
@@ -80,9 +68,9 @@
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil :depth 1
-                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                              :build (:not elpaca--activate-package)))
+                       :ref nil :depth 1
+                       :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                       :build (:not elpaca--activate-package)))
 (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
        (build (expand-file-name "elpaca/" elpaca-builds-directory))
        (order (cdr elpaca-order))
@@ -95,7 +83,7 @@
         (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
                  ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
                                                  ,@(when-let ((depth (plist-get order :depth)))
-                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                    (list (format "--depth=%d" depth) "--no-single-branch"))
                                                  ,(plist-get order :repo) ,repo))))
                  ((zerop (call-process "git" nil buffer t "checkout"
                                        (or (plist-get order :ref) "--"))))
@@ -310,7 +298,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (require 'lib-files)
 (require 'lib-elisp)
-
 ;;; Configuration
 
 ;; Increase number of messages saved in log.

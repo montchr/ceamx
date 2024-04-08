@@ -1,6 +1,11 @@
-;;; init-benchmarking.el --- Measure startup and require times -*- lexical-binding: t -*-
+;;; init-benchmarking.el --- Measure startup and feature load time  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2006-2021  Steve Purcell
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -16,9 +21,6 @@
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;; Copyright (c) 2006-2021, Steve Purcell
-;; All rights reserved.
 
 ;; Redistribution and use in source and binary forms, with or without
 ;; modification, are permitted provided that the following conditions are met:
