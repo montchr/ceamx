@@ -381,6 +381,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;;; Completion-At-Point
 
 (require 'init-completion)
+(require 'init-abbrevs)
 
 ;;;; Help
 
