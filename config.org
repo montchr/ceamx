@@ -8997,11 +8997,37 @@ lel
 
 
 ** Expanding Templates (~tempel~) :: ~init-templates~
-:PROPERTIES:
-:header-args: :noweb-ref init-templates
-:END:
 
-Configuration for expandable file templates and abbrevs.
+Configuration for expandable file templates.
+
+#+name: init-templates-file
+#+begin_src emacs-lisp :tangle lisp/init-templates.el :noweb yes :comments no
+<<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-templates>>
+
+<<file-footer(feature="init-templates")>>
+#+end_src
+
+*** Tasks
+
+**** TODO Heading structure in this section is nonsence
+
+
+*** Commentary
+
+**** ~tempel~ vs ~yasnippet~
 
 ~tempel~ is simple and powerful, built on top of the Emacs internal ~tempo~
 library.  I prefer to use ~tempel~ where possible.
@@ -9021,7 +9047,22 @@ hive-mind manufacturing reductive, homogenizing, totalitarian thoughtforms?  And
 if so, what is this parrot-god's end goal?  I have so many questions.  I think a
 table of pros/cons and a list of differences would likely suffice.
 
-*** Template Syntax
+
+**** "Templates" or "Snippets"?"
+
+Templates may have placeholders to be filled and expanded.  ~tempel~ and
+~yasnippet~ do this, despite the name of the latter package.
+
+Snippets are static chunks of text, often "tricks" and easy-to-forget reference
+material.  Abbrevs (via ~abbrev-mode~) are an example of this.
+
+Templates may include a snippet in their expansion.  Snippets in themselves have
+no relation to templates, unless we are coincidentally talking about a snippet
+whose subject is templates.  I will say no more on that matter so that we may
+avoid further confusion.
+
+
+**** Tempo Syntax
 
 - Source :: [[https://github.com/minad/tempel/blob/main/README.org#template-syntax][tempel/README.org at main · minad/tempel · GitHub]]
 
@@ -9049,7 +9090,12 @@ Furthermore Tempel supports syntax extensions:
 - =q=  Quits the containing template when jumped to.
 
 
-*** Install the ~tempel~ package
+*** TempEl (~tempel~)
+:PROPERTIES:
+:header-args: :noweb-ref init-templates
+:END:
+
+**** Install the ~tempel~ package
 
 #+begin_src emacs-lisp
 (require 'lib-common)
@@ -9080,7 +9126,7 @@ Capf, such that it will be tried first."
   (global-tempel-abbrev-mode))
 #+end_src
 
-*** Add user element to include nested ~tempel~ templates with ~(i NAME)~
+**** Add custom template element to include nested templates
 
 See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elements>
 
@@ -9097,8 +9143,7 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
   (add-to-list 'tempel-user-elements #'+tempel-include))
 #+end_src
 
-
-*** Keybindings
+**** Keybindings
 
 #+begin_src emacs-lisp
 (after! tempel
@@ -9111,8 +9156,7 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
     "S-TAB" #'tempel-previous))
 #+end_src
 
-
-*** ~tempel-collection~: install community ~tempel~ templates
+**** ~tempel-collection~: install community ~tempel~ templates
 
 <https://github.com/Crandel/tempel-collection>
 <https://github.com/Crandel/tempel-collection/tree/main/templates>
