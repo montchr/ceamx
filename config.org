@@ -6,7 +6,7 @@
 #+property: header-args:emacs-lisp :comments both
 #+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :results silent :noweb yes
 #+archive: graveyard/%s::datetree/
-#+startup: indent show2levels
+#+startup show2levels
 
 * Start
 
@@ -1585,7 +1585,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 #+end_src
 
 
-** Packages
+*** Packages
 
 
 * Configure
@@ -11677,6 +11677,9 @@ Intended for use as a local hook function on
 
 #+BEGIN_SRC emacs-lisp
 (package! org-modern
+  ;; Ensure leading stars are replaced by spaces.
+  (setopt org-modern-hide-stars ?\s)
+
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 #+END_SRC

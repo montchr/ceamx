@@ -339,6 +339,8 @@ Intended for use as a local hook function on
 
 ;; [[file:../config.org::*~org-modern~][~org-modern~:1]]
 (package! org-modern
+  (setopt org-modern-hide-stars ?\s)
+
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 ;; ~org-modern~:1 ends here
