@@ -24,7 +24,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(setopt abbrev-suggest t)
+;;(setopt abbrev-suggest t)
 (defvar ceamx-abbrev-prefix-regexp
   (rx (or bol
           (1+ (any "\t ")))

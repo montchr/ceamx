@@ -449,7 +449,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;;; Completion-At-Point
 
 (require 'init-completion)
-(require 'init-abbrevs)
+;; (require 'init-abbrevs)
 
 ;;;; Help
 
@@ -7462,15 +7462,35 @@ as the CHAR argument to `ceamx-normalize-char'."
 #+end_src
 
 
-*** Abbrevs (~abbrev-mode~) :: ~init-abbrevs~
+*** DISABLED Abbrevs (~abbrev-mode~) :: ~init-abbrevs~
 :PROPERTIES:
 :header-args: :noweb-ref init-abbrevs
 :END:
 
+- Note taken on [2024-04-09 Tue 01:00] \\
+  Currently it is impossible to type when ~abbrev-mode~ is active in a buffer.
+  When pressing =SPC= after a word, I see the following:
+
+  #+begin_example
+  Debugger entered--Lisp error: (wrong-type-argument stringp Template)
+    split-string(Template " " t)
+    abbrev--suggest-count-words(Template)
+    abbrev--suggest-maybe-suggest()
+    expand-abbrev()
+    #<subr org-self-insert-command>(1)
+    apply(#<subr org-self-insert-command> 1)
+    org-self-insert-command(1)
+    funcall-interactively(org-self-insert-command 1)
+    command-execute(org-self-insert-command)
+  #+end_example
+
+  But I'm not sure where that's coming from.
+
+
 **** Display suggestions for available abbrevs
 
 #+begin_src emacs-lisp
-(setopt abbrev-suggest t)
+;;(setopt abbrev-suggest t)
 #+end_src
 
 **** Allow abbrevs with a prefix colon, semicolon, or underscore
@@ -7484,7 +7504,7 @@ Adapted from Prot's original version with the following changes:
 - Abstracted the regexp to a variable ~ceamx-abbrev-prefix-regexp~ for reuse
   across =abbrev-table= contexts.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defvar ceamx-abbrev-prefix-regexp
   (rx (or bol
           (1+ (any "\t ")))
