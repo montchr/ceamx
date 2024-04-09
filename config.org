@@ -7412,6 +7412,94 @@ as the CHAR argument to `ceamx-normalize-char'."
 
 ** Completion
 
+#+name: init-abbrevs-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-abbrevs.el
+<<file-prop-line(feature="init-abbrevs",desc="Abbrevs support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-abbrevs>>
+
+<<file-footer(feature="init-abbrevs")>>
+#+end_src
+
+#+name: init-completion-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-completion.el
+<<file-prop-line(feature="init-completion",desc="Completion-At-Point enhancements")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-completion>>
+
+<<file-footer(feature="init-completion")>>
+#+end_src
+
+
+*** Abbrevs (~abbrev-mode~) :: ~init-abbrevs~
+:PROPERTIES:
+:header-args: :noweb-ref init-abbrevs
+:END:
+
+**** Display suggestions for available abbrevs
+
+#+begin_src emacs-lisp
+(setopt abbrev-suggest t)
+#+end_src
+
+**** Allow abbrevs with a prefix colon, semicolon, or underscore
+
+- Source :: <https://github.com/protesilaos/dotfiles/blob/8fc72724cd6debd12c8258bf64adf6822a0bc90c/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion.el#L215-L225>
+- Background :: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>
+
+Adapted from Prot's original version with the following changes:
+
+- Converted the duplicated regexp string into an ~rx~ form via the ~xr~ utility.
+- Abstracted the regexp to a variable ~ceamx-abbrev-prefix-regexp~ for reuse
+  across =abbrev-table= contexts.
+
+#+begin_src emacs-lisp
+(defvar ceamx-abbrev-prefix-regexp
+  (rx (or bol
+          (1+ (any "\t ")))
+      (group-n 1
+        (or (seq (any ":;_") (0+ nonl))
+            (0+ nonl)))))
+
+(abbrev-table-put global-abbrev-table :regexp ceamx-abbrev-prefix-regexp)
+
+(with-eval-after-load 'text-mode
+  (abbrev-table-put text-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp))
+
+(with-eval-after-load 'org
+  (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp))
+#+end_src
+
+**** Enable =abbrev-mode=
+
+#+begin_src emacs-lisp
+(dolist (hook '(text-mode-hook prog-mode-hook git-commit-mode-hook))
+  (add-hook hook #'abbrev-mode))
+#+end_src
+
+
 *** Vertico
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-selection-vertico.el
@@ -7777,6 +7865,7 @@ Minibuffer candidate annotations.
 ;;; init-selection-marginalia.el ends here
 #+end_src
 
+
 *** Orderless
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-selection-orderless.el
@@ -7877,7 +7966,15 @@ Minibuffer candidate annotations.
 ;;; init-selection-orderless.el ends here
 #+end_src
 
-*** Completion-At-Point
+
+*** Completion-At-Point (~corfu~) :: ~init-completion~
+:PROPERTIES:
+:header-args: :noweb-ref init-completion
+:END:
+
+- <https://github.com/minad/corfu>
+- <https://github.com/minad/cape>
+- <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
 
 See the following notes on default Corfu keybindings from its readme:
 
@@ -7904,40 +8001,7 @@ bindings:
 | =C-g=                        | ~corfu-quit~               |
 | ~keyboard-escape-quit~       | ~corfu-reset~              |
 
-
-**** File Targets
-
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-completion.el
-<<file-prop-line(feature="init-completion",desc="Completion-At-Point enhancements")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-completion>>
-
-<<file-footer(feature="init-completion")>>
-#+end_src
-
-
-**** Code: ~init-completion.el~
-:PROPERTIES:
-:header-args: :noweb-ref init-completion
-:END:
-
-- <https://github.com/minad/corfu>
-- <https://github.com/minad/cape>
-- <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
-
-
-***** General completion settings
+**** General completion settings
 
 #+begin_src emacs-lisp
 (require 'lib-completion)
@@ -7962,7 +8026,7 @@ bindings:
 (keymap-global-set "C-S-SPC" #'completion-at-point)
 #+end_src
 
-***** Use ~orderless~ completion settings
+**** Use ~orderless~ completion settings
 
 See [[*Orderless]] for definitions.
 
@@ -7983,7 +8047,7 @@ See [[*Orderless]] for definitions.
                                        #'orderless-affix-dispatch)))
 #+end_src
 
-***** ~corfu~: COmpletion in Region FUnction
+**** ~corfu~: COmpletion in Region FUnction
 
 #+begin_src emacs-lisp
 (require 'lib-common)
@@ -8011,7 +8075,7 @@ See [[*Orderless]] for definitions.
   (global-corfu-mode))
 #+end_src
 
-***** Customize the ~corfu-map~ transient keybindings
+**** Customize the ~corfu-map~ transient keybindings
 
 These will be available when a ~corfu~ prompt is active.
 
@@ -8031,14 +8095,14 @@ These will be available when a ~corfu~ prompt is active.
     "M-h" nil))
 #+end_src
 
-****** Ensure Corfu flyout closes when leaving insert state
+***** Ensure Corfu flyout closes when leaving insert state
 
 #+begin_src emacs-lisp
 (after! meow
   (add-hook 'meow-insert-exit-hook #'corfu-quit))
 #+end_src
 
-****** ~corfu-echo-mode~: Show candidate docs in echo area
+***** ~corfu-echo-mode~: Show candidate docs in echo area
 
 Probably redundant when ~corfu-popupinfo-mode~ is in use.
 
@@ -8049,7 +8113,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
   (corfu-echo-mode))
 #+end_src
 
-****** ~corfu-popupinfo~: Display candidate docs or location in popup
+***** ~corfu-popupinfo~: Display candidate docs or location in popup
 
 #+begin_src emacs-lisp
 (after! corfu
@@ -8063,7 +8127,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
   (keymap-set corfu-map "C-h" #'corfu-popupinfo-mode))
 #+end_src
 
-****** ~corfu-history-mode~: Sort candidates by history position
+***** ~corfu-history-mode~: Sort candidates by history position
 
 #+begin_src emacs-lisp
 (after! corfu
@@ -8075,7 +8139,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
   (add-to-list 'savehist-additional-variables 'corfu-history))
 #+end_src
 
-****** ~corfu-terminal~: Terminal support for Corfu
+***** ~corfu-terminal~: Terminal support for Corfu
 
 <https://codeberg.org/akib/emacs-corfu-terminal>
 
@@ -8090,7 +8154,7 @@ See also ~popon~, the utility library powering the interface.
     (corfu-terminal-mode 1)))
 #+end_src
 
-***** ~kind-icon~: Add icons to completion-at-point candidates
+**** ~kind-icon~: Add icons to completion-at-point candidates
 
 <https://github.com/jdtsmith/kind-icon>
 
@@ -8109,7 +8173,7 @@ See also ~popon~, the utility library powering the interface.
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
 #+end_src
 
-****** Reduce icon size slightly
+***** Reduce icon size slightly
 
 If you change this value, make sure to call ~kind-icon-reset-cache~ afterwards,
 otherwise the icon size will likely not be accurate.
@@ -8119,7 +8183,7 @@ otherwise the icon size will likely not be accurate.
   (plist-put kind-icon-default-style :height 0.9))
 #+end_src
 
-****** Update icon apperance after enabling a theme
+***** Update icon apperance after enabling a theme
 
 #+begin_src emacs-lisp
 (after! kind-icon
@@ -8128,7 +8192,7 @@ otherwise the icon size will likely not be accurate.
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 #+end_src
 
-***** ~dabbrev~: Dynamic Abbreviations
+**** ~dabbrev~: Dynamic Abbreviations
 
 #+begin_src emacs-lisp
 (after! dabbrev
@@ -8152,7 +8216,7 @@ otherwise the icon size will likely not be accurate.
 ;;;
 #+end_src
 
-***** ~cape~: Completion-At-Point Extensions
+**** ~cape~: Completion-At-Point Extensions
 
 <https://github.com/minad/cape/blob/main/README.org>
 
@@ -8193,7 +8257,7 @@ otherwise the icon size will likely not be accurate.
     "M-p r" #'cape-rfc1345))
 #+end_src
 
-****** Advise some modes' completion-at-point functions to work alongside ~cape~
+***** Advise some modes' completion-at-point functions to work alongside ~cape~
 
 #+begin_src emacs-lisp
 (after! comint
@@ -8207,7 +8271,8 @@ otherwise the icon size will likely not be accurate.
   (advice-add #'lsp-completion-at-point :around #'cape-wrap-nonexclusive))
 #+end_src
 
-*** Library
+
+*** Library :: ~lib-completion~
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-completion.el
 ;;; lib-completion.el --- Completion helper functions  -*- lexical-binding: t; -*-
