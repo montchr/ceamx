@@ -150,14 +150,12 @@
                           "gpath"))
                (optional (group "<" (+ (any numeric)) ">")))))
 
-  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
+    (add-to-list 'dabbrev-ignored-buffer-modes mode))
 
   ;; Swap M-/ and C-M-/
   (keymap-global-set "M-/" #'dabbrev-completion)
   (keymap-global-set "C-M-/" #'dabbrev-expand))
-
-;;;
 (require 'lib-common)
 
 (package! cape
