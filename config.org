@@ -1587,7 +1587,6 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 * Configure
 
-
 ** Common
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-common.el
@@ -2495,6 +2494,13 @@ accommodation for varying pixel densities."
 
 (package! page-break-lines
   (global-page-break-lines-mode))
+
+;;; ~breadcrumb~: header-line indication of current location in project
+
+;; <https://github.com/joaotavora/breadcrumb>
+
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 
 (provide 'init-ui)
 ;;; init-ui.el ends here

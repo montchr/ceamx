@@ -111,5 +111,12 @@
 (package! page-break-lines
   (global-page-break-lines-mode))
 
+;;; ~breadcrumb~: header-line indication of current location in project
+
+;; <https://github.com/joaotavora/breadcrumb>
+
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+
 (provide 'init-ui)
 ;;; init-ui.el ends here
