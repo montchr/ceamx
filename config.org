@@ -8992,136 +8992,32 @@ lel
 #+end_src
 
 
-** Expandable Abbreviations & Templates
-
-Configuration for expandable file templates and abbrevs.
-
-*** CANCELLED Rename the existing feature to ~init-snippets~
-CLOSED: [2024-03-24 Sun 14:44]
-
-
-- State "CANCELLED"  from "TODO"       [2024-03-24 Sun 14:44] \\
-  "Templates" is a more correct term than "snippets".
-
-  Templates may have placeholders to be filled and expanded.
-
-  Snippets are static chunks of text, often "tricks" and easy-to-forget reference
-  material.
-
-  Templates may include a snippet in their expansion.  Snippets in themselves have
-  no relation to templates, unless we are coincidentally talking about a snippet
-  whose subject is templates.  I will say no more on that matter so that we may
-  avoid further confusion.
-
-
-*** Target Files
-:PROPERTIES:
-:header-args: :noweb yes :comments no
-:END:
-
-#+name: init-templates-file
-#+begin_src emacs-lisp :tangle lisp/init-templates.el :comments no
-<<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-templates>>
-
-<<file-footer(feature="init-templates")>>
-#+end_src
-
-
-*** Code: =lisp/init-templates.el=
+** Expanding Templates (~tempel~) :: ~init-templates~
 :PROPERTIES:
 :header-args: :noweb-ref init-templates
 :END:
 
-**** ~tempel~ installation
+Configuration for expandable file templates and abbrevs.
 
-#+begin_src emacs-lisp
-(require 'lib-common)
+~tempel~ is simple and powerful, built on top of the Emacs internal ~tempo~
+library.  I prefer to use ~tempel~ where possible.
 
-(package! tempel
-  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
+~yasnippet~, by the author of ~eglot~, is generally much more powerful.
+~yasnippet~ supports nested template fields and provides many more opportunities
+for complex interactive prompts.  ~yasnippet~ has been around for quite a few
+years and provides a large degree of compatibility with the text-expansion
+template syntax established by the classic macOS text editor TextMate.
 
-  ;; Require trigger prefix before template name when completing.
-  ;; (setopt tempel-trigger-prefix "<")
+Wait...  Why am I explaining this?  Who is my audience?  What drives this desire
+to /explain/ information that is readily-available?  Could it be that I am
+compelled to reproduce the empty rhetorical stylings of a mad parrot-god whose
+half-digested productions drop from its beak as worm-words crawling in-to and
+out-from every crack and corner of this arachnid desert, driven by some kind of
+hive-mind manufacturing reductive, homogenizing, totalitarian thoughtforms?  And
+if so, what is this parrot-god's end goal?  I have so many questions.  I think a
+table of pros/cons and a list of differences would likely suffice.
 
-  ;; Setup completion at point for Tempel templates.
-  (def-hook! +tempel-setup-capf-h ()
-    '(conf-mode-hook prog-mode-hook text-mode-hook)
-    "Add the Tempel Capf to `completion-at-point-functions'.
-
-`tempel-expand' only triggers on exact matches.  Alternatively
-use `tempel-complete' if you want to see all matches, but then
-you should also configure `tempel-trigger-prefix', such that
-Tempel does not trigger too often when you don't expect it.
-
-NOTE: We add `tempel-expand' *before* the main programming mode
-Capf, such that it will be tried first."
-    (setq-local completion-at-point-functions
-                (cons #'tempel-expand
-                      completion-at-point-functions)))
-
-  ;; Integrate `tempel' with `abbrev'.
-  (global-tempel-abbrev-mode))
-#+end_src
-
-**** ~tempel~: Add user element to include nested templates
-
-See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elements>
-
-#+begin_src emacs-lisp
-(defun +tempel-include (elt)
-  "Tempel user element ELT to include a nested template."
-  (when (eq (car-safe elt) 'i)
-    (if-let (template (alist-get (cadr elt) (tempel--templates)))
-        (cons 'l template)
-      (message "Template %s not found" (cadr elt))
-      nil)))
-
-(after! tempel
-  (add-to-list 'tempel-user-elements #'+tempel-include))
-#+end_src
-
-**** ~tempel~: keybindings
-
-#+begin_src emacs-lisp
-(after! tempel
-  (global-keys!
-    "M-+" #'tempel-complete
-    "M-*" #'tempel-insert)
-
-  (define-keymap :keymap tempel-map
-    "TAB" #'tempel-next
-    "S-TAB" #'tempel-previous))
-#+end_src
-
-**** ~tempel-collection~: install community ~tempel~ templates
-
-<https://github.com/Crandel/tempel-collection>
-<https://github.com/Crandel/tempel-collection/tree/main/templates>
-
-#+begin_src emacs-lisp
-(package! tempel-collection
-  (after! tempel
-    (require 'tempel-collection)))
-#+end_src
-
-
-
-*** Reference
-
-**** TempEl Template Syntax
+*** Template Syntax
 
 - Source :: [[https://github.com/minad/tempel/blob/main/README.org#template-syntax][tempel/README.org at main · minad/tempel · GitHub]]
 
@@ -9147,6 +9043,79 @@ Furthermore Tempel supports syntax extensions:
 - =(p FORM <NAME> <NOINSERT>)= Like =p= described above, but =FORM=  is evaluated.
 - =(FORM ...)=  Other Lisp forms are evaluated. Named fields are lexically bound.
 - =q=  Quits the containing template when jumped to.
+
+
+*** Install the ~tempel~ package
+
+#+begin_src emacs-lisp
+(require 'lib-common)
+
+(package! tempel
+  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
+
+  ;; Setup completion at point for Tempel templates.
+  (def-hook! +tempel-setup-capf-h ()
+    '(conf-mode-hook prog-mode-hook text-mode-hook)
+    "Add the Tempel Capf to `completion-at-point-functions'.
+
+`tempel-expand' only triggers on exact matches.  Alternatively
+use `tempel-complete' if you want to see all matches, but then
+you should also configure `tempel-trigger-prefix', such that
+Tempel does not trigger too often when you don't expect it.
+
+NOTE: We add `tempel-expand' *before* the main programming mode
+Capf, such that it will be tried first."
+    (setq-local completion-at-point-functions
+                (cons #'tempel-expand
+                      completion-at-point-functions)))
+
+  ;; Integrate `tempel' with `abbrev'.
+  (global-tempel-abbrev-mode))
+#+end_src
+
+*** Add user element to include nested ~tempel~ templates with ~(i NAME)~
+
+See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elements>
+
+#+begin_src emacs-lisp
+(defun +tempel-include (elt)
+  "Tempel user element ELT to include a nested template."
+  (when (eq (car-safe elt) 'i)
+    (if-let (template (alist-get (cadr elt) (tempel--templates)))
+        (cons 'l template)
+      (message "Template %s not found" (cadr elt))
+      nil)))
+
+(after! tempel
+  (add-to-list 'tempel-user-elements #'+tempel-include))
+#+end_src
+
+
+*** Keybindings
+
+#+begin_src emacs-lisp
+(after! tempel
+  (global-keys!
+    "M-+" #'tempel-complete
+    "M-*" #'tempel-insert)
+
+  (define-keymap :keymap tempel-map
+    "TAB" #'tempel-next
+    "S-TAB" #'tempel-previous))
+#+end_src
+
+
+*** ~tempel-collection~: install community ~tempel~ templates
+
+<https://github.com/Crandel/tempel-collection>
+<https://github.com/Crandel/tempel-collection/tree/main/templates>
+
+#+begin_src emacs-lisp
+(package! tempel-collection
+  (after! tempel
+    (require 'tempel-collection)))
+#+end_src
+
 
 
 ** Language Support
