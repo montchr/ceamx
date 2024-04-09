@@ -39,10 +39,10 @@
   :commands (ef-themes-select)
 
   :config
-  (setopt ceamx-theme-default-dark 'ef-night)
-  (setopt ceamx-theme-default-light 'ef-frost)
+  ;; (setopt ceamx-theme-default-dark 'ef-night)
+  ;; (setopt ceamx-theme-default-light 'ef-frost)
 
-  (setopt ef-themes-to-toggle (list ceamx-theme-default-dark ceamx-theme-default-light))
+  ;; (setopt ef-themes-to-toggle (list ceamx-theme-default-dark ceamx-theme-default-light))
 
   (setopt ef-themes-headings
           '((0 . (variable-pitch 1.4))

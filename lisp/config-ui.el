@@ -30,12 +30,12 @@
 (defconst ceamx-theme-buffet-light-periods
   '(:morning :day :afternoon))
 
-(defcustom ceamx-theme-default-light 'modus-operandi
+(defcustom ceamx-theme-default-light 'modus-operandi-tinted
   "The default light theme."
   :group 'ceamx
   :type 'symbol)
 
-(defcustom ceamx-theme-default-dark 'modus-vivendi
+(defcustom ceamx-theme-default-dark 'modus-vivendi-tinted
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
