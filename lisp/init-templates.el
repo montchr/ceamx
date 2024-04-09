@@ -29,8 +29,8 @@
 (package! tempel
   (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
 
-  ;; Require trigger prefix before template name when completing.
-  ;; (setopt tempel-trigger-prefix "<")
+  ;; Require this prefix before triggering template name completion.
+  (setopt tempel-trigger-prefix "<")
 
   ;; Setup completion at point for Tempel templates.
   (def-hook! +tempel-setup-capf-h ()
