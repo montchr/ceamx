@@ -339,6 +339,7 @@ Intended for use as a local hook function on
 
 ;; [[file:../config.org::*~org-modern~][~org-modern~:1]]
 (package! org-modern
+  ;; Ensure leading stars are replaced by spaces.
   (setopt org-modern-hide-stars ?\s)
 
   (add-hook 'org-mode-hook #'org-modern-mode)
