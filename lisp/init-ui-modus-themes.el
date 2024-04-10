@@ -36,6 +36,14 @@
   (setopt modus-themes-disable-other-themes t)
   (setopt modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted))
 
+  ;; FIXME: results in type warning, but works
+  (setopt modus-themes-headings
+          '((1 . (1.6))
+            (2 . (background 1.5))
+            (3 . (background 1.2))
+            (4 . (1.1 regular))
+            (t . (regular))))
+
   (setopt modus-themes-common-palette-overrides
           '(
             ;; Make the fringe invisible.
