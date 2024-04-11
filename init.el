@@ -409,10 +409,9 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-editor)
 (require 'init-templates)
 
-;;;; Memex
+;;;; Outlines & Memex
 
-;; TODO: move after syntaxes? org-mode is heavy
-
+(require 'init-outline)
 (require 'init-org)
 (require 'init-notes)
 (require 'init-notes-denote)

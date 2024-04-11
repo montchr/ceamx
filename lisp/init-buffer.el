@@ -144,43 +144,6 @@
   (keymap-global-set "C-=" #'er/expand-region))
 ;; ~expand-region~: Expand your regions:1 ends here
 
-;; ~outli~: Enable simple comment-based outline features in many modes
-
-;; <https://github.com/jdtsmith/outli>
-
-
-;; [[file:../config.org::*~outli~: Enable simple comment-based outline features in many modes][~outli~: Enable simple comment-based outline features in many modes:1]]
-;; NOTE: In `emacs-lisp-mode' buffers, `outli-mode' should be enabled *after*
-;; `lispy-mode'. See the package configuration for `lispy'.
-
-(package! (outli :host github :repo "jdtsmith/outli")
-
-  (def-hook! +outli-mode-maybe-enable-h ()
-    '(prog-mode-hook text-mode-hook)
-    "Enable `outli-mode' conditionally, excluding some modes."
-    (let ((exclude-modes '(emacs-lisp-mode))
-          (excludep (lambda (excluded-mode)
-                      (eq major-mode excluded-mode))))
-      (unless (seq-some excludep exclude-modes)
-        (outli-mode)))))
-
-(with-eval-after-load 'outli
-  (defvar outli-mode-map)
-  (declare-function outline-next-heading "outline")
-  (declare-function outline-previous-heading "outline")
-  (declare-function outline-promote "outline")
-  (declare-function outline-demote "outline")
-
-  ;; FIXME: function definition is void -- from readme:
-  ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
-
-  (define-keymap :keymap outli-mode-map
-    "C-c C-n" #'outline-next-heading
-    "C-c C-p" #'outline-previous-heading
-    "C-c M-h" #'outline-promote
-    "C-c M-l" #'outline-demote))
-;; ~outli~: Enable simple comment-based outline features in many modes:1 ends here
-
 ;; ~rainbow-mode~: Colorize color names and hexcodes in buffers
 
 ;; <https://elpa.gnu.org/packages/rainbow-mode.html>
