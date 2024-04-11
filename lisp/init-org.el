@@ -169,6 +169,20 @@
   ;; FIXME: Does not seem to work in `emacs-lisp-mode' Org Src buffers
   ;; (keymap-set org-src-mode-map "M-," #'org-edit-src-exit)
   )
+(defvar-keymap org-mode-navigation-repeat-map
+  :repeat t
+
+  "C-n" #'org-next-visible-heading
+  "C-p" #'org-previous-visible-heading
+  "C-f" #'org-forward-heading-same-level
+  "C-b" #'org-backward-heading-same-level
+  "C-u" #'outline-up-heading
+
+  "n" #'org-next-visible-heading
+  "p" #'org-previous-visible-heading
+  "f" #'org-forward-heading-same-level
+  "b" #'org-backward-heading-same-level
+  "u" #'outline-up-heading)
 (defun +org-mode--local-set-tab-width-h ()
   "Set the `tab-width' in `org-mode' buffers to 8 columns.
 Any `tab-width' value other than 8 will result in an error.
