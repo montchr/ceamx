@@ -11329,62 +11329,9 @@ Else create a new file."
 
 
 ** Org-Mode
-
-*** Header
 :PROPERTIES:
-:header-args: :tangle lisp/init-org.el
+:header-args: :noweb-ref init-org
 :END:
-
-#+begin_src emacs-lisp :comments no :tangle lisp/init-org.el
-;;; init-org.el --- org-mode initialisation -*- lexical-binding: t -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-#+end_src
-
-*** Commentary
-
- #+begin_src emacs-lisp :comments no :tangle lisp/init-org.el
-;;; Commentary:
-
-;;  Configuration for `org-mode'.
-
-;;;; Resources
-
-;; <https://github.com/james-stoup/emacs-org-mode-tutorial>
-
-;;;; Investigate
-
-;; TODO: <https://orgmode.org/worg/org-contrib/org-choose.html>
-;; TODO: <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
-#+end_src
-
-*** Code
-:PROPERTIES:
-:header-args: :tangle lisp/init-org.el
-:END:
-
-#+begin_src emacs-lisp :comments no
-;;; Code:
-#+end_src
 
 **** Requirements
 
@@ -11397,25 +11344,44 @@ Else create a new file."
 (require 'lib-common)
 #+END_SRC
 
-**** Configuration of important files/directories
+**** Set up essential files & directories
+***** Define variables in =lisp/config-org.el= so they may be used in other init files
 
-Must be set before loading Org-Mode or any of its sub-features are used.
+#+begin_src emacs-lisp :noweb-ref config-org
+(require 'config-notes)
+
+(defvar ceamx-default-agenda-files
+  (f-glob "*.org" ceamx-agenda-dir)
+  "List of absolute paths of all files that should be included in the agenda.")
+
+(defvar ceamx-default-todo-file
+  (expand-file-name "todo.org" ceamx-agenda-dir)
+  "Absolute path to default file for active G2D.")
+
+(defvar ceamx-default-capture-file
+  (expand-file-name "inbox.org" ceamx-agenda-dir)
+  "Absolute path to default inbox file for new G2D waiting to be processed.")
+#+end_src
+
+***** Tell Org about our directories and files
+
+These must be set before loading Org-Mode or any of its sub-features are used.
 
 Most notes will be stored in `ceamx-notes-dir'.
 
-The value of `org-directory' will be used as a default destination for new
+The value of ~org-directory~ will be used as a default destination for new
 notes, especially as they relate to tasks and agendas.  For that reason, use
-the `ceamx-agenda-dir'.
+the ~ceamx-agenda-dir~.
 
-FIXME: Because these directories are managed by Syncthing, creating them
-automatically is not a great idea if they do not already exist.  A better
-workaround to the issue of Org-Mode failing to load might be setting the
-default target to a subdirectory of `user-emacs-directory'.
+Because these directories are managed by Syncthing, creating them automatically
+is not a great idea if they do not already exist.  A better workaround to the
+issue of Org-Mode failing to load might be setting the default target to a
+subdirectory of ~user-emacs-directory~.
 
-Why?  Because you do not want to end up with two Syncthing entries with the
-same intended target path but with different IDs.  If Syncthing is not set up
-yet, then any directory created via the Emacs configuration will probably
-result in a conflict when Syncthing tries to take control of these paths.
+Why?  Because you do not want to end up with two Syncthing entries with the same
+intended target path but with different IDs.  If Syncthing is not set up yet,
+then any directory created via the Emacs configuration will probably result in a
+conflict when Syncthing tries to take control of these paths.
 
 #+BEGIN_SRC emacs-lisp
 (defvar org-directory ceamx-agenda-dir)
@@ -11770,52 +11736,8 @@ kill the selection again.
 #+END_SRC
 
 
-*** User Options
-
-#+begin_src emacs-lisp :comments no :tangle lisp/config-org.el
-;;; config-org.el --- org-mode variables             -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
-
-(require 'config-notes)
-
-(defvar ceamx-default-agenda-files
-  (f-glob "*.org" ceamx-agenda-dir)
-  "List of absolute paths of all files that should be included in the agenda.")
-
-(defvar ceamx-default-todo-file
-  (expand-file-name "todo.org" ceamx-agenda-dir)
-  "Absolute path to default file for active G2D.")
-
-(defvar ceamx-default-capture-file
-  (expand-file-name "inbox.org" ceamx-agenda-dir)
-  "Absolute path to default inbox file for new G2D waiting to be processed.")
-
-(provide 'config-org)
-;;; config-org.el ends here
-#+end_src
+*** Resources
+**** [[https://github.com/james-stoup/emacs-org-mode-tutorial][GitHub - james-stoup/emacs-org-mode-tutorial: A primer for users trying to make sense of Org Mode]]
 
 
 *** Tasks
@@ -11860,7 +11782,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 - State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:52] \\
   Not "broken", just misunderstood.
 
-**** TODO Electric-pair for equals-sign
+**** TODO Org-Mode: electric-pair for equals-sign
 
 
 
@@ -13165,6 +13087,53 @@ POS defaults to the current position."
 #+end_src
 
 
+* Target Files
+
+** =lisp/init-org.el=
+
+#+name: init-org-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-org.el
+<<file-prop-line(feature="init-org",desc="Org-Mode support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-org>>
+
+<<file-footer(feature="init-org")>>
+#+end_src
+
+** =lisp/config-org.el=
+
+#+name: config-org-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/config-org.el
+<<file-prop-line(feature="config-org",desc="Org-Mode settings")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-org>>
+
+<<file-footer(feature="config-org")>>
+#+end_src
+
+
 * Appendix
 
 ** Maintenance
@@ -13225,6 +13194,7 @@ deleted before tangling."
   (org-babel-tangle-file
    (or src-file ceamx-literate-config-file)))
 #+end_src
+
 
 ** Noweb Partials
 :PROPERTIES:
@@ -13409,6 +13379,7 @@ CLOSED: [2024-03-18 Mon 23:40]
 - State "DONE"       from "TODO"       [2024-03-18 Mon 23:40]
 Setting this on a heading works.
 
+
 ** Styleguide
 
 *** Org-Mode: When to wrap inline text in ~tildes~ vs. =equals=
@@ -13418,13 +13389,9 @@ Setting this on a heading works.
 [[https://emacs.stackexchange.com/a/21870][What's the relationship between ~foo~ and =foo= in org-mode? - Emacs Stack Exchange]]
 
 ** To Investigate
+*** TODO <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
+*** TODO <https://orgmode.org/worg/org-contrib/org-choose.html>
 
-- Merged: [[https://github.com/doomemacs/doomemacs/pull/7002][module: Add corfu by LuigiPiucco · Pull Request #7002 · doomemacs/doomemacs · GitHub]]
-- <https://github.com/Genivia/ugrep#using-ugrep-within-emacs>
-- <https://manueluberti.eu/posts/2022-08-07-emacs-ugrep/#fn:3>
-- <https://manueluberti.eu/posts/2023-10-01-embark-ugrep/>
-- <https://manueluberti.eu/posts/2021-09-10-rgrep-and-vc-git-grep/>
-- <https://github.com/leoliu/easy-kill>
 
 ** Issues
 
