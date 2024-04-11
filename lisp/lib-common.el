@@ -66,11 +66,6 @@
 
 ;;; Commentary:
 
-;; General, common, and generic library functions.
-
-;; Avoid any library dependencies which are not already part of Emacs.  This
-;; library will be loaded before packages are available.
-
 ;;; Code:
 
 ;;;; Requirements

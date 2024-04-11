@@ -8,73 +8,7 @@
 #+archive: graveyard/%s::datetree/
 #+startup show2levels
 
-* Start
-
-** Targets
-
-#+name: init-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle init.el
-<<file-prop-line(feature="init",desc="Initialize Ceamx",extraprops="no-byte-compile: t;")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init>>
-
-<<file-footer(feature="init")>>
-#+end_src
-
-#+name: init-benchmarking-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-benchmarking.el
-<<file-prop-line(feature="init-benchmarking",desc="Measure startup and feature load time")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-;; Copyright (c) 2006-2021  Steve Purcell
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-;;
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-;;
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-;;; Commentary:
-;;; Code:
-
-<<init-benchmarking>>
-
-<<file-footer(feature="init-benchmarking")>>
-#+end_src
-
-
-** ~init~ :: the ceamx index
+* ~init~ :: the ceamx index
 :PROPERTIES:
 :header-args: :noweb-ref init
 :END:
@@ -560,42 +494,15 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 #+end_src
 
 
-**** Tasks
 
-***** TODO <https://github.com/Genivia/ugrep#using-ugrep-within-emacs>
-***** TODO <https://elpa.gnu.org/packages/xr.html>
-
-
-** ~early-init~ :: pre-startup
-
-*** File
-
-#+name: early-init-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle early-init.el
-<<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<early-init>>
-
-<<file-footer(feature="early-init")>>
-#+end_src
-
-*** Code
+* ~early-init~ :: pre-startup
 :PROPERTIES:
 :header-args: :noweb-ref early-init :comments both
 :END:
 
-**** Prevent package.el from enabling all packages before init
+- [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
+
+** Prevent package.el from enabling all packages before init
 
 When nil and using the builtin package manager, `package-initialize' must be
 invoked in the init process prior to `require'ing any packages installed with
@@ -607,7 +514,7 @@ When non-nil, there is no need to invoke `package-initialize'.
 (setq package-enable-at-startup nil)
 #+end_src
 
-**** Set up indirect init/startup hooks
+** Set up indirect init/startup hooks
 
 #+begin_src emacs-lisp
 (defvar ceamx-after-init-hook '())
@@ -619,10 +526,9 @@ When non-nil, there is no need to invoke `package-initialize'.
   (run-hooks 'ceamx-emacs-startup-hook))
 #+end_src
 
-**** Performance
+** Performance
 
-
-***** Language servers
+*** Language servers
 
 <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
 
@@ -639,8 +545,7 @@ When non-nil, there is no need to invoke `package-initialize'.
   (setq read-process-output-max (* 1024 1024)))
 #+end_src
 
-
-***** Minimize garbage collection during startup
+*** Minimize garbage collection during startup
 
 [[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii comments on An easy trick I found to improve Emacs start-up time]]:
 
@@ -657,24 +562,21 @@ See also:
 
 <https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
 
-
-***** Provide insight into garbage-collection activity to inform tuning decisions
+*** Provide insight into garbage-collection activity to inform tuning decisions
 
 #+begin_src emacs-lisp
 ;; TODO: will a `init-file-debug' check work here?
 (setq garbage-collection-messages t)
 #+end_src
 
-
-***** Prevent garbage-collection during init
+*** Prevent garbage-collection during init
 
 #+begin_src emacs-lisp
 ;; NOTE: Either use `gcmh' or make sure to reset this later. Or else!
 (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
 #+end_src
 
-
-***** DISABLED Simplify filename pattern-matching during init
+*** DISABLED Simplify filename pattern-matching during init
 
 - Note taken on [2024-03-23 Sat 03:24] \\
   Quick followup: I would not be surprised if this had something to do with adding
@@ -722,9 +624,9 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
 #+end_src
 
-**** Directories and well-known-files
+** Directories and well-known-files
 
-***** Add directories to load path
+*** Add directories to load path
 
 #+begin_src emacs-lisp
 ;; Configure load path
@@ -733,7 +635,7 @@ Intended for use as a callback on `ceamx-after-init-hook'."
     (add-to-list 'load-path dir)))
 #+end_src
 
-***** Load custom constants describing well-known paths
+*** Load custom constants describing well-known paths
 
 See [[*=ceamx-paths= :: common path constants]]
 
@@ -741,7 +643,7 @@ See [[*=ceamx-paths= :: common path constants]]
 (require 'ceamx-paths)
 #+end_src
 
-***** Configure ~custom-file~ location
+*** Configure ~custom-file~ location
 
 #+begin_src emacs-lisp
 ;; Normally, options configured in `user-init-file' won't need to be persisted
@@ -751,20 +653,20 @@ See [[*=ceamx-paths= :: common path constants]]
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 #+end_src
 
-***** Store packages in the designated directory
+*** Store packages in the designated directory
 
 #+begin_src emacs-lisp
 (setq package-user-dir ceamx-packages-dir)
 #+end_src
 
-***** Use preferred cache directories for native-comp
+*** Use preferred cache directories for native-comp
 
 #+begin_src emacs-lisp
 (startup-redirect-eln-cache ceamx-eln-dir)
 (add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
 #+end_src
 
-**** Native compilation settings
+** Native compilation settings
 
 #+begin_src emacs-lisp
 (setq native-comp-async-report-warnings-errors 'silent)
@@ -783,7 +685,7 @@ See [[*=ceamx-paths= :: common path constants]]
 (setq byte-compile-warnings nil)
 #+end_src
 
-**** Inhibit early annoyances
+** Inhibit early annoyances
 
 #+begin_src emacs-lisp
 ;; No bells.
@@ -798,7 +700,7 @@ See [[*=ceamx-paths= :: common path constants]]
 (setq read-answer-short t)              ; affects `read-answer' (completion)
 #+end_src
 
-**** Frames and window-system integration
+** Frames and window-system integration
 
 ;; FIXME: seems to behave inconsistently when server is running?
 
@@ -825,7 +727,7 @@ See [[*=ceamx-paths= :: common path constants]]
 (tooltip-mode -1)
 #+end_src
 
-***** Rename the default/initial frame
+**** Rename the default/initial frame
 
 #+begin_src emacs-lisp
 (defvar ceamx-default-frame-name "home — [ceamx]"
@@ -842,12 +744,9 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 #+end_src
 
-*** Links
-
-- [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
 
 
-** ~ceamx-paths~ :: common path constants
+* ~ceamx-paths~ :: common path constants
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el :comments no
 ;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
@@ -969,7 +868,7 @@ block of saved text lacking a \"templatable\" characteristic.")
 #+end_src
 
 
-** ~ceamx-keymaps~ :: common keymaps
+* ~ceamx-keymaps~ :: common keymaps
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :comments no
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
@@ -1030,7 +929,7 @@ block of saved text lacking a \"templatable\" characteristic.")
 #+end_src
 
 
-** ~lib-common~ :: standard library
+* ~lib-common~ :: standard library
 :PROPERTIES:
 :header-args: :tangle lisp/lib-common.el
 :END:
@@ -1038,7 +937,13 @@ block of saved text lacking a \"templatable\" characteristic.")
 This library is a requirement of just about every customization and library
 file. It is loaded early during initialization.
 
-*** File Headers
+
+General, common, and generic library functions.
+
+Avoid any library dependencies which are not already part of Emacs.  This
+library will be loaded before packages are available.
+
+** File Headers
 
 #+begin_src emacs-lisp :comments no
 ;;; lib-common.el --- Common library functions -*- lexical-binding: t -*-
@@ -1110,27 +1015,13 @@ file. It is loaded early during initialization.
 ;;; Commentary:
 #+end_src
 
-*** Commentary
-
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
-;; General, common, and generic library functions.
-
-;; Avoid any library dependencies which are not already part of Emacs.  This
-;; library will be loaded before packages are available.
-#+end_src
-
-*** Tasks
-
-**** TODO Consider moving to =lisp/core/ceamx-lib.el=
-
-
-*** Sources
+** Sources
 
 - <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
 - <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
 - <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
 
-*** Code
+** Code
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
 ;;; Code:
@@ -1142,8 +1033,8 @@ file. It is loaded early during initialization.
 (require 'seq)
 #+end_src
 
-**** General
-***** ~ceamx-host-p~: Determine whether Emacs is running on a given host
+*** General
+**** ~ceamx-host-p~: Determine whether Emacs is running on a given host
 
 #+begin_src emacs-lisp
 (defun ceamx-host-p (name)
@@ -1151,7 +1042,7 @@ file. It is loaded early during initialization.
   (string= name (system-name)))
 #+end_src
 
-***** ~ceamx-unquote~: Unquote an Elisp expression
+**** ~ceamx-unquote~: Unquote an Elisp expression
 
 #+begin_src emacs-lisp
 (defun ceamx-unquote (exp)
@@ -1162,7 +1053,7 @@ file. It is loaded early during initialization.
   exp)
 #+end_src
 
-***** ~noop!~: Make the wrapped expression do nothing
+**** ~noop!~: Make the wrapped expression do nothing
 
 - source :: <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
 
@@ -1174,8 +1065,8 @@ Unlike `ignore', produce no side effects."
   nil)
 #+end_src
 
-**** Loading and Evalling
-***** ~after!~: Evaluate an expression after the given feature(s) have loaded
+*** Loading and Evalling
+**** ~after!~: Evaluate an expression after the given feature(s) have loaded
 
 - Note taken on [2024-03-23 Sat 15:11] \\
   Replaced the existing version with Doom's version for its logical operator
@@ -1234,7 +1125,7 @@ things you want byte-compiled in them! Like function/macro definitions."
 #+end_src
 
 
-***** ~defer!~: Evaluate an expression after Emacs is idle for some time
+**** ~defer!~: Evaluate an expression after Emacs is idle for some time
 
 - source :: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
 
@@ -1248,7 +1139,7 @@ things you want byte-compiled in them! Like function/macro definitions."
     (lambda () ,@body)))
 #+end_src
 
-***** ~defer-until!~: Evaluate an expression when a condition is non-nil
+**** ~defer-until!~: Evaluate an expression when a condition is non-nil
 
 - source :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
 
@@ -1272,8 +1163,8 @@ Meant to serve as a predicated alternative to `after!'."
           (add-hook 'after-load-functions #',fn)))))
 #+end_src
 
-**** Variable Mutation
-***** ~appendq!~: Append lists to a symbol in place
+*** Variable Mutation
+**** ~appendq!~: Append lists to a symbol in place
 
 #+begin_src emacs-lisp
 (defmacro appendq! (sym &rest lists)
@@ -1281,7 +1172,7 @@ Meant to serve as a predicated alternative to `after!'."
   `(setq ,sym (append ,sym ,@lists)))
 #+end_src
 
-***** ~prependq!~: Prepend lists to a symbol in place
+**** ~prependq!~: Prepend lists to a symbol in place
 
 #+begin_src emacs-lisp
 (defmacro prependq! (sym &rest lists)
@@ -1289,7 +1180,7 @@ Meant to serve as a predicated alternative to `after!'."
   `(setq ,sym (append ,@lists ,sym)))
 #+end_src
 
-***** ~appendopt!~ Append lists to an existing user option
+**** ~appendopt!~ Append lists to an existing user option
 
 #+begin_src emacs-lisp
 (defmacro appendopt! (variable &rest lists)
@@ -1298,7 +1189,7 @@ This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,variable ,@lists)))
 #+end_src
 
-***** ~prependopt!~: Prepend lists to an existing user option
+**** ~prependopt!~: Prepend lists to an existing user option
 
 #+begin_src emacs-lisp
 (defmacro prependopt! (variable &rest lists)
@@ -1307,7 +1198,7 @@ This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,@lists ,variable)))
 #+end_src
 
-***** ~delq!~: Delete an element from a list in-place
+**** ~delq!~: Delete an element from a list in-place
 
 #+begin_src emacs-lisp
 (defmacro delq! (elt list &optional fetcher)
@@ -1319,7 +1210,7 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
                 ,list)))
 #+end_src
 
-***** ~pushnew!~: Push values sequentially into a list uniquely
+**** ~pushnew!~: Push values sequentially into a list uniquely
 
 #+begin_src emacs-lisp
 ;; TODO: another version to test car of alist so that new additions with the
@@ -1332,8 +1223,8 @@ This is a variadic `cl-pushnew'."
       (cl-pushnew ,var ,place :test #'equal))))
 #+end_src
 
-**** Filesystem
-***** ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
+*** Filesystem
+**** ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
 
 #+begin_src emacs-lisp
 (defun ceamx-subdirs (parent-dir)
@@ -1344,8 +1235,8 @@ This is a variadic `cl-pushnew'."
     (expand-file-name parent-dir) t "^[^\\.]")))
 #+end_src
 
-**** Hooks & Advice
-***** ~def-advice!~: Macro to define and add advice to a function
+*** Hooks & Advice
+**** ~def-advice!~: Macro to define and add advice to a function
 
 #+begin_src emacs-lisp
 (defmacro def-advice! (name arglist how symbol docstring &rest body)
@@ -1381,7 +1272,7 @@ the newly-defined advice.  SYMBOL is the function to be advised."
      ',name))
 #+end_src
 
-***** ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
+**** ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
 
 #+begin_src emacs-lisp
 (defmacro def-hook! (name arglist hooks docstring &rest body)
@@ -1409,8 +1300,8 @@ as in `defun'."
         (add-hook hook ',name)))))
 #+end_src
 
-**** Packages & User Configuration
-***** ~use-feature!~: Configuration-only wrapper for ~use-package~
+*** Packages & User Configuration
+**** ~use-feature!~: Configuration-only wrapper for ~use-package~
 
 #+begin_src emacs-lisp
 (defmacro use-feature! (name &rest args)
@@ -1428,7 +1319,7 @@ will be nil."
      ,@args))
 #+end_src
 
-***** ~package!~: Declare a package and its initial configuration
+**** ~package!~: Declare a package and its initial configuration
 
 Wrapper for ~elpaca~ to avoid having to declare its autoloads in every file.
 
@@ -1443,8 +1334,8 @@ without needing to declare autoloads for `elpaca' in every file."
      (elpaca ,order ,@body)))
 #+end_src
 
-**** Input and Keybindings
-***** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
+*** Input and Keybindings
+**** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
 
 Usages of this function should be replaced with the result of evaluating
 ~string-to-char~.
@@ -1475,7 +1366,7 @@ vary based on... various reasons?"
     char))
 #+end_src
 
-***** ~global-keys!~: Define multiple global keybindings
+**** ~global-keys!~: Define multiple global keybindings
 
 #+begin_src emacs-lisp :tangle lisp/lib-common.el
 (defmacro global-keys! (&rest keys)
@@ -1486,7 +1377,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
      ,@keys))
 #+end_src
 
-***** ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
+**** ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
 
 [[https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/][oantolin comments on Repeat-mode is awesome, share you useful configs]]
 
@@ -1502,7 +1393,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
      keymap)))
 #+end_src
 
-*** Footer
+** Footer
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
 (provide 'lib-common)
@@ -1510,7 +1401,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 #+end_src
 
 
-** ~init-benchmarking~ :: measure startup times
+* ~init-benchmarking~ :: measure startup times
 :PROPERTIES:
 :header-args: :noweb-ref init-benchmarking
 :END:
@@ -1585,12 +1476,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 #+end_src
 
 
-*** Packages
-
-
-* Configure
-
-** Common
+* Common
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-common.el
 ;;; config-common.el --- Common and miscellaneous configuration settings  -*- lexical-binding: t; -*-
@@ -1636,9 +1522,9 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 #+end_src
 
 
-** Environment
+* Environment
 
-*** Options / Variables
+** Options / Variables
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-env.el
 ;;; config-env.el --- Variables regarding the environment  -*- lexical-binding: t; -*-
@@ -1717,7 +1603,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;;; config-env.el ends here
 #+end_src
 
-*** Customizations
+** Customizations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-env.el
 ;;; init-env.el --- Environment configuration -*- lexical-binding: t -*-
@@ -1816,8 +1702,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;;; init-env.el ends here
 #+end_src
 
-
-*** Terminal/TTY Support
+** Terminal/TTY Support
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-env-tty.el
 ;;; init-env-tty.el --- TTY environment support -*- lexical-binding: t -*-
@@ -1888,8 +1773,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;;; init-env-tty.el ends here
 #+end_src
 
-
-*** WSL Support
+** WSL Support
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-env-wsl.el
 ;;; lib-env-wsl.el --- Helpers for WSL environments  -*- lexical-binding: t; -*-
@@ -1935,9 +1819,9 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 #+end_src
 
 
-** Secrets
+* Secrets
 
-*** Customizations
+** Customizations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-secrets.el
 ;;; init-secrets.el --- Support for secretive operations  -*- lexical-binding: t; -*-
@@ -2028,7 +1912,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;;; init-secrets.el ends here
 #+end_src
 
-*** Library
+** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-secrets.el
 ;;; lib-secrets.el --- Helpers for secrets           -*- lexical-binding: t; -*-
@@ -2079,9 +1963,9 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 #+end_src
 
 
-** Frame
+* Frame
 
-*** Customizations
+** Customizations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-frame.el
 ;;; init-frame.el --- Frame modifications -*- lexical-binding: t -*-
@@ -2162,8 +2046,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;;; init-frame.el ends here
 #+end_src
 
-
-*** Frame Hooks
+** Frame Hooks
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-frame-hooks.el
 ;;; init-frame-hooks.el --- Provide specific hooks for GUI/TTY frame creation  -*- lexical-binding: t; -*-
@@ -2240,8 +2123,7 @@ Selectively runs either `after-make-console-frame-hooks' or
 ;;; init-frame-hooks.el ends here
 #+end_src
 
-
-*** Library
+** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-frame.el
 ;;; lib-frame.el --- Frame functions                 -*- lexical-binding: t; -*-
@@ -2282,9 +2164,9 @@ Selectively runs either `after-make-console-frame-hooks' or
 #+end_src
 
 
-** Appearance
+* Appearance
 
-*** Options / Variables
+** Options / Variables
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-ui.el
 ;;; config-ui.el --- General UI settings             -*- lexical-binding: t; -*-
@@ -2382,7 +2264,7 @@ accommodation for varying pixel densities."
 #+end_src
 
 
-*** Customization
+** Customization
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-ui.el
 ;;; init-ui.el --- General user interface customizations  -*- lexical-binding: t; -*-
@@ -2510,9 +2392,9 @@ accommodation for varying pixel densities."
 #+end_src
 
 
-*** Themes
+** Themes
 
-**** General Customization
+*** General Customization
 
 #+BEGIN_SRC emacs-lisp :comments no :tangle lisp/init-ui-theme.el
 ;;; init-ui-theme.el --- Theme Initalization -*- lexical-binding: t -*-
@@ -2578,9 +2460,9 @@ accommodation for varying pixel densities."
 #+END_SRC
 
 
-**** Modus Themes
+*** Modus Themes
 
-***** Customization
+**** Customization
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-ui-modus-themes.el
 ;;; init-ui-modus-themes.el ---Modus Themes initialization  -*- lexical-binding: t; -*-
@@ -2665,10 +2547,10 @@ accommodation for varying pixel densities."
 #+end_src
 
 
-**** Ef-Themes
+*** Ef-Themes
 
 
-***** Customization
+**** Customization
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-ui-ef-themes.el
 ;;; init-ui-ef-themes.el --- Support for the Ef theme family  -*- lexical-binding: t; -*-
@@ -2748,7 +2630,7 @@ accommodation for varying pixel densities."
 #+end_src
 
 
-**** Circadian Theme Phasing
+*** Circadian Theme Phasing
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-ui-circadian.el
 ;;; init-ui-circadian.el --- Support for sunrise/sunset adjustments  -*- lexical-binding: t; -*-
@@ -2875,7 +2757,7 @@ accommodation for varying pixel densities."
 #+end_src
 
 
-**** Library
+*** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-ui-theme.el
 ;;; lib-ui-theme.el --- Theme library functions and macros  -*- lexical-binding: t; -*-
@@ -3012,7 +2894,7 @@ not retain the generic background set by the function
 
 
 
-*** Fonts/Typography
+** Fonts/Typography
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-ui-font.el
 ;;; init-ui-font.el --- Font configuration           -*- lexical-binding: t; -*-
@@ -3205,7 +3087,7 @@ not retain the generic background set by the function
 
 
 
-*** Modeline
+** Modeline
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-ui-modeline.el
 ;;; init-ui-modeline.el --- Modeline -*- lexical-binding: t -*-
@@ -3281,7 +3163,7 @@ not retain the generic background set by the function
 #+end_src
 
 
-**** Doom-Modeline
+*** Doom-Modeline
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-ui-modeline-doom.el
 ;;; init-ui-modeline-doom.el --- doom-modeline init  -*- lexical-binding: t; -*-
@@ -3357,7 +3239,7 @@ not retain the generic background set by the function
 
 
 
-*** Integrating the preceding interfaces
+** Integrating the preceding interfaces
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-after-ui.el
 ;;; init-after-ui.el --- Late UI configuration       -*- lexical-binding: t; -*-
@@ -3426,7 +3308,7 @@ not retain the generic background set by the function
 
 
 
-*** Library
+** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-ui.el
 ;;; lib-ui.el --- General user interface library     -*- lexical-binding: t; -*-
@@ -3504,9 +3386,9 @@ will be used as default."
 #+end_src
 
 
-** Window
+* Window
 
-*** Customization
+** Customization
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-window.el
 ;;; init-window.el --- Window management -*- lexical-binding: t -*-
@@ -3882,7 +3764,7 @@ will be used as default."
 #+end_src
 
 
-*** Variable Definitions
+** Variable Definitions
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-window.el
 ;;; config-window.el --- Settings for window management  -*- lexical-binding: t; -*-
@@ -3922,7 +3804,7 @@ The buffer will be created if it does not exist."
 #+end_src
 
 
-*** Library
+** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-window.el
 ;;; lib-window.el --- Helpers for window management  -*- lexical-binding: t; -*-
@@ -4258,10 +4140,10 @@ If there is only one window and multiple frames, call
 #+end_src
 
 
-** Buffer
+* Buffer
 
 
-*** Customizations
+** Customizations
 :PROPERTIES:
 :header-args: :tangle lisp/init-buffer.el
 :END:
@@ -4292,14 +4174,14 @@ If there is only one window and multiple frames, call
 ;;; Code:
 #+end_src
 
-**** Requirements
+*** Requirements
 
 #+begin_src emacs-lisp
 (require 'lib-common)
 (require 'lib-buffer)
 #+end_src
 
-**** General
+*** General
 
 #+begin_src emacs-lisp
 (setq-default indicate-empty-lines nil)
@@ -4312,7 +4194,7 @@ If there is only one window and multiple frames, call
 (setq-default truncate-lines t)
 #+end_src
 
-**** Scrolling
+*** Scrolling
 
 #+begin_src emacs-lisp
 (setopt scroll-error-top-bottom t)
@@ -4334,7 +4216,7 @@ If there is only one window and multiple frames, call
   "<wheel-right>" #'scroll-right)
 #+end_src
 
-**** Auto-revert buffers
+*** Auto-revert buffers
 
 #+begin_src emacs-lisp
 ;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For
@@ -4346,7 +4228,7 @@ If there is only one window and multiple frames, call
 (add-hook 'ceamx-after-init-hook #'global-auto-revert-mode)
 #+end_src
 
-**** Buffer selection
+*** Buffer selection
 
 #+begin_src emacs-lisp
 (setopt ibuffer-movement-cycle t)
@@ -4355,14 +4237,14 @@ If there is only one window and multiple frames, call
 (keymap-global-set "C-x C-b" #'ibuffer-list-buffers)
 #+end_src
 
-**** ~hl-line~: Enable highlighting of the current line
+*** ~hl-line~: Enable highlighting of the current line
 
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'hl-line-mode)
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 #+end_src
 
-**** ~goto-address~: Linkify URLs and email addresses in buffers [builtin]
+*** ~goto-address~: Linkify URLs and email addresses in buffers [builtin]
 
 #+begin_src emacs-lisp
 (autoload 'goto-address-prog-mode "goto-addr")
@@ -4370,7 +4252,7 @@ If there is only one window and multiple frames, call
 (add-hook 'prog-mode-hook #'goto-address-prog-mode)
 #+end_src
 
-**** ~uniquify~: Disambiguate identically-named buffers [builtin]
+*** ~uniquify~: Disambiguate identically-named buffers [builtin]
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'uniquify
@@ -4384,7 +4266,7 @@ If there is only one window and multiple frames, call
   (setopt uniquify-ignore-buffers-re "^\\*"))
 #+end_src
 
-**** ~link-hint~: Activate links in buffer with ~avy~
+*** ~link-hint~: Activate links in buffer with ~avy~
 
 <https://github.com/noctuid/link-hint.el>
 
@@ -4395,7 +4277,7 @@ If there is only one window and multiple frames, call
     "M-g U" #'link-hint-copy-link))
 #+end_src
 
-**** ~expand-region~: Expand your regions
+*** ~expand-region~: Expand your regions
 
 <https://github.com/magnars/expand-region.el>
 
@@ -4440,7 +4322,7 @@ If there is only one window and multiple frames, call
     "C-c M-l" #'outline-demote))
 #+end_src
 
-**** ~rainbow-mode~: Colorize color names and hexcodes in buffers
+*** ~rainbow-mode~: Colorize color names and hexcodes in buffers
 
 <https://elpa.gnu.org/packages/rainbow-mode.html>
 
@@ -4448,7 +4330,7 @@ If there is only one window and multiple frames, call
 (package! rainbow-mode)
 #+end_src
 
-**** ~lentic~: Create decoupled views of the same content
+*** ~lentic~: Create decoupled views of the same content
 
 #+begin_src emacs-lisp
 (package! lentic
@@ -4459,7 +4341,7 @@ If there is only one window and multiple frames, call
 #+end_src
 
 
-**** Global Keybindings
+*** Global Keybindings
 
 #+begin_src emacs-lisp
 (global-keys!
@@ -4468,7 +4350,7 @@ If there is only one window and multiple frames, call
   "C-c `" #'mode-line-other-buffer)
 #+end_src
 
-**** DISABLED ~repeat-map~ for basic buffer navigation commands
+*** DISABLED ~repeat-map~ for basic buffer navigation commands
 
 <https://www.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/>
 
@@ -4493,14 +4375,14 @@ It seemed like a great idea, but I had quite a few issues.
   "d" #'scroll-up-command)
 #+end_src
 
-**** Footer
+*** Footer
 
 #+begin_src emacs-lisp :comments no
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
 #+end_src
 
-*** Library
+** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-buffer.el
 ;;; lib-buffer.el --- Helpers for buffers            -*- lexical-binding: t; -*-
@@ -4540,7 +4422,7 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 ;;; lib-buffer.el ends here
 #+end_src
 
-*** User Options
+** User Options
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-buffer.el
 ;;; config-buffer.el --- Variables relating to buffers and modes  -*- lexical-binding: t; -*-
@@ -4624,9 +4506,9 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 #+end_src
 
 
-** Editor
+* Editor
 
-*** Target Files
+** Target Files
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
@@ -4719,12 +4601,12 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 #+end_src
 
 
-*** ~init-editor~
+** ~init-editor~
 :PROPERTIES:
 :header-args: :noweb-ref init-editor
 :END:
 
-**** Requirements
+*** Requirements
 
 #+begin_src emacs-lisp
 (require 'ceamx-keymaps)
@@ -4736,7 +4618,7 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 (require 'lib-simple)
 #+end_src
 
-**** Enable some commands that Emacs disables by default
+*** Enable some commands that Emacs disables by default
 
 #+begin_src emacs-lisp
 (dolist (cmd '(downcase-region
@@ -4745,21 +4627,21 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   (put cmd 'disabled nil))
 #+end_src
 
-**** ~ceamx-insert-map~: =C-c i= keymap for inserting insertables
+*** ~ceamx-insert-map~: =C-c i= keymap for inserting insertables
 
 #+begin_src emacs-lisp
 (keymap-global-set "C-c i" #'ceamx-insert-map)
 #+end_src
 
-**** Replace region when inserting text
+*** Replace region when inserting text
 
 #+begin_src emacs-lisp
 (delete-selection-mode 1)
 #+end_src
 
-***** TODO Meow does not seem to respect ~delete-selection-mode~?
+**** TODO Meow does not seem to respect ~delete-selection-mode~?
 
-**** Improve sentence legibility and parsing with double-spaced ending
+*** Improve sentence legibility and parsing with double-spaced ending
 
 #+begin_src emacs-lisp
 ;; Yes, it may appear strange and archaic, and yet... I realized that I actually
@@ -4772,13 +4654,13 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 (keymap-global-set "M-Q" #'repunctuate-sentences)
 #+end_src
 
-**** Don't consider camelCaseWORDs as separate words
+*** Don't consider camelCaseWORDs as separate words
 
 #+begin_src emacs-lisp
 (global-subword-mode -1)
 #+end_src
 
-**** Automatically wrap text at ~fill-column~ in some contexts
+*** Automatically wrap text at ~fill-column~ in some contexts
 
 #+begin_src emacs-lisp
 ;; When a mode defines a comment syntax, then only wrap those comments. In all
@@ -4790,13 +4672,13 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   (add-hook mode-hook #'auto-fill-mode))
 #+end_src
 
-**** Comments
+*** Comments
 
 #+begin_src emacs-lisp
 (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
 #+end_src
 
-**** Semantic pair matching
+*** Semantic pair matching
 
 See the Info node [[info:emacs#Matching]]
 
@@ -4816,7 +4698,7 @@ See the Info node [[info:emacs#Matching]]
 (show-paren-mode 1)
 #+end_src
 
-***** Set up a keymap for common usages of `insert-pair'
+**** Set up a keymap for common usages of `insert-pair'
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-pairs-map
@@ -4835,13 +4717,13 @@ See the Info node [[info:emacs#Matching]]
 (keymap-set ceamx-insert-map "P" ceamx-pairs-map)
 #+end_src
 
-**** Formatting
+*** Formatting
 
 #+begin_src emacs-lisp
 (setopt require-final-newline t)
 #+end_src
 
-***** ~whitespace-mode~ [builtin]: visualize whitespace
+**** ~whitespace-mode~ [builtin]: visualize whitespace
 
 This mode is buffer-local. It might be undesireable in some cases, so enable
 it selectively.
@@ -4857,7 +4739,7 @@ it selectively.
           missing-newline-at-eof))
 #+end_src
 
-***** Indentation
+**** Indentation
 
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
@@ -4865,19 +4747,19 @@ it selectively.
 (setopt backward-delete-char-untabify-method 'untabify)
 #+end_src
 
-****** ~electric-indent-mode~ [builtin]: Emacs' best attempt at automatic indentation
+***** ~electric-indent-mode~ [builtin]: Emacs' best attempt at automatic indentation
 
 #+begin_src emacs-lisp
 (electric-indent-mode 1)
 #+end_src
 
-***** Delete trailing whitespace before saving files
+**** Delete trailing whitespace before saving files
 
 #+begin_src emacs-lisp
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
 #+end_src
 
-***** ~editorconfig~: EditorConfig integration
+**** ~editorconfig~: EditorConfig integration
 
 #+begin_src emacs-lisp
 ;; <https://editorconfig.org>
@@ -4888,7 +4770,7 @@ it selectively.
   (add-hook 'on-first-file-hook #'editorconfig-mode))
 #+end_src
 
-****** Prevent `editorconfig' from exploding `org-mode' buffers
+***** Prevent `editorconfig' from exploding `org-mode' buffers
 
 #+begin_src emacs-lisp
 ;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
@@ -4908,7 +4790,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
             #'+editorconfig-enforce-org-mode-tab-width-h))
 #+end_src
 
-***** ~apheleia~: opinionated code reformatting
+**** ~apheleia~: opinionated code reformatting
 
 <https://github.com/radian-software/apheleia>
 
@@ -4948,7 +4830,7 @@ after formatting (or other arbitrary modifications):
   (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h))
 #+end_src
 
-**** ~puni~: versatile structured editing
+*** ~puni~: versatile structured editing
 
 <https://github.com/AmaiKinono/puni>
 
@@ -4976,7 +4858,7 @@ after formatting (or other arbitrary modifications):
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 #+end_src
 
-**** ~drag-stuff~: drag stuff around in arbitrary directions
+*** ~drag-stuff~: drag stuff around in arbitrary directions
 
 <https://github.com/rejeep/drag-stuff.el>
 
@@ -4994,14 +4876,14 @@ after formatting (or other arbitrary modifications):
 #+end_src
 
 
-***** Issues
+**** Issues
 
 Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
 recent versions of Emacs:
 
 <https://github.com/rejeep/drag-stuff.el/issues/36>
 
-***** Alternatives
+**** Alternatives
 
 I haven't yet found any other package to move arbitrary regions up/down while
 preserving column position.
@@ -5011,7 +4893,7 @@ this but fails pretty badly, moving the region/selection to the first column
 regardless of its original position.
 #+end_src
 
-**** ~rect~ [builtin]: operate on a buffer rectangularly
+*** ~rect~ [builtin]: operate on a buffer rectangularly
 
 <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
 
@@ -5053,7 +4935,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
 #+end_src
 
-**** ~multiple-cursors~: Sublime-esque multi-cursor editing
+*** ~multiple-cursors~: Sublime-esque multi-cursor editing
 
 <https://github.com/magnars/multiple-cursors.el>
 
@@ -5095,7 +4977,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       ("q" nil))))
 #+end_src
 
-**** ~easy-kill~
+*** ~easy-kill~
 
 <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
@@ -5119,7 +5001,7 @@ b => buffer name
   )
 #+end_src
 
-**** Keybindings
+*** Keybindings
 
 #+begin_src emacs-lisp
 (keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
@@ -5134,14 +5016,14 @@ b => buffer name
 #+end_src
 
 
-*** ~lib-editor~: editor helpers
+** ~lib-editor~: editor helpers
 :PROPERTIES:
 :header-args: :noweb-ref lib-editor
 :END:
 
 Functions for general editor configuration.
 
-**** ~ceamx/continue-comment~
+*** ~ceamx/continue-comment~
 
 <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
 
@@ -5167,7 +5049,7 @@ two inserted lines are the same."
 
 
 
-*** ~config-editor~: editor options
+** ~config-editor~: editor options
 :PROPERTIES:
 :header-args: :noweb-ref config-editor
 :END:
@@ -5188,9 +5070,9 @@ non-nil, buffers will never be formatted upon save."
 #+end_src
 
 
-** Files
+* Files
 
-*** Customizations
+** Customizations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-files.el
 ;;; init-files.el --- File handling -*- lexical-binding: t -*-
@@ -5338,7 +5220,7 @@ non-nil, buffers will never be formatted upon save."
 #+end_src
 
 
-*** Library
+** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-files.el
 ;;; lib-files.el --- File helpers -*- lexical-binding: t -*-
@@ -5583,7 +5465,7 @@ writable or with a prefix argument, then read a file to visit."
 #+end_src
 
 
-** Workspace
+* Workspace
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-workspace.el
 ;;; init-workspace.el --- Workspaces and perspectives  -*- lexical-binding: t; -*-
@@ -5711,9 +5593,9 @@ With optional argument FRAME, return the list of buffers of FRAME."
 #+end_src
 
 
-** Help
+* Help
 
-*** Options / Variables
+** Options / Variables
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-help.el
 ;;; config-help.el --- Help settings                 -*- lexical-binding: t; -*-
@@ -5754,7 +5636,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 #+end_src
 
 
-*** Customizations
+** Customizations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-help.el
 ;;; init-help.el --- Help -*- lexical-binding: t; -*-
@@ -5961,7 +5843,7 @@ was printed, and only have ElDoc display if one wasn't.\""
 #+end_src
 
 
-*** Library
+** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-help.el
 ;;; lib-help.el --- Helpers for help and documentation  -*- lexical-binding: t; -*-
@@ -6071,7 +5953,7 @@ DOC is as in `devdocs-install'."
 #+end_src
 
 
-** History
+* History
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-history.el
 ;;; init-history.el --- History management           -*- lexical-binding: t; -*-
@@ -6252,7 +6134,7 @@ DOC is as in `devdocs-install'."
 #+end_src
 
 
-** Search
+* Search
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-search.el
 ;;; init-search.el --- Search                        -*- lexical-binding: t; -*-
@@ -6403,9 +6285,9 @@ DOC is as in `devdocs-install'."
 ;;; init-search.el ends here
 #+end_src
 
-*** Writable grep buffers with ~wgrep~
+** Writable grep buffers with ~wgrep~
 
-**** Customization
+*** Customization
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-wgrep.el
 ;;; init-wgrep.el --- Configuration for writable minibuffer grep  -*- lexical-binding: t; -*-
@@ -6471,7 +6353,7 @@ DOC is as in `devdocs-install'."
 ;;; init-wgrep.el ends here
 #+end_src
 
-**** Library
+*** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-wgrep.el
 ;;; lib-wgrep.el --- wgrep helpers                   -*- lexical-binding: t; -*-
@@ -6526,7 +6408,7 @@ and consult-location to occur-edit."
 #+end_src
 
 
-** Input Methods
+* Input Methods
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-input-methods.el
 ;;; init-input-methods.el --- Configuration for input methods  -*- lexical-binding: t; -*-
@@ -6588,9 +6470,9 @@ and consult-location to occur-edit."
 #+end_src
 
 
-** Keys
+* Keys
 
-*** General
+** General
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-keys.el
 ;;; init-keys.el --- Keybindings -*- lexical-binding: t -*-
@@ -6720,7 +6602,7 @@ and consult-location to occur-edit."
 #+end_src
 
 
-**** DISABLED Library
+*** DISABLED Library
 
 Diabetic experiments with syntactic sugar.
 
@@ -6799,9 +6681,9 @@ Diabetic experiments with syntactic sugar.
 #+end_src
 
 
-*** =meow= modal keybindings
+** =meow= modal keybindings
 
-**** Target Files
+*** Target Files
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
@@ -6847,7 +6729,7 @@ Diabetic experiments with syntactic sugar.
 #+end_src
 
 
-**** Code: =init-keys-meow.el=
+*** Code: =init-keys-meow.el=
 :PROPERTIES:
 :header-args: :noweb-ref init-keys-meow
 :END:
@@ -6861,7 +6743,7 @@ Diabetic experiments with syntactic sugar.
 (package! meow)
 #+end_src
 
-***** Load meow after Which-Key to circumvent Meow-Keypad UI issues
+**** Load meow after Which-Key to circumvent Meow-Keypad UI issues
 
 Meow's leader functionality has a custom keybinding visualization helper that
 looks almost exactly like ~which-key~ except that it is very buggy. It does try
@@ -6887,9 +6769,9 @@ And allow Elpaca to finish processing its queues, since everything afterwards de
 (elpaca-wait)
 #+end_src
 
-***** Set up the basic Meow state keybindings
+**** Set up the basic Meow state keybindings
 
-****** Add initial keybindings to the Meow Leader keymap
+***** Add initial keybindings to the Meow Leader keymap
 
 #+begin_src emacs-lisp
 (meow-leader-define-key
@@ -6917,7 +6799,7 @@ And allow Elpaca to finish processing its queues, since everything afterwards de
  '("<escape>" . ignore))
 #+end_src
 
-****** Add initial keybindings to the INSERT state keymap
+***** Add initial keybindings to the INSERT state keymap
 
 I am not sure what I was doing here:
 
@@ -6932,7 +6814,7 @@ I am not sure what I was doing here:
     "0" #'meow-expand-0))
 #+end_src
 
-****** Add initial keybindings to the NORMAL state keymap
+***** Add initial keybindings to the NORMAL state keymap
 
 #+begin_src emacs-lisp
 (meow-normal-define-key
@@ -7007,21 +6889,21 @@ I am not sure what I was doing here:
  '(":" . avy-goto-char-2))
 #+end_src
 
-****** Tell Meow about our keyboard layout to arrange its cheatsheet
+***** Tell Meow about our keyboard layout to arrange its cheatsheet
 
 #+begin_src emacs-lisp
 ;; NOTE: This is not a customizable variable, although it is required for meow.
 (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
 #+end_src
 
-***** Configure the Keypad
+**** Configure the Keypad
 
 #+begin_src emacs-lisp
 ;; Don't pass through keys that aren't in keypad.
 (setopt meow-keypad-self-insert-undefined nil)
 #+end_src
 
-****** Avoid the default binding for ~meow-keypad~ in motion state
+***** Avoid the default binding for ~meow-keypad~ in motion state
 
 The goal here is to preserve the established SPC/DEL keybindings to scroll in Info mode and some other similar modes.
 
@@ -7029,7 +6911,7 @@ The goal here is to preserve the established SPC/DEL keybindings to scroll in In
 (keymap-unset meow-motion-state-keymap "SPC" t)
 #+end_src
 
-****** Determine the dispatch target for the leader keymap with ~meow-keypad-leader-dispatch~
+***** Determine the dispatch target for the leader keymap with ~meow-keypad-leader-dispatch~
 
 I will maintain sections on both options, tangling only one at a time.
 
@@ -7038,7 +6920,7 @@ tend to switch between the two. Part of the reason for that is that I have not
 kept a record of my assessment of the benefits and drawbacks of the different
 values I have tried. So, here I will do just that.
 
-******* ACTIVE Leader keymap from ~meow-keymap-alist~ (default)
+****** ACTIVE Leader keymap from ~meow-keymap-alist~ (default)
 
 When ~meow-keypad-leader-dispatch~ is nil, the leader will dispatch to the
 leader keymap in ~meow-keymap-alist~.
@@ -7054,7 +6936,7 @@ This is the default behavior.
 (setopt meow-keypad-leader-dispatch nil)
 #+end_src
 
-******* Leader dispatch to ~mode-specific-map~ ("C-c")
+****** Leader dispatch to ~mode-specific-map~ ("C-c")
 
 | Pros                                | Cons                                                                             |
 |-------------------------------------+----------------------------------------------------------------------------------|
@@ -7069,7 +6951,7 @@ This is the default behavior.
 (setopt meow-keypad-leader-dispatch "C-c")
 #+end_src
 
-***** Customize the appearance of the mode-line indicator for the current Meow state
+**** Customize the appearance of the mode-line indicator for the current Meow state
 
 This should happen before defining any new states so that they may provide their
 own values upon definition.
@@ -7083,7 +6965,7 @@ own values upon definition.
            (keypad . "🅚")))
 #+end_src
 
-***** DISABLED Define a new state for navigating Org-Mode trees
+**** DISABLED Define a new state for navigating Org-Mode trees
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -7159,7 +7041,7 @@ And provide access to this state:
 (keymap-set meow-normal-state-keymap "O" #'meow-org-motion-mode)
 #+end_src
 
-***** Map preferred initial Meow states for some additional major-modes
+**** Map preferred initial Meow states for some additional major-modes
 
 #+begin_src emacs-lisp
 (pushnew! meow-mode-state-list
@@ -7180,7 +7062,7 @@ And provide access to this state:
           '(help-mode . motion))
 #+end_src
 
-***** Improve Meow integration with the default Emacs kill-ring and system clipboard
+**** Improve Meow integration with the default Emacs kill-ring and system clipboard
 
 [[https://github.com/meow-edit/meow/issues/543][Clipboard Confusing Defaults and Documentation · Issue #543 · meow-edit/meow · GitHub]]
 
@@ -7188,7 +7070,7 @@ And provide access to this state:
 (setopt meow-use-clipboard t)
 #+end_src
 
-***** Expand upon the default Meow pair-things
+**** Expand upon the default Meow pair-things
 
 See the helper functions/macros.
 
@@ -7204,25 +7086,25 @@ See the helper functions/macros.
 ;; (ceamx-meow-unbind-thing "r")
 #+end_src
 
-***** Activate Meow
+**** Activate Meow
 
 #+begin_src emacs-lisp
 (meow-global-mode 1)
 #+end_src
 
 
-**** Code: =lib-keys-meow.el=
+*** Code: =lib-keys-meow.el=
 :PROPERTIES:
 :header-args: :noweb-ref lib-keys-meow
 :END:
 
-***** Working with Meow "things"
+**** Working with Meow "things"
 
 #+begin_src emacs-lisp
 (require 'lib-common)
 #+end_src
 
-****** ~meow-pair!~
+***** ~meow-pair!~
 
 #+begin_src emacs-lisp
 (defmacro meow-pair! (thing char begin end)
@@ -7261,7 +7143,7 @@ and Info node `(elisp) String Conversion' for more info."
        (ceamx-meow-bind-thing ',sym ,char))))
 #+end_src
 
-****** ~ceamx-meow-bind-thing~
+***** ~ceamx-meow-bind-thing~
 
 #+begin_src emacs-lisp
 (defun ceamx-meow-bind-thing (thing char)
@@ -7272,7 +7154,7 @@ and Info node `(elisp) String Conversion' for more info."
     (add-to-list 'meow-char-thing-table `(,char . ,thing))))
 #+end_src
 
-****** ~ceamx-meow-unbind-thing~
+***** ~ceamx-meow-unbind-thing~
 
 #+begin_src emacs-lisp
 (defun ceamx-meow-unbind-thing (char)
@@ -7291,7 +7173,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 #+end_src
 
 
-*** ~which-key~
+** ~which-key~
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-keys-which-key.el
 ;;; init-keys-which-key.el --- Support for which-key  -*- lexical-binding: t; -*-
@@ -7373,12 +7255,12 @@ as the CHAR argument to `ceamx-normalize-char'."
 #+end_src
 
 
-*** ~config-keys~ :: variables
+** ~config-keys~ :: variables
 :PROPERTIES:
 :header-args: :tangle lisp/config-keys.el
 :END:
 
-**** File Header
+*** File Header
 
 #+begin_src emacs-lisp :comments no
 ;;; config-keys.el --- Key-related variables -*- lexical-binding: t -*-
@@ -7408,13 +7290,13 @@ as the CHAR argument to `ceamx-normalize-char'."
 ;;; Code:
 #+end_src
 
-**** Code
+*** Code
 
 #+begin_src emacs-lisp
 (defconst ceamx-keys-repl-toggle "C-:")
 #+end_src
 
-**** File Footer
+*** File Footer
 
 #+begin_src emacs-lisp :comments no
 (provide 'config-keys)
@@ -7422,7 +7304,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 #+end_src
 
 
-** Completion
+* Completion
 
 #+name: init-abbrevs-file
 #+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-abbrevs.el
@@ -7465,7 +7347,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 #+end_src
 
 
-*** DISABLED Abbrevs (~abbrev-mode~) :: ~init-abbrevs~
+** DISABLED Abbrevs (~abbrev-mode~) :: ~init-abbrevs~
 :PROPERTIES:
 :header-args: :noweb-ref init-abbrevs
 :END:
@@ -7490,13 +7372,13 @@ as the CHAR argument to `ceamx-normalize-char'."
   But I'm not sure where that's coming from.
 
 
-**** Display suggestions for available abbrevs
+*** Display suggestions for available abbrevs
 
 #+begin_src emacs-lisp
 ;;(setopt abbrev-suggest t)
 #+end_src
 
-**** Allow abbrevs with a prefix colon, semicolon, or underscore
+*** Allow abbrevs with a prefix colon, semicolon, or underscore
 
 - Source :: <https://github.com/protesilaos/dotfiles/blob/8fc72724cd6debd12c8258bf64adf6822a0bc90c/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion.el#L215-L225>
 - Background :: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>
@@ -7524,7 +7406,7 @@ Adapted from Prot's original version with the following changes:
   (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp))
 #+end_src
 
-**** Enable =abbrev-mode=
+*** Enable =abbrev-mode=
 
 #+begin_src emacs-lisp
 (dolist (hook '(text-mode-hook prog-mode-hook git-commit-mode-hook))
@@ -7532,7 +7414,7 @@ Adapted from Prot's original version with the following changes:
 #+end_src
 
 
-*** Vertico
+** Vertico
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-selection-vertico.el
 ;;; init-selection-vertico.el --- Vertico configuration        -*- lexical-binding: t; -*-
@@ -7674,7 +7556,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 #+end_src
 
 
-*** Consult
+** Consult
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-selection-consult.el
 ;;; init-selection-consult.el --- Configuration for Consult  -*- lexical-binding: t; -*-
@@ -7841,7 +7723,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 #+end_src
 
 
-*** Marginalia
+** Marginalia
 
 Minibuffer candidate annotations.
 
@@ -7898,7 +7780,7 @@ Minibuffer candidate annotations.
 #+end_src
 
 
-*** Orderless
+** Orderless
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-selection-orderless.el
 ;;; init-selection-orderless.el --- Orderless completion matching style configuration  -*- lexical-binding: t; -*-
@@ -7999,7 +7881,7 @@ Minibuffer candidate annotations.
 #+end_src
 
 
-*** Completion-At-Point (~corfu~) :: ~init-completion~
+** Completion-At-Point (~corfu~) :: ~init-completion~
 :PROPERTIES:
 :header-args: :noweb-ref init-completion
 :END:
@@ -8033,7 +7915,7 @@ bindings:
 | =C-g=                        | ~corfu-quit~               |
 | ~keyboard-escape-quit~       | ~corfu-reset~              |
 
-**** General completion settings
+*** General completion settings
 
 #+begin_src emacs-lisp
 (require 'lib-completion)
@@ -8058,7 +7940,7 @@ bindings:
 (keymap-global-set "C-S-SPC" #'completion-at-point)
 #+end_src
 
-**** Use ~orderless~ completion settings
+*** Use ~orderless~ completion settings
 
 See [[*Orderless]] for definitions.
 
@@ -8079,7 +7961,7 @@ See [[*Orderless]] for definitions.
                                        #'orderless-affix-dispatch)))
 #+end_src
 
-**** ~corfu~: COmpletion in Region FUnction
+*** ~corfu~: COmpletion in Region FUnction
 
 #+begin_src emacs-lisp
 (require 'lib-common)
@@ -8107,7 +7989,7 @@ See [[*Orderless]] for definitions.
   (global-corfu-mode))
 #+end_src
 
-**** Customize the ~corfu-map~ transient keybindings
+*** Customize the ~corfu-map~ transient keybindings
 
 These will be available when a ~corfu~ prompt is active.
 
@@ -8127,14 +8009,14 @@ These will be available when a ~corfu~ prompt is active.
     "M-h" nil))
 #+end_src
 
-***** Ensure Corfu flyout closes when leaving insert state
+**** Ensure Corfu flyout closes when leaving insert state
 
 #+begin_src emacs-lisp
 (after! meow
   (add-hook 'meow-insert-exit-hook #'corfu-quit))
 #+end_src
 
-***** ~corfu-echo-mode~: Show candidate docs in echo area
+**** ~corfu-echo-mode~: Show candidate docs in echo area
 
 Probably redundant when ~corfu-popupinfo-mode~ is in use.
 
@@ -8145,7 +8027,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
   (corfu-echo-mode))
 #+end_src
 
-***** ~corfu-popupinfo~: Display candidate docs or location in popup
+**** ~corfu-popupinfo~: Display candidate docs or location in popup
 
 #+begin_src emacs-lisp
 (after! corfu
@@ -8159,7 +8041,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
   (keymap-set corfu-map "C-h" #'corfu-popupinfo-mode))
 #+end_src
 
-***** ~corfu-history-mode~: Sort candidates by history position
+**** ~corfu-history-mode~: Sort candidates by history position
 
 #+begin_src emacs-lisp
 (after! corfu
@@ -8171,7 +8053,7 @@ Probably redundant when ~corfu-popupinfo-mode~ is in use.
   (add-to-list 'savehist-additional-variables 'corfu-history))
 #+end_src
 
-***** ~corfu-terminal~: Terminal support for Corfu
+**** ~corfu-terminal~: Terminal support for Corfu
 
 <https://codeberg.org/akib/emacs-corfu-terminal>
 
@@ -8186,7 +8068,7 @@ See also ~popon~, the utility library powering the interface.
     (corfu-terminal-mode 1)))
 #+end_src
 
-**** ~kind-icon~: Add icons to completion-at-point candidates
+*** ~kind-icon~: Add icons to completion-at-point candidates
 
 <https://github.com/jdtsmith/kind-icon>
 
@@ -8205,7 +8087,7 @@ See also ~popon~, the utility library powering the interface.
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
 #+end_src
 
-***** Reduce icon size slightly
+**** Reduce icon size slightly
 
 If you change this value, make sure to call ~kind-icon-reset-cache~ afterwards,
 otherwise the icon size will likely not be accurate.
@@ -8215,7 +8097,7 @@ otherwise the icon size will likely not be accurate.
   (plist-put kind-icon-default-style :height 0.9))
 #+end_src
 
-***** Update icon apperance after enabling a theme
+**** Update icon apperance after enabling a theme
 
 #+begin_src emacs-lisp
 (after! kind-icon
@@ -8224,7 +8106,7 @@ otherwise the icon size will likely not be accurate.
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 #+end_src
 
-**** ~dabbrev~: Dynamic Abbreviations
+*** ~dabbrev~: Dynamic Abbreviations
 
 #+begin_src emacs-lisp
 (after! dabbrev
@@ -8246,7 +8128,7 @@ otherwise the icon size will likely not be accurate.
   (keymap-global-set "C-M-/" #'dabbrev-expand))
 #+end_src
 
-**** ~cape~: Completion-At-Point Extensions
+*** ~cape~: Completion-At-Point Extensions
 
 <https://github.com/minad/cape/blob/main/README.org>
 
@@ -8287,7 +8169,7 @@ otherwise the icon size will likely not be accurate.
     "M-p r" #'cape-rfc1345))
 #+end_src
 
-***** Advise some modes' completion-at-point functions to work alongside ~cape~
+**** Advise some modes' completion-at-point functions to work alongside ~cape~
 
 #+begin_src emacs-lisp
 (after! comint
@@ -8302,7 +8184,7 @@ otherwise the icon size will likely not be accurate.
 #+end_src
 
 
-*** Library :: ~lib-completion~
+** Library :: ~lib-completion~
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-completion.el
 ;;; lib-completion.el --- Completion helper functions  -*- lexical-binding: t; -*-
@@ -8344,7 +8226,7 @@ otherwise the icon size will likely not be accurate.
 #+end_src
 
 
-** Embark
+* Embark
 
 #+begin_quote
 Emacs Mini-Buffer Actions Rooted in Keymaps
@@ -8353,7 +8235,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 <https://github.com/oantolin/embark>
 
 
-*** Customizations
+** Customizations
 :PROPERTIES:
 :header-args: emacs-lisp :tangle lisp/init-embark.el
 :END:
@@ -8385,7 +8267,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 ;;; Code:
 #+end_src
 
-**** Install and pre-configure the Embark package
+*** Install and pre-configure the Embark package
 
 #+begin_src emacs-lisp :noweb yes
 (require 'lib-common)
@@ -8398,20 +8280,20 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
   <<embark-load>>)
 #+end_src
 
-***** Use Embark's completion UI for displaying available key help
+**** Use Embark's completion UI for displaying available key help
 
 #+begin_src emacs-lisp :noweb-ref embark-help-key-completion :tangle no
 (setopt prefix-help-command #'embark-prefix-help-command)
 #+end_src
 
-***** Keybindings
+**** Keybindings
 
 #+begin_src emacs-lisp :noweb-ref embark-keybindings :tangle no
 (keymap-global-set "C-;" #'embark-act)
 (keymap-global-set "M-." #'embark-dwim)
 #+end_src
 
-***** Load Embark after an idle delay
+**** Load Embark after an idle delay
 
 <2024-03-20 Wed> Embark weighs in at nearly 5k lines-of-code at the time of
 writing, so loading it immediately would probably cause a noticeable lag in
@@ -8434,9 +8316,9 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
   (require 'embark))
 #+end_src
 
-**** Appearance
+*** Appearance
 
-***** Configure ~display-buffer-alist~ rules for Embark windows
+**** Configure ~display-buffer-alist~ rules for Embark windows
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'embark
@@ -8447,7 +8329,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
                  (window-parameters (mode-line-format . none)))))
 #+end_src
 
-**** Footer
+*** Footer
 
 #+begin_src emacs-lisp :comments no
 (provide 'init-embark)
@@ -8455,7 +8337,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 #+end_src
 
 
-** Terminal Emulation
+* Terminal Emulation
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-term.el
 ;;; init-term.el --- Terminal emulators inside Emacs  -*- lexical-binding: t; -*-
@@ -8519,7 +8401,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 #+end_src
 
 
-** Version Control
+* Version Control
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-vcs.el
 ;;; init-vcs.el --- Git/VCS -*- lexical-binding: t -*-
@@ -8732,9 +8614,9 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 ;;; init-vcs.el ends here
 #+end_src
 
-*** Magit
+** Magit
 
-**** Customization
+*** Customization
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-vcs-magit.el
 ;;; init-vcs-magit.el --- Magit support              -*- lexical-binding: t; -*-
@@ -8830,7 +8712,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 ;;; init-vcs-magit.el ends here
 #+end_src
 
-*** Forge Integrations
+** Forge Integrations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-vcs-forge.el
 ;;; init-vcs-forge.el --- Support for git forge integration  -*- lexical-binding: t; -*-
@@ -8881,7 +8763,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 #+end_src
 
 
-** Projects
+* Projects
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-projects.el
 ;;; config-projects.el --- Project settings          -*- lexical-binding: t; -*-
@@ -8952,12 +8834,12 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 (provide 'init-project)
 ;;; init-project.el ends here
 #+end_src
-*** DISABLED Projectile
+** DISABLED Projectile
 
 lel
 
 
-** Checkers (Flycheck + Flymake)
+* Checkers (Flycheck + Flymake)
 
 <https://www.flycheck.org/en/latest/index.html>
 <https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
@@ -8983,7 +8865,7 @@ lel
 #+end_src
 
 
-**** Code: =lisp/init-flycheck.el=
+*** Code: =lisp/init-flycheck.el=
 :PROPERTIES:
 :header-args: :noweb-ref init-flycheck
 :END:
@@ -8993,7 +8875,7 @@ lel
 (require 'lib-common)
 #+end_src
 
-***** ~flycheck~: install and configure
+**** ~flycheck~: install and configure
 
 #+begin_src emacs-lisp
 (package! flycheck
@@ -9011,7 +8893,7 @@ lel
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
 #+end_src
 
-***** ~consult-flycheck~: integration with Consult
+**** ~consult-flycheck~: integration with Consult
 
 #+begin_src emacs-lisp
 (package! consult-flycheck
@@ -9022,38 +8904,11 @@ lel
 #+end_src
 
 
-** Expanding Templates (~tempel~) :: ~init-templates~
+* Expanding Templates (~tempel~) :: ~init-templates~
 
 Configuration for expandable file templates.
 
-#+name: init-templates-file
-#+begin_src emacs-lisp :tangle lisp/init-templates.el :noweb yes :comments no
-<<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-templates>>
-
-<<file-footer(feature="init-templates")>>
-#+end_src
-
-*** Tasks
-
-**** TODO Heading structure in this section is nonsence
-
-
-*** Commentary
-
-**** ~tempel~ vs ~yasnippet~
+** ~tempel~ vs ~yasnippet~
 
 ~tempel~ is simple and powerful, built on top of the Emacs internal ~tempo~
 library.  I prefer to use ~tempel~ where possible.
@@ -9074,7 +8929,7 @@ if so, what is this parrot-god's end goal?  I have so many questions.  I think a
 table of pros/cons and a list of differences would likely suffice.
 
 
-**** "Templates" or "Snippets"?"
+** "Templates" or "Snippets"?"
 
 Templates may have placeholders to be filled and expanded.  ~tempel~ and
 ~yasnippet~ do this, despite the name of the latter package.
@@ -9088,7 +8943,7 @@ whose subject is templates.  I will say no more on that matter so that we may
 avoid further confusion.
 
 
-**** Tempo Syntax
+** Tempo Syntax
 
 - Source :: [[https://github.com/minad/tempel/blob/main/README.org#template-syntax][tempel/README.org at main · minad/tempel · GitHub]]
 
@@ -9116,12 +8971,10 @@ Furthermore Tempel supports syntax extensions:
 - =q=  Quits the containing template when jumped to.
 
 
-*** TempEl (~tempel~)
+** Install and configure TempEl (~tempel~)
 :PROPERTIES:
 :header-args: :noweb-ref init-templates
 :END:
-
-**** Install the ~tempel~ package
 
 #+begin_src emacs-lisp
 (require 'lib-common)
@@ -9152,7 +9005,7 @@ Capf, such that it will be tried first."
   (global-tempel-abbrev-mode))
 #+end_src
 
-**** Add custom template element to include nested templates
+*** Add custom template element to include nested templates
 
 See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elements>
 
@@ -9169,7 +9022,7 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
   (add-to-list 'tempel-user-elements #'+tempel-include))
 #+end_src
 
-**** Keybindings
+*** Keybindings
 
 #+begin_src emacs-lisp
 (after! tempel
@@ -9182,7 +9035,7 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
     "S-TAB" #'tempel-previous))
 #+end_src
 
-**** ~tempel-collection~: install community ~tempel~ templates
+*** ~tempel-collection~: install community ~tempel~ templates
 
 <https://github.com/Crandel/tempel-collection>
 <https://github.com/Crandel/tempel-collection/tree/main/templates>
@@ -9195,9 +9048,9 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
 
 
 
-** Language Support
+* Language Support
 
-*** General Programming (~prog-mode~ derived modes)
+** General Programming (~prog-mode~ derived modes)
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-prog.el
 ;;; init-prog.el --- Programming mode support        -*- lexical-binding: t; -*-
@@ -9320,7 +9173,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 
 
-*** Tree-Sitter
+** Tree-Sitter
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-treesitter.el
 ;;; init-treesitter.el --- Tree-Sitter support          -*- lexical-binding: t; -*-
@@ -9412,13 +9265,13 @@ Intended for use as a hook callback on `prog-mode-hook'."
 #+end_src
 
 
-*** General LISPs
+** General LISPs
 
 Configuration for working with Lisps of all kinds.
 
-**** Target Files
+*** Target Files
 
-***** =init-lisp.el=
+**** =init-lisp.el=
 
 #+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-lisp.el
 <<file-prop-line(feature="init-lisp",desc="Lisp support")>>
@@ -9439,7 +9292,7 @@ Configuration for working with Lisps of all kinds.
 <<file-footer(feature="init-lisp")>>
 #+end_src
 
-***** =config-lisp.el=
+**** =config-lisp.el=
 
 #+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/config-lisp.el
 <<file-prop-line(feature="config-lisp",desc="Lispy variable definitions")>>
@@ -9460,7 +9313,7 @@ Configuration for working with Lisps of all kinds.
 <<file-footer(feature="config-lisp")>>
 #+end_src
 
-***** =lib-lisp.el=
+**** =lib-lisp.el=
 
 #+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-lisp.el
 <<file-prop-line(feature="lib-lisp",desc="Lisp support functions")>>
@@ -9481,7 +9334,7 @@ Configuration for working with Lisps of all kinds.
 <<file-footer(feature="lib-lisp")>>
 #+end_src
 
-**** Code
+*** Code
 :PROPERTIES:
 :header-args: :noweb-ref init-lisp
 :END:
@@ -9495,7 +9348,7 @@ Configuration for working with Lisps of all kinds.
 (require 'config-lisp)
 #+end_src
 
-***** Configure behavior for all Lisp modes with ~ceamx-lisp-init-hook~
+**** Configure behavior for all Lisp modes with ~ceamx-lisp-init-hook~
 
 #+begin_src emacs-lisp
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
@@ -9509,12 +9362,12 @@ Configuration for working with Lisps of all kinds.
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 #+end_src
 
-***** Configure indentation and formatting
+**** Configure indentation and formatting
 
 I am honestly surprised at how complex, sometimes-broken, and inconsistent is
 the process of formatting Lisp code in Emacs.
 
-****** Always indent Lisp code with two spaces
+***** Always indent Lisp code with two spaces
 
 Even if Emacs core does things differently.
 
@@ -9523,7 +9376,7 @@ Even if Emacs core does things differently.
   (put sym 'lisp-indent-function 2))
 #+end_src
 
-****** Prevent ~calculate-lisp-indent~ from indenting quoted lists as functions
+***** Prevent ~calculate-lisp-indent~ from indenting quoted lists as functions
 
 [[https://emacs.stackexchange.com/a/52789/40956][indentation - How to indent keywords aligned? - Emacs Stack Exchange]]
 
@@ -9532,7 +9385,7 @@ Even if Emacs core does things differently.
 (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
 #+end_src
 
-***** ~lispy~: the structural expression editing experience
+**** ~lispy~: the structural expression editing experience
 
 - Website :: [[https://github.com/abo-abo/lispy][GitHub - abo-abo/lispy: Short and sweet LISP editing]]
 - API Reference :: [[https://oremacs.com/lispy/][lispy.el function reference]]
@@ -9575,7 +9428,7 @@ Even if Emacs core does things differently.
       (push "\\*lispy-message\\*" popper-reference-buffers))))
 #+end_src
 
-***** ~kbd-mode~: syntax support for =kmonad= and =kanata= configs
+**** ~kbd-mode~: syntax support for =kmonad= and =kanata= configs
 
 [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
 
@@ -9583,7 +9436,7 @@ Even if Emacs core does things differently.
 (package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
 #+end_src
 
-****** Inhibit formatters
+***** Inhibit formatters
 
 Unfortunately, we need to do this because whitespace is used to convey
 non-syntactic meaning to the reader.
@@ -9598,10 +9451,10 @@ non-syntactic meaning to the reader.
     (add-to-list 'lispy-no-indent-modes #'kbd-mode)))
 #+end_src
 
-****** TODO Add =kanata= symbols to list of fontified
+***** TODO Add =kanata= symbols to list of fontified
 
 
-**** Options & Variables
+*** Options & Variables
 :PROPERTIES:
 :header-args: :noweb-ref config-lisp
 :END:
@@ -9619,12 +9472,12 @@ non-syntactic meaning to the reader.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 #+end_src
 
-**** Library
+*** Library
 :PROPERTIES:
 :header-args: :noweb-ref lib-lisp
 :END:
 
-***** ~ceamx-lisp-init-hook~
+**** ~ceamx-lisp-init-hook~
 
 #+begin_src emacs-lisp
 (defvar ceamx-lisp-init-hook '()
@@ -9644,7 +9497,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   (run-hooks 'ceamx-lisp-init-hook))
 #+end_src
 
-****** Check for unmatched parentheses upon saving files
+***** Check for unmatched parentheses upon saving files
 
 #+begin_src emacs-lisp
 (defun ceamx-enable-check-parens-on-save ()
@@ -9659,7 +9512,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
              (locate-file file-base (custom-theme--load-path) '(".elc" ".el"))))))
 #+end_src
 
-***** ~ceamx/indent-last-sexp~: format the s-expression before pint
+**** ~ceamx/indent-last-sexp~: format the s-expression before pint
 
 #+begin_src emacs-lisp
 (defun ceamx/indent-last-sexp ()
@@ -9670,7 +9523,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     (indent-sexp)))
 #+end_src
 
-***** ~ceamx-calculate-lisp-indent-a~: improve indentation logic
+**** ~ceamx-calculate-lisp-indent-a~: improve indentation logic
 
 - URL :: <https://emacs.stackexchange.com/a/52789/40956>
 - SPDX-License-Identifier :: CC-BY-SA-4.0
@@ -9858,9 +9711,9 @@ lists."
 #+end_src
 
 
-*** Emacs Lisp
+** Emacs Lisp
 
-**** Customizations
+*** Customizations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-lang-elisp.el
 ;;; init-lang-elisp.el --- Emacs Lisp development support  -*- lexical-binding: t; -*-
@@ -10017,7 +9870,7 @@ The original function fails in the presence of whitespace after a sexp."
 #+end_src
 
 
-**** Library
+*** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-elisp.el
 ;;; lib-elisp.el --- Helper utilities for Emacs Lisp development and language support  -*- lexical-binding: t; -*-
@@ -10139,9 +9992,9 @@ keywords are supported:
 #+end_src
 
 
-*** Eglot
+** Eglot
 
-**** Customizations
+*** Customizations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-eglot.el
 ;;; init-eglot.el --- Eglot support                  -*- lexical-binding: t; -*-
@@ -10229,7 +10082,7 @@ keywords are supported:
 #+end_src
 
 
-*** Data Formats (XML, CSV...)
+** Data Formats (XML, CSV...)
 :PROPERTIES:
 :ID:       137d1e04-d0dc-4512-a450-fbafeef65804
 :END:
@@ -10314,7 +10167,7 @@ keywords are supported:
 
 ***
 
-*** HTML
+** HTML
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-lang-html.el
 ;;; init-lang-html.el ---HTML and templating engine support  -*- lexical-binding: t; -*-
@@ -10387,7 +10240,7 @@ keywords are supported:
 #+end_src
 
 
-*** JavaScript
+** JavaScript
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-lang-js.el
 ;;; init-lang-js.el --- JavaScript/TypeScript language support improvements  -*- lexical-binding: t; -*-
@@ -10445,7 +10298,7 @@ keywords are supported:
 #+end_src
 
 
-*** Lua
+** Lua
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-lang-lua.el
 ;;; init-lang-lua.el --- Lua language support        -*- lexical-binding: t; -*-
@@ -10489,10 +10342,10 @@ keywords are supported:
 #+end_src
 
 
-*** Markdown
+** Markdown
 
 
-**** Customization
+*** Customization
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-lang-markdown.el
 ;;; init-lang-markdown.el --- Markdown support customizations  -*- lexical-binding: t; -*-
@@ -10576,7 +10429,7 @@ usually wrongly fontified as a metadata block."
 #+end_src
 
 
-**** Library
+*** Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-lang-markdown.el
 ;;; lib-lang-markdown.el --- Markdown helpers        -*- lexical-binding: t; -*-
@@ -10619,7 +10472,7 @@ Returns process exit code."
 ;;; lib-lang-markdown.el ends here
 #+end_src
 
-*** Nix
+** Nix
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-lang-nix.el
 ;;; init-lang-nix.el --- Nix language support -*- lexical-binding: t -*-
@@ -10742,7 +10595,7 @@ Returns process exit code."
 #+end_src
 
 
-*** Nushell
+** Nushell
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-shell-nu.el
 ;;; init-shell-nu.el --- Nushell support             -*- lexical-binding: t; -*-
@@ -10784,8 +10637,8 @@ Returns process exit code."
 (provide 'init-shell-nu)
 ;;; init-shell-nu.el ends here
 #+end_src
-**** TODO Rename file to =init-lang-nushell.el= or include in =init-lang-shell.el=
-*** PHP
+*** TODO Rename file to =init-lang-nushell.el= or include in =init-lang-shell.el=
+** PHP
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-lang-php.el
 ;;; init-lang-php.el --- PHP language support        -*- lexical-binding: t; -*-
@@ -10885,7 +10738,7 @@ Returns process exit code."
 (provide 'init-lang-php)
 ;;; init-lang-php.el ends here
 #+end_src
-*** Shell Scripting
+** Shell Scripting
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-lang-shell.el
 ;;; init-lang-shell.el --- Shell script language support  -*- lexical-binding: t; -*-
@@ -10936,7 +10789,7 @@ Returns process exit code."
 (provide 'init-lang-shell)
 ;;; init-lang-shell.el ends here
 #+end_src
-*** YAML
+** YAML
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-lang-yaml.el
 ;;; init-lang-yaml.el --- YAML language support      -*- lexical-binding: t; -*-
@@ -10976,7 +10829,7 @@ Returns process exit code."
 
 
 
-*** Miscellaneous Languages
+** Miscellaneous Languages
 :PROPERTIES:
 :header-args: :tangle lisp/init-lang-misc.el
 :END:
@@ -10984,9 +10837,9 @@ Returns process exit code."
 Configuration for miscellaneous languages that don't warrant
 their own initialization files.
 
-**** Customizations
+*** Customizations
 
-***** File Header
+**** File Header
 
 #+begin_src emacs-lisp :comments no
 ;;; init-lang-misc.el --- Miscellaneous language support -*- lexical-binding: t -*-
@@ -11019,32 +10872,32 @@ their own initialization files.
 (require 'lib-common)
 #+end_src
 
-***** Language support for Apache Web Server configuration files
+**** Language support for Apache Web Server configuration files
 
 #+begin_src emacs-lisp
 (package! apache-mode)
 #+end_src
 
-***** Language support for the Just task runner configuration files
+**** Language support for the Just task runner configuration files
 
 #+begin_src emacs-lisp
 (package! just-mode)
 #+end_src
 
-***** Syntax highlighting for robots.txt files
+**** Syntax highlighting for robots.txt files
 
 #+begin_src emacs-lisp
 (package! robots-txt-mode)
 #+end_src
 
-***** Language support for =vimrc= syntax
+**** Language support for =vimrc= syntax
 
 #+begin_src emacs-lisp
 (package! vimrc-mode
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
 #+end_src
 
-***** Footer
+**** Footer
 
 #+begin_src emacs-lisp :comments no
 (provide 'init-lang-misc)
@@ -11052,7 +10905,7 @@ their own initialization files.
 #+end_src
 
 
-** Notetaking
+* Notetaking
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-notes.el
 ;;; config-notes.el --- Notes settings               -*- lexical-binding: t; -*-
@@ -11180,7 +11033,7 @@ their own initialization files.
 
 
 
-*** Denote
+** Denote
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-notes-denote.el
 ;;; init-notes-denote.el --- Denote configuration          -*- lexical-binding: t; -*-
@@ -11328,12 +11181,12 @@ Else create a new file."
 #+end_src
 
 
-** Org-Mode
+* Org-Mode
 :PROPERTIES:
 :header-args: :noweb-ref init-org
 :END:
 
-**** Requirements
+*** Requirements
 
 #+BEGIN_SRC emacs-lisp
 (require 'ceamx-keymaps)
@@ -11344,8 +11197,8 @@ Else create a new file."
 (require 'lib-common)
 #+END_SRC
 
-**** Set up essential files & directories
-***** Define variables in =lisp/config-org.el= so they may be used in other init files
+*** Set up essential files & directories
+**** Define variables in =lisp/config-org.el= so they may be used in other init files
 
 #+begin_src emacs-lisp :noweb-ref config-org
 (require 'config-notes)
@@ -11363,7 +11216,7 @@ Else create a new file."
   "Absolute path to default inbox file for new G2D waiting to be processed.")
 #+end_src
 
-***** Tell Org about our directories and files
+**** Tell Org about our directories and files
 
 These must be set before loading Org-Mode or any of its sub-features are used.
 
@@ -11393,7 +11246,7 @@ conflict when Syncthing tries to take control of these paths.
 (setopt org-agenda-files ceamx-default-agenda-files)
 #+END_SRC
 
-**** General settings
+*** General settings
 
 <https://github.com/minad/org-modern#configuration>
 
@@ -11401,9 +11254,9 @@ conflict when Syncthing tries to take control of these paths.
 (add-hook 'org-mode-hook #'prettify-symbols-mode)
 #+END_SRC
 
-**** Editing settings
+*** Editing settings
 
-***** Tags
+**** Tags
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-auto-align-tags nil)
@@ -11412,7 +11265,7 @@ conflict when Syncthing tries to take control of these paths.
 (setopt org-fold-catch-invisible-edits 'error) ; default: smart
 #+END_SRC
 
-***** Headings / List Items
+**** Headings / List Items
 
 Prevent TAB behavior oddities at the end of headlines.
 
@@ -11436,7 +11289,7 @@ may cause unexpected changes to the content (depending on the setting of `org-ca
 (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 #+END_SRC
 
-***** Source code blocks
+**** Source code blocks
 
 #+BEGIN_SRC emacs-lisp
 ;; Changing the indentation of source code is unhelpful and destructive.
@@ -11460,9 +11313,9 @@ may cause unexpected changes to the content (depending on the setting of `org-ca
           ("q" . "quote")))
 #+END_SRC
 
-**** Appearance settings
+*** Appearance settings
 
-***** Text formatting
+**** Text formatting
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-ellipsis "…")
@@ -11470,14 +11323,14 @@ may cause unexpected changes to the content (depending on the setting of `org-ca
 (setopt org-pretty-entities t)
 #+END_SRC
 
-***** Images
+**** Images
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-image-actual-width 300)
 (setopt org-startup-with-inline-images t)
 #+END_SRC
 
-***** Folding and indentation
+**** Folding and indentation
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-indent-indentation-per-level 2)
@@ -11487,7 +11340,7 @@ may cause unexpected changes to the content (depending on the setting of `org-ca
 (setopt org-startup-indented nil)
 #+END_SRC
 
-***** Workflow and state settings
+**** Workflow and state settings
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-log-done 'time)
@@ -11503,9 +11356,9 @@ may cause unexpected changes to the content (depending on the setting of `org-ca
            "CANCELLED(x@/!)")))
 #+END_SRC
 
-**** Agenda settings
+*** Agenda settings
 
-***** Agenda appearance
+**** Agenda appearance
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-agenda-tags-column 0)
@@ -11518,7 +11371,7 @@ may cause unexpected changes to the content (depending on the setting of `org-ca
         "⭠ now ─────────────────────────────────────────────────")
 #+END_SRC
 
-**** Refiling
+*** Refiling
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-refile-targets '((org-agenda-files . (:maxlevel . 5))
@@ -11534,7 +11387,7 @@ may cause unexpected changes to the content (depending on the setting of `org-ca
 (setopt org-reverse-note-order t)       ; prepend new notes
 #+END_SRC
 
-**** Keybindings
+*** Keybindings
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-return-follows-link t)
@@ -11577,7 +11430,7 @@ may cause unexpected changes to the content (depending on the setting of `org-ca
   )
 #+END_SRC
 
-**** Enforce the correct `tab-width' to prevent errors
+*** Enforce the correct `tab-width' to prevent errors
 
 <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
 
@@ -11605,9 +11458,9 @@ Intended for use as a local hook function on
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
 #+END_SRC
 
-**** Packages
+*** Packages
 
-***** ~doct~: `org-capture' template definer
+**** ~doct~: `org-capture' template definer
 
 <https://github.com/progfolio/doct>
 
@@ -11632,7 +11485,7 @@ Intended for use as a local hook function on
                               "%i %a"))))))
 #+END_SRC
 
-***** ~org-ql~
+**** ~org-ql~
 
 <https://github.com/alphapapa/org-ql>
 
@@ -11640,7 +11493,7 @@ Intended for use as a local hook function on
 (package! org-ql)
 #+END_SRC
 
-***** ~org-modern~
+**** ~org-modern~
 
 <https://github.com/minad/org-modern>
 
@@ -11653,7 +11506,7 @@ Intended for use as a local hook function on
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 #+END_SRC
 
-***** ~org-super-agenda~
+**** ~org-super-agenda~
 
 <https://github.com/alphapapa/org-super-agenda>
 
@@ -11665,7 +11518,7 @@ TODO: Configure
   (require 'org-super-agenda))
 #+END_SRC
 
-***** ~org-download~: support dragging-and-dropping images into Org buffers
+**** ~org-download~: support dragging-and-dropping images into Org buffers
 
 <https://github.com/abo-abo/org-download>
 
@@ -11675,7 +11528,7 @@ TODO: Configure
   (add-hook 'dired-mode-hook #'org-download-enable))
 #+END_SRC
 
-***** ~org-rich-yank~: surround pasted code with src-block markup
+**** ~org-rich-yank~: surround pasted code with src-block markup
 
 <https://github.com/unhammer/org-rich-yank>
 
@@ -11695,14 +11548,14 @@ kill the selection again.
     (keymap-set org-mode-map "C-M-y" #'org-rich-yank)))
 #+END_SRC
 
-***** ~org-web-tools~: view, capture, and archive webpages in org-mode
+**** ~org-web-tools~: view, capture, and archive webpages in org-mode
 
 #+BEGIN_SRC emacs-lisp
 (package! org-web-tools
   (keymap-set ceamx-insert-map "l" #'org-web-tools-insert-link-for-url))
 #+END_SRC
 
-***** ~auto-tangle-mode~: automatically tangle literate Org files
+**** ~auto-tangle-mode~: automatically tangle literate Org files
 
 #+BEGIN_SRC emacs-lisp
 (package! (auto-tangle-mode
@@ -11711,7 +11564,7 @@ kill the selection again.
   (autoload 'auto-tangle-mode "auto-tangle-mode"))
 #+END_SRC
 
-***** ~org-sidebar~: provide a sidebar for Org buffers
+**** ~org-sidebar~: provide a sidebar for Org buffers
 
 <https://github.com/alphapapa/org-sidebar>
 
@@ -11719,7 +11572,7 @@ kill the selection again.
 (package! org-sidebar)
 #+END_SRC
 
-***** ~org-bookmark-heading~: Support heading bookmarks
+**** ~org-bookmark-heading~: Support heading bookmarks
 
 #+begin_src emacs-lisp
 (package! org-bookmark-heading
@@ -11728,7 +11581,7 @@ kill the selection again.
     (require 'org-bookmark-heading)))
 #+end_src
 
-**** Footer
+*** Footer
 
 #+BEGIN_SRC emacs-lisp :comments no
 (provide 'init-org)
@@ -11736,15 +11589,15 @@ kill the selection again.
 #+END_SRC
 
 
-*** Resources
-**** [[https://github.com/james-stoup/emacs-org-mode-tutorial][GitHub - james-stoup/emacs-org-mode-tutorial: A primer for users trying to make sense of Org Mode]]
+** Resources
+*** [[https://github.com/james-stoup/emacs-org-mode-tutorial][GitHub - james-stoup/emacs-org-mode-tutorial: A primer for users trying to make sense of Org Mode]]
 
 
-*** Tasks
+** Tasks
 
-**** TODO Meow overwrites repeat-mode?
+*** TODO Meow overwrites repeat-mode?
 
-**** CANCELLED Fix no-cycle when press TAB at headline EOL
+*** CANCELLED Fix no-cycle when press TAB at headline EOL
 CLOSED: [2024-03-18 Mon 23:53]
 
 - State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:53] \\
@@ -11754,7 +11607,7 @@ part of that folded content, so the TAB press is technically not on the
 headline.
 
 
-**** TODO Repeat-mode for navigating tree
+*** TODO Repeat-mode for navigating tree
 
 
 
@@ -11762,9 +11615,9 @@ headline.
   I saw some post on Reddit about an integration with Meow for this purpose the
   other day... not sure if I saved it though.
 
-**** TODO [#B] Bind ~org-insert-subheading~
+*** TODO [#B] Bind ~org-insert-subheading~
 
-**** DONE Figure out why completion is broken
+*** DONE Figure out why completion is broken
 CLOSED: [2024-03-18 Mon 23:51]
 
 - State "DONE"       from "TODO"       [2024-03-18 Mon 23:51]
@@ -11776,17 +11629,17 @@ However, it would still be nice if I could get symbol completion inside of
 inline code markup.
 
 
-**** CANCELLED Figure out why Elisp source blocks are broken
+*** CANCELLED Figure out why Elisp source blocks are broken
 CLOSED: [2024-03-18 Mon 23:52]
 
 - State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:52] \\
   Not "broken", just misunderstood.
 
-**** TODO Org-Mode: electric-pair for equals-sign
+*** TODO Org-Mode: electric-pair for equals-sign
 
 
 
-** Controls
+* Controls
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-controls.el
 ;;; init-controls.el --- Controlling various subsystems  -*- lexical-binding: t; -*-
@@ -11842,7 +11695,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 #+end_src
 
 
-** Dashboard
+* Dashboard
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-dashboard.el
 ;;; init-dashboard.el --- Dashboard support  -*- lexical-binding: t; -*-
@@ -11913,7 +11766,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 #+end_src
 
 
-** Dired, the Directory Editor
+* Dired, the Directory Editor
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-dired.el
 ;;; init-dired.el --- Dired -*- lexical-binding: t -*-
@@ -12064,7 +11917,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 **
 
 
-** Printing
+* Printing
 #+begin_src emacs-lisp :comments no :tangle lisp/init-printing.el
 ;;; init-printing.el --- Support for printing documents  -*- lexical-binding: t; -*-
 
@@ -12112,7 +11965,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 **
 
 
-** DISABLED Newsreader
+* DISABLED Newsreader
 
 
 
@@ -12158,10 +12011,10 @@ CLOSED: [2024-03-18 Mon 23:52]
 #+end_src
 
 
-*** TODO Feature name ~init-feeds~ does not match the filename =init-news.el=
+** TODO Feature name ~init-feeds~ does not match the filename =init-news.el=
 
 
-** Surfing the Wild Web of Words (EWW)
+* Surfing the Wild Web of Words (EWW)
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-eww.el
 ;;; init-eww.el --- Surfing the Wild Web of Words  -*- lexical-binding: t; -*-
@@ -12185,7 +12038,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 #+end_src
 
 
-*** DISABLED Tell Emacs we want its Web Wowser to handle URL browsing by default
+** DISABLED Tell Emacs we want its Web Wowser to handle URL browsing by default
 
 Currently, since so many URLs point to GitHub, and GitHub will not function
 without JavaScript, it does not make sense to use EWW by default.
@@ -12195,10 +12048,10 @@ without JavaScript, it does not make sense to use EWW by default.
 #+end_src
 
 
-**** TODO Use a different browser for some domains
+*** TODO Use a different browser for some domains
 
 
-*** Configure EWW settings before loading
+** Configure EWW settings before loading
 
 #+begin_src emacs-lisp :tangle lisp/init-eww.el
 (setopt shr-use-colors t)
@@ -12214,7 +12067,7 @@ without JavaScript, it does not make sense to use EWW by default.
 #+end_src
 
 
-*** EWW: Keybindings
+** EWW: Keybindings
 
 #+begin_src emacs-lisp :tangle lisp/init-eww.el
 (define-keymap :keymap ceamx-launch-map
@@ -12228,7 +12081,7 @@ without JavaScript, it does not make sense to use EWW by default.
     "o" '("open link" . link-hint-open-link)))
 #+end_src
 
-*** Cleanup the rendering of some pages
+** Cleanup the rendering of some pages
 
 #+begin_src emacs-lisp :tangle lisp/init-eww.el
 (add-hook 'eww-after-render-hook #'ceamx-eww-rerender)
@@ -12240,7 +12093,7 @@ without JavaScript, it does not make sense to use EWW by default.
 #+end_src
 
 
-*** EWW: Library
+** EWW: Library
 
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-eww.el
 ;;; lib-eww.el --- Helpers for Ceamx EWW  -*- lexical-binding: t; -*-
@@ -12435,14 +12288,14 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 ;;; lib-eww.el ends here
 #+end_src
 
-*** EWW: Sources
+** EWW: Sources
 
-**** [[https://gitlab.com/howardabrams/spacemacs.d/-/blob/51196e861da9a76a02f1159397ba85b936cdfe27/layers/ha-eww/funcs.el][layers/ha-eww/funcs.el · 51196e861da9a76a02f1159397ba85b936cdfe27 · Howard Abrams / spacemacs.d · GitLab]]
+*** [[https://gitlab.com/howardabrams/spacemacs.d/-/blob/51196e861da9a76a02f1159397ba85b936cdfe27/layers/ha-eww/funcs.el][layers/ha-eww/funcs.el · 51196e861da9a76a02f1159397ba85b936cdfe27 · Howard Abrams / spacemacs.d · GitLab]]
 
 
-** Tools
+* Tools
 
-*** Target Files
+** Target Files
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
@@ -12468,9 +12321,9 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 #+end_src
 
 
-*** ~init-tools~: & utils
+** ~init-tools~: & utils
 
-**** Code: =init-tools.el=
+*** Code: =init-tools.el=
 :PROPERTIES:
 :header-args: :noweb-ref init-tools
 :END:
@@ -12482,7 +12335,7 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 #+end_src
 
 
-***** ~pandoc-mode~
+**** ~pandoc-mode~
 
 <https://joostkremers.github.io/pandoc-mode/>
 
@@ -12493,7 +12346,7 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 #+end_src
 
-***** ~unpackaged~: a library of useful yet unsubstantial Emacs Lisp code
+**** ~unpackaged~: a library of useful yet unsubstantial Emacs Lisp code
 
 <https://github.com/alphapapa/unpackaged.el>
 
@@ -12502,7 +12355,7 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 #+end_src
 
-***** DISABLED ~org-tanglesync~: sync tangled src blocks
+**** DISABLED ~org-tanglesync~: sync tangled src blocks
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -12536,11 +12389,11 @@ pull in all of the existing =*.el= files to =config.org=!
 
 
 
-*** ~init-tools-ai~: augementated intelligentry
+** ~init-tools-ai~: augementated intelligentry
 
 Providing integrations with LLMs and other simulation machines.
 
-**** Customization
+*** Customization
 
 #+BEGIN_SRC emacs-lisp :comments no :tangle lisp/init-tools-ai.el
 ;;; init-tools-ai.el --- Support for AI/LLM interaction  -*- lexical-binding: t; -*-
@@ -12581,7 +12434,7 @@ Providing integrations with LLMs and other simulation machines.
 #+END_SRC
 
 
-*** ~init-tools-ledger~: budgeting
+** ~init-tools-ledger~: budgeting
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-tools-ledger.el
 ;;; init-tools-ledger.el --- Support for ledger      -*- lexical-binding: t; -*-
@@ -12743,7 +12596,7 @@ Providing integrations with LLMs and other simulation machines.
 #+end_src
 
 
-*** ~init-tools-pdf~: PDF-Tools
+** ~init-tools-pdf~: PDF-Tools
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-tools-pdf.el
 ;;; init-tools-pdf.el --- Support for working with PDF files  -*- lexical-binding: t; -*-
@@ -12821,7 +12674,7 @@ Providing integrations with LLMs and other simulation machines.
 #+end_src
 
 
-** ~init-fun~
+* ~init-fun~
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-fun.el
 ;;; init-fun.el --- Configure the fun                -*- lexical-binding: t; -*-
@@ -13089,6 +12942,136 @@ POS defaults to the current position."
 
 * Target Files
 
+
+#+name: init-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle init.el
+<<file-prop-line(feature="init",desc="Initialize Ceamx",extraprops="no-byte-compile: t;")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init>>
+
+<<file-footer(feature="init")>>
+#+end_src
+
+#+name: init-benchmarking-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-benchmarking.el
+<<file-prop-line(feature="init-benchmarking",desc="Measure startup and feature load time")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2006-2021  Steve Purcell
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+;;; Commentary:
+;;; Code:
+
+<<init-benchmarking>>
+
+<<file-footer(feature="init-benchmarking")>>
+#+end_src
+
+
+
+** =early-init.el=
+
+#+name: early-init-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle early-init.el
+<<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<early-init>>
+
+<<file-footer(feature="early-init")>>
+#+end_src
+
+** =lisp/init-templates.el=
+
+#+name: init-templates-file
+#+begin_src emacs-lisp :tangle lisp/init-templates.el :noweb yes :comments no
+<<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-templates>>
+
+<<file-footer(feature="init-templates")>>
+#+end_src
+
+** =lisp/init-outline.el=
+
+#+name: init-outline-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-outline.el
+<<file-prop-line(feature="init-outline",desc="Customizations for outline structures")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-outline>>
+
+<<file-footer(feature="init-outline")>>
+#+end_src
+
 ** =lisp/init-org.el=
 
 #+name: init-org-file
@@ -13135,6 +13118,17 @@ POS defaults to the current position."
 
 
 * Appendix
+
+** Issues
+
+*** TODO Consider moving =lisp/lib-common.el= to =lisp/core/ceamx-lib.el=
+
+
+*** DONE org-mode needs ~tab-width~ set to 8 otherwise constant errors
+CLOSED: [2024-03-20 Wed 22:43]
+- State "DONE"       from "TODO"       [2024-03-20 Wed 22:43]
+
+  <https://github.com/doomemacs/doomemacs/commit/2757a97a30e7c4a0c2a5d2de13f2214baf09b019>
 
 ** Maintenance
 
@@ -13194,7 +13188,6 @@ deleted before tangling."
   (org-babel-tangle-file
    (or src-file ceamx-literate-config-file)))
 #+end_src
-
 
 ** Noweb Partials
 :PROPERTIES:
@@ -13379,7 +13372,6 @@ CLOSED: [2024-03-18 Mon 23:40]
 - State "DONE"       from "TODO"       [2024-03-18 Mon 23:40]
 Setting this on a heading works.
 
-
 ** Styleguide
 
 *** Org-Mode: When to wrap inline text in ~tildes~ vs. =equals=
@@ -13389,20 +13381,10 @@ Setting this on a heading works.
 [[https://emacs.stackexchange.com/a/21870][What's the relationship between ~foo~ and =foo= in org-mode? - Emacs Stack Exchange]]
 
 ** To Investigate
+*** TODO <https://elpa.gnu.org/packages/xr.html>
 *** TODO <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
 *** TODO <https://orgmode.org/worg/org-contrib/org-choose.html>
 
-
-** Issues
-
-*** DONE org-mode needs ~tab-width~ set to 8 otherwise constant errors
-CLOSED: [2024-03-20 Wed 22:43]
-- State "DONE"       from "TODO"       [2024-03-20 Wed 22:43]
-
-  <https://github.com/doomemacs/doomemacs/commit/2757a97a30e7c4a0c2a5d2de13f2214baf09b019>
-
-
-* Epilogue
 
 
 
