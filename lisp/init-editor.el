@@ -144,27 +144,24 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
   :config
   (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h))
-(use-package puni
-  :commands (puni-global-mode
-             puni-disable-puni-mode
-             puni-backward-sexp-or-up-list
-             puni-forward-sexp-or-up-list)
-
-  :init
-  (define-keymap :keymap puni-mode-map
-    "C-M-f" #'puni-forward-sexp
-    "C-M-b" #'puni-backward-sexp
-    "C-M-a" #'puni-beginning-of-sexp
-    "C-M-e" #'puni-end-of-sexp
-    "C-M-[" #'puni-backward-sexp-or-up-list
-    "C-M-]" #'puni-forward-sexp-or-up-list
-
-    "M-(" #'puni-syntactic-forward-punct
-    "M-)" #'puni-syntactic-backward-punct
-    )
-
-  ;; (puni-global-mode)
+(package! puni
+  (puni-global-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
+
+;; (after! puni
+;;     ;; (define-keymap :keymap puni-mode-map
+;;   ;;   "C-M-f" #'puni-forward-sexp
+;;   ;;   "C-M-b" #'puni-backward-sexp
+;;   ;;   "C-M-a" #'puni-beginning-of-sexp
+;;   ;;   "C-M-e" #'puni-end-of-sexp
+;;   ;;   "C-M-[" #'puni-backward-sexp-or-up-list
+;;   ;;   "C-M-]" #'puni-forward-sexp-or-up-list
+
+;;   ;;   "M-(" #'puni-syntactic-forward-punct
+;;   ;;   "M-)" #'puni-syntactic-backward-punct
+;;   ;;   )
+
+;; )
 (use-package drag-stuff
   :bind
   (([M-up] . drag-stuff-up)
@@ -245,6 +242,51 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
   (keymap-global-set "C-M-@" #'easy-mark) ; override `mark-sexp'
   )
+(after! puni
+
+  (defvar-keymap structural-editing-map
+    :repeat t
+
+    "d" #'puni-forward-delete-char
+    ;; "DEL" #'puni-backward-delete-char
+    ;; "D" #'puni-forward-kill-word
+    ;; "M-DEL" #'puni-backward-kill-word
+    ;; "C-k" #'puni-kill-line
+    ;; "M-k" #'puni-backward-kill-line
+    "k" #'kill-sexp
+
+    "f" #'puni-forward-sexp
+    "b" #'puni-backward-sexp
+    "[" #'puni-backward-sexp-or-up-list
+    "]" #'puni-forward-sexp-or-up-list
+    "a" #'puni-beginning-of-sexp
+    "e" #'puni-end-of-sexp
+    "u" #'puni-up-list
+    "M-(" #'puni-syntactic-forward-punct
+    "M-)" #'puni-syntactic-backward-punct
+
+    "\\" #'indent-region
+    "/" #'undo
+
+    ">" #'puni-slurp-forward
+    "<" #'puni-slurp-backward
+    "}" #'puni-barf-forward
+    "{" #'puni-barf-backward
+    "R" #'puni-raise
+    "t" #'puni-transpose
+    "C" #'puni-convolute
+    ;; FIXME: avoid meow dependency -- no puni equivalent
+    ;; "J" #'meow-join-sexp
+    "S" #'puni-split
+    ;; FIXME: for `emacs-lisp-mode' only
+    "x" #'eval-defun
+
+    ))
+
+;; FIXME: wrong type argument symbolp
+;; (map-keymap (lambda (_ cmd)
+;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
+
 (keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
 
 (global-keys!

@@ -4798,27 +4798,24 @@ after formatting (or other arbitrary modifications):
 <https://github.com/AmaiKinono/puni>
 
 #+begin_src emacs-lisp
-(use-package puni
-  :commands (puni-global-mode
-             puni-disable-puni-mode
-             puni-backward-sexp-or-up-list
-             puni-forward-sexp-or-up-list)
-
-  :init
-  (define-keymap :keymap puni-mode-map
-    "C-M-f" #'puni-forward-sexp
-    "C-M-b" #'puni-backward-sexp
-    "C-M-a" #'puni-beginning-of-sexp
-    "C-M-e" #'puni-end-of-sexp
-    "C-M-[" #'puni-backward-sexp-or-up-list
-    "C-M-]" #'puni-forward-sexp-or-up-list
-
-    "M-(" #'puni-syntactic-forward-punct
-    "M-)" #'puni-syntactic-backward-punct
-    )
-
-  ;; (puni-global-mode)
+(package! puni
+  (puni-global-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
+
+;; (after! puni
+;;     ;; (define-keymap :keymap puni-mode-map
+;;   ;;   "C-M-f" #'puni-forward-sexp
+;;   ;;   "C-M-b" #'puni-backward-sexp
+;;   ;;   "C-M-a" #'puni-beginning-of-sexp
+;;   ;;   "C-M-e" #'puni-end-of-sexp
+;;   ;;   "C-M-[" #'puni-backward-sexp-or-up-list
+;;   ;;   "C-M-]" #'puni-forward-sexp-or-up-list
+
+;;   ;;   "M-(" #'puni-syntactic-forward-punct
+;;   ;;   "M-)" #'puni-syntactic-backward-punct
+;;   ;;   )
+
+;; )
 #+end_src
 
 *** ~drag-stuff~: drag stuff around in arbitrary directions
@@ -4964,6 +4961,75 @@ b => buffer name
   )
 #+end_src
 
+*** TODO Lispy-like structural editing repeat-map
+
+Work in progress.
+
+This is still not quite usable as a Lispy replacement.  The goal is to use
+similar structureal editing keybindings across many major-modes.
+
+Note that this repeat-map should not be used in tandem with ~lispy-mode~ because
+its bindings generally would need ~puni-mode~ to be active.
+
+*** Resources
+
+- <https://karthinks.com/software/a-consistent-structural-editing-interface/>
+- <https://github.com/suliveevil/emacs.d?tab=readme-ov-file#repeat-repeat-mode>
+- <https://github.com/karthink/.emacs.d/blob/master/init.el#L3209-L3241>
+
+
+*** Tasks
+
+- [ ] Disable ~repeat-exit-timeout~ for this map only
+
+#+begin_src emacs-lisp
+(after! puni
+
+  (defvar-keymap structural-editing-map
+    :repeat t
+
+    "d" #'puni-forward-delete-char
+    ;; "DEL" #'puni-backward-delete-char
+    ;; "D" #'puni-forward-kill-word
+    ;; "M-DEL" #'puni-backward-kill-word
+    ;; "C-k" #'puni-kill-line
+    ;; "M-k" #'puni-backward-kill-line
+    "k" #'kill-sexp
+
+    "f" #'puni-forward-sexp
+    "b" #'puni-backward-sexp
+    "[" #'puni-backward-sexp-or-up-list
+    "]" #'puni-forward-sexp-or-up-list
+    "a" #'puni-beginning-of-sexp
+    "e" #'puni-end-of-sexp
+    "u" #'puni-up-list
+    "M-(" #'puni-syntactic-forward-punct
+    "M-)" #'puni-syntactic-backward-punct
+
+    "\\" #'indent-region
+    "/" #'undo
+
+    ">" #'puni-slurp-forward
+    "<" #'puni-slurp-backward
+    "}" #'puni-barf-forward
+    "{" #'puni-barf-backward
+    "R" #'puni-raise
+    "t" #'puni-transpose
+    "C" #'puni-convolute
+    ;; FIXME: avoid meow dependency -- no puni equivalent
+    ;; "J" #'meow-join-sexp
+    "S" #'puni-split
+    ;; FIXME: for `emacs-lisp-mode' only
+    "x" #'eval-defun
+
+    ))
+
+;; FIXME: wrong type argument symbolp
+;; (map-keymap (lambda (_ cmd)
+;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
+
+#+end_src
+
 *** Keybindings
 
 #+begin_src emacs-lisp
@@ -5022,6 +5088,13 @@ two inserted lines are the same."
 #+end_src
 
 #+begin_src emacs-lisp
+(defcustom ceamx-structured-editing-style 'lispy
+  "The structured editing provider."
+  :group 'ceamx
+  :type '(choice :tag "Structured editing style" :value lispy
+          (const :tag "Lispy" lispy)
+          (const :tag "Puni" puni)))
+
 (defcustom ceamx-format-on-save-disabled-modes
   '(emacs-lisp-mode                     ; conflict with `lispy' indent
     org-msg-edit-mode)
@@ -9311,7 +9384,6 @@ Even if Emacs core does things differently.
 [[https://emacs.stackexchange.com/a/52789/40956][indentation - How to indent keywords aligned? - Emacs Stack Exchange]]
 
 #+begin_src emacs-lisp
-
 (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
 #+end_src
 
@@ -9322,9 +9394,10 @@ Even if Emacs core does things differently.
 
 #+begin_src emacs-lisp
 (package! lispy
-  (add-hook 'ceamx-lisp-init-hook #'lispy-mode)
+  (when (eq 'lispy ceamx-structured-editing-style)
+    (add-hook 'ceamx-lisp-init-hook #'lispy-mode)))
 
-  (after! lispy
+(after! lispy
     ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
     ;; in favor of just moving past the closing quote as I would expect.
     ;;
@@ -9355,7 +9428,7 @@ Even if Emacs core does things differently.
       (push 'macrostep lispy-compat))
 
     (after! popper
-      (push "\\*lispy-message\\*" popper-reference-buffers))))
+      (push "\\*lispy-message\\*" popper-reference-buffers)))
 #+end_src
 
 **** ~kbd-mode~: syntax support for =kmonad= and =kanata= configs
@@ -9416,7 +9489,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 (defun ceamx-lisp-init ()
   "Enable features useful in any Lisp mode."
 
-  (when (fboundp 'lispy-mode)
+  (when (and (fboundp 'lispy-mode) (eq 'lispy ceamx-structured-editing-style))
     (lispy-mode))
 
   ;; `outli' overrides some `lispy' features.
@@ -11652,6 +11725,7 @@ kill the selection again.
 
 ** Tasks
 
+*** TODO Expand ~org-mode-navigation-repeat-map~ based on ~org-speed-commands~
 *** TODO Meow overwrites repeat-mode?
 
 *** CANCELLED Fix no-cycle when press TAB at headline EOL

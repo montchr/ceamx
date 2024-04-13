@@ -41,12 +41,12 @@
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 (dolist (sym '(add-function advice-add plist-put))
   (put sym 'lisp-indent-function 2))
-
 (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
 (package! lispy
-  (add-hook 'ceamx-lisp-init-hook #'lispy-mode)
+  (when (eq 'lispy ceamx-structured-editing-style)
+    (add-hook 'ceamx-lisp-init-hook #'lispy-mode)))
 
-  (after! lispy
+(after! lispy
     ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
     ;; in favor of just moving past the closing quote as I would expect.
     ;;
@@ -77,7 +77,7 @@
       (push 'macrostep lispy-compat))
 
     (after! popper
-      (push "\\*lispy-message\\*" popper-reference-buffers))))
+      (push "\\*lispy-message\\*" popper-reference-buffers)))
 (package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
 (require 'config-editor)
 (require 'lib-common)

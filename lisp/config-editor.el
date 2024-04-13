@@ -25,6 +25,13 @@
 ;;; Code:
 
 (defvar ceamx-apheleia-lighter " Aph")
+(defcustom ceamx-structured-editing-style 'lispy
+  "The structured editing provider."
+  :group 'ceamx
+  :type '(choice :tag "Structured editing style" :value lispy
+          (const :tag "Lispy" lispy)
+          (const :tag "Puni" puni)))
+
 (defcustom ceamx-format-on-save-disabled-modes
   '(emacs-lisp-mode                     ; conflict with `lispy' indent
     org-msg-edit-mode)

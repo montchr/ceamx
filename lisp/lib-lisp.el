@@ -30,7 +30,7 @@
 (defun ceamx-lisp-init ()
   "Enable features useful in any Lisp mode."
 
-  (when (fboundp 'lispy-mode)
+  (when (and (fboundp 'lispy-mode) (eq 'lispy ceamx-structured-editing-style))
     (lispy-mode))
 
   ;; `outli' overrides some `lispy' features.
