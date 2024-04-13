@@ -111,29 +111,6 @@
 
 ;; TODO: move this setting elsewhere
 (setopt org-reverse-note-order t)       ; prepend new notes
-(require 'config-org)
-
-(defun ceamx/org-clean-up-inbox ()
-  "Archive all DONE tasks and sort the remainder by TODO order."
-  (interactive)
-  (with-current-buffer (find-file ceamx-default-capture-file)
-    (ceamx/org-archive-done-tasks 'file)
-    (goto-char (point-min))
-    (if (org-at-heading-p) (save-excursion (insert "\n")))
-    (org-sort-entries nil ?p)
-    (goto-char (point-min))
-    (org-sort-entries nil ?o)
-    (save-buffer)))
-
-(defun ceamx/org-archive-done-tasks (&optional scope)
-  "Archive finished or cancelled tasks.
-       SCOPE can be 'file or 'tree."
-  (interactive)
-  (org-map-entries
-   (lambda ()
-     (org-archive-subtree)
-     (setq org-map-continue-from (outline-previous-heading)))
-   "TODO=\"DONE\"|TODO=\"CANCELLED\"" (or scope (if (org-before-first-heading-p) 'file 'tree))))
 (setopt org-return-follows-link t)
 (with-eval-after-load 'org
   (defvar org-mode-map)

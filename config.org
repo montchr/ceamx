@@ -11498,6 +11498,39 @@ may cause unexpected changes to the content (depending on the setting of `org-ca
 (setopt org-reverse-note-order t)       ; prepend new notes
 #+END_SRC
 
+*** TODO Provide commands to archive DONE tasks
+
+| Author | Sacha Chua                                                                                 |
+| URL    | <https://pages.sachachua.com/.emacs.d/Sacha.html#quick-way-to-archive-all-done-from-inbox> |
+
+I don't think this is working properly...
+
+#+begin_src emacs-lisp :noweb-ref nil
+(require 'config-org)
+
+(defun ceamx/org-clean-up-inbox ()
+  "Archive all DONE tasks and sort the remainder by TODO order."
+  (interactive)
+  (with-current-buffer (find-file ceamx-default-capture-file)
+    (ceamx/org-archive-done-tasks 'file)
+    (goto-char (point-min))
+    (if (org-at-heading-p) (save-excursion (insert "\n")))
+    (org-sort-entries nil ?p)
+    (goto-char (point-min))
+    (org-sort-entries nil ?o)
+    (save-buffer)))
+
+(defun ceamx/org-archive-done-tasks (&optional scope)
+  "Archive finished or cancelled tasks.
+       SCOPE can be 'file or 'tree."
+  (interactive)
+  (org-map-entries
+   (lambda ()
+     (org-archive-subtree)
+     (setq org-map-continue-from (outline-previous-heading)))
+   "TODO=\"DONE\"|TODO=\"CANCELLED\"" (or scope (if (org-before-first-heading-p) 'file 'tree))))
+#+end_src
+
 *** Keybindings
 
 #+BEGIN_SRC emacs-lisp
