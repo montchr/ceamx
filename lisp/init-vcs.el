@@ -87,12 +87,14 @@
     :config
     (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
 
-  :config
+  ;; :config
 
 ;;;;; Keybindings
 
-  (keymap-set diff-hl-mode-map "C-M-]" #'diff-hl-next-hunk)
-  (keymap-set diff-hl-mode-map "C-M-[" #'diff-hl-previous-hunk))
+  ;; (keymap-set diff-hl-mode-map "C-M-]" #'diff-hl-next-hunk)
+  ;; FIXME: C-[ is ESC! avoid!
+  ;; (keymap-set diff-hl-mode-map "C-M-[" #'diff-hl-previous-hunk)
+  )
 
 ;;;; git-commit :: <https://magit.vc/>
 
