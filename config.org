@@ -4800,6 +4800,7 @@ after formatting (or other arbitrary modifications):
 #+begin_src emacs-lisp
 (package! puni
   (puni-global-mode)
+  (add-hook 'prog-mode-hook #'puni-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 
 ;; (after! puni

@@ -146,6 +146,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h))
 (package! puni
   (puni-global-mode)
+  (add-hook 'prog-mode-hook #'puni-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 
 ;; (after! puni
