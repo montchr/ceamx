@@ -8108,17 +8108,20 @@ otherwise the icon size will likely not be accurate.
 *** ~dabbrev~: Dynamic Abbreviations
 
 #+begin_src emacs-lisp
-(after! dabbrev
-  (setopt dabbrev-ignored-buffer-regexps
-          (list
-           ;; TODO: what does this pattern represent?
-           ;;       why is it not same as eval result: (rx "` ")
-           "\\` "
-           (rx line-start " ")
-           (rx (group (or (seq (opt (or "e" (seq "g" (opt "r")))) "tags")
-                          "gpath"))
-               (optional (group "<" (+ (any numeric)) ">")))))
+(setopt dabbrev-upcase-means-case-search t)
+(setopt dabbrev-ignored-buffer-regexps
+        (list
+         ;; TODO: what does this pattern represent?
+         ;;       why is it not same as eval result: (rx "` ")
+         "\\` "
+         (rx line-start " ")
+         (rx (group (or (seq (opt (or "e" (seq "g" (opt "r")))) "tags")
+                        "gpath"))
+             (optional (group "<" (+ (any numeric)) ">")))))
+#+end_src
 
+#+begin_src emacs-lisp
+(after! dabbrev
   (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
     (add-to-list 'dabbrev-ignored-buffer-modes mode))
 

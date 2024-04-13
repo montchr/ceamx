@@ -139,17 +139,17 @@
   (declare-function kind-icon-reset-cache "kind-icon")
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
+(setopt dabbrev-upcase-means-case-search t)
+(setopt dabbrev-ignored-buffer-regexps
+        (list
+         ;; TODO: what does this pattern represent?
+         ;;       why is it not same as eval result: (rx "` ")
+         "\\` "
+         (rx line-start " ")
+         (rx (group (or (seq (opt (or "e" (seq "g" (opt "r")))) "tags")
+                        "gpath"))
+             (optional (group "<" (+ (any numeric)) ">")))))
 (after! dabbrev
-  (setopt dabbrev-ignored-buffer-regexps
-          (list
-           ;; TODO: what does this pattern represent?
-           ;;       why is it not same as eval result: (rx "` ")
-           "\\` "
-           (rx line-start " ")
-           (rx (group (or (seq (opt (or "e" (seq "g" (opt "r")))) "tags")
-                          "gpath"))
-               (optional (group "<" (+ (any numeric)) ">")))))
-
   (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
     (add-to-list 'dabbrev-ignored-buffer-modes mode))
 
