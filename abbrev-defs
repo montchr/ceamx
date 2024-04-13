@@ -1,0 +1,6 @@
+;;-*-coding: utf-8;-*-
+(define-abbrev-table 'global-abbrev-table
+  '(
+    ("wordpress" "WordPress" nil :count 0)
+   ))
+

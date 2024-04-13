@@ -7351,7 +7351,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 #+end_src
 
 
-** DISABLED Abbrevs (~abbrev-mode~) :: ~init-abbrevs~
+** Abbrevs (~abbrev-mode~) :: ~init-abbrevs~
 :PROPERTIES:
 :header-args: :noweb-ref init-abbrevs
 :END:
@@ -7359,27 +7359,22 @@ as the CHAR argument to `ceamx-normalize-char'."
 - Note taken on [2024-04-09 Tue 01:00] \\
   Currently it is impossible to type when ~abbrev-mode~ is active in a buffer.
   When pressing =SPC= after a word, I see the following:
-
-  #+begin_example
-  Debugger entered--Lisp error: (wrong-type-argument stringp Template)
-    split-string(Template " " t)
-    abbrev--suggest-count-words(Template)
-    abbrev--suggest-maybe-suggest()
-    expand-abbrev()
-    #<subr org-self-insert-command>(1)
-    apply(#<subr org-self-insert-command> 1)
-    org-self-insert-command(1)
-    funcall-interactively(org-self-insert-command 1)
-    command-execute(org-self-insert-command)
-  #+end_example
-
   But I'm not sure where that's coming from.
 
+
+*** Load custom abbrevs from ~abbrev-file-name~
+
+#+begin_src emacs-lisp
+(setopt abbrev-file-name (locate-user-emacs-file "abbrev-defs"))
+
+(when (file-exists-p abbrev-file-name)
+  (quietly-read-abbrev-file))
+#+end_src
 
 *** Display suggestions for available abbrevs
 
 #+begin_src emacs-lisp
-;;(setopt abbrev-suggest t)
+(setopt abbrev-suggest t)
 #+end_src
 
 *** Allow abbrevs with a prefix colon, semicolon, or underscore
@@ -7393,7 +7388,7 @@ Adapted from Prot's original version with the following changes:
 - Abstracted the regexp to a variable ~ceamx-abbrev-prefix-regexp~ for reuse
   across =abbrev-table= contexts.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (defvar ceamx-abbrev-prefix-regexp
   (rx (or bol
           (1+ (any "\t ")))
@@ -8982,6 +8977,7 @@ Furthermore Tempel supports syntax extensions:
 :header-args: :noweb-ref init-templates
 :END:
 
+
 #+begin_src emacs-lisp
 (require 'lib-common)
 
@@ -9005,10 +9001,7 @@ NOTE: We add `tempel-expand' *before* the main programming mode
 Capf, such that it will be tried first."
     (setq-local completion-at-point-functions
                 (cons #'tempel-expand
-                      completion-at-point-functions)))
-
-  ;; Integrate `tempel' with `abbrev'.
-  (global-tempel-abbrev-mode))
+                      completion-at-point-functions))))
 #+end_src
 
 *** Add custom template element to include nested templates
@@ -9051,6 +9044,29 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
   (after! tempel
     (require 'tempel-collection)))
 #+end_src
+
+
+*** Issues
+
+**** DONE ~tempel-abbrev-mode~ results in an error when pressing SPC after a word
+CLOSED: [2024-04-13 Sat 00:00]
+
+- State "DONE"       from "TODO"       [2024-04-13 Sat 00:00]
+
+
+
+  #+begin_example
+  Debugger entered--Lisp error: (wrong-type-argument stringp Template)
+    split-string(Template " " t)
+    abbrev--suggest-count-words(Template)
+    abbrev--suggest-maybe-suggest()
+    expand-abbrev()
+    #<subr org-self-insert-command>(1)
+    apply(#<subr org-self-insert-command> 1)
+    org-self-insert-command(1)
+    funcall-interactively(org-self-insert-command 1)
+    command-execute(org-self-insert-command)
+  #+end_example
 
 
 

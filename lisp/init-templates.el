@@ -46,10 +46,7 @@ NOTE: We add `tempel-expand' *before* the main programming mode
 Capf, such that it will be tried first."
     (setq-local completion-at-point-functions
                 (cons #'tempel-expand
-                      completion-at-point-functions)))
-
-  ;; Integrate `tempel' with `abbrev'.
-  (global-tempel-abbrev-mode))
+                      completion-at-point-functions))))
 (defun +tempel-include (elt)
   "Tempel user element ELT to include a nested template."
   (when (eq (car-safe elt) 'i)
