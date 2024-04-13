@@ -2504,11 +2504,11 @@ accommodation for varying pixel densities."
 
   ;; FIXME: results in type warning, but works
   (setopt modus-themes-headings
-          '((1 . (1.6))
-            (2 . (background 1.5))
-            (3 . (background 1.2))
-            (4 . (1.1 regular))
-            (t . (regular))))
+          '((1 . (variable-pitch regular background 1.4))
+            (2 . (variable-pitch regular background 1.2))
+            (3 . (background 1.1))
+            (4 . (1.1))
+            (t . t)))
 
   (setopt modus-themes-common-palette-overrides
           '(
