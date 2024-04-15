@@ -5108,51 +5108,20 @@ non-nil, buffers will never be formatted upon save."
 
 
 * Files
+:PROPERTIES:
+:header-args: :noweb-ref init-files
+:END:
 
-** Customizations
-
-#+begin_src emacs-lisp :comments no :tangle lisp/init-files.el
-;;; init-files.el --- File handling -*- lexical-binding: t -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;  Configuration for file handling
-
-;;; Code:
-
-;;; Requirements
-
+#+begin_src emacs-lisp
 (require 'ceamx-keymaps)
 (require 'ceamx-paths)
 
 (require 'lib-common)
 (require 'lib-files)
+#+end_src
 
-;;; Manage backup files and prevent file-lock clutter
-
-;; TODO: enable file locks in TRAMP?
-
+** Manage backup files and prevent file-lock clutter
+#+begin_src emacs-lisp
 (setopt create-lockfiles nil)
 (setopt make-backup-files nil)
 
@@ -5164,14 +5133,20 @@ non-nil, buffers will never be formatted upon save."
 
 (setopt delete-by-moving-to-trash t)
 
-;;; Add file headers to new files
 
+#+end_src
+
+** Add file headers to new files
+
+#+begin_src emacs-lisp
 (use-feature! autoinsert
   :config
   (auto-insert-mode t))
+#+end_src
 
-;;; Configure finding of files
+** Configure finding of files
 
+#+begin_src emacs-lisp
 (setopt find-file-suppress-same-file-warnings t)
 
 (setopt find-file-visit-truename t)
@@ -5181,25 +5156,29 @@ non-nil, buffers will never be formatted upon save."
   :config
   ;; Always find references of symbol at point.
   (setopt xref-prompt-for-identifier nil))
+#+end_src
 
-;;;; Prompt to create missing parent directories for not-found files
+*** Prompt to create missing parent directories for not-found files
 
-;; <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
+<https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
 
+#+begin_src emacs-lisp
 (defun ceamx-create-missing-directories-h ()
   "Automatically create missing directories when creating new files."
   (unless (file-remote-p buffer-file-name)
     (let ((parent-directory (file-name-directory buffer-file-name)))
       (and (not (file-directory-p parent-directory))
-        (y-or-n-p (format "Directory `%s' does not exist! Create it?"
-                    parent-directory))
-        (progn (make-directory parent-directory 'parents)
-          t)))))
+           (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                             parent-directory))
+           (progn (make-directory parent-directory 'parents)
+                  t)))))
 
 (add-hook 'find-file-not-found-functions #'ceamx-create-missing-directories-h)
+#+end_src
 
-;;; Configure auto-saving of file-visiting buffers
+** Configure auto-saving of file-visiting buffers
 
+#+begin_src emacs-lisp
 ;; Prevent creation of the list of all auto-saved files.
 (setopt auto-save-list-file-prefix nil)
 
@@ -5217,17 +5196,21 @@ non-nil, buffers will never be formatted upon save."
 
 ;; Save file-visiting buffers according to the configured timers.
 (auto-save-visited-mode)
+#+end_src
 
-;;; Set the list of safe local variable values
+** Set the list of safe local variable values
 
+#+begin_src emacs-lisp
 (setopt safe-local-variable-values
         '((org-refile-targets
            (nil :maxlevel . 3))
           ;; FIXME: there are better ways, i hope...
           (eval load-file "./ceamx-dev-loader.el")))
+#+end_src
 
-;;; Keybindings
+** Keybindings
 
+#+begin_src emacs-lisp
 (global-keys!
   "C-c f" '("[ File ]" . ceamx-file-map)
   "C-c C-f" '("[ File ]" . ceamx-file-map)
@@ -5251,86 +5234,18 @@ non-nil, buffers will never be formatted upon save."
   "U" #'ceamx/sudo-find-file
 
   "C-d" '("diff with..." . ceamx/diff-with-file))
-
-(provide 'init-files)
-;;; init-files.el ends here
 #+end_src
 
+** Functions and commands
+:PROPERTIES:
+:header-args: :noweb-ref lib-files
+:END:
 
-** Library
-
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-files.el
-;;; lib-files.el --- File helpers -*- lexical-binding: t -*-
-
-;; Copyright (C) 2022-2024  Chris Montgomery <chris@cdom.io>
-;; Copyright (C) 2014-2022  Henrik Lissner
-;; Copyright (C) 2006-2021  Steve Purcell
-;; Copyright (C) 2008-2024  Jonas Bernoulli
-;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause
-
-;; Author: Henrik Lissner
-;;         Vegard Øye <vegard_oye at hotmail.com>
-;;         Steve Purcell
-;;         Chris Montgomery <chris@cdom.io>
-;;         Jonas Bernoulli <jonas@bernoul.li>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Created: 23 January 2023
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;; Permission is hereby granted, free of charge, to any person obtaining
-;; a copy of this software and associated documentation files (the
-;; "Software"), to deal in the Software without restriction, including
-;; without limitation the rights to use, copy, modify, merge, publish,
-;; distribute, sublicense, and/or sell copies of the Software, and to
-;; permit persons to whom the Software is furnished to do so, subject to
-;; the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be
-;; included in all copies or substantial portions of the Software.
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-;;
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-;;
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-;;; Commentary:
-
-;;  Helper functions for working with files.
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'cl-lib)
+#+end_src
 
+#+begin_src emacs-lisp
 ;; FIXME: is this supposed to work on save? not working in either magit or projectile
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L369-L391>
 (defun ceamx-files--update-refs (&rest files)
@@ -5360,11 +5275,11 @@ non-nil, buffers will never be formatted upon save."
       (magit-refresh))
     (when (bound-and-true-p save-place-mode)
       (save-place-forget-unreadable-files))))
+#+end_src
 
-;;
-;;; Commands
-;;
+*** Commands
 
+#+begin_src emacs-lisp
 ;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L3325-L3332>
 (defun ceamx/file-edit (file &optional bang)
   "Open FILE.
@@ -5433,7 +5348,6 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (ceamx-files--update-refs old-path new-path)
     (message "File copied to %S" (abbreviate-file-name new-path))))
 
-
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
 (defun ceamx/move-this-file (new-path &optional force-p)
   "Move current buffer's file to NEW-PATH.
@@ -5477,28 +5391,15 @@ writable or with a prefix argument, then read a file to visit."
   (interactive "P")
   (require 'tramp)
   (if (or arg
-        (not buffer-file-name)
-        (file-writable-p buffer-file-name))
-    (let ((default-directory
-            (concat "/sudo:root@localhost:" default-directory)))
-      (apply #'find-file
-        (find-file-read-args
-          "Find file: "
-          (confirm-nonexistent-file-or-buffer))))
+          (not buffer-file-name)
+          (file-writable-p buffer-file-name))
+      (let ((default-directory
+             (concat "/sudo:root@localhost:" default-directory)))
+        (apply #'find-file
+               (find-file-read-args
+                "Find file: "
+                (confirm-nonexistent-file-or-buffer))))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
-
-;; ;;;###autoload
-;; (defun doom/remove-recent-file (file)
-;;   "Remove FILE from your recently-opened-files list."
-;;   (interactive
-;;    (list (completing-read "Remove recent file: " recentf-list
-;;                           nil t)))
-;;   (setq recentf-list (delete file recentf-list))
-;;   (recentf-save-list)
-;;   (message "Removed %S from `recentf-list'" (abbreviate-file-name file)))
-
-(provide 'lib-files)
-;;; lib-files.el ends here
 #+end_src
 
 
@@ -13128,7 +13029,6 @@ POS defaults to the current position."
 
 * Target Files
 
-
 #+name: init-file
 #+begin_src emacs-lisp :noweb yes :comments no :tangle init.el
 <<file-prop-line(feature="init",desc="Initialize Ceamx",extraprops="no-byte-compile: t;")>>
@@ -13190,8 +13090,6 @@ POS defaults to the current position."
 <<file-footer(feature="init-benchmarking")>>
 #+end_src
 
-
-
 ** =early-init.el=
 
 #+name: early-init-file
@@ -13212,6 +13110,90 @@ POS defaults to the current position."
 <<early-init>>
 
 <<file-footer(feature="early-init")>>
+#+end_src
+
+** =lisp/init-files.el=
+
+#+name: init-files-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-files.el
+<<file-prop-line(feature="init-files",desc="File handling")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-files>>
+
+<<file-footer(feature="init-files")>>
+#+end_src
+
+** =lisp/lib-files.el=
+
+#+name: lib-files-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-files.el
+<<file-prop-line(feature="lib-files",desc="Files support support")>>
+
+;; Copyright (C) 2022-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2014-2022  Henrik Lissner
+;; Copyright (C) 2006-2021  Steve Purcell
+;; Copyright (C) 2008-2024  Jonas Bernoulli
+;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause
+
+;; Author: Henrik Lissner
+;;         Vegard Øye <vegard_oye at hotmail.com>
+;;         Steve Purcell
+;;         Chris Montgomery <chris@cdom.io>
+;;         Jonas Bernoulli <jonas@bernoul.li>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Created: 23 January 2023
+;; Version: 0.1.0
+
+<<file-license>>
+
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+;;; Commentary:
+;;; Code:
+
+<<lib-files>>
+
+<<file-footer(feature="lib-files")>>
 #+end_src
 
 ** =lisp/init-templates.el=

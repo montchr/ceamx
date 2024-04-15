@@ -1,4 +1,4 @@
-;;; lib-files.el --- File helpers -*- lexical-binding: t -*-
+;;; lib-files.el --- Files support support  -*- lexical-binding: t;  -*-
 
 ;; Copyright (C) 2022-2024  Chris Montgomery <chris@cdom.io>
 ;; Copyright (C) 2014-2022  Henrik Lissner
@@ -62,13 +62,9 @@
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ;;; Commentary:
-
-;;  Helper functions for working with files.
-
 ;;; Code:
 
 (require 'cl-lib)
-
 ;; FIXME: is this supposed to work on save? not working in either magit or projectile
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L369-L391>
 (defun ceamx-files--update-refs (&rest files)
@@ -98,11 +94,6 @@
       (magit-refresh))
     (when (bound-and-true-p save-place-mode)
       (save-place-forget-unreadable-files))))
-
-;;
-;;; Commands
-;;
-
 ;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L3325-L3332>
 (defun ceamx/file-edit (file &optional bang)
   "Open FILE.
@@ -171,7 +162,6 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (ceamx-files--update-refs old-path new-path)
     (message "File copied to %S" (abbreviate-file-name new-path))))
 
-
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
 (defun ceamx/move-this-file (new-path &optional force-p)
   "Move current buffer's file to NEW-PATH.
@@ -215,25 +205,15 @@ writable or with a prefix argument, then read a file to visit."
   (interactive "P")
   (require 'tramp)
   (if (or arg
-        (not buffer-file-name)
-        (file-writable-p buffer-file-name))
-    (let ((default-directory
-            (concat "/sudo:root@localhost:" default-directory)))
-      (apply #'find-file
-        (find-file-read-args
-          "Find file: "
-          (confirm-nonexistent-file-or-buffer))))
+          (not buffer-file-name)
+          (file-writable-p buffer-file-name))
+      (let ((default-directory
+             (concat "/sudo:root@localhost:" default-directory)))
+        (apply #'find-file
+               (find-file-read-args
+                "Find file: "
+                (confirm-nonexistent-file-or-buffer))))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
-
-;; ;;;###autoload
-;; (defun doom/remove-recent-file (file)
-;;   "Remove FILE from your recently-opened-files list."
-;;   (interactive
-;;    (list (completing-read "Remove recent file: " recentf-list
-;;                           nil t)))
-;;   (setq recentf-list (delete file recentf-list))
-;;   (recentf-save-list)
-;;   (message "Removed %S from `recentf-list'" (abbreviate-file-name file)))
 
 (provide 'lib-files)
 ;;; lib-files.el ends here

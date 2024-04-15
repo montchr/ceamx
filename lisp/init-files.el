@@ -1,4 +1,4 @@
-;;; init-files.el --- File handling -*- lexical-binding: t -*-
+;;; init-files.el --- File handling  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -22,23 +22,13 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;  Configuration for file handling
-
 ;;; Code:
-
-;;; Requirements
 
 (require 'ceamx-keymaps)
 (require 'ceamx-paths)
 
 (require 'lib-common)
 (require 'lib-files)
-
-;;; Manage backup files and prevent file-lock clutter
-
-;; TODO: enable file locks in TRAMP?
-
 (setopt create-lockfiles nil)
 (setopt make-backup-files nil)
 
@@ -50,14 +40,10 @@
 
 (setopt delete-by-moving-to-trash t)
 
-;;; Add file headers to new files
 
 (use-feature! autoinsert
   :config
   (auto-insert-mode t))
-
-;;; Configure finding of files
-
 (setopt find-file-suppress-same-file-warnings t)
 
 (setopt find-file-visit-truename t)
@@ -67,25 +53,17 @@
   :config
   ;; Always find references of symbol at point.
   (setopt xref-prompt-for-identifier nil))
-
-;;;; Prompt to create missing parent directories for not-found files
-
-;; <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
-
 (defun ceamx-create-missing-directories-h ()
   "Automatically create missing directories when creating new files."
   (unless (file-remote-p buffer-file-name)
     (let ((parent-directory (file-name-directory buffer-file-name)))
       (and (not (file-directory-p parent-directory))
-        (y-or-n-p (format "Directory `%s' does not exist! Create it?"
-                    parent-directory))
-        (progn (make-directory parent-directory 'parents)
-          t)))))
+           (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                             parent-directory))
+           (progn (make-directory parent-directory 'parents)
+                  t)))))
 
 (add-hook 'find-file-not-found-functions #'ceamx-create-missing-directories-h)
-
-;;; Configure auto-saving of file-visiting buffers
-
 ;; Prevent creation of the list of all auto-saved files.
 (setopt auto-save-list-file-prefix nil)
 
@@ -103,17 +81,11 @@
 
 ;; Save file-visiting buffers according to the configured timers.
 (auto-save-visited-mode)
-
-;;; Set the list of safe local variable values
-
 (setopt safe-local-variable-values
         '((org-refile-targets
            (nil :maxlevel . 3))
           ;; FIXME: there are better ways, i hope...
           (eval load-file "./ceamx-dev-loader.el")))
-
-;;; Keybindings
-
 (global-keys!
   "C-c f" '("[ File ]" . ceamx-file-map)
   "C-c C-f" '("[ File ]" . ceamx-file-map)
