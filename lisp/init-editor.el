@@ -243,6 +243,8 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
   (keymap-global-set "C-M-@" #'easy-mark) ; override `mark-sexp'
   )
+(package! ialign
+  (keymap-global-set "C-x l" #'ialign))
 (after! puni
 
   (defvar-keymap structural-editing-map

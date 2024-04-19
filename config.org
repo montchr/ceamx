@@ -4962,6 +4962,15 @@ b => buffer name
   )
 #+end_src
 
+*** ~ialign~: Interactively ~align-regexp~
+
+<https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
+
+#+begin_src emacs-lisp
+(package! ialign
+  (keymap-global-set "C-x l" #'ialign))
+#+end_src
+
 *** TODO Lispy-like structural editing repeat-map
 
 Work in progress.
