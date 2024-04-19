@@ -115,34 +115,16 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (with-eval-after-load 'editorconfig
   (add-hook 'editorconfig-after-apply-functions
             #'+editorconfig-enforce-org-mode-tab-width-h))
-(use-package apheleia
-  :blackout ceamx-apheleia-lighter
-  :preface
-
-  (defun +apheleia-format-maybe-inhibit-h ()
-    "Check if formatting should be disabled for current buffer."
-    (or (eq major-mode 'fundamental-mode)
-        (string-blank-p (buffer-name))
-        (eq ceamx-format-on-save-disabled-modes t)
-        (not (null (memq major-mode ceamx-format-on-save-disabled-modes)))))
-
-  :init
-  (apheleia-global-mode 1)
-
-  ;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
-  (def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
-    :around #'save-buffer
-    "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
-    (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
-      (funcall func)))
-
-  ;; "We need to do this both before and after Apheleia is loaded
-  ;; because the autoloading is set up such that the minor mode
-  ;; definition is evaluated twice."
-  ;; <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2272C1-L2275>
-  (blackout 'apheleia-mode ceamx-apheleia-lighter)
-
-  :config
+(package! apheleia
+  (apheleia-global-mode 1))
+(after! (apheleia blackout)
+  (blackout 'apheleia-mode ceamx-apheleia-lighter))
+(def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
+  :around #'save-buffer
+  "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
+  (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
+    (funcall func)))
+(after! (apheleia)
   (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h))
 (package! puni
   (puni-global-mode)

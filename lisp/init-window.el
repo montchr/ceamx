@@ -1,4 +1,4 @@
-;;; init-window.el --- Window management -*- lexical-binding: t -*-
+;;; init-window.el --- Window management  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -22,68 +22,7 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;; <karthink> has a helpful summary of `display-buffer' action functions and
-;; alist entries in their Emacs configuration, which I am also including here
-;; for my own reference. Note that this list is not necessarily complete.
-
-;;;; display-buffer-action-functions are:
-;;  `display-buffer-same-window' -- Use the selected window.
-;;  `display-buffer-reuse-window' -- Use a window already showing the buffer.
-;;  `display-buffer-reuse-mode-window' -- Use a window with the same major-mode.
-;;  `display-buffer-in-previous-window' -- Use a window that did show the buffer before.
-;;  `display-buffer-use-some-window' -- Use some existing window.
-;;  `display-buffer-pop-up-window' -- Pop up a new window.
-;;  `display-buffer-below-selected' -- Use or pop up a window below the selected one.
-;;  `display-buffer-at-bottom' -- Use or pop up a window at the bottom of the selected frame.
-;;  `display-buffer-pop-up-frame' -- Show the buffer on a new frame.
-;;  `display-buffer-in-child-frame' -- Show the buffer in a child frame.
-;;  `display-buffer-no-window' -- Do not display the buffer and have `display-buffer' return nil immediately.
-
-;;;; Action alist entries are:
-;;  `inhibit-same-window' -- A non-nil value prevents the same
-;;     window from being used for display.
-;;  `inhibit-switch-frame' -- A non-nil value prevents any frame
-;;     used for showing the buffer from being raised or selected.
-;;  `reusable-frames' -- The value specifies the set of frames to
-;;     search for a window that already displays the buffer.
-;;     Possible values are nil (the selected frame), t (any live
-;;     frame), visible (any visible frame), 0 (any visible or
-;;     iconified frame) or an existing live frame.
-;;  `pop-up-frame-parameters' -- The value specifies an alist of
-;;     frame parameters to give a new frame, if one is created.
-;;  `window-height' -- The value specifies the desired height of the
-;;     window chosen and is either an integer (the total height of
-;;     the window), a floating point number (the fraction of its
-;;     total height with respect to the total height of the frame's
-;;     root window) or a function to be called with one argument -
-;;     the chosen window.  The function is supposed to adjust the
-;;     height of the window; its return value is ignored.  Suitable
-;;     functions are `shrink-window-if-larger-than-buffer' and
-;;     `fit-window-to-buffer'.
-;;  `window-width' -- The value specifies the desired width of the
-;;     window chosen and is either an integer (the total width of
-;;     the window), a floating point number (the fraction of its
-;;     total width with respect to the width of the frame's root
-;;     window) or a function to be called with one argument - the
-;;     chosen window.  The function is supposed to adjust the width
-;;     of the window; its return value is ignored.
-;;  `preserve-size' -- The value should be either (t . nil) to
-;;     preserve the width of the chosen window, (nil . t) to
-;;     preserve its height or (t . t) to preserve its height and
-;;     width in future changes of the window configuration.
-;;  `window-parameters' -- The value specifies an alist of window
-;;     parameters to give the chosen window.
-;;  `allow-no-window' -- A non-nil value means that `display-buffer'
-;;     may not display the buffer and return nil immediately.
-
-;;; Sources:
-
-;; <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
-
 ;;; Code:
-
-;;; Requirements
 
 (require 'transient)
 
@@ -93,9 +32,6 @@
 (require 'lib-common)
 (require 'lib-buffer)
 (require 'lib-window)
-
-;;; General buffer display settings
-
 (setopt switch-to-buffer-in-dedicated-window 'pop)
 
 ;; Ensure interactive buffer switching behaves according to expectations.
@@ -118,58 +54,40 @@
 (setopt window-resize-pixelwise t)
 
 (setopt display-buffer-base-action
-  '((display-buffer-reuse-window
-      display-buffer-in-previous-window)))
-
-;;; Declare rules for displaying buffers with `display-buffer-alist'
-
+        '((display-buffer-reuse-window
+           display-buffer-in-previous-window)))
 ;; TODO: move these to config-...
 (defvar ceamx-checkers-buffer-names-regexp
   (rx "*" (or "Flycheck" "Package-Lint")))
 
 (setopt display-buffer-alist
-  `(
-     ;; (,(rx "*" (or "Agenda Commands" "Org Select") "*")
-     ;;   (display-buffer-below-selected
-     ;;     display-buffer-in-side-window)
-     ;;   (body-function . select-window)
-     ;;   (window-parameters . ((mode-line-format . nil))))
+        `(
+          ;; (,(rx "*" (or "Agenda Commands" "Org Select") "*")
+          ;;   (display-buffer-below-selected
+          ;;     display-buffer-in-side-window)
+          ;;   (body-function . select-window)
+          ;;   (window-parameters . ((mode-line-format . nil))))
 
-     (,ceamx-checkers-buffer-names-regexp
-       (display-buffer-in-direction
-         display-buffer-in-side-window)
-       (window-parameters . ((no-other-window . t))))
+          (,ceamx-checkers-buffer-names-regexp
+           (display-buffer-in-direction
+            display-buffer-in-side-window)
+           (window-parameters . ((no-other-window . t))))
 
-     ;; TODO: is there not a simpler way than using `ceamx-buffer-mode'?
-     ;; e.g. `derived-mode-p' or similar
-     ((lambda (buf act) (member (ceamx-buffer-mode buf) ceamx-message-modes-list))
-       (display-buffer-at-bottom
-         display-buffer-in-side-window))
+          ;; TODO: is there not a simpler way than using `ceamx-buffer-mode'?
+          ;; e.g. `derived-mode-p' or similar
+          ((lambda (buf act) (member (ceamx-buffer-mode buf) ceamx-message-modes-list))
+           (display-buffer-at-bottom
+            display-buffer-in-side-window))
 
-     (,(rx "*" (group (or "Compile-Log" "Messages" "Warnings")) "*")
-       (display-buffer-at-bottom
-         display-buffer-in-side-window
-         display-buffer-in-direction))
+          (,(rx "*" (group (or "Compile-Log" "Messages" "Warnings")) "*")
+           (display-buffer-at-bottom
+            display-buffer-in-side-window
+            display-buffer-in-direction))
 
-     (,(rx "*Backtrace*")
-       (display-buffer-in-side-window)
-       (window-height . 0.2)
-       (side . bottom))))
-
-;;; Summon and dismiss "popup" windows with `popper'
-
-;; <https://github.com/karthink/popper>
-
-(defun +popper-select-below-fn (buffer &optional _alist)
-    (funcall (if (> (frame-width) 170)
-               ;; #'display-buffer-in-direction
-               #'popper-select-popup-at-bottom
-               #'display-buffer-at-bottom)
-      buffer
-      `((window-height . ,popper-window-height)
-         (direction . below)
-         (body-function . ,#'select-window))))
-
+          (,(rx "*Backtrace*")
+           (display-buffer-in-side-window)
+           (window-height . 0.2)
+           (side . bottom))))
 (package! popper
   (global-keys!
     "C-`" #'popper-toggle
@@ -212,19 +130,11 @@
   ;; Load as early as possible to catch popups as early as possible.
   (popper-mode)
   (popper-echo-mode))
-
-;;;; Configure overrides in ~popper-repeat-map~
-
 (after! popper
   (defvar-keymap popper-repeat-map
     :repeat t
     "`" #'popper-cycle
     "~" #'popper-cycle-backwards))
-
-;;;; Configure popup display control rules manually
-
-;; <https://github.com/karthink/popper/blob/master/README.org#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
-
 (after! popper
   (setopt popper-display-control nil)
 
@@ -232,49 +142,22 @@
                '((popper-display-control-p
                   (ceamx-window-display-popup)
                   (window-height . ,popper-window-height)))))
-
-;;;; Configure ~projectile~ integration
-
 (after! (popper projectile)
   (setopt popper-group-function #'popper-group-by-projectile))
-
-;;; Restore previous window configurations with `winner-mode' [builtin]
-
 (add-hook 'ceamx-after-init-hook #'winner-mode)
-
-;;; Toggle a window's "dedicated" flag with `dedicated-mode'
-
-;; <https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
-
 (package! dedicated
   (keymap-global-set "C-c W" #'dedicated-mode))
-
-;;; Add "distraction-free" editing with `olivetti-mode'
-
-;; <https://github.com/rnkn/olivetti>
-
 (package! olivetti
   (setopt olivetti-style 'fancy))
-
-;;; =golden-ratio.el=: Automatically resize windows accordingly
-
 (package! golden-ratio
   (setopt golden-ratio-auto-scale t)
   (setopt golden-ratio-max-width 100))
-
-;;; Interactively manage windows with `ace-window'
-
-;; <https://github.com/abo-abo/ace-window>
-
 (package! ace-window
   ;; Same frame only. While it'd be nice to use the default (global), I really
   ;; dislike that it orders window numbers leads to jarring gaps in window
   ;; numbers in the same frame. For example, frame A might have windows numbered
   ;; 1 and 3 and frame B will have window 2.
   (setopt aw-scope 'frame))
-
-;;; Create a Transient menu for window management
-
 (transient-define-prefix ceamx/window-dispatch ()
   "Window management transient."
   :transient-suffix 'transient--do-stay
@@ -331,9 +214,6 @@
     ("`" "[ ] popups" popper-toggle)
     ""
     ("q" "quit" transient-quit-all)]])
-
-;;; Bind keys for window management
-
 (global-keys!
   "C-x o" #'ceamx/other-window
   "C-x O" #'ace-window
@@ -360,10 +240,6 @@
   "<down>" #'shrink-window
   "<left>" #'shrink-window-horizontally
   "<right>" #'enlarge-window-horizontally)
-
-;;;; Disable confusing repeat behaviors
-
-;; TIP: Use "C-x O" instead, bound to `ace-window' currently.
 (put 'other-window 'repeat-map nil)
 
 (provide 'init-window)

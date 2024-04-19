@@ -1,6 +1,6 @@
-;;; lib-window.el --- Helpers for window management  -*- lexical-binding: t; -*-
+;;; lib-window.el --- Window management support library  -*- lexical-binding: t;  -*-
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 ;; Copyright (C) 2023 Free Software Foundation, Inc.
 ;; Copyright (C) 2024  Protesilaos Stavrou
 
@@ -9,67 +9,31 @@
 ;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
 ;;         Protesilaos Stavrou <public@protesilaos.com>
 
-;; Keywords: local
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; This file is NOT part of GNU Emacs.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;; Helper functions for `init-window'.
-
-;;; Sources:
-
-;; <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
-;; <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
-;; <https://github.com/karthink/popper/blob/master/popper.el#L265-L283>
-
 ;;; Code:
-
-;;; Requirements
 
 (require 'windmove)
 
 (require 'config-window)
-
-;;; Helpers for `popper'
-
-;; TODO: add buffers tracking files in nix store, which are only useful for
-;; reference purposes, often invoked when viewing definition of low-level
-;; Emacs internals defined in C code (e.g. `string-equal')
-(defun +popper-current-buffer-popup-p (buf)
-  "Whether the buffer BUF should be considered a popup.
-This is intended for use as a predicate in `popper-reference-buffers'."
-  (with-current-buffer buf
-    (and (derived-mode-p 'fundamental-mode)
-      (not (bound-and-true-p scratch-buffer))
-      ;; Less than `max-lines' but not empty.
-      (let ((lines (count-lines (point-min) (point-max)))
-             (max-lines 10))
-        (and (not (zerop lines))
-          (< lines max-lines))))))
-
-(defun +popper-close-focused (&rest _)
-  "Close any focused `popper' popup.
-Intended as a general hook function."
-  (declare-function popper-toggle "popper")
-  (when (bound-and-true-p popper-popup-status)
-    (popper-toggle)))
-
-;;; `display-buffer' functions
-
-;; <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
-
 (defun ceamx-window-display-popup-at-bottom (buffer &optional alist)
   "Display popup-buffer BUFFER at the bottom of the screen.
 ALIST is an association list of action symbols and values.  See
@@ -132,27 +96,49 @@ such alists."
           (prog1 (window--display-buffer buffer window 'reuse alist)
             (unless (cdr (assq 'inhibit-switch-frame alist))
               (window--maybe-raise-frame (window-frame window)))))))))
-
-;;; Macros
-
 (defmacro with-safe-side-windows! (&rest body)
   "Toggle side windows, evaluate BODY, restore side windows.
 Copied from the `evil' macro `evil-save-side-windows'."
   (declare (indent defun)
-    (debug (&rest form)))
+           (debug (&rest form)))
   (let ((sides (make-symbol "sidesvar")))
     `(let ((,sides (and (fboundp 'window-toggle-side-windows)
-                     (window-with-parameter 'window-side))))
-       ;; (declare-function window-toggle-side-windows "window")
-       (when ,sides
-         (window-toggle-side-windows))
-       (unwind-protect
-         (progn ,@body)
-         (when ,sides
-           (window-toggle-side-windows))))))
+                    (window-with-parameter 'window-side))))
+      ;; (declare-function window-toggle-side-windows "window")
+      (when ,sides
+       (window-toggle-side-windows))
+      (unwind-protect
+          (progn ,@body)
+        (when ,sides
+         (window-toggle-side-windows))))))
+(defun +popper-current-buffer-popup-p (buf)
+  "Whether the buffer BUF should be considered a popup.
+This is intended for use as a predicate in `popper-reference-buffers'."
+  (with-current-buffer buf
+    (and (derived-mode-p 'fundamental-mode)
+         (not (bound-and-true-p scratch-buffer))
+         ;; Less than `max-lines' but not empty.
+         (let ((lines (count-lines (point-min) (point-max)))
+               (max-lines 10))
+           (and (not (zerop lines))
+                (< lines max-lines))))))
 
-;;; Interactive window management
+(defun +popper-close-focused (&rest _)
+  "Close any focused `popper' popup.
+Intended as a general hook function."
+  (declare-function popper-toggle "popper")
+  (when (bound-and-true-p popper-popup-status)
+    (popper-toggle)))
 
+(defun +popper-select-below-fn (buffer &optional _alist)
+  (funcall (if (> (frame-width) 170)
+               ;; #'display-buffer-in-direction
+               #'popper-select-popup-at-bottom
+             #'display-buffer-at-bottom)
+           buffer
+           `((window-height . ,popper-window-height)
+             (direction . below)
+             (body-function . ,#'select-window)))
 ;; FIXME: "display-buffer" is misleading
 ;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 ;;;###autoload
@@ -167,10 +153,10 @@ didactic purposes."
     (with-current-buffer buffer
       (delete-window)
       (display-buffer-at-bottom
-        buffer '((window-height .
-                   (lambda (win)
-                     (fit-window-to-buffer
-                       win (/ (frame-height) 3)))))))))
+       buffer '((window-height .
+                 (lambda (win)
+                   (fit-window-to-buffer
+                    win (/ (frame-height) 3)))))))))
 
 ;; TODO: this seems very similar to `windmove-swap-states-in-direction'...?
 (defun ceamx-move-window (side)
@@ -238,9 +224,9 @@ this window there."
   "TODO"
   (interactive "P\nS\nf")
   (select-window
-    (split-window (selected-window)
-      (when count (- count))
-      direction))
+   (split-window (selected-window)
+                 (when count (- count))
+                 direction))
   ;; (when (and (not count)
   ;;         ceamx-window-auto-balance)
   ;;   (balance-windows (window-parent)))
@@ -270,7 +256,7 @@ buffer will be created with that name."
 When called interactively, prompt the user for FILE."
   (interactive "F")
   (if file
-    (find-file file)
+      (find-file file)
     (let ((buffer (generate-new-buffer "*new*")))
       (set-buffer-major-mode buffer)
       (set-window-buffer nil buffer))))
@@ -307,8 +293,8 @@ With COUNTER as a prefix argument, do the rotation
 counter-clockwise."
   (interactive "P")
   (when-let* ((winlist (if counter (reverse (window-list)) (window-list)))
-               (wincount (count-windows))
-               ((> wincount 1)))
+              (wincount (count-windows))
+              ((> wincount 1)))
     (dotimes (i (- wincount 1))
       (window-swap-states (elt winlist i) (elt winlist (+ i 1))))))
 

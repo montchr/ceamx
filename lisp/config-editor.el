@@ -25,13 +25,6 @@
 ;;; Code:
 
 (defvar ceamx-apheleia-lighter " Aph")
-(defcustom ceamx-structured-editing-style 'lispy
-  "The structured editing provider."
-  :group 'ceamx
-  :type '(choice :tag "Structured editing style" :value lispy
-          (const :tag "Lispy" lispy)
-          (const :tag "Puni" puni)))
-
 (defcustom ceamx-format-on-save-disabled-modes
   '(emacs-lisp-mode                     ; conflict with `lispy' indent
     org-msg-edit-mode)
@@ -40,6 +33,12 @@ When nil, buffers will always be formatted upon save. When
 non-nil, buffers will never be formatted upon save."
   :group 'ceamx
   :type '(choice boolean (repeat symbol)))
+(defcustom ceamx-structured-editing-style 'lispy
+  "The structured editing provider."
+  :group 'ceamx
+  :type '(choice :tag "Structured editing style" :value lispy
+          (const :tag "Lispy" lispy)
+          (const :tag "Puni" puni)))
 
 (provide 'config-editor)
 ;;; config-editor.el ends here
