@@ -138,7 +138,7 @@ Intended as a general hook function."
            buffer
            `((window-height . ,popper-window-height)
              (direction . below)
-             (body-function . ,#'select-window)))
+             (body-function . ,#'select-window))))
 ;; FIXME: "display-buffer" is misleading
 ;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 ;;;###autoload

@@ -3714,7 +3714,7 @@ Intended as a general hook function."
            buffer
            `((window-height . ,popper-window-height)
              (direction . below)
-             (body-function . ,#'select-window)))
+             (body-function . ,#'select-window))))
 #+end_src
 
 
