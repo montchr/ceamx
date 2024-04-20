@@ -392,7 +392,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;;; Actions
 
 (require 'init-embark)
-(require 'init-wgrep)
 
 ;; Projects / Files
 (require 'init-project)
@@ -5921,90 +5920,64 @@ DOC is as in `devdocs-install'."
 
 
 * Search
+:PROPERTIES:
+:header-args: :noweb-ref init-search
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-search.el
-;;; init-search.el --- Search                        -*- lexical-binding: t; -*-
+Configuration for search-related utilities like ~isearch~ and
+~query-replace~.
 
-;; Copyright (C) 2024  Chris Montgomery
+See also ~init-selection-consult~, as ~consult~ often provides a frontend to
+these utilities.
 
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
+- Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-isearch.el>
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+** Requirements
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Configuration for search-related utilities like `isearch' and
-;; `query-replace'.
-
-;; See also `init-selection-consult', as `consult' often provides a frontend to
-;; these utilities.
-
-;;; Sources:
-
-;; <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-isearch.el>
-
-;;; Code:
-
+  #+begin_src emacs-lisp
 (require 'ceamx-keymaps)
 
 (require 'lib-common)
+(require 'lib-search)
+#+end_src
 
-;;; `isearch' [builtin]
+** ~isearch~ [builtin]
 
-(use-feature! isearch
-  :blackout
+#+begin_src emacs-lisp :noweb-ref lib-search
+(defun ceamx/replace-symbol-at-point ()
+  "Run `query-replace-regexp' for the symbol at point."
+  (interactive)
+  (require 'isearch)
+  (isearch-forward-symbol-at-point)
+  (isearch-query-replace-regexp))
+#+end_src
 
-  :preface
+#+begin_src emacs-lisp
+(setopt search-highlight t)
+(setopt isearch-lazy-highlight t)
+(setopt isearch-lazy-count t)
+(setopt lazy-count-prefix-format "[%s/%s] ")
+(setopt lazy-count-suffix-format nil)
+(setopt isearch-allow-scroll 'unlimited)
 
-  (defun ceamx/replace-symbol-at-point ()
-    "Run `query-replace-regexp' for the symbol at point."
-    (interactive)
-    (require 'isearch)
-    (isearch-forward-symbol-at-point)
-    (isearch-query-replace-regexp))
+;; Allow extending search string by holding shift and using motion commands.
+(setopt isearch-yank-on-move 'shift)
 
-  :config
+;; TODO: monitor behavior
+;;       specifically, it looks like that regexp will consider any
+;;       non-alphanumeric character to be whitespace, which might be a bit much.
+;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-isearch.el>
+(setopt search-whitespace-regexp ".*?")
+(setopt isearch-lax-whitespace t)
+(setopt isearch-regexp-lax-whitespace nil)
 
-;;;; Definitions
+(after! isearch
+  (blackout 'isearch)
 
   (defvar-keymap isearch-repeat-map
     :repeat t
     "s" #'isearch-repeat-forward
     "r" #'isearch-repeat-backward)
-
-;;;; Customizations
-
-  (setopt search-highlight t)
-  (setopt isearch-lazy-highlight t)
-  (setopt isearch-lazy-count t)
-  (setopt lazy-count-prefix-format "[%s/%s] ")
-  (setopt lazy-count-suffix-format nil)
-  (setopt isearch-allow-scroll 'unlimited)
-
-  ;; Allow extending search string by holding shift and using motion commands.
-  (setopt isearch-yank-on-move 'shift)
-
-  ;; TODO: monitor behavior
-  ;;       specifically, it looks like that regexp will consider any
-  ;;       non-alphanumeric character to be whitespace, which might be a bit much.
-  ;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-isearch.el>
-  (setopt search-whitespace-regexp ".*?")
-  (setopt isearch-lax-whitespace t)
-  (setopt isearch-regexp-lax-whitespace nil)
-
-;;;; Keybindings
 
   (define-keymap :keymap (current-global-map)
     "M-s M-o" #'multi-occur
@@ -6023,152 +5996,41 @@ DOC is as in `devdocs-install'."
     "M-e" nil)
 
   (keymap-set minibuffer-local-isearch-map "M-/" #'isearch-complete-edit))
+#+end_src
 
-;;; Efficiently replace targets in the buffer or context with `substitute'
+** ~substitute~: Efficiently replace targets in the buffer or context
 
-;; <https://protesilaos.com/emacs/substitute>
+<https://protesilaos.com/emacs/substitute>
 
-(use-package substitute
-  :commands (substitute-target-above-point
-              substitute-target-below-point
-              substitute-target-in-buffer
-              substitute-target-in-defun)
-  :defines (substitute-post-replace-functions)
-
-  :init
-  ;; Provide messages reporting on matches changed in the context.
-  (add-hook 'substitute-post-replace-functions #'substitute-report-operation)
-
+#+begin_src emacs-lisp
+(package! substitute
   (define-keymap :keymap ceamx-replace-map
     "b" #'substitute-target-in-buffer
     "d" #'substitute-target-in-defun
     "r" #'substitute-target-above-point
     "s" #'substitute-target-below-point)
 
-  :config
   (setopt substitute-hightlight t))
 
-;;; Configure `re-builder', the builtin regular expression builder
-
-;; <https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder>
-;; <https://francismurillo.github.io/2017-03-30-Exploring-Emacs-rx-Macro/>
-
-;; Unfortunately, `re-builder' itself is poorly-documented.
-
-(use-feature! re-builder
-  :commands (re-builder)
-  :config
-  ;; "string" => recommended: \\(foo\\\|bar\\)
-  ;; "rx"     => recommended; advanced sexp regexp engine
-  ;; "read"   => default, avoid: backslash hell
-  (setopt reb-re-syntax 'string))
-
-;;; Keybindings
-
-(keymap-set search-map "r" '("replace..." . ceamx-replace-map))
-
-(provide 'init-search)
-;;; init-search.el ends here
+(after! substitute
+  ;; Provide messages reporting on matches changed in the context.
+  (add-hook 'substitute-post-replace-functions #'substitute-report-operation))
 #+end_src
 
-** Writable grep buffers with ~wgrep~
+** ~wgrep~: writable grep buffers
 
-*** Customization
+"Writable grep buffer and apply the changes to files"
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-wgrep.el
-;;; init-wgrep.el --- Configuration for writable minibuffer grep  -*- lexical-binding: t; -*-
+<https://github.com/mhayashi1120/Emacs-wgrep>
 
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; "Writable grep buffer and apply the changes to files"
-;;
-;; <https://github.com/mhayashi1120/Emacs-wgrep>
-
-;;; Code:
-
-(require 'lib-common)
-(require 'lib-wgrep)
-
-(use-package wgrep
-  :defines ( wgrep-auto-save-buffer
-             wgrep-change-readonly-file)
-  :commands (wgrep-change-to-wgrep-mode)
-
-  :init
-  ;; TODO: why in `:init'?
+#+begin_src emacs-lisp
+(package! wgrep
   (setopt wgrep-auto-save-buffer t)
-  (setopt wgrep-change-readonly-file t)
-
-  (keymap-set minibuffer-local-map "C-c C-e" #'+vertico/embark-export-write)
-
-  (after! dired
-    (keymap-set dired-mode-map "C-c C-e" #'wgrep-change-to-wgrep-mode))
-  (after! grep
-    (keymap-set grep-mode-map "W" #'wgrep-change-to-wgrep-mode))
-
-  :config
-  ;; FIXME: `wgrep-mode-map' does not exist -- maybe we want `grep-mode-map'?
-  ;; (after! evil
-  ;;   (evil-define-key '(normal motion) 'wgrep-mode-map "q" #'wgrep-exit))
-
-  ;; FIXME: wrong num args
-  ;; the intention is to close the wgrep popup after abort/finish
-  ;; (after! popper
-  ;;   (advice-add #'wgrep-abort-changes :after #'popper-toggle)
-  ;;   (advice-add #'wgrep-finish-edit :after #'popper-toggle))
-  )
-
-(provide 'init-wgrep)
-;;; init-wgrep.el ends here
+  (setopt wgrep-change-readonly-file t))
 #+end_src
 
-*** Library
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-wgrep.el
-;;; lib-wgrep.el --- wgrep helpers                   -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;;         Henrik Lissner
-;; Keywords: tools, local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
-
+#+begin_src emacs-lisp :noweb-ref lib-search
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
 ;;;###autoload
 (defun +vertico/embark-export-write ()
@@ -6180,17 +6042,49 @@ and consult-location to occur-edit."
   (require 'wgrep)
   (let* ((edit-command
           (pcase-let ((`(,type . ,candidates)
-                        (run-hook-with-args-until-success 'embark-candidate-collectors)))
+                       (run-hook-with-args-until-success 'embark-candidate-collectors)))
             (pcase type
               ('consult-grep #'wgrep-change-to-wgrep-mode)
               ('file #'wdired-change-to-wdired-mode)
               ('consult-location #'occur-edit-mode)
               (x (user-error "Embark category %S doesn't support writable export" x)))))
-          (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
+         (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
     (embark-export)))
+#+end_src
 
-(provide 'lib-wgrep)
-;;; lib-wgrep.el ends here
+**** Keybindings
+** ~re-builder~ [builtin]: the regular expression builder
+
+<https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder>
+<https://francismurillo.github.io/2017-03-30-Exploring-Emacs-rx-Macro/>
+
+Unfortunately, ~re-builder~ itself is poorly-documented.
+
+#+begin_src emacs-lisp
+;; "string" => recommended: \\(foo\\\|bar\\)
+;; "rx"     => recommended; advanced sexp regexp engine
+;; "read"   => default, avoid: backslash hell
+(setopt reb-re-syntax 'string)
+#+end_src
+
+** Keybindings
+
+#+begin_src emacs-lisp
+(keymap-set search-map "r" '("replace..." . ceamx-replace-map))
+
+(keymap-set minibuffer-local-map "C-c C-e" #'+vertico/embark-export-write)
+
+(after! dired
+  (keymap-set dired-mode-map "C-c C-e" #'wgrep-change-to-wgrep-mode))
+
+(after! grep
+  (keymap-set grep-mode-map "W" #'wgrep-change-to-wgrep-mode))
+
+;; FIXME: wrong num args
+;; the intention is to close the wgrep popup after abort/finish
+;; (after! popper
+;;   (advice-add #'wgrep-abort-changes :after #'popper-toggle)
+;;   (advice-add #'wgrep-finish-edit :after #'popper-toggle))
 #+end_src
 
 
@@ -13133,7 +13027,49 @@ POS defaults to the current position."
 <<file-footer(feature="config-org")>>
 #+end_src
 
+** =lisp/init-search.el=
 
+#+name: init-search-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-search.el
+<<file-prop-line(feature="init-search",desc="Searching and replacing features")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-search>>
+
+<<file-footer(feature="init-search")>>
+#+end_src
+
+** =lisp/lib-search.el=
+
+#+name: lib-search-file
+#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-search.el
+<<file-prop-line(feature="lib-search",desc="Search support functions")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-search>>
+
+<<file-footer(feature="lib-search")>>
+#+end_src
 
 ** =lisp/init-window.el=
 

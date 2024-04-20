@@ -390,7 +390,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;;; Actions
 
 (require 'init-embark)
-(require 'init-wgrep)
 
 ;; Projects / Files
 (require 'init-project)
