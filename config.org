@@ -8402,6 +8402,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 
 (require 'lib-common)
 
+;; FIXME: does not close transient when pressing ESC
 ;; FIXME: move to configuration for `transient'
 (with-eval-after-load 'transient
   (defvar transient-map)
@@ -13537,8 +13538,6 @@ Example table:
                         (plist-get author :years)))
                      authors "\n")
           (ceamx-authors-format-author-lines authors)))
-
-;; stop buggin me
 #+end_src
 
 #+RESULTS: file-authors

@@ -28,6 +28,7 @@
 
 (require 'lib-common)
 
+;; FIXME: does not close transient when pressing ESC
 ;; FIXME: move to configuration for `transient'
 (with-eval-after-load 'transient
   (defvar transient-map)
