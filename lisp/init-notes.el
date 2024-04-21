@@ -26,7 +26,7 @@
 
 (require 'f)
 
-(require 'config-notes)
+(require 'ceamx-paths)
 
 ;; Create all required directories if not already present.
 (dolist (dir (list ceamx-notes-dir ceamx-journal-dir ceamx-agenda-dir))

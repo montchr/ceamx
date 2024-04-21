@@ -22,9 +22,6 @@
 
 ;; Define variables pointing to commonly-used paths.
 
-;; Path variables relating to specific modules should be defined in a
-;; feature-specific file i.e. `config-<module>'.
-
 ;;; Code:
 
 ;;
@@ -96,15 +93,52 @@ equivalent settings for third-party package managers.
 Packages will be stored in subdirectories based on the current
 Emacs version to prevent bytecode incompatibility.")
 
+;;; Feature-Specific Paths
+
+(defconst ceamx-cheatsheets-dir
+  (file-name-as-directory
+   (concat ceamx-home-dir "Documents/cheatsheets"))
+  "Absolute path to the directory containing user cheatsheets.")
+(defconst ceamx-projects-dir
+  (file-name-as-directory
+   (or (getenv "XDG_PROJECTS_DIR")
+       (concat ceamx-home-dir "Developer")))
+  "The root directory for projects.")
 (defconst ceamx-templates-dir
   (file-name-as-directory (file-name-concat user-emacs-directory "templates"))
   "Directory for user-defined expandable templates.
 Templates, in this sense, refer to the primary focus of packages
-like \"tempo\", \"tempel\", and \"yasnippet\".  Care should be
-taken to distinguish this usage of the term \"template\" from the
-similar but essentially different concept of a \"snippet\".  A
-snippet, in our usage, refers to a /non-expandable/ and /static/
-block of saved text lacking a \"templatable\" characteristic.")
+like \"tempo\", \"tempel\", and \"yasnippet\".")
+(defconst ceamx-notes-dir
+  (file-name-as-directory (concat ceamx-home-dir "Documents/notes"))
+  "Base directory for note storage.")
+
+(defconst ceamx-agenda-dir
+  (file-name-as-directory (concat ceamx-notes-dir "g2d")))
+
+(defconst ceamx-dailies-dir
+  (file-name-as-directory (concat ceamx-notes-dir "daily")))
+
+(defconst ceamx-notes-default-dir
+  (file-name-as-directory (concat ceamx-notes-dir "default")))
+
+(defconst ceamx-journal-dir
+  (file-name-as-directory (concat ceamx-notes-dir "journal")))
+
+(defconst ceamx-work-notes-dir
+  (file-name-as-directory (concat ceamx-notes-dir "work")))
+(defconst ceamx-default-agenda-files
+  (file-expand-wildcards (file-name-concat ceamx-agenda-dir "*.org"))
+  "List of absolute paths of all files that should be included in the agenda.")
+
+(defconst ceamx-default-todo-file
+  (expand-file-name "todo.org" ceamx-agenda-dir)
+  "Absolute path to default file for active G2D.")
+
+(defconst ceamx-default-capture-file
+  (expand-file-name "inbox.org" ceamx-agenda-dir)
+  "Absolute path to default inbox file for new G2D waiting to be processed.")
+(defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
 
 (provide 'ceamx-paths)
 ;;; ceamx-paths.el ends here

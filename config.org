@@ -771,9 +771,6 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 ;; Define variables pointing to commonly-used paths.
 
-;; Path variables relating to specific modules should be defined in a
-;; feature-specific file i.e. `config-<module>'.
-
 ;;; Code:
 
 ;;
@@ -845,15 +842,9 @@ equivalent settings for third-party package managers.
 Packages will be stored in subdirectories based on the current
 Emacs version to prevent bytecode incompatibility.")
 
-(defconst ceamx-templates-dir
-  (file-name-as-directory (file-name-concat user-emacs-directory "templates"))
-  "Directory for user-defined expandable templates.
-Templates, in this sense, refer to the primary focus of packages
-like \"tempo\", \"tempel\", and \"yasnippet\".  Care should be
-taken to distinguish this usage of the term \"template\" from the
-similar but essentially different concept of a \"snippet\".  A
-snippet, in our usage, refers to a /non-expandable/ and /static/
-block of saved text lacking a \"templatable\" characteristic.")
+;;; Feature-Specific Paths
+
+<<config-feature-paths>>
 
 (provide 'ceamx-paths)
 ;;; ceamx-paths.el ends here
@@ -5380,48 +5371,15 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
 * Help
 
-** Options / Variables
+** Define the directory containing Es cheatsheets
 
-#+begin_src emacs-lisp :comments no :tangle lisp/config-help.el
-;;; config-help.el --- Help settings                 -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local, help
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Settings for helping.
-
-;;; Code:
-
-(require 'ceamx-paths)
-
-(defvar ceamx-cheatsheets-dir
+#+begin_src emacs-lisp :noweb-ref config-feature-paths
+(defconst ceamx-cheatsheets-dir
   (file-name-as-directory
    (concat ceamx-home-dir "Documents/cheatsheets"))
   "Absolute path to the directory containing user cheatsheets.")
-
-(provide 'config-help)
-;;; config-help.el ends here
 #+end_src
 
-
-** Customizations
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-help.el
 ;;; init-help.el --- Help -*- lexical-binding: t; -*-
@@ -8413,42 +8371,14 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 
 * Projects
 
-#+begin_src emacs-lisp :comments no :tangle lisp/config-projects.el
-;;; config-projects.el --- Project settings          -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
-
-(require 'ceamx-paths)
-
-(defvar ceamx-projects-dir
+#+begin_src emacs-lisp :noweb-ref config-feature-paths
+(defconst ceamx-projects-dir
   (file-name-as-directory
    (or (getenv "XDG_PROJECTS_DIR")
        (concat ceamx-home-dir "Developer")))
   "The root directory for projects.")
-
-(provide 'config-projects)
-;;; config-projects.el ends here
 #+end_src
+
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-project.el
 ;;; init-project.el --- Project support              -*- lexical-binding: t; -*-
@@ -8482,6 +8412,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 (provide 'init-project)
 ;;; init-project.el ends here
 #+end_src
+
 ** DISABLED Projectile
 
 lel
@@ -8618,6 +8549,16 @@ Furthermore Tempel supports syntax extensions:
 - =(FORM ...)=  Other Lisp forms are evaluated. Named fields are lexically bound.
 - =q=  Quits the containing template when jumped to.
 
+
+** Define the location of the custom template directory
+
+#+begin_src emacs-lisp :noweb-ref config-feature-paths
+(defconst ceamx-templates-dir
+  (file-name-as-directory (file-name-concat user-emacs-directory "templates"))
+  "Directory for user-defined expandable templates.
+Templates, in this sense, refer to the primary focus of packages
+like \"tempo\", \"tempel\", and \"yasnippet\".")
+#+end_src
 
 ** Install and configure TempEl (~tempel~)
 :PROPERTIES:
@@ -10684,57 +10625,29 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 
 * Notetaking
 
-#+begin_src emacs-lisp :comments no :tangle lisp/config-notes.el
-;;; config-notes.el --- Notes settings               -*- lexical-binding: t; -*-
+** Define locations for important directories and files
 
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
-
-(require 'f)
-
-(require 'ceamx-paths)
-
-(defvar ceamx-notes-dir
-  (f-join ceamx-home-dir "Documents/notes")
+#+begin_src emacs-lisp :noweb-ref config-feature-paths
+(defconst ceamx-notes-dir
+  (file-name-as-directory (concat ceamx-home-dir "Documents/notes"))
   "Base directory for note storage.")
 
-(defvar ceamx-agenda-dir
-  (f-join ceamx-notes-dir "g2d"))
+(defconst ceamx-agenda-dir
+  (file-name-as-directory (concat ceamx-notes-dir "g2d")))
 
-(defvar ceamx-dailies-dir
-  (f-join ceamx-notes-dir "daily"))
+(defconst ceamx-dailies-dir
+  (file-name-as-directory (concat ceamx-notes-dir "daily")))
 
-(defvar ceamx-notes-default-dir
-  (f-join ceamx-notes-dir "default"))
+(defconst ceamx-notes-default-dir
+  (file-name-as-directory (concat ceamx-notes-dir "default")))
 
-(defvar ceamx-journal-dir
-  (f-join ceamx-notes-dir "journal"))
+(defconst ceamx-journal-dir
+  (file-name-as-directory (concat ceamx-notes-dir "journal")))
 
-(defvar ceamx-work-notes-dir
-  (f-join ceamx-notes-dir "work"))
-
-(provide 'config-notes)
-;;; config-notes.el ends here
+(defconst ceamx-work-notes-dir
+  (file-name-as-directory (concat ceamx-notes-dir "work")))
 #+end_src
+
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-notes.el
 ;;; init-notes.el --- Configuration for notetaking   -*- lexical-binding: t; -*-
@@ -10765,7 +10678,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 
 (require 'f)
 
-(require 'config-notes)
+(require 'ceamx-paths)
 
 ;; Create all required directories if not already present.
 (dolist (dir (list ceamx-notes-dir ceamx-journal-dir ceamx-agenda-dir))
@@ -10838,7 +10751,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 
 ;;; Code:
 
-(require 'config-notes)
+(require 'ceamx-paths)
 
 (use-package denote
   :config
@@ -10967,37 +10880,30 @@ Else create a new file."
 
 #+BEGIN_SRC emacs-lisp
 (require 'ceamx-keymaps)
-
-(require 'config-notes)
-(require 'config-org)
+(require 'ceamx-paths)
 
 (require 'lib-common)
 #+END_SRC
 
 *** Set up essential files & directories
-**** Define variables in =lisp/config-org.el= so they may be used in other init files
 
-#+begin_src emacs-lisp :noweb-ref config-org
-(require 'config-notes)
-
-(defvar ceamx-default-agenda-files
-  (f-glob "*.org" ceamx-agenda-dir)
+#+begin_src emacs-lisp :noweb-ref config-feature-paths
+(defconst ceamx-default-agenda-files
+  (file-expand-wildcards (file-name-concat ceamx-agenda-dir "*.org"))
   "List of absolute paths of all files that should be included in the agenda.")
 
-(defvar ceamx-default-todo-file
+(defconst ceamx-default-todo-file
   (expand-file-name "todo.org" ceamx-agenda-dir)
   "Absolute path to default file for active G2D.")
 
-(defvar ceamx-default-capture-file
+(defconst ceamx-default-capture-file
   (expand-file-name "inbox.org" ceamx-agenda-dir)
   "Absolute path to default inbox file for new G2D waiting to be processed.")
 #+end_src
 
-**** Tell Org about our directories and files
-
 These must be set before loading Org-Mode or any of its sub-features are used.
 
-Most notes will be stored in `ceamx-notes-dir'.
+Most notes will be stored in ~ceamx-notes-dir~.
 
 The value of ~org-directory~ will be used as a default destination for new
 notes, especially as they relate to tasks and agendas.  For that reason, use
@@ -11172,7 +11078,7 @@ may cause unexpected changes to the content (depending on the setting of `org-ca
 I don't think this is working properly...
 
 #+begin_src emacs-lisp :noweb-ref nil
-(require 'config-org)
+(require 'ceamx-paths)
 
 (defun ceamx/org-clean-up-inbox ()
   "Archive all DONE tasks and sort the remainder by TODO order."
@@ -12266,6 +12172,10 @@ Providing integrations with LLMs and other simulation machines.
 
 ** ~init-tools-ledger~: budgeting
 
+#+begin_src emacs-lisp :noweb-ref config-feature-paths
+(defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
+#+end_src
+
 #+begin_src emacs-lisp :comments no :tangle lisp/init-tools-ledger.el
 ;;; init-tools-ledger.el --- Support for ledger      -*- lexical-binding: t; -*-
 
@@ -12296,9 +12206,10 @@ Providing integrations with LLMs and other simulation machines.
 ;;; Code:
 
 (require 'lib-common)
+#+end_src
 
-(defvar ceamx-ledger-dir (expand-file-name "~/ledger"))
 
+#+begin_src emacs-lisp :comments no :tangle lisp/init-tools-ledger.el
 (use-package hledger-mode
   :mode ("\\.journal\\'" "\\.hledger\\'")
   :commands (hledger-enable-reporting)
@@ -12349,8 +12260,8 @@ Providing integrations with LLMs and other simulation machines.
   :init
 
   (def-hook! +hledger-accounts-capf-h () '(hledger-mode-hook)
-             "Add hledger accounts to completion-at-point functions."
-             (add-hook 'completion-at-point-functions 'hledger-completion-accounts))
+    "Add hledger accounts to completion-at-point functions."
+    (add-hook 'completion-at-point-functions 'hledger-completion-accounts))
 
   (setopt hledger-jfile (file-name-concat ceamx-ledger-dir "main.journal"))
 

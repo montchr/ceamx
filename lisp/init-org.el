@@ -25,9 +25,7 @@
 ;;; Code:
 
 (require 'ceamx-keymaps)
-
-(require 'config-notes)
-(require 'config-org)
+(require 'ceamx-paths)
 
 (require 'lib-common)
 (defvar org-directory ceamx-agenda-dir)

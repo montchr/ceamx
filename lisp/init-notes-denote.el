@@ -23,7 +23,7 @@
 
 ;;; Code:
 
-(require 'config-notes)
+(require 'ceamx-paths)
 
 (use-package denote
   :config

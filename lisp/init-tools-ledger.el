@@ -28,8 +28,6 @@
 
 (require 'lib-common)
 
-(defvar ceamx-ledger-dir (expand-file-name "~/ledger"))
-
 (use-package hledger-mode
   :mode ("\\.journal\\'" "\\.hledger\\'")
   :commands (hledger-enable-reporting)
@@ -80,8 +78,8 @@
   :init
 
   (def-hook! +hledger-accounts-capf-h () '(hledger-mode-hook)
-             "Add hledger accounts to completion-at-point functions."
-             (add-hook 'completion-at-point-functions 'hledger-completion-accounts))
+    "Add hledger accounts to completion-at-point functions."
+    (add-hook 'completion-at-point-functions 'hledger-completion-accounts))
 
   (setopt hledger-jfile (file-name-concat ceamx-ledger-dir "main.journal"))
 
