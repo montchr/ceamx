@@ -29,7 +29,7 @@
 ;;; Code:
 
 ;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
-(defvar ceamx-common-url-regexp
+(defconst ceamx-common-url-regexp
   (concat
     "~?\\<\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]*\\)"
     "[.@]"

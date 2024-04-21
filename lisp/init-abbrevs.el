@@ -29,7 +29,7 @@
 (when (file-exists-p abbrev-file-name)
   (quietly-read-abbrev-file))
 (setopt abbrev-suggest t)
-(defvar ceamx-abbrev-prefix-regexp
+(defconst ceamx-abbrev-prefix-regexp
   (rx (or bol
           (1+ (any "\t ")))
       (group-n 1

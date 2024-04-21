@@ -53,7 +53,7 @@
   (eww (format "https://en.m.wikipedia.org/wiki/Special:Search?search=%s"
                (url-encode-url text))))
 
-(defvar ceamx-eww-reddit-comment-header-regexp
+(defconst ceamx-eww-reddit-comment-header-regexp
   (rx "level "
       (one-or-more digit)
       (zero-or-more anything)
@@ -68,7 +68,7 @@
       line-end)
   "Regular expression for matching Reddit comments.")
 
-(defvar ceamx-eww-github-repo-landing-readme-header-regexp
+(defconst ceamx-eww-github-repo-landing-readme-header-regexp
   (rx line-start
       "• "
       (one-or-more anything) ; SVG icon for the readme
@@ -76,7 +76,7 @@
       line-end)
   "Regular expression matching the header for the README file content.")
 
-(defvar ceamx-eww-github-begin-file-content-regexp
+(defconst ceamx-eww-github-begin-file-content-regexp
   (rx
    (one-or-more digit)
    " lines ("
@@ -87,7 +87,7 @@
   "Regular expression for matching the start of a repo file on GitHub.")
 
 ;; TODO: support formats other than markdown too
-(defvar ceamx-eww-github-footer-text-regexp
+(defconst ceamx-eww-github-footer-text-regexp
   (rx line-start
       (one-or-more anything)            ; SVG of GitHub logo
       " © "

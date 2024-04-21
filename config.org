@@ -786,39 +786,39 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 ;;
 ;;; Variables
 
-(defvar ceamx-site-lisp-dir
+(defconst ceamx-site-lisp-dir
   (concat user-emacs-directory "site-lisp/")
   "Absolute path to the site-lisp directory.")
 
-(defvar ceamx-home-dir (file-name-as-directory (getenv "HOME"))
+(defconst ceamx-home-dir (file-name-as-directory (getenv "HOME"))
   "Path to user home directory.")
 
-(defvar ceamx-xdg-config-dir
+(defconst ceamx-xdg-config-dir
   (file-name-as-directory
    (or (getenv "XDG_CONFIG_HOME")
        (concat ceamx-home-dir ".config"))))
 
-(defvar ceamx-xdg-cache-dir
+(defconst ceamx-xdg-cache-dir
   (file-name-as-directory
    (or (getenv "XDG_CACHE_HOME")
        (concat ceamx-home-dir ".cache"))))
 
-(defvar ceamx-config-dir ceamx-xdg-config-dir
+(defconst ceamx-config-dir ceamx-xdg-config-dir
   "The root directory for personal configurations.")
 
 ;; TODO: rename to something like `ceamx-storage-dir' to reduce confusion
-(defvar ceamx-local-dir
+(defconst ceamx-local-dir
   (concat ceamx-xdg-cache-dir "ceamx/")
   "The root directory for local Emacs files.
 Use this as permanent storage for files that are safe to share
 across systems.")
 
-(defvar ceamx-etc-dir (concat ceamx-local-dir "etc/")
+(defconst ceamx-etc-dir (concat ceamx-local-dir "etc/")
   "Directory for non-volatile storage.
 Use this for files that don't change much, like servers binaries,
 external dependencies or long-term shared data.")
 
-(defvar ceamx-var-dir (concat ceamx-local-dir "var/")
+(defconst ceamx-var-dir (concat ceamx-local-dir "var/")
   "Directory for volatile storage.
 Use this for files that change often, like data and cache files.")
 
@@ -827,12 +827,12 @@ Use this for files that change often, like data and cache files.")
 ;; removed in this context.  the latter is likely better off used as needed, and
 ;; closer to the usage rather than in this declaration.  this declaration *is*
 ;; the standard Unix-like filename expected by `convert-standard-filename'.
-(defvar ceamx-eln-dir (convert-standard-filename
+(defconst ceamx-eln-dir (convert-standard-filename
                        (file-name-as-directory
                         (expand-file-name "eln/" ceamx-var-dir)))
   "Directory for natively-compiled eln files.")
 
-(defvar ceamx-packages-dir
+(defconst ceamx-packages-dir
   (expand-file-name (ceamx-format-version-subdir "packages")
     ceamx-local-dir)
   "Where packages are stored.
@@ -1499,7 +1499,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;;; Code:
 
 ;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
-(defvar ceamx-common-url-regexp
+(defconst ceamx-common-url-regexp
   (concat
     "~?\\<\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]*\\)"
     "[.@]"
@@ -6990,7 +6990,7 @@ Adapted from Prot's original version with the following changes:
   across =abbrev-table= contexts.
 
 #+begin_src emacs-lisp
-(defvar ceamx-abbrev-prefix-regexp
+(defconst ceamx-abbrev-prefix-regexp
   (rx (or bol
           (1+ (any "\t ")))
       (group-n 1
@@ -11887,7 +11887,7 @@ without JavaScript, it does not make sense to use EWW by default.
   (eww (format "https://en.m.wikipedia.org/wiki/Special:Search?search=%s"
                (url-encode-url text))))
 
-(defvar ceamx-eww-reddit-comment-header-regexp
+(defconst ceamx-eww-reddit-comment-header-regexp
   (rx "level "
       (one-or-more digit)
       (zero-or-more anything)
@@ -11902,7 +11902,7 @@ without JavaScript, it does not make sense to use EWW by default.
       line-end)
   "Regular expression for matching Reddit comments.")
 
-(defvar ceamx-eww-github-repo-landing-readme-header-regexp
+(defconst ceamx-eww-github-repo-landing-readme-header-regexp
   (rx line-start
       "• "
       (one-or-more anything) ; SVG icon for the readme
@@ -11910,7 +11910,7 @@ without JavaScript, it does not make sense to use EWW by default.
       line-end)
   "Regular expression matching the header for the README file content.")
 
-(defvar ceamx-eww-github-begin-file-content-regexp
+(defconst ceamx-eww-github-begin-file-content-regexp
   (rx
    (one-or-more digit)
    " lines ("
@@ -11921,7 +11921,7 @@ without JavaScript, it does not make sense to use EWW by default.
   "Regular expression for matching the start of a repo file on GitHub.")
 
 ;; TODO: support formats other than markdown too
-(defvar ceamx-eww-github-footer-text-regexp
+(defconst ceamx-eww-github-footer-text-regexp
   (rx line-start
       (one-or-more anything)            ; SVG of GitHub logo
       " © "
@@ -13202,7 +13202,7 @@ they will also be included in the result."
     (dolist (file (ceamx-list-tangled-init-files))
       (f-delete file))))
 
-(defvar ceamx-literate-config-file (locate-user-emacs-file "config.org"))
+(defconst ceamx-literate-config-file (locate-user-emacs-file "config.org"))
 
 (defun ceamx/tangle (&optional src-file clean)
   "Tangle the Emacs configuration.
