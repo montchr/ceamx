@@ -52,8 +52,8 @@
 ;;; Provide commonly-used interface libraries
 
 ;; Required as dependencies for many packages, either as more recent versions
-;; than those available in Emacs (e.g. `transient 'IIRC), or, including some
-;; (like `nix-mode') who don't seem to declare them.
+;; than those available in Emacs (e.g. ~transient ~IIRC), or, including some
+;; (like ~nix-mode~) who don't seem to declare them.
 
 (package! transient)
 

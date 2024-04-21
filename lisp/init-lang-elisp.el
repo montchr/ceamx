@@ -84,7 +84,7 @@
 
 ;;; Packages
 
-;;;; `eros' :: <https://github.com/xiongtx/eros>
+;;;; ~eros~ :: <https://github.com/xiongtx/eros>
 
 ;;  Evaluation Result OverlayS for Emacs Lisp
 
@@ -107,7 +107,7 @@
       ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
 
-;;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
+;;;; ~suggest~ :: <https://github.com/Wilfred/suggest.el>
 
 ;;  discover elisp functions that do what you want,
 ;;  brought to you by enumerative program synthesis
@@ -117,7 +117,7 @@
   :init
   (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
 
-;;;; `macrostep' :: <https://github.com/emacsorphanage/macrostep>
+;;;; ~macrostep~ :: <https://github.com/emacsorphanage/macrostep>
 
 ;;  "interactive macro-expander for Emacs"
 
@@ -139,7 +139,7 @@ The original function fails in the presence of whitespace after a sexp."
   :init
   (keymap-set emacs-lisp-mode-map "C-c x" #'ceamx/macrostep-expand))
 
-;;; Install `xr' to convert string regexps to `rx' forms
+;;; Install ~xr~ to convert string regexps to ~rx~ forms
 
 ;; <https://github.com/mattiase/xr>
 

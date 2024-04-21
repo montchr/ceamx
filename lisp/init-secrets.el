@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;; GnuPG, pinentry, `auth-source', Unix password store, etc.
+;; GnuPG, pinentry, ~auth-source~, Unix password store, etc.
 
 ;;; Sources:
 
@@ -35,7 +35,7 @@
 (require 'ceamx-paths)
 (require 'lib-common)
 
-;;; Configure secrets lookup with `auth-source' and the Unix password store
+;;; Configure secrets lookup with ~auth-source~ and the Unix password store
 
 ;; Ensure secrets and auth credentials are not stored in plaintext (the default).
 ;;

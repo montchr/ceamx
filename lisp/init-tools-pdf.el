@@ -26,7 +26,7 @@
 
 ;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org>
 
-;; `pdf-tools' should be installed installed via Nixpkgs because it requires
+;; ~pdf-tools~ should be installed installed via Nixpkgs because it requires
 ;; some separate binaries.
 
 ;; TODO: <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>

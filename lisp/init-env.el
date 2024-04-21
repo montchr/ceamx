@@ -45,7 +45,7 @@
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
-;;; Make temporary buffers inherit buffer-local environment variables with `inheritenv'
+;;; Make temporary buffers inherit buffer-local environment variables with ~inheritenv~
 
 ;; <https://github.com/purcell/inheritenv>
 
@@ -70,7 +70,7 @@
   (with-eval-after-load 'eat
     (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
 
-;;; Support integration with Direnv via the `envrc' package
+;;; Support integration with Direnv via the ~envrc~ package
 
 ;; <https://github.com/purcell/envrc>
 ;; <https://direnv.net/>

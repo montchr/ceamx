@@ -32,7 +32,7 @@
 
 ;;; Functions
 
-;;;; Pre-defined filters for `consult-info' searches
+;;;; Pre-defined filters for ~consult-info~ searches
 
 ;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
 (defun ceamx/emacs-info ()
@@ -64,7 +64,7 @@
                  (_ #'consult-info))))
       (command-execute fn))))
 
-;;;; `devdocs' support
+;;;; ~devdocs~ support
 
 (defun +devdocs--doc-directory-exists-p (slug)
   "Whether the directory for the doc SLUG exists."

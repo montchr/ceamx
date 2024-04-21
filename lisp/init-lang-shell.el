@@ -20,8 +20,8 @@
 
 ;;; Commentary:
 
-;; NOTE: Make sure `flycheck-mode' is not enabled in shell script buffers, as
-;; `flymake' will handle it just fine.
+;; NOTE: Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
+;; ~flymake~ will handle it just fine.
 
 ;;; Code:
 

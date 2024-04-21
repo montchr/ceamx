@@ -50,7 +50,7 @@
   (define-keymap :keymap dired-mode-map
     "M-p" #'dired-up-directory))
 
-;;; Provide Dired with polished interface and feature enhancements with `dirvish'
+;;; Provide Dired with polished interface and feature enhancements with ~dirvish~
 
 ;;  <https://github.com/alexluigit/dirvish>
 ;;  <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#Sample-config>
@@ -126,7 +126,7 @@
     "M-e" #'dirvish-emerge-menu
     "M-j" #'dirvish-fd-jump))
 
-;;; Provide addtional syntax highlighting for Dired with `diredfl'
+;;; Provide addtional syntax highlighting for Dired with ~diredfl~
 
 ;; <https://github.com/purcell/diredfl>
 

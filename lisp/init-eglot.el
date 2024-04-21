@@ -73,7 +73,7 @@
 (package! flycheck-eglot
   (add-hook 'eglot-managed-mode-hook #'flycheck-eglot-mode))
 
-;;; `consult-eglot' :: <https://github.com/mohkale/consult-eglot>
+;;; ~consult-eglot~ :: <https://github.com/mohkale/consult-eglot>
 
 (package! consult-eglot
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))

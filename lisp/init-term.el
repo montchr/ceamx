@@ -34,7 +34,7 @@
   :config
   (setopt eshell-scroll-to-bottom-on-input 'this))
 
-;;; `eat' :: <https://codeberg.org/akib/emacs-eat/>
+;;; ~eat~ :: <https://codeberg.org/akib/emacs-eat/>
 
 ;; "Emulate A Terminal"
 

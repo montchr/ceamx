@@ -43,13 +43,13 @@
   ;; No need for all that other nonsense.
   (setopt vc-handled-backends '(Git))
 
-  ;; NOTE: According to the documentation for `diff-hl', the diff algorithm
+  ;; NOTE: According to the documentation for ~diff-hl~, the diff algorithm
   ;; cannot be determined based on the user's global git config =diff.algorithm=
   ;; setting. The website source they linked to has disappeared with no archived
   ;; page available. So I have not verified this for certain.
   (setopt vc-git-diff-switches '("--histogram")))
 
-;;;; `diff-hl' :: <https://github.com/dgutov/diff-hl>
+;;;; ~diff-hl~ :: <https://github.com/dgutov/diff-hl>
 
 ;; <https://github.com/purcell/emacs.d/blob/master/lisp/init-vc.el>
 
@@ -168,19 +168,19 @@
           (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
           date-full date-relative)))))
 
-;;;; `browse-at-remote' :: <https://github.com/rmuslimov/browse-at-remote>
+;;;; ~browse-at-remote~ :: <https://github.com/rmuslimov/browse-at-remote>
 
 (use-package browse-at-remote
   :commands (browse-at-remote)
   :init
   (keymap-set vc-prefix-map "o" #'browse-at-remote))
 
-;;;; `consult-gh' :: <https://github.com/armindarvish/consult-gh>
+;;;; ~consult-gh~ :: <https://github.com/armindarvish/consult-gh>
 
 ;; TODO: look through readme and review settings, add config as desired
 ;;
 ;; [2023-12-28]: I still haven't gotten it to work at all. Searches come up with
-;; nothing and the tool keeps trying to write to the `gh' CLI's config file,
+;; nothing and the tool keeps trying to write to the ~gh~ CLI's config file,
 ;; which is fortunately read-only in the Nix store.
 ;;
 ;; I really wish this tool was usuable but it's not surprising that GitHub would

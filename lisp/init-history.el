@@ -36,7 +36,7 @@
 (require 'ceamx-paths)
 (require 'lib-common)
 
-;;; Record some variables' values with `savehist' [builtin]
+;;; Record some variables' values with ~savehist~ [builtin]
 
 (use-feature! savehist
   :init
@@ -50,13 +50,13 @@
 
   (setopt savehist-autosave-interval 60))
 
-;;; Record point position in buffers with `saveplace' [builtin]
+;;; Record point position in buffers with ~saveplace~ [builtin]
 
 (use-feature! saveplace
   :init
   (save-place-mode))
 
-;;; Record recently-accessed files with `recentf' [builtin]
+;;; Record recently-accessed files with ~recentf~ [builtin]
 
 (use-feature! recentf
   :init
@@ -74,7 +74,7 @@
   (dolist (path '(ceamx-etc-dir ceamx-var-dir))
     (add-to-list 'recentf-exclude path)))
 
-;;; Return to previously-visited buffer positions with `dogears'
+;;; Return to previously-visited buffer positions with ~dogears~
 
 ;; <https://github.com/alphapapa/dogears.el>
 
@@ -116,7 +116,7 @@
 
 ;;;; Increase undo history limits
 
-;; Advice from the author of `undo-fu':
+;; Advice from the author of ~undo-fu~:
 ;;
 ;; > The default undo limits for emacs are quite low _(0.15mb at time of
 ;; > writing)_ undo-tree for example increases these limits.
@@ -133,7 +133,7 @@
 (setopt undo-strong-limit 100663296) ; 96mb.
 (setopt undo-outer-limit 1006632960) ; 960mb.
 
-;;;; Support optional linear undo/redo with `undo-fu'
+;;;; Support optional linear undo/redo with ~undo-fu~
 
 ;; <https://codeberg.org/ideasman42/emacs-undo-fu>
 
@@ -141,11 +141,11 @@
   (keymap-global-set "C-z" #'undo-fu-only-undo)
   (keymap-global-set "C-S-z" #'undo-fu-only-redo))
 
-;;;; Record undo/redo steps across Emacs sessions with `undo-fu-session'
+;;;; Record undo/redo steps across Emacs sessions with ~undo-fu-session~
 
 ;; <https://codeberg.org/ideasman42/emacs-undo-fu-session>
 
-;; NOTE: This is *NOT* just for use with `undo-fu'! It's an essential
+;; NOTE: This is *NOT* just for use with ~undo-fu~! It's an essential
 ;; enhancement to the builtin Emacs undo system as well.
 
 (defvar undo-fu-session-directory
@@ -160,7 +160,7 @@
 
   (undo-fu-session-global-mode))
 
-;;;; Visualize the Emacs undo tree with `vundo' (visual undo)
+;;;; Visualize the Emacs undo tree with ~vundo~ (visual undo)
 
 ;; <https://github.com/casouri/vundo>
 

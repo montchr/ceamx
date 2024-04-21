@@ -138,43 +138,43 @@
 
 ;;;; Use latest versions of some Emacs builtins to satisfy bleeding-edge packages
 
-;; Installing the latest development versions of `eglot' and `magit' (for
+;; Installing the latest development versions of ~eglot~ and ~magit~ (for
 ;; example) comes with the significant caveat that their dependencies often
 ;; track the latest versions of builtin Emacs libraries. Those can be installed
 ;; via GNU ELPA.
 ;;
-;; Since core libraries like `seq' are often dependencies of many other packages
-;; or otherwise loaded immediately (like `eldoc'), installation and activation
+;; Since core libraries like ~seq~ are often dependencies of many other packages
+;; or otherwise loaded immediately (like ~eldoc~), installation and activation
 ;; of the newer versions needs to happen upfront to avoid version conflicts and
 ;; mismatches. For example, we do not want some package loaded earlier in init
-;; to think it is using the builtin version of `seq', while a package loaded
+;; to think it is using the builtin version of ~seq~, while a package loaded
 ;; later in init uses a differnt version. I am not sure how realistic such a
 ;; scenario might be, or whether it would truly pose a problem, but the point is
 ;; that we should aim for consistency.
 ;;
 ;; Oftentimes, these builtins must be unloaded before loading the newer version.
-;; This applies especially to core libraries like `seq' or the
-;; enabled-by-default `global-eldoc-mode' provided by `eldoc', but not
-;; `jsonrpc', since its functionality is specific to more niche features like
-;; inter-process communication in the case of `eglot'.
+;; This applies especially to core libraries like ~seq~ or the
+;; enabled-by-default ~global-eldoc-mode~ provided by ~eldoc~, but not
+;; ~jsonrpc~, since its functionality is specific to more niche features like
+;; inter-process communication in the case of ~eglot~.
 ;;
 ;; A feature must only be unloaded once, *before* loading the version installed
 ;; by Elpaca. Normally, that is not an issue because the init file is only
 ;; loaded once on session startup. But when you are re-loading the init file
 ;; inside a running session, you'd actually end up unloading the version that
 ;; Elpaca loaded. To prevent that, the unloading should happen only once --
-;; during session startup -- so we check for a non-nil value of `after-init-time'.
+;; during session startup -- so we check for a non-nil value of ~after-init-time~.
 ;;
 ;; I don't understand why the Elpaca-installed feature/package only seems to be
 ;; loaded during the initial session startup? Unless the unloading happens
-;; conditionally based on `after-init-time' as described above, every time the
-;; init file is reloaded and `elpaca-process-queues' runs in
-;; `+auto-tangle-reload-init-h', I get a bunch of errors (not warnings!) about
-;; `eglot' and `org' as missing dependencies.
+;; conditionally based on ~after-init-time~ as described above, every time the
+;; init file is reloaded and ~elpaca-process-queues~ runs in
+;; ~+auto-tangle-reload-init-h~, I get a bunch of errors (not warnings!) about
+;; ~eglot~ and ~org~ as missing dependencies.
 
-;;;;; Install the latest version of `seq' builtin library, carefully
+;;;;; Install the latest version of ~seq~ builtin library, carefully
 
-;; `magit' requires a more recent version of `seq' than the version included in
+;; ~magit~ requires a more recent version of ~seq~ than the version included in
 ;; Emacs 29.
 
 ;; Requires special care because unloading it can make other libraries freak out.
@@ -196,16 +196,16 @@
 
 ;;;;; Install the latest version of `jsonrpc' builtin library
 
-;; Required by (and originally extracted from) `eglot'.
+;; Required by (and originally extracted from) ~eglot~.
 
 (elpaca jsonrpc
   (require 'jsonrpc))
 
-;;;;; Install the latest version of `eldoc' builtin library, carefully
+;;;;; Install the latest version of ~eldoc~ builtin library, carefully
 
-;; Required by `eglot'.
+;; Required by ~eglot~.
 
-;; `eldoc' requires a delicate workaround to avoid catastrophy.
+;; ~eldoc~ requires a delicate workaround to avoid catastrophy.
 ;; <https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
 
 (unless after-init-time
@@ -217,7 +217,7 @@
   (require 'eldoc)
   (global-eldoc-mode))
 
-;;;;; Install the latest version of the builtin `eglot' package
+;;;;; Install the latest version of the builtin ~eglot~ package
 
 (unless after-init-time
   (when (featurep 'eglot)
@@ -225,7 +225,7 @@
 
 (elpaca eglot)
 
-;;;;; Install the latest version of Org-Mode (`org')
+;;;;; Install the latest version of Org-Mode (~org~)
 
 (unless after-init-time
   (when (featurep 'org)
@@ -237,9 +237,9 @@
 
 (elpaca-wait)
 
-;;;; Initialize miscellaneous packages adding `use-package' keywords
+;;;; Initialize miscellaneous packages adding ~use-package~ keywords
 
-;; NOTE: `blackout' is still useful even without `use-package'
+;; NOTE: ~blackout~ is still useful even without ~use-package~
 (use-package blackout
   :demand t)
 
@@ -502,11 +502,11 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ** Prevent package.el from enabling all packages before init
 
-When nil and using the builtin package manager, `package-initialize' must be
-invoked in the init process prior to `require'ing any packages installed with
-`package-install'.
+When nil and using the builtin package manager, ~package-initialize~ must be
+invoked in the init process prior to ~require~ing any packages installed with
+~package-install~.
 
-When non-nil, there is no need to invoke `package-initialize'.
+When non-nil, there is no need to invoke ~package-initialize~.
 
 #+begin_src emacs-lisp
 (setq package-enable-at-startup nil)
@@ -1642,7 +1642,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
-;;; Make temporary buffers inherit buffer-local environment variables with `inheritenv'
+;;; Make temporary buffers inherit buffer-local environment variables with ~inheritenv~
 
 ;; <https://github.com/purcell/inheritenv>
 
@@ -1667,7 +1667,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
   (with-eval-after-load 'eat
     (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
 
-;;; Support integration with Direnv via the `envrc' package
+;;; Support integration with Direnv via the ~envrc~ package
 
 ;; <https://github.com/purcell/envrc>
 ;; <https://direnv.net/>
@@ -1835,7 +1835,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 ;;; Commentary:
 
-;; GnuPG, pinentry, `auth-source', Unix password store, etc.
+;; GnuPG, pinentry, ~auth-source~, Unix password store, etc.
 
 ;;; Sources:
 
@@ -1850,7 +1850,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 (require 'ceamx-paths)
 (require 'lib-common)
 
-;;; Configure secrets lookup with `auth-source' and the Unix password store
+;;; Configure secrets lookup with ~auth-source~ and the Unix password store
 
 ;; Ensure secrets and auth credentials are not stored in plaintext (the default).
 ;;
@@ -2027,7 +2027,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 (menu-bar-mode -1)
 
-;;;; Enable the resurrection of frames with `undelete-frame'
+;;;; Enable the resurrection of frames with ~undelete-frame~
 
 (undelete-frame-mode 1)
 
@@ -2310,8 +2310,8 @@ accommodation for varying pixel densities."
 ;;; Provide commonly-used interface libraries
 
 ;; Required as dependencies for many packages, either as more recent versions
-;; than those available in Emacs (e.g. `transient 'IIRC), or, including some
-;; (like `nix-mode') who don't seem to declare them.
+;; than those available in Emacs (e.g. ~transient ~IIRC), or, including some
+;; (like ~nix-mode~) who don't seem to declare them.
 
 (package! transient)
 
@@ -2653,7 +2653,7 @@ accommodation for varying pixel densities."
 (require 'config-ui)
 (require 'lib-common)
 
-;;; Sunrise/sunset interval via `solar' and `circadian'
+;;; Sunrise/sunset interval via ~solar~ and ~circadian~
 
 (use-feature! solar
   :when (eq 'solar ceamx-theme-circadian-interval)
@@ -2928,7 +2928,7 @@ not retain the generic background set by the function
 
 (setq-default text-scale-remap-header-line t)
 
-;;;; Use the `fontaine' package for configuring and managing font presets
+;;;; Use the ~fontaine~ package for configuring and managing font presets
 
 ;; <https://protesilaos.com/emacs/fontaine>
 
@@ -3049,11 +3049,11 @@ not retain the generic background set by the function
 
 (elpaca-wait)
 
-;;;; Enable improved ligature support with the `ligature.el' package
+;;;; Enable improved ligature support with the ~ligature.el~ package
 
 ;; <https://github.com/mickeynp/ligature.el>
 
-;; A better implementation of ligature support than the builtin `prettify-symbols-mode'.
+;; A better implementation of ligature support than the builtin ~prettify-symbols-mode~.
 ;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
 
 (package! ligature
@@ -3124,7 +3124,7 @@ not retain the generic background set by the function
   :config
   (minions-mode 1))
 
-;;;; Show current command and its binding with `keycast'
+;;;; Show current command and its binding with ~keycast~
 
 ;; <https://github.com/tarsius/keycast>
 
@@ -3261,7 +3261,7 @@ not retain the generic background set by the function
 
 (require 'lib-common)
 
-;;; `spacious-padding' :: <https://protesilaos.com/emacs/spacious-padding>
+;;; ~spacious-padding~ :: <https://protesilaos.com/emacs/spacious-padding>
 (use-package spacious-padding
   :demand t
   :commands (spacious-padding-mode)
@@ -3440,7 +3440,7 @@ The buffer will be created if it does not exist."
 
 - Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 
-<karthink> has a helpful summary of `display-buffer' action functions and
+<karthink> has a helpful summary of ~display-buffer~ action functions and
 alist entries in their Emacs configuration, which I am also including here
 for my own reference. Note that this list is not necessarily complete.
 
@@ -3456,7 +3456,7 @@ for my own reference. Note that this list is not necessarily complete.
 - ~display-buffer-at-bottom~ :: Use or pop up a window at the bottom of the selected frame
 - ~display-buffer-pop-up-frame~ :: Show the buffer on a new frame
 - ~display-buffer-in-child-frame~ :: Show the buffer in a child frame
-- ~display-buffer-no-window~ :: Do not display the buffer and have `display-buffer' return nil immediately
+- ~display-buffer-no-window~ :: Do not display the buffer and have ~display-buffer~ return nil immediately
 
 Action alist entries are:
 
@@ -3478,8 +3478,8 @@ Action alist entries are:
     root window) or a function to be called with one argument -
     the chosen window.  The function is supposed to adjust the
     height of the window; its return value is ignored.  Suitable
-    functions are `shrink-window-if-larger-than-buffer' and
-    `fit-window-to-buffer'.
+    functions are ~shrink-window-if-larger-than-buffer~ and
+    ~fit-window-to-buffer~.
 - ~window-width~ :: The value specifies the desired width of th
     window chosen and is either an integer (the total width of
     the window), a floating point number (the fraction of its
@@ -3535,7 +3535,7 @@ Action alist entries are:
            (side . bottom))))
     #+end_src
 
-*** `display-buffer' functions
+*** ~display-buffer~ functions
 
 <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
 
@@ -3744,13 +3744,13 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   (setopt popper-group-function #'popper-group-by-projectile))
 #+end_src
 
-** Restore previous window configurations with `winner-mode' [builtin]
+** Restore previous window configurations with ~winner-mode~ [builtin]
 
 #+begin_src emacs-lisp
 (add-hook 'ceamx-after-init-hook #'winner-mode)
 #+end_src
 
-** Toggle a window's "dedicated" flag with `dedicated-mode'
+** Toggle a window's "dedicated" flag with ~dedicated-mode~
 
 <https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
 
@@ -3759,7 +3759,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   (keymap-global-set "C-c W" #'dedicated-mode))
 #+end_src
 
-** Add "distraction-free" editing with `olivetti-mode'
+** Add "distraction-free" editing with ~olivetti-mode~
 
 <https://github.com/rnkn/olivetti>
 
@@ -3776,7 +3776,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   (setopt golden-ratio-max-width 100))
 #+end_src
 
-** Interactively manage windows with `ace-window'
+** Interactively manage windows with ~ace-window~
 
 <https://github.com/abo-abo/ace-window>
 
@@ -3883,7 +3883,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
 
 *** Disable confusing repeat behaviors
 
-Use "C-x O" instead, bound to `ace-window' currently.
+Use "C-x O" instead, bound to ~ace-window~ currently.
 
 #+begin_src emacs-lisp
 (put 'other-window 'repeat-map nil)
@@ -4521,7 +4521,7 @@ See the Info node [[info:emacs#Matching]]
 (show-paren-mode 1)
 #+end_src
 
-**** Set up a keymap for common usages of `insert-pair'
+**** Set up a keymap for common usages of ~insert-pair~
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-pairs-map
@@ -4593,7 +4593,7 @@ it selectively.
   (add-hook 'on-first-file-hook #'editorconfig-mode))
 #+end_src
 
-***** Prevent `editorconfig' from exploding `org-mode' buffers
+***** Prevent ~editorconfig~ from exploding ~org-mode~ buffers
 
 #+begin_src emacs-lisp
 ;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
@@ -4617,7 +4617,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 <https://github.com/radian-software/apheleia>
 
-In case you run into issues with `web-mode' not updating syntax highlighting
+In case you run into issues with ~web-mode~ not updating syntax highlighting
 after formatting (or other arbitrary modifications):
 <https://github.com/doomemacs/doomemacs/blob/35dc13632b3177b9efedad212f2180f69e756853/modules/editor/format/config.el#L74-L83>
 
@@ -4732,7 +4732,7 @@ recent versions of Emacs:
 I haven't yet found any other package to move arbitrary regions up/down while
 preserving column position.
 
-`move-text-mode' <https://github.com/emacsfodder/move-text>, claims to do
+~move-text-mode~ <https://github.com/emacsfodder/move-text>, claims to do
 this but fails pretty badly, moving the region/selection to the first column
 regardless of its original position.
 #+end_src
@@ -5323,7 +5323,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
         :state ,#'consult--buffer-state))
     (add-to-list 'consult-buffer-sources '+beframe-consult-source)))
 
-;;; Introduce an `activities'-based workflow for frame/tab/window/buffer management
+;;; Introduce an ~activities~-based workflow for frame/tab/window/buffer management
 
 (use-package activities
   :commands ( activities-mode activities-tabs-mode activities-new activities-resume activities-suspend
@@ -5423,7 +5423,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 ;; rules (as of <2024-03-06>).
 (setopt Man-notify-method 'aggressive)
 
-;;; Bind commands to call `consult-info' filtered by commonly-used manual collections
+;;; Bind commands to call ~consult-info~ filtered by commonly-used manual collections
 
 (declare-function consult-info "consult-info")
 
@@ -5437,14 +5437,14 @@ With optional argument FRAME, return the list of buffers of FRAME."
   "C-h I i"  #'consult-info
   "C-h I o"  #'ceamx/org-info)
 
-;;; Peruse local `devdocs' docsets corresponding to the current major-mode
+;;; Peruse local ~devdocs~ docsets corresponding to the current major-mode
 
 ;; <https://github.com/astoff/devdocs.el>
 
-;; NOTE: Must run `devdocs-install' before a docset is available for reference.
+;; NOTE: Must run ~devdocs-install~ before a docset is available for reference.
 ;;
 ;; TODO: Install docsets automatically.
-;;       See `lib-help' for WIP.
+;;       See ~lib-help~ for WIP.
 
 (package! devdocs
   (define-keymap :keymap help-map
@@ -5455,7 +5455,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
   ;; FIXME: on a stale timer! every week! not every session...
   (devdocs-update-all))
 
-;;; Display keyboard macros or latest interactive commands as Elisp via `elmacro'
+;;; Display keyboard macros or latest interactive commands as Elisp via ~elmacro~
 
 ;; <https://github.com/Silex/elmacro>
 
@@ -5477,7 +5477,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
   ;; FIXME: maybe causes errors?
   (setopt elmacro-processor-concatenate-inserts t))
 
-;;; Provide improved alternatives to the builtin `describe-*' utilities with `helpful'
+;;; Provide improved alternatives to the builtin `describe-*' utilities with ~helpful~
 
 ;; <https://github.com/Wilfred/helpful>
 
@@ -5541,7 +5541,7 @@ was printed, and only have ElDoc display if one wasn't.\""
     (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
     (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)))
 
-;;; DISABLED Improve display of hints in an active `repeat-mode' keymap
+;;; DISABLED Improve display of hints in an active ~repeat-mode~ keymap
 
 ;; <https://github.com/karthink/repeat-help>
 
@@ -5623,7 +5623,7 @@ was printed, and only have ElDoc display if one wasn't.\""
 
 ;;; Functions
 
-;;;; Pre-defined filters for `consult-info' searches
+;;;; Pre-defined filters for ~consult-info~ searches
 
 ;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
 (defun ceamx/emacs-info ()
@@ -5655,7 +5655,7 @@ was printed, and only have ElDoc display if one wasn't.\""
                  (_ #'consult-info))))
       (command-execute fn))))
 
-;;;; `devdocs' support
+;;;; ~devdocs~ support
 
 (defun +devdocs--doc-directory-exists-p (slug)
   "Whether the directory for the doc SLUG exists."
@@ -5737,7 +5737,7 @@ DOC is as in `devdocs-install'."
 (require 'ceamx-paths)
 (require 'lib-common)
 
-;;; Record some variables' values with `savehist' [builtin]
+;;; Record some variables' values with ~savehist~ [builtin]
 
 (use-feature! savehist
   :init
@@ -5751,13 +5751,13 @@ DOC is as in `devdocs-install'."
 
   (setopt savehist-autosave-interval 60))
 
-;;; Record point position in buffers with `saveplace' [builtin]
+;;; Record point position in buffers with ~saveplace~ [builtin]
 
 (use-feature! saveplace
   :init
   (save-place-mode))
 
-;;; Record recently-accessed files with `recentf' [builtin]
+;;; Record recently-accessed files with ~recentf~ [builtin]
 
 (use-feature! recentf
   :init
@@ -5775,7 +5775,7 @@ DOC is as in `devdocs-install'."
   (dolist (path '(ceamx-etc-dir ceamx-var-dir))
     (add-to-list 'recentf-exclude path)))
 
-;;; Return to previously-visited buffer positions with `dogears'
+;;; Return to previously-visited buffer positions with ~dogears~
 
 ;; <https://github.com/alphapapa/dogears.el>
 
@@ -5817,7 +5817,7 @@ DOC is as in `devdocs-install'."
 
 ;;;; Increase undo history limits
 
-;; Advice from the author of `undo-fu':
+;; Advice from the author of ~undo-fu~:
 ;;
 ;; > The default undo limits for emacs are quite low _(0.15mb at time of
 ;; > writing)_ undo-tree for example increases these limits.
@@ -5834,7 +5834,7 @@ DOC is as in `devdocs-install'."
 (setopt undo-strong-limit 100663296) ; 96mb.
 (setopt undo-outer-limit 1006632960) ; 960mb.
 
-;;;; Support optional linear undo/redo with `undo-fu'
+;;;; Support optional linear undo/redo with ~undo-fu~
 
 ;; <https://codeberg.org/ideasman42/emacs-undo-fu>
 
@@ -5842,11 +5842,11 @@ DOC is as in `devdocs-install'."
   (keymap-global-set "C-z" #'undo-fu-only-undo)
   (keymap-global-set "C-S-z" #'undo-fu-only-redo))
 
-;;;; Record undo/redo steps across Emacs sessions with `undo-fu-session'
+;;;; Record undo/redo steps across Emacs sessions with ~undo-fu-session~
 
 ;; <https://codeberg.org/ideasman42/emacs-undo-fu-session>
 
-;; NOTE: This is *NOT* just for use with `undo-fu'! It's an essential
+;; NOTE: This is *NOT* just for use with ~undo-fu~! It's an essential
 ;; enhancement to the builtin Emacs undo system as well.
 
 (defvar undo-fu-session-directory
@@ -5861,7 +5861,7 @@ DOC is as in `devdocs-install'."
 
   (undo-fu-session-global-mode))
 
-;;;; Visualize the Emacs undo tree with `vundo' (visual undo)
+;;;; Visualize the Emacs undo tree with ~vundo~ (visual undo)
 
 ;; <https://github.com/casouri/vundo>
 
@@ -6180,7 +6180,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
     "s-x" #'kill-region
     "s-q" #'save-buffers-kill-emacs))
 
-;;; Enable and configure `repeat-mode'
+;;; Enable and configure ~repeat-mode~
 
 (setopt repeat-exit-key "ESC")
 (setopt repeat-exit-timeout 10)
@@ -6193,7 +6193,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 ;; Avoid running mode-hooks too early.
 (add-hook 'ceamx-after-init-hook #'repeat-mode)
 
-;;; Show free keybindings for modkeys or prefixes with `free-keys'
+;;; Show free keybindings for modkeys or prefixes with ~free-keys~
 
 ;; <https://github.com/Fuco1/free-keys>
 
@@ -6222,7 +6222,7 @@ Diabetic experiments with syntactic sugar.
 
 (require 'cl-lib)
 
-;; NOTE: all in-use definitions have been moved to `lib-common'
+;; NOTE: all in-use definitions have been moved to ~lib-common~
 
 ;; FIXME: interface still doesn't feel right...
 ;; TODO: account for remapping (don't prefix)
@@ -6247,8 +6247,8 @@ Diabetic experiments with syntactic sugar.
 ;;   "Apply the function FUNC to key/definition pairs DEFS.
 
 ;; FUNC should accept args KEY and DEF. KEY should be a string
-;; matching `key-valid-p'. DEF is anything that can be a key
-;; definition. See the docstring for `keymap-set' for more info on
+;; matching ~key-valid-p~. DEF is anything that can be a key
+;; definition. See the docstring for ~keymap-set~ for more info on
 ;; accepted values for DEF.
 
 ;; This function does not validate the validity of each KEY/DEF pair
@@ -6807,23 +6807,23 @@ as the CHAR argument to `ceamx-normalize-char'."
 ;; place, in an effort to help these packages reference the final state of all
 ;; keybindings.
 
-;; For example, `which-key' does not seem to like the way that `meow' handles
+;; For example, ~which-key~ does not seem to like the way that ~meow~ handles
 ;; keybindings -- see the documentation for
-;; `meow-keypad-describe-keymap-function' -- displaying only
-;; `which-key-prefix-prefix'. `general.el' behaves similarly, from what I can
+;; ~meow-keypad-describe-keymap-function~ -- displaying only
+;; ~which-key-prefix-prefix~. `general.el' behaves similarly, from what I can
 ;; recall. I suspect this has something to do with key translations, a subject
 ;; with which I am currently unfamiliar.
 
-;; 2024-01-13 UPDATE: My previous note about `which-key' and `meow' interaction
+;; 2024-01-13 UPDATE: My previous note about ~which-key~ and ~meow~ interaction
 ;; makes me wonder if in fact the behavior I was describing was actually Meow's
-;; broken `which-key'-like popups. Still, I have seen the described behavior
+;; broken ~which-key~-like popups. Still, I have seen the described behavior
 ;; from both packages.
 
 ;; I would much rather have some slightly-more-manual method of compiling these
 ;; "cheatsheets" for specific maps in a hydra-like UI. But I don't want to
 ;; entirely sacrifice the usage of builtin keymap functionality for the
 ;; abstractions of hydra. Perhaps there's a way to shadow the keymaps similarly
-;; to what `which-key' does, maybe? (i'm guessing) but with more control?
+;; to what ~which-key~ does, maybe? (i'm guessing) but with more control?
 
 ;;; Code:
 
@@ -7268,7 +7268,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     "M-s k"  #'consult-keep-lines
     "M-s u"  #'consult-focus-lines)
 
-;;;; `isearch' integration
+;;;; ~isearch~ integration
 
   (keymap-global-set "M-s e" #'consult-isearch-history)
 
@@ -7979,7 +7979,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
   :config
   (setopt eshell-scroll-to-bottom-on-input 'this))
 
-;;; `eat' :: <https://codeberg.org/akib/emacs-eat/>
+;;; ~eat~ :: <https://codeberg.org/akib/emacs-eat/>
 
 ;; "Emulate A Terminal"
 
@@ -8052,13 +8052,13 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
   ;; No need for all that other nonsense.
   (setopt vc-handled-backends '(Git))
 
-  ;; NOTE: According to the documentation for `diff-hl', the diff algorithm
+  ;; NOTE: According to the documentation for ~diff-hl~, the diff algorithm
   ;; cannot be determined based on the user's global git config =diff.algorithm=
   ;; setting. The website source they linked to has disappeared with no archived
   ;; page available. So I have not verified this for certain.
   (setopt vc-git-diff-switches '("--histogram")))
 
-;;;; `diff-hl' :: <https://github.com/dgutov/diff-hl>
+;;;; ~diff-hl~ :: <https://github.com/dgutov/diff-hl>
 
 ;; <https://github.com/purcell/emacs.d/blob/master/lisp/init-vc.el>
 
@@ -8177,19 +8177,19 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
           (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
           date-full date-relative)))))
 
-;;;; `browse-at-remote' :: <https://github.com/rmuslimov/browse-at-remote>
+;;;; ~browse-at-remote~ :: <https://github.com/rmuslimov/browse-at-remote>
 
 (use-package browse-at-remote
   :commands (browse-at-remote)
   :init
   (keymap-set vc-prefix-map "o" #'browse-at-remote))
 
-;;;; `consult-gh' :: <https://github.com/armindarvish/consult-gh>
+;;;; ~consult-gh~ :: <https://github.com/armindarvish/consult-gh>
 
 ;; TODO: look through readme and review settings, add config as desired
 ;;
 ;; [2023-12-28]: I still haven't gotten it to work at all. Searches come up with
-;; nothing and the tool keeps trying to write to the `gh' CLI's config file,
+;; nothing and the tool keeps trying to write to the ~gh~ CLI's config file,
 ;; which is fortunately read-only in the Nix store.
 ;;
 ;; I really wish this tool was usuable but it's not surprising that GitHub would
@@ -8255,7 +8255,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 (require 'lib-common)
 
 ;; FIXME: does not close transient when pressing ESC
-;; FIXME: move to configuration for `transient'
+;; FIXME: move to configuration for ~transient~
 (with-eval-after-load 'transient
   (defvar transient-map)
   (declare-function transient-quit-one "transient")
@@ -8730,7 +8730,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
   :init
   (add-hook 'prog-mode-hook #'hl-todo-mode))
 
-;;; `dumb-jump' :: <https://github.com/jacktasia/dumb-jump>
+;;; ~dumb-jump~ :: <https://github.com/jacktasia/dumb-jump>
 ;;  "zero-configuration" jump-to-definition package with support for many langs
 (use-package dumb-jump
   :autoload dumb-jump-xref-activate
@@ -8753,13 +8753,13 @@ Intended for use as a hook callback on `prog-mode-hook'."
     ("l" dumb-jump-quick-look "Quick look")
     ("b" dumb-jump-back "Back")))
 
-;;; `rainbow-delimiters' :: <https://github.com/Fanael/rainbow-delimiters>
+;;; ~rainbow-delimiters~ :: <https://github.com/Fanael/rainbow-delimiters>
 (use-package rainbow-delimiters
   :commands (rainbow-delimiters-mode)
   :init
   (add-hook 'ceamx-lisp-init-hook #'rainbow-delimiters-mode))
 
-;;; `repl-toggle' :: <https://git.sr.ht/~tomterl/repl-toggle>
+;;; ~repl-toggle~ :: <https://git.sr.ht/~tomterl/repl-toggle>
 ;;  Switch between `prog-mode' buffers and their corresponding REPLs.
 ;; FIXME: "cannot load"
 ;; (use-package repl-toggle
@@ -8824,17 +8824,17 @@ Intended for use as a hook callback on `prog-mode-hook'."
 ;;;; Mode Association:
 
 ;; NOTE: This feature is intended to be loaded *after* all other language
-;;       packages have been installed so that `treesit-auto' it can override `auto-mode-alist'.
+;;       packages have been installed so that ~treesit-auto~ it can override ~auto-mode-alist~.
 
 ;;  By default, Emacs plays it safe with tree-sitter language support so as not
 ;;  to override legacy mode file extension associations. This makes sense as a
-;;  default, but it's a pain to have to override `auto-mode-alist' for every
+;;  default, but it's a pain to have to override ~auto-mode-alist~ for every
 ;;  language individually.
 ;;
-;;  `treesit-auto' is pretty smart about how it handles these behaviors; its
+;;  ~treesit-auto~ is pretty smart about how it handles these behaviors; its
 ;;  readme provides more in-depth details.
 
-;;  In short, `global-treesit-auto-mode' will:
+;;  In short, ~global-treesit-auto-mode~ will:
 ;;
 ;;  - Automatically switch to <name>-ts-mode when the grammar for <name> is installed
 ;;  - Stick with <name>-mode if the grammar isn’t installed
@@ -8850,13 +8850,13 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 (require 'lib-common)
 
-;;; Automatically use available `treesit' modes via `treesit-auto'
+;;; Automatically use available ~treesit~ modes via ~treesit-auto~
 
 ;; <https://github.com/renzmann/treesit-auto>
 
 ;; NOTE: This package does *not* automatically manage mode-hook translation.
 ;; Those should be managed manually on a case-by-case basis. For example,
-;; `nix-ts-mode-hook' does not currently inherit the value of `nix-mode-hook'.
+;; ~nix-ts-mode-hook~ does not currently inherit the value of ~nix-mode-hook~.
 ;; Some Tree-Sitter modes, however, still derive from their non-Tree-Sitter
 ;; predecessor, and so will also run that mode's hooks in addition to its own.
 
@@ -9412,7 +9412,7 @@ lists."
 
 ;;; Packages
 
-;;;; `eros' :: <https://github.com/xiongtx/eros>
+;;;; ~eros~ :: <https://github.com/xiongtx/eros>
 
 ;;  Evaluation Result OverlayS for Emacs Lisp
 
@@ -9435,7 +9435,7 @@ lists."
       ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
 
-;;;; `suggest' :: <https://github.com/Wilfred/suggest.el>
+;;;; ~suggest~ :: <https://github.com/Wilfred/suggest.el>
 
 ;;  discover elisp functions that do what you want,
 ;;  brought to you by enumerative program synthesis
@@ -9445,7 +9445,7 @@ lists."
   :init
   (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
 
-;;;; `macrostep' :: <https://github.com/emacsorphanage/macrostep>
+;;;; ~macrostep~ :: <https://github.com/emacsorphanage/macrostep>
 
 ;;  "interactive macro-expander for Emacs"
 
@@ -9467,7 +9467,7 @@ The original function fails in the presence of whitespace after a sexp."
   :init
   (keymap-set emacs-lisp-mode-map "C-c x" #'ceamx/macrostep-expand))
 
-;;; Install `xr' to convert string regexps to `rx' forms
+;;; Install ~xr~ to convert string regexps to ~rx~ forms
 
 ;; <https://github.com/mattiase/xr>
 
@@ -9682,7 +9682,7 @@ keywords are supported:
 (package! flycheck-eglot
   (add-hook 'eglot-managed-mode-hook #'flycheck-eglot-mode))
 
-;;; `consult-eglot' :: <https://github.com/mohkale/consult-eglot>
+;;; ~consult-eglot~ :: <https://github.com/mohkale/consult-eglot>
 
 (package! consult-eglot
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
@@ -9728,7 +9728,7 @@ keywords are supported:
 
 ;;; JSON
 
-;;;; Navigate arborescent JSON structures with `json-navigator'
+;;;; Navigate arborescent JSON structures with ~json-navigator~
 
 ;; <https://github.com/DamienCassou/json-navigator>
 
@@ -9802,7 +9802,7 @@ keywords are supported:
 
 ;;; Commentary:
 
-;; Configuration for `web-mode' and related.
+;; Configuration for ~web-mode~ and related.
 
 ;; <https://web-mode.org/>
 
@@ -9988,7 +9988,7 @@ keywords are supported:
 
 (require 'lib-common)
 
-;;; Install `markdown-mode'
+;;; Install ~markdown-mode~
 
 ;; <https://github.com/jrblevin/markdown-mode>
 
@@ -10117,22 +10117,22 @@ Returns process exit code."
 (require 'lib-common)
 (require 'lib-help)
 
-;;; Install and configure `nix-mode'
+;;; Install and configure ~nix-mode~
 
 ;; <https://github.com/NixOS/nix-mode>
 
-;; NOTE: `nix-mode' should not be loaded when using `nix-ts-mode'.
+;; NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 (package! nix-mode
   (require 'nix-mode)
 
   (add-hook 'nix-mode-hook #'eglot-ensure))
 
-;;; DISABLED Install and configure `nix-ts-mode'
+;;; DISABLED Install and configure ~nix-ts-mode~
 
 ;; <https://github.com/remi-gelinas/nix-ts-mode>
 
-;; FIXME: Disabled because it is currently inferior to `nix-mode' in a few ways,
+;; FIXME: Disabled because it is currently inferior to ~nix-mode~ in a few ways,
 ;; especially broken indentation and pairing:
 ;; <https://github.com/remi-gelinas/nix-ts-mode/issues/14>
 ;; <https://github.com/remi-gelinas/nix-ts-mode/pull/15>
@@ -10172,7 +10172,7 @@ Returns process exit code."
 (with-eval-after-load 'lsp-nix
   (setopt lsp-nix-nil-formatter nil))
 
-;;; Install `devdocs' Nix docset
+;;; Install ~devdocs~ Nix docset
 
 (def-hook! +devdocs-install-nix-docs ()
   '(nix-mode-hook nix-ts-mode-hook)
@@ -10181,9 +10181,9 @@ Returns process exit code."
 
 ;;; Keybindings
 
-;; These are too annoying to maintain for both `nix-mode' and `nix-ts-mode'
-;; because `nix-ts-mode' does not derive from `nix-mode' and I'm not using it
-;; right now anyway.  So mode-specific keybindings stay in `nix-mode' only.
+;; These are too annoying to maintain for both ~nix-mode~ and ~nix-ts-mode~
+;; because ~nix-ts-mode~ does not derive from ~nix-mode~ and I'm not using it
+;; right now anyway.  So mode-specific keybindings stay in ~nix-mode~ only.
 
 (require 'config-keys)
 
@@ -10236,7 +10236,7 @@ Returns process exit code."
 
 ;;; Code:
 
-;; TODO: move to `init-lang-misc'
+;; TODO: move to ~init-lang-misc~
 
 (use-package nushell-mode
 
@@ -10373,8 +10373,8 @@ Returns process exit code."
 
 ;;; Commentary:
 
-;; NOTE: Make sure `flycheck-mode' is not enabled in shell script buffers, as
-;; `flymake' will handle it just fine.
+;; NOTE: Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
+;; ~flymake~ will handle it just fine.
 
 ;;; Code:
 
@@ -10769,7 +10769,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
   (setopt denote-date-format nil)       ; read doc string
   ;; By default, we do not show the context of links.  We just display
   ;; file names.  This provides a more informative view.
-  ;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
+  ;; Also see ~denote-link-backlinks-display-buffer-action~ which is a bit
   ;; advanced.
   (setopt denote-backlinks-show-context t)
   ;; If you use Markdown or plain text files (Org renders links as buttons
@@ -10822,12 +10822,12 @@ Else create a new file."
                    :kill-buffer t
                    :jump-to-captured t)))
 
-  ;; Also check the commands `denote-link-after-creating',
-  ;; `denote-link-or-create'.  You may want to bind them to keys as well.
+  ;; Also check the commands ~denote-link-after-creating~,
+  ;; ~denote-link-or-create~.  You may want to bind them to keys as well.
 
   ;; If you want to have Denote commands available via a right click
   ;; context menu, use the following and then enable
-  ;; `context-menu-mode'.
+  ;; ~context-menu-mode~.
   (add-hook 'context-menu-functions #'denote-context-menu))
 
 
@@ -10954,7 +10954,7 @@ Prevent TAB behavior oddities at the end of headlines.
 
 When nil, pressing TAB at the end of a headline whose content is folded
 will act on the folded (non-visible) area instead of the headline, which
-may cause unexpected changes to the content (depending on the setting of `org-catch-invisible-edits'.
+may cause unexpected changes to the content (depending on the setting of ~org-catch-invisible-edits~.
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-special-ctrl-a/e t)
@@ -11165,7 +11165,7 @@ I don't think this is working properly...
   "u" #'outline-up-heading)
 #+end_src
 
-*** Enforce the correct `tab-width' to prevent errors
+*** Enforce the correct ~tab-width~ to prevent errors
 
 <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
 
@@ -11195,7 +11195,7 @@ Intended for use as a local hook function on
 
 *** Packages
 
-**** ~doct~: `org-capture' template definer
+**** ~doct~: ~org-capture~ template definer
 
 <https://github.com/progfolio/doct>
 
@@ -11271,7 +11271,7 @@ Paraphrasing from the README:
 
 This package should be loaded immediately. We never know when the user will
 hit =C-M-y=, so we always have to store the current buffer on kills. You can
-remove the `require' and have lazy/deferred loading, but then the first
+remove the ~require~ and have lazy/deferred loading, but then the first
 time you hit =C-M-y= after startup, you’ll get a message that you have to
 kill the selection again.
 
@@ -11557,7 +11557,7 @@ CLOSED: [2024-03-18 Mon 23:52]
   (define-keymap :keymap dired-mode-map
     "M-p" #'dired-up-directory))
 
-;;; Provide Dired with polished interface and feature enhancements with `dirvish'
+;;; Provide Dired with polished interface and feature enhancements with ~dirvish~
 
 ;;  <https://github.com/alexluigit/dirvish>
 ;;  <https://github.com/alexluigit/dirvish/blob/main/docs/CUSTOMIZING.org#Sample-config>
@@ -11633,7 +11633,7 @@ CLOSED: [2024-03-18 Mon 23:52]
     "M-e" #'dirvish-emerge-menu
     "M-j" #'dirvish-fd-jump))
 
-;;; Provide addtional syntax highlighting for Dired with `diredfl'
+;;; Provide addtional syntax highlighting for Dired with ~diredfl~
 
 ;; <https://github.com/purcell/diredfl>
 
@@ -12368,7 +12368,7 @@ Providing integrations with LLMs and other simulation machines.
 
 ;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org>
 
-;; `pdf-tools' should be installed installed via Nixpkgs because it requires
+;; ~pdf-tools~ should be installed installed via Nixpkgs because it requires
 ;; some separate binaries.
 
 ;; TODO: <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
@@ -12445,7 +12445,7 @@ Providing integrations with LLMs and other simulation machines.
 
 (require 'lib-common)
 
-;;;; `zone' [builtin]
+;;;; ~zone~ [builtin]
 
 ;; <https://www.emacswiki.org/emacs/ZoneMode>
 

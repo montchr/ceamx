@@ -139,43 +139,43 @@
 
 ;;;; Use latest versions of some Emacs builtins to satisfy bleeding-edge packages
 
-;; Installing the latest development versions of `eglot' and `magit' (for
+;; Installing the latest development versions of ~eglot~ and ~magit~ (for
 ;; example) comes with the significant caveat that their dependencies often
 ;; track the latest versions of builtin Emacs libraries. Those can be installed
 ;; via GNU ELPA.
 ;;
-;; Since core libraries like `seq' are often dependencies of many other packages
-;; or otherwise loaded immediately (like `eldoc'), installation and activation
+;; Since core libraries like ~seq~ are often dependencies of many other packages
+;; or otherwise loaded immediately (like ~eldoc~), installation and activation
 ;; of the newer versions needs to happen upfront to avoid version conflicts and
 ;; mismatches. For example, we do not want some package loaded earlier in init
-;; to think it is using the builtin version of `seq', while a package loaded
+;; to think it is using the builtin version of ~seq~, while a package loaded
 ;; later in init uses a differnt version. I am not sure how realistic such a
 ;; scenario might be, or whether it would truly pose a problem, but the point is
 ;; that we should aim for consistency.
 ;;
 ;; Oftentimes, these builtins must be unloaded before loading the newer version.
-;; This applies especially to core libraries like `seq' or the
-;; enabled-by-default `global-eldoc-mode' provided by `eldoc', but not
-;; `jsonrpc', since its functionality is specific to more niche features like
-;; inter-process communication in the case of `eglot'.
+;; This applies especially to core libraries like ~seq~ or the
+;; enabled-by-default ~global-eldoc-mode~ provided by ~eldoc~, but not
+;; ~jsonrpc~, since its functionality is specific to more niche features like
+;; inter-process communication in the case of ~eglot~.
 ;;
 ;; A feature must only be unloaded once, *before* loading the version installed
 ;; by Elpaca. Normally, that is not an issue because the init file is only
 ;; loaded once on session startup. But when you are re-loading the init file
 ;; inside a running session, you'd actually end up unloading the version that
 ;; Elpaca loaded. To prevent that, the unloading should happen only once --
-;; during session startup -- so we check for a non-nil value of `after-init-time'.
+;; during session startup -- so we check for a non-nil value of ~after-init-time~.
 ;;
 ;; I don't understand why the Elpaca-installed feature/package only seems to be
 ;; loaded during the initial session startup? Unless the unloading happens
-;; conditionally based on `after-init-time' as described above, every time the
-;; init file is reloaded and `elpaca-process-queues' runs in
-;; `+auto-tangle-reload-init-h', I get a bunch of errors (not warnings!) about
-;; `eglot' and `org' as missing dependencies.
+;; conditionally based on ~after-init-time~ as described above, every time the
+;; init file is reloaded and ~elpaca-process-queues~ runs in
+;; ~+auto-tangle-reload-init-h~, I get a bunch of errors (not warnings!) about
+;; ~eglot~ and ~org~ as missing dependencies.
 
-;;;;; Install the latest version of `seq' builtin library, carefully
+;;;;; Install the latest version of ~seq~ builtin library, carefully
 
-;; `magit' requires a more recent version of `seq' than the version included in
+;; ~magit~ requires a more recent version of ~seq~ than the version included in
 ;; Emacs 29.
 
 ;; Requires special care because unloading it can make other libraries freak out.
@@ -197,16 +197,16 @@
 
 ;;;;; Install the latest version of `jsonrpc' builtin library
 
-;; Required by (and originally extracted from) `eglot'.
+;; Required by (and originally extracted from) ~eglot~.
 
 (elpaca jsonrpc
   (require 'jsonrpc))
 
-;;;;; Install the latest version of `eldoc' builtin library, carefully
+;;;;; Install the latest version of ~eldoc~ builtin library, carefully
 
-;; Required by `eglot'.
+;; Required by ~eglot~.
 
-;; `eldoc' requires a delicate workaround to avoid catastrophy.
+;; ~eldoc~ requires a delicate workaround to avoid catastrophy.
 ;; <https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
 
 (unless after-init-time
@@ -218,7 +218,7 @@
   (require 'eldoc)
   (global-eldoc-mode))
 
-;;;;; Install the latest version of the builtin `eglot' package
+;;;;; Install the latest version of the builtin ~eglot~ package
 
 (unless after-init-time
   (when (featurep 'eglot)
@@ -226,7 +226,7 @@
 
 (elpaca eglot)
 
-;;;;; Install the latest version of Org-Mode (`org')
+;;;;; Install the latest version of Org-Mode (~org~)
 
 (unless after-init-time
   (when (featurep 'org)
@@ -238,9 +238,9 @@
 
 (elpaca-wait)
 
-;;;; Initialize miscellaneous packages adding `use-package' keywords
+;;;; Initialize miscellaneous packages adding ~use-package~ keywords
 
-;; NOTE: `blackout' is still useful even without `use-package'
+;; NOTE: ~blackout~ is still useful even without ~use-package~
 (use-package blackout
   :demand t)
 

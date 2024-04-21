@@ -28,7 +28,7 @@
 
 ;;; JSON
 
-;;;; Navigate arborescent JSON structures with `json-navigator'
+;;;; Navigate arborescent JSON structures with ~json-navigator~
 
 ;; <https://github.com/DamienCassou/json-navigator>
 

@@ -36,17 +36,17 @@
 ;;;; Mode Association:
 
 ;; NOTE: This feature is intended to be loaded *after* all other language
-;;       packages have been installed so that `treesit-auto' it can override `auto-mode-alist'.
+;;       packages have been installed so that ~treesit-auto~ it can override ~auto-mode-alist~.
 
 ;;  By default, Emacs plays it safe with tree-sitter language support so as not
 ;;  to override legacy mode file extension associations. This makes sense as a
-;;  default, but it's a pain to have to override `auto-mode-alist' for every
+;;  default, but it's a pain to have to override ~auto-mode-alist~ for every
 ;;  language individually.
 ;;
-;;  `treesit-auto' is pretty smart about how it handles these behaviors; its
+;;  ~treesit-auto~ is pretty smart about how it handles these behaviors; its
 ;;  readme provides more in-depth details.
 
-;;  In short, `global-treesit-auto-mode' will:
+;;  In short, ~global-treesit-auto-mode~ will:
 ;;
 ;;  - Automatically switch to <name>-ts-mode when the grammar for <name> is installed
 ;;  - Stick with <name>-mode if the grammar isn’t installed
@@ -62,13 +62,13 @@
 
 (require 'lib-common)
 
-;;; Automatically use available `treesit' modes via `treesit-auto'
+;;; Automatically use available ~treesit~ modes via ~treesit-auto~
 
 ;; <https://github.com/renzmann/treesit-auto>
 
 ;; NOTE: This package does *not* automatically manage mode-hook translation.
 ;; Those should be managed manually on a case-by-case basis. For example,
-;; `nix-ts-mode-hook' does not currently inherit the value of `nix-mode-hook'.
+;; ~nix-ts-mode-hook~ does not currently inherit the value of ~nix-mode-hook~.
 ;; Some Tree-Sitter modes, however, still derive from their non-Tree-Sitter
 ;; predecessor, and so will also run that mode's hooks in addition to its own.
 

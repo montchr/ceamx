@@ -29,7 +29,7 @@
 (require 'config-ui)
 (require 'lib-common)
 
-;;; Sunrise/sunset interval via `solar' and `circadian'
+;;; Sunrise/sunset interval via ~solar~ and ~circadian~
 
 (use-feature! solar
   :when (eq 'solar ceamx-theme-circadian-interval)

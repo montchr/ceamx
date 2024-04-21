@@ -28,7 +28,7 @@
 
 (require 'lib-common)
 
-;;; Install `markdown-mode'
+;;; Install ~markdown-mode~
 
 ;; <https://github.com/jrblevin/markdown-mode>
 

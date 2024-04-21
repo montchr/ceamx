@@ -77,7 +77,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
         :state ,#'consult--buffer-state))
     (add-to-list 'consult-buffer-sources '+beframe-consult-source)))
 
-;;; Introduce an `activities'-based workflow for frame/tab/window/buffer management
+;;; Introduce an ~activities~-based workflow for frame/tab/window/buffer management
 
 (use-package activities
   :commands ( activities-mode activities-tabs-mode activities-new activities-resume activities-suspend

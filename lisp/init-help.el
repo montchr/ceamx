@@ -39,7 +39,7 @@
 ;; rules (as of <2024-03-06>).
 (setopt Man-notify-method 'aggressive)
 
-;;; Bind commands to call `consult-info' filtered by commonly-used manual collections
+;;; Bind commands to call ~consult-info~ filtered by commonly-used manual collections
 
 (declare-function consult-info "consult-info")
 
@@ -53,14 +53,14 @@
   "C-h I i"  #'consult-info
   "C-h I o"  #'ceamx/org-info)
 
-;;; Peruse local `devdocs' docsets corresponding to the current major-mode
+;;; Peruse local ~devdocs~ docsets corresponding to the current major-mode
 
 ;; <https://github.com/astoff/devdocs.el>
 
-;; NOTE: Must run `devdocs-install' before a docset is available for reference.
+;; NOTE: Must run ~devdocs-install~ before a docset is available for reference.
 ;;
 ;; TODO: Install docsets automatically.
-;;       See `lib-help' for WIP.
+;;       See ~lib-help~ for WIP.
 
 (package! devdocs
   (define-keymap :keymap help-map
@@ -71,7 +71,7 @@
   ;; FIXME: on a stale timer! every week! not every session...
   (devdocs-update-all))
 
-;;; Display keyboard macros or latest interactive commands as Elisp via `elmacro'
+;;; Display keyboard macros or latest interactive commands as Elisp via ~elmacro~
 
 ;; <https://github.com/Silex/elmacro>
 
@@ -93,7 +93,7 @@
   ;; FIXME: maybe causes errors?
   (setopt elmacro-processor-concatenate-inserts t))
 
-;;; Provide improved alternatives to the builtin `describe-*' utilities with `helpful'
+;;; Provide improved alternatives to the builtin `describe-*' utilities with ~helpful~
 
 ;; <https://github.com/Wilfred/helpful>
 
@@ -157,7 +157,7 @@ was printed, and only have ElDoc display if one wasn't.\""
     (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
     (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)))
 
-;;; DISABLED Improve display of hints in an active `repeat-mode' keymap
+;;; DISABLED Improve display of hints in an active ~repeat-mode~ keymap
 
 ;; <https://github.com/karthink/repeat-help>
 

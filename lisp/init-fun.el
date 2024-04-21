@@ -25,7 +25,7 @@
 
 (require 'lib-common)
 
-;;;; `zone' [builtin]
+;;;; ~zone~ [builtin]
 
 ;; <https://www.emacswiki.org/emacs/ZoneMode>
 

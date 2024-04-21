@@ -30,22 +30,22 @@
 (require 'lib-common)
 (require 'lib-help)
 
-;;; Install and configure `nix-mode'
+;;; Install and configure ~nix-mode~
 
 ;; <https://github.com/NixOS/nix-mode>
 
-;; NOTE: `nix-mode' should not be loaded when using `nix-ts-mode'.
+;; NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 (package! nix-mode
   (require 'nix-mode)
 
   (add-hook 'nix-mode-hook #'eglot-ensure))
 
-;;; DISABLED Install and configure `nix-ts-mode'
+;;; DISABLED Install and configure ~nix-ts-mode~
 
 ;; <https://github.com/remi-gelinas/nix-ts-mode>
 
-;; FIXME: Disabled because it is currently inferior to `nix-mode' in a few ways,
+;; FIXME: Disabled because it is currently inferior to ~nix-mode~ in a few ways,
 ;; especially broken indentation and pairing:
 ;; <https://github.com/remi-gelinas/nix-ts-mode/issues/14>
 ;; <https://github.com/remi-gelinas/nix-ts-mode/pull/15>
@@ -85,7 +85,7 @@
 (with-eval-after-load 'lsp-nix
   (setopt lsp-nix-nil-formatter nil))
 
-;;; Install `devdocs' Nix docset
+;;; Install ~devdocs~ Nix docset
 
 (def-hook! +devdocs-install-nix-docs ()
   '(nix-mode-hook nix-ts-mode-hook)
@@ -94,9 +94,9 @@
 
 ;;; Keybindings
 
-;; These are too annoying to maintain for both `nix-mode' and `nix-ts-mode'
-;; because `nix-ts-mode' does not derive from `nix-mode' and I'm not using it
-;; right now anyway.  So mode-specific keybindings stay in `nix-mode' only.
+;; These are too annoying to maintain for both ~nix-mode~ and ~nix-ts-mode~
+;; because ~nix-ts-mode~ does not derive from ~nix-mode~ and I'm not using it
+;; right now anyway.  So mode-specific keybindings stay in ~nix-mode~ only.
 
 (require 'config-keys)
 

@@ -28,7 +28,7 @@
 
 (require 'lib-common)
 
-;;; `spacious-padding' :: <https://protesilaos.com/emacs/spacious-padding>
+;;; ~spacious-padding~ :: <https://protesilaos.com/emacs/spacious-padding>
 (use-package spacious-padding
   :demand t
   :commands (spacious-padding-mode)

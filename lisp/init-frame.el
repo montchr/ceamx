@@ -68,7 +68,7 @@
 
 (menu-bar-mode -1)
 
-;;;; Enable the resurrection of frames with `undelete-frame'
+;;;; Enable the resurrection of frames with ~undelete-frame~
 
 (undelete-frame-mode 1)
 

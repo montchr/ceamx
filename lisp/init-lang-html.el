@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;; Configuration for `web-mode' and related.
+;; Configuration for ~web-mode~ and related.
 
 ;; <https://web-mode.org/>
 

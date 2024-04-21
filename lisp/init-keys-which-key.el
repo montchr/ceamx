@@ -24,23 +24,23 @@
 ;; place, in an effort to help these packages reference the final state of all
 ;; keybindings.
 
-;; For example, `which-key' does not seem to like the way that `meow' handles
+;; For example, ~which-key~ does not seem to like the way that ~meow~ handles
 ;; keybindings -- see the documentation for
-;; `meow-keypad-describe-keymap-function' -- displaying only
-;; `which-key-prefix-prefix'. `general.el' behaves similarly, from what I can
+;; ~meow-keypad-describe-keymap-function~ -- displaying only
+;; ~which-key-prefix-prefix~. `general.el' behaves similarly, from what I can
 ;; recall. I suspect this has something to do with key translations, a subject
 ;; with which I am currently unfamiliar.
 
-;; 2024-01-13 UPDATE: My previous note about `which-key' and `meow' interaction
+;; 2024-01-13 UPDATE: My previous note about ~which-key~ and ~meow~ interaction
 ;; makes me wonder if in fact the behavior I was describing was actually Meow's
-;; broken `which-key'-like popups. Still, I have seen the described behavior
+;; broken ~which-key~-like popups. Still, I have seen the described behavior
 ;; from both packages.
 
 ;; I would much rather have some slightly-more-manual method of compiling these
 ;; "cheatsheets" for specific maps in a hydra-like UI. But I don't want to
 ;; entirely sacrifice the usage of builtin keymap functionality for the
 ;; abstractions of hydra. Perhaps there's a way to shadow the keymaps similarly
-;; to what `which-key' does, maybe? (i'm guessing) but with more control?
+;; to what ~which-key~ does, maybe? (i'm guessing) but with more control?
 
 ;;; Code:
 

@@ -98,7 +98,7 @@
     "M-g I"  #'consult-imenu-multi
 
     ;; M-s bindings (search-map)
-    "M-s d"  #'consult-fd               ; or `consult-find'
+    "M-s d"  #'consult-fd               ; or ~consult-find~
     "M-s D"  #'consult-locate
     "M-s g"  #'consult-ripgrep
     "M-s G"  #'consult-git-grep
@@ -107,7 +107,7 @@
     "M-s k"  #'consult-keep-lines
     "M-s u"  #'consult-focus-lines)
 
-;;;; `isearch' integration
+;;;; ~isearch~ integration
 
   (keymap-global-set "M-s e" #'consult-isearch-history)
 

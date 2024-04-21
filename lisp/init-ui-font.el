@@ -40,7 +40,7 @@
 
 (setq-default text-scale-remap-header-line t)
 
-;;;; Use the `fontaine' package for configuring and managing font presets
+;;;; Use the ~fontaine~ package for configuring and managing font presets
 
 ;; <https://protesilaos.com/emacs/fontaine>
 
@@ -161,11 +161,11 @@
 
 (elpaca-wait)
 
-;;;; Enable improved ligature support with the `ligature.el' package
+;;;; Enable improved ligature support with the ~ligature.el~ package
 
 ;; <https://github.com/mickeynp/ligature.el>
 
-;; A better implementation of ligature support than the builtin `prettify-symbols-mode'.
+;; A better implementation of ligature support than the builtin ~prettify-symbols-mode~.
 ;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
 
 (package! ligature

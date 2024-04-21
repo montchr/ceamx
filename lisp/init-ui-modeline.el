@@ -43,7 +43,7 @@
   :config
   (minions-mode 1))
 
-;;;; Show current command and its binding with `keycast'
+;;;; Show current command and its binding with ~keycast~
 
 ;; <https://github.com/tarsius/keycast>
 

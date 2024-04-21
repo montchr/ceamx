@@ -65,7 +65,7 @@
     "s-x" #'kill-region
     "s-q" #'save-buffers-kill-emacs))
 
-;;; Enable and configure `repeat-mode'
+;;; Enable and configure ~repeat-mode~
 
 (setopt repeat-exit-key "ESC")
 (setopt repeat-exit-timeout 10)
@@ -78,7 +78,7 @@
 ;; Avoid running mode-hooks too early.
 (add-hook 'ceamx-after-init-hook #'repeat-mode)
 
-;;; Show free keybindings for modkeys or prefixes with `free-keys'
+;;; Show free keybindings for modkeys or prefixes with ~free-keys~
 
 ;; <https://github.com/Fuco1/free-keys>
 

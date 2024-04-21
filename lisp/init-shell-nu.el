@@ -26,7 +26,7 @@
 
 ;;; Code:
 
-;; TODO: move to `init-lang-misc'
+;; TODO: move to ~init-lang-misc~
 
 (use-package nushell-mode
 

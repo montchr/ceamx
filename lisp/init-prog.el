@@ -65,7 +65,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
   :init
   (add-hook 'prog-mode-hook #'hl-todo-mode))
 
-;;; `dumb-jump' :: <https://github.com/jacktasia/dumb-jump>
+;;; ~dumb-jump~ :: <https://github.com/jacktasia/dumb-jump>
 ;;  "zero-configuration" jump-to-definition package with support for many langs
 (use-package dumb-jump
   :autoload dumb-jump-xref-activate
@@ -88,13 +88,13 @@ Intended for use as a hook callback on `prog-mode-hook'."
     ("l" dumb-jump-quick-look "Quick look")
     ("b" dumb-jump-back "Back")))
 
-;;; `rainbow-delimiters' :: <https://github.com/Fanael/rainbow-delimiters>
+;;; ~rainbow-delimiters~ :: <https://github.com/Fanael/rainbow-delimiters>
 (use-package rainbow-delimiters
   :commands (rainbow-delimiters-mode)
   :init
   (add-hook 'ceamx-lisp-init-hook #'rainbow-delimiters-mode))
 
-;;; `repl-toggle' :: <https://git.sr.ht/~tomterl/repl-toggle>
+;;; ~repl-toggle~ :: <https://git.sr.ht/~tomterl/repl-toggle>
 ;;  Switch between `prog-mode' buffers and their corresponding REPLs.
 ;; FIXME: "cannot load"
 ;; (use-package repl-toggle

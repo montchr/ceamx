@@ -41,7 +41,7 @@
   (setopt denote-date-format nil)       ; read doc string
   ;; By default, we do not show the context of links.  We just display
   ;; file names.  This provides a more informative view.
-  ;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
+  ;; Also see ~denote-link-backlinks-display-buffer-action~ which is a bit
   ;; advanced.
   (setopt denote-backlinks-show-context t)
   ;; If you use Markdown or plain text files (Org renders links as buttons
@@ -94,12 +94,12 @@ Else create a new file."
                    :kill-buffer t
                    :jump-to-captured t)))
 
-  ;; Also check the commands `denote-link-after-creating',
-  ;; `denote-link-or-create'.  You may want to bind them to keys as well.
+  ;; Also check the commands ~denote-link-after-creating~,
+  ;; ~denote-link-or-create~.  You may want to bind them to keys as well.
 
   ;; If you want to have Denote commands available via a right click
   ;; context menu, use the following and then enable
-  ;; `context-menu-mode'.
+  ;; ~context-menu-mode~.
   (add-hook 'context-menu-functions #'denote-context-menu))
 
 
