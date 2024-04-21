@@ -32,8 +32,10 @@ org-mode
 (title & "#+title: " p n "#+author: " p n "#+language: " p n n)
 
 (litfile & "\
-#+name: " (p "FEATURE-NAME" name) "-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/" name ".el
+** =lisp/" (p "FEATURE-NAME" name) ".el=
+
+#+name: " name "-file
+#+begin_src emacs-lisp :comments no :tangle lisp/" name ".el
 <<file-prop-line(feature=\"" name "\",desc=\"" (p "FEATURE DESCRIPTION" desc) "\")>>
 
 ;; Copyright (c) " (p "2022-") (format-time-string "%Y") "  " (i cdomat) "
@@ -52,18 +54,17 @@ org-mode
 <<file-footer(feature=\"" name "\")>>
 #+end_src
 
-
-*** Code: =" name ".el=
-:PROPERTIES:
-:header-args: :noweb-ref " name "
-:END:
-
-#+begin_src emacs-lisp
-
-
-#+end_src
-
 ")
+
+(elsrcref "#+begin_src emacs-lisp :noweb-ref " (p (or noweb-ref "NOWEB-REF")) n r n "#+end_src" n)
+
+(litpathvar "#+begin_src emacs-lisp :noweb-ref config-feature-paths" n r n "#+end_src" n)
+(litlib "#+begin_src emacs-lisp :noweb-ref lib-" (p "FEATURE-NAME") n r n "#+end_src" n)
+;; TODO: use yasnippet -- this is not possible with tempel
+;; (litlib2 (p "FEATURE-NAME" feature t)
+;;          (let ((noweb-ref (concat "lib" feature)))
+;;                                         (i elsrcref)))
+
 
 ;; Local Variables:
 ;; mode: lisp-data
