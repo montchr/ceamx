@@ -70,7 +70,7 @@ theme)."
                  (const :tag "The `standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
-(defcustom ceamx-theme-circadian-interval 'solar
+(defcustom ceamx-theme-circadian-interval 'buffet
   "The circadian theme switching interval.
 Value may be either `period' or `solar', corresponding
 respectively to period-based switching with `theme-buffet' or
