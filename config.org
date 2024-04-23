@@ -13155,12 +13155,12 @@ CLOSED: [2024-03-20 Wed 22:43]
 
 *** Functions to clean and re-tangle Elisp files
 
-#+begin_src emacs-lisp :session ceamx-tangle
+#+begin_src emacs-lisp
 (ceamx/tangle)
 #+end_src
 
 #+name: ceamx-tangle
-#+begin_src emacs-lisp :session ceamx-tangle
+#+begin_src emacs-lisp
 (require 'f)
 (require 'llama)
 
