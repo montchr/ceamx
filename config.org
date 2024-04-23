@@ -12922,28 +12922,6 @@ POS defaults to the current position."
 <<file-footer(feature="init-org")>>
 #+end_src
 
-** =lisp/config-org.el=
-
-#+name: config-org-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/config-org.el
-<<file-prop-line(feature="config-org",desc="Org-Mode settings")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-org>>
-
-<<file-footer(feature="config-org")>>
-#+end_src
-
 ** =lisp/init-search.el=
 
 #+name: init-search-file
