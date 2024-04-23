@@ -87,12 +87,16 @@
                      ef-dark)
             :twilight (ef-bio
                        ef-cherie
+                       ef-dream
+                       ef-rosa
                        modus-vivendi)
             :morning (ef-elea-light
                       ef-maris-light
+                      ef-reverie
                       ef-spring)
             :day (ef-frost
                   ef-light
+                  ef-spring
                   ef-trio-light
                   modus-operandi)
             :afternoon (ef-cyprus
@@ -101,11 +105,13 @@
                         ef-duo-light
                         ef-kassio
                         ef-melissa-light
+                        ef-reverie
                         ef-summer
                         modus-operandi-tinted)
             :evening (ef-elea-dark
+                      ef-dream
                       ef-maris-dark
-                      ef-melissa-dark
+                      ;; ef-melissa-dark
                       ef-symbiosis
                       ef-trio-dark
                       modus-vivendi-tinted)))
