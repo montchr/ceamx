@@ -33,10 +33,10 @@ When nil, buffers will always be formatted upon save. When
 non-nil, buffers will never be formatted upon save."
   :group 'ceamx
   :type '(choice boolean (repeat symbol)))
-(defcustom ceamx-structured-editing-style 'lispy
+(defcustom ceamx-structured-editing-style 'puni
   "The structured editing provider."
   :group 'ceamx
-  :type '(choice :tag "Structured editing style" :value lispy
+  :type '(choice :tag "Structured editing style" :value puni
           (const :tag "Lispy" lispy)
           (const :tag "Puni" puni)))
 

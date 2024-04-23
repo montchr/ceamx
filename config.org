@@ -4863,10 +4863,10 @@ b => buffer name
 *** Structural editing states
 
 #+begin_src emacs-lisp :noweb-ref config-editor
-(defcustom ceamx-structured-editing-style 'lispy
+(defcustom ceamx-structured-editing-style 'puni
   "The structured editing provider."
   :group 'ceamx
-  :type '(choice :tag "Structured editing style" :value lispy
+  :type '(choice :tag "Structured editing style" :value puni
           (const :tag "Lispy" lispy)
           (const :tag "Puni" puni)))
 #+end_src
