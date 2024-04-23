@@ -33,6 +33,7 @@
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
+(package! mugur)
 
 (provide 'init-tools)
 ;;; init-tools.el ends here

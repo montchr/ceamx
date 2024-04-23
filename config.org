@@ -12097,6 +12097,12 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 #+end_src
 
+**** ~mugur~: a configurator for QMK keyboards
+
+#+begin_src emacs-lisp
+(package! mugur)
+#+end_src
+
 **** DISABLED ~org-tanglesync~: sync tangled src blocks
 :PROPERTIES:
 :header-args: :tangle no
