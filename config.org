@@ -2362,8 +2362,6 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 ;;; Code:
 
-(require 'elpaca-autoloads)
-
 (require 'config-env)
 
 (require 'lib-common)
@@ -3657,8 +3655,6 @@ not retain the generic background set by the function
 ;;; Code:
 
 ;;;; Requirements
-
-(require 'elpaca-autoloads)
 
 (require 'ceamx-paths)
 (require 'config-env)
@@ -6475,8 +6471,6 @@ DOC is as in `devdocs-install'."
 ;;; Requirements
 
 (require 'cl-lib)
-
-(require 'elpaca-autoloads)
 
 (require 'ceamx-paths)
 (require 'lib-common)

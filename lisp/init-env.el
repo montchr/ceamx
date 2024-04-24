@@ -27,8 +27,6 @@
 
 ;;; Code:
 
-(require 'elpaca-autoloads)
-
 (require 'config-env)
 
 (require 'lib-common)

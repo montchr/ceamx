@@ -31,8 +31,6 @@
 
 (require 'cl-lib)
 
-(require 'elpaca-autoloads)
-
 (require 'ceamx-paths)
 (require 'lib-common)
 

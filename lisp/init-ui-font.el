@@ -26,8 +26,6 @@
 
 ;;;; Requirements
 
-(require 'elpaca-autoloads)
-
 (require 'ceamx-paths)
 (require 'config-env)
 
