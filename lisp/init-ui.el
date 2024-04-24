@@ -88,20 +88,21 @@
 ;; <https://karthinks.com/software/avy-can-do-anything/>
 
 (package! avy
-  (setopt avy-all-windows t)
-  (setopt avy-all-windows-alt t)
+  ;; Reduce the number of possible candidates.
+  ;; Can be overridden with the universal argument.
+  (setopt avy-all-windows nil)
   ;; Prevent conflicts with themes.
   (setopt avy-background nil)
   (setopt avy-style 'at-full)
-  ;; (setopt avy-style 'de-bruijn)
-  (setopt avy-timeout-seconds 0.2)
+  ;; Anything lower feels unusable.
+  (setopt avy-timeout-seconds 0.25)
 
-  (keymap-global-set "M-j" #'avy-goto-char-2)
+  (keymap-global-set "M-j" #'avy-goto-char-timer)
 
   (after! lispy
     (defvar lispy-mode-map)
     (declare-function lispy-join "lispy")
-    ;; Prevent conflict with newly-added M-j binding for `avy-goto-char-2'.
+    ;; Prevent conflict with newly-added M-j binding.
     (keymap-set lispy-mode-map "M-J" #'lispy-join)))
 
 ;;; ~page-break-lines~: improve appearance of form feed characters
