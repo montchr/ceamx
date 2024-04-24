@@ -35,11 +35,9 @@
 ;; This GitHub issue /might/ be relevant: <https://github.com/rainstormstudio/nerd-icons.el/issues/43>
 (use-package doom-modeline
   :demand t
-  :after (nerd-icons)
-  :commands (doom-modeline-mode)
 
   :init
-  (add-hook 'ceamx-after-init-hook #'doom-modeline-mode)
+  (doom-modeline-mode 1)
 
   :config
   (setopt doom-modeline-support-imenu t)
