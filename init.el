@@ -394,8 +394,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; Projects / Files
 (require 'init-project)
 (require 'init-vcs)
-(require 'init-vcs-magit)
-(require 'init-vcs-forge)
 (require 'init-files)
 (require 'init-dired)
 

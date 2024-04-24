@@ -1,4 +1,4 @@
-;;; init-vcs.el --- Git/VCS -*- lexical-binding: t -*-
+;;; init-vcs.el --- Version control support  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -22,47 +22,25 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;  Configurations for git.
-
 ;;; Code:
 
 (require 'ceamx-paths)
 (require 'lib-common)
+(setopt ediff-window-setup-function #'ediff-setup-windows-plain)
+;; Version control support is essential as soon as possible.
+(require 'vc)
 
-(use-feature! ediff
-  :config
-  ;; Keep the Ediff control panel in the same frame.
-  (setopt ediff-window-setup-function #'ediff-setup-windows-plain))
+(setopt vc-follow-symlinks t)
 
-(use-feature! vc
-  :demand t
-  :config
-  (setopt vc-follow-symlinks t)
+;; No need for all that other nonsense.
+(setopt vc-handled-backends '(Git))
 
-  ;; No need for all that other nonsense.
-  (setopt vc-handled-backends '(Git))
-
-  ;; NOTE: According to the documentation for ~diff-hl~, the diff algorithm
-  ;; cannot be determined based on the user's global git config =diff.algorithm=
-  ;; setting. The website source they linked to has disappeared with no archived
-  ;; page available. So I have not verified this for certain.
-  (setopt vc-git-diff-switches '("--histogram")))
-
-;;;; ~diff-hl~ :: <https://github.com/dgutov/diff-hl>
-
-;; <https://github.com/purcell/emacs.d/blob/master/lisp/init-vc.el>
-
-;; NOTE: Fringe indicators will conflict with Flycheck.
-
-(use-package diff-hl
-  :commands (global-diff-hl-mode
-             diff-hl-next-hunk
-             diff-hl-previous-hunk)
-  :autoload (diff-hl-magit-pre-refresh diff-hl-magit-post-refresh)
-  :defines (diff-hl-mode-map)
-
-  :init
+;; NOTE: According to the documentation for ~diff-hl~, the diff algorithm
+;; cannot be determined based on the user's global git config =diff.algorithm=
+;; setting. The website source they linked to has disappeared with no archived
+;; page available. So I have not verified this for certain.
+(setopt vc-git-diff-switches '("--histogram"))
+(package! diff-hl
   (add-hook 'ceamx-after-init-hook #'global-diff-hl-mode)
 
   ;; Display indicators in margins instead of fringes.
@@ -70,67 +48,34 @@
   ;; other indicators like Flycheck errors.
   (add-hook 'ceamx-after-init-hook #'diff-hl-margin-mode)
 
-    ;; Support mouse click on indicator to show hunk.
+  ;; Support mouse click on indicator to show hunk.
   (when (display-graphic-p)
-    (add-hook 'ceamx-after-init-hook #'diff-hl-show-hunk-mouse-mode)
+    (add-hook 'ceamx-after-init-hook #'diff-hl-show-hunk-mouse-mode)))
 
+;; Committing changes using a package other than `vc' requires integration.
+;; <https://github.com/dgutov/diff-hl#integration>
+(after! (diff-hl magit)
+  (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
-  ;; Committing changes using a package other than `vc' requires integration.
-  ;; <https://github.com/dgutov/diff-hl#integration>
-  (use-feature! magit
-    :init
-    (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh)
-    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
+;; Enable `dired' integration.
+(after! (diff-hl dired)
+  (add-hook 'dired-mode-hook #'diff-hl-dired-mode))
+(package! git-commit
+  (add-hook 'ceamx-after-init-hook #'global-git-commit-mode))
+(after! (git-commit evil)
+  (declare-function evil-insert-state "evil")
+  (add-hook 'git-commit-mode-hook #'evil-insert-state))
 
-  ;; Enable `dired' integration.
-  (use-feature! dired
-    :config
-    (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
+(after! (git-commit meow)
+  (declare-function meow-insert-mode "meow")
+  (add-hook 'git-commit-mode-hook #'meow-insert-mode))
+(package! git-timemachine
+  (keymap-global-set "C-x v t" #'git-timemachine))
 
-  ;; :config
-
-;;;;; Keybindings
-
-  ;; (keymap-set diff-hl-mode-map "C-M-]" #'diff-hl-next-hunk)
-  ;; FIXME: C-[ is ESC! avoid!
-  ;; (keymap-set diff-hl-mode-map "C-M-[" #'diff-hl-previous-hunk)
-  )
-
-;;;; git-commit :: <https://magit.vc/>
-
-(use-package git-commit
-  :after (transient)
-  :commands (global-git-commit-mode)
-
-  :init
-  (global-git-commit-mode 1)
-
-  (after! evil
-    (declare-function evil-insert-state "evil")
-    (add-hook 'git-commit-mode-hook #'evil-insert-state))
-
-  (after! meow
-    (declare-function meow-insert-mode "meow")
-    (add-hook 'git-commit-mode-hook #'meow-insert-mode)))
-
-
-;;;; git-timemachine :: <https://codeberg.org/pidu/git-timemachine>
-
-(use-package git-timemachine
-  :defer t
-  :commands (git-timemachine
-              git-timemachine-show-previous-revision
-              git-timemachine-show-next-revision
-              git-timemachine-blame
-              git-timemachine-show-commit)
-
-  :init
-  (keymap-global-set "C-x v t" #'git-timemachine)
-
+(after! git-timemachine
   ;; XXX: broken, see `ceamx/git-timemachine-dispatch'
   ;; (add-hook 'git-timemachine-mode-hook #'ceamx/git-timemachine-dispatch)
-
-  :config
 
   (define-keymap :keymap git-timemachine-mode-map
     "M-p" #'git-timemachine-show-previous-revision
@@ -144,13 +89,13 @@
     "Transient menu for `git-timemachine-mode'."
     ;; :transient-suffix 'transient--do-stack
     [["Navigation"
-       ("p" "previous revision" git-timemachine-show-previous-revision :transient t)
-       ("n" "next revision" git-timemachine-show-next-revision :transient t)]
-      ["Display"
-        ("b" "blame" git-timemachine-blame)
-        ("c" "commit" git-timemachine-show-commit )]
-      [""
-        ("q" "quit" git-timemachine-quit :transient nil)]])
+      ("p" "previous revision" git-timemachine-show-previous-revision :transient t)
+      ("n" "next revision" git-timemachine-show-next-revision :transient t)]
+     ["Display"
+      ("b" "blame" git-timemachine-blame)
+      ("c" "commit" git-timemachine-show-commit )]
+     [""
+      ("q" "quit" git-timemachine-quit :transient nil)]])
 
   (declare-function git-timemachine--show-minibuffer-details "git-timemachine")
 
@@ -159,52 +104,86 @@
     :override #'git-timemachine--show-minibuffer-details
     "Show REVISION details in the header-line instead of the minibuffer."
     (let* ((date-relative (nth 3 revision))
-            (date-full (nth 4 revision))
-            (author (if git-timemachine-show-author (concat (nth 6 revision) ": ") ""))
-            (sha-or-subject (if (eq git-timemachine-minibuffer-detail 'commit) (car revision) (nth 5 revision))))
+           (date-full (nth 4 revision))
+           (author (if git-timemachine-show-author (concat (nth 6 revision) ": ") ""))
+           (sha-or-subject (if (eq git-timemachine-minibuffer-detail 'commit) (car revision) (nth 5 revision))))
       (setq header-line-format
-        (format "%s%s [%s (%s)]"
-          (propertize author 'face 'git-timemachine-minibuffer-author-face)
-          (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
-          date-full date-relative)))))
-
-;;;; ~browse-at-remote~ :: <https://github.com/rmuslimov/browse-at-remote>
-
-(use-package browse-at-remote
-  :commands (browse-at-remote)
-  :init
+            (format "%s%s [%s (%s)]"
+                    (propertize author 'face 'git-timemachine-minibuffer-author-face)
+                    (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
+                    date-full date-relative)))))
+(package! browse-at-remote
   (keymap-set vc-prefix-map "o" #'browse-at-remote))
+(with-eval-after-load 'transient
+  (defvar transient-map)
+  (declare-function transient-quit-one "transient")
 
-;;;; ~consult-gh~ :: <https://github.com/armindarvish/consult-gh>
+  ;; Always close transient with ESC
+  (keymap-set transient-map "ESC" #'transient-quit-one))
+(package! magit)
+(with-eval-after-load 'magit
+  (defvar magit-mode-map)
+  (defvar magit-status-mode-map)
 
-;; TODO: look through readme and review settings, add config as desired
-;;
-;; [2023-12-28]: I still haven't gotten it to work at all. Searches come up with
-;; nothing and the tool keeps trying to write to the ~gh~ CLI's config file,
-;; which is fortunately read-only in the Nix store.
-;;
-;; I really wish this tool was usuable but it's not surprising that GitHub would
-;; change a bunch of API stuff, breaking integrations at any time.
+  (declare-function magit-discard "magit-apply")
+  (declare-function magit-dispatch "magit")
+  (declare-function magit-display-buffer-fullframe-status-v1 "magit-mode")
+  (declare-function magit-file-dispatch "magit-files")
+  (declare-function magit-restore-window-configuration "magit-mode")
+  (declare-function magit-revert "magit-sequence")
+  (declare-function magit-status "magit-status")
 
-;;
-;; NOTE: The double-dashed option names are NOT private, despite the Elisp
-;; naming convention. Try to ignore it.
-;; (use-package consult-gh
-;;   ;; FIXME: :elpaca (consult-gh :host github :repo "armindarvish/consult-gh")
-;;   :defines ( consult-gh-default-clone-directory
-;;              consult-gh-default-orgs-list)
-;;   :init
-;;   (dolist (owner '("montchr" "seadome"))
-;;     (add-to-list 'consult-gh-default-orgs-list owner))
+  (setopt magit-diff-refine-hunk t)     ; show granular diffs in selected hunk
+  (setopt magit-save-repository-buffers nil) ; avoid side-effects (e.g. auto-format)
+  ;; (setopt magit-revision-insert-related-refs nil) ; parent/related refs: rarely useful
+  (setopt magit-process-finish-apply-ansi-colors t) ; render ANSI colors in process output
 
-;;   ;; TODO: use/lose
-;;   ;; use "gh org list" to get a list of all your organizations and adds them to default list
-;;   ;; (setq consult-gh-default-orgs-list (append consult-gh-default-orgs-list (remove "" (split-string (or (consult-gh--command-to-string "org" "list") "") "\n"))))
+  (setopt magit-bury-buffer-function #'magit-restore-window-configuration)
+  ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
+  (setopt magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
+(after! magit
+  (remove-hook 'magit-section-movement-hook 'magit-hunk-set-window-start)
+  (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
+(package! ghub)
 
-;;   ;; Set the default folder for cloning repositories. By default Consult-GH will
-;;   ;; confirm this before cloning.
-;;   (setopt consult-gh-default-clone-directory
-;;     (concat ceamx-projects-dir "repos")))
+;; TODO: maybe: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#ghub>
+;; :config
+;; (require 'auth-source-pass)
+;; (defvar ceamx-ghub-token-cache nil)
+;; (def-advice! +ghub--token-use-cache-a (orig-func host username package &optional nocreate forge)
+;;   :around #'ghub--token
+;;   "Use a cached GitHub token."
+;;   (or ceamx-ghub-token-cache
+;;     (setq ceamx-ghub-token-cache
+;;       (funcall orig-func host username package nocreate forge))))
+(after! magit
+  ;; These should be bound automatically when `magit-define-global-key-bindings'
+  ;; is =default= (which is the default value), but that does not seem to work.
+  (define-keymap :keymap (current-global-map)
+    "C-x g"    #'magit-status
+    "C-x M-g"  #'magit-dispatch
+    "C-c M-g"  #'magit-file-dispatch)
+
+  ;; TODO: why does `define-keymap' not have an effect while `keymap-set' does?
+  (define-keymap :keymap magit-status-mode-map
+    "_" #'magit-revert
+    "V" nil
+    "x" #'magit-discard)
+
+  ;; (keymap-set magit-status-mode-map "_" #'magit-revert)
+  ;; TODO: rebind?
+  ;; (keymap-set magit-status-mode-map "V" nil)
+  ;; NOTE: Overrides default binding of `magit-reset-quickly'.
+  ;; (keymap-set magit-status-mode-map "x" #'magit-discard)
+
+  (transient-append-suffix 'magit-commit "-n"
+    '("-S" "Disable GPG signing" "--no-gpg"))
+
+  (transient-append-suffix 'magit-fetch "-p"
+    '("-t" "Fetch all tags" ("-t" "--tags")))
+
+  (transient-append-suffix 'magit-pull "-r"
+    '("-a" "Autostash" "--autostash")))
 
 (provide 'init-vcs)
 ;;; init-vcs.el ends here

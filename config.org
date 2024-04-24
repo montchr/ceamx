@@ -489,6 +489,28 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="config-editor")>>
 #+end_src
 
+*** =lisp/init-vcs.el=
+
+#+name: init-vcs-file
+#+begin_src emacs-lisp :comments no :tangle lisp/init-vcs.el
+<<file-prop-line(feature="init-vcs",desc="Version control support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-vcs>>
+
+<<file-footer(feature="init-vcs")>>
+#+end_src
+
 
 ** Partials
 :PROPERTIES:
@@ -1114,8 +1136,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; Projects / Files
 (require 'init-project)
 (require 'init-vcs)
-(require 'init-vcs-magit)
-(require 'init-vcs-forge)
 (require 'init-files)
 (require 'init-dired)
 
@@ -8728,74 +8748,50 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 #+end_src
 
 
-* Version Control
+* ~init-vcs~ :: version control (Git)
+:PROPERTIES:
+:header-args:emacs-lisp: :noweb-ref init-vcs
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-vcs.el
-;;; init-vcs.el --- Git/VCS -*- lexical-binding: t -*-
+** Requirements
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;  Configurations for git.
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'ceamx-paths)
 (require 'lib-common)
+#+end_src
 
-(use-feature! ediff
-  :config
-  ;; Keep the Ediff control panel in the same frame.
-  (setopt ediff-window-setup-function #'ediff-setup-windows-plain))
+** Keep the ~ediff~ control panel in the same frame
 
-(use-feature! vc
-  :demand t
-  :config
-  (setopt vc-follow-symlinks t)
+#+begin_src emacs-lisp
+(setopt ediff-window-setup-function #'ediff-setup-windows-plain)
+#+end_src
 
-  ;; No need for all that other nonsense.
-  (setopt vc-handled-backends '(Git))
+** Configure the builtin =vc= support
 
-  ;; NOTE: According to the documentation for ~diff-hl~, the diff algorithm
-  ;; cannot be determined based on the user's global git config =diff.algorithm=
-  ;; setting. The website source they linked to has disappeared with no archived
-  ;; page available. So I have not verified this for certain.
-  (setopt vc-git-diff-switches '("--histogram")))
+#+begin_src emacs-lisp
+;; Version control support is essential as soon as possible.
+(require 'vc)
 
-;;;; ~diff-hl~ :: <https://github.com/dgutov/diff-hl>
+(setopt vc-follow-symlinks t)
 
-;; <https://github.com/purcell/emacs.d/blob/master/lisp/init-vc.el>
+;; No need for all that other nonsense.
+(setopt vc-handled-backends '(Git))
 
-;; NOTE: Fringe indicators will conflict with Flycheck.
+;; NOTE: According to the documentation for ~diff-hl~, the diff algorithm
+;; cannot be determined based on the user's global git config =diff.algorithm=
+;; setting. The website source they linked to has disappeared with no archived
+;; page available. So I have not verified this for certain.
+(setopt vc-git-diff-switches '("--histogram"))
+#+end_src
 
-(use-package diff-hl
-  :commands (global-diff-hl-mode
-             diff-hl-next-hunk
-             diff-hl-previous-hunk)
-  :autoload (diff-hl-magit-pre-refresh diff-hl-magit-post-refresh)
-  :defines (diff-hl-mode-map)
+** ~diff-hl~: Display version control status indicators in margins
 
-  :init
+- Website :: <https://github.com/dgutov/diff-hl>
+
+NOTE: Fringe indicators will conflict with Flycheck.
+
+#+begin_src emacs-lisp
+(package! diff-hl
   (add-hook 'ceamx-after-init-hook #'global-diff-hl-mode)
 
   ;; Display indicators in margins instead of fringes.
@@ -8803,67 +8799,53 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
   ;; other indicators like Flycheck errors.
   (add-hook 'ceamx-after-init-hook #'diff-hl-margin-mode)
 
-    ;; Support mouse click on indicator to show hunk.
+  ;; Support mouse click on indicator to show hunk.
   (when (display-graphic-p)
-    (add-hook 'ceamx-after-init-hook #'diff-hl-show-hunk-mouse-mode)
+    (add-hook 'ceamx-after-init-hook #'diff-hl-show-hunk-mouse-mode)))
 
+;; Committing changes using a package other than `vc' requires integration.
+;; <https://github.com/dgutov/diff-hl#integration>
+(after! (diff-hl magit)
+  (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
-  ;; Committing changes using a package other than `vc' requires integration.
-  ;; <https://github.com/dgutov/diff-hl#integration>
-  (use-feature! magit
-    :init
-    (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh)
-    (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
+;; Enable `dired' integration.
+(after! (diff-hl dired)
+  (add-hook 'dired-mode-hook #'diff-hl-dired-mode))
+#+end_src
 
-  ;; Enable `dired' integration.
-  (use-feature! dired
-    :config
-    (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
+** ~git-commit~: Mode for editing Git commit messages
 
-  ;; :config
+- Website :: <https://magit.vc/>
 
-;;;;; Keybindings
+#+begin_src emacs-lisp
+(package! git-commit
+  (add-hook 'ceamx-after-init-hook #'global-git-commit-mode))
+#+end_src
 
-  ;; (keymap-set diff-hl-mode-map "C-M-]" #'diff-hl-next-hunk)
-  ;; FIXME: C-[ is ESC! avoid!
-  ;; (keymap-set diff-hl-mode-map "C-M-[" #'diff-hl-previous-hunk)
-  )
+*** Ensure ~git-commit-mode~ opens in modal insert state
 
-;;;; git-commit :: <https://magit.vc/>
+#+begin_src emacs-lisp
+(after! (git-commit evil)
+  (declare-function evil-insert-state "evil")
+  (add-hook 'git-commit-mode-hook #'evil-insert-state))
 
-(use-package git-commit
-  :after (transient)
-  :commands (global-git-commit-mode)
+(after! (git-commit meow)
+  (declare-function meow-insert-mode "meow")
+  (add-hook 'git-commit-mode-hook #'meow-insert-mode))
+#+end_src
 
-  :init
-  (global-git-commit-mode 1)
+** ~git-timemachine~: Interactively explore files' Git histories
 
-  (after! evil
-    (declare-function evil-insert-state "evil")
-    (add-hook 'git-commit-mode-hook #'evil-insert-state))
+<https://codeberg.org/pidu/git-timemachine>
 
-  (after! meow
-    (declare-function meow-insert-mode "meow")
-    (add-hook 'git-commit-mode-hook #'meow-insert-mode)))
+#+begin_src emacs-lisp
+(package! git-timemachine
+  (keymap-global-set "C-x v t" #'git-timemachine))
 
-
-;;;; git-timemachine :: <https://codeberg.org/pidu/git-timemachine>
-
-(use-package git-timemachine
-  :defer t
-  :commands (git-timemachine
-              git-timemachine-show-previous-revision
-              git-timemachine-show-next-revision
-              git-timemachine-blame
-              git-timemachine-show-commit)
-
-  :init
-  (keymap-global-set "C-x v t" #'git-timemachine)
-
+(after! git-timemachine
   ;; XXX: broken, see `ceamx/git-timemachine-dispatch'
   ;; (add-hook 'git-timemachine-mode-hook #'ceamx/git-timemachine-dispatch)
-
-  :config
 
   (define-keymap :keymap git-timemachine-mode-map
     "M-p" #'git-timemachine-show-previous-revision
@@ -8877,13 +8859,13 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
     "Transient menu for `git-timemachine-mode'."
     ;; :transient-suffix 'transient--do-stack
     [["Navigation"
-       ("p" "previous revision" git-timemachine-show-previous-revision :transient t)
-       ("n" "next revision" git-timemachine-show-next-revision :transient t)]
-      ["Display"
-        ("b" "blame" git-timemachine-blame)
-        ("c" "commit" git-timemachine-show-commit )]
-      [""
-        ("q" "quit" git-timemachine-quit :transient nil)]])
+      ("p" "previous revision" git-timemachine-show-previous-revision :transient t)
+      ("n" "next revision" git-timemachine-show-next-revision :transient t)]
+     ["Display"
+      ("b" "blame" git-timemachine-blame)
+      ("c" "commit" git-timemachine-show-commit )]
+     [""
+      ("q" "quit" git-timemachine-quit :transient nil)]])
 
   (declare-function git-timemachine--show-minibuffer-details "git-timemachine")
 
@@ -8892,105 +8874,52 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
     :override #'git-timemachine--show-minibuffer-details
     "Show REVISION details in the header-line instead of the minibuffer."
     (let* ((date-relative (nth 3 revision))
-            (date-full (nth 4 revision))
-            (author (if git-timemachine-show-author (concat (nth 6 revision) ": ") ""))
-            (sha-or-subject (if (eq git-timemachine-minibuffer-detail 'commit) (car revision) (nth 5 revision))))
+           (date-full (nth 4 revision))
+           (author (if git-timemachine-show-author (concat (nth 6 revision) ": ") ""))
+           (sha-or-subject (if (eq git-timemachine-minibuffer-detail 'commit) (car revision) (nth 5 revision))))
       (setq header-line-format
-        (format "%s%s [%s (%s)]"
-          (propertize author 'face 'git-timemachine-minibuffer-author-face)
-          (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
-          date-full date-relative)))))
+            (format "%s%s [%s (%s)]"
+                    (propertize author 'face 'git-timemachine-minibuffer-author-face)
+                    (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
+                    date-full date-relative)))))
+#+end_src
 
-;;;; ~browse-at-remote~ :: <https://github.com/rmuslimov/browse-at-remote>
+** ~browse-at-remote~: Open the current Git repo's remote forge page in a browser
 
-(use-package browse-at-remote
-  :commands (browse-at-remote)
-  :init
+- Website :: <https://github.com/rmuslimov/browse-at-remote>
+
+#+begin_src emacs-lisp
+(package! browse-at-remote
   (keymap-set vc-prefix-map "o" #'browse-at-remote))
-
-;;;; ~consult-gh~ :: <https://github.com/armindarvish/consult-gh>
-
-;; TODO: look through readme and review settings, add config as desired
-;;
-;; [2023-12-28]: I still haven't gotten it to work at all. Searches come up with
-;; nothing and the tool keeps trying to write to the ~gh~ CLI's config file,
-;; which is fortunately read-only in the Nix store.
-;;
-;; I really wish this tool was usuable but it's not surprising that GitHub would
-;; change a bunch of API stuff, breaking integrations at any time.
-
-;;
-;; NOTE: The double-dashed option names are NOT private, despite the Elisp
-;; naming convention. Try to ignore it.
-;; (use-package consult-gh
-;;   ;; FIXME: :elpaca (consult-gh :host github :repo "armindarvish/consult-gh")
-;;   :defines ( consult-gh-default-clone-directory
-;;              consult-gh-default-orgs-list)
-;;   :init
-;;   (dolist (owner '("montchr" "seadome"))
-;;     (add-to-list 'consult-gh-default-orgs-list owner))
-
-;;   ;; TODO: use/lose
-;;   ;; use "gh org list" to get a list of all your organizations and adds them to default list
-;;   ;; (setq consult-gh-default-orgs-list (append consult-gh-default-orgs-list (remove "" (split-string (or (consult-gh--command-to-string "org" "list") "") "\n"))))
-
-;;   ;; Set the default folder for cloning repositories. By default Consult-GH will
-;;   ;; confirm this before cloning.
-;;   (setopt consult-gh-default-clone-directory
-;;     (concat ceamx-projects-dir "repos")))
-
-(provide 'init-vcs)
-;;; init-vcs.el ends here
 #+end_src
 
 ** Magit
+*** TODO Support closing ~transient~ menus with the escape key
 
-*** Customization
+Something very similar to this code seemed to work previously, but that is no
+longer the case after switching this configuration to use ~package!~.
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-vcs-magit.el
-;;; init-vcs-magit.el --- Magit support              -*- lexical-binding: t; -*-
+This section should also be moved to the main configuration section for
+Transient, as it is not specific to ~magit~ or ~magit-section~.
 
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;  <https://magit.vc/>
-
-;;; Code:
-
-;;; Requirements
-
-(require 'lib-common)
-
-;; FIXME: does not close transient when pressing ESC
-;; FIXME: move to configuration for ~transient~
+#+begin_src emacs-lisp
 (with-eval-after-load 'transient
   (defvar transient-map)
   (declare-function transient-quit-one "transient")
 
   ;; Always close transient with ESC
   (keymap-set transient-map "ESC" #'transient-quit-one))
+#+end_src
 
-;;; Configure Magit
+*** Install Magit
 
+#+begin_src emacs-lisp
 (package! magit)
+#+end_src
 
+*** Configure Magit
+
+#+begin_src emacs-lisp
 (with-eval-after-load 'magit
   (defvar magit-mode-map)
   (defvar magit-status-mode-map)
@@ -9010,71 +8939,23 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 
   (setopt magit-bury-buffer-function #'magit-restore-window-configuration)
   ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
-  (setopt magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
-
-  ;; These should be bound automatically when `magit-define-global-key-bindings'
-  ;; is =default= (which is the default value), but that does not seem to work.
-  (define-keymap :keymap (current-global-map)
-    "C-x g"    #'magit-status
-    "C-x M-g"  #'magit-dispatch
-    "C-c M-g"  #'magit-file-dispatch)
-
-  ;; TODO: why does this not have an effect?
-  (define-keymap :keymap magit-status-mode-map
-    "_" #'magit-revert
-    "V" nil
-    "x" #'magit-discard)
-
-  (keymap-set magit-status-mode-map "_" #'magit-revert)
-  ;; TODO: rebind?
-  (keymap-set magit-status-mode-map "V" nil)
-  ;; NOTE: Overrides default binding of `magit-reset-quickly'.
-  (keymap-set magit-status-mode-map "x" #'magit-discard)
-
-  (transient-append-suffix 'magit-commit "-n"
-    '("-S" "Disable GPG signing" "--no-gpg"))
-  (transient-append-suffix 'magit-fetch "-p"
-    '("-t" "Fetch all tags" ("-t" "--tags")))
-  (transient-append-suffix 'magit-pull "-r"
-    '("-a" "Autostash" "--autostash")))
-
-(provide 'init-vcs-magit)
-;;; init-vcs-magit.el ends here
+  (setopt magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
 #+end_src
 
-** Forge Integrations
+*** Keep ~magit-section~ sections at the top of the window
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-vcs-forge.el
-;;; init-vcs-forge.el --- Support for git forge integration  -*- lexical-binding: t; -*-
+- Reference :: <https://emacs.stackexchange.com/questions/3380/how-to-scroll-up-when-expanding-a-section-in-magit-status#comment4819_3383>
 
-;; Copyright (C) 2024  Chris Montgomery
+#+begin_src emacs-lisp
+(after! magit
+  (remove-hook 'magit-section-movement-hook 'magit-hunk-set-window-start)
+  (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
+#+end_src
 
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
+** Configure GitHub forge integration
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
-
-(require 'lib-common)
-
-(use-package ghub
-  :demand t)
+#+begin_src emacs-lisp
+(package! ghub)
 
 ;; TODO: maybe: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#ghub>
 ;; :config
@@ -9086,10 +8967,39 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 ;;   (or ceamx-ghub-token-cache
 ;;     (setq ceamx-ghub-token-cache
 ;;       (funcall orig-func host username package nocreate forge))))
+#+end_src
 
+** Keybindings
 
-(provide 'init-vcs-forge)
-;;; init-vcs-forge.el ends here
+#+begin_src emacs-lisp
+(after! magit
+  ;; These should be bound automatically when `magit-define-global-key-bindings'
+  ;; is =default= (which is the default value), but that does not seem to work.
+  (define-keymap :keymap (current-global-map)
+    "C-x g"    #'magit-status
+    "C-x M-g"  #'magit-dispatch
+    "C-c M-g"  #'magit-file-dispatch)
+
+  ;; TODO: why does `define-keymap' not have an effect while `keymap-set' does?
+  (define-keymap :keymap magit-status-mode-map
+    "_" #'magit-revert
+    "V" nil
+    "x" #'magit-discard)
+
+  ;; (keymap-set magit-status-mode-map "_" #'magit-revert)
+  ;; TODO: rebind?
+  ;; (keymap-set magit-status-mode-map "V" nil)
+  ;; NOTE: Overrides default binding of `magit-reset-quickly'.
+  ;; (keymap-set magit-status-mode-map "x" #'magit-discard)
+
+  (transient-append-suffix 'magit-commit "-n"
+    '("-S" "Disable GPG signing" "--no-gpg"))
+
+  (transient-append-suffix 'magit-fetch "-p"
+    '("-t" "Fetch all tags" ("-t" "--tags")))
+
+  (transient-append-suffix 'magit-pull "-r"
+    '("-a" "Autostash" "--autostash")))
 #+end_src
 
 
@@ -9138,8 +9048,6 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 #+end_src
 
 ** DISABLED Projectile
-
-lel
 
 
 * Checkers (Flycheck + Flymake)
