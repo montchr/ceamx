@@ -90,6 +90,10 @@
            "|"
            "DONE(d!)"
            "CANCELLED(x@/!)")))
+(after! (org pulsar)
+  (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
+    (add-hook hook #'pulsar-recenter-center)
+    (add-hook hook #'pulsar-reveal-entry)))
 (setopt org-agenda-tags-column 0)
 (setopt org-agenda-block-separator ?─)
 (setopt org-agenda-time-grid

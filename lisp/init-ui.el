@@ -118,5 +118,21 @@
 (package! breadcrumb
   (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 
+;;; ~pulsar~: Pulse current line after function invocations
+
+(package! pulsar
+  (setopt pulsar-pulse t
+          pulsar-delay 0.055
+          pulsar-iterations 10
+          pulsar-face 'pulsar-magenta
+          pulsar-highlight-face 'pulsar-cyan)
+
+  (pulsar-global-mode 1)
+
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
+
+  (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
+    (add-hook 'next-error-hook (function fn))))
+
 (provide 'init-ui)
 ;;; init-ui.el ends here

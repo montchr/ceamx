@@ -157,5 +157,11 @@
   :init
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
+;; <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion.el#L357>
+(after! (consult consult-imenu pulsar)
+  (setq consult-after-jump-hook nil)
+  (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
+    (add-hook 'consult-after-jump-hook fn)))
+
 (provide 'init-selection-consult)
 ;;; init-selection-consult.el ends here

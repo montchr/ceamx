@@ -3112,6 +3112,22 @@ accommodation for varying pixel densities."
 (package! breadcrumb
   (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 
+;;; ~pulsar~: Pulse current line after function invocations
+
+(package! pulsar
+  (setopt pulsar-pulse t
+          pulsar-delay 0.055
+          pulsar-iterations 10
+          pulsar-face 'pulsar-magenta
+          pulsar-highlight-face 'pulsar-cyan)
+
+  (pulsar-global-mode 1)
+
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
+
+  (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
+    (add-hook 'next-error-hook (function fn))))
+
 (provide 'init-ui)
 ;;; init-ui.el ends here
 #+end_src
@@ -8054,6 +8070,12 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   :init
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
+;; <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion.el#L357>
+(after! (consult consult-imenu pulsar)
+  (setq consult-after-jump-hook nil)
+  (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
+    (add-hook 'consult-after-jump-hook fn)))
+
 (provide 'init-selection-consult)
 ;;; init-selection-consult.el ends here
 #+end_src
@@ -11662,6 +11684,17 @@ may cause unexpected changes to the content (depending on the setting of ~org-ca
            "DONE(d!)"
            "CANCELLED(x@/!)")))
 #+END_SRC
+
+**** Visual feedback after actions
+
+- Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
+
+#+begin_src emacs-lisp
+(after! (org pulsar)
+  (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
+    (add-hook hook #'pulsar-recenter-center)
+    (add-hook hook #'pulsar-reveal-entry)))
+#+end_src
 
 *** Agenda settings
 
