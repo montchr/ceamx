@@ -8862,6 +8862,7 @@ NOTE: Fringe indicators will conflict with Flycheck.
 
 #+begin_src emacs-lisp
 (package! git-commit
+  (require 'git-commit)
   (add-hook 'ceamx-after-init-hook #'global-git-commit-mode))
 #+end_src
 

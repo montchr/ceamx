@@ -62,6 +62,7 @@
 (after! (diff-hl dired)
   (add-hook 'dired-mode-hook #'diff-hl-dired-mode))
 (package! git-commit
+  (require 'git-commit)
   (add-hook 'ceamx-after-init-hook #'global-git-commit-mode))
 (after! (git-commit evil)
   (declare-function evil-insert-state "evil")
