@@ -301,16 +301,20 @@ counter-clockwise."
 ;; via <https://github.com/protesilaos/dotfiles/blob/24670bf47f7aaefc9bb2613d090cc9113acd6d48/emacs/.emacs.d/prot-lisp/prot-simple.el#L590C1-L601C41>
 ;;;###autoload
 (defun ceamx/other-window ()
-  "Wrapper for `other-window' and `next-multiframe-window'.
+  "Switch window in a multi-window frame or to a window in another frame.
 If there is only one window and multiple frames, call
-`next-multiframe-window'.  Otherwise, call `other-window'."
+`next-multiframe-window'.  Otherwise, call `other-window' or, if
+available, `switchy-window'."
   (interactive)
   (if (and (one-window-p) (length> (frame-list) 1))
       (progn
         (call-interactively #'next-multiframe-window)
         (setq this-command #'next-multiframe-window))
-    (call-interactively #'other-window)
-    (setq this-command #'other-window)))
+    (let ((other-window-command (or (and (fboundp 'switchy-window)
+                                         (function switchy-window))
+                                    (function other-window))))
+      (call-interactively other-window-command)
+      (setq this-command other-window-command))))
 
 (provide 'lib-window)
 ;;; lib-window.el ends here

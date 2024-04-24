@@ -158,6 +158,24 @@
   ;; numbers in the same frame. For example, frame A might have windows numbered
   ;; 1 and 3 and frame B will have window 2.
   (setopt aw-scope 'frame))
+(require 'lib-common)
+
+(package! switchy-window
+  (setopt switchy-window-delay 1.5)
+
+  (switchy-window-minor-mode))
+
+(after! switchy-window
+  ;; NOTE: Handled by `ceamx/other-window'.
+  ;; (keymap-set switchy-window-minor-mode-map "C-x o" #'switchy-window)
+
+  (def-hook! +window-selection-change-pulse-h (frame)
+    'window-selection-change-functions
+    "Pulse the newly-selected window on focus change."
+    (when (eq frame (selected-frame))
+      (if (fboundp 'pulsar-pulse-line)
+          (pulsar-pulse-line)
+        (pulse-momentary-highlight-one-line)))))
 (transient-define-prefix ceamx/window-dispatch ()
   "Window management transient."
   :transient-suffix 'transient--do-stay
