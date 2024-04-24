@@ -757,6 +757,7 @@ deleted before tangling."
 (require 'cl-lib)
 
 (require 'ceamx-paths)
+(require 'ceamx-keymaps)
 
 (require 'lib-common)
 #+end_src

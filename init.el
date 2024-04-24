@@ -27,6 +27,7 @@
 (require 'cl-lib)
 
 (require 'ceamx-paths)
+(require 'ceamx-keymaps)
 
 (require 'lib-common)
 (defgroup ceamx nil
