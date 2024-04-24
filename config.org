@@ -131,6 +131,94 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="init-benchmarking")>>
 #+end_src
 
+*** =lisp/init-ui.el=
+
+#+name: init-ui-file
+#+begin_src emacs-lisp :comments no :tangle lisp/init-ui.el
+<<file-prop-line(feature="init-ui",desc="General user interface customizations")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-ui>>
+
+<<file-footer(feature="init-ui")>>
+#+end_src
+
+*** =lisp/init-ui-font.el=
+
+#+name: init-ui-font-file
+#+begin_src emacs-lisp :comments no :tangle lisp/init-ui-font.el
+<<file-prop-line(feature="init-ui-font",desc="Font support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-ui-font>>
+
+<<file-footer(feature="init-ui-font")>>
+#+end_src
+
+*** =lisp/config-ui.el=
+
+#+name: config-ui-file
+#+begin_src emacs-lisp :comments no :tangle lisp/config-ui.el
+<<file-prop-line(feature="config-ui",desc="User options for Emacs appearance")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-ui>>
+
+<<file-footer(feature="config-ui")>>
+#+end_src
+
+*** =lisp/lib-ui.el=
+
+#+name: lib-ui-file
+#+begin_src emacs-lisp :comments no :tangle lisp/lib-ui.el
+<<file-prop-line(feature="lib-ui",desc="Appearance helper functions")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-ui>>
+
+<<file-footer(feature="lib-ui")>>
+#+end_src
+
 *** =lisp/init-files.el=
 
 #+name: init-files-file
@@ -1019,6 +1107,13 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
   (dolist (dir ceamx-buffer-read-only-dirs-list)
     (dir-locals-set-directory-class (file-truename dir) 'read-only)))
 
+;;;; Bind some commonly-used package management commands
+
+(define-keymap :keymap ceamx-packages-map
+  "f" #'elpaca-fetch-all
+  "m" #'elpaca-merge-all
+  "t" #'elpaca-try)
+
 ;;; Site-lisp packages
 
 (require 'on)
@@ -1078,22 +1173,8 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (require 'init-ui)
 
-(require 'init-ui-theme)
-(require 'init-ui-ef-themes)
-(require 'init-ui-modus-themes)
-
 (when (display-graphic-p)
   (require 'init-ui-font))
-
-(require 'init-ui-modeline)
-(require 'init-ui-modeline-doom)
-
-;;;;; Integrations for visual consistency
-
-;; FIXME: too complicated (`theme-buffet') or broken (`circadian')
-;; (require 'init-ui-circadian)
-
-(require 'init-after-ui)
 
 ;;;; Keyboard support
 
@@ -1632,6 +1713,9 @@ Emacs version to prevent bytecode incompatibility.")
 (defvar-keymap ceamx-activities-map)
 (define-prefix-command 'ceamx-activities-map)
 
+(defvar-keymap ceamx-appearance-map)
+(define-prefix-command 'ceamx-appearance-map)
+
 (defvar-keymap ceamx-code-map)
 (define-prefix-command 'ceamx-code-map)
 
@@ -1644,11 +1728,17 @@ Emacs version to prevent bytecode incompatibility.")
 (defvar-keymap ceamx-launch-map)
 (define-prefix-command 'ceamx-launch-map)
 
+(defvar-keymap ceamx-packages-map)
+(define-prefix-command 'ceamx-packages-map)
+
 (defvar-keymap ceamx-pairs-map)
 (define-prefix-command 'ceamx-pairs-map)
 
 (defvar-keymap ceamx-replace-map)
 (define-prefix-command 'ceamx-replace-map)
+
+(defvar-keymap ceamx-session-map)
+(define-prefix-command 'ceamx-session-map)
 
 (defvar-keymap ceamx-toggle-map)
 (define-prefix-command 'ceamx-toggle-map)
@@ -2892,42 +2982,28 @@ Selectively runs either `after-make-console-frame-hooks' or
 
 
 * Appearance
+:PROPERTIES:
+:header-args: :noweb-ref init-ui
+:END:
 
-** Options / Variables
+** General user interface settings
+:PROPERTIES:
+:header-args: :noweb-ref config-ui
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/config-ui.el
-;;; config-ui.el --- General UI settings             -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (defconst ceamx-gnome-ui-namespace "org.gnome.desktop.interface")
+#+end_src
 
+#+begin_src emacs-lisp
 (defconst ceamx-theme-buffet-dark-periods
   '(:night :twilight :evening))
 
 (defconst ceamx-theme-buffet-light-periods
   '(:morning :day :afternoon))
+#+end_src
 
+#+begin_src emacs-lisp
 (defcustom ceamx-theme-default-light 'modus-operandi-tinted
   "The default light theme."
   :group 'ceamx
@@ -2937,7 +3013,9 @@ Selectively runs either `after-make-console-frame-hooks' or
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
+#+end_src
 
+#+begin_src emacs-lisp
 (defcustom ceamx-modeline-provider 'doom
   "Modeline provider to load.
 Valid values are the symbols `doom', `nano', and `telephone'
@@ -2948,11 +3026,13 @@ A nil value will not load any modeline customizations (use Emacs
 with its default modeline)."
   :group 'ceamx
   :type '(choice :tag "Modeline to load" :value doom
-           (const :tag "The `doom-modeline' module" doom)
-           (const :tag "The `nano-modeline' module" nano)
-           (const :tag "The `telephone-line' module" telephone)
-           (const :tag "Do not load a modeline module" nil)))
+          (const :tag "The `doom-modeline' module" doom)
+          (const :tag "The `nano-modeline' module" nano)
+          (const :tag "The `telephone-line' module" telephone)
+          (const :tag "Do not load a modeline module" nil)))
+#+end_src
 
+#+begin_src emacs-lisp
 (defcustom ceamx-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
@@ -2963,11 +3043,13 @@ A nil value does not load any of the above (use Emacs without a
 theme)."
   :group 'ceamx
   :type '(choice :tag "Set of themes to load" :value modus
-                 (const :tag "The `ef-themes' module" ef)
-                 (const :tag "The `modus-themes' module" modus)
-                 (const :tag "The `standard-themes' module" standard)
-                 (const :tag "Do not load a theme module" nil)))
+          (const :tag "The `ef-themes' module" ef)
+          (const :tag "The `modus-themes' module" modus)
+          (const :tag "The `standard-themes' module" standard)
+          (const :tag "Do not load a theme module" nil)))
+#+end_src
 
+#+begin_src emacs-lisp
 (defcustom ceamx-theme-circadian-interval nil
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
@@ -2983,52 +3065,21 @@ unconditionally use `ceamx-theme-default-light' and
   :type '(choice :tag "Circadian theme switching interval" :value nil
           (const :tag "Time periods via `theme-buffet'" :value buffet)
           (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
+#+end_src
 
+#+begin_src emacs-lisp
 (defcustom ceamx-font-height-multiplier 1.0
   "Multiplier for display font size.
 Intended for use as a per-system (or, ideally, per-display)
 accommodation for varying pixel densities."
   :group 'ceamx
   :type '(float))
-
-(provide 'config-ui)
-;;; config-ui.el ends here
 #+end_src
 
 
-** Customization
+** General user interface customizations
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-ui.el
-;;; init-ui.el --- General user interface customizations  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; For user interface things that are shared by many other things.
-
-;;; Code:
-
-(require 'lib-common)
-
-;;; General
-
+#+begin_src emacs-lisp
 ;; Modal keybinding systems will change the cursor dynamically to indicate current state.
 ;; This default value matches what I expect in an "insert" mode.
 (setq-default cursor-type 'bar)
@@ -3041,7 +3092,9 @@ accommodation for varying pixel densities."
 
 ;; Improve visual contrast between focused/non-focused windows.
 (setopt highlight-nonselected-windows nil)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Customization buffer and menu interface
 
 (setopt custom-theme-allow-multiple-selections nil)
@@ -3049,7 +3102,9 @@ accommodation for varying pixel densities."
 (setopt custom-unlispify-menu-entries nil)
 (setopt custom-unlispify-tag-names nil)
 (setopt custom-unlispify-remove-prefixes nil)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Provide commonly-used interface libraries
 
 ;; Required as dependencies for many packages, either as more recent versions
@@ -3075,13 +3130,17 @@ accommodation for varying pixel densities."
 (package! svg-lib)
 
 (package! hydra)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; ~pretty-hydra~
 
 ;; <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 (package! pretty-hydra)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; ~avy~
 
 ;; <https://github.com/abo-abo/avy>
@@ -3105,21 +3164,27 @@ accommodation for varying pixel densities."
     (declare-function lispy-join "lispy")
     ;; Prevent conflict with newly-added M-j binding.
     (keymap-set lispy-mode-map "M-J" #'lispy-join)))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; ~page-break-lines~: improve appearance of form feed characters
 
 ;; <https://github.com/purcell/page-break-lines/blob/master/README.md>
 
 (package! page-break-lines
   (global-page-break-lines-mode))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; ~breadcrumb~: header-line indication of current location in project
 
 ;; <https://github.com/joaotavora/breadcrumb>
 
 (package! breadcrumb
   (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; ~pulsar~: Pulse current line after function invocations
 
 (package! pulsar
@@ -3135,63 +3200,38 @@ accommodation for varying pixel densities."
 
   (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
     (add-hook 'next-error-hook (function fn))))
-
-(provide 'init-ui)
-;;; init-ui.el ends here
 #+end_src
 
 
-** Themes
+** Theme
 
 *** General Customization
 
-#+BEGIN_SRC emacs-lisp :comments no :tangle lisp/init-ui-theme.el
-;;; init-ui-theme.el --- Theme Initalization -*- lexical-binding: t -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;  Load the theme configurations.
-
-;;; Code:
-
+#+begin_src emacs-lisp
 ;;; Requirements
 
 (require 'config-env)
 (require 'config-ui)
-(require 'lib-ui-theme)
 
+(require 'lib-ui)
+#+end_src
+
+#+begin_src emacs-lisp
 ;;; General Configuration
 
 ;; Don't prompt to confirm theme safety.
 (setopt custom-safe-themes t)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Ensure themes are applied in new frames to prevent flashing
 
 ;; TODO: also some other link i can't find now
 ;; <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
 (add-hook 'after-make-frame-functions #'ceamx-theme-re-enable-in-frame)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Add a custom hook to run after enabling a theme
 
 ;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
@@ -3203,45 +3243,14 @@ accommodation for varying pixel densities."
   (run-hooks 'ceamx-after-enable-theme-hook))
 
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
-
-(provide 'init-ui-theme)
-;;; init-ui-theme.el ends here
-#+END_SRC
+#+end_src
 
 
 *** Modus Themes
 
-**** Customization
+- Website :: <https://protesilaos.com/modus-themes/>
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-ui-modus-themes.el
-;;; init-ui-modus-themes.el ---Modus Themes initialization  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; <https://protesilaos.com/modus-themes/>
-
-;;; Code:
-
-(require 'lib-common)
-
+#+begin_src emacs-lisp
 (package! modus-themes
   (require 'modus-themes)
 
@@ -3285,58 +3294,19 @@ accommodation for varying pixel densities."
   ;; Do not extend `region' background past the end of the line.
   ;; <https://protesilaos.com/emacs/modus-themes#h:a5140c9c-18b2-45db-8021-38d0b5074116>
   (custom-set-faces
-   '(region ((t :extend nil))))
-
-  ;; NOTE: Loaded in `init-ui-circadian'.
-  ;; (load-theme 'modus-vivendi-tinted :no-confirm)
-  )
-
-(provide 'init-ui-modus-themes)
-;;; init-ui-modus-themes.el ends here
+   '(region ((t :extend nil)))))
 #+end_src
 
 
 *** Ef-Themes
 
+- Website :: <https://protesilaos.com/emacs/ef-themes>
 
-**** Customization
-
-#+begin_src emacs-lisp :comments no :tangle lisp/init-ui-ef-themes.el
-;;; init-ui-ef-themes.el --- Support for the Ef theme family  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; <https://protesilaos.com/emacs/ef-themes>
-
-;;; Code:
-
-;;; Requirements
-
-(require 'config-ui)
-
-;;; Configuration
-
+#+begin_src emacs-lisp
 (defvar ceamx-font-headings-style-alist)
+#+end_src
 
-
+#+begin_src emacs-lisp
 (use-package ef-themes
   :ensure t
   :demand t
@@ -3363,56 +3333,21 @@ accommodation for varying pixel densities."
           ef-themes-variable-pitch-ui nil)
 
   ;; Disable all other themes to avoid awkward blending
-  (mapc #'disable-theme custom-enabled-themes)
-
-  ;; The themes we provide are recorded in the `ef-themes-dark-themes',
-  ;; `ef-themes-light-themes'.
-  ;; Load the theme of choice:
-  ;; (load-theme 'ef-elea-dark :no-confirm)
-  ;; OR use this to load the theme which also calls `ef-themes-post-load-hook':
-  ;; (ef-themes-select 'ef-winter)
-  ;; OR use some other method of loading a theme in `init-ui-circadian'
-  )
-
-(provide 'init-ui-ef-themes)
-;;; init-ui-ef-themes.el ends here
+  (mapc #'disable-theme custom-enabled-themes))
 #+end_src
 
 
-*** Circadian Theme Phasing
+*** DISABLED Circadian Theme Phasing
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-ui-circadian.el
-;;; init-ui-circadian.el --- Support for sunrise/sunset adjustments  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
-
+#+begin_src emacs-lisp :tangle no
 (require 'cal-dst)
 
 (require 'config-ui)
-(require 'lib-common)
 
+(require 'lib-common)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
 ;;; Sunrise/sunset interval via ~solar~ and ~circadian~
 
 (use-feature! solar
@@ -3434,7 +3369,9 @@ accommodation for varying pixel densities."
   (setopt circadian-themes `((:sunrise . ,ceamx-theme-default-light)
                              (:sunset . ,ceamx-theme-default-dark)))
   (circadian-setup))
+#+end_src
 
+#+begin_src emacs-lisp :tangle no
 ;;;; Phase-of-day interval via `theme-buffet'
 
 ;; <https://git.sr.ht/~bboal/theme-buffet>
@@ -3464,11 +3401,11 @@ accommodation for varying pixel densities."
 
   (setopt theme-buffet-end-user
           '(:night (;; ef-autumn
-                     ef-duo-dark
-                     ef-trio-dark
-                     ef-night
-                     ef-winter
-                     ef-dark)
+                    ef-duo-dark
+                    ef-trio-dark
+                    ef-night
+                    ef-winter
+                    ef-dark)
             :twilight (ef-bio
                        ef-cherie
                        ef-dream
@@ -3506,49 +3443,20 @@ accommodation for varying pixel densities."
 
   ;; Activate some theme in the current period.
   (theme-buffet-a-la-carte))
-
-(provide 'init-ui-circadian)
-;;; init-ui-circadian.el ends here
 #+end_src
 
 
-*** Library
+*** Theme commands
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-ui-theme.el
-;;; lib-ui-theme.el --- Theme library functions and macros  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-;; Copyright (C) 2024  Protesilaos Stavrou
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;;         Protesilaos Stavrou <info@protesilaos.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Theme library functions and macros.
-
-;;; Code:
-
+#+begin_src emacs-lisp :noweb-ref lib-ui
 (require 'config-ui)
 
 (require 'lib-common)
 
 (declare-function theme-buffet--load-random "theme-buffet")
+#+end_src
 
+#+begin_src emacs-lisp :noweb-ref lib-ui
 ;;; Helpers
 
 (defun +theme-buffet--load-random-from-periods (periods)
@@ -3558,7 +3466,9 @@ must be a valid `theme-buffet' period as defined in
 `theme-buffet--keywords'."
   (let ((period (if (listp periods) (seq-random-elt periods) periods)))
     (theme-buffet--load-random period)))
+#+end_src
 
+#+begin_src emacs-lisp :noweb-ref lib-ui
 ;;; Functions
 
 ;; via prot-emacs
@@ -3578,9 +3488,13 @@ not retain the generic background set by the function
 (defun ceamx-gnome-theme-dark-p ()
   "Whether GNOME/GTK are using a theme with a dark color scheme."
   (string-match-p "dark" (ceamx-gnome-theme)))
+#+end_src
 
+#+begin_src emacs-lisp :noweb-ref lib-ui
 ;;; Commands
+#+end_src
 
+#+begin_src emacs-lisp :noweb-ref lib-ui
 ;;;; Desktop environment commands
 
 (defun ceamx/gnome-set-theme (theme)
@@ -3590,9 +3504,9 @@ not retain the generic background set by the function
   (let* ((namespace ceamx-gnome-ui-namespace)
          (value (pcase theme
                   ((rx (optional "prefer-") "dark")
-                    "prefer-dark")
+                   "prefer-dark")
                   ((rx (optional "prefer-") "light")
-                    "prefer-light")
+                   "prefer-light")
                   (_ "prefer-dark")))
          (cmd (format "gsettings set %s color-scheme %s" namespace value)))
     (shell-command cmd)))
@@ -3606,7 +3520,9 @@ not retain the generic background set by the function
   "Enable the light GNOME/GTK theme."
   (interactive)
   (ceamx/gnome-set-theme "light"))
+#+end_src
 
+#+begin_src emacs-lisp :noweb-ref lib-ui
 ;;;; Emacs-specific commands
 
 (defun ceamx/load-dark-theme ()
@@ -3614,21 +3530,23 @@ not retain the generic background set by the function
   (interactive)
   (pcase ceamx-theme-circadian-interval
     ('buffet
-      (+theme-buffet--load-random-from-periods
-        ceamx-theme-buffet-dark-periods))
+     (+theme-buffet--load-random-from-periods
+      ceamx-theme-buffet-dark-periods))
     (_
-      (load-theme ceamx-theme-default-dark :no-confirm))))
+     (load-theme ceamx-theme-default-dark :no-confirm))))
 
 (defun ceamx/load-light-theme ()
   "Load a random light theme."
   (interactive)
   (pcase ceamx-theme-circadian-interval
     ('buffet
-      (+theme-buffet--load-random-from-periods
-        ceamx-theme-buffet-light-periods))
+     (+theme-buffet--load-random-from-periods
+      ceamx-theme-buffet-light-periods))
     (_
-      (load-theme ceamx-theme-default-light :no-confirm))))
+     (load-theme ceamx-theme-default-light :no-confirm))))
+#+end_src
 
+#+begin_src emacs-lisp :noweb-ref lib-ui
 ;;;; Global commands
 
 (defun ceamx/light ()
@@ -3642,42 +3560,19 @@ not retain the generic background set by the function
   (interactive)
   (ceamx/gnome-dark-theme)
   (ceamx/load-dark-theme))
-
-(provide 'lib-ui-theme)
-;;; lib-ui-theme.el ends here
 #+end_src
 
 
-
 ** Fonts/Typography
+:PROPERTIES:
+:header-args: :noweb-ref init-ui-font
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-ui-font.el
-;;; init-ui-font.el --- Font configuration           -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
+#+begin_src emacs-lisp
 ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
+#+end_src
 
-;;; Code:
-
+#+begin_src emacs-lisp
 ;;;; Requirements
 
 (require 'ceamx-paths)
@@ -3685,13 +3580,17 @@ not retain the generic background set by the function
 
 (require 'lib-common)
 (require 'lib-ui)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; General
 
 (setq x-underline-at-descent-line nil)
 
 (setq-default text-scale-remap-header-line t)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Use the ~fontaine~ package for configuring and managing font presets
 
 ;; <https://protesilaos.com/emacs/fontaine>
@@ -3709,110 +3608,112 @@ not retain the generic background set by the function
   ;; sizes best scale in multiples of 3-point increments. So, each height value
   ;; is a multiple of 3.
   (setopt fontaine-presets
-    `( (small
-         :bold-weight medium
-         :default-height ,(pcase (system-name)
-                            (_ 90))
-         :default-weight ,(pcase (system-name)
-                            ("tuvok" 'semilight)
-                            (_ 'regular)))
-       (regular)
-       (medium
-         :default-height ,(pcase (system-name)
-                            ("boschic" 124)
-                            ("tuvok"
-                              120
-                              ;; 115
+          `( (small
+              :bold-weight medium
+              :default-height ,(pcase (system-name)
+                                (_ 90))
+              :default-weight ,(pcase (system-name)
+                                ("tuvok" 'semilight)
+                                (_ 'regular)))
+             (regular)
+             (medium
+              :default-height ,(pcase (system-name)
+                                ("boschic" 124)
+                                ("tuvok"
+                                 120
+                                 ;; 115
 
-                              )
-                            (_ 120)))
-       (large
-         :default-height ,(pcase (system-name)
-                            ;; ("tuvok" 140)
-                            (_ 144))
-         :default-weight semilight
-         :bold-weight semibold)
-       (xlarge
-         :default-height ,(pcase (system-name)
-                            (_ 156))
-         :bold-weight bold)
-       (big-mclarge-huge
-         :default-weight semilight
-         :default-height ,(pcase (system-name)
-                            (_ 180))
-         :bold-weight extrabold)
-       (t
-         :default-family "Iosevka Comfy"
-         :default-weight regular
-         :default-slant normal
-         :default-height ,(pcase (system-name)
-                            ("tuvok" 102)
-                            (_ 105))
+                                 )
+                                (_ 120)))
+             (large
+              :default-height ,(pcase (system-name)
+                                ;; ("tuvok" 140)
+                                (_ 144))
+              :default-weight semilight
+              :bold-weight semibold)
+             (xlarge
+              :default-height ,(pcase (system-name)
+                                (_ 156))
+              :bold-weight bold)
+             (big-mclarge-huge
+              :default-weight semilight
+              :default-height ,(pcase (system-name)
+                                (_ 180))
+              :bold-weight extrabold)
+             (t
+              :default-family "Iosevka Comfy"
+              :default-weight regular
+              :default-slant normal
+              :default-height ,(pcase (system-name)
+                                ("tuvok" 102)
+                                (_ 105))
 
-         :fixed-pitch-family "Iosevka Comfy"
-         :fixed-pitch-weight nil
-         :fixed-pitch-slant nil
-         :fixed-pitch-height 1.0
+              :fixed-pitch-family "Iosevka Comfy"
+              :fixed-pitch-weight nil
+              :fixed-pitch-slant nil
+              :fixed-pitch-height 1.0
 
-         :fixed-pitch-serif-family nil
-         :fixed-pitch-serif-weight nil
-         :fixed-pitch-serif-slant nil
-         :fixed-pitch-serif-height 1.0
+              :fixed-pitch-serif-family nil
+              :fixed-pitch-serif-weight nil
+              :fixed-pitch-serif-slant nil
+              :fixed-pitch-serif-height 1.0
 
-         :variable-pitch-family "Iosevka Comfy Motion"
-         :variable-pitch-weight nil
-         :variable-pitch-slant nil
-         :variable-pitch-height 1.0
+              :variable-pitch-family "Iosevka Comfy Motion"
+              :variable-pitch-weight nil
+              :variable-pitch-slant nil
+              :variable-pitch-height 1.0
 
-         :header-line-family nil
-         :header-line-height 1.0
-         :header-line-slant nil
-         :header-line-weight nil
+              :header-line-family nil
+              :header-line-height 1.0
+              :header-line-slant nil
+              :header-line-weight nil
 
-         :line-number-family nil
-         :line-number-height 1.0
-         :line-number-slant nil
-         :line-number-weight nil
+              :line-number-family nil
+              :line-number-height 1.0
+              :line-number-slant nil
+              :line-number-weight nil
 
-         :mode-line-active-family nil
-         :mode-line-active-weight nil
-         :mode-line-active-slant nil
-         :mode-line-active-height 1.0
+              :mode-line-active-family nil
+              :mode-line-active-weight nil
+              :mode-line-active-slant nil
+              :mode-line-active-height 1.0
 
-         :mode-line-inactive-family nil
-         :mode-line-inactive-weight nil
-         :mode-line-inactive-slant nil
-         :mode-line-inactive-height 1.0
+              :mode-line-inactive-family nil
+              :mode-line-inactive-weight nil
+              :mode-line-inactive-slant nil
+              :mode-line-inactive-height 1.0
 
-         :tab-bar-family nil
-         :tab-bar-weight nil
-         :tab-bar-slant nil
-         :tab-bar-height 1.0
+              :tab-bar-family nil
+              :tab-bar-weight nil
+              :tab-bar-slant nil
+              :tab-bar-height 1.0
 
-         :tab-line-family nil
-         :tab-line-weight nil
-         :tab-line-slant nil
-         :tab-line-height 1.0
+              :tab-line-family nil
+              :tab-line-weight nil
+              :tab-line-slant nil
+              :tab-line-height 1.0
 
-         :bold-family nil
-         :bold-weight medium
-         ;; :bold-weight semibold
-         :bold-slant nil
-         :bold-height 1.0
+              :bold-family nil
+              :bold-weight medium
+              ;; :bold-weight semibold
+              :bold-slant nil
+              :bold-height 1.0
 
-         :italic-family nil
-         :italic-weight nil
-         :italic-slant italic
-         :italic-height 1.0
+              :italic-family nil
+              :italic-weight nil
+              :italic-slant italic
+              :italic-height 1.0
 
-         :line-spacing 1)))
+              :line-spacing 1)))
 
   ;; Persist latest preset across sessions.
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
 
 (elpaca-wait)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Enable improved ligature support with the ~ligature.el~ package
 
 ;; <https://github.com/mickeynp/ligature.el>
@@ -3826,54 +3727,20 @@ not retain the generic background set by the function
   ;; Enable all Iosevka ligatures in programming modes
   ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
   (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
-                                        "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
-                                        "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
-                                        ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
 
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
-
-(provide 'init-ui-font)
-;;; init-ui-font.el ends here
 #+end_src
 
 
 
 ** Modeline
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-ui-modeline.el
-;;; init-ui-modeline.el --- Modeline -*- lexical-binding: t -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;  Modeline configuration
-
-;;; Code:
-
-(require 'lib-common)
-
+#+begin_src emacs-lisp
 (use-feature! emacs
   :config
   (setopt line-number-mode t)
@@ -3882,12 +3749,16 @@ not retain the generic background set by the function
 (use-feature! time
   :config
   (setopt display-time-24hr-format t))
+#+end_src
 
+#+begin_src emacs-lisp
 (use-package minions
   :commands (minions-mode)
   :config
   (minions-mode 1))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Show current command and its binding with ~keycast~
 
 ;; <https://github.com/tarsius/keycast>
@@ -3910,57 +3781,13 @@ not retain the generic background set by the function
 
   (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
     (add-to-list 'keycast-substitute-alist `(,event nil))))
-
-(provide 'init-ui-modeline)
-;;; init-ui-modeline.el ends here
 #+end_src
 
 
 *** Doom-Modeline
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-ui-modeline-doom.el
-;;; init-ui-modeline-doom.el --- doom-modeline init  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
-
-;; NOTE: be wary of performance issues, as this package is notoriously heavy
-;; FIXME: darwin: icons worked inconsistently until installing
-;; "Symbols Nerd Font Mono" via `nerd-icons-install-fonts'.
-;; The resulting file =NFM.ttf= seems significantly different than the version
-;; installed by Nix, but I'm not positive yet because the macOS Font Book app is
-;; pretty difficult to work with.
-;; Nerd Fonts recently released a new major version and I suspect that may factor into the issue.
-;; Note, however, that the nerd-icons package uses the latest font version (v3.0.x)
-;; This GitHub issue /might/ be relevant: <https://github.com/rainstormstudio/nerd-icons.el/issues/43>
-(use-package doom-modeline
-  :demand t
-
-  :init
-  (doom-modeline-mode 1)
-
-  :config
+#+begin_src emacs-lisp
+(package! doom-modeline
   (setopt doom-modeline-support-imenu t)
   (setopt doom-modeline-unicode-fallback t)
   (setopt doom-modeline-buffer-encoding nil)
@@ -3982,50 +3809,28 @@ not retain the generic background set by the function
 
   (setopt doom-modeline-modal t)
   ;; FIXME: missing icon with nix-installed font... but only when non-nil?! when nil, icon displays properly...
-  (setopt doom-modeline-modal-icon t))
+  (setopt doom-modeline-modal-icon t)
 
-(provide 'init-ui-modeline-doom)
-;;; init-ui-modeline-doom.el ends here
+  (doom-modeline-mode 1))
 #+end_src
-
 
 
 ** Integrating the preceding interfaces
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-after-ui.el
-;;; init-after-ui.el --- Late UI configuration       -*- lexical-binding: t; -*-
+#+begin_src emacs-lisp
+(elpaca-wait)
+#+end_src
 
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Configuration to load after all other user interface customizations.
-
-;; For features depending on the state of all other `init-ui-*' modules.
-
-;;; Code:
-
-(require 'lib-common)
-
+#+begin_src emacs-lisp
 (setopt ceamx-theme-default-light 'modus-operandi)
 (setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
+#+end_src
 
+#+begin_src emacs-lisp
+(ceamx/load-dark-theme)
+#+end_src
+
+#+begin_src emacs-lisp
 ;;; ~spacious-padding~ :: <https://protesilaos.com/emacs/spacious-padding>
 (use-package spacious-padding
   :demand t
@@ -4034,16 +3839,16 @@ not retain the generic background set by the function
 
   :init
   (setopt spacious-padding-widths
-    '(
-       ;; NOTE: `:internal-border-width' currently breaks `tab-bar-mode'
-       ;;       display on Emacs 29. Fixed in master branch.
-       ;;       <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-       :internal-border-width 15
-       :header-line-width 4
-       :mode-line-width 4
-       :tab-width 4
-       :right-divider-width 30
-       :scroll-bar-width 8))
+          '(
+            ;; NOTE: `:internal-border-width' currently breaks `tab-bar-mode'
+            ;;       display on Emacs 29. Fixed in master branch.
+            ;;       <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+            :internal-border-width 15
+            :header-line-width 4
+            :mode-line-width 4
+            :tab-width 4
+            :right-divider-width 30
+            :scroll-bar-width 8))
 
   :config
 
@@ -4056,50 +3861,21 @@ not retain the generic background set by the function
 
   (spacious-padding-mode 1))
 
-(provide 'init-after-ui)
-;;; init-after-ui.el ends here
 #+end_src
 
 
 
 ** Library
+:PROPERTIES:
+:header-args: :noweb-ref lib-ui
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-ui.el
-;;; lib-ui.el --- General user interface library     -*- lexical-binding: t; -*-
+- Source :: <https://github.com/noctuid/dotfiles/blob/master/emacs/.emacs.d/awaken.org#gui-related>
+- Ref :: <https://photo.stackexchange.com/questions/18494/what-is-the-difference-between-pixel-pitch-and-pixel-density>
+- Ref :: <https://insights.samsung.com/2023/10/05/what-is-pixel-pitch-understanding-fine-pixel-pitch-led-displays/>
 
-;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; <https://photo.stackexchange.com/questions/18494/what-is-the-difference-between-pixel-pitch-and-pixel-density>
-;; <https://insights.samsung.com/2023/10/05/what-is-pixel-pitch-understanding-fine-pixel-pitch-led-displays/>
-
-;;; Sources:
-
-;; <https://github.com/noctuid/dotfiles/blob/master/emacs/.emacs.d/awaken.org#gui-related>
-
-;;; Code:
-
-;;;; Requirements
-
-(require 'config-ui)
-
+#+begin_src emacs-lisp
 ;;;; Constants
 
 (defconst ceamx-inch-as-mm 25.4
@@ -4126,7 +3902,6 @@ center of its adjacent pixel."
     (/ (float (nth 1 (assoc 'mm-size monitor-attrs)))
       (nth 3 (assoc 'geometry monitor-attrs)))))
 
-
 (defun ceamx-font-height (number &optional multiplier)
   "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
 NUMBER should be a whole number. MULTIPLIER should be a float.
@@ -4134,9 +3909,6 @@ NUMBER should be a whole number. MULTIPLIER should be a float.
 If MULTIPLIER is nil, the value of `ceamx-font-height-multiplier'
 will be used as default."
   (truncate (* number (or multiplier ceamx-font-height-multiplier))))
-
-(provide 'lib-ui)
-;;; lib-ui.el ends here
 #+end_src
 
 
@@ -12351,6 +12123,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 
 * Printing
+
 #+begin_src emacs-lisp :comments no :tangle lisp/init-printing.el
 ;;; init-printing.el --- Support for printing documents  -*- lexical-binding: t; -*-
 

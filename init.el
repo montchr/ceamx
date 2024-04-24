@@ -336,22 +336,8 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (require 'init-ui)
 
-(require 'init-ui-theme)
-(require 'init-ui-ef-themes)
-(require 'init-ui-modus-themes)
-
 (when (display-graphic-p)
   (require 'init-ui-font))
-
-(require 'init-ui-modeline)
-(require 'init-ui-modeline-doom)
-
-;;;;; Integrations for visual consistency
-
-;; FIXME: too complicated (`theme-buffet') or broken (`circadian')
-;; (require 'init-ui-circadian)
-
-(require 'init-after-ui)
 
 ;;;; Keyboard support
 
