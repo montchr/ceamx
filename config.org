@@ -1090,7 +1090,8 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;;;;; Integrations for visual consistency
 
-(require 'init-ui-circadian)
+;; FIXME: too complicated (`theme-buffet') or broken (`circadian')
+;; (require 'init-ui-circadian)
 
 (require 'init-after-ui)
 
@@ -2967,14 +2968,19 @@ theme)."
                  (const :tag "The `standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
-(defcustom ceamx-theme-circadian-interval 'buffet
+(defcustom ceamx-theme-circadian-interval nil
   "The circadian theme switching interval.
-Value may be either `period' or `solar', corresponding
+Value may be `period', `solar', or nil, corresponding
 respectively to period-based switching with `theme-buffet' or
 sunrise/sunset toggling from the combination of the `solar'
-library and the `circadian' package."
+library and the `circadian' package.
+
+A nil value means to disable automatic theme switching.
+Theme-switching commands `ceamx/light' and `ceamx/dark' will
+unconditionally use `ceamx-theme-default-light' and
+`ceamx-theme-default-dark', respectively."
   :group 'ceamx
-  :type '(choice :tag "Circadian theme switching interval" :value solar
+  :type '(choice :tag "Circadian theme switching interval" :value nil
           (const :tag "Time periods via `theme-buffet'" :value buffet)
           (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
 
@@ -3478,7 +3484,7 @@ accommodation for varying pixel densities."
                   ef-trio-light
                   modus-operandi)
             :afternoon (ef-cyprus
-                        ef-arbutus
+                        ;; ef-arbutus
                         ef-day
                         ef-duo-light
                         ef-kassio
@@ -4016,6 +4022,9 @@ not retain the generic background set by the function
 ;;; Code:
 
 (require 'lib-common)
+
+(setopt ceamx-theme-default-light 'modus-operandi)
+(setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
 
 ;;; ~spacious-padding~ :: <https://protesilaos.com/emacs/spacious-padding>
 (use-package spacious-padding

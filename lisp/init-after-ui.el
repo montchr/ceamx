@@ -28,6 +28,9 @@
 
 (require 'lib-common)
 
+(setopt ceamx-theme-default-light 'modus-operandi)
+(setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
+
 ;;; ~spacious-padding~ :: <https://protesilaos.com/emacs/spacious-padding>
 (use-package spacious-padding
   :demand t

@@ -70,14 +70,19 @@ theme)."
                  (const :tag "The `standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
-(defcustom ceamx-theme-circadian-interval 'buffet
+(defcustom ceamx-theme-circadian-interval nil
   "The circadian theme switching interval.
-Value may be either `period' or `solar', corresponding
+Value may be `period', `solar', or nil, corresponding
 respectively to period-based switching with `theme-buffet' or
 sunrise/sunset toggling from the combination of the `solar'
-library and the `circadian' package."
+library and the `circadian' package.
+
+A nil value means to disable automatic theme switching.
+Theme-switching commands `ceamx/light' and `ceamx/dark' will
+unconditionally use `ceamx-theme-default-light' and
+`ceamx-theme-default-dark', respectively."
   :group 'ceamx
-  :type '(choice :tag "Circadian theme switching interval" :value solar
+  :type '(choice :tag "Circadian theme switching interval" :value nil
           (const :tag "Time periods via `theme-buffet'" :value buffet)
           (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
 

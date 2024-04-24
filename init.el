@@ -348,7 +348,8 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;;;;; Integrations for visual consistency
 
-(require 'init-ui-circadian)
+;; FIXME: too complicated (`theme-buffet') or broken (`circadian')
+;; (require 'init-ui-circadian)
 
 (require 'init-after-ui)
 

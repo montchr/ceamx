@@ -100,7 +100,7 @@
                   ef-trio-light
                   modus-operandi)
             :afternoon (ef-cyprus
-                        ef-arbutus
+                        ;; ef-arbutus
                         ef-day
                         ef-duo-light
                         ef-kassio
