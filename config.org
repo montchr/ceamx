@@ -8307,18 +8307,59 @@ otherwise the icon size will likely not be accurate.
 #+begin_src emacs-lisp
 (require 'lib-common)
 
+(defvar +corfu-buffer-scanning-size-limit (* 1 1024 1024) ; 1 MB
+  "Size limit for a buffer to be scanned by `cape-dabbrev'.")
+
+(defun +dabbrev-friend-buffer-p (buf)
+  "Whether to consider BUF a `dabbrev' friend buffer."
+  (< (buffer-size buf) +corfu-buffer-scanning-size-limit))
+
+(after! dabbrev
+  (setopt dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p)
+  (setopt dabbrev-ignored-buffer-regexps
+          '("\\` "
+            "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?"))
+  (setopt dabbrev-upcase-means-case-search t)
+
+  (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
+    (add-to-list 'dabbrev-ignored-buffer-modes mode)))
+
 (package! cape
   (setopt cape-dabbrev-check-other-buffers t)
 
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  (def-hook! +corfu-add-cape-file-h ()
+    'prog-mode-hook
+    "Register the `cape-file' `completion-at-point-functions'."
+    (add-hook 'completion-at-point-functions #'cape-file -10 t))
+
+  (def-hook! +corfu-add-cape-elisp-block-h ()
+    '(org-mode-hook markdown-mode-hook)
+    "Register Elisp src block symbol completions."
+    (add-hook 'completion-at-point-functions #'cape-elisp-block 0 t))
+
+  (def-hook! +corfu-add-cape-dabbrev-h ()
+    '(prog-mode-hook
+      text-mode-hook
+      conf-mode-hook
+      comint-mode-hook
+      minibuffer-setup-hook
+      eshell-mode-hook)
+    "Register `dabbrev' completions."
+    (add-hook 'completion-at-point-functions #'cape-dabbrev 20 t))
+
+  (def-hook! +corfu-add-cape-elisp-symbol-h ()
+    '(emacs-lisp-mode-hook)
+    "Register Emacs Lisp symbol completions."
+    (add-to-list 'completion-at-point-functions #'cape-elisp-symbol))
+
+  (advice-add #'pcomplete-completions-at-point :around #'cape-wrap-nonexclusive)
+
   ;; (add-to-list 'completion-at-point-functions #'cape-history)
   ;; (add-to-list 'completion-at-point-functions #'cape-keyword)
   ;; (add-to-list 'completion-at-point-functions #'cape-sgml)
-  ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
+  (add-to-list 'completion-at-point-functions #'cape-abbrev)
   ;; (add-to-list 'completion-at-point-functions #'cape-dict)
-  (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+
   ;; (add-to-list 'completion-at-point-functions #'cape-line)
   ;; "Character Mnemonics & Character Sets": <https://datatracker.ietf.org/doc/html/rfc1345>
   ;; (add-to-list 'completion-at-point-functions #'cape-rfc1345)
