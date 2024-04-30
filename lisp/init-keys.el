@@ -67,8 +67,9 @@
 
 ;;; Enable and configure ~repeat-mode~
 
-(setopt repeat-exit-key "ESC")
 (setopt repeat-exit-timeout 10)
+;; Allow any key sequence to exit `repeat-mode'.
+(setopt repeat-exit-key nil)
 (setopt repeat-on-final-keystroke t)
 (setopt repeat-keep-prefix nil)
 
