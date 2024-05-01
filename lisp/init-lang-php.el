@@ -1,31 +1,30 @@
-;;; init-lang-php.el --- PHP language support        -*- lexical-binding: t; -*-
+;;; init-lang-php.el --- PHP language support  -*- lexical-binding: t;  -*-
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
 ;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords:
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; This file is NOT part of GNU Emacs.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;; Support for PHP language.
-
 ;;; Code:
 
 (require 'lib-common)
-
 ;; FIXME: append, don't define a new var entirely
 ;; (defvar xref-ignored-files '("_ide_helper_models.php" "_ide_helper.php")
 ;;   "List of files to be ignored by `xref'.")
@@ -36,38 +35,11 @@
   (seq-some
    (lambda (cand)
      (string-suffix-p cand (oref (xref-item-location item) file))) xref-ignored-files))
-
-(use-package php-mode
-  :init
-  ;; Render multiline comments using `font-lock-comment-face'.
-  (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
-  :config
+(package! php-mode
   (setopt php-mode-template-compatibility nil)
 
-  ;; TODO: from doom
-  ;; (set-docsets! 'php-mode "PHP" "PHPUnit" "Laravel" "CakePHP" "CodeIgniter" "Doctrine_ORM")
-  ;; (set-repl-handler! 'php-mode #'+php/open-repl)
-  ;; (set-lookup-handlers! 'php-mode :documentation #'php-search-documentation)
-  ;; (set-ligatures! 'php-mode
-  ;;   ;; Functional
-  ;;   :lambda "function()" :lambda "fn"
-  ;;   :def "function"
-  ;;   ;; Types
-  ;;   :null "null"
-  ;;   :true "true" :false "false"
-  ;;   :int "int" :float "float"
-  ;;   :str "string"
-  ;;   :bool "list"
-  ;;   ;; Flow
-  ;;   :not "!"
-  ;;   :and "&&" :and "and"
-  ;;   :or "||" :or "or"
-  ;;   :for "for"
-  ;;   :return "return"
-  ;;   :yield "use")
-
-  )
-
+  ;; Render multiline comments using `font-lock-comment-face'.
+  (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h))
 ;; FIXME: i am going to assume this is all irrelevant in 2024 please
 ;; (use-feature! lsp-mode
 ;;   :init
@@ -84,10 +56,8 @@
 ;;     :filter-return #'lsp-ui-peek--get-references
 ;;     "Remove ignored files from list of xref-items."
 ;;     (cl-remove-if #'xref-ignored-file-p items)))
-
 (after! projectile
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
-
 (after! web-mode
   ;; This should override the default file extension association.
   (pushnew! web-mode-engines-alist '(("blade"  . "\\.blade\\."))))

@@ -621,6 +621,28 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="init-eglot")>>
 #+end_src
 
+*** =lisp/init-lang-php.el=
+
+#+name: init-lang-php-file
+#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-php.el
+<<file-prop-line(feature="init-lang-php",desc="PHP language support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lang-php>>
+
+<<file-footer(feature="init-lang-php")>>
+#+end_src
+
 
 ** Partials
 :PROPERTIES:
@@ -10754,37 +10776,22 @@ Returns process exit code."
 ;;; init-shell-nu.el ends here
 #+end_src
 *** TODO Rename file to =init-lang-nushell.el= or include in =init-lang-shell.el=
+
+
 ** PHP
+:PROPERTIES:
+:header-args: :noweb-ref init-lang-php
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-php.el
-;;; init-lang-php.el --- PHP language support        -*- lexical-binding: t; -*-
+*** Requirements
 
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Support for PHP language.
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'lib-common)
+#+end_src
 
+*** Ignore PHP-specific directories and files
+
+#+begin_src emacs-lisp
 ;; FIXME: append, don't define a new var entirely
 ;; (defvar xref-ignored-files '("_ide_helper_models.php" "_ide_helper.php")
 ;;   "List of files to be ignored by `xref'.")
@@ -10795,15 +10802,59 @@ Returns process exit code."
   (seq-some
    (lambda (cand)
      (string-suffix-p cand (oref (xref-item-location item) file))) xref-ignored-files))
+#+end_src
 
-(use-package php-mode
-  :init
-  ;; Render multiline comments using `font-lock-comment-face'.
-  (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
-  :config
+*** Install and configure ~php-mode~ for basic language support
+
+#+begin_src emacs-lisp
+(package! php-mode
   (setopt php-mode-template-compatibility nil)
 
-  ;; TODO: from doom
+  ;; Render multiline comments using `font-lock-comment-face'.
+  (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h))
+#+end_src
+
+*** LSP Mode integration
+
+#+begin_src emacs-lisp
+;; FIXME: i am going to assume this is all irrelevant in 2024 please
+;; (use-feature! lsp-mode
+;;   :init
+;;   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\vendor")
+
+;;   ;; FIXME: move these to lsp module?
+
+;;   (def-advice! +lsp-ignored-locations-to-xref-items-a (items)
+;;     :filter-return #'lsp--locations-to-xref-items
+;;     "Remove ignored files from list of xref-items."
+;;     (cl-remove-if #'xref-ignored-file-p items))
+
+;;   (def-advice! +lsp-ui-peek--ignored-locations-a (items)
+;;     :filter-return #'lsp-ui-peek--get-references
+;;     "Remove ignored files from list of xref-items."
+;;     (cl-remove-if #'xref-ignored-file-p items)))
+#+end_src
+
+*** Projectile integration
+
+#+begin_src emacs-lisp
+(after! projectile
+  (add-to-list 'projectile-globally-ignored-directories "vendor"))
+#+end_src
+
+*** Register Blade templates (=*.blade.php=) to open in ~web-mode~
+
+#+begin_src emacs-lisp
+(after! web-mode
+  ;; This should override the default file extension association.
+  (pushnew! web-mode-engines-alist '(("blade"  . "\\.blade\\."))))
+#+end_src
+
+
+*** TODO PHP enhancements from Doom
+
+#+begin_example
+;; TODO: from doom
   ;; (set-docsets! 'php-mode "PHP" "PHPUnit" "Laravel" "CakePHP" "CodeIgniter" "Doctrine_ORM")
   ;; (set-repl-handler! 'php-mode #'+php/open-repl)
   ;; (set-lookup-handlers! 'php-mode :documentation #'php-search-documentation)
@@ -10824,36 +10875,9 @@ Returns process exit code."
   ;;   :for "for"
   ;;   :return "return"
   ;;   :yield "use")
+  #+end_example
 
-  )
 
-;; FIXME: i am going to assume this is all irrelevant in 2024 please
-;; (use-feature! lsp-mode
-;;   :init
-;;   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\vendor")
-
-;;   ;; FIXME: move these to lsp module?
-
-;;   (def-advice! +lsp-ignored-locations-to-xref-items-a (items)
-;;     :filter-return #'lsp--locations-to-xref-items
-;;     "Remove ignored files from list of xref-items."
-;;     (cl-remove-if #'xref-ignored-file-p items))
-
-;;   (def-advice! +lsp-ui-peek--ignored-locations-a (items)
-;;     :filter-return #'lsp-ui-peek--get-references
-;;     "Remove ignored files from list of xref-items."
-;;     (cl-remove-if #'xref-ignored-file-p items)))
-
-(after! projectile
-  (add-to-list 'projectile-globally-ignored-directories "vendor"))
-
-(after! web-mode
-  ;; This should override the default file extension association.
-  (pushnew! web-mode-engines-alist '(("blade"  . "\\.blade\\."))))
-
-(provide 'init-lang-php)
-;;; init-lang-php.el ends here
-#+end_src
 ** Shell Scripting
 
 #+begin_src emacs-lisp :comments no :tangle lisp/init-lang-shell.el
