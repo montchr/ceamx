@@ -33,6 +33,7 @@
 (defun ceamx-emacs-startup-hook ()
   (run-hooks 'ceamx-emacs-startup-hook))
 (setenv "LSP_USE_PLISTS" "true")
+(setq lsp-use-plists t)
 
 ;; Read JSON streams in 1MiB chunks instead of the default 4kB.
 ;;

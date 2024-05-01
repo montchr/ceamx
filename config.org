@@ -621,6 +621,28 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="init-eglot")>>
 #+end_src
 
+*** =lisp/init-lsp-mode.el=
+
+#+name: init-lsp-mode-file
+#+begin_src emacs-lisp :comments no :tangle lisp/init-lsp-mode.el
+<<file-prop-line(feature="init-lsp-mode",desc="LSP-Mode support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lsp>>
+
+<<file-footer(feature="init-lsp-mode")>>
+#+end_src
+
 *** =lisp/init-lang-php.el=
 
 #+name: init-lang-php-file
@@ -1397,6 +1419,7 @@ When non-nil, there is no need to invoke ~package-initialize~.
 
 #+begin_src emacs-lisp
 (setenv "LSP_USE_PLISTS" "true")
+(setq lsp-use-plists t)
 
 ;; Read JSON streams in 1MiB chunks instead of the default 4kB.
 ;;
@@ -2510,7 +2533,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 
 (package! exec-path-from-shell
   (require 'exec-path-from-shell)
-  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"))
+  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH" "LSP_USE_PLISTS"))
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
