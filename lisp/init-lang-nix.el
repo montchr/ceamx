@@ -39,7 +39,11 @@
 (package! nix-mode
   (require 'nix-mode)
 
-  (add-hook 'nix-mode-hook #'eglot-ensure))
+  (when (eq 'eglot ceamx-lsp-client)
+    (add-hook 'nix-mode-hook #'eglot-ensure))
+
+  (when (eq 'lsp-mode ceamx-lsp-client)
+        (add-hook 'nix-mode-hook #'lsp-deferred)))
 
 ;;; DISABLED Install and configure ~nix-ts-mode~
 
@@ -56,6 +60,12 @@
       (require 'nix-ts-mode)
 
       (add-hook 'nix-ts-mode-hook #'eglot-ensure)
+
+      (when (eq 'eglot ceamx-lsp-client)
+        (add-hook 'nix-ts-mode-hook #'eglot-ensure))
+
+      (when (eq 'lsp-mode ceamx-lsp-client)
+        (add-hook 'nix-ts-mode-hook #'lsp-deferred))
 
       (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
       (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode)))))
@@ -79,11 +89,18 @@
 
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
-  (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nil"))))
+  ;; (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nil")))
+  (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nixd"))))
 
 ;; via `lsp-mode' package
 (with-eval-after-load 'lsp-nix
-  (setopt lsp-nix-nil-formatter nil))
+  (setopt lsp-nix-nil-formatter nil)
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
+                    :major-modes '(nix-mode nix-ts-mode)
+                    :priority 0
+                    :server-id 'nixd)))
 
 ;;; Install ~devdocs~ Nix docset
 

@@ -32,11 +32,14 @@
   ;; Make files executable if their first line has a shebang.
   (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p))
 
-(use-feature! eglot
-  :config
-  (add-hook 'sh-mode-hook #'eglot-ensure)
-  (add-hook 'bash-ts-mode-hook #'eglot-ensure)
+(after! eglot
   (add-to-list 'eglot-server-programs '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))))
+
+(let ((lsp-fn (if (eq 'lsp-mode ceamx-lsp-client)
+                  #'lsp-deferred
+                #'eglot-ensure)))
+  (add-hook 'sh-mode-hook lsp-fn)
+  (add-hook 'bash-ts-mode-hook lsp-fn))
 
 (use-feature! flymake
   :config

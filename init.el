@@ -411,6 +411,8 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;;;; Language/syntax support
 
+(require 'config-prog)
+
 (require 'init-prog)
 (require 'init-lisp)
 
@@ -429,8 +431,8 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
 (require 'init-shell-nu)
 
-(require 'init-eglot)
-;; (require 'init-lsp)
+;; (require 'init-eglot)
+(require 'init-lsp-mode)
 
 
 ;;;; Miscellaneous

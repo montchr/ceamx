@@ -24,7 +24,58 @@
 ;;; Commentary:
 ;;; Code:
 
+(package! lsp-mode
+  (setopt lsp-keymap-prefix "C-c l")
+  (setopt lsp-enable-on-type-formatting nil)
+  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
 
+(package! lsp-ui)
+
+(after! popper
+  (add-to-list 'popper-reference-buffers (rx bol "*lsp-" (group (or "help" "install")))))
+(after! (lsp-mode corfu)
+  (setopt lsp-completion-provider :none)
+
+  (defun +orderless-dispatch-flex-first-h (_pattern index _total)
+    "Dispatch flex completion styles before all others.
+Intended for use as a hook function on `orderless-style-dispatchers'."
+    (and (eq index 0) 'orderless-flex))
+
+  (def-hook! +lsp-mode-setup-completion-h ()
+    'lsp-completion-mode-hook
+    "Use `orderless' completion style with `lsp-mode'."
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless))
+    ;; Consider the first word as a flex filter.
+    (add-hook 'orderless-style-dispatchers #'+orderless-dispatch-flex-first-h nil 'local)
+    (setq-local completion-at-point-functions
+                (list (cape-capf-buster #'lsp-completion-at-point)))))
+(require 'json)
+
+(after! lsp-mode
+  (def-advice! lsp-booster--json-parse-as-bytecode-a (old-fn &rest args)
+    :around #'json-parse-buffer
+    "Maybe parse JSON as bytecode from \"emacs-lsp-booster\"."
+    (or
+     (when (equal (following-char) ?#)
+       (let ((bytecode (read (current-buffer))))
+         (when (byte-code-function-p bytecode)
+           (funcall bytecode))))
+     (apply old-fn args))))
+(after! lsp-mode
+  (def-advice! lsp-booster--resolve-final-command-a (old-fn cmd &optional test?)
+    :around #'lsp-resolve-final-command
+    "Wrap the LSP server command CMD with a call to \"emacs-lsp-booster\"."
+    (let ((orig-result (funcall old-fn cmd test?)))
+      (if (and (not test?)                             ;; for check lsp-server-present?
+               (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+               lsp-use-plists
+               (not (functionp 'json-rpc-connection))  ;; native json-rpc
+               (executable-find "emacs-lsp-booster"))
+          (progn
+            (message "Using emacs-lsp-booster for %s!" orig-result)
+            (cons "emacs-lsp-booster" orig-result))
+        orig-result))))
 
 (provide 'init-lsp-mode)
 ;;; init-lsp-mode.el ends here

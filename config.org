@@ -599,6 +599,28 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="init-vcs")>>
 #+end_src
 
+*** =lisp/config-prog.el=
+
+#+name: config-prog-file
+#+begin_src emacs-lisp :comments no :tangle lisp/config-prog.el
+<<file-prop-line(feature="config-prog",desc="User options for programming modes")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-prog>>
+
+<<file-footer(feature="config-prog")>>
+#+end_src
+
 *** =lisp/init-eglot.el=
 
 #+name: init-eglot-file
@@ -638,7 +660,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 ;;; Commentary:
 ;;; Code:
 
-<<init-lsp>>
+<<init-lsp-mode>>
 
 <<file-footer(feature="init-lsp-mode")>>
 #+end_src
@@ -1314,6 +1336,8 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;;;; Language/syntax support
 
+(require 'config-prog)
+
 (require 'init-prog)
 (require 'init-lisp)
 
@@ -1332,8 +1356,8 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
 (require 'init-shell-nu)
 
-(require 'init-eglot)
-;; (require 'init-lsp)
+;; (require 'init-eglot)
+(require 'init-lsp-mode)
 
 
 ;;;; Miscellaneous
@@ -10179,10 +10203,61 @@ keywords are supported:
 
 ** Language Server Protocol Support :lsp:lang:
 
+#+begin_src emacs-lisp :noweb-ref config-prog
+(defcustom ceamx-lsp-client 'eglot
+  "The preferred LSP client."
+  :group 'ceamx
+  :type '(choice :tag "LSP client" :value eglot
+          (const :tag "Eglot [builtin]" eglot)
+          (const :tag "LSP-Mode" lsp-mode)))
+#+end_src
+
+
 *** LSP-Mode
 :PROPERTIES:
 :header-args: :noweb-ref init-lsp-mode
 :END:
+
+#+begin_src emacs-lisp :noweb-ref config-prog
+(setopt ceamx-lsp-client 'lsp-mode)
+#+end_src
+
+
+**** Install ~lsp-mode~ and ~lsp-ui~
+
+#+begin_src emacs-lisp
+(package! lsp-mode
+  (setopt lsp-keymap-prefix "C-c l")
+  (setopt lsp-enable-on-type-formatting nil)
+  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
+
+(package! lsp-ui)
+
+(after! popper
+  (add-to-list 'popper-reference-buffers (rx bol "*lsp-" (group (or "help" "install")))))
+#+end_src
+
+**** Tell ~lsp-mode~ to respect ~corfu~ and ~orderless~ :capt:
+
+#+begin_src emacs-lisp
+(after! (lsp-mode corfu)
+  (setopt lsp-completion-provider :none)
+
+  (defun +orderless-dispatch-flex-first-h (_pattern index _total)
+    "Dispatch flex completion styles before all others.
+Intended for use as a hook function on `orderless-style-dispatchers'."
+    (and (eq index 0) 'orderless-flex))
+
+  (def-hook! +lsp-mode-setup-completion-h ()
+    'lsp-completion-mode-hook
+    "Use `orderless' completion style with `lsp-mode'."
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless))
+    ;; Consider the first word as a flex filter.
+    (add-hook 'orderless-style-dispatchers #'+orderless-dispatch-flex-first-h nil 'local)
+    (setq-local completion-at-point-functions
+                (list (cape-capf-buster #'lsp-completion-at-point)))))
+#+end_src
 
 **** Parse LSP JSON data as bytecode with =lsp-booster= :perf:
 
@@ -10193,7 +10268,7 @@ keywords are supported:
 
 (after! lsp-mode
   (def-advice! lsp-booster--json-parse-as-bytecode-a (old-fn &rest args)
-    :around 'json-parse-buffer
+    :around #'json-parse-buffer
     "Maybe parse JSON as bytecode from \"emacs-lsp-booster\"."
     (or
      (when (equal (following-char) ?#)
@@ -10210,7 +10285,7 @@ keywords are supported:
 #+begin_src emacs-lisp
 (after! lsp-mode
   (def-advice! lsp-booster--resolve-final-command-a (old-fn cmd &optional test?)
-    :around 'lsp-resolve-final-command
+    :around #'lsp-resolve-final-command
     "Wrap the LSP server command CMD with a call to \"emacs-lsp-booster\"."
     (let ((orig-result (funcall old-fn cmd test?)))
       (if (and (not test?)                             ;; for check lsp-server-present?
@@ -10225,7 +10300,7 @@ keywords are supported:
 #+end_src
 
 
-*** Eglot
+*** DISABLED Eglot
 :PROPERTIES:
 :header-args: :noweb-ref init-eglot
 :END:
@@ -10757,7 +10832,11 @@ Returns process exit code."
 (package! nix-mode
   (require 'nix-mode)
 
-  (add-hook 'nix-mode-hook #'eglot-ensure))
+  (when (eq 'eglot ceamx-lsp-client)
+    (add-hook 'nix-mode-hook #'eglot-ensure))
+
+  (when (eq 'lsp-mode ceamx-lsp-client)
+        (add-hook 'nix-mode-hook #'lsp-deferred)))
 
 ;;; DISABLED Install and configure ~nix-ts-mode~
 
@@ -10774,6 +10853,12 @@ Returns process exit code."
       (require 'nix-ts-mode)
 
       (add-hook 'nix-ts-mode-hook #'eglot-ensure)
+
+      (when (eq 'eglot ceamx-lsp-client)
+        (add-hook 'nix-ts-mode-hook #'eglot-ensure))
+
+      (when (eq 'lsp-mode ceamx-lsp-client)
+        (add-hook 'nix-ts-mode-hook #'lsp-deferred))
 
       (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
       (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode)))))
@@ -10797,11 +10882,18 @@ Returns process exit code."
 
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
-  (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nil"))))
+  ;; (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nil")))
+  (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nixd"))))
 
 ;; via `lsp-mode' package
 (with-eval-after-load 'lsp-nix
-  (setopt lsp-nix-nil-formatter nil))
+  (setopt lsp-nix-nil-formatter nil)
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
+                    :major-modes '(nix-mode nix-ts-mode)
+                    :priority 0
+                    :server-id 'nixd)))
 
 ;;; Install ~devdocs~ Nix docset
 
@@ -11018,11 +11110,14 @@ Returns process exit code."
   ;; Make files executable if their first line has a shebang.
   (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p))
 
-(use-feature! eglot
-  :config
-  (add-hook 'sh-mode-hook #'eglot-ensure)
-  (add-hook 'bash-ts-mode-hook #'eglot-ensure)
+(after! eglot
   (add-to-list 'eglot-server-programs '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))))
+
+(let ((lsp-fn (if (eq 'lsp-mode ceamx-lsp-client)
+                  #'lsp-deferred
+                #'eglot-ensure)))
+  (add-hook 'sh-mode-hook lsp-fn)
+  (add-hook 'bash-ts-mode-hook lsp-fn))
 
 (use-feature! flymake
   :config
