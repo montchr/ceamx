@@ -52,9 +52,7 @@ org-mode
 <<" name ">>
 
 <<file-footer(feature=\"" name "\")>>
-#+end_src
-
-")
+#+end_src" n)
 
 (elsrcref "#+begin_src emacs-lisp :noweb-ref " (p (or noweb-ref "NOWEB-REF")) n r n "#+end_src" n)
 
