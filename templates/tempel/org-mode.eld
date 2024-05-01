@@ -32,7 +32,7 @@ org-mode
 (title & "#+title: " p n "#+author: " p n "#+language: " p n n)
 
 (litfile & "\
-** =lisp/" (p "FEATURE-NAME" name) ".el=
+*** =lisp/" (p "FEATURE-NAME" name) ".el=
 
 #+name: " name "-file
 #+begin_src emacs-lisp :comments no :tangle lisp/" name ".el
