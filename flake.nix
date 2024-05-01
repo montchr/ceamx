@@ -4,11 +4,9 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.apparat.url = "sourcehut:~montchr/apparat";
   inputs.devshell.url = "github:numtide/devshell";
-  # FIXME: remove once new version is available in nixpkgs
-  inputs.nixfmt.url = "github:NixOS/nixfmt/master";
 
   outputs =
-    inputs@{ flake-parts, ... }:
+    inputs@{ flake-parts, apparat, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [ inputs.devshell.flakeModule ];
       systems = [
@@ -17,20 +15,9 @@
         "aarch64-darwin"
       ];
       perSystem =
+        { pkgs, ... }:
         {
-          config,
-          self',
-          inputs',
-          pkgs,
-          system,
-          ...
-        }:
-        let
-          inherit (inputs) apparat;
-          inherit (inputs') nixfmt;
-        in
-        {
-          formatter.default = nixfmt.packages.nixfmt;
+          formatter.default = pkgs.nixfmt-rfc-style;
           devshells.default =
             let
               cats = apparat.lib.devshell.categorised [
@@ -44,7 +31,7 @@
               devshell.name = "Ceamx";
               commands = [
                 (tool pkgs.just)
-                (formatter nixfmt.packages.nixfmt)
+                (formatter pkgs.nixfmt-rfc-style)
               ];
               env = [
                 {
