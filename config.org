@@ -5099,6 +5099,15 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   (add-hook mode-hook #'auto-fill-mode))
 #+end_src
 
+*** Provide commands to "unfill" text
+
+- Website :: <https://github.com/purcell/unfill>
+
+#+begin_src emacs-lisp
+(package! unfill
+  (keymap-global-set "M-q" #'unfill-toggle))
+#+end_src
+
 *** Comments
 
 #+begin_src emacs-lisp

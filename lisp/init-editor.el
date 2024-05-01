@@ -53,6 +53,8 @@
 
 (dolist (mode-hook '(prog-mode-hook text-mode-hook))
   (add-hook mode-hook #'auto-fill-mode))
+(package! unfill
+  (keymap-global-set "M-q" #'unfill-toggle))
 (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
 (setopt blink-matching-paren t)
 ;; Avoid "expression" style, which looks too much like a selected region.
