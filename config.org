@@ -10170,6 +10170,52 @@ keywords are supported:
 
 ** Language Server Protocol Support :lsp:lang:
 
+*** LSP-Mode
+:PROPERTIES:
+:header-args: :noweb-ref init-lsp-mode
+:END:
+
+**** Parse LSP JSON data as bytecode with =lsp-booster= :perf:
+
+- Source :: <https://github.com/blahgeek/emacs-lsp-booster/blob/master/README.md#configure-lsp-mode>
+
+#+begin_src emacs-lisp
+(require 'json)
+
+(after! lsp-mode
+  (def-advice! lsp-booster--json-parse-as-bytecode-a (old-fn &rest args)
+    :around 'json-parse-buffer
+    "Maybe parse JSON as bytecode from \"emacs-lsp-booster\"."
+    (or
+     (when (equal (following-char) ?#)
+       (let ((bytecode (read (current-buffer))))
+         (when (byte-code-function-p bytecode)
+           (funcall bytecode))))
+     (apply old-fn args))))
+#+end_src
+
+**** Wrap LSP server commands with =lsp-booster= :perf:
+
+- Source :: <https://github.com/blahgeek/emacs-lsp-booster/blob/master/README.md#configure-lsp-mode>
+
+#+begin_src emacs-lisp
+(after! lsp-mode
+  (def-advice! lsp-booster--resolve-final-command-a (old-fn cmd &optional test?)
+    :around 'lsp-resolve-final-command
+    "Wrap the LSP server command CMD with a call to \"emacs-lsp-booster\"."
+    (let ((orig-result (funcall old-fn cmd test?)))
+      (if (and (not test?)                             ;; for check lsp-server-present?
+               (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+               lsp-use-plists
+               (not (functionp 'json-rpc-connection))  ;; native json-rpc
+               (executable-find "emacs-lsp-booster"))
+          (progn
+            (message "Using emacs-lsp-booster for %s!" orig-result)
+            (cons "emacs-lsp-booster" orig-result))
+        orig-result))))
+#+end_src
+
+
 *** Eglot
 :PROPERTIES:
 :header-args: :noweb-ref init-eglot
@@ -10201,7 +10247,10 @@ keywords are supported:
   "r" '("rename..." . eglot-rename))
 #+end_src
 
-**** Performance: Use =lsp-booster= via ~eglot-booster~
+**** Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
+
+- Website :: <https://github.com/jdtsmith/eglot-booster>
+- Website :: <https://github.com/blahgeek/emacs-lsp-booster>
 
 Requires =emacs-lsp-booster= to be installed into the environment.  Available by that name in Nixpkgs.
 
