@@ -40,6 +40,12 @@
 (define-keymap :keymap ceamx-code-map
   "a" '("action.." . eglot-code-actions)
   "r" '("rename..." . eglot-rename))
+(package! (eglot-booster :host github :repo "jdtsmith/eglot-booster")
+  (after! eglot
+    (defer! 3
+      (require 'eglot-booster)
+      (eglot-booster-mode))))
+(setopt eglot-booster-no-remote-boost t)
 (after! eglot
   (defvar eglot-server-programs)
 

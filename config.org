@@ -10201,6 +10201,28 @@ keywords are supported:
   "r" '("rename..." . eglot-rename))
 #+end_src
 
+**** Performance: Use =lsp-booster= via ~eglot-booster~
+
+Requires =emacs-lsp-booster= to be installed into the environment.  Available by that name in Nixpkgs.
+
+#+begin_src emacs-lisp
+(package! (eglot-booster :host github :repo "jdtsmith/eglot-booster")
+  (after! eglot
+    (defer! 3
+      (require 'eglot-booster)
+      (eglot-booster-mode))))
+#+end_src
+
+Though I have not tried it, I am thinking that using =lsp-booster= over TRAMP is
+not worth the trouble of ensuring that the executable is available on every
+remote server.  At least not as a default behavior.  Consider enabling this
+per-project or server as desired.
+
+elsp
+#+begin_src emacs-lisp
+(setopt eglot-booster-no-remote-boost t)
+#+end_src
+
 **** Run language servers automatically in supported major modes
 
 #+begin_src emacs-lisp
