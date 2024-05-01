@@ -205,7 +205,9 @@ Intended for use as a local hook function on
 (package! org-ql)
 (package! org-modern
   ;; Ensure leading stars are replaced by spaces.
-  (setopt org-modern-hide-stars ?\s)
+  (setopt org-modern-hide-stars "  ")
+
+  (setopt org-modern-star 'fold)
 
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
