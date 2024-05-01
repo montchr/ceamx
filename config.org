@@ -599,6 +599,28 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="init-vcs")>>
 #+end_src
 
+*** =lisp/init-eglot.el=
+
+#+name: init-eglot-file
+#+begin_src emacs-lisp :comments no :tangle lisp/init-eglot.el
+<<file-prop-line(feature="init-eglot",desc="Eglot support")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-eglot>>
+
+<<file-footer(feature="init-eglot")>>
+#+end_src
+
 
 ** Partials
 :PROPERTIES:
@@ -10101,48 +10123,23 @@ keywords are supported:
 #+end_src
 
 
-** Eglot
+** Language Server Protocol Support
 
-*** Customizations
+*** Eglot
+:PROPERTIES:
+:header-args: :noweb-ref init-eglot
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-eglot.el
-;;; init-eglot.el --- Eglot support                  -*- lexical-binding: t; -*-
+**** Requirements
 
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Configure Eglot.
-
-;; TODO: Consider implementing Doom's approach to handling performance.
-;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/modules/tools/lsp/config.el>
-
-;;; Code:
-
-;;; Requirements
-
+#+begin_src emacs-lisp
 (require 'ceamx-keymaps)
-
 (require 'lib-common)
+#+end_src
 
-;;; Configure
+**** General Eglot settings
 
+#+begin_src emacs-lisp
 (setopt eglot-sync-connect 1)
 (setopt eglot-autoshutdown t)
 (setopt eglot-send-changes-idle-time 0.5)
@@ -10157,7 +10154,11 @@ keywords are supported:
 (define-keymap :keymap ceamx-code-map
   "a" '("action.." . eglot-code-actions)
   "r" '("rename..." . eglot-rename))
+#+end_src
 
+**** Run language servers automatically in supported major modes
+
+#+begin_src emacs-lisp
 (after! eglot
   (defvar eglot-server-programs)
 
@@ -10165,29 +10166,35 @@ keywords are supported:
     :around #'eglot-ensure
     "Run `eglot-ensure' in supported modes."
     (when (alist-get major-mode eglot-server-programs nil nil
-            (lambda (modes key)
-              (if (listp modes)
-                (member key modes)
-                (eq key modes))))
-      (funcall fn)))
+                     (lambda (modes key)
+                       (if (listp modes)
+                           (member key modes)
+                         (eq key modes))))
+      (funcall fn))))
+#+end_src
 
-  ;; Register eglot help buffers as popup windows.
-  (after! popper
-    (defvar popper-reference-buffers)
-    (add-to-list 'popper-reference-buffers "^\\*eglot-help")))
+**** Declare some Eglot buffers as popup windows
 
-;;; Configure Flycheck integration
+#+begin_src emacs-lisp
+(after! (eglot popper)
+  (defvar popper-reference-buffers)
+  (add-to-list 'popper-reference-buffers "^\\*eglot-help"))
+#+end_src
 
+**** Configure ~flycheck-eglot~ integration
+
+#+begin_src emacs-lisp
 (package! flycheck-eglot
   (add-hook 'eglot-managed-mode-hook #'flycheck-eglot-mode))
+#+end_src
 
-;;; ~consult-eglot~ :: <https://github.com/mohkale/consult-eglot>
+**** Add workspace symbols as Consult datasource with ~consult-eglot~
 
+<https://github.com/mohkale/consult-eglot>
+
+#+begin_src emacs-lisp
 (package! consult-eglot
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
-
-(provide 'init-eglot)
-;;; init-eglot.el ends here
 #+end_src
 
 
