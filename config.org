@@ -10168,7 +10168,7 @@ keywords are supported:
 #+end_src
 
 
-** Language Server Protocol Support
+** Language Server Protocol Support :lsp:lang:
 
 *** Eglot
 :PROPERTIES:
