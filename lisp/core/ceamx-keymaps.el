@@ -42,11 +42,17 @@
 (defvar-keymap ceamx-launch-map)
 (define-prefix-command 'ceamx-launch-map)
 
+(defvar-keymap ceamx-packages-map)
+(define-prefix-command 'ceamx-packages-map)
+
 (defvar-keymap ceamx-pairs-map)
 (define-prefix-command 'ceamx-pairs-map)
 
 (defvar-keymap ceamx-replace-map)
 (define-prefix-command 'ceamx-replace-map)
+
+(defvar-keymap ceamx-session-map)
+(define-prefix-command 'ceamx-session-map)
 
 (defvar-keymap ceamx-toggle-map)
 (define-prefix-command 'ceamx-toggle-map)

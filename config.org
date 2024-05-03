@@ -1299,6 +1299,15 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
   "m" #'elpaca-merge-all
   "t" #'elpaca-try)
 
+(keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
+
+;; FIXME: move elsewhere...
+(keymap-global-set "C-c q" ceamx-session-map)
+#+end_src
+
+** TODO Literate =init.el=
+
+#+begin_src emacs-lisp
 ;;; Site-lisp packages
 
 (require 'on)

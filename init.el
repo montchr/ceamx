@@ -203,7 +203,17 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
   ;; Associate directories with the read-only class
   (dolist (dir ceamx-buffer-read-only-dirs-list)
     (dir-locals-set-directory-class (file-truename dir) 'read-only)))
+;;;; Bind some commonly-used package management commands
 
+(define-keymap :keymap ceamx-packages-map
+  "f" #'elpaca-fetch-all
+  "m" #'elpaca-merge-all
+  "t" #'elpaca-try)
+
+(keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
+
+;; FIXME: move elsewhere...
+(keymap-global-set "C-c q" ceamx-session-map)
 ;;; Site-lisp packages
 
 (require 'on)
