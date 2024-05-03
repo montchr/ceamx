@@ -42,22 +42,8 @@
   ;; FIXME: no exist
   ;; (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
   )
-;; FIXME: i am going to assume this is all irrelevant in 2024 please
-;; (use-feature! lsp-mode
-;;   :init
-;;   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\vendor")
-
-;;   ;; FIXME: move these to lsp module?
-
-;;   (def-advice! +lsp-ignored-locations-to-xref-items-a (items)
-;;     :filter-return #'lsp--locations-to-xref-items
-;;     "Remove ignored files from list of xref-items."
-;;     (cl-remove-if #'xref-ignored-file-p items))
-
-;;   (def-advice! +lsp-ui-peek--ignored-locations-a (items)
-;;     :filter-return #'lsp-ui-peek--get-references
-;;     "Remove ignored files from list of xref-items."
-;;     (cl-remove-if #'xref-ignored-file-p items)))
+(setopt lsp-intelephense-storage-path
+  (file-name-as-directory (concat ceamx-var-dir "lsp-intelephense/.cache")))
 (after! projectile
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 (after! web-mode
