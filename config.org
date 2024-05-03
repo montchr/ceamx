@@ -20,7 +20,9 @@ on WSL2 when E is running MS Windows, however that is a very low priority.
 
 *** TODO Consider moving =lisp/lib-common.el= to =lisp/core/ceamx-lib.el=
 
-*** TODO <https://elpa.gnu.org/packages/xr.html>
+*** DONE <https://elpa.gnu.org/packages/xr.html>
+CLOSED: [2024-05-03 Fri 09:43]
+- State "DONE"       from "TODO"       [2024-05-03 Fri 09:43]
 *** TODO <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
 *** DONE org-mode needs ~tab-width~ set to 8 otherwise constant errors
 CLOSED: [2024-03-20 Wed 22:43]
