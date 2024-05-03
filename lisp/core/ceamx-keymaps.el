@@ -30,6 +30,9 @@
 (defvar-keymap ceamx-activities-map)
 (define-prefix-command 'ceamx-activities-map)
 
+(defvar-keymap ceamx-appearance-map)
+(define-prefix-command 'ceamx-appearance-map)
+
 (defvar-keymap ceamx-code-map)
 (define-prefix-command 'ceamx-code-map)
 
