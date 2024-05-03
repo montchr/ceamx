@@ -39,7 +39,9 @@
   (setopt php-mode-template-compatibility nil)
 
   ;; Render multiline comments using `font-lock-comment-face'.
-  (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h))
+  ;; FIXME: no exist
+  ;; (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
+  )
 ;; FIXME: i am going to assume this is all irrelevant in 2024 please
 ;; (use-feature! lsp-mode
 ;;   :init

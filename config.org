@@ -11113,7 +11113,9 @@ Returns process exit code."
   (setopt php-mode-template-compatibility nil)
 
   ;; Render multiline comments using `font-lock-comment-face'.
-  (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h))
+  ;; FIXME: no exist
+  ;; (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
+  )
 #+end_src
 
 *** LSP Mode integration
