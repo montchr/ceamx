@@ -4015,14 +4015,24 @@ not retain the generic background set by the function
 
 ** Integrating the preceding interfaces
 
+Firstly, ensure that all requested Appearance packages have been installed:
+
 #+begin_src emacs-lisp
 (elpaca-wait)
 #+end_src
+
+Configure some user options dependent on the loaded packages:
 
 #+begin_src emacs-lisp
 (setopt ceamx-theme-default-light 'modus-operandi)
 (setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
 #+end_src
+
+*** Load the preferred dark theme by default
+
+This is less than ideal, but ~circadian~ has been broken lately, causing
+lockups/crashes.  Manually invoking ~ceamx/load-light-theme~ or ~ceamx/light~ is
+not hard.
 
 #+begin_src emacs-lisp
 (ceamx/load-dark-theme)
@@ -4061,6 +4071,16 @@ not retain the generic background set by the function
 
 #+end_src
 
+*** Keybindings for appearance control
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-session-map
+  "f" (cons "Font" (define-prefix-command 'ceamx-session-font-prefix-command))
+  "f f" #'fontaine-set-preset
+  "t" (cons "Theme" (define-prefix-command 'ceamx-session-theme-prefix-command))
+  "t l" #'ceamx/light
+  "t d" #'ceamx/dark)
+#+end_src
 
 
 ** Library
