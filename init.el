@@ -262,6 +262,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;;; Editing
 
 (require 'init-editor)
+(require 'init-writing)
 (require 'init-templates)
 ;;;; Outlines & Memex
 

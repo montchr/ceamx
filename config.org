@@ -677,6 +677,27 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="init-lang-php")>>
 #+end_src
 
+*** =lisp/init-writing.el=
+
+#+name: init-writing-file
+#+begin_src emacs-lisp :comments no :tangle lisp/init-writing.el
+<<file-prop-line(feature="init-writing",desc="Writing augmentation")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-writing>>
+
+<<file-footer(feature="init-writing")>>
+#+end_src
 
 ** Partials
 :PROPERTIES:
@@ -1456,6 +1477,7 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 ;;;; Editing
 
 (require 'init-editor)
+(require 'init-writing)
 (require 'init-templates)
 #+end_src
 
@@ -11461,6 +11483,26 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 ;; _u_p level            _N_: narrow     _xp_: set property
 ;;                       _W_: widen
 ;; "))
+#+end_src
+
+
+* Writing
+:PROPERTIES:
+:header-args: :noweb-ref init-writing
+:END:
+
+#+begin_src emacs-lisp :noweb-ref ceamx-augmentation
+(require 'init-writing)
+#+end_src
+
+** ~jinx~: the enchanted spell checker
+
+This should be installed from Nixpkgs, as it depends on external libraries.
+See the readme for more information.
+
+#+begin_src emacs-lisp
+(when (featurep 'jinx)
+  (add-hook 'ceamx-emacs-startup-hook #'global-jinx-mode))
 #+end_src
 
 
