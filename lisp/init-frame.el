@@ -72,5 +72,11 @@
 
 (undelete-frame-mode 1)
 
+;;; Keybindings
+
+(define-keymap :keymap ceamx-session-map
+  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
+  "f d" #'delete-frame)
+
 (provide 'init-frame)
 ;;; init-frame.el ends here
