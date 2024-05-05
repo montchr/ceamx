@@ -33,9 +33,10 @@
 ;; Core functions and macros
 (require 'lib-common)
 
+(add-to-list 'load-path ceamx-site-lisp-dir)
+(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
-
 (defgroup ceamx nil
   "User-configurable options for Ceamx."
   ;; TODO: is this group appropriate?
@@ -51,8 +52,7 @@
 ;; TODO: see bbatsov/prelude for prior art
 (when +sys-wsl-p
   (require 'lib-env-wsl))
-(add-to-list 'load-path ceamx-site-lisp-dir)
-(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
+(require 'on)
 (defvar elpaca-installer-version 0.7)
 (defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
@@ -100,6 +100,21 @@
 (keymap-global-set "C-c q" ceamx-session-map)
 (add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
 (add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
+(require 'config-buffer)
+
+(def-hook! ceamx-register-read-only-buffers-h ()
+  'ceamx-after-init-hook
+  "Use read-only buffers for files in some directories.
+The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
+
+  ;; Define a read-only directory class
+  (dir-locals-set-class-variables
+   'read-only
+   '((nil . ((buffer-read-only . t)))))
+
+  ;; Associate directories with the read-only class
+  (dolist (dir ceamx-buffer-read-only-dirs-list)
+    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
 (require 'ceamx-paths)
 
 ;; These must be set prior to package load.
@@ -108,19 +123,6 @@
 
 (elpaca no-littering
   (require 'no-littering))
-(elpaca use-package)
-(elpaca elpaca-use-package
-  (elpaca-use-package-mode))
-(setopt use-package-always-ensure t)
-(elpaca-wait)
-(setopt use-package-expand-minimally nil)
-(when (bound-and-true-p init-file-debug)
-  (require 'use-package)
-  (setopt use-package-expand-minimally nil)
-  (setopt use-package-verbose t)
-  (setopt use-package-compute-statistics t))
-(elpaca blackout
-  (require 'blackout))
 (defun +elpaca-unload-seq (e)
   "Unload the builtin version of `seq' and continue the `elpaca' build E."
   (and (featurep 'seq) (unload-feature 'seq t))
@@ -154,40 +156,33 @@
     (unload-feature 'org)))
 
 (elpaca (org :autoloads "org-loaddefs.el"))
+(elpaca use-package)
+(elpaca elpaca-use-package
+  (elpaca-use-package-mode))
+(setopt use-package-always-ensure t)
 (elpaca-wait)
-
-(require 'config-buffer)
-
-(def-hook! ceamx-register-read-only-buffers-h ()
-  'ceamx-after-init-hook
-  "Use read-only buffers for files in some directories.
-The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
-
-  ;; Define a read-only directory class
-  (dir-locals-set-class-variables
-   'read-only
-   '((nil . ((buffer-read-only . t)))))
-
-  ;; Associate directories with the read-only class
-  (dolist (dir ceamx-buffer-read-only-dirs-list)
-    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
+(setopt use-package-expand-minimally nil)
+(when (bound-and-true-p init-file-debug)
+  (require 'use-package)
+  (setopt use-package-expand-minimally nil)
+  (setopt use-package-verbose t)
+  (setopt use-package-compute-statistics t))
+(elpaca blackout
+  (require 'blackout))
+(elpaca-wait)
 (use-package gcmh
   :blackout
   :commands (gcmh-mode)
   :init
   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
   (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
-(require 'on)
-(elpaca-wait)
-;;;
-
 ;; FIXME: remove or alias (`##' is very difficult to search for)
 (use-package llama) ;  `##' lambda shorthand =>
                                         ;  <https://git.sr.ht/~tarsius/llama>
 
 (use-package f)
-(require 'lib-files)
-(require 'lib-elisp)
+;; (require 'lib-files)
+;; (require 'lib-elisp)
 ;; Increase number of messages saved in log.
 (setq message-log-max 10000)
 
@@ -200,7 +195,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;; Prevent Emacs from pinging domain names unexpectedly.
 (setopt ffap-machine-p-known 'reject)
-
 ;;;; Environment
 
 (require 'init-env)
@@ -210,7 +204,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 
 (require 'init-secrets)
-
 ;;;; Displays + Appearance
 
 ;; TODO: re-enable
@@ -225,13 +218,11 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (when (display-graphic-p)
   (require 'init-ui-font))
-
 ;;;; Keyboard support
 
 (require 'init-keys)
 (require 'init-keys-which-key)
 (require 'init-keys-meow)
-
 ;;;; Windows
 
 (require 'init-window)
@@ -239,11 +230,9 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;; FIXME: load earlier / in another section
 (require 'init-history)
-
 ;;;; Dashboard
 
 (require 'init-dashboard)
-
 ;;;; Selection
 
 (require 'init-selection-vertico)
@@ -252,16 +241,13 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-selection-consult)
 
 (require 'init-search)
-
 ;;;; Completion-At-Point
 
 (require 'init-completion)
 ;; (require 'init-abbrevs)
-
 ;;;; Help
 
 (require 'init-help)
-
 ;;;; Actions
 
 (require 'init-embark)
@@ -271,31 +257,25 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-vcs)
 (require 'init-files)
 (require 'init-dired)
-
 ;;;; Workspaces + activities + contexts
 
 (require 'init-workspace)
-
 ;;;; Editing
 
 (require 'init-editor)
 (require 'init-templates)
-
 ;;;; Outlines & Memex
 
 (require 'init-outline)
 (require 'init-org)
 (require 'init-notes)
 (require 'init-notes-denote)
-
 ;;;; Linting
 
 (require 'init-flycheck)
-
 ;;;; Tree-Sitter
 
 (require 'init-treesitter)
-
 ;;;; Language/syntax support
 
 (require 'config-prog)
@@ -320,8 +300,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;; (require 'init-eglot)
 (require 'init-lsp-mode)
-
-
 ;;;; Miscellaneous
 
 (require 'init-tools)
@@ -336,9 +314,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-fun)
 
 (require 'init-controls)
-
-;;; Postlude
-
 ;; FIXME: causes some errors / inconsistencies
 ;; (def-hook! ceamx-maybe-start-emacs-server-h () 'ceamx-after-init-hook
 ;;   "Auto-start Emacs daemon if not already running."
@@ -346,14 +321,12 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;   (unless (and (fboundp 'server-running-p)
 ;;             (server-running-p))
 ;;     (server-start)))
-
 ;; unfortunately
 (when (and +gui-p +sys-mac-p)
   (def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
     "Restart the yabai service after init."
     (after! exec-path-from-shell
       (async-shell-command "yabai --restart-service"))))
-
 ;; Optionally load custom file after all packages have loaded.
 ;; (when (and ceamx-load-custom-file
 ;;            (file-exists-p custom-file))

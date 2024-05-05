@@ -937,8 +937,6 @@ deleted before tangling."
 :header-args: :noweb-ref init
 :END:
 
-** Load order
-
 #+begin_src emacs-lisp :noweb yes
 (require 'cl-lib)
 
@@ -949,15 +947,26 @@ deleted before tangling."
 ;; Core functions and macros
 (require 'lib-common)
 
+<<ceamx-load-path>>
 <<ceamx-identity>>
-
 <<ceamx-options>>
 
 <<ceamx-benchmarking>>
 <<ceamx-environmental-orientation>>
+<<ceamx-site-lisp-on>>
 <<ceamx-package-management>>
-<<ceamx-package-utilities>>
+<<ceamx-garbage-collection>>
+<<ceamx-utility-libraries>>
+#+end_src
 
+** Add the =site-lisp= directory to ~load-path~
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-load-path
+:END:
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path ceamx-site-lisp-dir)
+(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
 #+end_src
 
 ** Define the default user identity
@@ -1013,6 +1022,31 @@ deleted before tangling."
   (require 'lib-env-wsl))
 #+end_src
 
+** =site-lisp/on=: Define additional Emacs event hooks
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-site-lisp-on
+:END:
+
+#+begin_src emacs-lisp
+(require 'on)
+#+end_src
+
+** TODO DISABLED Load commonly-useful Ceamx libraries
+*** TODO Unnecessary, probably
+
+#+begin_src emacs-lisp
+;; (require 'lib-files)
+#+end_src
+
+*** TODO Improve visibility -- =site-lisp=, maybe?
+
+The functions and macros in ~lib-elisp~ are useful when hacking on Ceamx, but
+E always forgets they exist.
+
+#+begin_src emacs-lisp
+;; (require 'lib-elisp)
+#+end_src
+
 ** Initialize package management
 :PROPERTIES:
 :header-args: :noweb-ref ceamx-package-management
@@ -1020,14 +1054,6 @@ deleted before tangling."
 
 Third-party package managers should be configured in init.el directly instead
 of within a `require'd file so that they may be re-initialized properly.
-
-*** Add =site-lisp= to the Emacs ~load-path~
-
-#+begin_src emacs-lisp
-(add-to-list 'load-path ceamx-site-lisp-dir)
-(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
-#+end_src
-
 *** Bootstrap the Elpaca package manager
 
 **** Set the Elpaca installer version
@@ -1113,6 +1139,26 @@ definitions for ~elpaca-installer-version~ and ~elpaca-directory~.
 (add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
 #+end_src
 
+*** Pretend file-visiting-buffers in the package directory are read-only
+
+#+begin_src emacs-lisp
+(require 'config-buffer)
+
+(def-hook! ceamx-register-read-only-buffers-h ()
+  'ceamx-after-init-hook
+  "Use read-only buffers for files in some directories.
+The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
+
+  ;; Define a read-only directory class
+  (dir-locals-set-class-variables
+   'read-only
+   '((nil . ((buffer-read-only . t)))))
+
+  ;; Associate directories with the read-only class
+  (dolist (dir ceamx-buffer-read-only-dirs-list)
+    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
+#+end_src
+
 *** Encourage a ~no-littering~ policy for packages to artifice in the designated areas
 
 - Website :: <https://github.com/emacscollective/no-littering/>
@@ -1143,69 +1189,7 @@ Ceamx avoids ~use-package~ here so that:
   (require 'no-littering))
 #+end_src
 
-*** Install the latest version of Use-Package
-
-#+begin_src emacs-lisp
-(elpaca use-package)
-#+end_src
-
-*** Integrate Elpaca and Use-Package
-
-#+begin_src emacs-lisp
-(elpaca elpaca-use-package
-  (elpaca-use-package-mode))
-#+end_src
-
-*** Use-Package: Ensure package installation by default
-
-Equivalent to manually specifying =:ensure t= in each ~use-package~ expression.
-
-#+begin_src emacs-lisp
-(setopt use-package-always-ensure t)
-#+end_src
-
-*** Elpaca: finish processing current queue
-
-Reason:
-
-- Continuing otherwise will result in race conditions on the definition of storage paths
-- ~use-package~ must be loaded for byte-compilation checks in [[*Configure ~use-package~ for improved debuggability and introspectability]]
-
-#+begin_src emacs-lisp
-(elpaca-wait)
-#+end_src
-
-*** Configure ~use-package~ for improved debuggability and introspectability
-
-#+begin_src emacs-lisp
-(setopt use-package-expand-minimally nil)
-(when (bound-and-true-p init-file-debug)
-  (require 'use-package)
-  (setopt use-package-expand-minimally nil)
-  (setopt use-package-verbose t)
-  (setopt use-package-compute-statistics t))
-#+end_src
-
-** Pre-install packages adding ~use-package~ keywords
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-package-utilities
-:END:
-
-Note that these packages are likely useful even without using their ~use-package~ keywords.
-
-*** Install ~blackout~ for adjusting modeline indicators :modeline:
-
-- Keyword :: =:blackout=
-
-#+begin_src emacs-lisp
-(elpaca blackout
-  (require 'blackout))
-#+end_src
-
-** Install the latest versions of some builtin features and their dependencies
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-package-utilities
-:END:
+*** Install the latest versions of some builtin features and their dependencies
 
 Installing the latest development versions of ~eglot~ and ~magit~ (for example)
 comes with the significant caveat that their dependencies often track the latest
@@ -1242,7 +1226,7 @@ file is reloaded and ~elpaca-process-queues~ runs in
 ~eglot~ and ~org~ as missing dependencies.
 #+end_verse
 
-*** Install the latest version of ~seq~ builtin library, carefully
+**** Install the latest version of ~seq~ builtin library, carefully
 
 ~magit~ requires a more recent version of ~seq~ than the version included in
 Emacs 29.
@@ -1266,7 +1250,7 @@ Requires special care because unloading it can make other libraries freak out.
 (elpaca `(seq :build ,(+elpaca-seq-build-steps)))
 #+end_src
 
-*** Install the latest version of the builtin ~jsonrpc~ library
+**** Install the latest version of the builtin ~jsonrpc~ library
 
 Required by (and originally extracted from) ~eglot~.
 
@@ -1275,7 +1259,7 @@ Required by (and originally extracted from) ~eglot~.
   (require 'jsonrpc))
 #+end_src
 
-*** Install the latest version of the ~eldoc~ builtin library, carefully
+**** Install the latest version of the ~eldoc~ builtin library, carefully
 
 Required by ~eglot~.
 
@@ -1294,7 +1278,7 @@ Required by ~eglot~.
   (global-eldoc-mode))
 #+end_src
 
-*** Install the latest version of the builtin ~eglot~ package
+**** Install the latest version of the builtin ~eglot~ package
 
 #+begin_src emacs-lisp
 (unless after-init-time
@@ -1304,7 +1288,7 @@ Required by ~eglot~.
 (elpaca eglot)
 #+end_src
 
-*** Install the latest version of Org-Mode
+**** Install the latest version of Org-Mode
 
 #+begin_src emacs-lisp
 (unless after-init-time
@@ -1314,13 +1298,64 @@ Required by ~eglot~.
 (elpaca (org :autoloads "org-loaddefs.el"))
 #+end_src
 
-** Elpaca: finish processing current queue
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-package-utilities
-:END:
+*** Install the latest version of Use-Package
 
-- Reasion :: Continuing otherwise may result in loading conflicting versions of essential
-Emacs builtins.
+#+begin_src emacs-lisp
+(elpaca use-package)
+#+end_src
+
+*** Integrate Elpaca and Use-Package
+
+#+begin_src emacs-lisp
+(elpaca elpaca-use-package
+  (elpaca-use-package-mode))
+#+end_src
+
+*** Use-Package: Ensure package installation by default
+
+Equivalent to manually specifying =:ensure t= in each ~use-package~ expression.
+
+#+begin_src emacs-lisp
+(setopt use-package-always-ensure t)
+#+end_src
+
+*** Elpaca Wait № 1: finish processing current queue
+
+Reason:
+
+- Continuing otherwise will result in race conditions on the definition of storage paths
+- ~use-package~ must be loaded for byte-compilation checks in [[*Configure ~use-package~ for improved debuggability and introspectability]]
+
+#+begin_src emacs-lisp
+(elpaca-wait)
+#+end_src
+
+*** Configure ~use-package~ for improved debuggability and introspectability
+
+#+begin_src emacs-lisp
+(setopt use-package-expand-minimally nil)
+(when (bound-and-true-p init-file-debug)
+  (require 'use-package)
+  (setopt use-package-expand-minimally nil)
+  (setopt use-package-verbose t)
+  (setopt use-package-compute-statistics t))
+#+end_src
+
+*** Pre-install packages adding ~use-package~ keywords
+
+Note that these packages are likely useful even without using their ~use-package~ keywords.
+
+**** Install ~blackout~ for adjusting modeline indicators :modeline:
+
+- Keyword :: =:blackout=
+
+#+begin_src emacs-lisp
+(elpaca blackout
+  (require 'blackout))
+#+end_src
+
+*** Elpaca Wait № 2: finish processing current queue
+
 - Reason :: Continuing otherwise will result in race conditions where the newly-installed
 ~use-package~ keywords may or may not be available, resulting in sporadic
 initialization errors.
@@ -1329,27 +1364,10 @@ initialization errors.
 (elpaca-wait)
 #+end_src
 
-** Pretend file-visiting-buffers in the package directory are read-only
-
-#+begin_src emacs-lisp
-(require 'config-buffer)
-
-(def-hook! ceamx-register-read-only-buffers-h ()
-  'ceamx-after-init-hook
-  "Use read-only buffers for files in some directories.
-The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
-
-  ;; Define a read-only directory class
-  (dir-locals-set-class-variables
-   'read-only
-   '((nil . ((buffer-read-only . t)))))
-
-  ;; Associate directories with the read-only class
-  (dolist (dir ceamx-buffer-read-only-dirs-list)
-    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
-#+end_src
-
 ** Install ~gcmh~ to manage running garbage collection on idle
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-garbage-collection
+:END:
 
 - Website :: <https://akrl.sdf.org/>
 - Code :: <https://gitlab.com/koral/gcmh>
@@ -1366,47 +1384,17 @@ When idle, GC will be triggered with a low threshold.
   (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
 #+end_src
 
-** Load =site-lisp= packages
-
-#+begin_src emacs-lisp
-(require 'on)
-#+end_src
-
-*** TODO Elpaca: finish processing current queue
-
-Probably unnecessary.
-
-#+begin_src emacs-lisp
-(elpaca-wait)
-#+end_src
-
 ** Install utility libraries
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-utility-libraries
+:END:
 
 #+begin_src emacs-lisp
-;;;
-
 ;; FIXME: remove or alias (`##' is very difficult to search for)
 (use-package llama) ;  `##' lambda shorthand =>
                                         ;  <https://git.sr.ht/~tarsius/llama>
 
 (use-package f)
-#+end_src
-
-** Load commonly-useful Ceamx libraries
-
-*** TODO Unnecessary, probably
-
-#+begin_src emacs-lisp
-(require 'lib-files)
-#+end_src
-
-*** TODO Improve visibility -- =site-lisp=, maybe?
-
-The functions and macros in ~lib-elisp~ are useful when hacking on Ceamx, but
-E always forgets they exist.
-
-#+begin_src emacs-lisp
-(require 'lib-elisp)
 #+end_src
 
 ** TODO Literate =init.el=
@@ -1424,7 +1412,9 @@ E always forgets they exist.
 
 ;; Prevent Emacs from pinging domain names unexpectedly.
 (setopt ffap-machine-p-known 'reject)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Environment
 
 (require 'init-env)
@@ -1434,7 +1424,9 @@ E always forgets they exist.
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 
 (require 'init-secrets)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Displays + Appearance
 
 ;; TODO: re-enable
@@ -1449,13 +1441,17 @@ E always forgets they exist.
 
 (when (display-graphic-p)
   (require 'init-ui-font))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Keyboard support
 
 (require 'init-keys)
 (require 'init-keys-which-key)
 (require 'init-keys-meow)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Windows
 
 (require 'init-window)
@@ -1463,11 +1459,15 @@ E always forgets they exist.
 
 ;; FIXME: load earlier / in another section
 (require 'init-history)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Dashboard
 
 (require 'init-dashboard)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Selection
 
 (require 'init-selection-vertico)
@@ -1476,16 +1476,22 @@ E always forgets they exist.
 (require 'init-selection-consult)
 
 (require 'init-search)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Completion-At-Point
 
 (require 'init-completion)
 ;; (require 'init-abbrevs)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Help
 
 (require 'init-help)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Actions
 
 (require 'init-embark)
@@ -1495,31 +1501,43 @@ E always forgets they exist.
 (require 'init-vcs)
 (require 'init-files)
 (require 'init-dired)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Workspaces + activities + contexts
 
 (require 'init-workspace)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Editing
 
 (require 'init-editor)
 (require 'init-templates)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Outlines & Memex
 
 (require 'init-outline)
 (require 'init-org)
 (require 'init-notes)
 (require 'init-notes-denote)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Linting
 
 (require 'init-flycheck)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Tree-Sitter
 
 (require 'init-treesitter)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Language/syntax support
 
 (require 'config-prog)
@@ -1544,8 +1562,9 @@ E always forgets they exist.
 
 ;; (require 'init-eglot)
 (require 'init-lsp-mode)
+#+end_src
 
-
+#+begin_src emacs-lisp
 ;;;; Miscellaneous
 
 (require 'init-tools)
@@ -1560,9 +1579,11 @@ E always forgets they exist.
 (require 'init-fun)
 
 (require 'init-controls)
+#+end_src
 
-;;; Postlude
+** Postlude
 
+#+begin_src emacs-lisp
 ;; FIXME: causes some errors / inconsistencies
 ;; (def-hook! ceamx-maybe-start-emacs-server-h () 'ceamx-after-init-hook
 ;;   "Auto-start Emacs daemon if not already running."
@@ -1570,14 +1591,18 @@ E always forgets they exist.
 ;;   (unless (and (fboundp 'server-running-p)
 ;;             (server-running-p))
 ;;     (server-start)))
+#+end_src
 
+#+begin_src emacs-lisp
 ;; unfortunately
 (when (and +gui-p +sys-mac-p)
   (def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
     "Restart the yabai service after init."
     (after! exec-path-from-shell
       (async-shell-command "yabai --restart-service"))))
+#+end_src
 
+#+begin_src emacs-lisp
 ;; Optionally load custom file after all packages have loaded.
 ;; (when (and ceamx-load-custom-file
 ;;            (file-exists-p custom-file))
