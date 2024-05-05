@@ -50,6 +50,31 @@ CLOSED: [2024-03-20 Wed 22:43]
 :VISIBILITY: folded
 :END:
 
+** Init Load Order
+:PROPERTIES:
+:header-args: :noweb-ref init
+:END:
+
+#+begin_src emacs-lisp :noweb yes
+(require 'cl-lib)
+
+;; Core variables
+(require 'ceamx-paths)
+(require 'ceamx-keymaps)
+
+;; Core functions and macros
+(require 'lib-common)
+
+(setq-default user-full-name "Chris Montgomery"
+              user-mail-address "chris@cdom.io")
+
+<<ceamx-bootstrap>>
+
+<<ceamx-init-features>>
+
+<<ceamx-postlude>>
+#+end_src
+
 ** Target Files
 
 *** =early-init.el=
@@ -889,57 +914,19 @@ deleted before tangling."
 
 
 
-* ~init~ :: the ceamx index
+* Erstwhiles
 :PROPERTIES:
-:header-args: :noweb-ref init
+:header-args: :noweb-ref ceamx-bootstrap
 :END:
-
-#+begin_src emacs-lisp :noweb yes
-(require 'cl-lib)
-
-;; Core variables
-(require 'ceamx-paths)
-(require 'ceamx-keymaps)
-
-;; Core functions and macros
-(require 'lib-common)
-
-<<ceamx-load-path>>
-<<ceamx-identity>>
-<<ceamx-options>>
-
-<<ceamx-benchmarking>>
-<<ceamx-environmental-orientation>>
-<<ceamx-site-lisp-on>>
-<<ceamx-package-management>>
-<<ceamx-garbage-collection>>
-<<ceamx-utility-libraries>>
-#+end_src
 
 ** Add the =site-lisp= directory to ~load-path~
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-load-path
-:END:
 
 #+begin_src emacs-lisp
 (add-to-list 'load-path ceamx-site-lisp-dir)
 (prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
 #+end_src
 
-** Define the default user identity
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-identity
-:END:
-
-#+begin_src emacs-lisp
-(setq-default user-full-name "Chris Montgomery"
-              user-mail-address "chris@cdom.io")
-#+end_src
-
 ** Initialize the =ceamx= user options
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-options
-:END:
 
 #+begin_src emacs-lisp
 (defgroup ceamx nil
@@ -958,9 +945,6 @@ deleted before tangling."
 #+end_src
 
 ** Define variables describing the current environment-context :env:
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-environmental-orientation
-:END:
 
 #+begin_src emacs-lisp
 (require 'config-env)
@@ -971,15 +955,15 @@ deleted before tangling."
 #+end_src
 
 ** =site-lisp/on=: Define additional Emacs event hooks
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-site-lisp-on
-:END:
 
 #+begin_src emacs-lisp
 (require 'on)
 #+end_src
 
 ** TODO DISABLED Load commonly-useful Ceamx libraries
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 *** TODO Unnecessary, probably
 
 #+begin_src emacs-lisp
@@ -996,9 +980,6 @@ E always forgets they exist.
 #+end_src
 
 ** Initialize package management
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-package-management
-:END:
 
 Third-party package managers should be configured in init.el directly instead
 of within a `require'd file so that they may be re-initialized properly.
@@ -1313,9 +1294,6 @@ initialization errors.
 #+end_src
 
 ** Install ~gcmh~ to manage running garbage collection on idle
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-garbage-collection
-:END:
 
 - Website :: <https://akrl.sdf.org/>
 - Code :: <https://gitlab.com/koral/gcmh>
@@ -1333,9 +1311,6 @@ When idle, GC will be triggered with a low threshold.
 #+end_src
 
 ** Install utility libraries
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-utility-libraries
-:END:
 
 #+begin_src emacs-lisp
 ;; FIXME: remove or alias (`##' is very difficult to search for)
@@ -1346,9 +1321,6 @@ When idle, GC will be triggered with a low threshold.
 #+end_src
 
 ** Install the on-demand Emacs Start-Up Profiler (~esup~) :perf:
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-startup-profiler
-:END:
 
 #+begin_src emacs-lisp
 (package! esup)
@@ -1362,9 +1334,13 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
   (setq esup-depth 0))
 #+end_src
 
-** TODO Literate =init.el=
 
-*** TODO Miscellaneous things that should go somewhere else
+* TODO Load Features
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-init-features
+:END:
+
+** TODO Miscellaneous things that should go somewhere else
 
 #+begin_src emacs-lisp
 ;; Increase number of messages saved in log.
@@ -1381,9 +1357,9 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 (setopt ffap-machine-p-known 'reject)
 #+end_src
 
-#+begin_src emacs-lisp
-;;;; Environment
+** TODO Sections
 
+#+begin_src emacs-lisp
 (require 'init-env)
 (require 'init-input-methods)
 
@@ -1548,7 +1524,13 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 (require 'init-controls)
 #+end_src
 
-** Postlude
+
+* TODO Postlude
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-postlude
+:END:
+
+Yes, this order is unfortunate.
 
 #+begin_src emacs-lisp
 ;; FIXME: causes some errors / inconsistencies
@@ -1581,8 +1563,7 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 #+end_src
 
 
-
-* ~early-init~ :: pre-startup
+* Before Dawn: =early-init.el=
 :PROPERTIES:
 :header-args: :noweb-ref early-init :comments both
 :END:
@@ -1834,7 +1815,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 
 
-* ~ceamx-paths~ :: common path constants
+* Common: Paths
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el :comments no
 ;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
@@ -1947,7 +1928,7 @@ Emacs version to prevent bytecode incompatibility.")
 #+end_src
 
 
-* ~ceamx-keymaps~ :: common keymaps
+* Common: Keymaps
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :comments no
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
@@ -2489,7 +2470,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 #+end_src
 
 
-* Common
+* Common: Strings
 
 #+begin_src emacs-lisp :comments no :tangle lisp/config-common.el
 ;;; config-common.el --- Common and miscellaneous configuration settings  -*- lexical-binding: t; -*-

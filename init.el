@@ -33,10 +33,11 @@
 ;; Core functions and macros
 (require 'lib-common)
 
-(add-to-list 'load-path ceamx-site-lisp-dir)
-(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
+
+(add-to-list 'load-path ceamx-site-lisp-dir)
+(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
 (defgroup ceamx nil
   "User-configurable options for Ceamx."
   ;; TODO: is this group appropriate?
@@ -45,8 +46,6 @@
   "Whether to load the user `custom-file' (custom.el)."
   :group 'ceamx
   :type '(boolean))
-
-
 (require 'config-env)
 
 ;; TODO: see bbatsov/prelude for prior art
@@ -181,13 +180,12 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
                                         ;  <https://git.sr.ht/~tarsius/llama>
 
 (use-package f)
-;; (require 'lib-files)
-;; (require 'lib-elisp)
-;; Increase number of messages saved in log.
-(setq message-log-max 10000)
 (package! esup)
 (after! esup
   (setq esup-depth 0))
+
+;; Increase number of messages saved in log.
+(setq message-log-max 10000)
 
 ;; Unbind `suspend-frame'.
 ;; TODO: provide more context
@@ -198,8 +196,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;; Prevent Emacs from pinging domain names unexpectedly.
 (setopt ffap-machine-p-known 'reject)
-;;;; Environment
-
 (require 'init-env)
 (require 'init-input-methods)
 
@@ -317,6 +313,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-fun)
 
 (require 'init-controls)
+
 ;; FIXME: causes some errors / inconsistencies
 ;; (def-hook! ceamx-maybe-start-emacs-server-h () 'ceamx-after-init-hook
 ;;   "Auto-start Emacs daemon if not already running."
