@@ -45,7 +45,7 @@
   (setq read-process-output-max (* 1024 1024)))
 ;; TODO: will a `init-file-debug' check work here?
 (setq garbage-collection-messages t)
-;; NOTE: Either use `gcmh' or make sure to reset this later. Or else!
+;; NOTE: Either use `gcmh' or make sure to reset this later.  Or else!
 (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
 (defvar ceamx-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
@@ -65,7 +65,7 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; Normally, options configured in `user-init-file' won't need to be persisted
 ;; to `custom-file', but by default, when using package.el for package
 ;; management, `package-selected-packages' will always be written to
-;; `custom-file' if available. See `init-package' for details.
+;; `custom-file' if available.  See `init-package' for details.
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (setq package-user-dir ceamx-packages-dir)
 (startup-redirect-eln-cache ceamx-eln-dir)
@@ -112,7 +112,7 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;;
 ;; FIXME: actually, this is behaving inconsistently: disabling it does not
 ;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
-;; normally... maybe needs to happen later in init?
+;; normally...  maybe needs to happen later in init?
 (tooltip-mode -1)
 (defvar ceamx-default-frame-name "home — [ceamx]"
   "Name for the default Emacs frame.")

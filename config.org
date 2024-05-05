@@ -34,6 +34,9 @@ CLOSED: [2024-03-20 Wed 22:43]
 
 
 ** Styleguide
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 **** Org-Mode: When to wrap inline text in ~tildes~ vs. =equals=
 
@@ -43,6 +46,9 @@ CLOSED: [2024-03-20 Wed 22:43]
 
 
 * Anatomy
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 ** Target Files
 
@@ -931,6 +937,8 @@ deleted before tangling."
 :header-args: :noweb-ref init
 :END:
 
+** Load order
+
 #+begin_src emacs-lisp :noweb yes
 (require 'cl-lib)
 
@@ -947,7 +955,9 @@ deleted before tangling."
 
 <<ceamx-benchmarking>>
 <<ceamx-environmental-orientation>>
-<<ceamx-packages>>
+<<ceamx-package-management>>
+<<ceamx-package-utilities>>
+
 #+end_src
 
 ** Define the default user identity
@@ -981,7 +991,7 @@ deleted before tangling."
   :type '(boolean))
 #+end_src
 
-** Initialize startup benchmarking
+** Initialize startup benchmarking :perf:
 :PROPERTIES:
 :header-args: :noweb-ref ceamx-benchmarking
 :END:
@@ -990,7 +1000,7 @@ deleted before tangling."
 (require 'init-benchmarking)
 #+end_src
 
-** Load environment-context variables
+** Define variables describing the current environment-context :env:
 :PROPERTIES:
 :header-args: :noweb-ref ceamx-environmental-orientation
 :END:
@@ -1005,7 +1015,7 @@ deleted before tangling."
 
 ** Initialize package management
 :PROPERTIES:
-:header-args: :noweb-ref ceamx-packages
+:header-args: :noweb-ref ceamx-package-management
 :END:
 
 Third-party package managers should be configured in init.el directly instead
@@ -1026,7 +1036,7 @@ of within a `require'd file so that they may be re-initialized properly.
 (defvar elpaca-installer-version 0.7)
 #+end_src
 
-**** Point the Elpaca to its house
+**** Show the Elpaca to its house
 
 #+begin_src emacs-lisp
 (defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
@@ -1079,20 +1089,93 @@ definitions for ~elpaca-installer-version~ and ~elpaca-directory~.
 (elpaca `(,@elpaca-order))
 #+end_src
 
-*** Elpaca, meet ~use-package~, meet Elpaca
+**** Bind some commonly-used package management commands :keybinds:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-packages-map
+  "f" #'elpaca-fetch-all
+  "m" #'elpaca-merge-all
+  "t" #'elpaca-try)
+
+(keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
+#+end_src
+
+***** TODO Move this global binding somewhere else... but where? :keybinds:
+
+#+begin_src emacs-lisp
+(keymap-global-set "C-c q" ceamx-session-map)
+#+end_src
+
+*** Run our custom init and startup hooks on ~elpaca-after-init-hook~
+
+#+begin_src emacs-lisp
+(add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
+(add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
+#+end_src
+
+*** Encourage a ~no-littering~ policy for packages to artifice in the designated areas
+
+- Website :: <https://github.com/emacscollective/no-littering/>
+
+By default, Emacs features and many packages default to dumping their state
+files into ~user-emacs-directory~.  This makes sense for the sake of visibility.
+However, because E rarely thinks about any of those machine-generated and
+non-human-friendly files, they may be effectively designated as clutter.  Ceamx
+offloads these sanitation duties to the =no-littering= package because it works
+effectively and almost-invisibly.
+
+In some cases, especially for new packages / package features / targets, it may
+be necessary to manage such configuration by hand.
+
+Ceamx avoids ~use-package~ here so that:
+
+- ~no-littering~ may be installed and loaded as early as possible
+- the time-consuming invocations of ~elpaca-wait~ should be kept to the absolute minimum
+
+#+begin_src emacs-lisp
+(require 'ceamx-paths)
+
+;; These must be set prior to package load.
+(setq no-littering-etc-directory ceamx-etc-dir)
+(setq no-littering-var-directory ceamx-var-dir)
+
+(elpaca no-littering
+  (require 'no-littering))
+#+end_src
+
+*** Install the latest version of Use-Package
+
+#+begin_src emacs-lisp
+(elpaca use-package)
+#+end_src
+
+*** Integrate Elpaca and Use-Package
+
+#+begin_src emacs-lisp
+(elpaca elpaca-use-package
+  (elpaca-use-package-mode))
+#+end_src
+
+*** Use-Package: Ensure package installation by default
+
+Equivalent to manually specifying =:ensure t= in each ~use-package~ expression.
 
 #+begin_src emacs-lisp
 (setopt use-package-always-ensure t)
+#+end_src
 
-(elpaca use-package)
+*** Elpaca: finish processing current queue
 
-(elpaca elpaca-use-package
-  (elpaca-use-package-mode))
+Reason:
 
+- Continuing otherwise will result in race conditions on the definition of storage paths
+- ~use-package~ must be loaded for byte-compilation checks in [[*Configure ~use-package~ for improved debuggability and introspectability]]
+
+#+begin_src emacs-lisp
 (elpaca-wait)
 #+end_src
 
-*** Improve ~use-package~ debuggability and introspectability
+*** Configure ~use-package~ for improved debuggability and introspectability
 
 #+begin_src emacs-lisp
 (setopt use-package-expand-minimally nil)
@@ -1103,49 +1186,37 @@ definitions for ~elpaca-installer-version~ and ~elpaca-directory~.
   (setopt use-package-compute-statistics t))
 #+end_src
 
-*** Run our custom init and startup hooks on ~elpaca-after-init-hook~
+** Pre-install packages adding ~use-package~ keywords
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-package-utilities
+:END:
+
+Note that these packages are likely useful even without using their ~use-package~ keywords.
+
+*** Install ~blackout~ for adjusting modeline indicators :modeline:
+
+- Keyword :: =:blackout=
 
 #+begin_src emacs-lisp
-(add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
-(add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
+(elpaca blackout
+  (require 'blackout))
 #+end_src
 
-*** Point well-known features and packages to the designated residential storage zone
-
-- Website :: <https://github.com/emacscollective/no-littering/>
-
-By default, Emacs features and many packages default to dumping their state
-files into ~user-emacs-directory~.  This makes sense for the sake of visibility.
-However, because E rarely needs to refer to these files, they may be designated
-as clutter.
-
-The =no-littering= package handles this issue very well and almost-invisibly so E doesn't have to.
-
-In some cases, especially for new packages / package features / targets, it may
-be necessary to manage such configuration by hand.
-
-#+begin_src emacs-lisp
-(use-package no-littering
-  :demand t
-  :init
-  (setq no-littering-etc-directory ceamx-etc-dir)
-  (setq no-littering-var-directory ceamx-var-dir))
-
-(elpaca-wait)
-#+end_src
-
-*** Using the latest versions of some builtin features and their dependencies
+** Install the latest versions of some builtin features and their dependencies
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-package-utilities
+:END:
 
 Installing the latest development versions of ~eglot~ and ~magit~ (for example)
 comes with the significant caveat that their dependencies often track the latest
-versions of builtin Emacs libraries. Those can be installed via GNU ELPA.
+versions of builtin Emacs libraries.  Those can be installed via GNU ELPA.
 
 Since core libraries like ~seq~ are often dependencies of many other packages or
 otherwise loaded immediately (like ~eldoc~), installation and activation of the
 newer versions needs to happen upfront to avoid version conflicts and
-mismatches. For example, we do not want some package loaded earlier in init to
+mismatches.  For example, Ceamx does not want some package loaded earlier in init to
 think it is using the builtin version of ~seq~, while a package loaded later in
-init uses a differnt version. I am not sure how realistic such a scenario might
+init uses a differnt version.  E is not sure how realistic such a scenario might
 be, or whether it would truly pose a problem, but the point is that we should
 aim for consistency.
 
@@ -1156,20 +1227,22 @@ functionality is specific to more niche features like inter-process
 communication in the case of ~eglot~.
 
 A feature must only be unloaded once, *before* loading the version installed by
-Elpaca. Normally, that is not an issue because the init file is only loaded once
-on session startup. But when you are re-loading the init file inside a running
-session, you'd actually end up unloading the version that Elpaca loaded. To
-prevent that, the unloading should happen only once -- during session startup --
-so we check for a non-nil value of ~after-init-time~.
+Elpaca.  Normally, that is not an issue because the init file is only loaded
+once on session startup.  But upon re-loading the init file inside a running
+session, the Elpaca-installed version will become unloaded.  To prevent that,
+the unloading should happen only once -- during session startup -- hence the
+check for a non-nil ~after-init-time~.
 
-I don't understand why the Elpaca-installed feature/package only seems to be
-loaded during the initial session startup? Unless the unloading happens
+#+begin_verse
+I don't understand why the Elpaca-installed feature\/package only seems to be
+loaded during the initial session startup?  Unless the unloading happens
 conditionally based on ~after-init-time~ as described above, every time the init
 file is reloaded and ~elpaca-process-queues~ runs in
 ~+auto-tangle-reload-init-h~, I get a bunch of errors (not warnings!) about
 ~eglot~ and ~org~ as missing dependencies.
+#+end_verse
 
-**** Install the latest version of ~seq~ builtin library, carefully
+*** Install the latest version of ~seq~ builtin library, carefully
 
 ~magit~ requires a more recent version of ~seq~ than the version included in
 Emacs 29.
@@ -1193,23 +1266,24 @@ Requires special care because unloading it can make other libraries freak out.
 (elpaca `(seq :build ,(+elpaca-seq-build-steps)))
 #+end_src
 
+*** Install the latest version of the builtin ~jsonrpc~ library
+
+Required by (and originally extracted from) ~eglot~.
+
 #+begin_src emacs-lisp
-;;;;; Install the latest version of `jsonrpc' builtin library
-
-;; Required by (and originally extracted from) ~eglot~.
-
 (elpaca jsonrpc
   (require 'jsonrpc))
 #+end_src
 
+*** Install the latest version of the ~eldoc~ builtin library, carefully
+
+Required by ~eglot~.
+
+~eldoc~ requires a delicate workaround to avoid catastrophy
+<https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
+
+
 #+begin_src emacs-lisp
-;;;;; Install the latest version of ~eldoc~ builtin library, carefully
-
-;; Required by ~eglot~.
-
-;; ~eldoc~ requires a delicate workaround to avoid catastrophy.
-;; <https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
-
 (unless after-init-time
   (unload-feature 'eldoc t)
   (setq custom-delayed-init-variables '())
@@ -1220,9 +1294,9 @@ Requires special care because unloading it can make other libraries freak out.
   (global-eldoc-mode))
 #+end_src
 
-#+begin_src emacs-lisp
-;;;;; Install the latest version of the builtin ~eglot~ package
+*** Install the latest version of the builtin ~eglot~ package
 
+#+begin_src emacs-lisp
 (unless after-init-time
   (when (featurep 'eglot)
     (unload-feature 'eglot)))
@@ -1230,9 +1304,9 @@ Requires special care because unloading it can make other libraries freak out.
 (elpaca eglot)
 #+end_src
 
-#+begin_src emacs-lisp
-;;;;; Install the latest version of Org-Mode (~org~)
+*** Install the latest version of Org-Mode
 
+#+begin_src emacs-lisp
 (unless after-init-time
   (when (featurep 'org)
     (unload-feature 'org)))
@@ -1240,42 +1314,24 @@ Requires special care because unloading it can make other libraries freak out.
 (elpaca (org :autoloads "org-loaddefs.el"))
 #+end_src
 
-#+begin_src emacs-lisp
-;;;;; Ensure the previously-queued package requests have completed
+** Elpaca: finish processing current queue
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-package-utilities
+:END:
 
+- Reasion :: Continuing otherwise may result in loading conflicting versions of essential
+Emacs builtins.
+- Reason :: Continuing otherwise will result in race conditions where the newly-installed
+~use-package~ keywords may or may not be available, resulting in sporadic
+initialization errors.
+
+#+begin_src emacs-lisp
 (elpaca-wait)
 #+end_src
 
-#+begin_src emacs-lisp
-;;;; Initialize miscellaneous packages adding ~use-package~ keywords
-
-;; NOTE: ~blackout~ is still useful even without ~use-package~
-(use-package blackout
-  :demand t)
-
-(elpaca-wait)
-#+end_src
+** Pretend file-visiting-buffers in the package directory are read-only
 
 #+begin_src emacs-lisp
-;;;; Run garbage collection on idle
-
-;; <https://gitlab.com/koral/gcmh>
-;; <https://akrl.sdf.org/>
-
-;; During normal use, the GC threshold will be set to a high value.
-;; When idle, GC will be triggered with a low threshold.
-
-(use-package gcmh
-  :blackout
-  :commands (gcmh-mode)
-  :init
-  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
-  (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Treat file-visiting-buffers in the package directory as read-only
-
 (require 'config-buffer)
 
 (def-hook! ceamx-register-read-only-buffers-h ()
@@ -1293,46 +1349,69 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
     (dir-locals-set-directory-class (file-truename dir) 'read-only)))
 #+end_src
 
+** Install ~gcmh~ to manage running garbage collection on idle
+
+- Website :: <https://akrl.sdf.org/>
+- Code :: <https://gitlab.com/koral/gcmh>
+
+During normal use, the GC threshold will be set to a high value.
+When idle, GC will be triggered with a low threshold.
+
 #+begin_src emacs-lisp
-;;;; Bind some commonly-used package management commands
-
-(define-keymap :keymap ceamx-packages-map
-  "f" #'elpaca-fetch-all
-  "m" #'elpaca-merge-all
-  "t" #'elpaca-try)
-
-(keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
-
-;; FIXME: move elsewhere...
-(keymap-global-set "C-c q" ceamx-session-map)
+(use-package gcmh
+  :blackout
+  :commands (gcmh-mode)
+  :init
+  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
+  (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
 #+end_src
 
-** TODO Literate =init.el=
+** Load =site-lisp= packages
 
 #+begin_src emacs-lisp
-;;; Site-lisp packages
-
 (require 'on)
+#+end_src
 
+*** TODO Elpaca: finish processing current queue
+
+Probably unnecessary.
+
+#+begin_src emacs-lisp
 (elpaca-wait)
+#+end_src
 
-;;; Libraries
+** Install utility libraries
+
+#+begin_src emacs-lisp
+;;;
 
 ;; FIXME: remove or alias (`##' is very difficult to search for)
 (use-package llama) ;  `##' lambda shorthand =>
                                         ;  <https://git.sr.ht/~tarsius/llama>
 
 (use-package f)
+#+end_src
 
-(require 'lib-common)
+** Load commonly-useful Ceamx libraries
 
+*** TODO Unnecessary, probably
+
+#+begin_src emacs-lisp
 (require 'lib-files)
+#+end_src
+
+*** TODO Improve visibility -- =site-lisp=, maybe?
+
+The functions and macros in ~lib-elisp~ are useful when hacking on Ceamx, but
+E always forgets they exist.
+
+#+begin_src emacs-lisp
 (require 'lib-elisp)
 #+end_src
 
-#+begin_src emacs-lisp
-;;; Configuration
+** TODO Literate =init.el=
 
+#+begin_src emacs-lisp
 ;; Increase number of messages saved in log.
 (setq message-log-max 10000)
 
@@ -1589,7 +1668,7 @@ See also:
 *** Prevent garbage-collection during init
 
 #+begin_src emacs-lisp
-;; NOTE: Either use `gcmh' or make sure to reset this later. Or else!
+;; NOTE: Either use `gcmh' or make sure to reset this later.  Or else!
 (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
 #+end_src
 
@@ -1603,26 +1682,26 @@ See also:
   This snippet appears to cause Emacs to lose track of its own source files in most sessions.
 
   ~describe-function~ and ~helpful-function~ report symbols "without a source
-  file".  I did not have much to go on until I became aware of ~find-function~.
+  file".   I did not have much to go on until I became aware of ~find-function~.
   After invoking the latter on a function whose source could not be located, I
   noticed a clue: ~find-function~ somehow knew about the source file with a =.el=
-  extension.  I investigated the Emacs =lisp/= directory and saw that there are no
-  =.el= files -- only =.elc= and =.el.gz=.  The =.elc= files are unreadable, but
-  Emacs is still able to read the compressed =gz= archives.  I still do not know
+  extension.   I investigated the Emacs =lisp/= directory and saw that there are no
+  =.el= files -- only =.elc= and =.el.gz=.   The =.elc= files are unreadable, but
+  Emacs is still able to read the compressed =gz= archives.   I still do not know
   exactly why it forgot.
 
-  The issue has not been consistent, which likely indicates a race condition.  For
+  The issue has not been consistent, which likely indicates a race condition.   For
   a while, I assumed the issue occurred in consecutive sessions after calling
   ~restart-emacs~, but that was not the case.
 
   Disabling this hack is the only consistent way I found to help Emacs find
-  itself.  Re-enabling it caused the issue to recur.  In the end, after
+  itself.   Re-enabling it caused the issue to recur.   In the end, after
   disabling, I see absolutely no difference in startup performance.
   Optimization-by-copypasta strikes again.
 
   This has been a very frustrating regression in many/most of my Emacs sessions.
   I rely a lot on being able to read Emacs Lisp source code to understand how
-  Emacs works -- that is how I learn.  Without being able to view source, I am
+  Emacs works -- that is how I learn.   Without being able to view source, I am
   left only with a lack of clarity.
 
 - <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
@@ -1666,7 +1745,7 @@ See [[*=ceamx-paths= :: common path constants]]
 ;; Normally, options configured in `user-init-file' won't need to be persisted
 ;; to `custom-file', but by default, when using package.el for package
 ;; management, `package-selected-packages' will always be written to
-;; `custom-file' if available. See `init-package' for details.
+;; `custom-file' if available.  See `init-package' for details.
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 #+end_src
 
@@ -1740,7 +1819,7 @@ See [[*=ceamx-paths= :: common path constants]]
 ;;
 ;; FIXME: actually, this is behaving inconsistently: disabling it does not
 ;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
-;; normally... maybe needs to happen later in init?
+;; normally...  maybe needs to happen later in init?
 (tooltip-mode -1)
 #+end_src
 

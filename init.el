@@ -91,13 +91,27 @@
     (load "./elpaca-autoloads")))
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
-(setopt use-package-always-ensure t)
+(define-keymap :keymap ceamx-packages-map
+  "f" #'elpaca-fetch-all
+  "m" #'elpaca-merge-all
+  "t" #'elpaca-try)
 
+(keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
+(keymap-global-set "C-c q" ceamx-session-map)
+(add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
+(add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
+(require 'ceamx-paths)
+
+;; These must be set prior to package load.
+(setq no-littering-etc-directory ceamx-etc-dir)
+(setq no-littering-var-directory ceamx-var-dir)
+
+(elpaca no-littering
+  (require 'no-littering))
 (elpaca use-package)
-
 (elpaca elpaca-use-package
   (elpaca-use-package-mode))
-
+(setopt use-package-always-ensure t)
 (elpaca-wait)
 (setopt use-package-expand-minimally nil)
 (when (bound-and-true-p init-file-debug)
@@ -105,15 +119,8 @@
   (setopt use-package-expand-minimally nil)
   (setopt use-package-verbose t)
   (setopt use-package-compute-statistics t))
-(add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
-(add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
-(use-package no-littering
-  :demand t
-  :init
-  (setq no-littering-etc-directory ceamx-etc-dir)
-  (setq no-littering-var-directory ceamx-var-dir))
-
-(elpaca-wait)
+(elpaca blackout
+  (require 'blackout))
 (defun +elpaca-unload-seq (e)
   "Unload the builtin version of `seq' and continue the `elpaca' build E."
   (and (featurep 'seq) (unload-feature 'seq t))
@@ -127,19 +134,8 @@
           (list '+elpaca-unload-seq 'elpaca--activate-package)))
 
 (elpaca `(seq :build ,(+elpaca-seq-build-steps)))
-;;;;; Install the latest version of `jsonrpc' builtin library
-
-;; Required by (and originally extracted from) ~eglot~.
-
 (elpaca jsonrpc
   (require 'jsonrpc))
-;;;;; Install the latest version of ~eldoc~ builtin library, carefully
-
-;; Required by ~eglot~.
-
-;; ~eldoc~ requires a delicate workaround to avoid catastrophy.
-;; <https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
-
 (unless after-init-time
   (unload-feature 'eldoc t)
   (setq custom-delayed-init-variables '())
@@ -148,45 +144,17 @@
 (elpaca eldoc
   (require 'eldoc)
   (global-eldoc-mode))
-;;;;; Install the latest version of the builtin ~eglot~ package
-
 (unless after-init-time
   (when (featurep 'eglot)
     (unload-feature 'eglot)))
 
 (elpaca eglot)
-;;;;; Install the latest version of Org-Mode (~org~)
-
 (unless after-init-time
   (when (featurep 'org)
     (unload-feature 'org)))
 
 (elpaca (org :autoloads "org-loaddefs.el"))
-;;;;; Ensure the previously-queued package requests have completed
-
 (elpaca-wait)
-;;;; Initialize miscellaneous packages adding ~use-package~ keywords
-
-;; NOTE: ~blackout~ is still useful even without ~use-package~
-(use-package blackout
-  :demand t)
-
-(elpaca-wait)
-;;;; Run garbage collection on idle
-
-;; <https://gitlab.com/koral/gcmh>
-;; <https://akrl.sdf.org/>
-
-;; During normal use, the GC threshold will be set to a high value.
-;; When idle, GC will be triggered with a low threshold.
-
-(use-package gcmh
-  :blackout
-  :commands (gcmh-mode)
-  :init
-  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
-  (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
-;;;; Treat file-visiting-buffers in the package directory as read-only
 
 (require 'config-buffer)
 
@@ -203,37 +171,23 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
   ;; Associate directories with the read-only class
   (dolist (dir ceamx-buffer-read-only-dirs-list)
     (dir-locals-set-directory-class (file-truename dir) 'read-only)))
-;;;; Bind some commonly-used package management commands
-
-(define-keymap :keymap ceamx-packages-map
-  "f" #'elpaca-fetch-all
-  "m" #'elpaca-merge-all
-  "t" #'elpaca-try)
-
-(keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
-
-;; FIXME: move elsewhere...
-(keymap-global-set "C-c q" ceamx-session-map)
-;;; Site-lisp packages
-
+(use-package gcmh
+  :blackout
+  :commands (gcmh-mode)
+  :init
+  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
+  (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
 (require 'on)
-
 (elpaca-wait)
-
-;;; Libraries
+;;;
 
 ;; FIXME: remove or alias (`##' is very difficult to search for)
 (use-package llama) ;  `##' lambda shorthand =>
                                         ;  <https://git.sr.ht/~tarsius/llama>
 
 (use-package f)
-
-(require 'lib-common)
-
 (require 'lib-files)
 (require 'lib-elisp)
-;;; Configuration
-
 ;; Increase number of messages saved in log.
 (setq message-log-max 10000)
 
