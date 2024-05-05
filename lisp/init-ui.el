@@ -415,8 +415,9 @@
   "f" (cons "Font" (define-prefix-command 'ceamx-session-font-prefix-command))
   "f f" #'fontaine-set-preset
   "t" (cons "Theme" (define-prefix-command 'ceamx-session-theme-prefix-command))
+  "t d" #'ceamx/dark
   "t l" #'ceamx/light
-  "t d" #'ceamx/dark)
+  "t o" #'olivetti-mode)
 
 (provide 'init-ui)
 ;;; init-ui.el ends here
