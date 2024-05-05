@@ -412,12 +412,11 @@
   (spacious-padding-mode 1))
 
 (define-keymap :keymap ceamx-session-map
-  "f" (cons "Font" (define-prefix-command 'ceamx-session-font-prefix-command))
-  "f f" #'fontaine-set-preset
-  "t" (cons "Theme" (define-prefix-command 'ceamx-session-theme-prefix-command))
-  "t d" #'ceamx/dark
-  "t l" #'ceamx/light
-  "t o" #'olivetti-mode)
+  "a" (cons "Appearance" (define-prefix-command 'ceamx-session-font-prefix-command))
+  "a f" #'fontaine-set-preset
+  "a d" #'ceamx/dark
+  "a l" #'ceamx/light
+  "a o" #'olivetti-mode)
 
 (provide 'init-ui)
 ;;; init-ui.el ends here
