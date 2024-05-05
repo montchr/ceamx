@@ -170,6 +170,10 @@
       (if (fboundp 'pulsar-pulse-line)
           (pulsar-pulse-line)
         (pulse-momentary-highlight-one-line)))))
+(keymap-global-set "C-c w" (cons "Window" (define-prefix-command 'ceamx-custom-x-prefix)))
+
+(package! transpose-frame
+  (keymap-global-set "C-c w SPC" #'transpose-frame))
 (transient-define-prefix ceamx/window-dispatch ()
   "Window management transient."
   :transient-suffix 'transient--do-stay

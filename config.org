@@ -4549,6 +4549,15 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
         (pulse-momentary-highlight-one-line)))))
 #+end_src
 
+** Add commands to transpose/rotate a frame's windows
+
+#+begin_src emacs-lisp
+(keymap-global-set "C-c w" (cons "Window" (define-prefix-command 'ceamx-custom-x-prefix)))
+
+(package! transpose-frame
+  (keymap-global-set "C-c w SPC" #'transpose-frame))
+#+end_src
+
 ** Create a Transient menu for window management
 
 #+begin_src emacs-lisp
