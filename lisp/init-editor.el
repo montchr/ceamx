@@ -46,10 +46,12 @@
 
 (keymap-global-set "M-Q" #'repunctuate-sentences)
 (global-subword-mode -1)
-;; When a mode defines a comment syntax, then only wrap those comments. In all
-;; other modes (primarily `text-mode' derivatives), activating
-;; `auto-fill-mode' will apply to all lines.
-(setopt comment-auto-fill-only-comments t)
+(setopt comment-auto-fill-only-comments nil)
+
+(def-hook! +prog-mode-auto-fill-comments-only-h ()
+  'prog-mode-hook
+  "Set `auto-fill-mode' to only fill comments when in programming modes."
+  (setq-local comment-auto-fill-only-comments t))
 
 (dolist (mode-hook '(prog-mode-hook text-mode-hook))
   (add-hook mode-hook #'auto-fill-mode))
