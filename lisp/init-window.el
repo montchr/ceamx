@@ -147,8 +147,9 @@
 (add-hook 'ceamx-after-init-hook #'winner-mode)
 (package! dedicated
   (keymap-global-set "C-c W" #'dedicated-mode))
-(package! olivetti
-  (setopt olivetti-style 'fancy))
+(package! olivetti)
+
+;;  (setopt olivetti-style 'fancy) ; might not play well with `org-modern'
 (package! golden-ratio
   (setopt golden-ratio-auto-scale t)
   (setopt golden-ratio-max-width 100))

@@ -4599,8 +4599,9 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
 <https://github.com/rnkn/olivetti>
 
 #+begin_src emacs-lisp
-(package! olivetti
-  (setopt olivetti-style 'fancy))
+(package! olivetti)
+
+;;  (setopt olivetti-style 'fancy) ; might not play well with `org-modern'
 #+end_src
 
 ** =golden-ratio.el=: Automatically resize windows accordingly
