@@ -35,7 +35,8 @@
 (f-mkdir-full-path org-directory)
 
 (setopt org-agenda-files ceamx-default-agenda-files)
-(add-hook 'org-mode-hook #'prettify-symbols-mode)
+;; While nil is the default value, it must be set explicitly to opt-in.
+(setopt org-support-shift-select nil)
 (setopt org-auto-align-tags nil)
 (setopt org-tags-column 0)
 
@@ -70,6 +71,7 @@
           ("x" . "example")
           ("X" . "export")
           ("q" . "quote")))
+(add-hook 'org-mode-hook #'prettify-symbols-mode)
 (setopt org-ellipsis "…")
 (setopt org-hide-emphasis-markers nil)
 (setopt org-pretty-entities t)

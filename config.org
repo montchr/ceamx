@@ -11862,11 +11862,27 @@ conflict when Syncthing tries to take control of these paths.
 
 *** General settings
 
-<https://github.com/minad/org-modern#configuration>
+**** Support the special shifted-arrow-key commands
 
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook #'prettify-symbols-mode)
-#+END_SRC
+#+begin_src emacs-lisp
+;; While nil is the default value, it must be set explicitly to opt-in.
+(setopt org-support-shift-select nil)
+#+end_src
+
+From the documentation for that setting:
+
+#+begin_quote
+Shifted cursor keys will then execute Org commands in the following contexts:
+
+- on a headline, changing TODO state (left/right) and priority (up/down)
+- on a time stamp, changing the time
+- in a plain list item, changing the bullet type
+- in a property definition line, switching between allowed values
+- in the BEGIN line of a clock table (changing the time block).
+- in a table, moving the cell in the specified direction.
+
+Outside these contexts, the commands will throw an error.
+#+end_quote
 
 *** Editing settings
 
@@ -11929,6 +11945,14 @@ may cause unexpected changes to the content (depending on the setting of ~org-ca
 #+END_SRC
 
 *** Appearance settings
+
+**** Use ~prettify-symbols-mode~
+
+<https://github.com/minad/org-modern#configuration>
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook #'prettify-symbols-mode)
+#+END_SRC
 
 **** Text formatting
 
