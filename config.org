@@ -4456,7 +4456,10 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
     "~" #'popper-cycle-backwards))
 #+end_src
 
-*** Configure popup display control rules manually
+*** DISABLED Configure popup display control rules manually
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 
 <https://github.com/karthink/popper/blob/master/README.org#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
 

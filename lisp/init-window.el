@@ -135,13 +135,6 @@
     :repeat t
     "`" #'popper-cycle
     "~" #'popper-cycle-backwards))
-(after! popper
-  (setopt popper-display-control nil)
-
-  (prependopt! display-buffer-alist
-               '((popper-display-control-p
-                  (ceamx-window-display-popup)
-                  (window-height . ,popper-window-height)))))
 (after! (popper projectile)
   (setopt popper-group-function #'popper-group-by-projectile))
 (add-hook 'ceamx-after-init-hook #'winner-mode)
