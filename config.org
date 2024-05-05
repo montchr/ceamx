@@ -13411,13 +13411,13 @@ Return the new `zone' timer."
 #+end_src
 
 
-* Miscellaneous Libraries
+* The Bucket of Uncertainty
 
 Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
 
-** Tasks
+Or, perhaps more accurately: stuff that needs a better home.
 
-*** TODO Consolidate ~lib-simple~ and ~lib-text~
+** TODO Consolidate ~lib-simple~ and ~lib-text~
 
 
 ** "Simple" Library =lib-simple.el=
@@ -13611,4 +13611,16 @@ POS defaults to the current position."
 
 (provide 'lib-text)
 ;;; lib-text.el ends here
+#+end_src
+
+
+** Keybindings :keybinds:
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-postlude
+:END:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-session-map
+  "q" #'save-buffers-kill-emacs
+  "Q" #'kill-emacs)
 #+end_src

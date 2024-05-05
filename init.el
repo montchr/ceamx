@@ -336,6 +336,9 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;     "Load the user `custom-file'.
 ;; Keep in mind that the custom file is ignored in version control."
 ;;     (load custom-file 'noerror)))
+(define-keymap :keymap ceamx-session-map
+  "q" #'save-buffers-kill-emacs
+  "Q" #'kill-emacs)
 
 (provide 'init)
 ;;; init.el ends here
