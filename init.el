@@ -46,7 +46,7 @@
   :group 'ceamx
   :type '(boolean))
 
-(require 'init-benchmarking)
+
 (require 'config-env)
 
 ;; TODO: see bbatsov/prelude for prior art
@@ -185,6 +185,9 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; (require 'lib-elisp)
 ;; Increase number of messages saved in log.
 (setq message-log-max 10000)
+(package! esup)
+(after! esup
+  (setq esup-depth 0))
 
 ;; Unbind `suspend-frame'.
 ;; TODO: provide more context

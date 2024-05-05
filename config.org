@@ -96,49 +96,6 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="init")>>
 #+end_src
 
-*** =lisp/init-benchmarking.el=
-
-#+name: init-benchmarking-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-benchmarking.el
-<<file-prop-line(feature="init-benchmarking",desc="Measure startup and feature load time")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-;; Copyright (c) 2006-2021  Steve Purcell
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-;;
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-;;
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-;;; Commentary:
-;;; Code:
-
-<<init-benchmarking>>
-
-<<file-footer(feature="init-benchmarking")>>
-#+end_src
-
 *** =lisp/init-ui.el=
 
 #+name: init-ui-file
@@ -1000,15 +957,6 @@ deleted before tangling."
   :type '(boolean))
 #+end_src
 
-** Initialize startup benchmarking :perf:
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-benchmarking
-:END:
-
-#+begin_src emacs-lisp
-(require 'init-benchmarking)
-#+end_src
-
 ** Define variables describing the current environment-context :env:
 :PROPERTIES:
 :header-args: :noweb-ref ceamx-environmental-orientation
@@ -1397,7 +1345,26 @@ When idle, GC will be triggered with a low threshold.
 (use-package f)
 #+end_src
 
+** Install the on-demand Emacs Start-Up Profiler (~esup~) :perf:
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-startup-profiler
+:END:
+
+#+begin_src emacs-lisp
+(package! esup)
+#+end_src
+
+Work around an upstream bug where profiling [[https://github.com/jschaf/esup/issues/85#issuecomment-1130110196][fails catastrophically]] because
+~esup~ tries to parse the byte-compiled version of ~cl-lib~:
+
+#+begin_src emacs-lisp
+(after! esup
+  (setq esup-depth 0))
+#+end_src
+
 ** TODO Literate =init.el=
+
+*** TODO Miscellaneous things that should go somewhere else
 
 #+begin_src emacs-lisp
 ;; Increase number of messages saved in log.
@@ -2519,81 +2486,6 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 #+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
 (provide 'lib-common)
 ;;; lib-common.el ends here
-#+end_src
-
-
-* ~init-benchmarking~ :: measure startup times
-:PROPERTIES:
-:header-args: :noweb-ref init-benchmarking
-:END:
-
-#+begin_src emacs-lisp
-(defun ceamx-time-subtract-millis (b a)
-  (* 1000.0 (float-time (time-subtract b a))))
-
-(defvar ceamx-require-times nil
-  "A list of (FEATURE LOAD-START-TIME LOAD-DURATION).
-LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
-
-(defun ceamx-require-times-wrapper (orig feature &rest args)
-  "Note in `ceamx-require-times' the time taken to require each feature."
-  (let* ((already-loaded (memq feature features))
-         (require-start-time (and (not already-loaded) (current-time))))
-    (prog1
-        (apply orig feature args)
-      (when (and (not already-loaded) (memq feature features))
-        (let ((time (ceamx-time-subtract-millis (current-time) require-start-time)))
-          (add-to-list 'ceamx-require-times
-                       (list feature require-start-time time)
-                       t))))))
-
-(advice-add 'require :around 'ceamx-require-times-wrapper)
-
-(define-derived-mode ceamx-require-times-mode tabulated-list-mode "Require-Times"
-  "Show times taken to `require' packages."
-  (setq tabulated-list-format
-    [("Start time (ms)" 20 ceamx-require-times-sort-by-start-time-pred)
-      ("Feature" 30 t)
-      ("Time (ms)" 12 ceamx-require-times-sort-by-load-time-pred)])
-  (setq tabulated-list-sort-key (cons "Start time (ms)" nil))
-  (setq tabulated-list-padding 2)
-  (setq tabulated-list-entries #'ceamx-require-times-tabulated-list-entries)
-  (tabulated-list-init-header)
-  (when (fboundp 'tablist-minor-mode)
-    (tablist-minor-mode)))
-
-(defun ceamx-require-times-sort-by-start-time-pred (entry1 entry2)
-  (< (string-to-number (elt (nth 1 entry1) 0))
-     (string-to-number (elt (nth 1 entry2) 0))))
-
-(defun ceamx-require-times-sort-by-load-time-pred (entry1 entry2)
-  (> (string-to-number (elt (nth 1 entry1) 2))
-    (string-to-number (elt (nth 1 entry2) 2))))
-
-(defun ceamx-require-times-tabulated-list-entries ()
-  (cl-loop for (feature start-time millis) in ceamx-require-times
-           with order = 0
-           do (cl-incf order)
-           collect (list order
-                         (vector
-                          (format "%.3f" (ceamx-time-subtract-millis start-time before-init-time))
-                          (symbol-name feature)
-                          (format "%.3f" millis)))))
-
-(defun ceamx-require-times ()
-  "Show a tabular view of how long various libraries took to load."
-  (interactive)
-  (with-current-buffer (get-buffer-create "*Require Times*")
-    (ceamx-require-times-mode)
-    (tabulated-list-revert)
-    (display-buffer (current-buffer))))
-
-;; FIXME: show in echo area, not just messages buffer -- maybe idk `inhibit-startup-message' ?
-(defun ceamx-show-init-time ()
-  (message "init completed in %.2fms"
-    (ceamx-time-subtract-millis after-init-time before-init-time)))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-show-init-time)
 #+end_src
 
 
