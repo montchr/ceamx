@@ -9338,7 +9338,7 @@ Capf, such that it will be tried first."
                       completion-at-point-functions))))
 #+end_src
 
-*** Add custom template element to include nested templates
+*** Add custom template element =i= to include nested templates
 
 See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elements>
 
@@ -9368,17 +9368,16 @@ See <https://github.com/minad/tempel/blob/main/README.org#defining-custom-elemen
     "S-TAB" #'tempel-previous))
 #+end_src
 
-*** ~tempel-collection~: install community ~tempel~ templates
+*** Install the community ~tempel~ template collection
 
-<https://github.com/Crandel/tempel-collection>
-<https://github.com/Crandel/tempel-collection/tree/main/templates>
+- Website :: <https://github.com/Crandel/tempel-collection>
+- Code :: <https://github.com/Crandel/tempel-collection/tree/main/templates>
 
 #+begin_src emacs-lisp
 (package! tempel-collection
   (after! tempel
     (require 'tempel-collection)))
 #+end_src
-
 
 *** Issues
 
