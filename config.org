@@ -2388,7 +2388,7 @@ as in `defun'."
           docstring hooks-str)
         ,@body)
        (dolist (hook ',hooks)
-        (add-hook hook ',name)))))
+        (add-hook hook #',name)))))
 #+end_src
 
 *** Packages & User Configuration

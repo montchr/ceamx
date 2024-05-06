@@ -346,7 +346,7 @@ as in `defun'."
           docstring hooks-str)
         ,@body)
        (dolist (hook ',hooks)
-        (add-hook hook ',name)))))
+        (add-hook hook #',name)))))
 ;; ~def-hook!~: Macro to define a hook function and add it to the given hook(s):1 ends here
 
 ;; ~use-feature!~: Configuration-only wrapper for ~use-package~
