@@ -7769,15 +7769,16 @@ as the CHAR argument to `ceamx-normalize-char'."
 
 - Note taken on [2024-04-09 Tue 01:00] \\
   Currently it is impossible to type when ~abbrev-mode~ is active in a buffer.
-  When pressing =SPC= after a word, I see the following:
-  But I'm not sure where that's coming from.
 
+*** Re-locate the abbrev file to the ~user-emacs-directory~ for quick access
+
+#+begin_src emacs-lisp
+(setopt abbrev-file-name (locate-user-emacs-file "abbrev-defs"))
+#+end_src
 
 *** Load custom abbrevs from ~abbrev-file-name~
 
 #+begin_src emacs-lisp
-(setopt abbrev-file-name (locate-user-emacs-file "abbrev-defs"))
-
 (when (file-exists-p abbrev-file-name)
   (quietly-read-abbrev-file))
 #+end_src

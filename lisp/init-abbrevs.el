@@ -25,7 +25,6 @@
 ;;; Code:
 
 (setopt abbrev-file-name (locate-user-emacs-file "abbrev-defs"))
-
 (when (file-exists-p abbrev-file-name)
   (quietly-read-abbrev-file))
 (setopt abbrev-suggest t)
