@@ -1446,7 +1446,7 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 ;;;; Completion-At-Point
 
 (require 'init-completion)
-;; (require 'init-abbrevs)
+(require 'init-abbrevs)
 #+end_src
 
 #+begin_src emacs-lisp
