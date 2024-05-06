@@ -57,11 +57,11 @@ Capf, such that it will be tried first."
 
 (after! tempel
   (add-to-list 'tempel-user-elements #'+tempel-include))
-(after! tempel
-  (global-keys!
-    "M-+" #'tempel-complete
-    "M-*" #'tempel-insert)
+(define-keymap :keymap (current-global-map)
+  "M-+" #'tempel-complete
+  "M-*" #'tempel-insert)
 
+(after! tempel
   (define-keymap :keymap tempel-map
     "TAB" #'tempel-next
     "S-TAB" #'tempel-previous))
