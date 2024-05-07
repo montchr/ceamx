@@ -103,7 +103,6 @@ If no FILE is specified, reload the current buffer from disk."
   (if file
       (find-file file)
     (revert-buffer bang (or bang (not (buffer-modified-p))) t)))
-
 ;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L4652-L4660>
 (defun ceamx/buffer-new (&optional file)
   "Edit a new unnamed buffer or FILE."
@@ -114,7 +113,6 @@ If no FILE is specified, reload the current buffer from disk."
     (let ((buffer (generate-new-buffer "*new*")))
       (set-buffer-major-mode buffer)
       (set-window-buffer nil buffer))))
-
 ;; FIXME: this does not actually kill its buffers -- buffer must be deleted manually
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L397-L424>
 (defun ceamx/delete-this-file (&optional path force-p)
@@ -145,7 +143,6 @@ If FORCE-P, delete without confirmation."
           (kill-this-buffer)
           (ceamx-files--update-refs path)
           (message "Deleted %S" short-path))))))
-
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
 (defun ceamx/copy-this-file (new-path &optional force-p)
   "Copy current buffer's file to NEW-PATH.
@@ -161,7 +158,6 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (copy-file old-path new-path (or force-p 1))
     (ceamx-files--update-refs old-path new-path)
     (message "File copied to %S" (abbreviate-file-name new-path))))
-
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
 (defun ceamx/move-this-file (new-path &optional force-p)
   "Move current buffer's file to NEW-PATH.
@@ -180,7 +176,6 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (set-visited-file-name new-path t t)
     (ceamx-files--update-refs old-path new-path)
     (message "File moved to %S" (abbreviate-file-name new-path))))
-
 ;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
 (defun ceamx/kill-this-buffer ()
   "`kill-this-buffer' with no menu-bar checks.
@@ -190,12 +185,10 @@ See <https://www.reddit.com/r/emacs/comments/64xb3q/killthisbuffer_sometimes_jus
   (if (minibufferp)
       (abort-recursive-edit)
     (kill-buffer (current-buffer))))
-
 (defun ceamx/diff-with-file (&optional arg)
   (interactive "P")
   (let ((buffer (when arg (current-buffer))))
     (diff-buffer-with-file buffer)))
-
 ;; via <https://github.com/tarsius/fwb-cmds/blob/88e823809067983acfaeafa57d0bb6e889429ad2/fwb-cmds.el#L140C1-L156C78>
 ;;;###autoload
 (defun ceamx/sudo-find-file (&optional arg)

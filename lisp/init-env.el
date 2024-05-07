@@ -1,4 +1,4 @@
-;;; init-env.el --- Environment configuration -*- lexical-binding: t -*-
+;;; init-env.el --- Environmental integrations  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
 
@@ -22,37 +22,23 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;  Ensure proper integration with the user environment.
-
 ;;; Code:
 
 (require 'config-env)
-
 (require 'lib-common)
-
 ;; Disable unnecessary OS-specific command-line options.
 (unless +sys-mac-p
   (setq command-line-ns-option-alist nil))
 (unless +sys-linux-p
   (setq command-line-x-option-alist nil))
-
 (package! exec-path-from-shell
   (require 'exec-path-from-shell)
   (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH" "LSP_USE_PLISTS"))
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
-
-;;; Make temporary buffers inherit buffer-local environment variables with ~inheritenv~
-
-;; <https://github.com/purcell/inheritenv>
-
 (package! inheritenv
   (with-eval-after-load 'exec-path-from-shell
     (require 'inheritenv)))
-
-;;; ~with-editor~: Ensure shell/term modes use session as =$EDITOR=
-
 (package! with-editor
   (keymap-global-set "<remap> <async-shell-command>"
                      #'with-editor-async-shell-command)
@@ -67,25 +53,9 @@
   ;; <https://codeberg.org/akib/emacs-eat/issues/55#issuecomment-871388>
   (with-eval-after-load 'eat
     (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
-
-;;; Support integration with Direnv via the ~envrc~ package
-
-;; <https://github.com/purcell/envrc>
-;; <https://direnv.net/>
-;; <https://github.com/direnv/direnv>
-
-;; > Q: How does this differ from `direnv.el`?
-;;
-;; > <https://github.com/wbolster/emacs-direnv> repeatedly changes the global
-;; > Emacs environment, based on tracking what buffer you're working on.
-;;
-;; > Instead, `envrc.el` simply sets and stores the right environment in each
-;; > buffer, as a buffer-local variable.
-
 (package! envrc
   (with-eval-after-load 'exec-path-from-shell
     (envrc-global-mode)))
-
 (elpaca-wait)
 
 (provide 'init-env)

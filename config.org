@@ -121,6 +121,28 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="init")>>
 #+end_src
 
+*** =lisp/init-env.el=
+
+#+name: init-env-file
+#+begin_src emacs-lisp :comments no :tangle lisp/init-env.el
+<<file-prop-line(feature="init-env",desc="Environmental integrations")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-env>>
+
+<<file-footer(feature="init-env")>>
+#+end_src
+
 *** =lisp/init-ui.el=
 
 #+name: init-ui-file
@@ -2620,63 +2642,44 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 #+end_src
 
 ** Customizations
+:PROPERTIES:
+:header-args: :noweb-ref init-env
+:END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-env.el
-;;; init-env.el --- Environment configuration -*- lexical-binding: t -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;  Ensure proper integration with the user environment.
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'config-env)
-
 (require 'lib-common)
+#+end_src
 
+#+begin_src emacs-lisp
 ;; Disable unnecessary OS-specific command-line options.
 (unless +sys-mac-p
   (setq command-line-ns-option-alist nil))
 (unless +sys-linux-p
   (setq command-line-x-option-alist nil))
+#+end_src
 
+#+begin_src emacs-lisp
 (package! exec-path-from-shell
   (require 'exec-path-from-shell)
   (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH" "LSP_USE_PLISTS"))
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
+#+end_src
 
-;;; Make temporary buffers inherit buffer-local environment variables with ~inheritenv~
+*** Make temporary buffers inherit buffer-local environment variables with ~inheritenv~
 
-;; <https://github.com/purcell/inheritenv>
+- website :: <https://github.com/purcell/inheritenv>
 
+#+begin_src emacs-lisp
 (package! inheritenv
   (with-eval-after-load 'exec-path-from-shell
     (require 'inheritenv)))
+#+end_src
 
-;;; ~with-editor~: Ensure shell/term modes use session as =$EDITOR=
+*** ~with-editor~: Ensure shell/term modes use session as =$EDITOR=
 
+#+begin_src emacs-lisp
 (package! with-editor
   (keymap-global-set "<remap> <async-shell-command>"
                      #'with-editor-async-shell-command)
@@ -2691,29 +2694,43 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
   ;; <https://codeberg.org/akib/emacs-eat/issues/55#issuecomment-871388>
   (with-eval-after-load 'eat
     (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
+#+end_src
 
-;;; Support integration with Direnv via the ~envrc~ package
+***  Support integration with Direnv via the ~envrc~ package
 
-;; <https://github.com/purcell/envrc>
-;; <https://direnv.net/>
-;; <https://github.com/direnv/direnv>
+- src :: <https://github.com/purcell/envrc>
+- upstream :: <https://github.com/direnv/direnv>
 
-;; > Q: How does this differ from `direnv.el`?
-;;
-;; > <https://github.com/wbolster/emacs-direnv> repeatedly changes the global
-;; > Emacs environment, based on tracking what buffer you're working on.
-;;
-;; > Instead, `envrc.el` simply sets and stores the right environment in each
-;; > buffer, as a buffer-local variable.
+Q: How does this differ from `direnv.el`?
 
+<https://github.com/wbolster/emacs-direnv> repeatedly changes the global
+Emacs environment, based on tracking what buffer you're working on.
+
+Instead, `envrc.el` simply sets and stores the right environment in each
+buffer, as a buffer-local variable.
+
+#+begin_src emacs-lisp
 (package! envrc
   (with-eval-after-load 'exec-path-from-shell
     (envrc-global-mode)))
+#+end_src
 
+#+begin_src emacs-lisp
 (elpaca-wait)
+#+end_src
 
-(provide 'init-env)
-;;; init-env.el ends here
+*** TRAMP Support
+
+#+begin_src emacs-lisp
+(setopt tramp-default-method "ssh")
+(setopt tramp-default-remote-shell "/bin/bash")
+(setopt tramp-connection-timeout (* 60 10))
+;; Do not auto-save remote files. Note the reversed logic.
+(setopt remote-file-name-inhibit-auto-save-visited t)
+
+(after! tramp
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin")
+  (add-to-list 'tramp-remote-path "~/.local/bin"))
 #+end_src
 
 ** Terminal/TTY Support
@@ -5938,7 +5955,9 @@ If no FILE is specified, reload the current buffer from disk."
   (if file
       (find-file file)
     (revert-buffer bang (or bang (not (buffer-modified-p))) t)))
+#+end_src
 
+#+begin_src emacs-lisp
 ;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L4652-L4660>
 (defun ceamx/buffer-new (&optional file)
   "Edit a new unnamed buffer or FILE."
@@ -5949,7 +5968,9 @@ If no FILE is specified, reload the current buffer from disk."
     (let ((buffer (generate-new-buffer "*new*")))
       (set-buffer-major-mode buffer)
       (set-window-buffer nil buffer))))
+#+end_src
 
+#+begin_src emacs-lisp
 ;; FIXME: this does not actually kill its buffers -- buffer must be deleted manually
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L397-L424>
 (defun ceamx/delete-this-file (&optional path force-p)
@@ -5980,7 +6001,9 @@ If FORCE-P, delete without confirmation."
           (kill-this-buffer)
           (ceamx-files--update-refs path)
           (message "Deleted %S" short-path))))))
+#+end_src
 
+#+begin_src emacs-lisp
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
 (defun ceamx/copy-this-file (new-path &optional force-p)
   "Copy current buffer's file to NEW-PATH.
@@ -5996,7 +6019,9 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (copy-file old-path new-path (or force-p 1))
     (ceamx-files--update-refs old-path new-path)
     (message "File copied to %S" (abbreviate-file-name new-path))))
+#+end_src
 
+#+begin_src emacs-lisp
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
 (defun ceamx/move-this-file (new-path &optional force-p)
   "Move current buffer's file to NEW-PATH.
@@ -6015,7 +6040,9 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (set-visited-file-name new-path t t)
     (ceamx-files--update-refs old-path new-path)
     (message "File moved to %S" (abbreviate-file-name new-path))))
+#+end_src
 
+#+begin_src emacs-lisp
 ;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
 (defun ceamx/kill-this-buffer ()
   "`kill-this-buffer' with no menu-bar checks.
@@ -6025,12 +6052,16 @@ See <https://www.reddit.com/r/emacs/comments/64xb3q/killthisbuffer_sometimes_jus
   (if (minibufferp)
       (abort-recursive-edit)
     (kill-buffer (current-buffer))))
+#+end_src
 
+#+begin_src emacs-lisp
 (defun ceamx/diff-with-file (&optional arg)
   (interactive "P")
   (let ((buffer (when arg (current-buffer))))
     (diff-buffer-with-file buffer)))
+#+end_src
 
+#+begin_src emacs-lisp
 ;; via <https://github.com/tarsius/fwb-cmds/blob/88e823809067983acfaeafa57d0bb6e889429ad2/fwb-cmds.el#L140C1-L156C78>
 ;;;###autoload
 (defun ceamx/sudo-find-file (&optional arg)
