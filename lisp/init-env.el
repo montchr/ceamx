@@ -57,6 +57,15 @@
   (with-eval-after-load 'exec-path-from-shell
     (envrc-global-mode)))
 (elpaca-wait)
+(setopt tramp-default-method "ssh")
+(setopt tramp-default-remote-shell "/bin/bash")
+(setopt tramp-connection-timeout (* 60 10))
+;; Do not auto-save remote files. Note the reversed logic.
+(setopt remote-file-name-inhibit-auto-save-visited t)
+
+(after! tramp
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin")
+  (add-to-list 'tramp-remote-path "~/.local/bin"))
 
 (provide 'init-env)
 ;;; init-env.el ends here
