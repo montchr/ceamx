@@ -33,9 +33,12 @@ org-mode
 
 (litfile & "\
 *** =lisp/" (p "FEATURE-NAME" name) ".el=
+:PROPERTIES:
+:header-args: :tangle lisp/" name ".el
+:END:
 
 #+name: " name "-file
-#+begin_src emacs-lisp :comments no :tangle lisp/" name ".el
+#+begin_src emacs-lisp
 <<file-prop-line(feature=\"" name "\",desc=\"" (p "FEATURE DESCRIPTION" desc) "\")>>
 
 ;; Copyright (c) " (p "2022-") (format-time-string "%Y") "  " (i cdomat) "

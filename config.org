@@ -3,8 +3,7 @@
 #+author: Chris Montgomery
 #+email: chmont@proton.me
 #+language: en
-#+property: header-args:emacs-lisp :comments both
-#+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :results silent :noweb yes
+#+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments both
 #+archive: graveyard/%s::datetree/
 #+startup show2levels
 
@@ -80,7 +79,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =early-init.el=
 
 #+name: early-init-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle early-init.el
+#+begin_src emacs-lisp :tangle early-init.el
 <<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -102,7 +101,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =init.el=
 
 #+name: init-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle init.el
+#+begin_src emacs-lisp :tangle init.el
 <<file-prop-line(feature="init",desc="Initialize Ceamx",extraprops="no-byte-compile: t;")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -159,7 +158,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-env.el=
 
 #+name: init-env-file
-#+begin_src emacs-lisp :comments no :tangle lisp/init-env.el
+#+begin_src emacs-lisp :tangle lisp/init-env.el
 <<file-prop-line(feature="init-env",desc="Environmental integrations")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -181,7 +180,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-ui.el=
 
 #+name: init-ui-file
-#+begin_src emacs-lisp :comments no :tangle lisp/init-ui.el
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
 <<file-prop-line(feature="init-ui",desc="General user interface customizations")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -203,7 +202,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-ui-font.el=
 
 #+name: init-ui-font-file
-#+begin_src emacs-lisp :comments no :tangle lisp/init-ui-font.el
+#+begin_src emacs-lisp :tangle lisp/init-ui-font.el
 <<file-prop-line(feature="init-ui-font",desc="Font support")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -225,7 +224,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/config-ui.el=
 
 #+name: config-ui-file
-#+begin_src emacs-lisp :comments no :tangle lisp/config-ui.el
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 <<file-prop-line(feature="config-ui",desc="User options for Emacs appearance")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -247,7 +246,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/lib-ui.el=
 
 #+name: lib-ui-file
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-ui.el
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 <<file-prop-line(feature="lib-ui",desc="Appearance helper functions")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -269,7 +268,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-files.el=
 
 #+name: init-files-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-files.el
+#+begin_src emacs-lisp  :tangle lisp/init-files.el
 <<file-prop-line(feature="init-files",desc="File handling")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -291,7 +290,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/lib-files.el=
 
 #+name: lib-files-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-files.el
+#+begin_src emacs-lisp  :tangle lisp/lib-files.el
 <<file-prop-line(feature="lib-files",desc="Files support support")>>
 
 ;; Copyright (C) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -353,7 +352,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-templates.el=
 
 #+name: init-templates-file
-#+begin_src emacs-lisp :tangle lisp/init-templates.el :noweb yes :comments no
+#+begin_src emacs-lisp :tangle lisp/init-templates.el
 <<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -375,7 +374,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-outline.el=
 
 #+name: init-outline-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-outline.el
+#+begin_src emacs-lisp  :tangle lisp/init-outline.el
 <<file-prop-line(feature="init-outline",desc="Customizations for outline structures")>>
 
 ;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
@@ -397,7 +396,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-org.el=
 
 #+name: init-org-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-org.el
+#+begin_src emacs-lisp  :tangle lisp/init-org.el
 <<file-prop-line(feature="init-org",desc="Org-Mode support")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -419,7 +418,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-search.el=
 
 #+name: init-search-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-search.el
+#+begin_src emacs-lisp  :tangle lisp/init-search.el
 <<file-prop-line(feature="init-search",desc="Searching and replacing features")>>
 
 ;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
@@ -441,7 +440,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/lib-search.el=
 
 #+name: lib-search-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-search.el
+#+begin_src emacs-lisp  :tangle lisp/lib-search.el
 <<file-prop-line(feature="lib-search",desc="Search support functions")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -463,7 +462,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-window.el=
 
 #+name: init-window-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-window.el
+#+begin_src emacs-lisp  :tangle lisp/init-window.el
 <<file-prop-line(feature="init-window",desc="Window management")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -485,7 +484,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/config-window.el=
 
 #+name: config-window-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/config-window.el
+#+begin_src emacs-lisp  :tangle lisp/config-window.el
 <<file-prop-line(feature="config-window",desc="Window management user options")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -507,7 +506,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/lib-window.el=
 
 #+name: lib-window-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-window.el
+#+begin_src emacs-lisp  :tangle lisp/lib-window.el
 <<file-prop-line(feature="lib-window",desc="Window management support library")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -536,7 +535,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-editor.el=
 
 #+name: init-editor-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-editor.el
+#+begin_src emacs-lisp  :tangle lisp/init-editor.el
 <<file-prop-line(feature="init-editor",desc="Editor customizations")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -558,7 +557,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/lib-editor.el=
 
 #+name: lib-editor-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-editor.el
+#+begin_src emacs-lisp  :tangle lisp/lib-editor.el
 <<file-prop-line(feature="lib-editor",desc="Editor support library")>>
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -605,7 +604,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/config-editor.el=
 
 #+name: config-editor-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/config-editor.el
+#+begin_src emacs-lisp  :tangle lisp/config-editor.el
 <<file-prop-line(feature="config-editor",desc="User options for editing")>>
 
 ;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
@@ -627,7 +626,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-vcs.el=
 
 #+name: init-vcs-file
-#+begin_src emacs-lisp :comments no :tangle lisp/init-vcs.el
+#+begin_src emacs-lisp :tangle lisp/init-vcs.el
 <<file-prop-line(feature="init-vcs",desc="Version control support")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -649,7 +648,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/config-prog.el=
 
 #+name: config-prog-file
-#+begin_src emacs-lisp :comments no :tangle lisp/config-prog.el
+#+begin_src emacs-lisp :tangle lisp/config-prog.el
 <<file-prop-line(feature="config-prog",desc="User options for programming modes")>>
 
 ;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
@@ -671,7 +670,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-eglot.el=
 
 #+name: init-eglot-file
-#+begin_src emacs-lisp :comments no :tangle lisp/init-eglot.el
+#+begin_src emacs-lisp :tangle lisp/init-eglot.el
 <<file-prop-line(feature="init-eglot",desc="Eglot support")>>
 
 ;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
@@ -693,7 +692,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-lsp-mode.el=
 
 #+name: init-lsp-mode-file
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lsp-mode.el
+#+begin_src emacs-lisp :tangle lisp/init-lsp-mode.el
 <<file-prop-line(feature="init-lsp-mode",desc="LSP-Mode support")>>
 
 ;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
@@ -715,7 +714,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-lang-php.el=
 
 #+name: init-lang-php-file
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-php.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-php.el
 <<file-prop-line(feature="init-lang-php",desc="PHP language support")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -737,7 +736,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 *** =lisp/init-writing.el=
 
 #+name: init-writing-file
-#+begin_src emacs-lisp :comments no :tangle lisp/init-writing.el
+#+begin_src emacs-lisp :tangle lisp/init-writing.el
 <<file-prop-line(feature="init-writing",desc="Writing augmentation")>>
 
 ;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
@@ -771,7 +770,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 
 #+name: file-header
 #+header: :var feature="file-header-example" :var desc="" :var table=file-header-default-authors-table
-#+begin_src emacs-lisp :tangle .data/file-header-example.el :noweb no :comments no
+#+begin_src emacs-lisp :tangle .data/file-header-example.el :noweb no
   <<file-prop-line(feature,desc)>>
 
   ;; <<file-authors(table=table)>>
@@ -814,7 +813,7 @@ Emacs calls this the "file trailer" in ~generate-lisp-file-trailer~.
 #+end_src
 
 #+name: file-footer-example-usage
-#+begin_src emacs-lisp :noweb yes
+#+begin_src emacs-lisp
 <<file-footer(feature="file-footer-example")>>
 #+end_src
 
@@ -1676,7 +1675,7 @@ Yes, this order is unfortunate.
 
 * Before Dawn: =early-init.el=
 :PROPERTIES:
-:header-args: :noweb-ref early-init :comments both
+:header-args: :noweb-ref early-init
 :END:
 
 - [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
@@ -1928,7 +1927,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 * Common: Paths
 
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el :comments no
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el
 ;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -2041,7 +2040,7 @@ Emacs version to prevent bytecode incompatibility.")
 
 * Common: Keymaps
 
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :comments no
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
 
 
@@ -2111,7 +2110,7 @@ Emacs version to prevent bytecode incompatibility.")
 
 * Common: Functions & Macros
 :PROPERTIES:
-:header-args: :noweb-ref ceamx-lib :comments both
+:header-args: :noweb-ref ceamx-lib
 :END:
 
 - src :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
@@ -2495,7 +2494,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 
 * Common: Strings
 
-#+begin_src emacs-lisp :comments no :tangle lisp/config-common.el
+#+begin_src emacs-lisp :tangle lisp/config-common.el
 ;;; config-common.el --- Common and miscellaneous configuration settings  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -2543,7 +2542,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 
 ** Options / Variables
 
-#+begin_src emacs-lisp :comments no :tangle lisp/config-env.el
+#+begin_src emacs-lisp :tangle lisp/config-env.el
 ;;; config-env.el --- Variables regarding the environment  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -2714,7 +2713,7 @@ buffer, as a buffer-local variable.
 
 ** Terminal/TTY Support
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-env-tty.el
+#+begin_src emacs-lisp :tangle lisp/init-env-tty.el
 ;;; init-env-tty.el --- TTY environment support -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2023-2024 Chris Montgomery
@@ -2785,7 +2784,7 @@ buffer, as a buffer-local variable.
 
 ** WSL Support
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-env-wsl.el
+#+begin_src emacs-lisp :tangle lisp/lib-env-wsl.el
 ;;; lib-env-wsl.el --- Helpers for WSL environments  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -2833,7 +2832,7 @@ buffer, as a buffer-local variable.
 
 ** Customizations
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-secrets.el
+#+begin_src emacs-lisp :tangle lisp/init-secrets.el
 ;;; init-secrets.el --- Support for secretive operations  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -2924,7 +2923,7 @@ buffer, as a buffer-local variable.
 
 ** Library
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-secrets.el
+#+begin_src emacs-lisp :tangle lisp/lib-secrets.el
 ;;; lib-secrets.el --- Helpers for secrets           -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -2977,7 +2976,7 @@ buffer, as a buffer-local variable.
 
 ** Customizations
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-frame.el
+#+begin_src emacs-lisp :tangle lisp/init-frame.el
 ;;; init-frame.el --- Frame modifications -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
@@ -3064,7 +3063,7 @@ buffer, as a buffer-local variable.
 
 ** Frame Hooks
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-frame-hooks.el
+#+begin_src emacs-lisp :tangle lisp/init-frame-hooks.el
 ;;; init-frame-hooks.el --- Provide specific hooks for GUI/TTY frame creation  -*- lexical-binding: t; -*-
 
 ;; Copyright (c) 2023-2024 Chris Montgomery
@@ -3141,7 +3140,7 @@ Selectively runs either `after-make-console-frame-hooks' or
 
 ** Library
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-frame.el
+#+begin_src emacs-lisp :tangle lisp/lib-frame.el
 ;;; lib-frame.el --- Frame functions                 -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -4873,7 +4872,7 @@ available, `switchy-window'."
 :header-args: :tangle lisp/init-buffer.el
 :END:
 
-#+begin_src emacs-lisp :comments no
+#+begin_src emacs-lisp
 ;;; init-buffer.el --- Buffers configuration         -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -5066,14 +5065,14 @@ It seemed like a great idea, but I had quite a few issues.
 
 *** Footer
 
-#+begin_src emacs-lisp :comments no
+#+begin_src emacs-lisp
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
 #+end_src
 
 ** Library
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-buffer.el
+#+begin_src emacs-lisp :tangle lisp/lib-buffer.el
 ;;; lib-buffer.el --- Helpers for buffers            -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -5113,7 +5112,7 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 
 ** User Options
 
-#+begin_src emacs-lisp :comments no :tangle lisp/config-buffer.el
+#+begin_src emacs-lisp :tangle lisp/config-buffer.el
 ;;; config-buffer.el --- Variables relating to buffers and modes  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -6064,7 +6063,7 @@ writable or with a prefix argument, then read a file to visit."
 
 * Workspace
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-workspace.el
+#+begin_src emacs-lisp :tangle lisp/init-workspace.el
 ;;; init-workspace.el --- Workspaces and perspectives  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -6202,7 +6201,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 #+end_src
 
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-help.el
+#+begin_src emacs-lisp :tangle lisp/init-help.el
 ;;; init-help.el --- Help -*- lexical-binding: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -6409,7 +6408,7 @@ was printed, and only have ElDoc display if one wasn't.\""
 
 ** Library
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-help.el
+#+begin_src emacs-lisp :tangle lisp/lib-help.el
 ;;; lib-help.el --- Helpers for help and documentation  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -6519,7 +6518,7 @@ DOC is as in `devdocs-install'."
 
 * History
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-history.el
+#+begin_src emacs-lisp :tangle lisp/init-history.el
 ;;; init-history.el --- History management           -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -6873,7 +6872,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 * Input Methods
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-input-methods.el
+#+begin_src emacs-lisp :tangle lisp/init-input-methods.el
 ;;; init-input-methods.el --- Configuration for input methods  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -6937,7 +6936,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 ** General
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-keys.el
+#+begin_src emacs-lisp :tangle lisp/init-keys.el
 ;;; init-keys.el --- Keybindings -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -7037,7 +7036,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 Diabetic experiments with syntactic sugar.
 
-#+begin_src emacs-lisp :comments no :tangle no
+#+begin_src emacs-lisp :tangle no
 
 ;; Helper functions and macros for keybindings.
 
@@ -7120,7 +7119,7 @@ Diabetic experiments with syntactic sugar.
 :END:
 
 #+name: init-keys-meow-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-keys-meow.el
+#+begin_src emacs-lisp  :tangle lisp/init-keys-meow.el
 <<file-prop-line(feature="init-keys-meow",desc="Meow modal keybindings support")>>
 
 ;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
@@ -7140,7 +7139,7 @@ Diabetic experiments with syntactic sugar.
 #+end_src
 
 #+name: lib-keys-meow-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-keys-meow.el
+#+begin_src emacs-lisp  :tangle lisp/lib-keys-meow.el
 <<file-prop-line(feature="lib-keys-meow",desc="Meow helpers")>>
 
 ;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
@@ -7606,7 +7605,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 
 ** ~which-key~
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-keys-which-key.el
+#+begin_src emacs-lisp :tangle lisp/init-keys-which-key.el
 ;;; init-keys-which-key.el --- Support for which-key  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -7693,7 +7692,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 
 *** File Header
 
-#+begin_src emacs-lisp :comments no
+#+begin_src emacs-lisp
 ;;; config-keys.el --- Key-related variables -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -7729,7 +7728,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 
 *** File Footer
 
-#+begin_src emacs-lisp :comments no
+#+begin_src emacs-lisp
 (provide 'config-keys)
 ;;; config-keys.el ends here
 #+end_src
@@ -7738,7 +7737,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 * Completion
 
 #+name: init-abbrevs-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-abbrevs.el
+#+begin_src emacs-lisp  :tangle lisp/init-abbrevs.el
 <<file-prop-line(feature="init-abbrevs",desc="Abbrevs support")>>
 
 ;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
@@ -7758,7 +7757,7 @@ as the CHAR argument to `ceamx-normalize-char'."
 #+end_src
 
 #+name: init-completion-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-completion.el
+#+begin_src emacs-lisp  :tangle lisp/init-completion.el
 <<file-prop-line(feature="init-completion",desc="Completion-At-Point enhancements")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -7843,7 +7842,7 @@ Adapted from Prot's original version with the following changes:
 
 ** Vertico
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-selection-vertico.el
+#+begin_src emacs-lisp :tangle lisp/init-selection-vertico.el
 ;;; init-selection-vertico.el --- Vertico configuration        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -7985,7 +7984,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 ** Consult
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-selection-consult.el
+#+begin_src emacs-lisp :tangle lisp/init-selection-consult.el
 ;;; init-selection-consult.el --- Configuration for Consult  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -8160,7 +8159,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 Minibuffer candidate annotations.
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-selection-marginalia.el
+#+begin_src emacs-lisp :tangle lisp/init-selection-marginalia.el
 ;;; init-selection-marginalia.el --- Marginalia configuration  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -8215,7 +8214,7 @@ Minibuffer candidate annotations.
 
 ** Orderless
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-selection-orderless.el
+#+begin_src emacs-lisp :tangle lisp/init-selection-orderless.el
 ;;; init-selection-orderless.el --- Orderless completion matching style configuration  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -8663,7 +8662,7 @@ otherwise the icon size will likely not be accurate.
 
 ** Library :: ~lib-completion~
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-completion.el
+#+begin_src emacs-lisp :tangle lisp/lib-completion.el
 ;;; lib-completion.el --- Completion helper functions  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -8718,7 +8717,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 :END:
 
 
-#+begin_src emacs-lisp :comments no
+#+begin_src emacs-lisp
 ;;; init-embark.el --- Configuration for Embark  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -8808,7 +8807,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 
 *** Footer
 
-#+begin_src emacs-lisp :comments no
+#+begin_src emacs-lisp
 (provide 'init-embark)
 ;;; init-embark.el ends here
 #+end_src
@@ -8816,7 +8815,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 
 * Terminal Emulation
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-term.el
+#+begin_src emacs-lisp :tangle lisp/init-term.el
 ;;; init-term.el --- Terminal emulators inside Emacs  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -9153,7 +9152,7 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
 #+end_src
 
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-project.el
+#+begin_src emacs-lisp :tangle lisp/init-project.el
 ;;; init-project.el --- Project support              -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -9195,7 +9194,7 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
 <https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
 
 #+header-args: :tangle lisp/init-flycheck.el
-#+begin_src emacs-lisp :noweb yes :comments no
+#+begin_src emacs-lisp
 <<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
 
 ;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
@@ -9429,7 +9428,7 @@ CLOSED: [2024-04-13 Sat 00:00]
 
 ** General Programming (~prog-mode~ derived modes)
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-prog.el
+#+begin_src emacs-lisp :tangle lisp/init-prog.el
 ;;; init-prog.el --- Programming mode support        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -9552,7 +9551,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 ** Tree-Sitter
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-treesitter.el
+#+begin_src emacs-lisp :tangle lisp/init-treesitter.el
 ;;; init-treesitter.el --- Tree-Sitter support          -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -9650,7 +9649,7 @@ Configuration for working with Lisps of all kinds.
 
 **** =init-lisp.el=
 
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-lisp.el
+#+begin_src emacs-lisp  :tangle lisp/init-lisp.el
 <<file-prop-line(feature="init-lisp",desc="Lisp support")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -9671,7 +9670,7 @@ Configuration for working with Lisps of all kinds.
 
 **** =config-lisp.el=
 
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/config-lisp.el
+#+begin_src emacs-lisp  :tangle lisp/config-lisp.el
 <<file-prop-line(feature="config-lisp",desc="Lispy variable definitions")>>
 
 ;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
@@ -9692,7 +9691,7 @@ Configuration for working with Lisps of all kinds.
 
 **** =lib-lisp.el=
 
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/lib-lisp.el
+#+begin_src emacs-lisp  :tangle lisp/lib-lisp.el
 <<file-prop-line(feature="lib-lisp",desc="Lisp support functions")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -10092,7 +10091,7 @@ lists."
 
 *** Customizations
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-elisp.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-elisp.el
 ;;; init-lang-elisp.el --- Emacs Lisp development support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -10249,7 +10248,7 @@ The original function fails in the presence of whitespace after a sexp."
 
 *** Library
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-elisp.el
+#+begin_src emacs-lisp :tangle lisp/lib-elisp.el
 ;;; lib-elisp.el --- Helper utilities for Emacs Lisp development and language support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -10571,7 +10570,7 @@ elsp
 :ID:       137d1e04-d0dc-4512-a450-fbafeef65804
 :END:
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-data.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-data.el
 ;;; init-lang-data.el --- Data format support        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -10653,7 +10652,7 @@ elsp
 
 ** HTML
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-html.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-html.el
 ;;; init-lang-html.el ---HTML and templating engine support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -10726,7 +10725,7 @@ elsp
 
 ** JavaScript
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-js.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-js.el
 ;;; init-lang-js.el --- JavaScript/TypeScript language support improvements  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -10784,7 +10783,7 @@ elsp
 
 ** Lua
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-lua.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-lua.el
 ;;; init-lang-lua.el --- Lua language support        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -10831,7 +10830,7 @@ elsp
 
 *** Customization
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-markdown.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-markdown.el
 ;;; init-lang-markdown.el --- Markdown support customizations  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -10915,7 +10914,7 @@ usually wrongly fontified as a metadata block."
 
 *** Library
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-lang-markdown.el
+#+begin_src emacs-lisp :tangle lisp/lib-lang-markdown.el
 ;;; lib-lang-markdown.el --- Markdown helpers        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -10958,7 +10957,7 @@ Returns process exit code."
 
 ** Nix
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-nix.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-nix.el
 ;;; init-lang-nix.el --- Nix language support -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -11098,7 +11097,7 @@ Returns process exit code."
 
 ** Nushell
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-shell-nu.el
+#+begin_src emacs-lisp :tangle lisp/init-shell-nu.el
 ;;; init-shell-nu.el --- Nushell support             -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -11236,7 +11235,7 @@ its cache should stay out of the way.
 
 ** Shell Scripting
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-shell.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-shell.el
 ;;; init-lang-shell.el --- Shell script language support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -11290,7 +11289,7 @@ its cache should stay out of the way.
 #+end_src
 ** YAML
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-lang-yaml.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-yaml.el
 ;;; init-lang-yaml.el --- YAML language support      -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -11340,7 +11339,7 @@ their own initialization files.
 
 **** File Header
 
-#+begin_src emacs-lisp :comments no
+#+begin_src emacs-lisp
 ;;; init-lang-misc.el --- Miscellaneous language support -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -11398,7 +11397,7 @@ their own initialization files.
 
 **** Footer
 
-#+begin_src emacs-lisp :comments no
+#+begin_src emacs-lisp
 (provide 'init-lang-misc)
 ;;; init-lang-misc.el ends here
 #+end_src
@@ -11558,7 +11557,7 @@ See the readme for more information.
 #+end_src
 
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-notes.el
+#+begin_src emacs-lisp :tangle lisp/init-notes.el
 ;;; init-notes.el --- Configuration for notetaking   -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -11634,7 +11633,7 @@ See the readme for more information.
 
 ** Denote
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-notes-denote.el
+#+begin_src emacs-lisp :tangle lisp/init-notes-denote.el
 ;;; init-notes-denote.el --- Denote configuration          -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -12265,7 +12264,7 @@ kill the selection again.
 
 *** Footer
 
-#+BEGIN_SRC emacs-lisp :comments no
+#+BEGIN_SRC emacs-lisp
 (provide 'init-org)
 ;;; init-org.el ends here
 #+END_SRC
@@ -12324,7 +12323,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 * Controls
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-controls.el
+#+begin_src emacs-lisp :tangle lisp/init-controls.el
 ;;; init-controls.el --- Controlling various subsystems  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -12380,7 +12379,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 * Dashboard
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-dashboard.el
+#+begin_src emacs-lisp :tangle lisp/init-dashboard.el
 ;;; init-dashboard.el --- Dashboard support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -12451,7 +12450,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 * Dired, the Directory Editor
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-dired.el
+#+begin_src emacs-lisp :tangle lisp/init-dired.el
 ;;; init-dired.el --- Dired -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -12602,7 +12601,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 * Printing
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-printing.el
+#+begin_src emacs-lisp :tangle lisp/init-printing.el
 ;;; init-printing.el --- Support for printing documents  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -12653,7 +12652,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-news.el
+#+begin_src emacs-lisp :tangle lisp/init-news.el
 ;;; init-feeds.el --- News feed (RSS/Atom) subscription support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -12700,7 +12699,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 * Surfing the Wild Web of Words
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-eww.el
+#+begin_src emacs-lisp :tangle lisp/init-eww.el
 ;;; init-eww.el --- Surfing the Wild Web of Words  -*- lexical-binding: t; -*-
 
 ;; TODO: headers
@@ -12771,7 +12770,7 @@ without JavaScript, it does not make sense to use EWW by default.
 (add-hook 'eww-after-render-hook #'ceamx-eww-rerender)
 #+end_src
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-eww.el
+#+begin_src emacs-lisp :tangle lisp/init-eww.el
 (provide 'init-eww)
 ;;; init-eww.el ends here
 #+end_src
@@ -12779,7 +12778,7 @@ without JavaScript, it does not make sense to use EWW by default.
 
 ** EWW: Library
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-eww.el
+#+begin_src emacs-lisp :tangle lisp/lib-eww.el
 ;;; lib-eww.el --- Helpers for Ceamx EWW  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -12985,7 +12984,7 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 :END:
 
 #+name: init-tools-file
-#+begin_src emacs-lisp :noweb yes :comments no :tangle lisp/init-tools.el
+#+begin_src emacs-lisp  :tangle lisp/init-tools.el
 <<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
 
 ;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
@@ -13085,7 +13084,7 @@ Providing integrations with LLMs and other simulation machines.
 
 *** Customization
 
-#+BEGIN_SRC emacs-lisp :comments no :tangle lisp/init-tools-ai.el
+#+BEGIN_SRC emacs-lisp :tangle lisp/init-tools-ai.el
 ;;; init-tools-ai.el --- Support for AI/LLM interaction  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -13130,7 +13129,7 @@ Providing integrations with LLMs and other simulation machines.
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
 #+end_src
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-tools-ledger.el
+#+begin_src emacs-lisp :tangle lisp/init-tools-ledger.el
 ;;; init-tools-ledger.el --- Support for ledger      -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -13163,7 +13162,7 @@ Providing integrations with LLMs and other simulation machines.
 #+end_src
 
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-tools-ledger.el
+#+begin_src emacs-lisp :tangle lisp/init-tools-ledger.el
 (use-package hledger-mode
   :mode ("\\.journal\\'" "\\.hledger\\'")
   :commands (hledger-enable-reporting)
@@ -13293,7 +13292,7 @@ Providing integrations with LLMs and other simulation machines.
 
 ** ~init-tools-pdf~: PDF-Tools
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-tools-pdf.el
+#+begin_src emacs-lisp :tangle lisp/init-tools-pdf.el
 ;;; init-tools-pdf.el --- Support for working with PDF files  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -13371,7 +13370,7 @@ Providing integrations with LLMs and other simulation machines.
 
 * "Fun"
 
-#+begin_src emacs-lisp :comments no :tangle lisp/init-fun.el
+#+begin_src emacs-lisp :tangle lisp/init-fun.el
 ;;; init-fun.el --- Configure the fun                -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -13443,7 +13442,7 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 ** "Simple" Library =lib-simple.el=
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-simple.el
+#+begin_src emacs-lisp :tangle lisp/lib-simple.el
 ;;; lib-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -13583,7 +13582,7 @@ Call the commands `ceamx/escape-url-line' and
 
 ** General Text Library
 
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-text.el
+#+begin_src emacs-lisp :tangle lisp/lib-text.el
 ;;; lib-text.el --- Text utilities                   -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery

@@ -5,6 +5,23 @@ Archived entries from file /home/cdom/.config/emacs/config.org
 
 ** 2024-03 March
 
+*** 2024-03-18 Monday
+**** DONE File-level ~:noweb yes~ does not seem to have an effect
+CLOSED: [2024-03-18 Mon 23:40]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-05-08 Wed 00:21
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Anatomy/Partials/Tasks
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:END:
+
+- Note taken on [2024-03-18 Mon 23:40] \\
+  Turns out there was a syntax error in this line, where a arg name had a colon at the end in addition to the beginning.
+- State "DONE"       from "TODO"       [2024-03-18 Mon 23:40]
+Setting this on a heading works.
+
+
 *** 2024-03-24 Sunday
 **** CANCELLED Rename the existing feature to ~init-snippets~
 CLOSED: [2024-03-24 Sun 14:44]

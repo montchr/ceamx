@@ -24,12 +24,7 @@
 
 ;;; Code:
 
-;; Code
-
-
-;; [[file:../config.org::*Code][Code:1]]
 (defconst ceamx-keys-repl-toggle "C-:")
-;; Code:1 ends here
 
 (provide 'config-keys)
 ;;; config-keys.el ends here
