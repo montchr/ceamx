@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'ceamx-keymaps)
-(require 'lib-common)
+(require 'ceamx-lib)
 (setopt eglot-sync-connect 1)
 (setopt eglot-autoshutdown t)
 (setopt eglot-send-changes-idle-time 0.5)

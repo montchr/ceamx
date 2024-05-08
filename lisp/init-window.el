@@ -29,7 +29,7 @@
 (require 'config-buffer)
 (require 'config-window)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-buffer)
 (require 'lib-window)
 (setopt switch-to-buffer-in-dedicated-window 'pop)
@@ -152,7 +152,7 @@
   ;; numbers in the same frame. For example, frame A might have windows numbered
   ;; 1 and 3 and frame B will have window 2.
   (setopt aw-scope 'frame))
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (package! switchy-window
   (setopt switchy-window-delay 1.5)

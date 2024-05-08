@@ -225,7 +225,7 @@
 
 (require 'config-ui)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 ;;; Sunrise/sunset interval via ~solar~ and ~circadian~
 
 (use-feature! solar

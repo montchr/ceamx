@@ -63,7 +63,7 @@ CLOSED: [2024-03-20 Wed 22:43]
 (require 'ceamx-keymaps)
 
 ;; Core functions and macros
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")
@@ -121,11 +121,11 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="init")>>
 #+end_src
 
-*** =lisp/lib-common.el=
+*** =lisp/core/ceamx-lib.el=
 
-#+name: lib-common-file
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
-<<file-prop-line(feature="lib-common",desc="Ceamx common library")>>
+#+name: ceamx-lib-file
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el
+<<file-prop-line(feature="ceamx-lib",desc="Ceamx common library")>>
 
 ;; Copyright (C) 2023-2024  Chris Montgomery <chris@cdom.io>
 ;; Copyright (C) 2014-2023  Henrik Lissner
@@ -151,9 +151,9 @@ CLOSED: [2024-03-20 Wed 22:43]
 ;;; Commentary:
 ;;; Code:
 
-<<lib-common>>
+<<ceamx-lib>>
 
-<<file-footer(feature="lib-common")>>
+<<file-footer(feature="ceamx-lib")>>
 #+end_src
 
 *** =lisp/init-env.el=
@@ -2069,7 +2069,7 @@ Emacs version to prevent bytecode incompatibility.")
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defvar-keymap ceamx-activities-map)
 (define-prefix-command 'ceamx-activities-map)
@@ -2109,9 +2109,9 @@ Emacs version to prevent bytecode incompatibility.")
 #+end_src
 
 
-* ~lib-common~ :: standard library
+* Common: Functions & Macros
 :PROPERTIES:
-:header-args: :noweb-ref lib-common :comments both
+:header-args: :noweb-ref ceamx-lib :comments both
 :END:
 
 - src :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
@@ -2627,7 +2627,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 
 #+begin_src emacs-lisp
 (require 'config-env)
-(require 'lib-common)
+(require 'ceamx-lib)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2869,7 +2869,7 @@ buffer, as a buffer-local variable.
 (require 'auth-source-pass)
 
 (require 'ceamx-paths)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Configure secrets lookup with ~auth-source~ and the Unix password store
 
@@ -3014,7 +3014,7 @@ buffer, as a buffer-local variable.
 (require 'config-env)
 
 (require 'lib-frame)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Configure frame decorations
 
@@ -3543,7 +3543,7 @@ accommodation for varying pixel densities."
 
 (require 'config-ui)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 #+end_src
 
 #+begin_src emacs-lisp :tangle no
@@ -3650,7 +3650,7 @@ accommodation for varying pixel densities."
 #+begin_src emacs-lisp :noweb-ref lib-ui
 (require 'config-ui)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (declare-function theme-buffet--load-random "theme-buffet")
 #+end_src
@@ -3777,7 +3777,7 @@ not retain the generic background set by the function
 (require 'ceamx-paths)
 (require 'config-env)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-ui)
 #+end_src
 
@@ -4142,7 +4142,7 @@ will be used as default."
 (require 'config-buffer)
 (require 'config-window)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-buffer)
 (require 'lib-window)
     #+end_src
@@ -4552,7 +4552,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
 ** ~switchy-window~: A most-recently-used window switcher
 
 #+begin_src emacs-lisp
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (package! switchy-window
   (setopt switchy-window-delay 1.5)
@@ -4902,7 +4902,7 @@ available, `switchy-window'."
 *** Requirements
 
 #+begin_src emacs-lisp
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-buffer)
 #+end_src
 
@@ -5205,7 +5205,7 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 
 (require 'config-editor)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-editor)
 (require 'lib-simple)
 #+end_src
@@ -5761,7 +5761,7 @@ its bindings generally would need ~puni-mode~ to be active.
 (require 'ceamx-keymaps)
 (require 'ceamx-paths)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-files)
 #+end_src
 
@@ -6096,7 +6096,7 @@ writable or with a prefix argument, then read a file to visit."
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
 
@@ -6232,7 +6232,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-help)
 
 ;;; Configure window behavior for help buffers
@@ -6436,7 +6436,7 @@ was printed, and only have ElDoc display if one wasn't.\""
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defvar devdocs-data-dir)
 
@@ -6554,7 +6554,7 @@ DOC is as in `devdocs-install'."
 (require 'cl-lib)
 
 (require 'ceamx-paths)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Record some variables' values with ~savehist~ [builtin]
 
@@ -6714,7 +6714,7 @@ these utilities.
   #+begin_src emacs-lisp
 (require 'ceamx-keymaps)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-search)
 #+end_src
 
@@ -6973,7 +6973,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 ;;; Requirements
 
 (require 'config-env)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Bind some CUA-like hotkeys for editing operations
 
@@ -7048,7 +7048,7 @@ Diabetic experiments with syntactic sugar.
 
 (require 'cl-lib)
 
-;; NOTE: all in-use definitions have been moved to ~lib-common~
+;; NOTE: all in-use definitions have been moved to ~ceamx-lib~
 
 ;; FIXME: interface still doesn't feel right...
 ;; TODO: account for remapping (don't prefix)
@@ -7166,7 +7166,7 @@ Diabetic experiments with syntactic sugar.
 :END:
 
 #+begin_src emacs-lisp
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-keys-meow)
 #+end_src
 
@@ -7532,7 +7532,7 @@ See the helper functions/macros.
 **** Working with Meow "things"
 
 #+begin_src emacs-lisp
-(require 'lib-common)
+(require 'ceamx-lib)
 #+end_src
 
 ***** ~meow-pair!~
@@ -7871,7 +7871,7 @@ Adapted from Prot's original version with the following changes:
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defvar savehist-additional-variables)
 
@@ -8015,7 +8015,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-package consult
   :commands ( consult-bookmark consult-buffer consult-buffer-other-frame consult-buffer-other-tab
@@ -8188,7 +8188,7 @@ Minibuffer candidate annotations.
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-package marginalia
   :defines (marginalia-annotators)
@@ -8248,7 +8248,7 @@ Minibuffer candidate annotations.
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (package! orderless
   (require 'orderless)
@@ -8352,7 +8352,7 @@ bindings:
 
 #+begin_src emacs-lisp
 (require 'lib-completion)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;; Always resize mini-windows to fit their contents.
 (setopt resize-mini-windows t)
@@ -8397,7 +8397,7 @@ See [[*Orderless]] for definitions.
 *** ~corfu~: COmpletion in Region FUnction
 
 #+begin_src emacs-lisp
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (package! corfu
   (declare-function global-corfu-mode "corfu")
@@ -8569,7 +8569,7 @@ otherwise the icon size will likely not be accurate.
 <https://github.com/minad/cape/blob/main/README.org>
 
 #+begin_src emacs-lisp
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defvar +corfu-buffer-scanning-size-limit (* 1 1024 1024) ; 1 MB
   "Size limit for a buffer to be scanned by `cape-dabbrev'.")
@@ -8747,7 +8747,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 *** Install and pre-configure the Embark package
 
 #+begin_src emacs-lisp :noweb yes
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (package! embark
   <<embark-help-key-completion>>
@@ -8847,7 +8847,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 ;;; Code:
 
 (require 'ceamx-keymaps)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-feature! eshell
   :config
@@ -8887,7 +8887,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 
 #+begin_src emacs-lisp
 (require 'ceamx-paths)
-(require 'lib-common)
+(require 'ceamx-lib)
 #+end_src
 
 ** Keep the ~ediff~ control panel in the same frame
@@ -9222,7 +9222,7 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
 
 #+begin_src emacs-lisp
 (require 'ceamx-keymaps)
-(require 'lib-common)
+(require 'ceamx-lib)
 #+end_src
 
 **** ~flycheck~: install and configure
@@ -9338,7 +9338,7 @@ like \"tempo\", \"tempel\", and \"yasnippet\".")
 
 
 #+begin_src emacs-lisp
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (package! tempel
   (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
@@ -9460,7 +9460,7 @@ CLOSED: [2024-04-13 Sat 00:00]
 
 (require 'ceamx-keymaps)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-lisp)
 
 ;;; Hooks
@@ -9615,7 +9615,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 (require 'treesit)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Automatically use available ~treesit~ modes via ~treesit-auto~
 
@@ -9719,7 +9719,7 @@ Configuration for working with Lisps of all kinds.
 #+begin_src emacs-lisp
 (require 'derived)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-lisp)
 
 (require 'config-lisp)
@@ -9820,7 +9820,7 @@ non-syntactic meaning to the reader.
 
 #+begin_src emacs-lisp
 (require 'config-editor)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (after! kbd-mode
   (add-to-list 'ceamx-format-on-save-disabled-modes #'kbd-mode)
@@ -10122,7 +10122,7 @@ lists."
 (require 'config-keys)
 (require 'config-lisp)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-lisp)
 
 (declare-function blackout "blackout")
@@ -10477,7 +10477,7 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
 
 #+begin_src emacs-lisp
 (require 'ceamx-keymaps)
-(require 'lib-common)
+(require 'ceamx-lib)
 #+end_src
 
 **** General Eglot settings
@@ -10598,7 +10598,7 @@ elsp
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; JSON
 
@@ -10755,7 +10755,7 @@ elsp
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defun ceamx-init-javascript-modes ()
   (setopt js-indent-level 2)
@@ -10815,7 +10815,7 @@ elsp
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-package lua-mode
   :config
@@ -10860,7 +10860,7 @@ elsp
 
 (require 'config-env)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Install ~markdown-mode~
 
@@ -10988,7 +10988,7 @@ Returns process exit code."
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-help)
 
 ;;; Install and configure ~nix-mode~
@@ -11149,7 +11149,7 @@ Returns process exit code."
 *** Requirements
 
 #+begin_src emacs-lisp
-(require 'lib-common)
+(require 'ceamx-lib)
 #+end_src
 
 *** Ignore PHP-specific directories and files
@@ -11264,7 +11264,7 @@ its cache should stay out of the way.
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-feature! emacs
   :config
@@ -11368,7 +11368,7 @@ their own initialization files.
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 #+end_src
 
 **** Language support for Apache Web Server configuration files
@@ -11791,7 +11791,7 @@ Else create a new file."
 (require 'ceamx-keymaps)
 (require 'ceamx-paths)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 #+END_SRC
 
 *** Set up essential files & directories
@@ -12355,7 +12355,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 (require 'ceamx-keymaps)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Launch
 
@@ -12409,7 +12409,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 (require 'ceamx-paths)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-package dashboard
   :ensure t
@@ -12484,7 +12484,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Dired, the Directory Editor
 
@@ -12629,7 +12629,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-feature! printing
   :defer 2
@@ -12713,7 +12713,7 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 (require 'ceamx-keymaps)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-eww)
 
 (autoload 'eww "eww")
@@ -13015,7 +13015,7 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 #+begin_src emacs-lisp
 (require 'seq)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 #+end_src
 
 
@@ -13159,7 +13159,7 @@ Providing integrations with LLMs and other simulation machines.
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 #+end_src
 
 
@@ -13329,7 +13329,7 @@ Providing integrations with LLMs and other simulation machines.
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-feature! pdf-tools
   :magic ("%PDF" . pdf-view-mode)
@@ -13397,7 +13397,7 @@ Providing integrations with LLMs and other simulation machines.
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;;; ~zone~ [builtin]
 

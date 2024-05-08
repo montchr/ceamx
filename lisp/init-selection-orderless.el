@@ -30,7 +30,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (package! orderless
   (require 'orderless)

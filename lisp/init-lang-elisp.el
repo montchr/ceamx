@@ -27,7 +27,7 @@
 (require 'config-keys)
 (require 'config-lisp)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-lisp)
 
 (declare-function blackout "blackout")

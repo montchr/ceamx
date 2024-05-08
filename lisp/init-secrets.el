@@ -33,7 +33,7 @@
 (require 'auth-source-pass)
 
 (require 'ceamx-paths)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Configure secrets lookup with ~auth-source~ and the Unix password store
 

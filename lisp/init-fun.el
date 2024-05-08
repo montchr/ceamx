@@ -23,7 +23,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;;; ~zone~ [builtin]
 

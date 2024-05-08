@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-package lua-mode
   :config

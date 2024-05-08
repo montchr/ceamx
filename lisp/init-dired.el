@@ -30,7 +30,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Dired, the Directory Editor
 

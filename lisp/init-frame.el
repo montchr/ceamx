@@ -34,7 +34,7 @@
 (require 'config-env)
 
 (require 'lib-frame)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Configure frame decorations
 

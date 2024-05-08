@@ -30,7 +30,7 @@
 (require 'ceamx-paths)
 (require 'config-env)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-ui)
 ;;;; General
 

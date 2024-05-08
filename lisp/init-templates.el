@@ -24,7 +24,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (package! tempel
   (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))

@@ -28,7 +28,7 @@
 
 (require 'config-editor)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-editor)
 (require 'lib-simple)
 (dolist (cmd '(downcase-region

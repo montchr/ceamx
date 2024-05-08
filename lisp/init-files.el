@@ -27,7 +27,7 @@
 (require 'ceamx-keymaps)
 (require 'ceamx-paths)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-files)
 (setopt create-lockfiles nil)
 (setopt make-backup-files nil)

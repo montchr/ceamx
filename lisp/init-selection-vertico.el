@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defvar savehist-additional-variables)
 

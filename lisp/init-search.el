@@ -26,7 +26,7 @@
 
 (require 'ceamx-keymaps)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-search)
 (setopt find-library-include-other-files nil)
 (setopt search-highlight t)

@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'config-env)
-(require 'lib-common)
+(require 'ceamx-lib)
 ;; Disable unnecessary OS-specific command-line options.
 (unless +sys-mac-p
   (setq command-line-ns-option-alist nil))

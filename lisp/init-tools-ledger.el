@@ -26,7 +26,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-package hledger-mode
   :mode ("\\.journal\\'" "\\.hledger\\'")

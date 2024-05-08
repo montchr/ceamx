@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-help)
 
 ;;; Configure window behavior for help buffers

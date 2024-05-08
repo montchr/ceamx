@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-package consult
   :commands ( consult-bookmark consult-buffer consult-buffer-other-frame consult-buffer-other-tab

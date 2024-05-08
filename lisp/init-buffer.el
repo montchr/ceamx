@@ -22,18 +22,9 @@
 
 ;;; Code:
 
-;; Requirements
-
-
-;; [[file:../config.org::*Requirements][Requirements:1]]
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-buffer)
-;; Requirements:1 ends here
 
-;; General
-
-
-;; [[file:../config.org::*General][General:1]]
 (setq-default indicate-empty-lines nil)
 (setq-default fill-column 80)
 

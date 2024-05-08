@@ -10,7 +10,7 @@
 
 (require 'ceamx-keymaps)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-eww)
 
 (autoload 'eww "eww")

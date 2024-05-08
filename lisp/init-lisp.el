@@ -26,7 +26,7 @@
 
 (require 'derived)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-lisp)
 
 (require 'config-lisp)
@@ -80,7 +80,7 @@
       (push "\\*lispy-message\\*" popper-reference-buffers)))
 (package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
 (require 'config-editor)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (after! kbd-mode
   (add-to-list 'ceamx-format-on-save-disabled-modes #'kbd-mode)

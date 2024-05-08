@@ -24,7 +24,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (defmacro meow-pair! (thing char begin end)
   "Register a new Meow THING as a pair of BEGIN and END, and map it to CHAR.
 This macro simplifies `meow-thing-register' by assuming that the

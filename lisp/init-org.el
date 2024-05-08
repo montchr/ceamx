@@ -27,7 +27,7 @@
 (require 'ceamx-keymaps)
 (require 'ceamx-paths)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (defvar org-directory ceamx-agenda-dir)
 
 ;; TODO: I would prefer to check for the directory's existence explicitly --

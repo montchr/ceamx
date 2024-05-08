@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defvar devdocs-data-dir)
 

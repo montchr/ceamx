@@ -26,7 +26,7 @@
 
 (require 'config-ui)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (declare-function theme-buffet--load-random "theme-buffet")
 ;;; Helpers

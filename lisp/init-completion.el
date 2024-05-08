@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'lib-completion)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;; Always resize mini-windows to fit their contents.
 (setopt resize-mini-windows t)
@@ -58,7 +58,7 @@
                                        ;; #'+orderless-not-if-bang-dispatch
                                        #'+orderless-consult-dispatch
                                        #'orderless-affix-dispatch)))
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (package! corfu
   (declare-function global-corfu-mode "corfu")
@@ -156,7 +156,7 @@
   ;; Swap M-/ and C-M-/
   (keymap-global-set "M-/" #'dabbrev-completion)
   (keymap-global-set "C-M-/" #'dabbrev-expand))
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defvar +corfu-buffer-scanning-size-limit (* 1 1024 1024) ; 1 MB
   "Size limit for a buffer to be scanned by `cape-dabbrev'.")

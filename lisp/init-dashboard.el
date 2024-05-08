@@ -26,7 +26,7 @@
 
 (require 'ceamx-paths)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-package dashboard
   :ensure t

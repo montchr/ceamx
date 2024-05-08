@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-help)
 
 ;;; Install and configure ~nix-mode~

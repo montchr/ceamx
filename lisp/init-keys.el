@@ -33,7 +33,7 @@
 ;;; Requirements
 
 (require 'config-env)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Bind some CUA-like hotkeys for editing operations
 

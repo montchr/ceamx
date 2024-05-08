@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'ceamx-paths)
-(require 'lib-common)
+(require 'ceamx-lib)
 (setopt ediff-window-setup-function #'ediff-setup-windows-plain)
 ;; Version control support is essential as soon as possible.
 (require 'vc)

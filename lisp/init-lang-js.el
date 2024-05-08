@@ -26,7 +26,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defun ceamx-init-javascript-modes ()
   (setopt js-indent-level 2)

@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defvar-keymap ceamx-activities-map)
 (define-prefix-command 'ceamx-activities-map)

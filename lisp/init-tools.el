@@ -26,7 +26,7 @@
 
 (require 'seq)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (package! pandoc-mode
   (add-hook 'markdown-mode-hook #'pandoc-mode)
 

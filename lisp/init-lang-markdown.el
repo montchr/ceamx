@@ -26,7 +26,7 @@
 
 (require 'config-env)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Install ~markdown-mode~
 

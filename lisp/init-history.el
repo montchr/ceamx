@@ -32,7 +32,7 @@
 (require 'cl-lib)
 
 (require 'ceamx-paths)
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Record some variables' values with ~savehist~ [builtin]
 

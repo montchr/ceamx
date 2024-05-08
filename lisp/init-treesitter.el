@@ -60,7 +60,7 @@
 
 (require 'treesit)
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 ;;; Automatically use available ~treesit~ modes via ~treesit-auto~
 

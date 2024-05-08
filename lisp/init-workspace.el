@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
 

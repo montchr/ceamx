@@ -31,7 +31,7 @@
 (require 'ceamx-keymaps)
 
 ;; Core functions and macros
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chris@cdom.io")

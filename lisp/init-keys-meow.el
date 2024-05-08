@@ -24,7 +24,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 (require 'lib-keys-meow)
 (package! meow)
 (with-eval-after-load 'which-key

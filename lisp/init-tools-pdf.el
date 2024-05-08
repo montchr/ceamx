@@ -33,7 +33,7 @@
 
 ;;; Code:
 
-(require 'lib-common)
+(require 'ceamx-lib)
 
 (use-feature! pdf-tools
   :magic ("%PDF" . pdf-view-mode)
