@@ -71,6 +71,7 @@
 (after! (git-commit meow)
   (declare-function meow-insert-mode "meow")
   (add-hook 'git-commit-mode-hook #'meow-insert-mode))
+(package! git-modes)
 (package! git-timemachine
   (keymap-global-set "C-x v t" #'git-timemachine))
 

@@ -8987,6 +8987,14 @@ NOTE: Fringe indicators will conflict with Flycheck.
   (add-hook 'git-commit-mode-hook #'meow-insert-mode))
 #+end_src
 
+** Install additional major modes for Git-related files
+
+- website :: <https://github.com/magit/git-modes>
+
+#+begin_src emacs-lisp
+(package! git-modes)
+#+end_src
+
 ** ~git-timemachine~: Interactively explore files' Git histories
 
 <https://codeberg.org/pidu/git-timemachine>
