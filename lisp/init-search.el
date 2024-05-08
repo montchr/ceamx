@@ -28,6 +28,7 @@
 
 (require 'lib-common)
 (require 'lib-search)
+(setopt find-library-include-other-files nil)
 (setopt search-highlight t)
 (setopt isearch-lazy-highlight t)
 (setopt isearch-lazy-count t)

@@ -6739,6 +6739,12 @@ these utilities.
 (require 'lib-search)
 #+end_src
 
+** Finding a library means finding a library
+
+#+begin_src emacs-lisp
+(setopt find-library-include-other-files nil)
+#+end_src
+
 ** ~isearch~ [builtin]
 
 #+begin_src emacs-lisp :noweb-ref lib-search
