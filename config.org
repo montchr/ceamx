@@ -121,6 +121,41 @@ CLOSED: [2024-03-20 Wed 22:43]
 <<file-footer(feature="init")>>
 #+end_src
 
+*** =lisp/lib-common.el=
+
+#+name: lib-common-file
+#+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
+<<file-prop-line(feature="lib-common",desc="Ceamx common library")>>
+
+;; Copyright (C) 2023-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2014-2023  Henrik Lissner
+;; Copyright (C) 2006-2021  Steve Purcell
+;; Copyright (C) 2016–2022  Radian LLC and contributors
+;; Copyright (C) 2018  Adam Porter
+;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
+;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;;         Henrik Lissner
+;;         Steve Purcell
+;;         Radon Rosborough <radon@intuitiveexplanations.com>
+;;         Adam Porter <adam@alphapapa.net>
+;;         Bailey Ling <bling@live.ca>
+;;         7696122 <7696122@gmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+
+<<file-license>>
+<<file-license-mit>>
+<<file-license-bsd-2-clause>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-common>>
+
+<<file-footer(feature="lib-common")>>
+#+end_src
+
 *** =lisp/init-env.el=
 
 #+name: init-env-file
@@ -785,26 +820,6 @@ Emacs calls this the "file trailer" in ~generate-lisp-file-trailer~.
 
 #+results: file-footer-example-usage
 
-*** ~file-license~
-
-#+name: file-license
-#+begin_src emacs-lisp
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-#+end_src
-
 *** ~file-authors~
 
 Example table:
@@ -887,15 +902,67 @@ Example table:
 : Copyright (C) 1925-1995  Gilles Deleuze <notrees@rhizome.net>
 : Copyright (C)   Félix Guattari <poop@dada.net>
 
+** License Headers
+*** GNU General Public License 3.0 or later (=GPL-3.0-or-later=)
 
-*** Tasks
-**** DONE File-level ~:noweb yes~ does not seem to have an effect
-CLOSED: [2024-03-18 Mon 23:40]
+#+name: file-license
+#+begin_src emacs-lisp
+;; This file is NOT part of GNU Emacs.
 
-- Note taken on [2024-03-18 Mon 23:40] \\
-  Turns out there was a syntax error in this line, where a arg name had a colon at the end in addition to the beginning.
-- State "DONE"       from "TODO"       [2024-03-18 Mon 23:40]
-Setting this on a heading works.
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+#+end_src
+
+*** MIT License (=MIT=)
+
+#+name: file-license-mit
+#+begin_src emacs-lisp
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+#+end_src
+
+*** BSD 2-Clause License (=BSD-2-Clause=)
+
+#+name: file-license-bsd-2-clause
+#+begin_src emacs-lisp
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#+end_src
 
 ** Functions to clean and re-tangle Elisp files
 
@@ -957,7 +1024,7 @@ deleted before tangling."
 
 
 
-* Erstwhiles
+* Preparations
 :PROPERTIES:
 :header-args: :noweb-ref ceamx-bootstrap
 :END:
@@ -2044,110 +2111,29 @@ Emacs version to prevent bytecode incompatibility.")
 
 * ~lib-common~ :: standard library
 :PROPERTIES:
-:header-args: :tangle lisp/lib-common.el
+:header-args: :noweb-ref lib-common :comments both
 :END:
+
+- src :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
+- src :: <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
+- src :: <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
 
 This library is a requirement of just about every customization and library
 file. It is loaded early during initialization.
-
 
 General, common, and generic library functions.
 
 Avoid any library dependencies which are not already part of Emacs.  This
 library will be loaded before packages are available.
 
-** File Headers
-
-#+begin_src emacs-lisp :comments no
-;;; lib-common.el --- Common library functions -*- lexical-binding: t -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery <chris@cdom.io>
-;; Copyright (C) 2014-2023  Henrik Lissner
-;; Copyright (C) 2006-2021  Steve Purcell
-;; Copyright (C) 2016–2022  Radian LLC and contributors
-;; Copyright (C) 2018  Adam Porter
-;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
-;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;;         Henrik Lissner
-;;         Steve Purcell
-;;         Radon Rosborough <radon@intuitiveexplanations.com>
-;;         Adam Porter <adam@alphapapa.net>
-;;         Bailey Ling <bling@live.ca>
-;;         7696122 <7696122@gmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Created: 29 January, 2023
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;; Permission is hereby granted, free of charge, to any person obtaining
-;; a copy of this software and associated documentation files (the
-;; "Software"), to deal in the Software without restriction, including
-;; without limitation the rights to use, copy, modify, merge, publish,
-;; distribute, sublicense, and/or sell copies of the Software, and to
-;; permit persons to whom the Software is furnished to do so, subject to
-;; the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be
-;; included in all copies or substantial portions of the Software.
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-;;
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-;;
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-;;; Commentary:
-#+end_src
-
-** Sources
-
-- <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
-- <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
-- <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
-
-** Code
-
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
-;;; Code:
-
-;;;; Requirements
-
+#+begin_src emacs-lisp
 (require 'cl-lib)
 (require 'map)
 (require 'seq)
 #+end_src
 
-*** General
-**** ~ceamx-host-p~: Determine whether Emacs is running on a given host
+** General
+*** ~ceamx-host-p~: Determine whether Emacs is running on a given host
 
 #+begin_src emacs-lisp
 (defun ceamx-host-p (name)
@@ -2155,7 +2141,7 @@ library will be loaded before packages are available.
   (string= name (system-name)))
 #+end_src
 
-**** ~ceamx-unquote~: Unquote an Elisp expression
+*** ~ceamx-unquote~: Unquote an Elisp expression
 
 #+begin_src emacs-lisp
 (defun ceamx-unquote (exp)
@@ -2166,7 +2152,7 @@ library will be loaded before packages are available.
   exp)
 #+end_src
 
-**** ~noop!~: Make the wrapped expression do nothing
+*** ~noop!~: Make the wrapped expression do nothing
 
 - source :: <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
 
@@ -2178,8 +2164,8 @@ Unlike `ignore', produce no side effects."
   nil)
 #+end_src
 
-*** Loading and Evalling
-**** ~after!~: Evaluate an expression after the given feature(s) have loaded
+** Loading and Evalling
+*** ~after!~: Evaluate an expression after the given feature(s) have loaded
 
 - Note taken on [2024-03-23 Sat 15:11] \\
   Replaced the existing version with Doom's version for its logical operator
@@ -2238,7 +2224,7 @@ things you want byte-compiled in them! Like function/macro definitions."
 #+end_src
 
 
-**** ~defer!~: Evaluate an expression after Emacs is idle for some time
+*** ~defer!~: Evaluate an expression after Emacs is idle for some time
 
 - source :: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
 
@@ -2252,7 +2238,7 @@ things you want byte-compiled in them! Like function/macro definitions."
     (lambda () ,@body)))
 #+end_src
 
-**** ~defer-until!~: Evaluate an expression when a condition is non-nil
+*** ~defer-until!~: Evaluate an expression when a condition is non-nil
 
 - source :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
 
@@ -2276,8 +2262,8 @@ Meant to serve as a predicated alternative to `after!'."
           (add-hook 'after-load-functions #',fn)))))
 #+end_src
 
-*** Variable Mutation
-**** ~appendq!~: Append lists to a symbol in place
+** Variable Mutation
+*** ~appendq!~: Append lists to a symbol in place
 
 #+begin_src emacs-lisp
 (defmacro appendq! (sym &rest lists)
@@ -2285,7 +2271,7 @@ Meant to serve as a predicated alternative to `after!'."
   `(setq ,sym (append ,sym ,@lists)))
 #+end_src
 
-**** ~prependq!~: Prepend lists to a symbol in place
+*** ~prependq!~: Prepend lists to a symbol in place
 
 #+begin_src emacs-lisp
 (defmacro prependq! (sym &rest lists)
@@ -2293,7 +2279,7 @@ Meant to serve as a predicated alternative to `after!'."
   `(setq ,sym (append ,@lists ,sym)))
 #+end_src
 
-**** ~appendopt!~ Append lists to an existing user option
+*** ~appendopt!~ Append lists to an existing user option
 
 #+begin_src emacs-lisp
 (defmacro appendopt! (variable &rest lists)
@@ -2302,7 +2288,7 @@ This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,variable ,@lists)))
 #+end_src
 
-**** ~prependopt!~: Prepend lists to an existing user option
+*** ~prependopt!~: Prepend lists to an existing user option
 
 #+begin_src emacs-lisp
 (defmacro prependopt! (variable &rest lists)
@@ -2311,7 +2297,7 @@ This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,@lists ,variable)))
 #+end_src
 
-**** ~delq!~: Delete an element from a list in-place
+*** ~delq!~: Delete an element from a list in-place
 
 #+begin_src emacs-lisp
 (defmacro delq! (elt list &optional fetcher)
@@ -2323,7 +2309,7 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
                 ,list)))
 #+end_src
 
-**** ~pushnew!~: Push values sequentially into a list uniquely
+*** ~pushnew!~: Push values sequentially into a list uniquely
 
 #+begin_src emacs-lisp
 ;; TODO: another version to test car of alist so that new additions with the
@@ -2336,8 +2322,8 @@ This is a variadic `cl-pushnew'."
       (cl-pushnew ,var ,place :test #'equal))))
 #+end_src
 
-*** Filesystem
-**** ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
+** Filesystem
+*** ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
 
 #+begin_src emacs-lisp
 (defun ceamx-subdirs (parent-dir)
@@ -2348,8 +2334,8 @@ This is a variadic `cl-pushnew'."
     (expand-file-name parent-dir) t "^[^\\.]")))
 #+end_src
 
-*** Hooks & Advice
-**** ~def-advice!~: Macro to define and add advice to a function
+** Hooks & Advice
+*** ~def-advice!~: Macro to define and add advice to a function
 
 #+begin_src emacs-lisp
 (defmacro def-advice! (name arglist how symbol docstring &rest body)
@@ -2385,7 +2371,7 @@ the newly-defined advice.  SYMBOL is the function to be advised."
      ',name))
 #+end_src
 
-**** ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
+*** ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
 
 #+begin_src emacs-lisp
 (defmacro def-hook! (name arglist hooks docstring &rest body)
@@ -2413,8 +2399,8 @@ as in `defun'."
         (add-hook hook #',name)))))
 #+end_src
 
-*** Packages & User Configuration
-**** ~use-feature!~: Configuration-only wrapper for ~use-package~
+** Packages & User Configuration
+*** ~use-feature!~: Configuration-only wrapper for ~use-package~
 
 #+begin_src emacs-lisp
 (defmacro use-feature! (name &rest args)
@@ -2432,7 +2418,7 @@ will be nil."
      ,@args))
 #+end_src
 
-**** ~package!~: Declare a package and its initial configuration
+*** ~package!~: Declare a package and its initial configuration
 
 Wrapper for ~elpaca~ to avoid having to declare its autoloads in every file.
 
@@ -2447,13 +2433,13 @@ without needing to declare autoloads for `elpaca' in every file."
      (elpaca ,order ,@body)))
 #+end_src
 
-*** Input and Keybindings
-**** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
+** Input and Keybindings
+*** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
 
 Usages of this function should be replaced with the result of evaluating
 ~string-to-char~.
 
-#+begin_src emacs-lisp :tangle lisp/lib-common.el
+#+begin_src emacs-lisp
 (defun ceamx-normalize-char (char)
   "Normalize CHAR to a valid character matching `characterp'.
 CHAR may either be a valid character or a string convertable to a
@@ -2479,9 +2465,9 @@ vary based on... various reasons?"
     char))
 #+end_src
 
-**** ~global-keys!~: Define multiple global keybindings
+*** ~global-keys!~: Define multiple global keybindings
 
-#+begin_src emacs-lisp :tangle lisp/lib-common.el
+#+begin_src emacs-lisp
 (defmacro global-keys! (&rest keys)
   "Define keybindings KEYS in the global keymap.
 Wrapper for `define-keymap' with `current-global-map' as target keymap."
@@ -2490,11 +2476,11 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
      ,@keys))
 #+end_src
 
-**** ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
+*** ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
 
 [[https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/][oantolin comments on Repeat-mode is awesome, share you useful configs]]
 
-#+begin_src emacs-lisp :tangle lisp/lib-common.el
+#+begin_src emacs-lisp
 (defun ceamx-repeatify-keymap (repeat-map)
   "Set the `repeat-map' property on all commands bound in REPEAT-MAP."
   (named-let process ((keymap (symbol-value repeat-map)))
@@ -2504,13 +2490,6 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
         ((symbolp cmd) (put cmd 'repeat-map repeat-map))
         ((keymapp cmd) (process cmd))))
      keymap)))
-#+end_src
-
-** Footer
-
-#+begin_src emacs-lisp :comments no :tangle lisp/lib-common.el
-(provide 'lib-common)
-;;; lib-common.el ends here
 #+end_src
 
 
@@ -9432,20 +9411,17 @@ CLOSED: [2024-04-13 Sat 00:00]
 
 - State "DONE"       from "TODO"       [2024-04-13 Sat 00:00]
 
+** TODO Add templates for inserting SPDX license headers
 
+- src :: <https://github.com/condy0919/spdx.el>
 
-  #+begin_example
-  Debugger entered--Lisp error: (wrong-type-argument stringp Template)
-    split-string(Template " " t)
-    abbrev--suggest-count-words(Template)
-    abbrev--suggest-maybe-suggest()
-    expand-abbrev()
-    #<subr org-self-insert-command>(1)
-    apply(#<subr org-self-insert-command> 1)
-    org-self-insert-command(1)
-    funcall-interactively(org-self-insert-command 1)
-    command-execute(org-self-insert-command)
-  #+end_example
+  #+begin_src emacs-lisp
+(package! spdx
+  (keymap-set ceamx-insert-map "L" #'spdx-insert-spdx))
+#+end_src
+
+*** TODO Add this package's Tempo templates to Tempel
+
 
 
 
