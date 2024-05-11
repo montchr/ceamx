@@ -12262,6 +12262,15 @@ kill the selection again.
     (require 'org-bookmark-heading)))
 #+end_src
 
+**** Install the ~org-contrib~ community packages
+
+<https://orgmode.org/worg/org-contrib/>
+
+#+begin_src emacs-lisp
+(package! org-contrib)
+#+end_src
+
+
 *** Footer
 
 #+BEGIN_SRC emacs-lisp
