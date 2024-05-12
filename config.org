@@ -5839,7 +5839,14 @@ b => buffer name
   (keymap-global-set "C-x l" #'ialign))
 #+end_src
 
-*** Structural editing states
+*** Structural editing
+
+Prepare a prefix commands for binding structural editing commands:
+
+#+begin_src emacs-lisp
+(define-prefix-command 'ceamx-structural-editing-prefix)
+(keymap-global-set "C-c s" #'ceamx-structural-editing-prefix)
+#+end_src
 
 #+begin_src emacs-lisp :noweb-ref config-editor
 (defcustom ceamx-structured-editing-style 'puni
