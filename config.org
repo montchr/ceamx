@@ -9385,8 +9385,7 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
 <https://www.flycheck.org/en/latest/index.html>
 <https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
 
-#+header-args: :tangle lisp/init-flycheck.el
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-flycheck.el
 <<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
 
 ;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
