@@ -3,7 +3,7 @@
 #+author: Chris Montgomery
 #+email: chmont@proton.me
 #+language: en
-#+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments both
+#+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments no
 #+archive: graveyard/%s::datetree/
 #+startup show2levels
 
@@ -23,8 +23,10 @@ on WSL2 when E is running MS Windows, however that is a very low priority.
 
 ** Agenda
 
-*** TODO Consider moving =lisp/lib-common.el= to =lisp/core/ceamx-lib.el=
+*** DONE Consider moving =lisp/lib-common.el= to =lisp/core/ceamx-lib.el=
+CLOSED: [2024-05-11 Sat 21:31]
 
+- State "DONE"       from "TODO"       [2024-05-11 Sat 21:31]
 *** DONE <https://elpa.gnu.org/packages/xr.html>
 CLOSED: [2024-05-03 Fri 09:43]
 - State "DONE"       from "TODO"       [2024-05-03 Fri 09:43]

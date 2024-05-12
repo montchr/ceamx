@@ -231,6 +231,8 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   )
 (package! ialign
   (keymap-global-set "C-x l" #'ialign))
+(define-prefix-command 'ceamx-structural-editing-prefix)
+(keymap-global-set "C-c s" #'ceamx-structural-editing-prefix)
 (after! puni
 
   (defvar-keymap structural-editing-map
@@ -278,7 +280,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 (keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
 
-(global-keys!
+(define-keymap :keymap (current-global-map)
   "C-=" #'ceamx/insert-date
   "C-<" #'ceamx/escape-url-dwim
 

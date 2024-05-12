@@ -118,10 +118,7 @@
 (setopt org-reverse-note-order t)       ; prepend new notes
 (setopt org-return-follows-link t)
 (with-eval-after-load 'org
-  (defvar org-mode-map)
-  (declare-function consult-org-heading "consult-org")
-
-  (global-keys!
+  (define-keymap :keymap (current-global-map)
     "C-c a" #'org-agenda
     "C-c c" #'org-capture)
 
@@ -129,12 +126,18 @@
     "C-c <up>" #'org-priority-up
     "C-c <down>" #'org-priority-down
 
+    "M-." #'org-edit-special
+
     ;; FIXME: " key sequence starts with non-prefix key" -- that is, conflicts
     ;; with `ceamx-toggle-map'... maybe if that was not a prefix command but
     ;; instead was just a keymap...?
     ;; "C-c C-t l" #'org-toggle-link-display
 
     ;; "C-c l" #'org-store-link
+
+    ;; Kill subtree or table region.
+    "C-c s k" #'org-cut-special
+    "C-M-S-w" #'org-cut-special
 
     ;; Swap these around, as I am more likely to adjust subtree than insert an
     ;; arbitrary date from the calendar.
@@ -144,13 +147,11 @@
     "C-c C->" #'org-goto-calendar
 
     ;; Override earlier binding to `consult-outline'.
-    "M-g o" #'consult-org-heading)
+    "M-g o" #'consult-org-heading
 
-  ;; Mnemonic is the global key to goto definition/references.
-  (keymap-set org-mode-map "M-." #'org-edit-special) ; also: C-c '
-  ;; FIXME: Does not seem to work in `emacs-lisp-mode' Org Src buffers
-  ;; (keymap-set org-src-mode-map "M-," #'org-edit-src-exit)
-  )
+    ;; Mnemonic is the global key to goto definition/references.
+    "M-." #'org-edit-special ; also: C-c '
+    ))
 (defvar-keymap org-mode-navigation-repeat-map
   :repeat t
 
@@ -205,6 +206,8 @@ Intended for use as a local hook function on
                    :template ("* TODO %?"
                               "%i %a"))))))
 (package! org-ql)
+(after! org
+  (keymap-set org-mode-map "C-c C-w" #'org-ql-refile))
 (package! org-modern
   ;; Ensure leading stars are replaced by spaces.
   (setopt org-modern-hide-stars "  ")
@@ -235,6 +238,7 @@ Intended for use as a local hook function on
   (setopt org-bookmark-jump-indirect t)
   (after! org
     (require 'org-bookmark-heading)))
+(package! org-contrib)
 (provide 'init-org)
 ;;; init-org.el ends here
 
