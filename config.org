@@ -7,6 +7,12 @@
 #+archive: graveyard/%s::datetree/
 #+startup show2levels
 
+#+begin_quote
+generally no real magic in this world exists
+#+end_quote
+
+---Eli Zaretskii
+
 * Overview
 
 This is a user configuration for GNU Emacs.
@@ -36,6 +42,43 @@ CLOSED: [2024-03-20 Wed 22:43]
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
+
+*** Boolean Variables vs. Predicate Functions
+:PROPERTIES:
+:CUSTOM_ID: boolean-variables-vs.-predicate-functions
+:END:
+The naming for booleans and predicates is different.
+
+**** Example
+:PROPERTIES:
+:CUSTOM_ID: example
+:END:
+#+begin_src elisp
+(defvar ceamx-foo-flag t)
+(defvar ceamx-is-foo-enabled t)
+(defun ceamx-foo-p ()
+  ;; sketchy logic (don't do this)
+  (or ceamx-foo-flag ceamx-is-foo-enabled))
+#+end_src
+
+**** Explanation
+:PROPERTIES:
+:CUSTOM_ID: explanation
+:END:
+From
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html][Coding
+Conventions (GNU Emacs Lisp Reference Manual)]]:
+
+#+begin_quote
+If the purpose of a function is to tell you whether a certain condition
+is true or false, give the function a name that ends in 'p' (which
+stands for "predicate".  If the name is one word, add just 'p'; if the
+name is multiple words, add '-p'.  Examples are =framep= and
+=frame-live-p=.  We recommend to avoid using this =-p= suffix in boolean
+variable names, unless the variable is bound to a predicate function;
+instead, use a =-flag= suffix or names like =is-foo=.
+
+#+end_quote
 
 **** Org-Mode: When to wrap inline text in ~tildes~ vs. =equals=
 
@@ -1023,6 +1066,12 @@ deleted before tangling."
 
 
 
+* Resources
+
+- [[info:elisp#Tips][(elisp) Tips]]
+- [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
+
+
 * Preparations
 :PROPERTIES:
 :header-args: :noweb-ref ceamx-bootstrap
@@ -1092,21 +1141,27 @@ E always forgets they exist.
 
 Third-party package managers should be configured in init.el directly instead
 of within a `require'd file so that they may be re-initialized properly.
-*** Bootstrap the Elpaca package manager
 
-**** Set the Elpaca installer version
+*** Bootstrap the package manager
+
+Packages are installed with Elpaca.
+
+Previously, I have used =package.el= or Nixpkgs to manage packages.  See the
+[[*Alternatives]] subheading for details
+**** Elpaca
+***** Set the Elpaca installer version
 
 #+begin_src emacs-lisp
 (defvar elpaca-installer-version 0.7)
 #+end_src
 
-**** Show the Elpaca to its house
+***** Show the Elpaca to its house
 
 #+begin_src emacs-lisp
 (defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
 #+end_src
 
-**** Summon the Elpaca
+***** Summon the Elpaca
 
 The installation code only needs to be changed when the Elpaca warns about an
 installer version mismatch.
@@ -1153,7 +1208,75 @@ definitions for ~elpaca-installer-version~ and ~elpaca-directory~.
 (elpaca `(,@elpaca-order))
 #+end_src
 
-**** Bind some commonly-used package management commands :keybinds:
+**** Alternatives
+***** Nixpkgs
+
+I actually think this is the easiest approach, with the least amount of fiddling
+necessary.
+
+But: I would prefer using standalone/portable Emacs-specific package
+management so Nix is not a hard requirement.  This is primarily because I
+am eagerly anticipating the stable release of the official Emacs for
+Android, or at least some established norms/idioms/best-practices for
+configuration on Android.
+
+Currently I don't see any clear path towards supporting Nix there, at
+least not for a while.  I would prefer to have interoperability between
+Emacs for Android and Nix for Android instead of the GNU-signed Termux
+app, but AFAIK that would require building both Emacs and Nix for
+Android APKs from source to self-sign, which I don't want to do right
+now.
+
+Oh yeah, and there's also WSL when I am forced to use Microsoft Windows
+for something (like Adobe Acrobat).  Ideally I would use the NixOS on WSL
+setup but that's a little bit of a project to integrate into my
+wasteland of a system configuration repo.
+
+***** package.el
+
+When I forget what pain feels like, I remind myself by attempting to use
+=package.el=.  Soon I find that nothing works in a sane manner, and, the
+worst part: it's barely configurable as Emacs should be.  This results in
+many nasty hacks.  I do not think =package.el= is ready for daily usage
+in my life.
+
+I tried leaning into package.el because:
+
+1. It is built into Emacs, allowing for portability and predictable
+   behavior across machines.  Ostensibily.
+2. I thought using it would be a matter of "back-to-the-basics"/KISS.
+
+But:
+
+While the documentation seems thorough, I frequently need to dive into
+its source code to figure out why some weird behavior is happening.
+Several configurations I've referenced apply advices to its internal
+functions to hammer package.el into a usable machine.
+
+Somehow, even though both =package.el= and =use-package= are part of
+Emacs, they do not work well together.  TODO: add links to issues here
+
+package.el forces the use of =user-custom-file=, with no option to
+specify a different file or otherwise change this behavior.  I am
+absolutely not interested in committing =custom.el= whenever the state
+of my installed packages changes.  I like the idea of a lockfile, as
+every package manager should use one (except Nix, which transcends such
+barbaric practices entirely), but the current state of this behavior
+makes that impossible without resorting to hacks.  TODO: mention the
+snippet I recently came across (saved to bookmark manager).
+
+I've left a lot of comments throughout this configuration's explaining
+some of =package.el='s unintutive and sometimes downright terrible or
+broken behavior.  TODO: resurface these, which were probably deleted.
+
+I imagine one day these issues will be resolved and stabilized in future
+versions of Emacs, but until then, I would only be a reluctant user and
+find myself still prone to indecision in this field.
+
+On that note, I have since switched back to Elpaca.
+
+
+*** Bind some commonly-used package management commands :keybinds:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-packages-map
@@ -1164,7 +1287,7 @@ definitions for ~elpaca-installer-version~ and ~elpaca-directory~.
 (keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
 #+end_src
 
-***** TODO Move this global binding somewhere else... but where? :keybinds:
+**** TODO Move this global binding somewhere else... but where? :keybinds:
 
 #+begin_src emacs-lisp
 (keymap-global-set "C-c q" ceamx-session-map)
@@ -1418,6 +1541,62 @@ When idle, GC will be triggered with a low threshold.
   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
   (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
 #+end_src
+
+While browsing many other user configs, I have noticed several slightly
+different approaches to managing garbage collection, especially with the
+intent of reducing startup time.
+
+One approach is to offload this configuration to ~gcmh~, safely
+hiding the details away.  =gcmh= is written by Andrea
+Corallo, perhaps better known for gccemacs / native-comp.
+
+As it turns out, as a direct response to a Reddit thread sharing =gcmh=,
+Eli Zaretskii recommends caution in this field.  The package creator also
+weighs in.  Basically, Zaretskii recommends not overthinking things.
+
+[[https://old.reddit.com/r/emacs/comments/bg85qm/garbage_collector_magic_hack/eln27qh/][eli-zaretskii
+comments on Garbage Collector Magic Hack]]:
+
+#+begin_quote
+My problem with the advice to make the GC threshold at such high values
+begins the moment you start publishing your personal tweaks as general
+advice to others. IMO, this requires at least a lot of caveats, because
+your advice is likely to be followed by people whose workflows and
+system configurations are very different. Simply put, you might get
+others in trouble by promoting your personal hacks as "magic".
+
+#+end_quote
+
+From what I gather, =gcmh= has evolved a bit, so the previous criticism
+no longer applies.
+
+And, again, with more detail about fiddling carelessly with
+=gc-cons-threshold=:
+
+[[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii
+comments on An easy trick I found to improve Emacs start-up time]]
+
+#+begin_quote
+The GC threshold setting after init is too high, IMNSHO, and its value
+seems arbitrary.
+
+If the OP thinks that Emacs will GC as soon as it allocates 100 MiB,
+then that's a grave mistake. What really happens is the first time Emacs
+/considers doing GC/, if at that time more than 100 MiB have been
+allocated for Lisp objects, Emacs will GC. And since neither Lisp
+programs nor the user have /any/ control on how soon Emacs will decide
+to check whether GC is needed, the actual amount of memory by the time
+Emacs checks could be many times the value of the threshold.
+
+My advice is to spend some time measuring the effect of increased GC
+threshold on operations that you care about and that take a long enough
+time to annoy, and use the lowest threshold value which produces a
+tangible improvement. Start with the default value, then enlarge it by a
+factor of 2 until you see only insignificant speedups. I would not
+expect the value you arrive at to be as high as 100 MiB.
+
+#+end_quote
+
 
 ** Install utility libraries
 
@@ -1765,26 +1944,26 @@ See also:
   This snippet appears to cause Emacs to lose track of its own source files in most sessions.
 
   ~describe-function~ and ~helpful-function~ report symbols "without a source
-  file".   I did not have much to go on until I became aware of ~find-function~.
+  file".  I did not have much to go on until I became aware of ~find-function~.
   After invoking the latter on a function whose source could not be located, I
   noticed a clue: ~find-function~ somehow knew about the source file with a =.el=
-  extension.   I investigated the Emacs =lisp/= directory and saw that there are no
-  =.el= files -- only =.elc= and =.el.gz=.   The =.elc= files are unreadable, but
-  Emacs is still able to read the compressed =gz= archives.   I still do not know
+  extension.  I investigated the Emacs =lisp/= directory and saw that there are no
+  =.el= files -- only =.elc= and =.el.gz=.  The =.elc= files are unreadable, but
+  Emacs is still able to read the compressed =gz= archives.  I still do not know
   exactly why it forgot.
 
-  The issue has not been consistent, which likely indicates a race condition.   For
+  The issue has not been consistent, which likely indicates a race condition.  For
   a while, I assumed the issue occurred in consecutive sessions after calling
   ~restart-emacs~, but that was not the case.
 
   Disabling this hack is the only consistent way I found to help Emacs find
-  itself.   Re-enabling it caused the issue to recur.   In the end, after
+  itself.  Re-enabling it caused the issue to recur.  In the end, after
   disabling, I see absolutely no difference in startup performance.
   Optimization-by-copypasta strikes again.
 
   This has been a very frustrating regression in many/most of my Emacs sessions.
   I rely a lot on being able to read Emacs Lisp source code to understand how
-  Emacs works -- that is how I learn.   Without being able to view source, I am
+  Emacs works -- that is how I learn.  Without being able to view source, I am
   left only with a lack of clarity.
 
 - <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
@@ -2118,7 +2297,7 @@ Emacs version to prevent bytecode incompatibility.")
 - src :: <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
 
 This library is a requirement of just about every customization and library
-file. It is loaded early during initialization.
+file.  It is loaded early during initialization.
 
 General, common, and generic library functions.
 
@@ -2168,7 +2347,7 @@ Unlike `ignore', produce no side effects."
 
 - Note taken on [2024-03-23 Sat 15:11] \\
   Replaced the existing version with Doom's version for its logical operator
-  support. Were it not for the logical operators, ~after!~ would be nothing
+  support.  Were it not for the logical operators, ~after!~ would be nothing
   other than a fancy wrapper around ~with-eval-after-load~.
 
 - source :: <https://github.com/doomemacs/doomemacs/blob/bbadabda511027e515f02ccd7b70291ed03d8945/lisp/doom-lib.el#L628C1-L673C1>
