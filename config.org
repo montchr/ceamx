@@ -5927,7 +5927,7 @@ its bindings generally would need ~puni-mode~ to be active.
 #+begin_src emacs-lisp
 (keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
 
-(global-keys!
+(define-keymap :keymap (current-global-map)
   "C-=" #'ceamx/insert-date
   "C-<" #'ceamx/escape-url-dwim
 
@@ -12241,16 +12241,15 @@ I don't think this is working properly...
 
 #+BEGIN_SRC emacs-lisp
 (with-eval-after-load 'org
-  (defvar org-mode-map)
-  (declare-function consult-org-heading "consult-org")
-
-  (global-keys!
+  (define-keymap :keymap (current-global-map)
     "C-c a" #'org-agenda
     "C-c c" #'org-capture)
 
   (define-keymap :keymap org-mode-map
     "C-c <up>" #'org-priority-up
     "C-c <down>" #'org-priority-down
+
+    "M-." #'org-edit-special
 
     ;; FIXME: " key sequence starts with non-prefix key" -- that is, conflicts
     ;; with `ceamx-toggle-map'... maybe if that was not a prefix command but
@@ -12271,13 +12270,11 @@ I don't think this is working properly...
     "C-c C->" #'org-goto-calendar
 
     ;; Override earlier binding to `consult-outline'.
-    "M-g o" #'consult-org-heading)
+    "M-g o" #'consult-org-heading
 
-  ;; Mnemonic is the global key to goto definition/references.
-  (keymap-set org-mode-map "M-." #'org-edit-special) ; also: C-c '
-  ;; FIXME: Does not seem to work in `emacs-lisp-mode' Org Src buffers
-  ;; (keymap-set org-src-mode-map "M-," #'org-edit-src-exit)
-  )
+    ;; Mnemonic is the global key to goto definition/references.
+    "M-." #'org-edit-special ; also: C-c '
+    ))
 #+END_SRC
 
 **** Make Org tree navigation commands repeatable
