@@ -12259,6 +12259,10 @@ I don't think this is working properly...
 
     ;; "C-c l" #'org-store-link
 
+    ;; Kill subtree or table region.
+    "C-c s k" #'org-cut-special
+    "C-M-S-w" #'org-cut-special
+
     ;; Swap these around, as I am more likely to adjust subtree than insert an
     ;; arbitrary date from the calendar.
     "C-c <" #'org-promote-subtree
@@ -12357,6 +12361,13 @@ Intended for use as a local hook function on
 #+BEGIN_SRC emacs-lisp
 (package! org-ql)
 #+END_SRC
+
+**** Prefer the refiling interface provided by ~org-ql-refile~
+
+#+begin_src emacs-lisp
+(after! org
+  (keymap-set org-mode-map "C-c C-w" #'org-ql-refile))
+#+end_src
 
 **** ~org-modern~
 
