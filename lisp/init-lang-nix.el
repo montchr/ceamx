@@ -45,30 +45,24 @@
   (when (eq 'lsp-mode ceamx-lsp-client)
     (add-hook 'nix-mode-hook #'lsp-deferred)))
 
-;;; DISABLED Install and configure ~nix-ts-mode~
+;;; Install and configure ~nix-ts-mode~
 
 ;; <https://github.com/remi-gelinas/nix-ts-mode>
 
-;; FIXME: Disabled because it is currently inferior to ~nix-mode~ in a few ways,
-;; especially broken indentation and pairing:
-;; <https://github.com/remi-gelinas/nix-ts-mode/issues/14>
-;; <https://github.com/remi-gelinas/nix-ts-mode/pull/15>
+(package! nix-ts-mode
+  (when (treesit-language-available-p 'nix)
+    (require 'nix-ts-mode)
 
-(noop!
-  (package! nix-ts-mode
-    (when (treesit-language-available-p 'nix)
-      (require 'nix-ts-mode)
+    (add-hook 'nix-ts-mode-hook #'eglot-ensure)
 
-      (add-hook 'nix-ts-mode-hook #'eglot-ensure)
+    (when (eq 'eglot ceamx-lsp-client)
+      (add-hook 'nix-ts-mode-hook #'eglot-ensure))
 
-      (when (eq 'eglot ceamx-lsp-client)
-        (add-hook 'nix-ts-mode-hook #'eglot-ensure))
+    (when (eq 'lsp-mode ceamx-lsp-client)
+      (add-hook 'nix-ts-mode-hook #'lsp-deferred))
 
-      (when (eq 'lsp-mode ceamx-lsp-client)
-        (add-hook 'nix-ts-mode-hook #'lsp-deferred))
-
-      (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
-      (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode)))))
+    (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
+    (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode))))
 
 ;;; Configure formatters
 
