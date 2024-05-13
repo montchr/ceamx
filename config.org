@@ -9425,9 +9425,9 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
   ;; The default includes `newline', which is just too often.
   (setopt flycheck-check-syntax-automatically '(save idle-change mode-enabled))
 
-  (setopt flycheck-idle-change-delay 1.0)
-  (setopt flycheck-display-errors-delay 0.25)
-  (setopt flycheck-buffer-switch-check-intermediate-buffers t)
+  (setopt flycheck-idle-change-delay 3.0)
+  (setopt flycheck-display-errors-delay 0.5)
+  (setopt flycheck-buffer-switch-check-intermediate-buffers nil)
 
   (keymap-set ceamx-toggle-map "f" #'flycheck-mode)
 
