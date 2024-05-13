@@ -69,20 +69,24 @@
 
 ;;; Configure Nix language servers
 
+;; TODO: defcustom
+(defvar ceamx-lsp-server-nix-lang "nixd")
+
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
-  ;; (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nil")))
-  (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . ("nixd"))))
 
-;; via `lsp-mode' package
-(with-eval-after-load 'lsp-nix
+  (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . (ceamx-lsp-server-nix-lang))))
+
+;; via `lsp-mode'
+(after! lsp-nix
   (setopt lsp-nix-nil-formatter nil)
 
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
-                    :major-modes '(nix-mode nix-ts-mode)
-                    :priority 0
-                    :server-id 'nixd)))
+  (when (string= "nixd" ceamx-lsp-server-nix-lang)
+    (lsp-register-client
+     (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
+                      :major-modes '(nix-mode nix-ts-mode)
+                      :priority 0
+                      :server-id 'nixd))))
 
 ;;; Install ~devdocs~ Nix docset
 
