@@ -126,8 +126,6 @@
     "C-c <up>" #'org-priority-up
     "C-c <down>" #'org-priority-down
 
-    "M-." #'org-edit-special
-
     ;; FIXME: " key sequence starts with non-prefix key" -- that is, conflicts
     ;; with `ceamx-toggle-map'... maybe if that was not a prefix command but
     ;; instead was just a keymap...?
@@ -146,12 +144,11 @@
     "C-c >" #'org-demote-subtree
     "C-c C->" #'org-goto-calendar
 
-    ;; Override earlier binding to `consult-outline'.
-    "M-g o" #'consult-org-heading
-
     ;; Mnemonic is the global key to goto definition/references.
     "M-." #'org-edit-special ; also: C-c '
-    ))
+
+    ;; Override earlier binding to `consult-outline'.
+    "M-g o" #'consult-org-heading))
 (defvar-keymap org-mode-navigation-repeat-map
   :repeat t
 
