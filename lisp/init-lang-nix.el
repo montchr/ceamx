@@ -70,7 +70,7 @@
 ;;; Configure Nix language servers
 
 ;; TODO: defcustom
-(defvar ceamx-lsp-server-nix-lang "nixd")
+(defvar ceamx-lsp-server-nix-lang "nil")
 
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
