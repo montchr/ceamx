@@ -11148,8 +11148,11 @@ Returns process exit code."
 #+end_src
 
 ** Nix
+:PROPERTIES:
+:header-args: :tangle lisp/init-lang-nix.el
+:END:
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-nix.el
+#+begin_src emacs-lisp
 ;;; init-lang-nix.el --- Nix language support -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
@@ -11176,12 +11179,16 @@ Returns process exit code."
 ;;; Commentary:
 
 ;;  Configure Nix language support.
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Code:
 
 (require 'ceamx-lib)
 (require 'lib-help)
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Install and configure ~nix-mode~
 
 ;; <https://github.com/NixOS/nix-mode>
@@ -11195,9 +11202,11 @@ Returns process exit code."
     (add-hook 'nix-mode-hook #'eglot-ensure))
 
   (when (eq 'lsp-mode ceamx-lsp-client)
-        (add-hook 'nix-mode-hook #'lsp-deferred)))
+    (add-hook 'nix-mode-hook #'lsp-deferred)))
+#+end_src
 
 ;;; DISABLED Install and configure ~nix-ts-mode~
+#+begin_src emacs-lisp
 
 ;; <https://github.com/remi-gelinas/nix-ts-mode>
 
@@ -11221,22 +11230,30 @@ Returns process exit code."
 
       (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
       (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode)))))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Configure formatters
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Set the official formatter (=nixfmt=) as the default formatter
 
 (with-eval-after-load 'apheleia
   (defvar apheleia-mode-alist)
   (with-eval-after-load 'nix-ts-mode
     (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt))))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;;; Register =alejandra= as an additional formatter
 
 (with-eval-after-load 'apheleia
   (defvar apheleia-formatters)
   (add-to-list 'apheleia-formatters '(alejandra "alejandra")))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Configure Nix language servers
 
 (with-eval-after-load 'eglot
@@ -11253,14 +11270,18 @@ Returns process exit code."
                     :major-modes '(nix-mode nix-ts-mode)
                     :priority 0
                     :server-id 'nixd)))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Install ~devdocs~ Nix docset
 
 (def-hook! +devdocs-install-nix-docs ()
   '(nix-mode-hook nix-ts-mode-hook)
   "Install `devdocs' documents for the Nix language."
   (+devdocs-maybe-install "nix"))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Keybindings
 
 ;; These are too annoying to maintain for both ~nix-mode~ and ~nix-ts-mode~
@@ -11281,7 +11302,9 @@ Returns process exit code."
   (with-eval-after-load 'tempel
     ;; (eval-when-compile (require 'tempel))
     (tempel-key "C-c i t a" modargs nix-mode-map)))
+#+end_src
 
+#+begin_src emacs-lisp
 (provide 'init-lang-nix)
 ;;; init-lang-nix.el ends here
 #+end_src

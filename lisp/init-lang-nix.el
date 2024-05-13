@@ -43,7 +43,7 @@
     (add-hook 'nix-mode-hook #'eglot-ensure))
 
   (when (eq 'lsp-mode ceamx-lsp-client)
-        (add-hook 'nix-mode-hook #'lsp-deferred)))
+    (add-hook 'nix-mode-hook #'lsp-deferred)))
 
 ;;; DISABLED Install and configure ~nix-ts-mode~
 
