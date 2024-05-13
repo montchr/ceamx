@@ -52,7 +52,7 @@
     ;;
     ;; FIXME: This actually results in creating the quote pair *after* the
     ;; closing quote. "for example:"" "
-    (setopt lispy-close-quotes-at-end-p t)
+;;    (setopt lispy-close-quotes-at-end-p t)
 
     (setopt lispy-completion-method 'default)
 

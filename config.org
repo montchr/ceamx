@@ -5673,9 +5673,10 @@ non-nil, buffers will never be formatted upon save."
 
 #+begin_src emacs-lisp
 (package! puni
-  (puni-global-mode)
-  (add-hook 'prog-mode-hook #'puni-mode)
-  (add-hook 'term-mode-hook #'puni-disable-puni-mode))
+  ;; (puni-global-mode)
+  ;; (add-hook 'prog-mode-hook #'puni-mode)
+  ;; (add-hook 'term-mode-hook #'puni-disable-puni-mode)
+  )
 
 ;; (after! puni
 ;;     ;; (define-keymap :keymap puni-mode-map
@@ -5855,10 +5856,10 @@ Prepare a prefix commands for binding structural editing commands:
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref config-editor
-(defcustom ceamx-structured-editing-style 'puni
+(defcustom ceamx-structured-editing-style 'lispy
   "The structured editing provider."
   :group 'ceamx
-  :type '(choice :tag "Structured editing style" :value puni
+  :type '(choice :tag "Structured editing style" :value lispy
           (const :tag "Lispy" lispy)
           (const :tag "Puni" puni)))
 #+end_src
@@ -9967,7 +9968,7 @@ Even if Emacs core does things differently.
     ;;
     ;; FIXME: This actually results in creating the quote pair *after* the
     ;; closing quote. "for example:"" "
-    (setopt lispy-close-quotes-at-end-p t)
+;;    (setopt lispy-close-quotes-at-end-p t)
 
     (setopt lispy-completion-method 'default)
 
