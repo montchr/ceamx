@@ -37,11 +37,8 @@
 ;; NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 (package! nix-mode
-  (require 'nix-mode)
-
   (when (eq 'eglot ceamx-lsp-client)
     (add-hook 'nix-mode-hook #'eglot-ensure))
-
   (when (eq 'lsp-mode ceamx-lsp-client)
     (add-hook 'nix-mode-hook #'lsp-deferred)))
 
@@ -50,19 +47,10 @@
 ;; <https://github.com/remi-gelinas/nix-ts-mode>
 
 (package! nix-ts-mode
-  (when (treesit-language-available-p 'nix)
-    (require 'nix-ts-mode)
-
-    (add-hook 'nix-ts-mode-hook #'eglot-ensure)
-
-    (when (eq 'eglot ceamx-lsp-client)
-      (add-hook 'nix-ts-mode-hook #'eglot-ensure))
-
-    (when (eq 'lsp-mode ceamx-lsp-client)
-      (add-hook 'nix-ts-mode-hook #'lsp-deferred))
-
-    (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode))
-    (add-to-list 'major-mode-remap-alist '(nix-mode . nix-ts-mode))))
+  (when (eq 'eglot ceamx-lsp-client)
+    (add-hook 'nix-ts-mode-hook #'eglot-ensure))
+  (when (eq 'lsp-mode ceamx-lsp-client)
+    (add-hook 'nix-ts-mode-hook #'lsp-deferred)))
 
 ;;; Configure formatters
 
