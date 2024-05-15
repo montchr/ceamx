@@ -11,3 +11,7 @@ nix-mode nix-ts-mode
 
 (modbasic (i modargs) n "{" n> q n "}")
 
+(persys & "\
+  perSystem =
+    { " (p "inputs', ") (p "pkgs")", ... }:
+    {" n> > r> n> "};" %)
