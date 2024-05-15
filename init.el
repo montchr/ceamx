@@ -232,18 +232,13 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;;; Dashboard
 
 (require 'init-dashboard)
-;;;; Selection
+;;;; Text Expansion
 
-(require 'init-selection-vertico)
-(require 'init-selection-orderless)
-(require 'init-selection-marginalia)
-(require 'init-selection-consult)
+(require 'init-abbrevs)
+;;;; Completions and Selections
 
 (require 'init-search)
-;;;; Completion-At-Point
-
 (require 'init-completion)
-(require 'init-abbrevs)
 ;;;; Help
 
 (require 'init-help)

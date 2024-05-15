@@ -394,6 +394,72 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-files")>>
 #+end_src
 
+*** =lisp/init-abbrevs.el=
+
+#+name: init-abbrevs-file
+#+begin_src emacs-lisp :tangle lisp/init-abbrevs.el
+<<file-prop-line(feature="init-abbrevs",desc="Abbrevs support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-abbrevs>>
+
+<<file-footer(feature="init-abbrevs")>>
+#+end_src
+
+*** =lisp/init-completion.el=
+
+#+name: init-completion-file
+#+begin_src emacs-lisp :tangle lisp/init-completion.el
+<<file-prop-line(feature="init-completion",desc="Completion enhancements")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-completion>>
+
+<<file-footer(feature="init-completion")>>
+#+end_src
+
+*** =lisp/lib-completion.el=
+
+#+name: lib-completion-file
+#+begin_src emacs-lisp :tangle lisp/lib-completion.el
+<<file-prop-line(feature="lib-completion",desc="Completion helpers")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-completion>>
+
+<<file-footer(feature="lib-completion")>>
+#+end_src
+
 *** =lisp/init-templates.el=
 
 #+name: init-templates-file
@@ -1016,7 +1082,7 @@ Example table:
 #+end_src
 
 #+RESULTS:
-| /home/cdom/.config/emacs/lisp/lib-text.el | /home/cdom/.config/emacs/lisp/lib-simple.el | /home/cdom/.config/emacs/lisp/init-fun.el | /home/cdom/.config/emacs/lisp/init-tools-pdf.el | /home/cdom/.config/emacs/lisp/init-tools-ledger.el | /home/cdom/.config/emacs/lisp/init-tools-ai.el | /home/cdom/.config/emacs/lisp/init-tools.el | /home/cdom/.config/emacs/lisp/lib-eww.el | /home/cdom/.config/emacs/lisp/init-eww.el | /home/cdom/.config/emacs/lisp/init-news.el | /home/cdom/.config/emacs/lisp/init-printing.el | /home/cdom/.config/emacs/lisp/init-dired.el | /home/cdom/.config/emacs/lisp/init-dashboard.el | /home/cdom/.config/emacs/lisp/init-controls.el | /home/cdom/.config/emacs/lisp/init-notes-denote.el | /home/cdom/.config/emacs/lisp/init-notes.el | /home/cdom/.config/emacs/lisp/init-lang-misc.el | /home/cdom/.config/emacs/lisp/init-lang-yaml.el | /home/cdom/.config/emacs/lisp/init-lang-shell.el | /home/cdom/.config/emacs/lisp/init-shell-nu.el | /home/cdom/.config/emacs/lisp/init-lang-nix.el | /home/cdom/.config/emacs/lisp/lib-lang-markdown.el | /home/cdom/.config/emacs/lisp/init-lang-markdown.el | /home/cdom/.config/emacs/lisp/init-lang-lua.el | /home/cdom/.config/emacs/lisp/init-lang-js.el | /home/cdom/.config/emacs/lisp/init-lang-html.el | /home/cdom/.config/emacs/lisp/init-lang-data.el | /home/cdom/.config/emacs/lisp/lib-elisp.el | /home/cdom/.config/emacs/lisp/init-lang-elisp.el | /home/cdom/.config/emacs/lisp/lib-lisp.el | /home/cdom/.config/emacs/lisp/config-lisp.el | /home/cdom/.config/emacs/lisp/init-lisp.el | /home/cdom/.config/emacs/lisp/init-treesitter.el | /home/cdom/.config/emacs/lisp/init-prog.el | /home/cdom/.config/emacs/lisp/init-project.el | /home/cdom/.config/emacs/lisp/init-term.el | /home/cdom/.config/emacs/lisp/init-embark.el | /home/cdom/.config/emacs/lisp/lib-completion.el | /home/cdom/.config/emacs/lisp/init-selection-orderless.el | /home/cdom/.config/emacs/lisp/init-selection-marginalia.el | /home/cdom/.config/emacs/lisp/init-selection-consult.el | /home/cdom/.config/emacs/lisp/init-selection-vertico.el | /home/cdom/.config/emacs/lisp/init-completion.el | /home/cdom/.config/emacs/lisp/init-abbrevs.el | /home/cdom/.config/emacs/lisp/config-keys.el | /home/cdom/.config/emacs/lisp/init-keys-which-key.el | /home/cdom/.config/emacs/lisp/lib-keys-meow.el | /home/cdom/.config/emacs/lisp/init-keys-meow.el | /home/cdom/.config/emacs/lisp/init-keys.el | /home/cdom/.config/emacs/lisp/init-input-methods.el | /home/cdom/.config/emacs/lisp/init-history.el | /home/cdom/.config/emacs/lisp/lib-help.el | /home/cdom/.config/emacs/lisp/init-help.el | /home/cdom/.config/emacs/lisp/init-workspace.el | /home/cdom/.config/emacs/lisp/config-buffer.el | /home/cdom/.config/emacs/lisp/lib-buffer.el | /home/cdom/.config/emacs/lisp/init-buffer.el | /home/cdom/.config/emacs/lisp/lib-frame.el | /home/cdom/.config/emacs/lisp/init-frame-hooks.el | /home/cdom/.config/emacs/lisp/init-frame.el | /home/cdom/.config/emacs/lisp/lib-secrets.el | /home/cdom/.config/emacs/lisp/init-secrets.el | /home/cdom/.config/emacs/lisp/lib-env-wsl.el | /home/cdom/.config/emacs/lisp/init-env-tty.el | /home/cdom/.config/emacs/lisp/config-env.el | /home/cdom/.config/emacs/lisp/config-common.el | /home/cdom/.config/emacs/lisp/core/ceamx-keymaps.el | /home/cdom/.config/emacs/lisp/core/ceamx-paths.el | /home/cdom/.config/emacs/.data/file-header-example.el | /home/cdom/.config/emacs/lisp/init-writing.el | /home/cdom/.config/emacs/lisp/init-lang-php.el | /home/cdom/.config/emacs/lisp/init-lsp-mode.el | /home/cdom/.config/emacs/lisp/init-eglot.el | /home/cdom/.config/emacs/lisp/config-prog.el | /home/cdom/.config/emacs/lisp/init-vcs.el | /home/cdom/.config/emacs/lisp/config-editor.el | /home/cdom/.config/emacs/lisp/lib-editor.el | /home/cdom/.config/emacs/lisp/init-editor.el | /home/cdom/.config/emacs/lisp/lib-window.el | /home/cdom/.config/emacs/lisp/config-window.el | /home/cdom/.config/emacs/lisp/init-window.el | /home/cdom/.config/emacs/lisp/lib-search.el | /home/cdom/.config/emacs/lisp/init-search.el | /home/cdom/.config/emacs/lisp/init-org.el | /home/cdom/.config/emacs/lisp/init-outline.el | /home/cdom/.config/emacs/lisp/init-templates.el | /home/cdom/.config/emacs/lisp/lib-files.el | /home/cdom/.config/emacs/lisp/init-files.el | /home/cdom/.config/emacs/lisp/lib-ui.el | /home/cdom/.config/emacs/lisp/config-ui.el | /home/cdom/.config/emacs/lisp/init-ui-font.el | /home/cdom/.config/emacs/lisp/init-ui.el | /home/cdom/.config/emacs/lisp/init-env.el | /home/cdom/.config/emacs/lisp/core/ceamx-lib.el | /home/cdom/.config/emacs/init.el | /home/cdom/.config/emacs/early-init.el |
+| /home/cdom/.config/emacs/lisp/lib-text.el | /home/cdom/.config/emacs/lisp/lib-simple.el | /home/cdom/.config/emacs/lisp/init-fun.el | /home/cdom/.config/emacs/lisp/init-tools-pdf.el | /home/cdom/.config/emacs/lisp/init-tools-ledger.el | /home/cdom/.config/emacs/lisp/init-tools-ai.el | /home/cdom/.config/emacs/lisp/init-tools.el | /home/cdom/.config/emacs/lisp/lib-eww.el | /home/cdom/.config/emacs/lisp/init-eww.el | /home/cdom/.config/emacs/lisp/init-news.el | /home/cdom/.config/emacs/lisp/init-printing.el | /home/cdom/.config/emacs/lisp/init-dired.el | /home/cdom/.config/emacs/lisp/init-dashboard.el | /home/cdom/.config/emacs/lisp/init-controls.el | /home/cdom/.config/emacs/lisp/init-notes-denote.el | /home/cdom/.config/emacs/lisp/init-notes.el | /home/cdom/.config/emacs/lisp/init-lang-misc.el | /home/cdom/.config/emacs/lisp/init-lang-yaml.el | /home/cdom/.config/emacs/lisp/init-lang-shell.el | /home/cdom/.config/emacs/lisp/init-shell-nu.el | /home/cdom/.config/emacs/lisp/init-lang-nix.el | /home/cdom/.config/emacs/lisp/lib-lang-markdown.el | /home/cdom/.config/emacs/lisp/init-lang-markdown.el | /home/cdom/.config/emacs/lisp/init-lang-lua.el | /home/cdom/.config/emacs/lisp/init-lang-js.el | /home/cdom/.config/emacs/lisp/init-lang-html.el | /home/cdom/.config/emacs/lisp/init-lang-data.el | /home/cdom/.config/emacs/lisp/lib-elisp.el | /home/cdom/.config/emacs/lisp/init-lang-elisp.el | /home/cdom/.config/emacs/lisp/lib-lisp.el | /home/cdom/.config/emacs/lisp/config-lisp.el | /home/cdom/.config/emacs/lisp/init-lisp.el | /home/cdom/.config/emacs/lisp/init-treesitter.el | /home/cdom/.config/emacs/lisp/init-prog.el | /home/cdom/.config/emacs/lisp/init-flycheck.el | /home/cdom/.config/emacs/lisp/init-project.el | /home/cdom/.config/emacs/lisp/init-term.el | /home/cdom/.config/emacs/lisp/init-embark.el | /home/cdom/.config/emacs/lisp/config-keys.el | /home/cdom/.config/emacs/lisp/init-keys-which-key.el | /home/cdom/.config/emacs/lisp/lib-keys-meow.el | /home/cdom/.config/emacs/lisp/init-keys-meow.el | /home/cdom/.config/emacs/lisp/init-keys.el | /home/cdom/.config/emacs/lisp/init-input-methods.el | /home/cdom/.config/emacs/lisp/init-history.el | /home/cdom/.config/emacs/lisp/lib-help.el | /home/cdom/.config/emacs/lisp/init-help.el | /home/cdom/.config/emacs/lisp/init-workspace.el | /home/cdom/.config/emacs/lisp/config-buffer.el | /home/cdom/.config/emacs/lisp/lib-buffer.el | /home/cdom/.config/emacs/lisp/init-buffer.el | /home/cdom/.config/emacs/lisp/lib-frame.el | /home/cdom/.config/emacs/lisp/init-frame-hooks.el | /home/cdom/.config/emacs/lisp/init-frame.el | /home/cdom/.config/emacs/lisp/lib-secrets.el | /home/cdom/.config/emacs/lisp/init-secrets.el | /home/cdom/.config/emacs/lisp/lib-env-wsl.el | /home/cdom/.config/emacs/lisp/init-env-tty.el | /home/cdom/.config/emacs/lisp/config-env.el | /home/cdom/.config/emacs/lisp/config-common.el | /home/cdom/.config/emacs/lisp/core/ceamx-keymaps.el | /home/cdom/.config/emacs/lisp/core/ceamx-paths.el | /home/cdom/.config/emacs/.data/file-header-example.el | /home/cdom/.config/emacs/lisp/init-writing.el | /home/cdom/.config/emacs/lisp/init-lang-php.el | /home/cdom/.config/emacs/lisp/init-lsp-mode.el | /home/cdom/.config/emacs/lisp/init-eglot.el | /home/cdom/.config/emacs/lisp/config-prog.el | /home/cdom/.config/emacs/lisp/init-vcs.el | /home/cdom/.config/emacs/lisp/config-editor.el | /home/cdom/.config/emacs/lisp/lib-editor.el | /home/cdom/.config/emacs/lisp/init-editor.el | /home/cdom/.config/emacs/lisp/lib-window.el | /home/cdom/.config/emacs/lisp/config-window.el | /home/cdom/.config/emacs/lisp/init-window.el | /home/cdom/.config/emacs/lisp/lib-search.el | /home/cdom/.config/emacs/lisp/init-search.el | /home/cdom/.config/emacs/lisp/init-org.el | /home/cdom/.config/emacs/lisp/init-outline.el | /home/cdom/.config/emacs/lisp/init-templates.el | /home/cdom/.config/emacs/lisp/lib-completion.el | /home/cdom/.config/emacs/lisp/init-completion.el | /home/cdom/.config/emacs/lisp/init-abbrevs.el | /home/cdom/.config/emacs/lisp/lib-files.el | /home/cdom/.config/emacs/lisp/init-files.el | /home/cdom/.config/emacs/lisp/lib-ui.el | /home/cdom/.config/emacs/lisp/config-ui.el | /home/cdom/.config/emacs/lisp/init-ui-font.el | /home/cdom/.config/emacs/lisp/init-ui.el | /home/cdom/.config/emacs/lisp/init-env.el | /home/cdom/.config/emacs/lisp/core/ceamx-lib.el | /home/cdom/.config/emacs/init.el | /home/cdom/.config/emacs/early-init.el |
 
 #+name: ceamx-tangle-src
 #+begin_src emacs-lisp
@@ -1705,21 +1771,16 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 #+end_src
 
 #+begin_src emacs-lisp
-;;;; Selection
+;;;; Text Expansion
 
-(require 'init-selection-vertico)
-(require 'init-selection-orderless)
-(require 'init-selection-marginalia)
-(require 'init-selection-consult)
-
-(require 'init-search)
+(require 'init-abbrevs)
 #+end_src
 
 #+begin_src emacs-lisp
-;;;; Completion-At-Point
+;;;; Completions and Selections
 
+(require 'init-search)
 (require 'init-completion)
-(require 'init-abbrevs)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -7930,56 +7991,12 @@ as the CHAR argument to `ceamx-normalize-char'."
 #+end_src
 
 
-* Completion
+* Text Expansion
 
-#+name: init-abbrevs-file
-#+begin_src emacs-lisp  :tangle lisp/init-abbrevs.el
-<<file-prop-line(feature="init-abbrevs",desc="Abbrevs support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-abbrevs>>
-
-<<file-footer(feature="init-abbrevs")>>
-#+end_src
-
-#+name: init-completion-file
-#+begin_src emacs-lisp  :tangle lisp/init-completion.el
-<<file-prop-line(feature="init-completion",desc="Completion-At-Point enhancements")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-completion>>
-
-<<file-footer(feature="init-completion")>>
-#+end_src
-
-
-** Abbrevs (~abbrev-mode~) :: ~init-abbrevs~
+** Abbrevs (~abbrev-mode~)
 :PROPERTIES:
 :header-args: :noweb-ref init-abbrevs
 :END:
-
-- Note taken on [2024-04-09 Tue 01:00] \\
-  Currently it is impossible to type when ~abbrev-mode~ is active in a buffer.
 
 *** Re-locate the abbrev file to the ~user-emacs-directory~ for quick access
 
@@ -8036,51 +8053,96 @@ Adapted from Prot's original version with the following changes:
 #+end_src
 
 
-** Vertico
 
-#+begin_src emacs-lisp :tangle lisp/init-selection-vertico.el
-;;; init-selection-vertico.el --- Vertico configuration        -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+* Completions and Selections :completions:
+:PROPERTIES:
+:header-args: :noweb-ref init-completion
+:END:
 
-;; Author: Chris Montgomery <chris@cdom.io>
+** Requirements
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; "VERTical Interactive COmpletion"
-;;
-;; <https://github.com/minad/vertico>
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'ceamx-lib)
+(require 'lib-completion)
+#+end_src
 
+** Global Settings
+
+#+begin_src emacs-lisp
+;; Always resize mini-windows to fit their contents.
+(setopt resize-mini-windows t)
+
+;; TAB cycle if there are only few candidates
+(setopt completion-cycle-threshold 2)
+
+;; Hide commands in M-x which do not apply to the current mode.  Corfu commands
+;; are hidden, since they are not used via M-x.  This setting is useful beyond
+;; Corfu.
+(setopt read-extended-command-predicate #'command-completion-default-include-p)
+
+;; Don't let `completion-at-point' interfere with indentation.
+(setopt tab-always-indent 'complete)
+
+;; `completion-at-point' is often bound to M-TAB, but that conflicts with OS behavior.
+;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
+(keymap-global-set "C-S-SPC" #'completion-at-point)
+#+end_src
+
+*** Enable recursive minibuffers
+
+#+begin_src emacs-lisp
+(setopt enable-recursive-minibuffers t)
+#+end_src
+
+*** Hide M-x commands which do not work in the current mode
+
+Vertico commands are hidden in normal buffers.
+
+#+begin_src emacs-lisp
+(setopt read-extended-command-predicate #'command-completion-default-include-p)
+#+end_src
+
+*** Do not allow the cursor in the minibuffer prompt
+
+#+begin_src emacs-lisp
+(setopt minibuffer-prompt-properties '( read-only t
+                                        cursor-intangible t
+                                        face minibuffer-prompt))
+
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+#+end_src
+
+*** Add an indicator to the ~completing-read-multiple~ prompt :ui:
+
+#+begin_src emacs-lisp
+(defvar crm-separator)
+
+(defun +crm-indicator (args)
+  "Add prompt indicator to `completing-read-multiple' (ARGS are candidates).
+We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
+  (cons (format "[CRM%s] %s"
+                (replace-regexp-in-string
+                 "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                 crm-separator)
+                (car args))
+        (cdr args)))
+
+(advice-add #'completing-read-multiple :filter-args #'+crm-indicator)
+#+end_src
+
+** VERTical Interactive COmpletion :ui:minibuffer:
+
++ website :: <https://github.com/minad/vertico>
+
+#+begin_src emacs-lisp
 (defvar savehist-additional-variables)
+#+end_src
 
-;;
-;;; Packages
-;;
+*** Install Vertico and configure its global settings
 
-(use-package vertico
-  ;; FIXME: :elpaca (vertico :files (:defaults "extensions/*"))
-  :demand t
-
-  :init
-  (vertico-mode)
-
+#+begin_src emacs-lisp
+(package! vertico
   ;; Different scroll margin
   ;; (setopt vertico-scroll-margin 0)
 
@@ -8093,9 +8155,15 @@ Adapted from Prot's original version with the following changes:
   ;; Enable cycling for `vertico-next' and `vertico-previous'.
   (setopt vertico-cycle t)
 
-  :config
-  ;; Prefix current candidate with arrow
-  ;; <https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow>
+  (vertico-mode))
+#+end_src
+
+*** Prefix current candidate with arrow :feedback:
+
++ src :: <https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow>
+
+#+begin_src emacs-lisp
+(after! vertico
   (advice-add #'vertico--format-candidate :around
     (lambda (orig cand prefix suffix index start)
       (setq cand (funcall orig cand prefix suffix index start))
@@ -8103,17 +8171,13 @@ Adapted from Prot's original version with the following changes:
                   (propertize "» " 'face 'vertico-current)
                 "  ")
               cand))))
+#+end_src
 
-;; Configure directory extension.
-(use-feature! vertico-directory
-  :after (vertico)
-  :commands ( vertico-directory-enter
-              vertico-directory-delete-char
-              vertico-directory-delete-word
-              vertico-directory-tidy)
+*** Set up the ~vertico-directory~ extension
 
-  :init
-  ;; TODO: what for, exactly? needs binding?
+#+begin_src emacs-lisp
+(after! vertico
+  ;; FIXME: why is this disabled? i miss it
   ;; via <https://github.com/minad/vertico/wiki#additions-for-moving-up-and-down-directories-in-find-file>
   ;; (defun ceamx/vertico-directory-delete-entry ()
   ;;   "Delete directory or entire entry before point."
@@ -8135,324 +8199,226 @@ Adapted from Prot's original version with the following changes:
 
   ;; Tidy shadowed file names -- e.g. cleans `~/foo/bar///' to `/', and `~/foo/bar/~/' to `~/'.
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
+#+end_src
 
-(use-feature! vertico-repeat
-  :after (savehist vertico)
-  :commands ( vertico-repeat-history
-              vertico-repeat-save)
-  :init
+*** Set up the ~vertico-repeat~ extension for recalling session history :history:
+
+#+begin_src emacs-lisp
+(after! (vertico savehist)
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
-  :config
   (add-to-list 'savehist-additional-variables #'vertico-repeat-history))
-
-(use-feature! emacs
-  :init
-  ;; Add prompt indicator to `completing-read-multiple'.
-  (defvar crm-separator)
-  (defun +crm-indicator (args)
-    "Add prompt indicator to `completing-read-multiple' (ARGS are candidates).
-We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
-    (cons (format "[CRM%s] %s"
-            (replace-regexp-in-string
-              "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-              crm-separator)
-            (car args))
-      (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'+crm-indicator)
-
-  ;; Do not allow the cursor in the minibuffer prompt
-  (setopt minibuffer-prompt-properties '( read-only t
-                                          cursor-intangible t
-                                          face minibuffer-prompt))
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-
-  ;; Hide commands in M-x which do not work in the current mode.
-  ;; Vertico commands are hidden in normal buffers.
-  (setopt read-extended-command-predicate #'command-completion-default-include-p)
-
-  ;; Enable recursive minibuffers.
-  (setopt enable-recursive-minibuffers t))
-
-(provide 'init-selection-vertico)
-;;; init-selection-vertico.el ends here
 #+end_src
 
 
-** Consult
+** CONSULTing completing-read :minibuffer:search:
 
-#+begin_src emacs-lisp :tangle lisp/init-selection-consult.el
-;;; init-selection-consult.el --- Configuration for Consult  -*- lexical-binding: t; -*-
+- website :: <https://github.com/minad/consult>
+- ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+*** Install the Consult package
 
-;; Author: Chris Montgomery <chris@cdom.io>
+#+begin_src emacs-lisp
+(package! consult)
+#+end_src
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+*** Narrow/filter Consult candidates
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+#+begin_src emacs-lisp
+(setopt consult-narrow-key "<") ;; alternatively: "C-+"
+#+end_src
 
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*** Configure the display of candidate previews :ui:
 
-;;; Commentary:
+#+begin_src emacs-lisp
+(setopt consult-preview-key 'any)
+#+end_src
 
-;; "Consulting completing-read"
-;;
-;; <https://github.com/minad/consult>
+#+begin_src emacs-lisp
+;; Enable automatic preview at point in the *Completions* buffer. This is
+;; relevant when you use the default completion UI.
+(add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
+#+end_src
 
-;; <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
+**** Granularly refine per-command preview behavior
 
-;;; Code:
-
-(require 'ceamx-lib)
-
-(use-package consult
-  :commands ( consult-bookmark consult-buffer consult-buffer-other-frame consult-buffer-other-tab
-              consult-buffer-other-window consult-compile-error consult-complex-command
-              consult-fd consult-flymake consult-focus-lines consult-git-grep
-              consult-global-mark consult-goto-line consult-history consult-imenu
-              consult-imenu-multi consult-info consult-keep-lines consult-kmacro
-              consult-line consult-line-multi consult-locate consult-man consult-mark
-              consult-mode-command consult-outline consult-preview-at-point-mode
-              consult-project-buffer consult-register consult-register-format consult-register-load
-              consult-register-store consult-register-window consult-ripgrep consult-xref
-              consult-yank-pop)
-
-  :init
-
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
-  (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
-
-  ;; Improve previews for `consult-register' and other register commands.
-  (setopt register-preview-delay 0.5)
-  (setopt register-preview-function #'consult-register-format)
-  (advice-add #'register-preview :override #'consult-register-window)
-
-  ;; Display xref locations with previews.
-  (setopt xref-show-definitions-function #'consult-xref)
-  (setopt xref-show-xrefs-function #'consult-xref)
-
-  (global-keys!
-    "C-c M-x" #'consult-mode-command
-    ;; TODO: needs configuration? see `consult-mode-histories'
-    ;; "C-c h"   #'consult-history
-    "C-c K" #'consult-kmacro
-    "C-c M" #'consult-man
-
-    ;; FIXME: use a keymap for s prefix
-    ;; "C-c s h"  #'consult-history
-    ;; "C-c s m"  #'consult-mode-command
-    ;; "C-c s k"  #'consult-kmacro
-
-    "<remap> <Info-search>" #'consult-info
-
-    "C-x M-:" #'consult-complex-command     ; orig. `repeat-complex-command'
-    "C-x b" #'consult-buffer                ; orig. `switch-to-buffer'
-    "C-x 4 b" #'consult-buffer-other-window ; orig. `switch-to-buffer-other-window'
-    "C-x 5 b" #'consult-buffer-other-frame ; orig. `switch-to-buffer-other-frame'
-    "C-x t b" #'consult-buffer-other-tab   ; orig. `switch-to-buffer-other-tab'
-    "C-x r"  #'consult-bookmark            ; orig. `bookmark-jump'
-    "C-x p b" #'consult-project-buffer     ; orig. `project-switch-to-buffer'
-
-    ;; Custom M-# bindings for fast register access
-    "M-#"    #'consult-register-load
-    "M-'"    #'consult-register-store
-    "C-M-#"  #'consult-register
-
-    ;; Miscellaneous
-    "M-y" #'consult-yank-pop            ; orig. `yank-pop'
-
-    ;; M-g bindings (goto-map)
-    "M-g e"  #'consult-compile-error
-    "M-g f"  #'consult-flymake ;; Alternative: consult-flycheck
-    "M-g g" #'consult-goto-line
-    "M-g M-g" #'consult-goto-line
-    "M-g o"  #'consult-outline ;; Alternative: consult-org-heading
-    "M-g m"  #'consult-mark
-    "M-g k"  #'consult-global-mark
-    "M-g i"  #'consult-imenu
-    "M-g I"  #'consult-imenu-multi
-
-    ;; M-s bindings (search-map)
-    "M-s d"  #'consult-fd               ; or `consult-find'
-    "M-s D"  #'consult-locate
-    "M-s g"  #'consult-ripgrep
-    "M-s G"  #'consult-git-grep
-    "M-s l"  #'consult-line
-    "M-s L"  #'consult-line-multi
-    "M-s k"  #'consult-keep-lines
-    "M-s u"  #'consult-focus-lines)
-
-;;;; ~isearch~ integration
-
-  (keymap-global-set "M-s e" #'consult-isearch-history)
-
-  ;; Needed by consult-line to detect isearch.
-  (define-keymap :keymap isearch-mode-map
-    "M-e" #'consult-isearch-history
-    "M-s e" #'consult-isearch-history
-    "M-s l" #'consult-line
-    "M-s L" #'consult-line-multi)
-
-;;;; minibuffer integration
-
-  (keymap-set minibuffer-local-map "M-s" #'consult-history) ; orig. next-matching-history-element
-  (keymap-set minibuffer-local-map "M-r" #'consult-history) ; orig. previous-matching-history-element
-
-
-  :config
-
-  (setopt consult-preview-key 'any)
-
+#+begin_src emacs-lisp
+(after! consult
   ;; For some commands and buffer sources it is useful to configure the
   ;; :preview-key on a per-command basis using the `consult-customize' macro.
   (consult-customize
-    consult-theme :preview-key '(:debounce 0.2 any)
-    consult-ripgrep consult-git-grep consult-grep
-    consult-bookmark consult-recent-file consult-xref
-    consult--source-bookmark consult--source-file-register
-    consult--source-recent-file consult--source-project-recent-file
-    ;; :preview-key (kbd "M-.")
-    :preview-key '(:debounce 0.4 any))
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   ;; :preview-key (kbd "M-.")
+   :preview-key '(:debounce 0.4 any)))
+#+end_src
 
-  ;; Configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setopt consult-narrow-key "<") ;; "C-+"
+**** Improve previews for ~consult-register~ and other register commands :registers:
+
+#+begin_src emacs-lisp
+(setopt register-preview-delay 0.5)
+(setopt register-preview-function #'consult-register-format)
+(advice-add #'register-preview :override #'consult-register-window)
+#+end_src
+
+**** Display xref locations with previews :xref:
+
+#+begin_src emacs-lisp
+(setopt xref-show-definitions-function #'consult-xref)
+(setopt xref-show-xrefs-function #'consult-xref)
+#+end_src
+
+*** Keybindings :keybinds:
+
+**** Define global keybindings for Consult commands
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-c M-x" #'consult-mode-command
+  ;; TODO: needs configuration? see `consult-mode-histories'
+  ;; "C-c h"   #'consult-history
+  "C-c K" #'consult-kmacro
+  "C-c M" #'consult-man
+
+  ;; FIXME: use a keymap for s prefix
+  ;; "C-c s h"  #'consult-history
+  ;; "C-c s m"  #'consult-mode-command
+  ;; "C-c s k"  #'consult-kmacro
+
+  "<remap> <Info-search>" #'consult-info
+
+  "C-x M-:" #'consult-complex-command     ; orig. `repeat-complex-command'
+  "C-x b" #'consult-buffer                ; orig. `switch-to-buffer'
+  "C-x 4 b" #'consult-buffer-other-window ; orig. `switch-to-buffer-other-window'
+  "C-x 5 b" #'consult-buffer-other-frame ; orig. `switch-to-buffer-other-frame'
+  "C-x t b" #'consult-buffer-other-tab   ; orig. `switch-to-buffer-other-tab'
+  "C-x r"  #'consult-bookmark            ; orig. `bookmark-jump'
+  "C-x p b" #'consult-project-buffer     ; orig. `project-switch-to-buffer'
+
+  ;; Custom M-# bindings for fast register access
+  "M-#"    #'consult-register-load
+  "M-'"    #'consult-register-store
+  "C-M-#"  #'consult-register
+
+  ;; Miscellaneous
+  "M-y" #'consult-yank-pop            ; orig. `yank-pop'
+
+  ;; M-g bindings (goto-map)
+  "M-g e"  #'consult-compile-error
+  "M-g f"  #'consult-flymake ;; Alternative: consult-flycheck
+  "M-g g" #'consult-goto-line
+  "M-g M-g" #'consult-goto-line
+  "M-g o"  #'consult-outline ;; Alternative: consult-org-heading
+  "M-g m"  #'consult-mark
+  "M-g k"  #'consult-global-mark
+  "M-g i"  #'consult-imenu
+  "M-g I"  #'consult-imenu-multi
+
+  ;; M-s bindings (search-map)
+  "M-s d"  #'consult-fd               ; or `consult-find'
+  "M-s D"  #'consult-locate
+  "M-s e"  #'consult-isearch-history
+  "M-s g"  #'consult-ripgrep
+  "M-s G"  #'consult-git-grep
+  "M-s l"  #'consult-line
+  "M-s L"  #'consult-line-multi
+  "M-s k"  #'consult-keep-lines
+  "M-s u"  #'consult-focus-lines)
+#+end_src
+
+**** Define keybindings in ~isearch-mode-map~ for ~consult-line~ integration :isearch:
+
+#+begin_src emacs-lisp
+(after! isearch
+  (define-keymap :keymap isearch-mode-map
+    "M-e"   #'consult-isearch-history
+    "M-s e" #'consult-isearch-history
+    "M-s l" #'consult-line
+    "M-s L" #'consult-line-multi))
+#+end_src
+
+**** Define minibuffer-local keybindings for searching its history :minibuffer:history:
+
+#+begin_src emacs-lisp
+(keymap-set minibuffer-local-map "M-s" #'consult-history) ; orig. next-matching-history-element
+(keymap-set minibuffer-local-map "M-r" #'consult-history)
+#+end_src
+
+#+begin_src emacs-lisp
+(after! consult
 
   ;; Make narrowing help available in the minibuffer.
+  ;; FIXME: What if Embark commands are not autoloaded yet?
   (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'embark-prefix-help-command)
 
   ;; By default `consult-project-function' uses `project-root' from project.el.
   (with-eval-after-load 'projectile
     (declare-function projectile-project-root "projectile")
     (setopt consult-project-function (lambda (_) (projectile-project-root)))))
+#+end_src
 
-;; <https://github.com/minad/consult#embark-integration>
-(use-package embark-consult
-  :after (embark consult)
-  :init
-  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
+*** Install ~embark-consult~ for Embark integration
 
-;; <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion.el#L357>
+#+begin_src emacs-lisp
+(package! embark-consult
+  (after! embark
+    (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
+
+  (after! (embark consult)
+    (require 'embark-consult)))
+#+end_src
+
+*** Pulse line for visual feedback upon Consult selection jump :ui:navigation:
+
++ [ ] Why after ~consult-imenu~?
+
+#+begin_src emacs-lisp
 (after! (consult consult-imenu pulsar)
   (setq consult-after-jump-hook nil)
   (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
     (add-hook 'consult-after-jump-hook fn)))
-
-(provide 'init-selection-consult)
-;;; init-selection-consult.el ends here
 #+end_src
 
 
-** Marginalia
+** Marginalia for minibuffer completion candidates :minibuffer:help:
 
-Minibuffer candidate annotations.
+- website :: <https://github.com/minad/marginalia>
 
-#+begin_src emacs-lisp :tangle lisp/init-selection-marginalia.el
-;;; init-selection-marginalia.el --- Marginalia configuration  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;  Enable rich completion annotations in the minibuffer.
-;;
-;;  <https://github.com/minad/marginalia>
-
-;;; Code:
-
-(require 'ceamx-lib)
-
-(use-package marginalia
-  :defines (marginalia-annotators)
-  :init
-  ;; <https://www.lucacambiaghi.com/vanilla-emacs/readme.html#h:37ACBBF7-989F-4A57-9454-06B79B8EB4F0>
-  (setq marginalia-annotators '(marginalia-annotators-heavy
-                                marginalia-annotators-light
-                                nil))
-
-  ;; Must be in the :init section of use-package such that the mode gets
-  ;; enabled right away. Note that this forces loading the package.
-  (marginalia-mode)
-
-  :config
+#+begin_src emacs-lisp
+(package! marginalia
   (keymap-set minibuffer-local-map "M-A" #'marginalia-cycle)
 
-  (after! projectile
-    (add-to-list 'marginalia-command-categories '(projectile-find-file . file))))
-
-(provide 'init-selection-marginalia)
-;;; init-selection-marginalia.el ends here
+  (marginalia-mode))
 #+end_src
 
+*** Projectile integration
 
-** Orderless
+#+begin_src emacs-lisp
+(after! (marginalia)
+  (when (featurep 'projectile)
+    (add-to-list 'marginalia-command-categories '(projectile-find-file . file))))
+#+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-selection-orderless.el
-;;; init-selection-orderless.el --- Orderless completion matching style configuration  -*- lexical-binding: t; -*-
+** Orderlessly completion-match multiple regular expressions :search:
 
-;; Copyright (C) 2023-2024  Chris Montgomery
++ website :: <https://github.com/oantolin/orderless>
++ source :: <https://github.com/oantolin/orderless?tab=readme-ov-file#style-dispatchers>
++ source :: <https://github.com/minad/consult/wiki#minads-orderless-configuration>
 
-;; Author: Chris Montgomery <chris@cdom.io>
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;  Emacs completion style that matches multiple regexps in any order.
-;;
-;;  <https://github.com/oantolin/orderless>
-
-;; Refer to the following for sources info:
-;; <https://github.com/oantolin/orderless?tab=readme-ov-file#style-dispatchers>
-;; <https://github.com/minad/consult/wiki#minads-orderless-configuration>
-
-
-;;; Code:
-
-(require 'ceamx-lib)
-
+#+begin_src emacs-lisp
 (package! orderless
+  ;; FIXME: unnecessary as long as stuff is configured
   (require 'orderless)
 
   ;; Allow escaping space with backslash.
   (setopt orderless-component-separator #'orderless-escapable-split-on-space))
+#+end_src
 
-;;;; Query syntax additions through style dispatchers
+*** Query syntax additions through style dispatchers
 
+#+begin_src emacs-lisp
 ;; (defun +orderless-flex-if-twiddle-dispatch (pattern _index _total)
 ;;   "Return `orderless-flex' if PATTERN ends in a tilde character.
 ;; PATTERN, stripped of its tilde character, will be dispatched as
@@ -8474,99 +8440,46 @@ Minibuffer candidate annotations.
 ;;    ((string-prefix-p "!" pattern)
 ;;     `(orderless-not . ,(substring pattern 1)))))
 
-  (defun +orderless--consult-suffix ()
-    "Regexp which matches the end of string with Consult tofu support."
-    (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
-        (format "[%c-%c]*$"
-                consult--tofu-char
-                (+ consult--tofu-char consult--tofu-range -1))
-      "$"))
+(defun +orderless--consult-suffix ()
+  "Regexp which matches the end of string with Consult tofu support."
+  (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
+      (format "[%c-%c]*$"
+              consult--tofu-char
+              (+ consult--tofu-char consult--tofu-range -1))
+    "$"))
 
-  ;; Recognizes the following patterns:
-  ;; * .ext (file extension)
-  ;; * regexp$ (regexp matching at end)
-  (defun +orderless-consult-dispatch (word _index _total)
-    (cond
-     ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
-     ((string-suffix-p "$" word)
-      `(orderless-regexp . ,(concat (substring word 0 -1) (+orderless--consult-suffix))))
-     ;; File extensions
-     ((and (or minibuffer-completing-file-name
-               (derived-mode-p 'eshell-mode))
-           (string-match-p "\\`\\.." word))
-      `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--consult-suffix))))))
+;; Recognizes the following patterns:
+;; + .ext (file extension)
+;; + regexp$ (regexp matching at end)
+(defun +orderless-consult-dispatch (word _index _total)
+  (cond
+   ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
+   ((string-suffix-p "$" word)
+    `(orderless-regexp . ,(concat (substring word 0 -1) (+orderless--consult-suffix))))
+   ;; File extensions
+   ((and (or minibuffer-completing-file-name
+             (derived-mode-p 'eshell-mode))
+         (string-match-p "\\`\\.." word))
+    `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--consult-suffix))))))
+#+end_src
 
-;;;; Define custom completion syntax styles
+*** Define custom completion syntax styles
 
+#+begin_src emacs-lisp
 (after! orderless
   (orderless-define-completion-style +orderless-with-initialism
     (orderless-matching-styles '(orderless-initialism
                                  orderless-literal
                                  orderless-regexp))))
-
-(provide 'init-selection-orderless)
-;;; init-selection-orderless.el ends here
 #+end_src
 
+** COmpletion in Region FUnction :capfs:
 
-** Completion-At-Point (~corfu~) :: ~init-completion~
-:PROPERTIES:
-:header-args: :noweb-ref init-completion
-:END:
++ website :: <https://github.com/minad/corfu>
++ website :: <https://github.com/minad/cape>
++ ref :: <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
 
-- <https://github.com/minad/corfu>
-- <https://github.com/minad/cape>
-- <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
 
-See the following notes on default Corfu keybindings from its readme:
-
-Corfu uses a transient keymap ~corfu-map~ which is active while the popup is
-shown. The keymap defines the following remappings of fundamental commands and
-bindings:
-
-| Binding/Remapping            | Corfu command              |
-|------------------------------+----------------------------|
-| ~move-beginning-of-line~     | ~corfu-prompt-beginning~   |
-| ~move-end-of-line~           | ~corfu-prompt-end~         |
-| ~beginning-of-buffer~        | ~corfu-first~              |
-| ~end-of-buffer~              | ~corfu-last~               |
-| ~scroll-down-command~        | ~corfu-scroll-down~        |
-| ~scroll-up-command~          | ~corfu-scroll-up~          |
-| ~next-line~, =down=, =M-n=   | ~corfu-next~               |
-| ~previous-line~, =up=, =M-p= | ~corfu-previous~           |
-| ~completion-at-point~, =TAB= | ~corfu-complete~           |
-| =M-TAB=                      | ~corfu-expand~             |
-| =RET=                        | ~corfu-insert~             |
-| =M-g=                        | ~corfu-info-location~      |
-| =M-h=                        | ~corfu-info-documentation~ |
-| =M-SPC=                      | ~corfu-insert-separator~   |
-| =C-g=                        | ~corfu-quit~               |
-| ~keyboard-escape-quit~       | ~corfu-reset~              |
-
-*** General completion settings
-
-#+begin_src emacs-lisp
-(require 'lib-completion)
-(require 'ceamx-lib)
-
-;; Always resize mini-windows to fit their contents.
-(setopt resize-mini-windows t)
-
-;; TAB cycle if there are only few candidates
-(setopt completion-cycle-threshold 2)
-
-;; Hide commands in M-x which do not apply to the current mode.  Corfu commands
-;; are hidden, since they are not used via M-x.  This setting is useful beyond
-;; Corfu.
-(setopt read-extended-command-predicate #'command-completion-default-include-p)
-
-;; Don't let `completion-at-point' interfere with indentation.
-(setopt tab-always-indent 'complete)
-
-;; `completion-at-point' is often bound to M-TAB, but that conflicts with OS behavior.
-;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
-(keymap-global-set "C-S-SPC" #'completion-at-point)
-#+end_src
 
 *** Use ~orderless~ completion settings
 
@@ -8589,14 +8502,10 @@ See [[*Orderless]] for definitions.
                                        #'orderless-affix-dispatch)))
 #+end_src
 
-*** ~corfu~: COmpletion in Region FUnction
+*** Install Corfu and configure its global settings
 
 #+begin_src emacs-lisp
-(require 'ceamx-lib)
-
 (package! corfu
-  (declare-function global-corfu-mode "corfu")
-
   (setopt corfu-auto t)
   (setopt corfu-auto-delay 0.05)
   (setopt corfu-cycle t)
@@ -8637,66 +8546,60 @@ These will be available when a ~corfu~ prompt is active.
     "M-h" nil))
 #+end_src
 
-**** Ensure Corfu flyout closes when leaving insert state
+**** Ensure Corfu flyout closes when leaving insert state :keybinds:
 
 #+begin_src emacs-lisp
 (after! meow
   (add-hook 'meow-insert-exit-hook #'corfu-quit))
 #+end_src
 
-**** ~corfu-echo-mode~: Show candidate docs in echo area
+**** ~corfu-echo-mode~: Show candidate docs in echo area :messages:help:
 
 Probably redundant when ~corfu-popupinfo-mode~ is in use.
 
 #+begin_src emacs-lisp
+(setopt corfu-echo-delay '(0.5 . 0.25))
+
 (after! corfu
-  (declare-function corfu-echo-mode "corfu-echo")
-  (setopt corfu-echo-delay '(0.5 . 0.25))
   (corfu-echo-mode))
 #+end_src
 
-**** ~corfu-popupinfo~: Display candidate docs or location in popup
+**** ~corfu-popupinfo~: Display candidate docs or location in popup :ui:help:
 
 #+begin_src emacs-lisp
+(setopt corfu-popupinfo-delay '(1.0 . 0.5))
+
 (after! corfu
-  (declare-function corfu-popupinfo-mode "corfu-popupinfo")
-
-  (setopt corfu-popupinfo-delay '(2.0 . 1.0))
-
-  (corfu-popupinfo-mode)
-
-  ;; Overrides previous binding to `corfu-info-documentation'.
-  (keymap-set corfu-map "C-h" #'corfu-popupinfo-mode))
+  (corfu-popupinfo-mode))
 #+end_src
 
-**** ~corfu-history-mode~: Sort candidates by history position
+**** ~corfu-history-mode~: Sort candidates by history position :history:
 
 #+begin_src emacs-lisp
 (after! corfu
-  (declare-function corfu-history-mode "corfu-history")
   (corfu-history-mode))
 
-;; Persist across sessions.
+;; Persist Corfu history across sessions.
 (after! (savehist corfu-history)
   (add-to-list 'savehist-additional-variables 'corfu-history))
 #+end_src
 
-**** ~corfu-terminal~: Terminal support for Corfu
+**** Install ~corfu-terminal~ for Corfu terminal support :package:
 
-<https://codeberg.org/akib/emacs-corfu-terminal>
++ website :: <https://codeberg.org/akib/emacs-corfu-terminal>
 
 Corfu-endorsed solution to making it usable in terminal.
+
 See also ~popon~, the utility library powering the interface.
 
 #+begin_src emacs-lisp
-(package! corfu-terminal)
-
-(after! (corfu corfu-terminal)
-  (unless (display-graphic-p)
-    (corfu-terminal-mode 1)))
+(package! corfu-terminal
+  (after! (corfu)
+    (unless (display-graphic-p)
+      (corfu-terminal-mode 1))))
 #+end_src
 
-*** ~kind-icon~: Add icons to completion-at-point candidates
+*** Install ~kind-icon~ to add icons to completion-at-point candidates :ui:icons:
 
 <https://github.com/jdtsmith/kind-icon>
 
@@ -8708,9 +8611,6 @@ See also ~popon~, the utility library powering the interface.
   (require 'kind-icon)
 
   (after! corfu
-    (defvar corfu-margin-formatters)
-    (declare-function kind-icon-margin-formatter "kind-icon")
-
     (setopt kind-icon-default-face 'corfu-default)
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
 #+end_src
@@ -8729,7 +8629,6 @@ otherwise the icon size will likely not be accurate.
 
 #+begin_src emacs-lisp
 (after! kind-icon
-  (declare-function kind-icon-reset-cache "kind-icon")
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 #+end_src
@@ -8738,6 +8637,16 @@ otherwise the icon size will likely not be accurate.
 
 #+begin_src emacs-lisp
 (setopt dabbrev-upcase-means-case-search t)
+#+end_src
+
+**** Exclude some buffers and modes from ~dabbrev~ sources
+
+#+begin_src emacs-lisp
+;; FIXME: the `xr'-generated pattern below is mangled from:
+;; (setopt dabbrev-ignored-buffer-regexps
+;;         '("\\` "
+;;           "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?"))
+
 (setopt dabbrev-ignored-buffer-regexps
         (list
          ;; TODO: what does this pattern represent?
@@ -8747,55 +8656,58 @@ otherwise the icon size will likely not be accurate.
          (rx (group (or (seq (opt (or "e" (seq "g" (opt "r")))) "tags")
                         "gpath"))
              (optional (group "<" (+ (any numeric)) ">")))))
+
+(after! dabbrev
+  (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
+    (add-to-list 'dabbrev-ignored-buffer-modes mode)))
+#+end_src
+
+**** Ignore sources buffers above size threshold
+
+#+begin_src emacs-lisp :noweb-ref lib-completion
+(defvar +dabbrev-friend-buffer-size-max (* 1 1024 1024) ; 1 MB
+  "Size limit for a buffer to be scanned for dynamic abbreviations.")
+
+(defun +dabbrev-friend-buffer-p (buf)
+  "Whether to consider BUF a `dabbrev' friend buffer."
+  (< (buffer-size buf) +dabbrev-friend-buffer-size-max))
 #+end_src
 
 #+begin_src emacs-lisp
-(after! dabbrev
-  (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
-    (add-to-list 'dabbrev-ignored-buffer-modes mode))
+(setopt dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p)
+#+end_src
 
+**** Override default ~dabbrev~ keybindings :keybinds:
+
+#+begin_src emacs-lisp
+(after! dabbrev
   ;; Swap M-/ and C-M-/
   (keymap-global-set "M-/" #'dabbrev-completion)
   (keymap-global-set "C-M-/" #'dabbrev-expand))
 #+end_src
 
-*** ~cape~: Completion-At-Point Extensions
+** Completion-At-Point Extensions (Cape)
 
-<https://github.com/minad/cape/blob/main/README.org>
+- website :: <https://github.com/minad/cape/blob/main/README.org>
 
 #+begin_src emacs-lisp
-(require 'ceamx-lib)
-
-(defvar +corfu-buffer-scanning-size-limit (* 1 1024 1024) ; 1 MB
-  "Size limit for a buffer to be scanned by `cape-dabbrev'.")
-
-(defun +dabbrev-friend-buffer-p (buf)
-  "Whether to consider BUF a `dabbrev' friend buffer."
-  (< (buffer-size buf) +corfu-buffer-scanning-size-limit))
-
-(after! dabbrev
-  (setopt dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p)
-  (setopt dabbrev-ignored-buffer-regexps
-          '("\\` "
-            "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?"))
-  (setopt dabbrev-upcase-means-case-search t)
-
-  (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
-    (add-to-list 'dabbrev-ignored-buffer-modes mode)))
+;; FIXME: something is real messed up in here... i think probably these get
+;; applied by a mode hook but then never removed...?
 
 (package! cape
-  (setopt cape-dabbrev-check-other-buffers t)
+ (setopt cape-dabbrev-check-other-buffers t)
 
   (def-hook! +corfu-add-cape-file-h ()
     'prog-mode-hook
     "Register the `cape-file' `completion-at-point-functions'."
-    (add-hook 'completion-at-point-functions #'cape-file -10 t))
+    (add-hook 'completion-at-point-functions #'cape-file 0 t))
 
   (def-hook! +corfu-add-cape-elisp-block-h ()
     '(org-mode-hook markdown-mode-hook)
     "Register Elisp src block symbol completions."
     (add-hook 'completion-at-point-functions #'cape-elisp-block 0 t))
 
+  ;; FIXME: weighted too high!
   (def-hook! +corfu-add-cape-dabbrev-h ()
     '(prog-mode-hook
       text-mode-hook
@@ -8811,19 +8723,21 @@ otherwise the icon size will likely not be accurate.
     "Register Emacs Lisp symbol completions."
     (add-to-list 'completion-at-point-functions #'cape-elisp-symbol))
 
-  (advice-add #'pcomplete-completions-at-point :around #'cape-wrap-nonexclusive)
+  ;; (advice-add #'pcomplete-completions-at-point :around #'cape-wrap-nonexclusive)
 
+  ;; FIXME: Enabling any of these outright will override everything else above!
+  ;; maybe change order? i.e. move these closer to beginning of expression
   ;; (add-to-list 'completion-at-point-functions #'cape-history)
   ;; (add-to-list 'completion-at-point-functions #'cape-keyword)
   ;; (add-to-list 'completion-at-point-functions #'cape-sgml)
-  (add-to-list 'completion-at-point-functions #'cape-abbrev)
+  ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
   ;; (add-to-list 'completion-at-point-functions #'cape-dict)
 
   ;; (add-to-list 'completion-at-point-functions #'cape-line)
   ;; "Character Mnemonics & Character Sets": <https://datatracker.ietf.org/doc/html/rfc1345>
   ;; (add-to-list 'completion-at-point-functions #'cape-rfc1345)
 
-  (global-keys!
+  (define-keymap :keymap (current-global-map)
     "M-p p" #'completion-at-point ;; capf
     "M-p t" #'complete-tag        ;; etags
     "M-p d" #'cape-dabbrev        ;; or dabbrev-completion
@@ -8853,48 +8767,6 @@ otherwise the icon size will likely not be accurate.
 (after! lsp-mode
   (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
   (advice-add #'lsp-completion-at-point :around #'cape-wrap-nonexclusive))
-#+end_src
-
-
-** Library :: ~lib-completion~
-
-#+begin_src emacs-lisp :tangle lisp/lib-completion.el
-;;; lib-completion.el --- Completion helper functions  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
-
-(defvar corfu--frame)
-
-;; via <https://github.com/doomemacs/doomemacs/pull/7002>
-(defun +corfu-visible-p ()
-  "Predicate whether Corfu is active/visible."
-  (or (and (frame-live-p corfu--frame)
-           (frame-visible-p corfu--frame))
-      (and (featurep 'corfu-terminal)
-           (popon-live-p corfu-terminal--popon))))
-
-(provide 'lib-completion)
-;;; lib-completion.el ends here
 #+end_src
 
 
