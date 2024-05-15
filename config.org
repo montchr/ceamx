@@ -10855,9 +10855,6 @@ elsp
 #+end_src
 
 
-
-***
-
 ** HTML
 
 #+begin_src emacs-lisp :tangle lisp/init-lang-html.el
