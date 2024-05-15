@@ -45,10 +45,7 @@
 
   :config
   (setq nxml-slash-auto-complete-flag t)
-  (setq nxml-auto-insert-xml-declaration-flag t)
-
-  ;; FIXME: prob broken?
-  (setq-hook! 'nxml-mode-hook tab-width nxml-child-indent))
+  (setq nxml-auto-insert-xml-declaration-flag t))
 
 ;;; CSV/TSV
 
