@@ -65,6 +65,10 @@
 ;; FIXME: auto-select window
 (keymap-global-set "C-x C-b" #'ibuffer-list-buffers)
 
+(package! mwim
+  (keymap-global-set "C-a" #'mwim-beginning)
+  (keymap-global-set "C-e" #'mwim-end))
+
 (add-hook 'prog-mode-hook #'hl-line-mode)
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 
