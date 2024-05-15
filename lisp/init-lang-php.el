@@ -25,16 +25,9 @@
 ;;; Code:
 
 (require 'ceamx-lib)
-;; FIXME: append, don't define a new var entirely
-;; (defvar xref-ignored-files '("_ide_helper_models.php" "_ide_helper.php")
-;;   "List of files to be ignored by `xref'.")
-
-;; FIXME: relocate this... somewhere...
-(defun xref-ignored-file-p (item)
-  "Return t if `item' should be ignored."
-  (seq-some
-   (lambda (cand)
-     (string-suffix-p cand (oref (xref-item-location item) file))) xref-ignored-files))
+(appendq! xref-ignored-files
+          '("_ide_helper_models.php"
+            "_ide_helper.php"))
 (package! php-mode
   (setopt php-mode-template-compatibility nil)
 

@@ -11370,16 +11370,11 @@ Returns process exit code."
 *** Ignore PHP-specific directories and files
 
 #+begin_src emacs-lisp
-;; FIXME: append, don't define a new var entirely
-;; (defvar xref-ignored-files '("_ide_helper_models.php" "_ide_helper.php")
-;;   "List of files to be ignored by `xref'.")
+(appendq! xref-ignored-files
+          '("_ide_helper_models.php"
+            "_ide_helper.php"))
+#+end_src
 
-;; FIXME: relocate this... somewhere...
-(defun xref-ignored-file-p (item)
-  "Return t if `item' should be ignored."
-  (seq-some
-   (lambda (cand)
-     (string-suffix-p cand (oref (xref-item-location item) file))) xref-ignored-files))
 #+end_src
 
 *** Install and configure ~php-mode~ for basic language support
