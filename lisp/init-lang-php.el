@@ -28,6 +28,8 @@
 (appendq! xref-ignored-files
           '("_ide_helper_models.php"
             "_ide_helper.php"))
+;; `web-mode' does templates better.
+(setopt php-mode-template-compatibility nil)
 (package! php-mode
   (setopt php-mode-template-compatibility nil)
 

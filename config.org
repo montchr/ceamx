@@ -11375,6 +11375,13 @@ Returns process exit code."
             "_ide_helper.php"))
 #+end_src
 
+*** Disable PHP template compatibility
+
+PHP is not a templating language and it never was.
+
+#+begin_src emacs-lisp
+;; `web-mode' does templates better.
+(setopt php-mode-template-compatibility nil)
 #+end_src
 
 *** Install and configure ~php-mode~ for basic language support
