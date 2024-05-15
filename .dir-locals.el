@@ -1,4 +1,5 @@
 ;;; Directory Local Variables            -*- no-byte-compile: t -*-
 ;;; For more information see (info "(emacs) Directory Variables")
 
-((org-mode . ((tab-width . 8))))
+((emacs-lisp-mode . ((flycheck-disabled-checkers . (emacs-lisp-checkdoc))))
+ (org-mode . ((tab-width . 8))))
