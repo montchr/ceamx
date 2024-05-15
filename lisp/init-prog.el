@@ -50,12 +50,8 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 (add-hook 'prog-mode-hook #'ceamx-prog-mode-init-h)
 
-;;
-;;; Defaults
-
-
-;;
-;;; Packages
+;; Always find references of symbol at point.
+(setopt xref-prompt-for-identifier nil)
 
 ;;; hl-todo :: <https://github.com/tarsius/hl-todo>
 ;;  Highlight TODO and other codetags in comments and strings

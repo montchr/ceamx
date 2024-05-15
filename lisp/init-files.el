@@ -45,14 +45,7 @@
   :config
   (auto-insert-mode t))
 (setopt find-file-suppress-same-file-warnings t)
-
 (setopt find-file-visit-truename t)
-
-;; TODO: move elsewhere
-(use-feature! xref
-  :config
-  ;; Always find references of symbol at point.
-  (setopt xref-prompt-for-identifier nil))
 (defun ceamx-create-missing-directories-h ()
   "Automatically create missing directories when creating new files."
   (unless (file-remote-p buffer-file-name)

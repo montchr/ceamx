@@ -5985,14 +5985,7 @@ its bindings generally would need ~puni-mode~ to be active.
 
 #+begin_src emacs-lisp
 (setopt find-file-suppress-same-file-warnings t)
-
 (setopt find-file-visit-truename t)
-
-;; TODO: move elsewhere
-(use-feature! xref
-  :config
-  ;; Always find references of symbol at point.
-  (setopt xref-prompt-for-identifier nil))
 #+end_src
 
 *** Prompt to create missing parent directories for not-found files
@@ -9672,14 +9665,23 @@ Intended for use as a hook callback on `prog-mode-hook'."
     (highlight-function-calls-mode 1)))
 
 (add-hook 'prog-mode-hook #'ceamx-prog-mode-init-h)
+#+end_src
 
-;;
-;;; Defaults
+*** Configure ~xref~
 
+#+begin_src emacs-lisp :tangle lisp/config-prog.el
+(defvar xref-ignored-files '()
+  "List of files to be ignored by `xref'.")
+#+end_src
 
-;;
-;;; Packages
+#+begin_src emacs-lisp :tangle lisp/init-prog.el
+;; Always find references of symbol at point.
+(setopt xref-prompt-for-identifier nil)
+#+end_src
 
+*** Packages
+
+#+begin_src emacs-lisp :tangle lisp/init-prog.el
 ;;; hl-todo :: <https://github.com/tarsius/hl-todo>
 ;;  Highlight TODO and other codetags in comments and strings
 ;;  <https://peps.python.org/pep-0350/#specification>

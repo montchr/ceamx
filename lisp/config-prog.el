@@ -34,3 +34,6 @@
 
 (provide 'config-prog)
 ;;; config-prog.el ends here
+
+(defvar xref-ignored-files '()
+  "List of files to be ignored by `xref'.")
