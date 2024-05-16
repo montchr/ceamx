@@ -76,6 +76,8 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
             (message "Using emacs-lsp-booster for %s!" orig-result)
             (cons "emacs-lsp-booster" orig-result))
         orig-result))))
+(package! dap-mode
+  (dap-auto-configure-mode))
 
 (provide 'init-lsp-mode)
 ;;; init-lsp-mode.el ends here
