@@ -37,6 +37,10 @@
   ;; FIXME: no exist
   ;; (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
   )
+(after! php-mode
+  (defer! 2
+    (when (featurep 'dap)
+      (require 'dap-php))))
 (setopt lsp-intelephense-storage-path
   (file-name-as-directory (concat ceamx-var-dir "lsp-intelephense/.cache")))
 (after! projectile

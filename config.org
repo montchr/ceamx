@@ -10463,7 +10463,7 @@ keywords are supported:
 #+end_src
 
 
-** Language Server Protocol Support :lsp:lang:
+** Language Server and Debugger Protocol Support :lsp:lang:
 
 #+begin_src emacs-lisp :noweb-ref config-prog
 (defcustom ceamx-lsp-client 'eglot
@@ -10559,6 +10559,20 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
             (message "Using emacs-lsp-booster for %s!" orig-result)
             (cons "emacs-lsp-booster" orig-result))
         orig-result))))
+#+end_src
+
+
+*** Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
+:PROPERTIES:
+:header-args: :noweb-ref init-lsp-mode
+:END:
+
+- website :: <https://github.com/emacs-lsp/dap-mode>
+- spec :: <https://microsoft.github.io/debug-adapter-protocol/>
+
+#+begin_src emacs-lisp
+(package! dap-mode
+  (dap-auto-configure-mode))
 #+end_src
 
 
@@ -11276,6 +11290,21 @@ PHP is not a templating language and it never was.
   ;; FIXME: no exist
   ;; (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
   )
+#+end_src
+
+*** Debugging with Xdebug and ~dap-mode~
+
++ ref :: <https://emacs-lsp.github.io/dap-mode/page/configuration/#php>
+
+Requires:
+
++ [[https://github.com/xdebug/vscode-php-debug?tab=readme-ov-file][GitHub - xdebug/vscode-php-debug: PHP Debug Adapter for Visual Studio Code]]
+
+#+begin_src emacs-lisp
+(after! php-mode
+  (defer! 2
+    (when (featurep 'dap)
+      (require 'dap-php))))
 #+end_src
 
 *** LSP Mode integration
