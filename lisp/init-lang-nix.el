@@ -57,14 +57,14 @@
 ;;;; Set the official formatter (=nixfmt=) as the default formatter
 
 (with-eval-after-load 'apheleia
-  (defvar apheleia-mode-alist)
+  (add-to-list 'safe-local-variable-values '(apheleia-formatter . nixfmt))
   (with-eval-after-load 'nix-ts-mode
     (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt))))
 
 ;;;; Register =alejandra= as an additional formatter
 
 (with-eval-after-load 'apheleia
-  (defvar apheleia-formatters)
+  (add-to-list 'safe-local-variable-values '(apheleia-formatter . alejandra))
   (add-to-list 'apheleia-formatters '(alejandra "alejandra")))
 
 ;;; Configure Nix language servers
