@@ -12376,6 +12376,18 @@ kill the selection again.
 #+end_src
 
 
+*** Literate programming with Org-Babel
+
+**** Ensure common languages are loaded
+
+#+begin_src emacs-lisp
+(setopt org-babel-load-languages '((emacs-lisp . t)
+                                   (shell . t)
+                                   (sql . t)))
+#+end_src
+
+***** TODO Only add languages upon initially encountering its =src= block
+
 *** Footer
 
 #+BEGIN_SRC emacs-lisp

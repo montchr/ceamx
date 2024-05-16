@@ -236,6 +236,9 @@ Intended for use as a local hook function on
   (after! org
     (require 'org-bookmark-heading)))
 (package! org-contrib)
+(setopt org-babel-load-languages '((emacs-lisp . t)
+                                   (shell . t)
+                                   (sql . t)))
 (provide 'init-org)
 ;;; init-org.el ends here
 
