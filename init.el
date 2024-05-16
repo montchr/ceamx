@@ -310,30 +310,28 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (require 'init-controls)
 
-;; FIXME: causes some errors / inconsistencies
-;; (def-hook! ceamx-maybe-start-emacs-server-h () 'ceamx-after-init-hook
-;;   "Auto-start Emacs daemon if not already running."
-;;   (require 'server)
-;;   (unless (and (fboundp 'server-running-p)
-;;             (server-running-p))
-;;     (server-start)))
-;; unfortunately
-(when (and +gui-p +sys-mac-p)
-  (def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
-    "Restart the yabai service after init."
-    (after! exec-path-from-shell
-      (async-shell-command "yabai --restart-service"))))
-;; Optionally load custom file after all packages have loaded.
-;; (when (and ceamx-load-custom-file
-;;            (file-exists-p custom-file))
-;;   (def-hook! ceamx-after-init-load-custom-file-h ()
-;;     'ceamx-after-init-hook
-;;     "Load the user `custom-file'.
-;; Keep in mind that the custom file is ignored in version control."
-;;     (load custom-file 'noerror)))
 (define-keymap :keymap ceamx-session-map
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs)
+(defun ceamx/maybe-start-server ()
+  "Allow this Emacs process to act as server process if not already running."
+  (require 'server)
+  (unless (and (fboundp 'server-running-p)
+               (server-running-p))
+    (server-start)))
+(add-hook 'ceamx-emacs-startup-hook #'ceamx/maybe-start-server)
+(when (and (display-graphic-p) +sys-mac-p)
+  (def-hook! ceamx-after-init-restart-yabai-h ()
+    'ceamx-after-init-hook
+    "Restart the yabai service after init."
+    (after! exec-path-from-shell
+      (async-shell-command "yabai --restart-service"))))
+(defun ceamx/load-custom-file ()
+  "Load the user `custom-file'."
+  (interactive)
+  (when (file-exists-p custom-file)
+    (load custom-file 'noerror)))
+(add-hook 'ceamx-after-init-hook #'ceamx/load-custom-file)
 
 (provide 'init)
 ;;; init.el ends here

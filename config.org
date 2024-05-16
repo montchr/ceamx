@@ -1881,44 +1881,6 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 #+end_src
 
 
-* TODO Postlude
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-postlude
-:END:
-
-Yes, this order is unfortunate.
-
-#+begin_src emacs-lisp
-;; FIXME: causes some errors / inconsistencies
-;; (def-hook! ceamx-maybe-start-emacs-server-h () 'ceamx-after-init-hook
-;;   "Auto-start Emacs daemon if not already running."
-;;   (require 'server)
-;;   (unless (and (fboundp 'server-running-p)
-;;             (server-running-p))
-;;     (server-start)))
-#+end_src
-
-#+begin_src emacs-lisp
-;; unfortunately
-(when (and +gui-p +sys-mac-p)
-  (def-hook! ceamx-after-init-restart-yabai-h () 'ceamx-after-init-hook
-    "Restart the yabai service after init."
-    (after! exec-path-from-shell
-      (async-shell-command "yabai --restart-service"))))
-#+end_src
-
-#+begin_src emacs-lisp
-;; Optionally load custom file after all packages have loaded.
-;; (when (and ceamx-load-custom-file
-;;            (file-exists-p custom-file))
-;;   (def-hook! ceamx-after-init-load-custom-file-h ()
-;;     'ceamx-after-init-hook
-;;     "Load the user `custom-file'.
-;; Keep in mind that the custom file is ignored in version control."
-;;     (load custom-file 'noerror)))
-#+end_src
-
-
 * Before Dawn: =early-init.el=
 :PROPERTIES:
 :header-args: :noweb-ref early-init
@@ -13798,4 +13760,51 @@ POS defaults to the current position."
 (define-keymap :keymap ceamx-session-map
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs)
+#+end_src
+
+* Postlude
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-postlude
+:END:
+
+** Start the Emacs server process if not already running
+
+#+begin_src emacs-lisp
+(defun ceamx/maybe-start-server ()
+  "Allow this Emacs process to act as server process if not already running."
+  (require 'server)
+  (unless (and (fboundp 'server-running-p)
+               (server-running-p))
+    (server-start)))
+#+end_src
+
+#+begin_src emacs-lisp
+(add-hook 'ceamx-emacs-startup-hook #'ceamx/maybe-start-server)
+#+end_src
+
+** macOS: Restart Yabai after init
+
+Otherwise, =yabai= will not "see" the Emacs GUI window.
+
+#+begin_src emacs-lisp
+(when (and (display-graphic-p) +sys-mac-p)
+  (def-hook! ceamx-after-init-restart-yabai-h ()
+    'ceamx-after-init-hook
+    "Restart the yabai service after init."
+    (after! exec-path-from-shell
+      (async-shell-command "yabai --restart-service"))))
+#+end_src
+
+** Optionally load the ~custom-file~
+
+#+begin_src emacs-lisp
+(defun ceamx/load-custom-file ()
+  "Load the user `custom-file'."
+  (interactive)
+  (when (file-exists-p custom-file)
+    (load custom-file 'noerror)))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+(add-hook 'ceamx-after-init-hook #'ceamx/load-custom-file)
 #+end_src
