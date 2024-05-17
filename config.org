@@ -902,8 +902,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 | Someone Else?    |                  |      |   |                  |
 
 #+name: file-header
-#+header: :var feature="file-header-example" :var desc="" :var table=file-header-default-authors-table
-#+begin_src emacs-lisp :tangle .data/file-header-example.el :noweb no
+#+begin_src emacs-lisp :noweb yes :var feature="file-header-example" :var desc="" :var table=file-header-default-authors-table
   <<file-prop-line(feature,desc)>>
 
   ;; <<file-authors(table=table)>>
