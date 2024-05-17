@@ -1098,13 +1098,10 @@ Example table:
 
 ** Functions to clean and re-tangle Elisp files
 
-#+begin_src emacs-lisp :noweb yes
+#+begin_src emacs-lisp :noweb yes :results silent
 <<ceamx-tangle-src>>
-(ceamx/tangle)
+(ceamx/tangle-fresh)
 #+end_src
-
-#+RESULTS:
-| /home/cdom/.config/emacs/lisp/lib-text.el | /home/cdom/.config/emacs/lisp/lib-simple.el | /home/cdom/.config/emacs/lisp/init-fun.el | /home/cdom/.config/emacs/lisp/init-tools-pdf.el | /home/cdom/.config/emacs/lisp/init-tools-ledger.el | /home/cdom/.config/emacs/lisp/init-tools-ai.el | /home/cdom/.config/emacs/lisp/init-tools.el | /home/cdom/.config/emacs/lisp/lib-eww.el | /home/cdom/.config/emacs/lisp/init-eww.el | /home/cdom/.config/emacs/lisp/init-news.el | /home/cdom/.config/emacs/lisp/init-printing.el | /home/cdom/.config/emacs/lisp/init-dired.el | /home/cdom/.config/emacs/lisp/init-dashboard.el | /home/cdom/.config/emacs/lisp/init-controls.el | /home/cdom/.config/emacs/lisp/init-notes-denote.el | /home/cdom/.config/emacs/lisp/init-notes.el | /home/cdom/.config/emacs/lisp/init-lang-misc.el | /home/cdom/.config/emacs/lisp/init-lang-yaml.el | /home/cdom/.config/emacs/lisp/init-lang-shell.el | /home/cdom/.config/emacs/lisp/init-shell-nu.el | /home/cdom/.config/emacs/lisp/init-lang-nix.el | /home/cdom/.config/emacs/lisp/lib-lang-markdown.el | /home/cdom/.config/emacs/lisp/init-lang-markdown.el | /home/cdom/.config/emacs/lisp/init-lang-lua.el | /home/cdom/.config/emacs/lisp/init-lang-js.el | /home/cdom/.config/emacs/lisp/init-lang-html.el | /home/cdom/.config/emacs/lisp/init-lang-data.el | /home/cdom/.config/emacs/lisp/lib-elisp.el | /home/cdom/.config/emacs/lisp/init-lang-elisp.el | /home/cdom/.config/emacs/lisp/lib-lisp.el | /home/cdom/.config/emacs/lisp/config-lisp.el | /home/cdom/.config/emacs/lisp/init-lisp.el | /home/cdom/.config/emacs/lisp/init-treesitter.el | /home/cdom/.config/emacs/lisp/init-prog.el | /home/cdom/.config/emacs/lisp/init-flycheck.el | /home/cdom/.config/emacs/lisp/init-project.el | /home/cdom/.config/emacs/lisp/init-term.el | /home/cdom/.config/emacs/lisp/init-embark.el | /home/cdom/.config/emacs/lisp/config-keys.el | /home/cdom/.config/emacs/lisp/init-keys-which-key.el | /home/cdom/.config/emacs/lisp/lib-keys-meow.el | /home/cdom/.config/emacs/lisp/init-keys-meow.el | /home/cdom/.config/emacs/lisp/init-keys.el | /home/cdom/.config/emacs/lisp/init-input-methods.el | /home/cdom/.config/emacs/lisp/init-history.el | /home/cdom/.config/emacs/lisp/lib-help.el | /home/cdom/.config/emacs/lisp/init-help.el | /home/cdom/.config/emacs/lisp/init-workspace.el | /home/cdom/.config/emacs/lisp/config-buffer.el | /home/cdom/.config/emacs/lisp/lib-buffer.el | /home/cdom/.config/emacs/lisp/init-buffer.el | /home/cdom/.config/emacs/lisp/lib-frame.el | /home/cdom/.config/emacs/lisp/init-frame-hooks.el | /home/cdom/.config/emacs/lisp/init-frame.el | /home/cdom/.config/emacs/lisp/lib-secrets.el | /home/cdom/.config/emacs/lisp/init-secrets.el | /home/cdom/.config/emacs/lisp/lib-env-wsl.el | /home/cdom/.config/emacs/lisp/init-env-tty.el | /home/cdom/.config/emacs/lisp/config-env.el | /home/cdom/.config/emacs/lisp/config-common.el | /home/cdom/.config/emacs/lisp/core/ceamx-keymaps.el | /home/cdom/.config/emacs/lisp/core/ceamx-paths.el | /home/cdom/.config/emacs/.data/file-header-example.el | /home/cdom/.config/emacs/lisp/init-writing.el | /home/cdom/.config/emacs/lisp/init-lang-php.el | /home/cdom/.config/emacs/lisp/init-lsp-mode.el | /home/cdom/.config/emacs/lisp/init-eglot.el | /home/cdom/.config/emacs/lisp/config-prog.el | /home/cdom/.config/emacs/lisp/init-vcs.el | /home/cdom/.config/emacs/lisp/config-editor.el | /home/cdom/.config/emacs/lisp/lib-editor.el | /home/cdom/.config/emacs/lisp/init-editor.el | /home/cdom/.config/emacs/lisp/lib-window.el | /home/cdom/.config/emacs/lisp/config-window.el | /home/cdom/.config/emacs/lisp/init-window.el | /home/cdom/.config/emacs/lisp/lib-search.el | /home/cdom/.config/emacs/lisp/init-search.el | /home/cdom/.config/emacs/lisp/init-org.el | /home/cdom/.config/emacs/lisp/init-outline.el | /home/cdom/.config/emacs/lisp/init-templates.el | /home/cdom/.config/emacs/lisp/lib-completion.el | /home/cdom/.config/emacs/lisp/init-completion.el | /home/cdom/.config/emacs/lisp/init-abbrevs.el | /home/cdom/.config/emacs/lisp/lib-files.el | /home/cdom/.config/emacs/lisp/init-files.el | /home/cdom/.config/emacs/lisp/lib-ui.el | /home/cdom/.config/emacs/lisp/config-ui.el | /home/cdom/.config/emacs/lisp/init-ui-font.el | /home/cdom/.config/emacs/lisp/init-ui.el | /home/cdom/.config/emacs/lisp/init-env.el | /home/cdom/.config/emacs/lisp/core/ceamx-lib.el | /home/cdom/.config/emacs/init.el | /home/cdom/.config/emacs/early-init.el |
 
 #+name: ceamx-tangle-src
 #+begin_src emacs-lisp
@@ -1135,24 +1132,19 @@ they will also be included in the result."
 (defun ceamx/purge-tangled-init-files ()
   "Delete all tangled init files according to `ceamx-list-tangled-init-files'."
   (interactive)
-  (when (yes-or-no-p "Delete all tangled init files?")
-    (dolist (file (ceamx-list-tangled-init-files))
-      (f-delete file))))
+  (dolist (file (ceamx-list-tangled-init-files))
+    (f-delete file)))
 
 (defconst ceamx-literate-config-file (locate-user-emacs-file "config.org"))
 
-(defun ceamx/tangle (&optional src-file clean)
-  "Tangle the Emacs configuration.
+(defun ceamx/tangle-fresh (&optional src-file)
+  "Purge all existing tangled init files and re-tangle.
 When SRC-FILE is non-nil, it will be used as the source file to
 be tangled by `org-babel-tangle-file'.  Otherwise, if SRC-FILE is
 nil, the value of `ceamx-literate-config-file' will be the
-default source file.
-
-When CLEAN is non-nil, any previously-tangled init files will be
-deleted before tangling."
+default source file."
   (interactive)
-  (when clean
-    (ceamx/purge-tangled-init-files))
+  (ceamx/purge-tangled-init-files)
   (org-babel-tangle-file
    (or src-file ceamx-literate-config-file)))
 #+end_src
