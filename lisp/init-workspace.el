@@ -79,44 +79,34 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
 ;;; Introduce an ~activities~-based workflow for frame/tab/window/buffer management
 
-(use-package activities
-  :commands ( activities-mode activities-tabs-mode activities-new activities-resume activities-suspend
-              activities-kill activities-switch activities-revert activities-list)
+(package! activities
+  (activities-mode)
+  ;; Unfortunately, due to the `tab-bar-mode' display bug in Emacs 29 (see
+  ;; `init-workspace'), I am avoiding `tab-bar-mode'.  Though I really would
+  ;; like to use it, the bug is just too distracting and impossible to work
+  ;; around.
+  (unless (version< emacs-version "30.0")
+    (when tab-bar-mode
+      (activities-tabs-mode)))
 
-  :preface
+  ;; Prevent `edebug' default bindings from interfering.
   (setq edebug-inhibit-emacs-lisp-mode-bindings t)
 
-  :init
-  (activities-mode)
+  (keymap-global-unset "C-x C-a" t)
+  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
 
-  ;; Unfortunately, due to the `tab-bar-mode' display bug in Emacs 29 (see
-  ;; `init-workspace'), I will be leaving this disabled for the time being.
-  ;; (unless tab-bar-mode
-  ;;   (activities-tabs-mode))
+  ;; TODO: still shares bindings with edebug which is confusing
+  (define-keymap :keymap (current-global-map)
+    "C-x C-a C-n" #'activities-new
+    "C-x C-a C-d" #'activities-define
+    "C-x C-a C-a" #'activities-resume
+    "C-x C-a C-s" #'activities-suspend
+    "C-x C-a C-k" #'activities-kill
+    "C-x C-a RET" #'activities-switch
 
-  (keymap-global-set "C-x C-a" '("[ Activities ]"))
-
-  (define-keymap :keymap ceamx-activities-map
-    "C-n" #'activities-new
-    "C-a" #'activities-resume
-    "C-s" #'activities-suspend
-    "C-k" #'activities-kill
-    "RET" #'activities-switch
-
-    "g" #'activities-revert
-    "l" #'activities-list))
-
-;; TODO: <https://github.com/alphapapa/ap.el/blob/0831e0bb603cf3fe1cdeaa9f1c97b02f681c1f74/init.el#L395>
-;; (use-package bufler
-;;   :ensure (:files (:defaults (:exclude "helm-bufler.el")))
-;;   :config
-;;   (global-keys!
-;;     "C-x b" #'bufler-switch-buffer
-;;     "C-x B" #'bufler-workspace-focus-buffer
-;;     "C-x C-b" #'bufler)
-;;   (setopt bufler-groups
-;;     (bufler-defgroups
-;;       (group (auto-workspace)))))
+    "C-x C-a b" #'activities-switch-buffer
+    "C-x C-a g" #'activities-revert
+    "C-x C-a l" #'activities-list))
 
 (provide 'init-workspace)
 ;;; init-workspace.el ends here
