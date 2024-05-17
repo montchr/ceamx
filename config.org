@@ -1,4 +1,4 @@
-# -*- eval: (load-file "./ceamx-dev-loader.el"); org-refile-targets: ((nil . (:maxlevel . 3))) -*-
+# -*- eval: (load-file "./ceamx-dev-loader.el"); org-refile-targets: ((nil . (:maxlevel . 4))) -*-
 #+title: Ceamx: An Emacs Configuration
 #+author: Chris Montgomery
 #+email: chmont@proton.me
