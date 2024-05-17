@@ -287,7 +287,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-lang-nix)
 (require 'init-lang-php)
 (require 'init-lang-shell)
-(require 'init-lang-yaml)
 (require 'init-lang-misc)
 
 ;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'

@@ -822,6 +822,28 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-lsp-mode")>>
 #+end_src
 
+*** =lisp/init-lang-data.el=
+
+#+name: init-lang-data-file
+#+begin_src emacs-lisp :tangle lisp/init-lang-data.el
+<<file-prop-line(feature="init-lang-data",desc="Language support for data syntaxes")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lang-data>>
+
+<<file-footer(feature="init-lang-data")>>
+#+end_src
+
 *** =lisp/init-lang-php.el=
 
 #+name: init-lang-php-file
@@ -1853,7 +1875,6 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 (require 'init-lang-nix)
 (require 'init-lang-php)
 (require 'init-lang-shell)
-(require 'init-lang-yaml)
 (require 'init-lang-misc)
 
 ;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
@@ -10636,52 +10657,45 @@ elsp
 #+end_src
 
 
-** Data Formats (XML, CSV...)
+** Data Formats (JSON, TOML, YAML, XML, CSV...)
 :PROPERTIES:
 :ID:       137d1e04-d0dc-4512-a450-fbafeef65804
+:header-args: :noweb-ref init-lang-data
 :END:
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-data.el
-;;; init-lang-data.el --- Data format support        -*- lexical-binding: t; -*-
+*** Requirements
 
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: data, local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Support for working with data files like JSON, TOML, CSV, XML, etc.
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'ceamx-lib)
+#+end_src
 
-;;; JSON
+*** JSON [builtin]
 
-;;;; Navigate arborescent JSON structures with ~json-navigator~
+**** Navigate arborescent JSON structures with ~json-navigator~
 
-;; <https://github.com/DamienCassou/json-navigator>
++ website :: <https://github.com/DamienCassou/json-navigator>
 
+#+begin_src emacs-lisp
 ;; TODO: add bindings
 
 (package! json-navigator)
+#+end_src
 
-;;; XML
+*** TODO TOML
 
+*** YAML
+
+#+begin_src emacs-lisp
+(package! yaml-mode
+  (dolist (pattern '("\\.yml\\'"
+                     "\\.yaml\\'"
+                     "Procfile\\'"))
+    (add-to-list 'auto-mode-alist `(,pattern . yaml-mode))))
+#+end_src
+
+*** XML [builtin]
+
+#+begin_src emacs-lisp
 (use-feature! nxml-mode
   :mode "\\.p\\(?:list\\|om\\)\\'"      ; plist, pom
   :mode "\\.xs\\(?:d\\|lt\\)\\'"        ; xslt, xsd
@@ -10690,17 +10704,14 @@ elsp
   :config
   (setq nxml-slash-auto-complete-flag t)
   (setq nxml-auto-insert-xml-declaration-flag t))
+#+end_src
 
-;;; CSV/TSV
+*** CSV + TSV
 
-(use-package csv-mode
-  :commands ( csv-align-fields
-              csv-unalign-fields
-              csv-sort-fields
-              csv-sort-numeric-fields
-              csv-kill-fields
-              csv-transpose)
-  :config
+#+begin_src emacs-lisp
+(package! csv-mode)
+
+(after! csv-mode
   (define-keymap :keymap csv-mode-map
     "a" #'csv-align-fields
     "u" #'csv-unalign-fields
@@ -10708,10 +10719,6 @@ elsp
     "S" #'csv-sort-numeric-fields
     "k" #'csv-kill-fields
     "t" #'csv-transpose))
-
-
-(provide 'init-lang-data)
-;;; init-lang-data.el ends here
 #+end_src
 
 
@@ -11378,46 +11385,6 @@ its cache should stay out of the way.
 (provide 'init-lang-shell)
 ;;; init-lang-shell.el ends here
 #+end_src
-** YAML
-
-#+begin_src emacs-lisp :tangle lisp/init-lang-yaml.el
-;;; init-lang-yaml.el --- YAML language support      -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chris@cdom.io>
-;; Keywords: languages
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-;;; Code:
-
-(use-package yaml-mode
-  :commands (yaml-mode)
-  :init
-  (dolist (pattern '("\\.yml\\'"
-                     "\\.yaml\\'"
-                     "Procfile\\'"))
-    (add-to-list 'auto-mode-alist `(,pattern . yaml-mode))))
-
-(provide 'init-lang-yaml)
-;;; init-lang-yaml.el ends here
-#+end_src
-
-
-
 ** Miscellaneous Languages
 :PROPERTIES:
 :header-args: :tangle lisp/init-lang-misc.el
