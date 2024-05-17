@@ -6943,7 +6943,7 @@ DOC is as in `devdocs-install'."
 Configuration for search-related utilities like ~isearch~ and
 ~query-replace~.
 
-See also ~init-selection-consult~, as ~consult~ often provides a frontend to
+See also [[*CONSULTing completing-read]], as ~consult~ often provides a frontend to
 these utilities.
 
 - Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-isearch.el>
