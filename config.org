@@ -10447,6 +10447,8 @@ keywords are supported:
   :type '(choice :tag "LSP client" :value eglot
           (const :tag "Eglot [builtin]" eglot)
           (const :tag "LSP-Mode" lsp-mode)))
+
+(defvar ceamx-lsp-mode-cache-dir (file-name-as-directory (concat ceamx-var-dir "lsp")))
 #+end_src
 
 

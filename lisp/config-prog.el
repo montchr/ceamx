@@ -30,6 +30,8 @@
   :type '(choice :tag "LSP client" :value eglot
           (const :tag "Eglot [builtin]" eglot)
           (const :tag "LSP-Mode" lsp-mode)))
+
+(defvar ceamx-lsp-mode-cache-dir (file-name-as-directory (concat ceamx-var-dir "lsp")))
 (setopt ceamx-lsp-client 'lsp-mode)
 
 (provide 'config-prog)
