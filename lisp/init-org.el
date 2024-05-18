@@ -139,6 +139,13 @@
     "C-c >" #'org-demote-subtree
     "C-c C->" #'org-goto-calendar
 
+    ;; Override the global binding to `narrow-to-region', which is disabled by
+    ;; default.  I have not once (yet) wanted to actually use `narrow-to-regin',
+    ;; but I do often type "C-x n n" in `org-mode', expecting the behavior of
+    ;; `org-narrow-to-subtree'.  That's a waste of a potential DWIM key
+    ;; sequence.d
+    "C-x n n" #'org-narrow-to-subtree
+
     ;; Mnemonic is the global key to goto definition/references.
     "M-." #'org-edit-special ; also: C-c '
 
