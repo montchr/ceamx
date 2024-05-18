@@ -1634,25 +1634,24 @@ During normal use, the GC threshold will be set to a high value.
 When idle, GC will be triggered with a low threshold.
 
 #+begin_src emacs-lisp
-(use-package gcmh
-  :blackout
-  :commands (gcmh-mode)
-  :init
-  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
-  (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
+(package! gcmh
+  (blackout 'gcmh-mode)
+  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
 #+end_src
+
+*** Background and Rationale
 
 While browsing many other user configs, I have noticed several slightly
 different approaches to managing garbage collection, especially with the
 intent of reducing startup time.
 
-One approach is to offload this configuration to ~gcmh~, safely
-hiding the details away.  =gcmh= is written by Andrea
-Corallo, perhaps better known for gccemacs / native-comp.
+One approach is to offload this configuration to ~gcmh~, safely hiding the
+details away.  =gcmh= is written by Andrea Corallo, one of the Emacs
+co-maintainers, also known for introducing =gccemacs=.
 
-As it turns out, as a direct response to a Reddit thread sharing =gcmh=,
-Eli Zaretskii recommends caution in this field.  The package creator also
-weighs in.  Basically, Zaretskii recommends not overthinking things.
+As a direct response to a Reddit thread sharing =gcmh=, Eli Zaretskii recommends
+caution in this field.  Corallo also weighs in.  Basically, Zaretskii recommends
+not overthinking things:
 
 [[https://old.reddit.com/r/emacs/comments/bg85qm/garbage_collector_magic_hack/eln27qh/][eli-zaretskii
 comments on Garbage Collector Magic Hack]]:
@@ -1664,7 +1663,6 @@ advice to others. IMO, this requires at least a lot of caveats, because
 your advice is likely to be followed by people whose workflows and
 system configurations are very different. Simply put, you might get
 others in trouble by promoting your personal hacks as "magic".
-
 #+end_quote
 
 From what I gather, =gcmh= has evolved a bit, so the previous criticism
@@ -1694,9 +1692,7 @@ time to annoy, and use the lowest threshold value which produces a
 tangible improvement. Start with the default value, then enlarge it by a
 factor of 2 until you see only insignificant speedups. I would not
 expect the value you arrive at to be as high as 100 MiB.
-
 #+end_quote
-
 
 ** Install utility libraries
 

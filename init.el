@@ -169,12 +169,9 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (elpaca blackout
   (require 'blackout))
 (elpaca-wait)
-(use-package gcmh
-  :blackout
-  :commands (gcmh-mode)
-  :init
-  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode)
-  (setopt gcmh-high-cons-threshold (* 16 1024 1024)))
+(package! gcmh
+  (blackout 'gcmh-mode)
+  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
 ;; FIXME: remove or alias (`##' is very difficult to search for)
 (use-package llama) ;  `##' lambda shorthand =>
                                         ;  <https://git.sr.ht/~tarsius/llama>
