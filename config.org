@@ -12246,7 +12246,15 @@ I don't think this is working properly...
   "p" #'org-previous-visible-heading
   "f" #'org-forward-heading-same-level
   "b" #'org-backward-heading-same-level
-  "u" #'outline-up-heading)
+  "u" #'outline-up-heading
+
+  "H" #'org-promote-subtree
+  "J" #'org-move-subtree-down
+  "K" #'org-move-subtree-up
+  "L" #'org-demote-subtree
+
+  "<" #'org-promote-subtree
+  ">" #'org-demote-subtree)
 #+end_src
 
 *** Enforce the correct ~tab-width~ to prevent errors

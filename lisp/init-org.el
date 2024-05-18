@@ -161,7 +161,15 @@
   "p" #'org-previous-visible-heading
   "f" #'org-forward-heading-same-level
   "b" #'org-backward-heading-same-level
-  "u" #'outline-up-heading)
+  "u" #'outline-up-heading
+
+  "H" #'org-promote-subtree
+  "J" #'org-move-subtree-down
+  "K" #'org-move-subtree-up
+  "L" #'org-demote-subtree
+
+  "<" #'org-promote-subtree
+  ">" #'org-demote-subtree)
 (defun +org-mode--local-set-tab-width-h ()
   "Set the `tab-width' in `org-mode' buffers to 8 columns.
 Any `tab-width' value other than 8 will result in an error.
