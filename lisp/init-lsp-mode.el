@@ -26,13 +26,28 @@
 
 (package! lsp-mode
   (setopt lsp-keymap-prefix "C-c l")
-  (setopt lsp-enable-on-type-formatting nil)
   (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
 
 (package! lsp-ui)
 
 (after! popper
   (add-to-list 'popper-reference-buffers (rx bol "*lsp-" (group (or "help" "install")))))
+(setopt
+ lsp-enable-folding nil
+ lsp-enable-on-type-formatting nil
+ lsp-headerline-breadcrumb-enable nil)
+(setopt lsp-ui-peek-enable t
+        lsp-ui-doc-max-width 72
+        lsp-ui-doc-max-height 8
+        lsp-ui-doc-delay 0.2
+        ;; Prevent the doc flyout from disappearing on hover.
+        lsp-ui-doc-show-with-mouse nil
+        lsp-ui-doc-position 'at-point
+        ;; Prevent conflict with Flycheck error overlays.
+        lsp-ui-sideline-show-hover nil)
+
+(after! lsp-ui
+  lsp-ui-sideline-actions-icon lsp-ui-sideline-actions-icon-default)
 (after! (lsp-mode corfu)
   (setopt lsp-completion-provider :none)
 
@@ -76,6 +91,10 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
             (message "Using emacs-lsp-booster for %s!" orig-result)
             (cons "emacs-lsp-booster" orig-result))
         orig-result))))
+(package! consult-lsp
+  (after! lsp-mode
+    ;; Override the default binding for `xref-find-apropos'.
+    (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols)))
 (package! dap-mode
   (dap-auto-configure-mode))
 
