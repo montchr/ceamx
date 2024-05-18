@@ -1,4 +1,4 @@
-# -*- eval: (load-file "./ceamx-dev-loader.el"); org-refile-targets: ((nil . (:maxlevel . 4))) -*-
+# -*- eval: (load-file "./ceamx-dev-loader.el") -*-
 #+title: Ceamx: An Emacs Configuration
 #+author: Chris Montgomery
 #+email: chmont@proton.me
@@ -13889,3 +13889,18 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 #+begin_src emacs-lisp :tangle no
 (add-hook 'ceamx-after-init-hook #'ceamx/load-custom-file)
 #+end_src
+
+
+* End
+
+This is the section for file-local variables.  File-local variables must be on
+the last "page" of a document, beginning no more than 3000 characters from EOF.
+See [[info:emacs#Specifying File Variables]["(emacs) Specifying File Variables"]] for more information.
+
+23 SKIDOO
+
+
+
+# Local Variables:
+# org-refile-targets: ((nil . (:maxlevel . 4)))
+# End:
