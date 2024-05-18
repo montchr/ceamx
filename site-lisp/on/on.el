@@ -5,7 +5,7 @@
 ;; Copyright (C) 2014-2022  Henrik Lissner
 
 ;; Author: Alex Griffin <a@ajgrf.com>
-;;         Chris Montgomery <chris@cdom.io>
+;;         Chris Montgomery <chmont@proton.me>
 ;; Version: 0.2.0
 ;; Keywords: convenience
 ;; Homepage: https://gitlab.com/ajgrf/on.el

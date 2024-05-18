@@ -1,6 +1,6 @@
 ;;; ceamx-lib.el --- Ceamx common library  -*- lexical-binding: t;  -*-
 
-;; Copyright (C) 2023-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (C) 2023-2024  Chris Montgomery <chmont@proton.me>
 ;; Copyright (C) 2014-2023  Henrik Lissner
 ;; Copyright (C) 2006-2021  Steve Purcell
 ;; Copyright (C) 2016–2022  Radian LLC and contributors
@@ -8,7 +8,7 @@
 ;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
 ;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
 
-;; Author: Chris Montgomery <chris@cdom.io>
+;; Author: Chris Montgomery <chmont@proton.me>
 ;;         Henrik Lissner
 ;;         Steve Purcell
 ;;         Radon Rosborough <radon@intuitiveexplanations.com>

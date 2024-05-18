@@ -3,7 +3,7 @@
 ;; Copyright (C) 2024  Chris Montgomery
 ;; Copyright (C) 2020-2023  Protesilaos Stavrou
 
-;; Author: Chris Montgomery <chris@cdom.io>
+;; Author: Chris Montgomery <chmont@proton.me>
 ;;         Protesilaos Stavrou <info@protesilaos.com>
 ;; Keywords: local
 

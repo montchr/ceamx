@@ -1,8 +1,8 @@
 ;;; lib-completion.el --- Completion helpers  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
 
-;; Author: Chris Montgomery <chris@cdom.io>
+;; Author: Chris Montgomery <chmont@proton.me>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 

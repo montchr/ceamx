@@ -1,8 +1,8 @@
 ;;; init.el --- Initialize Ceamx  -*- lexical-binding: t; no-byte-compile: t; -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
 
-;; Author: Chris Montgomery <chris@cdom.io>
+;; Author: Chris Montgomery <chmont@proton.me>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -34,7 +34,7 @@
 (require 'ceamx-lib)
 
 (setq-default user-full-name "Chris Montgomery"
-              user-mail-address "chris@cdom.io")
+              user-mail-address "chmont@proton.me")
 
 (add-to-list 'load-path ceamx-site-lisp-dir)
 (prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))

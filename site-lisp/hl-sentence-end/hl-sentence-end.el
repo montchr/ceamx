@@ -3,7 +3,7 @@
 ;; Copyright (C) 2019 Tobias Zawada
 
 ;; Author: Tobias Zawada <i@tn-home.de>
-;;         Chris Montgomery <chris@cdom.io>
+;;         Chris Montgomery <chmont@proton.me>
 ;; URL: https://emacs.stackexchange.com/a/48479
 ;; Keywords: faces, convenience
 

@@ -4,7 +4,7 @@
 ;; Copyright (C) 2020-2023  Protesilaos Stavrou
 ;; Copyright (c) 2023  Bruno Boal <egomet@bboal.com>
 
-;; Author: Chris Montgomery <chris@cdom.io>
+;; Author: Chris Montgomery <chmont@proton.me>
 ;;         Protesilaos Stavrou <info@protesilaos.com>
 ;;         Bruno Boal <egomet@bboal.com>
 ;; Keywords: local, convenience

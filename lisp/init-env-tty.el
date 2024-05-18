@@ -4,7 +4,7 @@
 ;; Copyright (c) 2006-2021 Steve Purcell
 
 ;; Author: Steve Purcell
-;;         Chris Montgomery <chris@cdom.io>
+;;         Chris Montgomery <chmont@proton.me>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Created: 20 July 2023
 

@@ -52,9 +52,9 @@ CLOSED: [2024-03-24 Sun 14:44]
 #+begin_src emacs-lisp :tangle lisp/init-templates.el :noweb yes :comments no
 <<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
 
-;; Author: Chris Montgomery <chris@cdom.io>
+;; Author: Chris Montgomery <chmont@proton.me>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 

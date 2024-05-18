@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chris@cdom.io>
+;; Author: Chris Montgomery <chmont@proton.me>
 ;; Keywords: local, help
 
 ;; This program is free software; you can redistribute it and/or modify

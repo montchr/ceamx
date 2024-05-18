@@ -1,15 +1,15 @@
 ;;; lib-window.el --- Window management support library  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chris@cdom.io>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
 ;; Copyright (C) 2023 Free Software Foundation, Inc.
 ;; Copyright (C) 2024  Protesilaos Stavrou
 
-;; Author: Chris Montgomery <chris@cdom.io>
+;; Author: Chris Montgomery <chmont@proton.me>
 ;;         Vegard Øye <vegard_oye at hotmail.com>
 ;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
 ;;         Protesilaos Stavrou <public@protesilaos.com>
 
-;; Author: Chris Montgomery <chris@cdom.io>
+;; Author: Chris Montgomery <chmont@proton.me>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
