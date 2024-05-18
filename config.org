@@ -10666,6 +10666,14 @@ elsp
 
 *** TODO TOML
 
+**** LSP-Mode: Use the correct cache base directory
+
+#+begin_src emacs-lisp
+(when (featurep 'lsp-toml)
+  (setopt lsp-toml-cache-path (file-name-as-directory
+                               (concat ceamx-lsp-mode-cache-dir "server/toml"))))
+#+end_src
+
 *** YAML
 
 #+begin_src emacs-lisp

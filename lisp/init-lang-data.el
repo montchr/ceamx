@@ -28,6 +28,9 @@
 ;; TODO: add bindings
 
 (package! json-navigator)
+(when (featurep 'lsp-toml)
+  (setopt lsp-toml-cache-path (file-name-as-directory
+                               (concat ceamx-lsp-mode-cache-dir "server/toml"))))
 (package! yaml-mode
   (dolist (pattern '("\\.yml\\'"
                      "\\.yaml\\'"
