@@ -26,7 +26,6 @@
 
 (require 'ceamx-keymaps)
 (require 'ceamx-paths)
-
 (require 'ceamx-lib)
 (defvar org-directory ceamx-agenda-dir)
 
@@ -239,6 +238,14 @@ Intended for use as a local hook function on
 (setopt org-babel-load-languages '((emacs-lisp . t)
                                    (shell . t)
                                    (sql . t)))
+(def-advice! +org-babel-load-language-on-demand-a (orig-fun &rest args)
+  :around #'org-babel-execute-src-block
+  "Load language if needed before executing a source block."
+  (let ((language (org-element-property :language (org-element-at-point))))
+    (unless (cdr (assoc (intern language) org-babel-load-languages))
+      (add-to-list 'org-babel-load-languages (cons (intern language) t))
+      (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
+    (apply orig-fun args)))
 (provide 'init-org)
 ;;; init-org.el ends here
 

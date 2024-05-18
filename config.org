@@ -11830,7 +11830,6 @@ Else create a new file."
 #+BEGIN_SRC emacs-lisp
 (require 'ceamx-keymaps)
 (require 'ceamx-paths)
-
 (require 'ceamx-lib)
 #+END_SRC
 
@@ -12325,6 +12324,21 @@ kill the selection again.
 (setopt org-babel-load-languages '((emacs-lisp . t)
                                    (shell . t)
                                    (sql . t)))
+#+end_src
+
+**** Load other supported languages on-demand during execution
+
++ source :: <https://github.com/Icy-Thought/emacs.d/blob/e9c75d87bf61c456b26332787cde27bdfc188830/config.org#org-babel-language-on-demand>
+
+#+begin_src emacs-lisp
+(def-advice! +org-babel-load-language-on-demand-a (orig-fun &rest args)
+  :around #'org-babel-execute-src-block
+  "Load language if needed before executing a source block."
+  (let ((language (org-element-property :language (org-element-at-point))))
+    (unless (cdr (assoc (intern language) org-babel-load-languages))
+      (add-to-list 'org-babel-load-languages (cons (intern language) t))
+      (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
+    (apply orig-fun args)))
 #+end_src
 
 ***** TODO Only add languages upon initially encountering its =src= block
