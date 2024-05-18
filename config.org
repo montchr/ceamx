@@ -934,22 +934,16 @@ instead, use a =-flag= suffix or names like =is-foo=.
 ;; Version: 0.1.0
 #+end_src
 
-*** ~file-footer~
+*** TODO ~file-footer~
 
 Emacs calls this the "file trailer" in ~generate-lisp-file-trailer~.
 
+- [ ] Adds significantly to tangle time
+
 #+name: file-footer
-#+header: :var feature=""
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :var feature=""
 (format "(provide '%1$s)\n;;; %1$s.el ends here\n" feature)
 #+end_src
-
-#+name: file-footer-example-usage
-#+begin_src emacs-lisp
-<<file-footer(feature="file-footer-example")>>
-#+end_src
-
-#+results: file-footer-example-usage
 
 *** ~file-authors~
 
