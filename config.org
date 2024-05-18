@@ -11979,48 +11979,28 @@ conflict when Syncthing tries to take control of these paths.
 (setopt org-agenda-files ceamx-default-agenda-files)
 #+END_SRC
 
-*** General settings
-
-**** Support the special shifted-arrow-key commands
+*** Define structure templates
 
 #+begin_src emacs-lisp
-;; While nil is the default value, it must be set explicitly to opt-in.
-(setopt org-support-shift-select nil)
+(setopt org-structure-template-alist
+        '(("s" . "src")
+          ("e" . "src emacs-lisp")
+          ("E" . "src emacs-lisp :results value code :lexical t")
+          ("t" . "src emacs-lisp :tangle FILENAME")
+          ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+          ("x" . "example")
+          ("X" . "export")
+          ("q" . "quote")))
 #+end_src
 
-From the documentation for that setting:
-
-#+begin_quote
-Shifted cursor keys will then execute Org commands in the following contexts:
-
-- on a headline, changing TODO state (left/right) and priority (up/down)
-- on a time stamp, changing the time
-- in a plain list item, changing the bullet type
-- in a property definition line, switching between allowed values
-- in the BEGIN line of a clock table (changing the time block).
-- in a table, moving the cell in the specified direction.
-
-Outside these contexts, the commands will throw an error.
-#+end_quote
-
-*** Editing settings
-
-**** Tags
-
-#+BEGIN_SRC emacs-lisp
-(setopt org-auto-align-tags nil)
-(setopt org-tags-column 0)
-
-(setopt org-fold-catch-invisible-edits 'error) ; default: smart
-#+END_SRC
-
-**** Headings / List Items
+*** Headings / List Items
 
 Prevent TAB behavior oddities at the end of headlines.
 
-When nil, pressing TAB at the end of a headline whose content is folded
-will act on the folded (non-visible) area instead of the headline, which
-may cause unexpected changes to the content (depending on the setting of ~org-catch-invisible-edits~.
+When nil, pressing TAB at the end of a headline whose content is folded will act
+on the folded (non-visible) area instead of the headline, which may cause
+unexpected changes to the content (depending on the setting of
+~org-catch-invisible-edits~.
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-special-ctrl-a/e t)
@@ -12032,70 +12012,52 @@ may cause unexpected changes to the content (depending on the setting of ~org-ca
 (setopt org-insert-heading-respect-content nil)
 
 (setopt org-M-RET-may-split-line nil)
-(setopt org-cycle-emulate-tab t)
-(setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
+;; (setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
+(setopt org-blank-before-new-entry nil)
 
 (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 #+END_SRC
 
-**** Source code blocks
+*** Appearance
+**** Activate visual overhaul provided by ~org-modern~
+
+<https://github.com/minad/org-modern>
 
 #+BEGIN_SRC emacs-lisp
-;; Changing the indentation of source code is unhelpful and destructive.
-(setopt org-edit-src-content-indentation 0)
+(package! org-modern
+  ;; Ensure leading stars are replaced by spaces.
+  ;; (setopt org-modern-hide-stars "  ")
+  (setopt org-modern-hide-stars nil)
 
-(setopt org-edit-src-persistent-message nil)
-(setopt org-src-fontify-natively t)
-(setopt org-src-preserve-indentation t)
-(setopt org-src-tab-acts-natively t)
-;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
-;; (setopt org-src-window-setup 'current-window)
-(setopt org-src-window-setup 'other-window)
+  (setopt org-modern-star nil)
 
-(setopt org-structure-template-alist
-        '(("s" . "src")
-          ("e" . "src emacs-lisp")
-          ("E" . "src emacs-lisp :results value code :lexical t")
-          ("t" . "src emacs-lisp :tangle FILENAME")
-          ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
-          ("x" . "example")
-          ("X" . "export")
-          ("q" . "quote")))
+  (add-hook 'org-mode-hook #'org-modern-mode)
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 #+END_SRC
 
-*** Appearance settings
-
-**** Use ~prettify-symbols-mode~
+**** Text formatting
 
 <https://github.com/minad/org-modern#configuration>
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook #'prettify-symbols-mode)
-#+END_SRC
 
-**** Text formatting
-
-#+BEGIN_SRC emacs-lisp
-(setopt org-ellipsis "…")
-(setopt org-hide-emphasis-markers nil)
 (setopt org-pretty-entities t)
-#+END_SRC
-
-**** Images
-
-#+BEGIN_SRC emacs-lisp
-(setopt org-image-actual-width 300)
-(setopt org-startup-with-inline-images t)
+(setopt org-hide-emphasis-markers nil)
 #+END_SRC
 
 **** Folding and indentation
 
 #+BEGIN_SRC emacs-lisp
+(setopt org-cycle-emulate-tab t)
 (setopt org-indent-indentation-per-level 2)
 (setopt org-startup-folded 'content)
 
 ;; Avoid unnecessary indentation effects unless specified in file header.
 (setopt org-startup-indented nil)
+
+;; (setopt org-ellipsis "…")
+(setopt org-ellipsis " ⇢")
 #+END_SRC
 
 **** Workflow and state settings
@@ -12125,9 +12087,7 @@ may cause unexpected changes to the content (depending on the setting of ~org-ca
     (add-hook hook #'pulsar-reveal-entry)))
 #+end_src
 
-*** Agenda settings
-
-**** Agenda appearance
+*** Agenda
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-agenda-tags-column 0)
@@ -12140,12 +12100,22 @@ may cause unexpected changes to the content (depending on the setting of ~org-ca
         "⭠ now ─────────────────────────────────────────────────")
 #+END_SRC
 
-*** Refiling
+*** Tags
 
 #+BEGIN_SRC emacs-lisp
-(setopt org-refile-targets '((org-agenda-files . (:maxlevel . 5))
-                             (ceamx-default-todo-file . (:level . 1))
-                             (nil . (:level . 1))))
+(setopt org-auto-align-tags nil)
+(setopt org-tags-column 0)
+
+(setopt org-fold-catch-invisible-edits 'error) ; default: smart
+#+END_SRC
+
+*** Refiling and Archiving
+
+#+BEGIN_SRC emacs-lisp
+(setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 2))
+                             ;; (org-agenda-files . (:maxlevel . 1))
+                             (,(locate-user-emacs-file "TODO.org") . (:level . 1))
+                             (nil . (:maxlevel . 5))))
 
 (setopt org-refile-use-outline-path 'file)
 (setopt org-outline-path-complete-in-steps nil)
@@ -12156,7 +12126,7 @@ may cause unexpected changes to the content (depending on the setting of ~org-ca
 (setopt org-reverse-note-order t)       ; prepend new notes
 #+END_SRC
 
-*** TODO Provide commands to archive DONE tasks
+**** TODO Provide commands to archive DONE tasks
 
 | Author | Sacha Chua                                                                                 |
 | URL    | <https://pages.sachachua.com/.emacs.d/Sacha.html#quick-way-to-archive-all-done-from-inbox> |
@@ -12189,26 +12159,32 @@ I don't think this is working properly...
    "TODO=\"DONE\"|TODO=\"CANCELLED\"" (or scope (if (org-before-first-heading-p) 'file 'tree))))
 #+end_src
 
+*** Links
+
+**** Images
+
+#+BEGIN_SRC emacs-lisp
+(setopt org-image-actual-width 300)
+(setopt org-startup-with-inline-images t)
+#+END_SRC
+
 *** Keybindings
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-return-follows-link t)
 #+END_SRC
 
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-c a" #'org-agenda
+  "C-c c" #'org-capture)
+#+end_src
+
 #+BEGIN_SRC emacs-lisp
 (with-eval-after-load 'org
-  (define-keymap :keymap (current-global-map)
-    "C-c a" #'org-agenda
-    "C-c c" #'org-capture)
-
   (define-keymap :keymap org-mode-map
     "C-c <up>" #'org-priority-up
     "C-c <down>" #'org-priority-down
-
-    ;; FIXME: " key sequence starts with non-prefix key" -- that is, conflicts
-    ;; with `ceamx-toggle-map'... maybe if that was not a prefix command but
-    ;; instead was just a keymap...?
-    ;; "C-c C-t l" #'org-toggle-link-display
 
     ;; "C-c l" #'org-store-link
 
@@ -12230,11 +12206,41 @@ I don't think this is working properly...
     "M-g o" #'consult-org-heading))
 #+END_SRC
 
+**** Support the special shifted-arrow-key commands
+
+#+begin_src emacs-lisp
+;; While nil is the default value, it must be set explicitly to opt-in.
+(setopt org-support-shift-select nil)
+#+end_src
+
+From the documentation for that setting:
+
+#+begin_quote
+Shifted cursor keys will then execute Org commands in the following contexts:
+
+- on a headline, changing TODO state (left/right) and priority (up/down)
+- on a time stamp, changing the time
+- in a plain list item, changing the bullet type
+- in a property definition line, switching between allowed values
+- in the BEGIN line of a clock table (changing the time block).
+- in a table, moving the cell in the specified direction.
+
+Outside these contexts, the commands will throw an error.
+#+end_quote
+
+**** Toggleables
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'org
+  (keymap-set org-mode-map "C-c t l" #'org-toggle-link-display))
+#+end_src
+
 **** Make Org tree navigation commands repeatable
 
 #+begin_src emacs-lisp
-(defvar-keymap org-mode-navigation-repeat-map
-  :repeat t
+(defvar-keymap org-mode-navigation-repeat-map :repeat t
+  "TAB" #'org-cycle
+  "S-TAB" #'org-cycle-global
 
   "C-n" #'org-next-visible-heading
   "C-p" #'org-previous-visible-heading
@@ -12285,7 +12291,7 @@ Intended for use as a local hook function on
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
 #+END_SRC
 
-*** Packages
+*** Capture
 
 **** ~doct~: ~org-capture~ template definer
 
@@ -12312,6 +12318,8 @@ Intended for use as a local hook function on
                               "%i %a"))))))
 #+END_SRC
 
+*** Packages
+
 **** ~org-ql~
 
 <https://github.com/alphapapa/org-ql>
@@ -12326,21 +12334,6 @@ Intended for use as a local hook function on
 (after! org
   (keymap-set org-mode-map "C-c C-w" #'org-ql-refile))
 #+end_src
-
-**** ~org-modern~
-
-<https://github.com/minad/org-modern>
-
-#+BEGIN_SRC emacs-lisp
-(package! org-modern
-  ;; Ensure leading stars are replaced by spaces.
-  (setopt org-modern-hide-stars "  ")
-
-  (setopt org-modern-star 'fold)
-
-  (add-hook 'org-mode-hook #'org-modern-mode)
-  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
-#+END_SRC
 
 **** ~org-super-agenda~
 
@@ -12425,8 +12418,20 @@ kill the selection again.
 (package! org-contrib)
 #+end_src
 
-
 *** Literate programming with Org-Babel
+
+#+BEGIN_SRC emacs-lisp
+;; Changing the indentation of source code is unhelpful and destructive.
+(setopt org-edit-src-content-indentation 0)
+
+(setopt org-edit-src-persistent-message nil)
+(setopt org-src-fontify-natively t)
+(setopt org-src-preserve-indentation t)
+(setopt org-src-tab-acts-natively t)
+;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
+;; (setopt org-src-window-setup 'current-window)
+(setopt org-src-window-setup 'other-window)
+#+END_SRC
 
 **** Ensure common languages are loaded
 

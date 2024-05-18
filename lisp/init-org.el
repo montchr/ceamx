@@ -34,33 +34,6 @@
 (f-mkdir-full-path org-directory)
 
 (setopt org-agenda-files ceamx-default-agenda-files)
-;; While nil is the default value, it must be set explicitly to opt-in.
-(setopt org-support-shift-select nil)
-(setopt org-auto-align-tags nil)
-(setopt org-tags-column 0)
-
-(setopt org-fold-catch-invisible-edits 'error) ; default: smart
-(setopt org-special-ctrl-a/e t)
-;; Instead of forcing this always, use the function
-;; `org-insert-heading-respect-content' directly, bound to [C-<return>].
-(setopt org-insert-heading-respect-content nil)
-
-(setopt org-M-RET-may-split-line nil)
-(setopt org-cycle-emulate-tab t)
-(setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
-
-(setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
-;; Changing the indentation of source code is unhelpful and destructive.
-(setopt org-edit-src-content-indentation 0)
-
-(setopt org-edit-src-persistent-message nil)
-(setopt org-src-fontify-natively t)
-(setopt org-src-preserve-indentation t)
-(setopt org-src-tab-acts-natively t)
-;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
-;; (setopt org-src-window-setup 'current-window)
-(setopt org-src-window-setup 'other-window)
-
 (setopt org-structure-template-alist
         '(("s" . "src")
           ("e" . "src emacs-lisp")
@@ -70,17 +43,38 @@
           ("x" . "example")
           ("X" . "export")
           ("q" . "quote")))
+(setopt org-special-ctrl-a/e t)
+;; Instead of forcing this always, use the function
+;; `org-insert-heading-respect-content' directly, bound to [C-<return>].
+(setopt org-insert-heading-respect-content nil)
+
+(setopt org-M-RET-may-split-line nil)
+;; (setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
+(setopt org-blank-before-new-entry nil)
+
+(setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+(package! org-modern
+  ;; Ensure leading stars are replaced by spaces.
+  ;; (setopt org-modern-hide-stars "  ")
+  (setopt org-modern-hide-stars nil)
+
+  (setopt org-modern-star nil)
+
+  (add-hook 'org-mode-hook #'org-modern-mode)
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 (add-hook 'org-mode-hook #'prettify-symbols-mode)
-(setopt org-ellipsis "…")
-(setopt org-hide-emphasis-markers nil)
+
 (setopt org-pretty-entities t)
-(setopt org-image-actual-width 300)
-(setopt org-startup-with-inline-images t)
+(setopt org-hide-emphasis-markers nil)
+(setopt org-cycle-emulate-tab t)
 (setopt org-indent-indentation-per-level 2)
 (setopt org-startup-folded 'content)
 
 ;; Avoid unnecessary indentation effects unless specified in file header.
 (setopt org-startup-indented nil)
+
+;; (setopt org-ellipsis "…")
+(setopt org-ellipsis " ⇢")
 (setopt org-log-done 'time)
 (setopt org-todo-keywords
         '((sequence
@@ -104,9 +98,14 @@
           " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
 (setopt org-agenda-current-time-string
         "⭠ now ─────────────────────────────────────────────────")
-(setopt org-refile-targets '((org-agenda-files . (:maxlevel . 5))
-                             (ceamx-default-todo-file . (:level . 1))
-                             (nil . (:level . 1))))
+(setopt org-auto-align-tags nil)
+(setopt org-tags-column 0)
+
+(setopt org-fold-catch-invisible-edits 'error) ; default: smart
+(setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 2))
+                             ;; (org-agenda-files . (:maxlevel . 1))
+                             (,(locate-user-emacs-file "TODO.org") . (:level . 1))
+                             (nil . (:maxlevel . 5))))
 
 (setopt org-refile-use-outline-path 'file)
 (setopt org-outline-path-complete-in-steps nil)
@@ -115,20 +114,16 @@
 
 ;; TODO: move this setting elsewhere
 (setopt org-reverse-note-order t)       ; prepend new notes
+(setopt org-image-actual-width 300)
+(setopt org-startup-with-inline-images t)
 (setopt org-return-follows-link t)
+(define-keymap :keymap (current-global-map)
+  "C-c a" #'org-agenda
+  "C-c c" #'org-capture)
 (with-eval-after-load 'org
-  (define-keymap :keymap (current-global-map)
-    "C-c a" #'org-agenda
-    "C-c c" #'org-capture)
-
   (define-keymap :keymap org-mode-map
     "C-c <up>" #'org-priority-up
     "C-c <down>" #'org-priority-down
-
-    ;; FIXME: " key sequence starts with non-prefix key" -- that is, conflicts
-    ;; with `ceamx-toggle-map'... maybe if that was not a prefix command but
-    ;; instead was just a keymap...?
-    ;; "C-c C-t l" #'org-toggle-link-display
 
     ;; "C-c l" #'org-store-link
 
@@ -148,8 +143,13 @@
 
     ;; Override earlier binding to `consult-outline'.
     "M-g o" #'consult-org-heading))
-(defvar-keymap org-mode-navigation-repeat-map
-  :repeat t
+;; While nil is the default value, it must be set explicitly to opt-in.
+(setopt org-support-shift-select nil)
+(with-eval-after-load 'org
+  (keymap-set org-mode-map "C-c t l" #'org-toggle-link-display))
+(defvar-keymap org-mode-navigation-repeat-map :repeat t
+  "TAB" #'org-cycle
+  "S-TAB" #'org-cycle-global
 
   "C-n" #'org-next-visible-heading
   "C-p" #'org-previous-visible-heading
@@ -212,14 +212,6 @@ Intended for use as a local hook function on
 (package! org-ql)
 (after! org
   (keymap-set org-mode-map "C-c C-w" #'org-ql-refile))
-(package! org-modern
-  ;; Ensure leading stars are replaced by spaces.
-  (setopt org-modern-hide-stars "  ")
-
-  (setopt org-modern-star 'fold)
-
-  (add-hook 'org-mode-hook #'org-modern-mode)
-  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 (package! org-super-agenda
   ;; FIXME: probably can use autoloads instead
   (require 'org-super-agenda))
@@ -243,6 +235,16 @@ Intended for use as a local hook function on
   (after! org
     (require 'org-bookmark-heading)))
 (package! org-contrib)
+;; Changing the indentation of source code is unhelpful and destructive.
+(setopt org-edit-src-content-indentation 0)
+
+(setopt org-edit-src-persistent-message nil)
+(setopt org-src-fontify-natively t)
+(setopt org-src-preserve-indentation t)
+(setopt org-src-tab-acts-natively t)
+;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
+;; (setopt org-src-window-setup 'current-window)
+(setopt org-src-window-setup 'other-window)
 (setopt org-babel-load-languages '((emacs-lisp . t)
                                    (shell . t)
                                    (sql . t)))
