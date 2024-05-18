@@ -6370,6 +6370,8 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
 ;;; Introduce an ~activities~-based workflow for frame/tab/window/buffer management
 
+;; <https://github.com/alphapapa/activities.el>
+
 (package! activities
   (activities-mode)
   ;; Unfortunately, due to the `tab-bar-mode' display bug in Emacs 29 (see
