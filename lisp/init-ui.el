@@ -352,31 +352,6 @@
 
   (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
     (add-to-list 'keycast-substitute-alist `(,event nil))))
-(package! doom-modeline
-  (setopt doom-modeline-support-imenu t)
-  (setopt doom-modeline-unicode-fallback t)
-  (setopt doom-modeline-buffer-encoding nil)
-  (setopt doom-modeline-github nil)
-  (setopt doom-modeline-buffer-file-name-style 'truncate-upto-project)
-
-  ;; Enable HUD mode, providing a micromap of buffer position.
-  (setopt doom-modeline-hud t)
-
-  (setopt doom-modeline-icon t)
-
-  ;; note that the major mode icon is not missing like most others.
-  ;; git branch icon is also fine.
-  (setopt doom-modeline-major-mode-icon t)
-
-  ;; FIXME: missing icons when using nix-installed icon font
-  (setopt doom-modeline-buffer-state-icon t)
-  (setopt doom-modeline-buffer-modification-icon t)
-
-  (setopt doom-modeline-modal t)
-  ;; FIXME: missing icon with nix-installed font... but only when non-nil?! when nil, icon displays properly...
-  (setopt doom-modeline-modal-icon t)
-
-  (doom-modeline-mode 1))
 (elpaca-wait)
 (setopt ceamx-theme-default-light 'modus-operandi)
 (setopt ceamx-theme-default-dark 'modus-vivendi-tinted)

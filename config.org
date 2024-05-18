@@ -4221,8 +4221,10 @@ not retain the generic background set by the function
     (add-to-list 'keycast-substitute-alist `(,event nil))))
 #+end_src
 
-
-*** Doom-Modeline
+*** DISABLED Doom-Modeline
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 #+begin_src emacs-lisp
 (package! doom-modeline
