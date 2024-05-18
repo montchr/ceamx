@@ -117,39 +117,6 @@ not retain the generic background set by the function
   (interactive)
   (ceamx/gnome-dark-theme)
   (ceamx/load-dark-theme))
-;;;; Constants
-
-(defconst ceamx-inch-as-mm 25.4
-  "One inch in millimeters.")
-
-(defconst ceamx-pt-as-mm 0.353
-  "One typographic point in millimeters.")
-
-;;;; Functions
-
-(defun ceamx-default-monitor-geometry ()
-  "Return geometry for the first monitor in `display-monitor-attributes-list'."
-  (let* ((first-monitor (car (display-monitor-attributes-list))))
-    (alist-get 'geometry first-monitor)))
-
-;; via <https://www.reddit.com/r/emacs/comments/7hzxb8/comment/dqywyqc/>
-(defun ceamx-pixel-pitch (&optional frame)
-  "Return the pixel pitch for FRAME in millimeters.
-When FRAME is nil, the current frame will be used as default.
-
-Pixel pitch is the distance from the center of a pixel to the
-center of its adjacent pixel."
-  (let ((monitor-attrs (frame-monitor-attributes frame)))
-    (/ (float (nth 1 (assoc 'mm-size monitor-attrs)))
-      (nth 3 (assoc 'geometry monitor-attrs)))))
-
-(defun ceamx-font-height (number &optional multiplier)
-  "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
-NUMBER should be a whole number. MULTIPLIER should be a float.
-
-If MULTIPLIER is nil, the value of `ceamx-font-height-multiplier'
-will be used as default."
-  (truncate (* number (or multiplier ceamx-font-height-multiplier))))
 
 (provide 'lib-ui)
 ;;; lib-ui.el ends here

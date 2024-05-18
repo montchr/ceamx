@@ -202,18 +202,15 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-secrets)
 ;;;; Displays + Appearance
 
-;; TODO: re-enable
-;; (require 'init-frame-hooks)
-(require 'init-env-tty)
-(require 'init-frame)
-
 ;; Load configuration settings for conditional loading.
 (require 'config-ui)
+
+(require 'init-env-tty)
 
 (require 'init-ui)
 
 (when (display-graphic-p)
-  (require 'init-ui-font))
+  (require 'init-ui-graphical))
 ;;;; Keyboard support
 
 (require 'init-keys)

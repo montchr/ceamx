@@ -1,4 +1,4 @@
-;;; init-ui-font.el --- Font support  -*- lexical-binding: t;  -*-
+;;; init-ui-graphical.el --- Appearance customizations for graphical environments  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
 
@@ -25,26 +25,14 @@
 ;;; Code:
 
 ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
-;;;; Requirements
-
 (require 'ceamx-paths)
 (require 'config-env)
 
 (require 'ceamx-lib)
 (require 'lib-ui)
-;;;; General
-
 (setq x-underline-at-descent-line nil)
 
 (setq-default text-scale-remap-header-line t)
-;;;; Use the ~fontaine~ package for configuring and managing font presets
-
-;; <https://protesilaos.com/emacs/fontaine>
-
-;; TIP: You can test out alterations quickly with, for example:
-;;      (internal-set-lisp-face-attribute 'default :weight 'semilight)
-
-
 (package! fontaine
   (require 'fontaine)
 
@@ -157,13 +145,6 @@
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
 
 (elpaca-wait)
-;;;; Enable improved ligature support with the ~ligature.el~ package
-
-;; <https://github.com/mickeynp/ligature.el>
-
-;; A better implementation of ligature support than the builtin ~prettify-symbols-mode~.
-;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
-
 (package! ligature
   (require 'ligature)
 
@@ -178,5 +159,5 @@
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-(provide 'init-ui-font)
-;;; init-ui-font.el ends here
+(provide 'init-ui-graphical)
+;;; init-ui-graphical.el ends here

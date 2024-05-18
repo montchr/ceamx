@@ -318,6 +318,51 @@
 
   ;; Activate some theme in the current period.
   (theme-buffet-a-la-carte))
+(require 'config-env)
+
+(require 'ceamx-lib)
+(unless +sys-mac-p
+  ;; Hide window decorations.
+  (add-to-list 'default-frame-alist '(undecorated . t)))
+(when +sys-mac-p
+  ;; `undecorated-round' is macOS-specific.
+  (add-to-list 'default-frame-alist '(undecorated-round . t))
+
+  ;; GUI menu bar is necessary otherwise Emacs will be treated as a
+  ;; non-application OS window (e.g. no focus capture).
+  ;; <https://github.com/doomemacs/doomemacs/blob/d657be1744a1481dc4646d0b62d5ee1d3e75d1d8/lisp/doom-start.el#L118-L128>
+  (def-hook! ceamx-frame--maybe-restore-gui-menu-bar-h (&optional frame)
+    '(after-make-frame-functions window-setup-hook)
+    "TODO: Provide source for this approach (Doom?), and why it does what it does."
+    (when-let (frame (or frame (selected-frame)))
+      (when (display-graphic-p frame)
+        (set-frame-parameter frame 'menu-bar-lines 1))))
+
+  ;; Stop C-z from minimizing windows.
+  (keymap-global-unset "C-z" t))
+;; Disable the frame menu bar by default
+(menu-bar-mode -1)
+
+;; Enable the resurrection of frames with ~undelete-frame~
+(undelete-frame-mode 1)
+(modify-all-frames-parameters
+ ;; NOTE: `org-modern', whose readme provided this example, initially had these
+ ;; set to 40.  but on <%tuvok%>, 40 looked absolutely ridiclous.  i figured i
+ ;; should try halving that, which seemed perfect.  so i am guessing there is
+ ;; some confodungin factors with high-density displays
+ '((right-divider-width . 20)
+   (internal-border-width . 20)))
+
+(dolist (face '(window-divider
+                window-divider-first-pixel
+                window-divider-last-pixel))
+  (face-spec-reset-face face)
+  (set-face-foreground face (face-attribute 'default :background)))
+
+(set-face-background 'fringe (face-attribute 'default :background))
+(define-keymap :keymap ceamx-session-map
+  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
+  "f d" #'delete-frame)
 (use-feature! emacs
   :config
   (setopt line-number-mode t)
@@ -356,36 +401,6 @@
 (setopt ceamx-theme-default-light 'modus-operandi)
 (setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
 (ceamx/load-dark-theme)
-;;; ~spacious-padding~ :: <https://protesilaos.com/emacs/spacious-padding>
-(use-package spacious-padding
-  :demand t
-  :commands (spacious-padding-mode)
-  :defines (spacious-padding-widths)
-
-  :init
-  (setopt spacious-padding-widths
-          '(
-            ;; NOTE: `:internal-border-width' currently breaks `tab-bar-mode'
-            ;;       display on Emacs 29. Fixed in master branch.
-            ;;       <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-            :internal-border-width 15
-            :header-line-width 4
-            :mode-line-width 4
-            :tab-width 4
-            :right-divider-width 30
-            :scroll-bar-width 8))
-
-  :config
-
-  ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
-  ;; is very flexible.
-  ;; TODO: v0.3.0 standardizes this a bit
-  ;; (setq spacious-padding-subtle-mode-line
-  ;;       `(:mode-line-active default     ; NOTE: assumes `modus-themes'
-  ;;                           :mode-line-inactive vertical-border))
-
-  (spacious-padding-mode 1))
-
 (define-keymap :keymap ceamx-session-map
   "a" (cons "Appearance" (define-prefix-command 'ceamx-session-font-prefix-command))
   "a f" #'fontaine-set-preset

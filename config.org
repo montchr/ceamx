@@ -118,6 +118,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<ceamx-postlude>>
 #+end_src
 
+
 ** Target Files
 
 *** =early-init.el=
@@ -243,11 +244,11 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-ui")>>
 #+end_src
 
-*** =lisp/init-ui-font.el=
+*** =lisp/init-ui-graphical.el=
 
-#+name: init-ui-font-file
-#+begin_src emacs-lisp :tangle lisp/init-ui-font.el
-<<file-prop-line(feature="init-ui-font",desc="Font support")>>
+#+name: init-ui-graphical-file
+#+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el
+<<file-prop-line(feature="init-ui-graphical",desc="Appearance customizations for graphical environments")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
 
@@ -260,9 +261,9 @@ instead, use a =-flag= suffix or names like =is-foo=.
 ;;; Commentary:
 ;;; Code:
 
-<<init-ui-font>>
+<<init-ui-graphical>>
 
-<<file-footer(feature="init-ui-font")>>
+<<file-footer(feature="init-ui-graphical")>>
 #+end_src
 
 *** =lisp/config-ui.el=
@@ -1756,18 +1757,15 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 #+begin_src emacs-lisp
 ;;;; Displays + Appearance
 
-;; TODO: re-enable
-;; (require 'init-frame-hooks)
-(require 'init-env-tty)
-(require 'init-frame)
-
 ;; Load configuration settings for conditional loading.
 (require 'config-ui)
+
+(require 'init-env-tty)
 
 (require 'init-ui)
 
 (when (display-graphic-p)
-  (require 'init-ui-font))
+  (require 'init-ui-graphical))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3208,213 +3206,6 @@ buffer, as a buffer-local variable.
 #+end_src
 
 
-* Frame
-
-** Customizations
-
-#+begin_src emacs-lisp :tangle lisp/init-frame.el
-;;; init-frame.el --- Frame modifications -*- lexical-binding: t -*-
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; FIXME: unreadable childframes sometimes. e.g. command output, embark.
-;; at least make sure these childframes seriously have modeline disabled and
-;; their padding reduced
-
-;;; Code:
-
-;;; Requirements
-
-(require 'config-env)
-
-(require 'lib-frame)
-(require 'ceamx-lib)
-
-;;; Configure frame decorations
-
-(unless +sys-mac-p
-  ;; Hide window decorations.
-  (add-to-list 'default-frame-alist '(undecorated . t)))
-
-;;;; Handle macOS-specific workarounds
-
-(when +sys-mac-p
-  ;; `undecorated-round' is macOS-specific.
-  (add-to-list 'default-frame-alist '(undecorated-round . t))
-
-  ;; GUI menu bar is necessary otherwise Emacs will be treated as a
-  ;; non-application OS window (e.g. no focus capture).
-  ;; <https://github.com/doomemacs/doomemacs/blob/d657be1744a1481dc4646d0b62d5ee1d3e75d1d8/lisp/doom-start.el#L118-L128>
-  (def-hook! ceamx-frame--maybe-restore-gui-menu-bar-h (&optional frame)
-    '(after-make-frame-functions window-setup-hook)
-    "TODO: Provide source for this approach (Doom?), and why it does what it does."
-    (when-let (frame (or frame (selected-frame)))
-      (when (display-graphic-p frame)
-        (set-frame-parameter frame 'menu-bar-lines 1))))
-
-  ;; Stop C-z from minimizing windows.
-  (keymap-global-unset "C-z" t))
-
-
-;;; General frame configuration
-
-;;;; Disable the frame menu bar by default
-
-(menu-bar-mode -1)
-
-;;;; Enable the resurrection of frames with ~undelete-frame~
-
-(undelete-frame-mode 1)
-
-;;; Keybindings
-
-(define-keymap :keymap ceamx-session-map
-  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
-  "f d" #'delete-frame)
-
-(provide 'init-frame)
-;;; init-frame.el ends here
-#+end_src
-
-** Frame Hooks
-
-#+begin_src emacs-lisp :tangle lisp/init-frame-hooks.el
-;;; init-frame-hooks.el --- Provide specific hooks for GUI/TTY frame creation  -*- lexical-binding: t; -*-
-
-;; Copyright (c) 2023-2024 Chris Montgomery
-;; Copyright (c) 2006-2021 Steve Purcell
-
-;; Author: Steve Purcell
-;;         Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Created: 20 July 2023
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-;;; Commentary:
-;;; Code:
-
-(defvar after-make-console-frame-hooks '()
-  "Hooks to run after creating a new TTY frame.")
-(defvar after-make-window-system-frame-hooks '()
-  "Hooks to run after creating a new window-system frame.")
-
-(defun run-after-make-frame-hooks (frame)
-  "Run configured hooks in response to the newly-created FRAME.
-Selectively runs either `after-make-console-frame-hooks' or
-`after-make-window-system-frame-hooks'"
-  (with-selected-frame frame
-    (run-hooks (if window-system
-                   'after-make-window-system-frame-hooks
-                 'after-make-console-frame-hooks))))
-(add-hook 'after-make-frame-functions 'run-after-make-frame-hooks)
-
-(defvar ceamx/initial-frame (selected-frame)
-  "The frame (if any) active during Emacs initialization.")
-
-;; NOTE: Should not use `elpaca-after-init-hook'.
-(add-hook 'after-init-hook
-          (lambda () (when ceamx/initial-frame
-                       (run-after-make-frame-hooks ceamx/initial-frame))))
-
-
-(provide 'init-frame-hooks)
-;;; init-frame-hooks.el ends here
-#+end_src
-
-** Library
-
-#+begin_src emacs-lisp :tangle lisp/lib-frame.el
-;;; lib-frame.el --- Frame functions                 -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
-
-;; TODO: why?
-(defun ceamx/maybe-suspend-frame ()
-  (interactive)
-  (unless (and +sys-mac-p window-system)
-    (suspend-frame)))
-
-
-(provide 'lib-frame)
-;;; lib-frame.el ends here
-#+end_src
-
-
 * Appearance
 :PROPERTIES:
 :header-args: :noweb-ref init-ui
@@ -3677,7 +3468,6 @@ accommodation for varying pixel densities."
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
 #+end_src
 
-
 *** Modus Themes
 
 - Website :: <https://protesilaos.com/modus-themes/>
@@ -3729,7 +3519,6 @@ accommodation for varying pixel densities."
    '(region ((t :extend nil)))))
 #+end_src
 
-
 *** Ef-Themes
 
 - Website :: <https://protesilaos.com/emacs/ef-themes>
@@ -3767,7 +3556,6 @@ accommodation for varying pixel densities."
   ;; Disable all other themes to avoid awkward blending
   (mapc #'disable-theme custom-enabled-themes))
 #+end_src
-
 
 *** DISABLED Circadian Theme Phasing
 
@@ -3876,7 +3664,6 @@ accommodation for varying pixel densities."
   ;; Activate some theme in the current period.
   (theme-buffet-a-la-carte))
 #+end_src
-
 
 *** Theme commands
 
@@ -3994,18 +3781,95 @@ not retain the generic background set by the function
   (ceamx/load-dark-theme))
 #+end_src
 
+** Frame and Window
+
+*** Requirements
+
+#+begin_src emacs-lisp
+(require 'config-env)
+
+(require 'ceamx-lib)
+#+end_src
+
+*** Configure frame decorations
+
+#+begin_src emacs-lisp
+(unless +sys-mac-p
+  ;; Hide window decorations.
+  (add-to-list 'default-frame-alist '(undecorated . t)))
+#+end_src
+
+**** Handle macOS-specific workarounds
+
+#+begin_src emacs-lisp
+(when +sys-mac-p
+  ;; `undecorated-round' is macOS-specific.
+  (add-to-list 'default-frame-alist '(undecorated-round . t))
+
+  ;; GUI menu bar is necessary otherwise Emacs will be treated as a
+  ;; non-application OS window (e.g. no focus capture).
+  ;; <https://github.com/doomemacs/doomemacs/blob/d657be1744a1481dc4646d0b62d5ee1d3e75d1d8/lisp/doom-start.el#L118-L128>
+  (def-hook! ceamx-frame--maybe-restore-gui-menu-bar-h (&optional frame)
+    '(after-make-frame-functions window-setup-hook)
+    "TODO: Provide source for this approach (Doom?), and why it does what it does."
+    (when-let (frame (or frame (selected-frame)))
+      (when (display-graphic-p frame)
+        (set-frame-parameter frame 'menu-bar-lines 1))))
+
+  ;; Stop C-z from minimizing windows.
+  (keymap-global-unset "C-z" t))
+#+end_src
+
+*** General frame configuration
+
+#+begin_src emacs-lisp
+;; Disable the frame menu bar by default
+(menu-bar-mode -1)
+
+;; Enable the resurrection of frames with ~undelete-frame~
+(undelete-frame-mode 1)
+#+end_src
+
+*** Add frame borders and window dividers
+
+#+begin_src emacs-lisp
+(modify-all-frames-parameters
+ ;; NOTE: `org-modern', whose readme provided this example, initially had these
+ ;; set to 40.  but on <%tuvok%>, 40 looked absolutely ridiclous.  i figured i
+ ;; should try halving that, which seemed perfect.  so i am guessing there is
+ ;; some confodungin factors with high-density displays
+ '((right-divider-width . 20)
+   (internal-border-width . 20)))
+
+(dolist (face '(window-divider
+                window-divider-first-pixel
+                window-divider-last-pixel))
+  (face-spec-reset-face face)
+  (set-face-foreground face (face-attribute 'default :background)))
+
+(set-face-background 'fringe (face-attribute 'default :background))
+#+end_src
+
+*** Keybindings
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-session-map
+  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
+  "f d" #'delete-frame)
+#+end_src
+
 ** Fonts/Typography
 :PROPERTIES:
-:header-args: :noweb-ref init-ui-font
+:header-args: :noweb-ref init-ui-graphical
 :END:
 
 #+begin_src emacs-lisp
 ;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
 #+end_src
 
-#+begin_src emacs-lisp
-;;;; Requirements
+**** Requirements
 
+#+begin_src emacs-lisp
 (require 'ceamx-paths)
 (require 'config-env)
 
@@ -4013,23 +3877,22 @@ not retain the generic background set by the function
 (require 'lib-ui)
 #+end_src
 
-#+begin_src emacs-lisp
-;;;; General
+**** General
 
+#+begin_src emacs-lisp
 (setq x-underline-at-descent-line nil)
 
 (setq-default text-scale-remap-header-line t)
 #+end_src
 
+**** Use the ~fontaine~ package for configuring and managing font presets
+
+<https://protesilaos.com/emacs/fontaine>
+
+TIP: You can test out alterations quickly with, for example:
+     (internal-set-lisp-face-attribute 'default :weight 'semilight)
+
 #+begin_src emacs-lisp
-;;;; Use the ~fontaine~ package for configuring and managing font presets
-
-;; <https://protesilaos.com/emacs/fontaine>
-
-;; TIP: You can test out alterations quickly with, for example:
-;;      (internal-set-lisp-face-attribute 'default :weight 'semilight)
-
-
 (package! fontaine
   (require 'fontaine)
 
@@ -4144,14 +4007,14 @@ not retain the generic background set by the function
 (elpaca-wait)
 #+end_src
 
+**** Enable improved ligature support with the ~ligature.el~ package
+
+<https://github.com/mickeynp/ligature.el>
+
+A better implementation of ligature support than the builtin ~prettify-symbols-mode~.
+<https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
+
 #+begin_src emacs-lisp
-;;;; Enable improved ligature support with the ~ligature.el~ package
-
-;; <https://github.com/mickeynp/ligature.el>
-
-;; A better implementation of ligature support than the builtin ~prettify-symbols-mode~.
-;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
-
 (package! ligature
   (require 'ligature)
 
@@ -4270,8 +4133,14 @@ not hard.
 (ceamx/load-dark-theme)
 #+end_src
 
+*** DISABLED Improve the breathability of frame boundaries with ~spacious-padding~
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+- Website :: <https://protesilaos.com/emacs/spacious-padding>
+
 #+begin_src emacs-lisp
-;;; ~spacious-padding~ :: <https://protesilaos.com/emacs/spacious-padding>
 (use-package spacious-padding
   :demand t
   :commands (spacious-padding-mode)
@@ -4300,7 +4169,6 @@ not hard.
   ;;                           :mode-line-inactive vertical-border))
 
   (spacious-padding-mode 1))
-
 #+end_src
 
 *** Keybindings for appearance control
@@ -4314,7 +4182,8 @@ not hard.
   "a o" #'olivetti-mode)
 #+end_src
 
-** Library
+
+** TODO Calculate sizes based on display monitor attributes
 :PROPERTIES:
 :header-args: :noweb-ref lib-ui
 :END:
@@ -4323,23 +4192,28 @@ not hard.
 - Ref :: <https://photo.stackexchange.com/questions/18494/what-is-the-difference-between-pixel-pitch-and-pixel-density>
 - Ref :: <https://insights.samsung.com/2023/10/05/what-is-pixel-pitch-understanding-fine-pixel-pitch-led-displays/>
 
+*** Measurement constants
 
-#+begin_src emacs-lisp
-;;;; Constants
-
+#+begin_src emacs-lisp :noweb-ref config-ui
 (defconst ceamx-inch-as-mm 25.4
   "One inch in millimeters.")
 
 (defconst ceamx-pt-as-mm 0.353
   "One typographic point in millimeters.")
+#+end_src
 
-;;;; Functions
+*** Function to get geometry attributes for the default display monitor
 
+#+begin_src emacs-lisp :noweb-ref config-ui
 (defun ceamx-default-monitor-geometry ()
   "Return geometry for the first monitor in `display-monitor-attributes-list'."
   (let* ((first-monitor (car (display-monitor-attributes-list))))
     (alist-get 'geometry first-monitor)))
+#+end_src
 
+*** Function to get the pixel pitch for a frame
+
+#+begin_src emacs-lisp :noweb-ref config-ui
 ;; via <https://www.reddit.com/r/emacs/comments/7hzxb8/comment/dqywyqc/>
 (defun ceamx-pixel-pitch (&optional frame)
   "Return the pixel pitch for FRAME in millimeters.
@@ -4349,8 +4223,12 @@ Pixel pitch is the distance from the center of a pixel to the
 center of its adjacent pixel."
   (let ((monitor-attrs (frame-monitor-attributes frame)))
     (/ (float (nth 1 (assoc 'mm-size monitor-attrs)))
-      (nth 3 (assoc 'geometry monitor-attrs)))))
+       (nth 3 (assoc 'geometry monitor-attrs)))))
+#+end_src
 
+*** Function to calculate font height scaling
+
+#+begin_src emacs-lisp :noweb-ref config-ui
 (defun ceamx-font-height (number &optional multiplier)
   "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
 NUMBER should be a whole number. MULTIPLIER should be a float.
@@ -4361,7 +4239,7 @@ will be used as default."
 #+end_src
 
 
-* Window
+* Window Management
 :PROPERTIES:
 :header-args: :noweb-ref init-window
 :END:
