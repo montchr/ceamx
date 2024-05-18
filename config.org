@@ -5,7 +5,7 @@
 #+language: en
 #+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments no
 #+archive: graveyard/%s::datetree/
-#+startup show2levels
+#+startup: show2levels
 
 #+begin_quote
 generally no real magic in this world exists
