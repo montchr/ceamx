@@ -102,7 +102,7 @@
 (setopt org-auto-align-tags nil)
 (setopt org-tags-column 0)
 
-(setopt org-fold-catch-invisible-edits 'error) ; default: smart
+(setopt org-fold-catch-invisible-edits 'show-and-error) ; default: smart
 (setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 2))
                              ;; (org-agenda-files . (:maxlevel . 1))
                              (,(locate-user-emacs-file "TODO.org") . (:level . 1))

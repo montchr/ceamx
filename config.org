@@ -11990,7 +11990,7 @@ unexpected changes to the content (depending on the setting of
 (setopt org-auto-align-tags nil)
 (setopt org-tags-column 0)
 
-(setopt org-fold-catch-invisible-edits 'error) ; default: smart
+(setopt org-fold-catch-invisible-edits 'show-and-error) ; default: smart
 #+END_SRC
 
 *** Refiling and Archiving
