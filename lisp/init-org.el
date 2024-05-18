@@ -50,7 +50,7 @@
 
 (setopt org-M-RET-may-split-line nil)
 ;; (setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
-(setopt org-blank-before-new-entry nil)
+;; (setopt org-blank-before-new-entry nil)
 
 (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 (package! org-modern
@@ -75,7 +75,8 @@
 
 ;; (setopt org-ellipsis "…")
 (setopt org-ellipsis " ⇢")
-(set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
+(after! org
+  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 (setopt org-log-done 'time)
 (setopt org-todo-keywords
         '((sequence

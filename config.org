@@ -11896,7 +11896,7 @@ unexpected changes to the content (depending on the setting of
 
 (setopt org-M-RET-may-split-line nil)
 ;; (setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
-(setopt org-blank-before-new-entry nil)
+;; (setopt org-blank-before-new-entry nil)
 
 (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 #+END_SRC
@@ -11941,7 +11941,8 @@ unexpected changes to the content (depending on the setting of
 
 ;; (setopt org-ellipsis "…")
 (setopt org-ellipsis " ⇢")
-(set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
+(after! org
+  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 #+END_SRC
 
 **** Workflow and state settings
