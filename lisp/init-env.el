@@ -64,8 +64,12 @@
 (setopt remote-file-name-inhibit-auto-save-visited t)
 
 (after! tramp
-  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin")
-  (add-to-list 'tramp-remote-path "~/.local/bin"))
+  (dolist (path '("~/.local/bin"
+                  "~/.nix-profile/bin"
+                  "~/.local/state/nix/profiles/profile/bin/"
+                  "/nix/var/nix/profiles/default/bin"
+                  "/run/current-system/sw/bin"))
+    (add-to-list 'tramp-remote-path path)))
 
 (provide 'init-env)
 ;;; init-env.el ends here
