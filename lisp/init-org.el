@@ -147,7 +147,7 @@
     "C-x n n" #'org-narrow-to-subtree
 
     ;; Mnemonic is the global key to goto definition/references.
-    "M-." #'org-edit-special ; also: C-c '
+    ;; "M-." #'org-edit-special ; also: C-c '
 
     ;; Override earlier binding to `consult-outline'.
     "M-g o" #'consult-org-heading))
