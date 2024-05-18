@@ -13,7 +13,7 @@ org-mode
 (src & "#+begin_src " p n r n "#+end_src" :post (org-edit-src-code))
 (elisp & "#+begin_src emacs-lisp" n r n "#+end_src" :post (org-edit-src-code))
 (elsp & "#+begin_src emacs-lisp" n r n "#+end_src" :post (org-edit-src-code))
-(sh & "#+begin_src sh" n r n "#+end_src" :post (org-edit-src-code))
+(sh & "#+begin_src shell" n r n "#+end_src" :post (org-edit-src-code))
 
 (readmecollapse  "*** " (p "Heading") n "#+HTML: <details> <summary> " (p "sub-heading")  " </summary>" n (r> "link or any comments") n n "#+HTML: </details>" n)
 
