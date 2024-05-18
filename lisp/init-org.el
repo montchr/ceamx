@@ -75,6 +75,7 @@
 
 ;; (setopt org-ellipsis "…")
 (setopt org-ellipsis " ⇢")
+(set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
 (setopt org-log-done 'time)
 (setopt org-todo-keywords
         '((sequence

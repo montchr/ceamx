@@ -11941,6 +11941,7 @@ unexpected changes to the content (depending on the setting of
 
 ;; (setopt org-ellipsis "…")
 (setopt org-ellipsis " ⇢")
+(set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)
 #+END_SRC
 
 **** Workflow and state settings
