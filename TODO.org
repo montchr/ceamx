@@ -2,11 +2,32 @@
 #+author: Chris Montgomery <chmont@proton.me>
 #+language: en
 
-* Features
+* Scratches
+
+** kmacro to convert outli-style elisp comment to org heading
+
+#+begin_src emacs-lisp
+(defalias 'ceamx/outli-comment-to-org-heading
+  (kmacro "C-k C-k C-k C-p C-p <return> <return> C-p C-y C-p C-p C-d C-d C-d * * * C-n C-k C-k C-s ; ; ; <return> C-a"))
+#+end_src
+
+* Improvements
+
+** PROJ dyimod-l
+
+*** TODO quick keybinding like meow's =x= to mark line without meow
+
+muscles men-or-y
+
+*** TODO =q= to bury buff (musecles menory)
 
 * Bugs
 
 ** TODO Why can I not refile to this file from the other file?
+
+** TODO block cursor when meow disabled
+
+block cursor is garbage mess
 
 * Packages
 

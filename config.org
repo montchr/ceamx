@@ -118,7 +118,6 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<ceamx-postlude>>
 #+end_src
 
-
 ** Target Files
 
 *** =early-init.el=
@@ -915,8 +914,11 @@ instead, use a =-flag= suffix or names like =is-foo=.
 :header-args: :results replace
 :END:
 
-*** TODO ~file-header~ cannot accept passthrough noweb args?
+*** CANCELLED ~file-header~ cannot accept passthrough noweb args?
+CLOSED: [2024-05-18 Sat 15:50]
 
+- State "CANCELLED"  from "TODO"       [2024-05-18 Sat 15:50] \\
+  There are many limitations to Noweb, and E expects to move away from the current approach.
 *** ~file-header~
 
 #+name: file-header-default-authors-table
