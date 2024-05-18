@@ -3510,7 +3510,6 @@ accommodation for varying pixel densities."
   :type '(float))
 #+end_src
 
-
 ** General user interface customizations
 
 #+begin_src emacs-lisp
@@ -3635,7 +3634,6 @@ accommodation for varying pixel densities."
   (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
     (add-hook 'next-error-hook (function fn))))
 #+end_src
-
 
 ** Theme
 
@@ -3996,7 +3994,6 @@ not retain the generic background set by the function
   (ceamx/load-dark-theme))
 #+end_src
 
-
 ** Fonts/Typography
 :PROPERTIES:
 :header-args: :noweb-ref init-ui-font
@@ -4170,8 +4167,6 @@ not retain the generic background set by the function
   (global-ligature-mode t))
 #+end_src
 
-
-
 ** Modeline
 
 #+begin_src emacs-lisp
@@ -4250,7 +4245,6 @@ not retain the generic background set by the function
   (doom-modeline-mode 1))
 #+end_src
 
-
 ** Integrating the preceding interfaces
 
 Firstly, ensure that all requested Appearance packages have been installed:
@@ -4319,7 +4313,6 @@ not hard.
   "a l" #'ceamx/light
   "a o" #'olivetti-mode)
 #+end_src
-
 
 ** Library
 :PROPERTIES:
@@ -13631,8 +13624,8 @@ Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
 
 Or, perhaps more accurately: stuff that needs a better home.
 
-** TODO Consolidate ~lib-simple~ and ~lib-text~
 
+** TODO Consolidate ~lib-simple~ and ~lib-text~
 
 ** "Simple" Library =lib-simple.el=
 
@@ -13773,7 +13766,6 @@ Call the commands `ceamx/escape-url-line' and
 ;;; lib-simple.el ends here
 #+end_src
 
-
 ** General Text Library
 
 #+begin_src emacs-lisp :tangle lisp/lib-text.el
@@ -13827,7 +13819,6 @@ POS defaults to the current position."
 ;;; lib-text.el ends here
 #+end_src
 
-
 ** Keybindings :keybinds:
 :PROPERTIES:
 :header-args: :noweb-ref ceamx-postlude
@@ -13838,6 +13829,7 @@ POS defaults to the current position."
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs)
 #+end_src
+
 
 * Postlude
 :PROPERTIES:
