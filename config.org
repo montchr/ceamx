@@ -11337,7 +11337,7 @@ its cache should stay out of the way.
 
 #+begin_src emacs-lisp
 (setopt lsp-intelephense-storage-path
-  (file-name-as-directory (concat ceamx-var-dir "lsp-intelephense/.cache")))
+  (file-name-as-directory (concat ceamx-lsp-mode-cache-dir "server/intelephense/cache")))
 #+end_src
 
 *** Projectile integration
