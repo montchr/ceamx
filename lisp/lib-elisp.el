@@ -28,6 +28,18 @@
 
 ;;; Code:
 
+;;; Functions
+
+;; via <https://emacs.stackexchange.com/a/58078/40956>
+(defun ceamx-dev-list-mode-ancestors (mode)
+  "Return a list of the ancestor modes that MODE is derived from."
+  (let ((modes   ())
+        (parent  nil))
+    (while (setq parent (get mode 'derived-mode-parent))
+      (push parent modes)
+      (setq mode parent))
+    (setq modes  (nreverse modes))))
+
 ;;; Macros
 
 ;; via <https://github.com/alphapapa/emacs-package-dev-handbook/blob/master/README.org#debug-warn-macro>
