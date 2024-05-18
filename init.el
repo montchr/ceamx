@@ -274,6 +274,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;;; Language/syntax support
 
 (require 'config-prog)
+(require 'lib-prog)
 
 (require 'init-prog)
 (require 'init-lisp)

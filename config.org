@@ -778,6 +778,28 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="config-prog")>>
 #+end_src
 
+*** =lisp/lib-prog.el=
+
+#+name: lib-prog-file
+#+begin_src emacs-lisp :tangle lisp/lib-prog.el
+<<file-prop-line(feature="lib-prog",desc="Assorted helper callables for programming modes")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chris@cdom.io>
+
+;; Author: Chris Montgomery <chris@cdom.io>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-prog>>
+
+<<file-footer(feature="lib-prog")>>
+#+end_src
+
 *** =lisp/init-eglot.el=
 
 #+name: init-eglot-file
@@ -1847,6 +1869,7 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 ;;;; Language/syntax support
 
 (require 'config-prog)
+(require 'lib-prog)
 
 (require 'init-prog)
 (require 'init-lisp)
@@ -10527,6 +10550,19 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
         orig-result))))
 #+end_src
 
+**** Define function to change the priority of a pre-defined LSP client
+
+- source :: <https://github.com/doomemacs/doomemacs/blob/9620bb45ac4cd7b0274c497b2d9d93c4ad9364ee/modules/tools/lsp/autoload/lsp-mode.el#L4-L11>
+
+#+begin_src emacs-lisp :noweb-ref lib-prog
+(defun ceamx-lsp-client-set-priority (client priority)
+  "Change the PRIORITY of an LSP-Mode CLIENT."
+  (require 'lsp-mode)
+  (if-let (client (gethash client lsp-clients))
+      (setf (lsp--client-priority client)
+            priority)
+    (error "No LSP client named %S" client)))
+#+end_src
 
 *** Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
 :PROPERTIES:
