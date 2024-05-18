@@ -31,11 +31,24 @@
 (when (featurep 'lsp-toml)
   (setopt lsp-toml-cache-path (file-name-as-directory
                                (concat ceamx-lsp-mode-cache-dir "server/toml"))))
-(package! yaml-mode
-  (dolist (pattern '("\\.yml\\'"
-                     "\\.yaml\\'"
-                     "Procfile\\'"))
-    (add-to-list 'auto-mode-alist `(,pattern . yaml-mode))))
+(package! yaml-mode)
+(when (eq 'lsp ceamx-lsp-client)
+  (after! (yaml-mode)
+    (add-hook 'yaml-mode-hook #'lsp-deferred)
+    (add-hook 'yaml-ts-mode-hook #'lsp-deferred)))
+(when (eq 'lsp ceamx-lsp-client)
+  (setopt lsp-yaml-schemas nil)
+
+  ;; Keep this cached file with all of the other LSP server caches.
+  (setopt lsp-yaml-schema-store-local-db
+          (file-name-concat ceamx-lsp-mode-cache-dir "server/yaml/lsp-yaml-schemas.json"))
+
+  ;; Download the YAML Schema Store database if not present.
+  ;; FIXME: handle periodic updates of cached data
+  (after! lsp-yaml
+    (defer! 2
+      (unless (file-exists-p lsp-yaml-schema-store-local-db)
+        (lsp-yaml-download-schema-store-db)))))
 (use-feature! nxml-mode
   :mode "\\.p\\(?:list\\|om\\)\\'"      ; plist, pom
   :mode "\\.xs\\(?:d\\|lt\\)\\'"        ; xslt, xsd
