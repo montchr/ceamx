@@ -36,19 +36,11 @@
 
 ;; Improve visual contrast between focused/non-focused windows.
 (setopt highlight-nonselected-windows nil)
-;;; Customization buffer and menu interface
-
 (setopt custom-theme-allow-multiple-selections nil)
 
 (setopt custom-unlispify-menu-entries nil)
 (setopt custom-unlispify-tag-names nil)
 (setopt custom-unlispify-remove-prefixes nil)
-;;; Provide commonly-used interface libraries
-
-;; Required as dependencies for many packages, either as more recent versions
-;; than those available in Emacs (e.g. ~transient ~IIRC), or, including some
-;; (like ~nix-mode~) who don't seem to declare them.
-
 (package! transient)
 
 (with-eval-after-load 'transient
@@ -58,27 +50,13 @@
   ;; Always close transient with ESC
   ;; FIXME: meow overrides this. waiting until it loads does not help.
   (keymap-set transient-map "ESC" #'transient-quit-one))
-
 (package! magit-section)
-
 (package! nerd-icons
   (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
   (require 'nerd-icons))
-
 (package! svg-lib)
-
 (package! hydra)
-;;; ~pretty-hydra~
-
-;; <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
-
 (package! pretty-hydra)
-;;; ~avy~
-
-;; <https://github.com/abo-abo/avy>
-
-;; <https://karthinks.com/software/avy-can-do-anything/>
-
 (package! avy
   ;; Reduce the number of possible candidates.
   ;; Can be overridden with the universal argument.
@@ -96,20 +74,10 @@
     (declare-function lispy-join "lispy")
     ;; Prevent conflict with newly-added M-j binding.
     (keymap-set lispy-mode-map "M-J" #'lispy-join)))
-;;; ~page-break-lines~: improve appearance of form feed characters
-
-;; <https://github.com/purcell/page-break-lines/blob/master/README.md>
-
 (package! page-break-lines
   (global-page-break-lines-mode))
-;;; ~breadcrumb~: header-line indication of current location in project
-
-;; <https://github.com/joaotavora/breadcrumb>
-
 (package! breadcrumb
   (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
-;;; ~pulsar~: Pulse current line after function invocations
-
 (package! pulsar
   (setopt pulsar-pulse t
           pulsar-delay 0.055

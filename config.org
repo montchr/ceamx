@@ -3320,9 +3320,9 @@ accommodation for varying pixel densities."
 (setopt highlight-nonselected-windows nil)
 #+end_src
 
-#+begin_src emacs-lisp
-;;; Customization buffer and menu interface
+** Customize the Customization buffer and menu interface
 
+#+begin_src emacs-lisp
 (setopt custom-theme-allow-multiple-selections nil)
 
 (setopt custom-unlispify-menu-entries nil)
@@ -3330,13 +3330,15 @@ accommodation for varying pixel densities."
 (setopt custom-unlispify-remove-prefixes nil)
 #+end_src
 
+** Provide commonly-used interface libraries
+
+Required as dependencies for many packages, either as more recent versions
+than those available in Emacs (e.g. ~transient ~IIRC), or, including some
+(like ~nix-mode~) who don't seem to declare them.
+
+*** ~transient~ and ~magit-section~
+
 #+begin_src emacs-lisp
-;;; Provide commonly-used interface libraries
-
-;; Required as dependencies for many packages, either as more recent versions
-;; than those available in Emacs (e.g. ~transient ~IIRC), or, including some
-;; (like ~nix-mode~) who don't seem to declare them.
-
 (package! transient)
 
 (with-eval-after-load 'transient
@@ -3346,33 +3348,46 @@ accommodation for varying pixel densities."
   ;; Always close transient with ESC
   ;; FIXME: meow overrides this. waiting until it loads does not help.
   (keymap-set transient-map "ESC" #'transient-quit-one))
+#+end_src
 
+#+begin_src emacs-lisp
 (package! magit-section)
+#+end_src
 
+*** ~nerd-icons~
+
+#+begin_src emacs-lisp
 (package! nerd-icons
   (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
   (require 'nerd-icons))
+#+end_src
 
+*** Decorate buffers with SVG
+
+#+begin_src emacs-lisp
 (package! svg-lib)
+#+end_src
 
+*** Hydra
+
+#+begin_src emacs-lisp
 (package! hydra)
 #+end_src
 
+*** Pretty-Hydra
+
+- Website :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
+
 #+begin_src emacs-lisp
-;;; ~pretty-hydra~
-
-;; <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
-
 (package! pretty-hydra)
 #+end_src
 
+*** Avy
+
+- Website :: <https://github.com/abo-abo/avy>
+- Ref :: <https://karthinks.com/software/avy-can-do-anything/>
+
 #+begin_src emacs-lisp
-;;; ~avy~
-
-;; <https://github.com/abo-abo/avy>
-
-;; <https://karthinks.com/software/avy-can-do-anything/>
-
 (package! avy
   ;; Reduce the number of possible candidates.
   ;; Can be overridden with the universal argument.
@@ -3392,27 +3407,27 @@ accommodation for varying pixel densities."
     (keymap-set lispy-mode-map "M-J" #'lispy-join)))
 #+end_src
 
+*** ~page-break-lines~: improve appearance of form feed characters
+
+- Website :: <https://github.com/purcell/page-break-lines/blob/master/README.md>
+
 #+begin_src emacs-lisp
-;;; ~page-break-lines~: improve appearance of form feed characters
-
-;; <https://github.com/purcell/page-break-lines/blob/master/README.md>
-
 (package! page-break-lines
   (global-page-break-lines-mode))
 #+end_src
 
+*** ~breadcrumb~: header-line indication of current location in project
+
+- Website :: <https://github.com/joaotavora/breadcrumb>
+
 #+begin_src emacs-lisp
-;;; ~breadcrumb~: header-line indication of current location in project
-
-;; <https://github.com/joaotavora/breadcrumb>
-
 (package! breadcrumb
   (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 #+end_src
 
-#+begin_src emacs-lisp
-;;; ~pulsar~: Pulse current line after function invocations
+*** Pulse current line after function invocations with ~pulsar~
 
+#+begin_src emacs-lisp
 (package! pulsar
   (setopt pulsar-pulse t
           pulsar-delay 0.055
@@ -4183,7 +4198,6 @@ not hard.
   "a l" #'ceamx/light
   "a o" #'olivetti-mode)
 #+end_src
-
 
 ** TODO Calculate sizes based on display monitor attributes
 :PROPERTIES:
