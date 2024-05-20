@@ -3362,10 +3362,23 @@ than those available in Emacs (e.g. ~transient ~IIRC), or, including some
   (require 'nerd-icons))
 #+end_src
 
-*** Decorate buffers with SVG
+*** ~svg-lib~
 
 #+begin_src emacs-lisp
 (package! svg-lib)
+#+end_src
+
+*** WIP Decorate buffers with SVG
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+- Source :: <https://github.com/Icy-Thought/emacs.d/blob/main/config.org#svg-tag-decorating-buffers-with-svg>
+
+#+begin_src emacs-lisp
+(package! svg-tag-mode
+  (add-hook 'prog-mode-hook #'svg-tag-mode)
+  (add-hook 'text-mode-hook #'svg-tag-mode))
 #+end_src
 
 *** Hydra
