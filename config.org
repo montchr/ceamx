@@ -11908,12 +11908,6 @@ unexpected changes to the content (depending on the setting of
 
 #+BEGIN_SRC emacs-lisp
 (package! org-modern
-  ;; Ensure leading stars are replaced by spaces.
-  ;; (setopt org-modern-hide-stars "  ")
-  (setopt org-modern-hide-stars nil)
-
-  (setopt org-modern-star nil)
-
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 #+END_SRC
@@ -11922,12 +11916,20 @@ unexpected changes to the content (depending on the setting of
 
 <https://github.com/minad/org-modern#configuration>
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
 (setopt org-pretty-entities t)
-(setopt org-hide-emphasis-markers nil)
-#+END_SRC
+(setopt org-pretty-entities-include-sub-superscripts nil)
+#+end_src
+
+#+begin_src emacs-lisp
+(setopt org-hide-emphasis-markers t)
+(setopt org-link-descriptive t)
+
+(package! org-appear
+  (add-hook 'org-mode-hook #'org-appear-mode))
+#+end_src
 
 **** Folding and indentation
 
@@ -11938,6 +11940,11 @@ unexpected changes to the content (depending on the setting of
 
 ;; Avoid unnecessary indentation effects unless specified in file header.
 (setopt org-startup-indented nil)
+
+;; Ensure leading stars are replaced by spaces.
+(setopt org-modern-hide-stars " ")
+;; (setopt org-modern-hide-stars nil)
+(setopt org-modern-star nil)
 
 ;; (setopt org-ellipsis "…")
 (setopt org-ellipsis " ⇢")

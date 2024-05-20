@@ -54,24 +54,28 @@
 
 (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 (package! org-modern
-  ;; Ensure leading stars are replaced by spaces.
-  ;; (setopt org-modern-hide-stars "  ")
-  (setopt org-modern-hide-stars nil)
-
-  (setopt org-modern-star nil)
-
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
 (setopt org-pretty-entities t)
-(setopt org-hide-emphasis-markers nil)
+(setopt org-pretty-entities-include-sub-superscripts nil)
+(setopt org-hide-emphasis-markers t)
+(setopt org-link-descriptive t)
+
+(package! org-appear
+  (add-hook 'org-mode-hook #'org-appear-mode))
 (setopt org-cycle-emulate-tab t)
 (setopt org-indent-indentation-per-level 2)
 (setopt org-startup-folded 'content)
 
 ;; Avoid unnecessary indentation effects unless specified in file header.
 (setopt org-startup-indented nil)
+
+;; Ensure leading stars are replaced by spaces.
+(setopt org-modern-hide-stars " ")
+;; (setopt org-modern-hide-stars nil)
+(setopt org-modern-star nil)
 
 ;; (setopt org-ellipsis "…")
 (setopt org-ellipsis " ⇢")
