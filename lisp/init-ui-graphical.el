@@ -24,7 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
 (require 'ceamx-paths)
 (require 'config-env)
 

@@ -3289,53 +3289,77 @@ buffer, as a buffer-local variable.
 :header-args: :noweb-ref init-ui
 :END:
 
-** General user interface settings
-:PROPERTIES:
-:header-args: :noweb-ref config-ui
-:END:
-
 #+begin_src emacs-lisp
-(defconst ceamx-gnome-ui-namespace "org.gnome.desktop.interface")
+(require 'ceamx-paths)
+(require 'config-env)
+
+(require 'ceamx-lib)
+(require 'lib-ui)
 #+end_src
 
-#+begin_src emacs-lisp
-(defconst ceamx-theme-buffet-dark-periods
-  '(:night :twilight :evening))
 
-(defconst ceamx-theme-buffet-light-periods
-  '(:morning :day :afternoon))
+** Cursor
+
+#+begin_src emacs-lisp
+;; Modal keybinding systems will change the cursor dynamically to indicate current state.
+;; This value matches what I expect in an "insert" mode.
+(setq-default cursor-type 'bar)
+
+;; Enable cursor blinking.
+(blink-cursor-mode 1)
+
+;; Seeing a cursor in a window other than the active window is pretty confusing.
+(setq-default cursor-in-non-selected-windows nil)
 #+end_src
 
-#+begin_src emacs-lisp
-(defcustom ceamx-theme-default-light 'modus-operandi-tinted
-  "The default light theme."
-  :group 'ceamx
-  :type 'symbol)
+** Customize the Customization buffer and menu interface
 
-(defcustom ceamx-theme-default-dark 'modus-vivendi-tinted
-  "The default dark theme."
-  :group 'ceamx
-  :type 'symbol)
+#+begin_src emacs-lisp
+(setopt custom-theme-allow-multiple-selections nil)
+
+(setopt custom-unlispify-menu-entries nil)
+(setopt custom-unlispify-tag-names nil)
+(setopt custom-unlispify-remove-prefixes nil)
 #+end_src
 
-#+begin_src emacs-lisp
-(defcustom ceamx-modeline-provider 'doom
-  "Modeline provider to load.
-Valid values are the symbols `doom', `nano', and `telephone'
-which reference the `doom-modeline', `nano-modeline', and
-`telephone-line' modules respectively.
+** Menus (Hydratics & Transients)
 
-A nil value will not load any modeline customizations (use Emacs
-with its default modeline)."
-  :group 'ceamx
-  :type '(choice :tag "Modeline to load" :value doom
-          (const :tag "The `doom-modeline' module" doom)
-          (const :tag "The `nano-modeline' module" nano)
-          (const :tag "The `telephone-line' module" telephone)
-          (const :tag "Do not load a modeline module" nil)))
+Required as dependencies for many packages, either as more recent versions
+than those available in Emacs (e.g. ~transient ~IIRC), or, including some
+(like ~nix-mode~) who don't seem to declare them.
+
+*** Hydra
+
+- Documentation :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
+
+#+begin_src emacs-lisp
+(package! hydra)
+(package! pretty-hydra)
 #+end_src
 
+*** Transient
+
 #+begin_src emacs-lisp
+(package! transient)
+(package! magit-section)
+#+end_src
+
+**** TODO Allow quitting ~transient~ menus with =ESC=
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'transient
+  (defvar transient-map)
+  (declare-function transient-quit-one "transient")
+
+  ;; Always close transient with ESC
+  ;; FIXME: meow overrides this. waiting until it loads does not help.
+  (keymap-set transient-map "ESC" #'transient-quit-one))
+#+end_src
+
+** Theme
+*** Configure the preferred theme family
+
+#+begin_src emacs-lisp :noweb-ref config-ui
 (defcustom ceamx-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
@@ -3352,219 +3376,50 @@ theme)."
           (const :tag "Do not load a theme module" nil)))
 #+end_src
 
-#+begin_src emacs-lisp
-(defcustom ceamx-theme-circadian-interval nil
-  "The circadian theme switching interval.
-Value may be `period', `solar', or nil, corresponding
-respectively to period-based switching with `theme-buffet' or
-sunrise/sunset toggling from the combination of the `solar'
-library and the `circadian' package.
+*** Configure the preferred light and dark themes
 
-A nil value means to disable automatic theme switching.
-Theme-switching commands `ceamx/light' and `ceamx/dark' will
-unconditionally use `ceamx-theme-default-light' and
-`ceamx-theme-default-dark', respectively."
+#+begin_src emacs-lisp :noweb-ref config-ui
+(defcustom ceamx-theme-default-light 'modus-operandi-tinted
+  "The default light theme."
   :group 'ceamx
-  :type '(choice :tag "Circadian theme switching interval" :value nil
-          (const :tag "Time periods via `theme-buffet'" :value buffet)
-          (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
-#+end_src
+  :type 'symbol)
 
-#+begin_src emacs-lisp
-(defcustom ceamx-font-height-multiplier 1.0
-  "Multiplier for display font size.
-Intended for use as a per-system (or, ideally, per-display)
-accommodation for varying pixel densities."
+(defcustom ceamx-theme-default-dark 'modus-vivendi-tinted
+  "The default dark theme."
   :group 'ceamx
-  :type '(float))
+  :type 'symbol)
 #+end_src
 
-** General user interface customizations
+*** Consider all themes "safe"
 
 #+begin_src emacs-lisp
-;; Modal keybinding systems will change the cursor dynamically to indicate current state.
-;; This default value matches what I expect in an "insert" mode.
-(setq-default cursor-type 'bar)
-
-;; Enable cursor blinking.
-(blink-cursor-mode 1)
-
-;; Seeing a cursor in a window other than the active window is pretty confusing.
-(setq-default cursor-in-non-selected-windows nil)
-
-;; Improve visual contrast between focused/non-focused windows.
-(setopt highlight-nonselected-windows nil)
-#+end_src
-
-** Customize the Customization buffer and menu interface
-
-#+begin_src emacs-lisp
-(setopt custom-theme-allow-multiple-selections nil)
-
-(setopt custom-unlispify-menu-entries nil)
-(setopt custom-unlispify-tag-names nil)
-(setopt custom-unlispify-remove-prefixes nil)
-#+end_src
-
-** Provide commonly-used interface libraries
-
-Required as dependencies for many packages, either as more recent versions
-than those available in Emacs (e.g. ~transient ~IIRC), or, including some
-(like ~nix-mode~) who don't seem to declare them.
-
-*** ~transient~ and ~magit-section~
-
-#+begin_src emacs-lisp
-(package! transient)
-
-(with-eval-after-load 'transient
-  (defvar transient-map)
-  (declare-function transient-quit-one "transient")
-
-  ;; Always close transient with ESC
-  ;; FIXME: meow overrides this. waiting until it loads does not help.
-  (keymap-set transient-map "ESC" #'transient-quit-one))
-#+end_src
-
-#+begin_src emacs-lisp
-(package! magit-section)
-#+end_src
-
-*** ~nerd-icons~
-
-#+begin_src emacs-lisp
-(package! nerd-icons
-  (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
-  (require 'nerd-icons))
-#+end_src
-
-*** ~svg-lib~
-
-#+begin_src emacs-lisp
-(package! svg-lib)
-#+end_src
-
-*** WIP Decorate buffers with SVG
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-- Source :: <https://github.com/Icy-Thought/emacs.d/blob/main/config.org#svg-tag-decorating-buffers-with-svg>
-
-#+begin_src emacs-lisp
-(package! svg-tag-mode
-  (add-hook 'prog-mode-hook #'svg-tag-mode)
-  (add-hook 'text-mode-hook #'svg-tag-mode))
-#+end_src
-
-*** Hydra
-
-#+begin_src emacs-lisp
-(package! hydra)
-#+end_src
-
-*** Pretty-Hydra
-
-- Website :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
-
-#+begin_src emacs-lisp
-(package! pretty-hydra)
-#+end_src
-
-*** Avy
-
-- Website :: <https://github.com/abo-abo/avy>
-- Ref :: <https://karthinks.com/software/avy-can-do-anything/>
-
-#+begin_src emacs-lisp
-(package! avy
-  ;; Reduce the number of possible candidates.
-  ;; Can be overridden with the universal argument.
-  (setopt avy-all-windows nil)
-  ;; Prevent conflicts with themes.
-  (setopt avy-background nil)
-  (setopt avy-style 'at-full)
-  ;; Anything lower feels unusable.
-  (setopt avy-timeout-seconds 0.25)
-
-  (keymap-global-set "M-j" #'avy-goto-char-timer)
-
-  (after! lispy
-    (defvar lispy-mode-map)
-    (declare-function lispy-join "lispy")
-    ;; Prevent conflict with newly-added M-j binding.
-    (keymap-set lispy-mode-map "M-J" #'lispy-join)))
-#+end_src
-
-*** ~page-break-lines~: improve appearance of form feed characters
-
-- Website :: <https://github.com/purcell/page-break-lines/blob/master/README.md>
-
-#+begin_src emacs-lisp
-(package! page-break-lines
-  (global-page-break-lines-mode))
-#+end_src
-
-*** ~breadcrumb~: header-line indication of current location in project
-
-- Website :: <https://github.com/joaotavora/breadcrumb>
-
-#+begin_src emacs-lisp
-(package! breadcrumb
-  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
-#+end_src
-
-*** Pulse current line after function invocations with ~pulsar~
-
-#+begin_src emacs-lisp
-(package! pulsar
-  (setopt pulsar-pulse t
-          pulsar-delay 0.055
-          pulsar-iterations 10
-          pulsar-face 'pulsar-magenta
-          pulsar-highlight-face 'pulsar-cyan)
-
-  (pulsar-global-mode 1)
-
-  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
-
-  (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
-    (add-hook 'next-error-hook (function fn))))
-#+end_src
-
-** Theme
-
-*** General Customization
-
-#+begin_src emacs-lisp
-;;; Requirements
-
-(require 'config-env)
-(require 'config-ui)
-
-(require 'lib-ui)
-#+end_src
-
-#+begin_src emacs-lisp
-;;; General Configuration
-
-;; Don't prompt to confirm theme safety.
 (setopt custom-safe-themes t)
 #+end_src
 
-#+begin_src emacs-lisp
-;;; Ensure themes are applied in new frames to prevent flashing
+*** Ensure themes are applied in new frames to prevent flashing
 
-;; TODO: also some other link i can't find now
-;; <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
-(add-hook 'after-make-frame-functions #'ceamx-theme-re-enable-in-frame)
+- Source :: <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
+
+#+begin_src emacs-lisp :noweb-ref lib-ui
+;; via prot-emacs
+(defun ceamx-theme-re-enable-in-frame (_frame)
+  "Re-enable active theme, if any, upon FRAME creation.
+Add this to `after-make-frame-functions' so that new frames do
+not retain the generic background set by the function
+`ceamx-theme-no-bright-flash'."
+  (when-let ((theme (car custom-enabled-themes)))
+    (enable-theme theme)))
 #+end_src
 
 #+begin_src emacs-lisp
-;;; Add a custom hook to run after enabling a theme
+(add-hook 'after-make-frame-functions #'ceamx-theme-re-enable-in-frame)
+#+end_src
 
-;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+*** Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
 
+- Source :: <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+
+#+begin_src emacs-lisp
 (defvar ceamx-after-enable-theme-hook nil)
 
 (defun ceamx-after-enable-theme (&rest _args)
@@ -3574,7 +3429,7 @@ than those available in Emacs (e.g. ~transient ~IIRC), or, including some
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
 #+end_src
 
-*** Modus Themes
+*** Modus Themes :package:
 
 - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -3625,7 +3480,7 @@ than those available in Emacs (e.g. ~transient ~IIRC), or, including some
    '(region ((t :extend nil)))))
 #+end_src
 
-*** Ef-Themes
+*** Ef-Themes :package:
 
 - Website :: <https://protesilaos.com/emacs/ef-themes>
 
@@ -3663,7 +3518,25 @@ than those available in Emacs (e.g. ~transient ~IIRC), or, including some
   (mapc #'disable-theme custom-enabled-themes))
 #+end_src
 
-*** DISABLED Circadian Theme Phasing
+*** Circadian Theme Phasing
+
+#+begin_src emacs-lisp :noweb-ref config-ui
+(defcustom ceamx-theme-circadian-interval nil
+  "The circadian theme switching interval.
+Value may be `period', `solar', or nil, corresponding
+respectively to period-based switching with `theme-buffet' or
+sunrise/sunset toggling from the combination of the `solar'
+library and the `circadian' package.
+
+A nil value means to disable automatic theme switching.
+Theme-switching commands `ceamx/light' and `ceamx/dark' will
+unconditionally use `ceamx-theme-default-light' and
+`ceamx-theme-default-dark', respectively."
+  :group 'ceamx
+  :type '(choice :tag "Circadian theme switching interval" :value nil
+          (const :tag "Time periods via `theme-buffet'" :value buffet)
+          (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
+#+end_src
 
 #+begin_src emacs-lisp :tangle no
 (require 'cal-dst)
@@ -3673,9 +3546,12 @@ than those available in Emacs (e.g. ~transient ~IIRC), or, including some
 (require 'ceamx-lib)
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-;;; Sunrise/sunset interval via ~solar~ and ~circadian~
+**** TODO Sunrise/sunset interval via ~solar~ and ~circadian~
 
+Recently in Emacs 29, these would behave erratically, locking up Emacs during
+the minute of sundown.
+
+#+begin_src emacs-lisp :tangle no
 (use-feature! solar
   :when (eq 'solar ceamx-theme-circadian-interval)
 
@@ -3697,16 +3573,24 @@ than those available in Emacs (e.g. ~transient ~IIRC), or, including some
   (circadian-setup))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-;;;; Phase-of-day interval via `theme-buffet'
+**** TODO Phase-of-day interval via ~theme-buffet~
 
-;; <https://git.sr.ht/~bboal/theme-buffet>
+- Website :: <https://git.sr.ht/~bboal/theme-buffet>
 
 ;; > The theme-buffet package arranges to automatically change themes during
 ;; > specific times of the day or at fixed intervals. The collection of themes
 ;; > is customisable, with the default options covering the built-in Emacs
 ;; > themes as well as Prot's modus-themes and ef-themes.
 
+#+begin_src emacs-lisp :noweb-ref config-ui
+(defconst ceamx-theme-buffet-dark-periods
+  '(:night :twilight :evening))
+
+(defconst ceamx-theme-buffet-light-periods
+  '(:morning :day :afternoon))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
 (use-package theme-buffet
   :ensure t
   :demand t
@@ -3771,18 +3655,10 @@ than those available in Emacs (e.g. ~transient ~IIRC), or, including some
   (theme-buffet-a-la-carte))
 #+end_src
 
-*** Theme commands
+***** Add helper function to load a random theme from the specified periods
 
 #+begin_src emacs-lisp :noweb-ref lib-ui
-(require 'config-ui)
-
-(require 'ceamx-lib)
-
 (declare-function theme-buffet--load-random "theme-buffet")
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref lib-ui
-;;; Helpers
 
 (defun +theme-buffet--load-random-from-periods (periods)
   "Load a random theme from the specified `theme-buffet' PERIODS.
@@ -3793,18 +3669,21 @@ must be a valid `theme-buffet' period as defined in
     (theme-buffet--load-random period)))
 #+end_src
 
+*** Theme commands
+
 #+begin_src emacs-lisp :noweb-ref lib-ui
-;;; Functions
+(require 'config-ui)
+(require 'ceamx-lib)
+#+end_src
 
-;; via prot-emacs
-(defun ceamx-theme-re-enable-in-frame (_frame)
-  "Re-enable active theme, if any, upon FRAME creation.
-Add this to `after-make-frame-functions' so that new frames do
-not retain the generic background set by the function
-`ceamx-theme-no-bright-flash'."
-  (when-let ((theme (car custom-enabled-themes)))
-    (enable-theme theme)))
 
+**** Integration with the GNOME/GTK color scheme
+
+#+begin_src emacs-lisp :noweb-ref config-ui
+(defconst ceamx-gnome-ui-namespace "org.gnome.desktop.interface")
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref lib-ui
 (defun ceamx-gnome-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command (format "gsettings get %s color-scheme"
@@ -3813,14 +3692,6 @@ not retain the generic background set by the function
 (defun ceamx-gnome-theme-dark-p ()
   "Whether GNOME/GTK are using a theme with a dark color scheme."
   (string-match-p "dark" (ceamx-gnome-theme)))
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref lib-ui
-;;; Commands
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref lib-ui
-;;;; Desktop environment commands
 
 (defun ceamx/gnome-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
@@ -3847,9 +3718,9 @@ not retain the generic background set by the function
   (ceamx/gnome-set-theme "light"))
 #+end_src
 
-#+begin_src emacs-lisp :noweb-ref lib-ui
-;;;; Emacs-specific commands
+**** Commands to load a preferred light or dark Emacs theme
 
+#+begin_src emacs-lisp :noweb-ref lib-ui
 (defun ceamx/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
@@ -3871,9 +3742,9 @@ not retain the generic background set by the function
      (load-theme ceamx-theme-default-light :no-confirm))))
 #+end_src
 
-#+begin_src emacs-lisp :noweb-ref lib-ui
-;;;; Global commands
+**** Commands to globally set a preferred light or dark theme
 
+#+begin_src emacs-lisp :noweb-ref lib-ui
 (defun ceamx/light ()
   "Activate a light theme globally."
   (interactive)
@@ -3887,16 +3758,74 @@ not retain the generic background set by the function
   (ceamx/load-dark-theme))
 #+end_src
 
-** Frame and Window
+*** Load the theme
 
-*** Requirements
+Wait until all the themes are available:
 
 #+begin_src emacs-lisp
-(require 'config-env)
-
-(require 'ceamx-lib)
+(elpaca-wait)
 #+end_src
 
+Configure some user options dependent on the loaded packages:
+
+#+begin_src emacs-lisp
+(setopt ceamx-theme-default-light 'modus-operandi)
+(setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
+#+end_src
+
+This is less than ideal, but ~circadian~ has been broken lately, causing
+lockups/crashes.  Manually invoking ~ceamx/load-light-theme~ or ~ceamx/light~ is
+not hard.
+
+#+begin_src emacs-lisp
+(ceamx/load-dark-theme)
+#+end_src
+
+** Interaction & Feedback
+*** Avy :package:
+
+- Website :: <https://github.com/abo-abo/avy>
+- Ref :: <https://karthinks.com/software/avy-can-do-anything/>
+
+#+begin_src emacs-lisp
+(package! avy
+  ;; Reduce the number of possible candidates.
+  ;; Can be overridden with the universal argument.
+  (setopt avy-all-windows nil)
+  ;; Prevent conflicts with themes.
+  (setopt avy-background nil)
+  (setopt avy-style 'at-full)
+  ;; Anything lower feels unusable.
+  (setopt avy-timeout-seconds 0.25)
+
+  (keymap-global-set "M-j" #'avy-goto-char-timer)
+
+  (after! lispy
+    (defvar lispy-mode-map)
+    (declare-function lispy-join "lispy")
+    ;; Prevent conflict with newly-added M-j binding.
+    (keymap-set lispy-mode-map "M-J" #'lispy-join)))
+#+end_src
+
+*** Pulse current line after function invocations with ~pulsar~ :package:
+
+#+begin_src emacs-lisp
+(package! pulsar
+  (setopt pulsar-pulse t
+          pulsar-delay 0.055
+          pulsar-iterations 10
+          pulsar-face 'pulsar-magenta
+          pulsar-highlight-face 'pulsar-cyan)
+
+  (pulsar-global-mode 1)
+
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
+
+  (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
+    (add-hook 'next-error-hook (function fn))))
+#+end_src
+
+** Defenestrography (Frames & Windows)
 *** Configure frame decorations
 
 #+begin_src emacs-lisp
@@ -3956,24 +3885,63 @@ not retain the generic background set by the function
 (set-face-background 'fringe (face-attribute 'default :background))
 #+end_src
 
-*** Keybindings
+*** DISABLED Improve the breathability of frame boundaries with ~spacious-padding~
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+- Website :: <https://protesilaos.com/emacs/spacious-padding>
 
 #+begin_src emacs-lisp
-(define-keymap :keymap ceamx-session-map
-  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
-  "f d" #'delete-frame)
+(use-package spacious-padding
+  :demand t
+  :commands (spacious-padding-mode)
+  :defines (spacious-padding-widths)
+
+  :init
+  (setopt spacious-padding-widths
+          '(
+            ;; NOTE: `:internal-border-width' currently breaks `tab-bar-mode'
+            ;;       display on Emacs 29. Fixed in master branch.
+            ;;       <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+            :internal-border-width 15
+            :header-line-width 4
+            :mode-line-width 4
+            :tab-width 4
+            :right-divider-width 30
+            :scroll-bar-width 8))
+
+  :config
+
+  ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
+  ;; is very flexible.
+  ;; TODO: v0.3.0 standardizes this a bit
+  ;; (setq spacious-padding-subtle-mode-line
+  ;;       `(:mode-line-active default     ; NOTE: assumes `modus-themes'
+  ;;                           :mode-line-inactive vertical-border))
+
+  (spacious-padding-mode 1))
 #+end_src
 
-** Fonts/Typography
+*** Differentiate between focused and non-focused windows
+
+#+begin_src emacs-lisp
+(setopt highlight-nonselected-windows nil)
+#+end_src
+
+** Typography
 :PROPERTIES:
 :header-args: :noweb-ref init-ui-graphical
 :END:
 
-#+begin_src emacs-lisp
-;; TODO: separate presets per font i.e. Berkeley Mono + Iosevka
+#+begin_src emacs-lisp :noweb-ref config-ui
+(defcustom ceamx-font-height-multiplier 1.0
+  "Multiplier for display font size.
+Intended for use as a per-system (or, ideally, per-display)
+accommodation for varying pixel densities."
+  :group 'ceamx
+  :type '(float))
 #+end_src
-
-**** Requirements
 
 #+begin_src emacs-lisp
 (require 'ceamx-paths)
@@ -3983,15 +3951,13 @@ not retain the generic background set by the function
 (require 'lib-ui)
 #+end_src
 
-**** General
-
 #+begin_src emacs-lisp
 (setq x-underline-at-descent-line nil)
 
 (setq-default text-scale-remap-header-line t)
 #+end_src
 
-**** Use the ~fontaine~ package for configuring and managing font presets
+*** Configure font presets with the ~fontaine~ package
 
 <https://protesilaos.com/emacs/fontaine>
 
@@ -4113,7 +4079,7 @@ TIP: You can test out alterations quickly with, for example:
 (elpaca-wait)
 #+end_src
 
-**** Enable improved ligature support with the ~ligature.el~ package
+*** Enable improved ligature support with the ~ligature.el~ package
 
 <https://github.com/mickeynp/ligature.el>
 
@@ -4136,7 +4102,63 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
   (global-ligature-mode t))
 #+end_src
 
+*** TODO Separate presets per font i.e. Berkeley Mono + Iosevka
+
+** Iconography & Symbolisms
+*** Provide common dependency: ~nerd-icons~
+
+#+begin_src emacs-lisp
+(package! nerd-icons
+  (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
+  (require 'nerd-icons))
+#+end_src
+
+*** Provide common dependency: ~svg-lib~
+
+#+begin_src emacs-lisp
+(package! svg-lib)
+#+end_src
+
+*** Improve appearance of form feed characters with ~page-break-lines~
+
+- Website :: <https://github.com/purcell/page-break-lines/blob/master/README.md>
+
+#+begin_src emacs-lisp
+(package! page-break-lines
+  (global-page-break-lines-mode))
+#+end_src
+*** TODO Decorate buffers with SVG via ~svg-tag-mode~
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+- Source :: <https://github.com/Icy-Thought/emacs.d/blob/main/config.org#svg-tag-decorating-buffers-with-svg>
+
+#+begin_src emacs-lisp
+(package! svg-tag-mode
+  (add-hook 'prog-mode-hook #'svg-tag-mode)
+  (add-hook 'text-mode-hook #'svg-tag-mode))
+#+end_src
+
+
 ** Modeline
+
+#+begin_src emacs-lisp :noweb-ref config-ui
+(defcustom ceamx-modeline-provider 'doom
+  "Modeline provider to load.
+Valid values are the symbols `doom', `nano', and `telephone'
+which reference the `doom-modeline', `nano-modeline', and
+`telephone-line' modules respectively.
+
+A nil value will not load any modeline customizations (use Emacs
+with its default modeline)."
+  :group 'ceamx
+  :type '(choice :tag "Modeline to load" :value doom
+          (const :tag "The `doom-modeline' module" doom)
+          (const :tag "The `nano-modeline' module" nano)
+          (const :tag "The `telephone-line' module" telephone)
+          (const :tag "Do not load a modeline module" nil)))
+#+end_src
 
 #+begin_src emacs-lisp
 (use-feature! emacs
@@ -4149,6 +4171,8 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
   (setopt display-time-24hr-format t))
 #+end_src
 
+*** ~minions~
+
 #+begin_src emacs-lisp
 (use-package minions
   :commands (minions-mode)
@@ -4156,10 +4180,9 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
   (minions-mode 1))
 #+end_src
 
-#+begin_src emacs-lisp
-;;;; Show current command and its binding with ~keycast~
+*** Show current command and its binding with ~keycast~
 
-;; <https://github.com/tarsius/keycast>
+- Website :: <https://github.com/tarsius/keycast>
 
 ;; Supports display in the mode-line, header-line, tab-bar, and as messages in a
 ;; dedicated frame.
@@ -4167,6 +4190,7 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
 ;; NOTE: Incompatible with kitchen-sink modeline packages like `doom-modeline'
 ;; and `telephone-line'.
 
+#+begin_src emacs-lisp
 (use-package keycast
   :commands (keycast-mode-line-mode)
 
@@ -4214,70 +4238,7 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
   (doom-modeline-mode 1))
 #+end_src
 
-** Integrating the preceding interfaces
-
-Firstly, ensure that all requested Appearance packages have been installed:
-
-#+begin_src emacs-lisp
-(elpaca-wait)
-#+end_src
-
-Configure some user options dependent on the loaded packages:
-
-#+begin_src emacs-lisp
-(setopt ceamx-theme-default-light 'modus-operandi)
-(setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
-#+end_src
-
-*** Load the preferred dark theme by default
-
-This is less than ideal, but ~circadian~ has been broken lately, causing
-lockups/crashes.  Manually invoking ~ceamx/load-light-theme~ or ~ceamx/light~ is
-not hard.
-
-#+begin_src emacs-lisp
-(ceamx/load-dark-theme)
-#+end_src
-
-*** DISABLED Improve the breathability of frame boundaries with ~spacious-padding~
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-- Website :: <https://protesilaos.com/emacs/spacious-padding>
-
-#+begin_src emacs-lisp
-(use-package spacious-padding
-  :demand t
-  :commands (spacious-padding-mode)
-  :defines (spacious-padding-widths)
-
-  :init
-  (setopt spacious-padding-widths
-          '(
-            ;; NOTE: `:internal-border-width' currently breaks `tab-bar-mode'
-            ;;       display on Emacs 29. Fixed in master branch.
-            ;;       <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-            :internal-border-width 15
-            :header-line-width 4
-            :mode-line-width 4
-            :tab-width 4
-            :right-divider-width 30
-            :scroll-bar-width 8))
-
-  :config
-
-  ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
-  ;; is very flexible.
-  ;; TODO: v0.3.0 standardizes this a bit
-  ;; (setq spacious-padding-subtle-mode-line
-  ;;       `(:mode-line-active default     ; NOTE: assumes `modus-themes'
-  ;;                           :mode-line-inactive vertical-border))
-
-  (spacious-padding-mode 1))
-#+end_src
-
-*** Keybindings for appearance control
+** Keybindings
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-session-map
@@ -4285,7 +4246,10 @@ not hard.
   "a f" #'fontaine-set-preset
   "a d" #'ceamx/dark
   "a l" #'ceamx/light
-  "a o" #'olivetti-mode)
+  "a o" #'olivetti-mode
+
+  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
+  "f d" #'delete-frame)
 #+end_src
 
 ** TODO Calculate sizes based on display monitor attributes
@@ -4342,6 +4306,7 @@ If MULTIPLIER is nil, the value of `ceamx-font-height-multiplier'
 will be used as default."
   (truncate (* number (or multiplier ceamx-font-height-multiplier))))
 #+end_src
+
 
 
 * Window Management
@@ -6388,6 +6353,14 @@ With optional argument FRAME, return the list of buffers of FRAME."
     "C-x C-a l" #'activities-list))
 #+end_src
 
+** Display header-line indication of current location in project with ~breadcrumb~
+
+- Website :: <https://github.com/joaotavora/breadcrumb>
+
+#+begin_src emacs-lisp
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+#+end_src
 
 * Help
 

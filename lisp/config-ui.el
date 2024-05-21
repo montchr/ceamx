@@ -24,35 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(defconst ceamx-gnome-ui-namespace "org.gnome.desktop.interface")
-(defconst ceamx-theme-buffet-dark-periods
-  '(:night :twilight :evening))
-
-(defconst ceamx-theme-buffet-light-periods
-  '(:morning :day :afternoon))
-(defcustom ceamx-theme-default-light 'modus-operandi-tinted
-  "The default light theme."
-  :group 'ceamx
-  :type 'symbol)
-
-(defcustom ceamx-theme-default-dark 'modus-vivendi-tinted
-  "The default dark theme."
-  :group 'ceamx
-  :type 'symbol)
-(defcustom ceamx-modeline-provider 'doom
-  "Modeline provider to load.
-Valid values are the symbols `doom', `nano', and `telephone'
-which reference the `doom-modeline', `nano-modeline', and
-`telephone-line' modules respectively.
-
-A nil value will not load any modeline customizations (use Emacs
-with its default modeline)."
-  :group 'ceamx
-  :type '(choice :tag "Modeline to load" :value doom
-          (const :tag "The `doom-modeline' module" doom)
-          (const :tag "The `nano-modeline' module" nano)
-          (const :tag "The `telephone-line' module" telephone)
-          (const :tag "Do not load a modeline module" nil)))
 (defcustom ceamx-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
@@ -67,6 +38,15 @@ theme)."
           (const :tag "The `modus-themes' module" modus)
           (const :tag "The `standard-themes' module" standard)
           (const :tag "Do not load a theme module" nil)))
+(defcustom ceamx-theme-default-light 'modus-operandi-tinted
+  "The default light theme."
+  :group 'ceamx
+  :type 'symbol)
+
+(defcustom ceamx-theme-default-dark 'modus-vivendi-tinted
+  "The default dark theme."
+  :group 'ceamx
+  :type 'symbol)
 (defcustom ceamx-theme-circadian-interval nil
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
@@ -82,12 +62,32 @@ unconditionally use `ceamx-theme-default-light' and
   :type '(choice :tag "Circadian theme switching interval" :value nil
           (const :tag "Time periods via `theme-buffet'" :value buffet)
           (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
+(defconst ceamx-theme-buffet-dark-periods
+  '(:night :twilight :evening))
+
+(defconst ceamx-theme-buffet-light-periods
+  '(:morning :day :afternoon))
+(defconst ceamx-gnome-ui-namespace "org.gnome.desktop.interface")
 (defcustom ceamx-font-height-multiplier 1.0
   "Multiplier for display font size.
 Intended for use as a per-system (or, ideally, per-display)
 accommodation for varying pixel densities."
   :group 'ceamx
   :type '(float))
+(defcustom ceamx-modeline-provider 'doom
+  "Modeline provider to load.
+Valid values are the symbols `doom', `nano', and `telephone'
+which reference the `doom-modeline', `nano-modeline', and
+`telephone-line' modules respectively.
+
+A nil value will not load any modeline customizations (use Emacs
+with its default modeline)."
+  :group 'ceamx
+  :type '(choice :tag "Modeline to load" :value doom
+          (const :tag "The `doom-modeline' module" doom)
+          (const :tag "The `nano-modeline' module" nano)
+          (const :tag "The `telephone-line' module" telephone)
+          (const :tag "Do not load a modeline module" nil)))
 (defconst ceamx-inch-as-mm 25.4
   "One inch in millimeters.")
 

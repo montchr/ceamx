@@ -58,6 +58,8 @@
     "C-x C-a b" #'activities-switch-buffer
     "C-x C-a g" #'activities-revert
     "C-x C-a l" #'activities-list))
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 
 (provide 'init-workspace)
 ;;; init-workspace.el ends here

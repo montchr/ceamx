@@ -24,8 +24,13 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'ceamx-paths)
+(require 'config-env)
+
+(require 'ceamx-lib)
+(require 'lib-ui)
 ;; Modal keybinding systems will change the cursor dynamically to indicate current state.
-;; This default value matches what I expect in an "insert" mode.
+;; This value matches what I expect in an "insert" mode.
 (setq-default cursor-type 'bar)
 
 ;; Enable cursor blinking.
@@ -33,16 +38,15 @@
 
 ;; Seeing a cursor in a window other than the active window is pretty confusing.
 (setq-default cursor-in-non-selected-windows nil)
-
-;; Improve visual contrast between focused/non-focused windows.
-(setopt highlight-nonselected-windows nil)
 (setopt custom-theme-allow-multiple-selections nil)
 
 (setopt custom-unlispify-menu-entries nil)
 (setopt custom-unlispify-tag-names nil)
 (setopt custom-unlispify-remove-prefixes nil)
+(package! hydra)
+(package! pretty-hydra)
 (package! transient)
-
+(package! magit-section)
 (with-eval-after-load 'transient
   (defvar transient-map)
   (declare-function transient-quit-one "transient")
@@ -50,66 +54,8 @@
   ;; Always close transient with ESC
   ;; FIXME: meow overrides this. waiting until it loads does not help.
   (keymap-set transient-map "ESC" #'transient-quit-one))
-(package! magit-section)
-(package! nerd-icons
-  (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
-  (require 'nerd-icons))
-(package! svg-lib)
-(package! hydra)
-(package! pretty-hydra)
-(package! avy
-  ;; Reduce the number of possible candidates.
-  ;; Can be overridden with the universal argument.
-  (setopt avy-all-windows nil)
-  ;; Prevent conflicts with themes.
-  (setopt avy-background nil)
-  (setopt avy-style 'at-full)
-  ;; Anything lower feels unusable.
-  (setopt avy-timeout-seconds 0.25)
-
-  (keymap-global-set "M-j" #'avy-goto-char-timer)
-
-  (after! lispy
-    (defvar lispy-mode-map)
-    (declare-function lispy-join "lispy")
-    ;; Prevent conflict with newly-added M-j binding.
-    (keymap-set lispy-mode-map "M-J" #'lispy-join)))
-(package! page-break-lines
-  (global-page-break-lines-mode))
-(package! breadcrumb
-  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
-(package! pulsar
-  (setopt pulsar-pulse t
-          pulsar-delay 0.055
-          pulsar-iterations 10
-          pulsar-face 'pulsar-magenta
-          pulsar-highlight-face 'pulsar-cyan)
-
-  (pulsar-global-mode 1)
-
-  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
-
-  (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
-    (add-hook 'next-error-hook (function fn))))
-;;; Requirements
-
-(require 'config-env)
-(require 'config-ui)
-
-(require 'lib-ui)
-;;; General Configuration
-
-;; Don't prompt to confirm theme safety.
 (setopt custom-safe-themes t)
-;;; Ensure themes are applied in new frames to prevent flashing
-
-;; TODO: also some other link i can't find now
-;; <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
 (add-hook 'after-make-frame-functions #'ceamx-theme-re-enable-in-frame)
-;;; Add a custom hook to run after enabling a theme
-
-;; via <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-
 (defvar ceamx-after-enable-theme-hook nil)
 
 (defun ceamx-after-enable-theme (&rest _args)
@@ -194,8 +140,6 @@
 (require 'config-ui)
 
 (require 'ceamx-lib)
-;;; Sunrise/sunset interval via ~solar~ and ~circadian~
-
 (use-feature! solar
   :when (eq 'solar ceamx-theme-circadian-interval)
 
@@ -215,15 +159,6 @@
   (setopt circadian-themes `((:sunrise . ,ceamx-theme-default-light)
                              (:sunset . ,ceamx-theme-default-dark)))
   (circadian-setup))
-;;;; Phase-of-day interval via `theme-buffet'
-
-;; <https://git.sr.ht/~bboal/theme-buffet>
-
-;; > The theme-buffet package arranges to automatically change themes during
-;; > specific times of the day or at fixed intervals. The collection of themes
-;; > is customisable, with the default options covering the built-in Emacs
-;; > themes as well as Prot's modus-themes and ef-themes.
-
 (use-package theme-buffet
   :ensure t
   :demand t
@@ -286,9 +221,40 @@
 
   ;; Activate some theme in the current period.
   (theme-buffet-a-la-carte))
-(require 'config-env)
+(elpaca-wait)
+(setopt ceamx-theme-default-light 'modus-operandi)
+(setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
+(ceamx/load-dark-theme)
+(package! avy
+  ;; Reduce the number of possible candidates.
+  ;; Can be overridden with the universal argument.
+  (setopt avy-all-windows nil)
+  ;; Prevent conflicts with themes.
+  (setopt avy-background nil)
+  (setopt avy-style 'at-full)
+  ;; Anything lower feels unusable.
+  (setopt avy-timeout-seconds 0.25)
 
-(require 'ceamx-lib)
+  (keymap-global-set "M-j" #'avy-goto-char-timer)
+
+  (after! lispy
+    (defvar lispy-mode-map)
+    (declare-function lispy-join "lispy")
+    ;; Prevent conflict with newly-added M-j binding.
+    (keymap-set lispy-mode-map "M-J" #'lispy-join)))
+(package! pulsar
+  (setopt pulsar-pulse t
+          pulsar-delay 0.055
+          pulsar-iterations 10
+          pulsar-face 'pulsar-magenta
+          pulsar-highlight-face 'pulsar-cyan)
+
+  (pulsar-global-mode 1)
+
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
+
+  (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
+    (add-hook 'next-error-hook (function fn))))
 (unless +sys-mac-p
   ;; Hide window decorations.
   (add-to-list 'default-frame-alist '(undecorated . t)))
@@ -328,9 +294,13 @@
   (set-face-foreground face (face-attribute 'default :background)))
 
 (set-face-background 'fringe (face-attribute 'default :background))
-(define-keymap :keymap ceamx-session-map
-  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
-  "f d" #'delete-frame)
+(setopt highlight-nonselected-windows nil)
+(package! nerd-icons
+  (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
+  (require 'nerd-icons))
+(package! svg-lib)
+(package! page-break-lines
+  (global-page-break-lines-mode))
 (use-feature! emacs
   :config
   (setopt line-number-mode t)
@@ -343,16 +313,6 @@
   :commands (minions-mode)
   :config
   (minions-mode 1))
-;;;; Show current command and its binding with ~keycast~
-
-;; <https://github.com/tarsius/keycast>
-
-;; Supports display in the mode-line, header-line, tab-bar, and as messages in a
-;; dedicated frame.
-
-;; NOTE: Incompatible with kitchen-sink modeline packages like `doom-modeline'
-;; and `telephone-line'.
-
 (use-package keycast
   :commands (keycast-mode-line-mode)
 
@@ -365,16 +325,15 @@
 
   (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
     (add-to-list 'keycast-substitute-alist `(,event nil))))
-(elpaca-wait)
-(setopt ceamx-theme-default-light 'modus-operandi)
-(setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
-(ceamx/load-dark-theme)
 (define-keymap :keymap ceamx-session-map
   "a" (cons "Appearance" (define-prefix-command 'ceamx-session-font-prefix-command))
   "a f" #'fontaine-set-preset
   "a d" #'ceamx/dark
   "a l" #'ceamx/light
-  "a o" #'olivetti-mode)
+  "a o" #'olivetti-mode
+
+  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
+  "f d" #'delete-frame)
 
 (provide 'init-ui)
 ;;; init-ui.el ends here

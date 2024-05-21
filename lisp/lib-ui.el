@@ -24,22 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'config-ui)
-
-(require 'ceamx-lib)
-
-(declare-function theme-buffet--load-random "theme-buffet")
-;;; Helpers
-
-(defun +theme-buffet--load-random-from-periods (periods)
-  "Load a random theme from the specified `theme-buffet' PERIODS.
-PERIODS can be a single keyword or list of keywords. Each keyword
-must be a valid `theme-buffet' period as defined in
-`theme-buffet--keywords'."
-  (let ((period (if (listp periods) (seq-random-elt periods) periods)))
-    (theme-buffet--load-random period)))
-;;; Functions
-
 ;; via prot-emacs
 (defun ceamx-theme-re-enable-in-frame (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
@@ -48,7 +32,17 @@ not retain the generic background set by the function
 `ceamx-theme-no-bright-flash'."
   (when-let ((theme (car custom-enabled-themes)))
     (enable-theme theme)))
+(declare-function theme-buffet--load-random "theme-buffet")
 
+(defun +theme-buffet--load-random-from-periods (periods)
+  "Load a random theme from the specified `theme-buffet' PERIODS.
+PERIODS can be a single keyword or list of keywords. Each keyword
+must be a valid `theme-buffet' period as defined in
+`theme-buffet--keywords'."
+  (let ((period (if (listp periods) (seq-random-elt periods) periods)))
+    (theme-buffet--load-random period)))
+(require 'config-ui)
+(require 'ceamx-lib)
 (defun ceamx-gnome-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command (format "gsettings get %s color-scheme"
@@ -57,8 +51,6 @@ not retain the generic background set by the function
 (defun ceamx-gnome-theme-dark-p ()
   "Whether GNOME/GTK are using a theme with a dark color scheme."
   (string-match-p "dark" (ceamx-gnome-theme)))
-;;; Commands
-;;;; Desktop environment commands
 
 (defun ceamx/gnome-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
@@ -83,8 +75,6 @@ not retain the generic background set by the function
   "Enable the light GNOME/GTK theme."
   (interactive)
   (ceamx/gnome-set-theme "light"))
-;;;; Emacs-specific commands
-
 (defun ceamx/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
@@ -104,8 +94,6 @@ not retain the generic background set by the function
       ceamx-theme-buffet-light-periods))
     (_
      (load-theme ceamx-theme-default-light :no-confirm))))
-;;;; Global commands
-
 (defun ceamx/light ()
   "Activate a light theme globally."
   (interactive)
