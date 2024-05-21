@@ -278,6 +278,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (require 'init-prog)
 (require 'init-lisp)
+(require 'init-lsp)
 
 (require 'init-lang-data)
 (require 'init-lang-elisp)
@@ -292,9 +293,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
 (require 'init-shell-nu)
-
-;; (require 'init-eglot)
-(require 'init-lsp-mode)
 ;;;; Miscellaneous
 
 (require 'init-tools)

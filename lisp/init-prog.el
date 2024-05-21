@@ -103,10 +103,9 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 ;;; Keybindings
 
-(keymap-global-set "M-C" ceamx-code-map)
+(keymap-global-set "C-c l" (cons "Code" (define-prefix-command 'ceamx-code-prefix)))
 
-(define-keymap :keymap ceamx-code-map
-  "d" #'xref-find-definitions)
+(keymap-global-set "C-c l d" #'xref-find-definitions)
 
 (provide 'init-prog)
 ;;; init-prog.el ends here

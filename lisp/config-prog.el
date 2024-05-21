@@ -32,7 +32,7 @@
           (const :tag "LSP-Mode" lsp-mode)))
 
 (defvar ceamx-lsp-mode-cache-dir (file-name-as-directory (concat ceamx-var-dir "lsp")))
-(setopt ceamx-lsp-client 'lsp-mode)
+(setopt ceamx-lsp-client 'eglot)
 
 (provide 'config-prog)
 ;;; config-prog.el ends here

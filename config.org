@@ -864,11 +864,11 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-prog")>>
 #+end_src
 
-*** =lisp/init-eglot.el=
+*** =lisp/init-lsp.el=
 
-#+name: init-eglot-file
-#+begin_src emacs-lisp :tangle lisp/init-eglot.el
-<<file-prop-line(feature="init-eglot",desc="Eglot support")>>
+#+name: init-lsp-file
+#+begin_src emacs-lisp :tangle lisp/init-lsp.el
+<<file-prop-line(feature="init-lsp",desc="Eglot support")>>
 
 ;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
 
@@ -881,31 +881,9 @@ instead, use a =-flag= suffix or names like =is-foo=.
 ;;; Commentary:
 ;;; Code:
 
-<<init-eglot>>
+<<init-lsp>>
 
-<<file-footer(feature="init-eglot")>>
-#+end_src
-
-*** =lisp/init-lsp-mode.el=
-
-#+name: init-lsp-mode-file
-#+begin_src emacs-lisp :tangle lisp/init-lsp-mode.el
-<<file-prop-line(feature="init-lsp-mode",desc="LSP-Mode support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lsp-mode>>
-
-<<file-footer(feature="init-lsp-mode")>>
+<<file-footer(feature="init-lsp")>>
 #+end_src
 
 *** =lisp/init-lang-data.el=
@@ -1944,6 +1922,7 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 
 (require 'init-prog)
 (require 'init-lisp)
+(require 'init-lsp)
 
 (require 'init-lang-data)
 (require 'init-lang-elisp)
@@ -1958,9 +1937,6 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 
 ;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
 (require 'init-shell-nu)
-
-;; (require 'init-eglot)
-(require 'init-lsp-mode)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2383,9 +2359,6 @@ Emacs version to prevent bytecode incompatibility.")
 
 (defvar-keymap ceamx-appearance-map)
 (define-prefix-command 'ceamx-appearance-map)
-
-(defvar-keymap ceamx-code-map)
-(define-prefix-command 'ceamx-code-map)
 
 (defvar-keymap ceamx-file-map)
 (define-prefix-command 'ceamx-file-map)
@@ -6368,6 +6341,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
   (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 #+end_src
 
+
 * Help
 
 ** Define the directory containing Es cheatsheets
@@ -9603,14 +9577,17 @@ Intended for use as a hook callback on `prog-mode-hook'."
 ;;   (setq rtog/mode-repl-alist '( (php-mode . psysh)
 ;;                                 (emacs-lisp-mode . ielm)
 ;;                                 (nix-mode . nix-repl))))
+#+end_src
 
+#+begin_src emacs-lisp :tangle lisp/init-prog.el
 ;;; Keybindings
 
-(keymap-global-set "M-C" ceamx-code-map)
+(keymap-global-set "C-c l" (cons "Code" (define-prefix-command 'ceamx-code-prefix)))
 
-(define-keymap :keymap ceamx-code-map
-  "d" #'xref-find-definitions)
+(keymap-global-set "C-c l d" #'xref-find-definitions)
+#+end_src
 
+#+begin_src emacs-lisp :tangle lisp/init-prog.el
 (provide 'init-prog)
 ;;; init-prog.el ends here
 #+end_src
@@ -10464,6 +10441,9 @@ keywords are supported:
 #+end_src
 
 ** Language Server and Debugger Protocol Support :lsp:lang:
+:PROPERTIES:
+:header-args: :noweb-ref init-lsp
+:END:
 
 #+begin_src emacs-lisp :noweb-ref config-prog
 (defcustom ceamx-lsp-client 'eglot
@@ -10476,16 +10456,21 @@ keywords are supported:
 (defvar ceamx-lsp-mode-cache-dir (file-name-as-directory (concat ceamx-var-dir "lsp")))
 #+end_src
 
-
-*** LSP-Mode
-:PROPERTIES:
-:header-args: :noweb-ref init-lsp-mode
-:END:
-
 #+begin_src emacs-lisp :noweb-ref config-prog
-(setopt ceamx-lsp-client 'lsp-mode)
+(setopt ceamx-lsp-client 'eglot)
 #+end_src
 
+*** Requirements
+
+#+begin_src emacs-lisp
+(require 'ceamx-keymaps)
+(require 'ceamx-lib)
+#+end_src
+
+*** DISABLED LSP-Mode
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 **** Install ~lsp-mode~ and ~lsp-ui~
 
@@ -10611,33 +10596,7 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
     (error "No LSP client named %S" client)))
 #+end_src
 
-*** Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
-:PROPERTIES:
-:header-args: :noweb-ref init-lsp-mode
-:END:
-
-- website :: <https://github.com/emacs-lsp/dap-mode>
-- spec :: <https://microsoft.github.io/debug-adapter-protocol/>
-
-#+begin_src emacs-lisp
-(package! dap-mode
-  (dap-auto-configure-mode))
-#+end_src
-
-
-*** DISABLED Eglot
-:PROPERTIES:
-:header-args: :noweb-ref init-eglot
-:END:
-
-**** Requirements
-
-#+begin_src emacs-lisp
-(require 'ceamx-keymaps)
-(require 'ceamx-lib)
-#+end_src
-
-**** General Eglot settings
+*** Eglot
 
 #+begin_src emacs-lisp
 (setopt eglot-sync-connect 1)
@@ -10650,10 +10609,6 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
 
 ;; Prevent frequent focus-stealing.
 (setopt eglot-auto-display-help-buffer nil)
-
-(define-keymap :keymap ceamx-code-map
-  "a" '("action.." . eglot-code-actions)
-  "r" '("rename..." . eglot-rename))
 #+end_src
 
 **** Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
@@ -10721,6 +10676,29 @@ elsp
 (package! consult-eglot
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
 #+end_src
+
+**** Keybindings
+
+#+begin_src emacs-lisp
+(keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
+(keymap-global-set "C-c l r" '("rename..." . eglot-rename))
+#+end_src
+
+*** TODO Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+- website :: <https://github.com/emacs-lsp/dap-mode>
+- spec :: <https://microsoft.github.io/debug-adapter-protocol/>
+
+  This might be dependent on LSP-Mode?
+
+#+begin_src emacs-lisp
+(package! dap-mode
+  (dap-auto-configure-mode))
+#+end_src
+
 
 ** Data Formats (JSON, TOML, YAML, XML, CSV...)
 :PROPERTIES:
@@ -11237,7 +11215,7 @@ Returns process exit code."
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
 
-  (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . (ceamx-lsp-server-nix-lang))))
+  (add-to-list 'eglot-server-programs `((nix-mode nix-ts-mode) . (,ceamx-lsp-server-nix-lang))))
 
 ;; via `lsp-mode'
 (after! lsp-nix

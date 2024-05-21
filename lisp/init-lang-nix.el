@@ -75,7 +75,7 @@
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
 
-  (add-to-list 'eglot-server-programs '((nix-mode nix-ts-mode) . (ceamx-lsp-server-nix-lang))))
+  (add-to-list 'eglot-server-programs `((nix-mode nix-ts-mode) . (,ceamx-lsp-server-nix-lang))))
 
 ;; via `lsp-mode'
 (after! lsp-nix

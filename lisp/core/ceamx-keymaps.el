@@ -33,9 +33,6 @@
 (defvar-keymap ceamx-appearance-map)
 (define-prefix-command 'ceamx-appearance-map)
 
-(defvar-keymap ceamx-code-map)
-(define-prefix-command 'ceamx-code-map)
-
 (defvar-keymap ceamx-file-map)
 (define-prefix-command 'ceamx-file-map)
 
