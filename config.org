@@ -393,6 +393,49 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-files")>>
 #+end_src
 
+*** =lisp/init-flycheck.el=
+
+#+begin_src emacs-lisp :tangle lisp/init-flycheck.el
+<<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-flycheck>>
+
+<<file-footer(feature="init-flycheck")>>
+#+end_src
+
+*** =lisp/init-flymake.el=
+
+#+name: init-flymake-file
+#+begin_src emacs-lisp :tangle lisp/init-flymake.el
+<<file-prop-line(feature="init-flymake",desc="Flymake support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-flymake>>
+
+<<file-footer(feature="init-flymake")>>
+#+end_src
+
 *** =lisp/init-abbrevs.el=
 
 #+name: init-abbrevs-file
@@ -754,7 +797,6 @@ instead, use a =-flag= suffix or names like =is-foo=.
 
 <<file-footer(feature="init-workspace")>>
 #+end_src
-
 
 *** =lisp/init-vcs.el=
 
@@ -1575,6 +1617,16 @@ Required by ~eglot~.
 (elpaca eglot)
 #+end_src
 
+**** Install the latest version of the builtin ~flymake~ package
+
+#+begin_src emacs-lisp
+(unless after-init-time
+  (when (featurep 'flymake)
+    (unload-feature 'flymake)))
+
+(elpaca flymake)
+#+end_src
+
 **** Install the latest version of Org-Mode
 
 #+begin_src emacs-lisp
@@ -1874,7 +1926,8 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 #+begin_src emacs-lisp
 ;;;; Linting
 
-(require 'init-flycheck)
+(require 'init-flymake)
+;; (require 'init-flycheck)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -9146,29 +9199,10 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
 <https://www.flycheck.org/en/latest/index.html>
 <https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
 
-#+begin_src emacs-lisp :tangle lisp/init-flycheck.el
-<<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-flycheck>>
-
-<<file-footer(feature="init-flycheck")>>
-#+end_src
-
-
-*** Code: =lisp/init-flycheck.el=
+*** DISABLED Flycheck
 :PROPERTIES:
-:header-args: :noweb-ref init-flycheck
+# :header-args: :noweb-ref init-flycheck
+:header-args: :noweb-ref nil
 :END:
 
 #+begin_src emacs-lisp
@@ -9204,6 +9238,38 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
     (require 'consult-flycheck)))
 #+end_src
 
+*** Flymake
+:PROPERTIES:
+:header-args: :noweb-ref init-flymake
+:END:
+
+#+begin_src emacs-lisp
+;; Disable Flycheck checkers covered by Flymake equivalents.
+(with-eval-after-load 'flycheck
+  (setq-default flycheck-disabled-checkers
+                (append (default-value 'flycheck-disabled-checkers)
+                        '(emacs-lisp emacs-lisp-checkdoc emacs-lisp-package sh-shellcheck))))
+
+(package! flymake-flycheck
+  (add-hook 'flymake-mode-hook #'flymake-flycheck-auto))
+
+(add-hook 'prog-mode-hook #'flymake-mode)
+(add-hook 'text-mode-hook #'flymake-mode)
+
+(after! flymake
+  (define-keymap :keymap flymake-mode-map
+    "C-c ! l" #'flymake-show-buffer-diagnostics
+    "C-c ! n" #'flymake-goto-next-error
+    "C-c ! p" #'flymake-goto-previous-error
+    "C-c ! c" #'flymake-show-buffer-diagnostics)
+
+  (setopt eldoc-documentation-function #'eldoc-documentation-compose)
+
+  (def-hook! ceamx-flymake-eldoc-function-h ()
+    'flymake-mode-hook
+    "Use Flymake's Eldoc integration."
+    (add-hook 'eldoc-documentation-functions #'flymake-eldoc-function nil t)))
+#+end_src
 
 * Template Expansion
 :PROPERTIES:

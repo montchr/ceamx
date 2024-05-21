@@ -151,6 +151,11 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (elpaca eglot)
 (unless after-init-time
+  (when (featurep 'flymake)
+    (unload-feature 'flymake)))
+
+(elpaca flymake)
+(unless after-init-time
   (when (featurep 'org)
     (unload-feature 'org)))
 
@@ -261,7 +266,8 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-notes-denote)
 ;;;; Linting
 
-(require 'init-flycheck)
+(require 'init-flymake)
+;; (require 'init-flycheck)
 ;;;; Tree-Sitter
 
 (require 'init-treesitter)
