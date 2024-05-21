@@ -1,70 +1,54 @@
-;;; init-workspace.el --- Workspaces and perspectives  -*- lexical-binding: t; -*-
+;;; init-workspace.el --- Workspaces, activities, scopes, and other organizational closures  -*- lexical-binding: t;  -*-
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
 
 ;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; This file is NOT part of GNU Emacs.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;; Overwork and perspipritaction.
-
-;; FIXME: `tab-bar-mode' is currently broken due to upstream Emacs 29 bug
-;; <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-;; For this reason, avoid `burly-tabs-mode' on Emacs 29.
-
-
 ;;; Code:
 
 (require 'ceamx-lib)
-
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
-
 ;; FIXME: restoring bookmark results in stray mini childframe (like that old
 ;; embark issue)
-(use-package burly
-  :demand t
-  :commands (burly-open-last-bookmark)
-  :autoload (burly-bookmark-frames))
+(package! burly
+  (require 'burly))
+(defface +beframe-buffer
+  '((t :inherit font-lock-string-face))
+  "Face for `consult' framed buffers.")
 
-(use-package beframe
-  :ensure t
-  :demand t
-
-  :preface
-  (defface +beframe-buffer
-    '((t :inherit font-lock-string-face))
-    "Face for `consult' framed buffers.")
-
-  (defun +beframe-buffer-names-sorted (&optional frame)
-    "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+(defun +beframe-buffer-names-sorted (&optional frame)
+  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
 With optional argument FRAME, return the list of buffers of FRAME."
-    (declare-function beframe-buffer-names "beframe")
-    (declare-function beframe-buffer-sort-visibility "beframe")
-    (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+  (declare-function beframe-buffer-names "beframe")
+  (declare-function beframe-buffer-sort-visibility "beframe")
+  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
 
-  :config
+(package! beframe
   ;; FIXME: still listed as frame buffers
   (setopt beframe-global-buffers '("\\*scratch\\*" "\\*Messages\\*" "\\*Backtrace\\*"))
 
   (keymap-global-set "C-c b" beframe-prefix-map)
   (beframe-mode 1)
 
-  (use-feature! consult
-    :config
+  (after! consult
     (declare-function consult--buffer-state "consult")
     (defvar +beframe-consult-source
       `(:name "Frame-specific buffers (current frame)"
@@ -76,10 +60,11 @@ With optional argument FRAME, return the list of buffers of FRAME."
         :action ,#'switch-to-buffer
         :state ,#'consult--buffer-state))
     (add-to-list 'consult-buffer-sources '+beframe-consult-source)))
+;; Prevent `edebug' default bindings from interfering.
+(setq edebug-inhibit-emacs-lisp-mode-bindings t)
 
-;;; Introduce an ~activities~-based workflow for frame/tab/window/buffer management
-
-;; <https://github.com/alphapapa/activities.el>
+(keymap-global-unset "C-x C-a" t)
+(keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
 
 (package! activities
   (activities-mode)
@@ -90,12 +75,6 @@ With optional argument FRAME, return the list of buffers of FRAME."
   (unless (version< emacs-version "30.0")
     (when tab-bar-mode
       (activities-tabs-mode)))
-
-  ;; Prevent `edebug' default bindings from interfering.
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-
-  (keymap-global-unset "C-x C-a" t)
-  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
 
   ;; TODO: still shares bindings with edebug which is confusing
   (define-keymap :keymap (current-global-map)
