@@ -8829,7 +8829,7 @@ autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
 #+end_src
 
 
-* ~init-vcs~ :: version control (Git)
+* Version Control (Git)
 :PROPERTIES:
 :header-args:emacs-lisp: :noweb-ref init-vcs
 :END:
@@ -9380,6 +9380,7 @@ avoid further confusion.
 
 *** TODO Add this package's Tempo templates to Tempel
 
+
 * Language Support
 
 ** General Programming (~prog-mode~ derived modes)
@@ -9513,7 +9514,6 @@ Intended for use as a hook callback on `prog-mode-hook'."
 #+end_src
 
 
-
 ** Tree-Sitter
 :PROPERTIES:
 :header-args: :tangle lisp/init-treesitter.el
@@ -9623,7 +9623,6 @@ Intended for use as a hook callback on `prog-mode-hook'."
 (provide 'init-treesitter)
 ;;; init-treesitter.el ends here
 #+end_src
-
 
 ** General LISPs
 
@@ -10070,7 +10069,6 @@ lists."
                normal-indent))))))
 #+end_src
 
-
 ** Emacs Lisp
 
 *** Customizations
@@ -10363,7 +10361,6 @@ keywords are supported:
 ;;; lib-elisp.el ends here
 #+end_src
 
-
 ** Language Server and Debugger Protocol Support :lsp:lang:
 
 #+begin_src emacs-lisp :noweb-ref config-prog
@@ -10623,7 +10620,6 @@ elsp
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
 #+end_src
 
-
 ** Data Formats (JSON, TOML, YAML, XML, CSV...)
 :PROPERTIES:
 :ID:       137d1e04-d0dc-4512-a450-fbafeef65804
@@ -10740,7 +10736,6 @@ elsp
     "t" #'csv-transpose))
 #+end_src
 
-
 ** HTML
 
 #+begin_src emacs-lisp :tangle lisp/init-lang-html.el
@@ -10813,7 +10808,6 @@ elsp
 ;;; init-lang-html.el ends here
 #+end_src
 
-
 ** JavaScript
 
 #+begin_src emacs-lisp :tangle lisp/init-lang-js.el
@@ -10871,7 +10865,6 @@ elsp
 ;;; init-lang-js.el ends here
 #+end_src
 
-
 ** Lua
 
 #+begin_src emacs-lisp :tangle lisp/init-lang-lua.el
@@ -10914,7 +10907,6 @@ elsp
 (provide 'init-lang-lua)
 ;;; init-lang-lua.el ends here
 #+end_src
-
 
 ** Markdown
 
@@ -11194,7 +11186,6 @@ Returns process exit code."
 ;;; init-lang-nix.el ends here
 #+end_src
 
-
 ** Nushell
 
 #+begin_src emacs-lisp :tangle lisp/init-shell-nu.el
@@ -11238,7 +11229,6 @@ Returns process exit code."
 ;;; init-shell-nu.el ends here
 #+end_src
 *** TODO Rename file to =init-lang-nushell.el= or include in =init-lang-shell.el=
-
 
 ** PHP
 :PROPERTIES:
@@ -11349,7 +11339,6 @@ its cache should stay out of the way.
   ;;   :yield "use")
   #+end_example
 
-
 ** Shell Scripting
 
 #+begin_src emacs-lisp :tangle lisp/init-lang-shell.el
@@ -11404,6 +11393,7 @@ its cache should stay out of the way.
 (provide 'init-lang-shell)
 ;;; init-lang-shell.el ends here
 #+end_src
+
 ** Miscellaneous Languages
 :PROPERTIES:
 :header-args: :tangle lisp/init-lang-misc.el
