@@ -9204,72 +9204,9 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
 #+end_src
 
 
-* Expanding Templates (~tempel~) :: ~init-templates~
+* Template Expansion
 
 Configuration for expandable file templates.
-
-** ~tempel~ vs ~yasnippet~
-
-~tempel~ is simple and powerful, built on top of the Emacs internal ~tempo~
-library.  I prefer to use ~tempel~ where possible.
-
-~yasnippet~, by the author of ~eglot~, is generally much more powerful.
-~yasnippet~ supports nested template fields and provides many more opportunities
-for complex interactive prompts.  ~yasnippet~ has been around for quite a few
-years and provides a large degree of compatibility with the text-expansion
-template syntax established by the classic macOS text editor TextMate.
-
-Wait...  Why am I explaining this?  Who is my audience?  What drives this desire
-to /explain/ information that is readily-available?  Could it be that I am
-compelled to reproduce the empty rhetorical stylings of a mad parrot-god whose
-half-digested productions drop from its beak as worm-words crawling in-to and
-out-from every crack and corner of this arachnid desert, driven by some kind of
-hive-mind manufacturing reductive, homogenizing, totalitarian thoughtforms?  And
-if so, what is this parrot-god's end goal?  I have so many questions.  I think a
-table of pros/cons and a list of differences would likely suffice.
-
-
-** "Templates" or "Snippets"?"
-
-Templates may have placeholders to be filled and expanded.  ~tempel~ and
-~yasnippet~ do this, despite the name of the latter package.
-
-Snippets are static chunks of text, often "tricks" and easy-to-forget reference
-material.  Abbrevs (via ~abbrev-mode~) are an example of this.
-
-Templates may include a snippet in their expansion.  Snippets in themselves have
-no relation to templates, unless we are coincidentally talking about a snippet
-whose subject is templates.  I will say no more on that matter so that we may
-avoid further confusion.
-
-
-** Tempo Syntax
-
-- Source :: [[https://github.com/minad/tempel/blob/main/README.org#template-syntax][tempel/README.org at main · minad/tempel · GitHub]]
-
-All the Tempo syntax elements are fully supported. The syntax elements are described in detail in the docstring of ~tempo-define-template~  in tempo.el. We document the important ones here:
-
-- “string” Inserts a string literal.
-- =p=  Inserts an unnamed placeholder field.
-- =n=  Inserts a newline.
-- =>= Indents with ~indent-according-to-mode~ .
-- =r=  Inserts the current region. If no region is active, quits the containing template when jumped to.
-- =r>= Acts like =r= , but indent region.
-- =n>=  Inserts a newline and indents.
-- =&=  Insert newline unless there is only whitespace between line start and point.
-- =%=  Insert newline unless there is only whitespace between point and line end.
-- =o= Like =%=  but leaves the point before newline.
-- =(s NAME)=  Inserts a named field.
-- =(p PROMPT <NAME> <NOINSERT>)= Insert an optionally named field with a prompt. The =PROMPT= is displayed directly in the buffer as default value. If =NOINSERT= is non-nil, no field is inserted. Then the minibuffer is used for prompting and the value is bound to =NAME= .
-- =(r PROMPT <NAME> <NOINSERT>)= Insert region or act like =(p ...)= .
-- =(r> PROMPT <NAME> <NOINSERT>)= Act like =(r ...)= , but indent region.
-
-Furthermore Tempel supports syntax extensions:
-
-- =(p FORM <NAME> <NOINSERT>)= Like =p= described above, but =FORM=  is evaluated.
-- =(FORM ...)=  Other Lisp forms are evaluated. Named fields are lexically bound.
-- =q=  Quits the containing template when jumped to.
-
 
 ** Define the location of the custom template directory
 
@@ -9373,6 +9310,67 @@ CLOSED: [2024-04-13 Sat 00:00]
 *** TODO Add this package's Tempo templates to Tempel
 
 
+** Reference
+*** Tempo Syntax
+
+- Source :: [[https://github.com/minad/tempel/blob/main/README.org#template-syntax][tempel/README.org at main · minad/tempel · GitHub]]
+
+All the Tempo syntax elements are fully supported. The syntax elements are described in detail in the docstring of ~tempo-define-template~  in tempo.el. We document the important ones here:
+
+- “string” Inserts a string literal.
+- =p=  Inserts an unnamed placeholder field.
+- =n=  Inserts a newline.
+- =>= Indents with ~indent-according-to-mode~ .
+- =r=  Inserts the current region. If no region is active, quits the containing template when jumped to.
+- =r>= Acts like =r= , but indent region.
+- =n>=  Inserts a newline and indents.
+- =&=  Insert newline unless there is only whitespace between line start and point.
+- =%=  Insert newline unless there is only whitespace between point and line end.
+- =o= Like =%=  but leaves the point before newline.
+- =(s NAME)=  Inserts a named field.
+- =(p PROMPT <NAME> <NOINSERT>)= Insert an optionally named field with a prompt. The =PROMPT= is displayed directly in the buffer as default value. If =NOINSERT= is non-nil, no field is inserted. Then the minibuffer is used for prompting and the value is bound to =NAME= .
+- =(r PROMPT <NAME> <NOINSERT>)= Insert region or act like =(p ...)= .
+- =(r> PROMPT <NAME> <NOINSERT>)= Act like =(r ...)= , but indent region.
+
+Furthermore Tempel supports syntax extensions:
+
+- =(p FORM <NAME> <NOINSERT>)= Like =p= described above, but =FORM=  is evaluated.
+- =(FORM ...)=  Other Lisp forms are evaluated. Named fields are lexically bound.
+- =q=  Quits the containing template when jumped to.
+
+** Commentary
+*** ~tempel~ vs ~yasnippet~
+
+~tempel~ is simple and powerful, built on top of the Emacs internal ~tempo~
+library.  I prefer to use ~tempel~ where possible.
+
+~yasnippet~, by the author of ~eglot~, is generally much more powerful.
+~yasnippet~ supports nested template fields and provides many more opportunities
+for complex interactive prompts.  ~yasnippet~ has been around for quite a few
+years and provides a large degree of compatibility with the text-expansion
+template syntax established by the classic macOS text editor TextMate.
+
+Wait...  Why am I explaining this?  Who is my audience?  What drives this desire
+to /explain/ information that is readily-available?  Could it be that I am
+compelled to reproduce the empty rhetorical stylings of a mad parrot-god whose
+half-digested productions drop from its beak as worm-words crawling in-to and
+out-from every crack and corner of this arachnid desert, driven by some kind of
+hive-mind manufacturing reductive, homogenizing, totalitarian thoughtforms?  And
+if so, what is this parrot-god's end goal?  I have so many questions.  I think a
+table of pros/cons and a list of differences would likely suffice.
+
+*** "Templates" or "Snippets"?"
+
+Templates may have placeholders to be filled and expanded.  ~tempel~ and
+~yasnippet~ do this, despite the name of the latter package.
+
+Snippets are static chunks of text, often "tricks" and easy-to-forget reference
+material.  Abbrevs (via ~abbrev-mode~) are an example of this.
+
+Templates may include a snippet in their expansion.  Snippets in themselves have
+no relation to templates, unless we are coincidentally talking about a snippet
+whose subject is templates.  I will say no more on that matter so that we may
+avoid further confusion.
 
 
 * Language Support
