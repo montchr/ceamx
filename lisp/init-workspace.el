@@ -30,21 +30,15 @@
 ;; embark issue)
 (package! burly
   (require 'burly))
-;; Prevent `edebug' default bindings from interfering.
-(setq edebug-inhibit-emacs-lisp-mode-bindings t)
+(require 'ceamx-lib)
 
-(keymap-global-unset "C-x C-a" t)
-(keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
+(defun ceamx-after-init-define-activities-keys-h ()
+  "Define keybindings for `activities' late to override `edebug'.
+Intended for use as a hook on `ceamx-after-init-hook'."
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
 
-(package! activities
-  (activities-mode)
-  ;; Unfortunately, due to the `tab-bar-mode' display bug in Emacs 29 (see
-  ;; `init-workspace'), I am avoiding `tab-bar-mode'.  Though I really would
-  ;; like to use it, the bug is just too distracting and impossible to work
-  ;; around.
-  (unless (version< emacs-version "30.0")
-    (when tab-bar-mode
-      (activities-tabs-mode)))
+  ;; (keymap-global-unset "C-x C-a" t)
+  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
 
   ;; TODO: still shares bindings with edebug which is confusing
   (define-keymap :keymap (current-global-map)
@@ -58,6 +52,18 @@
     "C-x C-a b" #'activities-switch-buffer
     "C-x C-a g" #'activities-revert
     "C-x C-a l" #'activities-list))
+
+(package! activities
+  (activities-mode)
+  ;; Unfortunately, due to the `tab-bar-mode' display bug in Emacs 29 (see
+  ;; `init-workspace'), I am avoiding `tab-bar-mode'.  Though I really would
+  ;; like to use it, the bug is just too distracting and impossible to work
+  ;; around.
+  (unless (version< emacs-version "30.0")
+    (when tab-bar-mode
+      (activities-tabs-mode)))
+
+  (add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h))
 (package! breadcrumb
   (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 
