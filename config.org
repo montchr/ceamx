@@ -10666,6 +10666,25 @@ elsp
 (package! yaml-mode)
 #+end_src
 
+**** Install and configure ~yaml-pro~ for structural editing
+
+#+begin_src emacs-lisp
+(package! yaml-pro
+  (add-hook 'yaml-mode-hook #'yaml-pro-mode)
+  (add-hook 'yaml-ts-mode-hook #'yaml-pro-mode)
+
+  ;; The package does not expose `yaml-pro-ts-mode' until `yaml-pro-mode' is
+  ;; activated.  I consider this less-than-ideal behavior and should probably
+  ;; file a bug report.
+  (when (featurep 'treesit)
+    (add-hook 'yaml-pro-mode-hook (lambda () (yaml-pro-ts-mode)))))
+#+end_src
+
+
+***** TODO Configure repeat map
+
+<https://github.com/zkry/yaml-pro?tab=readme-ov-file#easy-movement-with-repeat-map>
+
 **** Start the LSP server
 
 #+begin_src emacs-lisp

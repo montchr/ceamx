@@ -32,6 +32,15 @@
   (setopt lsp-toml-cache-path (file-name-as-directory
                                (concat ceamx-lsp-mode-cache-dir "server/toml"))))
 (package! yaml-mode)
+(package! yaml-pro
+  (add-hook 'yaml-mode-hook #'yaml-pro-mode)
+  (add-hook 'yaml-ts-mode-hook #'yaml-pro-mode)
+
+  ;; The package does not expose `yaml-pro-ts-mode' until `yaml-pro-mode' is
+  ;; activated.  I consider this less-than-ideal behavior and should probably
+  ;; file a bug report.
+  (when (featurep 'treesit)
+    (add-hook 'yaml-pro-mode-hook (lambda () (yaml-pro-ts-mode)))))
 (when (eq 'lsp ceamx-lsp-client)
   (after! (yaml-mode)
     (add-hook 'yaml-mode-hook #'lsp-deferred)
