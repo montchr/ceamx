@@ -27,12 +27,6 @@
 
 (require 'ceamx-lib)
 
-(defvar-keymap ceamx-activities-map)
-(define-prefix-command 'ceamx-activities-map)
-
-(defvar-keymap ceamx-appearance-map)
-(define-prefix-command 'ceamx-appearance-map)
-
 (defvar-keymap ceamx-file-map)
 (define-prefix-command 'ceamx-file-map)
 
