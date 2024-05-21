@@ -68,6 +68,8 @@ Capf, such that it will be tried first."
 (package! tempel-collection
   (after! tempel
     (require 'tempel-collection)))
+(package! spdx
+  (keymap-set ceamx-insert-map "L" #'spdx-insert-spdx))
 
 (provide 'init-templates)
 ;;; init-templates.el ends here

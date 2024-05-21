@@ -9205,6 +9205,9 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
 
 
 * Template Expansion
+:PROPERTIES:
+:header-args: :noweb-ref init-templates
+:END:
 
 Configuration for expandable file templates.
 
@@ -9218,11 +9221,7 @@ Templates, in this sense, refer to the primary focus of packages
 like \"tempo\", \"tempel\", and \"yasnippet\".")
 #+end_src
 
-** Install and configure TempEl (~tempel~)
-:PROPERTIES:
-:header-args: :noweb-ref init-templates
-:END:
-
+** Install and configure TempEl
 
 #+begin_src emacs-lisp
 (require 'ceamx-lib)
@@ -9372,6 +9371,16 @@ no relation to templates, unless we are coincidentally talking about a snippet
 whose subject is templates.  I will say no more on that matter so that we may
 avoid further confusion.
 
+** TODO Add templates for inserting SPDX license headers
+
+- src :: <https://github.com/condy0919/spdx.el>
+
+  #+begin_src emacs-lisp
+(package! spdx
+  (keymap-set ceamx-insert-map "L" #'spdx-insert-spdx))
+#+end_src
+
+*** TODO Add this package's Tempo templates to Tempel
 
 * Language Support
 
