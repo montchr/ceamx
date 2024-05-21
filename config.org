@@ -11861,7 +11861,7 @@ Else create a new file."
 :header-args: :noweb-ref init-org
 :END:
 
-*** Requirements
+** Requirements
 
 #+BEGIN_SRC emacs-lisp
 (require 'ceamx-keymaps)
@@ -11869,7 +11869,7 @@ Else create a new file."
 (require 'ceamx-lib)
 #+END_SRC
 
-*** Set up essential files & directories
+** Set up essential files & directories
 
 #+begin_src emacs-lisp :noweb-ref config-feature-paths
 (defconst ceamx-default-agenda-files
@@ -11913,7 +11913,7 @@ conflict when Syncthing tries to take control of these paths.
 (setopt org-agenda-files ceamx-default-agenda-files)
 #+END_SRC
 
-*** Define structure templates
+** Define structure templates
 
 #+begin_src emacs-lisp
 (setopt org-structure-template-alist
@@ -11927,7 +11927,7 @@ conflict when Syncthing tries to take control of these paths.
           ("q" . "quote")))
 #+end_src
 
-*** Headings / List Items
+** Headings / List Items
 
 Prevent TAB behavior oddities at the end of headlines.
 
@@ -11952,8 +11952,8 @@ unexpected changes to the content (depending on the setting of
 (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 #+END_SRC
 
-*** Appearance
-**** Activate visual overhaul provided by ~org-modern~
+** Appearance
+*** Activate visual overhaul provided by ~org-modern~
 
 <https://github.com/minad/org-modern>
 
@@ -11963,7 +11963,7 @@ unexpected changes to the content (depending on the setting of
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 #+END_SRC
 
-**** Text formatting
+*** Text formatting
 
 <https://github.com/minad/org-modern#configuration>
 
@@ -11982,7 +11982,7 @@ unexpected changes to the content (depending on the setting of
   (add-hook 'org-mode-hook #'org-appear-mode))
 #+end_src
 
-**** Folding and indentation
+*** Folding and indentation
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-cycle-emulate-tab t)
@@ -12003,7 +12003,7 @@ unexpected changes to the content (depending on the setting of
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 #+END_SRC
 
-**** Workflow and state settings
+*** Workflow and state settings
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-log-done 'time)
@@ -12019,7 +12019,7 @@ unexpected changes to the content (depending on the setting of
            "CANCELLED(x@/!)")))
 #+END_SRC
 
-**** Visual feedback after actions
+*** Visual feedback after actions
 
 - Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
 
@@ -12102,9 +12102,7 @@ I don't think this is working properly...
    "TODO=\"DONE\"|TODO=\"CANCELLED\"" (or scope (if (org-before-first-heading-p) 'file 'tree))))
 #+end_src
 
-*** Links
-
-**** Images
+*** Images
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-image-actual-width 300)
@@ -12156,6 +12154,13 @@ I don't think this is working properly...
     "M-g o" #'consult-org-heading))
 #+END_SRC
 
+**** Toggleables
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'org
+  (keymap-set org-mode-map "C-c t l" #'org-toggle-link-display))
+#+end_src
+
 **** Support the special shifted-arrow-key commands
 
 #+begin_src emacs-lisp
@@ -12177,13 +12182,6 @@ Shifted cursor keys will then execute Org commands in the following contexts:
 
 Outside these contexts, the commands will throw an error.
 #+end_quote
-
-**** Toggleables
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'org
-  (keymap-set org-mode-map "C-c t l" #'org-toggle-link-display))
-#+end_src
 
 **** Make Org tree navigation commands repeatable
 
@@ -12270,7 +12268,7 @@ Intended for use as a local hook function on
 
 *** Packages
 
-**** ~org-ql~
+*** ~org-ql~
 
 <https://github.com/alphapapa/org-ql>
 
@@ -12278,14 +12276,14 @@ Intended for use as a local hook function on
 (package! org-ql)
 #+END_SRC
 
-**** Prefer the refiling interface provided by ~org-ql-refile~
+*** Prefer the refiling interface provided by ~org-ql-refile~
 
 #+begin_src emacs-lisp
 (after! org
   (keymap-set org-mode-map "C-c C-w" #'org-ql-refile))
 #+end_src
 
-**** ~org-super-agenda~
+*** ~org-super-agenda~
 
 <https://github.com/alphapapa/org-super-agenda>
 
@@ -12297,7 +12295,7 @@ TODO: Configure
   (require 'org-super-agenda))
 #+END_SRC
 
-**** ~org-download~: support dragging-and-dropping images into Org buffers
+*** ~org-download~: support dragging-and-dropping images into Org buffers
 
 <https://github.com/abo-abo/org-download>
 
@@ -12307,7 +12305,7 @@ TODO: Configure
   (add-hook 'dired-mode-hook #'org-download-enable))
 #+END_SRC
 
-**** ~org-rich-yank~: surround pasted code with src-block markup
+*** ~org-rich-yank~: surround pasted code with src-block markup
 
 <https://github.com/unhammer/org-rich-yank>
 
@@ -12327,14 +12325,14 @@ kill the selection again.
     (keymap-set org-mode-map "C-M-y" #'org-rich-yank)))
 #+END_SRC
 
-**** ~org-web-tools~: view, capture, and archive webpages in org-mode
+*** ~org-web-tools~: view, capture, and archive webpages in org-mode
 
 #+BEGIN_SRC emacs-lisp
 (package! org-web-tools
   (keymap-set ceamx-insert-map "l" #'org-web-tools-insert-link-for-url))
 #+END_SRC
 
-**** ~auto-tangle-mode~: automatically tangle literate Org files
+*** ~auto-tangle-mode~: automatically tangle literate Org files
 
 #+BEGIN_SRC emacs-lisp
 (package! (auto-tangle-mode
@@ -12343,7 +12341,7 @@ kill the selection again.
   (autoload 'auto-tangle-mode "auto-tangle-mode"))
 #+END_SRC
 
-**** ~org-sidebar~: provide a sidebar for Org buffers
+*** ~org-sidebar~: provide a sidebar for Org buffers
 
 <https://github.com/alphapapa/org-sidebar>
 
@@ -12351,7 +12349,7 @@ kill the selection again.
 (package! org-sidebar)
 #+END_SRC
 
-**** ~org-bookmark-heading~: Support heading bookmarks
+*** ~org-bookmark-heading~: Support heading bookmarks
 
 #+begin_src emacs-lisp
 (package! org-bookmark-heading
@@ -12360,7 +12358,7 @@ kill the selection again.
     (require 'org-bookmark-heading)))
 #+end_src
 
-**** Install the ~org-contrib~ community packages
+*** Install the ~org-contrib~ community packages
 
 <https://orgmode.org/worg/org-contrib/>
 
@@ -12406,14 +12404,10 @@ kill the selection again.
     (apply orig-fun args)))
 #+end_src
 
-***** TODO Only add languages upon initially encountering its =src= block
+***** DONE Only add languages upon initially encountering its =src= block
+CLOSED: [2024-05-20 Mon 23:36]
 
-*** Footer
-
-#+BEGIN_SRC emacs-lisp
-(provide 'init-org)
-;;; init-org.el ends here
-#+END_SRC
+- State "DONE"       from "TODO"       [2024-05-20 Mon 23:36]
 
 
 ** Resources
@@ -12423,8 +12417,10 @@ kill the selection again.
 ** Tasks
 
 *** TODO Expand ~org-mode-navigation-repeat-map~ based on ~org-speed-commands~
-*** TODO Meow overwrites repeat-mode?
+*** DONE Meow overwrites repeat-mode?
+CLOSED: [2024-05-20 Mon 23:38]
 
+- State "DONE"       from "TODO"       [2024-05-20 Mon 23:38]
 *** CANCELLED Fix no-cycle when press TAB at headline EOL
 CLOSED: [2024-03-18 Mon 23:53]
 
@@ -12434,17 +12430,17 @@ I think this happens because when there is folded content EOL is considered
 part of that folded content, so the TAB press is technically not on the
 headline.
 
+*** DONE Repeat-mode for navigating tree
+CLOSED: [2024-05-20 Mon 23:38]
 
-*** TODO Repeat-mode for navigating tree
 
 
-
+- State "DONE"       from "TODO"       [2024-05-20 Mon 23:38]
 - Note taken on [2024-03-18 Mon 23:52] \\
   I saw some post on Reddit about an integration with Meow for this purpose the
   other day... not sure if I saved it though.
 
 *** TODO [#B] Bind ~org-insert-subheading~
-
 *** DONE Figure out why completion is broken
 CLOSED: [2024-03-18 Mon 23:51]
 
@@ -12456,7 +12452,6 @@ indirect buffer with ~org-edit-src-code~.
 However, it would still be nice if I could get symbol completion inside of
 inline code markup.
 
-
 *** CANCELLED Figure out why Elisp source blocks are broken
 CLOSED: [2024-03-18 Mon 23:52]
 
@@ -12464,7 +12459,6 @@ CLOSED: [2024-03-18 Mon 23:52]
   Not "broken", just misunderstood.
 
 *** TODO Org-Mode: electric-pair for equals-sign
-
 
 
 * Controls

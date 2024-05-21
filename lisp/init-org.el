@@ -156,10 +156,10 @@
 
     ;; Override earlier binding to `consult-outline'.
     "M-g o" #'consult-org-heading))
-;; While nil is the default value, it must be set explicitly to opt-in.
-(setopt org-support-shift-select nil)
 (with-eval-after-load 'org
   (keymap-set org-mode-map "C-c t l" #'org-toggle-link-display))
+;; While nil is the default value, it must be set explicitly to opt-in.
+(setopt org-support-shift-select nil)
 (defvar-keymap org-mode-navigation-repeat-map :repeat t
   "TAB" #'org-cycle
   "S-TAB" #'org-cycle-global
@@ -269,8 +269,6 @@ Intended for use as a local hook function on
       (add-to-list 'org-babel-load-languages (cons (intern language) t))
       (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
     (apply orig-fun args)))
-(provide 'init-org)
-;;; init-org.el ends here
 
 (provide 'init-org)
 ;;; init-org.el ends here
