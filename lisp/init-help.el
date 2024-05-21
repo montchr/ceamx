@@ -128,6 +128,10 @@
     ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
     "C-h" nil))
 
+;;; Eldoc: Display multiple composed messages
+
+(setopt eldoc-documentation-function #'eldoc-documentation-compose)
+
 ;;; Tune the contexts in which Eldoc displays its messages
 
 (use-feature! eldoc

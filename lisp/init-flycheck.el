@@ -24,26 +24,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'ceamx-keymaps)
-(require 'ceamx-lib)
-(package! flycheck
-  (setopt flycheck-emacs-lisp-load-path 'inherit)
 
-  ;; The default includes `newline', which is just too often.
-  (setopt flycheck-check-syntax-automatically '(save idle-change mode-enabled))
-
-  (setopt flycheck-idle-change-delay 3.0)
-  (setopt flycheck-display-errors-delay 0.5)
-  (setopt flycheck-buffer-switch-check-intermediate-buffers nil)
-
-  (keymap-set ceamx-toggle-map "f" #'flycheck-mode)
-
-  (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
-(package! consult-flycheck
-  (keymap-global-set "M-g f" #'consult-flycheck)
-
-  (after! (consult flycheck)
-    (require 'consult-flycheck)))
 
 (provide 'init-flycheck)
 ;;; init-flycheck.el ends here

@@ -6373,6 +6373,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
   "Absolute path to the directory containing user cheatsheets.")
 #+end_src
 
+** Code:
 
 #+begin_src emacs-lisp :tangle lisp/init-help.el
 ;;; init-help.el --- Help -*- lexical-binding: t; -*-
@@ -6504,6 +6505,10 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
     ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
     "C-h" nil))
+
+;;; Eldoc: Display multiple composed messages
+
+(setopt eldoc-documentation-function #'eldoc-documentation-compose)
 
 ;;; Tune the contexts in which Eldoc displays its messages
 
@@ -9216,38 +9221,84 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
     (require 'consult-flycheck)))
 #+end_src
 
-*** Flymake
+*** Flymake [builtin]
 :PROPERTIES:
 :header-args: :noweb-ref init-flymake
 :END:
 
+**** Load Flymake everywhere by default
+
 #+begin_src emacs-lisp
-;; Disable Flycheck checkers covered by Flymake equivalents.
-(with-eval-after-load 'flycheck
-  (setq-default flycheck-disabled-checkers
-                (append (default-value 'flycheck-disabled-checkers)
-                        '(emacs-lisp emacs-lisp-checkdoc emacs-lisp-package sh-shellcheck))))
-
-(package! flymake-flycheck
-  (add-hook 'flymake-mode-hook #'flymake-flycheck-auto))
-
 (add-hook 'prog-mode-hook #'flymake-mode)
 (add-hook 'text-mode-hook #'flymake-mode)
+#+end_src
 
-(after! flymake
-  (define-keymap :keymap flymake-mode-map
-    "C-c ! l" #'flymake-show-buffer-diagnostics
-    "C-c ! n" #'flymake-goto-next-error
-    "C-c ! p" #'flymake-goto-previous-error
-    "C-c ! c" #'flymake-show-buffer-diagnostics)
+**** Appearance :ui:
 
-  (setopt eldoc-documentation-function #'eldoc-documentation-compose)
+#+begin_src emacs-lisp
+(setopt flymake-fringe-indicator-position 'right-fringe)
+#+end_src
 
+**** Display Flymake diagnostics in a childframe with ~flymake-popon~
+
+#+begin_src emacs-lisp
+(package! flymake-popon
+  (add-hook 'flymake-mode-hook #'flymake-popon-mode)
+
+  (setopt flymake-popon-method 'popon))
+#+end_src
+
+**** Enable the Flymake Eldoc integration :help:eldoc:
+
+#+begin_src emacs-lisp
+(after! (eldoc flymake)
   (def-hook! ceamx-flymake-eldoc-function-h ()
     'flymake-mode-hook
     "Use Flymake's Eldoc integration."
     (add-hook 'eldoc-documentation-functions #'flymake-eldoc-function nil t)))
 #+end_src
+
+**** Tell Flymake how to digest Flycheck checkers :package:
+
+- Website :: [[https://github.com/purcell/flymake-flycheck][purcell/flymake-flycheck: Use any Emacs flycheck checker as a flymake backend]]
+
+#+begin_src emacs-lisp
+(package! flymake-flycheck
+  (add-hook 'flymake-mode-hook #'flymake-flycheck-auto))
+
+;; Disable Flycheck checkers covered by Flymake equivalents.
+(after! 'flycheck
+  (setq-default
+   flycheck-disabled-checkers
+   (append (default-value 'flycheck-disabled-checkers)
+           '(emacs-lisp emacs-lisp-checkdoc emacs-lisp-package sh-shellcheck))))
+#+end_src
+
+***** Caveats
+
+- Source :: [[https://github.com/purcell/flymake-flycheck][purcell/flymake-flycheck: Use any Emacs flycheck checker as a flymake backend]]
+- Retrieved :: [2024-05-21 Tue 09:25]
+
++ Flycheck UI packages will have no idea of what the checkers are doing, because
+  they are run without flycheck's coordination.
++ Flycheck's notion of "chained checkers" is not handled automatically, so
+  although multiple chained checkers can be used, they will all be executed
+  simultaneously even if earlier checkers fail.  This could either be considered
+  a feature, or lead to redundant confusing messages.
+
+**** Keybindings :keybinds:
+
+Mirror the Flycheck default prefix of =C-c !=
+
+#+begin_src emacs-lisp
+(after! flymake
+  (define-keymap :keymap flymake-mode-map
+    "C-c ! l" #'flymake-show-buffer-diagnostics
+    "C-c ! n" #'flymake-goto-next-error
+    "C-c ! p" #'flymake-goto-previous-error
+    "C-c ! c" #'flymake-show-buffer-diagnostics))
+#+end_src
+
 
 * Template Expansion
 :PROPERTIES:

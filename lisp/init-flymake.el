@@ -24,31 +24,33 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Disable Flycheck checkers covered by Flymake equivalents.
-(with-eval-after-load 'flycheck
-  (setq-default flycheck-disabled-checkers
-                (append (default-value 'flycheck-disabled-checkers)
-                        '(emacs-lisp emacs-lisp-checkdoc emacs-lisp-package sh-shellcheck))))
+(add-hook 'prog-mode-hook #'flymake-mode)
+(add-hook 'text-mode-hook #'flymake-mode)
+(setopt flymake-fringe-indicator-position 'right-fringe)
+(package! flymake-popon
+  (add-hook 'flymake-mode-hook #'flymake-popon-mode)
 
+  (setopt flymake-popon-method 'popon))
+(after! (eldoc flymake)
+  (def-hook! ceamx-flymake-eldoc-function-h ()
+    'flymake-mode-hook
+    "Use Flymake's Eldoc integration."
+    (add-hook 'eldoc-documentation-functions #'flymake-eldoc-function nil t)))
 (package! flymake-flycheck
   (add-hook 'flymake-mode-hook #'flymake-flycheck-auto))
 
-(add-hook 'prog-mode-hook #'flymake-mode)
-(add-hook 'text-mode-hook #'flymake-mode)
-
+;; Disable Flycheck checkers covered by Flymake equivalents.
+(after! 'flycheck
+  (setq-default
+   flycheck-disabled-checkers
+   (append (default-value 'flycheck-disabled-checkers)
+           '(emacs-lisp emacs-lisp-checkdoc emacs-lisp-package sh-shellcheck))))
 (after! flymake
   (define-keymap :keymap flymake-mode-map
     "C-c ! l" #'flymake-show-buffer-diagnostics
     "C-c ! n" #'flymake-goto-next-error
     "C-c ! p" #'flymake-goto-previous-error
-    "C-c ! c" #'flymake-show-buffer-diagnostics)
-
-  (setopt eldoc-documentation-function #'eldoc-documentation-compose)
-
-  (def-hook! ceamx-flymake-eldoc-function-h ()
-    'flymake-mode-hook
-    "Use Flymake's Eldoc integration."
-    (add-hook 'eldoc-documentation-functions #'flymake-eldoc-function nil t)))
+    "C-c ! c" #'flymake-show-buffer-diagnostics))
 
 (provide 'init-flymake)
 ;;; init-flymake.el ends here
