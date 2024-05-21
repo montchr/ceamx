@@ -73,12 +73,12 @@
 (setopt org-startup-indented nil)
 
 ;; Ensure leading stars are replaced by spaces.
-(setopt org-modern-hide-stars " ")
+(setopt org-modern-hide-stars "   ")
 ;; (setopt org-modern-hide-stars nil)
 (setopt org-modern-star nil)
 
 ;; (setopt org-ellipsis "…")
-(setopt org-ellipsis " ⇢")
+(setopt org-ellipsis " ⇢") ; prefix is nbsp
 (after! org
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 (setopt org-log-done 'time)
