@@ -68,6 +68,9 @@ Capf, such that it will be tried first."
 (package! tempel-collection
   (after! tempel
     (require 'tempel-collection)))
+(package! yasnippet
+  (setq yas-snippet-dirs (list
+                          (file-name-as-directory (concat ceamx-templates-dir "yasnippet")))))
 (package! spdx
   (keymap-set ceamx-insert-map "L" #'spdx-insert-spdx))
 

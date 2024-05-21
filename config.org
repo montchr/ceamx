@@ -9297,17 +9297,15 @@ CLOSED: [2024-04-13 Sat 00:00]
 
 - State "DONE"       from "TODO"       [2024-04-13 Sat 00:00]
 
-** TODO Add templates for inserting SPDX license headers
+** Install and configure YASnippet
 
-- src :: <https://github.com/condy0919/spdx.el>
+- Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
 
-  #+begin_src emacs-lisp
-(package! spdx
-  (keymap-set ceamx-insert-map "L" #'spdx-insert-spdx))
+#+begin_src emacs-lisp
+(package! yasnippet
+  (setq yas-snippet-dirs (list
+                          (file-name-as-directory (concat ceamx-templates-dir "yasnippet")))))
 #+end_src
-
-*** TODO Add this package's Tempo templates to Tempel
-
 
 ** Reference
 *** Tempo Syntax
