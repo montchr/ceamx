@@ -6313,7 +6313,10 @@ FIXME: `tab-bar-mode' is currently broken due to upstream Emacs 29 bug
   (require 'burly))
 #+end_src
 
-** Beframe
+** DISABLED Beframe
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 #+begin_src emacs-lisp
 (defface +beframe-buffer
@@ -6326,7 +6329,9 @@ With optional argument FRAME, return the list of buffers of FRAME."
   (declare-function beframe-buffer-names "beframe")
   (declare-function beframe-buffer-sort-visibility "beframe")
   (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+#+end_src
 
+#+begin_src emacs-lisp
 (package! beframe
   ;; FIXME: still listed as frame buffers
   (setopt beframe-global-buffers '("\\*scratch\\*" "\\*Messages\\*" "\\*Backtrace\\*"))
