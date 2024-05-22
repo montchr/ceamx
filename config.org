@@ -11357,6 +11357,19 @@ PHP is not a templating language and it never was.
   )
 #+end_src
 
+*** Install ~neon-mode~ for the PHP-centric NEON configuration language
+
+- Website :: <https://github.com/Fuco1/neon-mode>
+- Website :: <https://ne-on.org/>
+
+I have never ever encountered NEON in any context other than a =phpstan.neon= PHPStan
+configuration file.
+
+#+begin_src emacs-lisp
+(package! neon-mode)
+#+end_src
+
+
 *** Debugging with Xdebug and ~dap-mode~
 
 + ref :: <https://emacs-lsp.github.io/dap-mode/page/configuration/#php>

@@ -37,6 +37,7 @@
   ;; FIXME: no exist
   ;; (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
   )
+(package! neon-mode)
 (after! php-mode
   (defer! 2
     (when (featurep 'dap)
