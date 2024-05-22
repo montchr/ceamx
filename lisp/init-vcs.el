@@ -146,18 +146,9 @@
 (after! magit
   (remove-hook 'magit-section-movement-hook 'magit-hunk-set-window-start)
   (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
-(package! ghub)
-
-;; TODO: maybe: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#ghub>
-;; :config
-;; (require 'auth-source-pass)
-;; (defvar ceamx-ghub-token-cache nil)
-;; (def-advice! +ghub--token-use-cache-a (orig-func host username package &optional nocreate forge)
-;;   :around #'ghub--token
-;;   "Use a cached GitHub token."
-;;   (or ceamx-ghub-token-cache
-;;     (setq ceamx-ghub-token-cache
-;;       (funcall orig-func host username package nocreate forge))))
+(package! forge
+  (after! magit
+    (require 'forge)))
 (define-keymap :keymap (current-global-map)
   "C-c g"    #'magit-dispatch
   "C-c G"    #'magit-file-dispatch

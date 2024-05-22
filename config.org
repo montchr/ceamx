@@ -9053,22 +9053,54 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
   (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
 #+end_src
 
-** Configure GitHub forge integration
+** Configure Forge integration :package:secrets:api:
 
 #+begin_src emacs-lisp
-(package! ghub)
-
-;; TODO: maybe: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#ghub>
-;; :config
-;; (require 'auth-source-pass)
-;; (defvar ceamx-ghub-token-cache nil)
-;; (def-advice! +ghub--token-use-cache-a (orig-func host username package &optional nocreate forge)
-;;   :around #'ghub--token
-;;   "Use a cached GitHub token."
-;;   (or ceamx-ghub-token-cache
-;;     (setq ceamx-ghub-token-cache
-;;       (funcall orig-func host username package nocreate forge))))
+(package! forge
+  (after! magit
+    (require 'forge)))
 #+end_src
+
+*** Tell Forge which remote to track
+
+Forge will prefer, in order, =upstream= and then =origin=.  I use that convention
+for repositories where I am a contributor.  For personal repositories, I tend to
+use Git remotes named after the forge.  For example, =github= or =codeberg=.  In
+those cases, the recommended option for my setup is to set the Git config
+setting =forge.remote= /per repository/ (not globally).
+
+#+begin_src shell
+git config forge.remote 'github'
+#+end_src
+
+*** GitHub token authentication
+
+- Docs :: <https://magit.vc/manual/ghub.html#Creating-and-Storing-a-Token>
+- Docs :: <https://magit.vc/manual/forge.html#Token-Creation>
+- Docs :: [[info:auth#The Unix password store][info "(auth) The Unix password store"]]
+
+Create the token at https://github.com/settings/tokens/new with these scopes:
+
++ =repo=  grants full read/write access to private and public repositories.
++ =user=  grants access to profile information.
++ =read:org=  grants read-only access to organization membership.
+
+Add the token to the password store:
+
+  #+begin_src shell
+pass insert api.github.com/montchr^forge
+#+end_src
+
+Note that =^forge= is required by the =ghub= backend to denote the package using the
+stored token:
+
+#+begin_quote
+The default Auth-Source backends only support storing three values per entry;
+the "machine", the "login" and the "password". Because Ghub uses separate tokens
+for each package, it has to squeeze four values into those three slots, and it
+does that by using "USERNAME /^PACKAGE/ " as the "login".
+#+end_quote
+
 
 ** Keybindings
 
