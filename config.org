@@ -9073,25 +9073,18 @@ Transient, as it is not specific to ~magit~ or ~magit-section~.
 ** Keybindings
 
 #+begin_src emacs-lisp
-(after! magit
-  ;; These should be bound automatically when `magit-define-global-key-bindings'
-  ;; is =default= (which is the default value), but that does not seem to work.
-  (define-keymap :keymap (current-global-map)
-    "C-x g"    #'magit-status
-    "C-x M-g"  #'magit-dispatch
-    "C-c M-g"  #'magit-file-dispatch)
+(define-keymap :keymap (current-global-map)
+  "C-c g"    #'magit-dispatch
+  "C-c G"    #'magit-file-dispatch
 
-  ;; TODO: why does `define-keymap' not have an effect while `keymap-set' does?
+  "C-x g"    #'magit-status
+  "C-x M-g"  #'magit-dispatch)
+
+(after! magit
   (define-keymap :keymap magit-status-mode-map
     "_" #'magit-revert
-    "V" nil
+    ;; "V" nil
     "x" #'magit-discard)
-
-  ;; (keymap-set magit-status-mode-map "_" #'magit-revert)
-  ;; TODO: rebind?
-  ;; (keymap-set magit-status-mode-map "V" nil)
-  ;; NOTE: Overrides default binding of `magit-reset-quickly'.
-  ;; (keymap-set magit-status-mode-map "x" #'magit-discard)
 
   (transient-append-suffix 'magit-commit "-n"
     '("-S" "Disable GPG signing" "--no-gpg"))
