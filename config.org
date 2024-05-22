@@ -5999,16 +5999,6 @@ its bindings generally would need ~puni-mode~ to be active.
 (auto-save-visited-mode)
 #+end_src
 
-** Set the list of safe local variable values
-
-#+begin_src emacs-lisp
-(setopt safe-local-variable-values
-        '((org-refile-targets
-           (nil :maxlevel . 3))
-          ;; FIXME: there are better ways, i hope...
-          (eval load-file "./ceamx-dev-loader.el")))
-#+end_src
-
 ** Keybindings
 
 #+begin_src emacs-lisp
@@ -13916,7 +13906,7 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
     (load custom-file 'noerror)))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (add-hook 'ceamx-after-init-hook #'ceamx/load-custom-file)
 #+end_src
 

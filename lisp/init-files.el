@@ -74,11 +74,6 @@
 
 ;; Save file-visiting buffers according to the configured timers.
 (auto-save-visited-mode)
-(setopt safe-local-variable-values
-        '((org-refile-targets
-           (nil :maxlevel . 3))
-          ;; FIXME: there are better ways, i hope...
-          (eval load-file "./ceamx-dev-loader.el")))
 (global-keys!
   "C-c f" '("[ File ]" . ceamx-file-map)
   "C-c C-f" '("[ File ]" . ceamx-file-map)
