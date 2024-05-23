@@ -3697,6 +3697,16 @@ Taking all supported environments into account:
   (or (ceamx-ui-gsettings-dark-theme-p)))
 #+end_src
 
+**** ~ceamx-ui-load-theme~: function to cleanly load a theme
+
+Similar to the theme-family-specific ~modus-themes-load-theme~.
+
+#+begin_src emacs-lisp :noweb-ref lib-ui
+(defun ceamx-ui-load-theme (theme)
+  "Load THEME after resetting any previously-loaded themes."
+  (mapc #'disable-theme (remq theme custom-enabled-themes))
+  (load-theme theme :no-confirm))
+#+end_src
 
 **** Commands to load a preferred light or dark Emacs theme
 

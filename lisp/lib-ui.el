@@ -75,6 +75,10 @@ must be a valid `theme-buffet' period as defined in
   "Enable the light GNOME/GTK theme."
   (interactive)
   (ceamx/ui/gsettings-set-theme "light"))
+(defun ceamx-ui-load-theme (theme)
+  "Load THEME after resetting any previously-loaded themes."
+  (mapc #'disable-theme (remq theme custom-enabled-themes))
+  (load-theme theme :no-confirm))
 (defun ceamx/ui/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
