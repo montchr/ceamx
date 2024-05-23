@@ -3,7 +3,8 @@
 #+author: Chris Montgomery
 #+email: chmont@proton.me
 #+language: en
-#+property: header-args :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments no
+#+property: header-args:emacs-lisp+ :results silent
+#+property: header-args             :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments no
 #+startup: show2levels
 
 #+begin_quote
