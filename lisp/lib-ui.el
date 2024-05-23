@@ -45,7 +45,7 @@ must be a valid `theme-buffet' period as defined in
 (require 'ceamx-lib)
 (defun ceamx-ui-gsettings-theme ()
   "Get the currently-active GNOME/GTK color scheme."
-  (shell-command (format "gsettings get %s color-scheme"
+  (shell-command-to-string (format "gsettings get %s color-scheme"
                          ceamx-ui-gsettings-ui-namespace)))
 
 (defun ceamx-ui-gsettings-dark-theme-p ()
