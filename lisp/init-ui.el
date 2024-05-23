@@ -206,15 +206,16 @@
     ;; Prevent conflict with newly-added M-j binding.
     (keymap-set lispy-mode-map "M-J" #'lispy-join)))
 (package! pulsar
+  (pulsar-global-mode 1)
+
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line))
+
+(after! pulsar
   (setopt pulsar-pulse t
           pulsar-delay 0.055
           pulsar-iterations 10
           pulsar-face 'pulsar-magenta
           pulsar-highlight-face 'pulsar-cyan)
-
-  (pulsar-global-mode 1)
-
-  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
 
   (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
     (add-hook 'next-error-hook (function fn))))
