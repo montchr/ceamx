@@ -40,6 +40,8 @@
   (after! eglot
     (eglot-booster-mode)))
 (setopt eglot-booster-no-remote-boost t)
+(add-hook 'prog-mode-hook #'eglot-ensure)
+
 (after! eglot
   (defvar eglot-server-programs)
 
