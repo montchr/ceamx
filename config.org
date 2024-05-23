@@ -3763,12 +3763,13 @@ Configure some user options dependent on the loaded packages:
 (setopt ceamx-ui-theme-dark 'modus-vivendi-tinted)
 #+end_src
 
-This is less than ideal, but ~circadian~ has been broken lately, causing
-lockups/crashes.  Manually invoking ~ceamx/load-light-theme~ or ~ceamx/light~ is
-not hard.
+~circadian~ has been broken lately, causing lockups/crashes.  In such a situation,
+fall back to loading a theme based on the desktop environment appearance:
 
 #+begin_src emacs-lisp
-(ceamx/load-dark-theme)
+(if (ceamx-ui-desktop-dark-theme-p)
+    (ceamx/ui/load-dark-theme)
+  (ceamx/ui/load-light-theme))
 #+end_src
 
 ** Interaction & Feedback

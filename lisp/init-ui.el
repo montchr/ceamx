@@ -227,7 +227,9 @@
 (elpaca-wait)
 (setopt ceamx-ui-theme-light 'modus-operandi)
 (setopt ceamx-ui-theme-dark 'modus-vivendi-tinted)
-(ceamx/load-dark-theme)
+(if (ceamx-ui-desktop-dark-theme-p)
+    (ceamx/ui/load-dark-theme)
+  (ceamx/ui/load-light-theme))
 (package! avy
   ;; Reduce the number of possible candidates.
   ;; Can be overridden with the universal argument.
