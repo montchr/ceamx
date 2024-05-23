@@ -17,7 +17,7 @@ php-mode php-ts-mode
 (match & "match (" (p "$var") ") {" n> (p "$cond") " => " (p "$ret") "," n r> n "};")
 (param-doc & " * @param " (p "type") " $" (p "name") " " q n> "*" q)
 (return-doc & " * @return " (p "type") " " (r "description"))
-(strict-types & "declare(strict-types=1);" n)
+(strict-types & "declare(strict_types=1);" n)
 (vd & "var_dump(" (r "$var") ");")
 (vde & "var_dump(" (r "$var") ");exit(1);")
 (ve & "var_export(" (r "$var") (p ", true") ");")
