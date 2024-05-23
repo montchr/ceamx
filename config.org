@@ -3328,7 +3328,7 @@ than those available in Emacs (e.g. ~transient ~IIRC), or, including some
 *** Configure the preferred theme family
 
 #+begin_src emacs-lisp :noweb-ref config-ui
-(defcustom ceamx-theme-family 'modus
+(defcustom ceamx-ui-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
 reference the `ef-themes', `modus-themes', and `standard-themes',
@@ -3347,12 +3347,12 @@ theme)."
 *** Configure the preferred light and dark themes
 
 #+begin_src emacs-lisp :noweb-ref config-ui
-(defcustom ceamx-theme-default-light 'modus-operandi-tinted
+(defcustom ceamx-ui-theme-light 'modus-operandi-tinted
   "The default light theme."
   :group 'ceamx
   :type 'symbol)
 
-(defcustom ceamx-theme-default-dark 'modus-vivendi-tinted
+(defcustom ceamx-ui-theme-dark 'modus-vivendi-tinted
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
@@ -3370,17 +3370,17 @@ theme)."
 
 #+begin_src emacs-lisp :noweb-ref lib-ui
 ;; via prot-emacs
-(defun ceamx-theme-re-enable-in-frame (_frame)
+(defun ceamx-ui-re-enable-theme-in-frame (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
 Add this to `after-make-frame-functions' so that new frames do
 not retain the generic background set by the function
-`ceamx-theme-no-bright-flash'."
+`ceamx-ui-theme-no-bright-flash'."
   (when-let ((theme (car custom-enabled-themes)))
     (enable-theme theme)))
 #+end_src
 
 #+begin_src emacs-lisp
-(add-hook 'after-make-frame-functions #'ceamx-theme-re-enable-in-frame)
+(add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)
 #+end_src
 
 *** Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
@@ -3463,10 +3463,10 @@ not retain the generic background set by the function
   :commands (ef-themes-select)
 
   :config
-  ;; (setopt ceamx-theme-default-dark 'ef-night)
-  ;; (setopt ceamx-theme-default-light 'ef-frost)
+  ;; (setopt ceamx-ui-theme-dark 'ef-night)
+  ;; (setopt ceamx-ui-theme-light 'ef-frost)
 
-  ;; (setopt ef-themes-to-toggle (list ceamx-theme-default-dark ceamx-theme-default-light))
+  ;; (setopt ef-themes-to-toggle (list ceamx-ui-theme-dark ceamx-ui-theme-light))
 
   (setopt ef-themes-headings
           '((0 . (variable-pitch 1.4))
@@ -3489,7 +3489,7 @@ not retain the generic background set by the function
 *** Circadian Theme Phasing
 
 #+begin_src emacs-lisp :noweb-ref config-ui
-(defcustom ceamx-theme-circadian-interval nil
+(defcustom ceamx-ui-theme-circadian-interval nil
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
 respectively to period-based switching with `theme-buffet' or
@@ -3498,8 +3498,8 @@ library and the `circadian' package.
 
 A nil value means to disable automatic theme switching.
 Theme-switching commands `ceamx/light' and `ceamx/dark' will
-unconditionally use `ceamx-theme-default-light' and
-`ceamx-theme-default-dark', respectively."
+unconditionally use `ceamx-ui-theme-default-light' and
+`ceamx-ui-theme-default-dark', respectively."
   :group 'ceamx
   :type '(choice :tag "Circadian theme switching interval" :value nil
           (const :tag "Time periods via `theme-buffet'" :value buffet)
@@ -3521,14 +3521,14 @@ the minute of sundown.
 
 #+begin_src emacs-lisp :tangle no
 (use-feature! solar
-  :when (eq 'solar ceamx-theme-circadian-interval)
+  :when (eq 'solar ceamx-ui-theme-circadian-interval)
 
   :config
   (setopt calendar-latitude 39.968)
   (setopt calendar-longitude -75.133))
 
 (use-package circadian
-  :when (eq 'solar ceamx-theme-circadian-interval)
+  :when (eq 'solar ceamx-ui-theme-circadian-interval)
   :ensure t
   :demand t
   :after solar
@@ -3536,8 +3536,8 @@ the minute of sundown.
   :commands (circadian-setup)
 
   :init
-  (setopt circadian-themes `((:sunrise . ,ceamx-theme-default-light)
-                             (:sunset . ,ceamx-theme-default-dark)))
+  (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
+                             (:sunset . ,ceamx-ui-theme-dark)))
   (circadian-setup))
 #+end_src
 
@@ -3551,10 +3551,10 @@ the minute of sundown.
 ;; > themes as well as Prot's modus-themes and ef-themes.
 
 #+begin_src emacs-lisp :noweb-ref config-ui
-(defconst ceamx-theme-buffet-dark-periods
+(defconst ceamx-ui-theme-buffet-dark-periods
   '(:night :twilight :evening))
 
-(defconst ceamx-theme-buffet-light-periods
+(defconst ceamx-ui-theme-buffet-light-periods
   '(:morning :day :afternoon))
 #+end_src
 
@@ -3562,7 +3562,7 @@ the minute of sundown.
 (use-package theme-buffet
   :ensure t
   :demand t
-  :when (eq 'buffet ceamx-theme-circadian-interval)
+  :when (eq 'buffet ceamx-ui-theme-circadian-interval)
 
   :commands (theme-buffet-modus-ef)
   :defines (theme-buffet-menu)
@@ -3647,24 +3647,24 @@ must be a valid `theme-buffet' period as defined in
 **** Integration with the GNOME/GTK/GSettings color scheme
 
 #+begin_src emacs-lisp :noweb-ref config-ui
-(defconst ceamx-gsettings-ui-namespace "org.gnome.desktop.interface")
+(defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref lib-ui
-(defun ceamx-gsettings-theme ()
+(defun ceamx-ui-gsettings-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command (format "gsettings get %s color-scheme"
-                         ceamx-gsettings-ui-namespace)))
+                         ceamx-ui-gsettings-ui-namespace)))
 
-(defun ceamx-gsettings-theme-dark-p ()
+(defun ceamx-ui-gsettings-dark-theme-p ()
   "Whether GNOME/GTK are using a theme with a dark color scheme."
-  (string-match-p "dark" (ceamx-gsettings-theme)))
+  (string-match-p "dark" (ceamx-ui-gsettings-theme)))
 
-(defun ceamx/gsettings-set-theme (theme)
+(defun ceamx/ui/gsettings-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
   ;; FIXME: prompt with completion
   (interactive "s")
-  (let* ((namespace ceamx-gsettings-ui-namespace)
+  (let* ((namespace ceamx-ui-gsettings-ui-namespace)
          (value (pcase theme
                   ((rx (optional "prefer-") "dark")
                    "prefer-dark")
@@ -3674,60 +3674,73 @@ must be a valid `theme-buffet' period as defined in
          (cmd (format "gsettings set %s color-scheme %s" namespace value)))
     (shell-command cmd)))
 
-(defun ceamx/gsettings-dark-theme ()
+(defun ceamx/ui/gsettings-dark-theme ()
   "Enable the dark GNOME/GTK theme."
   (interactive)
-  (ceamx/gsettings-set-theme "dark"))
+  (ceamx/ui/gsettings-set-theme "dark"))
 
-(defun ceamx/gsettings-light-theme ()
+(defun ceamx/ui/gsettings-light-theme ()
   "Enable the light GNOME/GTK theme."
   (interactive)
-  (ceamx/gsettings-set-theme "light"))
+  (ceamx/ui/gsettings-set-theme "light"))
 #+end_src
+
+**** Generalized commands for desktop environment integration
+
+Taking all supported environments into account:
+
++ [[*Integration with the GNOME/GTK/GSettings color scheme]]
+
+#+begin_src emacs-lisp
+(defun ceamx-ui-desktop-dark-theme-p ()
+  "Predicate whether a desktop environment is displaying a dark appearance."
+  (or (ceamx-ui-gsettings-dark-theme-p)))
+#+end_src
+
 
 **** Commands to load a preferred light or dark Emacs theme
 
 #+begin_src emacs-lisp :noweb-ref lib-ui
-(defun ceamx/load-dark-theme ()
+(defun ceamx/ui/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
-  (pcase ceamx-theme-circadian-interval
+  (pcase ceamx-ui-theme-circadian-interval
     ('buffet
      (+theme-buffet--load-random-from-periods
-      ceamx-theme-buffet-dark-periods))
+      ceamx-ui-theme-buffet-dark-periods))
     (_
-     (load-theme ceamx-theme-default-dark :no-confirm))))
+     (load-theme ceamx-ui-theme-dark :no-confirm))))
 
-(defun ceamx/load-light-theme ()
+(defun ceamx/ui/load-light-theme ()
   "Load a random light theme."
   (interactive)
-  (pcase ceamx-theme-circadian-interval
+  (pcase ceamx-ui-theme-circadian-interval
     ('buffet
      (+theme-buffet--load-random-from-periods
-      ceamx-theme-buffet-light-periods))
+      ceamx-ui-theme-buffet-light-periods))
     (_
-     (load-theme ceamx-theme-default-light :no-confirm))))
+     (load-theme ceamx-ui-theme-light :no-confirm))))
 #+end_src
 
 **** Commands to globally set a preferred light or dark theme
 
 #+begin_src emacs-lisp :noweb-ref lib-ui
-(defun ceamx/light ()
+(defun ceamx/ui/light ()
   "Activate a light theme globally."
   (interactive)
-  (ceamx/gsettings-light-theme)
-  (ceamx/load-light-theme))
+  (ceamx/ui/gsettings-light-theme)
+  (ceamx/ui/load-light-theme))
 
-(defun ceamx/dark ()
+(defun ceamx/ui/dark ()
   "Activate a dark theme globally."
   (interactive)
-  (ceamx/gsettings-dark-theme)
-  (ceamx/load-dark-theme))
+  (ceamx/ui/gsettings-dark-theme)
+  (ceamx/ui/load-dark-theme))
 #+end_src
 
-*** Load the theme
+*** Load a default theme
 
-Wait until all the themes are available:
+Wait until all the theme support is available:
 
 #+begin_src emacs-lisp
 (elpaca-wait)
@@ -3736,8 +3749,8 @@ Wait until all the themes are available:
 Configure some user options dependent on the loaded packages:
 
 #+begin_src emacs-lisp
-(setopt ceamx-theme-default-light 'modus-operandi)
-(setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
+(setopt ceamx-ui-theme-light 'modus-operandi)
+(setopt ceamx-ui-theme-dark 'modus-vivendi-tinted)
 #+end_src
 
 This is less than ideal, but ~circadian~ has been broken lately, causing
@@ -4106,7 +4119,6 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
   (add-hook 'prog-mode-hook #'svg-tag-mode)
   (add-hook 'text-mode-hook #'svg-tag-mode))
 #+end_src
-
 
 ** Modeline
 

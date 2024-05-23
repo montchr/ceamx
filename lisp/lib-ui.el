@@ -25,11 +25,11 @@
 ;;; Code:
 
 ;; via prot-emacs
-(defun ceamx-theme-re-enable-in-frame (_frame)
+(defun ceamx-ui-re-enable-theme-in-frame (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
 Add this to `after-make-frame-functions' so that new frames do
 not retain the generic background set by the function
-`ceamx-theme-no-bright-flash'."
+`ceamx-ui-theme-no-bright-flash'."
   (when-let ((theme (car custom-enabled-themes)))
     (enable-theme theme)))
 (declare-function theme-buffet--load-random "theme-buffet")
@@ -43,20 +43,20 @@ must be a valid `theme-buffet' period as defined in
     (theme-buffet--load-random period)))
 (require 'config-ui)
 (require 'ceamx-lib)
-(defun ceamx-gsettings-theme ()
+(defun ceamx-ui-gsettings-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command (format "gsettings get %s color-scheme"
-                         ceamx-gsettings-ui-namespace)))
+                         ceamx-ui-gsettings-ui-namespace)))
 
-(defun ceamx-gsettings-theme-dark-p ()
+(defun ceamx-ui-gsettings-dark-theme-p ()
   "Whether GNOME/GTK are using a theme with a dark color scheme."
-  (string-match-p "dark" (ceamx-gsettings-theme)))
+  (string-match-p "dark" (ceamx-ui-gsettings-theme)))
 
-(defun ceamx/gsettings-set-theme (theme)
+(defun ceamx/ui/gsettings-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
   ;; FIXME: prompt with completion
   (interactive "s")
-  (let* ((namespace ceamx-gsettings-ui-namespace)
+  (let* ((namespace ceamx-ui-gsettings-ui-namespace)
          (value (pcase theme
                   ((rx (optional "prefer-") "dark")
                    "prefer-dark")
@@ -66,45 +66,45 @@ must be a valid `theme-buffet' period as defined in
          (cmd (format "gsettings set %s color-scheme %s" namespace value)))
     (shell-command cmd)))
 
-(defun ceamx/gsettings-dark-theme ()
+(defun ceamx/ui/gsettings-dark-theme ()
   "Enable the dark GNOME/GTK theme."
   (interactive)
-  (ceamx/gsettings-set-theme "dark"))
+  (ceamx/ui/gsettings-set-theme "dark"))
 
-(defun ceamx/gsettings-light-theme ()
+(defun ceamx/ui/gsettings-light-theme ()
   "Enable the light GNOME/GTK theme."
   (interactive)
-  (ceamx/gsettings-set-theme "light"))
-(defun ceamx/load-dark-theme ()
+  (ceamx/ui/gsettings-set-theme "light"))
+(defun ceamx/ui/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
-  (pcase ceamx-theme-circadian-interval
+  (pcase ceamx-ui-theme-circadian-interval
     ('buffet
      (+theme-buffet--load-random-from-periods
-      ceamx-theme-buffet-dark-periods))
+      ceamx-ui-theme-buffet-dark-periods))
     (_
-     (load-theme ceamx-theme-default-dark :no-confirm))))
+     (load-theme ceamx-ui-theme-dark :no-confirm))))
 
-(defun ceamx/load-light-theme ()
+(defun ceamx/ui/load-light-theme ()
   "Load a random light theme."
   (interactive)
-  (pcase ceamx-theme-circadian-interval
+  (pcase ceamx-ui-theme-circadian-interval
     ('buffet
      (+theme-buffet--load-random-from-periods
-      ceamx-theme-buffet-light-periods))
+      ceamx-ui-theme-buffet-light-periods))
     (_
-     (load-theme ceamx-theme-default-light :no-confirm))))
-(defun ceamx/light ()
+     (load-theme ceamx-ui-theme-light :no-confirm))))
+(defun ceamx/ui/light ()
   "Activate a light theme globally."
   (interactive)
-  (ceamx/gsettings-light-theme)
-  (ceamx/load-light-theme))
+  (ceamx/ui/gsettings-light-theme)
+  (ceamx/ui/load-light-theme))
 
-(defun ceamx/dark ()
+(defun ceamx/ui/dark ()
   "Activate a dark theme globally."
   (interactive)
-  (ceamx/gsettings-dark-theme)
-  (ceamx/load-dark-theme))
+  (ceamx/ui/gsettings-dark-theme)
+  (ceamx/ui/load-dark-theme))
 
 (provide 'lib-ui)
 ;;; lib-ui.el ends here

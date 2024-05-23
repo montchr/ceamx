@@ -24,7 +24,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(defcustom ceamx-theme-family 'modus
+(defcustom ceamx-ui-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
 reference the `ef-themes', `modus-themes', and `standard-themes',
@@ -38,16 +38,16 @@ theme)."
           (const :tag "The `modus-themes' module" modus)
           (const :tag "The `standard-themes' module" standard)
           (const :tag "Do not load a theme module" nil)))
-(defcustom ceamx-theme-default-light 'modus-operandi-tinted
+(defcustom ceamx-ui-theme-light 'modus-operandi-tinted
   "The default light theme."
   :group 'ceamx
   :type 'symbol)
 
-(defcustom ceamx-theme-default-dark 'modus-vivendi-tinted
+(defcustom ceamx-ui-theme-dark 'modus-vivendi-tinted
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
-(defcustom ceamx-theme-circadian-interval nil
+(defcustom ceamx-ui-theme-circadian-interval nil
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
 respectively to period-based switching with `theme-buffet' or
@@ -56,18 +56,18 @@ library and the `circadian' package.
 
 A nil value means to disable automatic theme switching.
 Theme-switching commands `ceamx/light' and `ceamx/dark' will
-unconditionally use `ceamx-theme-default-light' and
-`ceamx-theme-default-dark', respectively."
+unconditionally use `ceamx-ui-theme-default-light' and
+`ceamx-ui-theme-default-dark', respectively."
   :group 'ceamx
   :type '(choice :tag "Circadian theme switching interval" :value nil
           (const :tag "Time periods via `theme-buffet'" :value buffet)
           (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
-(defconst ceamx-theme-buffet-dark-periods
+(defconst ceamx-ui-theme-buffet-dark-periods
   '(:night :twilight :evening))
 
-(defconst ceamx-theme-buffet-light-periods
+(defconst ceamx-ui-theme-buffet-light-periods
   '(:morning :day :afternoon))
-(defconst ceamx-gsettings-ui-namespace "org.gnome.desktop.interface")
+(defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
 (defcustom ceamx-font-height-multiplier 1.0
   "Multiplier for display font size.
 Intended for use as a per-system (or, ideally, per-display)

@@ -55,7 +55,7 @@
   ;; FIXME: meow overrides this. waiting until it loads does not help.
   (keymap-set transient-map "ESC" #'transient-quit-one))
 (setopt custom-safe-themes t)
-(add-hook 'after-make-frame-functions #'ceamx-theme-re-enable-in-frame)
+(add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)
 (defvar ceamx-after-enable-theme-hook nil)
 
 (defun ceamx-after-enable-theme (&rest _args)
@@ -114,10 +114,10 @@
   :commands (ef-themes-select)
 
   :config
-  ;; (setopt ceamx-theme-default-dark 'ef-night)
-  ;; (setopt ceamx-theme-default-light 'ef-frost)
+  ;; (setopt ceamx-ui-theme-dark 'ef-night)
+  ;; (setopt ceamx-ui-theme-light 'ef-frost)
 
-  ;; (setopt ef-themes-to-toggle (list ceamx-theme-default-dark ceamx-theme-default-light))
+  ;; (setopt ef-themes-to-toggle (list ceamx-ui-theme-dark ceamx-ui-theme-light))
 
   (setopt ef-themes-headings
           '((0 . (variable-pitch 1.4))
@@ -141,14 +141,14 @@
 
 (require 'ceamx-lib)
 (use-feature! solar
-  :when (eq 'solar ceamx-theme-circadian-interval)
+  :when (eq 'solar ceamx-ui-theme-circadian-interval)
 
   :config
   (setopt calendar-latitude 39.968)
   (setopt calendar-longitude -75.133))
 
 (use-package circadian
-  :when (eq 'solar ceamx-theme-circadian-interval)
+  :when (eq 'solar ceamx-ui-theme-circadian-interval)
   :ensure t
   :demand t
   :after solar
@@ -156,13 +156,13 @@
   :commands (circadian-setup)
 
   :init
-  (setopt circadian-themes `((:sunrise . ,ceamx-theme-default-light)
-                             (:sunset . ,ceamx-theme-default-dark)))
+  (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
+                             (:sunset . ,ceamx-ui-theme-dark)))
   (circadian-setup))
 (use-package theme-buffet
   :ensure t
   :demand t
-  :when (eq 'buffet ceamx-theme-circadian-interval)
+  :when (eq 'buffet ceamx-ui-theme-circadian-interval)
 
   :commands (theme-buffet-modus-ef)
   :defines (theme-buffet-menu)
@@ -221,9 +221,12 @@
 
   ;; Activate some theme in the current period.
   (theme-buffet-a-la-carte))
+(defun ceamx-ui-desktop-dark-theme-p ()
+  "Predicate whether a desktop environment is displaying a dark appearance."
+  (or (ceamx-ui-gsettings-dark-theme-p)))
 (elpaca-wait)
-(setopt ceamx-theme-default-light 'modus-operandi)
-(setopt ceamx-theme-default-dark 'modus-vivendi-tinted)
+(setopt ceamx-ui-theme-light 'modus-operandi)
+(setopt ceamx-ui-theme-dark 'modus-vivendi-tinted)
 (ceamx/load-dark-theme)
 (package! avy
   ;; Reduce the number of possible candidates.
