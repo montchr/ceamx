@@ -11412,9 +11412,14 @@ Requires:
       (require 'dap-php))))
 #+end_src
 
-*** LSP Mode integration
+*** Language server integration
 
-**** Keep Intelephense storage in its place
+**** DISABLED LSP Mode integration
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+***** Keep Intelephense storage in its place
 
 E wants to avoid Intelephense but just in case it is still used in some case,
 its cache should stay out of the way.
@@ -11438,7 +11443,6 @@ its cache should stay out of the way.
   ;; This should override the default file extension association.
   (pushnew! web-mode-engines-alist '(("blade"  . "\\.blade\\."))))
 #+end_src
-
 
 *** TODO PHP enhancements from Doom
 

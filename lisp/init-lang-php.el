@@ -42,8 +42,6 @@
   (defer! 2
     (when (featurep 'dap)
       (require 'dap-php))))
-(setopt lsp-intelephense-storage-path
-  (file-name-as-directory (concat ceamx-lsp-mode-cache-dir "server/intelephense/cache")))
 (after! projectile
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 (after! web-mode
