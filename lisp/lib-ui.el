@@ -43,20 +43,20 @@ must be a valid `theme-buffet' period as defined in
     (theme-buffet--load-random period)))
 (require 'config-ui)
 (require 'ceamx-lib)
-(defun ceamx-gnome-theme ()
+(defun ceamx-gsettings-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command (format "gsettings get %s color-scheme"
-                         ceamx-gnome-ui-namespace)))
+                         ceamx-gsettings-ui-namespace)))
 
-(defun ceamx-gnome-theme-dark-p ()
+(defun ceamx-gsettings-theme-dark-p ()
   "Whether GNOME/GTK are using a theme with a dark color scheme."
-  (string-match-p "dark" (ceamx-gnome-theme)))
+  (string-match-p "dark" (ceamx-gsettings-theme)))
 
-(defun ceamx/gnome-set-theme (theme)
+(defun ceamx/gsettings-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
   ;; FIXME: prompt with completion
   (interactive "s")
-  (let* ((namespace ceamx-gnome-ui-namespace)
+  (let* ((namespace ceamx-gsettings-ui-namespace)
          (value (pcase theme
                   ((rx (optional "prefer-") "dark")
                    "prefer-dark")
@@ -66,15 +66,15 @@ must be a valid `theme-buffet' period as defined in
          (cmd (format "gsettings set %s color-scheme %s" namespace value)))
     (shell-command cmd)))
 
-(defun ceamx/gnome-dark-theme ()
+(defun ceamx/gsettings-dark-theme ()
   "Enable the dark GNOME/GTK theme."
   (interactive)
-  (ceamx/gnome-set-theme "dark"))
+  (ceamx/gsettings-set-theme "dark"))
 
-(defun ceamx/gnome-light-theme ()
+(defun ceamx/gsettings-light-theme ()
   "Enable the light GNOME/GTK theme."
   (interactive)
-  (ceamx/gnome-set-theme "light"))
+  (ceamx/gsettings-set-theme "light"))
 (defun ceamx/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
@@ -97,13 +97,13 @@ must be a valid `theme-buffet' period as defined in
 (defun ceamx/light ()
   "Activate a light theme globally."
   (interactive)
-  (ceamx/gnome-light-theme)
+  (ceamx/gsettings-light-theme)
   (ceamx/load-light-theme))
 
 (defun ceamx/dark ()
   "Activate a dark theme globally."
   (interactive)
-  (ceamx/gnome-dark-theme)
+  (ceamx/gsettings-dark-theme)
   (ceamx/load-dark-theme))
 
 (provide 'lib-ui)

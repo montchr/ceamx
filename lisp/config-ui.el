@@ -67,7 +67,7 @@ unconditionally use `ceamx-theme-default-light' and
 
 (defconst ceamx-theme-buffet-light-periods
   '(:morning :day :afternoon))
-(defconst ceamx-gnome-ui-namespace "org.gnome.desktop.interface")
+(defconst ceamx-gsettings-ui-namespace "org.gnome.desktop.interface")
 (defcustom ceamx-font-height-multiplier 1.0
   "Multiplier for display font size.
 Intended for use as a per-system (or, ideally, per-display)
