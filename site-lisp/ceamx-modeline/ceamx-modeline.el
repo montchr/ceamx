@@ -35,11 +35,33 @@
   "A minor-mode modeline from Ceamx."
   :group 'ceamx)
 
-(defvar ceamx-modeline-format "[ %s ]")
-
 (defvar ceamx-modeline--original-format nil)
 
-;;; Mode:
+;;; Functions
+
+(defun ceamx-modeline-format ()
+  "Return the value of the `ceamx-modeline' format."
+  `("%e"
+    mode-line-front-space
+    (:propertize (""
+                  mode-line-mule-info
+                  mode-line-client
+                  mode-line-modified
+                  mode-line-remote)
+     display
+     (min-width (5.0)))
+    mode-line-frame-identification
+    ;; mode-line-buffer-identification
+    (:eval (breadcrumb-project-crumbs))
+    "   "
+    mode-line-position
+    (vc-mode vc-mode)
+    "  "
+    mode-line-modes
+    mode-line-misc-info
+    mode-line-end-spaces))
+
+;;; Mode
 
 ;;;###autoload
 (define-minor-mode ceamx-modeline-mode
@@ -49,7 +71,7 @@
   (if ceamx-modeline-mode
       (progn
         (setq ceamx-modeline--original-format (default-value 'mode-line-format))
-        (setq-default mode-line-format ceamx-modeline-format))
+        (setq-default mode-line-format (ceamx-modeline-format)))
     (progn
       (setq-default mode-line-format ceamx-modeline--original-format))))
 
