@@ -230,10 +230,9 @@
     ("`" "[ ] popups" popper-toggle)
     ""
     ("q" "quit" transient-quit-all)]])
-(global-keys!
+(define-keymap :keymap (current-global-map)
   "C-x o" #'ceamx/other-window
   "C-x O" #'ace-window
-  "C-x w" #'ceamx/window-dispatch
 
   "C-x =" #'balance-windows
   "C-x +" #'balance-windows-area
@@ -256,7 +255,9 @@
   "<down>" #'shrink-window
   "<left>" #'shrink-window-horizontally
   "<right>" #'enlarge-window-horizontally)
-(put 'other-window 'repeat-map nil)
+(define-keymap :keymap window-prefix-map
+  "d" #'ace-delete-window
+  "w" #'ace-window)
 
 (provide 'init-window)
 ;;; init-window.el ends here
