@@ -4136,10 +4136,10 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 =telephone-line=.
 
 #+begin_src emacs-lisp
-(package! keycast
-  (unless (eq 'doom ceamx-modeline-provider)
-    (add-hook 'ceamx-emacs-startup-hook #'keycast-header-line-mode)))
+(package! keycast)
+#+end_src
 
+#+begin_src emacs-lisp
 (after! keycast
   (dolist (input '(self-insert-command org-self-insert-command))
     (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))

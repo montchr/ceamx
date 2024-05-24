@@ -271,9 +271,7 @@
 (setopt display-time-24hr-format t)
 (package! minions
   (minions-mode 1))
-(package! keycast
-  (unless (eq 'doom ceamx-modeline-provider)
-    (add-hook 'ceamx-emacs-startup-hook #'keycast-header-line-mode)))
+(package! keycast)
 
 (after! keycast
   (dolist (input '(self-insert-command org-self-insert-command))
