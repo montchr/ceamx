@@ -4185,7 +4185,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-session-map
-  "a" (cons "Appearance" (define-prefix-command 'ceamx-session-font-prefix-command))
+  "a" (cons "Appearance" (define-prefix-command 'ceamx-session-appearance-prefix-command))
   "a f" #'fontaine-set-preset
   "a d" #'ceamx/dark
   "a l" #'ceamx/light

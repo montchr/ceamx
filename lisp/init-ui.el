@@ -282,7 +282,7 @@
   (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
     (add-to-list 'keycast-substitute-alist `(,event nil))))
 (define-keymap :keymap ceamx-session-map
-  "a" (cons "Appearance" (define-prefix-command 'ceamx-session-font-prefix-command))
+  "a" (cons "Appearance" (define-prefix-command 'ceamx-session-appearance-prefix-command))
   "a f" #'fontaine-set-preset
   "a d" #'ceamx/dark
   "a l" #'ceamx/light
