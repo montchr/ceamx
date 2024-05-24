@@ -144,6 +144,8 @@
     "C-c >" #'org-demote-subtree
     "C-c C->" #'org-goto-calendar
 
+    "C-M-<return>" #'org-insert-subheading
+
     ;; Override the global binding to `narrow-to-region', which is disabled by
     ;; default.  I have not once (yet) wanted to actually use `narrow-to-regin',
     ;; but I do often type "C-x n n" in `org-mode', expecting the behavior of
