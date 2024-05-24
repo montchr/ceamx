@@ -5164,10 +5164,12 @@ available, `switchy-window'."
 *** Global Keybindings
 
 #+begin_src emacs-lisp
-(global-keys!
+(define-keymap :keymap (current-global-map)
   "C-c [" #'previous-buffer
   "C-c ]" #'next-buffer
-  "C-c `" #'mode-line-other-buffer)
+  "C-c `" #'mode-line-other-buffer
+
+  "C-x C-b" #'ibuffer)
 #+end_src
 
 *** DISABLED ~repeat-map~ for basic buffer navigation commands

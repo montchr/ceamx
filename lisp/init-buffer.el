@@ -102,10 +102,12 @@
 (with-eval-after-load 'lentic
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 
-(global-keys!
+(define-keymap :keymap (current-global-map)
   "C-c [" #'previous-buffer
   "C-c ]" #'next-buffer
-  "C-c `" #'mode-line-other-buffer)
+  "C-c `" #'mode-line-other-buffer
+
+  "C-x C-b" #'ibuffer)
 
 (provide 'init-buffer)
 ;;; init-buffer.el ends here
