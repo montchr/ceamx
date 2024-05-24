@@ -29,6 +29,8 @@ muscles men-or-y
 
 block cursor is garbage mess
 
+** TODO =shell= src blocks get tangled without explicit =:noweb-ref nil= header-arg
+
 * Packages
 
 * Meta

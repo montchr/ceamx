@@ -4,6 +4,7 @@
 #+email: chmont@proton.me
 #+language: en
 #+property: header-args:emacs-lisp+ :results silent
+#+property: header-args:shell+      :results replace
 #+property: header-args             :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments no
 #+startup: overview
 
@@ -11763,7 +11764,7 @@ they are not detected from within emacs.
 
 Despite all that:
 
-#+begin_src shell :results replace
+#+begin_src shell :noweb-ref nil
 enchant-lsmod-2 -list-dicts
 #+end_src
 
