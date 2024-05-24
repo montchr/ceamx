@@ -9232,9 +9232,12 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 #+begin_src emacs-lisp
 (package! flymake-flycheck
   (add-hook 'flymake-mode-hook #'flymake-flycheck-auto))
+#+end_src
 
-;; Disable Flycheck checkers covered by Flymake equivalents.
-(after! 'flycheck
+Disable Flycheck checkers covered by Flymake equivalents:
+
+#+begin_src emacs-lisp
+(after! flymake-flycheck
   (setq-default
    flycheck-disabled-checkers
    (append (default-value 'flycheck-disabled-checkers)

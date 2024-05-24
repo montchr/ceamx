@@ -38,9 +38,7 @@
     (add-hook 'eldoc-documentation-functions #'flymake-eldoc-function nil t)))
 (package! flymake-flycheck
   (add-hook 'flymake-mode-hook #'flymake-flycheck-auto))
-
-;; Disable Flycheck checkers covered by Flymake equivalents.
-(after! 'flycheck
+(after! flymake-flycheck
   (setq-default
    flycheck-disabled-checkers
    (append (default-value 'flycheck-disabled-checkers)
