@@ -79,11 +79,51 @@
             (t . (regular 1.15))))
 
   (let ((overrides '((cursor blue-intense)
-                     (keybind green-cooler)
+
+                     ;; Syntax
+                     (builtin magenta)
                      (comment red-faint)
+                     (constant magenta-cooler)
+                     (docstring magenta-faint)
+                     (docmarkup green-faint)
+                     (fnname magenta-warmer)
+                     (keybind green-cooler)
+                     (keyword cyan)
+                     (preprocessor cyan-cooler)
+                     (string red-cooler)
+                     (type magenta-cooler)
+                     (variable blue-warmer)
+                     (rx-construct magenta-warmer)
+                     (rx-backslash blue-cooler)
+
+                     ;; Buttons
+                     (bg-button-active bg-main)
+                     (fg-button-active fg-main)
+                     (bg-button-inactive bg-inactive)
+                     (fg-button-inactive "gray50")
+
+                     ;; Mode-line
+                     (bg-mode-line-active bg-lavender)
+                     (fg-mode-line-active fg-main)
+                     (border-mode-line-active bg-lavender)
+                     (border-mode-line-inactive unspecified)
+
+                     ;; Fringe
+                     (fringe unspecified)
+
+                     ;; Prompts
+                     (fg-prompt fg-main)
+                     (bg-prompt bg-yellow-subtle)
+
+                     ;; Pair-matching (parens)
                      (bg-paren-match unspecified)
                      (fg-paren-match magenta-intense)
-                     (underline-paren-match magenta-intense))))
+                     (underline-paren-match magenta-intense)
+
+                     ;; Link styles
+                     ;; (underline-link border)
+                     ;; (underline-link-visited border)
+                     )))
     (setopt modus-operandi-palette-overrides overrides
             modus-vivendi-palette-overrides overrides)))
 (defvar ceamx-font-headings-style-alist)
