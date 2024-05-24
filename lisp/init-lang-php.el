@@ -32,10 +32,9 @@
   (when (eq 'php-ts-mode ceamx-lang-php-major-mode-provider)
     (add-to-list 'auto-mode-alist `(,ceamx-lang-php-extension-regexp . php-ts-mode))))
 (package! neon-mode)
-(after! php-mode
-  (defer! 2
-    (when (featurep 'dap)
-      (require 'dap-php))))
+(after! (:or php-mode phps-mode php-ts-mode)
+  (when (featurep 'dap)
+    (require 'dap-php)))
 (after! projectile
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 (after! web-mode

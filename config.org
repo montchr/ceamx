@@ -11438,10 +11438,9 @@ Requires:
 + [[https://github.com/xdebug/vscode-php-debug?tab=readme-ov-file][GitHub - xdebug/vscode-php-debug: PHP Debug Adapter for Visual Studio Code]]
 
 #+begin_src emacs-lisp
-(after! php-mode
-  (defer! 2
-    (when (featurep 'dap)
-      (require 'dap-php))))
+(after! (:or php-mode phps-mode php-ts-mode)
+  (when (featurep 'dap)
+    (require 'dap-php)))
 #+end_src
 
 *** Language server integration
