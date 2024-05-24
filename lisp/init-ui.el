@@ -78,7 +78,7 @@
             (agenda-date . (variable-pitch regular 1.3))
             (t . (regular 1.15))))
 
-  (let ((overrides '((cursor blue-intense)
+  (let ((overrides '((cursor blue)
 
                      ;; Syntax
                      (builtin magenta)
@@ -112,8 +112,9 @@
                      (fringe unspecified)
 
                      ;; Prompts
-                     (fg-prompt fg-main)
-                     (bg-prompt bg-yellow-subtle)
+                     ;; (fg-prompt fg-main)
+                     ;; not really subtle! too loud.
+                     ;; (bg-prompt bg-yellow-subtle)
 
                      ;; Pair-matching (parens)
                      (bg-paren-match unspecified)
