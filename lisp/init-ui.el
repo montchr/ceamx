@@ -268,10 +268,8 @@
 (line-number-mode 1)
 (column-number-mode 1)
 
-(use-package minions
-  :commands (minions-mode)
-  :config
 (setopt display-time-24hr-format t)
+(package! minions
   (minions-mode 1))
 (use-package keycast
   :commands (keycast-mode-line-mode)

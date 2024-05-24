@@ -4118,12 +4118,10 @@ with its default modeline)."
 (setopt display-time-24hr-format t)
 #+end_src
 
-*** ~minions~
+*** Minimize many mode-line minor-modes with ~minions~
 
 #+begin_src emacs-lisp
-(use-package minions
-  :commands (minions-mode)
-  :config
+(package! minions
   (minions-mode 1))
 #+end_src
 
