@@ -272,7 +272,6 @@
 (package! minions
   (minions-mode 1))
 (package! keycast)
-
 (after! keycast
   (dolist (input '(self-insert-command org-self-insert-command))
     (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))

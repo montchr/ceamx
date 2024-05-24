@@ -9193,20 +9193,25 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 :header-args: :noweb-ref init-flymake
 :END:
 
-**** Load Flymake everywhere by default
+
+Load just about everywhere:
 
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'flymake-mode)
 (add-hook 'text-mode-hook #'flymake-mode)
 #+end_src
 
-**** Appearance :ui:
+Configure Flymake behavior and apperance:
 
 #+begin_src emacs-lisp
-(setopt flymake-fringe-indicator-position 'right-fringe)
+(setopt flymake-no-changes-timeout 1.0
+        flymake-wrap-around t
+        flymake-fringe-indicator-position 'right-fringe)
 #+end_src
 
 **** Display Flymake diagnostics in a childframe with ~flymake-popon~
+
+- Website :: [[https://codeberg.org/akib/emacs-flymake-popon][akib/emacs-flymake-popon: Flymake diagnostics on cursor hover - Codeberg.org]]
 
 #+begin_src emacs-lisp
 (package! flymake-popon

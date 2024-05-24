@@ -26,9 +26,12 @@
 
 (add-hook 'prog-mode-hook #'flymake-mode)
 (add-hook 'text-mode-hook #'flymake-mode)
-(setopt flymake-fringe-indicator-position 'right-fringe)
+(setopt flymake-no-changes-timeout 1.0
+        flymake-wrap-around t
+        flymake-fringe-indicator-position 'right-fringe)
 (package! flymake-popon
   (add-hook 'flymake-mode-hook #'flymake-popon-mode)
+
   (setopt flymake-popon-method 'popon))
 (package! flymake-flycheck
   (add-hook 'flymake-mode-hook #'flymake-flycheck-auto))
