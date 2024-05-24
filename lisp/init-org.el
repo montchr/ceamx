@@ -153,8 +153,9 @@
     ;; sequence.d
     "C-x n n" #'org-narrow-to-subtree
 
-    ;; Mnemonic is the global key to goto definition/references.
-    ;; "M-." #'org-edit-special ; also: C-c '
+    ;; Mnemonic is the global key to goto definition/references.  Without this,
+    ;; C finds Elph using this unavailingly in src blocks.
+    "M-." #'org-edit-special ; also: C-c '
 
     ;; Override earlier binding to `consult-outline'.
     "M-g o" #'consult-org-heading))
