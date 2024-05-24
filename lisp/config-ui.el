@@ -74,7 +74,7 @@ Intended for use as a per-system (or, ideally, per-display)
 accommodation for varying pixel densities."
   :group 'ceamx
   :type '(float))
-(defcustom ceamx-modeline-provider 'doom
+(defcustom ceamx-modeline-provider nil
   "Modeline provider to load.
 Valid values are the symbols `doom', `nano', and `telephone'
 which reference the `doom-modeline', `nano-modeline', and
@@ -83,7 +83,7 @@ which reference the `doom-modeline', `nano-modeline', and
 A nil value will not load any modeline customizations (use Emacs
 with its default modeline)."
   :group 'ceamx
-  :type '(choice :tag "Modeline to load" :value doom
+  :type '(choice :tag "Modeline to load" :value nil
           (const :tag "The `doom-modeline' module" doom)
           (const :tag "The `nano-modeline' module" nano)
           (const :tag "The `telephone-line' module" telephone)
