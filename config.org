@@ -11749,14 +11749,37 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 (require 'init-writing)
 #+end_src
 
-** ~jinx~: the enchanted spell checker
 
-This should be installed from Nixpkgs, as it depends on external libraries.
-See the readme for more information.
+** [[https://github.com/minad/jinx][minad/jinx]]: the enchanted spell checker :broken:
+
+- Docs :: <https://github.com/minad/jinx/wiki>
+
+Ideally =emacsPackages.jinx= from Nixpkgs would install the required =enchant=
+package, as =jinx= depends on the latter.  Unfortunately, as of
+<2024-05-24 Fri 15:21>, the autoloads from the Nixpkgs package are not set up
+properly, and even after setting up autoloads manually below, dictionaries are
+unavailable.  Apparently =aspell= dictionaries are used behind the scenes, but
+they are not detected from within emacs.
+
+Despite all that:
+
+#+begin_src shell :results replace
+enchant-lsmod-2 -list-dicts
+#+end_src
 
 #+begin_src emacs-lisp
-(when (featurep 'jinx)
-  (add-hook 'ceamx-emacs-startup-hook #'global-jinx-mode))
+(autoload 'global-jinx-mode "jinx")
+(autoload 'jinx-correct "jinx")
+(autoload 'jinx-languages "jinx")
+
+(add-hook 'ceamx-emacs-startup-hook #'global-jinx-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+(keymap-global-set "M-$" #'jinx-correct)
+(keymap-global-set "C-M-$" #'jinx-languages)
+
+(setopt jinx-languages "en")
 #+end_src
 
 
@@ -14002,4 +14025,5 @@ See [[info:emacs#Specifying File Variables]["(emacs) Specifying File Variables"]
 
 # Local Variables:
 # org-refile-targets: ((nil . (:maxlevel . 4)))
+# jinx-languages: "en_US"
 # End:

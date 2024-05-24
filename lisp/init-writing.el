@@ -24,8 +24,15 @@
 ;;; Commentary:
 ;;; Code:
 
-(when (featurep 'jinx)
-  (add-hook 'ceamx-emacs-startup-hook #'global-jinx-mode))
+(autoload 'global-jinx-mode "jinx")
+(autoload 'jinx-correct "jinx")
+(autoload 'jinx-languages "jinx")
+
+(add-hook 'ceamx-emacs-startup-hook #'global-jinx-mode)
+(keymap-global-set "M-$" #'jinx-correct)
+(keymap-global-set "C-M-$" #'jinx-languages)
+
+(setopt jinx-languages "en")
 
 (provide 'init-writing)
 ;;; init-writing.el ends here
