@@ -29,13 +29,7 @@
 (setopt flymake-fringe-indicator-position 'right-fringe)
 (package! flymake-popon
   (add-hook 'flymake-mode-hook #'flymake-popon-mode)
-
   (setopt flymake-popon-method 'popon))
-(after! (eldoc flymake)
-  (def-hook! ceamx-flymake-eldoc-function-h ()
-    'flymake-mode-hook
-    "Use Flymake's Eldoc integration."
-    (add-hook 'eldoc-documentation-functions #'flymake-eldoc-function nil t)))
 (package! flymake-flycheck
   (add-hook 'flymake-mode-hook #'flymake-flycheck-auto))
 (after! flymake-flycheck

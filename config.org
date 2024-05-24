@@ -9215,9 +9215,12 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
   (setopt flymake-popon-method 'popon))
 #+end_src
 
-**** Enable the Flymake Eldoc integration :help:eldoc:
+**** DISABLED Display diagnostics alongside Eldoc output
 
-#+begin_src emacs-lisp
+This is a bit noisy and causes a distracting resize of the minibuffer every time
+diagnostics change.
+
+#+begin_src emacs-lisp :noweb-ref nil
 (after! (eldoc flymake)
   (def-hook! ceamx-flymake-eldoc-function-h ()
     'flymake-mode-hook
