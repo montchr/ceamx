@@ -5,7 +5,7 @@
 #+language: en
 #+property: header-args:emacs-lisp+ :results silent
 #+property: header-args             :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments no
-#+startup: show2levels
+#+startup: overview
 
 #+begin_quote
 generally no real magic in this world exists
