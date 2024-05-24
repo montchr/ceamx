@@ -11360,9 +11360,27 @@ Returns process exit code."
 :END:
 
 *** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+begin_src emacs-lisp
 (require 'ceamx-lib)
+#+end_src
+
+*** Feature Settings
+
+#+begin_src emacs-lisp :noweb-ref config-prog
+(defconst ceamx-lang-php-extension-regexp "\\.\\(php\\|phtml\\)\\'"
+  "Pattern matching files with PHP syntax.")
+
+(defcustom ceamx-lang-php-major-mode-provider 'php-ts-mode
+  "Which of several major-modes to provide PHP language support."
+  :group 'ceamx
+  :type '(choice :tag "PHP language support provider" :value php-mode
+          (const :tag "`php-ts-mode': Tree-Sitter-based" php-ts-mode)
+          (const :tag "`phps-mode': claims of intelligence" phps-mode)
+          (const :tag "`php-mode': regular-degular" php-mode)))
 #+end_src
 
 *** Ignore PHP-specific directories and files
@@ -11373,31 +11391,36 @@ Returns process exit code."
             "_ide_helper.php"))
 #+end_src
 
-*** Disable PHP template compatibility
+*** Install a PHP major-mode... but which one?
 
-PHP is not a templating language and it never was.
+**** DISABLED [[https://github.com/emacs-php/php-mode][emacs-php/php-mode]] :package:
 
-#+begin_src emacs-lisp
-;; `web-mode' does templates better.
-(setopt php-mode-template-compatibility nil)
-#+end_src
-
-*** Install and configure ~php-mode~ for basic language support
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb-ref nil
 (package! php-mode
-  (setopt php-mode-template-compatibility nil)
+  ;; PHP is not a templating language and it never was.
+  ;; `web-mode' does templates better.
+  (setopt php-mode-template-compatibility nil))
+  #+end_src
 
-  ;; Render multiline comments using `font-lock-comment-face'.
-  ;; FIXME: no exist
-  ;; (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
-  )
+**** [[https://github.com/emacs-php/php-ts-mode][emacs-php/php-ts-mode]] :package:
+
+#+begin_src emacs-lisp
+(package! (php-ts-mode :host github :repo "emacs-php/php-ts-mode")
+  (when (eq 'php-ts-mode ceamx-lang-php-major-mode-provider)
+    (add-to-list 'auto-mode-alist `(,ceamx-lang-php-extension-regexp . php-ts-mode))))
 #+end_src
 
-*** Install ~neon-mode~ for the PHP-centric NEON configuration language
+**** DISABLED [[https://github.com/cjohansson/emacs-phps-mode][cjohansson/phps-mode]] :package:
 
-- Website :: <https://github.com/Fuco1/neon-mode>
-- Website :: <https://ne-on.org/>
+#+begin_src emacs-lisp :noweb-ref nil
+(package! phps-mode
+  (when (eq 'phps-mode ceamx-lang-php-major-mode-provider)
+    (add-to-list 'auto-mode-alist `(,ceamx-lang-php-extension-regexp . phps-mode))))
+#+end_src
+
+*** [[https://github.com/Fuco1/neon-mode][Fuco1/neon-mode]]: major-mode for the PHP-centric NEON franken-lang :package:
+
+- Reference :: <https://ne-on.org/>
 
 I have never ever encountered NEON in any context other than a =phpstan.neon= PHPStan
 configuration file.
@@ -11405,7 +11428,6 @@ configuration file.
 #+begin_src emacs-lisp
 (package! neon-mode)
 #+end_src
-
 
 *** Debugging with Xdebug and ~dap-mode~
 

@@ -28,15 +28,9 @@
 (appendq! xref-ignored-files
           '("_ide_helper_models.php"
             "_ide_helper.php"))
-;; `web-mode' does templates better.
-(setopt php-mode-template-compatibility nil)
-(package! php-mode
-  (setopt php-mode-template-compatibility nil)
-
-  ;; Render multiline comments using `font-lock-comment-face'.
-  ;; FIXME: no exist
-  ;; (add-hook 'php-mode-hook #'ceamx--multiline-comment-face-h)
-  )
+(package! (php-ts-mode :host github :repo "emacs-php/php-ts-mode")
+  (when (eq 'php-ts-mode ceamx-lang-php-major-mode-provider)
+    (add-to-list 'auto-mode-alist `(,ceamx-lang-php-extension-regexp . php-ts-mode))))
 (package! neon-mode)
 (after! php-mode
   (defer! 2

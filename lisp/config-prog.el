@@ -33,6 +33,16 @@
 
 (defvar ceamx-lsp-mode-cache-dir (file-name-as-directory (concat ceamx-var-dir "lsp")))
 (setopt ceamx-lsp-client 'eglot)
+(defconst ceamx-lang-php-extension-regexp "\\.\\(php\\|phtml\\)\\'"
+  "Pattern matching files with PHP syntax.")
+
+(defcustom ceamx-lang-php-major-mode-provider 'php-ts-mode
+  "Which of several major-modes to provide PHP language support."
+  :group 'ceamx
+  :type '(choice :tag "PHP language support provider" :value php-mode
+          (const :tag "`php-ts-mode': Tree-Sitter-based" php-ts-mode)
+          (const :tag "`phps-mode': claims of intelligence" phps-mode)
+          (const :tag "`php-mode': regular-degular" php-mode)))
 
 (provide 'config-prog)
 ;;; config-prog.el ends here
