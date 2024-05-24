@@ -265,17 +265,13 @@
 (package! svg-lib)
 (package! page-break-lines
   (global-page-break-lines-mode))
-(use-feature! emacs
-  :config
-  (setopt line-number-mode t)
-  (setopt column-number-mode t))
+(line-number-mode 1)
+(column-number-mode 1)
 
-(use-feature! time
-  :config
-  (setopt display-time-24hr-format t))
 (use-package minions
   :commands (minions-mode)
   :config
+(setopt display-time-24hr-format t)
   (minions-mode 1))
 (use-package keycast
   :commands (keycast-mode-line-mode)

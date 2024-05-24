@@ -4112,14 +4112,10 @@ with its default modeline)."
 #+end_src
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
-  (setopt line-number-mode t)
-  (setopt column-number-mode t))
+(line-number-mode 1)
+(column-number-mode 1)
 
-(use-feature! time
-  :config
-  (setopt display-time-24hr-format t))
+(setopt display-time-24hr-format t)
 #+end_src
 
 *** ~minions~
