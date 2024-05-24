@@ -163,29 +163,32 @@
   (keymap-set org-mode-map "C-c t l" #'org-toggle-link-display))
 ;; While nil is the default value, it must be set explicitly to opt-in.
 (setopt org-support-shift-select nil)
+;; TODO: Activate with a dedicated easy-to-access binding...
+;;       Maybe the same binding for other per-major mode navigation maps?
 (defvar-keymap org-mode-navigation-repeat-map :repeat t
-  "TAB" #'org-cycle
-  "S-TAB" #'org-cycle-global
+               ;; Double-edged sword; quick, but gets in the way usually.
+               ;; "TAB" #'org-cycle
+               ;; "S-TAB" #'org-cycle-global
 
-  "C-n" #'org-next-visible-heading
-  "C-p" #'org-previous-visible-heading
-  "C-f" #'org-forward-heading-same-level
-  "C-b" #'org-backward-heading-same-level
-  "C-u" #'outline-up-heading
+               "C-n" #'org-next-visible-heading
+               "C-p" #'org-previous-visible-heading
+               "C-f" #'org-forward-heading-same-level
+               "C-b" #'org-backward-heading-same-level
+               "C-u" #'outline-up-heading
 
-  "n" #'org-next-visible-heading
-  "p" #'org-previous-visible-heading
-  "f" #'org-forward-heading-same-level
-  "b" #'org-backward-heading-same-level
-  "u" #'outline-up-heading
+               "n" #'org-next-visible-heading
+               "p" #'org-previous-visible-heading
+               "f" #'org-forward-heading-same-level
+               "b" #'org-backward-heading-same-level
+               "u" #'outline-up-heading
 
-  "H" #'org-promote-subtree
-  "J" #'org-move-subtree-down
-  "K" #'org-move-subtree-up
-  "L" #'org-demote-subtree
+               "H" #'org-promote-subtree
+               "J" #'org-move-subtree-down
+               "K" #'org-move-subtree-up
+               "L" #'org-demote-subtree
 
-  "<" #'org-promote-subtree
-  ">" #'org-demote-subtree)
+               "<" #'org-promote-subtree
+               ">" #'org-demote-subtree)
 (defun +org-mode--local-set-tab-width-h ()
   "Set the `tab-width' in `org-mode' buffers to 8 columns.
 Any `tab-width' value other than 8 will result in an error.

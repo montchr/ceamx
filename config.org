@@ -12341,29 +12341,32 @@ Outside these contexts, the commands will throw an error.
 **** Make Org tree navigation commands repeatable
 
 #+begin_src emacs-lisp
+;; TODO: Activate with a dedicated easy-to-access binding...
+;;       Maybe the same binding for other per-major mode navigation maps?
 (defvar-keymap org-mode-navigation-repeat-map :repeat t
-  "TAB" #'org-cycle
-  "S-TAB" #'org-cycle-global
+               ;; Double-edged sword; quick, but gets in the way usually.
+               ;; "TAB" #'org-cycle
+               ;; "S-TAB" #'org-cycle-global
 
-  "C-n" #'org-next-visible-heading
-  "C-p" #'org-previous-visible-heading
-  "C-f" #'org-forward-heading-same-level
-  "C-b" #'org-backward-heading-same-level
-  "C-u" #'outline-up-heading
+               "C-n" #'org-next-visible-heading
+               "C-p" #'org-previous-visible-heading
+               "C-f" #'org-forward-heading-same-level
+               "C-b" #'org-backward-heading-same-level
+               "C-u" #'outline-up-heading
 
-  "n" #'org-next-visible-heading
-  "p" #'org-previous-visible-heading
-  "f" #'org-forward-heading-same-level
-  "b" #'org-backward-heading-same-level
-  "u" #'outline-up-heading
+               "n" #'org-next-visible-heading
+               "p" #'org-previous-visible-heading
+               "f" #'org-forward-heading-same-level
+               "b" #'org-backward-heading-same-level
+               "u" #'outline-up-heading
 
-  "H" #'org-promote-subtree
-  "J" #'org-move-subtree-down
-  "K" #'org-move-subtree-up
-  "L" #'org-demote-subtree
+               "H" #'org-promote-subtree
+               "J" #'org-move-subtree-down
+               "K" #'org-move-subtree-up
+               "L" #'org-demote-subtree
 
-  "<" #'org-promote-subtree
-  ">" #'org-demote-subtree)
+               "<" #'org-promote-subtree
+               ">" #'org-demote-subtree)
 #+end_src
 
 *** Enforce the correct ~tab-width~ to prevent errors
