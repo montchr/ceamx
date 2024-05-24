@@ -271,13 +271,11 @@
 (setopt display-time-24hr-format t)
 (package! minions
   (minions-mode 1))
-(use-package keycast
-  :commands (keycast-mode-line-mode)
+(package! keycast
+  (unless (eq 'doom ceamx-modeline-provider)
+    (add-hook 'ceamx-emacs-startup-hook #'keycast-header-line-mode)))
 
-  ;; :init
-  ;; (add-hook 'ceamx-emacs-startup-hook #'keycast-mode-line-mode)
-
-  :config
+(after! keycast
   (dolist (input '(self-insert-command org-self-insert-command))
     (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
 
