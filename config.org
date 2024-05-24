@@ -3620,7 +3620,7 @@ must be a valid `theme-buffet' period as defined in
   "Whether GNOME/GTK are using a theme with a dark color scheme."
   (string-match-p "dark" (ceamx-ui-gsettings-theme)))
 
-(defun ceamx/ui/gsettings-set-theme (theme)
+(defun ceamx-ui/gsettings-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
   ;; FIXME: prompt with completion
   (interactive "s")
@@ -3634,15 +3634,15 @@ must be a valid `theme-buffet' period as defined in
          (cmd (format "gsettings set %s color-scheme %s" namespace value)))
     (shell-command cmd)))
 
-(defun ceamx/ui/gsettings-dark-theme ()
+(defun ceamx-ui/gsettings-dark-theme ()
   "Enable the dark GNOME/GTK theme."
   (interactive)
-  (ceamx/ui/gsettings-set-theme "dark"))
+  (ceamx-ui/gsettings-set-theme "dark"))
 
-(defun ceamx/ui/gsettings-light-theme ()
+(defun ceamx-ui/gsettings-light-theme ()
   "Enable the light GNOME/GTK theme."
   (interactive)
-  (ceamx/ui/gsettings-set-theme "light"))
+  (ceamx-ui/gsettings-set-theme "light"))
 #+end_src
 
 **** Generalized commands for desktop environment integration
@@ -3671,7 +3671,7 @@ Similar to the theme-family-specific ~modus-themes-load-theme~.
 **** Commands to load a preferred light or dark Emacs theme
 
 #+begin_src emacs-lisp :noweb-ref lib-ui
-(defun ceamx/ui/load-dark-theme ()
+(defun ceamx-ui/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
   (pcase ceamx-ui-theme-circadian-interval
@@ -3681,7 +3681,7 @@ Similar to the theme-family-specific ~modus-themes-load-theme~.
     (_
      (load-theme ceamx-ui-theme-dark :no-confirm))))
 
-(defun ceamx/ui/load-light-theme ()
+(defun ceamx-ui/load-light-theme ()
   "Load a random light theme."
   (interactive)
   (pcase ceamx-ui-theme-circadian-interval
@@ -3695,17 +3695,17 @@ Similar to the theme-family-specific ~modus-themes-load-theme~.
 **** Commands to globally set a preferred light or dark theme
 
 #+begin_src emacs-lisp :noweb-ref lib-ui
-(defun ceamx/ui/light ()
+(defun ceamx-ui/light ()
   "Activate a light theme globally."
   (interactive)
-  (ceamx/ui/gsettings-light-theme)
-  (ceamx/ui/load-light-theme))
+  (ceamx-ui/gsettings-light-theme)
+  (ceamx-ui/load-light-theme))
 
-(defun ceamx/ui/dark ()
+(defun ceamx-ui/dark ()
   "Activate a dark theme globally."
   (interactive)
-  (ceamx/ui/gsettings-dark-theme)
-  (ceamx/ui/load-dark-theme))
+  (ceamx-ui/gsettings-dark-theme)
+  (ceamx-ui/load-dark-theme))
 #+end_src
 
 *** Load a default theme
@@ -3728,8 +3728,8 @@ fall back to loading a theme based on the desktop environment appearance:
 
 #+begin_src emacs-lisp
 (if (ceamx-ui-desktop-dark-theme-p)
-    (ceamx/ui/load-dark-theme)
-  (ceamx/ui/load-light-theme))
+    (ceamx-ui/load-dark-theme)
+  (ceamx-ui/load-light-theme))
 #+end_src
 
 ** Interaction & Feedback
@@ -4187,8 +4187,8 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 (define-keymap :keymap ceamx-session-map
   "a" (cons "Appearance" (define-prefix-command 'ceamx-session-appearance-prefix-command))
   "a f" #'fontaine-set-preset
-  "a d" #'ceamx/dark
-  "a l" #'ceamx/light
+  "a d" #'ceamx-ui/dark
+  "a l" #'ceamx-ui/light
   "a o" #'olivetti-mode
 
   "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))

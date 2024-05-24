@@ -186,8 +186,8 @@
 (setopt ceamx-ui-theme-light 'modus-operandi)
 (setopt ceamx-ui-theme-dark 'modus-vivendi-tinted)
 (if (ceamx-ui-desktop-dark-theme-p)
-    (ceamx/ui/load-dark-theme)
-  (ceamx/ui/load-light-theme))
+    (ceamx-ui/load-dark-theme)
+  (ceamx-ui/load-light-theme))
 (package! avy
   ;; Reduce the number of possible candidates.
   ;; Can be overridden with the universal argument.
@@ -284,8 +284,8 @@
 (define-keymap :keymap ceamx-session-map
   "a" (cons "Appearance" (define-prefix-command 'ceamx-session-appearance-prefix-command))
   "a f" #'fontaine-set-preset
-  "a d" #'ceamx/dark
-  "a l" #'ceamx/light
+  "a d" #'ceamx-ui/dark
+  "a l" #'ceamx-ui/light
   "a o" #'olivetti-mode
 
   "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
