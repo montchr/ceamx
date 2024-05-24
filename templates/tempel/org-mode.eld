@@ -32,6 +32,12 @@ org-mode
 (inlsrc "src_" p "{" q "}")
 (title & "#+title: " p n "#+author: " p n "#+language: " p n n)
 
+;; TODO: find the first parent noweb-ref, strip its prefix, use that as default module name
+(litconf "#+begin_src emacs-lisp :noweb-ref config-" (p "MODULE") n r n "#+end_src" n)
+(litlib "#+begin_src emacs-lisp :noweb-ref lib-" (p "MODULE") n r n "#+end_src" n)
+(litpathvar "#+begin_src emacs-lisp :noweb-ref config-feature-paths" n r n "#+end_src" n)
+
+
 (litfile & "\
 *** =lisp/" (p "FEATURE-NAME" name) ".el=
 
@@ -55,10 +61,6 @@ org-mode
 <<file-footer(feature=\"" name "\")>>
 #+end_src" n)
 
-(elsrcref "#+begin_src emacs-lisp :noweb-ref " (p (or noweb-ref "NOWEB-REF")) n r n "#+end_src" n)
-
-(litpathvar "#+begin_src emacs-lisp :noweb-ref config-feature-paths" n r n "#+end_src" n)
-(litlib "#+begin_src emacs-lisp :noweb-ref lib-" (p "FEATURE-NAME") n r n "#+end_src" n)
 ;; TODO: use yasnippet -- this is not possible with tempel
 ;; (litlib2 (p "FEATURE-NAME" feature t)
 ;;          (let ((noweb-ref (concat "lib" feature)))
