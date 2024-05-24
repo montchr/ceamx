@@ -62,20 +62,20 @@ Intended for use as a hook callback on `prog-mode-hook'."
   (add-hook 'prog-mode-hook #'hl-todo-mode))
 
 ;;; ~dumb-jump~ :: <https://github.com/jacktasia/dumb-jump>
-;;  "zero-configuration" jump-to-definition package with support for many langs
-(use-package dumb-jump
-  :autoload dumb-jump-xref-activate
-  :init
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
-  :config
-  ;; FIXME: make conditional if ripgrep available
-  (setopt dumb-jump-force-searcher 'rg))
 
-(after! (hydra dumb-jump)
-  ;; TODO: needs binding
+;;  "zero-configuration" jump-to-definition package with support for many langs
+
+(package! dumb-jump
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+
+(after! dumb-jump
+  (when (executable-find "rg")
+    (setopt dumb-jump-force-searcher 'rg)))
+
+(after! (hydra)
   ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
-  (defhydra dumb-jump-hydra (:color blue :columns 3)
-    "Dumb Jump"
+  (defhydra ceamx-prog-dumb-jump-dispatch (:color blue :columns 3)
+    "Jump (dumbly)"
     ("j" dumb-jump-go "Go")
     ("o" dumb-jump-go-other-window "Other window")
     ("e" dumb-jump-go-prefer-external "Go external")
@@ -106,6 +106,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 (keymap-global-set "C-c l" (cons "Code" (define-prefix-command 'ceamx-code-prefix)))
 
 (keymap-global-set "C-c l d" #'xref-find-definitions)
+(keymap-global-set "C-c l j" #'ceamx-prog-dumb-jump-dispatch/body)
 
 (provide 'init-prog)
 ;;; init-prog.el ends here
