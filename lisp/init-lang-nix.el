@@ -1,4 +1,4 @@
-;;; init-lang-nix.el --- Nix language support -*- lexical-binding: t -*-
+;;; init-lang-nix.el --- Nix language support  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
 
@@ -22,26 +22,23 @@
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;  Configure Nix language support.
-
 ;;; Code:
 
 (require 'ceamx-lib)
-(require 'lib-help)
 
+(require 'config-prog)
+
+(require 'lib-help)
 (package! nix-mode
   (when (eq 'eglot ceamx-lsp-client)
     (add-hook 'nix-mode-hook #'eglot-ensure))
   (when (eq 'lsp-mode ceamx-lsp-client)
     (add-hook 'nix-mode-hook #'lsp-deferred)))
-
 (package! nix-ts-mode
   (when (eq 'eglot ceamx-lsp-client)
     (add-hook 'nix-ts-mode-hook #'eglot-ensure))
   (when (eq 'lsp-mode ceamx-lsp-client)
     (add-hook 'nix-ts-mode-hook #'lsp-deferred)))
-
 (after! reformatter
   (reformatter-define nixfmt-format
     :group 'ceamx
@@ -49,17 +46,14 @@
 
   (add-hook 'nix-mode-hook #'nixfmt-format-on-save-mode)
   (add-hook 'nix-ts-mode-hook #'nixfmt-format-on-save-mode))
-
 (with-eval-after-load 'apheleia
   (add-to-list 'safe-local-variable-values '(apheleia-formatter . nixfmt))
   (add-to-list 'apheleia-mode-alist '(nix-mode . nixfmt))
   (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt)))
-
 (after! reformatter
   (reformatter-define alejandra-format
     :group 'ceamx
     :program "alejandra"))
-
 (with-eval-after-load 'apheleia
   (add-to-list 'safe-local-variable-values '(apheleia-formatter . alejandra))
   (add-to-list 'apheleia-formatters '(alejandra "alejandra")))
@@ -84,16 +78,10 @@
                       :major-modes '(nix-mode nix-ts-mode)
                       :priority 0
                       :server-id 'nixd))))
-
-;;; Install ~devdocs~ Nix docset
-
 (def-hook! +devdocs-install-nix-docs ()
   '(nix-mode-hook nix-ts-mode-hook)
   "Install `devdocs' documents for the Nix language."
   (+devdocs-maybe-install "nix"))
-
-;;; Keybindings
-
 ;; These are too annoying to maintain for both ~nix-mode~ and ~nix-ts-mode~
 ;; because ~nix-ts-mode~ does not derive from ~nix-mode~ and I'm not using it
 ;; right now anyway.  So mode-specific keybindings stay in ~nix-mode~ only.
