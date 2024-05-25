@@ -10795,6 +10795,29 @@ The timing here may be delicate...
       (funcall fn))))
 #+end_src
 
+**** Define helper functions for specifying server configurations
+
+#+begin_src emacs-lisp :noweb-ref config-prog
+(defvar ceamx-eglot-server-configurations-alist '()
+  "Alist of language server initialization options as accepted in `eglot-server-programs'.")
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref lib-prog
+(require 'config-prog)
+
+(defun ceamx-eglot-server-options (server-name)
+  "Return the custom initialization options for the SERVER-NAME language server."
+  (alist-get server-name ceamx-eglot-server-configurations-alist nil nil #'string=))
+
+(defun ceamx-eglot-server-contact (server-name &rest args)
+  "Return a contact specification for SERVER-NAME including default options.
+ARGS are as in `eglot-server-programs', which see."
+  (let ((options (ceamx-eglot-server-options server-name)))
+    (append (ensure-list server-name)
+            args
+            (when options (list :initializationOptions options)))))
+#+end_src
+
 **** Declare some Eglot buffers as popup windows
 
 #+begin_src emacs-lisp
@@ -11340,7 +11363,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 #+begin_src emacs-lisp :noweb-ref config-prog
 ;; TODO: defcustom
-(defvar ceamx-lsp-server-nix-lang "nixd")
+(defvar ceamx-lsp-server-nix-lang "nil")
 
 (defvar ceamx-lsp-nix-nixd-default-config
   `(:nixpkgs (:expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")
@@ -11357,11 +11380,19 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 #+end_src
 
 #+begin_src emacs-lisp
+(require 'config-prog)
+(require 'lib-prog)
+
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
 
-  (add-to-list 'eglot-server-programs '(nix-mode nix-ts-mode) . ("nil"))
-  (add-to-list 'eglot-server-programs `((nix-mode nix-ts-mode) . ("nixd" :initializationOptions ,ceamx-lsp-nix-nixd-default-config))))
+  (appendq! ceamx-eglot-server-configurations-alist
+            '("nil" . nil)
+            (cons "nixd" ceamx-lsp-nix-nixd-default-config))
+
+  (add-to-list 'eglot-server-programs
+               (cons '(nix-mode nix-ts-mode)
+                     (ceamx-eglot-server-contact ceamx-lsp-server-nix-lang))))
 #+end_src
 
 #+begin_src emacs-lisp

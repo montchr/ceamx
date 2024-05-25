@@ -33,8 +33,10 @@
 
 (defvar ceamx-lsp-mode-cache-dir (file-name-as-directory (concat ceamx-var-dir "lsp")))
 (setopt ceamx-lsp-client 'eglot)
+(defvar ceamx-eglot-server-configurations-alist '()
+  "Alist of language server initialization options as accepted in `eglot-server-programs'.")
 ;; TODO: defcustom
-(defvar ceamx-lsp-server-nix-lang "nixd")
+(defvar ceamx-lsp-server-nix-lang "nil")
 
 (defvar ceamx-lsp-nix-nixd-default-config
   `(:nixpkgs (:expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")

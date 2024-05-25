@@ -57,11 +57,19 @@
 (with-eval-after-load 'apheleia
   (add-to-list 'safe-local-variable-values '(apheleia-formatter . alejandra))
   (add-to-list 'apheleia-formatters '(alejandra "alejandra")))
+(require 'config-prog)
+(require 'lib-prog)
+
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
 
-  (add-to-list 'eglot-server-programs '(nix-mode nix-ts-mode) . ("nil"))
-  (add-to-list 'eglot-server-programs `((nix-mode nix-ts-mode) . ("nixd" :initializationOptions ,ceamx-lsp-nix-nixd-default-config))))
+  (appendq! ceamx-eglot-server-configurations-alist
+            '("nil" . nil)
+            (cons "nixd" ceamx-lsp-nix-nixd-default-config))
+
+  (add-to-list 'eglot-server-programs
+               (cons '(nix-mode nix-ts-mode)
+                     (ceamx-eglot-server-contact ceamx-lsp-server-nix-lang))))
 (after! lsp-nix
   (setopt lsp-nix-nil-formatter nil)
 

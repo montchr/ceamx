@@ -31,6 +31,19 @@
       (setf (lsp--client-priority client)
             priority)
     (error "No LSP client named %S" client)))
+(require 'config-prog)
+
+(defun ceamx-eglot-server-options (server-name)
+  "Return the custom initialization options for the SERVER-NAME language server."
+  (alist-get server-name ceamx-eglot-server-configurations-alist nil nil #'string=))
+
+(defun ceamx-eglot-server-contact (server-name &rest args)
+  "Return a contact specification for SERVER-NAME including default options.
+ARGS are as in `eglot-server-programs', which see."
+  (let ((options (ceamx-eglot-server-options server-name)))
+    (append (ensure-list server-name)
+            args
+            (when options (list :initializationOptions options)))))
 
 (provide 'lib-prog)
 ;;; lib-prog.el ends here
