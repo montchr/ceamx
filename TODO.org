@@ -13,8 +13,7 @@
 
 * Improvements
 
-** PROJ dyimod-l
-
+** PROJ Moda.el
 *** TODO quick keybinding like meow's =x= to mark line without meow
 
 muscles men-or-y
@@ -33,6 +32,9 @@ block cursor is garbage mess
 
 * Packages
 
+* Kleptography
+** TODO [[https://github.com/nanasess/dotfiles/blob/ac4f3f479d6cad6f91a6d3333a598299c3daa382/.emacs.d/init.el#L961][dotfiles/.emacs.d/init.el at ac4f3f479d6cad6f91a6d3333a598299c3daa382 · nanasess/dotfiles · GitHub]] :php:lang:
+** TODO [[https://github.com/Gleek/emacs.d/blob/acbd5ea94b21571fc6cc1d28a8e0581410f402be/core/lang/core-php.el][emacs.d/core/lang/core-php.el at acbd5ea94b21571fc6cc1d28a8e0581410f402be · Gleek/emacs.d · GitHub]] :php:
 * Meta
 
 
