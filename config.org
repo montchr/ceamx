@@ -11343,13 +11343,26 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 ;; TODO: defcustom
 (defvar ceamx-lsp-server-nix-lang "nixd")
 
+(defvar ceamx-lsp-nix-nixd-default-config
+  `(:nixpkgs (:expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")
+    :formatting (:command ["nixfmt"])
+    :options (:nixos (:expr ,(format "import (builtins.getFlake \"%s\").%s.\"%s\".options"
+                              "/etc/nixos"
+                              "nixosConfigurations"
+                              (system-name)))
+              :home-manager (:expr ,(format "import (builtins.getFlake \"%s\").%s.\"%s@%s\".options"
+                                     "/etc/nixos"
+                                     "homeConfigurations"
+                                     (user-login-name)
+                                     (system-name))))))
 #+end_src
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
 
-  (add-to-list 'eglot-server-programs `((nix-mode nix-ts-mode) . (,ceamx-lsp-server-nix-lang))))
+  (add-to-list 'eglot-server-programs '(nix-mode nix-ts-mode) . ("nil"))
+  (add-to-list 'eglot-server-programs `((nix-mode nix-ts-mode) . ("nixd" :initializationOptions ,ceamx-lsp-nix-nixd-default-config))))
 #+end_src
 
 #+begin_src emacs-lisp

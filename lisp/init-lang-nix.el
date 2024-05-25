@@ -57,18 +57,11 @@
 (with-eval-after-load 'apheleia
   (add-to-list 'safe-local-variable-values '(apheleia-formatter . alejandra))
   (add-to-list 'apheleia-formatters '(alejandra "alejandra")))
-
-;;; Configure Nix language servers
-
-;; TODO: defcustom
-(defvar ceamx-lsp-server-nix-lang "nixd")
-
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
 
-  (add-to-list 'eglot-server-programs `((nix-mode nix-ts-mode) . (,ceamx-lsp-server-nix-lang))))
-
-;; via `lsp-mode'
+  (add-to-list 'eglot-server-programs '(nix-mode nix-ts-mode) . ("nil"))
+  (add-to-list 'eglot-server-programs `((nix-mode nix-ts-mode) . ("nixd" :initializationOptions ,ceamx-lsp-nix-nixd-default-config))))
 (after! lsp-nix
   (setopt lsp-nix-nil-formatter nil)
 

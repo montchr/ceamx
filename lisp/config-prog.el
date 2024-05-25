@@ -33,6 +33,21 @@
 
 (defvar ceamx-lsp-mode-cache-dir (file-name-as-directory (concat ceamx-var-dir "lsp")))
 (setopt ceamx-lsp-client 'eglot)
+;; TODO: defcustom
+(defvar ceamx-lsp-server-nix-lang "nixd")
+
+(defvar ceamx-lsp-nix-nixd-default-config
+  `(:nixpkgs (:expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")
+    :formatting (:command ["nixfmt"])
+    :options (:nixos (:expr ,(format "import (builtins.getFlake \"%s\").%s.\"%s\".options"
+                              "/etc/nixos"
+                              "nixosConfigurations"
+                              (system-name)))
+              :home-manager (:expr ,(format "import (builtins.getFlake \"%s\").%s.\"%s@%s\".options"
+                                     "/etc/nixos"
+                                     "homeConfigurations"
+                                     (user-login-name)
+                                     (system-name))))))
 (defconst ceamx-lang-php-extension-regexp "\\.\\(php\\|phtml\\)\\'"
   "Pattern matching files with PHP syntax.")
 
