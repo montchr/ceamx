@@ -14118,5 +14118,4 @@ See [[info:emacs#Specifying File Variables]["(emacs) Specifying File Variables"]
 
 # Local Variables:
 # org-refile-targets: ((nil . (:maxlevel . 4)))
-# jinx-languages: "en_US"
 # End:
