@@ -5479,7 +5479,7 @@ two inserted lines are the same."
     (default-indent-new-line)))
 #+end_src
 
-*** Semantic pair matching
+*** Semantic pair matching :pairs:
 
 See the Info node [[info:emacs#Matching]]
 
@@ -5687,6 +5687,38 @@ non-nil, buffers will never be formatted upon save."
   "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
   (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
     (funcall func)))
+#+end_src
+
+**** Use the Biome formatter for supported major modes :lang:
+
+- Reference :: <https://biomejs.dev/internals/language-support/>
+
+As of <2024-05-24 Fri>
+
+#+begin_src emacs-lisp :noweb-ref config-editor
+;; As of <2024-05-24 Fri>
+;; <https://biomejs.dev/internals/language-support/>
+(defconst ceamx-editor-format-biome-modes-list
+  '(javascript-mode js-mode js-ts-mode js3-mode
+    typescript-mode typescript-ts-mode
+    js-jsx-mode tsx-ts-mode
+    json-mode json-ts-mode)
+  "List of major-mode symbols for the languages supported by the Biome formatter.")
+#+end_src
+
+#+begin_src emacs-lisp
+(after! reformatter
+  (require 'derived)
+  (dolist (hook (mapcar #'derived-mode-hook-name ceamx-editor-format-biome-modes-list))
+    (add-hook hook #'biome-format-on-save-mode)))
+#+end_src
+
+#+begin_src emacs-lisp
+(after! apheleia
+  (add-to-list 'apheleia-formatters '(biome "biome" "format" "--stdin-filepath" filepath))
+
+  (dolist (mode ceamx-editor-format-biome-modes-list)
+    (add-to-list 'apheleia-mode-alist '(mode . biome))))
 #+end_src
 
 *** ~puni~: versatile structured editing

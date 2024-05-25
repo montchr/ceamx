@@ -128,6 +128,10 @@ PROPS is as in `editorconfig-after-apply-functions'."
                         (expand-file-name
                          (locate-dominating-file default-directory "package.json")))
                 "--stdin-filepath" (buffer-file-name))))
+(after! reformatter
+  (reformatter-define biome-format
+    :program "biome"
+    :args (list "--stdin-filepath" (buffer-file-name))))
 (package! apheleia
   ;; (apheleia-global-mode 1)
   )
@@ -143,6 +147,15 @@ PROPS is as in `editorconfig-after-apply-functions'."
   "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
   (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
     (funcall func)))
+(after! reformatter
+  (require 'derived)
+  (dolist (hook (mapcar #'derived-mode-hook-name ceamx-editor-format-biome-modes-list))
+    (add-hook hook #'biome-format-on-save-mode)))
+(after! apheleia
+  (add-to-list 'apheleia-formatters '(biome "biome" "format" "--stdin-filepath" filepath))
+
+  (dolist (mode ceamx-editor-format-biome-modes-list)
+    (add-to-list 'apheleia-mode-alist '(mode . biome))))
 (package! puni
   ;; (puni-global-mode)
   ;; (add-hook 'prog-mode-hook #'puni-mode)
