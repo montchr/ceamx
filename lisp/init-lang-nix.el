@@ -82,24 +82,21 @@
   '(nix-mode-hook nix-ts-mode-hook)
   "Install `devdocs' documents for the Nix language."
   (+devdocs-maybe-install "nix"))
-;; These are too annoying to maintain for both ~nix-mode~ and ~nix-ts-mode~
-;; because ~nix-ts-mode~ does not derive from ~nix-mode~ and I'm not using it
-;; right now anyway.  So mode-specific keybindings stay in ~nix-mode~ only.
-
 (require 'config-keys)
 
 (with-eval-after-load 'nix-mode
-  (defvar nix-mode-map)
-  (defvar nix-repl-mode-map)
-  (declare-function nix-repl "nix-repl")
-
   (keymap-set nix-mode-map ceamx-keys-repl-toggle #'nix-repl)
-  (keymap-set nix-repl-mode-map ceamx-keys-repl-toggle #'quit-window)
 
   ;; FIXME: this is dumb, but the simplest way i found to avoid yelling without use-package
   (with-eval-after-load 'tempel
     ;; (eval-when-compile (require 'tempel))
     (tempel-key "C-c i t a" modargs nix-mode-map)))
+
+(with-eval-after-load 'nix-ts-mode
+  (keymap-set nix-ts-mode-map ceamx-keys-repl-toggle #'nix-repl))
+
+(with-eval-after-load 'nix-repl
+  (keymap-set nix-repl-mode-map ceamx-keys-repl-toggle #'quit-window))
 
 (provide 'init-lang-nix)
 ;;; init-lang-nix.el ends here
