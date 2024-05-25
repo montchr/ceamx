@@ -11260,7 +11260,7 @@ Returns process exit code."
 ;;; lib-lang-markdown.el ends here
 #+end_src
 
-** Nix
+** Nix :lang:
 :PROPERTIES:
 :header-args: :noweb-ref init-lang-nix
 :END:
@@ -11275,7 +11275,7 @@ Returns process exit code."
 (require 'lib-help)
 #+end_src
 
-*** Install and configure ~nix-mode~
+*** Install and configure ~nix-mode~ :package:
 
 <https://github.com/NixOS/nix-mode>
 
@@ -11289,7 +11289,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
     (add-hook 'nix-mode-hook #'lsp-deferred)))
 #+end_src
 
-*** Install and configure ~nix-ts-mode~
+*** Install and configure ~nix-ts-mode~ :package:
 
 <https://github.com/remi-gelinas/nix-ts-mode>
 
@@ -11301,8 +11301,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
     (add-hook 'nix-ts-mode-hook #'lsp-deferred)))
 #+end_src
 
-*** Configure formatters
-
+*** Configure formatters :formatting:
 **** Set the official formatter (=nixfmt=) as the default formatter
 
 #+begin_src emacs-lisp
@@ -11337,7 +11336,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (add-to-list 'apheleia-formatters '(alejandra "alejandra")))
 #+end_src
 
-*** Configure Nix language servers
+*** Configure Nix language servers :lsp:
 
 #+begin_src emacs-lisp :noweb-ref config-prog
 ;; TODO: defcustom
@@ -11377,7 +11376,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
                       :server-id 'nixd))))
 #+end_src
 
-*** Install ~devdocs~ Nix docset
+*** Install ~devdocs~ Nix docset :docs:
 
 #+begin_src emacs-lisp
 (def-hook! +devdocs-install-nix-docs ()
@@ -11386,7 +11385,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (+devdocs-maybe-install "nix"))
 #+end_src
 
-*** Keybindings
+*** Keybindings :keybinds:
 
 #+begin_src emacs-lisp
 (require 'config-keys)
