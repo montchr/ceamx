@@ -10315,6 +10315,14 @@ lists."
 ;;; Advices
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
+(def-advice! +elisp-flymake-byte-compile-fix-load-path-a (orig-fn &rest args)
+  :around #'elisp-flymake-byte-compile
+  "Set load path for the `emacs-lisp' byte compilation `flymake' backend."
+  (let ((elisp-flymake-byte-compile-load-path
+         (append elisp-flymake-byte-compile-load-path load-path)))
+    (apply orig-fn args)))
+
+;; via <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
 (def-advice! +emacs-lisp-append-value-to-eldoc-a (fn sym)
   :around #'elisp-get-var-docstring
   "Display variable value next to documentation in eldoc."
