@@ -5647,7 +5647,7 @@ not yet exist for Eglot (only LSP-Mode).
 (after! reformatter
   (reformatter-define biome-format
     :program "biome"
-    :args (list "--stdin-filepath" (buffer-file-name))))
+    :args (list "format" "--stdin-file-path" (buffer-file-name))))
 #+end_src
 
 ***** TODO Inhibit on-save formatting with prefix argument
@@ -5737,7 +5737,7 @@ As of <2024-05-24 Fri>
 
 #+begin_src emacs-lisp
 (after! apheleia
-  (add-to-list 'apheleia-formatters '(biome "biome" "format" "--stdin-filepath" filepath))
+  (add-to-list 'apheleia-formatters '(biome "biome" "format" "--stdin-file-path" filepath))
 
   (dolist (mode ceamx-editor-format-biome-modes-list)
     (add-to-list 'apheleia-mode-alist '(mode . biome))))

@@ -131,7 +131,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (after! reformatter
   (reformatter-define biome-format
     :program "biome"
-    :args (list "--stdin-filepath" (buffer-file-name))))
+    :args (list "format" "--stdin-file-path" (buffer-file-name))))
 (package! apheleia
   ;; (apheleia-global-mode 1)
   )
@@ -152,7 +152,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (dolist (hook (mapcar #'derived-mode-hook-name ceamx-editor-format-biome-modes-list))
     (add-hook hook #'biome-format-on-save-mode)))
 (after! apheleia
-  (add-to-list 'apheleia-formatters '(biome "biome" "format" "--stdin-filepath" filepath))
+  (add-to-list 'apheleia-formatters '(biome "biome" "format" "--stdin-file-path" filepath))
 
   (dolist (mode ceamx-editor-format-biome-modes-list)
     (add-to-list 'apheleia-mode-alist '(mode . biome))))
