@@ -24,7 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(defvar ceamx-apheleia-lighter " Aph")
 (defcustom ceamx-format-on-save-disabled-modes
   '(emacs-lisp-mode                     ; conflict with `lispy' indent
     org-msg-edit-mode)

@@ -66,7 +66,7 @@ two inserted lines are the same."
   ;; line. But when continuing a comment it's not desired.
   (cl-letf (((symbol-function #'delete-horizontal-space) #'ignore))
     (default-indent-new-line)))
-(defun +apheleia-format-maybe-inhibit-h ()
+(defun ceamx-editor-format-maybe-inhibit-h ()
   "Check if formatting should be disabled for current buffer."
   (or (eq major-mode 'fundamental-mode)
       (string-blank-p (buffer-name))

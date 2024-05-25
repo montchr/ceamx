@@ -119,17 +119,30 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (with-eval-after-load 'editorconfig
   (add-hook 'editorconfig-after-apply-functions
             #'+editorconfig-enforce-org-mode-tab-width-h))
+(package! reformatter
+  (require 'reformatter))
+(after! reformatter
+  (reformatter-define prettier
+    :program "prettier"
+    :args (list (concat "--plugin-search-dir="
+                        (expand-file-name
+                         (locate-dominating-file default-directory "package.json")))
+                "--stdin-filepath" (buffer-file-name))))
 (package! apheleia
-  (apheleia-global-mode 1))
-(after! (apheleia blackout)
-  (blackout 'apheleia-mode ceamx-apheleia-lighter))
+  ;; (apheleia-global-mode 1)
+  )
+
+(after! (apheleia)
+  (blackout 'apheleia-mode " Aph"))
+(require 'lib-editor)
+
+(after! (apheleia)
+  (add-to-list 'apheleia-inhibit-functions #'ceamx-editor-format-maybe-inhibit-h))
 (def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
   :around #'save-buffer
   "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
   (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
     (funcall func)))
-(after! (apheleia)
-  (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h))
 (package! puni
   ;; (puni-global-mode)
   ;; (add-hook 'prog-mode-hook #'puni-mode)

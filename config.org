@@ -5518,7 +5518,7 @@ See the Info node [[info:emacs#Matching]]
 (keymap-set ceamx-insert-map "P" ceamx-pairs-map)
 #+end_src
 
-*** Formatting
+*** Formatting :formatting:
 
 #+begin_src emacs-lisp
 (setopt require-final-newline t)
@@ -5591,48 +5591,64 @@ PROPS is as in `editorconfig-after-apply-functions'."
             #'+editorconfig-enforce-org-mode-tab-width-h))
 #+end_src
 
-**** ~apheleia~: opinionated code reformatting
+**** [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT
 
-<https://github.com/radian-software/apheleia>
+#+begin_src emacs-lisp
+(package! reformatter
+  (require 'reformatter))
+#+end_src
 
-In case you run into issues with ~web-mode~ not updating syntax highlighting
-after formatting (or other arbitrary modifications):
+***** Configure generalized polyglot formatters
+
+****** =prettier=
+
+- Source :: <https://github.com/akirak/flake-templates/blob/629b04932dc71e3e0213d66a0aa8a08cd0b64922/README.md#emacs>
+
+#+begin_src emacs-lisp
+(after! reformatter
+  (reformatter-define prettier
+    :program "prettier"
+    :args (list (concat "--plugin-search-dir="
+                        (expand-file-name
+                         (locate-dominating-file default-directory "package.json")))
+                "--stdin-filepath" (buffer-file-name))))
+#+end_src
+
+****** =biome=
+
+- Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
+
+This should, possibly more ideally, be run as an LSP client, but AFAIK one does
+not yet exist for Eglot (only LSP-Mode).
+
+#+begin_src emacs-lisp
+(after! reformatter
+  (reformatter-define biome-format
+    :program "biome"
+    :args (list "--stdin-filepath" (buffer-file-name))))
+#+end_src
+
+***** TODO Inhibit on-save formatting with prefix argument
+
+**** [[https://github.com/radian-software/apheleia][radian-software/apheleia]]: opinionated code reformatting
+
+In case you run into issues with ~web-mode~ not updating syntax highlighting after
+formatting (or other arbitrary modifications):
 <https://github.com/doomemacs/doomemacs/blob/35dc13632b3177b9efedad212f2180f69e756853/modules/editor/format/config.el#L74-L83>
 
 #+begin_src emacs-lisp
 (package! apheleia
-  (apheleia-global-mode 1))
-#+end_src
+  ;; (apheleia-global-mode 1)
+  )
 
-***** Simplify Apheleia appearance in mode-line
-
-#+begin_src emacs-lisp :noweb-ref config-editor
-(defvar ceamx-apheleia-lighter " Aph")
-#+end_src
-
-#+begin_src emacs-lisp
-(after! (apheleia blackout)
-  (blackout 'apheleia-mode ceamx-apheleia-lighter))
-#+end_src
-
-***** Inhibit formatting-on-save with a prefix argument
-
-- Source :: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
-
-#+begin_src emacs-lisp
-(def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
-  :around #'save-buffer
-  "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
-  (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
-    (funcall func)))
-#+end_src
-
-***** Inhibit Apheleia formatting in some major modes
-
-#+begin_src emacs-lisp
 (after! (apheleia)
-  (add-to-list 'apheleia-inhibit-functions #'+apheleia-format-maybe-inhibit-h))
+  (blackout 'apheleia-mode " Aph"))
 #+end_src
+
+***** Inhibit automatic formatting in some contexts
+
+Unlike ~reformatter~, ~apheleia~ will /always/ run if it can.  A blessing and a curse.
+This section handles the curse.
 
 #+begin_src emacs-lisp :noweb-ref config-editor
 (defcustom ceamx-format-on-save-disabled-modes
@@ -5646,12 +5662,31 @@ non-nil, buffers will never be formatted upon save."
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref lib-editor
-(defun +apheleia-format-maybe-inhibit-h ()
+(defun ceamx-editor-format-maybe-inhibit-h ()
   "Check if formatting should be disabled for current buffer."
   (or (eq major-mode 'fundamental-mode)
       (string-blank-p (buffer-name))
       (eq ceamx-format-on-save-disabled-modes t)
       (not (null (memq major-mode ceamx-format-on-save-disabled-modes)))))
+#+end_src
+
+#+begin_src emacs-lisp
+(require 'lib-editor)
+
+(after! (apheleia)
+  (add-to-list 'apheleia-inhibit-functions #'ceamx-editor-format-maybe-inhibit-h))
+#+end_src
+
+***** Inhibit on-save formatting with prefix argument
+
+- Source :: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
+
+#+begin_src emacs-lisp
+(def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
+  :around #'save-buffer
+  "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
+  (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
+    (funcall func)))
 #+end_src
 
 *** ~puni~: versatile structured editing
@@ -11195,22 +11230,24 @@ Returns process exit code."
 ;;; Commentary:
 
 ;;  Configure Nix language support.
+
+;;; Code:
 #+end_src
 
-#+begin_src emacs-lisp
-;;; Code:
+*** Requirements
 
+#+begin_src emacs-lisp
 (require 'ceamx-lib)
 (require 'lib-help)
 #+end_src
 
+*** Install and configure ~nix-mode~
+
+<https://github.com/NixOS/nix-mode>
+
+NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
+
 #+begin_src emacs-lisp
-;;; Install and configure ~nix-mode~
-
-;; <https://github.com/NixOS/nix-mode>
-
-;; NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
-
 (package! nix-mode
   (when (eq 'eglot ceamx-lsp-client)
     (add-hook 'nix-mode-hook #'eglot-ensure))
@@ -11218,11 +11255,11 @@ Returns process exit code."
     (add-hook 'nix-mode-hook #'lsp-deferred)))
 #+end_src
 
+*** Install and configure ~nix-ts-mode~
+
+<https://github.com/remi-gelinas/nix-ts-mode>
+
 #+begin_src emacs-lisp
-;;; Install and configure ~nix-ts-mode~
-
-;; <https://github.com/remi-gelinas/nix-ts-mode>
-
 (package! nix-ts-mode
   (when (eq 'eglot ceamx-lsp-client)
     (add-hook 'nix-ts-mode-hook #'eglot-ensure))
@@ -11230,22 +11267,37 @@ Returns process exit code."
     (add-hook 'nix-ts-mode-hook #'lsp-deferred)))
 #+end_src
 
+*** Configure formatters
+
+**** Set the official formatter (=nixfmt=) as the default formatter
+
 #+begin_src emacs-lisp
-;;; Configure formatters
+(after! reformatter
+  (reformatter-define nixfmt-format
+    :group 'ceamx
+    :program "nixfmt")
+
+  (add-hook 'nix-mode-hook #'nixfmt-format-on-save-mode)
+  (add-hook 'nix-ts-mode-hook #'nixfmt-format-on-save-mode))
 #+end_src
 
 #+begin_src emacs-lisp
-;;;; Set the official formatter (=nixfmt=) as the default formatter
-
 (with-eval-after-load 'apheleia
   (add-to-list 'safe-local-variable-values '(apheleia-formatter . nixfmt))
-  (with-eval-after-load 'nix-ts-mode
-    (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt))))
+  (add-to-list 'apheleia-mode-alist '(nix-mode . nixfmt))
+  (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt)))
+#+end_src
+
+**** Register =alejandra= as an additional formatter
+
+#+begin_src emacs-lisp
+(after! reformatter
+  (reformatter-define alejandra-format
+    :group 'ceamx
+    :program "alejandra"))
 #+end_src
 
 #+begin_src emacs-lisp
-;;;; Register =alejandra= as an additional formatter
-
 (with-eval-after-load 'apheleia
   (add-to-list 'safe-local-variable-values '(apheleia-formatter . alejandra))
   (add-to-list 'apheleia-formatters '(alejandra "alejandra")))

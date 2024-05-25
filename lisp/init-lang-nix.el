@@ -30,21 +30,11 @@
 (require 'ceamx-lib)
 (require 'lib-help)
 
-;;; Install and configure ~nix-mode~
-
-;; <https://github.com/NixOS/nix-mode>
-
-;; NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
-
 (package! nix-mode
   (when (eq 'eglot ceamx-lsp-client)
     (add-hook 'nix-mode-hook #'eglot-ensure))
   (when (eq 'lsp-mode ceamx-lsp-client)
     (add-hook 'nix-mode-hook #'lsp-deferred)))
-
-;;; Install and configure ~nix-ts-mode~
-
-;; <https://github.com/remi-gelinas/nix-ts-mode>
 
 (package! nix-ts-mode
   (when (eq 'eglot ceamx-lsp-client)
@@ -52,16 +42,23 @@
   (when (eq 'lsp-mode ceamx-lsp-client)
     (add-hook 'nix-ts-mode-hook #'lsp-deferred)))
 
-;;; Configure formatters
+(after! reformatter
+  (reformatter-define nixfmt-format
+    :group 'ceamx
+    :program "nixfmt")
 
-;;;; Set the official formatter (=nixfmt=) as the default formatter
+  (add-hook 'nix-mode-hook #'nixfmt-format-on-save-mode)
+  (add-hook 'nix-ts-mode-hook #'nixfmt-format-on-save-mode))
 
 (with-eval-after-load 'apheleia
   (add-to-list 'safe-local-variable-values '(apheleia-formatter . nixfmt))
-  (with-eval-after-load 'nix-ts-mode
-    (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt))))
+  (add-to-list 'apheleia-mode-alist '(nix-mode . nixfmt))
+  (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt)))
 
-;;;; Register =alejandra= as an additional formatter
+(after! reformatter
+  (reformatter-define alejandra-format
+    :group 'ceamx
+    :program "alejandra"))
 
 (with-eval-after-load 'apheleia
   (add-to-list 'safe-local-variable-values '(apheleia-formatter . alejandra))
