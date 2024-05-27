@@ -4740,6 +4740,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
 (require 'ceamx-lib)
 
 (package! switchy-window
+  ;; NOTE: This delay is slightly too short unless invoking within a repeat-map.
   (setopt switchy-window-delay 1.5)
 
   (switchy-window-minor-mode))
@@ -4827,7 +4828,32 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
     ("q" "quit" transient-quit-all)]])
 #+end_src
 
-** Bind keys for window management
+** Keybindings
+*** Define additional bindings under the =C-x w= prefix (~window-prefix-map~)
+
+#+begin_src emacs-lisp
+(define-keymap :keymap window-prefix-map
+  "w" #'ace-window
+
+  "d" #'ace-delete-window
+  "p" #'popper-toggle
+  "P" #'popper-toggle-type
+  "u" #'winner-undo
+
+  "h" #'windmove-left
+  "H" #'ceamx/window-move-left
+  "j" #'windmove-down
+  "J" #'ceamx/window-move-down
+  "k" #'windmove-up
+  "K" #'ceamx/window-move-up
+  "l" #'windmove-right
+  "L" #'ceamx/window-move-right
+
+  "=" #'balance-windows
+  "SPC" #'ceamx/swap-or-rotate-windows)
+#+end_src
+
+*** Define global window management keybindings
 
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
@@ -4843,13 +4869,12 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   "C-x <up>" #'enlarge-window           ; also: C-x ^
   "C-x <down>" #'shrink-window
   "C-x <left>" #'shrink-window-horizontally
-  "C-x <right>" #'enlarge-window-horizontally
+  "C-x <right>" #'enlarge-window-horizontally)
+#+end_src
 
-  ;; TODO: repeat-mode
-  ;; FIXME: find another binding -- i prefer rectangle here
-  ;; "C-x SPC" #'ceamx/swap-or-rotate-windows
-  )
+*** Define repeatable keybindings for resizing windows (~resize-window-repeat-map~)
 
+#+begin_src emacs-lisp
 (define-keymap :keymap resize-window-repeat-map
   "<up>" #'enlarge-window
   "<down>" #'shrink-window
@@ -4857,11 +4882,36 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   "<right>" #'enlarge-window-horizontally)
 #+end_src
 
+*** Define repeatable keybindings for window actions (~ceamx-window-repeat-map~)
+
+This is very similar to ~window-prefix-map~.  Unfortunately, it does not seem
+possible to create a functional ~repeat-map~ inheriting from a parent keymap.  The
+commands bound in the parent map are unaffected by the ~defvar-keymap~ =:repeat=
+keyword of a child map.
+
 #+begin_src emacs-lisp
-(define-keymap :keymap window-prefix-map
-  "d" #'ace-delete-window
-  "w" #'ace-window)
+(defvar-keymap ceamx-window-repeat-map
+  :repeat (:exit (repeat-exit))
+
+  "o" #'ceamx/other-window
+  "P" #'popper-toggle-type
+  "u" #'winner-undo
+
+  "h" #'windmove-left
+  "H" #'ceamx/window-move-left
+  "j" #'windmove-down
+  "J" #'ceamx/window-move-down
+  "k" #'windmove-up
+  "K" #'ceamx/window-move-up
+  "l" #'windmove-right
+  "L" #'ceamx/window-move-right
+
+  "SPC" #'ceamx/swap-or-rotate-windows
+
+  "RET" #'repeat-exit
+  "ESC" #'repeat-exit)
 #+end_src
+
 ** Define commands for window management
 
 - Source :: <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
@@ -7255,6 +7305,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 ;; Allow any key sequence to exit `repeat-mode'.
 (setopt repeat-exit-key nil)
+
 (setopt repeat-exit-timeout 15)
 (setopt repeat-on-final-keystroke t)
 (setopt repeat-keep-prefix nil)

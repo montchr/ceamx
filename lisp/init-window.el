@@ -155,6 +155,7 @@
 (require 'ceamx-lib)
 
 (package! switchy-window
+  ;; NOTE: This delay is slightly too short unless invoking within a repeat-map.
   (setopt switchy-window-delay 1.5)
 
   (switchy-window-minor-mode))
@@ -230,6 +231,25 @@
     ("`" "[ ] popups" popper-toggle)
     ""
     ("q" "quit" transient-quit-all)]])
+(define-keymap :keymap window-prefix-map
+  "w" #'ace-window
+
+  "d" #'ace-delete-window
+  "p" #'popper-toggle
+  "P" #'popper-toggle-type
+  "u" #'winner-undo
+
+  "h" #'windmove-left
+  "H" #'ceamx/window-move-left
+  "j" #'windmove-down
+  "J" #'ceamx/window-move-down
+  "k" #'windmove-up
+  "K" #'ceamx/window-move-up
+  "l" #'windmove-right
+  "L" #'ceamx/window-move-right
+
+  "=" #'balance-windows
+  "SPC" #'ceamx/swap-or-rotate-windows)
 (define-keymap :keymap (current-global-map)
   "C-x o" #'ceamx/other-window
   "C-x O" #'ace-window
@@ -243,21 +263,32 @@
   "C-x <up>" #'enlarge-window           ; also: C-x ^
   "C-x <down>" #'shrink-window
   "C-x <left>" #'shrink-window-horizontally
-  "C-x <right>" #'enlarge-window-horizontally
-
-  ;; TODO: repeat-mode
-  ;; FIXME: find another binding -- i prefer rectangle here
-  ;; "C-x SPC" #'ceamx/swap-or-rotate-windows
-  )
-
+  "C-x <right>" #'enlarge-window-horizontally)
 (define-keymap :keymap resize-window-repeat-map
   "<up>" #'enlarge-window
   "<down>" #'shrink-window
   "<left>" #'shrink-window-horizontally
   "<right>" #'enlarge-window-horizontally)
-(define-keymap :keymap window-prefix-map
-  "d" #'ace-delete-window
-  "w" #'ace-window)
+(defvar-keymap ceamx-window-repeat-map
+  :repeat (:exit (repeat-exit))
+
+  "o" #'ceamx/other-window
+  "P" #'popper-toggle-type
+  "u" #'winner-undo
+
+  "h" #'windmove-left
+  "H" #'ceamx/window-move-left
+  "j" #'windmove-down
+  "J" #'ceamx/window-move-down
+  "k" #'windmove-up
+  "K" #'ceamx/window-move-up
+  "l" #'windmove-right
+  "L" #'ceamx/window-move-right
+
+  "SPC" #'ceamx/swap-or-rotate-windows
+
+  "RET" #'repeat-exit
+  "ESC" #'repeat-exit)
 
 (provide 'init-window)
 ;;; init-window.el ends here

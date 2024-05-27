@@ -69,6 +69,7 @@
 
 ;; Allow any key sequence to exit `repeat-mode'.
 (setopt repeat-exit-key nil)
+
 (setopt repeat-exit-timeout 15)
 (setopt repeat-on-final-keystroke t)
 (setopt repeat-keep-prefix nil)
