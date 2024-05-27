@@ -172,20 +172,22 @@ was printed, and only have ElDoc display if one wasn't.\""
 ;; - C-h binding prevented normal C-h usage
 ;; - No straightforward way to disable or customize per-map
 
-;; (package! repeat-help
-;;   (setopt repeat-help-auto nil)
+(package! repeat-help
+  (setopt repeat-help-auto nil)
+  (setopt repeat-help-key (kbd "?"))
 
-;;   ;; If `repeat-help' detects `which-key' because `embark' has not yet loaded,
-;;   ;; then its default popup type will be `which-key', not `embark'. This does
-;;   ;; not quite line up with the intended behavior as stated in the `repeat-help'
-;;   ;; README.
-;;   ;; Note, also, that Embark will not be loaded until one of its autoloaded
-;;   ;; commands are invoked.
-;;   ;; <https://github.com/karthink/repeat-help/issues/10>
-;;   ;; (with-eval-after-load 'embark
-;;   ;;   (setopt repeat-help-popup-type 'embark))
+  ;; If `repeat-help' detects `which-key' because `embark' has not yet loaded,
+  ;; then its default popup type will be `which-key', not `embark'. This does
+  ;; not quite line up with the intended behavior as stated in the `repeat-help'
+  ;; README.
+  ;; Note, also, that Embark will not be loaded until one of its autoloaded
+  ;; commands are invoked.
+  ;; <https://github.com/karthink/repeat-help/issues/10>
+  (with-eval-after-load 'embark
+    (setopt repeat-help-popup-type 'embark))
 
-;;   (add-hook 'repeat-mode-hook #'repeat-help-mode))
+  (require 'repeat-help)
+  (add-hook 'repeat-mode-hook #'repeat-help-mode))
 
 ;;; Keybindings
 
