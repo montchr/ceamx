@@ -10985,6 +10985,8 @@ ARGS are as in `eglot-server-programs', which see."
 
 **** Start the LSP server
 
+Install the =yaml-language-server= from Nixpkgs first.
+
 #+begin_src emacs-lisp
 (when (eq 'lsp ceamx-lsp-client)
   (after! (yaml-mode)
@@ -11601,7 +11603,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
     (add-to-list 'auto-mode-alist `(,ceamx-lang-php-extension-regexp . phps-mode))))
 #+end_src
 
-*** [[https://github.com/Fuco1/neon-mode][Fuco1/neon-mode]]: major-mode for the PHP-centric NEON franken-lang :package:
+*** [[https://github.com/Fuco1/neon-mode][Fuco1/neon-mode]]: major-mode for NEON, the PHP-centric franken-YAML DSL :package:
 
 - Reference :: <https://ne-on.org/>
 
