@@ -9723,7 +9723,8 @@ Intended for use as a hook callback on `prog-mode-hook'."
 ;;  "zero-configuration" jump-to-definition package with support for many langs
 
 (package! dumb-jump
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+  ;; Add to end of list as a fallback for when there are no smart options.
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 100))
 
 (after! (hydra)
   ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
