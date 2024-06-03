@@ -38,7 +38,8 @@
 (package! flymake-phpstan
   (add-hook 'php-mode-hook #'flymake-phpstan-turn-on)
   ;; NOTE: I'm not positive that this is the right name.
-  (add-to-list 'flycheck-disabled-checkers 'phpstan))
+  (after! flycheck
+    (add-to-list 'flycheck-disabled-checkers 'phpstan)))
 (after! projectile
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 (after! web-mode
