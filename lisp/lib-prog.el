@@ -33,17 +33,25 @@
     (error "No LSP client named %S" client)))
 (require 'config-prog)
 
-(defun ceamx-eglot-server-options (server-name)
-  "Return the custom initialization options for the SERVER-NAME language server."
-  (alist-get server-name ceamx-eglot-server-configurations-alist nil nil #'string=))
+(defun ceamx-eglot-server-default-settings (name)
+  "Return the custom initialization options for the NAME language server."
+  (alist-get name ceamx-eglot-server-configurations-alist nil nil #'string=))
 
-(defun ceamx-eglot-server-contact (server-name &rest args)
-  "Return a contact specification for SERVER-NAME including default options.
-ARGS are as in `eglot-server-programs', which see."
-  (let ((options (ceamx-eglot-server-options server-name)))
-    (append (ensure-list server-name)
+(defun ceamx-eglot-server-contact (name &optional program &rest args)
+  "Return a contact specification for the language server NAME.
+PROGRAM and ARGS are as in `eglot-server-programs', which see.
+
+Unless PROGRAM is provided, the program name used in
+`eglot-server-programs' will be the value of NAME."
+  (let ((options (ceamx-eglot-server-default-settings name))
+        (program (or program name)))
+    ;; The use of `append' here is significant because it will filter out a nil
+    ;; value for `options'.
+    (append (ensure-list program)
             args
             (when options (list :initializationOptions options)))))
+
+(ceamx-eglot-server-contact "nixd")
 
 (provide 'lib-prog)
 ;;; lib-prog.el ends here

@@ -60,12 +60,12 @@
 (require 'config-prog)
 (require 'lib-prog)
 
+(add-to-list 'ceamx-eglot-server-configurations-alist '("nix-nil" . nil))
+(add-to-list 'ceamx-eglot-server-configurations-alist
+             (cons "nix-nixd" ceamx-lsp-nix-nixd-default-config))
+
 (with-eval-after-load 'eglot
   (defvar eglot-server-programs)
-
-  (appendq! ceamx-eglot-server-configurations-alist
-            '("nil" . nil)
-            (cons "nixd" ceamx-lsp-nix-nixd-default-config))
 
   (add-to-list 'eglot-server-programs
                (cons '(nix-mode nix-ts-mode)
@@ -73,7 +73,7 @@
 (after! lsp-nix
   (setopt lsp-nix-nil-formatter nil)
 
-  (when (string= "nixd" ceamx-lsp-server-nix-lang)
+  (when (string= "nix-nixd" ceamx-lsp-server-nix-lang)
     (lsp-register-client
      (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
                       :major-modes '(nix-mode nix-ts-mode)
