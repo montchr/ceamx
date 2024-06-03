@@ -11645,6 +11645,17 @@ its cache should stay out of the way.
   (file-name-as-directory (concat ceamx-lsp-mode-cache-dir "server/intelephense/cache")))
 #+end_src
 
+*** Checkers
+
+**** [[https://github.com/emacs-php/phpstan.el][emacs-php/phpstan.el]]: Provide PHPStan checks
+
+#+begin_src emacs-lisp
+(package! flymake-phpstan
+  (add-hook 'php-mode-hook #'flymake-phpstan-turn-on)
+  ;; NOTE: I'm not positive that this is the right name.
+  (add-to-list 'flycheck-disabled-checkers 'phpstan))
+#+end_src
+
 *** Projectile integration
 
 #+begin_src emacs-lisp
