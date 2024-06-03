@@ -10766,10 +10766,7 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
 **** Provide workspace symbols as Consult datasource :completion:
 
 #+begin_src emacs-lisp
-(package! consult-lsp
-  (after! lsp-mode
-    ;; Override the default binding for `xref-find-apropos'.
-    (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols)))
+(package! consult-lsp)
 #+end_src
 
 **** Define function to change the priority of a pre-defined LSP client
@@ -10897,6 +10894,16 @@ ARGS are as in `eglot-server-programs', which see."
 #+begin_src emacs-lisp
 (keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
 (keymap-global-set "C-c l r" '("rename..." . eglot-rename))
+(keymap-global-set "C-c l o" #'consult-eglot-symbols)
+
+(after! eglot
+  ;; Override the default binding for `xref-find-apropos'.
+  (keymap-set eglot-mode-map "C-M-." #'consult-eglot-symbols))
+
+(after! lsp-mode
+    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
+    ;; Override the default binding for `xref-find-apropos'.
+    (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 #+end_src
 
 *** TODO Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)

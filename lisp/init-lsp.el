@@ -63,6 +63,16 @@
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
 (keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
 (keymap-global-set "C-c l r" '("rename..." . eglot-rename))
+(keymap-global-set "C-c l o" #'consult-eglot-symbols)
+
+(after! eglot
+  ;; Override the default binding for `xref-find-apropos'.
+  (keymap-set eglot-mode-map "C-M-." #'consult-eglot-symbols))
+
+(after! lsp-mode
+    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
+    ;; Override the default binding for `xref-find-apropos'.
+    (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 
 (provide 'init-lsp)
 ;;; init-lsp.el ends here
