@@ -36,6 +36,12 @@
 (after! (:or php-mode phps-mode php-ts-mode)
   (when (featurep 'dap)
     (require 'dap-php)))
+(defvar ceamx-lang-php-iph-dangerous-license-path
+  (file-name-concat (xdg-cache-home) "intelephense.license.txt"))
+(after! eglot
+  (add-to-list 'eglot-server-programs
+               (cons '(php-mode php-ts-mode)
+                     (ceamx-eglot-server-contact "php-iph" "intelephense" "--stdio"))))
 (package! flymake-phpstan
   (add-hook 'php-mode-hook #'flymake-phpstan-turn-on)
   ;; NOTE: I'm not positive that this is the right name.
