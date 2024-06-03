@@ -68,10 +68,6 @@ Intended for use as a hook callback on `prog-mode-hook'."
 (package! dumb-jump
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
-(after! dumb-jump
-  (when (executable-find "rg")
-    (setopt dumb-jump-force-searcher 'rg)))
-
 (after! (hydra)
   ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
   (defhydra ceamx-prog-dumb-jump-dispatch (:color blue :columns 3)
