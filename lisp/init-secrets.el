@@ -43,17 +43,18 @@
 ;; secrets might be stored.
 (setopt auth-sources (list "~/.authinfo.gpg"))
 
+;; TODO: provide explanation as to why these functions are named like so -- they just magically work..?
 (use-feature! auth-source-pass
   :preface
-  (defvar +auth-source-pass--cache (make-hash-table :test #'equal))
+  (defvar auth-source-pass--cache (make-hash-table :test #'equal))
 
-  (defun +auth-source-pass--reset-cache ()
-    (setq +auth-source-pass--cache (make-hash-table :test #'equal)))
+  (defun auth-source-pass--reset-cache ()
+    (setq auth-source-pass--cache (make-hash-table :test #'equal)))
 
-  (defun +auth-source-pass--read-entry (entry)
+  (defun auth-source-pass--read-entry (entry)
     "Return a string with the file content of ENTRY."
-    (run-at-time 45 nil #'+auth-source-pass--reset-cache)
-    (let ((cached (gethash entry +auth-source-pass--cache)))
+    (run-at-time 45 nil #'auth-source-pass--reset-cache)
+    (let ((cached (gethash entry auth-source-pass--cache)))
       (or cached
         (puthash
           entry
@@ -62,7 +63,7 @@
                                     (format "%s.gpg" entry)
                                     (getenv "PASSWORD_STORE_DIR")))
             (buffer-substring-no-properties (point-min) (point-max)))
-          +auth-source-pass--cache))))
+          auth-source-pass--cache))))
 
   (defun ceamx-auth-source-pass-list-items ()
     "Return a list of all password store items."
