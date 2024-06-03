@@ -10870,8 +10870,6 @@ Unless PROGRAM is provided, the program name used in
     (append (ensure-list program)
             args
             (when options (list :initializationOptions options)))))
-
-(ceamx-eglot-server-contact "nixd")
 #+end_src
 
 **** Declare some Eglot buffers as popup windows
@@ -11643,11 +11641,6 @@ Requires:
 *** Integration with the unfree Intelephense language server :unfree:
 
 #+begin_src emacs-lisp
-(defvar ceamx-lang-php-iph-dangerous-license-path
-  (file-name-concat (xdg-cache-home) "intelephense.license.txt"))
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref nil
 (defun ceamx-eglot--php-iph-default-settings (instance)
   "Return initial settings for Intelephense language server INSTANCE.
 INSTANCE is as in the argument passed to a unary function as

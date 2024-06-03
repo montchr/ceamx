@@ -51,7 +51,5 @@ Unless PROGRAM is provided, the program name used in
             args
             (when options (list :initializationOptions options)))))
 
-(ceamx-eglot-server-contact "nixd")
-
 (provide 'lib-prog)
 ;;; lib-prog.el ends here
