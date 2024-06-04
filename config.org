@@ -10743,7 +10743,7 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
      (apply old-fn args))))
 #+end_src
 
-**** Wrap LSP server commands with =lsp-booster= :perf:
+***** Wrap LSP server commands with =lsp-booster= :perf:
 
 - Source :: <https://github.com/blahgeek/emacs-lsp-booster/blob/master/README.md#configure-lsp-mode>
 
@@ -11638,15 +11638,100 @@ Requires:
     (require 'dap-php)))
 #+end_src
 
-*** Integration with the unfree Intelephense language server :unfree:
+*** DISABLED Integration with the unfree Intelephense language server :unfree:
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+- docs :: <https://github.com/bmewburn/intelephense-docs>
 
 #+begin_src emacs-lisp
+;; (mkdir! "~/.data/junk/")                                                ; PASS
+;; (mkdir! "~/.data/junk")                                                 ; FAIL
+;; (mkdir! ("~/.data/junk/"))                                              ; PASS
+;; (mkdir! ("~/.data/junk/foo/" "~/data/junk/bar/"))                       ; PASS
+;; (mkdir! ("~/.data/junk/foo/" "~/.data/junk/bar/" "~/.data/junk/fnord")) ; FAIL
+(defmacro mkdir! (dirs)
+  "Create the directory(s) DIRS if not yet existent.
+Each directory in DIRS should be a string ending in a slash
+character.  This rule aims to prevent accidental creation of
+directories when the value is actually a string intended for use
+as a file path."
+  (let ((dirs-list (ensure-list dirs)))
+    (dolist (dir dirs-list)
+      (unless (string-suffix-p "/" dir)
+        (user-error "Directory path %S is missing a trailing slash" dir)))
+    (let ((dir-sym (make-symbol "dir")))
+      `(dolist (,dir-sym (list ,@dirs-list))
+         (unless (file-directory-p ,dir-sym)
+           (make-directory ,dir-sym))))))
+
+(defvar ceamx-eglot-storage-dir (file-name-as-directory (concat ceamx-var-dir "eglot")))
+
+(defvar ceamx-php-intelephense-global-storage-dir
+  (file-name-as-directory (concat
+                           ;; TODO: why does `xdg-cache-home' not include a
+                           ;; trailing slash? where does this function even come from?
+                           (file-name-as-directory (xdg-cache-home))
+                           "intelephense")))
+
+(defvar ceamx-eglot-php-iph-storage-dir
+  (file-name-as-directory (concat ceamx-eglot-storage-dir "php-iph")))
+
+(dolist (dir (list ceamx-eglot-storage-dir
+                   ceamx-php-intelephense-global-storage-dir
+                   ceamx-eglot-php-iph-storage-dir))
+  (unless (file-directory-p dir)
+    (make-directory dir)))
+
+;; FIXME: ugh
+;; (mkdir! (macroexpand (list ceamx-eglot-storage-dir
+;;                            ceamx-php-iph-global-storage-dir
+;;                            ceamx-eglot-php-iph-storage-dir)))
+
+;; Available options listed in schema: https://github.com/bmewburn/intelephense-docs/blob/master/installation.md#configuration-options
+(defvar ceamx-php-iph-default-stubs
+  ["apache" "bcmath" "bz2" "calendar"
+   "com_dotnet" "Core" "ctype" "curl" "date" "dba" "dom" "enchant"
+   "exif" "fileinfo" "filter" "fpm" "ftp" "gd" "hash" "iconv" "imap" "interbase"
+   "intl" "json" "ldap" "libxml" "mbstring" "mcrypt" "meta" "mssql" "mysqli"
+   "oci8" "odbc" "openssl" "pcntl" "pcre" "PDO" "pdo_ibm" "pdo_mysql"
+   "pdo_pgsql" "pdo_sqlite" "pgsql" "Phar" "posix" "pspell" "readline" "recode"
+   "Reflection" "regex" "session" "shmop" "SimpleXML" "snmp" "soap" "sockets"
+   "sodium" "SPL" "sqlite3" "standard" "superglobals" "sybase" "sysvmsg"
+   "sysvsem" "sysvshm" "tidy" "tokenizer" "wddx" "xml" "xmlreader" "xmlrpc"
+   "xmlwriter" "Zend OPcache" "zip" "zlib"])
+
+;; ["oauth" "wordpress" "yaml"]
+
+(defvar ceamx-php-iph-extra-stubs [])
+
+(defvar ceamx-php-iph-stubs
+  (seq-concatenate 'vector ceamx-php-iph-default-stubs ceamx-php-iph-extra-stubs))
+
+;; <https://github.com/bmewburn/intelephense-docs/blob/master/installation.md#configuration-options>
+;; TODO: read from JSON file
 (defun ceamx-eglot--php-iph-default-settings (instance)
   "Return initial settings for Intelephense language server INSTANCE.
 INSTANCE is as in the argument passed to a unary function as
 specified in `eglot-server-programs', which see."
-  (list
-   :licenceKey (auth-source-pass-get 'secret "Licenses/intelephense")))
+  `(:globalStoragePath ,ceamx-php-intelephense-global-storage-dir
+    :storagePath ,ceamx-eglot-php-iph-storage-dir
+    ;; FIXME: figure out how to cache for longer
+    ;; FIXME: causes re-verification on every emacs session... is that normal for this kind of... scheme?
+    ;; FIXME: data corruption non-utf-8...?
+    :licenceKey ,ceamx-php-iph-license-key
+    :intelephense (:completion (:maxItems 100)
+                   :diagnostics (:embeddedLanguages nil)
+                   :files (;; :exclude []
+                           :maxSize ,(* (* 1024 1024) 3))
+                   :format (:enable t
+                            :braces "psr12")
+                   :environment (;; :includePaths []
+                                 :phpVersion "8.2.0")
+                   :phpdoc (:returnVoid nil)
+                   ;; :stubs ,ceamx-php-iph-stubs
+                   )))
 
 (add-to-list 'ceamx-eglot-server-configurations-alist
              '("php-iph" . ceamx-eglot--php-iph-default-settings))

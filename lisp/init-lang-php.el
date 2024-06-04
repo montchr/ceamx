@@ -36,19 +36,6 @@
 (after! (:or php-mode phps-mode php-ts-mode)
   (when (featurep 'dap)
     (require 'dap-php)))
-(defun ceamx-eglot--php-iph-default-settings (instance)
-  "Return initial settings for Intelephense language server INSTANCE.
-INSTANCE is as in the argument passed to a unary function as
-specified in `eglot-server-programs', which see."
-  (list
-   :licenceKey (auth-source-pass-get 'secret "Licenses/intelephense")))
-
-(add-to-list 'ceamx-eglot-server-configurations-alist
-             '("php-iph" . ceamx-eglot--php-iph-default-settings))
-(after! eglot
-  (add-to-list 'eglot-server-programs
-               (cons '(php-mode php-ts-mode)
-                     (ceamx-eglot-server-contact "php-iph" "intelephense" "--stdio"))))
 (package! flymake-phpstan
   (add-hook 'php-mode-hook #'flymake-phpstan-turn-on)
   ;; NOTE: I'm not positive that this is the right name.
