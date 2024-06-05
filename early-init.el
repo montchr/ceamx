@@ -87,8 +87,7 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; No bells.
 (setq ring-bell-function #'ignore)
 
-;; Display scratch buffer on startup.
-;; TODO: replace with dashboard
+;; Don't show the Emacs startup screen.
 (setq inhibit-startup-screen t)
 
 ;; Allow answering yes/no questions with y/n.

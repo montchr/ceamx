@@ -2219,8 +2219,7 @@ See [[*=ceamx-paths= :: common path constants]]
 ;; No bells.
 (setq ring-bell-function #'ignore)
 
-;; Display scratch buffer on startup.
-;; TODO: replace with dashboard
+;; Don't show the Emacs startup screen.
 (setq inhibit-startup-screen t)
 
 ;; Allow answering yes/no questions with y/n.
@@ -13071,9 +13070,6 @@ What even is this though...?
   :demand t
   :after (nerd-icons)
 
-  :preface
-  (setopt initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
-
   :init
   (add-hook 'ceamx-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'ceamx-after-init-hook #'dashboard-initialize)
@@ -14087,12 +14083,18 @@ Return the new `zone' timer."
 #+end_src
 
 
-* The Bucket of Uncertainty
+* TODO The Bucket of Uncertainty
+:PROPERTIES:
+:header-args: :noweb-ref ceamx-postlude
+:END:
 
 Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
 
 Or, perhaps more accurately: stuff that needs a better home.
 
+#+begin_src emacs-lisp
+(setopt initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+#+end_src
 
 ** TODO Consolidate ~lib-simple~ and ~lib-text~
 
@@ -14289,9 +14291,6 @@ POS defaults to the current position."
 #+end_src
 
 ** Keybindings :keybinds:
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-postlude
-:END:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-session-map

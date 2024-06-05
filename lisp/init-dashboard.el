@@ -33,9 +33,6 @@
   :demand t
   :after (nerd-icons)
 
-  :preface
-  (setopt initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
-
   :init
   (add-hook 'ceamx-after-init-hook #'dashboard-insert-startupify-lists)
   (add-hook 'ceamx-after-init-hook #'dashboard-initialize)
