@@ -308,6 +308,11 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (require 'init-controls)
 
+(package! persistent-scratch
+  ;; `with-demoted-errors' or `ignore-errors' wrapper is recommended by project
+  ;; readme, as there will be an error if the autosave file does not exist.
+  (with-demoted-errors
+    (persistent-scratch-autosave-mode 1)))
 (define-keymap :keymap ceamx-session-map
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs)

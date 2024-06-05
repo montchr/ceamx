@@ -14096,6 +14096,13 @@ Or, perhaps more accurately: stuff that needs a better home.
 (setopt initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 #+end_src
 
+#+begin_src emacs-lisp
+(package! persistent-scratch
+  ;; `with-demoted-errors' or `ignore-errors' wrapper is recommended by project
+  ;; readme, as there will be an error if the autosave file does not exist.
+  (with-demoted-errors
+    (persistent-scratch-autosave-mode 1)))
+#+end_src
 
 
 ** The Keybindings of Uncertainty :keybinds:
