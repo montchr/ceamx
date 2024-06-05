@@ -45,6 +45,13 @@ public function set" (p "NAME: " name t) (upcase-initials name) "(" (p "type") "
 ;; orig: doc-comment-oneline
 (phpdoci & "/** @var " (p "TYPE") " " p " */" %)
 
+(phpcsignore & "// phpcs:ignore " p)
+(phpcsdisable (p "Sniffs (comma-separated): " sniffs t)
+              (p "Reason: " reason) &
+              "// phpcs:disable " sniffs " -- " reason n
+              r
+              "// phpcs:enable" n)
+
 
 (ext "extends " (p "ParentClass"))
 (impl "implements " p)
