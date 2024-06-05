@@ -10035,7 +10035,7 @@ the process of formatting Lisp code in Emacs.
 Even if Emacs core does things differently.
 
 #+begin_src emacs-lisp
-(dolist (sym '(add-function advice-add plist-put))
+(dolist (sym '(add-function add-to-list advice-add plist-put))
   (put sym 'lisp-indent-function 2))
 #+end_src
 

@@ -39,7 +39,7 @@
 ;; Add hooks to supported Lisp modes.
 (dolist (mode ceamx-lisp-modes-list)
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
-(dolist (sym '(add-function advice-add plist-put))
+(dolist (sym '(add-function add-to-list advice-add plist-put))
   (put sym 'lisp-indent-function 2))
 (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
 (package! lispy
