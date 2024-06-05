@@ -10905,12 +10905,16 @@ The timing here may be delicate...
 
 (defun ceamx-eglot-server-contact (name &optional program &rest args)
   "Return a contact specification for the language server NAME.
+NAME is a string of the \"<lang>-<program>\" format for naming
+language servers in Ceamx.  This format is based on the format
+commonly used by `lsp-mode'.
+
 PROGRAM and ARGS are as in `eglot-server-programs', which see.
 
 Unless PROGRAM is provided, the program name used in
 `eglot-server-programs' will be the value of NAME."
   (let ((options (ceamx-eglot-server-default-settings name))
-        (program (or program name)))
+        (program (or program (string-trim-left name "[[:alpha:]]+-"))))
     ;; The use of `append' here is significant because it will filter out a nil
     ;; value for `options'.
     (append (ensure-list program)
