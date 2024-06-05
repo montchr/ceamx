@@ -11688,30 +11688,22 @@ Requires:
     (require 'dap-php)))
 #+end_src
 
-*** DISABLED Integration with the unfree Intelephense language server :unfree:
+*** DISABLED Integration with the proprietary Intelephense language server
 :PROPERTIES:
 :header-args: :noweb-ref nil
 :END:
 
 - docs :: <https://github.com/bmewburn/intelephense-docs>
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb-ref config-feature-paths
 (defvar ceamx-php-intelephense-global-storage-dir
-  (file-name-as-directory (concat
-                           ;; TODO: why does `xdg-cache-home' not include a
-                           ;; trailing slash? where does this function even come from?
-                           (file-name-as-directory (xdg-cache-home))
-                           "intelephense")))
+  (file-name-as-directory (concat ceamx-xdg-cache-dir "intelephense")))
 
 (defvar ceamx-eglot-php-iph-storage-dir
   (file-name-as-directory (concat ceamx-eglot-storage-dir "php-iph")))
+#+end_src
 
-(dolist (dir (list ceamx-eglot-storage-dir
-                   ceamx-php-intelephense-global-storage-dir
-                   ceamx-eglot-php-iph-storage-dir))
-  (unless (file-directory-p dir)
-    (make-directory dir)))
-
+#+begin_src emacs-lisp :noweb-ref config-prog
 ;; Available options listed in schema: https://github.com/bmewburn/intelephense-docs/blob/master/installation.md#configuration-options
 (defvar ceamx-php-iph-default-stubs
   ["apache" "bcmath" "bz2" "calendar"
@@ -11725,24 +11717,28 @@ Requires:
    "sysvsem" "sysvshm" "tidy" "tokenizer" "wddx" "xml" "xmlreader" "xmlrpc"
    "xmlwriter" "Zend OPcache" "zip" "zlib"])
 
-;; ["oauth" "wordpress" "yaml"]
-
 (defvar ceamx-php-iph-extra-stubs [])
 
 (defvar ceamx-php-iph-stubs
   (seq-concatenate 'vector ceamx-php-iph-default-stubs ceamx-php-iph-extra-stubs))
+#+end_src
 
+#+begin_src emacs-lisp
+(dolist (dir (list ceamx-eglot-storage-dir
+                   ceamx-php-intelephense-global-storage-dir
+                   ceamx-eglot-php-iph-storage-dir))
+  (unless (file-directory-p dir)
+    (make-directory dir)))
+#+end_src
+
+#+begin_src emacs-lisp
 ;; <https://github.com/bmewburn/intelephense-docs/blob/master/installation.md#configuration-options>
 ;; TODO: read from JSON file
-(defun ceamx-eglot--php-iph-default-settings (instance)
-  "Return initial settings for Intelephense language server INSTANCE.
-INSTANCE is as in the argument passed to a unary function as
-specified in `eglot-server-programs', which see."
+(defvar ceamx-eglot-php-iph-default-settings
   `(:globalStoragePath ,ceamx-php-intelephense-global-storage-dir
     :storagePath ,ceamx-eglot-php-iph-storage-dir
-    ;; FIXME: figure out how to cache for longer
-    ;; FIXME: causes re-verification on every emacs session... is that normal for this kind of... scheme?
-    ;; FIXME: data corruption non-utf-8...?
+    ;; FIXME: data corruption non-utf-8 when loading from `auth-source-pass'
+    ;;        currently i am defining this in site-config.el as a workaround
     :licenceKey ,ceamx-php-iph-license-key
     :intelephense (:completion (:maxItems 100)
                    :diagnostics (:embeddedLanguages nil)
@@ -11750,21 +11746,29 @@ specified in `eglot-server-programs', which see."
                            :maxSize ,(* (* 1024 1024) 3))
                    :format (:enable t
                             :braces "psr12")
-                   :environment (;; :includePaths []
+                   :environment (:includePaths ["vendor"]
                                  :phpVersion "8.2.0")
                    :phpdoc (:returnVoid nil)
-                   ;; :stubs ,ceamx-php-iph-stubs
-                   )))
+                   :stubs ,ceamx-php-iph-stubs
+                   ))
+  "Initial settings for the Intelephense language server.")
 
 (add-to-list 'ceamx-eglot-server-configurations-alist
-             '("php-iph" . ceamx-eglot--php-iph-default-settings))
+             (cons "php-iph" ceamx-eglot-php-iph-default-settings))
 #+end_src
 
 #+begin_src emacs-lisp
 (after! eglot
   (add-to-list 'eglot-server-programs
-               (cons '(php-mode php-ts-mode)
-                     (ceamx-eglot-server-contact "php-iph" "intelephense" "--stdio"))))
+    ;; TODO: add `phps-mode' (which is supported in eglot core btw)
+    ;; TODO: consider contributing documentation fix for `eglot-alternatives' to
+    ;;       indicate that it can accept `:initializationOptions' (see source code)
+    `((php-mode php-ts-mode) . ,(eglot-alternatives
+                                 ;; FIXME: somehow include phpactor here, but
+                                 ;; there's not really an easy way to simply
+                                 ;; append to or otherwise access the existing entry
+                                 (list
+                                  (ceamx-eglot-server-contact "php-iph" "intelephense" "--stdio"))))))
 #+end_src
 
 **** DISABLED LSP Mode integration
