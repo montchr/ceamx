@@ -14104,6 +14104,9 @@ Or, perhaps more accurately: stuff that needs a better home.
     (persistent-scratch-autosave-mode 1)))
 #+end_src
 
+#+begin_src emacs-lisp
+(keymap-set ceamx-launch-map "s" #'scratch-buffer)
+#+end_src
 
 ** The Keybindings of Uncertainty :keybinds:
 

@@ -313,6 +313,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
   ;; readme, as there will be an error if the autosave file does not exist.
   (with-demoted-errors
     (persistent-scratch-autosave-mode 1)))
+(keymap-set ceamx-launch-map "s" #'scratch-buffer)
 (define-keymap :keymap ceamx-session-map
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs)
