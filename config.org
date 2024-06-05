@@ -6,7 +6,6 @@
 #+property: header-args:emacs-lisp+ :results silent
 #+property: header-args:shell+      :results replace
 #+property: header-args             :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments no
-#+startup: overview
 
 #+begin_quote
 generally no real magic in this world exists
