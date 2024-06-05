@@ -1236,6 +1236,48 @@ default source file."
 
 
 
+* Maintenance
+
+** Debugging
+
+- Source :: [[https://github.com/progfolio/.emacs.d/blob/master/init.org?plain=1][.emacs.d/init.org at master · progfolio/.emacs.d]]
+- Retrieved :: [2024-06-04 Tue 22:20]
+
+Running this form will launch the debugger after loading a package.
+
+This is useful for finding out when a dependency is requiring a package (perhaps
+earlier than you want).
+
+Use by tangling this block and launching Emacs with =emacs --debug-init=.
+
+#+begin_src emacs-lisp :var file="" :results silent :tangle no
+(unless (string-empty-p file)
+  (eval-after-load file
+    '(debug)))
+#+end_src
+
+Similarly, this variable will hit the debugger when a message matches its
+regexp.
+
+#+begin_src emacs-lisp :tangle no
+(setq debug-on-message "")
+#+end_src
+
+Adding a variable watcher can be a useful way to track down initialization and
+mutation of a variable.
+
+#+begin_src emacs-lisp :tangle no
+(add-variable-watcher 'org-capture-after-finalize-hook
+                      (lambda (symbol newval operation where)
+                        (debug)
+                        (message "%s set to %s" symbol newval)))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+(setq debug-on-error t)
+#+end_src
+
+
 * Resources
 
 - [[info:elisp#Tips][(elisp) Tips]]
