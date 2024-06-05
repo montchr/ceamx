@@ -81,9 +81,6 @@
 (define-keymap :keymap emacs-lisp-mode-map
   ceamx-keys-repl-toggle #'ielm
 
-  "C-c C-f" nil                         ; `byte-compile-current-file'
-  "C-c C-b" nil                         ; `elisp-byte-compile-buffer'
-
   "C-S-t" #'transpose-sexps)
 
 (with-eval-after-load 'ielm

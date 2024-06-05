@@ -76,7 +76,6 @@
 (auto-save-visited-mode)
 (global-keys!
   "C-c f" '("[ File ]" . ceamx-file-map)
-  "C-c C-f" '("[ File ]" . ceamx-file-map)
 
   ;; I mistakenly hit this sequence frequently instead of C-x C-f, but have never
   ;; once needed to configure `fill-column' on-demand (that should be configured

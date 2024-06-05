@@ -6201,7 +6201,6 @@ its bindings generally would need ~puni-mode~ to be active.
 #+begin_src emacs-lisp
 (global-keys!
   "C-c f" '("[ File ]" . ceamx-file-map)
-  "C-c C-f" '("[ File ]" . ceamx-file-map)
 
   ;; I mistakenly hit this sequence frequently instead of C-x C-f, but have never
   ;; once needed to configure `fill-column' on-demand (that should be configured
@@ -10460,9 +10459,6 @@ lists."
 (define-keymap :keymap emacs-lisp-mode-map
   ceamx-keys-repl-toggle #'ielm
 
-  "C-c C-f" nil                         ; `byte-compile-current-file'
-  "C-c C-b" nil                         ; `elisp-byte-compile-buffer'
-
   "C-S-t" #'transpose-sexps)
 
 (with-eval-after-load 'ielm
@@ -12304,6 +12300,7 @@ Else create a new file."
 
   ;; Key bindings specifically for Dired.
   (define-keymap :keymap dired-mode-map
+    ;; FIXME: avoid C-c C-* for stuff like this
     "C-c C-d C-i" #'denote-link-dired-marked-notes
     "C-c C-d C-r" #'denote-dired-rename-marked-files
     "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter)
@@ -12979,7 +12976,9 @@ CLOSED: [2024-03-18 Mon 23:52]
 *** TODO Org-Mode: electric-pair for equals-sign
 
 
-* Controls
+* TODO Controls
+
+What even is this though...?
 
 #+begin_src emacs-lisp :tangle lisp/init-controls.el
 ;;; init-controls.el --- Controlling various subsystems  -*- lexical-binding: t; -*-
@@ -13016,14 +13015,11 @@ CLOSED: [2024-03-18 Mon 23:52]
 
 ;;; Launch
 
-(keymap-global-set "C-c C-o" '("[ Launch ]" . ceamx-launch-map))
 (keymap-global-set "C-c o" '("[ Launch ]" . ceamx-launch-map))
 
-;; (define-keymap :keymap ceamx-launch-map)
 
 ;;; Toggle
 
-(keymap-global-set "C-c C-t" '("[ Toggle ]" . ceamx-toggle-map))
 (keymap-global-set "C-c t" '("[ Toggle ]" . ceamx-toggle-map))
 
 (define-keymap :keymap ceamx-toggle-map

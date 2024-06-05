@@ -32,14 +32,11 @@
 
 ;;; Launch
 
-(keymap-global-set "C-c C-o" '("[ Launch ]" . ceamx-launch-map))
 (keymap-global-set "C-c o" '("[ Launch ]" . ceamx-launch-map))
 
-;; (define-keymap :keymap ceamx-launch-map)
 
 ;;; Toggle
 
-(keymap-global-set "C-c C-t" '("[ Toggle ]" . ceamx-toggle-map))
 (keymap-global-set "C-c t" '("[ Toggle ]" . ceamx-toggle-map))
 
 (define-keymap :keymap ceamx-toggle-map

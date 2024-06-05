@@ -79,6 +79,7 @@ Else create a new file."
 
   ;; Key bindings specifically for Dired.
   (define-keymap :keymap dired-mode-map
+    ;; FIXME: avoid C-c C-* for stuff like this
     "C-c C-d C-i" #'denote-link-dired-marked-notes
     "C-c C-d C-r" #'denote-dired-rename-marked-files
     "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter)
