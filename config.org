@@ -10828,6 +10828,10 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
 
 *** Eglot
 
+#+begin_src emacs-lisp :noweb-ref config-feature-paths
+(defvar ceamx-eglot-storage-dir (file-name-as-directory (concat ceamx-var-dir "eglot")))
+#+end_src
+
 #+begin_src emacs-lisp
 (setopt eglot-sync-connect 1)
 (setopt eglot-autoshutdown t)
@@ -11707,8 +11711,6 @@ as a file path."
       `(dolist (,dir-sym (list ,@dirs-list))
          (unless (file-directory-p ,dir-sym)
            (make-directory ,dir-sym))))))
-
-(defvar ceamx-eglot-storage-dir (file-name-as-directory (concat ceamx-var-dir "eglot")))
 
 (defvar ceamx-php-intelephense-global-storage-dir
   (file-name-as-directory (concat

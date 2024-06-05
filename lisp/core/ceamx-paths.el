@@ -109,6 +109,7 @@ Emacs version to prevent bytecode incompatibility.")
   "Directory for user-defined expandable templates.
 Templates, in this sense, refer to the primary focus of packages
 like \"tempo\", \"tempel\", and \"yasnippet\".")
+(defvar ceamx-eglot-storage-dir (file-name-as-directory (concat ceamx-var-dir "eglot")))
 (defconst ceamx-notes-dir
   (file-name-as-directory (concat ceamx-home-dir "Documents/notes"))
   "Base directory for note storage.")
