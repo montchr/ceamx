@@ -12625,9 +12625,11 @@ I don't think this is working properly...
 #+END_SRC
 
 #+begin_src emacs-lisp
-(define-keymap :keymap (current-global-map)
-  "C-c a" #'org-agenda
-  "C-c c" #'org-capture)
+(keymap-global-set "C-c c" #'org-capture)
+
+(define-keymap :keymap ceamx-launch-map
+  "a" #'org-agenda
+  "c" #'org-capture)
 #+end_src
 
 #+BEGIN_SRC emacs-lisp

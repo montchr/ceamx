@@ -123,9 +123,11 @@
 (setopt org-image-actual-width 300)
 (setopt org-startup-with-inline-images t)
 (setopt org-return-follows-link t)
-(define-keymap :keymap (current-global-map)
-  "C-c a" #'org-agenda
-  "C-c c" #'org-capture)
+(keymap-global-set "C-c c" #'org-capture)
+
+(define-keymap :keymap ceamx-launch-map
+  "a" #'org-agenda
+  "c" #'org-capture)
 (with-eval-after-load 'org
   (define-keymap :keymap org-mode-map
     "C-c <up>" #'org-priority-up
