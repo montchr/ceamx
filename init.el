@@ -308,6 +308,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (require 'init-controls)
 
+(setopt initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 (package! persistent-scratch
   ;; `with-demoted-errors' or `ignore-errors' wrapper is recommended by project
   ;; readme, as there will be an error if the autosave file does not exist.
