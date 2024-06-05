@@ -14096,11 +14096,19 @@ Or, perhaps more accurately: stuff that needs a better home.
 (setopt initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 #+end_src
 
-** TODO Consolidate ~lib-simple~ and ~lib-text~
 
-** "Simple" Library =lib-simple.el=
 
-#+begin_src emacs-lisp :tangle lisp/lib-simple.el
+** The Keybindings of Uncertainty :keybinds:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-session-map
+  "q" #'save-buffers-kill-emacs
+  "Q" #'kill-emacs)
+#+end_src
+
+** =lib-simple=: The Library of Uncertain Simplicity
+
+#+begin_src emacs-lisp :tangle lisp/lib-simple.el :noweb-ref nil
 ;;; lib-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -14237,9 +14245,9 @@ Call the commands `ceamx/escape-url-line' and
 ;;; lib-simple.el ends here
 #+end_src
 
-** General Text Library
+** =lib-text=: The Material Fabric of Uncertainty
 
-#+begin_src emacs-lisp :tangle lisp/lib-text.el
+#+begin_src emacs-lisp :tangle lisp/lib-text.el :noweb-ref nil
 ;;; lib-text.el --- Text utilities                   -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -14290,14 +14298,7 @@ POS defaults to the current position."
 ;;; lib-text.el ends here
 #+end_src
 
-** Keybindings :keybinds:
-
-#+begin_src emacs-lisp
-(define-keymap :keymap ceamx-session-map
-  "q" #'save-buffers-kill-emacs
-  "Q" #'kill-emacs)
-#+end_src
-
+** TODO Consolidate ~lib-simple~ and ~lib-text~
 
 * Postlude
 :PROPERTIES:
