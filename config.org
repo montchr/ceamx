@@ -9600,8 +9600,18 @@ CLOSED: [2024-04-13 Sat 00:00]
 
 #+begin_src emacs-lisp
 (package! yasnippet
-  (setq yas-snippet-dirs (list
-                          (file-name-as-directory (concat ceamx-templates-dir "yasnippet")))))
+  (setopt yas-snippet-dirs
+          (list (file-name-as-directory
+                 (concat ceamx-templates-dir "yasnippet"))))
+
+  (defer! 2
+    (yas-global-mode 1)))
+#+end_src
+
+Add the official snippets bundle:
+
+#+begin_src emacs-lisp
+(package! yasnippet-snippets)
 #+end_src
 
 ** Reference
