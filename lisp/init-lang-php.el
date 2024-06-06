@@ -41,6 +41,23 @@
   ;; NOTE: I'm not positive that this is the right name.
   (after! flycheck
     (add-to-list 'flycheck-disabled-checkers 'phpstan)))
+(after! reformatter
+  ;; FIXME: okay this hasn't worked either...
+  (reformatter-define php-cs-fixer-fmt
+    :program (format "%s/vendor/bin/php-cs-fixer" (getenv "PRJ_ROOT"))
+    :args '("fix" "--diff" "--using-cache=no" "-q" "-"))
+
+  ;; FIXME: phpcbf is really finicky and doesn't play nice with the usual
+  ;; formatter standards.  the exit codes are nonsense.  and apparently the
+  ;; `:exit-code-success-p' lambda is not a function?
+  (reformatter-define phpcbf-fmt
+    :program (format "%s/vendor/bin/phpcbf" (getenv "PRJ_ROOT"))
+    :args (list "--stdin-path" input-file
+                "-q"
+                "-")
+    :exit-code-success-p (lambda (exit-code)
+                           (or (= 0 exit-code)
+                               (= 1 exit-code)))))
 (after! projectile
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 (after! web-mode
