@@ -71,6 +71,9 @@
   ;; FIXME: on a stale timer! every week! not every session...
   (devdocs-update-all))
 
+(after! popper
+  (add-to-list 'popper-reference-buffers "\\*devdocs\\*"))
+
 ;;; Display keyboard macros or latest interactive commands as Elisp via ~elmacro~
 
 ;; <https://github.com/Silex/elmacro>
