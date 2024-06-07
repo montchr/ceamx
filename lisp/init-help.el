@@ -172,7 +172,7 @@ was printed, and only have ElDoc display if one wasn't.\""
 ;; <https://karthinks.com/software/it-bears-repeating/>
 
 ;; DISABLED:
-;; - C-h binding prevented normal C-h usage
+;; - Hides default help, which I generally do want to see.
 ;; - No straightforward way to disable or customize per-map
 
 (package! repeat-help
@@ -189,8 +189,9 @@ was printed, and only have ElDoc display if one wasn't.\""
   (with-eval-after-load 'embark
     (setopt repeat-help-popup-type 'embark))
 
-  (require 'repeat-help)
-  (add-hook 'repeat-mode-hook #'repeat-help-mode))
+  ;; (require 'repeat-help)
+  ;; (add-hook 'repeat-mode-hook #'repeat-help-mode)
+  )
 
 ;;; Provide "Casual" transient menus for complex modes
 
