@@ -192,6 +192,30 @@ was printed, and only have ElDoc display if one wasn't.\""
   (require 'repeat-help)
   (add-hook 'repeat-mode-hook #'repeat-help-mode))
 
+;;; Provide "Casual" transient menus for complex modes
+
+;; <https://github.com/kickingvegas/cc-isearch-menu/blob/main/README.org>
+(package! cc-isearch-menu
+  (require 'cc-isearch-menu)
+
+  (after! isearch
+    (keymap-set isearch-mode-map "<f2>" #'cc-isearch-menu-transient)))
+
+;; <https://github.com/kickingvegas/casual-dired>
+(package! casual-dired
+  (after! dired
+    (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)))
+
+;; <https://github.com/kickingvegas/casual-info>
+(package! casual-info
+  (after! info
+    (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)))
+
+;;; `Info-mode' enchantments
+
+(add-hook 'Info-mode-hook #'hl-line-mode)
+(add-hook 'Info-mode-hook #'scroll-lock-mode)
+
 ;;; Keybindings
 
 (define-keymap :keymap help-map
