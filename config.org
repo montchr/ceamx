@@ -12101,6 +12101,11 @@ its cache should stay out of the way.
 *** Formatters
 
 #+begin_src emacs-lisp
+(defun +reformatter--phpcbf-fmt-exit-code-success-p (exit-code)
+    "Handle PHPCBF non-standard exit codes."
+    (or (= 0 exit-code)
+        (= 1 exit-code)))
+
 (after! reformatter
   ;; FIXME: okay this hasn't worked either...
   (reformatter-define php-cs-fixer-fmt
@@ -12115,9 +12120,7 @@ its cache should stay out of the way.
     :args (list "--stdin-path" input-file
                 "-q"
                 "-")
-    :exit-code-success-p (lambda (exit-code)
-                           (or (= 0 exit-code)
-                               (= 1 exit-code)))))
+    :exit-code-success-p +reformatter--phpcbf-fmt-exit-code-success-p))
 #+end_src
 
 *** Projectile integration

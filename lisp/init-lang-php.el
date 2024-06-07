@@ -41,6 +41,11 @@
   ;; NOTE: I'm not positive that this is the right name.
   (after! flycheck
     (add-to-list 'flycheck-disabled-checkers 'phpstan)))
+(defun +reformatter--phpcbf-fmt-exit-code-success-p (exit-code)
+    "Handle PHPCBF non-standard exit codes."
+    (or (= 0 exit-code)
+        (= 1 exit-code)))
+
 (after! reformatter
   ;; FIXME: okay this hasn't worked either...
   (reformatter-define php-cs-fixer-fmt
@@ -55,9 +60,7 @@
     :args (list "--stdin-path" input-file
                 "-q"
                 "-")
-    :exit-code-success-p (lambda (exit-code)
-                           (or (= 0 exit-code)
-                               (= 1 exit-code)))))
+    :exit-code-success-p +reformatter--phpcbf-fmt-exit-code-success-p))
 (after! projectile
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 (after! web-mode
