@@ -146,6 +146,9 @@
 (after! magit
   (remove-hook 'magit-section-movement-hook 'magit-hunk-set-window-start)
   (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
+(package! magit-todos
+  (after! magit
+    (magit-todos-mode 1)))
 (package! forge
   (after! magit
     (require 'forge)))
