@@ -310,6 +310,28 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-ui")>>
 #+end_src
 
+*** =lisp/init-dashboard.el=
+
+#+name: init-dashboard-file
+#+begin_src emacs-lisp :tangle lisp/init-dashboard.el
+<<file-prop-line(feature="init-dashboard",desc="Dashboard support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-dashboard>>
+
+<<file-footer(feature="init-dashboard")>>
+#+end_src
+
 *** =lisp/init-files.el=
 
 #+name: init-files-file
@@ -1293,10 +1315,6 @@ Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
 Or, perhaps more accurately: stuff that needs a better home.
 
 #+begin_src emacs-lisp
-(setopt initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
-#+end_src
-
-#+begin_src emacs-lisp
 (package! persistent-scratch
   ;; `with-demoted-errors' or `ignore-errors' wrapper is recommended by project
   ;; readme, as there will be an error if the autosave file does not exist.
@@ -2117,6 +2135,12 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 #+end_src
 
 #+begin_src emacs-lisp
+;;;; Dashboard
+
+(require 'init-dashboard)
+#+end_src
+
+#+begin_src emacs-lisp
 ;;;; Keyboard support
 
 (require 'init-keys)
@@ -2132,12 +2156,6 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 
 ;; FIXME: load earlier / in another section
 (require 'init-history)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Dashboard
-
-(require 'init-dashboard)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2447,9 +2465,6 @@ See [[*=ceamx-paths= :: common path constants]]
 ;; No bells.
 (setq ring-bell-function #'ignore)
 
-;; Don't show the Emacs startup screen.
-(setq inhibit-startup-screen t)
-
 ;; Allow answering yes/no questions with y/n.
 (setq use-short-answers t)              ; affects `yes-or-no-p'
 (setq read-answer-short t)              ; affects `read-answer' (completion)
@@ -2482,7 +2497,7 @@ See [[*=ceamx-paths= :: common path constants]]
 (tooltip-mode -1)
 #+end_src
 
-**** Rename the default/initial frame
+*** Rename the default/initial frame
 
 #+begin_src emacs-lisp
 (defvar ceamx-default-frame-name "home — [ceamx]"
@@ -2499,6 +2514,15 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 #+end_src
 
+
+
+** Quietize startup
+
+#+begin_src emacs-lisp
+(setq inhibit-startup-screen t)
+(setq initial-scratch-message nil)
+(setq initial-buffer-choice nil)
+#+end_src
 
 
 * Common: Paths
@@ -3580,6 +3604,21 @@ buffer, as a buffer-local variable.
 (setopt custom-unlispify-menu-entries nil)
 (setopt custom-unlispify-tag-names nil)
 (setopt custom-unlispify-remove-prefixes nil)
+#+end_src
+
+** Layout Utilities
+*** =grid=
+
+- Source :: [[https://github.com/ichernyshovvv/grid.el][ichernyshovvv/grid.el]]
+- Retrieved :: [2024-06-07 Fri 11:45]
+
+#+begin_quote
+This library allows you to put text data into boxes and align them horizontally,
+applying margin, padding, borders.
+#+end_quote
+
+#+begin_src emacs-lisp
+(package! (grid :host github :repo "ichernyshovvv/grid.el"))
 #+end_src
 
 ** Menus (Hydratics & Transients)
@@ -13322,72 +13361,44 @@ What even is this though...?
 
 
 * Dashboard
+:PROPERTIES:
+:header-args: :noweb-ref init-dashboard
+:END:
 
-#+begin_src emacs-lisp :tangle lisp/init-dashboard.el
-;;; init-dashboard.el --- Dashboard support  -*- lexical-binding: t; -*-
+#+begin_src emacs-lisp
+(package! enlight
+  (require 'enlight)
+  (setopt initial-buffer-choice #'enlight))
 
-;; Copyright (C) 2024  Chris Montgomery
+(after! enlight
+  (require 'grid)
 
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
+  ;; FIXME: use theme palette
+  (defface enlight-yellow-bold
+    '((t (:foreground "#cabf00" :bold t)))
+    "Yellow bold face.")
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+  (defvar enlight-calendar
+    (progn
+      (calendar)
+;;      (diary-mark-entries)
+      (prog1 (with-current-buffer (buffer-name (current-buffer))
+               (buffer-string))
+        (calendar-exit))))
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; <https://github.com/emacs-dashboard/emacs-dashboard>
-
-;;; Code:
-
-(require 'ceamx-paths)
-
-(require 'ceamx-lib)
-
-(use-package dashboard
-  :ensure t
-  :demand t
-  :after (nerd-icons)
-
-  :init
-  (add-hook 'ceamx-after-init-hook #'dashboard-insert-startupify-lists)
-  (add-hook 'ceamx-after-init-hook #'dashboard-initialize)
-  ;; HACK: Work around <https://github.com/emacs-dashboard/emacs-dashboard/issues/499>
-  ;; (dashboard-setup-startup-hook)
-  (add-hook 'window-size-change-functions #'dashboard-resize-on-hook 100)
-  (add-hook 'window-setup-hook #'dashboard-resize-on-hook)
-
-  :config
-  (setopt dashboard-banner-logo-title "C E A M X")
-  (setopt dashboard-startup-banner 'official)
-  (setopt dashboard-projects-backend 'project-el)
-  (setopt dashboard-center-content t)
-  (setopt dashboard-display-icons-p t)
-  (setopt dashboard-icon-type 'nerd-icons)
-  ;; NOTE: This value results in a warning because `dashboard-items' specifies an
-  ;; incorrect `:type'. The value should be an alist, not a list of alists. At
-  ;; the time of writing, the value is copied directly from the package README.
-  ;; <https://github.com/emacs-dashboard/emacs-dashboard/issues/489>
-  (setopt dashboard-items '((recents  . 5)
-                             (bookmarks . 5)
-                             (projects . 5)
-                             (agenda . 5)
-                             (registers . 5))))
-
-(provide 'init-dashboard)
-;;; init-dashboard.el ends here
+  (setopt enlight-content
+          (concat (grid-get-box `(:align center :content "C E A M X" :width 80))
+                  enlight-calendar "\n"
+                  (grid-get-row
+                   (list (concat
+                          (propertize "MENU" 'face 'highlight) "\n"
+                          (enlight-menu '(("Org-Mode"
+                                           ("Agenda (current day)" (org-agenda nil "a") "a"))
+                                          ("Projects"
+                                           ("switch..." project-switch-project "p"))
+                                          ("Downloads"
+                                           ("~/Downloads/" (dired "~/Downloads") "a"))))))))))
 #+end_src
-
 
 * Dired, the Directory Editor
 

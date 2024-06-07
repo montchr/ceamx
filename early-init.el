@@ -87,9 +87,6 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 ;; No bells.
 (setq ring-bell-function #'ignore)
 
-;; Don't show the Emacs startup screen.
-(setq inhibit-startup-screen t)
-
 ;; Allow answering yes/no questions with y/n.
 (setq use-short-answers t)              ; affects `yes-or-no-p'
 (setq read-answer-short t)              ; affects `read-answer' (completion)
@@ -125,6 +122,9 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
   (set-frame-name ceamx-default-frame-name))
 
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
+(setq inhibit-startup-screen t)
+(setq initial-scratch-message nil)
+(setq initial-buffer-choice nil)
 
 (provide 'early-init)
 ;;; early-init.el ends here

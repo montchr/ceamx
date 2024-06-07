@@ -43,6 +43,7 @@
 (setopt custom-unlispify-menu-entries nil)
 (setopt custom-unlispify-tag-names nil)
 (setopt custom-unlispify-remove-prefixes nil)
+(package! (grid :host github :repo "ichernyshovvv/grid.el"))
 (package! hydra)
 (package! pretty-hydra)
 (package! transient)

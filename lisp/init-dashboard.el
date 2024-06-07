@@ -1,62 +1,61 @@
-;;; init-dashboard.el --- Dashboard support  -*- lexical-binding: t; -*-
+;;; init-dashboard.el --- Dashboard support  -*- lexical-binding: t;  -*-
 
-;; Copyright (C) 2024  Chris Montgomery
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
 
 ;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; This file is NOT part of GNU Emacs.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;; <https://github.com/emacs-dashboard/emacs-dashboard>
-
 ;;; Code:
 
-(require 'ceamx-paths)
+(package! enlight
+  (require 'enlight)
+  (setopt initial-buffer-choice #'enlight))
 
-(require 'ceamx-lib)
+(after! enlight
+  (require 'grid)
 
-(use-package dashboard
-  :ensure t
-  :demand t
-  :after (nerd-icons)
+  ;; FIXME: use theme palette
+  (defface enlight-yellow-bold
+    '((t (:foreground "#cabf00" :bold t)))
+    "Yellow bold face.")
 
-  :init
-  (add-hook 'ceamx-after-init-hook #'dashboard-insert-startupify-lists)
-  (add-hook 'ceamx-after-init-hook #'dashboard-initialize)
-  ;; HACK: Work around <https://github.com/emacs-dashboard/emacs-dashboard/issues/499>
-  ;; (dashboard-setup-startup-hook)
-  (add-hook 'window-size-change-functions #'dashboard-resize-on-hook 100)
-  (add-hook 'window-setup-hook #'dashboard-resize-on-hook)
+  (defvar enlight-calendar
+    (progn
+      (calendar)
+;;      (diary-mark-entries)
+      (prog1 (with-current-buffer (buffer-name (current-buffer))
+               (buffer-string))
+        (calendar-exit))))
 
-  :config
-  (setopt dashboard-banner-logo-title "C E A M X")
-  (setopt dashboard-startup-banner 'official)
-  (setopt dashboard-projects-backend 'project-el)
-  (setopt dashboard-center-content t)
-  (setopt dashboard-display-icons-p t)
-  (setopt dashboard-icon-type 'nerd-icons)
-  ;; NOTE: This value results in a warning because `dashboard-items' specifies an
-  ;; incorrect `:type'. The value should be an alist, not a list of alists. At
-  ;; the time of writing, the value is copied directly from the package README.
-  ;; <https://github.com/emacs-dashboard/emacs-dashboard/issues/489>
-  (setopt dashboard-items '((recents  . 5)
-                             (bookmarks . 5)
-                             (projects . 5)
-                             (agenda . 5)
-                             (registers . 5))))
+  (setopt enlight-content
+          (concat (grid-get-box `(:align center :content "C E A M X" :width 80))
+                  enlight-calendar "\n"
+                  (grid-get-row
+                   (list (concat
+                          (propertize "MENU" 'face 'highlight) "\n"
+                          (enlight-menu '(("Org-Mode"
+                                           ("Agenda (current day)" (org-agenda nil "a") "a"))
+                                          ("Projects"
+                                           ("switch..." project-switch-project "p"))
+                                          ("Downloads"
+                                           ("~/Downloads/" (dired "~/Downloads") "a"))))))))))
 
 (provide 'init-dashboard)
 ;;; init-dashboard.el ends here

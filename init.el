@@ -216,6 +216,9 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (when (display-graphic-p)
   (require 'init-ui-graphical))
+;;;; Dashboard
+
+(require 'init-dashboard)
 ;;;; Keyboard support
 
 (require 'init-keys)
@@ -228,9 +231,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;; FIXME: load earlier / in another section
 (require 'init-history)
-;;;; Dashboard
-
-(require 'init-dashboard)
 ;;;; Text Expansion
 
 (require 'init-abbrevs)
@@ -308,7 +308,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (require 'init-controls)
 
-(setopt initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
 (package! persistent-scratch
   ;; `with-demoted-errors' or `ignore-errors' wrapper is recommended by project
   ;; readme, as there will be an error if the autosave file does not exist.
