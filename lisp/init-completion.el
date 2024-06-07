@@ -65,19 +65,18 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (advice-add #'completing-read-multiple :filter-args #'+crm-indicator)
 (defvar savehist-additional-variables)
 (package! vertico
-  ;; Different scroll margin
   ;; (setopt vertico-scroll-margin 0)
-
-  ;; Show more candidates
-  ;; (setopt vertico-count 20)
-
-  ;; Grow and shrink the Vertico minibuffer
+  (setopt vertico-count 5)
   (setopt vertico-resize t)
-
   ;; Enable cycling for `vertico-next' and `vertico-previous'.
   (setopt vertico-cycle t)
 
   (vertico-mode))
+
+;; Avy-like candidate selection
+(after! vertico
+  (keymap-set vertico-map "M-q" #'vertico-quick-insert)
+  (keymap-set vertico-map "C-q" #'vertico-quick-exit))
 (after! vertico
   (advice-add #'vertico--format-candidate :around
     (lambda (orig cand prefix suffix index start)
@@ -87,7 +86,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
                 "  ")
               cand))))
 (after! vertico
-  ;; FIXME: why is this disabled? i miss it
+  ;; FIXME: why is this disabled?
   ;; via <https://github.com/minad/vertico/wiki#additions-for-moving-up-and-down-directories-in-find-file>
   ;; (defun ceamx/vertico-directory-delete-entry ()
   ;;   "Delete directory or entire entry before point."
@@ -112,6 +111,28 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (after! (vertico savehist)
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
   (add-to-list 'savehist-additional-variables #'vertico-repeat-history))
+;;   M-B -> `vertico-multiform-buffer'
+;;   M-F -> `vertico-multiform-flat'
+;;   M-G -> `vertico-multiform-grid'
+;;   M-R -> `vertico-multiform-reverse'
+;;   M-U -> `vertico-multiform-unobtrusive'
+;;   M-V -> `vertico-multiform-vertical'
+(after! vertico
+  ;; NOTE: Takes precedence over `vertico-multiform-categories'.
+  (setopt vertico-multiform-commands
+          `((consult-line buffer)
+           (consult-imenu reverse buffer)
+           (consult-outline buffer quick ,(lambda (_) (text-scale-set -1)))
+           (execute-extended-command flat)))
+
+  (setopt vertico-multiform-categories
+          '((file buffer grid)
+            (buffer flat (vertico-cycle . t))
+            (consult-grep buffer)
+            (imenu (:not indexed mouse))
+            (symbol (vertico-sort-function . vertico-sort-alpha))))
+
+  (vertico-multiform-mode))
 (package! consult)
 (setopt consult-narrow-key "<") ;; alternatively: "C-+"
 (setopt consult-preview-key 'any)
