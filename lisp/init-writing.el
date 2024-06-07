@@ -24,6 +24,10 @@
 ;;; Commentary:
 ;;; Code:
 
+;; Prevent excessive completion-spamming.
+;; Without this, on Emacs 30.0, typing causes constant `corfu' errors.
+;; <https://github.com/minad/corfu/discussions/457>
+(setopt text-mode-ispell-word-completion nil)
 (autoload 'global-jinx-mode "jinx")
 (autoload 'jinx-correct "jinx")
 (autoload 'jinx-languages "jinx")
