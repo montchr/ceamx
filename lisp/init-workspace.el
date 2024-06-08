@@ -26,10 +26,6 @@
 
 (require 'ceamx-lib)
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
-;; FIXME: restoring bookmark results in stray mini childframe (like that old
-;; embark issue)
-(package! burly
-  (require 'burly))
 (require 'ceamx-lib)
 
 (defun ceamx-after-init-define-activities-keys-h ()

@@ -6702,15 +6702,6 @@ writable or with a prefix argument, then read a file to visit."
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
 #+end_src
 
-** Burly
-
-#+begin_src emacs-lisp
-;; FIXME: restoring bookmark results in stray mini childframe (like that old
-;; embark issue)
-(package! burly
-  (require 'burly))
-#+end_src
-
 ** DISABLED Beframe
 :PROPERTIES:
 :header-args: :noweb-ref nil
