@@ -31,9 +31,51 @@
   (add-hook 'markdown-mode-hook #'pandoc-mode)
 
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
-
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 (package! mugur)
+(package! chatgpt-shell)
+
+(after! chatgpt-shell
+    (setopt chatgpt-shell-openai-key
+            (lambda ()
+              (auth-source-pass-get 'secret "openai-key"))))
+(require 'ceamx-paths)
+
+(package! hledger-mode
+  (setopt hledger-jfile ceamx-ledger-main-journal-file))
+(after! popper
+  (add-to-list 'popper-reference-buffers "\\*Personal Finance\\*"))
+(require 'lib-tools)
+
+(after! hledger-mode
+  (define-keymap :keymap hledger-mode-map
+    "C-c e" #'hledger-jentry
+    ;; NOTE: Overrides global binding for completion-at-point/cape commands.
+    "M-p" #'ceamx/hledger-prev-entry
+    "M-n" #'ceamx/hledger-next-entry))
+(package! flycheck-hledger
+  (when (fboundp 'flycheck-mode)
+    (add-hook 'hledger-mode-hook #'flycheck-mode))
+
+  (setopt flycheck-hledger-strict t))
+(require 'lib-tools)
+
+(after! hledger-mode
+  (add-hook 'hledger-mode-hook #'+hledger-accounts-capf-h))
+(require 'ceamx-lib)
+
+(defvar pdf-tools-handle-upgrades nil)
+
+(after! pdf-tools
+  (dolist
+      (pkg
+       '(pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
+         pdf-links pdf-misc pdf-occur pdf-outline pdf-sync
+         pdf-util pdf-view pdf-virtual))
+    (require pkg))
+  (pdf-tools-install))
+;; (use-package saveplace-pdf-view
+;;   :defer 5)
 
 (provide 'init-tools)
 ;;; init-tools.el ends here

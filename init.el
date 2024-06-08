@@ -296,9 +296,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;;; Miscellaneous
 
 (require 'init-tools)
-(require 'init-tools-ai)
-(require 'init-tools-ledger)
-(require 'init-tools-pdf)
 
 (require 'init-term)
 (require 'init-eww)

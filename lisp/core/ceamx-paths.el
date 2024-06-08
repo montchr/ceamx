@@ -145,6 +145,7 @@ like \"tempo\", \"tempel\", and \"yasnippet\".")
   (expand-file-name "inbox.org" ceamx-agenda-dir)
   "Absolute path to default inbox file for new G2D waiting to be processed.")
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
+(defconst ceamx-ledger-main-journal-file (file-name-concat ceamx-ledger-dir "main.journal"))
 
 (provide 'ceamx-paths)
 ;;; ceamx-paths.el ends here

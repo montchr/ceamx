@@ -121,6 +121,29 @@ instead, use a =-flag= suffix or names like =is-foo=.
 
 ** Target Files
 
+*** =lisp/lib-tools.el=
+
+#+name: lib-tools-file
+#+begin_src emacs-lisp :tangle lisp/lib-tools.el
+<<file-prop-line(feature="lib-tools",desc="Library for miscellaneous tooling")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-tools>>
+
+<<file-footer(feature="lib-tools")>>
+#+end_src
+
+
 *** =early-init.el=
 
 #+name: early-init-file
@@ -996,6 +1019,29 @@ instead, use a =-flag= suffix or names like =is-foo=.
 
 <<file-footer(feature="init-writing")>>
 #+end_src
+
+*** =lisp/init-tools.el=
+
+#+name: init-tools-file
+#+begin_src emacs-lisp  :tangle lisp/init-tools.el
+<<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-tools>>
+
+<<file-footer(feature="init-tools")>>
+#+end_src
+
 
 ** Partials
 :PROPERTIES:
@@ -2254,9 +2300,6 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 ;;;; Miscellaneous
 
 (require 'init-tools)
-(require 'init-tools-ai)
-(require 'init-tools-ledger)
-(require 'init-tools-pdf)
 
 (require 'init-term)
 (require 'init-eww)
@@ -14023,36 +14066,6 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 
 
 * Tools
-
-** Target Files
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-#+name: init-tools-file
-#+begin_src emacs-lisp  :tangle lisp/init-tools.el
-<<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-tools>>
-
-<<file-footer(feature="init-tools")>>
-#+end_src
-
-
-** ~init-tools~: & utils
-
-*** Code: =init-tools.el=
 :PROPERTIES:
 :header-args: :noweb-ref init-tools
 :END:
@@ -14063,10 +14076,7 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 (require 'ceamx-lib)
 #+end_src
 
-
-**** ~pandoc-mode~
-
-<https://joostkremers.github.io/pandoc-mode/>
+** [[https://joostkremers.github.io/pandoc-mode/][Pandoc-mode]]: filetype conversion multitool
 
 #+begin_src emacs-lisp
 (package! pandoc-mode
@@ -14075,22 +14085,19 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 #+end_src
 
-**** ~unpackaged~: a library of useful yet unsubstantial Emacs Lisp code
-
-<https://github.com/alphapapa/unpackaged.el>
+** [[https://github.com/alphapapa/unpackaged.el][alphapapa/unpackaged.el]]: a library of useful yet "unsubstantial" Emacs Lisp code
 
 #+begin_src emacs-lisp
-
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 #+end_src
 
-**** ~mugur~: a configurator for QMK keyboards
+** ~mugur~: a configurator for QMK keyboards
 
 #+begin_src emacs-lisp
 (package! mugur)
 #+end_src
 
-**** DISABLED ~org-tanglesync~: sync tangled src blocks
+** DISABLED ~org-tanglesync~: sync tangled src blocks
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -14124,188 +14131,84 @@ pull in all of the existing =*.el= files to =config.org=!
 
 
 
-** ~init-tools-ai~: augementated intelligentry
+** Augementated Intelligentry (AI)
 
 Providing integrations with LLMs and other simulation machines.
 
-*** Customization
+M is not eager to board the train bound for Hype City.
 
-#+BEGIN_SRC emacs-lisp :tangle lisp/init-tools-ai.el
-;;; init-tools-ai.el --- Support for AI/LLM interaction  -*- lexical-binding: t; -*-
+*** [[https://github.com/xenodium/chatgpt-shell/blob/main/README.org][xenodium/chatgpt-shell]]
 
-;; Copyright (C) 2024  Chris Montgomery
+#+BEGIN_SRC emacs-lisp
+(package! chatgpt-shell)
 
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; <https://github.com/xenodium/chatgpt-shell/blob/main/README.org>
-
-;;; Code:
-
-(use-package chatgpt-shell
-  :ensure t
-  :config
-  (setopt chatgpt-shell-openai-key
-    (lambda ()
-      (auth-source-pass-get 'secret "openai-key"))))
-
-(provide 'init-tools-ai)
-;;; init-tools-ai.el ends here
+(after! chatgpt-shell
+    (setopt chatgpt-shell-openai-key
+            (lambda ()
+              (auth-source-pass-get 'secret "openai-key"))))
 #+END_SRC
 
+** Personal Finance with =hledger=
+:PROPERTIES:
+:header-args: :noweb-ref init-tools
+:END:
 
-** ~init-tools-ledger~: budgeting
+- website :: <https://hledger.org/>
+- docs :: <https://hledger.org/1.30/hledger.html#journal>
+- website :: <https://github.com/narendraj9/hledger-mode>
+
+*** Define important feature paths :paths:
 
 #+begin_src emacs-lisp :noweb-ref config-feature-paths
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
+(defconst ceamx-ledger-main-journal-file (file-name-concat ceamx-ledger-dir "main.journal"))
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-tools-ledger.el
-;;; init-tools-ledger.el --- Support for ledger      -*- lexical-binding: t; -*-
+*** Install ~hledger-mode~ :package:
 
-;; Copyright (C) 2024  Chris Montgomery
+#+begin_src emacs-lisp
+(require 'ceamx-paths)
 
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; <https://hledger.org/>
-;; <https://github.com/narendraj9/hledger-mode>
-;; <https://hledger.org/1.30/hledger.html#journal>
-
-;;; Code:
-
-(require 'ceamx-lib)
+(package! hledger-mode
+  (setopt hledger-jfile ceamx-ledger-main-journal-file))
 #+end_src
 
+*** Register buffers as popups :window:
 
-#+begin_src emacs-lisp :tangle lisp/init-tools-ledger.el
-(use-package hledger-mode
-  :mode ("\\.journal\\'" "\\.hledger\\'")
-  :commands (hledger-enable-reporting)
+#+begin_src emacs-lisp
+(after! popper
+  (add-to-list 'popper-reference-buffers "\\*Personal Finance\\*"))
+#+end_src
 
-  :preface
-  (defun ceamx/hledger-next-entry ()
-    "Move to next entry and pulse."
-    (interactive)
-    (hledger-next-or-new-entry)
-    (hledger-pulse-momentary-current-entry))
+*** Keybindings :kbd:
 
-  (defun ceamx/hledger-prev-entry ()
-    "Move to last entry and pulse."
-    (interactive)
-    (hledger-backward-entry)
-    (hledger-pulse-momentary-current-entry))
+#+begin_src emacs-lisp
+(require 'lib-tools)
 
-  ;; TODO: use theme values
-  ;; (defface hledger-warning-face
-  ;;   '((((background dark))
-  ;;      :background "Red" :foreground "White")
-  ;;     (((background light))
-  ;;      :background "Red" :foreground "White")
-  ;;     (t :inverse-video t))
-  ;;   "Face for warning"
-  ;;   :group 'hledger)
-
-  ;; (defun +hledger-view-mode-hl-freq-accts-h ()
-  ;;     "Highlight frequently-changing hledger accounts.
-  ;; For use as a hook on `hledger-view-mode-hook'."
-  ;;     (run-with-timer 1
-  ;;       nil
-  ;;       (lambda ()
-  ;;         (when (equal hledger-last-run-command
-  ;;                 "balancesheet")
-  ;;           ;; highlight frequently changing accounts
-  ;;           (highlight-regexp "^.*\\(savings\\|cash\\).*$")
-  ;;           (highlight-regexp "^.*credit-card.*$"
-  ;;             'hledger-warning-face)))))
-
-
-  (defun +hledger-accounts-completions ()
-    "Return completion candidates for hledger accounts."
-    (when-let ((bounds (and (boundp 'hledger-accounts-cache)
-                            (bounds-of-thing-at-point 'symbol))))
-      (list (car bounds) (point) hledger-accounts-cache)))
-
-  :init
-
-  (def-hook! +hledger-accounts-capf-h () '(hledger-mode-hook)
-    "Add hledger accounts to completion-at-point functions."
-    (add-hook 'completion-at-point-functions 'hledger-completion-accounts))
-
-  (setopt hledger-jfile (file-name-concat ceamx-ledger-dir "main.journal"))
-
-  ;; (setq hledger-email-secrets-file (expand-file-name "secrets.el" emacs-assets-directory))
-
-  ;; Expanded account balances in the overall monthly report are
-  ;; mostly noise and do not convey any meaningful information.
-  ;; (setopt hledger-show-expanded-report nil)
-
-  ;; TODO:
-  ;; (when (boundp 'my-hledger-service-fetch-url)
-  ;;   (setq hledger-service-fetch-url
-  ;;     my-hledger-service-fetch-url))
-
-  (dolist (fn '(hl-line-mode
-                ;; FIXME: possibly performance issue? emacs at constant 20% but
-                ;; probably unrelated
-                ;; +hledger-view-mode-hl-freq-accts-h
-
-                ;; TODO: ???
-                ;; center-text-for-reading
-                ))
-    (add-hook 'hledger-view-mode-hook fn))
-
-  :config
-  (push "\\*Personal Finance\\*" popper-reference-buffers)
-
+(after! hledger-mode
   (define-keymap :keymap hledger-mode-map
     "C-c e" #'hledger-jentry
     ;; NOTE: Overrides global binding for completion-at-point/cape commands.
     "M-p" #'ceamx/hledger-prev-entry
     "M-n" #'ceamx/hledger-next-entry))
+#+end_src
 
-(use-package flycheck-hledger
-  :after (flycheck hledger-mode)
+*** Register the =hledger= checker for =Flycheck= :checkers:
 
-  :init
-  (use-feature! flycheck
-    :commands (flycheck-mode)
-    :init
+#+begin_src emacs-lisp
+(package! flycheck-hledger
+  (when (fboundp 'flycheck-mode)
     (add-hook 'hledger-mode-hook #'flycheck-mode))
 
-  :config
   (setopt flycheck-hledger-strict t))
+#+end_src
 
+*** TODO =hledger-input= :package:
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+#+begin_src emacs-lisp
 ;; TODO
 ;; (use-package hledger-input
 ;;   ;; :pin manual
@@ -14330,87 +14233,84 @@ Providing integrations with LLMs and other simulation machines.
 ;;             (lambda ()
 ;;               (make-local-variable 'company-idle-delay)
 ;;               (setq-local company-idle-delay 0.1))))
+#+end_src
 
-(provide 'init-tools-ledger)
-;;; init-tools-ledger.el ends here
+*** Define =hledger= helper commands
+
+#+begin_src emacs-lisp :noweb-ref lib-tools
+(defun ceamx-finance/hledger-next-entry ()
+  "Move to next entry and pulse."
+  (interactive)
+  (declare-function hledger-next-or-new-entry "hledger-mode")
+  (declare-function hledger-pulse-momentary-current-entry "hledger-mode")
+
+  (hledger-next-or-new-entry)
+  (hledger-pulse-momentary-current-entry))
+
+(defun ceamx-finance/hledger-prev-entry ()
+  "Move to last entry and pulse."
+  (interactive)
+  (declare-function hledger-backward-entry "hledger-mode")
+  (declare-function hledger-pulse-momentary-current-entry "hledger-mode")
+
+  (hledger-backward-entry)
+  (hledger-pulse-momentary-current-entry))
+#+end_src
+
+*** Register completions for =hledger= data :capfs:
+
+#+begin_src emacs-lisp
+(require 'lib-tools)
+
+(after! hledger-mode
+  (add-hook 'hledger-mode-hook #'+hledger-accounts-capf-h))
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref lib-tools
+(defun +hledger-accounts-completion-at-point ()
+  "Return completion candidates for hledger accounts."
+
+  (when-let ((bounds (and (boundp 'hledger-accounts-cache)
+                          (bounds-of-thing-at-point 'symbol))))
+    (list (car bounds) (point) hledger-accounts-cache)))
+
+(defun +hledger-accounts-capf-h ()
+  "Add hledger accounts to `completion-at-point' functions."
+  (add-hook 'completion-at-point-functions
+            '+hledger-accounts-completion-at-point 20 t))
 #+end_src
 
 
-** ~init-tools-pdf~: PDF-Tools
 
-#+begin_src emacs-lisp :tangle lisp/init-tools-pdf.el
-;;; init-tools-pdf.el --- Support for working with PDF files  -*- lexical-binding: t; -*-
+** PDF-Tools
 
-;; Copyright (C) 2024  Chris Montgomery
+- website :: <https://github.com/vedang/pdf-tools>
+- ref :: <https://github.com/jwiegley/dot-emacs/blob/master/init.org>
 
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local, docs
+~pdf-tools~ should be installed installed via Nixpkgs because it requires
+some separate binaries.
 
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; <https://github.com/vedang/pdf-tools>
-
-;;; Sources:
-
-;; <https://github.com/jwiegley/dot-emacs/blob/master/init.org>
-
-;; ~pdf-tools~ should be installed installed via Nixpkgs because it requires
-;; some separate binaries.
-
-;; TODO: <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'ceamx-lib)
 
-(use-feature! pdf-tools
-  :magic ("%PDF" . pdf-view-mode)
-  :custom
-  (pdf-tools-handle-upgrades nil)
-  :config
+(defvar pdf-tools-handle-upgrades nil)
+
+(after! pdf-tools
   (dolist
-    (pkg
-      '(pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
+      (pkg
+       '(pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
          pdf-links pdf-misc pdf-occur pdf-outline pdf-sync
          pdf-util pdf-view pdf-virtual))
     (require pkg))
   (pdf-tools-install))
+#+end_src
 
-;; (use-package pdf-tools
-;;   :commands (pdf-tools-install)
+** TODO <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
+** TODO =saveplace-pdf-view=
 
-;;   :init
-;;   (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode))
-;;   (add-to-list 'magic-mode-alist '("%PDF" . pdf-view-mode))
-
-;;   (setopt pdf-tools-handle-upgrades nil)
-;;   :config
-;;   (dolist
-;;     (pkg
-;;       '(pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
-;;          pdf-links pdf-misc pdf-occur pdf-outline pdf-sync
-;;          pdf-util pdf-view pdf-virtual))
-;;     (require pkg))
-;;   (pdf-tools-install))
-
+#+begin_src emacs-lisp
 ;; (use-package saveplace-pdf-view
 ;;   :defer 5)
-
-(provide 'init-tools-pdf)
-;;; init-tools-pdf.el ends here
 #+end_src
 
 
