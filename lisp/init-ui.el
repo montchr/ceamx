@@ -72,7 +72,7 @@
   (setopt modus-themes-mixed-fonts t)
   (setopt modus-themes-variable-pitch-ui nil)
   (setopt modus-themes-disable-other-themes t)
-  (setopt modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted))
+  (setopt modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi))
 
   (setopt modus-themes-headings
           '((agenda-structure . (variable-pitch light 2.2))
@@ -225,8 +225,8 @@
   "Predicate whether a desktop environment is displaying a dark appearance."
   (or (ceamx-ui-gsettings-dark-theme-p)))
 (elpaca-wait)
-(setopt ceamx-ui-theme-light 'modus-operandi)
-(setopt ceamx-ui-theme-dark 'modus-vivendi-tinted)
+(setopt ceamx-ui-theme-light 'modus-operandi-tinted)
+(setopt ceamx-ui-theme-dark 'modus-vivendi)
 (if (ceamx-ui-desktop-dark-theme-p)
     (ceamx-ui/load-dark-theme)
   (ceamx-ui/load-light-theme))

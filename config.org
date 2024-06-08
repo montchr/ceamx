@@ -3741,7 +3741,7 @@ not retain the generic background set by the function
   (setopt modus-themes-mixed-fonts t)
   (setopt modus-themes-variable-pitch-ui nil)
   (setopt modus-themes-disable-other-themes t)
-  (setopt modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted))
+  (setopt modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi))
 
   (setopt modus-themes-headings
           '((agenda-structure . (variable-pitch light 2.2))
@@ -4091,8 +4091,8 @@ Wait until all the theme support is available:
 Configure some user options dependent on the loaded packages:
 
 #+begin_src emacs-lisp
-(setopt ceamx-ui-theme-light 'modus-operandi)
-(setopt ceamx-ui-theme-dark 'modus-vivendi-tinted)
+(setopt ceamx-ui-theme-light 'modus-operandi-tinted)
+(setopt ceamx-ui-theme-dark 'modus-vivendi)
 #+end_src
 
 ~circadian~ has been broken lately, causing lockups/crashes.  In such a situation,
