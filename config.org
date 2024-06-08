@@ -4244,7 +4244,7 @@ Emacs =master= branch.  ~tab-bar-mode~ is that important to me.  Emacs 30 seems
 stable enough so far.
 
 #+begin_src emacs-lisp
-(when (version< emacs-version "30.0")
+(unless (version< emacs-version "30")
   (tab-bar-mode 1))
 #+end_src
 

@@ -282,7 +282,7 @@
   (keymap-global-unset "C-z" t))
 (menu-bar-mode -1)
 (undelete-frame-mode 1)
-(when (version< emacs-version "30.0")
+(unless (version< emacs-version "30")
   (tab-bar-mode 1))
 (modify-all-frames-parameters
  ;; NOTE: `org-modern', whose readme provided this example, initially had these
