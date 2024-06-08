@@ -49,6 +49,15 @@
 ;;; Commentary:
 ;;; Code:
 
+(defun ceamx/cycle-string-inflection ()
+  "Cycle through `string-inflection' styles appropriate to the major-mode."
+  (interactive)
+  (pcase major-mode
+    (`emacs-lisp-mode (string-inflection-all-cycle))
+    (`python-mode (string-inflection-python-style-cycle))
+    (`java-mode (string-inflection-java-style-cycle))
+    (`elixir-mode (string-inflection-elixir-style-cycle))
+    (_ (string-inflection-ruby-style-cycle))))
 (defun ceamx/continue-comment ()
   "Continue current comment, preserving trailing whitespace.
 This differs from `default-indent-new-line' in the following way:

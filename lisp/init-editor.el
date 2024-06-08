@@ -46,6 +46,14 @@
 
 (keymap-global-set "M-Q" #'repunctuate-sentences)
 (global-subword-mode -1)
+(require 'lib-editor)
+
+(package! string-inflection)
+
+(defvar-keymap ceamx-string-repeat-map
+  :repeat t
+
+  "c" #'ceamx/cycle-string-inflection)
 (setopt comment-auto-fill-only-comments nil)
 
 (def-hook! +prog-mode-auto-fill-comments-only-h ()

@@ -5820,6 +5820,32 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 (global-subword-mode -1)
 #+end_src
 
+** ~string-inflection~: Commands to cycle through word casing
+
+#+begin_src emacs-lisp
+(require 'lib-editor)
+
+(package! string-inflection)
+
+(defvar-keymap ceamx-string-repeat-map
+  :repeat t
+
+  "c" #'ceamx/cycle-string-inflection)
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref lib-editor
+(defun ceamx/cycle-string-inflection ()
+  "Cycle through `string-inflection' styles appropriate to the major-mode."
+  (interactive)
+  (pcase major-mode
+    (`emacs-lisp-mode (string-inflection-all-cycle))
+    (`python-mode (string-inflection-python-style-cycle))
+    (`java-mode (string-inflection-java-style-cycle))
+    (`elixir-mode (string-inflection-elixir-style-cycle))
+    (_ (string-inflection-ruby-style-cycle))))
+#+end_src
+
+
 ** Automatically wrap text at ~fill-column~ in some contexts
 
 #+begin_src emacs-lisp
