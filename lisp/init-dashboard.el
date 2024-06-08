@@ -26,20 +26,19 @@
 
 (package! enlight
   (require 'enlight)
-  (setopt initial-buffer-choice #'enlight))
 
+  (setopt initial-buffer-choice #'enlight))
+;; FIXME: use theme palette
+(defface enlight-yellow-bold
+  '((t (:foreground "#cabf00" :bold t)))
+  "Yellow bold face.")
 (after! enlight
   (require 'grid)
-
-  ;; FIXME: use theme palette
-  (defface enlight-yellow-bold
-    '((t (:foreground "#cabf00" :bold t)))
-    "Yellow bold face.")
 
   (defvar enlight-calendar
     (progn
       (calendar)
-;;      (diary-mark-entries)
+      ;;      (diary-mark-entries)
       (prog1 (with-current-buffer (buffer-name (current-buffer))
                (buffer-string))
         (calendar-exit))))
@@ -51,11 +50,24 @@
                    (list (concat
                           (propertize "MENU" 'face 'highlight) "\n"
                           (enlight-menu '(("Org-Mode"
-                                           ("Agenda (current day)" (org-agenda nil "a") "a"))
-                                          ("Projects"
-                                           ("switch..." project-switch-project "p"))
-                                          ("Downloads"
-                                           ("~/Downloads/" (dired "~/Downloads") "a"))))))))))
+                                           ("Agenda (current day)" (org-agenda nil "a") "A"))
+                                          ("Contexts"
+                                           ("Activity..." activities-resume "a")
+                                           ("Project..." project-switch-project "p"))
+                                          ("Open"
+                                           ("~/Downloads/" (dired "~/Downloads") "d"))))))))))
+;;;; TODO: not yet working, might not be do-able in the early days of `enlight'
+
+;; (keymap-set enlight-mode-map "a" (define-prefix-command '+enlight-menu-a-prefix))
+
+;; (grid-get-column (list (propertize "[ACTIVITIES]" 'face 'highlight)
+;;                        `(:content ,(enlight-menu `(("Seadome"
+;;                                                     ()
+;;                                                     ("CEAMX" (activities-resume (activities-named "ceamx")) "a c")
+;;                                                     ("Dotfield" (activities-resume (activities-named  "dotfield") "a d")))
+;;                                                   ("Kleinweb"
+;;                                                    ("TUTV" (activities-resume (activities-named "tutv")) "a w 1"))))
+;;                          :width 50)))
 
 (provide 'init-dashboard)
 ;;; init-dashboard.el ends here

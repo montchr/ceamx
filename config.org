@@ -13403,28 +13403,37 @@ What even is this though...?
 #+end_src
 
 
-* Dashboard
+* Dashboard (powered by =enlight=)
 :PROPERTIES:
 :header-args: :noweb-ref init-dashboard
 :END:
 
+** Install and activate =enlight=
+
 #+begin_src emacs-lisp
 (package! enlight
   (require 'enlight)
-  (setopt initial-buffer-choice #'enlight))
 
+  (setopt initial-buffer-choice #'enlight))
+#+end_src
+
+** Define dashboard-specific faces :faces:
+
+#+begin_src emacs-lisp
+;; FIXME: use theme palette
+(defface enlight-yellow-bold
+  '((t (:foreground "#cabf00" :bold t)))
+  "Yellow bold face.")
+#+end_src
+
+#+begin_src emacs-lisp
 (after! enlight
   (require 'grid)
-
-  ;; FIXME: use theme palette
-  (defface enlight-yellow-bold
-    '((t (:foreground "#cabf00" :bold t)))
-    "Yellow bold face.")
 
   (defvar enlight-calendar
     (progn
       (calendar)
-;;      (diary-mark-entries)
+      ;;      (diary-mark-entries)
       (prog1 (with-current-buffer (buffer-name (current-buffer))
                (buffer-string))
         (calendar-exit))))
@@ -13436,11 +13445,27 @@ What even is this though...?
                    (list (concat
                           (propertize "MENU" 'face 'highlight) "\n"
                           (enlight-menu '(("Org-Mode"
-                                           ("Agenda (current day)" (org-agenda nil "a") "a"))
-                                          ("Projects"
-                                           ("switch..." project-switch-project "p"))
-                                          ("Downloads"
-                                           ("~/Downloads/" (dired "~/Downloads") "a"))))))))))
+                                           ("Agenda (current day)" (org-agenda nil "a") "A"))
+                                          ("Contexts"
+                                           ("Activity..." activities-resume "a")
+                                           ("Project..." project-switch-project "p"))
+                                          ("Open"
+                                           ("~/Downloads/" (dired "~/Downloads") "d"))))))))))
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; TODO: not yet working, might not be do-able in the early days of `enlight'
+
+;; (keymap-set enlight-mode-map "a" (define-prefix-command '+enlight-menu-a-prefix))
+
+;; (grid-get-column (list (propertize "[ACTIVITIES]" 'face 'highlight)
+;;                        `(:content ,(enlight-menu `(("Seadome"
+;;                                                     ()
+;;                                                     ("CEAMX" (activities-resume (activities-named "ceamx")) "a c")
+;;                                                     ("Dotfield" (activities-resume (activities-named  "dotfield") "a d")))
+;;                                                   ("Kleinweb"
+;;                                                    ("TUTV" (activities-resume (activities-named "tutv")) "a w 1"))))
+;;                          :width 50)))
 #+end_src
 
 * Dired, the Directory Editor
