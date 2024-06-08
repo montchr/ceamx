@@ -55,13 +55,9 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 (package! activities
   (activities-mode)
-  ;; Unfortunately, due to the `tab-bar-mode' display bug in Emacs 29 (see
-  ;; `init-workspace'), I am avoiding `tab-bar-mode'.  Though I really would
-  ;; like to use it, the bug is just too distracting and impossible to work
-  ;; around.
-  (unless (version< emacs-version "30.0")
-    (when tab-bar-mode
-      (activities-tabs-mode)))
+
+  (when tab-bar-mode
+    (activities-tabs-mode))
 
   (add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h))
 (package! breadcrumb

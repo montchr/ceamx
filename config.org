@@ -4182,12 +4182,29 @@ fall back to loading a theme based on the desktop environment appearance:
 *** General frame configuration
 
 #+begin_src emacs-lisp
-;; Disable the frame menu bar by default
 (menu-bar-mode -1)
-
-;; Enable the resurrection of frames with ~undelete-frame~
 (undelete-frame-mode 1)
 #+end_src
+
+*** Enable ~tab-bar-mode~ in Emacs 30
+
+- ref :: <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+
+~tab-bar-mode~ is currently broken in Emacs 29 due to upstream bug.  The fix is
+present on the =master= branch (Emacs 30), but it will not be backported.
+
+Unfortunately, the bug is impossibly distracting.  So I am avoiding
+`tab-bar-mode' on Emacs 29.
+
+As of <2024-06-06>, I am using the =nix-community/emacs-overlay#emacs-pgtk= package tracking the
+Emacs =master= branch.  ~tab-bar-mode~ is that important to me.  Emacs 30 seems
+stable enough so far.
+
+#+begin_src emacs-lisp
+(when (version< emacs-version "30.0")
+  (tab-bar-mode 1))
+#+end_src
+
 
 *** Add frame borders and window dividers
 
@@ -6675,9 +6692,6 @@ writable or with a prefix argument, then read a file to visit."
 :header-args: :noweb-ref init-workspace
 :END:
 
-FIXME: `tab-bar-mode' is currently broken due to upstream Emacs 29 bug
-<https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-
 ** Requirements
 
 #+begin_src emacs-lisp
@@ -6767,13 +6781,9 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 (package! activities
   (activities-mode)
-  ;; Unfortunately, due to the `tab-bar-mode' display bug in Emacs 29 (see
-  ;; `init-workspace'), I am avoiding `tab-bar-mode'.  Though I really would
-  ;; like to use it, the bug is just too distracting and impossible to work
-  ;; around.
-  (unless (version< emacs-version "30.0")
-    (when tab-bar-mode
-      (activities-tabs-mode)))
+
+  (when tab-bar-mode
+    (activities-tabs-mode))
 
   (add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h))
 #+end_src
@@ -8585,7 +8595,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
   (add-to-list 'savehist-additional-variables #'vertico-repeat-history))
 #+end_src
-
 
 *** Fine-tune Vertico appearance per-command or per-category
 

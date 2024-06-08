@@ -280,11 +280,10 @@
 
   ;; Stop C-z from minimizing windows.
   (keymap-global-unset "C-z" t))
-;; Disable the frame menu bar by default
 (menu-bar-mode -1)
-
-;; Enable the resurrection of frames with ~undelete-frame~
 (undelete-frame-mode 1)
+(when (version< emacs-version "30.0")
+  (tab-bar-mode 1))
 (modify-all-frames-parameters
  ;; NOTE: `org-modern', whose readme provided this example, initially had these
  ;; set to 40.  but on <%tuvok%>, 40 looked absolutely ridiclous.  i figured i
