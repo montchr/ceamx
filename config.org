@@ -5778,7 +5778,7 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 (require 'lib-simple)
 #+end_src
 
-*** Enable some commands that Emacs disables by default
+** Enable some commands that Emacs disables by default
 
 #+begin_src emacs-lisp
 (dolist (cmd '(downcase-region
@@ -5787,21 +5787,21 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   (put cmd 'disabled nil))
 #+end_src
 
-*** ~ceamx-insert-map~: [C-c i] keymap for inserting insertables
+** ~ceamx-insert-map~: [C-c i] keymap for inserting insertables
 
 #+begin_src emacs-lisp
 (keymap-global-set "C-c i" #'ceamx-insert-map)
 #+end_src
 
-*** Replace region when inserting text
+** Replace region when inserting text
 
 #+begin_src emacs-lisp
 (delete-selection-mode 1)
 #+end_src
 
-**** TODO Meow does not seem to respect ~delete-selection-mode~?
+*** TODO Meow does not seem to respect ~delete-selection-mode~?
 
-*** Improve sentence legibility and parsing with double-spaced ending
+** Improve sentence legibility and parsing with double-spaced ending
 
 #+begin_src emacs-lisp
 ;; Yes, it may appear strange and archaic, and yet... I realized that I actually
@@ -5814,13 +5814,13 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 (keymap-global-set "M-Q" #'repunctuate-sentences)
 #+end_src
 
-*** Don't consider camelCaseWORDs as separate words
+** Don't consider camelCaseWORDs as separate words
 
 #+begin_src emacs-lisp
 (global-subword-mode -1)
 #+end_src
 
-*** Automatically wrap text at ~fill-column~ in some contexts
+** Automatically wrap text at ~fill-column~ in some contexts
 
 #+begin_src emacs-lisp
 (setopt comment-auto-fill-only-comments nil)
@@ -5834,7 +5834,7 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   (add-hook mode-hook #'auto-fill-mode))
 #+end_src
 
-*** Provide commands to "unfill" text
+** Provide commands to "unfill" text
 
 - Website :: <https://github.com/purcell/unfill>
 
@@ -5843,13 +5843,13 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   (keymap-global-set "M-q" #'unfill-toggle))
 #+end_src
 
-*** Comments
+** Comments
 
 #+begin_src emacs-lisp
 (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
 #+end_src
 
-**** ~ceamx/continue-comment~
+*** ~ceamx/continue-comment~
 :PROPERTIES:
 :header-args: :noweb-ref lib-editor
 :END:
@@ -5876,7 +5876,7 @@ two inserted lines are the same."
     (default-indent-new-line)))
 #+end_src
 
-*** Semantic pair matching :pairs:
+** Semantic pair matching :pairs:
 
 See the Info node [[info:emacs#Matching]]
 
@@ -5896,7 +5896,7 @@ See the Info node [[info:emacs#Matching]]
 (show-paren-mode 1)
 #+end_src
 
-**** Set up a keymap for common usages of ~insert-pair~
+*** Set up a keymap for common usages of ~insert-pair~
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-pairs-map
@@ -5915,13 +5915,13 @@ See the Info node [[info:emacs#Matching]]
 (keymap-set ceamx-insert-map "P" ceamx-pairs-map)
 #+end_src
 
-*** Formatting :formatting:
+** Formatting :formatting:
 
 #+begin_src emacs-lisp
 (setopt require-final-newline t)
 #+end_src
 
-**** ~whitespace-mode~ [builtin]: visualize whitespace
+*** ~whitespace-mode~ [builtin]: visualize whitespace
 
 This mode is buffer-local. It might be undesireable in some cases, so enable
 it selectively.
@@ -5937,7 +5937,7 @@ it selectively.
           missing-newline-at-eof))
 #+end_src
 
-**** Indentation
+*** Indentation
 
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
@@ -5945,19 +5945,19 @@ it selectively.
 (setopt backward-delete-char-untabify-method 'untabify)
 #+end_src
 
-***** ~electric-indent-mode~ [builtin]: Emacs' best attempt at automatic indentation
+**** ~electric-indent-mode~ [builtin]: Emacs' best attempt at automatic indentation
 
 #+begin_src emacs-lisp
 (electric-indent-mode 1)
 #+end_src
 
-**** Delete trailing whitespace before saving files
+*** Delete trailing whitespace before saving files
 
 #+begin_src emacs-lisp
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
 #+end_src
 
-**** ~editorconfig~: EditorConfig integration
+*** ~editorconfig~: EditorConfig integration
 
 #+begin_src emacs-lisp
 ;; <https://editorconfig.org>
@@ -5968,7 +5968,7 @@ it selectively.
   (add-hook 'on-first-file-hook #'editorconfig-mode))
 #+end_src
 
-***** Prevent ~editorconfig~ from exploding ~org-mode~ buffers
+**** Prevent ~editorconfig~ from exploding ~org-mode~ buffers
 
 #+begin_src emacs-lisp
 ;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
@@ -5988,16 +5988,16 @@ PROPS is as in `editorconfig-after-apply-functions'."
             #'+editorconfig-enforce-org-mode-tab-width-h))
 #+end_src
 
-**** [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT
+*** [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT
 
 #+begin_src emacs-lisp
 (package! reformatter
   (require 'reformatter))
 #+end_src
 
-***** Configure generalized polyglot formatters
+**** Configure generalized polyglot formatters
 
-****** =prettier=
+***** =prettier=
 
 - Source :: <https://github.com/akirak/flake-templates/blob/629b04932dc71e3e0213d66a0aa8a08cd0b64922/README.md#emacs>
 
@@ -6011,7 +6011,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
                 "--stdin-filepath" (buffer-file-name))))
 #+end_src
 
-****** =biome=
+***** =biome=
 
 - Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
 
@@ -6025,9 +6025,9 @@ not yet exist for Eglot (only LSP-Mode).
     :args (list "format" "--stdin-file-path" (buffer-file-name))))
 #+end_src
 
-***** TODO Inhibit on-save formatting with prefix argument
+**** TODO Inhibit on-save formatting with prefix argument
 
-**** [[https://github.com/radian-software/apheleia][radian-software/apheleia]]: opinionated code reformatting
+*** [[https://github.com/radian-software/apheleia][radian-software/apheleia]]: opinionated code reformatting
 
 In case you run into issues with ~web-mode~ not updating syntax highlighting after
 formatting (or other arbitrary modifications):
@@ -6042,7 +6042,7 @@ formatting (or other arbitrary modifications):
   (blackout 'apheleia-mode " Aph"))
 #+end_src
 
-***** Inhibit automatic formatting in some contexts
+**** Inhibit automatic formatting in some contexts
 
 Unlike ~reformatter~, ~apheleia~ will /always/ run if it can.  A blessing and a curse.
 This section handles the curse.
@@ -6074,7 +6074,7 @@ non-nil, buffers will never be formatted upon save."
   (add-to-list 'apheleia-inhibit-functions #'ceamx-editor-format-maybe-inhibit-h))
 #+end_src
 
-***** Inhibit on-save formatting with prefix argument
+**** Inhibit on-save formatting with prefix argument
 
 - Source :: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
 
@@ -6086,7 +6086,7 @@ non-nil, buffers will never be formatted upon save."
     (funcall func)))
 #+end_src
 
-**** Use the Biome formatter for supported major modes :lang:
+*** Use the Biome formatter for supported major modes :lang:
 
 - Reference :: <https://biomejs.dev/internals/language-support/>
 
@@ -6118,7 +6118,7 @@ As of <2024-05-24 Fri>
     (add-to-list 'apheleia-mode-alist '(mode . biome))))
 #+end_src
 
-*** ~puni~: versatile structured editing
+** ~puni~: versatile structured editing
 
 <https://github.com/AmaiKinono/puni>
 
@@ -6145,7 +6145,7 @@ As of <2024-05-24 Fri>
 ;; )
 #+end_src
 
-*** ~drag-stuff~: drag stuff around in arbitrary directions
+** ~drag-stuff~: drag stuff around in arbitrary directions
 
 <https://github.com/rejeep/drag-stuff.el>
 
@@ -6163,14 +6163,14 @@ As of <2024-05-24 Fri>
 #+end_src
 
 
-**** Issues
+*** Issues
 
 Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
 recent versions of Emacs:
 
 <https://github.com/rejeep/drag-stuff.el/issues/36>
 
-**** Alternatives
+*** Alternatives
 
 I haven't yet found any other package to move arbitrary regions up/down while
 preserving column position.
@@ -6180,7 +6180,7 @@ this but fails pretty badly, moving the region/selection to the first column
 regardless of its original position.
 #+end_src
 
-*** ~rect~ [builtin]: operate on a buffer rectangularly
+** ~rect~ [builtin]: operate on a buffer rectangularly
 
 <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
 
@@ -6222,7 +6222,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
 #+end_src
 
-*** ~multiple-cursors~: Sublime-esque multi-cursor editing
+** ~multiple-cursors~: Sublime-esque multi-cursor editing
 
 <https://github.com/magnars/multiple-cursors.el>
 
@@ -6264,7 +6264,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       ("q" nil))))
 #+end_src
 
-*** ~easy-kill~
+** ~easy-kill~
 
 <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
@@ -6288,7 +6288,7 @@ b => buffer name
   )
 #+end_src
 
-*** ~ialign~: Interactively ~align-regexp~
+** ~ialign~: Interactively ~align-regexp~
 
 <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
 
@@ -6297,7 +6297,7 @@ b => buffer name
   (keymap-global-set "C-x l" #'ialign))
 #+end_src
 
-*** Structural editing
+** Structural editing
 
 Prepare a prefix commands for binding structural editing commands:
 
@@ -6315,7 +6315,7 @@ Prepare a prefix commands for binding structural editing commands:
           (const :tag "Puni" puni)))
 #+end_src
 
-**** Structural editing with ~puni~
+*** Structural editing with ~puni~
 
 Work in progress.
 
@@ -6380,7 +6380,7 @@ its bindings generally would need ~puni-mode~ to be active.
 
 #+end_src
 
-*** Miscellaneous keybindings
+** Miscellaneous keybindings
 
 #+begin_src emacs-lisp
 (keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
