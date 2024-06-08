@@ -8610,8 +8610,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (setopt vertico-multiform-commands
           `((consult-line buffer)
            (consult-imenu reverse buffer)
-           (consult-outline buffer quick ,(lambda (_) (text-scale-set -1)))
-           (execute-extended-command flat)))
+           (consult-outline buffer quick ,(lambda (_) (text-scale-set -1)))))
 
   (setopt vertico-multiform-categories
           '((file buffer grid)
