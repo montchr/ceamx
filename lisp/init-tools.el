@@ -33,7 +33,8 @@
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 (package! mugur)
-(package! chatgpt-shell)
+(package! chatgpt-shell
+  (setopt chatgpt-shell-root-path ceamx-tools-chatgpt-shell-cache-dir))
 
 (after! chatgpt-shell
     (setopt chatgpt-shell-openai-key

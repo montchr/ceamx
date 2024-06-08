@@ -14076,8 +14076,15 @@ M is not eager to board the train bound for Hype City.
 
 *** [[https://github.com/xenodium/chatgpt-shell/blob/main/README.org][xenodium/chatgpt-shell]]
 
+#+begin_src emacs-lisp :noweb-ref config-feature-paths
+(defconst ceamx-tools-chatgpt-shell-cache-dir
+  (file-name-as-directory (concat ceamx-var-dir "chatgpt-shell")))
+#+end_src
+
+
 #+BEGIN_SRC emacs-lisp
-(package! chatgpt-shell)
+(package! chatgpt-shell
+  (setopt chatgpt-shell-root-path ceamx-tools-chatgpt-shell-cache-dir))
 
 (after! chatgpt-shell
     (setopt chatgpt-shell-openai-key

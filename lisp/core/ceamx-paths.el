@@ -144,6 +144,8 @@ like \"tempo\", \"tempel\", and \"yasnippet\".")
 (defconst ceamx-default-capture-file
   (expand-file-name "inbox.org" ceamx-agenda-dir)
   "Absolute path to default inbox file for new G2D waiting to be processed.")
+(defconst ceamx-tools-chatgpt-shell-cache-dir
+  (file-name-as-directory (concat ceamx-var-dir "chatgpt-shell")))
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
 (defconst ceamx-ledger-main-journal-file (file-name-concat ceamx-ledger-dir "main.journal"))
 
