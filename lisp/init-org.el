@@ -34,6 +34,26 @@
 (f-mkdir-full-path org-directory)
 
 (setopt org-agenda-files ceamx-default-agenda-files)
+(package! doct
+  (require 'doct))
+
+(with-eval-after-load 'doct
+  (declare-function doct "doct")
+
+  (setopt org-capture-templates
+          (doct `(("Inbox"
+                   :keys "t"
+                   ;; TODO: make sure this icon spec is up to date with 2024
+                   :icon ("checklist" :set "octicon" :color "green")
+                   ;; TODO: should this be evaled/expanded?
+                   :file ceamx-default-capture-file
+                   :prepend t
+                   :headline "Inbox"
+                   :type entry
+                   :template ("* TODO %?"
+                              "%i %a"))))))
+(package! org-ql)
+(package! org-contrib)
 (setopt org-structure-template-alist
         '(("s" . "src")
           ("e" . "src emacs-lisp")
@@ -43,14 +63,13 @@
           ("x" . "example")
           ("X" . "export")
           ("q" . "quote")))
-(setopt org-special-ctrl-a/e t)
 ;; Instead of forcing this always, use the function
 ;; `org-insert-heading-respect-content' directly, bound to [C-<return>].
 (setopt org-insert-heading-respect-content nil)
 
 (setopt org-M-RET-may-split-line nil)
+(setopt org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
 ;; (setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
-;; (setopt org-blank-before-new-entry nil)
 
 (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 (package! org-modern
@@ -58,8 +77,9 @@
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
-(setopt org-pretty-entities t)
-(setopt org-pretty-entities-include-sub-superscripts nil)
+(setopt org-pretty-entities t
+        org-pretty-entities-include-sub-superscripts nil)
+
 (setopt org-hide-emphasis-markers t)
 (setopt org-link-descriptive t)
 
@@ -104,6 +124,9 @@
           " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
 (setopt org-agenda-current-time-string
         "⭠ now ─────────────────────────────────────────────────")
+(package! org-super-agenda
+  ;; FIXME: probably can use autoloads instead
+  (require 'org-super-agenda))
 (setopt org-auto-align-tags nil)
 (setopt org-tags-column 0)
 
@@ -122,75 +145,9 @@
 (setopt org-reverse-note-order t)       ; prepend new notes
 (setopt org-image-actual-width 300)
 (setopt org-startup-with-inline-images t)
-(setopt org-return-follows-link t)
-(keymap-global-set "C-c c" #'org-capture)
-
-(define-keymap :keymap ceamx-launch-map
-  "a" #'org-agenda
-  "c" #'org-capture)
-(with-eval-after-load 'org
-  (define-keymap :keymap org-mode-map
-    "C-c <up>" #'org-priority-up
-    "C-c <down>" #'org-priority-down
-
-    ;; "C-c l" #'org-store-link
-
-    ;; Kill subtree or table region.
-    "C-c s k" #'org-cut-special
-    "C-M-S-w" #'org-cut-special
-
-    ;; Swap these around, as I am more likely to adjust subtree than insert an
-    ;; arbitrary date from the calendar.
-    "C-c <" #'org-promote-subtree
-    "C-c C-<" #'org-date-from-calendar
-    "C-c >" #'org-demote-subtree
-    "C-c C->" #'org-goto-calendar
-
-    "C-M-<return>" #'org-insert-subheading
-
-    ;; Override the global binding to `narrow-to-region', which is disabled by
-    ;; default.  I have not once (yet) wanted to actually use `narrow-to-regin',
-    ;; but I do often type "C-x n n" in `org-mode', expecting the behavior of
-    ;; `org-narrow-to-subtree'.  That's a waste of a potential DWIM key
-    ;; sequence.d
-    "C-x n n" #'org-narrow-to-subtree
-
-    ;; Mnemonic is the global key to goto definition/references.  Without this,
-    ;; C finds Elph using this unavailingly in src blocks.
-    "M-." #'org-edit-special ; also: C-c '
-
-    ;; Override earlier binding to `consult-outline'.
-    "M-g o" #'consult-org-heading))
-(with-eval-after-load 'org
-  (keymap-set org-mode-map "C-c t l" #'org-toggle-link-display))
-;; While nil is the default value, it must be set explicitly to opt-in.
-(setopt org-support-shift-select nil)
-;; TODO: Activate with a dedicated easy-to-access binding...
-;;       Maybe the same binding for other per-major mode navigation maps?
-(defvar-keymap org-mode-navigation-repeat-map :repeat t
-               ;; Double-edged sword; quick, but gets in the way usually.
-               ;; "TAB" #'org-cycle
-               ;; "S-TAB" #'org-cycle-global
-
-               "C-n" #'org-next-visible-heading
-               "C-p" #'org-previous-visible-heading
-               "C-f" #'org-forward-heading-same-level
-               "C-b" #'org-backward-heading-same-level
-               "C-u" #'outline-up-heading
-
-               "n" #'org-next-visible-heading
-               "p" #'org-previous-visible-heading
-               "f" #'org-forward-heading-same-level
-               "b" #'org-backward-heading-same-level
-               "u" #'outline-up-heading
-
-               "H" #'org-promote-subtree
-               "J" #'org-move-subtree-down
-               "K" #'org-move-subtree-up
-               "L" #'org-demote-subtree
-
-               "<" #'org-promote-subtree
-               ">" #'org-demote-subtree)
+(package! org-download
+  (require 'org-download)
+  (add-hook 'dired-mode-hook #'org-download-enable))
 (defun +org-mode--local-set-tab-width-h ()
   "Set the `tab-width' in `org-mode' buffers to 8 columns.
 Any `tab-width' value other than 8 will result in an error.
@@ -212,50 +169,13 @@ Intended for use as a local hook function on
   'org-mode-hook
   "Add a local hook to control `tab-width' on `after-change-major-mode-hook'."
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
-(package! doct
-  (require 'doct))
-
-(with-eval-after-load 'doct
-  (declare-function doct "doct")
-
-  (setopt org-capture-templates
-          (doct `(("Inbox"
-                   :keys "t"
-                   ;; TODO: make sure this icon spec is up to date with 2024
-                   :icon ("checklist" :set "octicon" :color "green")
-                   ;; TODO: should this be evaled/expanded?
-                   :file ceamx-default-capture-file
-                   :prepend t
-                   :headline "Inbox"
-                   :type entry
-                   :template ("* TODO %?"
-                              "%i %a"))))))
-(package! org-ql)
-(after! org
-  (keymap-set org-mode-map "C-c C-w" #'org-ql-refile))
-(package! org-super-agenda
-  ;; FIXME: probably can use autoloads instead
-  (require 'org-super-agenda))
-(package! org-download
-  (require 'org-download)
-  (add-hook 'dired-mode-hook #'org-download-enable))
-(package! org-rich-yank
-  (with-eval-after-load 'org-download
-    (require 'org-rich-yank)
-
-    (keymap-set org-mode-map "C-M-y" #'org-rich-yank)))
 (package! org-web-tools
   (keymap-set ceamx-insert-map "l" #'org-web-tools-insert-link-for-url))
-(package! (auto-tangle-mode
-           :host github
-           :repo "progfolio/auto-tangle-mode.el")
-  (autoload 'auto-tangle-mode "auto-tangle-mode"))
 (package! org-sidebar)
 (package! org-bookmark-heading
   (setopt org-bookmark-jump-indirect t)
   (after! org
     (require 'org-bookmark-heading)))
-(package! org-contrib)
 ;; Changing the indentation of source code is unhelpful and destructive.
 (setopt org-edit-src-content-indentation 0)
 
@@ -277,6 +197,87 @@ Intended for use as a local hook function on
       (add-to-list 'org-babel-load-languages (cons (intern language) t))
       (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
     (apply orig-fun args)))
+(package! (auto-tangle-mode
+           :host github
+           :repo "progfolio/auto-tangle-mode.el")
+  (autoload 'auto-tangle-mode "auto-tangle-mode"))
+(package! org-rich-yank
+  (with-eval-after-load 'org-download
+    (require 'org-rich-yank)
+
+    (keymap-set org-mode-map "C-M-y" #'org-rich-yank)))
+(keymap-global-set "C-c c" #'org-capture)
+
+(define-keymap :keymap ceamx-launch-map
+  "a" #'org-agenda
+  "c" #'org-capture)
+(setopt org-return-follows-link t)
+(setopt org-special-ctrl-a/e t)
+;; While nil is the default value, it must be set explicitly to opt-in.
+(setopt org-support-shift-select nil)
+(with-eval-after-load 'org
+  (define-keymap :keymap org-mode-map
+    "C-c <up>" #'org-priority-up
+    "C-c <down>" #'org-priority-down
+
+    ;; "C-c l" #'org-store-link
+
+    ;; Kill subtree or table region.
+    "C-c s k" #'org-cut-special
+    "C-M-S-w" #'org-cut-special
+
+    ;; Swap these around, as I am more likely to adjust subtree than insert an
+    ;; arbitrary date from the calendar.
+    "C-c <" #'org-promote-subtree
+    "C-c C-<" #'org-date-from-calendar
+    "C-c >" #'org-demote-subtree
+    "C-c C->" #'org-goto-calendar
+
+    ;; C-c t :: `ceamx-toggle-map'
+    "C-c t l" #'org-toggle-link-display
+
+    "C-M-<return>" #'org-insert-subheading
+
+    ;; Override the global binding to `narrow-to-region', which is disabled by
+    ;; default.  I have not once (yet) wanted to actually use `narrow-to-regin',
+    ;; but I do often type "C-x n n" in `org-mode', expecting the behavior of
+    ;; `org-narrow-to-subtree'.  That's a waste of a potential DWIM key
+    ;; sequence.d
+    "C-x n n" #'org-narrow-to-subtree
+
+    ;; Mnemonic is the global key to goto definition/references.  Without this,
+    ;; C finds Elph using this unavailingly in src blocks.
+    "M-." #'org-edit-special ; also: C-c '
+
+    ;; Override earlier binding to `consult-outline'.
+    "M-g o" #'consult-org-heading))
+;; TODO: Activate with a dedicated easy-to-access binding...
+;;       Maybe the same binding for other per-major mode navigation maps?
+(defvar-keymap org-mode-navigation-repeat-map
+  :repeat t
+  ;; Double-edged sword; quick, but gets in the way usually.
+  ;; "TAB" #'org-cycle
+  ;; "S-TAB" #'org-cycle-global
+
+  "C-n" #'org-next-visible-heading
+  "C-p" #'org-previous-visible-heading
+  "C-f" #'org-forward-heading-same-level
+  "C-b" #'org-backward-heading-same-level
+  "C-u" #'outline-up-heading
+
+  "n" #'org-next-visible-heading
+  "p" #'org-previous-visible-heading
+  "f" #'org-forward-heading-same-level
+  "b" #'org-backward-heading-same-level
+  "u" #'outline-up-heading
+
+  "H" #'org-promote-subtree
+  "J" #'org-move-subtree-down
+  "K" #'org-move-subtree-up
+  "L" #'org-demote-subtree
+
+  "<" #'org-promote-subtree
+  ">" #'org-demote-subtree)
 
 (provide 'init-org)
 ;;; init-org.el ends here

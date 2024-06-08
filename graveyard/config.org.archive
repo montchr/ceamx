@@ -1,0 +1,120 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /home/cdom/.config/emacs/config.org
+* 2024
+** 2024-03 March
+*** 2024-03-18 Monday
+**** CANCELLED Fix no-cycle when press TAB at headline EOL
+CLOSED: [2024-03-18 Mon 23:53]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-08 Sat 16:56
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Org-Mode/Tasks
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:END:
+
+- State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:53] \\
+  Works as intended.
+I think this happens because when there is folded content EOL is considered
+part of that folded content, so the TAB press is technically not on the
+headline.
+
+**** DONE Figure out why completion is broken
+CLOSED: [2024-03-18 Mon 23:51]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-08 Sat 16:56
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Org-Mode/Tasks
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:END:
+
+- State "DONE"       from "TODO"       [2024-03-18 Mon 23:51]
+Answer: I was expecting Corfu's Elisp completion in this Org file buffer, but
+mode-specific completion will only work once opening the src block in an
+indirect buffer with ~org-edit-src-code~.
+
+However, it would still be nice if I could get symbol completion inside of
+inline code markup.
+
+**** CANCELLED Figure out why Elisp source blocks are broken
+CLOSED: [2024-03-18 Mon 23:52]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-08 Sat 16:56
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Org-Mode/Tasks
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:END:
+
+- State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:52] \\
+  Not "broken", just misunderstood.
+
+
+** 2024-05 May
+*** 2024-05-20 Monday
+**** DONE Only add languages upon initially encountering its =src= block
+CLOSED: [2024-05-20 Mon 23:36]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-08 Sat 16:51
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Org-Mode/Literate programming with Org-Babel/Load other supported languages on-demand during execution
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:END:
+
+- State "DONE"       from "TODO"       [2024-05-20 Mon 23:36]
+**** DONE Meow overwrites repeat-mode?
+CLOSED: [2024-05-20 Mon 23:38]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-08 Sat 16:56
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Org-Mode/Tasks
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:END:
+
+- State "DONE"       from "TODO"       [2024-05-20 Mon 23:38]
+**** DONE Repeat-mode for navigating tree
+CLOSED: [2024-05-20 Mon 23:38]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-08 Sat 16:56
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Org-Mode/Tasks
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:END:
+
+
+
+- State "DONE"       from "TODO"       [2024-05-20 Mon 23:38]
+- Note taken on [2024-03-18 Mon 23:52] \\
+  I saw some post on Reddit about an integration with Meow for this purpose the
+  other day... not sure if I saved it though.
+
+
+** 2024-06 June
+*** 2024-06-08 Saturday
+**** CANCELLED Expand ~org-mode-navigation-repeat-map~ based on ~org-speed-commands~
+CLOSED: [2024-06-08 Sat 16:55]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-08 Sat 16:56
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Org-Mode/Tasks
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:END:
+- State "CANCELLED"  from "TODO"       [2024-06-08 Sat 16:55] \\
+  I don't even remember what this means, but I like the repeat map so far.
+**** DONE [#B] Bind ~org-insert-subheading~
+CLOSED: [2024-06-08 Sat 16:55]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-08 Sat 16:56
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Org-Mode/Tasks
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:END:
+- State "DONE"       from "TODO"       [2024-06-08 Sat 16:55]

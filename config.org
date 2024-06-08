@@ -12817,7 +12817,7 @@ Else create a new file."
 (require 'ceamx-lib)
 #+END_SRC
 
-** Set up essential files & directories
+** Set up essential files & directories :paths:
 
 #+begin_src emacs-lisp :noweb-ref config-feature-paths
 (defconst ceamx-default-agenda-files
@@ -12861,7 +12861,49 @@ conflict when Syncthing tries to take control of these paths.
 (setopt org-agenda-files ceamx-default-agenda-files)
 #+END_SRC
 
-** Define structure templates
+** Install common libraries
+*** ~doct~: ~org-capture~ template definer :package:
+
+<https://github.com/progfolio/doct>
+
+#+BEGIN_SRC emacs-lisp
+(package! doct
+  (require 'doct))
+
+(with-eval-after-load 'doct
+  (declare-function doct "doct")
+
+  (setopt org-capture-templates
+          (doct `(("Inbox"
+                   :keys "t"
+                   ;; TODO: make sure this icon spec is up to date with 2024
+                   :icon ("checklist" :set "octicon" :color "green")
+                   ;; TODO: should this be evaled/expanded?
+                   :file ceamx-default-capture-file
+                   :prepend t
+                   :headline "Inbox"
+                   :type entry
+                   :template ("* TODO %?"
+                              "%i %a"))))))
+#+END_SRC
+
+*** ~org-ql~ :package:
+
+<https://github.com/alphapapa/org-ql>
+
+#+BEGIN_SRC emacs-lisp
+(package! org-ql)
+#+END_SRC
+
+*** ~org-contrib~: community library :package:
+
+<https://orgmode.org/worg/org-contrib/>
+
+#+begin_src emacs-lisp
+(package! org-contrib)
+#+end_src
+
+** Define structure templates :snippets:
 
 #+begin_src emacs-lisp
 (setopt org-structure-template-alist
@@ -12885,23 +12927,18 @@ unexpected changes to the content (depending on the setting of
 ~org-catch-invisible-edits~.
 
 #+BEGIN_SRC emacs-lisp
-(setopt org-special-ctrl-a/e t)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
 ;; Instead of forcing this always, use the function
 ;; `org-insert-heading-respect-content' directly, bound to [C-<return>].
 (setopt org-insert-heading-respect-content nil)
 
 (setopt org-M-RET-may-split-line nil)
+(setopt org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
 ;; (setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
-;; (setopt org-blank-before-new-entry nil)
 
 (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 #+END_SRC
 
-** Appearance
-*** Activate visual overhaul provided by ~org-modern~
+** Activate visual overhaul provided by ~org-modern~ :package:ui:
 
 <https://github.com/minad/org-modern>
 
@@ -12911,18 +12948,16 @@ unexpected changes to the content (depending on the setting of
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 #+END_SRC
 
-*** Text formatting
+** Text appearance :font:ui:
 
 <https://github.com/minad/org-modern#configuration>
 
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
-(setopt org-pretty-entities t)
-(setopt org-pretty-entities-include-sub-superscripts nil)
-#+end_src
+(setopt org-pretty-entities t
+        org-pretty-entities-include-sub-superscripts nil)
 
-#+begin_src emacs-lisp
 (setopt org-hide-emphasis-markers t)
 (setopt org-link-descriptive t)
 
@@ -12930,7 +12965,7 @@ unexpected changes to the content (depending on the setting of
   (add-hook 'org-mode-hook #'org-appear-mode))
 #+end_src
 
-*** Folding and indentation
+** Folding and indentation
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-cycle-emulate-tab t)
@@ -12951,7 +12986,7 @@ unexpected changes to the content (depending on the setting of
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 #+END_SRC
 
-*** Workflow and state settings
+** Workflow and state settings
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-log-done 'time)
@@ -12967,7 +13002,7 @@ unexpected changes to the content (depending on the setting of
            "CANCELLED(x@/!)")))
 #+END_SRC
 
-*** Visual feedback after actions
+** Display visual feedback after actions :feedback:
 
 - Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
 
@@ -12978,7 +13013,7 @@ unexpected changes to the content (depending on the setting of
     (add-hook hook #'pulsar-reveal-entry)))
 #+end_src
 
-*** Agenda
+** Agenda
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-agenda-tags-column 0)
@@ -12991,7 +13026,19 @@ unexpected changes to the content (depending on the setting of
         "⭠ now ─────────────────────────────────────────────────")
 #+END_SRC
 
-*** Tags
+*** ~org-super-agenda~
+
+<https://github.com/alphapapa/org-super-agenda>
+
+TODO: Configure
+
+#+BEGIN_SRC emacs-lisp
+(package! org-super-agenda
+  ;; FIXME: probably can use autoloads instead
+  (require 'org-super-agenda))
+#+END_SRC
+
+** Tags
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-auto-align-tags nil)
@@ -13000,7 +13047,7 @@ unexpected changes to the content (depending on the setting of
 (setopt org-fold-catch-invisible-edits 'show-and-error) ; default: smart
 #+END_SRC
 
-*** Refiling and Archiving
+** Refiling and Archiving
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 2))
@@ -13017,7 +13064,7 @@ unexpected changes to the content (depending on the setting of
 (setopt org-reverse-note-order t)       ; prepend new notes
 #+END_SRC
 
-**** TODO Provide commands to archive DONE tasks
+*** TODO Provide commands to archive DONE tasks
 
 | Author | Sacha Chua                                                                                 |
 | URL    | <https://pages.sachachua.com/.emacs.d/Sacha.html#quick-way-to-archive-all-done-from-inbox> |
@@ -13050,124 +13097,24 @@ I don't think this is working properly...
    "TODO=\"DONE\"|TODO=\"CANCELLED\"" (or scope (if (org-before-first-heading-p) 'file 'tree))))
 #+end_src
 
-*** Images
+** Rich Media
 
 #+BEGIN_SRC emacs-lisp
 (setopt org-image-actual-width 300)
 (setopt org-startup-with-inline-images t)
 #+END_SRC
 
-*** Keybindings
+*** ~org-download~: support dragging-and-dropping images into Org buffers :media:network:package:
+
+<https://github.com/abo-abo/org-download>
 
 #+BEGIN_SRC emacs-lisp
-(setopt org-return-follows-link t)
+(package! org-download
+  (require 'org-download)
+  (add-hook 'dired-mode-hook #'org-download-enable))
 #+END_SRC
 
-#+begin_src emacs-lisp
-(keymap-global-set "C-c c" #'org-capture)
-
-(define-keymap :keymap ceamx-launch-map
-  "a" #'org-agenda
-  "c" #'org-capture)
-#+end_src
-
-#+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'org
-  (define-keymap :keymap org-mode-map
-    "C-c <up>" #'org-priority-up
-    "C-c <down>" #'org-priority-down
-
-    ;; "C-c l" #'org-store-link
-
-    ;; Kill subtree or table region.
-    "C-c s k" #'org-cut-special
-    "C-M-S-w" #'org-cut-special
-
-    ;; Swap these around, as I am more likely to adjust subtree than insert an
-    ;; arbitrary date from the calendar.
-    "C-c <" #'org-promote-subtree
-    "C-c C-<" #'org-date-from-calendar
-    "C-c >" #'org-demote-subtree
-    "C-c C->" #'org-goto-calendar
-
-    "C-M-<return>" #'org-insert-subheading
-
-    ;; Override the global binding to `narrow-to-region', which is disabled by
-    ;; default.  I have not once (yet) wanted to actually use `narrow-to-regin',
-    ;; but I do often type "C-x n n" in `org-mode', expecting the behavior of
-    ;; `org-narrow-to-subtree'.  That's a waste of a potential DWIM key
-    ;; sequence.d
-    "C-x n n" #'org-narrow-to-subtree
-
-    ;; Mnemonic is the global key to goto definition/references.  Without this,
-    ;; C finds Elph using this unavailingly in src blocks.
-    "M-." #'org-edit-special ; also: C-c '
-
-    ;; Override earlier binding to `consult-outline'.
-    "M-g o" #'consult-org-heading))
-#+END_SRC
-
-**** Toggleables
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'org
-  (keymap-set org-mode-map "C-c t l" #'org-toggle-link-display))
-#+end_src
-
-**** Support the special shifted-arrow-key commands
-
-#+begin_src emacs-lisp
-;; While nil is the default value, it must be set explicitly to opt-in.
-(setopt org-support-shift-select nil)
-#+end_src
-
-From the documentation for that setting:
-
-#+begin_quote
-Shifted cursor keys will then execute Org commands in the following contexts:
-
-- on a headline, changing TODO state (left/right) and priority (up/down)
-- on a time stamp, changing the time
-- in a plain list item, changing the bullet type
-- in a property definition line, switching between allowed values
-- in the BEGIN line of a clock table (changing the time block).
-- in a table, moving the cell in the specified direction.
-
-Outside these contexts, the commands will throw an error.
-#+end_quote
-
-**** Make Org tree navigation commands repeatable
-
-#+begin_src emacs-lisp
-;; TODO: Activate with a dedicated easy-to-access binding...
-;;       Maybe the same binding for other per-major mode navigation maps?
-(defvar-keymap org-mode-navigation-repeat-map :repeat t
-               ;; Double-edged sword; quick, but gets in the way usually.
-               ;; "TAB" #'org-cycle
-               ;; "S-TAB" #'org-cycle-global
-
-               "C-n" #'org-next-visible-heading
-               "C-p" #'org-previous-visible-heading
-               "C-f" #'org-forward-heading-same-level
-               "C-b" #'org-backward-heading-same-level
-               "C-u" #'outline-up-heading
-
-               "n" #'org-next-visible-heading
-               "p" #'org-previous-visible-heading
-               "f" #'org-forward-heading-same-level
-               "b" #'org-backward-heading-same-level
-               "u" #'outline-up-heading
-
-               "H" #'org-promote-subtree
-               "J" #'org-move-subtree-down
-               "K" #'org-move-subtree-up
-               "L" #'org-demote-subtree
-
-               "<" #'org-promote-subtree
-               ">" #'org-demote-subtree)
-#+end_src
-
-*** Enforce the correct ~tab-width~ to prevent errors
+** Enforce the correct ~tab-width~ to prevent errors :hack:formatting:
 
 <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
 
@@ -13195,73 +13142,78 @@ Intended for use as a local hook function on
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
 #+END_SRC
 
-*** Capture
-
-**** ~doct~: ~org-capture~ template definer
-
-<https://github.com/progfolio/doct>
+** ~org-web-tools~: view, capture, and archive webpages in org-mode :package:network:web:
 
 #+BEGIN_SRC emacs-lisp
-(package! doct
-  (require 'doct))
-
-(with-eval-after-load 'doct
-  (declare-function doct "doct")
-
-  (setopt org-capture-templates
-          (doct `(("Inbox"
-                   :keys "t"
-                   ;; TODO: make sure this icon spec is up to date with 2024
-                   :icon ("checklist" :set "octicon" :color "green")
-                   ;; TODO: should this be evaled/expanded?
-                   :file ceamx-default-capture-file
-                   :prepend t
-                   :headline "Inbox"
-                   :type entry
-                   :template ("* TODO %?"
-                              "%i %a"))))))
+(package! org-web-tools
+  (keymap-set ceamx-insert-map "l" #'org-web-tools-insert-link-for-url))
 #+END_SRC
 
-*** Packages
+** ~org-sidebar~: provide a sidebar for Org buffers :package:
 
-*** ~org-ql~
-
-<https://github.com/alphapapa/org-ql>
+<https://github.com/alphapapa/org-sidebar>
 
 #+BEGIN_SRC emacs-lisp
-(package! org-ql)
+(package! org-sidebar)
 #+END_SRC
 
-*** Prefer the refiling interface provided by ~org-ql-refile~
+** ~org-bookmark-heading~: Support heading bookmarks :bookmarks:package:
 
 #+begin_src emacs-lisp
-(after! org
-  (keymap-set org-mode-map "C-c C-w" #'org-ql-refile))
+(package! org-bookmark-heading
+  (setopt org-bookmark-jump-indirect t)
+  (after! org
+    (require 'org-bookmark-heading)))
 #+end_src
 
-*** ~org-super-agenda~
-
-<https://github.com/alphapapa/org-super-agenda>
-
-TODO: Configure
+** Literate programming with Org-Babel
 
 #+BEGIN_SRC emacs-lisp
-(package! org-super-agenda
-  ;; FIXME: probably can use autoloads instead
-  (require 'org-super-agenda))
+;; Changing the indentation of source code is unhelpful and destructive.
+(setopt org-edit-src-content-indentation 0)
+
+(setopt org-edit-src-persistent-message nil)
+(setopt org-src-fontify-natively t)
+(setopt org-src-preserve-indentation t)
+(setopt org-src-tab-acts-natively t)
+;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
+;; (setopt org-src-window-setup 'current-window)
+(setopt org-src-window-setup 'other-window)
 #+END_SRC
 
-*** ~org-download~: support dragging-and-dropping images into Org buffers
+*** Ensure common languages are loaded
 
-<https://github.com/abo-abo/org-download>
+#+begin_src emacs-lisp
+(setopt org-babel-load-languages '((emacs-lisp . t)
+                                   (shell . t)
+                                   (sql . t)))
+#+end_src
+
+*** Load other supported languages on-demand during execution
+
++ source :: <https://github.com/Icy-Thought/emacs.d/blob/e9c75d87bf61c456b26332787cde27bdfc188830/config.org#org-babel-language-on-demand>
+
+#+begin_src emacs-lisp
+(def-advice! +org-babel-load-language-on-demand-a (orig-fun &rest args)
+  :around #'org-babel-execute-src-block
+  "Load language if needed before executing a source block."
+  (let ((language (org-element-property :language (org-element-at-point))))
+    (unless (cdr (assoc (intern language) org-babel-load-languages))
+      (add-to-list 'org-babel-load-languages (cons (intern language) t))
+      (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
+    (apply orig-fun args)))
+#+end_src
+
+*** ~auto-tangle-mode~: automatically tangle literate Org files :package:
 
 #+BEGIN_SRC emacs-lisp
-(package! org-download
-  (require 'org-download)
-  (add-hook 'dired-mode-hook #'org-download-enable))
+(package! (auto-tangle-mode
+           :host github
+           :repo "progfolio/auto-tangle-mode.el")
+  (autoload 'auto-tangle-mode "auto-tangle-mode"))
 #+END_SRC
 
-*** ~org-rich-yank~: surround pasted code with src-block markup
+*** ~org-rich-yank~: surround pasted code with src-block markup :package:
 
 <https://github.com/unhammer/org-rich-yank>
 
@@ -13281,138 +13233,123 @@ kill the selection again.
     (keymap-set org-mode-map "C-M-y" #'org-rich-yank)))
 #+END_SRC
 
-*** ~org-web-tools~: view, capture, and archive webpages in org-mode
-
-#+BEGIN_SRC emacs-lisp
-(package! org-web-tools
-  (keymap-set ceamx-insert-map "l" #'org-web-tools-insert-link-for-url))
-#+END_SRC
-
-*** ~auto-tangle-mode~: automatically tangle literate Org files
-
-#+BEGIN_SRC emacs-lisp
-(package! (auto-tangle-mode
-           :host github
-           :repo "progfolio/auto-tangle-mode.el")
-  (autoload 'auto-tangle-mode "auto-tangle-mode"))
-#+END_SRC
-
-*** ~org-sidebar~: provide a sidebar for Org buffers
-
-<https://github.com/alphapapa/org-sidebar>
-
-#+BEGIN_SRC emacs-lisp
-(package! org-sidebar)
-#+END_SRC
-
-*** ~org-bookmark-heading~: Support heading bookmarks
+** Keybindings :kbd:
 
 #+begin_src emacs-lisp
-(package! org-bookmark-heading
-  (setopt org-bookmark-jump-indirect t)
-  (after! org
-    (require 'org-bookmark-heading)))
+(keymap-global-set "C-c c" #'org-capture)
+
+(define-keymap :keymap ceamx-launch-map
+  "a" #'org-agenda
+  "c" #'org-capture)
 #+end_src
 
-*** Install the ~org-contrib~ community packages
-
-<https://orgmode.org/worg/org-contrib/>
-
-#+begin_src emacs-lisp
-(package! org-contrib)
-#+end_src
-
-*** Literate programming with Org-Babel
+*** Key-related settings
 
 #+BEGIN_SRC emacs-lisp
-;; Changing the indentation of source code is unhelpful and destructive.
-(setopt org-edit-src-content-indentation 0)
-
-(setopt org-edit-src-persistent-message nil)
-(setopt org-src-fontify-natively t)
-(setopt org-src-preserve-indentation t)
-(setopt org-src-tab-acts-natively t)
-;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
-;; (setopt org-src-window-setup 'current-window)
-(setopt org-src-window-setup 'other-window)
+(setopt org-return-follows-link t)
+(setopt org-special-ctrl-a/e t)
 #+END_SRC
 
-**** Ensure common languages are loaded
+*** Support the special shifted-arrow-key commands
 
 #+begin_src emacs-lisp
-(setopt org-babel-load-languages '((emacs-lisp . t)
-                                   (shell . t)
-                                   (sql . t)))
+;; While nil is the default value, it must be set explicitly to opt-in.
+(setopt org-support-shift-select nil)
 #+end_src
 
-**** Load other supported languages on-demand during execution
+From the documentation for that setting:
 
-+ source :: <https://github.com/Icy-Thought/emacs.d/blob/e9c75d87bf61c456b26332787cde27bdfc188830/config.org#org-babel-language-on-demand>
+#+begin_quote
+Shifted cursor keys will then execute Org commands in the following contexts:
+
+- on a headline, changing TODO state (left/right) and priority (up/down)
+- on a time stamp, changing the time
+- in a plain list item, changing the bullet type
+- in a property definition line, switching between allowed values
+- in the BEGIN line of a clock table (changing the time block).
+- in a table, moving the cell in the specified direction.
+
+Outside these contexts, the commands will throw an error.
+#+end_quote
+
+*** Org-Mode-specific keybindings
+
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'org
+  (define-keymap :keymap org-mode-map
+    "C-c <up>" #'org-priority-up
+    "C-c <down>" #'org-priority-down
+
+    ;; "C-c l" #'org-store-link
+
+    ;; Kill subtree or table region.
+    "C-c s k" #'org-cut-special
+    "C-M-S-w" #'org-cut-special
+
+    ;; Swap these around, as I am more likely to adjust subtree than insert an
+    ;; arbitrary date from the calendar.
+    "C-c <" #'org-promote-subtree
+    "C-c C-<" #'org-date-from-calendar
+    "C-c >" #'org-demote-subtree
+    "C-c C->" #'org-goto-calendar
+
+    ;; C-c t :: `ceamx-toggle-map'
+    "C-c t l" #'org-toggle-link-display
+
+    "C-M-<return>" #'org-insert-subheading
+
+    ;; Override the global binding to `narrow-to-region', which is disabled by
+    ;; default.  I have not once (yet) wanted to actually use `narrow-to-regin',
+    ;; but I do often type "C-x n n" in `org-mode', expecting the behavior of
+    ;; `org-narrow-to-subtree'.  That's a waste of a potential DWIM key
+    ;; sequence.d
+    "C-x n n" #'org-narrow-to-subtree
+
+    ;; Mnemonic is the global key to goto definition/references.  Without this,
+    ;; C finds Elph using this unavailingly in src blocks.
+    "M-." #'org-edit-special ; also: C-c '
+
+    ;; Override earlier binding to `consult-outline'.
+    "M-g o" #'consult-org-heading))
+#+END_SRC
+
+*** Tree navigation repeat map
 
 #+begin_src emacs-lisp
-(def-advice! +org-babel-load-language-on-demand-a (orig-fun &rest args)
-  :around #'org-babel-execute-src-block
-  "Load language if needed before executing a source block."
-  (let ((language (org-element-property :language (org-element-at-point))))
-    (unless (cdr (assoc (intern language) org-babel-load-languages))
-      (add-to-list 'org-babel-load-languages (cons (intern language) t))
-      (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
-    (apply orig-fun args)))
+;; TODO: Activate with a dedicated easy-to-access binding...
+;;       Maybe the same binding for other per-major mode navigation maps?
+(defvar-keymap org-mode-navigation-repeat-map
+  :repeat t
+  ;; Double-edged sword; quick, but gets in the way usually.
+  ;; "TAB" #'org-cycle
+  ;; "S-TAB" #'org-cycle-global
+
+  "C-n" #'org-next-visible-heading
+  "C-p" #'org-previous-visible-heading
+  "C-f" #'org-forward-heading-same-level
+  "C-b" #'org-backward-heading-same-level
+  "C-u" #'outline-up-heading
+
+  "n" #'org-next-visible-heading
+  "p" #'org-previous-visible-heading
+  "f" #'org-forward-heading-same-level
+  "b" #'org-backward-heading-same-level
+  "u" #'outline-up-heading
+
+  "H" #'org-promote-subtree
+  "J" #'org-move-subtree-down
+  "K" #'org-move-subtree-up
+  "L" #'org-demote-subtree
+
+  "<" #'org-promote-subtree
+  ">" #'org-demote-subtree)
 #+end_src
-
-***** DONE Only add languages upon initially encountering its =src= block
-CLOSED: [2024-05-20 Mon 23:36]
-
-- State "DONE"       from "TODO"       [2024-05-20 Mon 23:36]
-
 
 ** Resources
 *** [[https://github.com/james-stoup/emacs-org-mode-tutorial][GitHub - james-stoup/emacs-org-mode-tutorial: A primer for users trying to make sense of Org Mode]]
 
 
 ** Tasks
-
-*** TODO Expand ~org-mode-navigation-repeat-map~ based on ~org-speed-commands~
-*** DONE Meow overwrites repeat-mode?
-CLOSED: [2024-05-20 Mon 23:38]
-
-- State "DONE"       from "TODO"       [2024-05-20 Mon 23:38]
-*** CANCELLED Fix no-cycle when press TAB at headline EOL
-CLOSED: [2024-03-18 Mon 23:53]
-
-- State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:53] \\
-  Works as intended.
-I think this happens because when there is folded content EOL is considered
-part of that folded content, so the TAB press is technically not on the
-headline.
-
-*** DONE Repeat-mode for navigating tree
-CLOSED: [2024-05-20 Mon 23:38]
-
-
-
-- State "DONE"       from "TODO"       [2024-05-20 Mon 23:38]
-- Note taken on [2024-03-18 Mon 23:52] \\
-  I saw some post on Reddit about an integration with Meow for this purpose the
-  other day... not sure if I saved it though.
-
-*** TODO [#B] Bind ~org-insert-subheading~
-*** DONE Figure out why completion is broken
-CLOSED: [2024-03-18 Mon 23:51]
-
-- State "DONE"       from "TODO"       [2024-03-18 Mon 23:51]
-Answer: I was expecting Corfu's Elisp completion in this Org file buffer, but
-mode-specific completion will only work once opening the src block in an
-indirect buffer with ~org-edit-src-code~.
-
-However, it would still be nice if I could get symbol completion inside of
-inline code markup.
-
-*** CANCELLED Figure out why Elisp source blocks are broken
-CLOSED: [2024-03-18 Mon 23:52]
-
-- State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:52] \\
-  Not "broken", just misunderstood.
 
 *** TODO Org-Mode: electric-pair for equals-sign
 
