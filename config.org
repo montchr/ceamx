@@ -1360,6 +1360,15 @@ Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
 
 Or, perhaps more accurately: stuff that needs a better home.
 
+** TODO disable expensive remote operations in emacs 30+
+
+#+begin_src emacs-lisp
+(setopt remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
+(setopt remote-file-name-inhibit-auto-save t)                 ; Emacs 30
+#+end_src
+
+** TODO persistent scratch buffers
+
 #+begin_src emacs-lisp
 (package! persistent-scratch
   ;; `with-demoted-errors' or `ignore-errors' wrapper is recommended by project
