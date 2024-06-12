@@ -1360,6 +1360,40 @@ Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
 
 Or, perhaps more accurately: stuff that needs a better home.
 
+** TODO ~hippie-expand~
+
+#+begin_src emacs-lisp
+(setopt hippie-expand-verbose t
+        hippie-expand-dabbrev-skip-space t)
+#+end_src
+
+#+begin_src emacs-lisp
+;; These are mostly from the default value, for visibility.
+(setopt hippie-expand-try-functions-list
+        '(try-complete-file-name-partially
+          try-complete-file-name
+
+          ;; Remove `try-expand-all-abbrevs' to disable automatic abbrev expansion.
+          try-expand-all-abbrevs
+
+          try-expand-list
+
+          ;; TODO: enable for shell modes only?
+          ;; try-expand-line
+
+          try-expand-dabbrev            ; see: `dabbrev-expand'
+          try-expand-dabbrev-all-buffers
+          ;; try-expand-dabbrev-from-kill
+
+          ;; Redundant with `completion-at-point'... *except* in the literate
+          ;; config file, where elisp symbols won't normally be available.
+          ;; TODO: enable for config.org
+          ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
+          ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
+          ))
+#+end_src
+
+
 ** TODO disable expensive remote operations in emacs 30+
 
 #+begin_src emacs-lisp
