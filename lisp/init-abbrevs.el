@@ -28,20 +28,6 @@
 (when (file-exists-p abbrev-file-name)
   (quietly-read-abbrev-file))
 (setopt abbrev-suggest t)
-(defconst ceamx-abbrev-prefix-regexp
-  (rx (or bol
-          (1+ (any "\t ")))
-      (group-n 1
-        (or (seq (any ":;_") (0+ nonl))
-            (0+ nonl)))))
-(after! abbrev
-  (abbrev-table-put global-abbrev-table :regexp ceamx-abbrev-prefix-regexp)
-
-  (with-eval-after-load 'text-mode
-    (abbrev-table-put text-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp))
-
-  (with-eval-after-load 'org
-    (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
 (dolist (hook '(text-mode-hook prog-mode-hook git-commit-mode-hook))
   (add-hook hook #'abbrev-mode))
 
