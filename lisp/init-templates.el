@@ -75,6 +75,11 @@ Capf, such that it will be tried first."
 
   (defer! 2
     (yas-global-mode 1)))
+
+(after! yasnippet
+  ;; These must be functions, so we must wait until load.
+  (setopt yas-prompt-functions '(yas-completing-prompt
+                                 yas-no-prompt)))
 (package! yasnippet-snippets)
 (package! spdx
   (keymap-set ceamx-insert-map "L" #'spdx-insert-spdx))
