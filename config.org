@@ -8485,13 +8485,9 @@ Adapted from Prot's original version with the following changes:
 - Abstracted the regexp to a variable ~ceamx-abbrev-prefix-regexp~ for reuse
   across =abbrev-table= contexts.
 
-#+begin_src emacs-lisp
-(defconst ceamx-abbrev-prefix-regexp
-  (rx (or bol
-          (1+ (any "\t ")))
-      (group-n 1
-        (or (seq (any ":;_") (0+ nonl))
-            (0+ nonl)))))
+#+begin_src emacs-lisp :noweb-ref nil
+(defconst ceamx-abbrev-prefix-regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:_].*\\|.*\\)")
+
 (after! abbrev
   (abbrev-table-put global-abbrev-table :regexp ceamx-abbrev-prefix-regexp)
 
@@ -9122,20 +9118,11 @@ otherwise the icon size will likely not be accurate.
 **** Exclude some buffers and modes from ~dabbrev~ sources
 
 #+begin_src emacs-lisp
-;; FIXME: the `xr'-generated pattern below is mangled from:
-;; (setopt dabbrev-ignored-buffer-regexps
-;;         '("\\` "
-;;           "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?"))
-
 (setopt dabbrev-ignored-buffer-regexps
         (list
-         ;; TODO: what does this pattern represent?
-         ;;       why is it not same as eval result: (rx "` ")
+         ;; TODO: what does this pattern match?
          "\\` "
-         (rx line-start " ")
-         (rx (group (or (seq (opt (or "e" (seq "g" (opt "r")))) "tags")
-                        "gpath"))
-             (optional (group "<" (+ (any numeric)) ">")))))
+         "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?"))
 
 (after! dabbrev
   (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
