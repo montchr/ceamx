@@ -41,7 +41,14 @@
   ;; sizes best scale in multiples of 3-point increments. So, each height value
   ;; is a multiple of 3.
   (setopt fontaine-presets
-          `( (small
+          `( (tiny
+              :bold-weight medium
+              :default-height ,(pcase (system-name)
+                                (_ 78))
+              :default-weight ,(pcase (system-name)
+                                ("tuvok" 'light)
+                                (_ 'semilight)))
+             (small
               :bold-weight medium
               :default-height ,(pcase (system-name)
                                 (_ 90))
