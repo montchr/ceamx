@@ -1558,6 +1558,18 @@ Call the commands `ceamx/escape-url-line' and
     (ceamx/escape-url-region (region-beginning) (region-end))
     (ceamx/escape-url-line (line-beginning-position))))
 
+;;; Selections
+
+;; copied from `mc--mark-symbol-at-point'
+(defun ceamx/mark-symbol-at-point ()
+  "Select the symbol under cursor."
+  (interactive)
+  (when (not (use-region-p))
+    (let ((b (bounds-of-thing-at-point 'symbol)))
+      (goto-char (car b))
+      (set-mark (cdr b)))))
+
+
 (provide 'lib-simple)
 ;;; lib-simple.el ends here
 #+end_src
