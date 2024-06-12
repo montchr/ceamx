@@ -9157,9 +9157,11 @@ otherwise the icon size will likely not be accurate.
 (setopt dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p)
 #+end_src
 
-**** Override default ~dabbrev~ keybindings :keybinds:
+**** DISABLED Override default ~dabbrev~ keybindings :keybinds:
 
-#+begin_src emacs-lisp
+This was not my idea, and I would like to savor the full ~dabbrev~ experience
+
+#+begin_src emacs-lisp :noweb-ref nil
 (after! dabbrev
   ;; Swap M-/ and C-M-/
   (keymap-global-set "M-/" #'dabbrev-completion)

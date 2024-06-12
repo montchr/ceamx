@@ -394,10 +394,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
     (add-to-list 'dabbrev-ignored-buffer-modes mode)))
 (setopt dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p)
-(after! dabbrev
-  ;; Swap M-/ and C-M-/
-  (keymap-global-set "M-/" #'dabbrev-completion)
-  (keymap-global-set "C-M-/" #'dabbrev-expand))
 ;; FIXME: something is real messed up in here... i think probably these get
 ;; applied by a mode hook but then never removed...?
 
