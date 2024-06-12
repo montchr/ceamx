@@ -375,20 +375,11 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 (setopt dabbrev-upcase-means-case-search t)
-;; FIXME: the `xr'-generated pattern below is mangled from:
-;; (setopt dabbrev-ignored-buffer-regexps
-;;         '("\\` "
-;;           "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?"))
-
 (setopt dabbrev-ignored-buffer-regexps
         (list
-         ;; TODO: what does this pattern represent?
-         ;;       why is it not same as eval result: (rx "` ")
+         ;; TODO: what does this pattern match?
          "\\` "
-         (rx line-start " ")
-         (rx (group (or (seq (opt (or "e" (seq "g" (opt "r")))) "tags")
-                        "gpath"))
-             (optional (group "<" (+ (any numeric)) ">")))))
+         "\\(TAGS\\|tags\\|ETAGS\\|etags\\|GTAGS\\|GRTAGS\\|GPATH\\)\\(<[0-9]+>\\)?"))
 
 (after! dabbrev
   (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
