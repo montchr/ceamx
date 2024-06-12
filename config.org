@@ -10018,9 +10018,32 @@ Add the official snippets bundle:
 (package! yasnippet-snippets)
 #+end_src
 
+Configure integration between ~yasnippet~ and ~hippie-expand~:
+
+#+begin_src emacs-lisp
+(after! (yasnippet hippie-exp)
+  (declare-function yas-hippie-try-expand "yasnippet")
+
+  (add-hook 'hippie-expand-try-functions-list #'yas-hippie-try-expand -80))
+#+end_src
+
+Register keybindings:
+
+#+begin_src emacs-lisp
+(keymap-set ceamx-insert-map "s" #'yas-insert-snippet)
+
+(keymap-set ceamx-insert-map "S" #'yas-new-snippet)
+
+;; Bind `SPC' to `yas-expand' when snippet expansion available (it
+;; will still call `self-insert-command' otherwise).
+(after! yasnippet
+  (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand))
+#+end_src
+
 ** Reference
 *** Tempo Syntax
 
+- info :: [[info:autotype#Skeleton Language][(autotype) Skeleton Language]]
 - Source :: [[https://github.com/minad/tempel/blob/main/README.org#template-syntax][tempel/README.org at main · minad/tempel · GitHub]]
 
 All the Tempo syntax elements are fully supported. The syntax elements are described in detail in the docstring of ~tempo-define-template~  in tempo.el. We document the important ones here:

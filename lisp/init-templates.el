@@ -81,6 +81,18 @@ Capf, such that it will be tried first."
   (setopt yas-prompt-functions '(yas-completing-prompt
                                  yas-no-prompt)))
 (package! yasnippet-snippets)
+(after! (yasnippet hippie-exp)
+  (declare-function yas-hippie-try-expand "yasnippet")
+
+  (add-hook 'hippie-expand-try-functions-list #'yas-hippie-try-expand -80))
+(keymap-set ceamx-insert-map "s" #'yas-insert-snippet)
+
+(keymap-set ceamx-insert-map "S" #'yas-new-snippet)
+
+;; Bind `SPC' to `yas-expand' when snippet expansion available (it
+;; will still call `self-insert-command' otherwise).
+(after! yasnippet
+  (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand))
 (package! spdx
   (keymap-set ceamx-insert-map "L" #'spdx-insert-spdx))
 
