@@ -344,7 +344,8 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (setopt corfu-echo-delay '(0.5 . 0.25))
 
 (after! corfu
-  (corfu-echo-mode))
+  (unless corfu-popupinfo-mode
+    (corfu-echo-mode)))
 (setopt corfu-popupinfo-delay '(1.0 . 0.5))
 
 (after! corfu

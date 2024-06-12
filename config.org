@@ -9036,13 +9036,12 @@ These will be available when a ~corfu~ prompt is active.
 
 **** ~corfu-echo-mode~: Show candidate docs in echo area :messages:help:
 
-Probably redundant when ~corfu-popupinfo-mode~ is in use.
-
 #+begin_src emacs-lisp
 (setopt corfu-echo-delay '(0.5 . 0.25))
 
 (after! corfu
-  (corfu-echo-mode))
+  (unless corfu-popupinfo-mode
+    (corfu-echo-mode)))
 #+end_src
 
 **** ~corfu-popupinfo~: Display candidate docs or location in popup :ui:help:
