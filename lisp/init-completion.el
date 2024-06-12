@@ -410,7 +410,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     "Register Elisp src block symbol completions."
     (add-hook 'completion-at-point-functions #'cape-elisp-block 0 t))
 
-  ;; FIXME: weighted too high!
   (def-hook! +corfu-add-cape-dabbrev-h ()
     '(prog-mode-hook
       text-mode-hook
@@ -419,12 +418,13 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
       minibuffer-setup-hook
       eshell-mode-hook)
     "Register `dabbrev' completions."
-    (add-hook 'completion-at-point-functions #'cape-dabbrev 20 t))
+    (add-hook 'completion-at-point-functions #'cape-dabbrev 40 t))
 
+  ;; TODO: also for config.org
   (def-hook! +corfu-add-cape-elisp-symbol-h ()
     '(emacs-lisp-mode-hook)
     "Register Emacs Lisp symbol completions."
-    (add-to-list 'completion-at-point-functions #'cape-elisp-symbol))
+    (add-hook 'completion-at-point-functions #'cape-elisp-symbol 30 t))
 
   ;; (advice-add #'pcomplete-completions-at-point :around #'cape-wrap-nonexclusive)
 
