@@ -454,7 +454,10 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     "M-p w" #'cape-dict
     "M-p :" #'cape-emoji
     "M-p &" #'cape-sgml
-    ;; ref: <https://datatracker.ietf.org/doc/html/rfc1345>
+    ;; RFC 1345 -- Character Mnemonics and Character Sets
+    ;; <https://datatracker.ietf.org/doc/html/rfc1345#section-3>
+    ;; FIXME: no effect
+    ;; Example:	l* => λ
     "M-p r" #'cape-rfc1345))
 (after! comint
   (advice-add #'comint-completion-at-point :around #'cape-wrap-nonexclusive))
