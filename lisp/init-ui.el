@@ -127,7 +127,9 @@
                      ;; (underline-link-visited border)
                      )))
     (setopt modus-operandi-palette-overrides overrides
-            modus-vivendi-palette-overrides overrides)))
+            modus-operandi-tinted-palette-overrides overrides
+            modus-vivendi-palette-overrides overrides
+            modus-vivendi-tinted-palette-overrides overrides)))
 (defvar ceamx-font-headings-style-alist)
 (package! ef-themes
   (require 'ef-themes)

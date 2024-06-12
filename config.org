@@ -3839,7 +3839,9 @@ not retain the generic background set by the function
                      ;; (underline-link-visited border)
                      )))
     (setopt modus-operandi-palette-overrides overrides
-            modus-vivendi-palette-overrides overrides)))
+            modus-operandi-tinted-palette-overrides overrides
+            modus-vivendi-palette-overrides overrides
+            modus-vivendi-tinted-palette-overrides overrides)))
 #+end_src
 
 *** Ef-Themes :package:
