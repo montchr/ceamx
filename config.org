@@ -5604,11 +5604,28 @@ available, `switchy-window'."
 ** Requirements
 
 #+begin_src emacs-lisp
+(require 'ceamx-keymaps)
 (require 'ceamx-lib)
 (require 'lib-buffer)
 #+end_src
 
-*** General
+#+begin_src emacs-lisp :noweb-ref config-buffer
+(require 'ceamx-paths)
+#+end_src
+
+
+** Define the =C-c b= buffer prefix map
+
+#+begin_src emacs-lisp
+(keymap-global-set "C-c b" '("[[ BUFFER ]]" . ceamx-buffer-prefix))
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref ceamx-keymaps
+(defvar-keymap ceamx-buffer-prefix-map)
+(defalias 'ceamx-buffer-prefix ceamx-buffer-prefix-map)
+#+end_src
+
+** General
 
 #+begin_src emacs-lisp
 (setq-default indicate-empty-lines nil)

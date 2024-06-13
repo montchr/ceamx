@@ -24,9 +24,10 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'ceamx-keymaps)
 (require 'ceamx-lib)
 (require 'lib-buffer)
-
+(keymap-global-set "C-c b" '("[[ BUFFER ]]" . ceamx-buffer-prefix))
 (setq-default indicate-empty-lines nil)
 (setq-default fill-column 80)
 
