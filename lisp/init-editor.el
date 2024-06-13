@@ -314,14 +314,15 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
 
 (keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
-
 (define-keymap :keymap (current-global-map)
   "C-=" #'ceamx/insert-date
   "C-<" #'ceamx/escape-url-dwim
 
   ;; Logical progression from M-f for `forward-word'.
   ;; See also `forward-sexp'
-  "M-F" #'forward-symbol)
+  "M-F" #'forward-symbol
+
+  "M-DEL" #'ceamx/backward-kill-word)
 
 (provide 'init-editor)
 ;;; init-editor.el ends here

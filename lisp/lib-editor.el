@@ -58,6 +58,37 @@
     (`java-mode (string-inflection-java-style-cycle))
     (`elixir-mode (string-inflection-elixir-style-cycle))
     (_ (string-inflection-ruby-style-cycle))))
+(defun ceamx/backward-kill-word ()
+  "Kill the previous word, smartly.
+This operation will respect the following rules:
+
+1. If the cursor is at the beginning of line, delete the '\n'.
+2. If there is *only* whitespace, delete only to beginning of line.
+3. If there is *some* whitespace, delete whitespace and check 4-5.
+4. If there are other characters instead of words, delete one only char.
+5. If it's a word at point, delete it."
+  (interactive)
+  (if (bolp)
+      ;; 1
+      (delete-char -1)
+    (if (string-match-p "^[[:space:]]+$"
+                        (buffer-substring-no-properties
+                         (line-beginning-position) (point)))
+        ;; 2
+        (delete-horizontal-space)
+      (when (thing-at-point 'whitespace)
+        ;; 3
+        (delete-horizontal-space))
+
+      (if (thing-at-point 'word)
+          ;; 5
+          (let ((start (car (bounds-of-thing-at-point 'word)))
+                (end (point)))
+            (if (> end start)
+                (delete-region start end)
+              (delete-char -1)))
+        ;; 4
+        (delete-char -1)))))
 (defun ceamx/continue-comment ()
   "Continue current comment, preserving trailing whitespace.
 This differs from `default-indent-new-line' in the following way:
