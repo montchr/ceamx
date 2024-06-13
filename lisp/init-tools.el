@@ -31,6 +31,8 @@
   (add-hook 'markdown-mode-hook #'pandoc-mode)
 
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
+(package! htmlize
+  (keymap-global-set "C-c b h" #'htmlize-buffer))
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 (package! mugur)
 (package! chatgpt-shell
