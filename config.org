@@ -731,6 +731,71 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-window")>>
 #+end_src
 
+*** =lisp/init-buffer.el=
+
+#+name: init-buffer-file
+#+begin_src emacs-lisp :tangle lisp/init-buffer.el
+<<file-prop-line(feature="init-buffer",desc="Buffer customizations")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-buffer>>
+
+<<file-footer(feature="init-buffer")>>
+#+end_src
+
+*** =lisp/lib-buffer.el=
+
+#+name: lib-buffer-file
+#+begin_src emacs-lisp :tangle lisp/lib-buffer.el
+<<file-prop-line(feature="lib-buffer",desc="Buffer helper callables")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-buffer>>
+
+<<file-footer(feature="lib-buffer")>>
+#+end_src
+*** =lisp/config-buffer.el=
+
+#+name: config-buffer-file
+#+begin_src emacs-lisp :tangle lisp/config-buffer.el
+<<file-prop-line(feature="config-buffer",desc="Buffer constants, options, and variables")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-buffer>>
+
+<<file-footer(feature="config-buffer")>>
+#+end_src
+
 *** =lisp/init-editor.el=
 
 #+name: init-editor-file
@@ -4875,6 +4940,8 @@ Action alist entries are:
 
 
     #+begin_src emacs-lisp
+(require 'lib-buffer)
+
 ;; TODO: move these to config-...
 (defvar ceamx-checkers-buffer-names-regexp
   (rx "*" (or "Flycheck" "Package-Lint")))
@@ -5530,40 +5597,11 @@ available, `switchy-window'."
 
 
 * Buffer
-
-
-** Customizations
 :PROPERTIES:
-:header-args: :tangle lisp/init-buffer.el
+:header-args: :noweb-ref init-buffer
 :END:
 
-#+begin_src emacs-lisp
-;;; init-buffer.el --- Buffers configuration         -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
-#+end_src
-
-*** Requirements
+** Requirements
 
 #+begin_src emacs-lisp
 (require 'ceamx-lib)
@@ -5583,7 +5621,7 @@ available, `switchy-window'."
 (setq-default truncate-lines t)
 #+end_src
 
-*** Scrolling
+** Scrolling
 
 #+begin_src emacs-lisp
 (setopt scroll-error-top-bottom t)
@@ -5605,7 +5643,7 @@ available, `switchy-window'."
   "<wheel-right>" #'scroll-right)
 #+end_src
 
-*** Auto-revert buffers
+** Auto-revert buffers
 
 #+begin_src emacs-lisp
 ;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For
@@ -5617,7 +5655,7 @@ available, `switchy-window'."
 (add-hook 'ceamx-after-init-hook #'global-auto-revert-mode)
 #+end_src
 
-*** Buffer selection
+** Buffer selection
 
 #+begin_src emacs-lisp
 (setopt ibuffer-movement-cycle t)
@@ -5626,7 +5664,7 @@ available, `switchy-window'."
 (keymap-global-set "C-x C-b" #'ibuffer-list-buffers)
 #+end_src
 
-*** ~mwim~: Move-Where-I-Mean line positions
+** ~mwim~: Move-Where-I-Mean line positions
 
 + src :: <https://github.com/alezost/mwim.el/blob/master/README.org#usage>
 
@@ -5636,14 +5674,14 @@ available, `switchy-window'."
   (keymap-global-set "C-e" #'mwim-end))
 #+end_src
 
-*** ~hl-line~: Enable highlighting of the current line
+** ~hl-line~: Enable highlighting of the current line
 
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'hl-line-mode)
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 #+end_src
 
-*** ~goto-address~: Linkify URLs and email addresses in buffers [builtin]
+** ~goto-address~: Linkify URLs and email addresses in buffers [builtin]
 
 #+begin_src emacs-lisp
 (autoload 'goto-address-prog-mode "goto-addr")
@@ -5651,7 +5689,7 @@ available, `switchy-window'."
 (add-hook 'prog-mode-hook #'goto-address-prog-mode)
 #+end_src
 
-*** ~uniquify~: Disambiguate identically-named buffers [builtin]
+** ~uniquify~: Disambiguate identically-named buffers [builtin]
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'uniquify
@@ -5665,7 +5703,7 @@ available, `switchy-window'."
   (setopt uniquify-ignore-buffers-re "^\\*"))
 #+end_src
 
-*** ~link-hint~: Activate links in buffer with ~avy~
+** ~link-hint~: Activate links in buffer with ~avy~
 
 <https://github.com/noctuid/link-hint.el>
 
@@ -5676,7 +5714,7 @@ available, `switchy-window'."
     "M-g U" #'link-hint-copy-link))
 #+end_src
 
-*** ~expand-region~: Expand your regions
+** ~expand-region~: Expand your regions
 
 <https://github.com/magnars/expand-region.el>
 
@@ -5685,7 +5723,7 @@ available, `switchy-window'."
   (keymap-global-set "C-=" #'er/expand-region))
 #+end_src
 
-*** ~rainbow-mode~: Colorize color names and hexcodes in buffers
+** ~rainbow-mode~: Colorize color names and hexcodes in buffers
 
 <https://elpa.gnu.org/packages/rainbow-mode.html>
 
@@ -5693,7 +5731,7 @@ available, `switchy-window'."
 (package! rainbow-mode)
 #+end_src
 
-*** ~lentic~: Create decoupled views of the same content
+** ~lentic~: Create decoupled views of the same content
 
 #+begin_src emacs-lisp
 (package! lentic
@@ -5703,19 +5741,10 @@ available, `switchy-window'."
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 #+end_src
 
-
-*** Global Keybindings
-
-#+begin_src emacs-lisp
-(define-keymap :keymap (current-global-map)
-  "C-c [" #'previous-buffer
-  "C-c ]" #'next-buffer
-  "C-c `" #'mode-line-other-buffer
-
-  "C-x C-b" #'ibuffer)
-#+end_src
-
-*** DISABLED ~repeat-map~ for basic buffer navigation commands
+** DISABLED ~repeat-map~ for basic buffer navigation commands
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 <https://www.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/>
 
@@ -5725,7 +5754,7 @@ It seemed like a great idea, but I had quite a few issues.
 - [ ] Does not work with Meow. See [[*Meow overwrites repeat-mode?]]
 - [ ] Pauses between every single movement command not specified in the repeat map
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (defvar-keymap ceamx-buffer-movement-repeat-map
   :repeat t
   ;; :repeat (:enter '(next-line previous-line forward-word))
@@ -5740,40 +5769,9 @@ It seemed like a great idea, but I had quite a few issues.
   "d" #'scroll-up-command)
 #+end_src
 
-*** Footer
+** ~ceamx-buffer-mode~: Helper function to return the major mode for a buffer
 
-#+begin_src emacs-lisp
-(provide 'init-buffer)
-;;; init-buffer.el ends here
-#+end_src
-
-** Library
-
-#+begin_src emacs-lisp :tangle lisp/lib-buffer.el
-;;; lib-buffer.el --- Helpers for buffers            -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
-
+#+begin_src emacs-lisp :noweb-ref lib-buffer
 ;;;###autoload
 (defun ceamx-buffer-mode (&optional buffer-or-name)
   "Return the major mode associated with a buffer.
@@ -5782,49 +5780,20 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
                       (if buffer-or-name
                           (get-buffer buffer-or-name)
                         (current-buffer))))
-
-(provide 'lib-buffer)
-;;; lib-buffer.el ends here
 #+end_src
 
-** User Options
+** Define groups of commonly-related modes and buffer-name patterns
 
-#+begin_src emacs-lisp :tangle lisp/config-buffer.el
-;;; config-buffer.el --- Variables relating to buffers and modes  -*- lexical-binding: t; -*-
+- src :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 
-;; Copyright (C) 2024  Chris Montgomery
+See also [[*General buffer display settings]]
 
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Sources:
-
-;; <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
-
-;;; Code:
-
-(require 'ceamx-paths)
-
+#+begin_src emacs-lisp :noweb-ref config-buffer
 (defvar ceamx-occur-grep-modes-list
   '(occur-mode
-     grep-mode
-     xref--xref-buffer-mode
-     flymake-diagnostics-buffer-mode)
+    grep-mode
+    xref--xref-buffer-mode
+    flymake-diagnostics-buffer-mode)
   "List of major-modes used in occur-type buffers.")
 
 (defvar ceamx-repl-modes-list
@@ -5845,13 +5814,13 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
 
 (defvar ceamx-help-modes-list
   '(helpful-mode
-     help-mode
-     eldoc-mode)
+    help-mode
+    eldoc-mode)
   "List of major-modes used in documentation buffers.")
 
 (defvar ceamx-help-buffer-names-list
   '("^\\*Apropos"
-     "^\\*eldoc\\*")
+    "^\\*eldoc\\*")
   "List of buffer names used in help buffers.")
 
 (defvar ceamx-manual-modes-list '(Man-mode woman-mode)
@@ -5861,13 +5830,25 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
   '(compilation-mode
     edebug-eval-mode)
   "List of major-modes used in message buffers.")
+#+end_src
 
+** Define directory trees whose files should be opened in read-only buffers
+
+#+begin_src emacs-lisp :noweb-ref config-buffer
 (defvar ceamx-buffer-read-only-dirs-list
   (list ceamx-packages-dir)
   "List of directories whose files should be opened in read-only buffers.")
+#+end_src
 
-(provide 'config-buffer)
-;;; config-buffer.el ends here
+** Global Keybindings
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-c [" #'previous-buffer
+  "C-c ]" #'next-buffer
+  "C-c `" #'mode-line-other-buffer
+
+  "C-x C-b" #'ibuffer)
 #+end_src
 
 

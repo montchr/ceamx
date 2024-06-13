@@ -56,6 +56,8 @@
 (setopt display-buffer-base-action
         '((display-buffer-reuse-window
            display-buffer-in-previous-window)))
+(require 'lib-buffer)
+
 ;; TODO: move these to config-...
 (defvar ceamx-checkers-buffer-names-regexp
   (rx "*" (or "Flycheck" "Package-Lint")))
