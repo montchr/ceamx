@@ -2738,9 +2738,8 @@ Emacs version to prevent bytecode incompatibility.")
 
 * Common: Keymaps
 
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :noweb yes
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
-
 
 ;; Copyright (C) 2024  Chris Montgomery
 
@@ -2767,6 +2766,8 @@ Emacs version to prevent bytecode incompatibility.")
 ;;; Code:
 
 (require 'ceamx-lib)
+
+<<ceamx-keymaps>>
 
 (defvar-keymap ceamx-file-map)
 (define-prefix-command 'ceamx-file-map)
