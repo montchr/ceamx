@@ -65,8 +65,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (advice-add #'completing-read-multiple :filter-args #'+crm-indicator)
 (defvar savehist-additional-variables)
 (package! vertico
-  ;; (setopt vertico-scroll-margin 0)
-  (setopt vertico-count 5)
+  (setopt vertico-count 8)
   (setopt vertico-resize t)
   ;; Enable cycling for `vertico-next' and `vertico-previous'.
   (setopt vertico-cycle t)
@@ -121,11 +120,11 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   ;; NOTE: Takes precedence over `vertico-multiform-categories'.
   (setopt vertico-multiform-commands
           `((consult-line buffer)
-           (consult-imenu reverse buffer)
-           (consult-outline buffer quick ,(lambda (_) (text-scale-set -1)))))
+           (consult-imenu buffer)
+           (consult-outline buffer quick ,(lambda (_) (text-scale-set -2)))))
 
   (setopt vertico-multiform-categories
-          '((file buffer grid)
+          '((file unobtrusive)
             (buffer flat (vertico-cycle . t))
             (consult-grep buffer)
             (imenu (:not indexed mouse))
