@@ -68,8 +68,7 @@
 (setopt org-insert-heading-respect-content nil)
 
 (setopt org-M-RET-may-split-line nil)
-(setopt org-blank-before-new-entry '((heading . nil) (plain-list-item . nil)))
-;; (setopt org-blank-before-new-entry '((heading . t) (plain-list-item . auto)))
+(setopt org-blank-before-new-entry '((heading . auto) (plain-list-item . nil)))
 
 (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 (package! org-modern
