@@ -88,7 +88,6 @@ Capf, such that it will be tried first."
 (keymap-set ceamx-insert-map "s" #'yas-insert-snippet)
 
 (keymap-set ceamx-insert-map "S" #'yas-new-snippet)
-
 ;; Bind `SPC' to `yas-expand' when snippet expansion available (it
 ;; will still call `self-insert-command' otherwise).
 (after! yasnippet
