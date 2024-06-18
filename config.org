@@ -8202,7 +8202,7 @@ This is the default behavior.
 (setopt meow-keypad-leader-dispatch nil)
 #+end_src
 
-****** Leader dispatch to ~mode-specific-map~ ("C-c")
+****** DISABLED Leader dispatch to ~mode-specific-map~ ("C-c")
 
 | Pros                                | Cons                                                                             |
 |-------------------------------------+----------------------------------------------------------------------------------|
@@ -8231,28 +8231,23 @@ own values upon definition.
            (keypad . "🅚")))
 #+end_src
 
-**** DISABLED Define a new state for navigating Org-Mode trees
+**** TODO Define a new state for navigating Org-Mode trees
 :PROPERTIES:
 :header-args: :tangle no
 :END:
-
-Unfortunately, this is unusable. I lose access to "M-v" and even the "ESC"
-binding doesn't work.
-
-Perhaps a Transient menu is a better option.
 
 Credit for the idea goes to this blog post:
 
 [[https://aatmunbaxi.netlify.app/comp/meow_state_org_speed/][A meow-state for speedy org structure navigation | Aatmun Baxi]]
 
 I made some adjustments for the sake of maintaining consistency with the default
-bindings. I would rather not mix up the motions switching between this state and
-the defaults.
+bindings in ~org-mode-map~ and ~outline-minor-mode-map~.  I would rather not mix
+up the motions switching between this state and the defaults.
 
 #+begin_src emacs-lisp
 (defvar-keymap meow-org-motion-keymap
 
-  "ESC" #'meow-normal-mode
+  "<escape>" #'meow-normal-mode
 
   "i" #'meow-insert-mode
   "g" #'meow-normal-mode
