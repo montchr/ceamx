@@ -12552,6 +12552,14 @@ their own initialization files.
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
 #+end_src
 
+**** Language support for Dotenv environment configuration files :package:major_mode:
+
+- website :: <https://github.com/preetpalS/emacs-dotenv-mode>
+
+#+begin_src emacs-lisp
+(package! dotenv-mode)
+#+end_src
+
 **** Footer
 
 #+begin_src emacs-lisp

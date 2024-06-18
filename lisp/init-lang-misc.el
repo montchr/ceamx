@@ -36,5 +36,7 @@
 (package! vimrc-mode
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
 
+(package! dotenv-mode)
+
 (provide 'init-lang-misc)
 ;;; init-lang-misc.el ends here
