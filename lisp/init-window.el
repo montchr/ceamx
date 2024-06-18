@@ -272,7 +272,14 @@
   "<left>" #'shrink-window-horizontally
   "<right>" #'enlarge-window-horizontally)
 (defvar-keymap ceamx-window-repeat-map
-  :repeat (:exit (repeat-exit))
+  :repeat t
+
+  "0" #'delete-window
+  "2" #'split-window-below
+  "3" #'split-window-right
+
+  "b" #'consult-buffer
+  "f" #'find-file
 
   "o" #'ceamx/other-window
   "P" #'popper-toggle-type
