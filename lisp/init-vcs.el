@@ -116,12 +116,6 @@
                     date-full date-relative)))))
 (package! browse-at-remote
   (keymap-set vc-prefix-map "o" #'browse-at-remote))
-(with-eval-after-load 'transient
-  (defvar transient-map)
-  (declare-function transient-quit-one "transient")
-
-  ;; Always close transient with ESC
-  (keymap-set transient-map "ESC" #'transient-quit-one))
 (package! magit)
 (with-eval-after-load 'magit
   (defvar magit-mode-map)

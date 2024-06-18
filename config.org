@@ -3787,9 +3787,9 @@ applying margin, padding, borders.
 
 ** Menus (Hydratics & Transients)
 
-Required as dependencies for many packages, either as more recent versions
-than those available in Emacs (e.g. ~transient ~IIRC), or, including some
-(like ~nix-mode~) who don't seem to declare them.
+Required as dependencies for many packages, either as more recent versions than
+those available in Emacs (e.g. ~transient~), or, including some packages (like
+~nix-mode~) who don't properly declare their dependencies.
 
 *** Hydra
 
@@ -3807,16 +3807,11 @@ than those available in Emacs (e.g. ~transient ~IIRC), or, including some
 (package! magit-section)
 #+end_src
 
-**** TODO Allow quitting ~transient~ menus with =ESC=
+**** Close any ~transient~ menu with the escape key
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'transient
-  (defvar transient-map)
-  (declare-function transient-quit-one "transient")
-
-  ;; Always close transient with ESC
-  ;; FIXME: meow overrides this. waiting until it loads does not help.
-  (keymap-set transient-map "ESC" #'transient-quit-one))
+  (keymap-set transient-map "<escape>" #'transient-quit-one))
 #+end_src
 
 ** Theme
@@ -9669,23 +9664,6 @@ NOTE: Fringe indicators will conflict with Flycheck.
 #+end_src
 
 ** Magit
-*** TODO Support closing ~transient~ menus with the escape key
-
-Something very similar to this code seemed to work previously, but that is no
-longer the case after switching this configuration to use ~package!~.
-
-This section should also be moved to the main configuration section for
-Transient, as it is not specific to ~magit~ or ~magit-section~.
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'transient
-  (defvar transient-map)
-  (declare-function transient-quit-one "transient")
-
-  ;; Always close transient with ESC
-  (keymap-set transient-map "ESC" #'transient-quit-one))
-#+end_src
-
 *** Install Magit
 
 #+begin_src emacs-lisp

@@ -49,12 +49,7 @@
 (package! transient)
 (package! magit-section)
 (with-eval-after-load 'transient
-  (defvar transient-map)
-  (declare-function transient-quit-one "transient")
-
-  ;; Always close transient with ESC
-  ;; FIXME: meow overrides this. waiting until it loads does not help.
-  (keymap-set transient-map "ESC" #'transient-quit-one))
+  (keymap-set transient-map "<escape>" #'transient-quit-one))
 (setopt custom-safe-themes t)
 (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)
 (defvar ceamx-after-enable-theme-hook nil)
