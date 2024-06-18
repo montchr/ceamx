@@ -41,10 +41,12 @@
   ;; NOTE: I'm not positive that this is the right name.
   (after! flycheck
     (add-to-list 'flycheck-disabled-checkers 'phpstan)))
+(require 'ceamx-lib)
+
 (defun +reformatter--phpcbf-fmt-exit-code-success-p (exit-code)
-    "Handle PHPCBF non-standard exit codes."
-    (or (= 0 exit-code)
-        (= 1 exit-code)))
+  "Handle PHPCBF non-standard exit codes."
+  (or (= 0 exit-code)
+      (= 1 exit-code)))
 
 (after! reformatter
   ;; FIXME: okay this hasn't worked either...
@@ -53,13 +55,17 @@
     :args '("fix" "--diff" "--using-cache=no" "-q" "-"))
 
   ;; FIXME: phpcbf is really finicky and doesn't play nice with the usual
-  ;; formatter standards.  the exit codes are nonsense.  and apparently the
-  ;; `:exit-code-success-p' lambda is not a function?
+  ;; formatter standards.
+  ;; + the exit codes are nonsense -- if there are any unfixed errors left in
+  ;;   the file, phpcbf will still return non-zero.
+  ;; + i wonder if the stupid exit codes mean that the patch/diff is output to
+  ;;   stderr instead of stdout as expected by `reformatter-define'?
   (reformatter-define phpcbf-fmt
     :program (format "%s/vendor/bin/phpcbf" (getenv "PRJ_ROOT"))
     :args (list "--stdin-path" input-file
                 "-q"
                 "-")
+    ;; XXX: apparently `:exit-code-success-p' does not really accept a lambda? maybe report upstream?
     :exit-code-success-p +reformatter--phpcbf-fmt-exit-code-success-p))
 (after! projectile
   (add-to-list 'projectile-globally-ignored-directories "vendor"))

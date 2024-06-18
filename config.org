@@ -11525,7 +11525,6 @@ Unless PROGRAM is provided, the program name used in
   (dap-auto-configure-mode))
 #+end_src
 
-
 ** Data Formats (JSON, TOML, YAML, XML, CSV...)
 :PROPERTIES:
 :ID:       137d1e04-d0dc-4512-a450-fbafeef65804
@@ -12204,6 +12203,8 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 **** DISABLED [[https://github.com/cjohansson/emacs-phps-mode][cjohansson/phps-mode]] :package:
 
+I don't even know.
+
 #+begin_src emacs-lisp :noweb-ref nil
 (package! phps-mode
   (when (eq 'phps-mode ceamx-lang-php-major-mode-provider)
@@ -12214,8 +12215,10 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 - Reference :: <https://ne-on.org/>
 
-I have never ever encountered NEON in any context other than a =phpstan.neon= PHPStan
-configuration file.
+I have never ever encountered NEON in any context other than a =phpstan.neon=
+PHPStan configuration file.  This kind of bizarre decision perpetuates PHP's
+terrible backwards ecosystem.  All that said, I very much appreciate that
+<Fuco1> has provided this package!  Reality strikes again.
 
 #+begin_src emacs-lisp
 (package! neon-mode)
@@ -12333,9 +12336,7 @@ its cache should stay out of the way.
   (file-name-as-directory (concat ceamx-lsp-mode-cache-dir "server/intelephense/cache")))
 #+end_src
 
-*** Checkers
-
-**** [[https://github.com/emacs-php/phpstan.el][emacs-php/phpstan.el]]: Provide PHPStan checks
+*** [[https://github.com/emacs-php/phpstan.el][emacs-php/phpstan.el]]: Provide PHPStan checks :linter:package:
 
 #+begin_src emacs-lisp
 (package! flymake-phpstan
@@ -12345,13 +12346,15 @@ its cache should stay out of the way.
     (add-to-list 'flycheck-disabled-checkers 'phpstan)))
 #+end_src
 
-*** Formatters
+*** Configure formatters :formatting:
 
 #+begin_src emacs-lisp
+(require 'ceamx-lib)
+
 (defun +reformatter--phpcbf-fmt-exit-code-success-p (exit-code)
-    "Handle PHPCBF non-standard exit codes."
-    (or (= 0 exit-code)
-        (= 1 exit-code)))
+  "Handle PHPCBF non-standard exit codes."
+  (or (= 0 exit-code)
+      (= 1 exit-code)))
 
 (after! reformatter
   ;; FIXME: okay this hasn't worked either...
@@ -12360,13 +12363,17 @@ its cache should stay out of the way.
     :args '("fix" "--diff" "--using-cache=no" "-q" "-"))
 
   ;; FIXME: phpcbf is really finicky and doesn't play nice with the usual
-  ;; formatter standards.  the exit codes are nonsense.  and apparently the
-  ;; `:exit-code-success-p' lambda is not a function?
+  ;; formatter standards.
+  ;; + the exit codes are nonsense -- if there are any unfixed errors left in
+  ;;   the file, phpcbf will still return non-zero.
+  ;; + i wonder if the stupid exit codes mean that the patch/diff is output to
+  ;;   stderr instead of stdout as expected by `reformatter-define'?
   (reformatter-define phpcbf-fmt
     :program (format "%s/vendor/bin/phpcbf" (getenv "PRJ_ROOT"))
     :args (list "--stdin-path" input-file
                 "-q"
                 "-")
+    ;; XXX: apparently `:exit-code-success-p' does not really accept a lambda? maybe report upstream?
     :exit-code-success-p +reformatter--phpcbf-fmt-exit-code-success-p))
 #+end_src
 
