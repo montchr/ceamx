@@ -12357,6 +12357,14 @@ its cache should stay out of the way.
       (= 1 exit-code)))
 
 (after! reformatter
+  (reformatter-define php-ecs-fmt
+    :group 'ceamx
+    :program (format "%s/vendor/bin/ecs" (getenv "PRJ_ROOT"))
+    ;; XXX: Flags are very broken upstream <https://github.com/easy-coding-standard/easy-coding-standard/issues/213>
+    :args `("check" "--no-ansi" "--no-progress-bar" "--no-interaction" "--quiet" "--fix" "--" ,input-file)
+    :stdin nil
+    :stdout nil)
+
   ;; FIXME: okay this hasn't worked either...
   (reformatter-define php-cs-fixer-fmt
     :program (format "%s/vendor/bin/php-cs-fixer" (getenv "PRJ_ROOT"))
