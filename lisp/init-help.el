@@ -195,9 +195,10 @@ was printed, and only have ElDoc display if one wasn't.\""
 
 ;;; Provide "Casual" transient menus for complex modes
 
-;; <https://github.com/kickingvegas/cc-isearch-menu/blob/main/README.org>
-(package! cc-isearch-menu
-  (require 'cc-isearch-menu)
+;; <https://github.com/kickingvegas/casual-avy>
+(package! (casual-avy :host github :repo "kickingvegas/casual-avy")
+  ;; M-g M-g
+  (keymap-set goto-map "M-g" #'casual-avy))
 
 ;; <https://github.com/kickingvegas/casual-isearch>
 (package! (casual-isearch :host github :repo "kickingvegas/casual-isearch")

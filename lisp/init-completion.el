@@ -187,7 +187,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   "M-g e"  #'consult-compile-error
   "M-g f"  #'consult-flymake ;; Alternative: consult-flycheck
   "M-g g" #'consult-goto-line
-  "M-g M-g" #'consult-goto-line
   "M-g o"  #'consult-outline ;; Alternative: consult-org-heading
   "M-g m"  #'consult-mark
   "M-g k"  #'consult-global-mark
