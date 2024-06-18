@@ -3,6 +3,7 @@ nix-mode nix-ts-mode
 ;; FIXME: indentation (in both modes)
 
 (attrset & p " = {" n> p " = " q ";" n "};" %)
+(imports & "imports = [" n> r n "];" %)
 (lines "''" n> r> n> "''")
 (mkopt "mkOption {" n> "type = with types; " p ";" n> "default = " p ";" n> "description = ''" n> p n "'';" n "};")
 (mkoptenable "enable = lib.mkEnableOption \"" p "\"; " %)
