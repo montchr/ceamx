@@ -3842,10 +3842,32 @@ theme)."
   :group 'ceamx
   :type 'symbol)
 
-(defcustom ceamx-ui-theme-dark 'modus-vivendi-tinted
+(defcustom ceamx-ui-theme-dark 'modus-vivendi
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
+#+end_src
+*** TODO Define groupings of themes into dark/light or other qualities
+
+Needs expansion for more than just the Modus Themes.
+
+#+begin_src emacs-lisp :noweb-ref config-ui
+(defvar ceamx-ui-dark-themes-list nil)
+
+(defvar ceamx-ui-light-themes-list nil)
+
+(after! modus-themes
+  (appendq! ceamx-ui-dark-themes-list
+            ;; `modus-vivendi' variants
+            (seq-filter
+             (lambda (sym) (string-prefix-p "modus-vivendi" (symbol-name sym)))
+             modus-themes-items))
+
+  (appendq! ceamx-ui-light-themes-list
+            ;; `modus-operandi' variants
+            (seq-filter
+             (lambda (sym) (string-prefix-p "modus-operandi" (symbol-name sym)))
+             modus-themes-items)))
 #+end_src
 
 *** Consider all themes "safe"
@@ -3997,42 +4019,43 @@ unconditionally use `ceamx-ui-theme-default-light' and
           (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
+**** Sunrise/sunset interval via ~solar~ and ~circadian~
+
+#+begin_src emacs-lisp
+(setopt ceamx-ui-theme-circadian-interval 'solar)
+#+end_src
+
+#+begin_src emacs-lisp
 (require 'cal-dst)
-
 (require 'config-ui)
-
 (require 'ceamx-lib)
+
+(setopt calendar-latitude 39.968)
+(setopt calendar-longitude -75.133)
+
+(package! circadian
+  (when (eq 'solar ceamx-ui-theme-circadian-interval)
+    (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
+                               (:sunset . ,ceamx-ui-theme-dark)))
+    (circadian-setup)))
+
+;; FIXME
+;; (after! circadian
+;;   (def-hook! +circadian-after-load-theme-set-system-theme-h (theme)
+;;     'circadian-after-load-theme-hook
+;;     "Set the desktop environment theme based on THEME polarity."
+;;     (cond
+;;      ((memq theme ceamx-ui-dark-themes-list)
+;;       (ceamx-ui/gsettings-dark-theme))
+;;      ((memq theme ceamx-ui-light-themes-list)
+;;       (ceamx-ui/gsettings-light-theme))
+;;      (t nil))))
 #+end_src
 
-**** TODO Sunrise/sunset interval via ~solar~ and ~circadian~
-
-Recently in Emacs 29, these would behave erratically, locking up Emacs during
-the minute of sundown.
-
-#+begin_src emacs-lisp :tangle no
-(use-feature! solar
-  :when (eq 'solar ceamx-ui-theme-circadian-interval)
-
-  :config
-  (setopt calendar-latitude 39.968)
-  (setopt calendar-longitude -75.133))
-
-(use-package circadian
-  :when (eq 'solar ceamx-ui-theme-circadian-interval)
-  :ensure t
-  :demand t
-  :after solar
-
-  :commands (circadian-setup)
-
-  :init
-  (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
-                             (:sunset . ,ceamx-ui-theme-dark)))
-  (circadian-setup))
-#+end_src
-
-**** TODO Phase-of-day interval via ~theme-buffet~
+**** DISABLED Phase-of-day interval via ~theme-buffet~
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 - Website :: <https://git.sr.ht/~bboal/theme-buffet>
 
@@ -4256,13 +4279,12 @@ Configure some user options dependent on the loaded packages:
 (setopt ceamx-ui-theme-dark 'modus-vivendi)
 #+end_src
 
-~circadian~ has been broken lately, causing lockups/crashes.  In such a situation,
-fall back to loading a theme based on the desktop environment appearance:
-
 #+begin_src emacs-lisp
-(if (ceamx-ui-desktop-dark-theme-p)
-    (ceamx-ui/load-dark-theme)
-  (ceamx-ui/load-light-theme))
+(if (eq 'solar ceamx-ui-theme-circadian-interval)
+    (after! circadian (add-hook 'ceamx-after-init-hook #'circadian-setup))
+  (if (ceamx-ui-desktop-dark-theme-p)
+      (ceamx-ui/load-dark-theme)
+    (ceamx-ui/load-light-theme)))
 #+end_src
 
 ** Interaction & Feedback

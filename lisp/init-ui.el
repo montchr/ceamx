@@ -132,101 +132,49 @@
   (setopt ef-themes-to-toggle '(ef-night ef-frost)
           ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil))
+(setopt ceamx-ui-theme-circadian-interval 'solar)
 (require 'cal-dst)
-
 (require 'config-ui)
-
 (require 'ceamx-lib)
-(use-feature! solar
-  :when (eq 'solar ceamx-ui-theme-circadian-interval)
 
-  :config
-  (setopt calendar-latitude 39.968)
-  (setopt calendar-longitude -75.133))
+(setopt calendar-latitude 39.968)
+(setopt calendar-longitude -75.133)
 
-(use-package circadian
-  :when (eq 'solar ceamx-ui-theme-circadian-interval)
-  :ensure t
-  :demand t
-  :after solar
+(package! circadian
+  (when (eq 'solar ceamx-ui-theme-circadian-interval)
+    (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
+                               (:sunset . ,ceamx-ui-theme-dark)))
+    (circadian-setup)))
 
-  :commands (circadian-setup)
-
-  :init
-  (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
-                             (:sunset . ,ceamx-ui-theme-dark)))
-  (circadian-setup))
-(use-package theme-buffet
-  :ensure t
-  :demand t
-  :when (eq 'buffet ceamx-ui-theme-circadian-interval)
-
-  :commands (theme-buffet-modus-ef)
-  :defines (theme-buffet-menu)
-
-  :init
-
-  ;; Take Daylight Savings Time offset into account for time period boundaries.
-  ;; I am not sure why the additional `1+' is necessary, but this is copied from
-  ;; the author's recommendation.
-  ;; via <https://git.sr.ht/~bboal/theme-buffet/tree/06f1be349e9c3d124520b18742911307de9abda3/item/theme-buffet.el#L68-70>
-  (setopt theme-buffet-time-offset (1+ (/ (cadr (calendar-current-time-zone)) 60)))
-
-  (setopt theme-buffet-menu 'end-user)
-
-  (setopt theme-buffet-end-user
-          '(:night (;; ef-autumn
-                    ef-duo-dark
-                    ef-trio-dark
-                    ef-night
-                    ef-winter
-                    ef-dark)
-            :twilight (ef-bio
-                       ef-cherie
-                       ef-dream
-                       ef-rosa
-                       modus-vivendi)
-            :morning (ef-elea-light
-                      ef-maris-light
-                      ef-reverie
-                      ef-spring)
-            :day (ef-frost
-                  ef-light
-                  ef-spring
-                  ef-trio-light
-                  modus-operandi)
-            :afternoon (ef-cyprus
-                        ;; ef-arbutus
-                        ef-day
-                        ef-duo-light
-                        ef-kassio
-                        ef-melissa-light
-                        ef-reverie
-                        ef-summer
-                        modus-operandi-tinted)
-            :evening (ef-elea-dark
-                      ef-dream
-                      ef-maris-dark
-                      ;; ef-melissa-dark
-                      ef-symbiosis
-                      ef-trio-dark
-                      modus-vivendi-tinted)))
-
-  :config
-
-  (theme-buffet-end-user)
-
-  ;; Activate some theme in the current period.
-  (theme-buffet-a-la-carte))
+;; FIXME
+;; (after! circadian
+;;   (def-hook! +circadian-after-load-theme-set-system-theme-h (theme)
+;;     'circadian-after-load-theme-hook
+;;     "Set the desktop environment theme based on THEME polarity."
+;;     (cond
+;;      ((memq theme ceamx-ui-dark-themes-list)
+;;       (ceamx-ui/gsettings-dark-theme))
+;;      ((memq theme ceamx-ui-light-themes-list)
+;;       (ceamx-ui/gsettings-light-theme))
+;;      (t nil))))
+;; FIXME: error open /dev/tty: no such address or device
+(defun ceamx-ui-kitty-set-theme (polarity)
+  "Set the Kitty terminal emulator colors to POLARITY.
+POLARITY is a string matching either \"light\" or \"dark\"."
+  (shell-command
+   (format "kitty @set-colors -a -c $KITTY_CONFIG_DIRECTORY/theme-%s.conf"
+           polarity)))
 (defun ceamx-ui-desktop-dark-theme-p ()
   "Predicate whether a desktop environment is displaying a dark appearance."
   (or (ceamx-ui-gsettings-dark-theme-p)))
 (elpaca-wait)
 (setopt ceamx-ui-theme-light 'modus-operandi-tinted)
 (setopt ceamx-ui-theme-dark 'modus-vivendi)
-(if (ceamx-ui-desktop-dark-theme-p)
-    (ceamx-ui/load-dark-theme)
-  (ceamx-ui/load-light-theme))
+(if (eq 'solar ceamx-ui-theme-circadian-interval)
+    (after! circadian (add-hook 'ceamx-after-init-hook #'circadian-setup))
+  (if (ceamx-ui-desktop-dark-theme-p)
+      (ceamx-ui/load-dark-theme)
+    (ceamx-ui/load-light-theme)))
 (package! avy
   ;; Reduce the number of possible candidates.
   ;; Can be overridden with the universal argument.

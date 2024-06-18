@@ -43,10 +43,26 @@ theme)."
   :group 'ceamx
   :type 'symbol)
 
-(defcustom ceamx-ui-theme-dark 'modus-vivendi-tinted
+(defcustom ceamx-ui-theme-dark 'modus-vivendi
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
+(defvar ceamx-ui-dark-themes-list nil)
+
+(defvar ceamx-ui-light-themes-list nil)
+
+(after! modus-themes
+  (appendq! ceamx-ui-dark-themes-list
+            ;; `modus-vivendi' variants
+            (seq-filter
+             (lambda (sym) (string-prefix-p "modus-vivendi" (symbol-name sym)))
+             modus-themes-items))
+
+  (appendq! ceamx-ui-light-themes-list
+            ;; `modus-operandi' variants
+            (seq-filter
+             (lambda (sym) (string-prefix-p "modus-operandi" (symbol-name sym)))
+             modus-themes-items)))
 (defcustom ceamx-ui-theme-circadian-interval nil
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
