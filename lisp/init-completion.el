@@ -124,8 +124,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
            (consult-outline buffer quick ,(lambda (_) (text-scale-set -2)))))
 
   (setopt vertico-multiform-categories
-          '((file unobtrusive)
-            (buffer flat (vertico-cycle . t))
+          '((buffer flat (vertico-cycle . t))
             (consult-grep buffer)
             (imenu (:not indexed mouse))
             (symbol (vertico-sort-function . vertico-sort-alpha))))
@@ -244,27 +243,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
   ;; Allow escaping space with backslash.
   (setopt orderless-component-separator #'orderless-escapable-split-on-space))
-;; (defun +orderless-flex-if-twiddle-dispatch (pattern _index _total)
-;;   "Return `orderless-flex' if PATTERN ends in a tilde character.
-;; PATTERN, stripped of its tilde character, will be dispatched as
-;; argument to `orderless-flex'."
-;;   (when (string-suffix-p "~" pattern)
-;;     `(orderless-flex . ,(substring pattern 0 -1))))
-
-;; (defun +orderless-first-initialism-dispatch (_pattern index _total)
-;;   "Return `orderless-initialism' when PATTERN has the initial INDEX value."
-;;   (if (= index 0) 'orderless-initialism))
-
-;; (defun +orderless-not-if-bang-dispatch (pattern _index _total)
-;;   "Return `orderless-not' when PATTERN begins with an exclamation mark.
-;; PATTERN, stripped of its exclamation mark, will be dispatched as
-;; argument to `orderless-not'."
-;;   (cond
-;;    ((equal "!" pattern)
-;;     #'ignore)
-;;    ((string-prefix-p "!" pattern)
-;;     `(orderless-not . ,(substring pattern 1)))))
-
 (defun +orderless--consult-suffix ()
   "Regexp which matches the end of string with Consult tofu support."
   (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
@@ -287,17 +265,13 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
          (string-match-p "\\`\\.." word))
     `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--consult-suffix))))))
 (after! orderless
-  (orderless-define-completion-style +orderless-with-initialism
-    (orderless-matching-styles '(orderless-initialism
-                                 orderless-literal
-                                 orderless-regexp))))
-(after! orderless
-  (setopt completion-styles '(orderless basic))
+  (setopt completion-styles '(basic orderless))
   (setopt completion-category-defaults nil)
   (setopt completion-category-overrides '((file (styles partial-completion))
-                                          (command (styles +orderless-with-initialism))
-                                          (variable (styles +orderless-with-initialism))
-                                          (symbol (styles +orderless-with-initialism))))
+                                          ;; (command (styles +orderless-with-initialism))
+                                          ;; (variable (styles +orderless-with-initialism))
+                                          ;; (symbol (styles +orderless-with-initialism))
+                                          ))
 
   (setopt orderless-matching-styles '(orderless-regexp))
   (setopt orderless-style-dispatchers (list ;; #'+orderless-first-initialism-dispatch
@@ -343,11 +317,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 (after! corfu
   (unless corfu-popupinfo-mode
-    (corfu-echo-mode)))
-(setopt corfu-popupinfo-delay '(1.0 . 0.5))
-
-(after! corfu
-  (corfu-popupinfo-mode))
+    (corfu-echo-mode 1)))
 (after! corfu
   (corfu-history-mode))
 

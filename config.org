@@ -8829,8 +8829,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
            (consult-outline buffer quick ,(lambda (_) (text-scale-set -2)))))
 
   (setopt vertico-multiform-categories
-          '((file unobtrusive)
-            (buffer flat (vertico-cycle . t))
+          '((buffer flat (vertico-cycle . t))
             (consult-grep buffer)
             (imenu (:not indexed mouse))
             (symbol (vertico-sort-function . vertico-sort-alpha))))
@@ -9046,27 +9045,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 *** Query syntax additions through style dispatchers
 
 #+begin_src emacs-lisp
-;; (defun +orderless-flex-if-twiddle-dispatch (pattern _index _total)
-;;   "Return `orderless-flex' if PATTERN ends in a tilde character.
-;; PATTERN, stripped of its tilde character, will be dispatched as
-;; argument to `orderless-flex'."
-;;   (when (string-suffix-p "~" pattern)
-;;     `(orderless-flex . ,(substring pattern 0 -1))))
-
-;; (defun +orderless-first-initialism-dispatch (_pattern index _total)
-;;   "Return `orderless-initialism' when PATTERN has the initial INDEX value."
-;;   (if (= index 0) 'orderless-initialism))
-
-;; (defun +orderless-not-if-bang-dispatch (pattern _index _total)
-;;   "Return `orderless-not' when PATTERN begins with an exclamation mark.
-;; PATTERN, stripped of its exclamation mark, will be dispatched as
-;; argument to `orderless-not'."
-;;   (cond
-;;    ((equal "!" pattern)
-;;     #'ignore)
-;;    ((string-prefix-p "!" pattern)
-;;     `(orderless-not . ,(substring pattern 1)))))
-
 (defun +orderless--consult-suffix ()
   "Regexp which matches the end of string with Consult tofu support."
   (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
@@ -9090,9 +9068,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--consult-suffix))))))
 #+end_src
 
-*** Define custom completion syntax styles
+*** DISABLED Define custom completion syntax styles
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb-ref nil
 (after! orderless
   (orderless-define-completion-style +orderless-with-initialism
     (orderless-matching-styles '(orderless-initialism
@@ -9114,12 +9092,13 @@ See [[*Orderless]] for definitions.
 
 #+begin_src emacs-lisp
 (after! orderless
-  (setopt completion-styles '(orderless basic))
+  (setopt completion-styles '(basic orderless))
   (setopt completion-category-defaults nil)
   (setopt completion-category-overrides '((file (styles partial-completion))
-                                          (command (styles +orderless-with-initialism))
-                                          (variable (styles +orderless-with-initialism))
-                                          (symbol (styles +orderless-with-initialism))))
+                                          ;; (command (styles +orderless-with-initialism))
+                                          ;; (variable (styles +orderless-with-initialism))
+                                          ;; (symbol (styles +orderless-with-initialism))
+                                          ))
 
   (setopt orderless-matching-styles '(orderless-regexp))
   (setopt orderless-style-dispatchers (list ;; #'+orderless-first-initialism-dispatch
@@ -9187,12 +9166,12 @@ These will be available when a ~corfu~ prompt is active.
 
 (after! corfu
   (unless corfu-popupinfo-mode
-    (corfu-echo-mode)))
+    (corfu-echo-mode 1)))
 #+end_src
 
-**** ~corfu-popupinfo~: Display candidate docs or location in popup :ui:help:
+**** DISABLED ~corfu-popupinfo~: Display candidate docs or location in popup :ui:help:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb-ref nil
 (setopt corfu-popupinfo-delay '(1.0 . 0.5))
 
 (after! corfu
