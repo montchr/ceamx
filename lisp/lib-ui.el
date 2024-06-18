@@ -102,12 +102,14 @@ must be a valid `theme-buffet' period as defined in
   "Activate a light theme globally."
   (interactive)
   (ceamx-ui/gsettings-light-theme)
+  ;;(ceamx-ui-kitty-set-theme "light")
   (ceamx-ui/load-light-theme))
 
 (defun ceamx-ui/dark ()
   "Activate a dark theme globally."
   (interactive)
   (ceamx-ui/gsettings-dark-theme)
+  ;;(ceamx-ui-kitty-set-theme "dark")
   (ceamx-ui/load-dark-theme))
 
 (provide 'lib-ui)

@@ -3998,6 +3998,24 @@ not retain the generic background set by the function
           ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil))
 #+end_src
+*** =DISABLED unspecified-theme=: A theme-less theme for a uniform appearance :package:
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+#+begin_src emacs-lisp
+(package! (unspecified-theme :host codeberg :repo "mekeor/unspecified-theme"))
+#+end_src
+
+*** DISABLED =evenok= :package:
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+#+begin_src emacs-lisp
+(package! (evenok :host codeberg :repo "mekeor/evenok"))
+(elpaca-process-queues)
+#+end_src
 
 *** Circadian Theme Phasing
 
@@ -4201,6 +4219,18 @@ must be a valid `theme-buffet' period as defined in
   (ceamx-ui/gsettings-set-theme "light"))
 #+end_src
 
+**** Integration with Kitty terminal theme
+
+#+begin_src emacs-lisp
+;; FIXME: error open /dev/tty: no such address or device
+(defun ceamx-ui-kitty-set-theme (polarity)
+  "Set the Kitty terminal emulator colors to POLARITY.
+POLARITY is a string matching either \"light\" or \"dark\"."
+  (shell-command
+   (format "kitty @set-colors -a -c $KITTY_CONFIG_DIRECTORY/theme-%s.conf"
+           polarity)))
+#+end_src
+
 **** Generalized commands for desktop environment integration
 
 Taking all supported environments into account:
@@ -4255,12 +4285,14 @@ Similar to the theme-family-specific ~modus-themes-load-theme~.
   "Activate a light theme globally."
   (interactive)
   (ceamx-ui/gsettings-light-theme)
+  ;;(ceamx-ui-kitty-set-theme "light")
   (ceamx-ui/load-light-theme))
 
 (defun ceamx-ui/dark ()
   "Activate a dark theme globally."
   (interactive)
   (ceamx-ui/gsettings-dark-theme)
+  ;;(ceamx-ui-kitty-set-theme "dark")
   (ceamx-ui/load-dark-theme))
 #+end_src
 
