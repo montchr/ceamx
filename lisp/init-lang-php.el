@@ -78,8 +78,11 @@
 (after! projectile
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 (after! web-mode
-  ;; This should override the default file extension association.
-  (pushnew! web-mode-engines-alist '(("blade"  . "\\.blade\\."))))
+  ;; Blade: Override the default engine in case `web-mode' is associated with the php extension by default.
+  (add-to-list 'web-mode-engines-alist '("blade"  . "\\.blade\\."))
+  (add-to-list 'auto-mode-alist '("\\.blade\\.php'" . web-mode))
+  ;; Twig
+  (add-to-list 'auto-mode-alist '("\\.twig\\'" . web-mode)))
 
 (provide 'init-lang-php)
 ;;; init-lang-php.el ends here

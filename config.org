@@ -12392,12 +12392,15 @@ its cache should stay out of the way.
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 #+end_src
 
-*** Register Blade templates (=*.blade.php=) to open in ~web-mode~
+*** Register Twig (=*.twig=) and Blade (=*.blade.php=) templates to open in ~web-mode~
 
 #+begin_src emacs-lisp
 (after! web-mode
-  ;; This should override the default file extension association.
-  (pushnew! web-mode-engines-alist '(("blade"  . "\\.blade\\."))))
+  ;; Blade: Override the default engine in case `web-mode' is associated with the php extension by default.
+  (add-to-list 'web-mode-engines-alist '("blade"  . "\\.blade\\."))
+  (add-to-list 'auto-mode-alist '("\\.blade\\.php'" . web-mode))
+  ;; Twig
+  (add-to-list 'auto-mode-alist '("\\.twig\\'" . web-mode)))
 #+end_src
 
 *** TODO PHP enhancements from Doom
