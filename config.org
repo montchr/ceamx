@@ -7197,12 +7197,11 @@ was printed, and only have ElDoc display if one wasn't.\""
 
 ;;; Provide "Casual" transient menus for complex modes
 
-;; <https://github.com/kickingvegas/cc-isearch-menu/blob/main/README.org>
-(package! cc-isearch-menu
-  (require 'cc-isearch-menu)
 
+;; <https://github.com/kickingvegas/casual-isearch>
+(package! (casual-isearch :host github :repo "kickingvegas/casual-isearch")
   (after! isearch
-    (keymap-set isearch-mode-map "<f2>" #'cc-isearch-menu-transient)))
+    (keymap-set isearch-mode-map "<f2>" #'casual-isearch-tmenu)))
 
 ;; <https://github.com/kickingvegas/casual-dired>
 (package! casual-dired

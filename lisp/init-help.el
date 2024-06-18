@@ -199,8 +199,10 @@ was printed, and only have ElDoc display if one wasn't.\""
 (package! cc-isearch-menu
   (require 'cc-isearch-menu)
 
+;; <https://github.com/kickingvegas/casual-isearch>
+(package! (casual-isearch :host github :repo "kickingvegas/casual-isearch")
   (after! isearch
-    (keymap-set isearch-mode-map "<f2>" #'cc-isearch-menu-transient)))
+    (keymap-set isearch-mode-map "<f2>" #'casual-isearch-tmenu)))
 
 ;; <https://github.com/kickingvegas/casual-dired>
 (package! casual-dired
