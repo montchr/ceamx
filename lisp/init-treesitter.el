@@ -82,5 +82,7 @@
 
   (global-treesit-auto-mode))
 
+(setopt treesit-font-lock-level 4)
+
 (provide 'init-treesitter)
 ;;; init-treesitter.el ends here
