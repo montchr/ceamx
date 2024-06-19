@@ -52,8 +52,47 @@ CLOSED: [2024-03-18 Mon 23:52]
 - State "CANCELLED"  from "TODO"       [2024-03-18 Mon 23:52] \\
   Not "broken", just misunderstood.
 
+*** 2024-03-20 Wednesday
+**** DONE org-mode needs ~tab-width~ set to 8 otherwise constant errors
+CLOSED: [2024-03-20 Wed 22:43]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-18 Tue 19:36
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Overview/Agenda
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:END:
+- State "DONE"       from "TODO"       [2024-03-20 Wed 22:43]
+
+  <https://github.com/doomemacs/doomemacs/commit/2757a97a30e7c4a0c2a5d2de13f2214baf09b019>
+
 
 ** 2024-05 May
+*** 2024-05-03 Friday
+**** DONE <https://elpa.gnu.org/packages/xr.html>
+CLOSED: [2024-05-03 Fri 09:43]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-18 Tue 19:36
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Overview/Agenda
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:END:
+- State "DONE"       from "TODO"       [2024-05-03 Fri 09:43]
+
+*** 2024-05-11 Saturday
+**** DONE Consider moving =lisp/lib-common.el= to =lisp/core/ceamx-lib.el=
+CLOSED: [2024-05-11 Sat 21:31]
+:PROPERTIES:
+:ARCHIVE_TIME: 2024-06-18 Tue 19:36
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_OLPATH: Overview/Agenda
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:END:
+
+- State "DONE"       from "TODO"       [2024-05-11 Sat 21:31]
+
 *** 2024-05-20 Monday
 **** DONE Only add languages upon initially encountering its =src= block
 CLOSED: [2024-05-20 Mon 23:36]

@@ -23,20 +23,7 @@ on WSL2 when E is running MS Windows, however that is a very low priority.
 
 ** Agenda
 
-*** DONE Consider moving =lisp/lib-common.el= to =lisp/core/ceamx-lib.el=
-CLOSED: [2024-05-11 Sat 21:31]
-
-- State "DONE"       from "TODO"       [2024-05-11 Sat 21:31]
-*** DONE <https://elpa.gnu.org/packages/xr.html>
-CLOSED: [2024-05-03 Fri 09:43]
-- State "DONE"       from "TODO"       [2024-05-03 Fri 09:43]
 *** TODO <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
-*** DONE org-mode needs ~tab-width~ set to 8 otherwise constant errors
-CLOSED: [2024-03-20 Wed 22:43]
-- State "DONE"       from "TODO"       [2024-03-20 Wed 22:43]
-
-  <https://github.com/doomemacs/doomemacs/commit/2757a97a30e7c4a0c2a5d2de13f2214baf09b019>
-
 *** TODO <https://orgmode.org/worg/org-contrib/org-choose.html>
 
 
@@ -2264,7 +2251,6 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 (setq message-log-max 10000)
 
 ;; Unbind `suspend-frame'.
-;; TODO: provide more context
 (global-unset-key (kbd "C-x C-z"))
 
 ;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
@@ -10142,7 +10128,13 @@ Register keybindings:
 (keymap-set ceamx-insert-map "s" #'yas-insert-snippet)
 
 (keymap-set ceamx-insert-map "S" #'yas-new-snippet)
+#+end_src
 
+*** TODO Automatically expand snippets on =SPC= key press
+
+Insanely helpful and also insanely annoying.  Needs refinement.
+
+#+begin_src emacs-lisp
 ;; Bind `SPC' to `yas-expand' when snippet expansion available (it
 ;; will still call `self-insert-command' otherwise).
 (after! yasnippet

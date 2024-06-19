@@ -190,7 +190,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (setq message-log-max 10000)
 
 ;; Unbind `suspend-frame'.
-;; TODO: provide more context
 (global-unset-key (kbd "C-x C-z"))
 
 ;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
