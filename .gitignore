@@ -1,11 +1,9 @@
-/result
+.data
 .direnv
+result
 
-/dotfield-init.el
-/dotfield-early-init.el
-
+# Context-specific configuration
 /site-config.el
-/.data/
 
 # Tangled files
 /init.el
