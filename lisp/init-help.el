@@ -195,15 +195,14 @@ was printed, and only have ElDoc display if one wasn't.\""
 
 ;;; Provide "Casual" transient menus for complex modes
 
+;; Hard requirement for all other Casual packages.
+(package! casual-lib
+  (require 'casual-lib))
+
 ;; <https://github.com/kickingvegas/casual-avy>
-(package! (casual-avy :host github :repo "kickingvegas/casual-avy")
+(package! casual-avy
   ;; M-g M-g
   (keymap-set goto-map "M-g" #'casual-avy))
-
-;; <https://github.com/kickingvegas/casual-isearch>
-(package! (casual-isearch :host github :repo "kickingvegas/casual-isearch")
-  (after! isearch
-    (keymap-set isearch-mode-map "<f2>" #'casual-isearch-tmenu)))
 
 ;; <https://github.com/kickingvegas/casual-dired>
 (package! casual-dired
@@ -214,6 +213,11 @@ was printed, and only have ElDoc display if one wasn't.\""
 (package! casual-info
   (after! info
     (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)))
+
+;; <https://github.com/kickingvegas/casual-isearch>
+(package! casual-isearch
+  (after! isearch
+    (keymap-set isearch-mode-map "<f2>" #'casual-isearch-tmenu)))
 
 ;;; `Info-mode' enchantments
 
