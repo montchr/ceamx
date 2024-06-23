@@ -12372,6 +12372,18 @@ its cache should stay out of the way.
   (add-to-list 'projectile-globally-ignored-directories "vendor"))
 #+end_src
 
+*** TODO ~ceamx-php-wordpress-spaghetti-template-p~: legacy theme template detection
+
+#+begin_src emacs-lisp
+;; (defconst ceamx-php-wordpress-template-names-regexp
+;;   (rx))
+
+;; (defun ceamx-php-wordpress-spaghetti-template-p (file)
+;;   "Whether a file matches the pattern for a WordPress classic theme template."
+;;   )
+#+end_src
+
+*** TODO Change buffer behavior based on ~ceamx-php-wordpress-spaghetti-template-p~ return value
 *** Register Twig (=*.twig=) and Blade (=*.blade.php=) templates to open in ~web-mode~
 
 #+begin_src emacs-lisp
