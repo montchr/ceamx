@@ -28,10 +28,16 @@
 (appendq! xref-ignored-files
           '("_ide_helper_models.php"
             "_ide_helper.php"))
-(package! (php-ts-mode :host github :repo "emacs-php/php-ts-mode")
-  (when (eq 'php-ts-mode ceamx-lang-php-major-mode-provider)
-    (add-to-list 'major-mode-remap-alist '(php-mode . php-ts-mode))
-    (add-to-list 'major-mode-remap-alist '(php-mode-maybe . php-ts-mode))))
+(package! php-mode
+  ;; PHP is not a templating language and it never was.  `web-mode' does
+  ;; templates better.  Furthermore, as of <2024-06-18 Tue 22:37> `php-ts-mode'
+  ;; does not currently support embedded HTML syntax, so disabling this feature
+  ;; of `php-mode' adds consistency.
+  (setopt php-mode-template-compatibility nil))
+(when (and (fboundp 'php-ts-mode)
+           (treesit-language-available-p 'php))
+  (add-to-list 'major-mode-remap-alist '(php-mode . php-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(php-mode-maybe . php-ts-mode)))
 (package! neon-mode)
 (after! (:or php-mode phps-mode php-ts-mode)
   (when (featurep 'dap)

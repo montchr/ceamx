@@ -52,14 +52,6 @@
                                      (system-name))))))
 (defconst ceamx-lang-php-extension-regexp "\\.\\(php\\|phtml\\)\\'"
   "Pattern matching files with PHP syntax.")
-
-(defcustom ceamx-lang-php-major-mode-provider 'php-ts-mode
-  "Which of several major-modes to provide PHP language support."
-  :group 'ceamx
-  :type '(choice :tag "PHP language support provider" :value php-mode
-          (const :tag "`php-ts-mode': Tree-Sitter-based" php-ts-mode)
-          (const :tag "`phps-mode': claims of intelligence" phps-mode)
-          (const :tag "`php-mode': regular-degular" php-mode)))
 ;; Available options listed in schema: https://github.com/bmewburn/intelephense-docs/blob/master/installation.md#configuration-options
 (defvar ceamx-php-iph-default-stubs
   ["apache" "bcmath" "bz2" "calendar"

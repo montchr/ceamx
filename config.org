@@ -12149,14 +12149,6 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 #+begin_src emacs-lisp :noweb-ref config-prog
 (defconst ceamx-lang-php-extension-regexp "\\.\\(php\\|phtml\\)\\'"
   "Pattern matching files with PHP syntax.")
-
-(defcustom ceamx-lang-php-major-mode-provider 'php-ts-mode
-  "Which of several major-modes to provide PHP language support."
-  :group 'ceamx
-  :type '(choice :tag "PHP language support provider" :value php-mode
-          (const :tag "`php-ts-mode': Tree-Sitter-based" php-ts-mode)
-          (const :tag "`phps-mode': claims of intelligence" phps-mode)
-          (const :tag "`php-mode': regular-degular" php-mode)))
 #+end_src
 
 *** Ignore PHP-specific directories and files
@@ -12169,24 +12161,32 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 *** Install a PHP major-mode... but which one?
 
-**** DISABLED [[https://github.com/emacs-php/php-mode][emacs-php/php-mode]] :package:
+**** [[https://github.com/emacs-php/php-mode][emacs-php/php-mode]] :package:
 
-#+begin_src emacs-lisp :noweb-ref nil
+#+begin_src emacs-lisp
 (package! php-mode
-  ;; PHP is not a templating language and it never was.
-  ;; `web-mode' does templates better.
-  ;; Furthermore, by its nature, `php-ts-mode' does not support embedded HTML
-  ;; syntax, so disabling this feature of `php-mode' adds consistency.
+  ;; PHP is not a templating language and it never was.  `web-mode' does
+  ;; templates better.  Furthermore, as of <2024-06-18 Tue 22:37> `php-ts-mode'
+  ;; does not currently support embedded HTML syntax, so disabling this feature
+  ;; of `php-mode' adds consistency.
   (setopt php-mode-template-compatibility nil))
   #+end_src
 
-**** [[https://github.com/emacs-php/php-ts-mode][emacs-php/php-ts-mode]] :package:
+**** ~php-ts-mode~ [builtin]
+
+~php-ts-mode~ is part of Emacs 30.
+
+Unfortunately, as of <2024-06-18 Tue 18:22>, I am missing the
+[[https://github.com/claytonrcarter/tree-sitter-phpdoc][=tree-sitter-phpdoc= grammar]], and it is not yet available in Nixpkgs.  I was
+able to run ~php-ts-mode-install-parsers~ as suggested in the error message, but
+the missing grammar should really be added to Nixpkgs and the current stateful
+installation might get confusing.
 
 #+begin_src emacs-lisp
-(package! (php-ts-mode :host github :repo "emacs-php/php-ts-mode")
-  (when (eq 'php-ts-mode ceamx-lang-php-major-mode-provider)
-    (add-to-list 'major-mode-remap-alist '(php-mode . php-ts-mode))
-    (add-to-list 'major-mode-remap-alist '(php-mode-maybe . php-ts-mode))))
+(when (and (fboundp 'php-ts-mode)
+           (treesit-language-available-p 'php))
+  (add-to-list 'major-mode-remap-alist '(php-mode . php-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(php-mode-maybe . php-ts-mode)))
 #+end_src
 
 **** DISABLED [[https://github.com/cjohansson/emacs-phps-mode][cjohansson/phps-mode]] :package:
