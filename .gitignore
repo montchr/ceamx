@@ -6,3 +6,7 @@
 
 /site-config.el
 /.data/
+
+# Tangled files
+/init.el
+/lisp/
