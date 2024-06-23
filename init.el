@@ -329,8 +329,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
           ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
           ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
           ))
-(setopt remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
-(setopt remote-file-name-inhibit-auto-save t)                 ; Emacs 30
 (package! persistent-scratch
   ;; `with-demoted-errors' or `ignore-errors' wrapper is recommended by project
   ;; readme, as there will be an error if the autosave file does not exist.

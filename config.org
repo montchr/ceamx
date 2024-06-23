@@ -1446,13 +1446,6 @@ Or, perhaps more accurately: stuff that needs a better home.
 #+end_src
 
 
-** TODO disable expensive remote operations in emacs 30+
-
-#+begin_src emacs-lisp
-(setopt remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
-(setopt remote-file-name-inhibit-auto-save t)                 ; Emacs 30
-#+end_src
-
 ** TODO persistent scratch buffers
 
 #+begin_src emacs-lisp
@@ -3445,7 +3438,10 @@ buffer, as a buffer-local variable.
 (setopt tramp-default-remote-shell "/bin/bash")
 (setopt tramp-connection-timeout (* 60 10))
 ;; Do not auto-save remote files. Note the reversed logic.
+(setopt remote-file-name-inhibit-auto-save t)                 ; Emacs 30
 (setopt remote-file-name-inhibit-auto-save-visited t)
+;; Avoid expensive operations on remote files.
+(setopt remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
 
 (after! tramp
   (dolist (path '("~/.local/bin"
