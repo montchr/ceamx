@@ -7151,25 +7151,6 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 (setopt eldoc-documentation-function #'eldoc-documentation-compose)
 
-;;; Tune the contexts in which Eldoc displays its messages
-
-(use-feature! eldoc
-  :config
-  ;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2800-L2810>
-  (def-advice! +eldoc-better-display-message-p-a (&rest _)
-    :override #'eldoc--message-command-p
-    "Make ElDoc smarter about when to display its messages.
-From the original author:
-
-\"By default ElDoc has a customizable whitelist of commands that
-it will display its messages after. The idea of this is to not
-trample on messages that other commands may have printed.
-However, this is a hopeless endeavour because there are a
-virtually unlimited number of commands that don't conflict with
-ElDoc. A better approach is to simply check to see if a message
-was printed, and only have ElDoc display if one wasn't.\""
-    (member (current-message) (list nil eldoc-last-message))))
-
 ;;; Display usage examples for Elisp callables inside their help buffers
 
 ;; <https://github.com/xuchunyang/elisp-demos>
@@ -11380,7 +11361,10 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
 (setopt eglot-auto-display-help-buffer nil)
 #+end_src
 
-**** Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
+**** DISABLED Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 - Website :: <https://github.com/jdtsmith/eglot-booster>
 - Website :: <https://github.com/blahgeek/emacs-lsp-booster>

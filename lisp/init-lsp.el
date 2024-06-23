@@ -36,10 +36,6 @@
 
 ;; Prevent frequent focus-stealing.
 (setopt eglot-auto-display-help-buffer nil)
-(package! (eglot-booster :host github :repo "jdtsmith/eglot-booster")
-  (after! eglot
-    (eglot-booster-mode)))
-(setopt eglot-booster-no-remote-boost t)
 (add-hook 'prog-mode-hook #'eglot-ensure)
 
 (after! eglot
