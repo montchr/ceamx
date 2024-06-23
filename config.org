@@ -7201,6 +7201,13 @@ Intended for use as a hook on `ceamx-after-init-hook'."
   ;; M-g M-g
   (keymap-set goto-map "M-g" #'casual-avy))
 
+;; <https://github.com/kickingvegas/casual-calc>
+(package! casual-calc
+  (after! calc
+    (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu))
+  (after! calc-alg
+    (keymap-set calc-alg-map "C-o" #'casual-calc-tmenu)))
+
 ;; <https://github.com/kickingvegas/casual-dired>
 (package! casual-dired
   (after! dired
