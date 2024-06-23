@@ -11372,10 +11372,7 @@ Intended for use as a hook function on `orderless-style-dispatchers'."
 (setopt eglot-auto-display-help-buffer nil)
 #+end_src
 
-**** DISABLED Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
+**** Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
 
 - Website :: <https://github.com/jdtsmith/eglot-booster>
 - Website :: <https://github.com/blahgeek/emacs-lsp-booster>
