@@ -10,3 +10,8 @@
 # Tangled files
 /init.el
 /lisp/
+
+# XXX: Currently there is no way to change this default (though it can be
+# specified manually when calling `treesit-install-language-grammar'
+# interactively)
+/tree-sitter/

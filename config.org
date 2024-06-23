@@ -10449,6 +10449,8 @@ Intended for use as a hook callback on `prog-mode-hook'."
   (global-treesit-auto-mode))
 #+end_src
 
+Increase the amount of syntax-highlighted structures:
+
 #+begin_src emacs-lisp
 (setopt treesit-font-lock-level 4)
 #+end_src
