@@ -557,6 +557,28 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-templates")>>
 #+end_src
 
+*** =lisp/init-notes.el=
+
+#+name: init-notes-file
+#+begin_src emacs-lisp :tangle lisp/init-notes.el
+<<file-prop-line(feature="init-notes",desc="Notetaking features")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-notes>>
+
+<<file-footer(feature="init-notes")>>
+#+end_src
+
 *** =lisp/init-outline.el=
 
 #+name: init-outline-file
@@ -2351,10 +2373,9 @@ Work around an upstream bug where profiling [[https://github.com/jschaf/esup/iss
 #+begin_src emacs-lisp
 ;;;; Outlines & Memex
 
+(require 'init-notes)
 (require 'init-outline)
 (require 'init-org)
-(require 'init-notes)
-(require 'init-notes-denote)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -2821,6 +2842,9 @@ Emacs version to prevent bytecode incompatibility.")
 
 (defvar-keymap ceamx-launch-map)
 (define-prefix-command 'ceamx-launch-map)
+
+(defvar-keymap ceamx-note-map)
+(define-prefix-command 'ceamx-note-map)
 
 (defvar-keymap ceamx-packages-map)
 (define-prefix-command 'ceamx-packages-map)
@@ -12729,6 +12753,9 @@ enchant-lsmod-2 -list-dicts
 
 
 * Notetaking
+:PROPERTIES:
+:header-args: :noweb-ref init-notes
+:END:
 
 ** Define locations for important directories and files
 
@@ -12753,50 +12780,39 @@ enchant-lsmod-2 -list-dicts
   (file-name-as-directory (concat ceamx-notes-dir "work")))
 #+end_src
 
+Create the directories if they don't already exist (to prevent errors):
 
-#+begin_src emacs-lisp :tangle lisp/init-notes.el
-;;; init-notes.el --- Configuration for notetaking   -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Generic notetaking configurations.
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'f)
-
 (require 'ceamx-paths)
 
-;; Create all required directories if not already present.
 (dolist (dir (list ceamx-notes-dir ceamx-journal-dir ceamx-agenda-dir))
   (f-mkdir-full-path dir))
+#+end_src
 
-;;
-;;; consult-notes <https://github.com/mclear-tools/consult-notes>
+** =consult-notes= :: provide notes as a Consult datasource :package:consult:
 
-(use-package consult-notes
-  ;; FIXME: :elpaca (:host github :repo "mclear-tools/consult-notes")
-  :commands (consult-notes
-              consult-notes-search-in-all-notes))
+- website :: <https://github.com/mclear-tools/consult-notes>
 
+#+begin_src emacs-lisp
+(package! consult-notes)
+
+(after! consult-notes
+  (setopt consult-notes-file-dir-sources
+          `(("Default" ?D ,ceamx-notes-default-dir)
+            ("Org" ?o ,org-directory)))
+
+  (setopt consult-notes-org-headings-files org-agenda-files)
+  (consult-notes-org-headings-mode)
+
+  ;; Integrate with Denote if available.
+  (when (locate-library "denote")
+    (consult-notes-denote-mode))
+  (setopt consult-notes-denote-files-function (lambda () (denote-directory-files nil t t))))
+#+end_src
+
+** TODO Embark integration for ~consult-notes~ :embark:
+#+begin_src emacs-lisp
 ;; via <https://github.com/mclear-tools/consult-notes#embark-support>
 ;; (after! (consult-notes embark)
 ;; 	(defun ceamx/consult-notes-embark-action (cand)
@@ -12820,160 +12836,100 @@ enchant-lsmod-2 -list-dicts
 
 ;;   ;; Make `embark-export' use dired for notes.
 ;;   (setf (alist-get consult-notes-category embark-exporters-alist) #'embark-export-dired))
-
-
-(provide 'init-notes)
-;;; init-notes.el ends here
 #+end_src
 
+** Denote (denote.el)
 
+- website :: <https://protesilaos.com/emacs/denote>
 
-** Denote
-
-#+begin_src emacs-lisp :tangle lisp/init-notes-denote.el
-;;; init-notes-denote.el --- Denote configuration          -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@proton.me>
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; <https://protesilaos.com/emacs/denote>
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'ceamx-paths)
 
-(use-package denote
-  :config
+(package! denote
+  (require 'denote)
+
   (setopt denote-directory ceamx-notes-default-dir)
-  (setopt denote-known-keywords '("emacs"))
+  (setopt denote-save-buffers nil)
+  (setopt denote-known-keywords '("emacs" "philosophy" "correspondence" "language" "work"))
   (setopt denote-infer-keywords t)
   (setopt denote-sort-keywords t)
+  (setopt denote-file-type nil)         ; Org is the default
   (setopt denote-prompts '(title keywords))
-  ;; TODO: exclude ".archive"
-  ;; (setopt denote-excluded-directories-regexp nil)
+  (setopt denote-excluded-directories-regexp "\\.archive")
   (setopt denote-excluded-keywords-regexp nil)
-  ;; Pick dates, where relevant, with Org's advanced interface:
+  (setopt denote-rename-confirmations '(modify-file-name
+                                        rewrite-front-matter))
+
+  ;; Pick dates, where relevant, with Org's advanced interface.
   (setopt denote-date-prompt-use-org-read-date t)
-  (setopt denote-allow-multi-word-keywords t)
+
   (setopt denote-date-format nil)       ; read doc string
-  ;; By default, we do not show the context of links.  We just display
-  ;; file names.  This provides a more informative view.
-  ;; Also see ~denote-link-backlinks-display-buffer-action~ which is a bit
-  ;; advanced.
+
+  ;; also: `denote-link-backlinks-display-buffer-action'
   (setopt denote-backlinks-show-context t)
-  ;; If you use Markdown or plain text files (Org renders links as buttons
-  ;; right away)
-  (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
-  ;; We use different ways to specify a path for demo purposes.
-  (setopt denote-dired-directories
-    (list denote-directory
-      (thread-last denote-directory (expand-file-name "attachments"))))
+
+  ;; FIXME: still non-existent function! but how? it is available in M-x
+  (add-hook 'find-file-hook #'denote-fontify-links-mode)
   (add-hook 'dired-mode-hook #'denote-dired-mode)
-  ;; Alternatively:
-  ;; (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
-
-  ;; Here is a custom, user-level command from one of the examples we
-  ;; showed in this manual.  We define it here and add it to a key binding
-  ;; below.
-  (defun my-denote-journal ()
-    "Create an entry tagged 'journal' with the date as its title.
-If a journal for the current day exists, visit it.  If multiple
-entries exist, prompt with completion for a choice between them.
-Else create a new file."
-    (interactive)
-    (let* ((today (format-time-string "%A %e %B %Y"))
-           (string (denote-sluggify today))
-           (files (denote-directory-files-matching-regexp string)))
-      (cond
-       ((> (length files) 1)
-        (find-file (completing-read "Select file: " files nil :require-match)))
-       (files
-        (find-file (car files)))
-       (t
-        (denote
-         today
-         '("journal"))))))
-
-  ;; Key bindings specifically for Dired.
-  (define-keymap :keymap dired-mode-map
-    ;; FIXME: avoid C-c C-* for stuff like this
-    "C-c C-d C-i" #'denote-link-dired-marked-notes
-    "C-c C-d C-r" #'denote-dired-rename-marked-files
-    "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter)
-
-  (with-eval-after-load 'org-capture
-    (setopt denote-org-capture-specifiers "%l\n%i\n%?")
-    (add-to-list 'org-capture-templates
-                 '("n" "New note (with denote.el)" plain
-                   (file denote-last-path)
-                   #'denote-org-capture
-                   :no-save t
-                   :immediate-finish nil
-                   :kill-buffer t
-                   :jump-to-captured t)))
-
-  ;; Also check the commands ~denote-link-after-creating~,
-  ;; ~denote-link-or-create~.  You may want to bind them to keys as well.
 
   ;; If you want to have Denote commands available via a right click
   ;; context menu, use the following and then enable
   ;; ~context-menu-mode~.
-  (add-hook 'context-menu-functions #'denote-context-menu))
+  (add-hook 'context-menu-functions #'denote-context-menu)
+
+  (setopt denote-dired-directories
+          (list denote-directory
+                (thread-last denote-directory (expand-file-name "attachments"))))
+
+  ;; Automatically rename Denote buffers using the `denote-rename-buffer-format'.
+  (denote-rename-buffer-mode 1))
 
 
-;;
-;;; denote-menu <https://github.com/namilus/denote-menu>
-;;
+#+end_src
 
-(use-package denote-menu
-  :after (denote)
-  :commands (list-denotes
-              denote-menu-clear-filters
-              denote-menu-filter
-              denote-menu-filter-by-keyword
-              denote-menu-filter-out-keyword
-              denote-menu-export-to-dired)
-  :config
-  (keymap-global-set "C-c z" #'list-denotes)
+** Keybindings
 
-  ;; TODO: `define-keymap'
-  (keymap-set denote-menu-mode-map "c" #'denote-menu-clear-filters)
-  (keymap-set denote-menu-mode-map "/ r" #'denote-menu-filter)
-  (keymap-set denote-menu-mode-map "/ k" #'denote-menu-filter-by-keyword)
-  (keymap-set denote-menu-mode-map "/ o" #'denote-menu-filter-out-keyword)
-  (keymap-set denote-menu-mode-map "e" #'denote-menu-export-to-dired))
+#+begin_src emacs-lisp
+;; "Also check the commands ~denote-link-after-creating~,
+;; ~denote-link-or-create~.  You may want to bind them to keys as well."
 
-;;
-;;; Integrations
-;;
+(define-keymap :keymap ceamx-note-map
+  "n" #'denote
 
-;; <https://github.com/mclear-tools/consult-notes#denote>
-(after! (denote consult-notes)
-  (consult-notes-denote-mode)
-  ;; Search only for text files in Denote dir.
-  (setopt consult-notes-denote-files-function
-        (function denote-directory-text-only-files)))
+  "c" #'denote-region                 ; "contents"
+  "C" #'denote-type
+  "s" #'denote-subdirectory
+  "t" #'denote-template
+  "z" #'denote-signature              ; "zettelkasten"
 
+  "i" #'denote-link                   ; "insert link"
+  "I" #'denote-add-links
+  "b" #'denote-backlinks
 
+  "f" (cons "find..." (define-prefix-command 'ceamx-find-notes-prefix))
+  "f f" #'denote-find-link
+  "f b" #'denote-find-backlink
 
-(provide 'init-notes-denote)
-;;; init-notes-denote.el ends here
+  "r" #'denote-rename-file
+  "R" #'denote-rename-file-using-front-matter)
+
+(with-eval-after-load 'dired
+  (define-keymap :keymap dired-mode-map
+    "C-c C-d C-i" #'denote-link-dired-marked-notes
+    "C-c C-d C-r" #'denote-dired-rename-marked-files
+    "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
+    "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
+
+(with-eval-after-load 'org-capture
+  (setopt denote-org-capture-specifiers "%l\n%i\n%?")
+  (add-to-list 'org-capture-templates
+      '("n" "New note (with denote.el)" plain
+        (file denote-last-path)
+        #'denote-org-capture
+        :no-save t
+        :immediate-finish nil
+        :kill-buffer t
+        :jump-to-captured t)))
 #+end_src
 
 
