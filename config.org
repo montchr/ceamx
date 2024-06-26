@@ -11718,6 +11718,21 @@ Install the =yaml-language-server= from Nixpkgs first.
   ;;       in `+web-mode--customization-hook'.
   (setopt web-mode-enable-current-element-highlight t))
 
+;;; emmet-mode
+
+;; - website :: <https://github.com/smihica/emmet-mode>
+;; - reference ::
+;; - <https://github.com/smihica/emmet-mode/blob/master/README.md#usage>
+
+;; NOTE: This package is unmaintained!
+
+(package! emmet-mode
+  (setopt emmet-move-cursor-between-quotes t)
+
+  (add-hook 'css-mode-hook #'emmet-mode)
+  (after! web-mode
+    (add-hook 'web-mode-hook #'emmet-mode)))
+
 (provide 'init-lang-html)
 ;;; init-lang-html.el ends here
 #+end_src
