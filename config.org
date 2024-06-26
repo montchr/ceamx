@@ -13684,6 +13684,21 @@ What even is this though...?
   (with-eval-after-load 'diredfl
     (set-face-attribute 'diredfl-dir-name nil :bold t)))
 
+;;; ~dired-preview~, a file previewer for Dired
+
+;; - website :: <https://protesilaos.com/emacs/dired-preview>
+
+(package! dired-preview
+  (setopt dired-preview-delay 0.7)
+  (setopt dired-preview-max-size (expt 2 20))
+  (setopt dired-preview-ignored-extensions-regexp
+          (concat "\\."
+                  "\\(mkv\\|webm\\|mp4\\|mp3\\|ogg\\|m4a"
+                  "\\|gz\\|zst\\|tar\\|xz\\|rar\\|zip"
+                  "\\|iso\\|epub\\|pdf\\)"))
+
+  (dired-preview-global-mode))
+
 (provide 'init-dired)
 ;;; init-dired.el ends here
 #+end_src
