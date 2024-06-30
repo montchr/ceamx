@@ -5764,6 +5764,12 @@ available, `switchy-window'."
 (keymap-global-set "C-x C-b" #'ibuffer-list-buffers)
 #+end_src
 
+** ~mowie~: a library to help you get where you mean
+
+#+begin_src emacs-lisp
+(package! (mowie :host codeberg :repo "mekeor/mowie"))
+#+end_src
+
 ** ~mwim~: Move-Where-I-Mean line positions
 
 + src :: <https://github.com/alezost/mwim.el/blob/master/README.org#usage>
