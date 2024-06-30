@@ -7051,7 +7051,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 * Help
 
-** Define the directory containing Es cheatsheets
+** Define the directory containing cheatsheets
 
 #+begin_src emacs-lisp :noweb-ref config-feature-paths
 (defconst ceamx-cheatsheets-dir
@@ -7281,6 +7281,9 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 (define-keymap :keymap help-map
   "l" #'find-library
+  ;; I actually prefer the default `man' over `consult-man'.
+  "m" #'man                     ; orig: `describe-mode'
+  "M" #'describe-mode
 
   ;; FIXME: no lambda binding
   ;; "t" `("text-props (pt)" . ,(cmd!!
