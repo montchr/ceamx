@@ -7,8 +7,8 @@ result
 /site-config.el
 
 # Tangled files
-/init.el
-/lisp/
+/lisp/*
+!/lisp/core
 
 # XXX: Currently there is no way to change this default (though it can be
 # specified manually when calling `treesit-install-language-grammar'
