@@ -35,7 +35,13 @@
 
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chmont@proton.me")
-
+(add-hook 'ceamx-after-init-hook
+          (lambda ()
+            (message "Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract (current-time) before-init-time)))
+                     gcs-done)))
 (add-to-list 'load-path ceamx-site-lisp-dir)
 (prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
 (defgroup ceamx nil
@@ -182,9 +188,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
                                         ;  <https://git.sr.ht/~tarsius/llama>
 
 (use-package f)
-(package! esup)
-(after! esup
-  (setq esup-depth 0))
 
 ;; Increase number of messages saved in log.
 (setq message-log-max 10000)
