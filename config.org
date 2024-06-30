@@ -6220,10 +6220,8 @@ it selectively.
 #+begin_src emacs-lisp
 ;; <https://editorconfig.org>
 
-(use-package editorconfig
-  :commands (editorconfig-mode)
-  :init
-  (add-hook 'on-first-file-hook #'editorconfig-mode))
+(package! editorconfig
+  (add-hook 'ceamx-emacs-startup-hook #'editorconfig-mode))
 #+end_src
 
 **** Prevent ~editorconfig~ from exploding ~org-mode~ buffers
