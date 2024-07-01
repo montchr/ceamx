@@ -12196,7 +12196,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (setopt php-mode-template-compatibility nil))
   #+end_src
 
-**** ~php-ts-mode~ [builtin]
+**** DISABLED ~php-ts-mode~ [builtin]
 
 ~php-ts-mode~ is part of Emacs 30.
 
