@@ -9015,16 +9015,52 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 #+begin_src emacs-lisp
 (package! orderless
-  ;; FIXME: unnecessary as long as stuff is configured
-  (require 'orderless)
+  (setopt completion-styles '(orderless basic))
+
+  (setopt completion-category-overrides
+          '(;; The "file" category override is required for TRAMP hostname
+            ;; completion.  "partial-completion" allows for wildcard/partial
+            ;; paths (e.g. "/u/s/l" for "/usr/share/local").
+            (file (styles basic partial-completion))))
+
+  ;; Available matching styles:
+  ;;
+  ;; - `orderless-regexp'
+  ;; - `orderless-literal'
+  ;; - `orderless-literal-prefix'
+  ;; - `orderless-prefixes' :: split component at word bounds and match word
+  ;;   bounds in candidate (in order)
+  ;; - `orderless-initialism' :: each char is the beginning of a word in
+  ;;   candidate, in order;  e.g. ‘abc’ => ‘\<.*\<b.*\c’
+  ;; - `orderless-flex' :: chars in component appear in candidate in order, but
+  ;;   not necessarily consecutively;  e.g. ‘abc’ => ‘a.*b.*c’
+  ;;
+  ;; <https://github.com/oantolin/orderless/blob/master/README.org#component-matching-styles>
+  (setopt orderless-matching-styles '(orderless-literal
+                                      orderless-regexp))
+
+  ;; Style dispatchers:
+  ;;
+  ;; `orderless-affix-dispatch' :: support a mini-syntax using special
+  ;; characters as prefix or suffix, as follows:
+  ;;
+  ;; - '!' :: negate component with `orderless-not' e.g. "!bad" and "bad!" match
+  ;;          strings that do *not* contain "bad"
+  ;; - '&' :: match candidate by annotation with `orderless-annotation'
+  ;; - ',' :: use `orderless-initialism'
+  ;; - '=' :: use `orderless-literal'
+  ;; - '^' :: use `orderless-literal-prefix'
+  ;; - '~' :: use `orderless-flex'
+  ;; - '%' :: ignore diacritics and character inflections
+  (setopt orderless-style-dispatchers '(orderless-affix-dispatch))
 
   ;; Allow escaping space with backslash.
   (setopt orderless-component-separator #'orderless-escapable-split-on-space))
 #+end_src
 
-*** Query syntax additions through style dispatchers
+Query syntax additions through style dispatchers:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb-ref nil
 (defun +orderless--consult-suffix ()
   "Regexp which matches the end of string with Consult tofu support."
   (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
@@ -9066,48 +9102,23 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 
-*** Use ~orderless~ completion settings
-
-See [[*Orderless]] for definitions.
-
-#+begin_src emacs-lisp
-(after! orderless
-  (setopt completion-styles '(basic orderless))
-  (setopt completion-category-defaults nil)
-  (setopt completion-category-overrides '((file (styles partial-completion))
-                                          ;; (command (styles +orderless-with-initialism))
-                                          ;; (variable (styles +orderless-with-initialism))
-                                          ;; (symbol (styles +orderless-with-initialism))
-                                          ))
-
-  (setopt orderless-matching-styles '(orderless-regexp))
-  (setopt orderless-style-dispatchers (list ;; #'+orderless-first-initialism-dispatch
-                                       ;; #'+orderless-flex-if-twiddle-dispatch
-                                       ;; #'+orderless-not-if-bang-dispatch
-                                       #'+orderless-consult-dispatch
-                                       #'orderless-affix-dispatch)))
-#+end_src
-
 *** Install Corfu and configure its global settings
 
 #+begin_src emacs-lisp
 (package! corfu
-  (setopt corfu-auto t)
-  (setopt corfu-auto-delay 0.05)
-  (setopt corfu-cycle t)
+  (setopt corfu-auto t
+          corfu-auto-delay 0.05)
+  (setopt corfu-count 8
+          corfu-cycle t
+          corfu-max-width 80
+          corfu-scroll-margin 5)
   (setopt corfu-preselect 'prompt)
-  (setopt corfu-count 8)
-  (setopt corfu-max-width 80)
   (setopt corfu-on-exact-match nil)
-  (setopt corfu-scroll-margin 5)
 
-  (setopt corfu-quit-at-boundary 'separator)
-  (setopt corfu-quit-no-match 'separator)
-
-  ;; Trigger insertion of the separator with "M-SPC".  The character will appear
-  ;; to be inserted into the buffer.  Upon selecting a candidate (or aborting,
-  ;; or whatver), the extra character will be removed.
-  (setopt corfu-separator ?_)
+  ;; "SPC" => Same as the Orderless field separator.
+  (setopt corfu-separator ?\s
+          corfu-quit-at-boundary 'separator
+          corfu-quit-no-match t)
 
   (global-corfu-mode))
 #+end_src
