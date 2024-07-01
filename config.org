@@ -8427,6 +8427,20 @@ See the helper functions/macros.
 ;; (ceamx-meow-unbind-thing "r")
 #+end_src
 
+**** ~meow-tree-sitter~: ~treesit~-powered motions for Meow
+
+- source :: https://github.com/skissue/meow-tree-sitter
+
+#+begin_src emacs-lisp
+(package! meow-tree-sitter
+  (after! meow
+    (require 'meow-tree-sitter)
+    (meow-tree-sitter-register-defaults))
+
+  (setopt meow-tree-sitter-can-expand t
+          meow-tree-sitter-can-jump-forward t))
+#+end_src
+
 **** Activate Meow
 
 #+begin_src emacs-lisp
