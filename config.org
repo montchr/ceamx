@@ -5700,7 +5700,7 @@ available, `switchy-window'."
 ** Define the =C-c b= buffer prefix map
 
 #+begin_src emacs-lisp
-(keymap-global-set "C-c b" '("[[ BUFFER ]]" . ceamx-buffer-prefix))
+(keymap-global-set "C-c b" '("Buffer" . ceamx-buffer-prefix))
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref ceamx-keymaps
@@ -13521,17 +13521,10 @@ What even is this though...?
 ;;; Requirements
 
 (require 'ceamx-keymaps)
-
 (require 'ceamx-lib)
 
-;;; Launch
-
-(keymap-global-set "C-c o" '("[ Launch ]" . ceamx-launch-map))
-
-
-;;; Toggle
-
-(keymap-global-set "C-c t" '("[ Toggle ]" . ceamx-toggle-map))
+(keymap-global-set "C-c o" '("Launch" . ceamx-launch-map))
+(keymap-global-set "C-c t" '("Toggle" . ceamx-toggle-map))
 
 (define-keymap :keymap ceamx-toggle-map
   "l" #'display-line-numbers-mode
