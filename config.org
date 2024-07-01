@@ -13643,8 +13643,20 @@ What even is this though...?
   (setopt dired-dwim-target t)
   (setopt dired-kill-when-opening-new-dired-buffer t)
   (setopt dired-listing-switches "-al --group-directories-first")
-  (setopt dired-mouse-drag-files t)
 
+  (setopt dired-backup-overwrite t)
+  (setopt dired-vc-rename-file t)
+
+  ;; TODO: difference between these two?
+  (setopt dired-clean-confirm-killing-deleted-buffers nil)
+  (setopt dired-clean-up-buffers-too t)
+
+  (setopt dired-create-destination-dirs 'ask
+          dired-create-destination-dirs-on-trailing-dirsep t
+          dired-recursive-deletes 'always
+          dired-recursive-copies 'top)
+
+  (setopt dired-mouse-drag-files t)
   ;; TODO: does this really belong here?
   (setopt mouse-drag-and-drop-region-cross-program t)
 
