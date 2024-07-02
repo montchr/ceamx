@@ -11650,7 +11650,7 @@ Install the =yaml-language-server= from Nixpkgs first.
     "t" #'csv-transpose))
 #+end_src
 
-** HTML
+** Web-Mode
 
 #+begin_src emacs-lisp :tangle lisp/init-lang-html.el
 ;;; init-lang-html.el ---HTML and templating engine support  -*- lexical-binding: t; -*-
@@ -11681,10 +11681,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 ;;; Code:
 
-(use-package web-mode
-  :commands (web-mode)
-
-  :init
+(package! web-mode
   ;; TODO: refactor
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
@@ -11695,28 +11692,17 @@ Install the =yaml-language-server= from Nixpkgs first.
   (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
-  :config
   (setopt web-mode-engines-alist
           '(("php" . "\\.phtml\\'")
             ("blade" . "\\.blade\\.")))
 
-  ;; TODO: revisit this...
-  ;; NOTE: This method of setting customizations is unusual,
-  ;;       but recommended by `web-mode' documentation.
-  (defun +web-mode--customization-hook ()
-    "Customization hook for `web-mode'"
-    (setopt web-mode-markup-indent-offset 2)
-    (setopt web-mode-css-indent-offset 2)
-    (setopt web-mode-code-indent-offset 2)
-    (setopt web-mode-enable-auto-pairing t)
-    (setopt web-mode-enable-css-colorization t)
-    (setopt web-mode-enable-block-face t)
-    (setopt web-mode-enable-part-face t))
-  (add-hook 'web-mode-hook '+web-mode--customization-hook)
+  ;; Defer to `electric-pair-mode' or similar.
+  (setopt web-mode-enable-auto-pairing nil)
 
-  ;; NOTE: The following customizations should NOT be set
-  ;;       in `+web-mode--customization-hook'.
-  (setopt web-mode-enable-current-element-highlight t))
+  (setopt web-mode-enable-css-colorization t
+          web-mode-enable-block-face t
+          web-mode-enable-part-face t
+          web-mode-enable-current-element-highlight t))
 
 ;;; emmet-mode
 
