@@ -6253,6 +6253,20 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 **** Configure generalized polyglot formatters
 
+***** =biome=
+
+- Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
+
+This should, possibly more ideally, be run as an LSP client, but AFAIK one does
+not yet exist for Eglot (only LSP-Mode).
+
+#+begin_src emacs-lisp
+(after! reformatter
+  (reformatter-define biome-format
+    :program "biome"
+    :args (list "format" "--stdin-file-path" (buffer-file-name))))
+#+end_src
+
 ***** =prettier=
 
 - Source :: <https://github.com/akirak/flake-templates/blob/629b04932dc71e3e0213d66a0aa8a08cd0b64922/README.md#emacs>
@@ -6267,18 +6281,14 @@ PROPS is as in `editorconfig-after-apply-functions'."
                 "--stdin-filepath" (buffer-file-name))))
 #+end_src
 
-***** =biome=
-
-- Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
-
-This should, possibly more ideally, be run as an LSP client, but AFAIK one does
-not yet exist for Eglot (only LSP-Mode).
+***** treefmt
 
 #+begin_src emacs-lisp
-(after! reformatter
-  (reformatter-define biome-format
-    :program "biome"
-    :args (list "format" "--stdin-file-path" (buffer-file-name))))
+(with-eval-after-load 'reformatter
+  (reformatter-define treefmt
+    :group 'ceamx
+    :program "treefmt"
+    :args (list "--stdin" (buffer-file-name))))
 #+end_src
 
 **** TODO Inhibit on-save formatting with prefix argument
