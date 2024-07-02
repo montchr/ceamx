@@ -12666,9 +12666,16 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 #+end_src
 
 
-** ~outli~: Enable simple comment-based outline features in many modes
+** DISABLED ~outli~: Enable simple comment-based outline features in many modes
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
-<https://github.com/jdtsmith/outli>
+- Note taken on [2024-07-02 Tue 10:45] \\
+  Disabled because I think it causes errors when reverting buffers for some
+  major-modes?
+
+- source :: <https://github.com/jdtsmith/outli>
 
 #+begin_src emacs-lisp
 ;; NOTE: In `emacs-lisp-mode' buffers, `outli-mode' should be enabled *after*
