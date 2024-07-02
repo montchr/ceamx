@@ -7,12 +7,6 @@
 #+property: header-args:shell+      :results replace
 #+property: header-args             :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments no
 
-#+begin_quote
-generally no real magic in this world exists
-#+end_quote
-
----Eli Zaretskii
-
 * Overview
 
 This is a user configuration for GNU Emacs.
