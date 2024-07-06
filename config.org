@@ -3821,7 +3821,12 @@ those available in Emacs (e.g. ~transient~), or, including some packages (like
 *** Transient
 
 #+begin_src emacs-lisp
-(package! transient)
+(package! transient
+  ;; Restore the default location, overriding `no-littering'.  I consider these
+  ;; values configuration to be exposed, not state to be hidden.  See
+  ;; `transient-save-values' and related.
+  (setopt transient-values-file (locate-user-emacs-file "transient/values.el")))
+
 (package! magit-section)
 #+end_src
 
