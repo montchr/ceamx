@@ -13587,8 +13587,8 @@ What even is this though...?
 #+begin_src emacs-lisp
 (package! enlight
   (require 'enlight)
-
-  (setopt initial-buffer-choice #'enlight))
+  ;; (setopt initial-buffer-choice #'enlight)
+  )
 #+end_src
 
 ** Define dashboard-specific faces :faces:
