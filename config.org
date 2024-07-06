@@ -2142,7 +2142,7 @@ Equivalent to manually specifying =:ensure t= in each ~use-package~ expression.
 (setopt use-package-always-ensure t)
 #+end_src
 
-*** Elpaca Wait № 1: finish processing current queue
+*** Elpaca-Wait № 1: finish processing current queue :wait:
 
 Reason:
 
@@ -2177,7 +2177,7 @@ Note that these packages are likely useful even without using their ~use-package
   (require 'blackout))
 #+end_src
 
-*** Elpaca Wait № 2: finish processing current queue
+*** Elpaca-Wait № 2: finish processing current queue :wait:
 
 - Reason :: Continuing otherwise will result in race conditions where the newly-installed
 ~use-package~ keywords may or may not be available, resulting in sporadic
@@ -3463,6 +3463,8 @@ buffer, as a buffer-local variable.
     (envrc-global-mode)))
 #+end_src
 
+*** Elpaca-Wait № 3: ~exec-path-from-shell~ :wait:
+
 #+begin_src emacs-lisp
 (elpaca-wait)
 #+end_src
@@ -4319,13 +4321,14 @@ Similar to the theme-family-specific ~modus-themes-load-theme~.
   (ceamx-ui/load-dark-theme))
 #+end_src
 
-*** Load a default theme
 
-Wait until all the theme support is available:
+*** Elpaca-Wait № 4: ensure availability of themes for integration :wait:
 
 #+begin_src emacs-lisp
 (elpaca-wait)
 #+end_src
+
+*** Load a default theme
 
 Configure some user options dependent on the loaded packages:
 
@@ -4661,7 +4664,11 @@ TIP: You can test out alterations quickly with, for example:
   ;; Persist latest preset across sessions.
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
+#+end_src
 
+*** Elpaca-Wait № 5: after baseline font settings :wait:
+
+#+begin_src emacs-lisp
 (elpaca-wait)
 #+end_src
 
