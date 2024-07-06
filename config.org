@@ -11554,7 +11554,21 @@ Unless PROGRAM is provided, the program name used in
 (package! json-navigator)
 #+end_src
 
-*** TODO TOML
+*** TOML
+**** Register =taplo= formatter
+
+#+begin_src emacs-lisp
+(after! reformatter
+  (reformatter-define toml-taplo-fmt
+    :group 'ceamx
+    :program "taplo"
+    :args (list "format" "--diff"
+                "--stdin-filepath" (buffer-file-name)
+                "-"))
+
+  (add-hook 'conf-toml-mode-hook #'toml-taplo-fmt-on-save-mode)
+  (add-hook 'toml-ts-mode-hook #'toml-taplo-fmt-on-save-mode))
+#+end_src
 
 **** LSP-Mode: Use the correct cache base directory
 
