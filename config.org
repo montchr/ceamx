@@ -9747,6 +9747,10 @@ NOTE: Fringe indicators will conflict with Flycheck.
     (magit-todos-mode 1)))
 #+end_src
 
+**** TODO Customize appearance to always keep folded, to reduce noise
+
+e.g. "M-4" should not expand this section -- it should only be expanded manually
+
 ** Configure Forge integration :package:secrets:api:
 
 #+begin_src emacs-lisp
