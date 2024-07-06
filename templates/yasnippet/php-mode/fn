@@ -1,9 +1,6 @@
-# -*- mode: snippet -*-
-# contributor: USAMI Kenta <tadsan@zonu.me>
-# name: function expr (closure)
+# name: arrow function
 # key: fn
-# group: definitions
+# contributor : Chris Montgomery <chmont@protonmail.com>
+# # group : definitions
 # --
-function (${2:$arg, ...}) ${3:use ($var) }{
-    $0
-}`(if (eq (point) (line-end-position)) ";" "")`
+${3:static }fn (${1:arg, ...})${2:: type} => $0

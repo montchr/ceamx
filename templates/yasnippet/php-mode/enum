@@ -1,11 +1,10 @@
-# -*- mode: snippet -*-
-# contributor: takeo obara<bararararatty@gmail.com>
+# contributor: chris montgomery <chmont@protonmail.com>
 # name: enum
 # key: enum
 # group : definitions
 # --
 enum ${1:Name}${2:: type} {
-    case: ${3:One};
-    case: ${4:Two};
+    case ${3:ONE};
+    case ${4:TWO};
 $0
 }
