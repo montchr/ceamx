@@ -7024,10 +7024,18 @@ writable or with a prefix argument, then read a file to visit."
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
 #+end_src
 
-** DISABLED Beframe
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
+** Beframe
+
+#+begin_src emacs-lisp
+(package! beframe
+  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
+
+  (beframe-mode 1))
+#+end_src
+
+*** Provide Consult integration :consult:
+
+- source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
 
 #+begin_src emacs-lisp
 (defface +beframe-buffer
@@ -7037,31 +7045,61 @@ writable or with a prefix argument, then read a file to visit."
 (defun +beframe-buffer-names-sorted (&optional frame)
   "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
 With optional argument FRAME, return the list of buffers of FRAME."
-  (declare-function beframe-buffer-names "beframe")
-  (declare-function beframe-buffer-sort-visibility "beframe")
   (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+
+(after! (beframe consult)
+  (declare-function consult--buffer-state "consult")
+
+  (defvar +beframe-consult-source
+    `(:name "Frame-specific buffers (current frame)"
+      :narrow ?F
+      :category buffer
+      :face +beframe-buffer
+      :history beframe-history
+      :items ,#'+beframe-buffer-names-sorted
+      :action ,#'switch-to-buffer
+      :state ,#'consult--buffer-state))
+
+  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
 #+end_src
 
+*** Provide ~ibuffer~ integration :ibuffer:
+
+- source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
+
 #+begin_src emacs-lisp
-(package! beframe
-  ;; FIXME: still listed as frame buffers
-  (setopt beframe-global-buffers '("\\*scratch\\*" "\\*Messages\\*" "\\*Backtrace\\*"))
+(defun +beframe-buffer-in-frame-p (buf frame)
+  "Return non-nil if BUF is in FRAME."
+  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
 
-  (keymap-global-set "C-c b" beframe-prefix-map)
-  (beframe-mode 1)
+(defun +beframe-frame-name-list ()
+  "Return list with frame names."
+  (mapcar #'car (make-frame-names-alist)))
 
-  (after! consult
-    (declare-function consult--buffer-state "consult")
-    (defvar +beframe-consult-source
-      `(:name "Frame-specific buffers (current frame)"
-        :narrow ?F
-        :category buffer
-        :face +beframe-buffer
-        :history beframe-history
-        :items ,#'+beframe-buffer-names-sorted
-        :action ,#'switch-to-buffer
-        :state ,#'consult--buffer-state))
-    (add-to-list 'consult-buffer-sources '+beframe-consult-source)))
+(defun +beframe-generate-ibuffer-filter-groups ()
+  "Create a set of ibuffer filter groups based on the Frame of buffers."
+  (mapcar
+   (lambda (frame)
+     (list (format "%s" frame)
+           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
+   (+beframe-frame-name-list)))
+
+(after! (beframe ibuffer)
+  (setq ibuffer-saved-filter-groups
+        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
+
+  (define-ibuffer-filter frame
+      "Limit current view to buffers in frames."
+    (:description "frame")
+    (memq buf (beframe-buffer-list))))
+#+end_src
+
+*** Keybindings :keybinds:
+
+#+begin_src emacs-lisp
+(after! beframe
+  ;; FIXME: not how we do things
+  (keymap-global-set "C-c b" beframe-prefix-map))
 #+end_src
 
 ** Introduce an ~activities~-based workflow for workspace management
@@ -8967,8 +9005,6 @@ Query syntax additions through style dispatchers:
 + website :: <https://github.com/minad/corfu>
 + website :: <https://github.com/minad/cape>
 + ref :: <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
-
-
 
 *** Install Corfu and configure its global settings
 
@@ -14025,7 +14061,9 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 
 #+begin_src emacs-lisp
 (package! htmlize
-  (keymap-global-set "C-c b h" #'htmlize-buffer))
+  ;; FIXME: conflicts with `beframe'
+  ;; (keymap-global-set "C-c b h" #'htmlize-buffer)
+  )
 #+end_src
 ** [[https://github.com/alphapapa/unpackaged.el][alphapapa/unpackaged.el]]: a library of useful yet "unsubstantial" Emacs Lisp code
 
