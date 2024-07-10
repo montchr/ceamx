@@ -12106,6 +12106,12 @@ I don't even know.
     (add-to-list 'auto-mode-alist `(,ceamx-lang-php-extension-regexp . phps-mode))))
 #+end_src
 
+*** Display line numbers in PHP buffers
+
+#+begin_src emacs-lisp
+(add-hook 'php-mode-hook #'display-line-numbers-mode)
+#+end_src
+
 *** [[https://github.com/Fuco1/neon-mode][Fuco1/neon-mode]]: major-mode for NEON, the PHP-centric franken-YAML DSL :package:
 
 - Reference :: <https://ne-on.org/>
