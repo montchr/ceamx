@@ -8977,12 +8977,13 @@ Query syntax additions through style dispatchers:
 (package! corfu
   (setopt corfu-auto t
           corfu-auto-delay 0.05)
-  (setopt corfu-count 8
+  (setopt corfu-count 12
           corfu-cycle t
           corfu-max-width 80
+          corfu-min-width 25
           corfu-scroll-margin 5)
-  (setopt corfu-preselect 'prompt)
-  (setopt corfu-on-exact-match nil)
+  (setopt corfu-on-exact-match 'insert
+          corfu-preselect 'prompt)
 
   ;; "SPC" => Same as the Orderless field separator.
   (setopt corfu-separator ?\s
@@ -9022,7 +9023,7 @@ These will be available when a ~corfu~ prompt is active.
 **** ~corfu-echo-mode~: Show candidate docs in echo area :messages:help:
 
 #+begin_src emacs-lisp
-(setopt corfu-echo-delay '(0.5 . 0.25))
+(setopt corfu-echo-delay '(0.25 . 0.25))
 
 (after! corfu
   (unless corfu-popupinfo-mode
