@@ -1411,6 +1411,8 @@ Example table:
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #+end_src
 
+
+* Maintenance
 ** Functions to clean and re-tangle Elisp files
 
 #+begin_src emacs-lisp :noweb yes :results silent
@@ -1466,8 +1468,6 @@ default source file."
 
 
 
-
-* Maintenance
 
 ** Debugging
 
