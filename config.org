@@ -9616,6 +9616,15 @@ NOTE: Fringe indicators will conflict with Flycheck.
 
 e.g. "M-4" should not expand this section -- it should only be expanded manually
 
+*** Show process output popup after N seconds :popups:
+
+This is pretty important when a project has =pre-commit= or =commit-msg= hooks that
+are wont to fail.
+
+#+begin_src emacs-lisp
+(setopt magit-process-popup-time 3)
+#+end_src
+
 ** Configure Forge integration :package:secrets:api:
 
 #+begin_src emacs-lisp
