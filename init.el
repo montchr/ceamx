@@ -224,8 +224,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;;;; Keyboard support
 
 (require 'init-keys)
-(require 'init-keys-which-key)
-(require 'init-keys-meow)
 ;;;; Windows
 
 (require 'init-window)

@@ -134,7 +134,6 @@ ELP is useful for seeing which functions in a package are "hot":
 #+end_src
 
 ** Target Files
-
 *** =lisp/lib-tools.el=
 
 #+name: lib-tools-file
@@ -156,7 +155,6 @@ ELP is useful for seeing which functions in a package are "hot":
 
 <<file-footer(feature="lib-tools")>>
 #+end_src
-
 
 *** =early-init.el=
 
@@ -257,6 +255,72 @@ ELP is useful for seeing which functions in a package are "hot":
 <<init-env>>
 
 <<file-footer(feature="init-env")>>
+#+end_src
+
+*** =lisp/init-keys.el=
+
+#+name: init-keys-file
+#+begin_src emacs-lisp :tangle lisp/init-keys.el
+<<file-prop-line(feature="init-keys",desc="Keybindings")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-keys>>
+
+<<file-footer(feature="init-keys")>>
+#+end_src
+
+*** =lisp/lib-keys.el=
+
+#+name: lib-keys-file
+#+begin_src emacs-lisp :tangle lisp/lib-keys.el
+<<file-prop-line(feature="lib-keys",desc="Keybinding helper library")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-keys>>
+
+<<file-footer(feature="lib-keys")>>
+#+end_src
+
+*** =lisp/config-keys.el=
+
+#+name: config-keys-file
+#+begin_src emacs-lisp :tangle lisp/config-keys.el
+<<file-prop-line(feature="config-keys",desc="Keybinding constants and variables")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-keys>>
+
+<<file-footer(feature="config-keys")>>
 #+end_src
 
 *** =lisp/init-ui.el=
@@ -1142,7 +1206,6 @@ ELP is useful for seeing which functions in a package are "hot":
 
 <<file-footer(feature="init-tools")>>
 #+end_src
-
 
 ** Partials
 :PROPERTIES:
@@ -2323,8 +2386,6 @@ expect the value you arrive at to be as high as 100 MiB.
 ;;;; Keyboard support
 
 (require 'init-keys)
-(require 'init-keys-which-key)
-(require 'init-keys-meow)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -7841,62 +7902,45 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+end_src
 
 
+
 * Keys
+:PROPERTIES:
+:header-args: :noweb-ref init-keys
+:END:
 
-** General
+** Commentary
+*** TODO <https://github.com/jwiegley/dot-emacs/blob/master/init.org#smart-newline>
+*** TODO <https://github.com/ainame/smart-newline.el/tree/c50ab035839b307c66d439083b6761cb7db5e972>
 
-#+begin_src emacs-lisp :tangle lisp/init-keys.el
-;;; init-keys.el --- Keybindings -*- lexical-binding: t -*-
+** Requirements
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;  Keybindings configuration.
-
-;; TODO: <https://github.com/jwiegley/dot-emacs/blob/master/init.org#smart-newline>
-;; TODO: <https://github.com/ainame/smart-newline.el/tree/c50ab035839b307c66d439083b6761cb7db5e972>
-
-;;; Code:
-
-;;; Requirements
-
+#+begin_src emacs-lisp
 (require 'config-env)
 (require 'ceamx-lib)
+(require 'lib-keys)
+#+end_src
 
-;;; Bind some CUA-like hotkeys for editing operations
+** Constants
 
-;; "C-S" prefix is inspired by the use of this mod combo in terminal emulators,
-;; where "C-c" for example would kill the current process.
+#+begin_src emacs-lisp :noweb-ref config-keys
+(defconst ceamx-keys-repl-toggle "C-:")
+#+end_src
 
-;; FIXME: move to bindings file
+** Bind some CUA-like hotkeys for editing operations
 
+"C-S" prefix is inspired by the use of this mod combo in terminal emulators,
+where "C-c" for example would kill the current process.
+
+#+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
   "C-S-c" #'kill-ring-save
   "C-S-v" #'yank
   "C-S-x" #'kill-region)
+#+end_src
 
-;;; macOS: Remap modifier keys for the Apple keyboard layout
+** macOS: Remap modifier keys for the Apple keyboard layout
 
+#+begin_src emacs-lisp
 (when (and +sys-mac-p (display-graphic-p))
   (setopt mac-control-modifier 'control)
   (setopt mac-option-modifier 'meta)
@@ -7912,37 +7956,52 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
     "s-v" #'yank
     "s-x" #'kill-region
     "s-q" #'save-buffers-kill-emacs))
+#+end_src
 
-;;; Enable and configure ~repeat-mode~
+** Enable and configure ~repeat-mode~
 
-;; Allow any key sequence to exit `repeat-mode'.
-(setopt repeat-exit-key nil)
-
+#+begin_src emacs-lisp
 (setopt repeat-exit-timeout 15)
 (setopt repeat-on-final-keystroke t)
 (setopt repeat-keep-prefix nil)
+#+end_src
 
-;; Related, but not technically part of `repeat-mode'.
+Allow any key sequence to exit ~repeat-mode~:
+
+#+begin_src emacs-lisp
+(setopt repeat-exit-key nil)
+#+end_src
+
+Related, but not technically part of ~repeat-mode~:
+
+#+begin_src emacs-lisp
 (setopt set-mark-command-repeat-pop t)
+#+end_src
 
-;; Avoid running mode-hooks too early.
+Enable ~repeat-mode~, avoiding running mode-hooks too early:
+
+#+begin_src emacs-lisp
 (add-hook 'ceamx-after-init-hook #'repeat-mode)
+#+end_src
 
-;;; Show free keybindings for modkeys or prefixes with ~free-keys~
+** ~free-keys~: Show free keybindings for modkeys or prefixes :package:
 
-;; <https://github.com/Fuco1/free-keys>
+- pkgsrc :: <https://github.com/Fuco1/free-keys>
+
+#+begin_src emacs-lisp
+;;
 
 ;; > If called with prefix argument C-u, you can specify a prefix map to be
 ;; > used, such as C-c or C-c C-x (these are specified as a string).
 
 (package! free-keys)
+#+end_src
 
-;;; `which-key'
+** ~which-key~ [builtin]
 
+#+begin_src emacs-lisp
 (when (fboundp 'which-key-mode)
-  ;; Activate after all other keybinding stuff.
-  ;; FIXME: use `ceamx-after-init-hook'
-  (add-hook 'after-init-hook #'which-key-mode))
+  (add-hook 'ceamx-after-init-hook #'which-key-mode))
 
 ;; Determine whether keys have been rebound, considering the active keymaps.
 (setopt which-key-compute-remaps t)
@@ -7958,182 +8017,40 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 ;; FIXME: no effect? what does this actually do?
 (setopt which-key-show-remaining-keys t)
-
-(provide 'init-keys)
-;;; init-keys.el ends here
 #+end_src
 
 
-*** DISABLED Library
-
-Diabetic experiments with syntactic sugar.
-
-#+begin_src emacs-lisp :tangle no
-
-;; Helper functions and macros for keybindings.
-
-
-;; TODO: add utility to apply prefix to provided keys and bind in maps,
-;; deferring until maps are defined if necessary. see
-;; <https://github.com/casouri/lunarymacs/blob/master/site-lisp/luna-key.el>
-
-(require 'cl-lib)
-
-;; NOTE: all in-use definitions have been moved to ~ceamx-lib~
-
-;; FIXME: interface still doesn't feel right...
-;; TODO: account for remapping (don't prefix)
-;; (defun ceamx--key-with-prefix (prefix key &optional sep)
-;;   "Return a key sequence string with PREFIX prepended to KEY.
-;; The arguments PREFIX and KEY must be strings satisfying `key-valid-p'.
-
-;; The optional argument SEP may specify a separator between PREFIX
-;; and KEY. If nil, a single whitespace character will be used as
-;; the default separator."
-;;   (cl-assert (key-valid-p prefix))
-;;   (cl-assert (key-valid-p key))
-;;   (let* ((sep (or sep " "))
-;;           (prefixed-key (concat prefix sep key)))
-;;     (cl-assert (key-valid-p prefixed-key))
-;;     prefixed-key))
-
-;; FIXME: while logging something simple works, this does not yet return
-;; anything useful -- it should return a modified version of DEFS
-;; TODO: rework since this doesn't need to be about keydefs
-;; (defun ceamx-map-keydefs (func &rest defs)
-;;   "Apply the function FUNC to key/definition pairs DEFS.
-
-;; FUNC should accept args KEY and DEF. KEY should be a string
-;; matching ~key-valid-p~. DEF is anything that can be a key
-;; definition. See the docstring for ~keymap-set~ for more info on
-;; accepted values for DEF.
-
-;; This function does not validate the validity of each KEY/DEF pair
-;; in DEFS. However, this function will throw when there is an
-;; uneven number of items in DEFS, or when there are duplicate
-;; definitions for KEY.
-
-;; This function is mostly copied from the source of
-;; `define-keymap'."
-;;   (let (seen-keys)
-;;     (while defs
-;;       (let ((key (pop defs)))
-;;         (unless defs
-;;           (error "Uneven number of key/definition pairs"))
-;;         (let ((def (pop defs)))
-;;           (if (member key seen-keys)
-;;               (error "Duplicate definition for key: %S" key)
-;;             (push key seen-keys))
-;;           (funcall func key def))))))
-
-;; (defmacro with-prefix! (prefix &rest defs)
-;;   "Prepend string PREFIX to each key in key/definition pairs DEFS.
-;; PREFIX must satisfy `key-valid-p'. DEFS is composed of keybinding
-;;  pairs of the form accepted by `define-keymap'.
-
-;; When PREFIX is prepended to each key string, a single space will
-;;  be added between PREFIX and the value for the key. If PREFIX
-;;  already includes trailing whitespace, that whitespace will be
-;;  stripped and replaced by a single space unless the trailing
-;;  whitespace is already a single space character."
-;;   (declare (indent defun))
-;;   (let* ((prefix (string-clean-whitespace prefix))
-;;          ;; FIXME: how to return modified KEY and DEF? or find another way...
-;;          (fn (lambda (key def) (format "%s %s" prefix key))))))
-#+end_src
-
-
-** =meow= modal keybindings
-
-*** Target Files
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-#+name: init-keys-meow-file
-#+begin_src emacs-lisp  :tangle lisp/init-keys-meow.el
-<<file-prop-line(feature="init-keys-meow",desc="Meow modal keybindings support")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-keys-meow>>
-
-<<file-footer(feature="init-keys-meow")>>
-#+end_src
-
-#+name: lib-keys-meow-file
-#+begin_src emacs-lisp  :tangle lisp/lib-keys-meow.el
-<<file-prop-line(feature="lib-keys-meow",desc="Meow helpers")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-keys-meow>>
-
-<<file-footer(feature="lib-keys-meow")>>
-#+end_src
-
-
-*** Code: =init-keys-meow.el=
-:PROPERTIES:
-:header-args: :noweb-ref init-keys-meow
-:END:
+** =meow= modal keybindings :meow:package:
 
 #+begin_src emacs-lisp
-(require 'ceamx-lib)
-(require 'lib-keys-meow)
-#+end_src
-
-#+begin_src emacs-lisp
-(package! meow)
-#+end_src
-
-**** Load meow after Which-Key to circumvent Meow-Keypad UI issues
-
-Meow's leader functionality has a custom keybinding visualization helper that
-looks almost exactly like ~which-key~ except that it is very buggy. It does try
-to smooth over some of the guts of Meow, as ~which-key~ is cluttered with
-keybinding entries for ~meow-digit-argument~. But even Meow's maintainers do not
-recommend using the custom keypad helper UI.
-
-Unfortunately, AFAIK there is no way to disable the UI feature explicitly
-without disabling the Keypad entirely. The only way to prevent this feature from
-causing workflow issues is by installing ~which-key~ and letting Meow defer to
-~which-key~ for this kind of interface.
-
-And so, we load Meow after Which-Key:
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'which-key
+(package! meow
+  (when (locate-library "which-key")
+    (require 'which-key))
   (require 'meow))
 #+end_src
 
-And allow Elpaca to finish processing its queues, since everything afterwards depends on Meow.
+Meow's leader functionality has a custom keybinding visualization helper that
+looks almost exactly like ~which-key~ except that it is very buggy.  It does try
+to smooth over some of the guts of Meow, as ~which-key~ is cluttered with
+keybinding entries for ~meow-digit-argument~.  But even Meow's maintainers do not
+recommend using the custom keypad helper UI.
+
+Unfortunately, AFAIK there is no way to disable the UI feature explicitly
+without disabling the Keypad entirely.  The only way to prevent this feature from
+causing workflow issues is by installing ~which-key~ and letting Meow defer to
+~which-key~ for this kind of interface.
+
+*** Elpaca-Wait № 6: modal keybinding framework :wait:
+
+Everything afterwards depends on Meow.
 
 #+begin_src emacs-lisp
 (elpaca-wait)
 #+end_src
 
-**** Set up the basic Meow state keybindings
+*** Set up the baseline state keybindings
 
-***** Add initial keybindings to the Meow Leader keymap
+**** Add initial keybindings to the Meow Leader keymap
 
 #+begin_src emacs-lisp
 (meow-leader-define-key
@@ -8161,22 +8078,11 @@ And allow Elpaca to finish processing its queues, since everything afterwards de
  '("<escape>" . ignore))
 #+end_src
 
-***** Add initial keybindings to the INSERT state keymap
+**** Add initial keybindings to the INSERT state keymap
 
-I am not sure what I was doing here:
+Nothing yet.
 
-#+begin_src emacs-lisp :tangle no
-(noop!
-  ;; TODO: instead, because meow key definer syntax sucks:
-  ;;
-  ;; see `meow-keymap-alist' for available states (or use the lookup logic
-  ;; from `meow-define-keys': (alist-get state meow-keymap-alist)
-  (define-keymap :keymap meow-insert-state-keymap
-    ;; etc.
-    "0" #'meow-expand-0))
-#+end_src
-
-***** Add initial keybindings to the NORMAL state keymap
+**** Add initial keybindings to the NORMAL state keymap
 
 #+begin_src emacs-lisp
 (meow-normal-define-key
@@ -8251,29 +8157,30 @@ I am not sure what I was doing here:
  '(":" . avy-goto-char-2))
 #+end_src
 
-***** Tell Meow about our keyboard layout to arrange its cheatsheet
+**** Tell Meow about our keyboard layout to arrange its cheatsheet
 
 #+begin_src emacs-lisp
 ;; NOTE: This is not a customizable variable, although it is required for meow.
 (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
 #+end_src
 
-**** Configure the Keypad
+*** Configure the Keypad
 
 #+begin_src emacs-lisp
 ;; Don't pass through keys that aren't in keypad.
 (setopt meow-keypad-self-insert-undefined nil)
 #+end_src
 
-***** Avoid the default binding for ~meow-keypad~ in motion state
+**** Avoid the default binding for ~meow-keypad~ in motion state
 
-The goal here is to preserve the established SPC/DEL keybindings to scroll in Info mode and some other similar modes.
+The goal here is to preserve the established SPC/DEL keybindings to scroll in
+Info mode and some other similar modes.
 
 #+begin_src emacs-lisp
 (keymap-unset meow-motion-state-keymap "SPC" t)
 #+end_src
 
-***** Determine the dispatch target for the leader keymap with ~meow-keypad-leader-dispatch~
+**** Determine the dispatch target for the leader keymap
 
 I will maintain sections on both options, tangling only one at a time.
 
@@ -8282,7 +8189,7 @@ tend to switch between the two. Part of the reason for that is that I have not
 kept a record of my assessment of the benefits and drawbacks of the different
 values I have tried. So, here I will do just that.
 
-****** ACTIVE Leader keymap from ~meow-keymap-alist~ (default)
+***** ACTIVE Leader keymap from ~meow-keymap-alist~ (default)
 
 When ~meow-keypad-leader-dispatch~ is nil, the leader will dispatch to the
 leader keymap in ~meow-keymap-alist~.
@@ -8298,7 +8205,7 @@ This is the default behavior.
 (setopt meow-keypad-leader-dispatch nil)
 #+end_src
 
-****** DISABLED Leader dispatch to ~mode-specific-map~ ("C-c")
+***** DISABLED Leader dispatch to ~mode-specific-map~ ("C-c")
 
 | Pros                                | Cons                                                                             |
 |-------------------------------------+----------------------------------------------------------------------------------|
@@ -8313,7 +8220,7 @@ This is the default behavior.
 (setopt meow-keypad-leader-dispatch "C-c")
 #+end_src
 
-**** Customize the appearance of the mode-line indicator for the current Meow state
+*** Customize the appearance of the mode-line indicator for the current Meow state :modeline:
 
 This should happen before defining any new states so that they may provide their
 own values upon definition.
@@ -8327,9 +8234,9 @@ own values upon definition.
            (keypad . "🅚")))
 #+end_src
 
-**** TODO Define a new state for navigating Org-Mode trees
+*** DISABLED Define a new state for navigating Org-Mode trees
 :PROPERTIES:
-:header-args: :tangle no
+:header-args: :noweb-ref nil
 :END:
 
 Credit for the idea goes to this blog post:
@@ -8398,7 +8305,7 @@ And provide access to this state:
 (keymap-set meow-normal-state-keymap "O" #'meow-org-motion-mode)
 #+end_src
 
-**** Map preferred initial Meow states for some additional major-modes
+*** Map preferred initial Meow states for some additional major-modes
 
 #+begin_src emacs-lisp
 (pushnew! meow-mode-state-list
@@ -8419,7 +8326,7 @@ And provide access to this state:
           '(help-mode . motion))
 #+end_src
 
-**** Improve Meow integration with the default Emacs kill-ring and system clipboard
+*** Improve Meow integration with the default Emacs kill-ring and system clipboard
 
 [[https://github.com/meow-edit/meow/issues/543][Clipboard Confusing Defaults and Documentation · Issue #543 · meow-edit/meow · GitHub]]
 
@@ -8427,9 +8334,7 @@ And provide access to this state:
 (setopt meow-use-clipboard t)
 #+end_src
 
-**** Expand upon the default Meow pair-things
-
-See the helper functions/macros.
+*** Expand upon the default Meow pair-things
 
 #+begin_src emacs-lisp
 (meow-pair! 'angle "a" "<" ">")
@@ -8438,44 +8343,18 @@ See the helper functions/macros.
 (ceamx-meow-bind-thing 'round ")")
 (ceamx-meow-bind-thing 'curly "{")
 (ceamx-meow-bind-thing 'curly "}")
-
-;; TODO: i don't really thing i want to do this, but here for reference
-;; (ceamx-meow-unbind-thing "r")
 #+end_src
 
-**** ~meow-tree-sitter~: ~treesit~-powered motions for Meow
-
-- source :: https://github.com/skissue/meow-tree-sitter
-
-#+begin_src emacs-lisp
-(package! meow-tree-sitter
-  (after! meow
-    (require 'meow-tree-sitter)
-    (meow-tree-sitter-register-defaults))
-
-  (setopt meow-tree-sitter-can-expand t
-          meow-tree-sitter-can-jump-forward t))
-#+end_src
-
-**** Activate Meow
-
-#+begin_src emacs-lisp
-(meow-global-mode 1)
-#+end_src
-
-
-*** Code: =lib-keys-meow.el=
+**** Define helper functions and macros for pair-things
 :PROPERTIES:
-:header-args: :noweb-ref lib-keys-meow
+:header-args: :noweb-ref lib-keys
 :END:
-
-**** Working with Meow "things"
 
 #+begin_src emacs-lisp
 (require 'ceamx-lib)
 #+end_src
 
-***** ~meow-pair!~
+***** ~meow-pair!~: Register a new meow-thing as a pair
 
 #+begin_src emacs-lisp
 (defmacro meow-pair! (thing char begin end)
@@ -8514,7 +8393,7 @@ and Info node `(elisp) String Conversion' for more info."
        (ceamx-meow-bind-thing ',sym ,char))))
 #+end_src
 
-***** ~ceamx-meow-bind-thing~
+***** ~ceamx-meow-bind-thing~: bind an existing meow-thing to a new key
 
 #+begin_src emacs-lisp
 (defun ceamx-meow-bind-thing (thing char)
@@ -8525,7 +8404,7 @@ and Info node `(elisp) String Conversion' for more info."
     (add-to-list 'meow-char-thing-table `(,char . ,thing))))
 #+end_src
 
-***** ~ceamx-meow-unbind-thing~
+***** ~ceamx-meow-unbind-thing~: remove an existing binding for a meow-thing
 
 #+begin_src emacs-lisp
 (defun ceamx-meow-unbind-thing (char)
@@ -8544,53 +8423,27 @@ as the CHAR argument to `ceamx-normalize-char'."
 #+end_src
 
 
-** ~config-keys~ :: variables
-:PROPERTIES:
-:header-args: :tangle lisp/config-keys.el
-:END:
 
-*** File Header
+*** ~meow-tree-sitter~: ~treesit~-powered motions for Meow
+
+- source :: https://github.com/skissue/meow-tree-sitter
 
 #+begin_src emacs-lisp
-;;; config-keys.el --- Key-related variables -*- lexical-binding: t -*-
+(package! meow-tree-sitter
+  (after! meow
+    (require 'meow-tree-sitter)
+    (meow-tree-sitter-register-defaults))
 
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This file is not part of GNU Emacs
-
-;; This program is free software: you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
+  (setopt meow-tree-sitter-can-expand t
+          meow-tree-sitter-can-jump-forward t))
 #+end_src
 
-*** Code
+*** Activate Meow
 
 #+begin_src emacs-lisp
-(defconst ceamx-keys-repl-toggle "C-:")
+(meow-global-mode 1)
 #+end_src
 
-*** File Footer
-
-#+begin_src emacs-lisp
-(provide 'config-keys)
-;;; config-keys.el ends here
-#+end_src
 
 
 * Text Expansion
