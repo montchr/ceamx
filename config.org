@@ -1468,7 +1468,6 @@ default source file."
 
 
 
-
 ** Debugging
 
 - Source :: [[https://github.com/progfolio/.emacs.d/blob/master/init.org?plain=1][.emacs.d/init.org at master · progfolio/.emacs.d]]
@@ -1557,20 +1556,6 @@ Or, perhaps more accurately: stuff that needs a better home.
           ))
 #+end_src
 
-
-** TODO persistent scratch buffers
-
-#+begin_src emacs-lisp
-(package! persistent-scratch
-  ;; `with-demoted-errors' or `ignore-errors' wrapper is recommended by project
-  ;; readme, as there will be an error if the autosave file does not exist.
-  (with-demoted-errors
-    (persistent-scratch-autosave-mode 1)))
-#+end_src
-
-#+begin_src emacs-lisp
-(keymap-set ceamx-launch-map "s" #'scratch-buffer)
-#+end_src
 
 ** The Keybindings of Uncertainty :keybinds:
 
