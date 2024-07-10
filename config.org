@@ -8423,9 +8423,7 @@ as the CHAR argument to `ceamx-normalize-char'."
   (assoc-delete-all (ceamx-normalize-char char) meow-char-thing-table #'eq))
 #+end_src
 
-
-
-*** ~meow-tree-sitter~: ~treesit~-powered motions for Meow
+*** ~meow-tree-sitter~: ~treesit~-powered motions for Meow :package:
 
 - source :: https://github.com/skissue/meow-tree-sitter
 
