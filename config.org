@@ -8033,8 +8033,7 @@ Everything afterwards depends on Meow.
 (elpaca-wait)
 #+end_src
 
-*** Set up the baseline state keybindings
-
+*** States
 **** Add initial keybindings to the Meow Leader keymap
 
 #+begin_src emacs-lisp
@@ -8142,14 +8141,117 @@ Nothing yet.
  '(":" . avy-goto-char-2))
 #+end_src
 
-**** Tell Meow about our keyboard layout to arrange its cheatsheet
+**** Define the =org-motion= state for navigating Org-Mode trees
+
+Credit for the idea goes to this blog post:
+
+[[https://aatmunbaxi.netlify.app/comp/meow_state_org_speed/][A meow-state for speedy org structure navigation | Aatmun Baxi]]
+
+I made some adjustments for the sake of maintaining consistency with the default
+bindings in ~org-mode-map~ and ~outline-minor-mode-map~.  I would rather not mix
+up the motions switching between this state and the defaults.
+
+Note that the =-keymap= suffix aligns with Meow's naming conventions, though it
+differs from the usual Emacs Lisp convention of a =-map= suffix.
+
+To avoid confusion/conflicts, this =org-motion= state and
+~org-mode-navigation-repeat-map~ should be considered mutually exclusive.  When
+=org-motion= is available, make sure the repeat map is not defined (exclude it
+from tangling).
+
+#+begin_src emacs-lisp
+(defvar-keymap meow-org-motion-keymap
+  :full t
+
+  "<escape>" #'meow-normal-mode
+
+  "i" #'meow-insert-mode
+  "g" #'meow-normal-mode
+  "u" #'meow-undo
+
+  "k" #'org-previous-visible-heading
+  "j" #'org-next-visible-heading
+  "p" #'org-previous-visible-heading
+  "n" #'org-next-visible-heading
+
+  "b" #'org-backward-heading-same-level
+  "f" #'org-forward-heading-same-level
+
+  "B" #'org-previous-block
+  "F" #'org-next-block
+
+  ;; Narrowing/widening
+  "N" #'org-narrow-to-subtree
+  "W" #'widen
+
+  ;; Drag subtrees up/down
+  "K" #'org-metaup
+  "J" #'org-metadown
+
+  ;; Promote/demote subtrees
+  "L" #'org-demote-subtree
+  "H" #'org-promote-subtree
+
+  ;; Search
+  "v" #'consult-org-heading
+
+  ;; Setting subtree metadata
+  "P" #'org-set-property-and-value
+  "t" #'org-todo
+  "d" #'org-deadline
+  "s" #'org-schedule
+  "e" #'org-set-effort)
+#+end_src
+
+Define the state itself, using the keymap we just initialized:
+
+#+begin_src emacs-lisp
+(meow-define-state org-motion
+  "Org-Mode tree navigation"
+  :lighter "🅞"
+  :keymap meow-org-motion-keymap)
+#+end_src
+
+And provide access to this state:
+
+#+begin_src emacs-lisp
+(keymap-set meow-normal-state-keymap "O" #'meow-org-motion-mode)
+#+end_src
+
+**** Map preferred initial Meow states for some additional major-modes
+
+#+begin_src emacs-lisp
+(pushnew! meow-mode-state-list
+          ;; shells
+          ;; TODO: use `ceamx-repl-modes-list'
+          '(comint-mode . insert)
+          '(eat-mode . insert)
+          '(eshell-mode . insert)
+
+          ;; writing
+          '(diary-mode . normal)
+
+          ;; complex
+          '(magit-mode . insert)
+          ;; FIXME: no effect
+          '(ediff-mode . insert)
+
+          ;; read-only
+          ;; TODO: how to lock state? i.e. dont allow switching
+          ;; TODO: set for all read-only buffers?
+          '(Info-mode . motion)
+          '(read-only-mode . motion)
+          '(help-mode . motion))
+#+end_src
+
+*** Cheatsheet
 
 #+begin_src emacs-lisp
 ;; NOTE: This is not a customizable variable, although it is required for meow.
 (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
 #+end_src
 
-*** Configure the Keypad
+*** Keypad
 
 #+begin_src emacs-lisp
 ;; Don't pass through keys that aren't in keypad.
@@ -8217,98 +8319,6 @@ own values upon definition.
            (insert . "🅘")
            (motion . "🅜")
            (keypad . "🅚")))
-#+end_src
-
-*** DISABLED Define a new state for navigating Org-Mode trees
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-Credit for the idea goes to this blog post:
-
-[[https://aatmunbaxi.netlify.app/comp/meow_state_org_speed/][A meow-state for speedy org structure navigation | Aatmun Baxi]]
-
-I made some adjustments for the sake of maintaining consistency with the default
-bindings in ~org-mode-map~ and ~outline-minor-mode-map~.  I would rather not mix
-up the motions switching between this state and the defaults.
-
-#+begin_src emacs-lisp
-(defvar-keymap meow-org-motion-keymap
-
-  "<escape>" #'meow-normal-mode
-
-  "i" #'meow-insert-mode
-  "g" #'meow-normal-mode
-  "u" #'meow-undo
-
-  ;; Move between headings
-  "p" #'org-previous-visible-heading
-  "n" #'org-next-visible-heading
-  ;; FIXME: find an available spot
-  ;; "C-M-p" #'org-previous-block
-  ;; "C-M-n" #'org-next-block
-
-  ;; Narrowing/widening
-  "N" #'org-narrow-to-subtree
-  "W" #'widen
-
-  ;; Move between headings at same-level
-  "b" #'org-backward-heading-same-level
-  "f" #'org-forward-heading-same-level
-
-  ;; Drag subtrees up/down
-  "K" #'org-subtree-up
-  "J" #'org-subtree-down
-
-  ;; Promote/demote subtrees
-  "L" #'org-demote-subtree
-  "H" #'org-promote-subtree
-
-  ;; Search
-  "v" #'consult-org-heading
-
-  ;; Setting subtree metadata
-  "l" #'org-set-property-and-value
-  "t" #'org-todo
-  "d" #'org-deadline
-  "s" #'org-schedule
-  "e" #'org-set-effort)
-#+end_src
-
-Define the state itself, using the keymap we just initialized:
-
-#+begin_src emacs-lisp
-(meow-define-state org-motion
-  "Org-Mode tree navigation"
-  :lighter "🅞"
-  :keymap meow-org-motion-keymap)
-#+end_src
-
-And provide access to this state:
-
-#+begin_src emacs-lisp
-(keymap-set meow-normal-state-keymap "O" #'meow-org-motion-mode)
-#+end_src
-
-*** Map preferred initial Meow states for some additional major-modes
-
-#+begin_src emacs-lisp
-(pushnew! meow-mode-state-list
-          ;; shells
-          ;; TODO: use `ceamx-repl-modes-list'
-          '(comint-mode . insert)
-          '(eat-mode . insert)
-          '(eshell-mode . insert)
-
-          ;; writing
-          '(diary-mode . normal)
-
-          ;; read-only
-          ;; TODO: how to lock state? i.e. dont allow switching
-          ;; TODO: set for all read-only buffers?
-          '(Info-mode . motion)
-          '(read-only-mode . motion)
-          '(help-mode . motion))
 #+end_src
 
 *** Improve Meow integration with the default Emacs kill-ring and system clipboard
@@ -13354,7 +13364,12 @@ Outside these contexts, the commands will throw an error.
     "M-g o" #'consult-org-heading))
 #+END_SRC
 
-*** Tree navigation repeat map
+*** DISABLED Define the ~org-mode-navigation-repeat-map~ for tree navigation
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+This will conflict with ~meow-org-motion-mode~, so only one should be tangled at a time.
 
 #+begin_src emacs-lisp
 ;; TODO: Activate with a dedicated easy-to-access binding...
