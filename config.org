@@ -8307,6 +8307,12 @@ This is the default behavior.
 (setopt meow-keypad-leader-dispatch "C-c")
 #+end_src
 
+*** Bind a toggle for ~meow-global-mode~
+
+#+begin_src emacs-lisp
+(keymap-set ceamx-toggle-map "m" #'meow-global-mode)
+#+end_src
+
 *** Customize the appearance of the mode-line indicator for the current Meow state :modeline:
 
 This should happen before defining any new states so that they may provide their
