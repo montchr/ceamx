@@ -13257,6 +13257,16 @@ Intended for use as a local hook function on
     (require 'org-bookmark-heading)))
 #+end_src
 
+** Exporters
+
+*** =ox-gfm=: org-export to GitHub Flavored Markdown (GFM) :package:
+
+#+begin_src emacs-lisp
+(package! ox-gfm
+  (after! org
+    (require 'ox-gfm)))
+#+end_src
+
 ** Literate programming with Org-Babel
 
 #+BEGIN_SRC emacs-lisp
