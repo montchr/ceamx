@@ -5,80 +5,28 @@
 #+language: en
 #+property: header-args:emacs-lisp+ :results silent
 #+property: header-args:shell+      :results replace
-#+property: header-args             :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments no
-
-* Overview
+#+property: header-args             :mkdirp yes :tangle init.el :tangle-mode o444 :exports code :noweb yes :comments no
 
 This is a user configuration for GNU Emacs.
 
 The target operating system is the NixOS distribution of GNU/Linux, though the
-configuration will usually also work on macOS.  E would like Ceamx to run well
-on WSL2 when E is running MS Windows, however that is a very low priority.
+configuration will usually also work on macOS.  It /might/ also work on WSL2, but
+probably not without issues.
 
-** Agenda
+#+begin_src emacs-lisp
+;;; init.el --- Ceamx  -*- lexical-binding: t; no-byte-compile: t; -*-
 
-*** TODO <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
-*** TODO <https://orgmode.org/worg/org-contrib/org-choose.html>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
 
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
 
-** Styleguide
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
+<<file-license>>
 
-*** Boolean Variables vs. Predicate Functions
-:PROPERTIES:
-:CUSTOM_ID: boolean-variables-vs.-predicate-functions
-:END:
-The naming for booleans and predicates is different.
-
-**** Example
-:PROPERTIES:
-:CUSTOM_ID: example
-:END:
-#+begin_src elisp
-(defvar ceamx-foo-flag t)
-(defvar ceamx-is-foo-enabled t)
-(defun ceamx-foo-p ()
-  ;; sketchy logic (don't do this)
-  (or ceamx-foo-flag ceamx-is-foo-enabled))
+;;; Commentary:
+;;; Code:
 #+end_src
-
-**** Explanation
-:PROPERTIES:
-:CUSTOM_ID: explanation
-:END:
-From
-[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html][Coding
-Conventions (GNU Emacs Lisp Reference Manual)]]:
-
-#+begin_quote
-If the purpose of a function is to tell you whether a certain condition
-is true or false, give the function a name that ends in 'p' (which
-stands for "predicate".  If the name is one word, add just 'p'; if the
-name is multiple words, add '-p'.  Examples are =framep= and
-=frame-live-p=.  We recommend to avoid using this =-p= suffix in boolean
-variable names, unless the variable is bound to a predicate function;
-instead, use a =-flag= suffix or names like =is-foo=.
-
-#+end_quote
-
-**** Org-Mode: When to wrap inline text in ~tildes~ vs. =equals=
-
-[[info:(org) Emphasis and Monospace][info (org) Emphasis and Monospace]]
-
-[[https://emacs.stackexchange.com/a/21870][What's the relationship between ~foo~ and =foo= in org-mode? - Emacs Stack Exchange]]
-
-
-* Anatomy
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-** =init.el=
-:PROPERTIES:
-:header-args: :noweb-ref init
-:END:
 
 #+begin_src emacs-lisp
 (require 'cl-lib)
@@ -94,1424 +42,17 @@ instead, use a =-flag= suffix or names like =is-foo=.
               user-mail-address "chmont@proton.me")
 #+end_src
 
-*** Profiling
 
-- source :: <https://github.com/progfolio/.emacs.d/blob/ed159dc6076664ad9976949d8cb3af8e86fe39d1/init.org#profiling>
+* Agenda
 
-#+begin_src emacs-lisp :lexical t
-(add-hook 'ceamx-after-init-hook
-          (lambda ()
-            (message "Emacs loaded in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract (current-time) before-init-time)))
-                     gcs-done)))
-#+end_src
+** TODO <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
+** TODO <https://orgmode.org/worg/org-contrib/org-choose.html>
 
-Optionally, display a report after startup:
 
-#+begin_src emacs-lisp :lexical t :noweb-ref nil
-(profiler-start 'cpu+mem)
-(add-hook 'ceamx-after-init-hook (lambda () (profiler-stop) (profiler-report)))
-#+end_src
+** TODO Update =cape= keybindings to use the new prefix map
 
-ELP is useful for seeing which functions in a package are "hot":
+** TODO Account for updates to casual-* suite
 
-#+begin_src emacs-lisp :var file="elpaca" :lexical t :noweb-ref nil
-(require 'elp)
-(with-eval-after-load file
-  (elp-instrument-package file))
-(add-hook ceamx-after-init-hook
-          (lambda () (elp-results) (elp-restore-package (intern file))))
-#+end_src
-
-#+begin_src emacs-lisp :noweb yes
-<<ceamx-bootstrap>>
-
-<<ceamx-init-features>>
-
-<<ceamx-postlude>>
-#+end_src
-
-** Target Files
-*** =lisp/lib-tools.el=
-
-#+name: lib-tools-file
-#+begin_src emacs-lisp :tangle lisp/lib-tools.el
-<<file-prop-line(feature="lib-tools",desc="Library for miscellaneous tooling")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-tools>>
-
-<<file-footer(feature="lib-tools")>>
-#+end_src
-
-*** =early-init.el=
-
-#+name: early-init-file
-#+begin_src emacs-lisp :tangle early-init.el
-<<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<early-init>>
-
-<<file-footer(feature="early-init")>>
-#+end_src
-
-*** =init.el=
-
-#+name: init-file
-#+begin_src emacs-lisp :tangle init.el
-<<file-prop-line(feature="init",desc="Initialize Ceamx",extraprops="no-byte-compile: t;")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init>>
-
-<<file-footer(feature="init")>>
-#+end_src
-
-*** =lisp/core/ceamx-lib.el=
-
-#+name: ceamx-lib-file
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el
-<<file-prop-line(feature="ceamx-lib",desc="Ceamx common library")>>
-
-;; Copyright (C) 2023-2024  Chris Montgomery <chmont@proton.me>
-;; Copyright (C) 2014-2023  Henrik Lissner
-;; Copyright (C) 2006-2021  Steve Purcell
-;; Copyright (C) 2016–2022  Radian LLC and contributors
-;; Copyright (C) 2018  Adam Porter
-;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
-;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;;         Henrik Lissner
-;;         Steve Purcell
-;;         Radon Rosborough <radon@intuitiveexplanations.com>
-;;         Adam Porter <adam@alphapapa.net>
-;;         Bailey Ling <bling@live.ca>
-;;         7696122 <7696122@gmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-
-<<file-license>>
-<<file-license-mit>>
-<<file-license-bsd-2-clause>>
-
-;;; Commentary:
-;;; Code:
-
-<<ceamx-lib>>
-
-<<file-footer(feature="ceamx-lib")>>
-#+end_src
-
-*** =lisp/init-env.el=
-
-#+name: init-env-file
-#+begin_src emacs-lisp :tangle lisp/init-env.el
-<<file-prop-line(feature="init-env",desc="Environmental integrations")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-env>>
-
-<<file-footer(feature="init-env")>>
-#+end_src
-
-*** =lisp/init-keys.el=
-
-#+name: init-keys-file
-#+begin_src emacs-lisp :tangle lisp/init-keys.el
-<<file-prop-line(feature="init-keys",desc="Keybindings")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-keys>>
-
-<<file-footer(feature="init-keys")>>
-#+end_src
-
-*** =lisp/lib-keys.el=
-
-#+name: lib-keys-file
-#+begin_src emacs-lisp :tangle lisp/lib-keys.el
-<<file-prop-line(feature="lib-keys",desc="Keybinding helper library")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-keys>>
-
-<<file-footer(feature="lib-keys")>>
-#+end_src
-
-*** =lisp/config-keys.el=
-
-#+name: config-keys-file
-#+begin_src emacs-lisp :tangle lisp/config-keys.el
-<<file-prop-line(feature="config-keys",desc="Keybinding constants and variables")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-keys>>
-
-<<file-footer(feature="config-keys")>>
-#+end_src
-
-*** =lisp/init-ui.el=
-
-#+name: init-ui-file
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
-<<file-prop-line(feature="init-ui",desc="General user interface customizations")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-ui>>
-
-<<file-footer(feature="init-ui")>>
-#+end_src
-
-*** =lisp/init-ui-graphical.el=
-
-#+name: init-ui-graphical-file
-#+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el
-<<file-prop-line(feature="init-ui-graphical",desc="Appearance customizations for graphical environments")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-ui-graphical>>
-
-<<file-footer(feature="init-ui-graphical")>>
-#+end_src
-
-*** =lisp/config-ui.el=
-
-#+name: config-ui-file
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
-<<file-prop-line(feature="config-ui",desc="User options for Emacs appearance")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-ui>>
-
-<<file-footer(feature="config-ui")>>
-#+end_src
-
-*** =lisp/lib-ui.el=
-
-#+name: lib-ui-file
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
-<<file-prop-line(feature="lib-ui",desc="Appearance helper functions")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-ui>>
-
-<<file-footer(feature="lib-ui")>>
-#+end_src
-
-*** =lisp/init-dashboard.el=
-
-#+name: init-dashboard-file
-#+begin_src emacs-lisp :tangle lisp/init-dashboard.el
-<<file-prop-line(feature="init-dashboard",desc="Dashboard support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-dashboard>>
-
-<<file-footer(feature="init-dashboard")>>
-#+end_src
-
-*** =lisp/init-files.el=
-
-#+name: init-files-file
-#+begin_src emacs-lisp  :tangle lisp/init-files.el
-<<file-prop-line(feature="init-files",desc="File handling")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-files>>
-
-<<file-footer(feature="init-files")>>
-#+end_src
-
-*** =lisp/lib-files.el=
-
-#+name: lib-files-file
-#+begin_src emacs-lisp  :tangle lisp/lib-files.el
-<<file-prop-line(feature="lib-files",desc="Files support support")>>
-
-;; Copyright (C) 2022-2024  Chris Montgomery <chmont@proton.me>
-;; Copyright (C) 2014-2022  Henrik Lissner
-;; Copyright (C) 2006-2021  Steve Purcell
-;; Copyright (C) 2008-2024  Jonas Bernoulli
-;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause
-
-;; Author: Henrik Lissner
-;;         Vegard Øye <vegard_oye at hotmail.com>
-;;         Steve Purcell
-;;         Chris Montgomery <chmont@proton.me>
-;;         Jonas Bernoulli <jonas@bernoul.li>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Created: 23 January 2023
-;; Version: 0.1.0
-
-<<file-license>>
-
-;; Permission is hereby granted, free of charge, to any person obtaining
-;; a copy of this software and associated documentation files (the
-;; "Software"), to deal in the Software without restriction, including
-;; without limitation the rights to use, copy, modify, merge, publish,
-;; distribute, sublicense, and/or sell copies of the Software, and to
-;; permit persons to whom the Software is furnished to do so, subject to
-;; the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be
-;; included in all copies or substantial portions of the Software.
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-;;
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-;;
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-;;; Commentary:
-;;; Code:
-
-<<lib-files>>
-
-<<file-footer(feature="lib-files")>>
-#+end_src
-
-*** =lisp/init-flycheck.el=
-
-#+begin_src emacs-lisp :tangle lisp/init-flycheck.el
-<<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-flycheck>>
-
-<<file-footer(feature="init-flycheck")>>
-#+end_src
-
-*** =lisp/init-flymake.el=
-
-#+name: init-flymake-file
-#+begin_src emacs-lisp :tangle lisp/init-flymake.el
-<<file-prop-line(feature="init-flymake",desc="Flymake support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-flymake>>
-
-<<file-footer(feature="init-flymake")>>
-#+end_src
-
-*** =lisp/init-abbrevs.el=
-
-#+name: init-abbrevs-file
-#+begin_src emacs-lisp :tangle lisp/init-abbrevs.el
-<<file-prop-line(feature="init-abbrevs",desc="Abbrevs support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-abbrevs>>
-
-<<file-footer(feature="init-abbrevs")>>
-#+end_src
-
-*** =lisp/init-completion.el=
-
-#+name: init-completion-file
-#+begin_src emacs-lisp :tangle lisp/init-completion.el
-<<file-prop-line(feature="init-completion",desc="Completion enhancements")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-completion>>
-
-<<file-footer(feature="init-completion")>>
-#+end_src
-
-*** =lisp/lib-completion.el=
-
-#+name: lib-completion-file
-#+begin_src emacs-lisp :tangle lisp/lib-completion.el
-<<file-prop-line(feature="lib-completion",desc="Completion helpers")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-completion>>
-
-<<file-footer(feature="lib-completion")>>
-#+end_src
-
-*** =lisp/init-templates.el=
-
-#+name: init-templates-file
-#+begin_src emacs-lisp :tangle lisp/init-templates.el
-<<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-templates>>
-
-<<file-footer(feature="init-templates")>>
-#+end_src
-
-*** =lisp/init-notes.el=
-
-#+name: init-notes-file
-#+begin_src emacs-lisp :tangle lisp/init-notes.el
-<<file-prop-line(feature="init-notes",desc="Notetaking features")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-notes>>
-
-<<file-footer(feature="init-notes")>>
-#+end_src
-
-*** =lisp/init-outline.el=
-
-#+name: init-outline-file
-#+begin_src emacs-lisp  :tangle lisp/init-outline.el
-<<file-prop-line(feature="init-outline",desc="Customizations for outline structures")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-outline>>
-
-<<file-footer(feature="init-outline")>>
-#+end_src
-
-*** =lisp/init-org.el=
-
-#+name: init-org-file
-#+begin_src emacs-lisp  :tangle lisp/init-org.el
-<<file-prop-line(feature="init-org",desc="Org-Mode support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-org>>
-
-<<file-footer(feature="init-org")>>
-#+end_src
-
-*** =lisp/init-search.el=
-
-#+name: init-search-file
-#+begin_src emacs-lisp  :tangle lisp/init-search.el
-<<file-prop-line(feature="init-search",desc="Searching and replacing features")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-search>>
-
-<<file-footer(feature="init-search")>>
-#+end_src
-
-*** =lisp/lib-search.el=
-
-#+name: lib-search-file
-#+begin_src emacs-lisp  :tangle lisp/lib-search.el
-<<file-prop-line(feature="lib-search",desc="Search support functions")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-search>>
-
-<<file-footer(feature="lib-search")>>
-#+end_src
-
-*** =lisp/init-window.el=
-
-#+name: init-window-file
-#+begin_src emacs-lisp  :tangle lisp/init-window.el
-<<file-prop-line(feature="init-window",desc="Window management")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-window>>
-
-<<file-footer(feature="init-window")>>
-#+end_src
-
-*** =lisp/config-window.el=
-
-#+name: config-window-file
-#+begin_src emacs-lisp  :tangle lisp/config-window.el
-<<file-prop-line(feature="config-window",desc="Window management user options")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-window>>
-
-<<file-footer(feature="config-window")>>
-#+end_src
-
-*** =lisp/lib-window.el=
-
-#+name: lib-window-file
-#+begin_src emacs-lisp  :tangle lisp/lib-window.el
-<<file-prop-line(feature="lib-window",desc="Window management support library")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-;; Copyright (C) 2023 Free Software Foundation, Inc.
-;; Copyright (C) 2024  Protesilaos Stavrou
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;;         Vegard Øye <vegard_oye at hotmail.com>
-;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
-;;         Protesilaos Stavrou <public@protesilaos.com>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-window>>
-
-<<file-footer(feature="lib-window")>>
-#+end_src
-
-*** =lisp/init-buffer.el=
-
-#+name: init-buffer-file
-#+begin_src emacs-lisp :tangle lisp/init-buffer.el
-<<file-prop-line(feature="init-buffer",desc="Buffer customizations")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-buffer>>
-
-<<file-footer(feature="init-buffer")>>
-#+end_src
-
-*** =lisp/lib-buffer.el=
-
-#+name: lib-buffer-file
-#+begin_src emacs-lisp :tangle lisp/lib-buffer.el
-<<file-prop-line(feature="lib-buffer",desc="Buffer helper callables")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-buffer>>
-
-<<file-footer(feature="lib-buffer")>>
-#+end_src
-*** =lisp/config-buffer.el=
-
-#+name: config-buffer-file
-#+begin_src emacs-lisp :tangle lisp/config-buffer.el
-<<file-prop-line(feature="config-buffer",desc="Buffer constants, options, and variables")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-buffer>>
-
-<<file-footer(feature="config-buffer")>>
-#+end_src
-
-*** =lisp/init-editor.el=
-
-#+name: init-editor-file
-#+begin_src emacs-lisp  :tangle lisp/init-editor.el
-<<file-prop-line(feature="init-editor",desc="Editor customizations")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-editor>>
-
-<<file-footer(feature="init-editor")>>
-#+end_src
-
-*** =lisp/lib-editor.el=
-
-#+name: lib-editor-file
-#+begin_src emacs-lisp  :tangle lisp/lib-editor.el
-<<file-prop-line(feature="lib-editor",desc="Editor support library")>>
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-;; Copyright (C) 2016–2022  Radian LLC and contributors
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;;         Radon Rosborough <radon@intuitiveexplanations.com>
-;; Keywords: local
-
-
-<<file-license>>
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-;; SOFTWARE.
-
-
-;;; Commentary:
-;;; Code:
-
-<<lib-editor>>
-
-<<file-footer(feature="lib-editor")>>
-#+end_src
-
-*** =lisp/config-editor.el=
-
-#+name: config-editor-file
-#+begin_src emacs-lisp  :tangle lisp/config-editor.el
-<<file-prop-line(feature="config-editor",desc="User options for editing")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-editor>>
-
-<<file-footer(feature="config-editor")>>
-#+end_src
-
-*** =lisp/init-workspace.el=
-
-#+name: init-workspace-file
-#+begin_src emacs-lisp :tangle lisp/init-workspace.el
-<<file-prop-line(feature="init-workspace",desc="Workspaces, activities, scopes, and other organizational closures")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-workspace>>
-
-<<file-footer(feature="init-workspace")>>
-#+end_src
-
-*** =lisp/init-vcs.el=
-
-#+name: init-vcs-file
-#+begin_src emacs-lisp :tangle lisp/init-vcs.el
-<<file-prop-line(feature="init-vcs",desc="Version control support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-vcs>>
-
-<<file-footer(feature="init-vcs")>>
-#+end_src
-
-*** =lisp/config-prog.el=
-
-#+name: config-prog-file
-#+begin_src emacs-lisp :tangle lisp/config-prog.el
-<<file-prop-line(feature="config-prog",desc="User options for programming modes")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-prog>>
-
-<<file-footer(feature="config-prog")>>
-#+end_src
-
-*** =lisp/lib-prog.el=
-
-#+name: lib-prog-file
-#+begin_src emacs-lisp :tangle lisp/lib-prog.el
-<<file-prop-line(feature="lib-prog",desc="Assorted helper callables for programming modes")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-prog>>
-
-<<file-footer(feature="lib-prog")>>
-#+end_src
-
-*** =lisp/init-lsp.el=
-
-#+name: init-lsp-file
-#+begin_src emacs-lisp :tangle lisp/init-lsp.el
-<<file-prop-line(feature="init-lsp",desc="Eglot support")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lsp>>
-
-<<file-footer(feature="init-lsp")>>
-#+end_src
-
-*** =lisp/init-lang-data.el=
-
-#+name: init-lang-data-file
-#+begin_src emacs-lisp :tangle lisp/init-lang-data.el
-<<file-prop-line(feature="init-lang-data",desc="Language support for data syntaxes")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lang-data>>
-
-<<file-footer(feature="init-lang-data")>>
-#+end_src
-
-*** =lisp/init-lang-nix.el=
-
-#+name: init-lang-nix-file
-#+begin_src emacs-lisp :tangle lisp/init-lang-nix.el
-<<file-prop-line(feature="init-lang-nix",desc="Nix language support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lang-nix>>
-
-<<file-footer(feature="init-lang-nix")>>
-#+end_src
-
-*** =lisp/init-lang-php.el=
-
-#+name: init-lang-php-file
-#+begin_src emacs-lisp :tangle lisp/init-lang-php.el
-<<file-prop-line(feature="init-lang-php",desc="PHP language support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lang-php>>
-
-<<file-footer(feature="init-lang-php")>>
-#+end_src
-
-*** =lisp/init-writing.el=
-
-#+name: init-writing-file
-#+begin_src emacs-lisp :tangle lisp/init-writing.el
-<<file-prop-line(feature="init-writing",desc="Writing augmentation")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-writing>>
-
-<<file-footer(feature="init-writing")>>
-#+end_src
-
-*** =lisp/init-tools.el=
-
-#+name: init-tools-file
-#+begin_src emacs-lisp  :tangle lisp/init-tools.el
-<<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-tools>>
-
-<<file-footer(feature="init-tools")>>
-#+end_src
-
-** Partials
-:PROPERTIES:
-:header-args: :results replace
-:END:
-
-*** CANCELLED ~file-header~ cannot accept passthrough noweb args?
-CLOSED: [2024-05-18 Sat 15:50]
-
-- State "CANCELLED"  from "TODO"       [2024-05-18 Sat 15:50] \\
-  There are many limitations to Noweb, and E expects to move away from the current approach.
-*** ~file-header~
-
-#+name: file-header-default-authors-table
-| Chris Montgomery | chmont@proton.me | 2024 |   | GPL-3.0-or-later |
-| Someone Else?    |                  |      |   |                  |
-
-#+name: file-header
-#+begin_src emacs-lisp :noweb yes :var feature="file-header-example" :var desc="" :var table=file-header-default-authors-table
-  <<file-prop-line(feature,desc)>>
-
-  ;; <<file-authors(table=table)>>
-  <<file-extra-meta>>
-
-  <<file-license>>
-
-  ;;; Commentary:
-  ;;; Code:
-#+end_src
-
-*** ~file-prop-line~
-
-- Note taken on [2024-03-27 Wed 01:47] \\
-  Added the ~extraprops~ =noweb= variable for additional propline values and file-local
-  variables.
-
-#+name: file-prop-line
-#+header: :var feature="" :var desc="" :var extraprops=""
-#+begin_src emacs-lisp
-(format ";;; %s.el --- %s  -*- lexical-binding: t; %s -*-" feature desc extraprops)
-#+end_src
-
-*** ~file-extra-meta~
-
-#+name: file-extra-meta
-#+begin_src emacs-lisp
-;; URL: https://codeberg.org/montchr/ceamx
-;; Version: 0.1.0
-#+end_src
-
-*** TODO ~file-footer~
-
-Emacs calls this the "file trailer" in ~generate-lisp-file-trailer~.
-
-- [ ] Adds significantly to tangle time
-
-#+name: file-footer
-#+begin_src emacs-lisp :var feature=""
-(format "(provide '%1$s)\n;;; %1$s.el ends here\n" feature)
-#+end_src
-
-*** ~file-authors~
-
-Example table:
-
-#+name: file-authors-example-table
-| Name           | Email               | Start Year | End Year | License          |
-|----------------+---------------------+------------+----------+------------------|
-| Gilles Deleuze | notrees@rhizome.net |       1925 |     1995 | GPL-3.0-or-later |
-| Félix Guattari | poop@dada.net       |            |          | WTFPL            |
-
-#+name: file-authors
-#+header: :var table=file-authors-example-table
-#+begin_src emacs-lisp
-(defun ceamx--authors-table-sanitize-year (year)
-  "TODO"
-  (pcase year
-    ((pred numberp)
-     (number-to-string year))
-    ((and (pred stringp)
-          (pred string-empty-p))
-     nil)
-    (_ year)))
-
-(defun ceamx--authors-table-sanitize-years (start end)
-  "TODO"
-  (let ((years (list start end)))
-    (seq-keep #'ceamx--authors-table-sanitize-year years)))
-
-(defun ceamx-authors-format-attribution (name email)
-""
-  (concat name (and (not (string-empty-p email))
-                    (format " <%s>" email))))
-
-(defun ceamx-authors-format-copyright-line (author years)
-  (format "Copyright (C) %s  %s" years author))
-
-(defun ceamx--authors-table-process-row (row)
-  "TODO"
-  (seq-let (name email start end license) row
-    (let* ((attribution (ceamx-authors-format-attribution name email))
-           (years (ceamx--authors-table-sanitize-years start end))
-           (year-range (string-join years "-")))
-      (list
-        :attribution attribution
-        :email email
-        :license license
-        :name name
-        :year-initial start
-        :year-latest end
-        :years year-range))))
-
-(defun ceamx-authors-from-table (table)
-  ""
-  (mapcar #'ceamx--authors-table-process-row table))
-
-(require 'subr-x)
-
-(defun ceamx-authors-format-author-lines (authors)
-  ""
-  (let* ((prefix "Author: "))
-                ;; FIXME: omit padding from first entry
-    (concat prefix
-
-            (mapconcat (lambda (author)
-                         (concat (make-string (length prefix) (string-to-char " "))
-                                 (plist-get author :attribution)))
-                       authors "\n"))))
-
-(let ((authors (ceamx-authors-from-table table)))
-  (format "%s\n\n%s"
-          (mapconcat (lambda (author)
-                       (ceamx-authors-format-copyright-line
-                        (plist-get author :attribution)
-                        (plist-get author :years)))
-                     authors "\n")
-          (ceamx-authors-format-author-lines authors)))
-#+end_src
-
-#+RESULTS: file-authors
-: Copyright (C) 1925-1995  Gilles Deleuze <notrees@rhizome.net>
-: Copyright (C)   Félix Guattari <poop@dada.net>
-
-** License Headers
-*** GNU General Public License 3.0 or later (=GPL-3.0-or-later=)
-
-#+name: file-license
-#+begin_src emacs-lisp
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-#+end_src
-
-*** MIT License (=MIT=)
-
-#+name: file-license-mit
-#+begin_src emacs-lisp
-;; Permission is hereby granted, free of charge, to any person obtaining
-;; a copy of this software and associated documentation files (the
-;; "Software"), to deal in the Software without restriction, including
-;; without limitation the rights to use, copy, modify, merge, publish,
-;; distribute, sublicense, and/or sell copies of the Software, and to
-;; permit persons to whom the Software is furnished to do so, subject to
-;; the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be
-;; included in all copies or substantial portions of the Software.
-#+end_src
-
-*** BSD 2-Clause License (=BSD-2-Clause=)
-
-#+name: file-license-bsd-2-clause
-#+begin_src emacs-lisp
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-;;
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-;;
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#+end_src
-
-
-* Maintenance
-** Functions to clean and re-tangle Elisp files
-
-#+begin_src emacs-lisp :noweb yes :results silent
-<<ceamx-tangle-src>>
-(ceamx/tangle-fresh)
-#+end_src
-
-#+name: ceamx-tangle-src
-#+begin_src emacs-lisp
-(require 'f)
-(require 'llama)
-
-(require 'ob-tangle)
-
-(defun ceamx-list-tangled-init-files ()
-  "List all tangled files in `user-emacs-directory'.
-Note that this is a crude approximation reflective of our
-expectations but not necessarily files that were truly tangled.
-
-The assumptions are as follows:
-
--- All Emacs Lisp files within the \"lisp\" subdirectory
--- early-init.el
--- init.el
-
-If there are any Emacs Lisp files within the \"lisp\"
-subdirectory that have not been created as a result of tangling,
-they will also be included in the result."
-  (let ((dir user-emacs-directory))
-    (append
-     (mapcar (##f-join dir %) '("early-init.el" "init.el"))
-     (f-files (f-join dir "lisp") (##f-ext-p % "el") t))))
-
-(defun ceamx/purge-tangled-init-files ()
-  "Delete all tangled init files according to `ceamx-list-tangled-init-files'."
-  (interactive)
-  (dolist (file (ceamx-list-tangled-init-files))
-    (f-delete file)))
-
-(defconst ceamx-literate-config-file (locate-user-emacs-file "config.org"))
-
-(defun ceamx/tangle-fresh (&optional src-file)
-  "Purge all existing tangled init files and re-tangle.
-When SRC-FILE is non-nil, it will be used as the source file to
-be tangled by `org-babel-tangle-file'.  Otherwise, if SRC-FILE is
-nil, the value of `ceamx-literate-config-file' will be the
-default source file."
-  (interactive)
-  (ceamx/purge-tangled-init-files)
-  (org-babel-tangle-file
-   (or src-file ceamx-literate-config-file)))
-#+end_src
-
-
-
-** Debugging
-
-- Source :: [[https://github.com/progfolio/.emacs.d/blob/master/init.org?plain=1][.emacs.d/init.org at master · progfolio/.emacs.d]]
-- Retrieved :: [2024-06-04 Tue 22:20]
-
-Running this form will launch the debugger after loading a package.
-
-This is useful for finding out when a dependency is requiring a package (perhaps
-earlier than you want).
-
-Use by tangling this block and launching Emacs with =emacs --debug-init=.
-
-#+begin_src emacs-lisp :var file="" :results silent :tangle no
-(unless (string-empty-p file)
-  (eval-after-load file
-    '(debug)))
-#+end_src
-
-Similarly, this variable will hit the debugger when a message matches its
-regexp.
-
-#+begin_src emacs-lisp :tangle no
-(setq debug-on-message "")
-#+end_src
-
-Adding a variable watcher can be a useful way to track down initialization and
-mutation of a variable.
-
-#+begin_src emacs-lisp :tangle no
-(add-variable-watcher 'org-capture-after-finalize-hook
-                      (lambda (symbol newval operation where)
-                        (debug)
-                        (message "%s set to %s" symbol newval)))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-(setq debug-on-error t)
-#+end_src
-
-
-* Resources
-
-- [[info:elisp#Tips][(elisp) Tips]]
-- [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
 
 
 * TODO The Bucket of Uncertainty
@@ -1772,981 +313,7 @@ POS defaults to the current position."
 ** TODO Consolidate ~lib-simple~ and ~lib-text~
 
 
-* Preparations
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-bootstrap
-:END:
-
-** Add the =site-lisp= directory to ~load-path~
-
-#+begin_src emacs-lisp
-(add-to-list 'load-path ceamx-site-lisp-dir)
-(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
-#+end_src
-
-** Initialize the =ceamx= user options
-
-#+begin_src emacs-lisp
-(defgroup ceamx nil
-  "User-configurable options for Ceamx."
-  ;; TODO: is this group appropriate?
-  :group 'file)
-#+end_src
-
-*** The user option to determine whether to load ~custom-file~
-
-#+begin_src emacs-lisp
-(defcustom ceamx-load-custom-file nil
-  "Whether to load the user `custom-file' (custom.el)."
-  :group 'ceamx
-  :type '(boolean))
-#+end_src
-
-** Define variables describing the current environment-context :env:
-
-#+begin_src emacs-lisp
-(require 'config-env)
-
-;; TODO: see bbatsov/prelude for prior art
-(when +sys-wsl-p
-  (require 'lib-env-wsl))
-#+end_src
-
-** =site-lisp/on=: Define additional Emacs event hooks
-
-#+begin_src emacs-lisp
-(require 'on)
-#+end_src
-
-** TODO DISABLED Load commonly-useful Ceamx libraries
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-*** TODO Unnecessary, probably
-
-#+begin_src emacs-lisp
-;; (require 'lib-files)
-#+end_src
-
-*** TODO Improve visibility -- =site-lisp=, maybe?
-
-The functions and macros in ~lib-elisp~ are useful when hacking on Ceamx, but
-E always forgets they exist.
-
-#+begin_src emacs-lisp
-;; (require 'lib-elisp)
-#+end_src
-
-** Initialize package management
-
-Third-party package managers should be configured in init.el directly instead
-of within a `require'd file so that they may be re-initialized properly.
-
-*** Bootstrap the package manager
-
-Packages are installed with Elpaca.
-
-Previously, I have used =package.el= or Nixpkgs to manage packages.  See the
-[[*Alternatives]] subheading for details
-**** Elpaca
-***** Set the Elpaca installer version
-
-#+begin_src emacs-lisp
-(defvar elpaca-installer-version 0.7)
-#+end_src
-
-***** Show the Elpaca to its house
-
-#+begin_src emacs-lisp
-(defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
-#+end_src
-
-***** Summon the Elpaca
-
-The installation code only needs to be changed when the Elpaca warns about an
-installer version mismatch.
-
-This should be copied verbatim from the Elpaca documentation, sans the
-definitions for ~elpaca-installer-version~ and ~elpaca-directory~.
-
-#+begin_src emacs-lisp
-(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
-(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                       :ref nil :depth 1
-                       :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                       :build (:not elpaca--activate-package)))
-(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-       (build (expand-file-name "elpaca/" elpaca-builds-directory))
-       (order (cdr elpaca-order))
-       (default-directory repo))
-  (add-to-list 'load-path (if (file-exists-p build) build repo))
-  (unless (file-exists-p repo)
-    (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
-    (condition-case-unless-debug err
-        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-                                                 ,@(when-let ((depth (plist-get order :depth)))
-                                                    (list (format "--depth=%d" depth) "--no-single-branch"))
-                                                 ,(plist-get order :repo) ,repo))))
-                 ((zerop (call-process "git" nil buffer t "checkout"
-                                       (or (plist-get order :ref) "--"))))
-                 (emacs (concat invocation-directory invocation-name))
-                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                 ((require 'elpaca))
-                 ((elpaca-generate-autoloads "elpaca" repo)))
-            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-          (error "%s" (with-current-buffer buffer (buffer-string))))
-      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-  (unless (require 'elpaca-autoloads nil t)
-    (require 'elpaca)
-    (elpaca-generate-autoloads "elpaca" repo)
-    (load "./elpaca-autoloads")))
-(add-hook 'after-init-hook #'elpaca-process-queues)
-(elpaca `(,@elpaca-order))
-#+end_src
-
-**** Alternatives
-***** Nixpkgs
-
-I actually think this is the easiest approach, with the least amount of fiddling
-necessary.
-
-But: I would prefer using standalone/portable Emacs-specific package
-management so Nix is not a hard requirement.  This is primarily because I
-am eagerly anticipating the stable release of the official Emacs for
-Android, or at least some established norms/idioms/best-practices for
-configuration on Android.
-
-Currently I don't see any clear path towards supporting Nix there, at
-least not for a while.  I would prefer to have interoperability between
-Emacs for Android and Nix for Android instead of the GNU-signed Termux
-app, but AFAIK that would require building both Emacs and Nix for
-Android APKs from source to self-sign, which I don't want to do right
-now.
-
-Oh yeah, and there's also WSL when I am forced to use Microsoft Windows
-for something (like Adobe Acrobat).  Ideally I would use the NixOS on WSL
-setup but that's a little bit of a project to integrate into my
-wasteland of a system configuration repo.
-
-***** package.el
-
-When I forget what pain feels like, I remind myself by attempting to use
-=package.el=.  Soon I find that nothing works in a sane manner, and, the
-worst part: it's barely configurable as Emacs should be.  This results in
-many nasty hacks.  I do not think =package.el= is ready for daily usage
-in my life.
-
-I tried leaning into package.el because:
-
-1. It is built into Emacs, allowing for portability and predictable
-   behavior across machines.  Ostensibily.
-2. I thought using it would be a matter of "back-to-the-basics"/KISS.
-
-But:
-
-While the documentation seems thorough, I frequently need to dive into
-its source code to figure out why some weird behavior is happening.
-Several configurations I've referenced apply advices to its internal
-functions to hammer package.el into a usable machine.
-
-Somehow, even though both =package.el= and =use-package= are part of
-Emacs, they do not work well together.  TODO: add links to issues here
-
-package.el forces the use of =user-custom-file=, with no option to
-specify a different file or otherwise change this behavior.  I am
-absolutely not interested in committing =custom.el= whenever the state
-of my installed packages changes.  I like the idea of a lockfile, as
-every package manager should use one (except Nix, which transcends such
-barbaric practices entirely), but the current state of this behavior
-makes that impossible without resorting to hacks.  TODO: mention the
-snippet I recently came across (saved to bookmark manager).
-
-I've left a lot of comments throughout this configuration's explaining
-some of =package.el='s unintutive and sometimes downright terrible or
-broken behavior.  TODO: resurface these, which were probably deleted.
-
-I imagine one day these issues will be resolved and stabilized in future
-versions of Emacs, but until then, I would only be a reluctant user and
-find myself still prone to indecision in this field.
-
-On that note, I have since switched back to Elpaca.
-
-
-*** Bind some commonly-used package management commands :keybinds:
-
-#+begin_src emacs-lisp
-(define-keymap :keymap ceamx-packages-map
-  "f" #'elpaca-fetch-all
-  "m" #'elpaca-merge-all
-  "t" #'elpaca-try)
-
-(keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
-#+end_src
-
-**** TODO Move this global binding somewhere else... but where? :keybinds:
-
-#+begin_src emacs-lisp
-(keymap-global-set "C-c q" ceamx-session-map)
-#+end_src
-
-*** Run our custom init and startup hooks on ~elpaca-after-init-hook~
-
-#+begin_src emacs-lisp
-(add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
-(add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
-#+end_src
-
-*** Pretend file-visiting-buffers in the package directory are read-only
-
-#+begin_src emacs-lisp
-(require 'config-buffer)
-
-(def-hook! ceamx-register-read-only-buffers-h ()
-  'ceamx-after-init-hook
-  "Use read-only buffers for files in some directories.
-The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
-
-  ;; Define a read-only directory class
-  (dir-locals-set-class-variables
-   'read-only
-   '((nil . ((buffer-read-only . t)))))
-
-  ;; Associate directories with the read-only class
-  (dolist (dir ceamx-buffer-read-only-dirs-list)
-    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
-#+end_src
-
-*** Encourage a ~no-littering~ policy for packages to artifice in the designated areas
-
-- Website :: <https://github.com/emacscollective/no-littering/>
-
-By default, Emacs features and many packages default to dumping their state
-files into ~user-emacs-directory~.  This makes sense for the sake of visibility.
-However, because E rarely thinks about any of those machine-generated and
-non-human-friendly files, they may be effectively designated as clutter.  Ceamx
-offloads these sanitation duties to the =no-littering= package because it works
-effectively and almost-invisibly.
-
-In some cases, especially for new packages / package features / targets, it may
-be necessary to manage such configuration by hand.
-
-Ceamx avoids ~use-package~ here so that:
-
-- ~no-littering~ may be installed and loaded as early as possible
-- the time-consuming invocations of ~elpaca-wait~ should be kept to the absolute minimum
-
-#+begin_src emacs-lisp
-(require 'ceamx-paths)
-
-;; These must be set prior to package load.
-(setq no-littering-etc-directory ceamx-etc-dir)
-(setq no-littering-var-directory ceamx-var-dir)
-
-(elpaca no-littering
-  (require 'no-littering))
-#+end_src
-
-*** Install the latest versions of some builtin features and their dependencies
-
-Installing the latest development versions of ~eglot~ and ~magit~ (for example)
-comes with the significant caveat that their dependencies often track the latest
-versions of builtin Emacs libraries.  Those can be installed via GNU ELPA.
-
-Since core libraries like ~seq~ are often dependencies of many other packages or
-otherwise loaded immediately (like ~eldoc~), installation and activation of the
-newer versions needs to happen upfront to avoid version conflicts and
-mismatches.  For example, Ceamx does not want some package loaded earlier in init to
-think it is using the builtin version of ~seq~, while a package loaded later in
-init uses a differnt version.  E is not sure how realistic such a scenario might
-be, or whether it would truly pose a problem, but the point is that we should
-aim for consistency.
-
-Oftentimes, these builtins must be unloaded before loading the newer version.
-This applies especially to core libraries like ~seq~ or the enabled-by-default
-~global-eldoc-mode~ provided by ~eldoc~, but not ~jsonrpc~, since its
-functionality is specific to more niche features like inter-process
-communication in the case of ~eglot~.
-
-A feature must only be unloaded once, *before* loading the version installed by
-Elpaca.  Normally, that is not an issue because the init file is only loaded
-once on session startup.  But upon re-loading the init file inside a running
-session, the Elpaca-installed version will become unloaded.  To prevent that,
-the unloading should happen only once -- during session startup -- hence the
-check for a non-nil ~after-init-time~.
-
-#+begin_verse
-I don't understand why the Elpaca-installed feature\/package only seems to be
-loaded during the initial session startup?  Unless the unloading happens
-conditionally based on ~after-init-time~ as described above, every time the init
-file is reloaded and ~elpaca-process-queues~ runs in
-~+auto-tangle-reload-init-h~, I get a bunch of errors (not warnings!) about
-~eglot~ and ~org~ as missing dependencies.
-#+end_verse
-
-**** Install the latest version of ~seq~ builtin library, carefully
-
-~magit~ requires a more recent version of ~seq~ than the version included in
-Emacs 29.
-
-Requires special care because unloading it can make other libraries freak out.
-<https://github.com/progfolio/elpaca/issues/216#issuecomment-1868444883>
-
-#+begin_src emacs-lisp
-(defun +elpaca-unload-seq (e)
-  "Unload the builtin version of `seq' and continue the `elpaca' build E."
-  (and (featurep 'seq) (unload-feature 'seq t))
-  (elpaca--continue-build e))
-
-(defun +elpaca-seq-build-steps ()
-  "Update the `elpaca' build-steps to activate the latest version of the builtin `seq' package."
-  (append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
-                       elpaca--pre-built-steps
-                     elpaca-build-steps))
-          (list '+elpaca-unload-seq 'elpaca--activate-package)))
-
-(elpaca `(seq :build ,(+elpaca-seq-build-steps)))
-#+end_src
-
-**** Install the latest version of the builtin ~jsonrpc~ library
-
-Required by (and originally extracted from) ~eglot~.
-
-#+begin_src emacs-lisp
-(elpaca jsonrpc
-  (require 'jsonrpc))
-#+end_src
-
-**** Install the latest version of the ~eldoc~ builtin library, carefully
-
-Required by ~eglot~.
-
-~eldoc~ requires a delicate workaround to avoid catastrophy
-<https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
-
-
-#+begin_src emacs-lisp
-(unless after-init-time
-  (unload-feature 'eldoc t)
-  (setq custom-delayed-init-variables '())
-  (defvar global-eldoc-mode nil))
-
-(elpaca eldoc
-  (require 'eldoc)
-  (global-eldoc-mode))
-#+end_src
-
-**** Install the latest version of the builtin ~eglot~ package
-
-#+begin_src emacs-lisp
-(unless after-init-time
-  (when (featurep 'eglot)
-    (unload-feature 'eglot)))
-
-(elpaca eglot)
-#+end_src
-
-**** Install the latest version of the builtin ~flymake~ package
-
-#+begin_src emacs-lisp
-(unless after-init-time
-  (when (featurep 'flymake)
-    (unload-feature 'flymake)))
-
-(elpaca flymake)
-#+end_src
-
-**** Install the latest version of Org-Mode
-
-#+begin_src emacs-lisp
-(unless after-init-time
-  (when (featurep 'org)
-    (unload-feature 'org)))
-
-(elpaca (org :autoloads "org-loaddefs.el"))
-#+end_src
-
-*** Install the latest version of Use-Package
-
-#+begin_src emacs-lisp
-(elpaca use-package)
-#+end_src
-
-*** Integrate Elpaca and Use-Package
-
-#+begin_src emacs-lisp
-(elpaca elpaca-use-package
-  (elpaca-use-package-mode))
-#+end_src
-
-*** Use-Package: Ensure package installation by default
-
-Equivalent to manually specifying =:ensure t= in each ~use-package~ expression.
-
-#+begin_src emacs-lisp
-(setopt use-package-always-ensure t)
-#+end_src
-
-*** Elpaca-Wait № 1: finish processing current queue :wait:
-
-Reason:
-
-- Continuing otherwise will result in race conditions on the definition of storage paths
-- ~use-package~ must be loaded for byte-compilation checks in [[*Configure ~use-package~ for improved debuggability and introspectability]]
-
-#+begin_src emacs-lisp
-(elpaca-wait)
-#+end_src
-
-*** Configure ~use-package~ for improved debuggability and introspectability
-
-#+begin_src emacs-lisp
-(setopt use-package-expand-minimally nil)
-(when (bound-and-true-p init-file-debug)
-  (require 'use-package)
-  (setopt use-package-expand-minimally nil)
-  (setopt use-package-verbose t)
-  (setopt use-package-compute-statistics t))
-#+end_src
-
-*** Pre-install packages adding ~use-package~ keywords
-
-Note that these packages are likely useful even without using their ~use-package~ keywords.
-
-**** Install ~blackout~ for adjusting modeline indicators :modeline:
-
-- Keyword :: =:blackout=
-
-#+begin_src emacs-lisp
-(elpaca blackout
-  (require 'blackout))
-#+end_src
-
-*** Elpaca-Wait № 2: finish processing current queue :wait:
-
-- Reason :: Continuing otherwise will result in race conditions where the newly-installed
-~use-package~ keywords may or may not be available, resulting in sporadic
-initialization errors.
-
-#+begin_src emacs-lisp
-(elpaca-wait)
-#+end_src
-
-** Install ~gcmh~ to manage running garbage collection on idle
-
-- Website :: <https://akrl.sdf.org/>
-- Code :: <https://gitlab.com/koral/gcmh>
-
-During normal use, the GC threshold will be set to a high value.
-When idle, GC will be triggered with a low threshold.
-
-#+begin_src emacs-lisp
-(package! gcmh
-  (blackout 'gcmh-mode)
-  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
-#+end_src
-
-*** Background and Rationale
-
-While browsing many other user configs, I have noticed several slightly
-different approaches to managing garbage collection, especially with the
-intent of reducing startup time.
-
-One approach is to offload this configuration to ~gcmh~, safely hiding the
-details away.  =gcmh= is written by Andrea Corallo, one of the Emacs
-co-maintainers, also known for introducing =gccemacs=.
-
-As a direct response to a Reddit thread sharing =gcmh=, Eli Zaretskii recommends
-caution in this field.  Corallo also weighs in.  Basically, Zaretskii recommends
-not overthinking things:
-
-[[https://old.reddit.com/r/emacs/comments/bg85qm/garbage_collector_magic_hack/eln27qh/][eli-zaretskii
-comments on Garbage Collector Magic Hack]]:
-
-#+begin_quote
-My problem with the advice to make the GC threshold at such high values
-begins the moment you start publishing your personal tweaks as general
-advice to others. IMO, this requires at least a lot of caveats, because
-your advice is likely to be followed by people whose workflows and
-system configurations are very different. Simply put, you might get
-others in trouble by promoting your personal hacks as "magic".
-#+end_quote
-
-From what I gather, =gcmh= has evolved a bit, so the previous criticism
-no longer applies.
-
-And, again, with more detail about fiddling carelessly with
-=gc-cons-threshold=:
-
-[[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii
-comments on An easy trick I found to improve Emacs start-up time]]
-
-#+begin_quote
-The GC threshold setting after init is too high, IMNSHO, and its value
-seems arbitrary.
-
-If the OP thinks that Emacs will GC as soon as it allocates 100 MiB,
-then that's a grave mistake. What really happens is the first time Emacs
-/considers doing GC/, if at that time more than 100 MiB have been
-allocated for Lisp objects, Emacs will GC. And since neither Lisp
-programs nor the user have /any/ control on how soon Emacs will decide
-to check whether GC is needed, the actual amount of memory by the time
-Emacs checks could be many times the value of the threshold.
-
-My advice is to spend some time measuring the effect of increased GC
-threshold on operations that you care about and that take a long enough
-time to annoy, and use the lowest threshold value which produces a
-tangible improvement. Start with the default value, then enlarge it by a
-factor of 2 until you see only insignificant speedups. I would not
-expect the value you arrive at to be as high as 100 MiB.
-#+end_quote
-
-** Install utility libraries
-
-#+begin_src emacs-lisp
-;; FIXME: remove or alias (`##' is very difficult to search for)
-(use-package llama) ;  `##' lambda shorthand =>
-                                        ;  <https://git.sr.ht/~tarsius/llama>
-
-(use-package f)
-#+end_src
-
-* TODO Load Features
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-init-features
-:END:
-
-** TODO Miscellaneous things that should go somewhere else
-
-#+begin_src emacs-lisp
-;; Increase number of messages saved in log.
-(setq message-log-max 10000)
-
-;; Unbind `suspend-frame'.
-(global-unset-key (kbd "C-x C-z"))
-
-;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
-(setopt auto-mode-case-fold nil)
-
-;; Prevent Emacs from pinging domain names unexpectedly.
-(setopt ffap-machine-p-known 'reject)
-#+end_src
-
-** TODO Sections
-
-#+begin_src emacs-lisp
-(require 'init-env)
-(require 'init-input-methods)
-
-;; Site-specific configuration, to be ignored by version control.
-(require 'site-config (file-name-concat user-emacs-directory "site-config") t)
-
-(require 'init-secrets)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Displays + Appearance
-
-;; Load configuration settings for conditional loading.
-(require 'config-ui)
-
-(require 'init-env-tty)
-
-(require 'init-ui)
-
-(when (display-graphic-p)
-  (require 'init-ui-graphical))
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Dashboard
-
-(require 'init-dashboard)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Keyboard support
-
-(require 'init-keys)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Windows
-
-(require 'init-window)
-(require 'init-buffer)
-
-;; FIXME: load earlier / in another section
-(require 'init-history)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Text Expansion
-
-(require 'init-abbrevs)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Completions and Selections
-
-(require 'init-search)
-(require 'init-completion)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Help
-
-(require 'init-help)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Actions
-
-(require 'init-embark)
-
-;; Projects / Files
-(require 'init-project)
-(require 'init-vcs)
-(require 'init-files)
-(require 'init-dired)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Workspaces + activities + contexts
-
-(require 'init-workspace)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Editing
-
-(require 'init-editor)
-(require 'init-writing)
-(require 'init-templates)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Outlines & Memex
-
-(require 'init-notes)
-(require 'init-outline)
-(require 'init-org)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Linting
-
-(require 'init-flymake)
-(require 'init-flycheck)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Tree-Sitter
-
-(require 'init-treesitter)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Language/syntax support
-
-(require 'config-prog)
-(require 'lib-prog)
-
-(require 'init-prog)
-(require 'init-lisp)
-(require 'init-lsp)
-
-(require 'init-lang-data)
-(require 'init-lang-elisp)
-(require 'init-lang-html)
-(require 'init-lang-js)
-(require 'init-lang-lua)
-(require 'init-lang-markdown)
-(require 'init-lang-nix)
-(require 'init-lang-php)
-(require 'init-lang-shell)
-(require 'init-lang-misc)
-
-;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
-(require 'init-shell-nu)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Miscellaneous
-
-(require 'init-tools)
-
-(require 'init-term)
-(require 'init-eww)
-(require 'init-printing)
-
-(require 'init-fun)
-
-(require 'init-controls)
-#+end_src
-
-
-* Before Dawn: =early-init.el=
-:PROPERTIES:
-:header-args: :noweb-ref early-init
-:END:
-
-- [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
-
-** Prevent package.el from enabling all packages before init
-
-When nil and using the builtin package manager, ~package-initialize~ must be
-invoked in the init process prior to ~require~ing any packages installed with
-~package-install~.
-
-When non-nil, there is no need to invoke ~package-initialize~.
-
-#+begin_src emacs-lisp
-(setq package-enable-at-startup nil)
-#+end_src
-
-** Set up indirect init/startup hooks
-
-#+begin_src emacs-lisp
-(defvar ceamx-after-init-hook '())
-(defun ceamx-after-init-hook ()
-  (run-hooks 'ceamx-after-init-hook))
-
-(defvar ceamx-emacs-startup-hook '())
-(defun ceamx-emacs-startup-hook ()
-  (run-hooks 'ceamx-emacs-startup-hook))
-#+end_src
-
-** Performance
-
-*** Language servers
-
-<https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
-
-#+begin_src emacs-lisp
-(setenv "LSP_USE_PLISTS" "true")
-(setq lsp-use-plists t)
-
-;; Read JSON streams in 1MiB chunks instead of the default 4kB.
-;;
-;; Language server responses tend to be in the 800kB to 3MB range,
-;; according to the lsp-mode documentation (linked above).
-;;
-;; This is a general LSP concern, not specific to any particular implementation.
-(when (functionp 'json-serialize)
-  (setq read-process-output-max (* 1024 1024)))
-#+end_src
-
-*** Minimize garbage collection during startup
-
-[[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii comments on An easy trick I found to improve Emacs start-up time]]:
-
-#+begin_quote
-My advice is to spend some time measuring the effect of increased GC threshold
-on operations that you care about and that take a long enough time to annoy,
-and use the lowest threshold value which produces a tangible improvement.
-Start with the default value, then enlarge it by a factor of 2 until you see
-only insignificant speedups. I would not expect the value you arrive at to be
-as high as 100 MiB.
-#+end_quote
-
-See also:
-
-<https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
-
-*** Provide insight into garbage-collection activity to inform tuning decisions
-
-#+begin_src emacs-lisp
-;; TODO: will a `init-file-debug' check work here?
-(setq garbage-collection-messages t)
-#+end_src
-
-*** Prevent garbage-collection during init
-
-#+begin_src emacs-lisp
-;; NOTE: Either use `gcmh' or make sure to reset this later.  Or else!
-(setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
-#+end_src
-
-*** DISABLED Simplify filename pattern-matching during init
-
-- Note taken on [2024-03-23 Sat 03:24] \\
-  Quick followup: I would not be surprised if this had something to do with adding
-  ~ceamx-restore-file-name-handler-alist-h~ on ~ceamx-after-init-hook~, which is
-  equivalent to ~elpaca-after-init-hook~.
-- Note taken on [2024-03-23 Sat 03:01] \\
-  This snippet appears to cause Emacs to lose track of its own source files in most sessions.
-
-  ~describe-function~ and ~helpful-function~ report symbols "without a source
-  file".  I did not have much to go on until I became aware of ~find-function~.
-  After invoking the latter on a function whose source could not be located, I
-  noticed a clue: ~find-function~ somehow knew about the source file with a =.el=
-  extension.  I investigated the Emacs =lisp/= directory and saw that there are no
-  =.el= files -- only =.elc= and =.el.gz=.  The =.elc= files are unreadable, but
-  Emacs is still able to read the compressed =gz= archives.  I still do not know
-  exactly why it forgot.
-
-  The issue has not been consistent, which likely indicates a race condition.  For
-  a while, I assumed the issue occurred in consecutive sessions after calling
-  ~restart-emacs~, but that was not the case.
-
-  Disabling this hack is the only consistent way I found to help Emacs find
-  itself.  Re-enabling it caused the issue to recur.  In the end, after
-  disabling, I see absolutely no difference in startup performance.
-  Optimization-by-copypasta strikes again.
-
-  This has been a very frustrating regression in many/most of my Emacs sessions.
-  I rely a lot on being able to read Emacs Lisp source code to understand how
-  Emacs works -- that is how I learn.  Without being able to view source, I am
-  left only with a lack of clarity.
-
-- <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
-- <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
-
-#+begin_src emacs-lisp :tangle no
-(defvar ceamx-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
-
-(defun ceamx-restore-file-name-handler-alist-h ()
-  "Restore the original value of the `file-name-handler-alist' variable.
-Intended for use as a callback on `ceamx-after-init-hook'."
-  (setq file-name-handler-alist ceamx-file-name-handler-alist)
-  (makunbound 'ceamx-file-name-handler-alist))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
-#+end_src
-
-** Directories and well-known-files
-
-*** Add directories to load path
-
-#+begin_src emacs-lisp
-;; Configure load path
-(dolist (subdir '("autoloads" "lisp" "lisp/core" "lisp/lib"))
-  (let ((dir (expand-file-name subdir user-emacs-directory)))
-    (add-to-list 'load-path dir)))
-#+end_src
-
-*** Load custom constants describing well-known paths
-
-See [[*=ceamx-paths= :: common path constants]]
-
-#+begin_src emacs-lisp
-(require 'ceamx-paths)
-#+end_src
-
-*** Configure ~custom-file~ location
-
-#+begin_src emacs-lisp
-;; Normally, options configured in `user-init-file' won't need to be persisted
-;; to `custom-file', but by default, when using package.el for package
-;; management, `package-selected-packages' will always be written to
-;; `custom-file' if available.  See `init-package' for details.
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-#+end_src
-
-*** Store packages in the designated directory
-
-#+begin_src emacs-lisp
-(setq package-user-dir ceamx-packages-dir)
-#+end_src
-
-*** Use preferred cache directories for native-comp
-
-#+begin_src emacs-lisp
-(startup-redirect-eln-cache ceamx-eln-dir)
-(add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
-#+end_src
-
-** Native compilation settings
-
-#+begin_src emacs-lisp
-(setq native-comp-async-report-warnings-errors 'silent)
-(setq native-compile-prune-cache t)
-
-;; Don't load outdated byte-compiled files.
-;;
-;; NOTE: This does not handle *recompiling* the outdated files.
-;; That would need to be handled during init.
-;;
-;; More info: <https://github.com/emacscollective/auto-compile/blob/main/README.org>
-(setq load-prefer-newer t)
-
-;; Package installation will provoke a lot of warnings from third-party
-;; packages, but there's nothing we can do about those.
-(setq byte-compile-warnings nil)
-#+end_src
-
-** Inhibit early annoyances
-
-#+begin_src emacs-lisp
-;; No bells.
-(setq ring-bell-function #'ignore)
-
-;; Allow answering yes/no questions with y/n.
-(setq use-short-answers t)              ; affects `yes-or-no-p'
-(setq read-answer-short t)              ; affects `read-answer' (completion)
-#+end_src
-
-** Frames and window-system integration
-
-;; FIXME: seems to behave inconsistently when server is running?
-
-#+begin_src emacs-lisp
-;; Prevent X11 from taking control of visual behavior and appearance.
-(setq inhibit-x-resources t)
-
-;; Avoid expensive frame resizing.
-(setq frame-inhibit-implied-resize t)
-
-;; Allow resizing the frame to the maximum available space on the desktop.
-(setq frame-resize-pixelwise t)
-
-;; Remove some unnecessary frame elements by default.
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-
-;; `tooltip-mode' is broken for me in pgtk -- might be an Emacs bug, causes
-;; constant errors when moving mouse over modeline.
-;;
-;; FIXME: actually, this is behaving inconsistently: disabling it does not
-;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
-;; normally...  maybe needs to happen later in init?
-(tooltip-mode -1)
-#+end_src
-
-*** Rename the default/initial frame
-
-#+begin_src emacs-lisp
-(defvar ceamx-default-frame-name "home — [ceamx]"
-  "Name for the default Emacs frame.")
-
-(defun ceamx-after-init-default-frame-name-h ()
-  "Set the name for the default frame.
-Simple wrapper for a call to `set-frame-name' providing
-`ceamx-default-frame-name' as the NAME argument.
-
-Intended for use as a callback on the `ceamx-after-init-hook'."
-  (set-frame-name ceamx-default-frame-name))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
-#+end_src
-
-
-
-** Quietize startup
-
-#+begin_src emacs-lisp
-(setq inhibit-startup-screen t)
-(setq initial-scratch-message nil)
-(setq initial-buffer-choice nil)
-#+end_src
-
-
-* Common: Paths
+* Define essential path constants
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el
 ;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
@@ -2858,8 +425,7 @@ Emacs version to prevent bytecode incompatibility.")
 ;; End:
 #+end_src
 
-
-* Common: Keymaps
+* Define essential keymaps
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :noweb yes
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
@@ -2922,7 +488,6 @@ Emacs version to prevent bytecode incompatibility.")
 (provide 'ceamx-keymaps)
 ;;; ceamx-keymaps.el ends here
 #+end_src
-
 
 * Common: Functions & Macros
 :PROPERTIES:
@@ -3307,7 +872,6 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
      keymap)))
 #+end_src
 
-
 * Common: Strings
 
 #+begin_src emacs-lisp :tangle lisp/config-common.el
@@ -3354,37 +918,996 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 #+end_src
 
 
+
+* Before Dawn: =early-init.el=
+:PROPERTIES:
+:header-args: :noweb-ref early-init
+:VISIBILITY: folded
+:END:
+
+- [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
+
+** Prevent package.el from enabling all packages before init
+
+When nil and using the builtin package manager, ~package-initialize~ must be
+invoked in the init process prior to ~require~ing any packages installed with
+~package-install~.
+
+When non-nil, there is no need to invoke ~package-initialize~.
+
+#+begin_src emacs-lisp
+(setq package-enable-at-startup nil)
+#+end_src
+
+** Set up indirect init/startup hooks
+
+#+begin_src emacs-lisp
+(defvar ceamx-after-init-hook '())
+(defun ceamx-after-init-hook ()
+  (run-hooks 'ceamx-after-init-hook))
+
+(defvar ceamx-emacs-startup-hook '())
+(defun ceamx-emacs-startup-hook ()
+  (run-hooks 'ceamx-emacs-startup-hook))
+#+end_src
+
+** Performance
+
+*** Language servers
+
+<https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
+
+#+begin_src emacs-lisp
+(setenv "LSP_USE_PLISTS" "true")
+(setq lsp-use-plists t)
+
+;; Read JSON streams in 1MiB chunks instead of the default 4kB.
+;;
+;; Language server responses tend to be in the 800kB to 3MB range,
+;; according to the lsp-mode documentation (linked above).
+;;
+;; This is a general LSP concern, not specific to any particular implementation.
+(when (functionp 'json-serialize)
+  (setq read-process-output-max (* 1024 1024)))
+#+end_src
+
+*** Minimize garbage collection during startup
+
+[[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii comments on An easy trick I found to improve Emacs start-up time]]:
+
+#+begin_quote
+My advice is to spend some time measuring the effect of increased GC threshold
+on operations that you care about and that take a long enough time to annoy,
+and use the lowest threshold value which produces a tangible improvement.
+Start with the default value, then enlarge it by a factor of 2 until you see
+only insignificant speedups. I would not expect the value you arrive at to be
+as high as 100 MiB.
+#+end_quote
+
+See also:
+
+<https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
+
+*** Provide insight into garbage-collection activity to inform tuning decisions
+
+#+begin_src emacs-lisp
+;; TODO: will a `init-file-debug' check work here?
+(setq garbage-collection-messages t)
+#+end_src
+
+*** Prevent garbage-collection during init
+
+#+begin_src emacs-lisp
+;; NOTE: Either use `gcmh' or make sure to reset this later.  Or else!
+(setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
+#+end_src
+
+*** DISABLED Simplify filename pattern-matching during init
+
+- Note taken on [2024-03-23 Sat 03:24] \\
+  Quick followup: I would not be surprised if this had something to do with adding
+  ~ceamx-restore-file-name-handler-alist-h~ on ~ceamx-after-init-hook~, which is
+  equivalent to ~elpaca-after-init-hook~.
+- Note taken on [2024-03-23 Sat 03:01] \\
+  This snippet appears to cause Emacs to lose track of its own source files in most sessions.
+
+  ~describe-function~ and ~helpful-function~ report symbols "without a source
+  file".  I did not have much to go on until I became aware of ~find-function~.
+  After invoking the latter on a function whose source could not be located, I
+  noticed a clue: ~find-function~ somehow knew about the source file with a =.el=
+  extension.  I investigated the Emacs =lisp/= directory and saw that there are no
+  =.el= files -- only =.elc= and =.el.gz=.  The =.elc= files are unreadable, but
+  Emacs is still able to read the compressed =gz= archives.  I still do not know
+  exactly why it forgot.
+
+  The issue has not been consistent, which likely indicates a race condition.  For
+  a while, I assumed the issue occurred in consecutive sessions after calling
+  ~restart-emacs~, but that was not the case.
+
+  Disabling this hack is the only consistent way I found to help Emacs find
+  itself.  Re-enabling it caused the issue to recur.  In the end, after
+  disabling, I see absolutely no difference in startup performance.
+  Optimization-by-copypasta strikes again.
+
+  This has been a very frustrating regression in many/most of my Emacs sessions.
+  I rely a lot on being able to read Emacs Lisp source code to understand how
+  Emacs works -- that is how I learn.  Without being able to view source, I am
+  left only with a lack of clarity.
+
+- <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
+- <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
+
+#+begin_src emacs-lisp :tangle no
+(defvar ceamx-file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+
+(defun ceamx-restore-file-name-handler-alist-h ()
+  "Restore the original value of the `file-name-handler-alist' variable.
+Intended for use as a callback on `ceamx-after-init-hook'."
+  (setq file-name-handler-alist ceamx-file-name-handler-alist)
+  (makunbound 'ceamx-file-name-handler-alist))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
+#+end_src
+
+** Directories and well-known-files
+
+*** Add directories to load path
+
+#+begin_src emacs-lisp
+;; Configure load path
+(dolist (subdir '("autoloads" "lisp" "lisp/core" "lisp/lib"))
+  (let ((dir (expand-file-name subdir user-emacs-directory)))
+    (add-to-list 'load-path dir)))
+#+end_src
+
+*** Load custom constants describing well-known paths
+
+See [[*=ceamx-paths= :: common path constants]]
+
+#+begin_src emacs-lisp
+(require 'ceamx-paths)
+#+end_src
+
+*** Configure ~custom-file~ location
+
+#+begin_src emacs-lisp
+;; Normally, options configured in `user-init-file' won't need to be persisted
+;; to `custom-file', but by default, when using package.el for package
+;; management, `package-selected-packages' will always be written to
+;; `custom-file' if available.  See `init-package' for details.
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+#+end_src
+
+*** Store packages in the designated directory
+
+#+begin_src emacs-lisp
+(setq package-user-dir ceamx-packages-dir)
+#+end_src
+
+*** Use preferred cache directories for native-comp
+
+#+begin_src emacs-lisp
+(startup-redirect-eln-cache ceamx-eln-dir)
+(add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
+#+end_src
+
+** Native compilation settings
+
+#+begin_src emacs-lisp
+(setq native-comp-async-report-warnings-errors 'silent)
+(setq native-compile-prune-cache t)
+
+;; Don't load outdated byte-compiled files.
+;;
+;; NOTE: This does not handle *recompiling* the outdated files.
+;; That would need to be handled during init.
+;;
+;; More info: <https://github.com/emacscollective/auto-compile/blob/main/README.org>
+(setq load-prefer-newer t)
+
+;; Package installation will provoke a lot of warnings from third-party
+;; packages, but there's nothing we can do about those.
+(setq byte-compile-warnings nil)
+#+end_src
+
+** Inhibit early annoyances
+
+#+begin_src emacs-lisp
+;; No bells.
+(setq ring-bell-function #'ignore)
+
+;; Allow answering yes/no questions with y/n.
+(setq use-short-answers t)              ; affects `yes-or-no-p'
+(setq read-answer-short t)              ; affects `read-answer' (completion)
+#+end_src
+
+** Frames and window-system integration
+
+;; FIXME: seems to behave inconsistently when server is running?
+
+#+begin_src emacs-lisp
+;; Prevent X11 from taking control of visual behavior and appearance.
+(setq inhibit-x-resources t)
+
+;; Avoid expensive frame resizing.
+(setq frame-inhibit-implied-resize t)
+
+;; Allow resizing the frame to the maximum available space on the desktop.
+(setq frame-resize-pixelwise t)
+
+;; Remove some unnecessary frame elements by default.
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+
+;; `tooltip-mode' is broken for me in pgtk -- might be an Emacs bug, causes
+;; constant errors when moving mouse over modeline.
+;;
+;; FIXME: actually, this is behaving inconsistently: disabling it does not
+;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
+;; normally...  maybe needs to happen later in init?
+(tooltip-mode -1)
+#+end_src
+
+*** Rename the default/initial frame
+
+#+begin_src emacs-lisp
+(defvar ceamx-default-frame-name "home — [ceamx]"
+  "Name for the default Emacs frame.")
+
+(defun ceamx-after-init-default-frame-name-h ()
+  "Set the name for the default frame.
+Simple wrapper for a call to `set-frame-name' providing
+`ceamx-default-frame-name' as the NAME argument.
+
+Intended for use as a callback on the `ceamx-after-init-hook'."
+  (set-frame-name ceamx-default-frame-name))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
+#+end_src
+
+
+
+** Quietize startup
+
+#+begin_src emacs-lisp
+(setq inhibit-startup-screen t)
+(setq initial-scratch-message nil)
+(setq initial-buffer-choice nil)
+#+end_src
+
+
+* =init.el=
+
+** Profiling
+
+- source :: <https://github.com/progfolio/.emacs.d/blob/ed159dc6076664ad9976949d8cb3af8e86fe39d1/init.org#profiling>
+
+#+begin_src emacs-lisp
+(add-hook 'ceamx-after-init-hook
+          (lambda ()
+            (message "Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract (current-time) before-init-time)))
+                     gcs-done)))
+#+end_src
+
+Optionally, display a report after startup:
+
+#+begin_src emacs-lisp :lexical t :tangle no
+(profiler-start 'cpu+mem)
+(add-hook 'ceamx-after-init-hook (lambda () (profiler-stop) (profiler-report)))
+#+end_src
+
+ELP is useful for seeing which functions in a package are "hot":
+
+#+begin_src emacs-lisp :var file="elpaca" :lexical t :tangle no
+(require 'elp)
+(with-eval-after-load file
+  (elp-instrument-package file))
+(add-hook ceamx-after-init-hook
+          (lambda () (elp-results) (elp-restore-package (intern file))))
+#+end_src
+
+** Add the =site-lisp= directory to ~load-path~
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path ceamx-site-lisp-dir)
+(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
+#+end_src
+
+** Initialize the =ceamx= user options
+
+#+begin_src emacs-lisp
+(defgroup ceamx nil
+  "User-configurable options for Ceamx."
+  ;; TODO: is this group appropriate?
+  :group 'file)
+#+end_src
+
+*** The user option to determine whether to load ~custom-file~
+
+#+begin_src emacs-lisp
+(defcustom ceamx-load-custom-file nil
+  "Whether to load the user `custom-file' (custom.el)."
+  :group 'ceamx
+  :type '(boolean))
+#+end_src
+
+** Define variables describing the current environment-context :env:
+
+#+begin_src emacs-lisp
+(require 'config-env)
+
+;; TODO: see bbatsov/prelude for prior art
+(when +sys-wsl-p
+  (require 'lib-env-wsl))
+#+end_src
+
+** =site-lisp/on=: Define additional Emacs event hooks
+
+#+begin_src emacs-lisp
+(require 'on)
+#+end_src
+
+
+* Package Management
+
+Third-party package managers should be configured in init.el directly instead
+of within a `require'd file so that they may be re-initialized properly.
+
+** Bootstrap the package manager
+
+Packages are installed with Elpaca.
+
+Previously, I have used =package.el= or Nixpkgs to manage packages.  See the
+[[*Alternatives]] subheading for details.
+
+*** Set the Elpaca installer version
+
+#+begin_src emacs-lisp
+(defvar elpaca-installer-version 0.7)
+#+end_src
+
+*** Show the Elpaca to its house
+
+#+begin_src emacs-lisp
+(defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
+#+end_src
+
+*** Summon the Elpaca
+
+The installation code only needs to be changed when the Elpaca warns about an
+installer version mismatch.
+
+This should be copied verbatim from the Elpaca documentation, sans the
+definitions for ~elpaca-installer-version~ and ~elpaca-directory~.
+
+#+begin_src emacs-lisp
+(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+                       :ref nil :depth 1
+                       :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                       :build (:not elpaca--activate-package)))
+(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+       (build (expand-file-name "elpaca/" elpaca-builds-directory))
+       (order (cdr elpaca-order))
+       (default-directory repo))
+  (add-to-list 'load-path (if (file-exists-p build) build repo))
+  (unless (file-exists-p repo)
+    (make-directory repo t)
+    (when (< emacs-major-version 28) (require 'subr-x))
+    (condition-case-unless-debug err
+        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                 ,@(when-let ((depth (plist-get order :depth)))
+                                                    (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                 ,(plist-get order :repo) ,repo))))
+                 ((zerop (call-process "git" nil buffer t "checkout"
+                                       (or (plist-get order :ref) "--"))))
+                 (emacs (concat invocation-directory invocation-name))
+                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                 ((require 'elpaca))
+                 ((elpaca-generate-autoloads "elpaca" repo)))
+            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+          (error "%s" (with-current-buffer buffer (buffer-string))))
+      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  (unless (require 'elpaca-autoloads nil t)
+    (require 'elpaca)
+    (elpaca-generate-autoloads "elpaca" repo)
+    (load "./elpaca-autoloads")))
+(add-hook 'after-init-hook #'elpaca-process-queues)
+(elpaca `(,@elpaca-order))
+#+end_src
+
+*** Alternatives
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+**** Nixpkgs
+
+I actually think this is the easiest approach, with the least amount of fiddling
+necessary.
+
+But: I would prefer using standalone/portable Emacs-specific package
+management so Nix is not a hard requirement.  This is primarily because I
+am eagerly anticipating the stable release of the official Emacs for
+Android, or at least some established norms/idioms/best-practices for
+configuration on Android.
+
+Currently I don't see any clear path towards supporting Nix there, at
+least not for a while.  I would prefer to have interoperability between
+Emacs for Android and Nix for Android instead of the GNU-signed Termux
+app, but AFAIK that would require building both Emacs and Nix for
+Android APKs from source to self-sign, which I don't want to do right
+now.
+
+Oh yeah, and there's also WSL when I am forced to use Microsoft Windows
+for something (like Adobe Acrobat).  Ideally I would use the NixOS on WSL
+setup but that's a little bit of a project to integrate into my
+wasteland of a system configuration repo.
+
+**** package.el
+
+When I forget what pain feels like, I remind myself by attempting to use
+=package.el=.  Soon I find that nothing works in a sane manner, and, the
+worst part: it's barely configurable as Emacs should be.  This results in
+many nasty hacks.  I do not think =package.el= is ready for daily usage
+in my life.
+
+I tried leaning into package.el because:
+
+1. It is built into Emacs, allowing for portability and predictable
+   behavior across machines.  Ostensibily.
+2. I thought using it would be a matter of "back-to-the-basics"/KISS.
+
+But:
+
+While the documentation seems thorough, I frequently need to dive into
+its source code to figure out why some weird behavior is happening.
+Several configurations I've referenced apply advices to its internal
+functions to hammer package.el into a usable machine.
+
+Somehow, even though both =package.el= and =use-package= are part of
+Emacs, they do not work well together.  TODO: add links to issues here
+
+package.el forces the use of =user-custom-file=, with no option to
+specify a different file or otherwise change this behavior.  I am
+absolutely not interested in committing =custom.el= whenever the state
+of my installed packages changes.  I like the idea of a lockfile, as
+every package manager should use one (except Nix, which transcends such
+barbaric practices entirely), but the current state of this behavior
+makes that impossible without resorting to hacks.  TODO: mention the
+snippet I recently came across (saved to bookmark manager).
+
+I've left a lot of comments throughout this configuration's explaining
+some of =package.el='s unintutive and sometimes downright terrible or
+broken behavior.  TODO: resurface these, which were probably deleted.
+
+I imagine one day these issues will be resolved and stabilized in future
+versions of Emacs, but until then, I would only be a reluctant user and
+find myself still prone to indecision in this field.
+
+On that note, I have since switched back to Elpaca.
+
+
+** Bind some commonly-used package management commands :keybinds:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-packages-map
+  "f" #'elpaca-fetch-all
+  "m" #'elpaca-merge-all
+  "t" #'elpaca-try)
+
+(keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
+#+end_src
+
+*** TODO Move this global binding somewhere else... but where? :keybinds:
+
+#+begin_src emacs-lisp
+(keymap-global-set "C-c q" ceamx-session-map)
+#+end_src
+
+** Run our custom init and startup hooks on ~elpaca-after-init-hook~
+
+#+begin_src emacs-lisp
+(add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
+(add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
+#+end_src
+
+** Pretend file-visiting-buffers in the package directory are read-only
+
+#+begin_src emacs-lisp
+(require 'config-buffer)
+
+(def-hook! ceamx-register-read-only-buffers-h ()
+  'ceamx-after-init-hook
+  "Use read-only buffers for files in some directories.
+The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
+
+  ;; Define a read-only directory class
+  (dir-locals-set-class-variables
+   'read-only
+   '((nil . ((buffer-read-only . t)))))
+
+  ;; Associate directories with the read-only class
+  (dolist (dir ceamx-buffer-read-only-dirs-list)
+    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
+#+end_src
+
+** Encourage a ~no-littering~ policy for packages to artifice in the designated areas :package:paths:
+
+- Website :: <https://github.com/emacscollective/no-littering/>
+
+By default, Emacs features and many packages default to dumping their state
+files into ~user-emacs-directory~.  This makes sense for the sake of visibility.
+However, because E rarely thinks about any of those machine-generated and
+non-human-friendly files, they may be effectively designated as clutter.  Ceamx
+offloads these sanitation duties to the =no-littering= package because it works
+effectively and almost-invisibly.
+
+In some cases, especially for new packages / package features / targets, it may
+be necessary to manage such configuration by hand.
+
+Ceamx avoids ~use-package~ here so that:
+
+- ~no-littering~ may be installed and loaded as early as possible
+- the time-consuming invocations of ~elpaca-wait~ should be kept to the absolute minimum
+
+#+begin_src emacs-lisp
+(require 'ceamx-paths)
+
+;; These must be set prior to package load.
+(setq no-littering-etc-directory ceamx-etc-dir)
+(setq no-littering-var-directory ceamx-var-dir)
+
+(elpaca no-littering
+  (require 'no-littering))
+#+end_src
+
+** Install the latest versions of some builtin features and their dependencies
+
+Installing the latest development versions of ~eglot~ and ~magit~ (for example)
+comes with the significant caveat that their dependencies often track the latest
+versions of builtin Emacs libraries.  Those can be installed via GNU ELPA.
+
+Since core libraries like ~seq~ are often dependencies of many other packages or
+otherwise loaded immediately (like ~eldoc~), installation and activation of the
+newer versions needs to happen upfront to avoid version conflicts and
+mismatches.  For example, Ceamx does not want some package loaded earlier in init to
+think it is using the builtin version of ~seq~, while a package loaded later in
+init uses a differnt version.  E is not sure how realistic such a scenario might
+be, or whether it would truly pose a problem, but the point is that we should
+aim for consistency.
+
+Oftentimes, these builtins must be unloaded before loading the newer version.
+This applies especially to core libraries like ~seq~ or the enabled-by-default
+~global-eldoc-mode~ provided by ~eldoc~, but not ~jsonrpc~, since its
+functionality is specific to more niche features like inter-process
+communication in the case of ~eglot~.
+
+A feature must only be unloaded once, *before* loading the version installed by
+Elpaca.  Normally, that is not an issue because the init file is only loaded
+once on session startup.  But upon re-loading the init file inside a running
+session, the Elpaca-installed version will become unloaded.  To prevent that,
+the unloading should happen only once -- during session startup -- hence the
+check for a non-nil ~after-init-time~.
+
+#+begin_verse
+I don't understand why the Elpaca-installed feature\/package only seems to be
+loaded during the initial session startup?  Unless the unloading happens
+conditionally based on ~after-init-time~ as described above, every time the init
+file is reloaded and ~elpaca-process-queues~ runs in
+~+auto-tangle-reload-init-h~, I get a bunch of errors (not warnings!) about
+~eglot~ and ~org~ as missing dependencies.
+#+end_verse
+
+*** Install the latest version of ~seq~ builtin library, carefully :package:
+
+~magit~ requires a more recent version of ~seq~ than the version included in
+Emacs 29.
+
+Requires special care because unloading it can make other libraries freak out.
+<https://github.com/progfolio/elpaca/issues/216#issuecomment-1868444883>
+
+#+begin_src emacs-lisp
+(defun +elpaca-unload-seq (e)
+  "Unload the builtin version of `seq' and continue the `elpaca' build E."
+  (and (featurep 'seq) (unload-feature 'seq t))
+  (elpaca--continue-build e))
+
+(defun +elpaca-seq-build-steps ()
+  "Update the `elpaca' build-steps to activate the latest version of the builtin `seq' package."
+  (append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
+                       elpaca--pre-built-steps
+                     elpaca-build-steps))
+          (list '+elpaca-unload-seq 'elpaca--activate-package)))
+
+(elpaca `(seq :build ,(+elpaca-seq-build-steps)))
+#+end_src
+
+*** Install the latest version of the builtin ~jsonrpc~ library :package:
+
+Required by (and originally extracted from) ~eglot~.
+
+#+begin_src emacs-lisp
+(elpaca jsonrpc
+  (require 'jsonrpc))
+#+end_src
+
+*** Install the latest version of the ~eldoc~ builtin library, carefully :package:
+
+Required by ~eglot~.
+
+~eldoc~ requires a delicate workaround to avoid catastrophy
+<https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
+
+
+#+begin_src emacs-lisp
+(unless after-init-time
+  (unload-feature 'eldoc t)
+  (setq custom-delayed-init-variables '())
+  (defvar global-eldoc-mode nil))
+
+(elpaca eldoc
+  (require 'eldoc)
+  (global-eldoc-mode))
+#+end_src
+
+*** Install the latest version of the builtin ~eglot~ package :package:
+
+#+begin_src emacs-lisp
+(unless after-init-time
+  (when (featurep 'eglot)
+    (unload-feature 'eglot)))
+
+(elpaca eglot)
+#+end_src
+
+*** Install the latest version of the builtin ~flymake~ package :package:
+
+#+begin_src emacs-lisp
+(unless after-init-time
+  (when (featurep 'flymake)
+    (unload-feature 'flymake)))
+
+(elpaca flymake)
+#+end_src
+
+*** Install the latest version of Org-Mode :package:
+
+#+begin_src emacs-lisp
+(unless after-init-time
+  (when (featurep 'org)
+    (unload-feature 'org)))
+
+(elpaca (org :autoloads "org-loaddefs.el"))
+#+end_src
+
+*** Install the latest version of Use-Package :package:
+
+#+begin_src emacs-lisp
+(elpaca use-package)
+#+end_src
+
+** Integrate Elpaca and Use-Package :package:
+
+#+begin_src emacs-lisp
+(elpaca elpaca-use-package
+  (elpaca-use-package-mode))
+#+end_src
+
+** Use-Package: Ensure package installation by default
+
+Equivalent to manually specifying =:ensure t= in each ~use-package~ expression.
+
+#+begin_src emacs-lisp
+(setopt use-package-always-ensure t)
+#+end_src
+
+** Elpaca-Wait № 1: finish processing current queue :wait:
+
+Reason:
+
+- Continuing otherwise will result in race conditions on the definition of storage paths
+- ~use-package~ must be loaded for byte-compilation checks in [[*Configure ~use-package~ for improved debuggability and introspectability]]
+
+#+begin_src emacs-lisp
+(elpaca-wait)
+#+end_src
+
+** Configure ~use-package~ for improved debuggability and introspectability
+
+#+begin_src emacs-lisp
+(setopt use-package-expand-minimally nil)
+(when (bound-and-true-p init-file-debug)
+  (require 'use-package)
+  (setopt use-package-expand-minimally nil)
+  (setopt use-package-verbose t)
+  (setopt use-package-compute-statistics t))
+#+end_src
+
+** Pre-install packages adding ~use-package~ keywords
+
+Note that these packages are likely useful even without using their ~use-package~ keywords.
+
+*** Install ~blackout~ for adjusting modeline indicators :modeline:package:
+
+- Keyword :: =:blackout=
+
+#+begin_src emacs-lisp
+(elpaca blackout
+  (require 'blackout))
+#+end_src
+
+** Elpaca-Wait № 2: finish processing current queue :wait:
+
+- Reason :: Continuing otherwise will result in race conditions where the newly-installed
+~use-package~ keywords may or may not be available, resulting in sporadic
+initialization errors.
+
+#+begin_src emacs-lisp
+(elpaca-wait)
+#+end_src
+
+** Install ~gcmh~ to manage running garbage collection on idle :package:
+
+- Website :: <https://akrl.sdf.org/>
+- Code :: <https://gitlab.com/koral/gcmh>
+
+During normal use, the GC threshold will be set to a high value.
+When idle, GC will be triggered with a low threshold.
+
+#+begin_src emacs-lisp
+(package! gcmh
+  (blackout 'gcmh-mode)
+  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
+#+end_src
+
+*** Background and Rationale
+
+While browsing many other user configs, I have noticed several slightly
+different approaches to managing garbage collection, especially with the
+intent of reducing startup time.
+
+One approach is to offload this configuration to ~gcmh~, safely hiding the
+details away.  =gcmh= is written by Andrea Corallo, one of the Emacs
+co-maintainers, also known for introducing =gccemacs=.
+
+As a direct response to a Reddit thread sharing =gcmh=, Eli Zaretskii recommends
+caution in this field.  Corallo also weighs in.  Basically, Zaretskii recommends
+not overthinking things:
+
+[[https://old.reddit.com/r/emacs/comments/bg85qm/garbage_collector_magic_hack/eln27qh/][eli-zaretskii
+comments on Garbage Collector Magic Hack]]:
+
+#+begin_quote
+My problem with the advice to make the GC threshold at such high values
+begins the moment you start publishing your personal tweaks as general
+advice to others. IMO, this requires at least a lot of caveats, because
+your advice is likely to be followed by people whose workflows and
+system configurations are very different. Simply put, you might get
+others in trouble by promoting your personal hacks as "magic".
+#+end_quote
+
+From what I gather, =gcmh= has evolved a bit, so the previous criticism
+no longer applies.
+
+And, again, with more detail about fiddling carelessly with
+=gc-cons-threshold=:
+
+[[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii
+comments on An easy trick I found to improve Emacs start-up time]]
+
+#+begin_quote
+The GC threshold setting after init is too high, IMNSHO, and its value
+seems arbitrary.
+
+If the OP thinks that Emacs will GC as soon as it allocates 100 MiB,
+then that's a grave mistake. What really happens is the first time Emacs
+/considers doing GC/, if at that time more than 100 MiB have been
+allocated for Lisp objects, Emacs will GC. And since neither Lisp
+programs nor the user have /any/ control on how soon Emacs will decide
+to check whether GC is needed, the actual amount of memory by the time
+Emacs checks could be many times the value of the threshold.
+
+My advice is to spend some time measuring the effect of increased GC
+threshold on operations that you care about and that take a long enough
+time to annoy, and use the lowest threshold value which produces a
+tangible improvement. Start with the default value, then enlarge it by a
+factor of 2 until you see only insignificant speedups. I would not
+expect the value you arrive at to be as high as 100 MiB.
+#+end_quote
+
+** Install utility libraries :package:
+
+#+begin_src emacs-lisp
+;; FIXME: remove or alias (`##' is very difficult to search for)
+(use-package llama) ;  `##' lambda shorthand =>
+                                        ;  <https://git.sr.ht/~tarsius/llama>
+
+(use-package f)
+#+end_src
+
+* TODO Miscellaneous things that should go somewhere else
+
+#+begin_src emacs-lisp
+;; Increase number of messages saved in log.
+(setq message-log-max 10000)
+
+;; Unbind `suspend-frame'.
+(global-unset-key (kbd "C-x C-z"))
+
+;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
+(setopt auto-mode-case-fold nil)
+
+;; Prevent Emacs from pinging domain names unexpectedly.
+(setopt ffap-machine-p-known 'reject)
+#+end_src
+
+* TODO The Meat
+
+#+begin_src emacs-lisp
+(require 'init-env)
+(require 'init-input-methods)
+
+;; Site-specific configuration, to be ignored by version control.
+(require 'site-config (file-name-concat user-emacs-directory "site-config") t)
+
+(require 'init-secrets)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Displays + Appearance
+
+;; Load configuration settings for conditional loading.
+(require 'config-ui)
+
+(require 'init-env-tty)
+
+(require 'init-ui)
+
+(when (display-graphic-p)
+  (require 'init-ui-graphical))
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Dashboard
+
+(require 'init-dashboard)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Keyboard support
+
+(require 'init-keys)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Windows
+
+(require 'init-window)
+(require 'init-buffer)
+
+;; FIXME: load earlier / in another section
+(require 'init-history)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Text Expansion
+
+(require 'init-abbrevs)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Completions and Selections
+
+(require 'init-search)
+(require 'init-completion)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Help
+
+(require 'init-help)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Actions
+
+(require 'init-embark)
+
+;; Projects / Files
+(require 'init-project)
+(require 'init-vcs)
+(require 'init-files)
+(require 'init-dired)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Workspaces + activities + contexts
+
+(require 'init-workspace)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Editing
+
+(require 'init-editor)
+(require 'init-writing)
+(require 'init-templates)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Outlines & Memex
+
+(require 'init-notes)
+(require 'init-outline)
+(require 'init-org)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Linting
+
+(require 'init-flymake)
+(require 'init-flycheck)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Tree-Sitter
+
+(require 'init-treesitter)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Language/syntax support
+
+(require 'config-prog)
+(require 'lib-prog)
+
+(require 'init-prog)
+(require 'init-lisp)
+(require 'init-lsp)
+
+(require 'init-lang-data)
+(require 'init-lang-elisp)
+(require 'init-lang-html)
+(require 'init-lang-js)
+(require 'init-lang-lua)
+(require 'init-lang-markdown)
+(require 'init-lang-nix)
+(require 'init-lang-php)
+(require 'init-lang-shell)
+(require 'init-lang-misc)
+
+;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
+(require 'init-shell-nu)
+#+end_src
+
+#+begin_src emacs-lisp
+;;;; Miscellaneous
+
+(require 'init-tools)
+
+(require 'init-term)
+(require 'init-eww)
+(require 'init-printing)
+
+(require 'init-fun)
+
+(require 'init-controls)
+#+end_src
+
+
+
 * Environment
 
 ** Options / Variables
 
-#+begin_src emacs-lisp :tangle lisp/config-env.el
-;;; config-env.el --- Variables regarding the environment  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Where are we?
-
-;;; Code:
-
+#+begin_src emacs-lisp :lexical t :tangle lisp/config-env.el
 (defvar +gui-p
   (display-graphic-p))
 
@@ -3436,9 +1959,6 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 #+end_src
 
 ** Customizations
-:PROPERTIES:
-:header-args: :noweb-ref init-env
-:END:
 
 #+begin_src emacs-lisp
 (require 'config-env)
@@ -3453,6 +1973,8 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
   (setq command-line-x-option-alist nil))
 #+end_src
 
+*** ~exec-path-from-shell~ :package:
+
 #+begin_src emacs-lisp
 (package! exec-path-from-shell
   (require 'exec-path-from-shell)
@@ -3461,7 +1983,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
   (exec-path-from-shell-initialize))
 #+end_src
 
-*** Make temporary buffers inherit buffer-local environment variables with ~inheritenv~
+*** Make temporary buffers inherit buffer-local environment variables with ~inheritenv~ :package:
 
 - website :: <https://github.com/purcell/inheritenv>
 
@@ -3471,7 +1993,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
     (require 'inheritenv)))
 #+end_src
 
-*** ~with-editor~: Ensure shell/term modes use session as =$EDITOR=
+*** ~with-editor~: Ensure shell/term modes use session as =$EDITOR= :package:
 
 #+begin_src emacs-lisp
 (package! with-editor
@@ -3490,7 +2012,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
     (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
 #+end_src
 
-***  Support integration with Direnv via the ~envrc~ package
+***  Support integration with Direnv via the ~envrc~ package :package:
 
 - src :: <https://github.com/purcell/envrc>
 - upstream :: <https://github.com/direnv/direnv>
@@ -3515,7 +2037,7 @@ buffer, as a buffer-local variable.
 (elpaca-wait)
 #+end_src
 
-*** TRAMP Support
+** TRAMP Support
 
 #+begin_src emacs-lisp
 (setopt tramp-default-method "ssh")
@@ -3538,59 +2060,7 @@ buffer, as a buffer-local variable.
 
 ** Terminal/TTY Support
 
-#+begin_src emacs-lisp :tangle lisp/init-env-tty.el
-;;; init-env-tty.el --- TTY environment support -*- lexical-binding: t -*-
-
-;; Copyright (c) 2023-2024 Chris Montgomery
-;; Copyright (c) 2006-2021 Steve Purcell
-
-;; Author: Steve Purcell
-;;         Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Created: 20 July 2023
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-;;; Commentary:
-
-;; Specialized configurations for Emacs running in a TTY / terminal emulator
-;; environment.
-
-;; FIXME: most of this should be loaded conditionally
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (autoload 'mwheel-install "mwheel")
 
 (defun ceamx/console-frame-setup ()
@@ -3602,43 +2072,15 @@ buffer, as a buffer-local variable.
 (global-set-key [mouse-5] (lambda () (interactive) (scroll-up 1)))
 
 ;; (add-hook 'after-make-console-frame-hooks 'ceamx/console-frame-setup)
-
-(provide 'init-env-tty)
-;;; init-env-tty.el ends here
 #+end_src
 
 ** WSL Support
 
-#+begin_src emacs-lisp :tangle lisp/lib-env-wsl.el
-;;; lib-env-wsl.el --- Helpers for WSL environments  -*- lexical-binding: t; -*-
++ <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
++ <https://emacsredux.com/blog/2021/12/19/using-emacs-on-windows-11-with-wsl2/>
 
-;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Sources:
-
-;; <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
-;; <https://emacsredux.com/blog/2021/12/19/using-emacs-on-windows-11-with-wsl2/>
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'config-env)
 
 (defun ceamx-wsl/copy-selected-text (start end)
@@ -3647,47 +2089,12 @@ buffer, as a buffer-local variable.
   (if (use-region-p)
     (let ((text (buffer-substring-no-properties start end)))
       (shell-command (concat "echo '" text "' | clip.exe")))))
-
-(provide 'lib-env-wsl)
-;;; lib-env-wsl.el ends here
 #+end_src
 
 
 * Secrets
 
-** Customizations
-
-#+begin_src emacs-lisp :tangle lisp/init-secrets.el
-;;; init-secrets.el --- Support for secretive operations  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; GnuPG, pinentry, ~auth-source~, Unix password store, etc.
-
-;;; Sources:
-
-;; <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#auth-source-pass>
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (require 'epg)
 (require 'auth-source)
 (require 'auth-source-pass)
@@ -3716,35 +2123,34 @@ buffer, as a buffer-local variable.
     (run-at-time 45 nil #'auth-source-pass--reset-cache)
     (let ((cached (gethash entry auth-source-pass--cache)))
       (or cached
-        (puthash
-          entry
-          (with-temp-buffer
-            (insert-file-contents (expand-file-name
+          (puthash
+           entry
+           (with-temp-buffer
+             (insert-file-contents (expand-file-name
                                     (format "%s.gpg" entry)
                                     (getenv "PASSWORD_STORE_DIR")))
-            (buffer-substring-no-properties (point-min) (point-max)))
-          auth-source-pass--cache))))
+             (buffer-substring-no-properties (point-min) (point-max)))
+           auth-source-pass--cache))))
 
   (defun ceamx-auth-source-pass-list-items ()
     "Return a list of all password store items."
     (let ((store-dir (getenv "PASSWORD_STORE_DIR")))
       (mapcar
-        (lambda (file)
-          (file-name-sans-extension (file-relative-name file store-dir)))
-        (directory-files-recursively store-dir "\.gpg$"))))
+       (lambda (file)
+         (file-name-sans-extension (file-relative-name file store-dir)))
+       (directory-files-recursively store-dir "\.gpg$"))))
 
   :config
   (auth-source-pass-enable))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Use Emacs for pinentry
 
 (use-feature! epg
   :defer 2
   :config
   (setopt epg-pinentry-mode 'loopback))
-
-(provide 'init-secrets)
-;;; init-secrets.el ends here
 #+end_src
 
 ** Library
@@ -3799,9 +2205,6 @@ buffer, as a buffer-local variable.
 
 
 * Appearance
-:PROPERTIES:
-:header-args: :noweb-ref init-ui
-:END:
 
 #+begin_src emacs-lisp
 (require 'ceamx-paths)
@@ -14420,6 +12823,1390 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 #+begin_src emacs-lisp
 (add-hook 'ceamx-after-init-hook #'ceamx/load-custom-file)
 #+end_src
+
+** TODO Init File Footer
+
+#+begin_src emacs-lisp :tangle no
+(provide 'init)
+;;; init.el ends here
+#+end_src
+
+
+* Anatomy
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+** Target Files
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+*** =lisp/lib-tools.el=
+
+#+name: lib-tools-file
+#+begin_src emacs-lisp :tangle lisp/lib-tools.el
+<<file-prop-line(feature="lib-tools",desc="Library for miscellaneous tooling")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-tools>>
+
+<<file-footer(feature="lib-tools")>>
+#+end_src
+
+*** =early-init.el=
+
+#+name: early-init-file
+#+begin_src emacs-lisp :tangle early-init.el
+<<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<early-init>>
+
+<<file-footer(feature="early-init")>>
+#+end_src
+
+*** =init.el=
+
+#+name: init-file
+#+begin_src emacs-lisp :tangle init.el
+
+#+end_src
+
+*** =lisp/core/ceamx-lib.el=
+
+#+name: ceamx-lib-file
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el
+<<file-prop-line(feature="ceamx-lib",desc="Ceamx common library")>>
+
+;; Copyright (C) 2023-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (C) 2014-2023  Henrik Lissner
+;; Copyright (C) 2006-2021  Steve Purcell
+;; Copyright (C) 2016–2022  Radian LLC and contributors
+;; Copyright (C) 2018  Adam Porter
+;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
+;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;;         Henrik Lissner
+;;         Steve Purcell
+;;         Radon Rosborough <radon@intuitiveexplanations.com>
+;;         Adam Porter <adam@alphapapa.net>
+;;         Bailey Ling <bling@live.ca>
+;;         7696122 <7696122@gmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+
+<<file-license>>
+<<file-license-mit>>
+<<file-license-bsd-2-clause>>
+
+;;; Commentary:
+;;; Code:
+
+<<ceamx-lib>>
+
+<<file-footer(feature="ceamx-lib")>>
+#+end_src
+
+*** =lisp/init-env.el=
+
+#+name: init-env-file
+#+begin_src emacs-lisp :tangle lisp/init-env.el
+<<file-prop-line(feature="init-env",desc="Environmental integrations")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-env>>
+
+<<file-footer(feature="init-env")>>
+#+end_src
+
+*** =lisp/init-keys.el=
+
+#+name: init-keys-file
+#+begin_src emacs-lisp :tangle lisp/init-keys.el
+<<file-prop-line(feature="init-keys",desc="Keybindings")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-keys>>
+
+<<file-footer(feature="init-keys")>>
+#+end_src
+
+*** =lisp/lib-keys.el=
+
+#+name: lib-keys-file
+#+begin_src emacs-lisp :tangle lisp/lib-keys.el
+<<file-prop-line(feature="lib-keys",desc="Keybinding helper library")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-keys>>
+
+<<file-footer(feature="lib-keys")>>
+#+end_src
+
+*** =lisp/config-keys.el=
+
+#+name: config-keys-file
+#+begin_src emacs-lisp :tangle lisp/config-keys.el
+<<file-prop-line(feature="config-keys",desc="Keybinding constants and variables")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-keys>>
+
+<<file-footer(feature="config-keys")>>
+#+end_src
+
+*** =lisp/init-ui.el=
+
+#+name: init-ui-file
+#+begin_src emacs-lisp :tangle lisp/init-ui.el
+<<file-prop-line(feature="init-ui",desc="General user interface customizations")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-ui>>
+
+<<file-footer(feature="init-ui")>>
+#+end_src
+
+*** =lisp/init-ui-graphical.el=
+
+#+name: init-ui-graphical-file
+#+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el
+<<file-prop-line(feature="init-ui-graphical",desc="Appearance customizations for graphical environments")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-ui-graphical>>
+
+<<file-footer(feature="init-ui-graphical")>>
+#+end_src
+
+*** =lisp/config-ui.el=
+
+#+name: config-ui-file
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
+<<file-prop-line(feature="config-ui",desc="User options for Emacs appearance")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-ui>>
+
+<<file-footer(feature="config-ui")>>
+#+end_src
+
+*** =lisp/lib-ui.el=
+
+#+name: lib-ui-file
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
+<<file-prop-line(feature="lib-ui",desc="Appearance helper functions")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-ui>>
+
+<<file-footer(feature="lib-ui")>>
+#+end_src
+
+*** =lisp/init-dashboard.el=
+
+#+name: init-dashboard-file
+#+begin_src emacs-lisp :tangle lisp/init-dashboard.el
+<<file-prop-line(feature="init-dashboard",desc="Dashboard support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-dashboard>>
+
+<<file-footer(feature="init-dashboard")>>
+#+end_src
+
+*** =lisp/init-files.el=
+
+#+name: init-files-file
+#+begin_src emacs-lisp  :tangle lisp/init-files.el
+<<file-prop-line(feature="init-files",desc="File handling")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-files>>
+
+<<file-footer(feature="init-files")>>
+#+end_src
+
+*** =lisp/lib-files.el=
+
+#+name: lib-files-file
+#+begin_src emacs-lisp  :tangle lisp/lib-files.el
+<<file-prop-line(feature="lib-files",desc="Files support support")>>
+
+;; Copyright (C) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (C) 2014-2022  Henrik Lissner
+;; Copyright (C) 2006-2021  Steve Purcell
+;; Copyright (C) 2008-2024  Jonas Bernoulli
+;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause
+
+;; Author: Henrik Lissner
+;;         Vegard Øye <vegard_oye at hotmail.com>
+;;         Steve Purcell
+;;         Chris Montgomery <chmont@proton.me>
+;;         Jonas Bernoulli <jonas@bernoul.li>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Created: 23 January 2023
+;; Version: 0.1.0
+
+<<file-license>>
+
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+;;; Commentary:
+;;; Code:
+
+<<lib-files>>
+
+<<file-footer(feature="lib-files")>>
+#+end_src
+
+*** =lisp/init-flycheck.el=
+
+#+begin_src emacs-lisp :tangle lisp/init-flycheck.el
+<<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-flycheck>>
+
+<<file-footer(feature="init-flycheck")>>
+#+end_src
+
+*** =lisp/init-flymake.el=
+
+#+name: init-flymake-file
+#+begin_src emacs-lisp :tangle lisp/init-flymake.el
+<<file-prop-line(feature="init-flymake",desc="Flymake support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-flymake>>
+
+<<file-footer(feature="init-flymake")>>
+#+end_src
+
+*** =lisp/init-abbrevs.el=
+
+#+name: init-abbrevs-file
+#+begin_src emacs-lisp :tangle lisp/init-abbrevs.el
+<<file-prop-line(feature="init-abbrevs",desc="Abbrevs support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-abbrevs>>
+
+<<file-footer(feature="init-abbrevs")>>
+#+end_src
+
+*** =lisp/init-completion.el=
+
+#+name: init-completion-file
+#+begin_src emacs-lisp :tangle lisp/init-completion.el
+<<file-prop-line(feature="init-completion",desc="Completion enhancements")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-completion>>
+
+<<file-footer(feature="init-completion")>>
+#+end_src
+
+*** =lisp/lib-completion.el=
+
+#+name: lib-completion-file
+#+begin_src emacs-lisp :tangle lisp/lib-completion.el
+<<file-prop-line(feature="lib-completion",desc="Completion helpers")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-completion>>
+
+<<file-footer(feature="lib-completion")>>
+#+end_src
+
+*** =lisp/init-templates.el=
+
+#+name: init-templates-file
+#+begin_src emacs-lisp :tangle lisp/init-templates.el
+<<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-templates>>
+
+<<file-footer(feature="init-templates")>>
+#+end_src
+
+*** =lisp/init-notes.el=
+
+#+name: init-notes-file
+#+begin_src emacs-lisp :tangle lisp/init-notes.el
+<<file-prop-line(feature="init-notes",desc="Notetaking features")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-notes>>
+
+<<file-footer(feature="init-notes")>>
+#+end_src
+
+*** =lisp/init-outline.el=
+
+#+name: init-outline-file
+#+begin_src emacs-lisp  :tangle lisp/init-outline.el
+<<file-prop-line(feature="init-outline",desc="Customizations for outline structures")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-outline>>
+
+<<file-footer(feature="init-outline")>>
+#+end_src
+
+*** =lisp/init-org.el=
+
+#+name: init-org-file
+#+begin_src emacs-lisp  :tangle lisp/init-org.el
+<<file-prop-line(feature="init-org",desc="Org-Mode support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-org>>
+
+<<file-footer(feature="init-org")>>
+#+end_src
+
+*** =lisp/init-search.el=
+
+#+name: init-search-file
+#+begin_src emacs-lisp  :tangle lisp/init-search.el
+<<file-prop-line(feature="init-search",desc="Searching and replacing features")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-search>>
+
+<<file-footer(feature="init-search")>>
+#+end_src
+
+*** =lisp/lib-search.el=
+
+#+name: lib-search-file
+#+begin_src emacs-lisp  :tangle lisp/lib-search.el
+<<file-prop-line(feature="lib-search",desc="Search support functions")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-search>>
+
+<<file-footer(feature="lib-search")>>
+#+end_src
+
+*** =lisp/init-window.el=
+
+#+name: init-window-file
+#+begin_src emacs-lisp  :tangle lisp/init-window.el
+<<file-prop-line(feature="init-window",desc="Window management")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-window>>
+
+<<file-footer(feature="init-window")>>
+#+end_src
+
+*** =lisp/config-window.el=
+
+#+name: config-window-file
+#+begin_src emacs-lisp  :tangle lisp/config-window.el
+<<file-prop-line(feature="config-window",desc="Window management user options")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-window>>
+
+<<file-footer(feature="config-window")>>
+#+end_src
+
+*** =lisp/lib-window.el=
+
+#+name: lib-window-file
+#+begin_src emacs-lisp  :tangle lisp/lib-window.el
+<<file-prop-line(feature="lib-window",desc="Window management support library")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (C) 2023 Free Software Foundation, Inc.
+;; Copyright (C) 2024  Protesilaos Stavrou
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;;         Vegard Øye <vegard_oye at hotmail.com>
+;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
+;;         Protesilaos Stavrou <public@protesilaos.com>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-window>>
+
+<<file-footer(feature="lib-window")>>
+#+end_src
+
+*** =lisp/init-buffer.el=
+
+#+name: init-buffer-file
+#+begin_src emacs-lisp :tangle lisp/init-buffer.el
+<<file-prop-line(feature="init-buffer",desc="Buffer customizations")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-buffer>>
+
+<<file-footer(feature="init-buffer")>>
+#+end_src
+
+*** =lisp/lib-buffer.el=
+
+#+name: lib-buffer-file
+#+begin_src emacs-lisp :tangle lisp/lib-buffer.el
+<<file-prop-line(feature="lib-buffer",desc="Buffer helper callables")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-buffer>>
+
+<<file-footer(feature="lib-buffer")>>
+#+end_src
+*** =lisp/config-buffer.el=
+
+#+name: config-buffer-file
+#+begin_src emacs-lisp :tangle lisp/config-buffer.el
+<<file-prop-line(feature="config-buffer",desc="Buffer constants, options, and variables")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-buffer>>
+
+<<file-footer(feature="config-buffer")>>
+#+end_src
+
+*** =lisp/init-editor.el=
+
+#+name: init-editor-file
+#+begin_src emacs-lisp  :tangle lisp/init-editor.el
+<<file-prop-line(feature="init-editor",desc="Editor customizations")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-editor>>
+
+<<file-footer(feature="init-editor")>>
+#+end_src
+
+*** =lisp/lib-editor.el=
+
+#+name: lib-editor-file
+#+begin_src emacs-lisp  :tangle lisp/lib-editor.el
+<<file-prop-line(feature="lib-editor",desc="Editor support library")>>
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (C) 2016–2022  Radian LLC and contributors
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;;         Radon Rosborough <radon@intuitiveexplanations.com>
+;; Keywords: local
+
+
+<<file-license>>
+
+;; Permission is hereby granted, free of charge, to any person obtaining a copy
+;; of this software and associated documentation files (the "Software"), to deal
+;; in the Software without restriction, including without limitation the rights
+;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;; copies of the Software, and to permit persons to whom the Software is
+;; furnished to do so, subject to the following conditions:
+
+;; The above copyright notice and this permission notice shall be included in
+;; all copies or substantial portions of the Software.
+
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+;; SOFTWARE.
+
+
+;;; Commentary:
+;;; Code:
+
+<<lib-editor>>
+
+<<file-footer(feature="lib-editor")>>
+#+end_src
+
+*** =lisp/config-editor.el=
+
+#+name: config-editor-file
+#+begin_src emacs-lisp  :tangle lisp/config-editor.el
+<<file-prop-line(feature="config-editor",desc="User options for editing")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-editor>>
+
+<<file-footer(feature="config-editor")>>
+#+end_src
+
+*** =lisp/init-workspace.el=
+
+#+name: init-workspace-file
+#+begin_src emacs-lisp :tangle lisp/init-workspace.el
+<<file-prop-line(feature="init-workspace",desc="Workspaces, activities, scopes, and other organizational closures")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-workspace>>
+
+<<file-footer(feature="init-workspace")>>
+#+end_src
+
+*** =lisp/init-vcs.el=
+
+#+name: init-vcs-file
+#+begin_src emacs-lisp :tangle lisp/init-vcs.el
+<<file-prop-line(feature="init-vcs",desc="Version control support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-vcs>>
+
+<<file-footer(feature="init-vcs")>>
+#+end_src
+
+*** =lisp/config-prog.el=
+
+#+name: config-prog-file
+#+begin_src emacs-lisp :tangle lisp/config-prog.el
+<<file-prop-line(feature="config-prog",desc="User options for programming modes")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-prog>>
+
+<<file-footer(feature="config-prog")>>
+#+end_src
+
+*** =lisp/lib-prog.el=
+
+#+name: lib-prog-file
+#+begin_src emacs-lisp :tangle lisp/lib-prog.el
+<<file-prop-line(feature="lib-prog",desc="Assorted helper callables for programming modes")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-prog>>
+
+<<file-footer(feature="lib-prog")>>
+#+end_src
+
+*** =lisp/init-lsp.el=
+
+#+name: init-lsp-file
+#+begin_src emacs-lisp :tangle lisp/init-lsp.el
+<<file-prop-line(feature="init-lsp",desc="Eglot support")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lsp>>
+
+<<file-footer(feature="init-lsp")>>
+#+end_src
+
+*** =lisp/init-lang-data.el=
+
+#+name: init-lang-data-file
+#+begin_src emacs-lisp :tangle lisp/init-lang-data.el
+<<file-prop-line(feature="init-lang-data",desc="Language support for data syntaxes")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lang-data>>
+
+<<file-footer(feature="init-lang-data")>>
+#+end_src
+
+*** =lisp/init-lang-nix.el=
+
+#+name: init-lang-nix-file
+#+begin_src emacs-lisp :tangle lisp/init-lang-nix.el
+<<file-prop-line(feature="init-lang-nix",desc="Nix language support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lang-nix>>
+
+<<file-footer(feature="init-lang-nix")>>
+#+end_src
+
+*** =lisp/init-lang-php.el=
+
+#+name: init-lang-php-file
+#+begin_src emacs-lisp :tangle lisp/init-lang-php.el
+<<file-prop-line(feature="init-lang-php",desc="PHP language support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lang-php>>
+
+<<file-footer(feature="init-lang-php")>>
+#+end_src
+
+*** =lisp/init-writing.el=
+
+#+name: init-writing-file
+#+begin_src emacs-lisp :tangle lisp/init-writing.el
+<<file-prop-line(feature="init-writing",desc="Writing augmentation")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-writing>>
+
+<<file-footer(feature="init-writing")>>
+#+end_src
+
+*** =lisp/init-tools.el=
+
+#+name: init-tools-file
+#+begin_src emacs-lisp  :tangle lisp/init-tools.el
+<<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-tools>>
+
+<<file-footer(feature="init-tools")>>
+#+end_src
+
+** Partials
+:PROPERTIES:
+:header-args: :results replace
+:VISIBILITY: folded
+:END:
+
+*** ~file-header~
+
+#+name: file-header-default-authors-table
+| Chris Montgomery | chmont@proton.me | 2024 |   | GPL-3.0-or-later |
+| Someone Else?    |                  |      |   |                  |
+
+#+name: file-header
+#+begin_src emacs-lisp :noweb yes :var feature="file-header-example" :var desc="" :var table=file-header-default-authors-table
+  <<file-prop-line(feature,desc)>>
+
+  ;; <<file-authors(table=table)>>
+  <<file-extra-meta>>
+
+  <<file-license>>
+
+  ;;; Commentary:
+  ;;; Code:
+#+end_src
+
+*** ~file-prop-line~
+
+- Note taken on [2024-03-27 Wed 01:47] \\
+  Added the ~extraprops~ =noweb= variable for additional propline values and file-local
+  variables.
+
+#+name: file-prop-line
+#+header: :var feature="" :var desc="" :var extraprops=""
+#+begin_src emacs-lisp
+(format ";;; %s.el --- %s  -*- lexical-binding: t; %s -*-" feature desc extraprops)
+#+end_src
+
+*** ~file-extra-meta~
+
+#+name: file-extra-meta
+#+begin_src emacs-lisp
+;; URL: https://codeberg.org/montchr/ceamx
+;; Version: 0.1.0
+#+end_src
+
+*** TODO ~file-footer~
+
+Emacs calls this the "file trailer" in ~generate-lisp-file-trailer~.
+
+- [ ] Adds significantly to tangle time
+
+#+name: file-footer
+#+begin_src emacs-lisp :var feature=""
+(format "(provide '%1$s)\n;;; %1$s.el ends here\n" feature)
+#+end_src
+
+*** ~file-authors~
+
+Example table:
+
+#+name: file-authors-example-table
+| Name           | Email               | Start Year | End Year | License          |
+|----------------+---------------------+------------+----------+------------------|
+| Gilles Deleuze | notrees@rhizome.net |       1925 |     1995 | GPL-3.0-or-later |
+| Félix Guattari | poop@dada.net       |            |          | WTFPL            |
+
+#+name: file-authors
+#+header: :var table=file-authors-example-table
+#+begin_src emacs-lisp
+(defun ceamx--authors-table-sanitize-year (year)
+  "TODO"
+  (pcase year
+    ((pred numberp)
+     (number-to-string year))
+    ((and (pred stringp)
+          (pred string-empty-p))
+     nil)
+    (_ year)))
+
+(defun ceamx--authors-table-sanitize-years (start end)
+  "TODO"
+  (let ((years (list start end)))
+    (seq-keep #'ceamx--authors-table-sanitize-year years)))
+
+(defun ceamx-authors-format-attribution (name email)
+""
+  (concat name (and (not (string-empty-p email))
+                    (format " <%s>" email))))
+
+(defun ceamx-authors-format-copyright-line (author years)
+  (format "Copyright (C) %s  %s" years author))
+
+(defun ceamx--authors-table-process-row (row)
+  "TODO"
+  (seq-let (name email start end license) row
+    (let* ((attribution (ceamx-authors-format-attribution name email))
+           (years (ceamx--authors-table-sanitize-years start end))
+           (year-range (string-join years "-")))
+      (list
+        :attribution attribution
+        :email email
+        :license license
+        :name name
+        :year-initial start
+        :year-latest end
+        :years year-range))))
+
+(defun ceamx-authors-from-table (table)
+  ""
+  (mapcar #'ceamx--authors-table-process-row table))
+
+(require 'subr-x)
+
+(defun ceamx-authors-format-author-lines (authors)
+  ""
+  (let* ((prefix "Author: "))
+                ;; FIXME: omit padding from first entry
+    (concat prefix
+
+            (mapconcat (lambda (author)
+                         (concat (make-string (length prefix) (string-to-char " "))
+                                 (plist-get author :attribution)))
+                       authors "\n"))))
+
+(let ((authors (ceamx-authors-from-table table)))
+  (format "%s\n\n%s"
+          (mapconcat (lambda (author)
+                       (ceamx-authors-format-copyright-line
+                        (plist-get author :attribution)
+                        (plist-get author :years)))
+                     authors "\n")
+          (ceamx-authors-format-author-lines authors)))
+#+end_src
+
+#+RESULTS: file-authors
+: Copyright (C) 1925-1995  Gilles Deleuze <notrees@rhizome.net>
+: Copyright (C)   Félix Guattari <poop@dada.net>
+
+*** License Headers
+**** GNU General Public License 3.0 or later (=GPL-3.0-or-later=)
+
+#+name: file-license
+#+begin_src emacs-lisp
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+#+end_src
+
+**** MIT License (=MIT=)
+
+#+name: file-license-mit
+#+begin_src emacs-lisp
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+#+end_src
+
+**** BSD 2-Clause License (=BSD-2-Clause=)
+
+#+name: file-license-bsd-2-clause
+#+begin_src emacs-lisp
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#+end_src
+
+
+* Maintenance
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+** Functions to clean and re-tangle Elisp files
+
+#+begin_src emacs-lisp :noweb yes :results silent
+<<ceamx-tangle-src>>
+(ceamx/tangle-fresh)
+#+end_src
+
+#+name: ceamx-tangle-src
+#+begin_src emacs-lisp
+(require 'f)
+(require 'llama)
+
+(require 'ob-tangle)
+
+(defun ceamx-list-tangled-init-files ()
+  "List all tangled files in `user-emacs-directory'.
+Note that this is a crude approximation reflective of our
+expectations but not necessarily files that were truly tangled.
+
+The assumptions are as follows:
+
+-- All Emacs Lisp files within the \"lisp\" subdirectory
+-- early-init.el
+-- init.el
+
+If there are any Emacs Lisp files within the \"lisp\"
+subdirectory that have not been created as a result of tangling,
+they will also be included in the result."
+  (let ((dir user-emacs-directory))
+    (append
+     (mapcar (##f-join dir %) '("early-init.el" "init.el"))
+     (f-files (f-join dir "lisp") (##f-ext-p % "el") t))))
+
+(defun ceamx/purge-tangled-init-files ()
+  "Delete all tangled init files according to `ceamx-list-tangled-init-files'."
+  (interactive)
+  (dolist (file (ceamx-list-tangled-init-files))
+    (f-delete file)))
+
+(defconst ceamx-literate-config-file (locate-user-emacs-file "config.org"))
+
+(defun ceamx/tangle-fresh (&optional src-file)
+  "Purge all existing tangled init files and re-tangle.
+When SRC-FILE is non-nil, it will be used as the source file to
+be tangled by `org-babel-tangle-file'.  Otherwise, if SRC-FILE is
+nil, the value of `ceamx-literate-config-file' will be the
+default source file."
+  (interactive)
+  (ceamx/purge-tangled-init-files)
+  (org-babel-tangle-file
+   (or src-file ceamx-literate-config-file)))
+#+end_src
+
+
+
+** Debugging
+
+- Source :: [[https://github.com/progfolio/.emacs.d/blob/master/init.org?plain=1][.emacs.d/init.org at master · progfolio/.emacs.d]]
+- Retrieved :: [2024-06-04 Tue 22:20]
+
+Running this form will launch the debugger after loading a package.
+
+This is useful for finding out when a dependency is requiring a package (perhaps
+earlier than you want).
+
+Use by tangling this block and launching Emacs with =emacs --debug-init=.
+
+#+begin_src emacs-lisp :var file="" :results silent :tangle no
+(unless (string-empty-p file)
+  (eval-after-load file
+    '(debug)))
+#+end_src
+
+Similarly, this variable will hit the debugger when a message matches its
+regexp.
+
+#+begin_src emacs-lisp :tangle no
+(setq debug-on-message "")
+#+end_src
+
+Adding a variable watcher can be a useful way to track down initialization and
+mutation of a variable.
+
+#+begin_src emacs-lisp :tangle no
+(add-variable-watcher 'org-capture-after-finalize-hook
+                      (lambda (symbol newval operation where)
+                        (debug)
+                        (message "%s set to %s" symbol newval)))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+(setq debug-on-error t)
+#+end_src
+
+
+* Resources
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+- [[info:elisp#Tips][(elisp) Tips]]
+- [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
+
 
 
 * End
