@@ -9743,11 +9743,13 @@ NOTE: Fringe indicators will conflict with Flycheck.
   (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
 #+end_src
 
-*** [[https://github.com/alphapapa/magit-todos][alphapapa/magit-todos]]: Show source-code comment reminders in ~magit-status~
+*** DISABLED [[https://github.com/alphapapa/magit-todos][alphapapa/magit-todos]]: Show source-code comment reminders in ~magit-status~
 
+- Note taken on [2024-07-12 Fri 14:30] \\
+  Broken as of <2024-07-12 Fri 14:30>
 - docs :: <https://github.com/alphapapa/magit-todos/blob/master/README.org>
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb-ref nil
 (package! magit-todos
   (after! magit
     (magit-todos-mode 1)))
