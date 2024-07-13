@@ -4588,6 +4588,14 @@ stable enough so far.
 (unless (version< emacs-version "30")
   (tab-bar-mode 1))
 #+end_src
+
+*** Configure tab bar appearance and behavior
+
+#+begin_src emacs-lisp
+(setopt tab-bar-auto-width t
+        tab-bar-auto-width-max '((80) 10))
+#+end_src
+
 ** Typography :font:
 :PROPERTIES:
 :header-args: :noweb-ref init-ui-graphical
