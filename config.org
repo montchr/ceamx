@@ -10125,12 +10125,6 @@ CLOSED: [2024-04-13 Sat 00:00]
                                  yas-no-prompt)))
 #+end_src
 
-Add the official snippets bundle:
-
-#+begin_src emacs-lisp
-(package! yasnippet-snippets)
-#+end_src
-
 Configure integration between ~yasnippet~ and ~hippie-expand~:
 
 #+begin_src emacs-lisp
