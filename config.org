@@ -7024,7 +7024,10 @@ writable or with a prefix argument, then read a file to visit."
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
 #+end_src
 
-** Beframe
+** DISABLED Beframe :package:
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 #+begin_src emacs-lisp
 (package! beframe
@@ -7102,7 +7105,84 @@ With optional argument FRAME, return the list of buffers of FRAME."
   (keymap-global-set "C-c b" beframe-prefix-map))
 #+end_src
 
-** Introduce an ~activities~-based workflow for workspace management
+** ~tabspaces~: workspaces by tab by project by tab :package:tabs:projects:
+
+- website :: <https://github.com/mclear-tools/tabspaces>
+
+#+begin_src emacs-lisp
+(package! tabspaces
+  (unless (fboundp 'consult-buffer)
+    (setopt tabspaces-use-filtered-buffers-as-default t))
+
+  (setopt tabspaces-include-buffers '("*scratch*"))
+
+  (setopt tabspaces-default-tab "default"
+          tabspaces-remove-to-default t)
+
+  (setopt tabspaces-initialize-project-with-todo t
+          tabspaces-todo-file-name "TODO.org")
+
+  ;; Save tabspaces across sessions.
+  (setopt tabspaces-session t
+          ;; XXX(<https://github.com/mclear-tools/tabspaces/issues/61>)
+          tabspaces-session-auto-restore t))
+#+end_src
+
+** Set up ~tabspaces~ Consult integration :consult:buffer:
+
+#+begin_src emacs-lisp
+(after! (tabspaces consult)
+  ;; Hide full buffer list by default.
+  ;; Narrow to full buffer list with "b" prefix.
+  ;; Narrow to project-related buffers with "p" prefix.
+  (consult-customize consult--source-buffer :hidden t :default nil)
+  ;; Set `consult-workspace' buffer list.
+  (defvar +consult--source-treespaces-workspace
+    (list :name "Workspace Buffers"
+          :narrow ?w
+          :history 'buffer-name-history
+          :category 'buffer
+          :state #'consult--buffer-state
+          :default t
+          :items (lambda () (consult--buffer-query
+                             :predicate #'tabspaces--local-buffer-p
+                             :sort 'visibility
+                             :as #'buffer-name)))
+    "Set `tabspaces' workspace buffer list for `consult-buffer'.")
+
+  (add-to-list 'consult-buffer-sources '+consult--source-treespaces-workspace))
+#+end_src
+
+** Set up a "Home" tabspace "dashboard" :dashboard:buffer:
+
+This may conflict with ~popper~, which will also try to display the =*Messages*= buffer.
+
+#+begin_src emacs-lisp
+(defun ceamx-workspace-open-tabspace-after-init-h ()
+  "Launch a \"Home\" tabspace on Emacs session startup."
+  (tabspaces-mode 1)
+  (progn
+    (tab-bar-rename-tab "Home")
+    (when (get-buffer "*Messages*")
+      (set-frame-parameter nil 'buffer-list (cons (get-buffer "*Messages*")
+                                                  (frame-parameter nil 'buffer-list))))
+    (when (get-buffer "*splash*")
+      (set-frame-parameter nil 'buffer-list (cons (get-buffer "*splash*")
+                                                  (frame-parameter nil 'buffer-list))))))
+#+end_src
+
+** Initialize ~tabspaces-mode~ on session startup :startup:
+
+#+begin_src emacs-lisp
+(if (fboundp 'ceamx-workspace-open-tabspace-after-init-h)
+    (add-hook 'ceamx-after-init-hook #'ceamx-workspace-open-tabspace-after-init-h)
+  (add-hook 'ceamx-after-init-hook #'tabspaces-mode))
+#+end_src
+
+** DISABLED ~activites~: workspace by activity
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 - Website :: <https://github.com/alphapapa/activities.el>
 
@@ -7139,13 +7219,38 @@ Intended for use as a hook on `ceamx-after-init-hook'."
   (add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h))
 #+end_src
 
-** Display header-line indication of current location in project with ~breadcrumb~
+** ~breadcrumb~: header-line wayfinding
 
 - Website :: <https://github.com/joaotavora/breadcrumb>
 
 #+begin_src emacs-lisp
 (package! breadcrumb
   (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+#+end_src
+
+** Workspace Keybindings :keybinds:
+
+#+begin_src emacs-lisp
+(defvar-keymap ceamx-workspace-prefix-map
+  "TAB" '("switch (b+t)..." . tabspaces-switch-buffer-and-tab)
+
+  "b" '("switch (b)" . tabspaces-switch-to-buffer)
+  "r" '("remove current buffer" . tabspaces-remove-current-buffer)
+  "R" '("remove selected buffer" . tabspaces-remove-selected-buffer)
+  "C" '("clear buffers" . tabspaces-clear-buffers)
+
+  "o" '("switch/create..." . tabspaces-switch-or-create-workspace)
+  "O" '("open/create..." . tabspaces-open-or-create-project-and-workspace)
+
+  "d" '("close (ws)" . tabspaces-close-workspace)
+  "k" '("kill (ws+b)" . tabspaces-kill-buffers-close-workspace))
+
+(defalias 'ceamx-workspace-prefix ceamx-workspace-prefix-map)
+
+(keymap-global-set "C-c TAB" #'ceamx-workspace-prefix)
+
+;; Bind `tabspaces-command-map' into the custom prefix map.
+(setopt tabspaces-keymap-prefix "C-c TAB ^")
 #+end_src
 
 
