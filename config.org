@@ -5400,30 +5400,6 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   (setopt aw-scope 'frame))
 #+end_src
 
-** ~switchy-window~: A most-recently-used window switcher
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-
-(package! switchy-window
-  ;; NOTE: This delay is slightly too short unless invoking within a repeat-map.
-  (setopt switchy-window-delay 1.5)
-
-  (switchy-window-minor-mode))
-
-(after! switchy-window
-  ;; NOTE: Handled by `ceamx/other-window'.
-  ;; (keymap-set switchy-window-minor-mode-map "C-x o" #'switchy-window)
-
-  (def-hook! +window-selection-change-pulse-h (frame)
-    'window-selection-change-functions
-    "Pulse the newly-selected window on focus change."
-    (when (eq frame (selected-frame))
-      (if (fboundp 'pulsar-pulse-line)
-          (pulsar-pulse-line)
-        (pulse-momentary-highlight-one-line)))))
-#+end_src
-
 ** Add commands to transpose/rotate a frame's windows
 
 #+begin_src emacs-lisp
