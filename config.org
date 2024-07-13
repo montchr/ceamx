@@ -4497,20 +4497,36 @@ stable enough so far.
 
 #+begin_src emacs-lisp
 (modify-all-frames-parameters
- ;; NOTE: `org-modern', whose readme provided this example, initially had these
- ;; set to 40.  but on <%tuvok%>, 40 looked absolutely ridiclous.  i figured i
- ;; should try halving that, which seemed perfect.  so i am guessing there is
- ;; some confodungin factors with high-density displays
  '((right-divider-width . 20)
    (internal-border-width . 20)))
 
-(dolist (face '(window-divider
-                window-divider-first-pixel
-                window-divider-last-pixel))
-  (face-spec-reset-face face)
-  (set-face-foreground face (face-attribute 'default :background)))
+(defun ceamx-ui-theme-update-colors-h ()
+"Set faces based on theme colors."
+  (let ((bg-main (face-background 'default))
+        (fg-main (face-foreground 'default)))
+    (custom-set-faces
+     `(fringe ((t :background ,bg-main)))
+     `(tab-bar-tab
+       ((t :box (:line-width 2
+                 :color ,(face-background 'tab-bar-tab nil 'tab-bar)))))
+     `(tab-bar-tab-inactive
+       ((t :box (:line-width 2
+                 :color ,(face-background 'tab-bar-tab-inactive nil 'tab-bar)))))
+     ;; `(tab-line-tab
+     ;;   ((t :box (:line-width 1
+     ;;             :color ,(face-background 'tab-line-tab nil 'tab-bar)))))
+     ;; `(tab-line-tab-active
+     ;;   ((t :box (:line-width 1
+     ;;             :color ,(face-background 'tab-line-tab-active nil 'tab-bar)))))
+     ;; `(tab-line-tab-inactive
+     ;;   ((t :box (:line-width 1
+     ;;             :color ,(face-background 'tab-line-tab-inactive nil 'tab-bar)))))
+     `(window-divider ((t :background ,bg-main :foreground ,bg-main)))
+     `(window-divider-first-pixel ((t :background ,bg-main :foreground ,bg-main)))
+     `(window-divider-last-pixel ((t :background ,bg-main :foreground ,bg-main))))))
 
-(set-face-background 'fringe (face-attribute 'default :background))
+(remove-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
+(add-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
 #+end_src
 
 *** DISABLED Improve the breathability of frame boundaries with ~spacious-padding~
