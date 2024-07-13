@@ -9063,8 +9063,8 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   ;;   not necessarily consecutively;  e.g. ‘abc’ => ‘a.*b.*c’
   ;;
   ;; <https://github.com/oantolin/orderless/blob/master/README.org#component-matching-styles>
-  (setopt orderless-matching-styles '(orderless-literal
-                                      orderless-regexp))
+  (setopt orderless-matching-styles (list #'orderless-literal
+                                          #'orderless-regexp))
 
   ;; Style dispatchers:
   ;;
@@ -9079,7 +9079,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   ;; - '^' :: use `orderless-literal-prefix'
   ;; - '~' :: use `orderless-flex'
   ;; - '%' :: ignore diacritics and character inflections
-  (setopt orderless-style-dispatchers '(orderless-affix-dispatch))
+  (setopt orderless-style-dispatchers (list #'orderless-affix-dispatch))
 
   ;; Allow escaping space with backslash.
   (setopt orderless-component-separator #'orderless-escapable-split-on-space))
