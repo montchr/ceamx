@@ -4438,7 +4438,13 @@ Configure some user options dependent on the loaded packages:
     (add-hook 'next-error-hook (function fn))))
 #+end_src
 
-** Defenestrography (Frames & Windows)
+** Frame Appearance :frame:
+*** Allow restoring deleted frames
+
+#+begin_src emacs-lisp
+(undelete-frame-mode 1)
+#+end_src
+
 *** Configure frame decorations
 
 #+begin_src emacs-lisp
@@ -4447,7 +4453,7 @@ Configure some user options dependent on the loaded packages:
   (add-to-list 'default-frame-alist '(undecorated . t)))
 #+end_src
 
-**** Handle macOS-specific workarounds
+**** Handle macOS-specific workarounds :macos:
 
 #+begin_src emacs-lisp
 (when +sys-mac-p
@@ -4467,33 +4473,6 @@ Configure some user options dependent on the loaded packages:
   ;; Stop C-z from minimizing windows.
   (keymap-global-unset "C-z" t))
 #+end_src
-
-*** General frame configuration
-
-#+begin_src emacs-lisp
-(menu-bar-mode -1)
-(undelete-frame-mode 1)
-#+end_src
-
-*** Enable ~tab-bar-mode~ in Emacs 30
-
-- ref :: <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-
-~tab-bar-mode~ is currently broken in Emacs 29 due to upstream bug.  The fix is
-present on the =master= branch (Emacs 30), but it will not be backported.
-
-Unfortunately, the bug is impossibly distracting.  So I am avoiding
-`tab-bar-mode' on Emacs 29.
-
-As of <2024-06-06>, I am using the =nix-community/emacs-overlay#emacs-pgtk= package tracking the
-Emacs =master= branch.  ~tab-bar-mode~ is that important to me.  Emacs 30 seems
-stable enough so far.
-
-#+begin_src emacs-lisp
-(unless (version< emacs-version "30")
-  (tab-bar-mode 1))
-#+end_src
-
 
 *** Add frame borders and window dividers
 
@@ -4569,13 +4548,47 @@ stable enough so far.
   (spacious-padding-mode 1))
 #+end_src
 
+** Window Appearance :window:
 *** Differentiate between focused and non-focused windows
 
 #+begin_src emacs-lisp
 (setopt highlight-nonselected-windows nil)
 #+end_src
 
-** Typography
+** Menu Bar :menubar:
+
+Disable the menu bar by default:
+
+#+begin_src emacs-lisp
+(menu-bar-mode -1)
+#+end_src
+
+But allow toggling it manually:
+
+#+begin_src emacs-lisp
+(keymap-set ceamx-toggle-map "M" #'menu-bar-mode)
+#+end_src
+
+** Tab Bar :tabs:
+*** Enable ~tab-bar-mode~ in Emacs 30
+
+- ref :: <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+
+~tab-bar-mode~ is currently broken in Emacs 29 due to upstream bug.  The fix is
+present on the =master= branch (Emacs 30), but it will not be backported.
+
+Unfortunately, the bug is impossibly distracting.  So I am avoiding
+`tab-bar-mode' on Emacs 29.
+
+As of <2024-06-06>, I am using the =nix-community/emacs-overlay#emacs-pgtk= package tracking the
+Emacs =master= branch.  ~tab-bar-mode~ is that important to me.  Emacs 30 seems
+stable enough so far.
+
+#+begin_src emacs-lisp
+(unless (version< emacs-version "30")
+  (tab-bar-mode 1))
+#+end_src
+** Typography :font:
 :PROPERTIES:
 :header-args: :noweb-ref init-ui-graphical
 :END:
@@ -4603,7 +4616,7 @@ accommodation for varying pixel densities."
 (setq-default text-scale-remap-header-line t)
 #+end_src
 
-*** Configure font presets with the ~fontaine~ package
+*** ~fontaine~: pre-configure font presets :package:
 
 <https://protesilaos.com/emacs/fontaine>
 
@@ -4736,7 +4749,7 @@ TIP: You can test out alterations quickly with, for example:
 (elpaca-wait)
 #+end_src
 
-*** Enable improved ligature support with the ~ligature.el~ package
+*** ~ligature.el~: improved ligature support :package:
 
 <https://github.com/mickeynp/ligature.el>
 
@@ -4759,10 +4772,8 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
   (global-ligature-mode t))
 #+end_src
 
-*** TODO Separate presets per font i.e. Berkeley Mono + Iosevka
-
-** Iconography & Symbolisms
-*** Provide common dependency: ~nerd-icons~
+** Iconography & Symbolisms :icons:
+*** Provide common dependency: ~nerd-icons~ :package:
 
 #+begin_src emacs-lisp
 (package! nerd-icons
@@ -4770,21 +4781,22 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
   (require 'nerd-icons))
 #+end_src
 
-*** Provide common dependency: ~svg-lib~
+*** Provide common dependency: ~svg-lib~ :package:
 
 #+begin_src emacs-lisp
 (package! svg-lib)
 #+end_src
 
-*** Improve appearance of form feed characters with ~page-break-lines~
+*** ~page-break-lines~: Improve appearance of form feed characters :package:
 
-- Website :: <https://github.com/purcell/page-break-lines/blob/master/README.md>
+- docs :: <https://github.com/purcell/page-break-lines/blob/master/README.md>
 
 #+begin_src emacs-lisp
 (package! page-break-lines
   (global-page-break-lines-mode))
 #+end_src
-*** TODO Decorate buffers with SVG via ~svg-tag-mode~
+
+*** TODO ~svg-tag-mode~: Decorate buffer elements with SVG :package:
 :PROPERTIES:
 :header-args: :noweb-ref nil
 :END:
@@ -4797,7 +4809,7 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
   (add-hook 'text-mode-hook #'svg-tag-mode))
 #+end_src
 
-** Modeline
+** Modeline :modeline:
 
 #+begin_src emacs-lisp :noweb-ref config-ui
 (defcustom ceamx-modeline-provider nil
@@ -4889,7 +4901,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
   (doom-modeline-mode 1))
 #+end_src
 
-** Keybindings
+** Keybindings :keybinds:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-session-map
@@ -5021,7 +5033,7 @@ The buffer will be created if it does not exist."
   :type '(string))
 #+end_src
 
-** Declare rules for displaying buffers with `display-buffer-alist'
+** Declare rules for displaying buffers with ~display-buffer-alist~ :buffer_rules:
 
 - Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 
@@ -5210,7 +5222,7 @@ Copied from the `evil' macro `evil-save-side-windows'."
          (window-toggle-side-windows))))))
 #+end_src
 
-** ~popper~: Summon and dismiss "popup" windows
+** ~popper~: Summon and dismiss "popup" windows :popups:
 
 - Website :: <https://github.com/karthink/popper>
 
@@ -5474,7 +5486,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
     ("q" "quit" transient-quit-all)]])
 #+end_src
 
-** Keybindings
+** Keybindings :keybinds:
 *** Define additional bindings under the =C-x w= prefix (~window-prefix-map~)
 
 #+begin_src emacs-lisp
