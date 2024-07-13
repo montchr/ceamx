@@ -2919,6 +2919,8 @@ Emacs version to prevent bytecode incompatibility.")
 (defvar-keymap ceamx-toggle-map)
 (define-prefix-command 'ceamx-toggle-map)
 
+(define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
+
 (provide 'ceamx-keymaps)
 ;;; ceamx-keymaps.el ends here
 #+end_src
@@ -7140,7 +7142,10 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
   ;; Save tabspaces across sessions.
   (setopt tabspaces-session t
-          ;; XXX(<https://github.com/mclear-tools/tabspaces/issues/61>)
+          ;; NOTE: Due to an upstream bug(?), the initial session restoration
+          ;; will fail with an error if the state file is missing.  Since this
+          ;; condition only applies upon initial installation, whatever.
+          ;; <https://github.com/mclear-tools/tabspaces/issues/61>
           tabspaces-session-auto-restore t))
 #+end_src
 
@@ -7247,25 +7252,29 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 ** Workspace Keybindings :keybinds:
 
 #+begin_src emacs-lisp
-(defvar-keymap ceamx-workspace-prefix-map
-  "TAB" '("switch (b+t)..." . tabspaces-switch-buffer-and-tab)
+(define-keymap :keymap ceamx-workspace-prefix-map
+  "TAB" '("switch/create space..." . tabspaces-switch-or-create-workspace)
+  "o" '("open/create space..." . tabspaces-open-or-create-project-and-workspace)
 
-  "b" '("switch (b)" . tabspaces-switch-to-buffer)
+  "b" '("switch buffer..." . tabspaces-switch-to-buffer)
   "r" '("remove current buffer" . tabspaces-remove-current-buffer)
   "R" '("remove selected buffer" . tabspaces-remove-selected-buffer)
+  "t" '("switch buffer+space..." . tabspaces-switch-buffer-and-tab)
   "C" '("clear buffers" . tabspaces-clear-buffers)
 
-  "o" '("switch/create..." . tabspaces-switch-or-create-workspace)
-  "O" '("open/create..." . tabspaces-open-or-create-project-and-workspace)
-
-  "d" '("close (ws)" . tabspaces-close-workspace)
-  "k" '("kill (ws+b)" . tabspaces-kill-buffers-close-workspace))
-
-(defalias 'ceamx-workspace-prefix ceamx-workspace-prefix-map)
+  "d" '("close space" . tabspaces-close-workspace)
+  "k" '("kill space+buffers" . tabspaces-kill-buffers-close-workspace))
 
 (keymap-global-set "C-c TAB" #'ceamx-workspace-prefix)
 
-;; Bind `tabspaces-command-map' into the custom prefix map.
+(after! outline
+  (keymap-unset outline-mode-map "C-c TAB" t))
+(after! org
+  (keymap-unset org-mode-map "C-c TAB" t))
+
+;; HACK: The auto-binding of `tabspaces-command-map' cannot be disabled
+;; entirely without a warning, so get it out of the way.
+;; <https://github.com/mclear-tools/tabspaces/issues/62>
 (setopt tabspaces-keymap-prefix "C-c TAB ^")
 #+end_src
 

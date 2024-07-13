@@ -56,5 +56,7 @@
 (defvar-keymap ceamx-toggle-map)
 (define-prefix-command 'ceamx-toggle-map)
 
+(define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
+
 (provide 'ceamx-keymaps)
 ;;; ceamx-keymaps.el ends here
