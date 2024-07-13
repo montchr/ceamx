@@ -4510,44 +4510,6 @@ Configure some user options dependent on the loaded packages:
 (add-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
 #+end_src
 
-*** DISABLED Improve the breathability of frame boundaries with ~spacious-padding~
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-- Website :: <https://protesilaos.com/emacs/spacious-padding>
-
-#+begin_src emacs-lisp
-(use-package spacious-padding
-  :demand t
-  :commands (spacious-padding-mode)
-  :defines (spacious-padding-widths)
-
-  :init
-  (setopt spacious-padding-widths
-          '(
-            ;; NOTE: `:internal-border-width' currently breaks `tab-bar-mode'
-            ;;       display on Emacs 29. Fixed in master branch.
-            ;;       <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-            :internal-border-width 15
-            :header-line-width 4
-            :mode-line-width 4
-            :tab-width 4
-            :right-divider-width 30
-            :scroll-bar-width 8))
-
-  :config
-
-  ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
-  ;; is very flexible.
-  ;; TODO: v0.3.0 standardizes this a bit
-  ;; (setq spacious-padding-subtle-mode-line
-  ;;       `(:mode-line-active default     ; NOTE: assumes `modus-themes'
-  ;;                           :mode-line-inactive vertical-border))
-
-  (spacious-padding-mode 1))
-#+end_src
-
 ** Window Appearance :window:
 *** Differentiate between focused and non-focused windows
 
