@@ -5217,6 +5217,11 @@ Copied from the `evil' macro `evil-save-side-windows'."
              messages-buffer-mode)
            (list
             ceamx-checkers-buffer-names-regexp)
+
+           ;; The "Home" tabspace, if enabled, will display the Messages buffer.
+           (unless (fboundp 'ceamx-workspace-open-tabspace-after-init-h)
+             '("\\*Messages\\*"))
+
            `(,(rx "Output*" eol)
              ,(rx "*" (or
                        "Async-native-compile-log"
@@ -5224,8 +5229,6 @@ Copied from the `evil' macro `evil-save-side-windows'."
                        "Compile-Log"
                        "Completions"
                        "compilation"
-
-                       "Messages"
                        "Shell Command Output"
                        "vc"
                        "Warnings")
