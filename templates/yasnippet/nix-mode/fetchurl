@@ -1,0 +1,8 @@
+# name: fetchurl
+# key: fetchurl
+# uuid: 1ab4c3c9-c1cd-41e3-a13b-70d7f930ab3e
+# --
+fetchurl {
+  url = "$1";
+  sha256 = "$2";
+};

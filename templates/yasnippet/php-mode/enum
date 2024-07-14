@@ -1,7 +1,8 @@
-# contributor: chris montgomery <chmont@protonmail.com>
 # name: enum
 # key: enum
+# uuid: 44378235-d012-4f4b-9fbb-f105d4673924
 # group : definitions
+# contributor: chris montgomery <chmont@proton.me>
 # --
 enum ${1:Name}${2:: type} {
     case ${3:ONE};

@@ -1,6 +1,4 @@
-# -*- mode: snippet -*-
 # name: package github
-# key: pg
 # --
 { lib
 , stdenv

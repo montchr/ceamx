@@ -1,6 +1,7 @@
 # name: arrow function
 # key: fn
+# uuid: bff93e63-2fa6-4e5c-8a68-47a93ca6302d
 # contributor : Chris Montgomery <chmont@protonmail.com>
-# # group : definitions
+# group : definitions
 # --
 ${3:static }fn (${1:arg, ...})${2:: type} => $0

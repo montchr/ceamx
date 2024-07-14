@@ -1,6 +1,7 @@
-# -*- mode: snippet -*-
+# name: <style type="text/css">
+# key: <style
+# uuid: 3898d740-6a3c-4303-913e-b8d91d1f0c96
 # contributor : Anders Bach Nielsen <abachn@abachn.net>
-# name: <style type="text/css" media="...">...</style>
 # --
 <style type="text/css" media="${1:screen}">
   $0

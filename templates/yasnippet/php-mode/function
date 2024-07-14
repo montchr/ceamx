@@ -4,7 +4,7 @@
 # key: function
 # group: definitions
 # --
-${4:public }function ${1:name}(${2:$arg, ...})
+${5:public }function ${1:name}(${2:$arg, ...})${3:: ${4:type}}
 {
     $0
 }

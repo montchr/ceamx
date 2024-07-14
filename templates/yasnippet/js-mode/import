@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# uuid: 8e6a5f15-7225-4e50-a74f-56359940ceff
+# contributor : Chris Montgomery <chmont@protonmail.com>
+# name: import
+# key: import
+# --
+import ${2:\{ ${3:name}${4: as ${5:alias}} \} from }'$1'$0

@@ -1,0 +1,6 @@
+# name: each
+# key: foreach
+# --
+${1:iterable}.forEach(${2:it} => {
+  $0
+})

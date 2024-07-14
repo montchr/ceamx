@@ -10142,9 +10142,9 @@ Register keybindings:
 (keymap-set ceamx-insert-map "S" #'yas-new-snippet)
 #+end_src
 
-*** TODO Automatically expand snippets on =SPC= key press
+*** Automatically expand snippets on =SPC= key press
 
-Insanely helpful and also insanely annoying.  Needs refinement.
+Insanely helpful when =key= is sensible, but insanely annoying if not.
 
 #+begin_src emacs-lisp
 ;; Bind `SPC' to `yas-expand' when snippet expansion available (it

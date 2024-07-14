@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# key: script
+# key: <script
 # name: script
 # --
 <script type="text/javascript">

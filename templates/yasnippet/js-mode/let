@@ -1,5 +1,4 @@
-# -*- mode: snippet; require-final-newline: nil -*-
-# name: let declaration
+# name: let <...>
 # key: let
 # --
-let ${1:name} = ${2:initial};
+let ${1:name}${2: = ${3:initial}}

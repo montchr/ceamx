@@ -1,9 +1,9 @@
 # -*- mode: snippet -*-
-# contributor: USAMI Kenta <tadsan@zonu.me>
 # name: foreach
 # key: foreach
+# uuid: a685d2b2-c241-4be5-8d9d-28991cb4d5fe
 # group : control structure
 # --
-foreach (${1:$expression} as \$${2:value}) {
+foreach (${1:$expr} as ${2:\$${3:key} => }\$${4:value}) {
     $0
 }
