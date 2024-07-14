@@ -10126,15 +10126,19 @@ Register keybindings:
 (keymap-set ceamx-insert-map "S" #'yas-new-snippet)
 #+end_src
 
-*** Automatically expand snippets on =SPC= key press
+*** Automatically expand snippets on =SPC= or =RET=
 
 Insanely helpful when =key= is sensible, but insanely annoying if not.
 
+Unless there is an available snippet expansion, the key will still call
+~self-insert-command~ as usual.
+
 #+begin_src emacs-lisp
-;; Bind `SPC' to `yas-expand' when snippet expansion available (it
-;; will still call `self-insert-command' otherwise).
+;; Note that `yas-maybe-expand' is indeed a variable, not a function.
 (after! yasnippet
-  (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand))
+  (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand)
+  (keymap-set yas-minor-mode-map "RET" yas-maybe-expand))
+#+end_src
 
 *** Disable automatic whitespace modifications in snippet files
 
