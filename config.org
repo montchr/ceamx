@@ -10122,8 +10122,6 @@ Register keybindings:
 
 #+begin_src emacs-lisp
 (keymap-set ceamx-insert-map "s" #'yas-insert-snippet)
-
-(keymap-set ceamx-insert-map "S" #'yas-new-snippet)
 #+end_src
 
 *** Automatically expand snippets on =SPC= or =RET=
