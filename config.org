@@ -5983,7 +5983,7 @@ See also [[*General buffer display settings]]
   (put cmd 'disabled nil))
 #+end_src
 
-** ~ceamx-insert-map~: [C-c i] keymap for inserting insertables
+** ~ceamx-insert-map~: [C-c i] keymap for inserting insertables :keybinds:
 
 #+begin_src emacs-lisp
 (keymap-global-set "C-c i" #'ceamx-insert-map)
@@ -5997,14 +5997,16 @@ See also [[*General buffer display settings]]
 
 *** TODO Meow does not seem to respect ~delete-selection-mode~?
 
-** Improve sentence legibility and parsing with double-spaced ending
+** Improve sentence legibility and parsability with double-spaced ending
+
+Yes, it may appear strange and archaic, and yet... I realized that I actually
+do *prefer* this for readability.  And so, I am giving it a shot.  My
+grandfather, who was an English teacher for most of the 20th century, would
+be very proud.  Though even writing this paragraph has been difficult.
+
+[2024-07-13] Update:  Still double-spacing.  No longer "difficult".
 
 #+begin_src emacs-lisp
-;; Yes, it may appear strange and archaic, and yet... I realized that I actually
-;; do *prefer* this for readability.  And so, I am giving it a shot.  My
-;; grandfather, who was an English teacher for most of the 20th century, would
-;; be very proud.  Though even writing this paragraph has been difficult.
-
 (setopt sentence-end-double-space t)
 
 (keymap-global-set "M-Q" #'repunctuate-sentences)
@@ -6012,11 +6014,17 @@ See also [[*General buffer display settings]]
 
 ** Don't consider camelCaseWORDs as separate words
 
+While it can be useful in some contexts, I wish that ~subword-mode~ did not break
+~ceamx/backward-kill-word~.  See also [[*Provide a command to intelligently kill
+words backwardsly]]
+
 #+begin_src emacs-lisp
 (global-subword-mode -1)
 #+end_src
 
-** ~string-inflection~: Commands to cycle through word casing
+** TODO ~string-inflection~: Commands to cycle through word casing
+
+Needs better bindings.
 
 #+begin_src emacs-lisp
 (require 'lib-editor)
@@ -6040,8 +6048,11 @@ See also [[*General buffer display settings]]
     (`elixir-mode (string-inflection-elixir-style-cycle))
     (_ (string-inflection-ruby-style-cycle))))
 #+end_src
-** Provide a command to intelligently kill words backwardsly
 
+** INPRG Provide a command to intelligently kill words backwardsly
+
+- State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
+  Needs a fix for compatibility with ~subword-mode~.  See also [[*Don't consider camelCaseWORDs as separate words]]
 - src :: https://www.reddit.com/r/emacs/comments/bz9rxn/comment/er0bgll/
 - src :: https://github.com/yantar92/emacs-config/blob/master/config.org#smarter-backward-kill-word
 
