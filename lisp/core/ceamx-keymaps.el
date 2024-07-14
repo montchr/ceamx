@@ -26,8 +26,7 @@
 
 (require 'ceamx-lib)
 
-(defvar-keymap ceamx-buffer-prefix-map)
-(defalias 'ceamx-buffer-prefix ceamx-buffer-prefix-map)
+(define-prefix-command 'ceamx-buffer-prefix 'ceamx-buffer-prefix-map)
 
 (defvar-keymap ceamx-file-map)
 (define-prefix-command 'ceamx-file-map)

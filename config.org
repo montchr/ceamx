@@ -2890,7 +2890,7 @@ Emacs version to prevent bytecode incompatibility.")
 
 (require 'ceamx-lib)
 
-<<ceamx-keymaps>>
+(define-prefix-command 'ceamx-buffer-prefix 'ceamx-buffer-prefix-map)
 
 (defvar-keymap ceamx-file-map)
 (define-prefix-command 'ceamx-file-map)
@@ -5727,16 +5727,10 @@ available, `switchy-window'."
 (require 'ceamx-paths)
 #+end_src
 
-
-** Define the =C-c b= buffer prefix map
+** Bind the ~ceamx-buffer-prefix~ to "C-c b" :keybinds:
 
 #+begin_src emacs-lisp
 (keymap-global-set "C-c b" '("Buffer" . ceamx-buffer-prefix))
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref ceamx-keymaps
-(defvar-keymap ceamx-buffer-prefix-map)
-(defalias 'ceamx-buffer-prefix ceamx-buffer-prefix-map)
 #+end_src
 
 ** General
@@ -5790,9 +5784,6 @@ available, `switchy-window'."
 
 #+begin_src emacs-lisp
 (setopt ibuffer-movement-cycle t)
-
-;; FIXME: auto-select window
-(keymap-global-set "C-x C-b" #'ibuffer-list-buffers)
 #+end_src
 
 ** ~mowie~: a library to help you get where you mean
@@ -5878,34 +5869,6 @@ available, `switchy-window'."
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 #+end_src
 
-** DISABLED ~repeat-map~ for basic buffer navigation commands
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-<https://www.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/>
-
-It seemed like a great idea, but I had quite a few issues.
-
-- [ ] Disable ~repeat-help-auto~ for these
-- [ ] Does not work with Meow. See [[*Meow overwrites repeat-mode?]]
-- [ ] Pauses between every single movement command not specified in the repeat map
-
-#+begin_src emacs-lisp
-(defvar-keymap ceamx-buffer-movement-repeat-map
-  :repeat t
-  ;; :repeat (:enter '(next-line previous-line forward-word))
-
-  "n" #'next-line
-  "p" #'previous-line
-  "f" #'forward-word
-  "b" #'backward-word
-
-  ;; FIXME: inconsistent with established binding mnemonics
-  "u" #'scroll-down-command
-  "d" #'scroll-up-command)
-#+end_src
-
 ** ~ceamx-buffer-mode~: Helper function to return the major mode for a buffer
 
 #+begin_src emacs-lisp :noweb-ref lib-buffer
@@ -5977,7 +5940,7 @@ See also [[*General buffer display settings]]
   "List of directories whose files should be opened in read-only buffers.")
 #+end_src
 
-** Global Keybindings
+** Keybindings :keybinds:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
@@ -5985,7 +5948,14 @@ See also [[*General buffer display settings]]
   "C-c ]" #'next-buffer
   "C-c `" #'mode-line-other-buffer
 
+  "C-x k" #'ceamx/kill-this-buffer      ; orig: `kill-buffer'
+  "C-x K" #'kill-buffer
   "C-x C-b" #'ibuffer)
+
+(define-keymap :keymap ceamx-buffer-prefix-map
+  "b" '("switch (local)..." . consult-buffer)
+  "B" '("switch (global)..." . tabspaces-switch-buffer-and-tab)
+  "k" #'ceamx/kill-this-buffer)
 #+end_src
 
 
@@ -7228,6 +7198,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 (keymap-global-set "C-c TAB" #'ceamx-workspace-prefix)
 
+;; Prevent conflicts with custom binding.
 (after! outline
   (keymap-unset outline-mode-map "C-c TAB" t))
 (after! org
