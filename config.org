@@ -8774,7 +8774,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (setopt vertico-multiform-commands
           `((consult-line buffer)
            (consult-imenu buffer)
-           (consult-outline buffer quick ,(lambda (_) (text-scale-set -2)))))
+           (consult-org-heading ,(lambda (_) (text-scale-set -1)))))
 
   (setopt vertico-multiform-categories
           '((buffer flat (vertico-cycle . t))
