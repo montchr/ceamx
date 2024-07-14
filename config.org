@@ -5776,6 +5776,8 @@ available, `switchy-window'."
 ;; contents have changed.
 (setopt global-auto-revert-non-file-buffers t)
 
+(setopt auto-revert-interval 2)         ; default: 5
+
 ;; Automatically revert a buffer if its file has changed on disk.
 (add-hook 'ceamx-after-init-hook #'global-auto-revert-mode)
 #+end_src
