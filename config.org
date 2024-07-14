@@ -10122,6 +10122,24 @@ Insanely helpful when =key= is sensible, but insanely annoying if not.
 ;; will still call `self-insert-command' otherwise).
 (after! yasnippet
   (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand))
+
+*** Disable automatic whitespace modifications in snippet files
+
+- ref :: <https://joaotavora.github.io/yasnippet/faq.html#org64f1b8c>
+
+#+begin_quote
+If there is a newline at the end of a snippet definition file, YASnippet will
+add a newline when expanding that snippet. When editing or saving a snippet
+file, please be careful not to accidentally add a terminal newline.
+#+end_quote
+
+#+begin_src emacs-lisp
+(defun +yasnippet-snippet-mode-disable-final-newline-h ()
+  "Prevent appendage of a final newline in `snippet-mode' files.
+A final newline would be inserted literally into the snippet expansion."
+  (setq-local require-final-newline nil))
+
+(add-hook 'snippet-mode-hook #'+yasnippet-snippet-mode-disable-final-newline-h nil t)
 #+end_src
 
 ** Reference

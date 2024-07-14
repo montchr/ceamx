@@ -8,6 +8,11 @@ indent_style=space
 insert_final_newline=true
 trim_trailing_whitespace=true
 
+# Whitespace in Yasnippet snippets will be inserted literally.
+[{snippets,templates}/yasnippet/**]
+insert_final_newline=false
+trim_trailing_whitespace=false
+
 [*.md]
 indent_style=space
 trim_trailing_whitespace=false
