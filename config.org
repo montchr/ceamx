@@ -7227,6 +7227,12 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 (setopt tabspaces-keymap-prefix "C-c TAB ^")
 #+end_src
 
+#+begin_src emacs-lisp
+;; (after! embark
+;;   (keymap-set ceamx-embark-tab-actions   ;; TODO: add something like `tabspaces-kill-buffers-close-workspace' (which
+;;   ;; does not currently accept an argument and only acts on the current workspace)
+;;               ))
+#+end_src
 
 * Help
 
@@ -8950,17 +8956,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     (setopt consult-project-function (lambda (_) (projectile-project-root)))))
 #+end_src
 
-*** Install ~embark-consult~ for Embark integration
-
-#+begin_src emacs-lisp
-(package! embark-consult
-  (after! embark
-    (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
-
-  (after! (embark consult)
-    (require 'embark-consult)))
-#+end_src
-
 *** Pulse line for visual feedback upon Consult selection jump :ui:navigation:
 
 + [ ] Why after ~consult-imenu~?
@@ -9389,56 +9384,83 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
 *** Install and pre-configure the Embark package
 
-#+begin_src emacs-lisp :noweb yes
+#+begin_src emacs-lisp
 (require 'ceamx-lib)
 
 (package! embark
-  <<embark-help-key-completion>>
+  (require 'embark)
 
-  <<embark-keybindings>>
+  (setopt embark-indicators '(;; embark--vertico-indicator
+                              ;; embark-mixed-indicator
+                              embark-minimal-indicator
+                              embark-highlight-indicator
+                              embark-isearch-highlight-indicator))
+  (setopt embark-mixed-indicator-delay 2.0)
 
-  <<embark-load>>)
+  ;; You can reverse the configured behavior at any time by calling `embark-act'
+  ;; with a "C-u" prefix argument.
+  ;; For finer control, e.g.: `((kill-buffer . t) (t . nil))'
+  ;; This only affects the behavior of `embark-act' inside the minibuffer.
+  (setopt embark-quit-after-action nil))
+
+(after! vertico
+  (add-to-list 'vertico-multiform-categories '(embark-keybinding grid)))
 #+end_src
 
-**** Use Embark's completion UI for displaying available key help
+*** Use Embark's completion UI for displaying available key help
 
-#+begin_src emacs-lisp :noweb-ref embark-help-key-completion :tangle no
+#+begin_src emacs-lisp
 (setopt prefix-help-command #'embark-prefix-help-command)
 #+end_src
 
-**** Keybindings
+*** Install ~embark-consult~ for Embark integration :package:consult:
 
-#+begin_src emacs-lisp :noweb-ref embark-keybindings :tangle no
-(keymap-global-set "C-;" #'embark-act)
+Embark will load the library automatically after Consult.
+
+#+begin_src emacs-lisp
+(package! embark-consult
+  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
+#+end_src
+
+*** Keybindings :keybinds:
+
+#+begin_src emacs-lisp
+;; NOTE: This key may be the default in GNOME Desktop for emoji input.  However,
+;; I have not encountered a conflict on GNOME, so I must be doing something
+;; conveniently correct in my GNOME configurations.  FWIW, I have enabled the
+;; Emacs-style keybindings there.
+(keymap-global-set "C-." #'embark-act)
+
+;; NOTE: While this overrides the default binding for `xref-find-definitions',
+;; the result of calling `embark-dwim' on a symbol still ends up calling
+;; `xref-find-definitions' as the default "dwim" action.
 (keymap-global-set "M-." #'embark-dwim)
+
+(keymap-global-set "C-h b" #'embark-bindings) ; orig: `describe-bindings'
+;; TODO: make sure this doesn't override something, and if it does, note it
+;; (keymap-global-set "C-h B" #'describe-bindings)
 #+end_src
 
-**** Load Embark after an idle delay
+**** Define actions for acting on tabs :tabs:
 
-<2024-03-20 Wed> Embark weighs in at nearly 5k lines-of-code at the time of
-writing, so loading it immediately would probably cause a noticeable lag in
-session startup.
+#+begin_src emacs-lisp
+(after! embark
+  (defvar-keymap ceamx-embark-tab-actions
+    :doc "Keymap for Embark actions for `tab-bar' tabs (when mentioned by name)."
+    :parent embark-general-map
 
-Embark, like any package with autoloaded commands, will not load until one of
-its autoloads is invoked. That has a few consequences, since Embark is versatile
-enough to be used as glue for some other, more niche packages.
+    "s" #'tab-bar-select-tab-by-name
+    "d" #'tab-bar-close-tab-by-name
+    "R" #'tab-bar-rename-tab-by-name)
 
-The ~repeat-help~ package defaults to using Embark's key help facilities before
-falling back to ~which-key~. I'd like to try out the Embark UI, as it seems more
-legible.
+  (add-to-list 'embark-keymap-alist '(tab . ceamx-embark-tab-actions))
 
-Another benefit to a deferred load is a faster initial display in response to
-invoking a command. If the feature needs to be loaded in response to invoking an
-autoloaded command e.g. ~embark-act~, there will be a multi-second delay.
-
-#+begin_src emacs-lisp :noweb-ref embark-load :tangle no
-(defer! 2
-  (require 'embark))
+  (push #'embark--confirm
+        (alist-get 'tab-bar-close-tab-by-name
+                   embark-pre-action-hooks)))
 #+end_src
 
-*** Appearance
-
-**** Configure ~display-buffer-alist~ rules for Embark windows
+*** Configure ~display-buffer-alist~ rules for Embark windows
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'embark
