@@ -7096,7 +7096,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
           tabspaces-session-auto-restore t))
 #+end_src
 
-** Set up ~tabspaces~ Consult integration :consult:buffer:
+*** Set up ~tabspaces~ Consult integration :consult:buffer:
 
 #+begin_src emacs-lisp
 (after! (tabspaces consult)
@@ -7121,7 +7121,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
   (add-to-list 'consult-buffer-sources '+consult--source-treespaces-workspace))
 #+end_src
 
-** Set up a "Home" tabspace "dashboard" :dashboard:buffer:
+*** Set up a "Home" tabspace "dashboard" :dashboard:buffer:
 
 This may conflict with ~popper~, which will also try to display the =*Messages*= buffer.
 
@@ -7140,6 +7140,7 @@ This may conflict with ~popper~, which will also try to display the =*Messages*=
 #+end_src
 
 ** Initialize ~tabspaces-mode~ on session startup :startup:
+*** Initialize ~tabspaces-mode~ on session startup :startup:
 
 #+begin_src emacs-lisp
 (if (fboundp 'ceamx-workspace-open-tabspace-after-init-h)
