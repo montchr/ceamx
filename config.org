@@ -2745,7 +2745,6 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 #+begin_src emacs-lisp
 (setq inhibit-startup-screen t)
-(setq initial-scratch-message nil)
 (setq initial-buffer-choice nil)
 #+end_src
 

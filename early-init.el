@@ -123,7 +123,6 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 (setq inhibit-startup-screen t)
-(setq initial-scratch-message nil)
 (setq initial-buffer-choice nil)
 
 (provide 'early-init)
