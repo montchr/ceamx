@@ -7139,7 +7139,14 @@ This may conflict with ~popper~, which will also try to display the =*Messages*=
                                                   (frame-parameter nil 'buffer-list))))))
 #+end_src
 
-** Initialize ~tabspaces-mode~ on session startup :startup:
+*** Register ~tabspaces~ command prompt categories :marginalia:completion:
+
+#+begin_src emacs-lisp
+(after! marginalia
+  ;; `tabspaces-switch-or-create-workspace' => "Select or create tab"
+  (add-to-list 'marginalia-prompt-categories '("create tab" . tab)))
+#+end_src
+
 *** Initialize ~tabspaces-mode~ on session startup :startup:
 
 #+begin_src emacs-lisp
