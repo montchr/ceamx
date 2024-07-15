@@ -8105,7 +8105,10 @@ Enable ~repeat-mode~, avoiding running mode-hooks too early:
 (package! free-keys)
 #+end_src
 
-** ~which-key~ [builtin]
+** DISABLED ~which-key~ [builtin]
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 #+begin_src emacs-lisp
 (when (fboundp 'which-key-mode)
