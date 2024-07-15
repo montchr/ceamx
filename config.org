@@ -7209,12 +7209,12 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-workspace-prefix-map
   "TAB" '("switch/create space..." . tabspaces-switch-or-create-workspace)
-  "o" '("open/create space..." . tabspaces-open-or-create-project-and-workspace)
+  "o" '("open project-space..." . tabspaces-open-or-create-project-and-workspace)
 
   "b" '("switch buffer..." . tabspaces-switch-to-buffer)
-  "r" '("remove current buffer" . tabspaces-remove-current-buffer)
-  "R" '("remove selected buffer" . tabspaces-remove-selected-buffer)
   "t" '("switch buffer+space..." . tabspaces-switch-buffer-and-tab)
+  "r" '("remove current buffer" . tabspaces-remove-current-buffer)
+  "R" '("remove buffer..." . tabspaces-remove-selected-buffer)
   "C" '("clear buffers" . tabspaces-clear-buffers)
 
   "d" '("close space" . tabspaces-close-workspace)
