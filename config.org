@@ -17,10 +17,14 @@ on WSL2 when E is running MS Windows, however that is a very low priority.
 
 ** Agenda
 
-*** TODO <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
-*** TODO <https://orgmode.org/worg/org-contrib/org-choose.html>
+*** CANCELLED <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
+CLOSED: [2024-07-14 Sun 21:34]
+- State "CANCELLED"  from "TODO"       [2024-07-14 Sun 21:34]
+*** INPRG <https://orgmode.org/worg/org-contrib/org-choose.html>
 
 
+- State "INPRG"      from "TODO"       [2024-07-14 Sun 21:41] \\
+  See section on ~org-contrib~
 ** Styleguide
 :PROPERTIES:
 :VISIBILITY: folded
@@ -13083,7 +13087,10 @@ conflict when Syncthing tries to take control of these paths.
 <https://orgmode.org/worg/org-contrib/>
 
 #+begin_src emacs-lisp
-(package! org-contrib)
+(package! org-contrib
+  (after! org
+    (require 'org-choose)
+    (add-to-list 'org-modules 'org-choose)))
 #+end_src
 
 ** Define structure templates :snippets:
