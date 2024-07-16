@@ -5959,7 +5959,6 @@ See also [[*General buffer display settings]]
 
 (define-keymap :keymap ceamx-buffer-prefix-map
   "b" '("switch (local)..." . consult-buffer)
-  "B" '("switch (global)..." . tabspaces-switch-buffer-and-tab)
   "k" #'ceamx/kill-this-buffer)
 #+end_src
 
@@ -7070,7 +7069,10 @@ With optional argument FRAME, return the list of buffers of FRAME."
   (keymap-global-set "C-c b" beframe-prefix-map))
 #+end_src
 
-** ~tabspaces~: workspaces by tab by project by tab :package:tabs:projects:
+** DISABLED ~tabspaces~: workspaces by tab by project by tab :package:tabs:projects:
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 - website :: <https://github.com/mclear-tools/tabspaces>
 
@@ -7155,58 +7157,11 @@ This may conflict with ~popper~, which will also try to display the =*Messages*=
   (add-hook 'ceamx-after-init-hook #'tabspaces-mode))
 #+end_src
 
-** DISABLED ~activites~: workspace by activity
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-- Website :: <https://github.com/alphapapa/activities.el>
+*** Tabspaces Keybindings :keybinds:
 
 #+begin_src emacs-lisp
-(require 'ceamx-lib)
+(keymap-set ceamx-buffer-prefix-map "B" '("switch (global)..." . tabspaces-switch-buffer-and-tab))
 
-(defun ceamx-after-init-define-activities-keys-h ()
-  "Define keybindings for `activities' late to override `edebug'.
-Intended for use as a hook on `ceamx-after-init-hook'."
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-
-  ;; (keymap-global-unset "C-x C-a" t)
-  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
-
-  ;; TODO: still shares bindings with edebug which is confusing
-  (define-keymap :keymap (current-global-map)
-    "C-x C-a C-n" #'activities-new
-    "C-x C-a C-d" #'activities-define
-    "C-x C-a C-a" #'activities-resume
-    "C-x C-a C-s" #'activities-suspend
-    "C-x C-a C-k" #'activities-kill
-    "C-x C-a RET" #'activities-switch
-
-    "C-x C-a b" #'activities-switch-buffer
-    "C-x C-a g" #'activities-revert
-    "C-x C-a l" #'activities-list))
-
-(package! activities
-  (activities-mode)
-
-  (when tab-bar-mode
-    (activities-tabs-mode))
-
-  (add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h))
-#+end_src
-
-** ~breadcrumb~: header-line wayfinding
-
-- Website :: <https://github.com/joaotavora/breadcrumb>
-
-#+begin_src emacs-lisp
-(package! breadcrumb
-  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
-#+end_src
-
-** Workspace Keybindings :keybinds:
-
-#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-workspace-prefix-map
   "TAB" '("switch/create space..." . tabspaces-switch-or-create-workspace)
   "o" '("open project-space..." . tabspaces-open-or-create-project-and-workspace)
@@ -7239,6 +7194,57 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 ;;   (keymap-set ceamx-embark-tab-actions   ;; TODO: add something like `tabspaces-kill-buffers-close-workspace' (which
 ;;   ;; does not currently accept an argument and only acts on the current workspace)
 ;;               ))
+#+end_src
+
+
+** ~activites~: workspace by activity :package:tabs:
+
+- Website :: <https://github.com/alphapapa/activities.el>
+
+#+begin_src emacs-lisp
+(require 'ceamx-lib)
+
+(package! activities
+  (activities-mode)
+
+  (when tab-bar-mode
+    (activities-tabs-mode)))
+#+end_src
+
+*** Activities.el Keybindings :keybinds:
+
+#+begin_src emacs-lisp
+(defun ceamx-after-init-define-activities-keys-h ()
+  "Define keybindings for `activities' late to override `edebug'.
+Intended for use as a hook on `ceamx-after-init-hook'."
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+
+  ;; (keymap-global-unset "C-x C-a" t)
+  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
+
+  ;; TODO: still shares bindings with edebug which is confusing
+  (define-keymap :keymap (current-global-map)
+    "C-x C-a C-n" #'activities-new
+    "C-x C-a C-d" #'activities-define
+    "C-x C-a C-a" #'activities-resume
+    "C-x C-a C-s" #'activities-suspend
+    "C-x C-a C-k" #'activities-kill
+    "C-x C-a RET" #'activities-switch
+
+    "C-x C-a b" #'activities-switch-buffer
+    "C-x C-a g" #'activities-revert
+    "C-x C-a l" #'activities-list))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
+#+end_src
+
+** ~breadcrumb~: header-line wayfinding
+
+- Website :: <https://github.com/joaotavora/breadcrumb>
+
+#+begin_src emacs-lisp
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 #+end_src
 
 * Help
