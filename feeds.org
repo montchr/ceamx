@@ -1,0 +1,204 @@
+#+TITLE: News Feed Manifest
+
+* Blogs :elfeed:
+
+** entry-title: \(linux\|nixos\|kde\|gnome\) :linux:
+
+** Art :art:
+
+** Software Development :dev:
+
+*** Web Development :web:
+
+**** PHP :php:
+
+**** WordPress :wp:
+
+***** entry-title: \(wordpress\|block.editor\)
+
+** Emacs :emacs:mustread:
+
+*** entry-title: \(emacs\|org-mode\)
+
+* Imported Feeds            :elfeed:
+** [[https://humantransit.org/feed][Human Transit]]
+** [[https://news.ycombinator.com/rss][Hacker News]]
+** [[https://feeds2.feedburner.com/thenextweb][The Next Web]]
+** [[https://acejet170.typepad.com/foundthings/rss.xml][Ace Jet 170]]
+** [[https://ambientehotel.wordpress.com/feed/][the m john harrison blog]]
+** [[https://bajoelsignodelibra.blogspot.com/feeds/posts/default][Bajo el Signo de Libra]]
+** [[https://bibliotheque-gay.blogspot.com/feeds/posts/default][Bibliothèque Gay]]
+** [[https://christine.website/blog.rss][Xe Iaso's blog]]
+** [[https://wptavern.com/feed/json][WP Tavern]]
+** [[https://www.ocfrealty.com/naked-philly/feed/][Naked Philly Blog Posts Archive - OCF Realty]]
+** [[https://bulletjournal.com/blogs/bulletjournalist.atom][Bullet Journal - The Bullet Journalist]]
+** [[https://mediapathic.blot.im/feed.rss][mediapathic]]
+** [[https://infodump.ghost.io/rss/][Infodump]]
+** [[http://feeds.feedburner.com/newmodels/rss][New Models]]
+** [[https://www.ribbonfarm.com/feed/][ribbonfarm]]
+** [[https://annaxmalina.tumblr.com/rss][⁂]]
+** [[https://revdancatt.com/rss][Rev Dan Catt]]
+** [[https://bldgblog.com/feed/][BLDGBLOG]]
+** [[https://www.tinyrayofsunshine.com/blog?format=rss][Articles - Tiny Ray of Sunshine]]
+** [[https://www.kensingtonvoice.com/en/feed/][Kensington Voice]]
+** [[https://www.indiewire.com/feed/][IndieWire]]
+** [[https://www.nplusonemag.com/feed/][n+1Articles – n+1]]
+** [[https://leancrew.com/all-this/feed/][And now it’s all this]]
+** [[https://medium.com/feed/@CoalitionForCriticalTechnology][Stories by Coalition for Critical Technology on Medium]]
+** [[https://www.rousette.org.uk/index.xml][but she's a girl...]]
+** [[https://mastodon.social/@geekcookbook_changes.rss][Funky Penguin's Geek Cookbook]]
+** [[https://peacemaker.design.blog/feed/][Circle of Peacemakers]]
+** [[https://kentcdodds.com/blog/rss.xml][Kent C. Dodds Blog]]
+** [[https://www.thetrace.org/feed/][The Trace]]
+** [[https://sachachua.com/blog/feed/][Sacha Chua]]
+** [[https://blog.jethro.dev/index.xml][Jethro Kuan]]
+** [[https://threewordphrase.com/rss.xml][Three Word Phrase]]
+** [[https://www.smbc-comics.com/comic/rss][Saturday Morning Breakfast Cereal]]
+** [[https://juniatanewsphilly.wordpress.com/feed/][Juniata News]]
+** [[https://stanislas.blog/atom.xml][Stan's blog]]
+** [[https://www.tweag.io/rss-nix.xml][Tweag - Nix blog]]
+** [[https://www.tweag.io/rss.xml][Tweag - Engineering blog]]
+** [[https://feed.infoq.com/][InfoQ]]
+** [[https://www.dantleech.com/atom.xml][Dans Blog]]
+** [[https://d12frosted.io/atom.xml][d12frosted]]
+** [[https://drewdevault.com/blog/index.xml][Drew DeVault's blog]]
+** [[https://blog.codinghorror.com/rss/][Coding Horror]]
+** [[https://torrentfreak.com/feed/][TorrentFreak]]
+** [[https://github.blog/feed/][The GitHub Blog]]
+** [[http://ergoemacs.org/emacs/blog.xml][Xah Emacs Blog]]
+** [[https://emacs.cafe/feed.xml][Emacs café]]
+** [[https://xenodium.com/rss.xml][Alvaro Ramirez's notes]]
+** [[https://krebsonsecurity.com/feed/][Krebs on Security]]
+** [[https://www.schneier.com/feed/atom/][Schneier on Security]]
+** [[https://feeds.feedburner.com/GiantRobotsSmashingIntoOtherGiantRobots][Giant Robots Smashing Into Other Giant Robots]]
+** [[https://therecord.media/feed/][The Record from Recorded Future News]]
+** [[https://cmacr.ae/index.xml][Calum MacRae on]]
+** [[https://feeds.feedburner.com/damninteresting/all][Damn Interesting]]
+** [[https://tech.toryanderson.com/index.xml][Tech.ToryAnderson.com]]
+** [[https://emacsair.me/feed.xml][Emacsair]]
+** [[https://ag91.github.io/rss.xml][Where parallels cross]]
+** [[https://worrydream.com/feed.xml][Bret Victor's website]]
+** [[https://queue.acm.org/rss/feeds/queuecontent.xml][ACM Queue - All Queue Content]]
+** [[https://blog.frantic.im/rss/][Frantic Notes]]
+** [[https://thereader.mitpress.mit.edu/feed/][The MIT Press Reader]]
+** [[https://www.nngroup.com/feed/rss/][NN/g latest articles and announcements]]
+** [[https://ishadeed.com/feed.xml][Ahmad Shadeed]]
+** [[https://www.murilopereira.com/index.xml][Murilo Pereira]]
+** [[https://tychoish.com/post/index.xml][Posts on tychoish]]
+** [[https://fzakaria.com/feed.xml][Farid Zakaria’s Blog]]
+** [[https://grahamc.com/feed/][Graham Christensen]]
+** [[https://esoteric.codes/rss][esoteric.codes]]
+** [[https://archlinux.org/feeds/news/][Arch Linux: Recent news updates]]
+** [[https://briandicroce.com/feed/][Brian Di Croce]]
+** [[https://batsov.com/atom.xml][(think)]]
+** [[https://martinfowler.com/feed.atom][Martin Fowler]]
+** [[https://daringfireball.net/feeds/main][Daring Fireball]]
+** [[https://www.bleepingcomputer.com/feed/][BleepingComputer]]
+** [[https://unixdigest.com/feed.rss][unixdigest.com]]
+** [[https://planet.emacslife.com/atom.xml][Planet Emacslife]]
+** [[https://danluu.com/atom.xml][Dan Luu]]
+** [[https://www.joshwcomeau.com/rss.xml][Josh Comeau's blog]]
+** [[https://seirdy.one/posts/index.xml][Posts on Seirdy’s Home]]
+** [[https://leahneukirchen.org/trivium/index.atom][Trivium]]
+** [[https://www.gicentre.net/blog?format=rss][Blog - giCentre]]
+** [[https://indieblog.page/dailyfeed][indieblog.page daily random posts]]
+** [[https://geotripper.blogspot.com/feeds/posts/default][Geotripper]]
+** [[https://samleathers.com/feed.xml][Feed]]
+** [[https://ounapuu.ee/index.xml][./techtipsy]]
+** [[https://sourcehut.org/blog/index.xml][Blogs on Sourcehut]]
+** [[https://kisslinux.org/rss/post.rss][KISS Linux Posts]]
+** [[https://kisslinux.org/rss/tidbits.rss][KISS Linux Tidbits]]
+** [[https://astrid.tech/atom.xml][astrid.tech]]
+** [[https://tonsky.me/atom.xml][tonsky.me]]
+** [[https://usesthis.com/feed.atom][Uses This]]
+** [[https://mazzo.li/rss.xml][bitonic's blog.]]
+** [[http://feeds.arstechnica.com/arstechnica/index/][Ars Technica - All content]]
+** [[https://precondition.github.io/feed.xml][precondition]]
+** [[https://shadowfacts.net/feed.xml][Shadowfacts]]
+** [[https://emacstil.com/feed.xml][Emacs TIL]]
+** [[https://cprss.s3.amazonaws.com/frontendfoc.us.xml][Frontend Focus]]
+** [[http://feeds.feedburner.com/CSS-Weekly?format=xml][CSS Weekly]]
+** [[https://dataswamp.org/~solene/rss.xml][Solene'%]]
+** [[https://restoreprivacy.com/news-reports/feed/][Privacy and Security News Archives | RestorePrivacy]]
+** [[https://feed.ctrl.blog/latest.atom][Ctrl blog]]
+** [[https://blog.willgrant.org/feed.xml][Blog posts by Will Grant]]
+** [[https://web.dev/static/blog/feed.xml][web.dev: Blog]]
+** [[https://nolanlawson.com/feed/][Read the Tea Leaves]]
+** [[https://doeken.org/blog/feed.atom][Doeke Norg - I like talking about PHP]]
+** [[https://adactio.com/links/rss][Adactio: Links]]
+** [[https://adactio.com/articles/rss][Adactio: Articles]]
+** [[https://thephp.cc/feeds/news/latest.xml][Latest News from thePHP.cc]]
+** [[https://www.astralcodexten.com/feed][Astral Codex Ten]]
+** [[https://blog.project-insanity.org/feed/][project-insanity.org]]
+** [[https://j3s.sh/feed.atom][j3s.sh]]
+** [[https://jonascarpay.com/rss.xml][jonas's blog]]
+** [[https://css-tricks.com/feed/][CSS-Tricks]]
+** [[https://catgirl.ai/log/atom.xml][gay robot noises - /var/log/ash]]
+** [[https://technomancy.us/atom.xml][Technomancy]]
+** Opinion
+*** [[https://feeds.dashes.com/AnilDash][Anil Dash]]
+*** [[http://randsinrepose.com/feed/][Rands in Repose]]
+*** [[http://feeds.kottke.org/main][kottke.org]]
+*** [[http://feeds2.feedburner.com/TheAwl][The Awl]]
+** Science & Technology
+*** [[https://news.ycombinator.com/rss][Hacker News]]
+*** [[https://feeds2.feedburner.com/thenextweb][The Next Web]]
+*** [[https://what-if.xkcd.com/feed.atom][what if?]]
+*** [[https://marco.org/rss][Marco.org]]
+*** [[https://www.macstories.net/feed/][MacStories]]
+** Videos
+** Music
+*** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC7brSEzOeLLb0l3QhAtdkgw][Sounds of the Dawn]]
+*** [[https://musicforprogramming.net/rss.php/][Music For Programming]]
+*** [[https://www.negrophonic.com/feed/][mudd up!]]
+** News/Politik
+*** [[https://hiddencityphila.org/feed/][Hidden City Philadelphia]]
+** Dev
+*** [[https://alistapart.com/main/feed/][A List Apart: The Full Feed]]
+*** [[https://wptavern.com/feed/json][WP Tavern]]
+** Culture
+*** [[https://www.johncoulthart.com/feuilleton/feed/][{ feuilleton }]]
+** Comix
+*** [[https://xkcd.com/rss.xml][xkcd.com]]
+*** [[https://qwantz.com/rssfeed.php][Dinosaur Comics!]]
+** Art
+*** [[http://bldgblog.blogspot.com/feeds/posts/default][BLDGBLOG]]
+*** [[https://scarfolk.blogspot.com/feeds/posts/default][Scarfolk Council]]
+** Journalism
+*** [[http://www.cjr.org/atom.xml][Columbia Journalism Review]]
+** Productivity
+*** [[https://trms.me/feed/][trms]]
+** Philly
+*** [[https://www.ocfrealty.com/naked-philly/feed/][Naked Philly Blog Posts Archive - OCF Realty]]
+** Work
+** [[https://feed.laravel-news.com/][Laravel News]]
+** [[https://developer.wordpress.org/news/feed/][WordPress Developer Blog]]
+** [[https://feeds.feedburner.com/cloudfour][Sharing what we learn about the responsive web – Cloud Four]]
+** [[https://rachelandrew.co.uk/feed/][Rachel Andrew]]
+** [[https://adrianroselli.com/feed][Adrian Roselli]]
+** [[https://tomjn.com/feed/][Tom J Nowell]]
+** [[https://www.laquadrature.net/en/feed/][La Quadrature du Net]]
+** [[https://rich.blog/feed/][Rich Tabor]]
+** WordPress
+*** [[https://make.wordpress.org/core/tag/gutenberg-new/feed/][gutenberg-new – Make WordPress Core]]
+*** [[https://make.wordpress.org/themes/tags/gutenberg-themes-roundup/feed/][gutenberg-themes-roundup – Make WordPress Themes]]
+*** [[https://kraftner.com/en/blog/index.xml][Blog on Thomas Kräftner]]
+*** [[https://tommcfarlin.com/feed/][Tom McFarlin]]
+*** [[https://theaveragedev.com/posts/index.xml][Posts on theAverageDev]]
+** [[https://www.maxdesign.com.au/][Max Design articles]]
+** [[http://domainincite.com/feed][Domain Incite]]
+** [[https://brainwashed.com/podcast/podcast_rss.xml][Brainwashed Radio - The Podcast Edition]]
+** [[https://brainwashed.com/index.php/reviews-easyblog?format=feed&type=rss][Music]]
+** [[https://drakerossman.com/feed.xml][Drake Rossman's Blog]]
+** [[https://stitcher.io/rss][stitcher.io]]
+** [[https://pluralistic.net/feed/][Pluralistic: Daily links from Cory Doctorow]]
+** [[https://karthinks.com/software/index.xml][Softwares on Karthinks]]
+** [[https://blog.ploeh.dk/atom.xml][ploeh blog]]
+
+
+# Local Variables:
+# org-modern-hide-stars: nil
+# org-pretty-entities: nil
+# org-modern-todo: nil
+# org-modern-keyword: nil
+# End:

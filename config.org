@@ -13862,12 +13862,10 @@ What even is this though...?
 **
 
 
-* DISABLED Newsreader
-
-
+* Newsreader (=elfeed=)
 
 #+begin_src emacs-lisp :tangle lisp/init-news.el
-;;; init-feeds.el --- News feed (RSS/Atom) subscription support  -*- lexical-binding: t; -*-
+;;; init-news.el --- News feed (RSS/Atom) subscription support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
@@ -13896,10 +13894,20 @@ What even is this though...?
 
 ;;; Code:
 
-;; (require 'ceamx-user)
+(defconst ceamx-reading-dir (concat ceamx-home-dir "Documents/reading/"))
 
-;; (use-feature! [newsticker]
-;;   (setopt newsticker-url-list ceamx-news-feed-url-list))
+(package! elfeed
+  (keymap-set ceamx-launch-map "f" #'elfeed))
+
+(package! elfeed-org
+  (require 'elfeed-org)
+
+  ;; When `elfeed' starts, `elfeed-org' will read the configuration.
+  (elfeed-org)
+
+  (setopt rmh-elfeed-org-files (list (locate-user-emacs-file "feeds.org")
+                                     ;; (file-name-concat ceamx-reading-dir "000-feeds.org")
+                                     )))
 
 
 
@@ -13908,8 +13916,11 @@ What even is this though...?
 #+end_src
 
 
-** TODO Feature name ~init-feeds~ does not match the filename =init-news.el=
+** DONE Feature name ~init-feeds~ does not match the filename =init-news.el=
+CLOSED: [2024-07-16 Tue 00:00]
 
+
+- State "DONE"       from "TODO"       [2024-07-16 Tue 00:00]
 
 * Surfing the Wild Web of Words
 
