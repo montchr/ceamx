@@ -8148,21 +8148,8 @@ Enable ~repeat-mode~, avoiding running mode-hooks too early:
 
 #+begin_src emacs-lisp
 (package! meow
-  (when (locate-library "which-key")
-    (require 'which-key))
   (require 'meow))
 #+end_src
-
-Meow's leader functionality has a custom keybinding visualization helper that
-looks almost exactly like ~which-key~ except that it is very buggy.  It does try
-to smooth over some of the guts of Meow, as ~which-key~ is cluttered with
-keybinding entries for ~meow-digit-argument~.  But even Meow's maintainers do not
-recommend using the custom keypad helper UI.
-
-Unfortunately, AFAIK there is no way to disable the UI feature explicitly
-without disabling the Keypad entirely.  The only way to prevent this feature from
-causing workflow issues is by installing ~which-key~ and letting Meow defer to
-~which-key~ for this kind of interface.
 
 *** Elpaca-Wait № 6: modal keybinding framework :wait:
 
@@ -8445,6 +8432,25 @@ This is the default behavior.
 #+begin_src emacs-lisp :tangle no
 (setopt meow-keypad-leader-dispatch "C-c")
 #+end_src
+
+**** Disable the broken keypad binding description popup
+
+Meow's leader functionality has a custom keybinding visualization helper that
+looks almost exactly like ~which-key~ except that it is very buggy.  It does try
+to smooth over some of the guts of Meow, as ~which-key~ is cluttered with
+keybinding entries for ~meow-digit-argument~.  But even Meow's maintainers do not
+recommend using the custom keypad helper UI.
+
+Fortunately, the keybinding description popup can be disabled:
+
+#+begin_src emacs-lisp
+;; NOTE: The variable is not defined with `defcustom'.
+(setq meow-keypad-describe-keymap-function nil)
+#+end_src
+
+<2024-07-15 Mon>: *Un*-fortunately, I have yet to figure out how to make
+~meow-keypad-describe-keymap-function~ compatible with manually calling
+~embark-describe-bindings~ by keybind (usually that would be {C-h}).
 
 *** Bind a toggle for ~meow-global-mode~
 
