@@ -9084,48 +9084,50 @@ Query syntax additions through style dispatchers:
 *** Configure custom completion styles
 
 #+begin_src emacs-lisp
-(setopt completion-styles '(+orderless-fast
-                            ;; orderless
-                            basic))
+(after! orderless
+  (setopt completion-styles '(+orderless-fast
+                              ;; orderless
+                              basic))
 
-(setopt completion-category-overrides
-        '(;; The "file" category override is required for TRAMP hostname
-          ;; completion.  "partial-completion" allows for wildcard/partial
-          ;; paths (e.g. "/u/s/l" for "/usr/share/local").
-          (file (styles basic partial-completion))))
+  (setopt completion-category-overrides
+          '(;; The "file" category override is required for TRAMP hostname
+            ;; completion.  "partial-completion" allows for wildcard/partial
+            ;; paths (e.g. "/u/s/l" for "/usr/share/local").
+            (file (styles basic partial-completion))))
 
-;; Available matching styles:
-;;
-;; - `orderless-regexp'
-;; - `orderless-literal'
-;; - `orderless-literal-prefix'
-;; - `orderless-prefixes' :: split component at word bounds and match word
-;;   bounds in candidate (in order)
-;; - `orderless-initialism' :: each char is the beginning of a word in
-;;   candidate, in order;  e.g. ‘abc’ => ‘\<.*\<b.*\c’
-;; - `orderless-flex' :: chars in component appear in candidate in order, but
-;;   not necessarily consecutively;  e.g. ‘abc’ => ‘a.*b.*c’
-;;
-;; <https://github.com/oantolin/orderless/blob/master/README.org#component-matching-styles>
-;; (setopt orderless-matching-styles (list #'orderless-literal
-;;                                         #'orderless-regexp))
+  ;; Available matching styles:
+  ;;
+  ;; - `orderless-regexp'
+  ;; - `orderless-literal'
+  ;; - `orderless-literal-prefix'
+  ;; - `orderless-prefixes' :: split component at word bounds and match word
+  ;;   bounds in candidate (in order)
+  ;; - `orderless-initialism' :: each char is the beginning of a word in
+  ;;   candidate, in order;  e.g. ‘abc’ => ‘\<.*\<b.*\c’
+  ;; - `orderless-flex' :: chars in component appear in candidate in order, but
+  ;;   not necessarily consecutively;  e.g. ‘abc’ => ‘a.*b.*c’
+  ;;
+  ;; <https://github.com/oantolin/orderless/blob/master/README.org#component-matching-styles>
+  ;; (setopt orderless-matching-styles (list #'orderless-literal
+  ;;                                         #'orderless-regexp))
 
-;; Style dispatchers:
-;;
-;; `orderless-affix-dispatch' :: support a mini-syntax using special
-;; characters as prefix or suffix, as follows:
-;;
-;; - '!' :: negate component with `orderless-not' e.g. "!bad" and "bad!" match
-;;          strings that do *not* contain "bad"
-;; - '&' :: match candidate by annotation with `orderless-annotation'
-;; - ',' :: use `orderless-initialism'
-;; - '=' :: use `orderless-literal'
-;; - '^' :: use `orderless-literal-prefix'
-;; - '~' :: use `orderless-flex'
-;; - '%' :: ignore diacritics and character inflections
-;; (setopt orderless-style-dispatchers (list #'orderless-affix-dispatch))
+  ;; Style dispatchers:
+  ;;
+  ;; `orderless-affix-dispatch' :: support a mini-syntax using special
+  ;; characters as prefix or suffix, as follows:
+  ;;
+  ;; - '!' :: negate component with `orderless-not' e.g. "!bad" and "bad!" match
+  ;;          strings that do *not* contain "bad"
+  ;; - '&' :: match candidate by annotation with `orderless-annotation'
+  ;; - ',' :: use `orderless-initialism'
+  ;; - '=' :: use `orderless-literal'
+  ;; - '^' :: use `orderless-literal-prefix'
+  ;; - '~' :: use `orderless-flex'
+  ;; - '%' :: ignore diacritics and character inflections
+  ;; (setopt orderless-style-dispatchers (list #'orderless-affix-dispatch))
 
 
+  )
 #+end_src
 
 ** COmpletion in Region FUnction :capfs:
