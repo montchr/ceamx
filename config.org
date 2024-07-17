@@ -9086,9 +9086,30 @@ Query syntax additions through style dispatchers:
     `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--consult-suffix))))))
 #+end_src
 
-*** DISABLED Define custom completion syntax styles
+*** Define custom completion syntax styles
 
-#+begin_src emacs-lisp :noweb-ref nil
+**** ~+orderless-fast-dispatch~
+
+- source :: <https://github.com/minad/corfu/blob/main/README.org#auto-completion>
+
+#+begin_src emacs-lisp
+(defun +orderless-fast-dispatch (word index total)
+  "Fast-dispatch `orderless' completion style for `corfu'."
+  (and (= index 0) (= total 1) (length< word 4)
+       (cons 'orderless-literal-prefix word)))
+#+end_src
+
+#+begin_src emacs-lisp
+(after! orderless
+  (orderless-define-completion-style +orderless-fast
+    "Fast completion style, intended for usage with `corfu'."
+    (orderless-style-dispatchers '(+orderless-fast-dispatch))
+    (orderless-matching-styles '(orderless-literal orderless-regexp))))
+#+end_src
+
+**** ~+orderless-with-initialism~
+
+#+begin_src emacs-lisp
 (after! orderless
   (orderless-define-completion-style +orderless-with-initialism
     (orderless-matching-styles '(orderless-initialism
