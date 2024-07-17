@@ -9137,7 +9137,8 @@ Query syntax additions through style dispatchers:
 #+begin_src emacs-lisp
 (package! corfu
   (setopt corfu-auto t
-          corfu-auto-delay 0.05)
+          corfu-auto-delay 0.2
+          corfu-auto-prefix 2)
   (setopt corfu-count 12
           corfu-cycle t
           corfu-max-width 80
