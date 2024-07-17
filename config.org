@@ -9340,6 +9340,9 @@ This was not my idea, and I would like to savor the full ~dabbrev~ experience
 ;; applied by a mode hook but then never removed...?
 
 (package! cape
+  ;; Ensure keymap availability.
+  (require 'cape)
+
   (setopt cape-dabbrev-check-other-buffers t)
 
   (def-hook! +corfu-add-cape-file-h ()
