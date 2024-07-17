@@ -9144,13 +9144,17 @@ Query syntax additions through style dispatchers:
           corfu-max-width 80
           corfu-min-width 25
           corfu-scroll-margin 5)
-  (setopt corfu-on-exact-match 'insert
-          corfu-preselect 'prompt)
-
   ;; "SPC" => Same as the Orderless field separator.
-  (setopt corfu-separator ?\s
+  (setopt corfu-separator ?\s)
+  (setopt corfu-on-exact-match 'insert
+          corfu-preselect 'prompt
           corfu-quit-at-boundary 'separator
           corfu-quit-no-match t)
+
+  ;; Prevent excessive completion-spamming.
+  ;; Without this, on Emacs 30.0, typing causes constant `corfu' errors.
+  ;; <https://github.com/minad/corfu/discussions/457>
+  (setopt text-mode-ispell-word-completion nil)
 
   (global-corfu-mode))
 #+end_src
@@ -12846,10 +12850,6 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 #+end_src
 
 #+begin_src emacs-lisp
-;; Prevent excessive completion-spamming.
-;; Without this, on Emacs 30.0, typing causes constant `corfu' errors.
-;; <https://github.com/minad/corfu/discussions/457>
-(setopt text-mode-ispell-word-completion nil)
 #+end_src
 
 ** [[https://github.com/minad/jinx][minad/jinx]]: the enchanted spell checker :broken:
