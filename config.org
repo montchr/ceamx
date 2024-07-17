@@ -9159,6 +9159,20 @@ Query syntax additions through style dispatchers:
   (global-corfu-mode))
 #+end_src
 
+*** Conditionally enable/disable Corfu in minibuffers :minibuffer:
+
+#+begin_src emacs-lisp
+(defun +corfu-minibuffer-enable-p ()
+  "Whether to enable `corfu' completion in a currently-active minibuffer."
+  (not (or (bound-and-true-p mct--active)
+           (bound-and-true-p vertico--input)
+           (eq (current-local-map) read-passwd-map))))
+#+end_src
+
+#+begin_src emacs-lisp
+(setopt global-corfu-minibuffer #'+corfu-minibuffer-enable-p)
+#+end_src
+
 *** Customize the ~corfu-map~ transient keybindings
 
 These will be available when a ~corfu~ prompt is active.
