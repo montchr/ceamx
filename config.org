@@ -9082,7 +9082,9 @@ Query syntax additions through style dispatchers:
 *** Configure custom completion styles
 
 #+begin_src emacs-lisp
-(setopt completion-styles '(orderless basic))
+(setopt completion-styles '(+orderless-fast
+                            ;; orderless
+                            basic))
 
 (setopt completion-category-overrides
         '(;; The "file" category override is required for TRAMP hostname
