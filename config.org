@@ -9019,6 +9019,8 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 #+begin_src emacs-lisp
 (package! orderless
+  (require 'orderless)
+
   ;; Allow escaping space with backslash.
   (setopt orderless-component-separator #'orderless-escapable-split-on-space))
 #+end_src
