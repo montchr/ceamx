@@ -20,9 +20,11 @@ on WSL2 when E is running MS Windows, however that is a very low priority.
 *** CANCELLED <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
 CLOSED: [2024-07-14 Sun 21:34]
 - State "CANCELLED"  from "TODO"       [2024-07-14 Sun 21:34]
-*** INPRG <https://orgmode.org/worg/org-contrib/org-choose.html>
+*** DONE <https://orgmode.org/worg/org-contrib/org-choose.html>
+CLOSED: [2024-07-16 Tue 00:17]
 
 
+- State "DONE"       from "INPRG"      [2024-07-16 Tue 00:17]
 - State "INPRG"      from "TODO"       [2024-07-14 Sun 21:41] \\
   See section on ~org-contrib~
 ** Styleguide
