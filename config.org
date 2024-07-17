@@ -6990,6 +6990,12 @@ writable or with a prefix argument, then read a file to visit."
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
 #+end_src
 
+** Scratch Buffers
+
+#+begin_src emacs-lisp
+(keymap-set ceamx-launch-map "s" #'scratch-buffer)
+#+end_src
+
 ** DISABLED Beframe :package:
 :PROPERTIES:
 :header-args: :noweb-ref nil
