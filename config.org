@@ -9340,7 +9340,7 @@ This was not my idea, and I would like to savor the full ~dabbrev~ experience
 ;; applied by a mode hook but then never removed...?
 
 (package! cape
- (setopt cape-dabbrev-check-other-buffers t)
+  (setopt cape-dabbrev-check-other-buffers t)
 
   (def-hook! +corfu-add-cape-file-h ()
     'prog-mode-hook
@@ -9382,25 +9382,7 @@ This was not my idea, and I would like to savor the full ~dabbrev~ experience
   ;; "Character Mnemonics & Character Sets": <https://datatracker.ietf.org/doc/html/rfc1345>
   ;; (add-to-list 'completion-at-point-functions #'cape-rfc1345)
 
-  (define-keymap :keymap (current-global-map)
-    "M-p p" #'completion-at-point ;; capf
-    "M-p t" #'complete-tag        ;; etags
-    "M-p d" #'cape-dabbrev        ;; or dabbrev-completion
-    "M-p h" #'cape-history
-    "M-p f" #'cape-file
-    "M-p k" #'cape-keyword
-    "M-p s" #'cape-elisp-symbol
-    "M-p e" #'cape-elisp-block
-    "M-p a" #'cape-abbrev
-    "M-p l" #'cape-line
-    "M-p w" #'cape-dict
-    "M-p :" #'cape-emoji
-    "M-p &" #'cape-sgml
-    ;; RFC 1345 -- Character Mnemonics and Character Sets
-    ;; <https://datatracker.ietf.org/doc/html/rfc1345#section-3>
-    ;; FIXME: no effect
-    ;; Example:	l* => λ
-    "M-p r" #'cape-rfc1345))
+  (keymap-global-set "C-c p" cape-prefix-map))
 #+end_src
 
 **** Advise some modes' completion-at-point functions to work alongside ~cape~
