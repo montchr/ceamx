@@ -297,6 +297,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-tools)
 
 (require 'init-term)
+(require 'init-news)
 (require 'init-eww)
 (require 'init-printing)
 
@@ -351,6 +352,9 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
   (when (file-exists-p custom-file)
     (load custom-file 'noerror)))
 (add-hook 'ceamx-after-init-hook #'ceamx/load-custom-file)
+(add-hook 'ceamx-after-init-hook
+          (lambda ()
+            (load (locate-user-emacs-file "chaos.el") t)))
 
 (provide 'init)
 ;;; init.el ends here

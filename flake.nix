@@ -30,6 +30,11 @@
             {
               devshell.name = "Ceamx";
               commands = [
+                # TODO: remove this temporary stuff for mail testing
+                (tool pkgs.pizauth)
+                (tool pkgs.msmtp)
+                (tool pkgs.isync)
+
                 (tool pkgs.just)
                 (formatter pkgs.nixfmt-rfc-style)
               ];
