@@ -14566,6 +14566,42 @@ some separate binaries.
 
 ** TODO <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
 ** TODO =saveplace-pdf-view=
+** I Ching / Yijing / Yi
+
+Unfortunately, due to copyright restrictions, there are no modern translations
+available for legal distribution.
+
+*** DISABLED [[https://github.com/zzkt/i-ching][zzkt/i-ching]] (via MELPA)
+:PROPERTIES:
+:header-args:emacs-lisp: :noweb-ref nil
+:END:
+
+Does not support changing line commentaries!
+
+#+begin_src emacs-lisp
+(package! i-ching
+  (setopt i-ching-hexagram-size 18
+          i-ching-hexagram-font "DejaVu Sans"
+          i-ching-divination-method '3-coins
+          i-ching-randomness-source 'pseudo)
+
+  (keymap-set ceamx-insert-map "h" #'i-ching-insert-hexagram))
+#+end_src
+
+*** emacswiki:i-ching.el
+
++ src :: https://www.emacswiki.org/emacs/i-ching.el
+
+This package is generally more *interesting* than the simpler and
+more-discoverable [[https://github.com/zzkt/i-ching][=i-ching= package on MELPA]].  It also, most importantly,
+supports the display of commentaries on individual changing lines.
+
+
+#+begin_src emacs-lisp
+(require 'i-ching)
+#+end_src
+
+**
 
 #+begin_src emacs-lisp
 ;; (use-package saveplace-pdf-view
