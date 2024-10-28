@@ -7464,36 +7464,48 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 ;;; Provide "Casual" transient menus for complex modes
 
-;; Hard requirement for all other Casual packages.
-(package! casual-lib
-  (require 'casual-lib))
+(package! casual-suite
+  (require 'casual-suite)
 
-;; <https://github.com/kickingvegas/casual-avy>
-(package! casual-avy
+  (keymap-global-set "C-o" #'casual-editkit-main-tmenu)
+  (keymap-set symbol-overlay-map "C-o" #'casual-symbol-overlay-tmenu)
+
+  ;; <https://github.com/kickingvegas/casual-avy>
   ;; M-g M-g
-  (keymap-set goto-map "M-g" #'casual-avy))
+  (keymap-set goto-map "M-g" #'casual-avy-tmenu)
 
-;; <https://github.com/kickingvegas/casual-calc>
-(package! casual-calc
+  ;; <https://github.com/kickingvegas/casual-calc>
   (after! calc
     (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu))
   (after! calc-alg
-    (keymap-set calc-alg-map "C-o" #'casual-calc-tmenu)))
+    (keymap-set calc-alg-map "C-o" #'casual-calc-tmenu))
 
-;; <https://github.com/kickingvegas/casual-dired>
-(package! casual-dired
+  ;; <https://github.com/kickingvegas/casual-dired>
   (after! dired
-    (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)))
+    (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu))
 
-;; <https://github.com/kickingvegas/casual-info>
-(package! casual-info
+  ;; <https://github.com/kickingvegas/casual-info>
   (after! info
-    (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)))
+    (keymap-set Info-mode-map "C-o" #'casual-info-tmenu))
 
-;; <https://github.com/kickingvegas/casual-isearch>
-(package! casual-isearch
+  ;; <https://github.com/kickingvegas/casual-isearch>
   (after! isearch
-    (keymap-set isearch-mode-map "<f2>" #'casual-isearch-tmenu)))
+    (keymap-set isearch-mode-map "<f2>" #'casual-isearch-tmenu))
+
+  (after! ibuffer
+    (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
+    (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
+    (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu))
+
+  (after! re-builder
+    (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
+    (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu))
+
+  (after! bookmark
+    (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu))
+
+  (after! org-agenda
+    (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)))
 
 ;;; `Info-mode' enchantments
 
