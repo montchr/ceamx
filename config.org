@@ -13638,10 +13638,7 @@ Outside these contexts, the commands will throw an error.
     "M-g o" #'consult-org-heading))
 #+END_SRC
 
-*** DISABLED Define the ~org-mode-navigation-repeat-map~ for tree navigation
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
+*** Define the ~org-mode-navigation-repeat-map~ for tree navigation
 
 This will conflict with ~meow-org-motion-mode~, so only one should be tangled at a time.
 

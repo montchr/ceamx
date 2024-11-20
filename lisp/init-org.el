@@ -255,6 +255,33 @@ Intended for use as a local hook function on
 
     ;; Override earlier binding to `consult-outline'.
     "M-g o" #'consult-org-heading))
+;; TODO: Activate with a dedicated easy-to-access binding...
+;;       Maybe the same binding for other per-major mode navigation maps?
+(defvar-keymap org-mode-navigation-repeat-map
+  :repeat t
+  ;; Double-edged sword; quick, but gets in the way usually.
+  ;; "TAB" #'org-cycle
+  ;; "S-TAB" #'org-cycle-global
+
+  "C-n" #'org-next-visible-heading
+  "C-p" #'org-previous-visible-heading
+  "C-f" #'org-forward-heading-same-level
+  "C-b" #'org-backward-heading-same-level
+  "C-u" #'outline-up-heading
+
+  "n" #'org-next-visible-heading
+  "p" #'org-previous-visible-heading
+  "f" #'org-forward-heading-same-level
+  "b" #'org-backward-heading-same-level
+  "u" #'outline-up-heading
+
+  "H" #'org-promote-subtree
+  "J" #'org-move-subtree-down
+  "K" #'org-move-subtree-up
+  "L" #'org-demote-subtree
+
+  "<" #'org-promote-subtree
+  ">" #'org-demote-subtree)
 
 (provide 'init-org)
 ;;; init-org.el ends here
