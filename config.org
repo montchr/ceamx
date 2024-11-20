@@ -1379,7 +1379,7 @@ mutation of a variable.
 - [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
 
 
-* Before Dawn: =early-init.el=
+* Before Dawn :: =early-init.el=
 :PROPERTIES:
 :header-args: :tangle early-init.el :comments both
 :END:
@@ -1651,7 +1651,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 
 
-* Common Libraries :: =lisp/core/ceamx-*.el=
+* Common Libraries :: =core/ceamx-*=
 
 ** =lisp/core/ceamx-paths.el= :: Paths
 
@@ -3083,7 +3083,7 @@ expect the value you arrive at to be as high as 100 MiB.
 
 
 
-* TODO The Bucket of Uncertainty
+* =init.el=: The Bucket of Uncertainty
 :PROPERTIES:
 :header-args: :tangle init.el
 :END:
@@ -3341,7 +3341,7 @@ POS defaults to the current position."
 ** TODO Consolidate ~lib-simple~ and ~lib-text~
 
 
-* Environment
+* Environment :: =env=
 
 ** Options / Variables
 
@@ -3640,7 +3640,7 @@ buffer, as a buffer-local variable.
 #+end_src
 
 
-* Secrets
+* Secrets :: =secrets= :secrets:
 
 ** Customizations
 
@@ -3785,7 +3785,7 @@ buffer, as a buffer-local variable.
 #+end_src
 
 
-* Appearance
+* Appearance :: =ui= :ui:
 :PROPERTIES:
 :header-args: :noweb-ref init-ui
 :END:
@@ -4928,7 +4928,7 @@ will be used as default."
 
 
 
-* Window Management
+* Window Management :: =window= :window:
 :PROPERTIES:
 :header-args: :noweb-ref init-window
 :END:
@@ -5697,7 +5697,7 @@ available, `switchy-window'."
 #+end_src
 
 
-* Buffer
+* Buffer :: =buffer= :buffer:
 :PROPERTIES:
 :header-args: :noweb-ref init-buffer
 :END:
@@ -5947,7 +5947,7 @@ See also [[*General buffer display settings]]
 #+end_src
 
 
-* Editor
+* Editing :: =editor= :editing:
 :PROPERTIES:
 :header-args: :noweb-ref init-editor
 :END:
@@ -6666,7 +6666,7 @@ its bindings generally would need ~puni-mode~ to be active.
 #+end_src
 
 
-* Files
+* Files :: =files= :files:
 :PROPERTIES:
 :header-args: :noweb-ref init-files
 :END:
@@ -6958,7 +6958,7 @@ writable or with a prefix argument, then read a file to visit."
 #+end_src
 
 
-* Workspace
+* Workspace :: =workspace= :workspace:
 :PROPERTIES:
 :header-args: :noweb-ref init-workspace
 :END:
@@ -7252,7 +7252,8 @@ Intended for use as a hook on `ceamx-after-init-hook'."
     "C-x b" #'bufler-switch-buffer))
 #+end_src
 
-* Help
+
+* Help :: =help= :help:
 
 ** Define the directory containing cheatsheets
 
@@ -7624,7 +7625,7 @@ DOC is as in `devdocs-install'."
 #+end_src
 
 
-* History
+* History :: =history= :history:
 
 #+begin_src emacs-lisp :tangle lisp/init-history.el
 ;;; init-history.el --- History management           -*- lexical-binding: t; -*-
@@ -7803,7 +7804,7 @@ DOC is as in `devdocs-install'."
 #+end_src
 
 
-* Search
+* Search :: =search= :search:
 :PROPERTIES:
 :header-args: :noweb-ref init-search
 :END:
@@ -7978,7 +7979,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+end_src
 
 
-* Input Methods
+* Input Methods :: =input-methods=
 
 #+begin_src emacs-lisp :tangle lisp/init-input-methods.el
 ;;; init-input-methods.el --- Configuration for input methods  -*- lexical-binding: t; -*-
@@ -8041,7 +8042,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 
 
-* Keys
+* Keys :: =keys= :keys:
 :PROPERTIES:
 :header-args: :noweb-ref init-keys
 :END:
@@ -8609,33 +8610,31 @@ as the CHAR argument to `ceamx-normalize-char'."
 
 
 
-* Text Expansion
-
-** Abbrevs (~abbrev-mode~)
+* Abbrevs (~abbrev-mode~) :: =abbrevs=
 :PROPERTIES:
 :header-args: :noweb-ref init-abbrevs
 :END:
 
-*** Re-locate the abbrev file to the ~user-emacs-directory~ for quick access
+** Re-locate the abbrev file to the ~user-emacs-directory~ for quick access
 
 #+begin_src emacs-lisp
 (setopt abbrev-file-name (locate-user-emacs-file "abbrev-defs"))
 #+end_src
 
-*** Load custom abbrevs from ~abbrev-file-name~
+** Load custom abbrevs from ~abbrev-file-name~
 
 #+begin_src emacs-lisp
 (when (file-exists-p abbrev-file-name)
   (quietly-read-abbrev-file))
 #+end_src
 
-*** Display suggestions for available abbrevs
+** Display suggestions for available abbrevs
 
 #+begin_src emacs-lisp
 (setopt abbrev-suggest t)
 #+end_src
 
-*** DISABLED Allow abbrevs with a prefix colon, semicolon, or underscore
+** DISABLED Allow abbrevs with a prefix colon, semicolon, or underscore
 
 Disabled to test interference with other completion-at-point behavior wired
 together through [[*Completion-At-Point Extensions (Cape)]].
@@ -8662,7 +8661,7 @@ Adapted from Prot's original version with the following changes:
     (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
 #+end_src
 
-*** Enable =abbrev-mode=
+** Enable =abbrev-mode=
 
 #+begin_src emacs-lisp
 (dolist (hook '(text-mode-hook prog-mode-hook git-commit-mode-hook))
@@ -8672,7 +8671,7 @@ Adapted from Prot's original version with the following changes:
 
 
 
-* Completions and Selections :completions:
+* Completions and Selections :: =completion= :completions:completion:
 :PROPERTIES:
 :header-args: :noweb-ref init-completion
 :END:
@@ -9448,7 +9447,7 @@ This was not my idea, and I would like to savor the full ~dabbrev~ experience
 #+end_src
 
 
-* Embark
+* Actions :: =embark= :actions:embark:
 
 #+begin_quote
 Emacs Mini-Buffer Actions Rooted in Keymaps
@@ -9586,7 +9585,7 @@ Embark will load the library automatically after Consult.
 #+end_src
 
 
-* Terminal Emulation
+* Terminal Emulation :: =term=
 
 #+begin_src emacs-lisp :tangle lisp/init-term.el
 ;;; init-term.el --- Terminal emulators inside Emacs  -*- lexical-binding: t; -*-
@@ -9650,7 +9649,7 @@ Embark will load the library automatically after Consult.
 #+end_src
 
 
-* Version Control (Git)
+* Version Control (Git) :: =vcs= :vcs:git:
 :PROPERTIES:
 :header-args:emacs-lisp: :noweb-ref init-vcs
 :END:
@@ -9947,7 +9946,7 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 #+end_src
 
 
-* Projects
+* Projects :: =project= :projects:
 
 #+begin_src emacs-lisp :noweb-ref config-feature-paths
 (defconst ceamx-projects-dir
@@ -9994,12 +9993,12 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 ** DISABLED Projectile
 
 
-* Checkers (Flycheck + Flymake)
+* Checkers (Flycheck + Flymake) :linter:checkers:
 
 <https://www.flycheck.org/en/latest/index.html>
 <https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
 
-*** Flycheck
+*** Flycheck :: =flycheck=
 :PROPERTIES:
 :header-args: :noweb-ref init-flycheck
 :END:
@@ -10047,7 +10046,7 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
     (require 'consult-flycheck)))
 #+end_src
 
-*** Flymake [builtin]
+*** Flymake [builtin] :: =flymake=
 :PROPERTIES:
 :header-args: :noweb-ref init-flymake
 :END:
@@ -10130,7 +10129,7 @@ Mirror the Flycheck default prefix of =C-c !=
 #+end_src
 
 
-* Template Expansion
+* Template Expansion :: =templates= :snippets:
 :PROPERTIES:
 :header-args: :noweb-ref init-templates
 :END:
@@ -10365,7 +10364,7 @@ avoid further confusion.
 *** TODO Add this package's Tempo templates to Tempel
 
 
-* Language Support
+* Language Support :lang:
 
 ** General Programming (~prog-mode~ derived modes)
 
@@ -10503,7 +10502,6 @@ Intended for use as a hook callback on `prog-mode-hook'."
 (provide 'init-prog)
 ;;; init-prog.el ends here
 #+end_src
-
 
 ** Tree-Sitter
 :PROPERTIES:
@@ -12775,7 +12773,7 @@ their own initialization files.
 #+end_src
 
 
-* Outlines
+* Outlines :: =outline= :outline:
 :PROPERTIES:
 :header-args: :noweb-ref init-outline
 :END:
@@ -12890,7 +12888,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 #+end_src
 
 
-* Writing
+* Writing :: =writing= :writing:
 :PROPERTIES:
 :header-args: :noweb-ref init-writing
 :END:
@@ -12935,7 +12933,7 @@ enchant-lsmod-2 -list-dicts
 #+end_src
 
 
-* Notetaking
+* Notetaking :: =notes= :notes:writing:
 :PROPERTIES:
 :header-args: :noweb-ref init-notes
 :END:
@@ -13116,7 +13114,7 @@ Create the directories if they don't already exist (to prevent errors):
 #+end_src
 
 
-* Org-Mode
+* Org-Mode :: =org= :org:
 :PROPERTIES:
 :header-args: :noweb-ref init-org
 :END:
@@ -13727,7 +13725,7 @@ What even is this though...?
 #+end_src
 
 
-* Dashboard (powered by =enlight=)
+* Dashboard :: =dashboard= :dashboard:
 :PROPERTIES:
 :header-args: :noweb-ref init-dashboard
 :END:
@@ -13792,7 +13790,7 @@ What even is this though...?
 ;;                          :width 50)))
 #+end_src
 
-* Dired, the Directory Editor
+* Dired, the Directory Editor :: =dired= :dired:
 
 #+begin_src emacs-lisp :tangle lisp/init-dired.el
 ;;; init-dired.el --- Dired -*- lexical-binding: t -*-
@@ -13890,7 +13888,7 @@ What even is this though...?
 ;;; init-dired.el ends here
 #+end_src
 
-* Printing
+* Printing :: =printing=
 
 #+begin_src emacs-lisp :tangle lisp/init-printing.el
 ;;; init-printing.el --- Support for printing documents  -*- lexical-binding: t; -*-
@@ -13939,7 +13937,7 @@ What even is this though...?
 **
 
 
-* Newsreader (=elfeed=)
+* Newsreader :: =news= :news:
 
 #+begin_src emacs-lisp :tangle lisp/init-news.el
 ;;; init-news.el --- News feed (RSS/Atom) subscription support  -*- lexical-binding: t; -*-
@@ -13999,7 +13997,7 @@ CLOSED: [2024-07-16 Tue 00:00]
 
 - State "DONE"       from "TODO"       [2024-07-16 Tue 00:00]
 
-* Surfing the Wild Web of Words
+* Surfing the Wild Web of Words :: =eww= :web:
 
 #+begin_src emacs-lisp :tangle lisp/init-eww.el
 ;;; init-eww.el --- Surfing the Wild Web of Words  -*- lexical-binding: t; -*-
@@ -14274,8 +14272,7 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 
 *** [[https://gitlab.com/howardabrams/spacemacs.d/-/blob/51196e861da9a76a02f1159397ba85b936cdfe27/layers/ha-eww/funcs.el][layers/ha-eww/funcs.el · 51196e861da9a76a02f1159397ba85b936cdfe27 · Howard Abrams / spacemacs.d · GitLab]]
 
-
-* Tools
+* Tools :: =tools= :tools:
 :PROPERTIES:
 :header-args: :noweb-ref init-tools
 :END:
@@ -14588,8 +14585,7 @@ supports the display of commentaries on individual changing lines.
 ;;   :defer 5)
 #+end_src
 
-
-* "Fun"
+* "Fun" :: =fun= :fun:
 
 #+begin_src emacs-lisp :tangle lisp/init-fun.el
 ;;; init-fun.el --- Configure the fun                -*- lexical-binding: t; -*-
@@ -14708,7 +14704,8 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
             (load (locate-user-emacs-file "chaos.el") t)))
 #+end_src
 
-* Append file footers
+
+* File Footers
 :PROPERTIES:
 :header-args:emacs-lisp: :noweb yes :comments no :tangle no
 :END:
@@ -14720,6 +14717,7 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 #+begin_src emacs-lisp :tangle init.el
 <<file-footer(feature="init")>>
 #+end_src
+
 
 ** Libraries (=lib-*.el=)
 
