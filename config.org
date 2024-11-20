@@ -82,129 +82,6 @@ instead, use a =-flag= suffix or names like =is-foo=.
 :END:
 
 ** Target Files
-*** =lisp/lib-tools.el=
-
-#+name: lib-tools-file
-#+begin_src emacs-lisp :tangle lisp/lib-tools.el
-<<file-prop-line(feature="lib-tools",desc="Library for miscellaneous tooling")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-tools>>
-
-<<file-footer(feature="lib-tools")>>
-#+end_src
-
-*** =lisp/core/ceamx-lib.el=
-
-#+name: ceamx-lib-file
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el
-<<file-prop-line(feature="ceamx-lib",desc="Ceamx common library")>>
-
-;; Copyright (C) 2023-2024  Chris Montgomery <chmont@proton.me>
-;; Copyright (C) 2014-2023  Henrik Lissner
-;; Copyright (C) 2006-2021  Steve Purcell
-;; Copyright (C) 2016–2022  Radian LLC and contributors
-;; Copyright (C) 2018  Adam Porter
-;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
-;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;;         Henrik Lissner
-;;         Steve Purcell
-;;         Radon Rosborough <radon@intuitiveexplanations.com>
-;;         Adam Porter <adam@alphapapa.net>
-;;         Bailey Ling <bling@live.ca>
-;;         7696122 <7696122@gmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-
-<<file-license>>
-<<file-license-mit>>
-<<file-license-bsd-2-clause>>
-
-;;; Commentary:
-;;; Code:
-
-<<ceamx-lib>>
-
-<<file-footer(feature="ceamx-lib")>>
-#+end_src
-
-*** =lisp/init-env.el=
-
-#+name: init-env-file
-#+begin_src emacs-lisp :tangle lisp/init-env.el
-<<file-prop-line(feature="init-env",desc="Environmental integrations")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-env>>
-
-<<file-footer(feature="init-env")>>
-#+end_src
-
-*** =lisp/init-keys.el=
-
-#+name: init-keys-file
-#+begin_src emacs-lisp :tangle lisp/init-keys.el
-<<file-prop-line(feature="init-keys",desc="Keybindings")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-keys>>
-
-<<file-footer(feature="init-keys")>>
-#+end_src
-
-*** =lisp/lib-keys.el=
-
-#+name: lib-keys-file
-#+begin_src emacs-lisp :tangle lisp/lib-keys.el
-<<file-prop-line(feature="lib-keys",desc="Keybinding helper library")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-keys>>
-
-<<file-footer(feature="lib-keys")>>
-#+end_src
-
 *** =lisp/config-keys.el=
 
 #+name: config-keys-file
@@ -1371,7 +1248,6 @@ default source file."
 #+end_src
 
 
-
 ** Debugging
 
 - Source :: [[https://github.com/progfolio/.emacs.d/blob/master/init.org?plain=1][.emacs.d/init.org at master · progfolio/.emacs.d]]
@@ -1690,9 +1566,9 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 
 
-* Common Libraries
+* Common Libraries :: =lisp/core/ceamx-*.el=
 
-** Paths
+** =lisp/core/ceamx-paths.el= :: Paths
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el
 ;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
@@ -1805,7 +1681,7 @@ Emacs version to prevent bytecode incompatibility.")
 #+end_src
 
 
-** Keymaps
+** =lisp/core/ceamx-keymaps.el= :: Keymap Definitions
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :noweb yes
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
@@ -1872,9 +1748,9 @@ Emacs version to prevent bytecode incompatibility.")
 #+end_src
 
 
-** Functions & Macros
+** =lisp/core/ceamx-lib.el= :: Core Functions & Macros
 :PROPERTIES:
-:header-args: :noweb-ref ceamx-lib
+:header-args: :tangle lisp/core/ceamx-lib.el :comments both
 :END:
 
 - src :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
@@ -1888,6 +1764,44 @@ General, common, and generic library functions.
 
 Avoid any library dependencies which are not already part of Emacs.  This
 library will be loaded before packages are available.
+
+*** File Header
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el :noweb yes :comments no
+<<file-prop-line(feature="ceamx-lib",desc="Ceamx common library")>>
+
+;; Copyright (C) 2023-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (C) 2014-2023  Henrik Lissner
+;; Copyright (C) 2006-2021  Steve Purcell
+;; Copyright (C) 2016–2022  Radian LLC and contributors
+;; Copyright (C) 2018  Adam Porter
+;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
+;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;;         Henrik Lissner
+;;         Steve Purcell
+;;         Radon Rosborough <radon@intuitiveexplanations.com>
+;;         Adam Porter <adam@alphapapa.net>
+;;         Bailey Ling <bling@live.ca>
+;;         7696122 <7696122@gmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+
+<<file-license>>
+<<file-license-mit>>
+<<file-license-bsd-2-clause>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
+*** Dependencies
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+begin_src emacs-lisp
 (require 'cl-lib)
@@ -1985,7 +1899,6 @@ things you want byte-compiled in them! Like function/macro definitions."
             (`(after! (:and ,@package) ,@body))))))
 
 #+end_src
-
 
 **** ~defer!~: Evaluate an expression after Emacs is idle for some time
 
@@ -2256,7 +2169,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 #+end_src
 
 
-** Strings
+* =lisp/config-common.el= :: Miscellaneous Settings
 
 #+begin_src emacs-lisp :tangle lisp/config-common.el
 ;;; config-common.el --- Common and miscellaneous configuration settings  -*- lexical-binding: t; -*-
@@ -14721,6 +14634,12 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 
 #+begin_src emacs-lisp :tangle init.el
 <<file-footer(feature="init")>>
+#+end_src
+
+** Libraries (=lib-*.el=)
+
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el :comments no :noweb yes
+<<file-footer(feature="ceamx-lib")>>
 #+end_src
 
 
