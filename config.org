@@ -6366,6 +6366,7 @@ non-nil, buffers will never be formatted upon save."
 - Source :: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
 
 #+begin_src emacs-lisp
+;; FIXME: only add advice after package load!!!
 (def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
   :around #'save-buffer
   "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
@@ -11705,7 +11706,7 @@ Unless PROGRAM is provided, the program name used in
 #+begin_src emacs-lisp
 ;; TODO: add bindings
 
-(package! json-navigator)
+;; (package! json-navigator)
 #+end_src
 
 *** TOML
@@ -14389,7 +14390,10 @@ Providing integrations with LLMs and other simulation machines.
 
 M is not eager to board the train bound for Hype City.
 
-*** [[https://github.com/xenodium/chatgpt-shell/blob/main/README.org][xenodium/chatgpt-shell]]
+*** DISABLED [[https://github.com/xenodium/chatgpt-shell/blob/main/README.org][xenodium/chatgpt-shell]]
+:PROPERTIES:
+:header-args:emacs-lisp: :noweb-ref nil
+:END:
 
 #+begin_src emacs-lisp :noweb-ref config-feature-paths
 (defconst ceamx-tools-chatgpt-shell-cache-dir
