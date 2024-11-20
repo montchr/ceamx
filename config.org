@@ -14713,11 +14713,10 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
             (load (locate-user-emacs-file "chaos.el") t)))
 #+end_src
 
-** Append file footers
+* Append file footers
 :PROPERTIES:
-:header-args:emacs-lisp: :noweb yes :comments no
+:header-args:emacs-lisp: :noweb yes :comments no :tangle no
 :END:
-
 
 #+begin_src emacs-lisp :tangle early-init.el
 <<file-footer(feature="early-init")>>
