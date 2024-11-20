@@ -81,64 +81,6 @@ instead, use a =-flag= suffix or names like =is-foo=.
 :VISIBILITY: folded
 :END:
 
-** =init.el=
-:PROPERTIES:
-:header-args: :noweb-ref init
-:END:
-
-#+begin_src emacs-lisp
-(require 'cl-lib)
-
-;; Core variables
-(require 'ceamx-paths)
-(require 'ceamx-keymaps)
-
-;; Core functions and macros
-(require 'ceamx-lib)
-
-(setq-default user-full-name "Chris Montgomery"
-              user-mail-address "chmont@proton.me")
-#+end_src
-
-*** Profiling
-
-- source :: <https://github.com/progfolio/.emacs.d/blob/ed159dc6076664ad9976949d8cb3af8e86fe39d1/init.org#profiling>
-
-#+begin_src emacs-lisp :lexical t
-(add-hook 'ceamx-after-init-hook
-          (lambda ()
-            (message "Emacs loaded in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract (current-time) before-init-time)))
-                     gcs-done)))
-#+end_src
-
-Optionally, display a report after startup:
-
-#+begin_src emacs-lisp :lexical t :noweb-ref nil
-(profiler-start 'cpu+mem)
-(add-hook 'ceamx-after-init-hook (lambda () (profiler-stop) (profiler-report)))
-#+end_src
-
-ELP is useful for seeing which functions in a package are "hot":
-
-#+begin_src emacs-lisp :var file="elpaca" :lexical t :noweb-ref nil
-(require 'elp)
-(with-eval-after-load file
-  (elp-instrument-package file))
-(add-hook ceamx-after-init-hook
-          (lambda () (elp-results) (elp-restore-package (intern file))))
-#+end_src
-
-#+begin_src emacs-lisp :noweb yes
-<<ceamx-bootstrap>>
-
-<<ceamx-init-features>>
-
-<<ceamx-postlude>>
-#+end_src
-
 ** Target Files
 *** =lisp/lib-tools.el=
 
@@ -1476,70 +1418,289 @@ mutation of a variable.
 - [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
 
 
-* TODO The Bucket of Uncertainty
+* Before Dawn: =early-init.el=
 :PROPERTIES:
-:header-args: :noweb-ref ceamx-postlude
+:header-args: :tangle early-init.el :comments both
 :END:
 
-Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
+#+begin_src emacs-lisp :tangle early-init.el :startup folded :noweb yes :comments no
+<<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
 
-Or, perhaps more accurately: stuff that needs a better home.
-
-** TODO ~hippie-expand~
-
-#+begin_src emacs-lisp
-(setopt hippie-expand-verbose t
-        hippie-expand-dabbrev-skip-space t)
-#+end_src
-
-#+begin_src emacs-lisp
-;; These are mostly from the default value, for visibility.
-(setopt hippie-expand-try-functions-list
-        '(try-complete-file-name-partially
-          try-complete-file-name
-
-          ;; Remove `try-expand-all-abbrevs' to disable automatic abbrev expansion.
-          try-expand-all-abbrevs
-
-          try-expand-list
-
-          ;; TODO: enable for shell modes only?
-          ;; try-expand-line
-
-          try-expand-dabbrev            ; see: `dabbrev-expand'
-          try-expand-dabbrev-all-buffers
-          ;; try-expand-dabbrev-from-kill
-
-          ;; Redundant with `completion-at-point'... *except* in the literate
-          ;; config file, where elisp symbols won't normally be available.
-          ;; TODO: enable for config.org
-          ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
-          ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
-          ))
-#+end_src
-
-
-** The Keybindings of Uncertainty :keybinds:
-
-#+begin_src emacs-lisp
-(define-keymap :keymap ceamx-session-map
-  "q" #'save-buffers-kill-emacs
-  "Q" #'kill-emacs)
-#+end_src
-
-** =lib-simple=: The Library of Uncertain Simplicity
-
-#+begin_src emacs-lisp :tangle lisp/lib-simple.el :noweb-ref nil
-;;; lib-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-;; Copyright (C) 2020-2023  Protesilaos Stavrou
-;; Copyright (c) 2023  Bruno Boal <egomet@bboal.com>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
 
 ;; Author: Chris Montgomery <chmont@proton.me>
-;;         Protesilaos Stavrou <info@protesilaos.com>
-;;         Bruno Boal <egomet@bboal.com>
-;; Keywords: local, convenience
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
+** Prevent package.el from enabling all packages before init
+
+- [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
+
+
+When nil and using the builtin package manager, ~package-initialize~ must be
+invoked in the init process prior to ~require~ing any packages installed with
+~package-install~.
+
+When non-nil, there is no need to invoke ~package-initialize~.
+
+#+begin_src emacs-lisp
+(setq package-enable-at-startup nil)
+#+end_src
+
+** Set up indirect init/startup hooks
+
+#+begin_src emacs-lisp
+(defvar ceamx-after-init-hook '())
+(defun ceamx-after-init-hook ()
+  (run-hooks 'ceamx-after-init-hook))
+
+(defvar ceamx-emacs-startup-hook '())
+(defun ceamx-emacs-startup-hook ()
+  (run-hooks 'ceamx-emacs-startup-hook))
+#+end_src
+
+** Performance
+*** Language servers
+
+<https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
+
+#+begin_src emacs-lisp
+(setenv "LSP_USE_PLISTS" "true")
+(setq lsp-use-plists t)
+
+;; Read JSON streams in 1MiB chunks instead of the default 4kB.
+;;
+;; Language server responses tend to be in the 800kB to 3MB range,
+;; according to the lsp-mode documentation (linked above).
+;;
+;; This is a general LSP concern, not specific to any particular implementation.
+(when (functionp 'json-serialize)
+  (setq read-process-output-max (* 1024 1024)))
+#+end_src
+
+*** Minimize garbage collection during startup
+
+[[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii comments on An easy trick I found to improve Emacs start-up time]]:
+
+#+begin_quote
+My advice is to spend some time measuring the effect of increased GC threshold
+on operations that you care about and that take a long enough time to annoy,
+and use the lowest threshold value which produces a tangible improvement.
+Start with the default value, then enlarge it by a factor of 2 until you see
+only insignificant speedups. I would not expect the value you arrive at to be
+as high as 100 MiB.
+#+end_quote
+
+See also:
+
+<https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
+
+*** Provide insight into garbage-collection activity to inform tuning decisions
+
+#+begin_src emacs-lisp
+;; TODO: will a `init-file-debug' check work here?
+(setq garbage-collection-messages t)
+#+end_src
+
+*** Prevent garbage-collection during init
+
+#+begin_src emacs-lisp
+;; NOTE: Either use `gcmh' or make sure to reset this later.  Or else!
+(setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
+#+end_src
+
+*** DISABLED Simplify filename pattern-matching during init
+
+- Note taken on [2024-11-19 Tue 20:52] \\
+  This was not properly excluded from tangling until restructuring my config
+  today!  So it has actually been present in =early-init.el= for some time...
+- Note taken on [2024-03-23 Sat 03:24] \\
+  Quick followup: I would not be surprised if this had something to do with adding
+  ~ceamx-restore-file-name-handler-alist-h~ on ~ceamx-after-init-hook~, which is
+  equivalent to ~elpaca-after-init-hook~.
+- Note taken on [2024-03-23 Sat 03:01] \\
+  This snippet appears to cause Emacs to lose track of its own source files in most sessions.
+
+  ~describe-function~ and ~helpful-function~ report symbols "without a source
+  file".  I did not have much to go on until I became aware of ~find-function~.
+  After invoking the latter on a function whose source could not be located, I
+  noticed a clue: ~find-function~ somehow knew about the source file with a =.el=
+  extension.  I investigated the Emacs =lisp/= directory and saw that there are no
+  =.el= files -- only =.elc= and =.el.gz=.  The =.elc= files are unreadable, but
+  Emacs is still able to read the compressed =gz= archives.  I still do not know
+  exactly why it forgot.
+
+  The issue has not been consistent, which likely indicates a race condition.  For
+  a while, I assumed the issue occurred in consecutive sessions after calling
+  ~restart-emacs~, but that was not the case.
+
+  Disabling this hack is the only consistent way I found to help Emacs find
+  itself.  Re-enabling it caused the issue to recur.  In the end, after
+  disabling, I see absolutely no difference in startup performance.
+  Optimization-by-copypasta strikes again.
+
+  This has been a very frustrating regression in many/most of my Emacs sessions.
+  I rely a lot on being able to read Emacs Lisp source code to understand how
+  Emacs works -- that is how I learn.  Without being able to view source, I am
+  left only with a lack of clarity.
+
+- <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
+- <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
+
+#+begin_src emacs-lisp :tangle no
+(defvar ceamx-file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+
+(defun ceamx-restore-file-name-handler-alist-h ()
+  "Restore the original value of the `file-name-handler-alist' variable.
+Intended for use as a callback on `ceamx-after-init-hook'."
+  (setq file-name-handler-alist ceamx-file-name-handler-alist)
+  (makunbound 'ceamx-file-name-handler-alist))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
+#+end_src
+
+** Directories and well-known-files
+*** Add directories to load path
+
+#+begin_src emacs-lisp
+;; Configure load path
+(dolist (subdir '("autoloads" "lisp" "lisp/core" "lisp/lib"))
+  (let ((dir (expand-file-name subdir user-emacs-directory)))
+    (add-to-list 'load-path dir)))
+#+end_src
+
+*** Load custom constants describing well-known paths
+
+See [[*=ceamx-paths= :: common path constants]]
+
+#+begin_src emacs-lisp
+(require 'ceamx-paths)
+#+end_src
+
+*** Configure ~custom-file~ location
+
+#+begin_src emacs-lisp
+;; Normally, options configured in `user-init-file' won't need to be persisted
+;; to `custom-file', but by default, when using package.el for package
+;; management, `package-selected-packages' will always be written to
+;; `custom-file' if available.  See `init-package' for details.
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+#+end_src
+
+*** Store packages in the designated directory
+
+#+begin_src emacs-lisp
+(setq package-user-dir ceamx-packages-dir)
+#+end_src
+
+*** Use preferred cache directories for native-comp
+
+#+begin_src emacs-lisp
+(startup-redirect-eln-cache ceamx-eln-dir)
+(add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
+#+end_src
+
+** Native compilation settings
+
+#+begin_src emacs-lisp
+(setq native-comp-async-report-warnings-errors 'silent)
+(setq native-compile-prune-cache t)
+
+;; Don't load outdated byte-compiled files.
+;;
+;; NOTE: This does not handle *recompiling* the outdated files.
+;; That would need to be handled during init.
+;;
+;; More info: <https://github.com/emacscollective/auto-compile/blob/main/README.org>
+(setq load-prefer-newer t)
+
+;; Package installation will provoke a lot of warnings from third-party
+;; packages, but there's nothing we can do about those.
+(setq byte-compile-warnings nil)
+#+end_src
+
+** Inhibit early annoyances
+
+#+begin_src emacs-lisp
+;; No bells.
+(setq ring-bell-function #'ignore)
+
+;; Allow answering yes/no questions with y/n.
+(setq use-short-answers t)              ; affects `yes-or-no-p'
+(setq read-answer-short t)              ; affects `read-answer' (completion)
+#+end_src
+
+** Frames and window-system integration
+
+;; FIXME: seems to behave inconsistently when server is running?
+
+#+begin_src emacs-lisp
+;; Prevent X11 from taking control of visual behavior and appearance.
+(setq inhibit-x-resources t)
+
+;; Avoid expensive frame resizing.
+(setq frame-inhibit-implied-resize t)
+
+;; Allow resizing the frame to the maximum available space on the desktop.
+(setq frame-resize-pixelwise t)
+
+;; Remove some unnecessary frame elements by default.
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+
+;; `tooltip-mode' is broken for me in pgtk -- might be an Emacs bug, causes
+;; constant errors when moving mouse over modeline.
+;;
+;; FIXME: actually, this is behaving inconsistently: disabling it does not
+;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
+;; normally...  maybe needs to happen later in init?
+(tooltip-mode -1)
+#+end_src
+
+*** Rename the default/initial frame
+
+#+begin_src emacs-lisp
+(defvar ceamx-default-frame-name "home — [ceamx]"
+  "Name for the default Emacs frame.")
+
+(defun ceamx-after-init-default-frame-name-h ()
+  "Set the name for the default frame.
+Simple wrapper for a call to `set-frame-name' providing
+`ceamx-default-frame-name' as the NAME argument.
+
+Intended for use as a callback on the `ceamx-after-init-hook'."
+  (set-frame-name ceamx-default-frame-name))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
+#+end_src
+
+** Quietize startup
+
+#+begin_src emacs-lisp
+(setq inhibit-startup-screen t)
+(setq initial-buffer-choice nil)
+#+end_src
+
+
+
+* Common Libraries
+
+** Paths
+
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el
+;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -1556,134 +1717,100 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 ;;; Commentary:
 
-;;; Sources:
-
-;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/ceamx-lisp/ceamx-simple.el>
-;; <https://github.com/BBoal/emacs-config/blob/95520648c5f2ed0784d42e98afff035a6964fd2f/bb-lisp/bb-simple.el>
+;; Define variables pointing to commonly-used paths.
 
 ;;; Code:
 
-;;; Requirements
+;;
+;;; Functions
 
-(require 'config-common)
+(defun ceamx-format-version-subdir (parent)
+  "Return a path-like string for a subdirectory of PARENT based on the current Emacs version."
+  (format "%s/%s.%s/"
+    parent
+    emacs-major-version
+    emacs-minor-version))
 
+;;
 ;;; Variables
 
-(defgroup ceamx-simple ()
-  "Generic utilities for editing."
-  :group 'editing)
+(defconst ceamx-site-lisp-dir
+  (concat user-emacs-directory "site-lisp/")
+  "Absolute path to the site-lisp directory.")
 
-(defcustom ceamx-simple-date-specifier "%F"
-  "Date specifier for `format-time-string'.
-Used by `ceamx/insert-date'."
-  :type 'string
-  :group 'ceamx-simple)
+(defconst ceamx-home-dir (file-name-as-directory (getenv "HOME"))
+  "Path to user home directory.")
 
-(defcustom ceamx-simple-time-specifier "%R %z"
-  "Time specifier for `format-time-string'.
-Used by `ceamx/insert-date'."
-  :type 'string
-  :group 'ceamx-simple)
+(defconst ceamx-xdg-config-dir
+  (file-name-as-directory
+   (or (getenv "XDG_CONFIG_HOME")
+       (concat ceamx-home-dir ".config"))))
 
-;;; Commands
+(defconst ceamx-xdg-cache-dir
+  (file-name-as-directory
+   (or (getenv "XDG_CACHE_HOME")
+       (concat ceamx-home-dir ".cache"))))
 
-;;;###autoload
-(defun ceamx/insert-date (&optional arg)
-  "Insert the current date as `ceamx-simple-date-specifier'.
+(defconst ceamx-config-dir ceamx-xdg-config-dir
+  "The root directory for personal configurations.")
 
-With optional prefix ARG (\\[universal-argument]) also append the
-current time understood as `ceamx-simple-time-specifier'.
+;; TODO: rename to something like `ceamx-storage-dir' to reduce confusion
+(defconst ceamx-local-dir
+  (concat ceamx-xdg-cache-dir "ceamx/")
+  "The root directory for local Emacs files.
+Use this as permanent storage for files that are safe to share
+across systems.")
 
-When region is active, delete the highlighted text and replace it
-with the specified date."
-  (interactive "P")
-  (let* ((date ceamx-simple-date-specifier)
-          (time ceamx-simple-time-specifier)
-          (format (if arg (format "%s %s" date time) date)))
-    (when (use-region-p)
-      (delete-region (region-beginning) (region-end)))
-    (insert (format-time-string format))))
+(defconst ceamx-etc-dir (concat ceamx-local-dir "etc/")
+  "Directory for non-volatile storage.
+Use this for files that don't change much, like servers binaries,
+external dependencies or long-term shared data.")
 
-(defun ceamx-simple--pos-url-on-line (char)
-  "Return position of `ceamx-common-url-regexp' at CHAR."
-  (when (integer-or-marker-p char)
-    (save-excursion
-      (goto-char char)
-      (re-search-forward ceamx-common-url-regexp (line-end-position) :noerror))))
+(defconst ceamx-var-dir (concat ceamx-local-dir "var/")
+  "Directory for volatile storage.
+Use this for files that change often, like data and cache files.")
 
-;;;###autoload
-(defun ceamx/escape-url-line (char)
-  "Escape all URLs or email addresses on the current line.
-When called from Lisp CHAR is a buffer position to operate from
-until the end of the line.  In interactive use, CHAR corresponds
-to `line-beginning-position'."
-  (interactive
-   (list
-    (if current-prefix-arg
-        (re-search-forward
-         ceamx-common-url-regexp
-         (line-end-position) :no-error
-         (prefix-numeric-value current-prefix-arg))
-      (line-beginning-position))))
-  (when-let ((regexp-end (ceamx-simple--pos-url-on-line char)))
-    (goto-char regexp-end)
-    (unless (looking-at ">")
-      (insert ">")
-      (when (search-backward "\s" (line-beginning-position) :noerror)
-        (forward-char 1))
-      (insert "<"))
-    (ceamx/escape-url-line (1+ regexp-end)))
-  (goto-char (line-end-position)))
+;; FIXME: avoid usage of `expand-file-name', which is incorrect -- read its
+;; documentation / the manual section.  `convert-standard-filename' may also be
+;; removed in this context.  the latter is likely better off used as needed, and
+;; closer to the usage rather than in this declaration.  this declaration *is*
+;; the standard Unix-like filename expected by `convert-standard-filename'.
+(defconst ceamx-eln-dir (convert-standard-filename
+                       (file-name-as-directory
+                        (expand-file-name "eln/" ceamx-var-dir)))
+  "Directory for natively-compiled eln files.")
 
-;;;###autoload
-(defun ceamx/escape-url-region (&optional beg end)
-  "Apply `ceamx/escape-url-line' on region lines between BEG and END."
-  (interactive
-   (if (region-active-p)
-       (list (region-beginning) (region-end))
-     (error "There is no region!")))
-  (let ((beg (min beg end))
-        (end (max beg end)))
-    (save-excursion
-      (goto-char beg)
-      (setq beg (line-beginning-position))
-      (while (<= beg end)
-        (ceamx/escape-url-line beg)
-        (beginning-of-line 2)
-        (setq beg (point))))))
+(defconst ceamx-packages-dir
+  (expand-file-name (ceamx-format-version-subdir "packages")
+    ceamx-local-dir)
+  "Where packages are stored.
+Intended for setting the value of `package-user-dir' or the
+equivalent settings for third-party package managers.
 
-;;;###autoload
-(defun ceamx/escape-url-dwim ()
-  "Escape URL on the current line or lines implied by the active region.
-Call the commands `ceamx/escape-url-line' and
-`ceamx/escape-url-region' ."
-  (interactive)
-  (if (region-active-p)
-    (ceamx/escape-url-region (region-beginning) (region-end))
-    (ceamx/escape-url-line (line-beginning-position))))
+Packages will be stored in subdirectories based on the current
+Emacs version to prevent bytecode incompatibility.")
 
-;;; Selections
+;;; Feature-Specific Paths
 
-;; copied from `mc--mark-symbol-at-point'
-(defun ceamx/mark-symbol-at-point ()
-  "Select the symbol under cursor."
-  (interactive)
-  (when (not (use-region-p))
-    (let ((b (bounds-of-thing-at-point 'symbol)))
-      (goto-char (car b))
-      (set-mark (cdr b)))))
+<<config-feature-paths>>
 
+(provide 'ceamx-paths)
+;;; ceamx-paths.el ends here
 
-(provide 'lib-simple)
-;;; lib-simple.el ends here
+;; Local Variables:
+;; no-byte-compile: t
+;; no-native-compile: t
+;; no-update-autoloads: t
+;; End:
 #+end_src
 
-** =lib-text=: The Material Fabric of Uncertainty
 
-#+begin_src emacs-lisp :tangle lisp/lib-text.el :noweb-ref nil
-;;; lib-text.el --- Text utilities                   -*- lexical-binding: t; -*-
+** Keymaps
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :noweb yes
+;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
 
 ;; Author: Chris Montgomery <chmont@proton.me>
 ;; Keywords: local
@@ -1703,41 +1830,550 @@ Call the commands `ceamx/escape-url-line' and
 
 ;;; Commentary:
 
-;;;; Sources:
-
-;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/lib/text.el>
+;;
 
 ;;; Code:
 
-;;;###autoload
-(defvar ceamx-point-in-comment-functions ()
-  "List of functions to run to determine if point is in a comment.
+(require 'ceamx-lib)
 
-Each function takes one argument: the position of the point. Stops on the first
-function to return non-nil.
+(define-prefix-command 'ceamx-buffer-prefix 'ceamx-buffer-prefix-map)
 
-Used by `ceamx-point-in-comment-p'.")
+(defvar-keymap ceamx-file-map)
+(define-prefix-command 'ceamx-file-map)
 
-;;;###autoload
-(defun ceamx-point-in-comment-p (&optional pos)
-  "Return non-nil if POS is in a comment.
-POS defaults to the current position."
-  (let ((pos (or pos (point))))
-    (if ceamx-point-in-comment-functions
-        (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
-      (nth 4 (syntax-ppss pos)))))
+(defvar-keymap ceamx-insert-map)
+(define-prefix-command 'ceamx-insert-map)
 
-(provide 'lib-text)
-;;; lib-text.el ends here
+(defvar-keymap ceamx-launch-map)
+(define-prefix-command 'ceamx-launch-map)
+
+(defvar-keymap ceamx-note-map)
+(define-prefix-command 'ceamx-note-map)
+
+(defvar-keymap ceamx-packages-map)
+(define-prefix-command 'ceamx-packages-map)
+
+(defvar-keymap ceamx-pairs-map)
+(define-prefix-command 'ceamx-pairs-map)
+
+(defvar-keymap ceamx-replace-map)
+(define-prefix-command 'ceamx-replace-map)
+
+(defvar-keymap ceamx-session-map)
+(define-prefix-command 'ceamx-session-map)
+
+(defvar-keymap ceamx-toggle-map)
+(define-prefix-command 'ceamx-toggle-map)
+
+(define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
+
+(provide 'ceamx-keymaps)
+;;; ceamx-keymaps.el ends here
 #+end_src
 
-** TODO Consolidate ~lib-simple~ and ~lib-text~
 
-
-* Preparations
+** Functions & Macros
 :PROPERTIES:
-:header-args: :noweb-ref ceamx-bootstrap
+:header-args: :noweb-ref ceamx-lib
 :END:
+
+- src :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
+- src :: <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
+- src :: <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
+
+This library is a requirement of just about every customization and library
+file.  It is loaded early during initialization.
+
+General, common, and generic library functions.
+
+Avoid any library dependencies which are not already part of Emacs.  This
+library will be loaded before packages are available.
+
+#+begin_src emacs-lisp
+(require 'cl-lib)
+(require 'map)
+(require 'seq)
+#+end_src
+
+*** General
+**** ~ceamx-host-p~: Determine whether Emacs is running on a given host
+
+#+begin_src emacs-lisp
+(defun ceamx-host-p (name)
+  "Whether Emacs is running on the machine NAME."
+  (string= name (system-name)))
+#+end_src
+
+**** ~ceamx-unquote~: Unquote an Elisp expression
+
+#+begin_src emacs-lisp
+(defun ceamx-unquote (exp)
+  "Return EXP unquoted."
+  (declare (pure t) (side-effect-free t))
+  (while (memq (car-safe exp) '(quote function))
+    (setq exp (cadr exp)))
+  exp)
+#+end_src
+
+**** ~noop!~: Make the wrapped expression do nothing
+
+- source :: <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
+
+#+begin_src emacs-lisp
+(defmacro noop! (&rest _body)
+  "Do nothing with BODY and return nil.
+Unlike `ignore', produce no side effects."
+  (declare (indent defun))
+  nil)
+#+end_src
+
+*** Loading and Evalling
+**** ~after!~: Evaluate an expression after the given feature(s) have loaded
+
+- Note taken on [2024-03-23 Sat 15:11] \\
+  Replaced the existing version with Doom's version for its logical operator
+  support.  Were it not for the logical operators, ~after!~ would be nothing
+  other than a fancy wrapper around ~with-eval-after-load~.
+
+- source :: <https://github.com/doomemacs/doomemacs/blob/bbadabda511027e515f02ccd7b70291ed03d8945/lisp/doom-lib.el#L628C1-L673C1>
+
+#+begin_src emacs-lisp
+(require 'cl-lib)
+
+(defmacro after! (package &rest body)
+  "Evaluate BODY after PACKAGE have loaded.
+
+PACKAGE is a symbol (or list of them) referring to Emacs
+features (aka packages).  PACKAGE may use :or/:any and :and/:all
+operators.  The precise format is:
+
+- An unquoted package symbol (the name of a package)
+    (after! package-a BODY...)
+- An unquoted, nested list of compound package lists, using any combination of
+  :or/:any and :and/:all
+    (after! (:or package-a package-b ...)  BODY...)
+    (after! (:and package-a package-b ...) BODY...)
+    (after! (:and package-a (:or package-b package-c) ...) BODY...)
+- An unquoted list of package symbols (i.e. BODY is evaluated once both magit
+  and git-gutter have loaded)
+    (after! (magit git-gutter) BODY...)
+  If :or/:any/:and/:all are omitted, :and/:all are implied.
+
+This emulates `eval-after-load' with a few key differences:
+
+1. No-ops for package that are disabled by the user (via `package!') or not
+   installed yet.
+2. Supports compound package statements (see :or/:any and :and/:all above).
+
+Since the contents of these blocks will never by byte-compiled, avoid putting
+things you want byte-compiled in them! Like function/macro definitions."
+  (declare (indent defun) (debug t))
+  (if (symbolp package)
+      (list (if (or (not (bound-and-true-p byte-compile-current-file))
+                    (require package nil 'noerror))
+                #'progn
+              #'with-no-warnings)
+            `(with-eval-after-load ',package ,@body))
+    (let ((p (car package)))
+      (cond ((memq p '(:or :any))
+             (macroexp-progn
+              (cl-loop for next in (cdr package)
+                       collect `(after! ,next ,@body))))
+            ((memq p '(:and :all))
+             (dolist (next (reverse (cdr package)) (car body))
+               (setq body `((after! ,next ,@body)))))
+            (`(after! (:and ,@package) ,@body))))))
+
+#+end_src
+
+
+**** ~defer!~: Evaluate an expression after Emacs is idle for some time
+
+- source :: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
+
+#+begin_src emacs-lisp
+(defmacro defer! (secs &rest body)
+  "Run BODY when Emacs is idle for SECS seconds."
+  (declare (indent defun) (debug t))
+  `(run-with-idle-timer
+    ,secs
+    nil
+    (lambda () ,@body)))
+#+end_src
+
+**** ~defer-until!~: Evaluate an expression when a condition is non-nil
+
+- source :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
+
+#+begin_src emacs-lisp
+(defmacro defer-until! (condition &rest body)
+  "Run BODY when CONDITION is non-nil.
+Leverages checks via `after-load-functions'.
+Meant to serve as a predicated alternative to `after!'."
+  (declare (indent defun) (debug t))
+  `(if ,condition
+       (progn ,@body)
+     ,(let ((fn (intern (format "ceamx--delay-form-%s-h" (sxhash (cons condition body))))))
+       `(progn
+          (fset ',fn (lambda (&rest args)
+                       (when ,(or condition t)
+                        (remove-hook 'after-load-functions #',fn)
+                        (unintern ',fn nil)
+                        (ignore args)
+                        ,@body)))
+          (put ',fn 'permanent-local-hook t)
+          (add-hook 'after-load-functions #',fn)))))
+#+end_src
+
+*** Variable Mutation
+**** ~appendq!~: Append lists to a symbol in place
+
+#+begin_src emacs-lisp
+(defmacro appendq! (sym &rest lists)
+  "Append LISTS to SYM in place."
+  `(setq ,sym (append ,sym ,@lists)))
+#+end_src
+
+**** ~prependq!~: Prepend lists to a symbol in place
+
+#+begin_src emacs-lisp
+(defmacro prependq! (sym &rest lists)
+  "Prepend LISTS to SYM in place."
+  `(setq ,sym (append ,@lists ,sym)))
+#+end_src
+
+**** ~appendopt!~ Append lists to an existing user option
+
+#+begin_src emacs-lisp
+(defmacro appendopt! (variable &rest lists)
+  "Append LISTS to the existing user option VARIABLE.
+This uses `setopt' to set the new value of VARIABLE."
+  `(setopt ,variable (append ,variable ,@lists)))
+#+end_src
+
+**** ~prependopt!~: Prepend lists to an existing user option
+
+#+begin_src emacs-lisp
+(defmacro prependopt! (variable &rest lists)
+  "Prepend LISTS to the existing user option VARIABLE.
+This uses `setopt' to set the new value of VARIABLE."
+  `(setopt ,variable (append ,@lists ,variable)))
+#+end_src
+
+**** ~delq!~: Delete an element from a list in-place
+
+#+begin_src emacs-lisp
+(defmacro delq! (elt list &optional fetcher)
+  "`delq' ELT from LIST in-place.
+If FETCHER is a function, ELT is used as the key in LIST (an alist)."
+  `(setq ,list (delq ,(if fetcher
+                          `(funcall ,fetcher ,elt ,list)
+                        elt)
+                ,list)))
+#+end_src
+
+**** ~pushnew!~: Push values sequentially into a list uniquely
+
+#+begin_src emacs-lisp
+;; TODO: another version to test car of alist so that new additions with the
+;;       same car will override the existing list
+(defmacro pushnew! (place &rest values)
+  "Push VALUES sequentially into PLACE, if they aren't already present.
+This is a variadic `cl-pushnew'."
+  (let ((var (make-symbol "result")))
+    `(dolist (,var (list ,@values) (with-no-warnings ,place))
+      (cl-pushnew ,var ,place :test #'equal))))
+#+end_src
+
+*** Filesystem
+**** ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
+
+#+begin_src emacs-lisp
+(defun ceamx-subdirs (parent-dir)
+  "Return every non-hidden subdirectory of PARENT-DIR."
+  (cl-remove-if-not
+   #'file-directory-p
+   (directory-files
+    (expand-file-name parent-dir) t "^[^\\.]")))
+#+end_src
+
+*** Hooks & Advice
+**** ~def-advice!~: Macro to define and add advice to a function
+
+#+begin_src emacs-lisp
+(defmacro def-advice! (name arglist how symbol docstring &rest body)
+  "Define an advice called NAME and add it to a function.
+ARGLIST, DOCSTRING, and BODY are as in `defun'.
+
+HOW and SYMBOL are as in `advice-add'.  HOW describes how to add
+the newly-defined advice.  SYMBOL is the function to be advised."
+  (declare (indent 2)
+           (doc-string 5))
+  (unless (stringp docstring)
+    (error "Ceamx: advice `%S' not documented'" name))
+  (unless (and (listp symbol)
+               (= 2 (length symbol))
+               (eq (nth 0 symbol) 'function)
+               (symbolp (nth 1 symbol)))
+    (error "Ceamx: advice `%S' does not sharp-quote symbol `%S'" name symbol))
+  `(progn
+     (defun ,name ,arglist
+      ,(let ((article (if (string-match-p "^:[aeiou]" (symbol-name how))
+                          "an"
+                        "a")))
+        (format "%s\n\nThis is %s `%S' advice for\n`%S'."
+         docstring article how
+         (if (and (listp symbol)
+              (memq (car symbol) ''function))
+             (cadr symbol)
+           symbol)))
+      ,@body)
+     (eval-when-compile
+       (declare-function ,name nil))
+     (advice-add ,symbol ',how #',name)
+     ',name))
+#+end_src
+
+**** ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
+
+#+begin_src emacs-lisp
+(defmacro def-hook! (name arglist hooks docstring &rest body)
+  "Define function NAME and add it to HOOKS.
+ARGLIST is as in `defun'.  HOOKS is a list of hooks to which to
+add the function, or just a single hook.  DOCSTRING and BODY are
+as in `defun'."
+  (declare (indent defun)
+           (doc-string 4))
+  (setq hooks (ensure-list (ceamx-unquote hooks)))
+  (dolist (hook hooks)
+    (unless (string-match-p "-\\(hook\\|functions\\)$" (symbol-name hook))
+      (error "Symbol `%S' is not a hook" hook)))
+  (unless (stringp docstring)
+    (error "Ceamx: no docstring provided for `def-hook!'"))
+  (let ((hooks-str (format "`%S'" (car hooks))))
+    (dolist (hook (cdr hooks))
+      (setq hooks-str (format "%s\nand `%S'" hooks-str hook)))
+    `(progn
+       (defun ,name ,arglist
+        ,(format "%s\n\nThis function is for use in %s."
+          docstring hooks-str)
+        ,@body)
+       (dolist (hook ',hooks)
+        (add-hook hook #',name)))))
+#+end_src
+
+*** Packages & User Configuration
+**** ~use-feature!~: Configuration-only wrapper for ~use-package~
+
+#+begin_src emacs-lisp
+(defmacro use-feature! (name &rest args)
+  "Configuration-only wrapper for `use-package', passing through NAME and ARGS.
+
+This macro is a wrapper for `use-package' (which see) disabling package
+installation by setting package installation keywords to nil.
+
+If `use-package-always-ensure' is non-nil, its effect will be
+ignored in this `use-package' macro expansion because `:ensure'
+will be nil."
+  (declare (indent defun))
+  `(use-package ,name
+     :ensure nil
+     ,@args))
+#+end_src
+
+**** ~package!~: Declare a package and its initial configuration
+
+Wrapper for ~elpaca~ to avoid having to declare its autoloads in every file.
+
+#+begin_src emacs-lisp
+(defmacro package! (order &rest body)
+  "Declare a package ORDER and its initial configuration BODY.
+Provides the necessary autoloads so that we can declare packages
+without needing to declare autoloads for `elpaca' in every file."
+  (declare (indent defun))
+  `(progn
+     (autoload 'elpaca "elpaca" nil nil t)
+     (elpaca ,order ,@body)))
+#+end_src
+
+*** Input and Keybindings
+**** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
+
+Usages of this function should be replaced with the result of evaluating
+~string-to-char~.
+
+#+begin_src emacs-lisp
+(defun ceamx-normalize-char (char)
+  "Normalize CHAR to a valid character matching `characterp'.
+CHAR may either be a valid character or a string convertable to a
+character with `string-to-char'.  If CHAR is already a character
+matching `characterp', then it will be returned as-is.
+
+When CHAR is a string containing more than one character, only
+the first character will be transformed.  See `string-to-char' for
+more info.
+
+This function is impure because the interpretation of CHAR can
+vary based on... various reasons?"
+  (declare (side-effect-free t)
+           (obsolete 'string-to-char "2024-03-23"))
+  (cl-assert (char-or-string-p char) t)
+  (if (stringp char)
+      (cond ((length= char 0)
+             (user-error "Character string `%s' is empty" char))
+            ((length> char 1)
+             (user-error "Character string `%s' should only contain a single character" char))
+            (t
+             (string-to-char char)))
+    char))
+#+end_src
+
+**** ~global-keys!~: Define multiple global keybindings
+
+#+begin_src emacs-lisp
+(defmacro global-keys! (&rest keys)
+  "Define keybindings KEYS in the global keymap.
+Wrapper for `define-keymap' with `current-global-map' as target keymap."
+  (declare (indent defun) (debug t))
+  `(define-keymap :keymap (current-global-map)
+     ,@keys))
+#+end_src
+
+**** ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
+
+[[https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/][oantolin comments on Repeat-mode is awesome, share you useful configs]]
+
+#+begin_src emacs-lisp
+(defun ceamx-repeatify-keymap (repeat-map)
+  "Set the `repeat-map' property on all commands bound in REPEAT-MAP."
+  (named-let process ((keymap (symbol-value repeat-map)))
+    (map-keymap
+     (lambda (_key cmd)
+       (cond
+        ((symbolp cmd) (put cmd 'repeat-map repeat-map))
+        ((keymapp cmd) (process cmd))))
+     keymap)))
+#+end_src
+
+
+** Strings
+
+#+begin_src emacs-lisp :tangle lisp/config-common.el
+;;; config-common.el --- Common and miscellaneous configuration settings  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+;; Copyright (C) 2020-2023  Protesilaos Stavrou
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;;         Protesilaos Stavrou <info@protesilaos.com>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Sources:
+
+;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
+
+;;; Code:
+
+;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
+(defconst ceamx-common-url-regexp
+  (concat
+    "~?\\<\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]*\\)"
+    "[.@]"
+    "\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]+\\)\\>/?")
+  "Regular expression to match (most?) URLs or email addresses.")
+
+(provide 'config-common)
+;;; config-common.el ends here
+#+end_src
+
+
+* =init.el=
+:PROPERTIES:
+:header-args: :tangle init.el :comments both
+:END:
+
+** File header
+
+#+begin_src emacs-lisp :tangle init.el :noweb yes :comments no
+<<file-prop-line(feature="init",desc="Initialize Ceamx",extraprops="no-byte-compile: t;")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
+** Load required libraries for =init.el=
+
+#+begin_src emacs-lisp
+(require 'cl-lib)
+
+;; Core variables
+(require 'ceamx-paths)
+(require 'ceamx-keymaps)
+
+;; Core functions and macros
+(require 'ceamx-lib)
+#+end_src
+
+** Configure default identity
+
+#+begin_src emacs-lisp
+(setq-default user-full-name "Chris Montgomery"
+              user-mail-address "chmont@proton.me")
+#+end_src
+
+** Profiling
+
+- source :: <https://github.com/progfolio/.emacs.d/blob/ed159dc6076664ad9976949d8cb3af8e86fe39d1/init.org#profiling>
+
+#+begin_src emacs-lisp :lexical t
+(add-hook 'ceamx-after-init-hook
+          (lambda ()
+            (message "Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract (current-time) before-init-time)))
+                     gcs-done)))
+#+end_src
+
+Optionally, display a report after startup:
+
+#+begin_src emacs-lisp :lexical t :tangle no
+(profiler-start 'cpu+mem)
+(add-hook 'ceamx-after-init-hook (lambda () (profiler-stop) (profiler-report)))
+#+end_src
+
+ELP is useful for seeing which functions in a package are "hot":
+
+#+begin_src emacs-lisp :var file="elpaca" :lexical t :tangle no
+(require 'elp)
+(with-eval-after-load file
+  (elp-instrument-package file))
+(add-hook ceamx-after-init-hook
+          (lambda () (elp-results) (elp-restore-package (intern file))))
+#+end_src
 
 ** Add the =site-lisp= directory to ~load-path~
 
@@ -2276,12 +2912,6 @@ expect the value you arrive at to be as high as 100 MiB.
 (use-package f)
 #+end_src
 
-
-* TODO Load Features
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-init-features
-:END:
-
 ** TODO Miscellaneous things that should go somewhere else
 
 #+begin_src emacs-lisp
@@ -2298,7 +2928,7 @@ expect the value you arrive at to be as high as 100 MiB.
 (setopt ffap-machine-p-known 'reject)
 #+end_src
 
-** TODO Sections
+** Load Features
 
 #+begin_src emacs-lisp
 (require 'init-env)
@@ -2453,853 +3083,72 @@ expect the value you arrive at to be as high as 100 MiB.
 #+end_src
 
 
-* Before Dawn: =early-init.el=
+
+
+* TODO The Bucket of Uncertainty
 :PROPERTIES:
-:header-args: :tangle early-init.el :comments both
+:header-args: :tangle init.el
 :END:
 
-#+begin_src emacs-lisp :tangle early-init.el :startup folded :noweb yes :comments no
-<<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
+Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+Or, perhaps more accurately: stuff that needs a better home.
 
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-#+end_src
-
-** Prevent package.el from enabling all packages before init
-
-- [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
-
-
-When nil and using the builtin package manager, ~package-initialize~ must be
-invoked in the init process prior to ~require~ing any packages installed with
-~package-install~.
-
-When non-nil, there is no need to invoke ~package-initialize~.
+** TODO ~hippie-expand~
 
 #+begin_src emacs-lisp
-(setq package-enable-at-startup nil)
+(setopt hippie-expand-verbose t
+        hippie-expand-dabbrev-skip-space t)
 #+end_src
-
-** Set up indirect init/startup hooks
 
 #+begin_src emacs-lisp
-(defvar ceamx-after-init-hook '())
-(defun ceamx-after-init-hook ()
-  (run-hooks 'ceamx-after-init-hook))
+;; These are mostly from the default value, for visibility.
+(setopt hippie-expand-try-functions-list
+        '(try-complete-file-name-partially
+          try-complete-file-name
 
-(defvar ceamx-emacs-startup-hook '())
-(defun ceamx-emacs-startup-hook ()
-  (run-hooks 'ceamx-emacs-startup-hook))
+          ;; Remove `try-expand-all-abbrevs' to disable automatic abbrev expansion.
+          try-expand-all-abbrevs
+
+          try-expand-list
+
+          ;; TODO: enable for shell modes only?
+          ;; try-expand-line
+
+          try-expand-dabbrev            ; see: `dabbrev-expand'
+          try-expand-dabbrev-all-buffers
+          ;; try-expand-dabbrev-from-kill
+
+          ;; Redundant with `completion-at-point'... *except* in the literate
+          ;; config file, where elisp symbols won't normally be available.
+          ;; TODO: enable for config.org
+          ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
+          ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
+          ))
 #+end_src
 
-** Performance
-*** Language servers
 
-<https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
+** The Keybindings of Uncertainty :keybinds:
 
 #+begin_src emacs-lisp
-(setenv "LSP_USE_PLISTS" "true")
-(setq lsp-use-plists t)
-
-;; Read JSON streams in 1MiB chunks instead of the default 4kB.
-;;
-;; Language server responses tend to be in the 800kB to 3MB range,
-;; according to the lsp-mode documentation (linked above).
-;;
-;; This is a general LSP concern, not specific to any particular implementation.
-(when (functionp 'json-serialize)
-  (setq read-process-output-max (* 1024 1024)))
+(define-keymap :keymap ceamx-session-map
+  "q" #'save-buffers-kill-emacs
+  "Q" #'kill-emacs)
 #+end_src
 
-*** Minimize garbage collection during startup
+** =lib-simple=: The Library of Uncertain Simplicity
 
-[[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii comments on An easy trick I found to improve Emacs start-up time]]:
-
-#+begin_quote
-My advice is to spend some time measuring the effect of increased GC threshold
-on operations that you care about and that take a long enough time to annoy,
-and use the lowest threshold value which produces a tangible improvement.
-Start with the default value, then enlarge it by a factor of 2 until you see
-only insignificant speedups. I would not expect the value you arrive at to be
-as high as 100 MiB.
-#+end_quote
-
-See also:
-
-<https://github.com/jwiegley/dot-emacs/blob/master/init.org#startup>
-
-*** Provide insight into garbage-collection activity to inform tuning decisions
-
-#+begin_src emacs-lisp
-;; TODO: will a `init-file-debug' check work here?
-(setq garbage-collection-messages t)
-#+end_src
-
-*** Prevent garbage-collection during init
-
-#+begin_src emacs-lisp
-;; NOTE: Either use `gcmh' or make sure to reset this later.  Or else!
-(setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
-#+end_src
-
-*** DISABLED Simplify filename pattern-matching during init
-
-- Note taken on [2024-11-19 Tue 20:52] \\
-  This was not properly excluded from tangling until restructuring my config
-  today!  So it has actually been present in =early-init.el= for some time...
-- Note taken on [2024-03-23 Sat 03:24] \\
-  Quick followup: I would not be surprised if this had something to do with adding
-  ~ceamx-restore-file-name-handler-alist-h~ on ~ceamx-after-init-hook~, which is
-  equivalent to ~elpaca-after-init-hook~.
-- Note taken on [2024-03-23 Sat 03:01] \\
-  This snippet appears to cause Emacs to lose track of its own source files in most sessions.
-
-  ~describe-function~ and ~helpful-function~ report symbols "without a source
-  file".  I did not have much to go on until I became aware of ~find-function~.
-  After invoking the latter on a function whose source could not be located, I
-  noticed a clue: ~find-function~ somehow knew about the source file with a =.el=
-  extension.  I investigated the Emacs =lisp/= directory and saw that there are no
-  =.el= files -- only =.elc= and =.el.gz=.  The =.elc= files are unreadable, but
-  Emacs is still able to read the compressed =gz= archives.  I still do not know
-  exactly why it forgot.
-
-  The issue has not been consistent, which likely indicates a race condition.  For
-  a while, I assumed the issue occurred in consecutive sessions after calling
-  ~restart-emacs~, but that was not the case.
-
-  Disabling this hack is the only consistent way I found to help Emacs find
-  itself.  Re-enabling it caused the issue to recur.  In the end, after
-  disabling, I see absolutely no difference in startup performance.
-  Optimization-by-copypasta strikes again.
-
-  This has been a very frustrating regression in many/most of my Emacs sessions.
-  I rely a lot on being able to read Emacs Lisp source code to understand how
-  Emacs works -- that is how I learn.  Without being able to view source, I am
-  left only with a lack of clarity.
-
-- <https://github.com/jwiegley/dot-emacs/blob/79bc2cff3a28ecd1a315609bbb607eb4ba700f76/init.org#during-loading-of-this-module-clear-file-name-handler-alist>
-- <https://old.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/>
-
-#+begin_src emacs-lisp :tangle no
-(defvar ceamx-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
-
-(defun ceamx-restore-file-name-handler-alist-h ()
-  "Restore the original value of the `file-name-handler-alist' variable.
-Intended for use as a callback on `ceamx-after-init-hook'."
-  (setq file-name-handler-alist ceamx-file-name-handler-alist)
-  (makunbound 'ceamx-file-name-handler-alist))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
-#+end_src
-
-** Directories and well-known-files
-*** Add directories to load path
-
-#+begin_src emacs-lisp
-;; Configure load path
-(dolist (subdir '("autoloads" "lisp" "lisp/core" "lisp/lib"))
-  (let ((dir (expand-file-name subdir user-emacs-directory)))
-    (add-to-list 'load-path dir)))
-#+end_src
-
-*** Load custom constants describing well-known paths
-
-See [[*=ceamx-paths= :: common path constants]]
-
-#+begin_src emacs-lisp
-(require 'ceamx-paths)
-#+end_src
-
-*** Configure ~custom-file~ location
-
-#+begin_src emacs-lisp
-;; Normally, options configured in `user-init-file' won't need to be persisted
-;; to `custom-file', but by default, when using package.el for package
-;; management, `package-selected-packages' will always be written to
-;; `custom-file' if available.  See `init-package' for details.
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-#+end_src
-
-*** Store packages in the designated directory
-
-#+begin_src emacs-lisp
-(setq package-user-dir ceamx-packages-dir)
-#+end_src
-
-*** Use preferred cache directories for native-comp
-
-#+begin_src emacs-lisp
-(startup-redirect-eln-cache ceamx-eln-dir)
-(add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
-#+end_src
-
-** Native compilation settings
-
-#+begin_src emacs-lisp
-(setq native-comp-async-report-warnings-errors 'silent)
-(setq native-compile-prune-cache t)
-
-;; Don't load outdated byte-compiled files.
-;;
-;; NOTE: This does not handle *recompiling* the outdated files.
-;; That would need to be handled during init.
-;;
-;; More info: <https://github.com/emacscollective/auto-compile/blob/main/README.org>
-(setq load-prefer-newer t)
-
-;; Package installation will provoke a lot of warnings from third-party
-;; packages, but there's nothing we can do about those.
-(setq byte-compile-warnings nil)
-#+end_src
-
-** Inhibit early annoyances
-
-#+begin_src emacs-lisp
-;; No bells.
-(setq ring-bell-function #'ignore)
-
-;; Allow answering yes/no questions with y/n.
-(setq use-short-answers t)              ; affects `yes-or-no-p'
-(setq read-answer-short t)              ; affects `read-answer' (completion)
-#+end_src
-
-** Frames and window-system integration
-
-;; FIXME: seems to behave inconsistently when server is running?
-
-#+begin_src emacs-lisp
-;; Prevent X11 from taking control of visual behavior and appearance.
-(setq inhibit-x-resources t)
-
-;; Avoid expensive frame resizing.
-(setq frame-inhibit-implied-resize t)
-
-;; Allow resizing the frame to the maximum available space on the desktop.
-(setq frame-resize-pixelwise t)
-
-;; Remove some unnecessary frame elements by default.
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-
-;; `tooltip-mode' is broken for me in pgtk -- might be an Emacs bug, causes
-;; constant errors when moving mouse over modeline.
-;;
-;; FIXME: actually, this is behaving inconsistently: disabling it does not
-;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
-;; normally...  maybe needs to happen later in init?
-(tooltip-mode -1)
-#+end_src
-
-*** Rename the default/initial frame
-
-#+begin_src emacs-lisp
-(defvar ceamx-default-frame-name "home — [ceamx]"
-  "Name for the default Emacs frame.")
-
-(defun ceamx-after-init-default-frame-name-h ()
-  "Set the name for the default frame.
-Simple wrapper for a call to `set-frame-name' providing
-`ceamx-default-frame-name' as the NAME argument.
-
-Intended for use as a callback on the `ceamx-after-init-hook'."
-  (set-frame-name ceamx-default-frame-name))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
-#+end_src
-
-** Quietize startup
-
-#+begin_src emacs-lisp
-(setq inhibit-startup-screen t)
-(setq initial-buffer-choice nil)
-#+end_src
-
-
-
-* Common: Paths
-
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el
-;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Define variables pointing to commonly-used paths.
-
-;;; Code:
-
-;;
-;;; Functions
-
-(defun ceamx-format-version-subdir (parent)
-  "Return a path-like string for a subdirectory of PARENT based on the current Emacs version."
-  (format "%s/%s.%s/"
-    parent
-    emacs-major-version
-    emacs-minor-version))
-
-;;
-;;; Variables
-
-(defconst ceamx-site-lisp-dir
-  (concat user-emacs-directory "site-lisp/")
-  "Absolute path to the site-lisp directory.")
-
-(defconst ceamx-home-dir (file-name-as-directory (getenv "HOME"))
-  "Path to user home directory.")
-
-(defconst ceamx-xdg-config-dir
-  (file-name-as-directory
-   (or (getenv "XDG_CONFIG_HOME")
-       (concat ceamx-home-dir ".config"))))
-
-(defconst ceamx-xdg-cache-dir
-  (file-name-as-directory
-   (or (getenv "XDG_CACHE_HOME")
-       (concat ceamx-home-dir ".cache"))))
-
-(defconst ceamx-config-dir ceamx-xdg-config-dir
-  "The root directory for personal configurations.")
-
-;; TODO: rename to something like `ceamx-storage-dir' to reduce confusion
-(defconst ceamx-local-dir
-  (concat ceamx-xdg-cache-dir "ceamx/")
-  "The root directory for local Emacs files.
-Use this as permanent storage for files that are safe to share
-across systems.")
-
-(defconst ceamx-etc-dir (concat ceamx-local-dir "etc/")
-  "Directory for non-volatile storage.
-Use this for files that don't change much, like servers binaries,
-external dependencies or long-term shared data.")
-
-(defconst ceamx-var-dir (concat ceamx-local-dir "var/")
-  "Directory for volatile storage.
-Use this for files that change often, like data and cache files.")
-
-;; FIXME: avoid usage of `expand-file-name', which is incorrect -- read its
-;; documentation / the manual section.  `convert-standard-filename' may also be
-;; removed in this context.  the latter is likely better off used as needed, and
-;; closer to the usage rather than in this declaration.  this declaration *is*
-;; the standard Unix-like filename expected by `convert-standard-filename'.
-(defconst ceamx-eln-dir (convert-standard-filename
-                       (file-name-as-directory
-                        (expand-file-name "eln/" ceamx-var-dir)))
-  "Directory for natively-compiled eln files.")
-
-(defconst ceamx-packages-dir
-  (expand-file-name (ceamx-format-version-subdir "packages")
-    ceamx-local-dir)
-  "Where packages are stored.
-Intended for setting the value of `package-user-dir' or the
-equivalent settings for third-party package managers.
-
-Packages will be stored in subdirectories based on the current
-Emacs version to prevent bytecode incompatibility.")
-
-;;; Feature-Specific Paths
-
-<<config-feature-paths>>
-
-(provide 'ceamx-paths)
-;;; ceamx-paths.el ends here
-
-;; Local Variables:
-;; no-byte-compile: t
-;; no-native-compile: t
-;; no-update-autoloads: t
-;; End:
-#+end_src
-
-
-* Common: Keymaps
-
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :noweb yes
-;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
-
-(require 'ceamx-lib)
-
-(define-prefix-command 'ceamx-buffer-prefix 'ceamx-buffer-prefix-map)
-
-(defvar-keymap ceamx-file-map)
-(define-prefix-command 'ceamx-file-map)
-
-(defvar-keymap ceamx-insert-map)
-(define-prefix-command 'ceamx-insert-map)
-
-(defvar-keymap ceamx-launch-map)
-(define-prefix-command 'ceamx-launch-map)
-
-(defvar-keymap ceamx-note-map)
-(define-prefix-command 'ceamx-note-map)
-
-(defvar-keymap ceamx-packages-map)
-(define-prefix-command 'ceamx-packages-map)
-
-(defvar-keymap ceamx-pairs-map)
-(define-prefix-command 'ceamx-pairs-map)
-
-(defvar-keymap ceamx-replace-map)
-(define-prefix-command 'ceamx-replace-map)
-
-(defvar-keymap ceamx-session-map)
-(define-prefix-command 'ceamx-session-map)
-
-(defvar-keymap ceamx-toggle-map)
-(define-prefix-command 'ceamx-toggle-map)
-
-(define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
-
-(provide 'ceamx-keymaps)
-;;; ceamx-keymaps.el ends here
-#+end_src
-
-
-* Common: Functions & Macros
-:PROPERTIES:
-:header-args: :noweb-ref ceamx-lib
-:END:
-
-- src :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
-- src :: <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
-- src :: <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
-
-This library is a requirement of just about every customization and library
-file.  It is loaded early during initialization.
-
-General, common, and generic library functions.
-
-Avoid any library dependencies which are not already part of Emacs.  This
-library will be loaded before packages are available.
-
-#+begin_src emacs-lisp
-(require 'cl-lib)
-(require 'map)
-(require 'seq)
-#+end_src
-
-** General
-*** ~ceamx-host-p~: Determine whether Emacs is running on a given host
-
-#+begin_src emacs-lisp
-(defun ceamx-host-p (name)
-  "Whether Emacs is running on the machine NAME."
-  (string= name (system-name)))
-#+end_src
-
-*** ~ceamx-unquote~: Unquote an Elisp expression
-
-#+begin_src emacs-lisp
-(defun ceamx-unquote (exp)
-  "Return EXP unquoted."
-  (declare (pure t) (side-effect-free t))
-  (while (memq (car-safe exp) '(quote function))
-    (setq exp (cadr exp)))
-  exp)
-#+end_src
-
-*** ~noop!~: Make the wrapped expression do nothing
-
-- source :: <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
-
-#+begin_src emacs-lisp
-(defmacro noop! (&rest _body)
-  "Do nothing with BODY and return nil.
-Unlike `ignore', produce no side effects."
-  (declare (indent defun))
-  nil)
-#+end_src
-
-** Loading and Evalling
-*** ~after!~: Evaluate an expression after the given feature(s) have loaded
-
-- Note taken on [2024-03-23 Sat 15:11] \\
-  Replaced the existing version with Doom's version for its logical operator
-  support.  Were it not for the logical operators, ~after!~ would be nothing
-  other than a fancy wrapper around ~with-eval-after-load~.
-
-- source :: <https://github.com/doomemacs/doomemacs/blob/bbadabda511027e515f02ccd7b70291ed03d8945/lisp/doom-lib.el#L628C1-L673C1>
-
-#+begin_src emacs-lisp
-(require 'cl-lib)
-
-(defmacro after! (package &rest body)
-  "Evaluate BODY after PACKAGE have loaded.
-
-PACKAGE is a symbol (or list of them) referring to Emacs
-features (aka packages).  PACKAGE may use :or/:any and :and/:all
-operators.  The precise format is:
-
-- An unquoted package symbol (the name of a package)
-    (after! package-a BODY...)
-- An unquoted, nested list of compound package lists, using any combination of
-  :or/:any and :and/:all
-    (after! (:or package-a package-b ...)  BODY...)
-    (after! (:and package-a package-b ...) BODY...)
-    (after! (:and package-a (:or package-b package-c) ...) BODY...)
-- An unquoted list of package symbols (i.e. BODY is evaluated once both magit
-  and git-gutter have loaded)
-    (after! (magit git-gutter) BODY...)
-  If :or/:any/:and/:all are omitted, :and/:all are implied.
-
-This emulates `eval-after-load' with a few key differences:
-
-1. No-ops for package that are disabled by the user (via `package!') or not
-   installed yet.
-2. Supports compound package statements (see :or/:any and :and/:all above).
-
-Since the contents of these blocks will never by byte-compiled, avoid putting
-things you want byte-compiled in them! Like function/macro definitions."
-  (declare (indent defun) (debug t))
-  (if (symbolp package)
-      (list (if (or (not (bound-and-true-p byte-compile-current-file))
-                    (require package nil 'noerror))
-                #'progn
-              #'with-no-warnings)
-            `(with-eval-after-load ',package ,@body))
-    (let ((p (car package)))
-      (cond ((memq p '(:or :any))
-             (macroexp-progn
-              (cl-loop for next in (cdr package)
-                       collect `(after! ,next ,@body))))
-            ((memq p '(:and :all))
-             (dolist (next (reverse (cdr package)) (car body))
-               (setq body `((after! ,next ,@body)))))
-            (`(after! (:and ,@package) ,@body))))))
-
-#+end_src
-
-
-*** ~defer!~: Evaluate an expression after Emacs is idle for some time
-
-- source :: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
-
-#+begin_src emacs-lisp
-(defmacro defer! (secs &rest body)
-  "Run BODY when Emacs is idle for SECS seconds."
-  (declare (indent defun) (debug t))
-  `(run-with-idle-timer
-    ,secs
-    nil
-    (lambda () ,@body)))
-#+end_src
-
-*** ~defer-until!~: Evaluate an expression when a condition is non-nil
-
-- source :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
-
-#+begin_src emacs-lisp
-(defmacro defer-until! (condition &rest body)
-  "Run BODY when CONDITION is non-nil.
-Leverages checks via `after-load-functions'.
-Meant to serve as a predicated alternative to `after!'."
-  (declare (indent defun) (debug t))
-  `(if ,condition
-       (progn ,@body)
-     ,(let ((fn (intern (format "ceamx--delay-form-%s-h" (sxhash (cons condition body))))))
-       `(progn
-          (fset ',fn (lambda (&rest args)
-                       (when ,(or condition t)
-                        (remove-hook 'after-load-functions #',fn)
-                        (unintern ',fn nil)
-                        (ignore args)
-                        ,@body)))
-          (put ',fn 'permanent-local-hook t)
-          (add-hook 'after-load-functions #',fn)))))
-#+end_src
-
-** Variable Mutation
-*** ~appendq!~: Append lists to a symbol in place
-
-#+begin_src emacs-lisp
-(defmacro appendq! (sym &rest lists)
-  "Append LISTS to SYM in place."
-  `(setq ,sym (append ,sym ,@lists)))
-#+end_src
-
-*** ~prependq!~: Prepend lists to a symbol in place
-
-#+begin_src emacs-lisp
-(defmacro prependq! (sym &rest lists)
-  "Prepend LISTS to SYM in place."
-  `(setq ,sym (append ,@lists ,sym)))
-#+end_src
-
-*** ~appendopt!~ Append lists to an existing user option
-
-#+begin_src emacs-lisp
-(defmacro appendopt! (variable &rest lists)
-  "Append LISTS to the existing user option VARIABLE.
-This uses `setopt' to set the new value of VARIABLE."
-  `(setopt ,variable (append ,variable ,@lists)))
-#+end_src
-
-*** ~prependopt!~: Prepend lists to an existing user option
-
-#+begin_src emacs-lisp
-(defmacro prependopt! (variable &rest lists)
-  "Prepend LISTS to the existing user option VARIABLE.
-This uses `setopt' to set the new value of VARIABLE."
-  `(setopt ,variable (append ,@lists ,variable)))
-#+end_src
-
-*** ~delq!~: Delete an element from a list in-place
-
-#+begin_src emacs-lisp
-(defmacro delq! (elt list &optional fetcher)
-  "`delq' ELT from LIST in-place.
-If FETCHER is a function, ELT is used as the key in LIST (an alist)."
-  `(setq ,list (delq ,(if fetcher
-                          `(funcall ,fetcher ,elt ,list)
-                        elt)
-                ,list)))
-#+end_src
-
-*** ~pushnew!~: Push values sequentially into a list uniquely
-
-#+begin_src emacs-lisp
-;; TODO: another version to test car of alist so that new additions with the
-;;       same car will override the existing list
-(defmacro pushnew! (place &rest values)
-  "Push VALUES sequentially into PLACE, if they aren't already present.
-This is a variadic `cl-pushnew'."
-  (let ((var (make-symbol "result")))
-    `(dolist (,var (list ,@values) (with-no-warnings ,place))
-      (cl-pushnew ,var ,place :test #'equal))))
-#+end_src
-
-** Filesystem
-*** ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
-
-#+begin_src emacs-lisp
-(defun ceamx-subdirs (parent-dir)
-  "Return every non-hidden subdirectory of PARENT-DIR."
-  (cl-remove-if-not
-   #'file-directory-p
-   (directory-files
-    (expand-file-name parent-dir) t "^[^\\.]")))
-#+end_src
-
-** Hooks & Advice
-*** ~def-advice!~: Macro to define and add advice to a function
-
-#+begin_src emacs-lisp
-(defmacro def-advice! (name arglist how symbol docstring &rest body)
-  "Define an advice called NAME and add it to a function.
-ARGLIST, DOCSTRING, and BODY are as in `defun'.
-
-HOW and SYMBOL are as in `advice-add'.  HOW describes how to add
-the newly-defined advice.  SYMBOL is the function to be advised."
-  (declare (indent 2)
-           (doc-string 5))
-  (unless (stringp docstring)
-    (error "Ceamx: advice `%S' not documented'" name))
-  (unless (and (listp symbol)
-               (= 2 (length symbol))
-               (eq (nth 0 symbol) 'function)
-               (symbolp (nth 1 symbol)))
-    (error "Ceamx: advice `%S' does not sharp-quote symbol `%S'" name symbol))
-  `(progn
-     (defun ,name ,arglist
-      ,(let ((article (if (string-match-p "^:[aeiou]" (symbol-name how))
-                          "an"
-                        "a")))
-        (format "%s\n\nThis is %s `%S' advice for\n`%S'."
-         docstring article how
-         (if (and (listp symbol)
-              (memq (car symbol) ''function))
-             (cadr symbol)
-           symbol)))
-      ,@body)
-     (eval-when-compile
-       (declare-function ,name nil))
-     (advice-add ,symbol ',how #',name)
-     ',name))
-#+end_src
-
-*** ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
-
-#+begin_src emacs-lisp
-(defmacro def-hook! (name arglist hooks docstring &rest body)
-  "Define function NAME and add it to HOOKS.
-ARGLIST is as in `defun'.  HOOKS is a list of hooks to which to
-add the function, or just a single hook.  DOCSTRING and BODY are
-as in `defun'."
-  (declare (indent defun)
-           (doc-string 4))
-  (setq hooks (ensure-list (ceamx-unquote hooks)))
-  (dolist (hook hooks)
-    (unless (string-match-p "-\\(hook\\|functions\\)$" (symbol-name hook))
-      (error "Symbol `%S' is not a hook" hook)))
-  (unless (stringp docstring)
-    (error "Ceamx: no docstring provided for `def-hook!'"))
-  (let ((hooks-str (format "`%S'" (car hooks))))
-    (dolist (hook (cdr hooks))
-      (setq hooks-str (format "%s\nand `%S'" hooks-str hook)))
-    `(progn
-       (defun ,name ,arglist
-        ,(format "%s\n\nThis function is for use in %s."
-          docstring hooks-str)
-        ,@body)
-       (dolist (hook ',hooks)
-        (add-hook hook #',name)))))
-#+end_src
-
-** Packages & User Configuration
-*** ~use-feature!~: Configuration-only wrapper for ~use-package~
-
-#+begin_src emacs-lisp
-(defmacro use-feature! (name &rest args)
-  "Configuration-only wrapper for `use-package', passing through NAME and ARGS.
-
-This macro is a wrapper for `use-package' (which see) disabling package
-installation by setting package installation keywords to nil.
-
-If `use-package-always-ensure' is non-nil, its effect will be
-ignored in this `use-package' macro expansion because `:ensure'
-will be nil."
-  (declare (indent defun))
-  `(use-package ,name
-     :ensure nil
-     ,@args))
-#+end_src
-
-*** ~package!~: Declare a package and its initial configuration
-
-Wrapper for ~elpaca~ to avoid having to declare its autoloads in every file.
-
-#+begin_src emacs-lisp
-(defmacro package! (order &rest body)
-  "Declare a package ORDER and its initial configuration BODY.
-Provides the necessary autoloads so that we can declare packages
-without needing to declare autoloads for `elpaca' in every file."
-  (declare (indent defun))
-  `(progn
-     (autoload 'elpaca "elpaca" nil nil t)
-     (elpaca ,order ,@body)))
-#+end_src
-
-** Input and Keybindings
-*** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
-
-Usages of this function should be replaced with the result of evaluating
-~string-to-char~.
-
-#+begin_src emacs-lisp
-(defun ceamx-normalize-char (char)
-  "Normalize CHAR to a valid character matching `characterp'.
-CHAR may either be a valid character or a string convertable to a
-character with `string-to-char'.  If CHAR is already a character
-matching `characterp', then it will be returned as-is.
-
-When CHAR is a string containing more than one character, only
-the first character will be transformed.  See `string-to-char' for
-more info.
-
-This function is impure because the interpretation of CHAR can
-vary based on... various reasons?"
-  (declare (side-effect-free t)
-           (obsolete 'string-to-char "2024-03-23"))
-  (cl-assert (char-or-string-p char) t)
-  (if (stringp char)
-      (cond ((length= char 0)
-             (user-error "Character string `%s' is empty" char))
-            ((length> char 1)
-             (user-error "Character string `%s' should only contain a single character" char))
-            (t
-             (string-to-char char)))
-    char))
-#+end_src
-
-*** ~global-keys!~: Define multiple global keybindings
-
-#+begin_src emacs-lisp
-(defmacro global-keys! (&rest keys)
-  "Define keybindings KEYS in the global keymap.
-Wrapper for `define-keymap' with `current-global-map' as target keymap."
-  (declare (indent defun) (debug t))
-  `(define-keymap :keymap (current-global-map)
-     ,@keys))
-#+end_src
-
-*** ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
-
-[[https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/][oantolin comments on Repeat-mode is awesome, share you useful configs]]
-
-#+begin_src emacs-lisp
-(defun ceamx-repeatify-keymap (repeat-map)
-  "Set the `repeat-map' property on all commands bound in REPEAT-MAP."
-  (named-let process ((keymap (symbol-value repeat-map)))
-    (map-keymap
-     (lambda (_key cmd)
-       (cond
-        ((symbolp cmd) (put cmd 'repeat-map repeat-map))
-        ((keymapp cmd) (process cmd))))
-     keymap)))
-#+end_src
-
-
-* Common: Strings
-
-#+begin_src emacs-lisp :tangle lisp/config-common.el
-;;; config-common.el --- Common and miscellaneous configuration settings  -*- lexical-binding: t; -*-
+#+begin_src emacs-lisp :tangle lisp/lib-simple.el :noweb-ref nil
+;;; lib-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
 ;; Copyright (C) 2020-2023  Protesilaos Stavrou
+;; Copyright (c) 2023  Bruno Boal <egomet@bboal.com>
 
 ;; Author: Chris Montgomery <chmont@proton.me>
 ;;         Protesilaos Stavrou <info@protesilaos.com>
-;; Keywords: local
+;;         Bruno Boal <egomet@bboal.com>
+;; Keywords: local, convenience
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -3318,21 +3167,180 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 
 ;;; Sources:
 
-;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
+;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/ceamx-lisp/ceamx-simple.el>
+;; <https://github.com/BBoal/emacs-config/blob/95520648c5f2ed0784d42e98afff035a6964fd2f/bb-lisp/bb-simple.el>
 
 ;;; Code:
 
-;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
-(defconst ceamx-common-url-regexp
-  (concat
-    "~?\\<\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]*\\)"
-    "[.@]"
-    "\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]+\\)\\>/?")
-  "Regular expression to match (most?) URLs or email addresses.")
+;;; Requirements
 
-(provide 'config-common)
-;;; config-common.el ends here
+(require 'config-common)
+
+;;; Variables
+
+(defgroup ceamx-simple ()
+  "Generic utilities for editing."
+  :group 'editing)
+
+(defcustom ceamx-simple-date-specifier "%F"
+  "Date specifier for `format-time-string'.
+Used by `ceamx/insert-date'."
+  :type 'string
+  :group 'ceamx-simple)
+
+(defcustom ceamx-simple-time-specifier "%R %z"
+  "Time specifier for `format-time-string'.
+Used by `ceamx/insert-date'."
+  :type 'string
+  :group 'ceamx-simple)
+
+;;; Commands
+
+;;;###autoload
+(defun ceamx/insert-date (&optional arg)
+  "Insert the current date as `ceamx-simple-date-specifier'.
+
+With optional prefix ARG (\\[universal-argument]) also append the
+current time understood as `ceamx-simple-time-specifier'.
+
+When region is active, delete the highlighted text and replace it
+with the specified date."
+  (interactive "P")
+  (let* ((date ceamx-simple-date-specifier)
+          (time ceamx-simple-time-specifier)
+          (format (if arg (format "%s %s" date time) date)))
+    (when (use-region-p)
+      (delete-region (region-beginning) (region-end)))
+    (insert (format-time-string format))))
+
+(defun ceamx-simple--pos-url-on-line (char)
+  "Return position of `ceamx-common-url-regexp' at CHAR."
+  (when (integer-or-marker-p char)
+    (save-excursion
+      (goto-char char)
+      (re-search-forward ceamx-common-url-regexp (line-end-position) :noerror))))
+
+;;;###autoload
+(defun ceamx/escape-url-line (char)
+  "Escape all URLs or email addresses on the current line.
+When called from Lisp CHAR is a buffer position to operate from
+until the end of the line.  In interactive use, CHAR corresponds
+to `line-beginning-position'."
+  (interactive
+   (list
+    (if current-prefix-arg
+        (re-search-forward
+         ceamx-common-url-regexp
+         (line-end-position) :no-error
+         (prefix-numeric-value current-prefix-arg))
+      (line-beginning-position))))
+  (when-let ((regexp-end (ceamx-simple--pos-url-on-line char)))
+    (goto-char regexp-end)
+    (unless (looking-at ">")
+      (insert ">")
+      (when (search-backward "\s" (line-beginning-position) :noerror)
+        (forward-char 1))
+      (insert "<"))
+    (ceamx/escape-url-line (1+ regexp-end)))
+  (goto-char (line-end-position)))
+
+;;;###autoload
+(defun ceamx/escape-url-region (&optional beg end)
+  "Apply `ceamx/escape-url-line' on region lines between BEG and END."
+  (interactive
+   (if (region-active-p)
+       (list (region-beginning) (region-end))
+     (error "There is no region!")))
+  (let ((beg (min beg end))
+        (end (max beg end)))
+    (save-excursion
+      (goto-char beg)
+      (setq beg (line-beginning-position))
+      (while (<= beg end)
+        (ceamx/escape-url-line beg)
+        (beginning-of-line 2)
+        (setq beg (point))))))
+
+;;;###autoload
+(defun ceamx/escape-url-dwim ()
+  "Escape URL on the current line or lines implied by the active region.
+Call the commands `ceamx/escape-url-line' and
+`ceamx/escape-url-region' ."
+  (interactive)
+  (if (region-active-p)
+    (ceamx/escape-url-region (region-beginning) (region-end))
+    (ceamx/escape-url-line (line-beginning-position))))
+
+;;; Selections
+
+;; copied from `mc--mark-symbol-at-point'
+(defun ceamx/mark-symbol-at-point ()
+  "Select the symbol under cursor."
+  (interactive)
+  (when (not (use-region-p))
+    (let ((b (bounds-of-thing-at-point 'symbol)))
+      (goto-char (car b))
+      (set-mark (cdr b)))))
+
+
+(provide 'lib-simple)
+;;; lib-simple.el ends here
 #+end_src
+
+** =lib-text=: The Material Fabric of Uncertainty
+
+#+begin_src emacs-lisp :tangle lisp/lib-text.el :noweb-ref nil
+;;; lib-text.el --- Text utilities                   -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; Keywords: local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;;; Sources:
+
+;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/lib/text.el>
+
+;;; Code:
+
+;;;###autoload
+(defvar ceamx-point-in-comment-functions ()
+  "List of functions to run to determine if point is in a comment.
+
+Each function takes one argument: the position of the point. Stops on the first
+function to return non-nil.
+
+Used by `ceamx-point-in-comment-p'.")
+
+;;;###autoload
+(defun ceamx-point-in-comment-p (&optional pos)
+  "Return non-nil if POS is in a comment.
+POS defaults to the current position."
+  (let ((pos (or pos (point))))
+    (if ceamx-point-in-comment-functions
+        (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
+      (nth 4 (syntax-ppss pos)))))
+
+(provide 'lib-text)
+;;; lib-text.el ends here
+#+end_src
+
+** TODO Consolidate ~lib-simple~ and ~lib-text~
 
 
 * Environment
@@ -14649,9 +14657,9 @@ Return the new `zone' timer."
 #+end_src
 
 
-* Postlude
+* =init.el=: Postlude
 :PROPERTIES:
-:header-args: :noweb-ref ceamx-postlude
+:header-args: :tangle init.el
 :END:
 
 ** Start the Emacs server process if not already running
@@ -14714,6 +14722,11 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 #+begin_src emacs-lisp :tangle early-init.el
 <<file-footer(feature="early-init")>>
 #+end_src
+
+#+begin_src emacs-lisp :tangle init.el
+<<file-footer(feature="init")>>
+#+end_src
+
 
 * End
 
