@@ -75,14 +75,13 @@ instead, use a =-flag= suffix or names like =is-foo=.
 
 [[https://emacs.stackexchange.com/a/21870][What's the relationship between ~foo~ and =foo= in org-mode? - Emacs Stack Exchange]]
 
-
-* Anatomy
+** Anatomy
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
 
-** Target Files
-*** =lisp/config-keys.el=
+*** Target Files
+**** =lisp/config-keys.el=
 
 #+name: config-keys-file
 #+begin_src emacs-lisp :tangle lisp/config-keys.el
@@ -104,7 +103,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="config-keys")>>
 #+end_src
 
-*** =lisp/config-ui.el=
+**** =lisp/config-ui.el=
 
 #+name: config-ui-file
 #+begin_src emacs-lisp :tangle lisp/config-ui.el
@@ -126,7 +125,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="config-ui")>>
 #+end_src
 
-*** =lisp/config-buffer.el=
+**** =lisp/config-buffer.el=
 
 #+name: config-buffer-file
 #+begin_src emacs-lisp :tangle lisp/config-buffer.el
@@ -148,7 +147,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="config-buffer")>>
 #+end_src
 
-*** =lisp/config-editor.el=
+**** =lisp/config-editor.el=
 
 #+name: config-editor-file
 #+begin_src emacs-lisp  :tangle lisp/config-editor.el
@@ -170,7 +169,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="config-editor")>>
 #+end_src
 
-*** =lisp/config-window.el=
+**** =lisp/config-window.el=
 
 #+name: config-window-file
 #+begin_src emacs-lisp  :tangle lisp/config-window.el
@@ -192,7 +191,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="config-window")>>
 #+end_src
 
-*** =lisp/config-prog.el=
+**** =lisp/config-prog.el=
 
 #+name: config-prog-file
 #+begin_src emacs-lisp :tangle lisp/config-prog.el
@@ -214,7 +213,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="config-prog")>>
 #+end_src
 
-*** =lisp/lib-files.el=
+**** =lisp/lib-files.el=
 
 #+name: lib-files-file
 #+begin_src emacs-lisp  :tangle lisp/lib-files.el
@@ -276,7 +275,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-files")>>
 #+end_src
 
-*** =lisp/lib-completion.el=
+**** =lisp/lib-completion.el=
 
 #+name: lib-completion-file
 #+begin_src emacs-lisp :tangle lisp/lib-completion.el
@@ -298,7 +297,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-completion")>>
 #+end_src
 
-*** =lisp/lib-tools.el=
+**** =lisp/lib-tools.el=
 
 #+name: lib-tools-file
 #+begin_src emacs-lisp :tangle lisp/lib-tools.el
@@ -320,7 +319,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-tools")>>
 #+end_src
 
-*** =lisp/lib-ui.el=
+**** =lisp/lib-ui.el=
 
 #+name: lib-ui-file
 #+begin_src emacs-lisp :tangle lisp/lib-ui.el
@@ -342,7 +341,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-ui")>>
 #+end_src
 
-*** =lisp/lib-keys.el=
+**** =lisp/lib-keys.el=
 
 #+name: lib-keys-file
 #+begin_src emacs-lisp :tangle lisp/lib-keys.el
@@ -364,7 +363,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-keys")>>
 #+end_src
 
-*** =lisp/lib-buffer.el=
+**** =lisp/lib-buffer.el=
 
 #+name: lib-buffer-file
 #+begin_src emacs-lisp :tangle lisp/lib-buffer.el
@@ -385,7 +384,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 
 <<file-footer(feature="lib-buffer")>>
 #+end_src
-*** =lisp/lib-editor.el=
+**** =lisp/lib-editor.el=
 
 #+name: lib-editor-file
 #+begin_src emacs-lisp  :tangle lisp/lib-editor.el
@@ -432,7 +431,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-editor")>>
 #+end_src
 
-*** =lisp/lib-search.el=
+**** =lisp/lib-search.el=
 
 #+name: lib-search-file
 #+begin_src emacs-lisp  :tangle lisp/lib-search.el
@@ -454,7 +453,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-search")>>
 #+end_src
 
-*** =lisp/lib-prog.el=
+**** =lisp/lib-prog.el=
 
 #+name: lib-prog-file
 #+begin_src emacs-lisp :tangle lisp/lib-prog.el
@@ -476,7 +475,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-prog")>>
 #+end_src
 
-*** =lisp/lib-window.el=
+**** =lisp/lib-window.el=
 
 #+name: lib-window-file
 #+begin_src emacs-lisp  :tangle lisp/lib-window.el
@@ -505,7 +504,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-window")>>
 #+end_src
 
-*** =lisp/init-env.el=
+**** =lisp/init-env.el=
 
 #+name: init-env-file
 #+begin_src emacs-lisp :tangle lisp/init-env.el
@@ -527,7 +526,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-env")>>
 #+end_src
 
-*** =lisp/init-keys.el=
+**** =lisp/init-keys.el=
 
 #+name: init-keys-file
 #+begin_src emacs-lisp :tangle lisp/init-keys.el
@@ -549,7 +548,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-keys")>>
 #+end_src
 
-*** =lisp/init-ui.el=
+**** =lisp/init-ui.el=
 
 #+name: init-ui-file
 #+begin_src emacs-lisp :tangle lisp/init-ui.el
@@ -571,7 +570,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-ui")>>
 #+end_src
 
-*** =lisp/init-ui-graphical.el=
+**** =lisp/init-ui-graphical.el=
 
 #+name: init-ui-graphical-file
 #+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el
@@ -593,7 +592,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-ui-graphical")>>
 #+end_src
 
-*** =lisp/init-dashboard.el=
+**** =lisp/init-dashboard.el=
 
 #+name: init-dashboard-file
 #+begin_src emacs-lisp :tangle lisp/init-dashboard.el
@@ -615,7 +614,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-dashboard")>>
 #+end_src
 
-*** =lisp/init-files.el=
+**** =lisp/init-files.el=
 
 #+name: init-files-file
 #+begin_src emacs-lisp  :tangle lisp/init-files.el
@@ -637,7 +636,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-files")>>
 #+end_src
 
-*** =lisp/init-flycheck.el=
+**** =lisp/init-flycheck.el=
 
 #+begin_src emacs-lisp :tangle lisp/init-flycheck.el
 <<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
@@ -658,7 +657,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-flycheck")>>
 #+end_src
 
-*** =lisp/init-flymake.el=
+**** =lisp/init-flymake.el=
 
 #+name: init-flymake-file
 #+begin_src emacs-lisp :tangle lisp/init-flymake.el
@@ -680,7 +679,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-flymake")>>
 #+end_src
 
-*** =lisp/init-abbrevs.el=
+**** =lisp/init-abbrevs.el=
 
 #+name: init-abbrevs-file
 #+begin_src emacs-lisp :tangle lisp/init-abbrevs.el
@@ -702,7 +701,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-abbrevs")>>
 #+end_src
 
-*** =lisp/init-completion.el=
+**** =lisp/init-completion.el=
 
 #+name: init-completion-file
 #+begin_src emacs-lisp :tangle lisp/init-completion.el
@@ -724,7 +723,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-completion")>>
 #+end_src
 
-*** =lisp/init-templates.el=
+**** =lisp/init-templates.el=
 
 #+name: init-templates-file
 #+begin_src emacs-lisp :tangle lisp/init-templates.el
@@ -746,7 +745,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-templates")>>
 #+end_src
 
-*** =lisp/init-notes.el=
+**** =lisp/init-notes.el=
 
 #+name: init-notes-file
 #+begin_src emacs-lisp :tangle lisp/init-notes.el
@@ -768,7 +767,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-notes")>>
 #+end_src
 
-*** =lisp/init-outline.el=
+**** =lisp/init-outline.el=
 
 #+name: init-outline-file
 #+begin_src emacs-lisp  :tangle lisp/init-outline.el
@@ -790,7 +789,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-outline")>>
 #+end_src
 
-*** =lisp/init-org.el=
+**** =lisp/init-org.el=
 
 #+name: init-org-file
 #+begin_src emacs-lisp  :tangle lisp/init-org.el
@@ -812,7 +811,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-org")>>
 #+end_src
 
-*** =lisp/init-search.el=
+**** =lisp/init-search.el=
 
 #+name: init-search-file
 #+begin_src emacs-lisp  :tangle lisp/init-search.el
@@ -834,7 +833,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-search")>>
 #+end_src
 
-*** =lisp/init-window.el=
+**** =lisp/init-window.el=
 
 #+name: init-window-file
 #+begin_src emacs-lisp  :tangle lisp/init-window.el
@@ -856,7 +855,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-window")>>
 #+end_src
 
-*** =lisp/init-buffer.el=
+**** =lisp/init-buffer.el=
 
 #+name: init-buffer-file
 #+begin_src emacs-lisp :tangle lisp/init-buffer.el
@@ -878,7 +877,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-buffer")>>
 #+end_src
 
-*** =lisp/init-editor.el=
+**** =lisp/init-editor.el=
 
 #+name: init-editor-file
 #+begin_src emacs-lisp  :tangle lisp/init-editor.el
@@ -900,7 +899,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-editor")>>
 #+end_src
 
-*** =lisp/init-workspace.el=
+**** =lisp/init-workspace.el=
 
 #+name: init-workspace-file
 #+begin_src emacs-lisp :tangle lisp/init-workspace.el
@@ -922,7 +921,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-workspace")>>
 #+end_src
 
-*** =lisp/init-vcs.el=
+**** =lisp/init-vcs.el=
 
 #+name: init-vcs-file
 #+begin_src emacs-lisp :tangle lisp/init-vcs.el
@@ -944,7 +943,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-vcs")>>
 #+end_src
 
-*** =lisp/init-lsp.el=
+**** =lisp/init-lsp.el=
 
 #+name: init-lsp-file
 #+begin_src emacs-lisp :tangle lisp/init-lsp.el
@@ -966,7 +965,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-lsp")>>
 #+end_src
 
-*** =lisp/init-lang-data.el=
+**** =lisp/init-lang-data.el=
 
 #+name: init-lang-data-file
 #+begin_src emacs-lisp :tangle lisp/init-lang-data.el
@@ -988,7 +987,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-lang-data")>>
 #+end_src
 
-*** =lisp/init-lang-nix.el=
+**** =lisp/init-lang-nix.el=
 
 #+name: init-lang-nix-file
 #+begin_src emacs-lisp :tangle lisp/init-lang-nix.el
@@ -1010,7 +1009,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-lang-nix")>>
 #+end_src
 
-*** =lisp/init-lang-php.el=
+**** =lisp/init-lang-php.el=
 
 #+name: init-lang-php-file
 #+begin_src emacs-lisp :tangle lisp/init-lang-php.el
@@ -1032,7 +1031,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-lang-php")>>
 #+end_src
 
-*** =lisp/init-writing.el=
+**** =lisp/init-writing.el=
 
 #+name: init-writing-file
 #+begin_src emacs-lisp :tangle lisp/init-writing.el
@@ -1054,7 +1053,7 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-writing")>>
 #+end_src
 
-*** =lisp/init-tools.el=
+**** =lisp/init-tools.el=
 
 #+name: init-tools-file
 #+begin_src emacs-lisp  :tangle lisp/init-tools.el
@@ -1076,17 +1075,17 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="init-tools")>>
 #+end_src
 
-** Partials
+*** Partials
 :PROPERTIES:
 :header-args: :results replace
 :END:
 
-*** CANCELLED ~file-header~ cannot accept passthrough noweb args?
+**** CANCELLED ~file-header~ cannot accept passthrough noweb args?
 CLOSED: [2024-05-18 Sat 15:50]
 
 - State "CANCELLED"  from "TODO"       [2024-05-18 Sat 15:50] \\
   There are many limitations to Noweb, and E expects to move away from the current approach.
-*** ~file-header~
+**** ~file-header~
 
 #+name: file-header-default-authors-table
 | Chris Montgomery | chmont@proton.me | 2024 |   | GPL-3.0-or-later |
@@ -1105,7 +1104,7 @@ CLOSED: [2024-05-18 Sat 15:50]
   ;;; Code:
 #+end_src
 
-*** ~file-prop-line~
+**** ~file-prop-line~
 
 - Note taken on [2024-03-27 Wed 01:47] \\
   Added the ~extraprops~ =noweb= variable for additional propline values and file-local
@@ -1117,7 +1116,7 @@ CLOSED: [2024-05-18 Sat 15:50]
 (format ";;; %s.el --- %s  -*- lexical-binding: t; %s -*-" feature desc extraprops)
 #+end_src
 
-*** ~file-extra-meta~
+**** ~file-extra-meta~
 
 #+name: file-extra-meta
 #+begin_src emacs-lisp
@@ -1125,7 +1124,7 @@ CLOSED: [2024-05-18 Sat 15:50]
 ;; Version: 0.1.0
 #+end_src
 
-*** TODO ~file-footer~
+**** TODO ~file-footer~
 
 Emacs calls this the "file trailer" in ~generate-lisp-file-trailer~.
 
@@ -1136,7 +1135,7 @@ Emacs calls this the "file trailer" in ~generate-lisp-file-trailer~.
 (format "(provide '%1$s)\n;;; %1$s.el ends here\n" feature)
 #+end_src
 
-*** ~file-authors~
+**** ~file-authors~
 
 Example table:
 
@@ -1218,8 +1217,8 @@ Example table:
 : Copyright (C) 1925-1995  Gilles Deleuze <notrees@rhizome.net>
 : Copyright (C)   Félix Guattari <poop@dada.net>
 
-** License Headers
-*** GNU General Public License 3.0 or later (=GPL-3.0-or-later=)
+*** License Headers
+**** GNU General Public License 3.0 or later (=GPL-3.0-or-later=)
 
 #+name: file-license
 #+begin_src emacs-lisp
@@ -1239,7 +1238,7 @@ Example table:
 ;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 #+end_src
 
-*** MIT License (=MIT=)
+**** MIT License (=MIT=)
 
 #+name: file-license-mit
 #+begin_src emacs-lisp
@@ -1255,7 +1254,7 @@ Example table:
 ;; included in all copies or substantial portions of the Software.
 #+end_src
 
-*** BSD 2-Clause License (=BSD-2-Clause=)
+**** BSD 2-Clause License (=BSD-2-Clause=)
 
 #+name: file-license-bsd-2-clause
 #+begin_src emacs-lisp
@@ -1280,9 +1279,8 @@ Example table:
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #+end_src
 
-
-* Maintenance
-** Functions to clean and re-tangle Elisp files
+** Maintenance
+*** Functions to clean and re-tangle Elisp files
 
 #+begin_src emacs-lisp :noweb yes :results silent
 <<ceamx-tangle-src>>
@@ -1336,7 +1334,7 @@ default source file."
 #+end_src
 
 
-** Debugging
+*** Debugging
 
 - Source :: [[https://github.com/progfolio/.emacs.d/blob/master/init.org?plain=1][.emacs.d/init.org at master · progfolio/.emacs.d]]
 - Retrieved :: [2024-06-04 Tue 22:20]
@@ -1375,8 +1373,7 @@ mutation of a variable.
 (setq debug-on-error t)
 #+end_src
 
-
-* Resources
+** Resources
 
 - [[info:elisp#Tips][(elisp) Tips]]
 - [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
