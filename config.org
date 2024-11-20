@@ -8,6 +8,9 @@
 #+property: header-args             :mkdirp yes :tangle no :exports code :noweb yes :comments both
 
 * Overview
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 This is a user configuration for GNU Emacs.
 
@@ -81,6 +84,10 @@ instead, use a =-flag= suffix or names like =is-foo=.
 :END:
 
 *** Target Files
+:PROPERTIES:
+:header-args:emacs-lisp: :comments no
+:END:
+
 **** =lisp/config-keys.el=
 
 #+name: config-keys-file
