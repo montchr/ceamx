@@ -24,21 +24,51 @@
 ;;; Commentary:
 ;;; Code:
 
+;; Dependencies
+
+
+;; [[file:../config.org::*Dependencies][Dependencies:1]]
 (require 'config-env)
 (require 'ceamx-lib)
-;; Disable unnecessary OS-specific command-line options.
+;; Dependencies:1 ends here
+
+;; Disable unnecessary OS-specific command-line options :macos:
+
+
+;; [[file:../config.org::*Disable unnecessary OS-specific command-line options][Disable unnecessary OS-specific command-line options:1]]
 (unless +sys-mac-p
   (setq command-line-ns-option-alist nil))
+
 (unless +sys-linux-p
   (setq command-line-x-option-alist nil))
+;; Disable unnecessary OS-specific command-line options:1 ends here
+
+;; ~exec-path-from=shell~: Inherit environment variables from variable environments :package:
+
+
+;; [[file:../config.org::*~exec-path-from=shell~: Inherit environment variables from variable environments][~exec-path-from=shell~: Inherit environment variables from variable environments:1]]
 (package! exec-path-from-shell
   (require 'exec-path-from-shell)
   (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH" "LSP_USE_PLISTS"))
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
+;; ~exec-path-from=shell~: Inherit environment variables from variable environments:1 ends here
+
+;; ~inheritenv~: Make temporary buffers inherit buffer-local environment variables :package:
+
+;; - website :: <https://github.com/purcell/inheritenv>
+
+
+;; [[file:../config.org::*~inheritenv~: Make temporary buffers inherit buffer-local environment variables][~inheritenv~: Make temporary buffers inherit buffer-local environment variables:1]]
 (package! inheritenv
   (with-eval-after-load 'exec-path-from-shell
     (require 'inheritenv)))
+;; ~inheritenv~: Make temporary buffers inherit buffer-local environment variables:1 ends here
+
+;; ~with-editor~: Ensure shell/term modes use session as =$EDITOR= :package:
+
+
+;; [[file:../config.org::*~with-editor~: Ensure shell/term modes use session as =$EDITOR=][~with-editor~: Ensure shell/term modes use session as =$EDITOR=:1]]
 (package! with-editor
   (keymap-global-set "<remap> <async-shell-command>"
                      #'with-editor-async-shell-command)
@@ -53,10 +83,39 @@
   ;; <https://codeberg.org/akib/emacs-eat/issues/55#issuecomment-871388>
   (with-eval-after-load 'eat
     (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
+;; ~with-editor~: Ensure shell/term modes use session as =$EDITOR=:1 ends here
+
+;; ~envrc~: Direnv integration :package:
+
+;; - src :: <https://github.com/purcell/envrc>
+;; - upstream :: <https://github.com/direnv/direnv>
+
+;; Q: How does this differ from `direnv.el`?
+
+;; <https://github.com/wbolster/emacs-direnv> repeatedly changes the global
+;; Emacs environment, based on tracking what buffer you're working on.
+
+;; Instead, `envrc.el` simply sets and stores the right environment in each
+;; buffer, as a buffer-local variable.
+
+
+;; [[file:../config.org::*~envrc~: Direnv integration][~envrc~: Direnv integration:1]]
 (package! envrc
   (with-eval-after-load 'exec-path-from-shell
     (envrc-global-mode)))
+;; ~envrc~: Direnv integration:1 ends here
+
+;; Elpaca-Wait № 3: ~exec-path-from-shell~ :wait:
+
+
+;; [[file:../config.org::*Elpaca-Wait № 3: ~exec-path-from-shell~][Elpaca-Wait № 3: ~exec-path-from-shell~:1]]
 (elpaca-wait)
+;; Elpaca-Wait № 3: ~exec-path-from-shell~:1 ends here
+
+;; TRAMP Support
+
+
+;; [[file:../config.org::*TRAMP Support][TRAMP Support:1]]
 (setopt tramp-default-method "ssh")
 (setopt tramp-default-remote-shell "/bin/bash")
 (setopt tramp-connection-timeout (* 60 10))
@@ -73,6 +132,26 @@
                   "/nix/var/nix/profiles/default/bin"
                   "/run/current-system/sw/bin"))
     (add-to-list 'tramp-remote-path path)))
+;; TRAMP Support:1 ends here
+
+;; Terminal/TTY Support
+
+
+;; [[file:../config.org::*Terminal/TTY Support][Terminal/TTY Support:1]]
+(autoload 'mwheel-install "mwheel")
+;; Terminal/TTY Support:1 ends here
+
+;; [[file:../config.org::*Terminal/TTY Support][Terminal/TTY Support:2]]
+(defun ceamx/console-frame-setup ()
+  (xterm-mouse-mode 1)
+  (mwheel-install))
+
+;; Make the mouse wheel scroll.
+(global-set-key [mouse-4] (lambda () (interactive) (scroll-down 1)))
+(global-set-key [mouse-5] (lambda () (interactive) (scroll-up 1)))
+
+;; (add-hook 'after-make-console-frame-hooks 'ceamx/console-frame-setup)
+;; Terminal/TTY Support:2 ends here
 
 (provide 'init-env)
 ;;; init-env.el ends here

@@ -511,28 +511,6 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-window")>>
 #+end_src
 
-**** =lisp/init-env.el=
-
-#+name: init-env-file
-#+begin_src emacs-lisp :tangle lisp/init-env.el
-<<file-prop-line(feature="init-env",desc="Environmental integrations")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-env>>
-
-<<file-footer(feature="init-env")>>
-#+end_src
-
 **** =lisp/init-keys.el=
 
 #+name: init-keys-file
@@ -2951,8 +2929,6 @@ expect the value you arrive at to be as high as 100 MiB.
 ;; Load configuration settings for conditional loading.
 (require 'config-ui)
 
-(require 'init-env-tty)
-
 (require 'init-ui)
 
 (when (display-graphic-p)
@@ -3348,11 +3324,14 @@ POS defaults to the current position."
 ** TODO Consolidate ~lib-simple~ and ~lib-text~
 
 
-* Environment :: =env=
+* Environment :: =env= :env:
 
-** Options / Variables
+** Settings :: =config-env= :config:
+:PROPERTIES:
+:header-args: :tangle lisp/config-env.el
+:END:
 
-#+begin_src emacs-lisp :tangle lisp/config-env.el
+#+begin_src emacs-lisp :tangle lisp/config-env.el :comments no
 ;;; config-env.el --- Variables regarding the environment  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -3402,8 +3381,8 @@ POS defaults to the current position."
 ;; via <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
 (defvar +sys-wsl-p
   (and (eq system-type 'gnu/linux)
-    (or (getenv "WSLENV")
-      (getenv "WSL_DISTRO_NAME")))
+       (or (getenv "WSLENV")
+           (getenv "WSL_DISTRO_NAME")))
   "Whether Emacs is currently running in WSL.")
 
 (defvar +env-dumb-p
@@ -3429,23 +3408,50 @@ POS defaults to the current position."
 ;;; config-env.el ends here
 #+end_src
 
-** Customizations
+
+** Customizations :: =init-env=
 :PROPERTIES:
-:header-args: :noweb-ref init-env
+:header-args: :tangle lisp/init-env.el :comments both
 :END:
+
+*** File Header
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/init-env.el :noweb yes :comments no
+<<file-prop-line(feature="init-env",desc="Environmental integrations")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
+*** Dependencies
 
 #+begin_src emacs-lisp
 (require 'config-env)
 (require 'ceamx-lib)
 #+end_src
 
+*** Disable unnecessary OS-specific command-line options :macos:
+
 #+begin_src emacs-lisp
-;; Disable unnecessary OS-specific command-line options.
 (unless +sys-mac-p
   (setq command-line-ns-option-alist nil))
+
 (unless +sys-linux-p
   (setq command-line-x-option-alist nil))
 #+end_src
+
+*** ~exec-path-from=shell~: Inherit environment variables from variable environments :package:
 
 #+begin_src emacs-lisp
 (package! exec-path-from-shell
@@ -3455,7 +3461,7 @@ POS defaults to the current position."
   (exec-path-from-shell-initialize))
 #+end_src
 
-*** Make temporary buffers inherit buffer-local environment variables with ~inheritenv~
+*** ~inheritenv~: Make temporary buffers inherit buffer-local environment variables :package:
 
 - website :: <https://github.com/purcell/inheritenv>
 
@@ -3465,7 +3471,7 @@ POS defaults to the current position."
     (require 'inheritenv)))
 #+end_src
 
-*** ~with-editor~: Ensure shell/term modes use session as =$EDITOR=
+*** ~with-editor~: Ensure shell/term modes use session as =$EDITOR= :package:
 
 #+begin_src emacs-lisp
 (package! with-editor
@@ -3484,7 +3490,7 @@ POS defaults to the current position."
     (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
 #+end_src
 
-***  Support integration with Direnv via the ~envrc~ package
+*** ~envrc~: Direnv integration :package:
 
 - src :: <https://github.com/purcell/envrc>
 - upstream :: <https://github.com/direnv/direnv>
@@ -3530,63 +3536,13 @@ buffer, as a buffer-local variable.
     (add-to-list 'tramp-remote-path path)))
 #+end_src
 
-** Terminal/TTY Support
+*** Terminal/TTY Support
 
-#+begin_src emacs-lisp :tangle lisp/init-env-tty.el
-;;; init-env-tty.el --- TTY environment support -*- lexical-binding: t -*-
-
-;; Copyright (c) 2023-2024 Chris Montgomery
-;; Copyright (c) 2006-2021 Steve Purcell
-
-;; Author: Steve Purcell
-;;         Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Created: 20 July 2023
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-;;; Commentary:
-
-;; Specialized configurations for Emacs running in a TTY / terminal emulator
-;; environment.
-
-;; FIXME: most of this should be loaded conditionally
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (autoload 'mwheel-install "mwheel")
+#+end_src
 
+#+begin_src emacs-lisp
 (defun ceamx/console-frame-setup ()
   (xterm-mouse-mode 1)
   (mwheel-install))
@@ -3596,12 +3552,19 @@ buffer, as a buffer-local variable.
 (global-set-key [mouse-5] (lambda () (interactive) (scroll-up 1)))
 
 ;; (add-hook 'after-make-console-frame-hooks 'ceamx/console-frame-setup)
-
-(provide 'init-env-tty)
-;;; init-env-tty.el ends here
 #+end_src
 
-** WSL Support
+*** File Footer
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/init-env.el :noweb yes :comments no
+<<file-footer(feature="init-env")>>
+#+end_src
+
+
+** WSL Support :: =lib-env-wsl= :wsl:
 
 #+begin_src emacs-lisp :tangle lisp/lib-env-wsl.el
 ;;; lib-env-wsl.el --- Helpers for WSL environments  -*- lexical-binding: t; -*-
@@ -3638,7 +3601,7 @@ buffer, as a buffer-local variable.
 (defun ceamx-wsl/copy-selected-text (start end)
   "In WSL, copy text region with START and END to the host clipboard."
   (interactive "r")
-  (if (use-region-p)
+  (when (use-region-p)
     (let ((text (buffer-substring-no-properties start end)))
       (shell-command (concat "echo '" text "' | clip.exe")))))
 

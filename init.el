@@ -467,8 +467,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; Load configuration settings for conditional loading.
 (require 'config-ui)
 
-(require 'init-env-tty)
-
 (require 'init-ui)
 
 (when (display-graphic-p)

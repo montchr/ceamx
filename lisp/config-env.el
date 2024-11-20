@@ -47,8 +47,8 @@
 ;; via <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
 (defvar +sys-wsl-p
   (and (eq system-type 'gnu/linux)
-    (or (getenv "WSLENV")
-      (getenv "WSL_DISTRO_NAME")))
+       (or (getenv "WSLENV")
+           (getenv "WSL_DISTRO_NAME")))
   "Whether Emacs is currently running in WSL.")
 
 (defvar +env-dumb-p

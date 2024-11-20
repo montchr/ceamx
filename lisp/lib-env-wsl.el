@@ -32,7 +32,7 @@
 (defun ceamx-wsl/copy-selected-text (start end)
   "In WSL, copy text region with START and END to the host clipboard."
   (interactive "r")
-  (if (use-region-p)
+  (when (use-region-p)
     (let ((text (buffer-substring-no-properties start end)))
       (shell-command (concat "echo '" text "' | clip.exe")))))
 
