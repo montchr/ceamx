@@ -3,9 +3,9 @@
 #+author: Chris Montgomery
 #+email: chmont@proton.me
 #+language: en
-#+property: header-args:emacs-lisp+ :results silent
+#+property: header-args:emacs-lisp+ :results silent :comments both
 #+property: header-args:shell+      :results replace
-#+property: header-args             :mkdirp yes :tangle no :tangle-mode o444 :exports code :noweb yes :comments no
+#+property: header-args             :mkdirp yes :tangle no :exports code :noweb yes :comments both
 
 * Overview
 
@@ -2319,6 +2319,7 @@ expect the value you arrive at to be as high as 100 MiB.
 
 (use-package f)
 #+end_src
+
 
 * TODO Load Features
 :PROPERTIES:
