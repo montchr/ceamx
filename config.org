@@ -162,50 +162,6 @@ ELP is useful for seeing which functions in a package are "hot":
 <<file-footer(feature="lib-tools")>>
 #+end_src
 
-*** =early-init.el=
-
-#+name: early-init-file
-#+begin_src emacs-lisp :tangle early-init.el
-<<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<early-init>>
-
-<<file-footer(feature="early-init")>>
-#+end_src
-
-*** =init.el=
-
-#+name: init-file
-#+begin_src emacs-lisp :tangle init.el
-<<file-prop-line(feature="init",desc="Initialize Ceamx",extraprops="no-byte-compile: t;")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init>>
-
-<<file-footer(feature="init")>>
-#+end_src
-
 *** =lisp/core/ceamx-lib.el=
 
 #+name: ceamx-lib-file
@@ -2499,12 +2455,28 @@ expect the value you arrive at to be as high as 100 MiB.
 
 * Before Dawn: =early-init.el=
 :PROPERTIES:
-:header-args: :noweb-ref early-init
+:header-args: :tangle early-init.el :comments both
 :END:
+
+#+begin_src emacs-lisp :tangle early-init.el :startup folded :noweb yes :comments no
+<<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
+** Prevent package.el from enabling all packages before init
 
 - [[https://old.reddit.com/r/emacs/comments/np6ey4/how_packageel_works_with_use_package/][How package.el Works with Use Package : emacs]]
 
-** Prevent package.el from enabling all packages before init
 
 When nil and using the builtin package manager, ~package-initialize~ must be
 invoked in the init process prior to ~require~ing any packages installed with
@@ -2529,7 +2501,6 @@ When non-nil, there is no need to invoke ~package-initialize~.
 #+end_src
 
 ** Performance
-
 *** Language servers
 
 <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
@@ -2581,6 +2552,9 @@ See also:
 
 *** DISABLED Simplify filename pattern-matching during init
 
+- Note taken on [2024-11-19 Tue 20:52] \\
+  This was not properly excluded from tangling until restructuring my config
+  today!  So it has actually been present in =early-init.el= for some time...
 - Note taken on [2024-03-23 Sat 03:24] \\
   Quick followup: I would not be surprised if this had something to do with adding
   ~ceamx-restore-file-name-handler-alist-h~ on ~ceamx-after-init-hook~, which is
@@ -2628,7 +2602,6 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 #+end_src
 
 ** Directories and well-known-files
-
 *** Add directories to load path
 
 #+begin_src emacs-lisp
@@ -2743,14 +2716,13 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 #+end_src
 
-
-
 ** Quietize startup
 
 #+begin_src emacs-lisp
 (setq inhibit-startup-screen t)
 (setq initial-buffer-choice nil)
 #+end_src
+
 
 
 * Common: Paths
@@ -14731,6 +14703,16 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 (add-hook 'ceamx-after-init-hook
           (lambda ()
             (load (locate-user-emacs-file "chaos.el") t)))
+#+end_src
+
+** Append file footers
+:PROPERTIES:
+:header-args:emacs-lisp: :noweb yes :comments no
+:END:
+
+
+#+begin_src emacs-lisp :tangle early-init.el
+<<file-footer(feature="early-init")>>
 #+end_src
 
 * End
