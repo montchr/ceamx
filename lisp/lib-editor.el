@@ -3,11 +3,11 @@
 ;; Copyright (C) 2023-2024  Chris Montgomery
 ;; Copyright (C) 2016–2022  Radian LLC and contributors
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Radon Rosborough <radon@intuitiveexplanations.com>
 ;; Keywords: local
 

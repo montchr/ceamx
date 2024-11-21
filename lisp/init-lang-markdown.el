@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local, languages
 
 ;; This program is free software; you can redistribute it and/or modify

@@ -3,7 +3,7 @@
 ;; Copyright (C) 2024  Chris Montgomery
 ;; Copyright (C) 2018  Adam Porter
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Adam Porter <adam@alphapapa.net>
 ;; Keywords: local, lisp, tools, internal, convenience
 

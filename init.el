@@ -1,8 +1,8 @@
 ;;; init.el --- Initialize Ceamx  -*- lexical-binding: t; no-byte-compile: t; -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -43,7 +43,7 @@
 
 ;; [[file:config.org::*Configure default identity][Configure default identity:1]]
 (setq-default user-full-name "Chris Montgomery"
-              user-mail-address "chmont@proton.me")
+              user-mail-address "chmont@protonmail.com")
 ;; Configure default identity:1 ends here
 
 ;; Profiling

@@ -1,7 +1,7 @@
 # -*- eval: (load-file "./ceamx-dev-loader.el") -*-
 #+title: Ceamx: An Emacs Configuration
 #+author: Chris Montgomery
-#+email: chmont@proton.me
+#+email: chmont@protonmail.com
 #+language: en
 #+property: header-args:emacs-lisp+ :results silent :comments both
 #+property: header-args:shell+      :results replace
@@ -18,18 +18,6 @@ The target operating system is the NixOS distribution of GNU/Linux, though the
 configuration will usually also work on macOS.  E would like Ceamx to run well
 on WSL2 when E is running MS Windows, however that is a very low priority.
 
-** Agenda
-
-*** CANCELLED <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
-CLOSED: [2024-07-14 Sun 21:34]
-- State "CANCELLED"  from "TODO"       [2024-07-14 Sun 21:34]
-*** DONE <https://orgmode.org/worg/org-contrib/org-choose.html>
-CLOSED: [2024-07-16 Tue 00:17]
-
-
-- State "DONE"       from "INPRG"      [2024-07-16 Tue 00:17]
-- State "INPRG"      from "TODO"       [2024-07-14 Sun 21:41] \\
-  See section on ~org-contrib~
 ** Styleguide
 :PROPERTIES:
 :VISIBILITY: folded
@@ -96,7 +84,7 @@ CLOSED: [2024-05-18 Sat 15:50]
 **** ~file-header~
 
 #+name: file-header-default-authors-table
-| Chris Montgomery | chmont@proton.me | 2024 |   | GPL-3.0-or-later |
+| Chris Montgomery | chmont@protonmail.com | 2024 |   | GPL-3.0-or-later |
 | Someone Else?    |                  |      |   |                  |
 
 #+name: file-header
@@ -387,6 +375,20 @@ mutation of a variable.
 - [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
 
 
+* Agenda
+** TODO Promising alternative to =org-roam= or =denote= <https://github.com/meedstrom/org-node>
+** CANCELLED <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
+CLOSED: [2024-07-14 Sun 21:34]
+- State "CANCELLED"  from "TODO"       [2024-07-14 Sun 21:34]
+** DONE <https://orgmode.org/worg/org-contrib/org-choose.html>
+CLOSED: [2024-07-16 Tue 00:17]
+
+
+- State "DONE"       from "INPRG"      [2024-07-16 Tue 00:17]
+- State "INPRG"      from "TODO"       [2024-07-14 Sun 21:41] \\
+  See section on ~org-contrib~
+
+
 * Target Files
 :PROPERTIES:
 :VISIBILITY: folded
@@ -398,9 +400,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/config-ui.el :comments no :noweb yes
 <<file-prop-line(feature="config-ui",desc="User options for Emacs appearance")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -420,9 +422,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/config-buffer.el :comments no :noweb yes
 <<file-prop-line(feature="config-buffer",desc="Buffer constants, options, and variables")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -442,9 +444,9 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/config-editor.el :comments no :noweb yes
 <<file-prop-line(feature="config-editor",desc="User options for editing")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -464,9 +466,9 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/config-window.el :comments no :noweb yes
 <<file-prop-line(feature="config-window",desc="Window management user options")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -486,9 +488,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/config-prog.el :comments no :noweb yes
 <<file-prop-line(feature="config-prog",desc="User options for programming modes")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -508,7 +510,7 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/lib-files.el :comments no :noweb yes
 <<file-prop-line(feature="lib-files",desc="Files support support")>>
 
-;; Copyright (C) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (C) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2014-2022  Henrik Lissner
 ;; Copyright (C) 2006-2021  Steve Purcell
 ;; Copyright (C) 2008-2024  Jonas Bernoulli
@@ -517,7 +519,7 @@ mutation of a variable.
 ;; Author: Henrik Lissner
 ;;         Vegard Øye <vegard_oye at hotmail.com>
 ;;         Steve Purcell
-;;         Chris Montgomery <chmont@proton.me>
+;;         Chris Montgomery <chmont@protonmail.com>
 ;;         Jonas Bernoulli <jonas@bernoul.li>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Created: 23 January 2023
@@ -570,9 +572,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/lib-completion.el :comments no :noweb yes
 <<file-prop-line(feature="lib-completion",desc="Completion helpers")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -592,9 +594,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/lib-tools.el :comments no :noweb yes
 <<file-prop-line(feature="lib-tools",desc="Library for miscellaneous tooling")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -614,9 +616,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/lib-ui.el :comments no :noweb yes
 <<file-prop-line(feature="lib-ui",desc="Appearance helper functions")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -636,9 +638,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/lib-buffer.el :comments no :noweb yes
 <<file-prop-line(feature="lib-buffer",desc="Buffer helper callables")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -660,11 +662,11 @@ mutation of a variable.
 ;; Copyright (C) 2023-2024  Chris Montgomery
 ;; Copyright (C) 2016–2022  Radian LLC and contributors
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Radon Rosborough <radon@intuitiveexplanations.com>
 ;; Keywords: local
 
@@ -704,9 +706,9 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/lib-search.el :comments no :noweb yes
 <<file-prop-line(feature="lib-search",desc="Search support functions")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -726,9 +728,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/lib-prog.el :comments no :noweb yes
 <<file-prop-line(feature="lib-prog",desc="Assorted helper callables for programming modes")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -748,16 +750,16 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/lib-window.el :comments no :noweb yes
 <<file-prop-line(feature="lib-window",desc="Window management support library")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2023 Free Software Foundation, Inc.
 ;; Copyright (C) 2024  Protesilaos Stavrou
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Vegard Øye <vegard_oye at hotmail.com>
 ;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
 ;;         Protesilaos Stavrou <public@protesilaos.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -777,9 +779,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-ui.el :comments no :noweb yes
 <<file-prop-line(feature="init-ui",desc="General user interface customizations")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -799,9 +801,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el :comments no :noweb yes
 <<file-prop-line(feature="init-ui-graphical",desc="Appearance customizations for graphical environments")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -821,9 +823,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-dashboard.el :comments no :noweb yes
 <<file-prop-line(feature="init-dashboard",desc="Dashboard support")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -843,9 +845,9 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/init-files.el :comments no :noweb yes
 <<file-prop-line(feature="init-files",desc="File handling")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -864,9 +866,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-flycheck.el :comments no :noweb yes
 <<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -886,9 +888,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-flymake.el :comments no :noweb yes
 <<file-prop-line(feature="init-flymake",desc="Flymake support")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -908,9 +910,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-abbrevs.el :comments no :noweb yes
 <<file-prop-line(feature="init-abbrevs",desc="Abbrevs support")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -930,9 +932,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-completion.el :comments no :noweb yes
 <<file-prop-line(feature="init-completion",desc="Completion enhancements")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -952,9 +954,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-templates.el :comments no :noweb yes
 <<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -974,9 +976,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-notes.el :comments no :noweb yes
 <<file-prop-line(feature="init-notes",desc="Notetaking features")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -996,9 +998,9 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/init-outline.el :comments no :noweb yes
 <<file-prop-line(feature="init-outline",desc="Customizations for outline structures")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1018,9 +1020,9 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/init-org.el :comments no :noweb yes
 <<file-prop-line(feature="init-org",desc="Org-Mode support")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1040,9 +1042,9 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/init-search.el :comments no :noweb yes
 <<file-prop-line(feature="init-search",desc="Searching and replacing features")>>
 
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1062,9 +1064,9 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/init-window.el :comments no :noweb yes
 <<file-prop-line(feature="init-window",desc="Window management")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1084,9 +1086,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-buffer.el :comments no :noweb yes
 <<file-prop-line(feature="init-buffer",desc="Buffer customizations")>>
 
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1106,9 +1108,9 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/init-editor.el :comments no :noweb yes
 <<file-prop-line(feature="init-editor",desc="Editor customizations")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1128,9 +1130,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-workspace.el :comments no :noweb yes
 <<file-prop-line(feature="init-workspace",desc="Workspaces, activities, scopes, and other organizational closures")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1150,9 +1152,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-vcs.el :comments no :noweb yes
 <<file-prop-line(feature="init-vcs",desc="Version control support")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1172,9 +1174,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-lsp.el :comments no :noweb yes
 <<file-prop-line(feature="init-lsp",desc="Eglot support")>>
 
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1194,9 +1196,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-lang-data.el :comments no :noweb yes
 <<file-prop-line(feature="init-lang-data",desc="Language support for data syntaxes")>>
 
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1216,9 +1218,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-lang-nix.el :comments no :noweb yes
 <<file-prop-line(feature="init-lang-nix",desc="Nix language support")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1238,9 +1240,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-lang-php.el :comments no :noweb yes
 <<file-prop-line(feature="init-lang-php",desc="PHP language support")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1260,9 +1262,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle lisp/init-writing.el :comments no :noweb yes
 <<file-prop-line(feature="init-writing",desc="Writing augmentation")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1282,9 +1284,9 @@ mutation of a variable.
 #+begin_src emacs-lisp  :tangle lisp/init-tools.el :comments no :noweb yes
 <<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
 
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1308,9 +1310,9 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle early-init.el :startup folded :noweb yes :comments no
 <<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -1582,7 +1584,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -1695,7 +1697,7 @@ Emacs version to prevent bytecode incompatibility.")
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -1780,7 +1782,7 @@ library will be loaded before packages are available.
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el :noweb yes :comments no
 <<file-prop-line(feature="ceamx-lib",desc="Ceamx common library")>>
 
-;; Copyright (C) 2023-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (C) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2014-2023  Henrik Lissner
 ;; Copyright (C) 2006-2021  Steve Purcell
 ;; Copyright (C) 2016–2022  Radian LLC and contributors
@@ -1788,7 +1790,7 @@ library will be loaded before packages are available.
 ;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
 ;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Henrik Lissner
 ;;         Steve Purcell
 ;;         Radon Rosborough <radon@intuitiveexplanations.com>
@@ -2184,7 +2186,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 ;; Copyright (C) 2024  Chris Montgomery
 ;; Copyright (C) 2020-2023  Protesilaos Stavrou
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Protesilaos Stavrou <info@protesilaos.com>
 ;; Keywords: local
 
@@ -2232,9 +2234,9 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 #+begin_src emacs-lisp :tangle init.el :noweb yes :comments no
 <<file-prop-line(feature="init",desc="Initialize Ceamx",extraprops="no-byte-compile: t;")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -2261,7 +2263,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 
 #+begin_src emacs-lisp
 (setq-default user-full-name "Chris Montgomery"
-              user-mail-address "chmont@proton.me")
+              user-mail-address "chmont@protonmail.com")
 #+end_src
 
 ** Profiling
@@ -3064,7 +3066,7 @@ Or, perhaps more accurately: stuff that needs a better home.
 ;; Copyright (C) 2020-2023  Protesilaos Stavrou
 ;; Copyright (c) 2023  Bruno Boal <egomet@bboal.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Protesilaos Stavrou <info@protesilaos.com>
 ;;         Bruno Boal <egomet@bboal.com>
 ;; Keywords: local, convenience
@@ -3213,7 +3215,7 @@ Call the commands `ceamx/escape-url-line' and
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -3274,7 +3276,7 @@ POS defaults to the current position."
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -3360,9 +3362,9 @@ POS defaults to the current position."
 #+begin_src emacs-lisp :tangle lisp/init-env.el :noweb yes :comments no
 <<file-prop-line(feature="init-env",desc="Environmental integrations")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -3509,7 +3511,7 @@ buffer, as a buffer-local variable.
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -3557,7 +3559,7 @@ buffer, as a buffer-local variable.
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -3649,7 +3651,7 @@ buffer, as a buffer-local variable.
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -7177,9 +7179,9 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 #+begin_src emacs-lisp :tangle lisp/init-help.el :comments no
 ;;; init-help.el --- Help -*- lexical-binding: t; -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -7430,7 +7432,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local, help
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -7540,7 +7542,7 @@ DOC is as in `devdocs-install'."
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local, lisp
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -7894,7 +7896,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -7965,9 +7967,9 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+begin_src emacs-lisp :tangle lisp/config-keys.el :comments no :noweb yes
 <<file-prop-line(feature="config-keys",desc="Keybinding constants and variables")>>
 
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -7980,9 +7982,9 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+begin_src emacs-lisp :tangle lisp/lib-keys.el :comments no :noweb yes
 <<file-prop-line(feature="lib-keys",desc="Keybinding helper library")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -7997,9 +7999,9 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+begin_src emacs-lisp :tangle lisp/init-keys.el :comments no :noweb yes
 <<file-prop-line(feature="init-keys",desc="Keybindings")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -9440,7 +9442,7 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -9565,7 +9567,7 @@ Embark will load the library automatically after Consult.
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -9935,7 +9937,7 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -10346,7 +10348,7 @@ avoid further confusion.
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -10486,7 +10488,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: languages, local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -10601,9 +10603,9 @@ Configuration for working with Lisps of all kinds.
 #+begin_src emacs-lisp :tangle lisp/init-lisp.el :noweb yes :comments no
 <<file-prop-line(feature="init-lisp",desc="Lisp support")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -10622,9 +10624,9 @@ Configuration for working with Lisps of all kinds.
 #+begin_src emacs-lisp  :tangle lisp/config-lisp.el :comments no :noweb yes
 <<file-prop-line(feature="config-lisp",desc="Lispy variable definitions")>>
 
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -10643,9 +10645,9 @@ Configuration for working with Lisps of all kinds.
 #+begin_src emacs-lisp  :tangle lisp/lib-lisp.el :comments no :noweb yes
 <<file-prop-line(feature="lib-lisp",desc="Lisp support functions")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -11040,7 +11042,7 @@ lists."
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local, lisp
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -11203,7 +11205,7 @@ The original function fails in the presence of whitespace after a sexp."
 ;; Copyright (C) 2024  Chris Montgomery
 ;; Copyright (C) 2018  Adam Porter
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Adam Porter <adam@alphapapa.net>
 ;; Keywords: local, lisp, tools, internal, convenience
 
@@ -11772,7 +11774,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -11845,7 +11847,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local, languages
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -11902,7 +11904,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: languages, local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -11948,7 +11950,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local, languages
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -12032,7 +12034,7 @@ usually wrongly fontified as a metadata block."
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: languages, local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -12228,7 +12230,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -12612,7 +12614,7 @@ its cache should stay out of the way.
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -12675,9 +12677,9 @@ their own initialization files.
 #+begin_src emacs-lisp  :tangle lisp/init-lang-misc.el :comments no
 ;;; init-lang-misc.el --- Miscellaneous language support -*- lexical-binding: t -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -13657,7 +13659,7 @@ What even is this though...?
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -13766,9 +13768,9 @@ What even is this though...?
 #+begin_src emacs-lisp :tangle lisp/init-dired.el :comments no
 ;;; init-dired.el --- Dired -*- lexical-binding: t -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
@@ -13866,7 +13868,7 @@ What even is this though...?
 
 ;; Copyright (C) 2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -13915,7 +13917,7 @@ What even is this though...?
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: news, local
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -14053,7 +14055,7 @@ CLOSED: [2024-07-16 Tue 00:00]
 ;; Copyright (C) 2023-2024  Chris Montgomery
 ;; Copyright (C) 2018  Howard X. Abrams
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Howard X. Abrams <howard.abrams@workday.com>
 ;; Keywords: local
 
@@ -14564,7 +14566,7 @@ supports the display of commentaries on individual changing lines.
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

@@ -1,6 +1,6 @@
 ;;; lib-files.el --- Files support support  -*- lexical-binding: t;  -*-
 
-;; Copyright (C) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (C) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2014-2022  Henrik Lissner
 ;; Copyright (C) 2006-2021  Steve Purcell
 ;; Copyright (C) 2008-2024  Jonas Bernoulli
@@ -9,7 +9,7 @@
 ;; Author: Henrik Lissner
 ;;         Vegard Øye <vegard_oye at hotmail.com>
 ;;         Steve Purcell
-;;         Chris Montgomery <chmont@proton.me>
+;;         Chris Montgomery <chmont@protonmail.com>
 ;;         Jonas Bernoulli <jonas@bernoul.li>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Created: 23 January 2023

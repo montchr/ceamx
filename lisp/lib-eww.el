@@ -3,7 +3,7 @@
 ;; Copyright (C) 2023-2024  Chris Montgomery
 ;; Copyright (C) 2018  Howard X. Abrams
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Howard X. Abrams <howard.abrams@workday.com>
 ;; Keywords: local
 

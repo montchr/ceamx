@@ -1,8 +1,8 @@
 ;;; lib-keys.el --- Keybinding helper library  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
 
-;; Author: Chris Montgomery <chmont@proton.me>
+;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 ;; Version: 0.1.0
 
