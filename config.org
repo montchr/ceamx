@@ -88,28 +88,6 @@ instead, use a =-flag= suffix or names like =is-foo=.
 :header-args:emacs-lisp: :comments no
 :END:
 
-**** =lisp/config-keys.el=
-
-#+name: config-keys-file
-#+begin_src emacs-lisp :tangle lisp/config-keys.el
-<<file-prop-line(feature="config-keys",desc="Keybinding constants and variables")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-keys>>
-
-<<file-footer(feature="config-keys")>>
-#+end_src
-
 **** =lisp/config-ui.el=
 
 #+name: config-ui-file
@@ -348,28 +326,6 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<file-footer(feature="lib-ui")>>
 #+end_src
 
-**** =lisp/lib-keys.el=
-
-#+name: lib-keys-file
-#+begin_src emacs-lisp :tangle lisp/lib-keys.el
-<<file-prop-line(feature="lib-keys",desc="Keybinding helper library")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-keys>>
-
-<<file-footer(feature="lib-keys")>>
-#+end_src
-
 **** =lisp/lib-buffer.el=
 
 #+name: lib-buffer-file
@@ -509,28 +465,6 @@ instead, use a =-flag= suffix or names like =is-foo=.
 <<lib-window>>
 
 <<file-footer(feature="lib-window")>>
-#+end_src
-
-**** =lisp/init-keys.el=
-
-#+name: init-keys-file
-#+begin_src emacs-lisp :tangle lisp/init-keys.el
-<<file-prop-line(feature="init-keys",desc="Keybindings")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-keys>>
-
-<<file-footer(feature="init-keys")>>
 #+end_src
 
 **** =lisp/init-ui.el=
@@ -8015,12 +7949,71 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 * Keys :: =keys= :keys:
 :PROPERTIES:
-:header-args: :noweb-ref init-keys
+:header-args: :tangle lisp/init-keys.el
 :END:
 
-** Commentary
-*** TODO <https://github.com/jwiegley/dot-emacs/blob/master/init.org#smart-newline>
-*** TODO <https://github.com/ainame/smart-newline.el/tree/c50ab035839b307c66d439083b6761cb7db5e972>
+** TODO <https://github.com/jwiegley/dot-emacs/blob/master/init.org#smart-newline>
+** TODO <https://github.com/ainame/smart-newline.el/tree/c50ab035839b307c66d439083b6761cb7db5e972>
+** File Headers
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/config-keys.el :comments no :noweb yes
+<<file-prop-line(feature="config-keys",desc="Keybinding constants and variables")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/lib-keys.el :comments no :noweb yes
+<<file-prop-line(feature="lib-keys",desc="Keybinding helper library")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+(require 'ceamx-lib)
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-keys.el :comments no :noweb yes
+<<file-prop-line(feature="init-keys",desc="Keybindings")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
+** Settings :: =config-keys=
+:PROPERTIES:
+:header-args: :tangle lisp/config-keys.el
+:END:
+
+#+begin_src emacs-lisp
+(defconst ceamx-keys-repl-toggle "C-:")
+#+end_src
 
 ** Requirements
 
@@ -8028,12 +8021,6 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 (require 'config-env)
 (require 'ceamx-lib)
 (require 'lib-keys)
-#+end_src
-
-** Constants
-
-#+begin_src emacs-lisp :noweb-ref config-keys
-(defconst ceamx-keys-repl-toggle "C-:")
 #+end_src
 
 ** Bind some CUA-like hotkeys for editing operations
@@ -8482,14 +8469,10 @@ own values upon definition.
 (ceamx-meow-bind-thing 'curly "}")
 #+end_src
 
-**** Define helper functions and macros for pair-things
+**** Define helper functions and macros for pair-things :lib:
 :PROPERTIES:
-:header-args: :noweb-ref lib-keys
+:header-args: :tangle lisp/lib-keys.el
 :END:
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-#+end_src
 
 ***** ~meow-pair!~: Register a new meow-thing as a pair
 
@@ -8579,6 +8562,22 @@ as the CHAR argument to `ceamx-normalize-char'."
 (meow-global-mode 1)
 #+end_src
 
+** File Footers
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/config-keys.el :comments no :noweb yes
+<<file-footer(feature="config-keys")>>
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/lib-keys.el :comments no :noweb yes
+<<file-footer(feature="lib-keys")>>
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-keys.el :comments no :noweb yes
+<<file-footer(feature="init-keys")>>
+#+end_src
 
 
 * Abbrevs (~abbrev-mode~) :: =abbrevs=
