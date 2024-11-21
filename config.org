@@ -1638,6 +1638,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 * Common Libraries :: =core/ceamx-*=
 
+
 ** =lisp/core/ceamx-paths.el= :: Paths
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el
@@ -1751,7 +1752,7 @@ Emacs version to prevent bytecode incompatibility.")
 #+end_src
 
 
-** =lisp/core/ceamx-keymaps.el= :: Keymap Definitions
+** =lisp/core/ceamx-keymaps.el= :: Keymaps
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :noweb yes
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
@@ -2307,7 +2308,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 ;;; Code:
 #+end_src
 
-** Load required libraries for =init.el=
+** Dependencies
 
 #+begin_src emacs-lisp
 (require 'cl-lib)
@@ -2816,7 +2817,7 @@ initialization errors.
 (elpaca-wait)
 #+end_src
 
-** Install ~gcmh~ to manage running garbage collection on idle
+** ~gcmh~: manage running garbage collection on idle :package:perf:
 
 - Website :: <https://akrl.sdf.org/>
 - Code :: <https://gitlab.com/koral/gcmh>
@@ -2885,7 +2886,7 @@ factor of 2 until you see only insignificant speedups. I would not
 expect the value you arrive at to be as high as 100 MiB.
 #+end_quote
 
-** Install utility libraries
+** Install utility libraries :package:
 
 #+begin_src emacs-lisp
 ;; FIXME: remove or alias (`##' is very difficult to search for)
