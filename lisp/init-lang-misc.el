@@ -27,16 +27,43 @@
 
 (require 'ceamx-lib)
 
+;; Language support for Apache Web Server configuration files
+
+
+;; [[file:../config.org::*Language support for Apache Web Server configuration files][Language support for Apache Web Server configuration files:1]]
 (package! apache-mode)
+;; Language support for Apache Web Server configuration files:1 ends here
 
+;; Language support for the Just task runner configuration files
+
+
+;; [[file:../config.org::*Language support for the Just task runner configuration files][Language support for the Just task runner configuration files:1]]
 (package! just-mode)
+;; Language support for the Just task runner configuration files:1 ends here
 
+;; Syntax highlighting for robots.txt files
+
+
+;; [[file:../config.org::*Syntax highlighting for robots.txt files][Syntax highlighting for robots.txt files:1]]
 (package! robots-txt-mode)
+;; Syntax highlighting for robots.txt files:1 ends here
 
+;; Language support for =vimrc= syntax
+
+
+;; [[file:../config.org::*Language support for =vimrc= syntax][Language support for =vimrc= syntax:1]]
 (package! vimrc-mode
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
+;; Language support for =vimrc= syntax:1 ends here
 
+;; Language support for Dotenv environment configuration files :package:major_mode:
+
+;; - website :: <https://github.com/preetpalS/emacs-dotenv-mode>
+
+
+;; [[file:../config.org::*Language support for Dotenv environment configuration files][Language support for Dotenv environment configuration files:1]]
 (package! dotenv-mode)
+;; Language support for Dotenv environment configuration files:1 ends here
 
 (provide 'init-lang-misc)
 ;;; init-lang-misc.el ends here

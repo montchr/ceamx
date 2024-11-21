@@ -24,10 +24,10 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Load required libraries for =init.el=
+;; Dependencies
 
 
-;; [[file:config.org::*Load required libraries for =init.el=][Load required libraries for =init.el=:1]]
+;; [[file:config.org::*Dependencies][Dependencies:1]]
 (require 'cl-lib)
 
 ;; Core variables
@@ -36,7 +36,7 @@
 
 ;; Core functions and macros
 (require 'ceamx-lib)
-;; Load required libraries for =init.el=:1 ends here
+;; Dependencies:1 ends here
 
 ;; Configure default identity
 
@@ -405,7 +405,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (elpaca-wait)
 ;; Elpaca-Wait № 2: finish processing current queue:1 ends here
 
-;; Install ~gcmh~ to manage running garbage collection on idle
+;; ~gcmh~: manage running garbage collection on idle :package:perf:
 
 ;; - Website :: <https://akrl.sdf.org/>
 ;; - Code :: <https://gitlab.com/koral/gcmh>
@@ -414,13 +414,13 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; When idle, GC will be triggered with a low threshold.
 
 
-;; [[file:config.org::*Install ~gcmh~ to manage running garbage collection on idle][Install ~gcmh~ to manage running garbage collection on idle:1]]
+;; [[file:config.org::*~gcmh~: manage running garbage collection on idle][~gcmh~: manage running garbage collection on idle:1]]
 (package! gcmh
   (blackout 'gcmh-mode)
   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
-;; Install ~gcmh~ to manage running garbage collection on idle:1 ends here
+;; ~gcmh~: manage running garbage collection on idle:1 ends here
 
-;; Install utility libraries
+;; Install utility libraries :package:
 
 
 ;; [[file:config.org::*Install utility libraries][Install utility libraries:1]]
@@ -601,9 +601,15 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-controls)
 ;; Load Features:16 ends here
 
+;; TODO ~hippie-expand~
+
+
+;; [[file:config.org::*~hippie-expand~][~hippie-expand~:1]]
 (setopt hippie-expand-verbose t
         hippie-expand-dabbrev-skip-space t)
+;; ~hippie-expand~:1 ends here
 
+;; [[file:config.org::*~hippie-expand~][~hippie-expand~:2]]
 ;; These are mostly from the default value, for visibility.
 (setopt hippie-expand-try-functions-list
         '(try-complete-file-name-partially
@@ -627,38 +633,70 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
           ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
           ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
           ))
+;; ~hippie-expand~:2 ends here
 
+;; The Keybindings of Uncertainty :keybinds:
+
+
+;; [[file:config.org::*The Keybindings of Uncertainty][The Keybindings of Uncertainty:1]]
 (define-keymap :keymap ceamx-session-map
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs)
+;; The Keybindings of Uncertainty:1 ends here
 
+;; Start the Emacs server process if not already running
+
+
+;; [[file:config.org::*Start the Emacs server process if not already running][Start the Emacs server process if not already running:1]]
 (defun ceamx/maybe-start-server ()
   "Allow this Emacs process to act as server process if not already running."
   (require 'server)
   (unless (and (fboundp 'server-running-p)
                (server-running-p))
     (server-start)))
+;; Start the Emacs server process if not already running:1 ends here
 
+;; [[file:config.org::*Start the Emacs server process if not already running][Start the Emacs server process if not already running:2]]
 (add-hook 'ceamx-emacs-startup-hook #'ceamx/maybe-start-server)
+;; Start the Emacs server process if not already running:2 ends here
 
+;; macOS: Restart Yabai after init
+
+;; Otherwise, =yabai= will not "see" the Emacs GUI window.
+
+
+;; [[file:config.org::*macOS: Restart Yabai after init][macOS: Restart Yabai after init:1]]
 (when (and (display-graphic-p) +sys-mac-p)
   (def-hook! ceamx-after-init-restart-yabai-h ()
     'ceamx-after-init-hook
     "Restart the yabai service after init."
     (after! exec-path-from-shell
       (async-shell-command "yabai --restart-service"))))
+;; macOS: Restart Yabai after init:1 ends here
 
+;; Optionally load the ~custom-file~
+
+
+;; [[file:config.org::*Optionally load the ~custom-file~][Optionally load the ~custom-file~:1]]
 (defun ceamx/load-custom-file ()
   "Load the user `custom-file'."
   (interactive)
   (when (file-exists-p custom-file)
     (load custom-file 'noerror)))
+;; Optionally load the ~custom-file~:1 ends here
 
+;; [[file:config.org::*Optionally load the ~custom-file~][Optionally load the ~custom-file~:2]]
 (add-hook 'ceamx-after-init-hook #'ceamx/load-custom-file)
+;; Optionally load the ~custom-file~:2 ends here
 
+;; Load the chaos file
+
+
+;; [[file:config.org::*Load the chaos file][Load the chaos file:1]]
 (add-hook 'ceamx-after-init-hook
           (lambda ()
             (load (locate-user-emacs-file "chaos.el") t)))
+;; Load the chaos file:1 ends here
 
 (provide 'init)
 ;;; init.el ends here

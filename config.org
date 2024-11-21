@@ -5,7 +5,7 @@
 #+language: en
 #+property: header-args:emacs-lisp+ :results silent :comments both
 #+property: header-args:shell+      :results replace
-#+property: header-args             :mkdirp yes :tangle no :exports code :noweb yes :comments both
+#+property: header-args             :mkdirp yes :tangle no :exports code :noweb yes
 
 * Overview
 :PROPERTIES:
@@ -83,917 +83,6 @@ instead, use a =-flag= suffix or names like =is-foo=.
 :VISIBILITY: folded
 :END:
 
-*** Target Files
-:PROPERTIES:
-:header-args:emacs-lisp: :comments no
-:END:
-
-**** =lisp/config-ui.el=
-
-#+name: config-ui-file
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
-<<file-prop-line(feature="config-ui",desc="User options for Emacs appearance")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-ui>>
-
-<<file-footer(feature="config-ui")>>
-#+end_src
-
-**** =lisp/config-buffer.el=
-
-#+name: config-buffer-file
-#+begin_src emacs-lisp :tangle lisp/config-buffer.el
-<<file-prop-line(feature="config-buffer",desc="Buffer constants, options, and variables")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-buffer>>
-
-<<file-footer(feature="config-buffer")>>
-#+end_src
-
-**** =lisp/config-editor.el=
-
-#+name: config-editor-file
-#+begin_src emacs-lisp  :tangle lisp/config-editor.el
-<<file-prop-line(feature="config-editor",desc="User options for editing")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-editor>>
-
-<<file-footer(feature="config-editor")>>
-#+end_src
-
-**** =lisp/config-window.el=
-
-#+name: config-window-file
-#+begin_src emacs-lisp  :tangle lisp/config-window.el
-<<file-prop-line(feature="config-window",desc="Window management user options")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-window>>
-
-<<file-footer(feature="config-window")>>
-#+end_src
-
-**** =lisp/config-prog.el=
-
-#+name: config-prog-file
-#+begin_src emacs-lisp :tangle lisp/config-prog.el
-<<file-prop-line(feature="config-prog",desc="User options for programming modes")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-prog>>
-
-<<file-footer(feature="config-prog")>>
-#+end_src
-
-**** =lisp/lib-files.el=
-
-#+name: lib-files-file
-#+begin_src emacs-lisp  :tangle lisp/lib-files.el
-<<file-prop-line(feature="lib-files",desc="Files support support")>>
-
-;; Copyright (C) 2022-2024  Chris Montgomery <chmont@proton.me>
-;; Copyright (C) 2014-2022  Henrik Lissner
-;; Copyright (C) 2006-2021  Steve Purcell
-;; Copyright (C) 2008-2024  Jonas Bernoulli
-;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause
-
-;; Author: Henrik Lissner
-;;         Vegard Øye <vegard_oye at hotmail.com>
-;;         Steve Purcell
-;;         Chris Montgomery <chmont@proton.me>
-;;         Jonas Bernoulli <jonas@bernoul.li>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Created: 23 January 2023
-;; Version: 0.1.0
-
-<<file-license>>
-
-;; Permission is hereby granted, free of charge, to any person obtaining
-;; a copy of this software and associated documentation files (the
-;; "Software"), to deal in the Software without restriction, including
-;; without limitation the rights to use, copy, modify, merge, publish,
-;; distribute, sublicense, and/or sell copies of the Software, and to
-;; permit persons to whom the Software is furnished to do so, subject to
-;; the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be
-;; included in all copies or substantial portions of the Software.
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-;;
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-;;
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-;;; Commentary:
-;;; Code:
-
-<<lib-files>>
-
-<<file-footer(feature="lib-files")>>
-#+end_src
-
-**** =lisp/lib-completion.el=
-
-#+name: lib-completion-file
-#+begin_src emacs-lisp :tangle lisp/lib-completion.el
-<<file-prop-line(feature="lib-completion",desc="Completion helpers")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-completion>>
-
-<<file-footer(feature="lib-completion")>>
-#+end_src
-
-**** =lisp/lib-tools.el=
-
-#+name: lib-tools-file
-#+begin_src emacs-lisp :tangle lisp/lib-tools.el
-<<file-prop-line(feature="lib-tools",desc="Library for miscellaneous tooling")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-tools>>
-
-<<file-footer(feature="lib-tools")>>
-#+end_src
-
-**** =lisp/lib-ui.el=
-
-#+name: lib-ui-file
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
-<<file-prop-line(feature="lib-ui",desc="Appearance helper functions")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-ui>>
-
-<<file-footer(feature="lib-ui")>>
-#+end_src
-
-**** =lisp/lib-buffer.el=
-
-#+name: lib-buffer-file
-#+begin_src emacs-lisp :tangle lisp/lib-buffer.el
-<<file-prop-line(feature="lib-buffer",desc="Buffer helper callables")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-buffer>>
-
-<<file-footer(feature="lib-buffer")>>
-#+end_src
-**** =lisp/lib-editor.el=
-
-#+name: lib-editor-file
-#+begin_src emacs-lisp  :tangle lisp/lib-editor.el
-<<file-prop-line(feature="lib-editor",desc="Editor support library")>>
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-;; Copyright (C) 2016–2022  Radian LLC and contributors
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;;         Radon Rosborough <radon@intuitiveexplanations.com>
-;; Keywords: local
-
-
-<<file-license>>
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-;; SOFTWARE.
-
-
-;;; Commentary:
-;;; Code:
-
-<<lib-editor>>
-
-<<file-footer(feature="lib-editor")>>
-#+end_src
-
-**** =lisp/lib-search.el=
-
-#+name: lib-search-file
-#+begin_src emacs-lisp  :tangle lisp/lib-search.el
-<<file-prop-line(feature="lib-search",desc="Search support functions")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-search>>
-
-<<file-footer(feature="lib-search")>>
-#+end_src
-
-**** =lisp/lib-prog.el=
-
-#+name: lib-prog-file
-#+begin_src emacs-lisp :tangle lisp/lib-prog.el
-<<file-prop-line(feature="lib-prog",desc="Assorted helper callables for programming modes")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-prog>>
-
-<<file-footer(feature="lib-prog")>>
-#+end_src
-
-**** =lisp/lib-window.el=
-
-#+name: lib-window-file
-#+begin_src emacs-lisp  :tangle lisp/lib-window.el
-<<file-prop-line(feature="lib-window",desc="Window management support library")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-;; Copyright (C) 2023 Free Software Foundation, Inc.
-;; Copyright (C) 2024  Protesilaos Stavrou
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;;         Vegard Øye <vegard_oye at hotmail.com>
-;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
-;;         Protesilaos Stavrou <public@protesilaos.com>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-window>>
-
-<<file-footer(feature="lib-window")>>
-#+end_src
-
-**** =lisp/init-ui.el=
-
-#+name: init-ui-file
-#+begin_src emacs-lisp :tangle lisp/init-ui.el
-<<file-prop-line(feature="init-ui",desc="General user interface customizations")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-ui>>
-
-<<file-footer(feature="init-ui")>>
-#+end_src
-
-**** =lisp/init-ui-graphical.el=
-
-#+name: init-ui-graphical-file
-#+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el
-<<file-prop-line(feature="init-ui-graphical",desc="Appearance customizations for graphical environments")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-ui-graphical>>
-
-<<file-footer(feature="init-ui-graphical")>>
-#+end_src
-
-**** =lisp/init-dashboard.el=
-
-#+name: init-dashboard-file
-#+begin_src emacs-lisp :tangle lisp/init-dashboard.el
-<<file-prop-line(feature="init-dashboard",desc="Dashboard support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-dashboard>>
-
-<<file-footer(feature="init-dashboard")>>
-#+end_src
-
-**** =lisp/init-files.el=
-
-#+name: init-files-file
-#+begin_src emacs-lisp  :tangle lisp/init-files.el
-<<file-prop-line(feature="init-files",desc="File handling")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-files>>
-
-<<file-footer(feature="init-files")>>
-#+end_src
-
-**** =lisp/init-flycheck.el=
-
-#+begin_src emacs-lisp :tangle lisp/init-flycheck.el
-<<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-flycheck>>
-
-<<file-footer(feature="init-flycheck")>>
-#+end_src
-
-**** =lisp/init-flymake.el=
-
-#+name: init-flymake-file
-#+begin_src emacs-lisp :tangle lisp/init-flymake.el
-<<file-prop-line(feature="init-flymake",desc="Flymake support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-flymake>>
-
-<<file-footer(feature="init-flymake")>>
-#+end_src
-
-**** =lisp/init-abbrevs.el=
-
-#+name: init-abbrevs-file
-#+begin_src emacs-lisp :tangle lisp/init-abbrevs.el
-<<file-prop-line(feature="init-abbrevs",desc="Abbrevs support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-abbrevs>>
-
-<<file-footer(feature="init-abbrevs")>>
-#+end_src
-
-**** =lisp/init-completion.el=
-
-#+name: init-completion-file
-#+begin_src emacs-lisp :tangle lisp/init-completion.el
-<<file-prop-line(feature="init-completion",desc="Completion enhancements")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-completion>>
-
-<<file-footer(feature="init-completion")>>
-#+end_src
-
-**** =lisp/init-templates.el=
-
-#+name: init-templates-file
-#+begin_src emacs-lisp :tangle lisp/init-templates.el
-<<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-templates>>
-
-<<file-footer(feature="init-templates")>>
-#+end_src
-
-**** =lisp/init-notes.el=
-
-#+name: init-notes-file
-#+begin_src emacs-lisp :tangle lisp/init-notes.el
-<<file-prop-line(feature="init-notes",desc="Notetaking features")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-notes>>
-
-<<file-footer(feature="init-notes")>>
-#+end_src
-
-**** =lisp/init-outline.el=
-
-#+name: init-outline-file
-#+begin_src emacs-lisp  :tangle lisp/init-outline.el
-<<file-prop-line(feature="init-outline",desc="Customizations for outline structures")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-outline>>
-
-<<file-footer(feature="init-outline")>>
-#+end_src
-
-**** =lisp/init-org.el=
-
-#+name: init-org-file
-#+begin_src emacs-lisp  :tangle lisp/init-org.el
-<<file-prop-line(feature="init-org",desc="Org-Mode support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-org>>
-
-<<file-footer(feature="init-org")>>
-#+end_src
-
-**** =lisp/init-search.el=
-
-#+name: init-search-file
-#+begin_src emacs-lisp  :tangle lisp/init-search.el
-<<file-prop-line(feature="init-search",desc="Searching and replacing features")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-search>>
-
-<<file-footer(feature="init-search")>>
-#+end_src
-
-**** =lisp/init-window.el=
-
-#+name: init-window-file
-#+begin_src emacs-lisp  :tangle lisp/init-window.el
-<<file-prop-line(feature="init-window",desc="Window management")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-window>>
-
-<<file-footer(feature="init-window")>>
-#+end_src
-
-**** =lisp/init-buffer.el=
-
-#+name: init-buffer-file
-#+begin_src emacs-lisp :tangle lisp/init-buffer.el
-<<file-prop-line(feature="init-buffer",desc="Buffer customizations")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-buffer>>
-
-<<file-footer(feature="init-buffer")>>
-#+end_src
-
-**** =lisp/init-editor.el=
-
-#+name: init-editor-file
-#+begin_src emacs-lisp  :tangle lisp/init-editor.el
-<<file-prop-line(feature="init-editor",desc="Editor customizations")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-editor>>
-
-<<file-footer(feature="init-editor")>>
-#+end_src
-
-**** =lisp/init-workspace.el=
-
-#+name: init-workspace-file
-#+begin_src emacs-lisp :tangle lisp/init-workspace.el
-<<file-prop-line(feature="init-workspace",desc="Workspaces, activities, scopes, and other organizational closures")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-workspace>>
-
-<<file-footer(feature="init-workspace")>>
-#+end_src
-
-**** =lisp/init-vcs.el=
-
-#+name: init-vcs-file
-#+begin_src emacs-lisp :tangle lisp/init-vcs.el
-<<file-prop-line(feature="init-vcs",desc="Version control support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-vcs>>
-
-<<file-footer(feature="init-vcs")>>
-#+end_src
-
-**** =lisp/init-lsp.el=
-
-#+name: init-lsp-file
-#+begin_src emacs-lisp :tangle lisp/init-lsp.el
-<<file-prop-line(feature="init-lsp",desc="Eglot support")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lsp>>
-
-<<file-footer(feature="init-lsp")>>
-#+end_src
-
-**** =lisp/init-lang-data.el=
-
-#+name: init-lang-data-file
-#+begin_src emacs-lisp :tangle lisp/init-lang-data.el
-<<file-prop-line(feature="init-lang-data",desc="Language support for data syntaxes")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lang-data>>
-
-<<file-footer(feature="init-lang-data")>>
-#+end_src
-
-**** =lisp/init-lang-nix.el=
-
-#+name: init-lang-nix-file
-#+begin_src emacs-lisp :tangle lisp/init-lang-nix.el
-<<file-prop-line(feature="init-lang-nix",desc="Nix language support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lang-nix>>
-
-<<file-footer(feature="init-lang-nix")>>
-#+end_src
-
-**** =lisp/init-lang-php.el=
-
-#+name: init-lang-php-file
-#+begin_src emacs-lisp :tangle lisp/init-lang-php.el
-<<file-prop-line(feature="init-lang-php",desc="PHP language support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lang-php>>
-
-<<file-footer(feature="init-lang-php")>>
-#+end_src
-
-**** =lisp/init-writing.el=
-
-#+name: init-writing-file
-#+begin_src emacs-lisp :tangle lisp/init-writing.el
-<<file-prop-line(feature="init-writing",desc="Writing augmentation")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-writing>>
-
-<<file-footer(feature="init-writing")>>
-#+end_src
-
-**** =lisp/init-tools.el=
-
-#+name: init-tools-file
-#+begin_src emacs-lisp  :tangle lisp/init-tools.el
-<<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
-
-;; Author: Chris Montgomery <chmont@proton.me>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-tools>>
-
-<<file-footer(feature="init-tools")>>
-#+end_src
-
 *** Partials
 :PROPERTIES:
 :header-args: :results replace
@@ -1031,7 +120,7 @@ CLOSED: [2024-05-18 Sat 15:50]
 
 #+name: file-prop-line
 #+header: :var feature="" :var desc="" :var extraprops=""
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :comments no
 (format ";;; %s.el --- %s  -*- lexical-binding: t; %s -*-" feature desc extraprops)
 #+end_src
 
@@ -1050,7 +139,7 @@ Emacs calls this the "file trailer" in ~generate-lisp-file-trailer~.
 - [ ] Adds significantly to tangle time
 
 #+name: file-footer
-#+begin_src emacs-lisp :var feature=""
+#+begin_src emacs-lisp :var feature="" :comments no
 (format "(provide '%1$s)\n;;; %1$s.el ends here\n" feature)
 #+end_src
 
@@ -1296,6 +385,919 @@ mutation of a variable.
 
 - [[info:elisp#Tips][(elisp) Tips]]
 - [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
+
+
+* Target Files
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+** =lisp/config-ui.el=
+
+#+name: config-ui-file
+#+begin_src emacs-lisp :tangle lisp/config-ui.el :comments no :noweb yes
+<<file-prop-line(feature="config-ui",desc="User options for Emacs appearance")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-ui>>
+
+<<file-footer(feature="config-ui")>>
+#+end_src
+
+** =lisp/config-buffer.el=
+
+#+name: config-buffer-file
+#+begin_src emacs-lisp :tangle lisp/config-buffer.el :comments no :noweb yes
+<<file-prop-line(feature="config-buffer",desc="Buffer constants, options, and variables")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-buffer>>
+
+<<file-footer(feature="config-buffer")>>
+#+end_src
+
+** =lisp/config-editor.el=
+
+#+name: config-editor-file
+#+begin_src emacs-lisp  :tangle lisp/config-editor.el :comments no :noweb yes
+<<file-prop-line(feature="config-editor",desc="User options for editing")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-editor>>
+
+<<file-footer(feature="config-editor")>>
+#+end_src
+
+** =lisp/config-window.el=
+
+#+name: config-window-file
+#+begin_src emacs-lisp  :tangle lisp/config-window.el :comments no :noweb yes
+<<file-prop-line(feature="config-window",desc="Window management user options")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-window>>
+
+<<file-footer(feature="config-window")>>
+#+end_src
+
+** =lisp/config-prog.el=
+
+#+name: config-prog-file
+#+begin_src emacs-lisp :tangle lisp/config-prog.el :comments no :noweb yes
+<<file-prop-line(feature="config-prog",desc="User options for programming modes")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<config-prog>>
+
+<<file-footer(feature="config-prog")>>
+#+end_src
+
+** =lisp/lib-files.el=
+
+#+name: lib-files-file
+#+begin_src emacs-lisp  :tangle lisp/lib-files.el :comments no :noweb yes
+<<file-prop-line(feature="lib-files",desc="Files support support")>>
+
+;; Copyright (C) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (C) 2014-2022  Henrik Lissner
+;; Copyright (C) 2006-2021  Steve Purcell
+;; Copyright (C) 2008-2024  Jonas Bernoulli
+;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause
+
+;; Author: Henrik Lissner
+;;         Vegard Øye <vegard_oye at hotmail.com>
+;;         Steve Purcell
+;;         Chris Montgomery <chmont@proton.me>
+;;         Jonas Bernoulli <jonas@bernoul.li>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Created: 23 January 2023
+;; Version: 0.1.0
+
+<<file-license>>
+
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+;;; Commentary:
+;;; Code:
+
+<<lib-files>>
+
+<<file-footer(feature="lib-files")>>
+#+end_src
+
+** =lisp/lib-completion.el=
+
+#+name: lib-completion-file
+#+begin_src emacs-lisp :tangle lisp/lib-completion.el :comments no :noweb yes
+<<file-prop-line(feature="lib-completion",desc="Completion helpers")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-completion>>
+
+<<file-footer(feature="lib-completion")>>
+#+end_src
+
+** =lisp/lib-tools.el=
+
+#+name: lib-tools-file
+#+begin_src emacs-lisp :tangle lisp/lib-tools.el :comments no :noweb yes
+<<file-prop-line(feature="lib-tools",desc="Library for miscellaneous tooling")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-tools>>
+
+<<file-footer(feature="lib-tools")>>
+#+end_src
+
+** =lisp/lib-ui.el=
+
+#+name: lib-ui-file
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el :comments no :noweb yes
+<<file-prop-line(feature="lib-ui",desc="Appearance helper functions")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-ui>>
+
+<<file-footer(feature="lib-ui")>>
+#+end_src
+
+** =lisp/lib-buffer.el=
+
+#+name: lib-buffer-file
+#+begin_src emacs-lisp :tangle lisp/lib-buffer.el :comments no :noweb yes
+<<file-prop-line(feature="lib-buffer",desc="Buffer helper callables")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-buffer>>
+
+<<file-footer(feature="lib-buffer")>>
+#+end_src
+** =lisp/lib-editor.el=
+
+#+name: lib-editor-file
+#+begin_src emacs-lisp  :tangle lisp/lib-editor.el :comments no :noweb yes
+<<file-prop-line(feature="lib-editor",desc="Editor support library")>>
+
+;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (C) 2016–2022  Radian LLC and contributors
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;;         Radon Rosborough <radon@intuitiveexplanations.com>
+;; Keywords: local
+
+
+<<file-license>>
+
+;; Permission is hereby granted, free of charge, to any person obtaining a copy
+;; of this software and associated documentation files (the "Software"), to deal
+;; in the Software without restriction, including without limitation the rights
+;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;; copies of the Software, and to permit persons to whom the Software is
+;; furnished to do so, subject to the following conditions:
+
+;; The above copyright notice and this permission notice shall be included in
+;; all copies or substantial portions of the Software.
+
+;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+;; SOFTWARE.
+
+
+;;; Commentary:
+;;; Code:
+
+<<lib-editor>>
+
+<<file-footer(feature="lib-editor")>>
+#+end_src
+
+** =lisp/lib-search.el=
+
+#+name: lib-search-file
+#+begin_src emacs-lisp  :tangle lisp/lib-search.el :comments no :noweb yes
+<<file-prop-line(feature="lib-search",desc="Search support functions")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-search>>
+
+<<file-footer(feature="lib-search")>>
+#+end_src
+
+** =lisp/lib-prog.el=
+
+#+name: lib-prog-file
+#+begin_src emacs-lisp :tangle lisp/lib-prog.el :comments no :noweb yes
+<<file-prop-line(feature="lib-prog",desc="Assorted helper callables for programming modes")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-prog>>
+
+<<file-footer(feature="lib-prog")>>
+#+end_src
+
+** =lisp/lib-window.el=
+
+#+name: lib-window-file
+#+begin_src emacs-lisp  :tangle lisp/lib-window.el :comments no :noweb yes
+<<file-prop-line(feature="lib-window",desc="Window management support library")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+;; Copyright (C) 2023 Free Software Foundation, Inc.
+;; Copyright (C) 2024  Protesilaos Stavrou
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;;         Vegard Øye <vegard_oye at hotmail.com>
+;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
+;;         Protesilaos Stavrou <public@protesilaos.com>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<lib-window>>
+
+<<file-footer(feature="lib-window")>>
+#+end_src
+
+** =lisp/init-ui.el=
+
+#+name: init-ui-file
+#+begin_src emacs-lisp :tangle lisp/init-ui.el :comments no :noweb yes
+<<file-prop-line(feature="init-ui",desc="General user interface customizations")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-ui>>
+
+<<file-footer(feature="init-ui")>>
+#+end_src
+
+** =lisp/init-ui-graphical.el=
+
+#+name: init-ui-graphical-file
+#+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el :comments no :noweb yes
+<<file-prop-line(feature="init-ui-graphical",desc="Appearance customizations for graphical environments")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-ui-graphical>>
+
+<<file-footer(feature="init-ui-graphical")>>
+#+end_src
+
+** =lisp/init-dashboard.el=
+
+#+name: init-dashboard-file
+#+begin_src emacs-lisp :tangle lisp/init-dashboard.el :comments no :noweb yes
+<<file-prop-line(feature="init-dashboard",desc="Dashboard support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-dashboard>>
+
+<<file-footer(feature="init-dashboard")>>
+#+end_src
+
+** =lisp/init-files.el=
+
+#+name: init-files-file
+#+begin_src emacs-lisp  :tangle lisp/init-files.el :comments no :noweb yes
+<<file-prop-line(feature="init-files",desc="File handling")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-files>>
+
+<<file-footer(feature="init-files")>>
+#+end_src
+
+** =lisp/init-flycheck.el=
+
+#+begin_src emacs-lisp :tangle lisp/init-flycheck.el :comments no :noweb yes
+<<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-flycheck>>
+
+<<file-footer(feature="init-flycheck")>>
+#+end_src
+
+** =lisp/init-flymake.el=
+
+#+name: init-flymake-file
+#+begin_src emacs-lisp :tangle lisp/init-flymake.el :comments no :noweb yes
+<<file-prop-line(feature="init-flymake",desc="Flymake support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-flymake>>
+
+<<file-footer(feature="init-flymake")>>
+#+end_src
+
+** =lisp/init-abbrevs.el=
+
+#+name: init-abbrevs-file
+#+begin_src emacs-lisp :tangle lisp/init-abbrevs.el :comments no :noweb yes
+<<file-prop-line(feature="init-abbrevs",desc="Abbrevs support")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-abbrevs>>
+
+<<file-footer(feature="init-abbrevs")>>
+#+end_src
+
+** =lisp/init-completion.el=
+
+#+name: init-completion-file
+#+begin_src emacs-lisp :tangle lisp/init-completion.el :comments no :noweb yes
+<<file-prop-line(feature="init-completion",desc="Completion enhancements")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-completion>>
+
+<<file-footer(feature="init-completion")>>
+#+end_src
+
+** =lisp/init-templates.el=
+
+#+name: init-templates-file
+#+begin_src emacs-lisp :tangle lisp/init-templates.el :comments no :noweb yes
+<<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-templates>>
+
+<<file-footer(feature="init-templates")>>
+#+end_src
+
+** =lisp/init-notes.el=
+
+#+name: init-notes-file
+#+begin_src emacs-lisp :tangle lisp/init-notes.el :comments no :noweb yes
+<<file-prop-line(feature="init-notes",desc="Notetaking features")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-notes>>
+
+<<file-footer(feature="init-notes")>>
+#+end_src
+
+** =lisp/init-outline.el=
+
+#+name: init-outline-file
+#+begin_src emacs-lisp  :tangle lisp/init-outline.el :comments no :noweb yes
+<<file-prop-line(feature="init-outline",desc="Customizations for outline structures")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-outline>>
+
+<<file-footer(feature="init-outline")>>
+#+end_src
+
+** =lisp/init-org.el=
+
+#+name: init-org-file
+#+begin_src emacs-lisp  :tangle lisp/init-org.el :comments no :noweb yes
+<<file-prop-line(feature="init-org",desc="Org-Mode support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-org>>
+
+<<file-footer(feature="init-org")>>
+#+end_src
+
+** =lisp/init-search.el=
+
+#+name: init-search-file
+#+begin_src emacs-lisp  :tangle lisp/init-search.el :comments no :noweb yes
+<<file-prop-line(feature="init-search",desc="Searching and replacing features")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-search>>
+
+<<file-footer(feature="init-search")>>
+#+end_src
+
+** =lisp/init-window.el=
+
+#+name: init-window-file
+#+begin_src emacs-lisp  :tangle lisp/init-window.el :comments no :noweb yes
+<<file-prop-line(feature="init-window",desc="Window management")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-window>>
+
+<<file-footer(feature="init-window")>>
+#+end_src
+
+** =lisp/init-buffer.el=
+
+#+name: init-buffer-file
+#+begin_src emacs-lisp :tangle lisp/init-buffer.el :comments no :noweb yes
+<<file-prop-line(feature="init-buffer",desc="Buffer customizations")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-buffer>>
+
+<<file-footer(feature="init-buffer")>>
+#+end_src
+
+** =lisp/init-editor.el=
+
+#+name: init-editor-file
+#+begin_src emacs-lisp  :tangle lisp/init-editor.el :comments no :noweb yes
+<<file-prop-line(feature="init-editor",desc="Editor customizations")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-editor>>
+
+<<file-footer(feature="init-editor")>>
+#+end_src
+
+** =lisp/init-workspace.el=
+
+#+name: init-workspace-file
+#+begin_src emacs-lisp :tangle lisp/init-workspace.el :comments no :noweb yes
+<<file-prop-line(feature="init-workspace",desc="Workspaces, activities, scopes, and other organizational closures")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-workspace>>
+
+<<file-footer(feature="init-workspace")>>
+#+end_src
+
+** =lisp/init-vcs.el=
+
+#+name: init-vcs-file
+#+begin_src emacs-lisp :tangle lisp/init-vcs.el :comments no :noweb yes
+<<file-prop-line(feature="init-vcs",desc="Version control support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-vcs>>
+
+<<file-footer(feature="init-vcs")>>
+#+end_src
+
+** =lisp/init-lsp.el=
+
+#+name: init-lsp-file
+#+begin_src emacs-lisp :tangle lisp/init-lsp.el :comments no :noweb yes
+<<file-prop-line(feature="init-lsp",desc="Eglot support")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lsp>>
+
+<<file-footer(feature="init-lsp")>>
+#+end_src
+
+** =lisp/init-lang-data.el=
+
+#+name: init-lang-data-file
+#+begin_src emacs-lisp :tangle lisp/init-lang-data.el :comments no :noweb yes
+<<file-prop-line(feature="init-lang-data",desc="Language support for data syntaxes")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lang-data>>
+
+<<file-footer(feature="init-lang-data")>>
+#+end_src
+
+** =lisp/init-lang-nix.el=
+
+#+name: init-lang-nix-file
+#+begin_src emacs-lisp :tangle lisp/init-lang-nix.el :comments no :noweb yes
+<<file-prop-line(feature="init-lang-nix",desc="Nix language support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lang-nix>>
+
+<<file-footer(feature="init-lang-nix")>>
+#+end_src
+
+** =lisp/init-lang-php.el=
+
+#+name: init-lang-php-file
+#+begin_src emacs-lisp :tangle lisp/init-lang-php.el :comments no :noweb yes
+<<file-prop-line(feature="init-lang-php",desc="PHP language support")>>
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-lang-php>>
+
+<<file-footer(feature="init-lang-php")>>
+#+end_src
+
+** =lisp/init-writing.el=
+
+#+name: init-writing-file
+#+begin_src emacs-lisp :tangle lisp/init-writing.el :comments no :noweb yes
+<<file-prop-line(feature="init-writing",desc="Writing augmentation")>>
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-writing>>
+
+<<file-footer(feature="init-writing")>>
+#+end_src
+
+** =lisp/init-tools.el=
+
+#+name: init-tools-file
+#+begin_src emacs-lisp  :tangle lisp/init-tools.el :comments no :noweb yes
+<<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
+
+;; Author: Chris Montgomery <chmont@proton.me>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
+<<init-tools>>
+
+<<file-footer(feature="init-tools")>>
+#+end_src
+
 
 
 * Before Dawn :: =early-init.el=
@@ -1575,7 +1577,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 ** =lisp/core/ceamx-paths.el= :: Paths
 
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el :comments no :noweb yes
 ;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -1688,7 +1690,7 @@ Emacs version to prevent bytecode incompatibility.")
 
 ** =lisp/core/ceamx-keymaps.el= :: Keymaps
 
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :noweb yes
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :comments no :noweb yes
 ;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -2176,7 +2178,7 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 
 * =lisp/config-common.el= :: Miscellaneous Settings
 
-#+begin_src emacs-lisp :tangle lisp/config-common.el
+#+begin_src emacs-lisp :tangle lisp/config-common.el :comments no :noweb yes
 ;;; config-common.el --- Common and miscellaneous configuration settings  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -3054,7 +3056,7 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 ** =lib-simple=: The Library of Uncertain Simplicity
 
-#+begin_src emacs-lisp :tangle lisp/lib-simple.el :noweb-ref nil
+#+begin_src emacs-lisp :tangle lisp/lib-simple.el :comments no :noweb-ref nil
 ;;; lib-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -3205,7 +3207,7 @@ Call the commands `ceamx/escape-url-line' and
 
 ** =lib-text=: The Material Fabric of Uncertainty
 
-#+begin_src emacs-lisp :tangle lisp/lib-text.el :noweb-ref nil
+#+begin_src emacs-lisp :tangle lisp/lib-text.el :comments no :noweb-ref nil
 ;;; lib-text.el --- Text utilities                   -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -3501,7 +3503,7 @@ buffer, as a buffer-local variable.
 
 ** WSL Support :: =lib-env-wsl= :wsl:
 
-#+begin_src emacs-lisp :tangle lisp/lib-env-wsl.el
+#+begin_src emacs-lisp :tangle lisp/lib-env-wsl.el :comments no
 ;;; lib-env-wsl.el --- Helpers for WSL environments  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -3549,7 +3551,7 @@ buffer, as a buffer-local variable.
 
 ** Customizations
 
-#+begin_src emacs-lisp :tangle lisp/init-secrets.el
+#+begin_src emacs-lisp :tangle lisp/init-secrets.el :comments no
 ;;; init-secrets.el --- Support for secretive operations  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -3641,7 +3643,7 @@ buffer, as a buffer-local variable.
 
 ** Library
 
-#+begin_src emacs-lisp :tangle lisp/lib-secrets.el
+#+begin_src emacs-lisp :tangle lisp/lib-secrets.el :comments no
 ;;; lib-secrets.el --- Helpers for secrets           -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -7171,7 +7173,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 ** Code:
 
-#+begin_src emacs-lisp :tangle lisp/init-help.el
+#+begin_src emacs-lisp :tangle lisp/init-help.el :comments no
 ;;; init-help.el --- Help -*- lexical-binding: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
@@ -7422,7 +7424,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 ** Library
 
-#+begin_src emacs-lisp :tangle lisp/lib-help.el
+#+begin_src emacs-lisp :tangle lisp/lib-help.el :comments no
 ;;; lib-help.el --- Helpers for help and documentation  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -7532,7 +7534,7 @@ DOC is as in `devdocs-install'."
 
 * History :: =history= :history:
 
-#+begin_src emacs-lisp :tangle lisp/init-history.el
+#+begin_src emacs-lisp :tangle lisp/init-history.el :comments no
 ;;; init-history.el --- History management           -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -7886,7 +7888,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 * Input Methods :: =input-methods=
 
-#+begin_src emacs-lisp :tangle lisp/init-input-methods.el
+#+begin_src emacs-lisp :tangle lisp/init-input-methods.el :comments no
 ;;; init-input-methods.el --- Configuration for input methods  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -9428,11 +9430,11 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
 
 ** Customizations
 :PROPERTIES:
-:header-args: emacs-lisp :tangle lisp/init-embark.el
+:header-args:emacs-lisp: :tangle lisp/init-embark.el
 :END:
 
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-embark.el :comments no
 ;;; init-embark.el --- Configuration for Embark  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -9557,7 +9559,7 @@ Embark will load the library automatically after Consult.
 
 * Terminal Emulation :: =term=
 
-#+begin_src emacs-lisp :tangle lisp/init-term.el
+#+begin_src emacs-lisp :tangle lisp/init-term.el :comments no
 ;;; init-term.el --- Terminal emulators inside Emacs  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -9927,7 +9929,7 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 #+end_src
 
 
-#+begin_src emacs-lisp :tangle lisp/init-project.el
+#+begin_src emacs-lisp :tangle lisp/init-project.el :comments no
 ;;; init-project.el --- Project support              -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -10338,7 +10340,7 @@ avoid further confusion.
 
 ** General Programming (~prog-mode~ derived modes)
 
-#+begin_src emacs-lisp :tangle lisp/init-prog.el
+#+begin_src emacs-lisp :tangle lisp/init-prog.el :comments no
 ;;; init-prog.el --- Programming mode support        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -10394,12 +10396,12 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 *** Configure ~xref~
 
-#+begin_src emacs-lisp :tangle lisp/config-prog.el
+#+begin_src emacs-lisp :tangle lisp/config-prog.el :comments no
 (defvar xref-ignored-files '()
   "List of files to be ignored by `xref'.")
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-prog.el
+#+begin_src emacs-lisp :tangle lisp/init-prog.el :comments no
 ;; Always find references of symbol at point.
 (setopt xref-prompt-for-identifier nil)
 #+end_src
@@ -10468,7 +10470,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 (keymap-global-set "C-c l j" #'ceamx-prog-dumb-jump-dispatch/body)
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-prog.el
+#+begin_src emacs-lisp :tangle lisp/init-prog.el :comments no
 (provide 'init-prog)
 ;;; init-prog.el ends here
 #+end_src
@@ -10478,7 +10480,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 :header-args: :tangle lisp/init-treesitter.el
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-treesitter.el :comments no
 ;;; init-treesitter.el --- Tree-Sitter support          -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -10498,9 +10500,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#+end_src
 
-#+begin_src emacs-lisp
 ;;; Commentary:
 #+end_src
 
@@ -10542,11 +10542,11 @@ Intended for use as a hook callback on `prog-mode-hook'."
 
 ;;  See also <https://github.com/purcell/emacs.d/blob/master/lisp/init-treesitter.el>
 ;;  for a more manual approach.
+
+;;; Code:
 #+end_src
 
 #+begin_src emacs-lisp
-;;; Code:
-
 (require 'treesit)
 
 (require 'ceamx-lib)
@@ -10584,7 +10584,7 @@ Increase the amount of syntax-highlighted structures:
 (setopt treesit-font-lock-level 4)
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/init-treesitter.el :comments no
 (provide 'init-treesitter)
 ;;; init-treesitter.el ends here
 #+end_src
@@ -10597,7 +10597,7 @@ Configuration for working with Lisps of all kinds.
 
 **** =init-lisp.el=
 
-#+begin_src emacs-lisp  :tangle lisp/init-lisp.el
+#+begin_src emacs-lisp :tangle lisp/init-lisp.el :noweb yes :comments no
 <<file-prop-line(feature="init-lisp",desc="Lisp support")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
@@ -10618,7 +10618,7 @@ Configuration for working with Lisps of all kinds.
 
 **** =config-lisp.el=
 
-#+begin_src emacs-lisp  :tangle lisp/config-lisp.el
+#+begin_src emacs-lisp  :tangle lisp/config-lisp.el :comments no :noweb yes
 <<file-prop-line(feature="config-lisp",desc="Lispy variable definitions")>>
 
 ;; Copyright (c) 2023-2024  Chris Montgomery <chmont@proton.me>
@@ -10639,7 +10639,7 @@ Configuration for working with Lisps of all kinds.
 
 **** =lib-lisp.el=
 
-#+begin_src emacs-lisp  :tangle lisp/lib-lisp.el
+#+begin_src emacs-lisp  :tangle lisp/lib-lisp.el :comments no :noweb yes
 <<file-prop-line(feature="lib-lisp",desc="Lisp support functions")>>
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
@@ -11034,7 +11034,7 @@ lists."
 
 *** Customizations
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-elisp.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-elisp.el :comments no
 ;;; init-lang-elisp.el --- Emacs Lisp development support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -11196,7 +11196,7 @@ The original function fails in the presence of whitespace after a sexp."
 
 *** Library
 
-#+begin_src emacs-lisp :tangle lisp/lib-elisp.el
+#+begin_src emacs-lisp :tangle lisp/lib-elisp.el :comments no
 ;;; lib-elisp.el --- Helper utilities for Emacs Lisp development and language support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -11766,7 +11766,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 ** Web-Mode
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-html.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-html.el :comments no
 ;;; init-lang-html.el ---HTML and templating engine support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -11839,7 +11839,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 ** JavaScript
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-js.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-js.el :comments no
 ;;; init-lang-js.el --- JavaScript/TypeScript language support improvements  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -11896,7 +11896,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 ** Lua
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-lua.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-lua.el :comments no
 ;;; init-lang-lua.el --- Lua language support        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -11942,7 +11942,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 *** Customization
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-markdown.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-markdown.el :comments no
 ;;; init-lang-markdown.el --- Markdown support customizations  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -12026,7 +12026,7 @@ usually wrongly fontified as a metadata block."
 
 *** Library
 
-#+begin_src emacs-lisp :tangle lisp/lib-lang-markdown.el
+#+begin_src emacs-lisp :tangle lisp/lib-lang-markdown.el :comments no
 ;;; lib-lang-markdown.el --- Markdown helpers        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -12222,7 +12222,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 ** Nushell
 
-#+begin_src emacs-lisp :tangle lisp/init-shell-nu.el
+#+begin_src emacs-lisp :tangle lisp/init-shell-nu.el :comments no
 ;;; init-shell-nu.el --- Nushell support             -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -12606,7 +12606,7 @@ its cache should stay out of the way.
 
 ** Shell Scripting
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-shell.el
+#+begin_src emacs-lisp :tangle lisp/init-lang-shell.el :comments no
 ;;; init-lang-shell.el --- Shell script language support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -12671,7 +12671,7 @@ their own initialization files.
 
 **** File Header
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp  :tangle lisp/init-lang-misc.el :comments no
 ;;; init-lang-misc.el --- Miscellaneous language support -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
@@ -12735,9 +12735,9 @@ their own initialization files.
 (package! dotenv-mode)
 #+end_src
 
-**** Footer
+**** File Footer
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp  :tangle lisp/init-lang-misc.el :comments no
 (provide 'init-lang-misc)
 ;;; init-lang-misc.el ends here
 #+end_src
@@ -13651,7 +13651,7 @@ This will conflict with ~meow-org-motion-mode~, so only one should be tangled at
 
 What even is this though...?
 
-#+begin_src emacs-lisp :tangle lisp/init-controls.el
+#+begin_src emacs-lisp :tangle lisp/init-controls.el :comments no
 ;;; init-controls.el --- Controlling various subsystems  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -13762,7 +13762,7 @@ What even is this though...?
 
 * Dired, the Directory Editor :: =dired= :dired:
 
-#+begin_src emacs-lisp :tangle lisp/init-dired.el
+#+begin_src emacs-lisp :tangle lisp/init-dired.el :comments no
 ;;; init-dired.el --- Dired -*- lexical-binding: t -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@proton.me>
@@ -13860,7 +13860,7 @@ What even is this though...?
 
 * Printing :: =printing=
 
-#+begin_src emacs-lisp :tangle lisp/init-printing.el
+#+begin_src emacs-lisp :tangle lisp/init-printing.el :comments no
 ;;; init-printing.el --- Support for printing documents  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
@@ -13909,7 +13909,7 @@ What even is this though...?
 
 * Newsreader :: =news= :news:
 
-#+begin_src emacs-lisp :tangle lisp/init-news.el
+#+begin_src emacs-lisp :tangle lisp/init-news.el :comments no
 ;;; init-news.el --- News feed (RSS/Atom) subscription support  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -13969,7 +13969,7 @@ CLOSED: [2024-07-16 Tue 00:00]
 
 * Surfing the Wild Web of Words :: =eww= :web:
 
-#+begin_src emacs-lisp :tangle lisp/init-eww.el
+#+begin_src emacs-lisp :tangle lisp/init-eww.el :comments no
 ;;; init-eww.el --- Surfing the Wild Web of Words  -*- lexical-binding: t; -*-
 
 ;; TODO: headers
@@ -14037,15 +14037,16 @@ CLOSED: [2024-07-16 Tue 00:00]
 (add-hook 'eww-after-render-hook #'ceamx-eww-rerender)
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-eww.el
+** File Footers
+
+#+begin_src emacs-lisp :tangle lisp/init-eww.el :comments no
 (provide 'init-eww)
 ;;; init-eww.el ends here
 #+end_src
 
-
 ** EWW: Library
 
-#+begin_src emacs-lisp :tangle lisp/lib-eww.el
+#+begin_src emacs-lisp :tangle lisp/lib-eww.el :comments no
 ;;; lib-eww.el --- Helpers for Ceamx EWW  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -14557,7 +14558,7 @@ supports the display of commentaries on individual changing lines.
 
 * "Fun" :: =fun= :fun:
 
-#+begin_src emacs-lisp :tangle lisp/init-fun.el
+#+begin_src emacs-lisp :tangle lisp/init-fun.el :comments no
 ;;; init-fun.el --- Configure the fun                -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
@@ -14676,15 +14677,12 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 
 
 * File Footers
-:PROPERTIES:
-:header-args:emacs-lisp: :noweb yes :comments no :tangle no
-:END:
 
-#+begin_src emacs-lisp :tangle early-init.el
+#+begin_src emacs-lisp :tangle early-init.el :comments no :noweb yes
 <<file-footer(feature="early-init")>>
 #+end_src
 
-#+begin_src emacs-lisp :tangle init.el
+#+begin_src emacs-lisp :tangle init.el :comments no :noweb yes
 <<file-footer(feature="init")>>
 #+end_src
 
