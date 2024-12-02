@@ -24,6 +24,12 @@
 ;;; Commentary:
 ;;; Code:
 
+;; Ensure themes are applied in new frames to prevent flashing
+
+;; - Source :: <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
+
+
+;; [[file:../config.org::*Ensure themes are applied in new frames to prevent flashing][Ensure themes are applied in new frames to prevent flashing:1]]
 ;; via prot-emacs
 (defun ceamx-ui-re-enable-theme-in-frame (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
@@ -32,6 +38,12 @@ not retain the generic background set by the function
 `ceamx-ui-theme-no-bright-flash'."
   (when-let ((theme (car custom-enabled-themes)))
     (enable-theme theme)))
+;; Ensure themes are applied in new frames to prevent flashing:1 ends here
+
+;; Add helper function to load a random theme from the specified periods
+
+
+;; [[file:../config.org::*Add helper function to load a random theme from the specified periods][Add helper function to load a random theme from the specified periods:1]]
 (declare-function theme-buffet--load-random "theme-buffet")
 
 (defun +theme-buffet--load-random-from-periods (periods)
@@ -41,8 +53,17 @@ must be a valid `theme-buffet' period as defined in
 `theme-buffet--keywords'."
   (let ((period (if (listp periods) (seq-random-elt periods) periods)))
     (theme-buffet--load-random period)))
+;; Add helper function to load a random theme from the specified periods:1 ends here
+
+;; Theme commands
+
+
+;; [[file:../config.org::*Theme commands][Theme commands:1]]
 (require 'config-ui)
 (require 'ceamx-lib)
+;; Theme commands:1 ends here
+
+;; [[file:../config.org::*Integration with the GNOME/GTK/GSettings color scheme][Integration with the GNOME/GTK/GSettings color scheme:2]]
 (defun ceamx-ui-gsettings-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command-to-string (format "gsettings get %s color-scheme"
@@ -75,10 +96,24 @@ must be a valid `theme-buffet' period as defined in
   "Enable the light GNOME/GTK theme."
   (interactive)
   (ceamx-ui/gsettings-set-theme "light"))
+;; Integration with the GNOME/GTK/GSettings color scheme:2 ends here
+
+;; ~ceamx-ui-load-theme~: function to cleanly load a theme
+
+;; Similar to the theme-family-specific ~modus-themes-load-theme~.
+
+
+;; [[file:../config.org::*~ceamx-ui-load-theme~: function to cleanly load a theme][~ceamx-ui-load-theme~: function to cleanly load a theme:1]]
 (defun ceamx-ui-load-theme (theme)
   "Load THEME after resetting any previously-loaded themes."
   (mapc #'disable-theme (remq theme custom-enabled-themes))
   (load-theme theme :no-confirm))
+;; ~ceamx-ui-load-theme~: function to cleanly load a theme:1 ends here
+
+;; Commands to load a preferred light or dark Emacs theme
+
+
+;; [[file:../config.org::*Commands to load a preferred light or dark Emacs theme][Commands to load a preferred light or dark Emacs theme:1]]
 (defun ceamx-ui/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
@@ -98,6 +133,12 @@ must be a valid `theme-buffet' period as defined in
       ceamx-ui-theme-buffet-light-periods))
     (_
      (load-theme ceamx-ui-theme-light :no-confirm))))
+;; Commands to load a preferred light or dark Emacs theme:1 ends here
+
+;; Commands to globally set a preferred light or dark theme
+
+
+;; [[file:../config.org::*Commands to globally set a preferred light or dark theme][Commands to globally set a preferred light or dark theme:1]]
 (defun ceamx-ui/light ()
   "Activate a light theme globally."
   (interactive)
@@ -111,6 +152,7 @@ must be a valid `theme-buffet' period as defined in
   (ceamx-ui/gsettings-dark-theme)
   ;;(ceamx-ui-kitty-set-theme "dark")
   (ceamx-ui/load-dark-theme))
+;; Commands to globally set a preferred light or dark theme:1 ends here
 
 (provide 'lib-ui)
 ;;; lib-ui.el ends here

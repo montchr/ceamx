@@ -24,6 +24,10 @@
 ;;; Commentary:
 ;;; Code:
 
+;; Configure the preferred theme family
+
+
+;; [[file:../config.org::*Configure the preferred theme family][Configure the preferred theme family:1]]
 (defcustom ceamx-ui-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
@@ -38,6 +42,12 @@ theme)."
           (const :tag "The `modus-themes' module" modus)
           (const :tag "The `standard-themes' module" standard)
           (const :tag "Do not load a theme module" nil)))
+;; Configure the preferred theme family:1 ends here
+
+;; Configure the preferred light and dark themes
+
+
+;; [[file:../config.org::*Configure the preferred light and dark themes][Configure the preferred light and dark themes:1]]
 (defcustom ceamx-ui-theme-light 'modus-operandi-tinted
   "The default light theme."
   :group 'ceamx
@@ -47,6 +57,14 @@ theme)."
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
+;; Configure the preferred light and dark themes:1 ends here
+
+;; TODO Define groupings of themes into dark/light or other qualities
+
+;; Needs expansion for more than just the Modus Themes.
+
+
+;; [[file:../config.org::*Define groupings of themes into dark/light or other qualities][Define groupings of themes into dark/light or other qualities:1]]
 (defvar ceamx-ui-dark-themes-list nil)
 
 (defvar ceamx-ui-light-themes-list nil)
@@ -63,6 +81,12 @@ theme)."
             (seq-filter
              (lambda (sym) (string-prefix-p "modus-operandi" (symbol-name sym)))
              modus-themes-items)))
+;; Define groupings of themes into dark/light or other qualities:1 ends here
+
+;; Circadian Theme Phasing
+
+
+;; [[file:../config.org::*Circadian Theme Phasing][Circadian Theme Phasing:1]]
 (defcustom ceamx-ui-theme-circadian-interval nil
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
@@ -78,18 +102,57 @@ unconditionally use `ceamx-ui-theme-default-light' and
   :type '(choice :tag "Circadian theme switching interval" :value nil
           (const :tag "Time periods via `theme-buffet'" :value buffet)
           (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
+;; Circadian Theme Phasing:1 ends here
+
+;; DISABLED Phase-of-day interval via ~theme-buffet~
+;; :PROPERTIES:
+;; :header-args: :tangle no
+;; :END:
+
+;; - Website :: <https://git.sr.ht/~bboal/theme-buffet>
+
+;;   #+begin_quote
+;; The theme-buffet package arranges to automatically change themes during specific
+;; times of the day or at fixed intervals. The collection of themes is
+;; customisable, with the default options covering the built-in Emacs themes as
+;; well as Prot's modus-themes and ef-themes.
+;; #+end_quote
+
+
+;; [[file:../config.org::*DISABLED Phase-of-day interval via ~theme-buffet~][DISABLED Phase-of-day interval via ~theme-buffet~:1]]
 (defconst ceamx-ui-theme-buffet-dark-periods
   '(:night :twilight :evening))
 
 (defconst ceamx-ui-theme-buffet-light-periods
   '(:morning :day :afternoon))
+;; DISABLED Phase-of-day interval via ~theme-buffet~:1 ends here
+
+;; Integration with the GNOME/GTK/GSettings color scheme
+
+
+;; [[file:../config.org::*Integration with the GNOME/GTK/GSettings color scheme][Integration with the GNOME/GTK/GSettings color scheme:1]]
 (defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
+;; Integration with the GNOME/GTK/GSettings color scheme:1 ends here
+
+;; Typography :font:
+;; :PROPERTIES:
+;; :header-args: :tangle lisp/init-ui-graphical.el
+;; :END:
+
+
+;; [[file:../config.org::*Typography][Typography:1]]
 (defcustom ceamx-font-height-multiplier 1.0
   "Multiplier for display font size.
 Intended for use as a per-system (or, ideally, per-display)
 accommodation for varying pixel densities."
   :group 'ceamx
   :type '(float))
+;; Typography:1 ends here
+
+;; Modeline :modeline:
+
+
+;; [[file:../config.org::*Modeline][Modeline:1]]
 (defcustom ceamx-modeline-provider nil
   "Modeline provider to load.
 Valid values are the symbols `doom', `nano', and `telephone'
@@ -104,15 +167,33 @@ with its default modeline)."
           (const :tag "The `nano-modeline' module" nano)
           (const :tag "The `telephone-line' module" telephone)
           (const :tag "Do not load a modeline module" nil)))
+;; Modeline:1 ends here
+
+;; Measurement constants
+
+
+;; [[file:../config.org::*Measurement constants][Measurement constants:1]]
 (defconst ceamx-inch-as-mm 25.4
   "One inch in millimeters.")
 
 (defconst ceamx-pt-as-mm 0.353
   "One typographic point in millimeters.")
+;; Measurement constants:1 ends here
+
+;; Function to get geometry attributes for the default display monitor
+
+
+;; [[file:../config.org::*Function to get geometry attributes for the default display monitor][Function to get geometry attributes for the default display monitor:1]]
 (defun ceamx-default-monitor-geometry ()
   "Return geometry for the first monitor in `display-monitor-attributes-list'."
   (let* ((first-monitor (car (display-monitor-attributes-list))))
     (alist-get 'geometry first-monitor)))
+;; Function to get geometry attributes for the default display monitor:1 ends here
+
+;; Function to get the pixel pitch for a frame
+
+
+;; [[file:../config.org::*Function to get the pixel pitch for a frame][Function to get the pixel pitch for a frame:1]]
 ;; via <https://www.reddit.com/r/emacs/comments/7hzxb8/comment/dqywyqc/>
 (defun ceamx-pixel-pitch (&optional frame)
   "Return the pixel pitch for FRAME in millimeters.
@@ -123,6 +204,12 @@ center of its adjacent pixel."
   (let ((monitor-attrs (frame-monitor-attributes frame)))
     (/ (float (nth 1 (assoc 'mm-size monitor-attrs)))
        (nth 3 (assoc 'geometry monitor-attrs)))))
+;; Function to get the pixel pitch for a frame:1 ends here
+
+;; Function to calculate font height scaling
+
+
+;; [[file:../config.org::*Function to calculate font height scaling][Function to calculate font height scaling:1]]
 (defun ceamx-font-height (number &optional multiplier)
   "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
 NUMBER should be a whole number. MULTIPLIER should be a float.
@@ -130,6 +217,7 @@ NUMBER should be a whole number. MULTIPLIER should be a float.
 If MULTIPLIER is nil, the value of `ceamx-font-height-multiplier'
 will be used as default."
   (truncate (* number (or multiplier ceamx-font-height-multiplier))))
+;; Function to calculate font height scaling:1 ends here
 
 (provide 'config-ui)
 ;;; config-ui.el ends here

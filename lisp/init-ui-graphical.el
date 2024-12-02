@@ -24,14 +24,29 @@
 ;;; Commentary:
 ;;; Code:
 
+;; [[file:../config.org::*Typography][Typography:2]]
 (require 'ceamx-paths)
 (require 'config-env)
 
 (require 'ceamx-lib)
 (require 'lib-ui)
+;; Typography:2 ends here
+
+;; [[file:../config.org::*Typography][Typography:3]]
 (setq x-underline-at-descent-line nil)
 
 (setq-default text-scale-remap-header-line t)
+;; Typography:3 ends here
+
+;; ~fontaine~: pre-configure font presets :package:
+
+;; <https://protesilaos.com/emacs/fontaine>
+
+;; TIP: You can test out alterations quickly with, for example:
+;;      (internal-set-lisp-face-attribute 'default :weight 'semilight)
+
+
+;; [[file:../config.org::*~fontaine~: pre-configure font presets][~fontaine~: pre-configure font presets:1]]
 (package! fontaine
   (require 'fontaine)
 
@@ -147,7 +162,24 @@
   ;; Persist latest preset across sessions.
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
+;; ~fontaine~: pre-configure font presets:1 ends here
+
+;; Elpaca-Wait № 5: after baseline font settings :wait:
+
+
+;; [[file:../config.org::*Elpaca-Wait № 5: after baseline font settings][Elpaca-Wait № 5: after baseline font settings:1]]
 (elpaca-wait)
+;; Elpaca-Wait № 5: after baseline font settings:1 ends here
+
+;; ~ligature.el~: improved ligature support :package:
+
+;; <https://github.com/mickeynp/ligature.el>
+
+;; A better implementation of ligature support than the builtin ~prettify-symbols-mode~.
+;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
+
+
+;; [[file:../config.org::*~ligature.el~: improved ligature support][~ligature.el~: improved ligature support:1]]
 (package! ligature
   (require 'ligature)
 
@@ -161,6 +193,7 @@
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
+;; ~ligature.el~: improved ligature support:1 ends here
 
 (provide 'init-ui-graphical)
 ;;; init-ui-graphical.el ends here

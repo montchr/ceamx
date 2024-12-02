@@ -29,6 +29,11 @@
 
 (require 'ceamx-lib)
 (require 'lib-ui)
+
+;; Cursor
+
+
+;; [[file:../config.org::*Cursor][Cursor:1]]
 ;; Modal keybinding systems will change the cursor dynamically to indicate current state.
 ;; This value matches what I expect in an "insert" mode.
 (setq-default cursor-type 'bar)
@@ -38,6 +43,12 @@
 
 ;; Seeing a cursor in a window other than the active window is pretty confusing.
 (setq-default cursor-in-non-selected-windows nil)
+;; Cursor:1 ends here
+
+;; Customize the Customization buffer and menu interface
+
+
+;; [[file:../config.org::*Customize the Customization buffer and menu interface][Customize the Customization buffer and menu interface:1]]
 (setopt custom-theme-allow-multiple-selections nil)
 
 (setopt custom-unlispify-menu-entries nil)
@@ -45,9 +56,37 @@
 (setopt custom-unlispify-remove-prefixes nil)
 
 (add-hook 'Custom-mode-hook #'custom-toggle-hide-all-widgets nil t)
+;; Customize the Customization buffer and menu interface:1 ends here
+
+;; =grid=
+
+;; - Source :: [[https://github.com/ichernyshovvv/grid.el][ichernyshovvv/grid.el]]
+;; - Retrieved :: [2024-06-07 Fri 11:45]
+
+;; #+begin_quote
+;; This library allows you to put text data into boxes and align them horizontally,
+;; applying margin, padding, borders.
+;; #+end_quote
+
+
+;; [[file:../config.org::*=grid=][=grid=:1]]
 (package! (grid :host github :repo "ichernyshovvv/grid.el"))
+;; =grid=:1 ends here
+
+;; Hydra
+
+;; - Documentation :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
+
+
+;; [[file:../config.org::*Hydra][Hydra:1]]
 (package! hydra)
 (package! pretty-hydra)
+;; Hydra:1 ends here
+
+;; Transient
+
+
+;; [[file:../config.org::*Transient][Transient:1]]
 (package! transient
   ;; Restore the default location, overriding `no-littering'.  I consider these
   ;; values configuration to be exposed, not state to be hidden.  See
@@ -55,10 +94,33 @@
   (setopt transient-values-file (locate-user-emacs-file "transient/values.el")))
 
 (package! magit-section)
+;; Transient:1 ends here
+
+;; Close any ~transient~ menu with the escape key
+
+
+;; [[file:../config.org::*Close any ~transient~ menu with the escape key][Close any ~transient~ menu with the escape key:1]]
 (with-eval-after-load 'transient
   (keymap-set transient-map "<escape>" #'transient-quit-one))
+;; Close any ~transient~ menu with the escape key:1 ends here
+
+;; Consider all themes "safe"
+
+
+;; [[file:../config.org::*Consider all themes "safe"][Consider all themes "safe":1]]
 (setopt custom-safe-themes t)
+;; Consider all themes "safe":1 ends here
+
+;; [[file:../config.org::*Ensure themes are applied in new frames to prevent flashing][Ensure themes are applied in new frames to prevent flashing:2]]
 (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)
+;; Ensure themes are applied in new frames to prevent flashing:2 ends here
+
+;; Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
+
+;; - Source :: <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+
+
+;; [[file:../config.org::*Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme][Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme:1]]
 (defvar ceamx-after-enable-theme-hook nil)
 
 (defun ceamx-after-enable-theme (&rest _args)
@@ -66,6 +128,14 @@
   (run-hooks 'ceamx-after-enable-theme-hook))
 
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
+;; Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme:1 ends here
+
+;; Modus Themes :package:
+
+;; - Website :: <https://protesilaos.com/modus-themes/>
+
+
+;; [[file:../config.org::*Modus Themes][Modus Themes:1]]
 (package! modus-themes
   (require 'modus-themes)
 
@@ -132,14 +202,34 @@
             modus-operandi-tinted-palette-overrides overrides
             modus-vivendi-palette-overrides overrides
             modus-vivendi-tinted-palette-overrides overrides)))
+;; Modus Themes:1 ends here
+
+;; Ef-Themes :package:
+
+;; - Website :: <https://protesilaos.com/emacs/ef-themes>
+
+
+;; [[file:../config.org::*Ef-Themes][Ef-Themes:1]]
 (defvar ceamx-font-headings-style-alist)
+;; Ef-Themes:1 ends here
+
+;; [[file:../config.org::*Ef-Themes][Ef-Themes:2]]
 (package! ef-themes
   (require 'ef-themes)
 
   (setopt ef-themes-to-toggle '(ef-night ef-frost)
           ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil))
+;; Ef-Themes:2 ends here
+
+;; Sunrise/sunset interval via ~solar~ and ~circadian~
+
+
+;; [[file:../config.org::*Sunrise/sunset interval via ~solar~ and ~circadian~][Sunrise/sunset interval via ~solar~ and ~circadian~:1]]
 (setopt ceamx-ui-theme-circadian-interval 'solar)
+;; Sunrise/sunset interval via ~solar~ and ~circadian~:1 ends here
+
+;; [[file:../config.org::*Sunrise/sunset interval via ~solar~ and ~circadian~][Sunrise/sunset interval via ~solar~ and ~circadian~:2]]
 (require 'cal-dst)
 (require 'config-ui)
 (require 'ceamx-lib)
@@ -164,6 +254,12 @@
 ;;      ((memq theme ceamx-ui-light-themes-list)
 ;;       (ceamx-ui/gsettings-light-theme))
 ;;      (t nil))))
+;; Sunrise/sunset interval via ~solar~ and ~circadian~:2 ends here
+
+;; Integration with Kitty terminal theme
+
+
+;; [[file:../config.org::*Integration with Kitty terminal theme][Integration with Kitty terminal theme:1]]
 ;; FIXME: error open /dev/tty: no such address or device
 (defun ceamx-ui-kitty-set-theme (polarity)
   "Set the Kitty terminal emulator colors to POLARITY.
@@ -171,17 +267,53 @@ POLARITY is a string matching either \"light\" or \"dark\"."
   (shell-command
    (format "kitty @set-colors -a -c $KITTY_CONFIG_DIRECTORY/theme-%s.conf"
            polarity)))
+;; Integration with Kitty terminal theme:1 ends here
+
+;; Generalized commands for desktop environment integration
+
+;; Taking all supported environments into account:
+
+;; + [[*Integration with the GNOME/GTK/GSettings color scheme]]
+
+
+;; [[file:../config.org::*Generalized commands for desktop environment integration][Generalized commands for desktop environment integration:1]]
 (defun ceamx-ui-desktop-dark-theme-p ()
   "Predicate whether a desktop environment is displaying a dark appearance."
   (or (ceamx-ui-gsettings-dark-theme-p)))
+;; Generalized commands for desktop environment integration:1 ends here
+
+;; Elpaca-Wait № 4: ensure availability of themes for integration :wait:
+
+
+;; [[file:../config.org::*Elpaca-Wait № 4: ensure availability of themes for integration][Elpaca-Wait № 4: ensure availability of themes for integration:1]]
 (elpaca-wait)
+;; Elpaca-Wait № 4: ensure availability of themes for integration:1 ends here
+
+;; Load a default theme
+
+;; Configure some user options dependent on the loaded packages:
+
+
+;; [[file:../config.org::*Load a default theme][Load a default theme:1]]
 (setopt ceamx-ui-theme-light 'modus-operandi-tinted)
 (setopt ceamx-ui-theme-dark 'modus-vivendi)
+;; Load a default theme:1 ends here
+
+;; [[file:../config.org::*Load a default theme][Load a default theme:2]]
 (if (eq 'solar ceamx-ui-theme-circadian-interval)
     (after! circadian (add-hook 'ceamx-after-init-hook #'circadian-setup))
   (if (ceamx-ui-desktop-dark-theme-p)
       (ceamx-ui/load-dark-theme)
     (ceamx-ui/load-light-theme)))
+;; Load a default theme:2 ends here
+
+;; Avy :package:
+
+;; - Website :: <https://github.com/abo-abo/avy>
+;; - Ref :: <https://karthinks.com/software/avy-can-do-anything/>
+
+
+;; [[file:../config.org::*Avy][Avy:1]]
 (package! avy
   ;; Reduce the number of possible candidates.
   ;; Can be overridden with the universal argument.
@@ -199,6 +331,12 @@ POLARITY is a string matching either \"light\" or \"dark\"."
     (declare-function lispy-join "lispy")
     ;; Prevent conflict with newly-added M-j binding.
     (keymap-set lispy-mode-map "M-J" #'lispy-join)))
+;; Avy:1 ends here
+
+;; Pulse current line after function invocations with ~pulsar~ :package:
+
+
+;; [[file:../config.org::*Pulse current line after function invocations with ~pulsar~][Pulse current line after function invocations with ~pulsar~:1]]
 (package! pulsar
   (pulsar-global-mode 1)
 
@@ -213,10 +351,28 @@ POLARITY is a string matching either \"light\" or \"dark\"."
 
   (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
     (add-hook 'next-error-hook (function fn))))
+;; Pulse current line after function invocations with ~pulsar~:1 ends here
+
+;; Allow restoring deleted frames
+
+
+;; [[file:../config.org::*Allow restoring deleted frames][Allow restoring deleted frames:1]]
 (undelete-frame-mode 1)
+;; Allow restoring deleted frames:1 ends here
+
+;; Configure frame decorations
+
+
+;; [[file:../config.org::*Configure frame decorations][Configure frame decorations:1]]
 (unless +sys-mac-p
   ;; Hide window decorations.
   (add-to-list 'default-frame-alist '(undecorated . t)))
+;; Configure frame decorations:1 ends here
+
+;; Handle macOS-specific workarounds :macos:
+
+
+;; [[file:../config.org::*Handle macOS-specific workarounds][Handle macOS-specific workarounds:1]]
 (when +sys-mac-p
   ;; `undecorated-round' is macOS-specific.
   (add-to-list 'default-frame-alist '(undecorated-round . t))
@@ -233,6 +389,12 @@ POLARITY is a string matching either \"light\" or \"dark\"."
 
   ;; Stop C-z from minimizing windows.
   (keymap-global-unset "C-z" t))
+;; Handle macOS-specific workarounds:1 ends here
+
+;; Add frame borders and window dividers
+
+
+;; [[file:../config.org::*Add frame borders and window dividers][Add frame borders and window dividers:1]]
 (modify-all-frames-parameters
  '((right-divider-width . 20)
    (internal-border-width . 20)))
@@ -264,31 +426,123 @@ POLARITY is a string matching either \"light\" or \"dark\"."
 
 (remove-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
 (add-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
+;; Add frame borders and window dividers:1 ends here
+
+;; Differentiate between focused and non-focused windows
+
+
+;; [[file:../config.org::*Differentiate between focused and non-focused windows][Differentiate between focused and non-focused windows:1]]
 (setopt highlight-nonselected-windows nil)
+;; Differentiate between focused and non-focused windows:1 ends here
+
+;; Menu Bar :menubar:
+
+;; Disable the menu bar by default:
+
+
+;; [[file:../config.org::*Menu Bar][Menu Bar:1]]
 (menu-bar-mode -1)
+;; Menu Bar:1 ends here
+
+
+
+;; But allow toggling it manually:
+
+
+;; [[file:../config.org::*Menu Bar][Menu Bar:2]]
 (keymap-set ceamx-toggle-map "M" #'menu-bar-mode)
+;; Menu Bar:2 ends here
+
+;; Enable ~tab-bar-mode~ in Emacs 30
+
+;; - ref :: <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+
+;; ~tab-bar-mode~ is currently broken in Emacs 29 due to upstream bug.  The fix is
+;; present on the =master= branch (Emacs 30), but it will not be backported.
+
+;; Unfortunately, the bug is impossibly distracting.  So I am avoiding
+;; `tab-bar-mode' on Emacs 29.
+
+;; As of <2024-06-06>, I am using the =nix-community/emacs-overlay#emacs-pgtk= package tracking the
+;; Emacs =master= branch.  ~tab-bar-mode~ is that important to me.  Emacs 30 seems
+;; stable enough so far.
+
+
+;; [[file:../config.org::*Enable ~tab-bar-mode~ in Emacs 30][Enable ~tab-bar-mode~ in Emacs 30:1]]
 (unless (version< emacs-version "30")
   (tab-bar-mode 1))
+;; Enable ~tab-bar-mode~ in Emacs 30:1 ends here
+
+;; Configure tab bar appearance and behavior
+
+
+;; [[file:../config.org::*Configure tab bar appearance and behavior][Configure tab bar appearance and behavior:1]]
 (setopt tab-bar-auto-width t
         tab-bar-auto-width-max '((80) 10))
+;; Configure tab bar appearance and behavior:1 ends here
+
+;; Provide common dependency: ~nerd-icons~ :package:
+
+
+;; [[file:../config.org::*Provide common dependency: ~nerd-icons~][Provide common dependency: ~nerd-icons~:1]]
 (package! nerd-icons
   (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
   (require 'nerd-icons))
+;; Provide common dependency: ~nerd-icons~:1 ends here
+
+;; Provide common dependency: ~svg-lib~ :package:
+
+
+;; [[file:../config.org::*Provide common dependency: ~svg-lib~][Provide common dependency: ~svg-lib~:1]]
 (package! svg-lib)
+;; Provide common dependency: ~svg-lib~:1 ends here
+
+;; ~page-break-lines~: Improve appearance of form feed characters :package:
+
+;; - docs :: <https://github.com/purcell/page-break-lines/blob/master/README.md>
+
+
+;; [[file:../config.org::*~page-break-lines~: Improve appearance of form feed characters][~page-break-lines~: Improve appearance of form feed characters:1]]
 (package! page-break-lines
   (global-page-break-lines-mode))
+;; ~page-break-lines~: Improve appearance of form feed characters:1 ends here
+
+;; [[file:../config.org::*Modeline][Modeline:2]]
 (line-number-mode 1)
 (column-number-mode 1)
 
 (setopt display-time-24hr-format t)
+;; Modeline:2 ends here
+
+;; Show current command and its binding with ~keycast~
+
+;; - Website :: <https://github.com/tarsius/keycast>
+
+;; Supports display in the mode-line, header-line, tab-bar, and as messages in a
+;; dedicated frame.
+
+;; NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
+;; =telephone-line=.
+
+
+;; [[file:../config.org::*Show current command and its binding with ~keycast~][Show current command and its binding with ~keycast~:1]]
 (package! keycast
   (keymap-set ceamx-toggle-map "k" #'keycast-mode-line-mode))
+;; Show current command and its binding with ~keycast~:1 ends here
+
+;; [[file:../config.org::*Show current command and its binding with ~keycast~][Show current command and its binding with ~keycast~:2]]
 (after! keycast
   (dolist (input '(self-insert-command org-self-insert-command))
     (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
 
   (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
     (add-to-list 'keycast-substitute-alist `(,event nil))))
+;; Show current command and its binding with ~keycast~:2 ends here
+
+;; Keybindings :keybinds:
+
+
+;; [[file:../config.org::*Keybindings][Keybindings:1]]
 (define-keymap :keymap ceamx-session-map
   "a" (cons "Appearance" (define-prefix-command 'ceamx-session-appearance-prefix-command))
   "a f" #'fontaine-set-preset
@@ -298,6 +552,7 @@ POLARITY is a string matching either \"light\" or \"dark\"."
 
   "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
   "f d" #'delete-frame)
+;; Keybindings:1 ends here
 
 (provide 'init-ui)
 ;;; init-ui.el ends here

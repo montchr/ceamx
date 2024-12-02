@@ -394,28 +394,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 :VISIBILITY: folded
 :END:
 
-** =lisp/config-ui.el=
-
-#+name: config-ui-file
-#+begin_src emacs-lisp :tangle lisp/config-ui.el :comments no :noweb yes
-<<file-prop-line(feature="config-ui",desc="User options for Emacs appearance")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-ui>>
-
-<<file-footer(feature="config-ui")>>
-#+end_src
-
 ** =lisp/config-buffer.el=
 
 #+name: config-buffer-file
@@ -610,28 +588,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<file-footer(feature="lib-tools")>>
 #+end_src
 
-** =lisp/lib-ui.el=
-
-#+name: lib-ui-file
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el :comments no :noweb yes
-<<file-prop-line(feature="lib-ui",desc="Appearance helper functions")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-ui>>
-
-<<file-footer(feature="lib-ui")>>
-#+end_src
-
 ** =lisp/lib-buffer.el=
 
 #+name: lib-buffer-file
@@ -771,50 +727,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<lib-window>>
 
 <<file-footer(feature="lib-window")>>
-#+end_src
-
-** =lisp/init-ui.el=
-
-#+name: init-ui-file
-#+begin_src emacs-lisp :tangle lisp/init-ui.el :comments no :noweb yes
-<<file-prop-line(feature="init-ui",desc="General user interface customizations")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-ui>>
-
-<<file-footer(feature="init-ui")>>
-#+end_src
-
-** =lisp/init-ui-graphical.el=
-
-#+name: init-ui-graphical-file
-#+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el :comments no :noweb yes
-<<file-prop-line(feature="init-ui-graphical",desc="Appearance customizations for graphical environments")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-ui-graphical>>
-
-<<file-footer(feature="init-ui-graphical")>>
 #+end_src
 
 ** =lisp/init-dashboard.el=
@@ -3699,16 +3611,100 @@ buffer, as a buffer-local variable.
 
 * Appearance :: =ui= :ui:
 :PROPERTIES:
-:header-args: :noweb-ref init-ui
+:header-args: :tangle lisp/init-ui.el
 :END:
 
-#+begin_src emacs-lisp
+** =lisp/config-ui.el=
+:PROPERTIES:
+:header-args: :tangle lisp/config-ui.el
+:END:
+
+*** File Header
+
+#+begin_src emacs-lisp :tangle lisp/config-ui.el :comments no :noweb yes
+;;; config-ui.el --- User options for Emacs appearance  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
+** =lisp/lib-ui.el=
+:PROPERTIES:
+:header-args: :tangle lisp/lib-ui.el
+:END:
+
+#+name: lib-ui-file
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el :comments no :noweb yes
+;;; lib-ui.el --- Appearance helper functions  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
+** =lisp/init-ui.el=
+:PROPERTIES:
+:header-args: :tangle lisp/init-ui.el
+:END:
+
+#+name: init-ui-file
+#+begin_src emacs-lisp :tangle lisp/init-ui.el :comments no :noweb yes
+;;; init-ui.el --- General user interface customizations  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
 (require 'ceamx-paths)
 (require 'config-env)
 
 (require 'ceamx-lib)
 (require 'lib-ui)
 #+end_src
+
+** =lisp/init-ui-graphical.el=
+:PROPERTIES:
+:header-args: :tangle lisp/init-ui-graphical.el
+:END:
+
+#+name: init-ui-graphical-file
+#+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el :comments no :noweb yes
+;;; init-ui-graphical.el --- Appearance customizations for graphical environments  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
 
 
 ** Cursor
@@ -3789,7 +3785,7 @@ those available in Emacs (e.g. ~transient~), or, including some packages (like
 ** Theme
 *** Configure the preferred theme family
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defcustom ceamx-ui-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
@@ -3808,7 +3804,7 @@ theme)."
 
 *** Configure the preferred light and dark themes
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defcustom ceamx-ui-theme-light 'modus-operandi-tinted
   "The default light theme."
   :group 'ceamx
@@ -3823,7 +3819,7 @@ theme)."
 
 Needs expansion for more than just the Modus Themes.
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defvar ceamx-ui-dark-themes-list nil)
 
 (defvar ceamx-ui-light-themes-list nil)
@@ -3852,7 +3848,7 @@ Needs expansion for more than just the Modus Themes.
 
 - Source :: <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
 
-#+begin_src emacs-lisp :noweb-ref lib-ui
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 ;; via prot-emacs
 (defun ceamx-ui-re-enable-theme-in-frame (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
@@ -3972,7 +3968,7 @@ not retain the generic background set by the function
 #+end_src
 *** =DISABLED unspecified-theme=: A theme-less theme for a uniform appearance :package:
 :PROPERTIES:
-:header-args: :noweb-ref nil
+:header-args: :tangle no
 :END:
 
 #+begin_src emacs-lisp
@@ -3981,7 +3977,7 @@ not retain the generic background set by the function
 
 *** DISABLED =evenok= :package:
 :PROPERTIES:
-:header-args: :noweb-ref nil
+:header-args: :tangle no
 :END:
 
 #+begin_src emacs-lisp
@@ -3991,7 +3987,7 @@ not retain the generic background set by the function
 
 *** Circadian Theme Phasing
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defcustom ceamx-ui-theme-circadian-interval nil
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
@@ -4044,7 +4040,7 @@ unconditionally use `ceamx-ui-theme-default-light' and
 
 **** DISABLED Phase-of-day interval via ~theme-buffet~
 :PROPERTIES:
-:header-args: :noweb-ref nil
+:header-args: :tangle no
 :END:
 
 - Website :: <https://git.sr.ht/~bboal/theme-buffet>
@@ -4056,7 +4052,7 @@ customisable, with the default options covering the built-in Emacs themes as
 well as Prot's modus-themes and ef-themes.
 #+end_quote
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defconst ceamx-ui-theme-buffet-dark-periods
   '(:night :twilight :evening))
 
@@ -4131,7 +4127,7 @@ well as Prot's modus-themes and ef-themes.
 
 ***** Add helper function to load a random theme from the specified periods
 
-#+begin_src emacs-lisp :noweb-ref lib-ui
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 (declare-function theme-buffet--load-random "theme-buffet")
 
 (defun +theme-buffet--load-random-from-periods (periods)
@@ -4145,18 +4141,18 @@ must be a valid `theme-buffet' period as defined in
 
 *** Theme commands
 
-#+begin_src emacs-lisp :noweb-ref lib-ui
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 (require 'config-ui)
 (require 'ceamx-lib)
 #+end_src
 
 **** Integration with the GNOME/GTK/GSettings color scheme
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
 #+end_src
 
-#+begin_src emacs-lisp :noweb-ref lib-ui
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 (defun ceamx-ui-gsettings-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command-to-string (format "gsettings get %s color-scheme"
@@ -4219,7 +4215,7 @@ Taking all supported environments into account:
 
 Similar to the theme-family-specific ~modus-themes-load-theme~.
 
-#+begin_src emacs-lisp :noweb-ref lib-ui
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 (defun ceamx-ui-load-theme (theme)
   "Load THEME after resetting any previously-loaded themes."
   (mapc #'disable-theme (remq theme custom-enabled-themes))
@@ -4228,7 +4224,7 @@ Similar to the theme-family-specific ~modus-themes-load-theme~.
 
 **** Commands to load a preferred light or dark Emacs theme
 
-#+begin_src emacs-lisp :noweb-ref lib-ui
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 (defun ceamx-ui/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
@@ -4252,7 +4248,7 @@ Similar to the theme-family-specific ~modus-themes-load-theme~.
 
 **** Commands to globally set a preferred light or dark theme
 
-#+begin_src emacs-lisp :noweb-ref lib-ui
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 (defun ceamx-ui/light ()
   "Activate a light theme globally."
   (interactive)
@@ -4459,10 +4455,10 @@ stable enough so far.
 
 ** Typography :font:
 :PROPERTIES:
-:header-args: :noweb-ref init-ui-graphical
+:header-args: :tangle lisp/init-ui-graphical.el
 :END:
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defcustom ceamx-font-height-multiplier 1.0
   "Multiplier for display font size.
 Intended for use as a per-system (or, ideally, per-display)
@@ -4665,7 +4661,7 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
 
 *** TODO ~svg-tag-mode~: Decorate buffer elements with SVG :package:
 :PROPERTIES:
-:header-args: :noweb-ref nil
+:header-args: :tangle no
 :END:
 
 - Source :: <https://github.com/Icy-Thought/emacs.d/blob/main/config.org#svg-tag-decorating-buffers-with-svg>
@@ -4678,7 +4674,7 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
 
 ** Modeline :modeline:
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defcustom ceamx-modeline-provider nil
   "Modeline provider to load.
 Valid values are the symbols `doom', `nano', and `telephone'
@@ -4704,7 +4700,7 @@ with its default modeline)."
 
 *** DISABLED Minimize many mode-line minor-modes with ~minions~
 :PROPERTIES:
-:header-args: :noweb-ref nil
+:header-args: :tangle no
 :END:
 
 #+begin_src emacs-lisp
@@ -4738,7 +4734,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 
 *** DISABLED Doom-Modeline
 :PROPERTIES:
-:header-args: :noweb-ref nil
+:header-args: :tangle no
 :END:
 
 #+begin_src emacs-lisp
@@ -4785,7 +4781,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 
 ** TODO Calculate sizes based on display monitor attributes
 :PROPERTIES:
-:header-args: :noweb-ref lib-ui
+:header-args: :tangle lisp/lib-ui.el
 :END:
 
 - Source :: <https://github.com/noctuid/dotfiles/blob/master/emacs/.emacs.d/awaken.org#gui-related>
@@ -4794,7 +4790,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 
 *** Measurement constants
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defconst ceamx-inch-as-mm 25.4
   "One inch in millimeters.")
 
@@ -4804,7 +4800,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 
 *** Function to get geometry attributes for the default display monitor
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defun ceamx-default-monitor-geometry ()
   "Return geometry for the first monitor in `display-monitor-attributes-list'."
   (let* ((first-monitor (car (display-monitor-attributes-list))))
@@ -4813,7 +4809,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 
 *** Function to get the pixel pitch for a frame
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 ;; via <https://www.reddit.com/r/emacs/comments/7hzxb8/comment/dqywyqc/>
 (defun ceamx-pixel-pitch (&optional frame)
   "Return the pixel pitch for FRAME in millimeters.
@@ -4828,7 +4824,7 @@ center of its adjacent pixel."
 
 *** Function to calculate font height scaling
 
-#+begin_src emacs-lisp :noweb-ref config-ui
+#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defun ceamx-font-height (number &optional multiplier)
   "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
 NUMBER should be a whole number. MULTIPLIER should be a float.
@@ -4838,6 +4834,32 @@ will be used as default."
   (truncate (* number (or multiplier ceamx-font-height-multiplier))))
 #+end_src
 
+
+
+** File Footers
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/config-ui.el :comments no
+(provide 'config-ui)
+;;; config-ui.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el :comments no
+(provide 'lib-ui)
+;;; lib-ui.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-ui.el :comments no
+(provide 'init-ui)
+;;; init-ui.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el :comments no
+(provide 'init-ui-graphical)
+;;; init-ui-graphical.el ends here
+#+end_src
 
 
 * Window Management :: =window= :window:
