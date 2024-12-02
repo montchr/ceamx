@@ -36,7 +36,7 @@
 (defvar ceamx-eglot-server-configurations-alist '()
   "Alist of language server initialization options as accepted in `eglot-server-programs'.")
 ;; TODO: defcustom
-(defvar ceamx-lsp-server-nix-lang "nix-nil")
+(defvar ceamx-lsp-server-nix-lang "nix-nixd")
 
 (defvar ceamx-lsp-nix-nixd-default-config
   `(:nixpkgs (:expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")
@@ -45,11 +45,11 @@
                               "/etc/nixos"
                               "nixosConfigurations"
                               (system-name)))
-              :home-manager (:expr ,(format "import (builtins.getFlake \"%s\").%s.\"%s@%s\".options"
+              :home-manager (:expr ,(format "import (builtins.getFlake \"%s\").%s.%s.config.home-manager.users.%s"
                                      "/etc/nixos"
-                                     "homeConfigurations"
-                                     (user-login-name)
-                                     (system-name))))))
+                                     "nixosConfigurations"
+                                     (system-name)
+                                     (user-login-name))))))
 (defconst ceamx-lang-php-extension-regexp "\\.\\(php\\|phtml\\)\\'"
   "Pattern matching files with PHP syntax.")
 ;; Available options listed in schema: https://github.com/bmewburn/intelephense-docs/blob/master/installation.md#configuration-options

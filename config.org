@@ -12150,7 +12150,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 #+begin_src emacs-lisp :noweb-ref config-prog
 ;; TODO: defcustom
-(defvar ceamx-lsp-server-nix-lang "nix-nil")
+(defvar ceamx-lsp-server-nix-lang "nix-nixd")
 
 (defvar ceamx-lsp-nix-nixd-default-config
   `(:nixpkgs (:expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")
@@ -12159,11 +12159,11 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
                               "/etc/nixos"
                               "nixosConfigurations"
                               (system-name)))
-              :home-manager (:expr ,(format "import (builtins.getFlake \"%s\").%s.\"%s@%s\".options"
+              :home-manager (:expr ,(format "import (builtins.getFlake \"%s\").%s.%s.config.home-manager.users.%s"
                                      "/etc/nixos"
-                                     "homeConfigurations"
-                                     (user-login-name)
-                                     (system-name))))))
+                                     "nixosConfigurations"
+                                     (system-name)
+                                     (user-login-name))))))
 #+end_src
 
 #+begin_src emacs-lisp
