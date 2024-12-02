@@ -3057,7 +3057,7 @@ Or, perhaps more accurately: stuff that needs a better home.
   "Q" #'kill-emacs)
 #+end_src
 
-** =lib-simple=: The Library of Uncertain Simplicity
+** =lisp/lib-simple.el=: The Library of Uncertain Simplicity
 
 #+begin_src emacs-lisp :tangle lisp/lib-simple.el :comments no :noweb-ref nil
 ;;; lib-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
@@ -3208,7 +3208,7 @@ Call the commands `ceamx/escape-url-line' and
 ;;; lib-simple.el ends here
 #+end_src
 
-** =lib-text=: The Material Fabric of Uncertainty
+** =lisp/lib-text.el=: The Material Fabric of Uncertainty
 
 #+begin_src emacs-lisp :tangle lisp/lib-text.el :comments no :noweb-ref nil
 ;;; lib-text.el --- Text utilities                   -*- lexical-binding: t; -*-
@@ -3261,9 +3261,11 @@ POS defaults to the current position."
 ;;; lib-text.el ends here
 #+end_src
 
-** TODO Consolidate ~lib-simple~ and ~lib-text~
+** CANCELLED Consolidate ~lib-simple~ and ~lib-text~
+CLOSED: [2024-12-01 Sun 21:52]
 
 
+- State "CANCELLED"  from "TODO"       [2024-12-01 Sun 21:52]
 * Environment :: =env= :env:
 
 ** Settings :: =config-env= :config:
