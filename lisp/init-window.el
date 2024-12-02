@@ -32,6 +32,11 @@
 (require 'ceamx-lib)
 (require 'lib-buffer)
 (require 'lib-window)
+
+;; General buffer display settings
+
+
+;; [[file:../config.org::*General buffer display settings][General buffer display settings:1]]
 (setopt switch-to-buffer-in-dedicated-window 'pop)
 
 ;; Ensure interactive buffer switching behaves according to expectations.
@@ -56,6 +61,74 @@
 (setopt display-buffer-base-action
         '((display-buffer-reuse-window
            display-buffer-in-previous-window)))
+;; General buffer display settings:1 ends here
+
+;; Declare rules for displaying buffers with ~display-buffer-alist~ :buffer_rules:
+
+;; - Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+
+;; <karthink> has a helpful summary of ~display-buffer~ action functions and
+;; alist entries in their Emacs configuration, which I am also including here
+;; for my own reference. Note that this list is not necessarily complete.
+
+;; ~display-buffer-action-functions~ are:
+
+;; - ~display-buffer-same-window~ :: Use the selected window
+;; - ~display-buffer-reuse-window~ :: Use a window already showing the buffer
+;; - ~display-buffer-reuse-mode-window~ :: Use a window with the same major-mode
+;; - ~display-buffer-in-previous-window~ :: Use a window that did show the buffer before
+;; - ~display-buffer-use-some-window~ :: Use some existing window
+;; - ~display-buffer-pop-up-window~ :: Pop up a new window
+;; - ~display-buffer-below-selected~ :: Use or pop up a window below the selected one
+;; - ~display-buffer-at-bottom~ :: Use or pop up a window at the bottom of the selected frame
+;; - ~display-buffer-pop-up-frame~ :: Show the buffer on a new frame
+;; - ~display-buffer-in-child-frame~ :: Show the buffer in a child frame
+;; - ~display-buffer-no-window~ :: Do not display the buffer and have ~display-buffer~ return nil immediately
+
+;; Action alist entries are:
+
+;; - ~inhibit-same-window~ :: A non-nil value prevents the sam
+;;     window from being used for display
+;; - ~inhibit-switch-frame~ :: A non-nil value prevents any fram
+;;     used for showing the buffer from being raised or selected
+;; - ~reusable-frames~ :: The value specifies the set of frames t
+;;     search for a window that already displays the buffer.
+;;     Possible values are nil (the selected frame), t (any live
+;;     frame), visible (any visible frame), 0 (any visible or
+;;     iconified frame) or an existing live frame.
+;; - ~pop-up-frame-parameters~ :: The value specifies an alist o
+;;     frame parameters to give a new frame, if one is created.
+;; - ~window-height~ :: The value specifies the desired height of th
+;;     window chosen and is either an integer (the total height of
+;;     the window), a floating point number (the fraction of its
+;;     total height with respect to the total height of the frame's
+;;     root window) or a function to be called with one argument -
+;;     the chosen window.  The function is supposed to adjust the
+;;     height of the window; its return value is ignored.  Suitable
+;;     functions are ~shrink-window-if-larger-than-buffer~ and
+;;     ~fit-window-to-buffer~.
+;; - ~window-width~ :: The value specifies the desired width of th
+;;     window chosen and is either an integer (the total width of
+;;     the window), a floating point number (the fraction of its
+;;     total width with respect to the width of the frame's root
+;;     window) or a function to be called with one argument - the
+;;     chosen window.  The function is supposed to adjust the width
+;;     of the window; its return value is ignored.
+;; - ~preserve-size~ :: The value should be either (t . nil) t
+;;     preserve the width of the chosen window, (nil . t) to
+;;     preserve its height or (t . t) to preserve its height and
+;;     width in future changes of the window configuration.
+;; - ~window-parameters~ :: The value specifies an alist of windo
+;;     parameters to give the chosen window.
+;; - ~allow-no-window~ :: A non-nil value means that `display-buffer
+;;     may not display the buffer and return nil immediately.
+
+
+;;     <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+
+
+
+;; [[file:../config.org::*Declare rules for displaying buffers with ~display-buffer-alist~][Declare rules for displaying buffers with ~display-buffer-alist~:1]]
 (require 'lib-buffer)
 
 ;; TODO: move these to config-...
@@ -90,6 +163,14 @@
            (display-buffer-in-side-window)
            (window-height . 0.2)
            (side . bottom))))
+;; Declare rules for displaying buffers with ~display-buffer-alist~:1 ends here
+
+;; ~popper~: Summon and dismiss "popup" windows :popups:
+
+;; - Website :: <https://github.com/karthink/popper>
+
+
+;; [[file:../config.org::*~popper~: Summon and dismiss "popup" windows][~popper~: Summon and dismiss "popup" windows:1]]
 (package! popper
   (global-keys!
     "C-`" #'popper-toggle
@@ -136,32 +217,92 @@
   ;; Load as early as possible to catch popups as early as possible.
   (popper-mode)
   (popper-echo-mode))
+;; ~popper~: Summon and dismiss "popup" windows:1 ends here
+
+;; Configure overrides in ~popper-repeat-map~
+
+
+;; [[file:../config.org::*Configure overrides in ~popper-repeat-map~][Configure overrides in ~popper-repeat-map~:1]]
 (after! popper
   (defvar-keymap popper-repeat-map
     :repeat t
     "`" #'popper-cycle
     "~" #'popper-cycle-backwards))
+;; Configure overrides in ~popper-repeat-map~:1 ends here
+
+;; Configure ~projectile~ integration
+
+
+;; [[file:../config.org::*Configure ~projectile~ integration][Configure ~projectile~ integration:1]]
 (after! (popper projectile)
   (setopt popper-group-function #'popper-group-by-projectile))
+;; Configure ~projectile~ integration:1 ends here
+
+;; Restore previous window configurations with ~winner-mode~ [builtin]
+
+
+;; [[file:../config.org::*Restore previous window configurations with ~winner-mode~ \[builtin\]][Restore previous window configurations with ~winner-mode~ [builtin]:1]]
 (add-hook 'ceamx-after-init-hook #'winner-mode)
+;; Restore previous window configurations with ~winner-mode~ [builtin]:1 ends here
+
+;; Toggle a window's "dedicated" flag with ~dedicated-mode~
+
+;; <https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
+
+
+;; [[file:../config.org::*Toggle a window's "dedicated" flag with ~dedicated-mode~][Toggle a window's "dedicated" flag with ~dedicated-mode~:1]]
 (package! dedicated
   (keymap-global-set "C-c W" #'dedicated-mode))
+;; Toggle a window's "dedicated" flag with ~dedicated-mode~:1 ends here
+
+;; Add "distraction-free" editing with ~olivetti-mode~
+
+;; <https://github.com/rnkn/olivetti>
+
+
+;; [[file:../config.org::*Add "distraction-free" editing with ~olivetti-mode~][Add "distraction-free" editing with ~olivetti-mode~:1]]
 (package! olivetti)
 
 ;;  (setopt olivetti-style 'fancy) ; might not play well with `org-modern'
+;; Add "distraction-free" editing with ~olivetti-mode~:1 ends here
+
+;; =golden-ratio.el=: Automatically resize windows accordingly
+
+
+;; [[file:../config.org::*=golden-ratio.el=: Automatically resize windows accordingly][=golden-ratio.el=: Automatically resize windows accordingly:1]]
 (package! golden-ratio
   (setopt golden-ratio-auto-scale t)
   (setopt golden-ratio-max-width 100))
+;; =golden-ratio.el=: Automatically resize windows accordingly:1 ends here
+
+;; Interactively manage windows with ~ace-window~
+
+;; <https://github.com/abo-abo/ace-window>
+
+
+;; [[file:../config.org::*Interactively manage windows with ~ace-window~][Interactively manage windows with ~ace-window~:1]]
 (package! ace-window
   ;; Same frame only. While it'd be nice to use the default (global), I really
   ;; dislike that it orders window numbers leads to jarring gaps in window
   ;; numbers in the same frame. For example, frame A might have windows numbered
   ;; 1 and 3 and frame B will have window 2.
   (setopt aw-scope 'frame))
+;; Interactively manage windows with ~ace-window~:1 ends here
+
+;; Add commands to transpose/rotate a frame's windows
+
+
+;; [[file:../config.org::*Add commands to transpose/rotate a frame's windows][Add commands to transpose/rotate a frame's windows:1]]
 (keymap-global-set "C-c w" (cons "Window" (define-prefix-command 'ceamx-custom-x-prefix)))
 
 (package! transpose-frame
   (keymap-global-set "C-c w SPC" #'transpose-frame))
+;; Add commands to transpose/rotate a frame's windows:1 ends here
+
+;; Create a Transient menu for window management
+
+
+;; [[file:../config.org::*Create a Transient menu for window management][Create a Transient menu for window management:1]]
 (transient-define-prefix ceamx/window-dispatch ()
   "Window management transient."
   :transient-suffix 'transient--do-stay
@@ -218,6 +359,12 @@
     ("`" "[ ] popups" popper-toggle)
     ""
     ("q" "quit" transient-quit-all)]])
+;; Create a Transient menu for window management:1 ends here
+
+;; Define additional bindings under the =C-x w= prefix (~window-prefix-map~)
+
+
+;; [[file:../config.org::*Define additional bindings under the =C-x w= prefix (~window-prefix-map~)][Define additional bindings under the =C-x w= prefix (~window-prefix-map~):1]]
 (define-keymap :keymap window-prefix-map
   "w" #'ace-window
 
@@ -237,6 +384,12 @@
 
   "=" #'balance-windows
   "SPC" #'ceamx/swap-or-rotate-windows)
+;; Define additional bindings under the =C-x w= prefix (~window-prefix-map~):1 ends here
+
+;; Define global window management keybindings
+
+
+;; [[file:../config.org::*Define global window management keybindings][Define global window management keybindings:1]]
 (define-keymap :keymap (current-global-map)
   "C-x o" #'ceamx/other-window
   "C-x O" #'ace-window
@@ -251,11 +404,28 @@
   "C-x <down>" #'shrink-window
   "C-x <left>" #'shrink-window-horizontally
   "C-x <right>" #'enlarge-window-horizontally)
+;; Define global window management keybindings:1 ends here
+
+;; Define repeatable keybindings for resizing windows (~resize-window-repeat-map~)
+
+
+;; [[file:../config.org::*Define repeatable keybindings for resizing windows (~resize-window-repeat-map~)][Define repeatable keybindings for resizing windows (~resize-window-repeat-map~):1]]
 (define-keymap :keymap resize-window-repeat-map
   "<up>" #'enlarge-window
   "<down>" #'shrink-window
   "<left>" #'shrink-window-horizontally
   "<right>" #'enlarge-window-horizontally)
+;; Define repeatable keybindings for resizing windows (~resize-window-repeat-map~):1 ends here
+
+;; Define repeatable keybindings for window actions (~ceamx-window-repeat-map~)
+
+;; This is very similar to ~window-prefix-map~.  Unfortunately, it does not seem
+;; possible to create a functional ~repeat-map~ inheriting from a parent keymap.  The
+;; commands bound in the parent map are unaffected by the ~defvar-keymap~ =:repeat=
+;; keyword of a child map.
+
+
+;; [[file:../config.org::*Define repeatable keybindings for window actions (~ceamx-window-repeat-map~)][Define repeatable keybindings for window actions (~ceamx-window-repeat-map~):1]]
 (defvar-keymap ceamx-window-repeat-map
   :repeat t
 
@@ -283,6 +453,7 @@
 
   "RET" #'repeat-exit
   "ESC" #'repeat-exit)
+;; Define repeatable keybindings for window actions (~ceamx-window-repeat-map~):1 ends here
 
 (provide 'init-window)
 ;;; init-window.el ends here

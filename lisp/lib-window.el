@@ -34,6 +34,14 @@
 (require 'windmove)
 
 (require 'config-window)
+
+;; ~display-buffer~ functions
+
+;; <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
+
+
+
+;; [[file:../config.org::*~display-buffer~ functions][~display-buffer~ functions:1]]
 (defun ceamx-window-display-popup-at-bottom (buffer &optional alist)
   "Display popup-buffer BUFFER at the bottom of the screen.
 ALIST is an association list of action symbols and values.  See
@@ -96,6 +104,9 @@ such alists."
           (prog1 (window--display-buffer buffer window 'reuse alist)
             (unless (cdr (assq 'inhibit-switch-frame alist))
               (window--maybe-raise-frame (window-frame window)))))))))
+;; ~display-buffer~ functions:1 ends here
+
+;; [[file:../config.org::*~display-buffer~ functions][~display-buffer~ functions:2]]
 (defmacro with-safe-side-windows! (&rest body)
   "Toggle side windows, evaluate BODY, restore side windows.
 Copied from the `evil' macro `evil-save-side-windows'."
@@ -111,6 +122,14 @@ Copied from the `evil' macro `evil-save-side-windows'."
           (progn ,@body)
         (when ,sides
          (window-toggle-side-windows))))))
+;; ~display-buffer~ functions:2 ends here
+
+;; Define a custom predicate for identifying a "popup" buffer
+
+;; - Reference :: <https://github.com/karthink/popper/blob/master/popper.el#L265-L283>
+
+
+;; [[file:../config.org::*Define a custom predicate for identifying a "popup" buffer][Define a custom predicate for identifying a "popup" buffer:1]]
 (defun +popper-current-buffer-popup-p (buf)
   "Whether the buffer BUF should be considered a popup.
 This is intended for use as a predicate in `popper-reference-buffers'."
@@ -139,6 +158,14 @@ Intended as a general hook function."
            `((window-height . ,popper-window-height)
              (direction . below)
              (body-function . ,#'select-window))))
+;; Define a custom predicate for identifying a "popup" buffer:1 ends here
+
+;; Define commands for window management
+
+;; - Source :: <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
+
+
+;; [[file:../config.org::*Define commands for window management][Define commands for window management:1]]
 ;; FIXME: "display-buffer" is misleading
 ;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 ;;;###autoload
@@ -315,6 +342,7 @@ available, `switchy-window'."
                                     (function other-window))))
       (call-interactively other-window-command)
       (setq this-command other-window-command))))
+;; Define commands for window management:1 ends here
 
 (provide 'lib-window)
 ;;; lib-window.el ends here

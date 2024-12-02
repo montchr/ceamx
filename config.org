@@ -438,28 +438,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<file-footer(feature="config-editor")>>
 #+end_src
 
-** =lisp/config-window.el=
-
-#+name: config-window-file
-#+begin_src emacs-lisp  :tangle lisp/config-window.el :comments no :noweb yes
-<<file-prop-line(feature="config-window",desc="Window management user options")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-window>>
-
-<<file-footer(feature="config-window")>>
-#+end_src
-
 ** =lisp/config-prog.el=
 
 #+name: config-prog-file
@@ -698,35 +676,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<lib-prog>>
 
 <<file-footer(feature="lib-prog")>>
-#+end_src
-
-** =lisp/lib-window.el=
-
-#+name: lib-window-file
-#+begin_src emacs-lisp  :tangle lisp/lib-window.el :comments no :noweb yes
-<<file-prop-line(feature="lib-window",desc="Window management support library")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-;; Copyright (C) 2023 Free Software Foundation, Inc.
-;; Copyright (C) 2024  Protesilaos Stavrou
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;;         Vegard Øye <vegard_oye at hotmail.com>
-;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
-;;         Protesilaos Stavrou <public@protesilaos.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-window>>
-
-<<file-footer(feature="lib-window")>>
 #+end_src
 
 ** =lisp/init-dashboard.el=
@@ -968,28 +917,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<init-search>>
 
 <<file-footer(feature="init-search")>>
-#+end_src
-
-** =lisp/init-window.el=
-
-#+name: init-window-file
-#+begin_src emacs-lisp  :tangle lisp/init-window.el :comments no :noweb yes
-<<file-prop-line(feature="init-window",desc="Window management")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-window>>
-
-<<file-footer(feature="init-window")>>
 #+end_src
 
 ** =lisp/init-buffer.el=
@@ -4864,10 +4791,26 @@ will be used as default."
 
 * Window Management :: =window= :window:
 :PROPERTIES:
-:header-args: :noweb-ref init-window
+:header-args: :tangle lisp/init-window.el
 :END:
 
-    #+begin_src emacs-lisp
+** File Headers
+
+#+name: init-window-file
+#+begin_src emacs-lisp :tangle lisp/init-window.el :comments no :noweb yes
+;;; init-window.el --- Window management  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
 (require 'transient)
 
 (require 'config-buffer)
@@ -4876,12 +4819,49 @@ will be used as default."
 (require 'ceamx-lib)
 (require 'lib-buffer)
 (require 'lib-window)
-    #+end_src
+#+end_src
 
-#+begin_src emacs-lisp :noweb-ref lib-window
+#+name: lib-window-file
+#+begin_src emacs-lisp :tangle lisp/lib-window.el :comments no :noweb yes
+;;; lib-window.el --- Window management support library  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (C) 2023 Free Software Foundation, Inc.
+;; Copyright (C) 2024  Protesilaos Stavrou
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;;         Vegard Øye <vegard_oye at hotmail.com>
+;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
+;;         Protesilaos Stavrou <public@protesilaos.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
 (require 'windmove)
 
 (require 'config-window)
+#+end_src
+
+#+name: config-window-file
+#+begin_src emacs-lisp :tangle lisp/config-window.el :comments no :noweb yes
+;;; config-window.el --- Window management user options  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
 #+end_src
 
 ** General buffer display settings
@@ -4915,7 +4895,7 @@ will be used as default."
 
 ** Define the user option specifying a fallback buffer
 
-#+begin_src emacs-lisp :noweb-ref config-window
+#+begin_src emacs-lisp :tangle lisp/config-window.el
 (defcustom ceamx-fallback-buffer-name "*scratch*"
   "The name of the buffer to fall back to if no other buffers exist.
 The buffer will be created if it does not exist."
@@ -5029,7 +5009,7 @@ Action alist entries are:
 <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
 
 
-#+begin_src emacs-lisp :noweb-ref lib-window
+#+begin_src emacs-lisp :tangle lisp/lib-window.el
 (defun ceamx-window-display-popup-at-bottom (buffer &optional alist)
   "Display popup-buffer BUFFER at the bottom of the screen.
 ALIST is an association list of action symbols and values.  See
@@ -5094,7 +5074,7 @@ such alists."
               (window--maybe-raise-frame (window-frame window)))))))))
 #+end_src
 
-#+begin_src emacs-lisp :noweb-ref lib-window
+#+begin_src emacs-lisp :tangle lisp/lib-window.el
 (defmacro with-safe-side-windows! (&rest body)
   "Toggle side windows, evaluate BODY, restore side windows.
 Copied from the `evil' macro `evil-save-side-windows'."
@@ -5169,7 +5149,7 @@ Copied from the `evil' macro `evil-save-side-windows'."
 
 - Reference :: <https://github.com/karthink/popper/blob/master/popper.el#L265-L283>
 
-#+begin_src emacs-lisp :noweb-ref lib-window
+#+begin_src emacs-lisp :tangle lisp/lib-window.el
 (defun +popper-current-buffer-popup-p (buf)
   "Whether the buffer BUF should be considered a popup.
 This is intended for use as a predicate in `popper-reference-buffers'."
@@ -5451,7 +5431,7 @@ keyword of a child map.
 
 - Source :: <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
 
-#+begin_src emacs-lisp :noweb-ref lib-window
+#+begin_src emacs-lisp :tangle lisp/lib-window.el
 ;; FIXME: "display-buffer" is misleading
 ;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 ;;;###autoload
@@ -5628,6 +5608,24 @@ available, `switchy-window'."
                                     (function other-window))))
       (call-interactively other-window-command)
       (setq this-command other-window-command))))
+#+end_src
+
+
+** File Footers
+
+#+begin_src emacs-lisp :tangle lisp/init-window.el :comments no
+(provide 'init-window)
+;;; init-window.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/lib-window.el :comments no
+(provide 'lib-window)
+;;; lib-window.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/config-window.el :comments no
+(provide 'config-window)
+;;; config-window.el ends here
 #+end_src
 
 

@@ -24,11 +24,16 @@
 ;;; Commentary:
 ;;; Code:
 
+;; Define the user option specifying a fallback buffer
+
+
+;; [[file:../config.org::*Define the user option specifying a fallback buffer][Define the user option specifying a fallback buffer:1]]
 (defcustom ceamx-fallback-buffer-name "*scratch*"
   "The name of the buffer to fall back to if no other buffers exist.
 The buffer will be created if it does not exist."
   :group 'ceamx
   :type '(string))
+;; Define the user option specifying a fallback buffer:1 ends here
 
 (provide 'config-window)
 ;;; config-window.el ends here
