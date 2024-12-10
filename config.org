@@ -11713,7 +11713,10 @@ Unless PROGRAM is provided, the program name used in
 (package! yaml-mode)
 #+end_src
 
-**** Install and configure ~yaml-pro~ for structural editing
+**** DISABLED Install and configure ~yaml-pro~ for structural editing
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
 
 #+begin_src emacs-lisp
 (package! yaml-pro
