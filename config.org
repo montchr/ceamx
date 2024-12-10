@@ -2695,16 +2695,22 @@ expect the value you arrive at to be as high as 100 MiB.
 #+begin_src emacs-lisp
 (require 'init-env)
 (require 'init-input-methods)
+#+end_src
 
+#+begin_src emacs-lisp
 ;; Site-specific configuration, to be ignored by version control.
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
+#+end_src
 
+#+begin_src emacs-lisp
 (require 'init-secrets)
 #+end_src
 
 #+begin_src emacs-lisp
 ;;;; Displays + Appearance
+#+end_src
 
+#+begin_src emacs-lisp
 ;; Load configuration settings for conditional loading.
 (require 'config-ui)
 
@@ -3105,6 +3111,8 @@ CLOSED: [2024-12-01 Sun 21:52]
 
 
 - State "CANCELLED"  from "TODO"       [2024-12-01 Sun 21:52]
+
+
 * Environment :: =env= :env:
 
 ** Settings :: =config-env= :config:

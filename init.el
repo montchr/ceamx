@@ -455,15 +455,16 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; [[file:config.org::*Load Features][Load Features:1]]
 (require 'init-env)
 (require 'init-input-methods)
-
-;; Site-specific configuration, to be ignored by version control.
-(require 'site-config (file-name-concat user-emacs-directory "site-config") t)
-
-(require 'init-secrets)
 ;; Load Features:1 ends here
 
 ;; [[file:config.org::*Load Features][Load Features:2]]
-;;;; Displays + Appearance
+;; Site-specific configuration, to be ignored by version control.
+(require 'site-config (file-name-concat user-emacs-directory "site-config") t)
+;; Load Features:2 ends here
+
+;; [[file:config.org::*Load Features][Load Features:3]]
+(require 'init-secrets)
+;; Load Features:3 ends here
 
 ;; [[file:config.org::*Load Features][Load Features:4]]
 ;;;; Displays + Appearance
