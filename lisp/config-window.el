@@ -24,7 +24,7 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Define the user option specifying a fallback buffer
+;; Define the user option specifying a fallback buffer :buffer:config:
 
 
 ;; [[file:../config.org::*Define the user option specifying a fallback buffer][Define the user option specifying a fallback buffer:1]]

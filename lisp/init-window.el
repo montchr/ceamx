@@ -33,7 +33,7 @@
 (require 'lib-buffer)
 (require 'lib-window)
 
-;; General buffer display settings
+;; General buffer display settings :buffer:frame:display_buffer:
 
 
 ;; [[file:../config.org::*General buffer display settings][General buffer display settings:1]]
@@ -63,7 +63,7 @@
            display-buffer-in-previous-window)))
 ;; General buffer display settings:1 ends here
 
-;; Declare rules for displaying buffers with ~display-buffer-alist~ :buffer_rules:
+;; Declare rules for displaying buffers with ~display-buffer-alist~ :display_buffer:
 
 ;; - Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 
@@ -165,7 +165,7 @@
            (side . bottom))))
 ;; Declare rules for displaying buffers with ~display-buffer-alist~:1 ends here
 
-;; ~popper~: Summon and dismiss "popup" windows :popups:
+;; ~popper~: Summon and dismiss "popup" windows :popups:package:
 
 ;; - Website :: <https://github.com/karthink/popper>
 
@@ -238,71 +238,71 @@
   (setopt popper-group-function #'popper-group-by-projectile))
 ;; Configure ~projectile~ integration:1 ends here
 
-;; Restore previous window configurations with ~winner-mode~ [builtin]
+;; Restore previous window configurations with ~winner-mode~ [builtin] :history:
 
 
 ;; [[file:../config.org::*Restore previous window configurations with ~winner-mode~ \[builtin\]][Restore previous window configurations with ~winner-mode~ [builtin]:1]]
 (add-hook 'ceamx-after-init-hook #'winner-mode)
 ;; Restore previous window configurations with ~winner-mode~ [builtin]:1 ends here
 
-;; Toggle a window's "dedicated" flag with ~dedicated-mode~
+;; =dedicated=: Toggle a window's "dedicated" flag :package:
 
 ;; <https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
 
 
-;; [[file:../config.org::*Toggle a window's "dedicated" flag with ~dedicated-mode~][Toggle a window's "dedicated" flag with ~dedicated-mode~:1]]
+;; [[file:../config.org::*=dedicated=: Toggle a window's "dedicated" flag][=dedicated=: Toggle a window's "dedicated" flag:1]]
 (package! dedicated
   (keymap-global-set "C-c W" #'dedicated-mode))
-;; Toggle a window's "dedicated" flag with ~dedicated-mode~:1 ends here
+;; =dedicated=: Toggle a window's "dedicated" flag:1 ends here
 
-;; Add "distraction-free" editing with ~olivetti-mode~
+;; =olivetti=: "Distraction-free" editing :package:
 
 ;; <https://github.com/rnkn/olivetti>
 
 
-;; [[file:../config.org::*Add "distraction-free" editing with ~olivetti-mode~][Add "distraction-free" editing with ~olivetti-mode~:1]]
+;; [[file:../config.org::*=olivetti=: "Distraction-free" editing][=olivetti=: "Distraction-free" editing:1]]
 (package! olivetti)
 
 ;;  (setopt olivetti-style 'fancy) ; might not play well with `org-modern'
-;; Add "distraction-free" editing with ~olivetti-mode~:1 ends here
+;; =olivetti=: "Distraction-free" editing:1 ends here
 
-;; =golden-ratio.el=: Automatically resize windows accordingly
+;; =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
 
 
-;; [[file:../config.org::*=golden-ratio.el=: Automatically resize windows accordingly][=golden-ratio.el=: Automatically resize windows accordingly:1]]
+;; [[file:../config.org::*=golden-ratio=: Automatically resize windows according to Ancient Wisdom][=golden-ratio=: Automatically resize windows according to Ancient Wisdom:1]]
 (package! golden-ratio
   (setopt golden-ratio-auto-scale t)
   (setopt golden-ratio-max-width 100))
-;; =golden-ratio.el=: Automatically resize windows accordingly:1 ends here
+;; =golden-ratio=: Automatically resize windows according to Ancient Wisdom:1 ends here
 
-;; Interactively manage windows with ~ace-window~
+;; =ace-window=: Interactively manage windows :package:
 
 ;; <https://github.com/abo-abo/ace-window>
 
 
-;; [[file:../config.org::*Interactively manage windows with ~ace-window~][Interactively manage windows with ~ace-window~:1]]
+;; [[file:../config.org::*=ace-window=: Interactively manage windows][=ace-window=: Interactively manage windows:1]]
 (package! ace-window
   ;; Same frame only. While it'd be nice to use the default (global), I really
   ;; dislike that it orders window numbers leads to jarring gaps in window
   ;; numbers in the same frame. For example, frame A might have windows numbered
   ;; 1 and 3 and frame B will have window 2.
   (setopt aw-scope 'frame))
-;; Interactively manage windows with ~ace-window~:1 ends here
+;; =ace-window=: Interactively manage windows:1 ends here
 
-;; Add commands to transpose/rotate a frame's windows
+;; =transpose-frame=: Transpose and rotate a frame's windows :package:
 
 
-;; [[file:../config.org::*Add commands to transpose/rotate a frame's windows][Add commands to transpose/rotate a frame's windows:1]]
+;; [[file:../config.org::*=transpose-frame=: Transpose and rotate a frame's windows][=transpose-frame=: Transpose and rotate a frame's windows:1]]
 (keymap-global-set "C-c w" (cons "Window" (define-prefix-command 'ceamx-custom-x-prefix)))
 
 (package! transpose-frame
   (keymap-global-set "C-c w SPC" #'transpose-frame))
-;; Add commands to transpose/rotate a frame's windows:1 ends here
+;; =transpose-frame=: Transpose and rotate a frame's windows:1 ends here
 
-;; Create a Transient menu for window management
+;; ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
 
 
-;; [[file:../config.org::*Create a Transient menu for window management][Create a Transient menu for window management:1]]
+;; [[file:../config.org::*~ceamx/window-dispatch~: a window-management menu][~ceamx/window-dispatch~: a window-management menu:1]]
 (transient-define-prefix ceamx/window-dispatch ()
   "Window management transient."
   :transient-suffix 'transient--do-stay
@@ -359,12 +359,12 @@
     ("`" "[ ] popups" popper-toggle)
     ""
     ("q" "quit" transient-quit-all)]])
-;; Create a Transient menu for window management:1 ends here
+;; ~ceamx/window-dispatch~: a window-management menu:1 ends here
 
-;; Define additional bindings under the =C-x w= prefix (~window-prefix-map~)
+;; Bind additional ~window-prefix-map~ keys (~window-prefix-map~) :keybinds:
 
 
-;; [[file:../config.org::*Define additional bindings under the =C-x w= prefix (~window-prefix-map~)][Define additional bindings under the =C-x w= prefix (~window-prefix-map~):1]]
+;; [[file:../config.org::*Bind additional ~window-prefix-map~ keys (~window-prefix-map~)][Bind additional ~window-prefix-map~ keys (~window-prefix-map~):1]]
 (define-keymap :keymap window-prefix-map
   "w" #'ace-window
 
@@ -384,12 +384,12 @@
 
   "=" #'balance-windows
   "SPC" #'ceamx/swap-or-rotate-windows)
-;; Define additional bindings under the =C-x w= prefix (~window-prefix-map~):1 ends here
+;; Bind additional ~window-prefix-map~ keys (~window-prefix-map~):1 ends here
 
-;; Define global window management keybindings
+;; Bind additional global keys :keybinds:
 
 
-;; [[file:../config.org::*Define global window management keybindings][Define global window management keybindings:1]]
+;; [[file:../config.org::*Bind additional global keys][Bind additional global keys:1]]
 (define-keymap :keymap (current-global-map)
   "C-x o" #'ceamx/other-window
   "C-x O" #'ace-window
@@ -404,20 +404,20 @@
   "C-x <down>" #'shrink-window
   "C-x <left>" #'shrink-window-horizontally
   "C-x <right>" #'enlarge-window-horizontally)
-;; Define global window management keybindings:1 ends here
+;; Bind additional global keys:1 ends here
 
-;; Define repeatable keybindings for resizing windows (~resize-window-repeat-map~)
+;; Bind repeatable keys for resizing windows (~resize-window-repeat-map~) :keybinds:
 
 
-;; [[file:../config.org::*Define repeatable keybindings for resizing windows (~resize-window-repeat-map~)][Define repeatable keybindings for resizing windows (~resize-window-repeat-map~):1]]
+;; [[file:../config.org::*Bind repeatable keys for resizing windows (~resize-window-repeat-map~)][Bind repeatable keys for resizing windows (~resize-window-repeat-map~):1]]
 (define-keymap :keymap resize-window-repeat-map
   "<up>" #'enlarge-window
   "<down>" #'shrink-window
   "<left>" #'shrink-window-horizontally
   "<right>" #'enlarge-window-horizontally)
-;; Define repeatable keybindings for resizing windows (~resize-window-repeat-map~):1 ends here
+;; Bind repeatable keys for resizing windows (~resize-window-repeat-map~):1 ends here
 
-;; Define repeatable keybindings for window actions (~ceamx-window-repeat-map~)
+;; Bind repeatable keys for window actions (~ceamx-window-repeat-map~) :keybinds:
 
 ;; This is very similar to ~window-prefix-map~.  Unfortunately, it does not seem
 ;; possible to create a functional ~repeat-map~ inheriting from a parent keymap.  The
@@ -425,7 +425,7 @@
 ;; keyword of a child map.
 
 
-;; [[file:../config.org::*Define repeatable keybindings for window actions (~ceamx-window-repeat-map~)][Define repeatable keybindings for window actions (~ceamx-window-repeat-map~):1]]
+;; [[file:../config.org::*Bind repeatable keys for window actions (~ceamx-window-repeat-map~)][Bind repeatable keys for window actions (~ceamx-window-repeat-map~):1]]
 (defvar-keymap ceamx-window-repeat-map
   :repeat t
 
@@ -453,7 +453,7 @@
 
   "RET" #'repeat-exit
   "ESC" #'repeat-exit)
-;; Define repeatable keybindings for window actions (~ceamx-window-repeat-map~):1 ends here
+;; Bind repeatable keys for window actions (~ceamx-window-repeat-map~):1 ends here
 
 (provide 'init-window)
 ;;; init-window.el ends here

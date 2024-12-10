@@ -160,7 +160,7 @@ Intended as a general hook function."
              (body-function . ,#'select-window))))
 ;; Define a custom predicate for identifying a "popup" buffer:1 ends here
 
-;; Define commands for window management
+;; Define commands for window management :lib:
 
 ;; - Source :: <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
 

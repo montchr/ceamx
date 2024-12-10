@@ -4819,6 +4819,9 @@ will be used as default."
 :END:
 
 ** File Headers
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+name: init-window-file
 #+begin_src emacs-lisp :tangle lisp/init-window.el :comments no :noweb yes
@@ -4888,7 +4891,7 @@ will be used as default."
 ;;; Code:
 #+end_src
 
-** General buffer display settings
+** General buffer display settings :buffer:frame:display_buffer:
 
 #+begin_src emacs-lisp
 (setopt switch-to-buffer-in-dedicated-window 'pop)
@@ -4917,7 +4920,7 @@ will be used as default."
            display-buffer-in-previous-window)))
 #+end_src
 
-** Define the user option specifying a fallback buffer
+** Define the user option specifying a fallback buffer :buffer:config:
 
 #+begin_src emacs-lisp :tangle lisp/config-window.el
 (defcustom ceamx-fallback-buffer-name "*scratch*"
@@ -4927,7 +4930,7 @@ The buffer will be created if it does not exist."
   :type '(string))
 #+end_src
 
-** Declare rules for displaying buffers with ~display-buffer-alist~ :buffer_rules:
+** Declare rules for displaying buffers with ~display-buffer-alist~ :display_buffer:
 
 - Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 
@@ -5116,7 +5119,7 @@ Copied from the `evil' macro `evil-save-side-windows'."
          (window-toggle-side-windows))))))
 #+end_src
 
-** ~popper~: Summon and dismiss "popup" windows :popups:
+** ~popper~: Summon and dismiss "popup" windows :popups:package:
 
 - Website :: <https://github.com/karthink/popper>
 
@@ -5244,13 +5247,13 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   (setopt popper-group-function #'popper-group-by-projectile))
 #+end_src
 
-** Restore previous window configurations with ~winner-mode~ [builtin]
+** Restore previous window configurations with ~winner-mode~ [builtin] :history:
 
 #+begin_src emacs-lisp
 (add-hook 'ceamx-after-init-hook #'winner-mode)
 #+end_src
 
-** Toggle a window's "dedicated" flag with ~dedicated-mode~
+** =dedicated=: Toggle a window's "dedicated" flag :package:
 
 <https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
 
@@ -5259,7 +5262,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   (keymap-global-set "C-c W" #'dedicated-mode))
 #+end_src
 
-** Add "distraction-free" editing with ~olivetti-mode~
+** =olivetti=: "Distraction-free" editing :package:
 
 <https://github.com/rnkn/olivetti>
 
@@ -5269,7 +5272,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
 ;;  (setopt olivetti-style 'fancy) ; might not play well with `org-modern'
 #+end_src
 
-** =golden-ratio.el=: Automatically resize windows accordingly
+** =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
 
 #+begin_src emacs-lisp
 (package! golden-ratio
@@ -5277,7 +5280,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   (setopt golden-ratio-max-width 100))
 #+end_src
 
-** Interactively manage windows with ~ace-window~
+** =ace-window=: Interactively manage windows :package:
 
 <https://github.com/abo-abo/ace-window>
 
@@ -5290,7 +5293,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   (setopt aw-scope 'frame))
 #+end_src
 
-** Add commands to transpose/rotate a frame's windows
+** =transpose-frame=: Transpose and rotate a frame's windows :package:
 
 #+begin_src emacs-lisp
 (keymap-global-set "C-c w" (cons "Window" (define-prefix-command 'ceamx-custom-x-prefix)))
@@ -5299,7 +5302,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
   (keymap-global-set "C-c w SPC" #'transpose-frame))
 #+end_src
 
-** Create a Transient menu for window management
+** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
 
 #+begin_src emacs-lisp
 (transient-define-prefix ceamx/window-dispatch ()
@@ -5360,98 +5363,7 @@ definition of low-level Emacs internals defined in C code (e.g. `string-equal')
     ("q" "quit" transient-quit-all)]])
 #+end_src
 
-** Keybindings :keybinds:
-*** Define additional bindings under the =C-x w= prefix (~window-prefix-map~)
-
-#+begin_src emacs-lisp
-(define-keymap :keymap window-prefix-map
-  "w" #'ace-window
-
-  "d" #'ace-delete-window
-  "p" #'popper-toggle
-  "P" #'popper-toggle-type
-  "u" #'winner-undo
-
-  "h" #'windmove-left
-  "H" #'ceamx/window-move-left
-  "j" #'windmove-down
-  "J" #'ceamx/window-move-down
-  "k" #'windmove-up
-  "K" #'ceamx/window-move-up
-  "l" #'windmove-right
-  "L" #'ceamx/window-move-right
-
-  "=" #'balance-windows
-  "SPC" #'ceamx/swap-or-rotate-windows)
-#+end_src
-
-*** Define global window management keybindings
-
-#+begin_src emacs-lisp
-(define-keymap :keymap (current-global-map)
-  "C-x o" #'ceamx/other-window
-  "C-x O" #'ace-window
-
-  "C-x =" #'balance-windows
-  "C-x +" #'balance-windows-area
-
-  "C-x C-n" #'next-buffer
-  "C-x C-p" #'previous-buffer
-
-  "C-x <up>" #'enlarge-window           ; also: C-x ^
-  "C-x <down>" #'shrink-window
-  "C-x <left>" #'shrink-window-horizontally
-  "C-x <right>" #'enlarge-window-horizontally)
-#+end_src
-
-*** Define repeatable keybindings for resizing windows (~resize-window-repeat-map~)
-
-#+begin_src emacs-lisp
-(define-keymap :keymap resize-window-repeat-map
-  "<up>" #'enlarge-window
-  "<down>" #'shrink-window
-  "<left>" #'shrink-window-horizontally
-  "<right>" #'enlarge-window-horizontally)
-#+end_src
-
-*** Define repeatable keybindings for window actions (~ceamx-window-repeat-map~)
-
-This is very similar to ~window-prefix-map~.  Unfortunately, it does not seem
-possible to create a functional ~repeat-map~ inheriting from a parent keymap.  The
-commands bound in the parent map are unaffected by the ~defvar-keymap~ =:repeat=
-keyword of a child map.
-
-#+begin_src emacs-lisp
-(defvar-keymap ceamx-window-repeat-map
-  :repeat t
-
-  "0" #'delete-window
-  "2" #'split-window-below
-  "3" #'split-window-right
-
-  "b" #'consult-buffer
-  "f" #'find-file
-
-  "o" #'ceamx/other-window
-  "P" #'popper-toggle-type
-  "u" #'winner-undo
-
-  "h" #'windmove-left
-  "H" #'ceamx/window-move-left
-  "j" #'windmove-down
-  "J" #'ceamx/window-move-down
-  "k" #'windmove-up
-  "K" #'ceamx/window-move-up
-  "l" #'windmove-right
-  "L" #'ceamx/window-move-right
-
-  "SPC" #'ceamx/swap-or-rotate-windows
-
-  "RET" #'repeat-exit
-  "ESC" #'repeat-exit)
-#+end_src
-
-** Define commands for window management
+** Define commands for window management :lib:
 
 - Source :: <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
 
@@ -5634,6 +5546,95 @@ available, `switchy-window'."
       (setq this-command other-window-command))))
 #+end_src
 
+** Bind additional ~window-prefix-map~ keys (~window-prefix-map~) :keybinds:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap window-prefix-map
+  "w" #'ace-window
+
+  "d" #'ace-delete-window
+  "p" #'popper-toggle
+  "P" #'popper-toggle-type
+  "u" #'winner-undo
+
+  "h" #'windmove-left
+  "H" #'ceamx/window-move-left
+  "j" #'windmove-down
+  "J" #'ceamx/window-move-down
+  "k" #'windmove-up
+  "K" #'ceamx/window-move-up
+  "l" #'windmove-right
+  "L" #'ceamx/window-move-right
+
+  "=" #'balance-windows
+  "SPC" #'ceamx/swap-or-rotate-windows)
+#+end_src
+
+** Bind additional global keys :keybinds:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-x o" #'ceamx/other-window
+  "C-x O" #'ace-window
+
+  "C-x =" #'balance-windows
+  "C-x +" #'balance-windows-area
+
+  "C-x C-n" #'next-buffer
+  "C-x C-p" #'previous-buffer
+
+  "C-x <up>" #'enlarge-window           ; also: C-x ^
+  "C-x <down>" #'shrink-window
+  "C-x <left>" #'shrink-window-horizontally
+  "C-x <right>" #'enlarge-window-horizontally)
+#+end_src
+
+** Bind repeatable keys for resizing windows (~resize-window-repeat-map~) :keybinds:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap resize-window-repeat-map
+  "<up>" #'enlarge-window
+  "<down>" #'shrink-window
+  "<left>" #'shrink-window-horizontally
+  "<right>" #'enlarge-window-horizontally)
+#+end_src
+
+** Bind repeatable keys for window actions (~ceamx-window-repeat-map~) :keybinds:
+
+This is very similar to ~window-prefix-map~.  Unfortunately, it does not seem
+possible to create a functional ~repeat-map~ inheriting from a parent keymap.  The
+commands bound in the parent map are unaffected by the ~defvar-keymap~ =:repeat=
+keyword of a child map.
+
+#+begin_src emacs-lisp
+(defvar-keymap ceamx-window-repeat-map
+  :repeat t
+
+  "0" #'delete-window
+  "2" #'split-window-below
+  "3" #'split-window-right
+
+  "b" #'consult-buffer
+  "f" #'find-file
+
+  "o" #'ceamx/other-window
+  "P" #'popper-toggle-type
+  "u" #'winner-undo
+
+  "h" #'windmove-left
+  "H" #'ceamx/window-move-left
+  "j" #'windmove-down
+  "J" #'ceamx/window-move-down
+  "k" #'windmove-up
+  "K" #'ceamx/window-move-up
+  "l" #'windmove-right
+  "L" #'ceamx/window-move-right
+
+  "SPC" #'ceamx/swap-or-rotate-windows
+
+  "RET" #'repeat-exit
+  "ESC" #'repeat-exit)
+#+end_src
 
 ** File Footers
 
