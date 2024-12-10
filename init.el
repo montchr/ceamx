@@ -465,6 +465,11 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; [[file:config.org::*Load Features][Load Features:2]]
 ;;;; Displays + Appearance
 
+;; [[file:config.org::*Load Features][Load Features:4]]
+;;;; Displays + Appearance
+;; Load Features:4 ends here
+
+;; [[file:config.org::*Load Features][Load Features:5]]
 ;; Load configuration settings for conditional loading.
 (require 'config-ui)
 
@@ -472,21 +477,21 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (when (display-graphic-p)
   (require 'init-ui-graphical))
-;; Load Features:2 ends here
+;; Load Features:5 ends here
 
-;; [[file:config.org::*Load Features][Load Features:3]]
+;; [[file:config.org::*Load Features][Load Features:6]]
 ;;;; Dashboard
 
 (require 'init-dashboard)
-;; Load Features:3 ends here
+;; Load Features:6 ends here
 
-;; [[file:config.org::*Load Features][Load Features:4]]
+;; [[file:config.org::*Load Features][Load Features:7]]
 ;;;; Keyboard support
 
 (require 'init-keys)
-;; Load Features:4 ends here
+;; Load Features:7 ends here
 
-;; [[file:config.org::*Load Features][Load Features:5]]
+;; [[file:config.org::*Load Features][Load Features:8]]
 ;;;; Windows
 
 (require 'init-window)
@@ -494,28 +499,28 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;; FIXME: load earlier / in another section
 (require 'init-history)
-;; Load Features:5 ends here
+;; Load Features:8 ends here
 
-;; [[file:config.org::*Load Features][Load Features:6]]
+;; [[file:config.org::*Load Features][Load Features:9]]
 ;;;; Text Expansion
 
 (require 'init-abbrevs)
-;; Load Features:6 ends here
+;; Load Features:9 ends here
 
-;; [[file:config.org::*Load Features][Load Features:7]]
+;; [[file:config.org::*Load Features][Load Features:10]]
 ;;;; Completions and Selections
 
 (require 'init-search)
 (require 'init-completion)
-;; Load Features:7 ends here
+;; Load Features:10 ends here
 
-;; [[file:config.org::*Load Features][Load Features:8]]
+;; [[file:config.org::*Load Features][Load Features:11]]
 ;;;; Help
 
 (require 'init-help)
-;; Load Features:8 ends here
+;; Load Features:11 ends here
 
-;; [[file:config.org::*Load Features][Load Features:9]]
+;; [[file:config.org::*Load Features][Load Features:12]]
 ;;;; Actions
 
 (require 'init-embark)
@@ -525,44 +530,44 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-vcs)
 (require 'init-files)
 (require 'init-dired)
-;; Load Features:9 ends here
+;; Load Features:12 ends here
 
-;; [[file:config.org::*Load Features][Load Features:10]]
+;; [[file:config.org::*Load Features][Load Features:13]]
 ;;;; Workspaces + activities + contexts
 
 (require 'init-workspace)
-;; Load Features:10 ends here
+;; Load Features:13 ends here
 
-;; [[file:config.org::*Load Features][Load Features:11]]
+;; [[file:config.org::*Load Features][Load Features:14]]
 ;;;; Editing
 
 (require 'init-editor)
 (require 'init-writing)
 (require 'init-templates)
-;; Load Features:11 ends here
+;; Load Features:14 ends here
 
-;; [[file:config.org::*Load Features][Load Features:12]]
+;; [[file:config.org::*Load Features][Load Features:15]]
 ;;;; Outlines & Memex
 
 (require 'init-notes)
 (require 'init-outline)
 (require 'init-org)
-;; Load Features:12 ends here
+;; Load Features:15 ends here
 
-;; [[file:config.org::*Load Features][Load Features:13]]
+;; [[file:config.org::*Load Features][Load Features:16]]
 ;;;; Linting
 
 (require 'init-flymake)
 (require 'init-flycheck)
-;; Load Features:13 ends here
+;; Load Features:16 ends here
 
-;; [[file:config.org::*Load Features][Load Features:14]]
+;; [[file:config.org::*Load Features][Load Features:17]]
 ;;;; Tree-Sitter
 
 (require 'init-treesitter)
-;; Load Features:14 ends here
+;; Load Features:17 ends here
 
-;; [[file:config.org::*Load Features][Load Features:15]]
+;; [[file:config.org::*Load Features][Load Features:18]]
 ;;;; Language/syntax support
 
 (require 'config-prog)
@@ -585,9 +590,9 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 ;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
 (require 'init-shell-nu)
-;; Load Features:15 ends here
+;; Load Features:18 ends here
 
-;; [[file:config.org::*Load Features][Load Features:16]]
+;; [[file:config.org::*Load Features][Load Features:19]]
 ;;;; Miscellaneous
 
 (require 'init-tools)
@@ -600,7 +605,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-fun)
 
 (require 'init-controls)
-;; Load Features:16 ends here
+;; Load Features:19 ends here
 
 ;; TODO ~hippie-expand~
 

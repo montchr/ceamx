@@ -24,19 +24,28 @@
 ;;; Commentary:
 ;;; Code:
 
-;; [[file:../config.org::*Typography][Typography:2]]
+;; Typography :font:
+;; :PROPERTIES:
+;; :header-args: :tangle lisp/init-ui-graphical.el
+;; :END:
+
+
+;; [[file:../config.org::*Typography][Typography:1]]
 (require 'ceamx-paths)
 (require 'config-env)
 
 (require 'ceamx-lib)
 (require 'lib-ui)
-;; Typography:2 ends here
+;; Typography:1 ends here
 
-;; [[file:../config.org::*Typography][Typography:3]]
+;; Text rendering and scaling
+
+
+;; [[file:../config.org::*Text rendering and scaling][Text rendering and scaling:1]]
 (setq x-underline-at-descent-line nil)
 
 (setq-default text-scale-remap-header-line t)
-;; Typography:3 ends here
+;; Text rendering and scaling:1 ends here
 
 ;; ~fontaine~: pre-configure font presets :package:
 

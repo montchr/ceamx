@@ -24,7 +24,7 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Configure the preferred theme family
+;; Configure the preferred theme family :config:
 
 
 ;; [[file:../config.org::*Configure the preferred theme family][Configure the preferred theme family:1]]
@@ -44,7 +44,7 @@ theme)."
           (const :tag "Do not load a theme module" nil)))
 ;; Configure the preferred theme family:1 ends here
 
-;; Configure the preferred light and dark themes
+;; Configure the preferred light and dark themes :config:
 
 
 ;; [[file:../config.org::*Configure the preferred light and dark themes][Configure the preferred light and dark themes:1]]
@@ -59,7 +59,7 @@ theme)."
   :type 'symbol)
 ;; Configure the preferred light and dark themes:1 ends here
 
-;; TODO Define groupings of themes into dark/light or other qualities
+;; TODO Define groupings of themes into dark/light or other qualities :config:
 
 ;; Needs expansion for more than just the Modus Themes.
 
@@ -83,11 +83,11 @@ theme)."
              modus-themes-items)))
 ;; Define groupings of themes into dark/light or other qualities:1 ends here
 
-;; Circadian Theme Phasing
+;; Theme Phasing Schedule
 
 
-;; [[file:../config.org::*Circadian Theme Phasing][Circadian Theme Phasing:1]]
-(defcustom ceamx-ui-theme-circadian-interval nil
+;; [[file:../config.org::*Theme Phasing Schedule][Theme Phasing Schedule:1]]
+(defcustom ceamx-ui-theme-circadian-interval 'solar
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
 respectively to period-based switching with `theme-buffet' or
@@ -102,52 +102,37 @@ unconditionally use `ceamx-ui-theme-default-light' and
   :type '(choice :tag "Circadian theme switching interval" :value nil
           (const :tag "Time periods via `theme-buffet'" :value buffet)
           (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
-;; Circadian Theme Phasing:1 ends here
+;; Theme Phasing Schedule:1 ends here
 
-;; DISABLED Phase-of-day interval via ~theme-buffet~
-;; :PROPERTIES:
-;; :header-args: :tangle no
-;; :END:
-
-;; - Website :: <https://git.sr.ht/~bboal/theme-buffet>
-
-;;   #+begin_quote
-;; The theme-buffet package arranges to automatically change themes during specific
-;; times of the day or at fixed intervals. The collection of themes is
-;; customisable, with the default options covering the built-in Emacs themes as
-;; well as Prot's modus-themes and ef-themes.
-;; #+end_quote
+;; Define darkness and lightness and apply these classifications to circadian structures :config:
 
 
-;; [[file:../config.org::*DISABLED Phase-of-day interval via ~theme-buffet~][DISABLED Phase-of-day interval via ~theme-buffet~:1]]
+;; [[file:../config.org::*Define darkness and lightness and apply these classifications to circadian structures][Define darkness and lightness and apply these classifications to circadian structures:1]]
 (defconst ceamx-ui-theme-buffet-dark-periods
   '(:night :twilight :evening))
 
 (defconst ceamx-ui-theme-buffet-light-periods
   '(:morning :day :afternoon))
-;; DISABLED Phase-of-day interval via ~theme-buffet~:1 ends here
+;; Define darkness and lightness and apply these classifications to circadian structures:1 ends here
 
-;; Integration with the GNOME/GTK/GSettings color scheme
+;; TODO Move to environment config
 
 
-;; [[file:../config.org::*Integration with the GNOME/GTK/GSettings color scheme][Integration with the GNOME/GTK/GSettings color scheme:1]]
+;; [[file:../config.org::*Move to environment config][Move to environment config:1]]
 (defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
-;; Integration with the GNOME/GTK/GSettings color scheme:1 ends here
+;; Move to environment config:1 ends here
 
-;; Typography :font:
-;; :PROPERTIES:
-;; :header-args: :tangle lisp/init-ui-graphical.el
-;; :END:
+;; Define a custom setting to adjust font height multiplier :config:
 
 
-;; [[file:../config.org::*Typography][Typography:1]]
+;; [[file:../config.org::*Define a custom setting to adjust font height multiplier][Define a custom setting to adjust font height multiplier:1]]
 (defcustom ceamx-font-height-multiplier 1.0
   "Multiplier for display font size.
 Intended for use as a per-system (or, ideally, per-display)
 accommodation for varying pixel densities."
   :group 'ceamx
   :type '(float))
-;; Typography:1 ends here
+;; Define a custom setting to adjust font height multiplier:1 ends here
 
 ;; Modeline :modeline:
 

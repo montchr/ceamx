@@ -3546,8 +3546,6 @@ buffer, as a buffer-local variable.
 :header-args: :tangle lisp/config-ui.el
 :END:
 
-*** File Header
-
 #+begin_src emacs-lisp :tangle lisp/config-ui.el :comments no :noweb yes
 ;;; config-ui.el --- User options for Emacs appearance  -*- lexical-binding: t;  -*-
 
@@ -3660,8 +3658,13 @@ buffer, as a buffer-local variable.
 (add-hook 'Custom-mode-hook #'custom-toggle-hide-all-widgets nil t)
 #+end_src
 
-** Layout Utilities
-*** =grid=
+** Load common interface toolkits
+
+Required as dependencies for multiple packages, either as more recent versions
+than those available in Emacs (e.g. ~transient~), or, including some packages
+(like ~nix-mode~) who don't properly declare their dependencies.
+
+*** =grid=: Library for textual data table presentation :package:
 
 - Source :: [[https://github.com/ichernyshovvv/grid.el][ichernyshovvv/grid.el]]
 - Retrieved :: [2024-06-07 Fri 11:45]
@@ -3675,13 +3678,7 @@ applying margin, padding, borders.
 (package! (grid :host github :repo "ichernyshovvv/grid.el"))
 #+end_src
 
-** Menus (Hydratics & Transients)
-
-Required as dependencies for many packages, either as more recent versions than
-those available in Emacs (e.g. ~transient~), or, including some packages (like
-~nix-mode~) who don't properly declare their dependencies.
-
-*** Hydra
+*** =hydra= :package:hydra:
 
 - Documentation :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
@@ -3690,7 +3687,7 @@ those available in Emacs (e.g. ~transient~), or, including some packages (like
 (package! pretty-hydra)
 #+end_src
 
-*** Transient
+*** =transient= :package:transient:
 
 #+begin_src emacs-lisp
 (package! transient
@@ -3709,8 +3706,8 @@ those available in Emacs (e.g. ~transient~), or, including some packages (like
   (keymap-set transient-map "<escape>" #'transient-quit-one))
 #+end_src
 
-** Theme
-*** Configure the preferred theme family
+** Theme :theme:
+*** Configure the preferred theme family :config:
 
 #+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defcustom ceamx-ui-theme-family 'modus
@@ -3729,7 +3726,7 @@ theme)."
           (const :tag "Do not load a theme module" nil)))
 #+end_src
 
-*** Configure the preferred light and dark themes
+*** Configure the preferred light and dark themes :config:
 
 #+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defcustom ceamx-ui-theme-light 'modus-operandi-tinted
@@ -3742,7 +3739,8 @@ theme)."
   :group 'ceamx
   :type 'symbol)
 #+end_src
-*** TODO Define groupings of themes into dark/light or other qualities
+
+*** TODO Define groupings of themes into dark/light or other qualities :config:
 
 Needs expansion for more than just the Modus Themes.
 
@@ -3893,7 +3891,7 @@ not retain the generic background set by the function
           ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil))
 #+end_src
-*** =DISABLED unspecified-theme=: A theme-less theme for a uniform appearance :package:
+*** DISABLED =unspecified-theme=: A theme-less theme for a uniform appearance :package:
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -3912,10 +3910,10 @@ not retain the generic background set by the function
 (elpaca-process-queues)
 #+end_src
 
-*** Circadian Theme Phasing
+*** Theme Phasing Schedule
 
 #+begin_src emacs-lisp :tangle lisp/config-ui.el
-(defcustom ceamx-ui-theme-circadian-interval nil
+(defcustom ceamx-ui-theme-circadian-interval 'solar
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
 respectively to period-based switching with `theme-buffet' or
@@ -3932,20 +3930,23 @@ unconditionally use `ceamx-ui-theme-default-light' and
           (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
 #+end_src
 
-**** Sunrise/sunset interval via ~solar~ and ~circadian~
-
-#+begin_src emacs-lisp
-(setopt ceamx-ui-theme-circadian-interval 'solar)
-#+end_src
+**** Set approximate stomping coordinates for hyper-astronomic relativity calculations
 
 #+begin_src emacs-lisp
 (require 'cal-dst)
 (require 'config-ui)
 (require 'ceamx-lib)
+#+end_src
 
+#+begin_src emacs-lisp
 (setopt calendar-latitude 39.968)
 (setopt calendar-longitude -75.133)
+#+end_src
 
+
+**** =circadian=: theme phasing based on sunrise/sunset time :package:
+
+#+begin_src emacs-lisp
 (package! circadian
   (when (eq 'solar ceamx-ui-theme-circadian-interval)
     (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
@@ -3965,7 +3966,7 @@ unconditionally use `ceamx-ui-theme-default-light' and
 ;;      (t nil))))
 #+end_src
 
-**** DISABLED Phase-of-day interval via ~theme-buffet~
+**** DISABLED =theme-buffet=: Phase-of-day theme-shift interval :package:
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -3979,6 +3980,9 @@ customisable, with the default options covering the built-in Emacs themes as
 well as Prot's modus-themes and ef-themes.
 #+end_quote
 
+
+***** Define darkness and lightness and apply these classifications to circadian structures :config:
+
 #+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defconst ceamx-ui-theme-buffet-dark-periods
   '(:night :twilight :evening))
@@ -3987,7 +3991,9 @@ well as Prot's modus-themes and ef-themes.
   '(:morning :day :afternoon))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
+***** Install and configure =theme-buffet= package
+
+#+begin_src emacs-lisp
 (use-package theme-buffet
   :ensure t
   :demand t
@@ -4052,7 +4058,7 @@ well as Prot's modus-themes and ef-themes.
   (theme-buffet-a-la-carte))
 #+end_src
 
-***** Add helper function to load a random theme from the specified periods
+***** Function to load a random theme from the specified periods :lib:
 
 #+begin_src emacs-lisp :tangle lisp/lib-ui.el
 (declare-function theme-buffet--load-random "theme-buffet")
@@ -4066,20 +4072,28 @@ must be a valid `theme-buffet' period as defined in
     (theme-buffet--load-random period)))
 #+end_src
 
-*** Theme commands
 
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
+*** Desktop environment integration :lib:graphical:
+:PROPERTIES:
+:header-args: :tangle lisp/lib-ui.el
+:END:
+
+#+begin_src emacs-lisp
 (require 'config-ui)
 (require 'ceamx-lib)
 #+end_src
 
 **** Integration with the GNOME/GTK/GSettings color scheme
 
+***** TODO Move to environment config
+
 #+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
+***** Commands
+
+#+begin_src emacs-lisp
 (defun ceamx-ui-gsettings-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command-to-string (format "gsettings get %s color-scheme"
@@ -4114,7 +4128,7 @@ must be a valid `theme-buffet' period as defined in
   (ceamx-ui/gsettings-set-theme "light"))
 #+end_src
 
-**** Integration with Kitty terminal theme
+**** Integration with Kitty terminal theme :tty:
 
 #+begin_src emacs-lisp
 ;; FIXME: error open /dev/tty: no such address or device
@@ -4142,7 +4156,7 @@ Taking all supported environments into account:
 
 Similar to the theme-family-specific ~modus-themes-load-theme~.
 
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
+#+begin_src emacs-lisp
 (defun ceamx-ui-load-theme (theme)
   "Load THEME after resetting any previously-loaded themes."
   (mapc #'disable-theme (remq theme custom-enabled-themes))
@@ -4151,7 +4165,7 @@ Similar to the theme-family-specific ~modus-themes-load-theme~.
 
 **** Commands to load a preferred light or dark Emacs theme
 
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
+#+begin_src emacs-lisp
 (defun ceamx-ui/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
@@ -4175,7 +4189,7 @@ Similar to the theme-family-specific ~modus-themes-load-theme~.
 
 **** Commands to globally set a preferred light or dark theme
 
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
+#+begin_src emacs-lisp
 (defun ceamx-ui/light ()
   "Activate a light theme globally."
   (interactive)
@@ -4215,8 +4229,7 @@ Configure some user options dependent on the loaded packages:
     (ceamx-ui/load-light-theme)))
 #+end_src
 
-** Interaction & Feedback
-*** Avy :package:
+** Avy :package:
 
 - Website :: <https://github.com/abo-abo/avy>
 - Ref :: <https://karthinks.com/software/avy-can-do-anything/>
@@ -4241,7 +4254,14 @@ Configure some user options dependent on the loaded packages:
     (keymap-set lispy-mode-map "M-J" #'lispy-join)))
 #+end_src
 
-*** Pulse current line after function invocations with ~pulsar~ :package:
+** Feedback
+*** Differentiate between focused and non-focused windows :window:
+
+#+begin_src emacs-lisp
+(setopt highlight-nonselected-windows nil)
+#+end_src
+
+*** =pulsar=: pulse current line after function invocations :package:animation:
 
 #+begin_src emacs-lisp
 (package! pulsar
@@ -4260,14 +4280,14 @@ Configure some user options dependent on the loaded packages:
     (add-hook 'next-error-hook (function fn))))
 #+end_src
 
-** Frame Appearance :frame:
-*** Allow restoring deleted frames
+** Frame/Window Appearance :frame:
+*** Allow restoring deleted frames :history:
 
 #+begin_src emacs-lisp
 (undelete-frame-mode 1)
 #+end_src
 
-*** Configure frame decorations
+*** Configure frame decorations :graphical:
 
 #+begin_src emacs-lisp
 (unless +sys-mac-p
@@ -4296,7 +4316,7 @@ Configure some user options dependent on the loaded packages:
   (keymap-global-unset "C-z" t))
 #+end_src
 
-*** Add frame borders and window dividers
+*** Add frame borders and window dividers :window:
 
 #+begin_src emacs-lisp
 (modify-all-frames-parameters
@@ -4330,13 +4350,6 @@ Configure some user options dependent on the loaded packages:
 
 (remove-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
 (add-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
-#+end_src
-
-** Window Appearance :window:
-*** Differentiate between focused and non-focused windows
-
-#+begin_src emacs-lisp
-(setopt highlight-nonselected-windows nil)
 #+end_src
 
 ** Menu Bar :menubar:
@@ -4385,6 +4398,16 @@ stable enough so far.
 :header-args: :tangle lisp/init-ui-graphical.el
 :END:
 
+#+begin_src emacs-lisp
+(require 'ceamx-paths)
+(require 'config-env)
+
+(require 'ceamx-lib)
+(require 'lib-ui)
+#+end_src
+
+*** Define a custom setting to adjust font height multiplier :config:
+
 #+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defcustom ceamx-font-height-multiplier 1.0
   "Multiplier for display font size.
@@ -4394,13 +4417,7 @@ accommodation for varying pixel densities."
   :type '(float))
 #+end_src
 
-#+begin_src emacs-lisp
-(require 'ceamx-paths)
-(require 'config-env)
-
-(require 'ceamx-lib)
-(require 'lib-ui)
-#+end_src
+*** Text rendering and scaling
 
 #+begin_src emacs-lisp
 (setq x-underline-at-descent-line nil)
@@ -4760,7 +4777,6 @@ If MULTIPLIER is nil, the value of `ceamx-font-height-multiplier'
 will be used as default."
   (truncate (* number (or multiplier ceamx-font-height-multiplier))))
 #+end_src
-
 
 
 ** File Footers
@@ -11718,6 +11734,11 @@ Unless PROGRAM is provided, the program name used in
 :header-args: :noweb-ref nil
 :END:
 
+
+
+- Note taken on [2024-12-09 Mon 20:01] \\
+  Disabled because it seems to be causing Emacs to crash after a few seconds of
+  idle time on an active YAML buffer.
 #+begin_src emacs-lisp
 (package! yaml-pro
   (add-hook 'yaml-mode-hook #'yaml-pro-mode)

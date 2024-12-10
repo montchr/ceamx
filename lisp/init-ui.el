@@ -58,7 +58,7 @@
 (add-hook 'Custom-mode-hook #'custom-toggle-hide-all-widgets nil t)
 ;; Customize the Customization buffer and menu interface:1 ends here
 
-;; =grid=
+;; =grid=: Library for textual data table presentation :package:
 
 ;; - Source :: [[https://github.com/ichernyshovvv/grid.el][ichernyshovvv/grid.el]]
 ;; - Retrieved :: [2024-06-07 Fri 11:45]
@@ -69,24 +69,24 @@
 ;; #+end_quote
 
 
-;; [[file:../config.org::*=grid=][=grid=:1]]
+;; [[file:../config.org::*=grid=: Library for textual data table presentation][=grid=: Library for textual data table presentation:1]]
 (package! (grid :host github :repo "ichernyshovvv/grid.el"))
-;; =grid=:1 ends here
+;; =grid=: Library for textual data table presentation:1 ends here
 
-;; Hydra
+;; =hydra= :package:hydra:
 
 ;; - Documentation :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 
-;; [[file:../config.org::*Hydra][Hydra:1]]
+;; [[file:../config.org::*=hydra=][=hydra=:1]]
 (package! hydra)
 (package! pretty-hydra)
-;; Hydra:1 ends here
+;; =hydra=:1 ends here
 
-;; Transient
+;; =transient= :package:transient:
 
 
-;; [[file:../config.org::*Transient][Transient:1]]
+;; [[file:../config.org::*=transient=][=transient=:1]]
 (package! transient
   ;; Restore the default location, overriding `no-littering'.  I consider these
   ;; values configuration to be exposed, not state to be hidden.  See
@@ -94,7 +94,7 @@
   (setopt transient-values-file (locate-user-emacs-file "transient/values.el")))
 
 (package! magit-section)
-;; Transient:1 ends here
+;; =transient=:1 ends here
 
 ;; Close any ~transient~ menu with the escape key
 
@@ -222,21 +222,24 @@
           ef-themes-variable-pitch-ui nil))
 ;; Ef-Themes:2 ends here
 
-;; Sunrise/sunset interval via ~solar~ and ~circadian~
+;; Set approximate stomping coordinates for hyper-astronomic relativity calculations
 
 
-;; [[file:../config.org::*Sunrise/sunset interval via ~solar~ and ~circadian~][Sunrise/sunset interval via ~solar~ and ~circadian~:1]]
-(setopt ceamx-ui-theme-circadian-interval 'solar)
-;; Sunrise/sunset interval via ~solar~ and ~circadian~:1 ends here
-
-;; [[file:../config.org::*Sunrise/sunset interval via ~solar~ and ~circadian~][Sunrise/sunset interval via ~solar~ and ~circadian~:2]]
+;; [[file:../config.org::*Set approximate stomping coordinates for hyper-astronomic relativity calculations][Set approximate stomping coordinates for hyper-astronomic relativity calculations:1]]
 (require 'cal-dst)
 (require 'config-ui)
 (require 'ceamx-lib)
+;; Set approximate stomping coordinates for hyper-astronomic relativity calculations:1 ends here
 
+;; [[file:../config.org::*Set approximate stomping coordinates for hyper-astronomic relativity calculations][Set approximate stomping coordinates for hyper-astronomic relativity calculations:2]]
 (setopt calendar-latitude 39.968)
 (setopt calendar-longitude -75.133)
+;; Set approximate stomping coordinates for hyper-astronomic relativity calculations:2 ends here
 
+;; =circadian=: theme phasing based on sunrise/sunset time :package:
+
+
+;; [[file:../config.org::*=circadian=: theme phasing based on sunrise/sunset time][=circadian=: theme phasing based on sunrise/sunset time:1]]
 (package! circadian
   (when (eq 'solar ceamx-ui-theme-circadian-interval)
     (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
@@ -254,33 +257,7 @@
 ;;      ((memq theme ceamx-ui-light-themes-list)
 ;;       (ceamx-ui/gsettings-light-theme))
 ;;      (t nil))))
-;; Sunrise/sunset interval via ~solar~ and ~circadian~:2 ends here
-
-;; Integration with Kitty terminal theme
-
-
-;; [[file:../config.org::*Integration with Kitty terminal theme][Integration with Kitty terminal theme:1]]
-;; FIXME: error open /dev/tty: no such address or device
-(defun ceamx-ui-kitty-set-theme (polarity)
-  "Set the Kitty terminal emulator colors to POLARITY.
-POLARITY is a string matching either \"light\" or \"dark\"."
-  (shell-command
-   (format "kitty @set-colors -a -c $KITTY_CONFIG_DIRECTORY/theme-%s.conf"
-           polarity)))
-;; Integration with Kitty terminal theme:1 ends here
-
-;; Generalized commands for desktop environment integration
-
-;; Taking all supported environments into account:
-
-;; + [[*Integration with the GNOME/GTK/GSettings color scheme]]
-
-
-;; [[file:../config.org::*Generalized commands for desktop environment integration][Generalized commands for desktop environment integration:1]]
-(defun ceamx-ui-desktop-dark-theme-p ()
-  "Predicate whether a desktop environment is displaying a dark appearance."
-  (or (ceamx-ui-gsettings-dark-theme-p)))
-;; Generalized commands for desktop environment integration:1 ends here
+;; =circadian=: theme phasing based on sunrise/sunset time:1 ends here
 
 ;; Elpaca-Wait № 4: ensure availability of themes for integration :wait:
 
@@ -333,10 +310,17 @@ POLARITY is a string matching either \"light\" or \"dark\"."
     (keymap-set lispy-mode-map "M-J" #'lispy-join)))
 ;; Avy:1 ends here
 
-;; Pulse current line after function invocations with ~pulsar~ :package:
+;; Differentiate between focused and non-focused windows :window:
 
 
-;; [[file:../config.org::*Pulse current line after function invocations with ~pulsar~][Pulse current line after function invocations with ~pulsar~:1]]
+;; [[file:../config.org::*Differentiate between focused and non-focused windows][Differentiate between focused and non-focused windows:1]]
+(setopt highlight-nonselected-windows nil)
+;; Differentiate between focused and non-focused windows:1 ends here
+
+;; =pulsar=: pulse current line after function invocations :package:animation:
+
+
+;; [[file:../config.org::*=pulsar=: pulse current line after function invocations][=pulsar=: pulse current line after function invocations:1]]
 (package! pulsar
   (pulsar-global-mode 1)
 
@@ -351,16 +335,16 @@ POLARITY is a string matching either \"light\" or \"dark\"."
 
   (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
     (add-hook 'next-error-hook (function fn))))
-;; Pulse current line after function invocations with ~pulsar~:1 ends here
+;; =pulsar=: pulse current line after function invocations:1 ends here
 
-;; Allow restoring deleted frames
+;; Allow restoring deleted frames :history:
 
 
 ;; [[file:../config.org::*Allow restoring deleted frames][Allow restoring deleted frames:1]]
 (undelete-frame-mode 1)
 ;; Allow restoring deleted frames:1 ends here
 
-;; Configure frame decorations
+;; Configure frame decorations :graphical:
 
 
 ;; [[file:../config.org::*Configure frame decorations][Configure frame decorations:1]]
@@ -391,7 +375,7 @@ POLARITY is a string matching either \"light\" or \"dark\"."
   (keymap-global-unset "C-z" t))
 ;; Handle macOS-specific workarounds:1 ends here
 
-;; Add frame borders and window dividers
+;; Add frame borders and window dividers :window:
 
 
 ;; [[file:../config.org::*Add frame borders and window dividers][Add frame borders and window dividers:1]]
@@ -427,13 +411,6 @@ POLARITY is a string matching either \"light\" or \"dark\"."
 (remove-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
 (add-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
 ;; Add frame borders and window dividers:1 ends here
-
-;; Differentiate between focused and non-focused windows
-
-
-;; [[file:../config.org::*Differentiate between focused and non-focused windows][Differentiate between focused and non-focused windows:1]]
-(setopt highlight-nonselected-windows nil)
-;; Differentiate between focused and non-focused windows:1 ends here
 
 ;; Menu Bar :menubar:
 

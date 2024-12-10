@@ -40,10 +40,10 @@ not retain the generic background set by the function
     (enable-theme theme)))
 ;; Ensure themes are applied in new frames to prevent flashing:1 ends here
 
-;; Add helper function to load a random theme from the specified periods
+;; Function to load a random theme from the specified periods :lib:
 
 
-;; [[file:../config.org::*Add helper function to load a random theme from the specified periods][Add helper function to load a random theme from the specified periods:1]]
+;; [[file:../config.org::*Function to load a random theme from the specified periods][Function to load a random theme from the specified periods:1]]
 (declare-function theme-buffet--load-random "theme-buffet")
 
 (defun +theme-buffet--load-random-from-periods (periods)
@@ -53,17 +53,23 @@ must be a valid `theme-buffet' period as defined in
 `theme-buffet--keywords'."
   (let ((period (if (listp periods) (seq-random-elt periods) periods)))
     (theme-buffet--load-random period)))
-;; Add helper function to load a random theme from the specified periods:1 ends here
+;; Function to load a random theme from the specified periods:1 ends here
 
-;; Theme commands
+;; Desktop environment integration :lib:graphical:
+;; :PROPERTIES:
+;; :header-args: :tangle lisp/lib-ui.el
+;; :END:
 
 
-;; [[file:../config.org::*Theme commands][Theme commands:1]]
+;; [[file:../config.org::*Desktop environment integration][Desktop environment integration:1]]
 (require 'config-ui)
 (require 'ceamx-lib)
-;; Theme commands:1 ends here
+;; Desktop environment integration:1 ends here
 
-;; [[file:../config.org::*Integration with the GNOME/GTK/GSettings color scheme][Integration with the GNOME/GTK/GSettings color scheme:2]]
+;; Commands
+
+
+;; [[file:../config.org::*Commands][Commands:1]]
 (defun ceamx-ui-gsettings-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command-to-string (format "gsettings get %s color-scheme"
@@ -96,7 +102,33 @@ must be a valid `theme-buffet' period as defined in
   "Enable the light GNOME/GTK theme."
   (interactive)
   (ceamx-ui/gsettings-set-theme "light"))
-;; Integration with the GNOME/GTK/GSettings color scheme:2 ends here
+;; Commands:1 ends here
+
+;; Integration with Kitty terminal theme :tty:
+
+
+;; [[file:../config.org::*Integration with Kitty terminal theme][Integration with Kitty terminal theme:1]]
+;; FIXME: error open /dev/tty: no such address or device
+(defun ceamx-ui-kitty-set-theme (polarity)
+  "Set the Kitty terminal emulator colors to POLARITY.
+POLARITY is a string matching either \"light\" or \"dark\"."
+  (shell-command
+   (format "kitty @set-colors -a -c $KITTY_CONFIG_DIRECTORY/theme-%s.conf"
+           polarity)))
+;; Integration with Kitty terminal theme:1 ends here
+
+;; Generalized commands for desktop environment integration
+
+;; Taking all supported environments into account:
+
+;; + [[*Integration with the GNOME/GTK/GSettings color scheme]]
+
+
+;; [[file:../config.org::*Generalized commands for desktop environment integration][Generalized commands for desktop environment integration:1]]
+(defun ceamx-ui-desktop-dark-theme-p ()
+  "Predicate whether a desktop environment is displaying a dark appearance."
+  (or (ceamx-ui-gsettings-dark-theme-p)))
+;; Generalized commands for desktop environment integration:1 ends here
 
 ;; ~ceamx-ui-load-theme~: function to cleanly load a theme
 
