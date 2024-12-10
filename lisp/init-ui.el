@@ -310,6 +310,23 @@
     (keymap-set lispy-mode-map "M-J" #'lispy-join)))
 ;; Avy:1 ends here
 
+;; ~rainbow-mode~: Colorize color names and hexcodes in buffers
+
+;; <https://elpa.gnu.org/packages/rainbow-mode.html>
+
+
+;; [[file:../config.org::*~rainbow-mode~: Colorize color names and hexcodes in buffers][~rainbow-mode~: Colorize color names and hexcodes in buffers:1]]
+(package! rainbow-mode)
+;; ~rainbow-mode~: Colorize color names and hexcodes in buffers:1 ends here
+
+;; Highlight the current line with ~hl-line-mode~ [builtin]
+
+
+;; [[file:../config.org::*Highlight the current line with ~hl-line-mode~ \[builtin\]][Highlight the current line with ~hl-line-mode~ [builtin]:1]]
+(add-hook 'prog-mode-hook #'hl-line-mode)
+(add-hook 'package-menu-mode-hook #'hl-line-mode)
+;; Highlight the current line with ~hl-line-mode~ [builtin]:1 ends here
+
 ;; Differentiate between focused and non-focused windows :window:
 
 

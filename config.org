@@ -394,28 +394,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 :VISIBILITY: folded
 :END:
 
-** =lisp/config-buffer.el=
-
-#+name: config-buffer-file
-#+begin_src emacs-lisp :tangle lisp/config-buffer.el :comments no :noweb yes
-<<file-prop-line(feature="config-buffer",desc="Buffer constants, options, and variables")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-buffer>>
-
-<<file-footer(feature="config-buffer")>>
-#+end_src
-
 ** =lisp/config-editor.el=
 
 #+name: config-editor-file
@@ -566,27 +544,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<file-footer(feature="lib-tools")>>
 #+end_src
 
-** =lisp/lib-buffer.el=
-
-#+name: lib-buffer-file
-#+begin_src emacs-lisp :tangle lisp/lib-buffer.el :comments no :noweb yes
-<<file-prop-line(feature="lib-buffer",desc="Buffer helper callables")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-buffer>>
-
-<<file-footer(feature="lib-buffer")>>
-#+end_src
 ** =lisp/lib-editor.el=
 
 #+name: lib-editor-file
@@ -917,28 +874,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<init-search>>
 
 <<file-footer(feature="init-search")>>
-#+end_src
-
-** =lisp/init-buffer.el=
-
-#+name: init-buffer-file
-#+begin_src emacs-lisp :tangle lisp/init-buffer.el :comments no :noweb yes
-<<file-prop-line(feature="init-buffer",desc="Buffer customizations")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-buffer>>
-
-<<file-footer(feature="init-buffer")>>
 #+end_src
 
 ** =lisp/init-editor.el=
@@ -4263,6 +4198,21 @@ Configure some user options dependent on the loaded packages:
 #+end_src
 
 ** Feedback
+*** ~rainbow-mode~: Colorize color names and hexcodes in buffers
+
+<https://elpa.gnu.org/packages/rainbow-mode.html>
+
+#+begin_src emacs-lisp
+(package! rainbow-mode)
+#+end_src
+
+*** Highlight the current line with ~hl-line-mode~ [builtin]
+
+#+begin_src emacs-lisp
+(add-hook 'prog-mode-hook #'hl-line-mode)
+(add-hook 'package-menu-mode-hook #'hl-line-mode)
+#+end_src
+
 *** Differentiate between focused and non-focused windows :window:
 
 #+begin_src emacs-lisp
@@ -5656,22 +5606,74 @@ keyword of a child map.
 
 * Buffer :: =buffer= :buffer:
 :PROPERTIES:
-:header-args: :noweb-ref init-buffer
+:header-args: :tangle lisp/init-buffer.el
 :END:
 
-** Requirements
+** File Headers
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+*** =lisp/lib-buffer.el=
 
-#+begin_src emacs-lisp
+#+name: lib-buffer-file
+#+begin_src emacs-lisp :tangle lisp/lib-buffer.el :comments no :noweb yes
+;;; lib-buffer.el --- Buffer helper callables  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+#+end_src
+
+*** =lisp/init-buffer.el=
+
+#+name: init-buffer-file
+#+begin_src emacs-lisp :tangle lisp/init-buffer.el :comments no :noweb yes
+;;; init-buffer.el --- Buffer customizations  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
 (require 'ceamx-keymaps)
 (require 'ceamx-lib)
 (require 'lib-buffer)
 #+end_src
 
-#+begin_src emacs-lisp :noweb-ref config-buffer
+*** =lisp/config-buffer.el=
+
+#+name: config-buffer-file
+#+begin_src emacs-lisp :tangle lisp/config-buffer.el :comments no :noweb yes
+;;; config-buffer.el --- Buffer constants, options, and variables  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; URL: https://git.sr.ht/~montchr/ceamx
+;; Version: 0.1.0
+
+<<file-license>>
+
+;;; Commentary:
+;;; Code:
+
 (require 'ceamx-paths)
 #+end_src
 
-** Bind the ~ceamx-buffer-prefix~ to "C-c b" :keybinds:
+** Bind ~ceamx-buffer-prefix~ to "C-c b" :keybinds:
 
 #+begin_src emacs-lisp
 (keymap-global-set "C-c b" '("Buffer" . ceamx-buffer-prefix))
@@ -5726,19 +5728,19 @@ keyword of a child map.
 (add-hook 'ceamx-after-init-hook #'global-auto-revert-mode)
 #+end_src
 
-** Buffer selection
+** Diredishly operate on buffers with ~ibuffer~ [builtin]
 
 #+begin_src emacs-lisp
 (setopt ibuffer-movement-cycle t)
 #+end_src
 
-** ~mowie~: a library to help you get where you mean
+** ~mowie~: library to define repeatable "smart" point-moving commands :package:
 
 #+begin_src emacs-lisp
 (package! (mowie :host codeberg :repo "mekeor/mowie"))
 #+end_src
 
-** ~mwim~: Move-Where-I-Mean line positions
+** ~mwim~: Move-Where-I-Mean line positions :package:
 
 + src :: <https://github.com/alezost/mwim.el/blob/master/README.org#usage>
 
@@ -5748,14 +5750,7 @@ keyword of a child map.
   (keymap-global-set "C-e" #'mwim-end))
 #+end_src
 
-** ~hl-line~: Enable highlighting of the current line
-
-#+begin_src emacs-lisp
-(add-hook 'prog-mode-hook #'hl-line-mode)
-(add-hook 'package-menu-mode-hook #'hl-line-mode)
-#+end_src
-
-** ~goto-address~: Linkify URLs and email addresses in buffers [builtin]
+** Linkify URLs and email addresses with ~goto-address~ [builtin]
 
 #+begin_src emacs-lisp
 (autoload 'goto-address-prog-mode "goto-addr")
@@ -5763,7 +5758,7 @@ keyword of a child map.
 (add-hook 'prog-mode-hook #'goto-address-prog-mode)
 #+end_src
 
-** ~uniquify~: Disambiguate identically-named buffers [builtin]
+** Disambiguate buffer names with ~uniquify~ [builtin]
 
 #+begin_src emacs-lisp
 (with-eval-after-load 'uniquify
@@ -5777,7 +5772,7 @@ keyword of a child map.
   (setopt uniquify-ignore-buffers-re "^\\*"))
 #+end_src
 
-** ~link-hint~: Activate links in buffer with ~avy~
+** ~link-hint~: Activate links in buffer with ~avy~ :package:
 
 <https://github.com/noctuid/link-hint.el>
 
@@ -5788,7 +5783,7 @@ keyword of a child map.
     "M-g U" #'link-hint-copy-link))
 #+end_src
 
-** ~expand-region~: Expand your regions
+** ~expand-region~: Expand your regions :package:
 
 <https://github.com/magnars/expand-region.el>
 
@@ -5797,15 +5792,7 @@ keyword of a child map.
   (keymap-global-set "C-=" #'er/expand-region))
 #+end_src
 
-** ~rainbow-mode~: Colorize color names and hexcodes in buffers
-
-<https://elpa.gnu.org/packages/rainbow-mode.html>
-
-#+begin_src emacs-lisp
-(package! rainbow-mode)
-#+end_src
-
-** ~lentic~: Create decoupled views of the same content
+** ~lentic~: Create decoupled views of the same content :package:
 
 #+begin_src emacs-lisp
 (package! lentic
@@ -5815,9 +5802,9 @@ keyword of a child map.
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 #+end_src
 
-** ~ceamx-buffer-mode~: Helper function to return the major mode for a buffer
+** [Function]: ~ceamx-buffer-mode~: return the major mode for a buffer :lib:
 
-#+begin_src emacs-lisp :noweb-ref lib-buffer
+#+begin_src emacs-lisp :tangle lisp/lib-buffer.el
 ;;;###autoload
 (defun ceamx-buffer-mode (&optional buffer-or-name)
   "Return the major mode associated with a buffer.
@@ -5828,13 +5815,13 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
                         (current-buffer))))
 #+end_src
 
-** Define groups of commonly-related modes and buffer-name patterns
+** Define groups of commonly-related modes and buffer-name patterns :config:
 
 - src :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 
 See also [[*General buffer display settings]]
 
-#+begin_src emacs-lisp :noweb-ref config-buffer
+#+begin_src emacs-lisp :tangle lisp/config-buffer.el
 (defvar ceamx-occur-grep-modes-list
   '(occur-mode
     grep-mode
@@ -5878,9 +5865,9 @@ See also [[*General buffer display settings]]
   "List of major-modes used in message buffers.")
 #+end_src
 
-** Define directory trees whose files should be opened in read-only buffers
+** Define directory trees whose files should be opened in read-only buffers :config:
 
-#+begin_src emacs-lisp :noweb-ref config-buffer
+#+begin_src emacs-lisp :tangle lisp/config-buffer.el
 (defvar ceamx-buffer-read-only-dirs-list
   (list ceamx-packages-dir)
   "List of directories whose files should be opened in read-only buffers.")
@@ -5901,6 +5888,26 @@ See also [[*General buffer display settings]]
 (define-keymap :keymap ceamx-buffer-prefix-map
   "b" '("switch (local)..." . consult-buffer)
   "k" #'ceamx/kill-this-buffer)
+#+end_src
+
+** File Footers
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/config-buffer.el :comments no :noweb yes
+(provide 'config-buffer)
+;;; config-buffer.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/init-buffer.el :comments no :noweb yes
+(provide 'init-buffer)
+;;; init-buffer.el ends here
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/lib-buffer.el :comments no :noweb yes
+(provide 'lib-buffer)
+;;; lib-buffer.el ends here
 #+end_src
 
 
