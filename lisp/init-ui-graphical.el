@@ -30,22 +30,18 @@
 ;; :END:
 
 
-;; [[file:../config.org::*Typography][Typography:1]]
 (require 'ceamx-paths)
 (require 'config-env)
 
 (require 'ceamx-lib)
 (require 'lib-ui)
-;; Typography:1 ends here
 
 ;; Text rendering and scaling
 
 
-;; [[file:../config.org::*Text rendering and scaling][Text rendering and scaling:1]]
 (setq x-underline-at-descent-line nil)
 
 (setq-default text-scale-remap-header-line t)
-;; Text rendering and scaling:1 ends here
 
 ;; ~fontaine~: pre-configure font presets :package:
 
@@ -55,7 +51,6 @@
 ;;      (internal-set-lisp-face-attribute 'default :weight 'semilight)
 
 
-;; [[file:../config.org::*~fontaine~: pre-configure font presets][~fontaine~: pre-configure font presets:1]]
 (package! fontaine
   (require 'fontaine)
 
@@ -171,14 +166,11 @@
   ;; Persist latest preset across sessions.
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
-;; ~fontaine~: pre-configure font presets:1 ends here
 
 ;; Elpaca-Wait № 5: after baseline font settings :wait:
 
 
-;; [[file:../config.org::*Elpaca-Wait № 5: after baseline font settings][Elpaca-Wait № 5: after baseline font settings:1]]
 (elpaca-wait)
-;; Elpaca-Wait № 5: after baseline font settings:1 ends here
 
 ;; ~ligature.el~: improved ligature support :package:
 
@@ -188,7 +180,6 @@
 ;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
 
 
-;; [[file:../config.org::*~ligature.el~: improved ligature support][~ligature.el~: improved ligature support:1]]
 (package! ligature
   (require 'ligature)
 
@@ -202,7 +193,6 @@
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
-;; ~ligature.el~: improved ligature support:1 ends here
 
 (provide 'init-ui-graphical)
 ;;; init-ui-graphical.el ends here

@@ -29,7 +29,6 @@
 ;; - Source :: <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
 
 
-;; [[file:../config.org::*Ensure themes are applied in new frames to prevent flashing][Ensure themes are applied in new frames to prevent flashing:1]]
 ;; via prot-emacs
 (defun ceamx-ui-re-enable-theme-in-frame (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
@@ -38,12 +37,10 @@ not retain the generic background set by the function
 `ceamx-ui-theme-no-bright-flash'."
   (when-let ((theme (car custom-enabled-themes)))
     (enable-theme theme)))
-;; Ensure themes are applied in new frames to prevent flashing:1 ends here
 
 ;; Function to load a random theme from the specified periods :lib:
 
 
-;; [[file:../config.org::*Function to load a random theme from the specified periods][Function to load a random theme from the specified periods:1]]
 (declare-function theme-buffet--load-random "theme-buffet")
 
 (defun +theme-buffet--load-random-from-periods (periods)
@@ -53,7 +50,6 @@ must be a valid `theme-buffet' period as defined in
 `theme-buffet--keywords'."
   (let ((period (if (listp periods) (seq-random-elt periods) periods)))
     (theme-buffet--load-random period)))
-;; Function to load a random theme from the specified periods:1 ends here
 
 ;; Desktop environment integration :lib:graphical:
 ;; :PROPERTIES:
@@ -61,15 +57,12 @@ must be a valid `theme-buffet' period as defined in
 ;; :END:
 
 
-;; [[file:../config.org::*Desktop environment integration][Desktop environment integration:1]]
 (require 'config-ui)
 (require 'ceamx-lib)
-;; Desktop environment integration:1 ends here
 
 ;; Commands
 
 
-;; [[file:../config.org::*Commands][Commands:1]]
 (defun ceamx-ui-gsettings-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command-to-string (format "gsettings get %s color-scheme"
@@ -102,12 +95,10 @@ must be a valid `theme-buffet' period as defined in
   "Enable the light GNOME/GTK theme."
   (interactive)
   (ceamx-ui/gsettings-set-theme "light"))
-;; Commands:1 ends here
 
 ;; Integration with Kitty terminal theme :tty:
 
 
-;; [[file:../config.org::*Integration with Kitty terminal theme][Integration with Kitty terminal theme:1]]
 ;; FIXME: error open /dev/tty: no such address or device
 (defun ceamx-ui-kitty-set-theme (polarity)
   "Set the Kitty terminal emulator colors to POLARITY.
@@ -115,7 +106,6 @@ POLARITY is a string matching either \"light\" or \"dark\"."
   (shell-command
    (format "kitty @set-colors -a -c $KITTY_CONFIG_DIRECTORY/theme-%s.conf"
            polarity)))
-;; Integration with Kitty terminal theme:1 ends here
 
 ;; Generalized commands for desktop environment integration
 
@@ -124,28 +114,23 @@ POLARITY is a string matching either \"light\" or \"dark\"."
 ;; + [[*Integration with the GNOME/GTK/GSettings color scheme]]
 
 
-;; [[file:../config.org::*Generalized commands for desktop environment integration][Generalized commands for desktop environment integration:1]]
 (defun ceamx-ui-desktop-dark-theme-p ()
   "Predicate whether a desktop environment is displaying a dark appearance."
   (or (ceamx-ui-gsettings-dark-theme-p)))
-;; Generalized commands for desktop environment integration:1 ends here
 
 ;; ~ceamx-ui-load-theme~: function to cleanly load a theme
 
 ;; Similar to the theme-family-specific ~modus-themes-load-theme~.
 
 
-;; [[file:../config.org::*~ceamx-ui-load-theme~: function to cleanly load a theme][~ceamx-ui-load-theme~: function to cleanly load a theme:1]]
 (defun ceamx-ui-load-theme (theme)
   "Load THEME after resetting any previously-loaded themes."
   (mapc #'disable-theme (remq theme custom-enabled-themes))
   (load-theme theme :no-confirm))
-;; ~ceamx-ui-load-theme~: function to cleanly load a theme:1 ends here
 
 ;; Commands to load a preferred light or dark Emacs theme
 
 
-;; [[file:../config.org::*Commands to load a preferred light or dark Emacs theme][Commands to load a preferred light or dark Emacs theme:1]]
 (defun ceamx-ui/load-dark-theme ()
   "Load a random dark theme."
   (interactive)
@@ -165,12 +150,10 @@ POLARITY is a string matching either \"light\" or \"dark\"."
       ceamx-ui-theme-buffet-light-periods))
     (_
      (load-theme ceamx-ui-theme-light :no-confirm))))
-;; Commands to load a preferred light or dark Emacs theme:1 ends here
 
 ;; Commands to globally set a preferred light or dark theme
 
 
-;; [[file:../config.org::*Commands to globally set a preferred light or dark theme][Commands to globally set a preferred light or dark theme:1]]
 (defun ceamx-ui/light ()
   "Activate a light theme globally."
   (interactive)
@@ -184,7 +167,6 @@ POLARITY is a string matching either \"light\" or \"dark\"."
   (ceamx-ui/gsettings-dark-theme)
   ;;(ceamx-ui-kitty-set-theme "dark")
   (ceamx-ui/load-dark-theme))
-;; Commands to globally set a preferred light or dark theme:1 ends here
 
 (provide 'lib-ui)
 ;;; lib-ui.el ends here

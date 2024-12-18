@@ -29,7 +29,6 @@
 ;; ~meow-pair!~: Register a new meow-thing as a pair
 
 
-;; [[file:../config.org::*~meow-pair!~: Register a new meow-thing as a pair][~meow-pair!~: Register a new meow-thing as a pair:1]]
 (defmacro meow-pair! (thing char begin end)
   "Register a new Meow THING as a pair of BEGIN and END, and map it to CHAR.
 This macro simplifies `meow-thing-register' by assuming that the
@@ -64,24 +63,20 @@ and Info node `(elisp) String Conversion' for more info."
         ',pair
         ',pair)
        (ceamx-meow-bind-thing ',sym ,char))))
-;; ~meow-pair!~: Register a new meow-thing as a pair:1 ends here
 
 ;; ~ceamx-meow-bind-thing~: bind an existing meow-thing to a new key
 
 
-;; [[file:../config.org::*~ceamx-meow-bind-thing~: bind an existing meow-thing to a new key][~ceamx-meow-bind-thing~: bind an existing meow-thing to a new key:1]]
 (defun ceamx-meow-bind-thing (thing char)
   "Add pre-registered THING to `meow-char-thing-table' as CHAR."
   (defvar meow-char-thing-table '())
   (let ((thing (ceamx-unquote thing))
         (char (ceamx-normalize-char char)))
     (add-to-list 'meow-char-thing-table `(,char . ,thing))))
-;; ~ceamx-meow-bind-thing~: bind an existing meow-thing to a new key:1 ends here
 
 ;; ~ceamx-meow-unbind-thing~: remove an existing binding for a meow-thing
 
 
-;; [[file:../config.org::*~ceamx-meow-unbind-thing~: remove an existing binding for a meow-thing][~ceamx-meow-unbind-thing~: remove an existing binding for a meow-thing:1]]
 (defun ceamx-meow-unbind-thing (char)
   "Remove the character association for character CHAR.
 This function will destructively modify the alist
@@ -95,7 +90,6 @@ CHAR may be a string or character constant, which will be passed
 as the CHAR argument to `ceamx-normalize-char'."
   (defvar meow-char-thing-table '())
   (assoc-delete-all (ceamx-normalize-char char) meow-char-thing-table #'eq))
-;; ~ceamx-meow-unbind-thing~: remove an existing binding for a meow-thing:1 ends here
 
 (provide 'lib-keys)
 ;;; lib-keys.el ends here

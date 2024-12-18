@@ -27,7 +27,6 @@
 ;; [Function]: ~ceamx-buffer-mode~: return the major mode for a buffer :lib:
 
 
-;; [[file:../config.org::*\[Function\]: ~ceamx-buffer-mode~: return the major mode for a buffer][[Function]: ~ceamx-buffer-mode~: return the major mode for a buffer:1]]
 ;;;###autoload
 (defun ceamx-buffer-mode (&optional buffer-or-name)
   "Return the major mode associated with a buffer.
@@ -36,7 +35,6 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
                       (if buffer-or-name
                           (get-buffer buffer-or-name)
                         (current-buffer))))
-;; [Function]: ~ceamx-buffer-mode~: return the major mode for a buffer:1 ends here
 
 (provide 'lib-buffer)
 ;;; lib-buffer.el ends here

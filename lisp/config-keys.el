@@ -30,9 +30,7 @@
 ;; :END:
 
 
-;; [[file:../config.org::*Settings :: =config-keys=][Settings :: =config-keys=:1]]
 (defconst ceamx-keys-repl-toggle "C-:")
-;; Settings :: =config-keys=:1 ends here
 
 (provide 'config-keys)
 ;;; config-keys.el ends here

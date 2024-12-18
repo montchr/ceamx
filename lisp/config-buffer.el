@@ -33,7 +33,6 @@
 ;; See also [[*General buffer display settings]]
 
 
-;; [[file:../config.org::*Define groups of commonly-related modes and buffer-name patterns][Define groups of commonly-related modes and buffer-name patterns:1]]
 (defvar ceamx-occur-grep-modes-list
   '(occur-mode
     grep-mode
@@ -75,16 +74,13 @@
   '(compilation-mode
     edebug-eval-mode)
   "List of major-modes used in message buffers.")
-;; Define groups of commonly-related modes and buffer-name patterns:1 ends here
 
 ;; Define directory trees whose files should be opened in read-only buffers :config:
 
 
-;; [[file:../config.org::*Define directory trees whose files should be opened in read-only buffers][Define directory trees whose files should be opened in read-only buffers:1]]
 (defvar ceamx-buffer-read-only-dirs-list
   (list ceamx-packages-dir)
   "List of directories whose files should be opened in read-only buffers.")
-;; Define directory trees whose files should be opened in read-only buffers:1 ends here
 
 (provide 'config-buffer)
 ;;; config-buffer.el ends here

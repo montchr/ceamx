@@ -20,7 +20,6 @@
 
 ;;; Commentary:
 
-;; [[file:../config.org::*Tree-Sitter][Tree-Sitter:2]]
 ;;;; Requirements:
 
 ;; Emacs 29+ built with tree-sitter support.
@@ -33,9 +32,7 @@
 ;;
 ;;  - `epkgs.treesit-auto'
 ;;  - `epkgs.treesit-grammars.with-all-grammars'
-;; Tree-Sitter:2 ends here
 
-;; [[file:../config.org::*Tree-Sitter][Tree-Sitter:3]]
 ;;;; Mode Association:
 
 ;; NOTE: This feature is intended to be loaded *after* all other language
@@ -60,29 +57,21 @@
 ;;  for a more manual approach.
 
 ;;; Code:
-;; Tree-Sitter:3 ends here
 
-;; [[file:../config.org::*Tree-Sitter][Tree-Sitter:4]]
 (require 'treesit)
 
 (require 'ceamx-lib)
-;; Tree-Sitter:4 ends here
 
-;; [[file:../config.org::*Tree-Sitter][Tree-Sitter:5]]
 ;;; Automatically use available ~treesit~ modes via ~treesit-auto~
 
 ;; <https://github.com/renzmann/treesit-auto>
-;; Tree-Sitter:5 ends here
 
-;; [[file:../config.org::*Tree-Sitter][Tree-Sitter:6]]
 ;; NOTE: This package does *not* automatically manage mode-hook translation.
 ;; Those should be managed manually on a case-by-case basis. For example,
 ;; ~nix-ts-mode-hook~ does not currently inherit the value of ~nix-mode-hook~.
 ;; Some Tree-Sitter modes, however, still derive from their non-Tree-Sitter
 ;; predecessor, and so will also run that mode's hooks in addition to its own.
-;; Tree-Sitter:6 ends here
 
-;; [[file:../config.org::*Tree-Sitter][Tree-Sitter:7]]
 (package! treesit-auto
   (require 'treesit-auto)
 
@@ -92,16 +81,13 @@
   (treesit-auto-add-to-auto-mode-alist 'all)
 
   (global-treesit-auto-mode))
-;; Tree-Sitter:7 ends here
 
 
 
 ;; Increase the amount of syntax-highlighted structures:
 
 
-;; [[file:../config.org::*Tree-Sitter][Tree-Sitter:8]]
 (setopt treesit-font-lock-level 4)
-;; Tree-Sitter:8 ends here
 
 (provide 'init-treesitter)
 ;;; init-treesitter.el ends here

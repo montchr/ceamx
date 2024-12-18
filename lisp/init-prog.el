@@ -56,7 +56,6 @@ Intended for use as a hook callback on `prog-mode-hook'."
 ;; Packages
 
 
-;; [[file:../config.org::*Packages][Packages:1]]
 ;;; hl-todo :: <https://github.com/tarsius/hl-todo>
 ;;  Highlight TODO and other codetags in comments and strings
 ;;  <https://peps.python.org/pep-0350/#specification>
@@ -64,9 +63,7 @@ Intended for use as a hook callback on `prog-mode-hook'."
   :commands (hl-todo-mode)
   :init
   (add-hook 'prog-mode-hook #'hl-todo-mode))
-;; Packages:1 ends here
 
-;; [[file:../config.org::*Packages][Packages:2]]
 ;;; ~dumb-jump~ :: <https://github.com/jacktasia/dumb-jump>
 
 ;;  "zero-configuration" jump-to-definition package with support for many langs
@@ -86,17 +83,13 @@ Intended for use as a hook callback on `prog-mode-hook'."
     ("i" dumb-jump-go-prompt "Prompt")
     ("l" dumb-jump-quick-look "Quick look")
     ("b" dumb-jump-back "Back")))
-;; Packages:2 ends here
 
-;; [[file:../config.org::*Packages][Packages:3]]
 ;;; ~rainbow-delimiters~ :: <https://github.com/Fanael/rainbow-delimiters>
 (use-package rainbow-delimiters
   :commands (rainbow-delimiters-mode)
   :init
   (add-hook 'ceamx-lisp-init-hook #'rainbow-delimiters-mode))
-;; Packages:3 ends here
 
-;; [[file:../config.org::*Packages][Packages:4]]
 ;;; ~repl-toggle~ :: <https://git.sr.ht/~tomterl/repl-toggle>
 ;;  Switch between `prog-mode' buffers and their corresponding REPLs.
 ;; FIXME: "cannot load"
@@ -107,16 +100,13 @@ Intended for use as a hook callback on `prog-mode-hook'."
 ;;   (setq rtog/mode-repl-alist '( (php-mode . psysh)
 ;;                                 (emacs-lisp-mode . ielm)
 ;;                                 (nix-mode . nix-repl))))
-;; Packages:4 ends here
 
-;; [[file:../config.org::*Packages][Packages:5]]
 ;;; Keybindings
 
 (keymap-global-set "C-c l" (cons "Code" (define-prefix-command 'ceamx-code-prefix)))
 
 (keymap-global-set "C-c l d" #'xref-find-definitions)
 (keymap-global-set "C-c l j" #'ceamx-prog-dumb-jump-dispatch/body)
-;; Packages:5 ends here
 
 (provide 'init-prog)
 ;;; init-prog.el ends here

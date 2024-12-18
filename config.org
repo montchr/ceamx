@@ -3,7 +3,7 @@
 #+author: Chris Montgomery
 #+email: chmont@protonmail.com
 #+language: en
-#+property: header-args:emacs-lisp+ :results silent :comments both
+#+property: header-args:emacs-lisp+ :results silent :comments org
 #+property: header-args:shell+      :results replace
 #+property: header-args             :mkdirp yes :tangle no :exports code :noweb yes
 
