@@ -54,6 +54,36 @@
     "@" #'outline-mark-subtree)
 
   (ceamx-repeatify-keymap 'outline-navigation-repeat-map))
+;; NOTE: In `emacs-lisp-mode' buffers, `outli-mode' should be enabled *after*
+;; `lispy-mode'. See the package configuration for `lispy'.
+
+(package! (outli :host github :repo "jdtsmith/outli")
+  (def-hook! +outli-mode-maybe-enable-h ()
+    '(prog-mode-hook text-mode-hook)
+    "Enable `outli-mode' conditionally, excluding some modes.
+Note that `emacs-lisp-mode' is excluded here due to a conflict with
+`lispy-mode'.  `outli-mode' must be loaded after `lispy-mode'."
+    (let ((exclude-modes '(emacs-lisp-mode))
+          (excludep (lambda (excluded-mode)
+                      (eq major-mode excluded-mode))))
+      (unless (seq-some excludep exclude-modes)
+        (outli-mode)))))
+
+(with-eval-after-load 'outli
+  (defvar outli-mode-map)
+  (declare-function outline-next-heading "outline")
+  (declare-function outline-previous-heading "outline")
+  (declare-function outline-promote "outline")
+  (declare-function outline-demote "outline")
+
+  (advice-add 'load-theme :after #'outli-reset-all-faces)
+
+  (define-keymap :keymap outli-mode-map
+    "C-c C-n" #'outline-next-heading
+    "C-c C-p" #'outline-previous-heading
+    ;; "C-c C-p" #'outline-back-to-heading
+    "C-c M-h" #'outline-promote
+    "C-c M-l" #'outline-demote))
 ;; (after! (transient outline)
 ;;   (transient-define-prefix ceamx/outline-dispatch ()
 ;;     "Outline navigation transient menu."
