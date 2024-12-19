@@ -1,4 +1,0 @@
-# name: callPackage
-# key: callpkg
-# --
-  $1 = callPackage $2{.}/$1/${3:package.nix} { };

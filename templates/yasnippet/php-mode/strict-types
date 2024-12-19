@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: declare(strict_types=1)
-# group: definitions
-# --
-declare(strict_types=1);

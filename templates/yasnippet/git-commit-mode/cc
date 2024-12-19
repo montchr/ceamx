@@ -1,4 +1,0 @@
-# name: conventional commit
-# key: cc
-# --
-${1:$$(yas-choose-value '("build" "ci" "docs" "fix" "feat" "style" "refactor" "perf" "test"))}${2:(${3:scope?})}: $0

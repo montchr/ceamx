@@ -1,1 +1,0 @@
-((magit-rebase "--autosquash" "--autostash"))

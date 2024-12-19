@@ -1,114 +1,102 @@
-;;; init.el --- Initialize Ceamx  -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; init.el --- Ceamx: Experimental Init -*- lexical-binding: t;
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
+;; Keywords: local
 
-;; This file is NOT part of GNU Emacs.
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
 
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
 ;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
+;; Experimental single-file initialization.
+
 ;;; Code:
 
-;; Dependencies
-
+;;;; Requirements
 
 (require 'cl-lib)
+(require 'map)
 
-;; Core variables
+;;;;; Core constants
 (require 'ceamx-paths)
-(require 'ceamx-keymaps)
 
-;; Core functions and macros
+;;;;; Core functions and macros
 (require 'ceamx-lib)
 
-;; Configure default identity
-
+;;;; Basic configuration
 
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chmont@protonmail.com")
 
-;; Profiling
+(add-to-list 'display-buffer-alist
+             '("\\`\\*\\(Warnings\\|Compile-Log\\)\\*\\'"
+               (display-buffer-no-window)
+               (allow-no-window . t)))
 
-;; - source :: <https://github.com/progfolio/.emacs.d/blob/ed159dc6076664ad9976949d8cb3af8e86fe39d1/init.org#profiling>
+;; Increase number of messages saved in log.
+(setq message-log-max 10000)
 
+;; Unbind `suspend-frame'.
+(global-unset-key (kbd "C-x C-z"))
 
-(add-hook 'ceamx-after-init-hook
-          (lambda ()
-            (message "Emacs loaded in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract (current-time) before-init-time)))
-                     gcs-done)))
+;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
+(setopt auto-mode-case-fold nil)
 
-;; Add the =site-lisp= directory to ~load-path~
+;; Prevent Emacs from pinging domain names unexpectedly.
+(setopt ffap-machine-p-known 'reject)
 
+;;;; Add local packages to load-path
 
 (add-to-list 'load-path ceamx-site-lisp-dir)
 (prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
 
-;; Initialize the =ceamx= user options
-
+;;;; Initialize the Ceamx options
 
 (defgroup ceamx nil
   "User-configurable options for Ceamx."
-  ;; TODO: is this group appropriate?
-  :group 'file)
-
-;; The user option to determine whether to load ~custom-file~
-
+  :group 'emacs)
 
 (defcustom ceamx-load-custom-file nil
   "Whether to load the user `custom-file' (custom.el)."
   :group 'ceamx
   :type '(boolean))
 
-;; Define variables describing the current environment-context :env:
-
-
-(require 'config-env)
-
-;; TODO: see bbatsov/prelude for prior art
-(when +sys-wsl-p
-  (require 'lib-env-wsl))
-
-;; =site-lisp/on=: Define additional Emacs event hooks
-
+;;;; Define additional Emacs event hooks
 
 (require 'on)
 
-;; Set the Elpaca installer version
+;;;; Package manager
 
+;;;;; Pretend file-visiting-buffers in the package directory are read-only
+
+;; Define a read-only directory class
+(dir-locals-set-class-variables
+  'read-only
+  '((nil . ((buffer-read-only . t)))))
+
+(dir-locals-set-directory-class (file-truename ceamx-packages-dir) 'read-only)
+
+;;;;; Install Elpaca
 
 (defvar elpaca-installer-version 0.8)
-
-;; Show the Elpaca to its house
-
-
 (defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
 
-;; Summon the Elpaca
-
 ;; The installation code only needs to be changed when the Elpaca warns about an
-;; installer version mismatch.
-
-;; This should be copied verbatim from the Elpaca documentation, sans the
-;; definitions for ~elpaca-installer-version~ and ~elpaca-directory~.
-
+;; installer version mismatch.  This should be copied verbatim from the Elpaca
+;; documentation sans the above definitions for `elpaca-installer-version' and
+;; `elpaca-directory'.
 
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -148,442 +136,462 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
-;; Bind some commonly-used package management commands :keybinds:
-
-
-(define-keymap :keymap ceamx-packages-map
-  "f" #'elpaca-fetch-all
-  "m" #'elpaca-merge-all
-  "t" #'elpaca-try)
-
-(keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
-
-;; TODO Move this global binding somewhere else... but where? :keybinds:
-
-
-(keymap-global-set "C-c q" ceamx-session-map)
-
-;; Run our custom init and startup hooks on ~elpaca-after-init-hook~
-
-
-(add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
-(add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
-
-;; Pretend file-visiting-buffers in the package directory are read-only
-
-
-(require 'config-buffer)
-
-(def-hook! ceamx-register-read-only-buffers-h ()
-  'ceamx-after-init-hook
-  "Use read-only buffers for files in some directories.
-The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
-
-  ;; Define a read-only directory class
-  (dir-locals-set-class-variables
-   'read-only
-   '((nil . ((buffer-read-only . t)))))
-
-  ;; Associate directories with the read-only class
-  (dolist (dir ceamx-buffer-read-only-dirs-list)
-    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
-
-;; Encourage a ~no-littering~ policy for packages to artifice in the designated areas
-
-;; - Website :: <https://github.com/emacscollective/no-littering/>
-
-;; By default, Emacs features and many packages default to dumping their state
-;; files into ~user-emacs-directory~.  This makes sense for the sake of visibility.
-;; However, because E rarely thinks about any of those machine-generated and
-;; non-human-friendly files, they may be effectively designated as clutter.  Ceamx
-;; offloads these sanitation duties to the =no-littering= package because it works
-;; effectively and almost-invisibly.
-
-;; In some cases, especially for new packages / package features / targets, it may
-;; be necessary to manage such configuration by hand.
-
-;; Ceamx avoids ~use-package~ here so that:
-
-;; - ~no-littering~ may be installed and loaded as early as possible
-;; - the time-consuming invocations of ~elpaca-wait~ should be kept to the absolute minimum
-
-
-(require 'ceamx-paths)
-
-;; These must be set prior to package load.
-(setq no-littering-etc-directory ceamx-etc-dir)
-(setq no-littering-var-directory ceamx-var-dir)
-
-(elpaca no-littering
-  (require 'no-littering))
-
-;; Install the latest version of ~seq~ builtin library, carefully
-
-;; ~magit~ requires a more recent version of ~seq~ than the version included in
-;; Emacs 29.
-
-;; Requires special care because unloading it can make other libraries freak out.
-;; <https://github.com/progfolio/elpaca/issues/216#issuecomment-1868444883>
-
-
-(defun +elpaca-unload-seq (e)
-  "Unload the builtin version of `seq' and continue the `elpaca' build E."
-  (and (featurep 'seq) (unload-feature 'seq t))
-  (elpaca--continue-build e))
-
-(defun +elpaca-seq-build-steps ()
-  "Update the `elpaca' build-steps to activate the latest version of the builtin `seq' package."
-  (append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
-                       elpaca--pre-built-steps
-                     elpaca-build-steps))
-          (list '+elpaca-unload-seq 'elpaca--activate-package)))
-
-(elpaca `(seq :build ,(+elpaca-seq-build-steps)))
-
-;; Install the latest version of the builtin ~jsonrpc~ library
-
-;; Required by (and originally extracted from) ~eglot~.
-
-
-(elpaca jsonrpc
-  (require 'jsonrpc))
-
-;; Install the latest version of the ~eldoc~ builtin library, carefully
-
-;; Required by ~eglot~.
-
-;; ~eldoc~ requires a delicate workaround to avoid catastrophy
-;; <https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
-
-
-
-(unless after-init-time
-  (unload-feature 'eldoc t)
-  (setq custom-delayed-init-variables '())
-  (defvar global-eldoc-mode nil))
-
-(elpaca eldoc
-  (require 'eldoc)
-  (global-eldoc-mode))
-
-;; Install the latest version of the builtin ~eglot~ package
-
-
-(unless after-init-time
-  (when (featurep 'eglot)
-    (unload-feature 'eglot)))
-
-(elpaca eglot)
-
-;; Install the latest version of the builtin ~flymake~ package
-
-
-(unless after-init-time
-  (when (featurep 'flymake)
-    (unload-feature 'flymake)))
-
-(elpaca flymake)
-
-;; Install the latest version of Org-Mode
-
-
-(unless after-init-time
-  (when (featurep 'org)
-    (unload-feature 'org)))
-
-(elpaca (org :autoloads "org-loaddefs.el"))
-
-;; Install the latest version of Use-Package
-
-
-(elpaca use-package)
-
-;; Integrate Elpaca and Use-Package
-
+;;;;; Elpaca + `use-package' integration
 
 (elpaca elpaca-use-package
   (elpaca-use-package-mode))
 
-;; Use-Package: Ensure package installation by default
-
-;; Equivalent to manually specifying =:ensure t= in each ~use-package~ expression.
-
-
-(setopt use-package-always-ensure t)
-
-;; Elpaca-Wait № 1: finish processing current queue :wait:
-
-;; Reason:
-
-;; - Continuing otherwise will result in race conditions on the definition of storage paths
-;; - ~use-package~ must be loaded for byte-compilation checks in [[*Configure ~use-package~ for improved debuggability and introspectability]]
-
-
+;; Prevent race conditions on the definition of storage paths.  Also,
+;; `use-package' must be loaded for byte-compilation checks.
 (elpaca-wait)
 
-;; Configure ~use-package~ for improved debuggability and introspectability
+(setopt use-package-always-ensure t)
+(setopt use-package-expand-minimally t)
 
-
-(setopt use-package-expand-minimally nil)
 (when (bound-and-true-p init-file-debug)
   (require 'use-package)
   (setopt use-package-expand-minimally nil)
   (setopt use-package-verbose t)
   (setopt use-package-compute-statistics t))
 
-;; Install ~blackout~ for adjusting modeline indicators :modeline:
+;;;; Essential early packages
 
-;; - Keyword :: =:blackout=
+(use-package no-littering
+  :demand t
+  :wait t
 
+  :preface
+  (setq no-littering-etc-directory ceamx-etc-dir)
+  (setq no-littering-var-directory ceamx-var-dir))
 
-(elpaca blackout
-  (require 'blackout))
+(use-package blackout
+  :demand t
+  :wait t)
 
-;; Elpaca-Wait № 2: finish processing current queue :wait:
+(use-package gcmh
+  :blackout t
+  :hook ceamx-emacs-startup-hook)
 
-;; - Reason :: Continuing otherwise will result in race conditions where the newly-installed
-;; ~use-package~ keywords may or may not be available, resulting in sporadic
-;; initialization errors.
-
-
-(elpaca-wait)
-
-;; ~gcmh~: manage running garbage collection on idle :package:perf:
-
-;; - Website :: <https://akrl.sdf.org/>
-;; - Code :: <https://gitlab.com/koral/gcmh>
-
-;; During normal use, the GC threshold will be set to a high value.
-;; When idle, GC will be triggered with a low threshold.
-
-
-(package! gcmh
-  (blackout 'gcmh-mode)
-  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
-
-;; Install utility libraries :package:
-
-
-;; FIXME: remove or alias (`##' is very difficult to search for)
-(use-package llama) ;  `##' lambda shorthand =>
-                                        ;  <https://git.sr.ht/~tarsius/llama>
+(use-package llama)
 
 (use-package f)
 
-;; TODO Miscellaneous things that should go somewhere else
-
-
-;; Increase number of messages saved in log.
-(setq message-log-max 10000)
-
-;; Unbind `suspend-frame'.
-(global-unset-key (kbd "C-x C-z"))
-
-;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
-(setopt auto-mode-case-fold nil)
-
-;; Prevent Emacs from pinging domain names unexpectedly.
-(setopt ffap-machine-p-known 'reject)
-
-;; Load Features
-
-
-(require 'init-env)
-(require 'init-input-methods)
-
-;; Site-specific configuration, to be ignored by version control.
-(require 'site-config (file-name-concat user-emacs-directory "site-config") t)
-
-(require 'init-secrets)
-
-;;;; Displays + Appearance
-
-;; Load configuration settings for conditional loading.
-(require 'config-ui)
-
-(require 'init-ui)
-
-(when (display-graphic-p)
-  (require 'init-ui-graphical))
-
-;;;; Dashboard
-
-(require 'init-dashboard)
-
-;;;; Keyboard support
-
-(require 'init-keys)
-
-;;;; Windows
-
-(require 'init-window)
-(require 'init-buffer)
-
-;; FIXME: load earlier / in another section
-(require 'init-history)
-
-;;;; Text Expansion
-
-(require 'init-abbrevs)
-
-;;;; Completions and Selections
-
-(require 'init-search)
-(require 'init-completion)
-
-;;;; Help
-
-(require 'init-help)
-
-;;;; Actions
-
-(require 'init-embark)
-
-;; Projects / Files
-(require 'init-project)
-(require 'init-vcs)
-(require 'init-files)
-(require 'init-dired)
-
-;;;; Workspaces + activities + contexts
-
-(require 'init-workspace)
-
-;;;; Editing
-
-(require 'init-editor)
-(require 'init-writing)
-(require 'init-templates)
-
-;;;; Outlines & Memex
-
-(require 'init-notes)
-(require 'init-outline)
-(require 'init-org)
-
-;;;; Linting
-
-(require 'init-flymake)
-(require 'init-flycheck)
-
-;;;; Tree-Sitter
-
-(require 'init-treesitter)
-
-;;;; Language/syntax support
-
-(require 'config-prog)
-(require 'lib-prog)
-
-(require 'init-prog)
-(require 'init-lisp)
-(require 'init-lsp)
-
-(require 'init-lang-data)
-(require 'init-lang-elisp)
-(require 'init-lang-html)
-(require 'init-lang-js)
-(require 'init-lang-lua)
-(require 'init-lang-markdown)
-(require 'init-lang-nix)
-(require 'init-lang-php)
-(require 'init-lang-shell)
-(require 'init-lang-misc)
-
-;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
-(require 'init-shell-nu)
-
-;;;; Miscellaneous
-
-(require 'init-tools)
-
-(require 'init-term)
-(require 'init-news)
-(require 'init-eww)
-(require 'init-printing)
-
-(require 'init-fun)
-
-(require 'init-controls)
-
-;; TODO ~hippie-expand~
-
-
-(setopt hippie-expand-verbose t
-        hippie-expand-dabbrev-skip-space t)
-
-;; These are mostly from the default value, for visibility.
-(setopt hippie-expand-try-functions-list
-        '(try-complete-file-name-partially
-          try-complete-file-name
-
-          ;; Remove `try-expand-all-abbrevs' to disable automatic abbrev expansion.
-          try-expand-all-abbrevs
-
-          try-expand-list
-
-          ;; TODO: enable for shell modes only?
-          ;; try-expand-line
-
-          try-expand-dabbrev            ; see: `dabbrev-expand'
-          try-expand-dabbrev-all-buffers
-          ;; try-expand-dabbrev-from-kill
-
-          ;; Redundant with `completion-at-point'... *except* in the literate
-          ;; config file, where elisp symbols won't normally be available.
-          ;; TODO: enable for config.org
-          ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
-          ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
-          ))
-
-;; The Keybindings of Uncertainty :keybinds:
-
-
-(define-keymap :keymap ceamx-session-map
-  "q" #'save-buffers-kill-emacs
-  "Q" #'kill-emacs)
-
-;; Start the Emacs server process if not already running
-
-
-(defun ceamx/maybe-start-server ()
-  "Allow this Emacs process to act as server process if not already running."
-  (require 'server)
-  (unless (and (fboundp 'server-running-p)
-               (server-running-p))
-    (server-start)))
-
-(add-hook 'ceamx-emacs-startup-hook #'ceamx/maybe-start-server)
-
-;; macOS: Restart Yabai after init
-
-;; Otherwise, =yabai= will not "see" the Emacs GUI window.
-
-
-(when (and (display-graphic-p) +sys-mac-p)
-  (def-hook! ceamx-after-init-restart-yabai-h ()
-    'ceamx-after-init-hook
-    "Restart the yabai service after init."
-    (after! exec-path-from-shell
-      (async-shell-command "yabai --restart-service"))))
-
-;; Optionally load the ~custom-file~
-
-
-(defun ceamx/load-custom-file ()
-  "Load the user `custom-file'."
+;;;; Environment Integration
+
+(use-package exec-path-from-shell
+  :demand t
+  :init
+  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH" "LSP_USE_PLISTS"))
+    (add-to-list 'exec-path-from-shell-variables var))
+  (exec-path-from-shell-initialize))
+
+(use-package inheritenv
+  :demand t
+  :after exec-path-from-shell)
+
+(use-package with-editor
+  :init
+  (keymap-global-set "<remap> <async-shell-command>"
+                     #'with-editor-async-shell-command)
+  (keymap-global-set "<remap> <shell-command>"
+                     #'with-editor-shell-command)
+
+  (add-hook 'shell-mode-hook #'with-editor-export-editor)
+  (add-hook 'eshell-mode-hook #'with-editor-export-editor)
+  (add-hook 'term-exec-hook #'with-editor-export-editor)
+
+  ;; Make sure that `eat' does not break `magit-commit'.
+  ;; <https://codeberg.org/akib/emacs-eat/issues/55#issuecomment-871388>
+  (with-eval-after-load 'eat
+    (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
+
+(use-package envrc
+  :after exec-path-from-shell
+  :init (envrc-global-mode)
+  :wait t)
+
+(use-feature! tramp
+  :config
+  (setopt tramp-default-method "ssh")
+  (setopt tramp-default-remote-shell "/bin/bash")
+  (setopt tramp-connection-timeout (* 60 10))
+  ;; Do not auto-save remote files. Note the reversed logic.
+  (setopt remote-file-name-inhibit-auto-save t)
+  (setopt remote-file-name-inhibit-auto-save-visited t)
+  ;; Avoid expensive operations on remote files.
+  (setopt remote-file-name-inhibit-delete-by-moving-to-trash t)
+
+  (dolist (path '("~/.local/bin"
+                   "~/.nix-profile/bin"
+                   "~/.local/state/nix/profiles/profile/bin/"
+                   "/nix/var/nix/profiles/default/bin"
+                   "/run/current-system/sw/bin"))
+    (add-to-list 'tramp-remote-path path)))
+
+;;;; Simple improvements
+
+(use-feature! delsel
+  :hook (ceamx-after-init . delete-selection-mode))
+
+(defun prot/keyboard-quit-dwim ()
+  "Do-What-I-Mean behaviour for a general `keyboard-quit'.
+
+The generic `keyboard-quit' does not do the expected thing when
+the minibuffer is open.  Whereas we want it to close the
+minibuffer, even without explicitly focusing it.
+
+The DWIM behaviour of this command is as follows:
+
+- When the region is active, disable it.
+- When a minibuffer is open, but not focused, close the minibuffer.
+- When the Completions buffer is selected, close it.
+- In every other case use the regular `keyboard-quit'."
   (interactive)
-  (when (file-exists-p custom-file)
-    (load custom-file 'noerror)))
+  (cond
+   ((region-active-p)
+    (keyboard-quit))
+   ((derived-mode-p 'completion-list-mode)
+    (delete-completion-window))
+   ((> (minibuffer-depth) 0)
+    (abort-recursive-edit))
+   (t
+    (keyboard-quit))))
 
-(add-hook 'ceamx-after-init-hook #'ceamx/load-custom-file)
+(define-key global-map (kbd "C-g") #'prot/keyboard-quit-dwim)
 
-;; Load the chaos file
+;;;; Secrets
+
+;; Configure secrets lookup with ~auth-source~ and the Unix password store
+
+;; Ensure secrets and auth credentials are not stored in plaintext (the default).
+;;
+;; It's best to list only a single file here to avoid confusion about where
+;; secrets might be stored.
+(setopt auth-sources (list "~/.authinfo.gpg"))
+
+(use-feature! auth-source-pass
+  :init
+  (auth-source-pass-enable))
+
+;; Use Emacs for pinentry.
+(use-feature! epg
+  :defer 2
+  :config
+  (setopt epg-pinentry-mode 'loopback))
+
+;;;; Appearance
+
+(let ((mono-spaced-font "Monospace")
+       (proportionately-spaced-font "Sans"))
+  (set-face-attribute 'default nil :family mono-spaced-font :height 100)
+  (set-face-attribute 'fixed-pitch nil :family mono-spaced-font :height 1.0)
+  (set-face-attribute 'variable-pitch nil :family proportionately-spaced-font :height 1.0))
+
+(defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
+
+(defcustom ceamx-ui-theme-light 'modus-operandi-tinted
+  "The default light theme."
+  :group 'ceamx
+  :type 'symbol)
+
+(defcustom ceamx-ui-theme-dark 'modus-vivendi
+  "The default dark theme."
+  :group 'ceamx
+  :type 'symbol)
+
+(defcustom ceamx-font-height-multiplier 1.0
+  "Multiplier for display font size.
+Intended for use as a per-system (or, ideally, per-display)
+accommodation for varying pixel densities."
+  :group 'ceamx
+  :type '(float))
+
+(defun ceamx-font-height (number &optional multiplier)
+  "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
+NUMBER should be a whole number. MULTIPLIER should be a float.
+
+If MULTIPLIER is nil, the value of `ceamx-font-height-multiplier'
+will be used as default."
+  (truncate (* number (or multiplier ceamx-font-height-multiplier))))
+
+(defun ceamx-ui-re-enable-theme-in-frame (_frame)
+  "Re-enable active theme, if any, upon FRAME creation.
+Add this to `after-make-frame-functions' so that new frames do
+not retain the generic background set by the function
+`ceamx-ui-theme-no-bright-flash'."
+  (when-let ((theme (car custom-enabled-themes)))
+    (enable-theme theme)))
 
 
-(add-hook 'ceamx-after-init-hook
-          (lambda ()
-            (load (locate-user-emacs-file "chaos.el") t)))
+(defun ceamx-ui-gsettings-theme ()
+  "Get the currently-active GNOME/GTK color scheme."
+  (shell-command-to-string (format "gsettings get %s color-scheme"
+                         ceamx-ui-gsettings-ui-namespace)))
 
-(provide 'init)
-;;; init.el ends here
+(defun ceamx-ui-gsettings-dark-theme-p ()
+  "Whether GNOME/GTK are using a theme with a dark color scheme."
+  (string-match-p "dark" (ceamx-ui-gsettings-theme)))
+
+(defun ceamx-ui/gsettings-set-theme (theme)
+  "Set the GNOME/GTK theme to THEME."
+  ;; FIXME: prompt with completion
+  (interactive "s")
+  (let* ((namespace ceamx-ui-gsettings-ui-namespace)
+         (value (pcase theme
+                  ((rx (optional "prefer-") "dark")
+                   "prefer-dark")
+                  ((rx (optional "prefer-") "light")
+                   "prefer-light")
+                  (_ "prefer-dark")))
+         (cmd (format "gsettings set %s color-scheme %s" namespace value)))
+    (shell-command cmd)))
+
+(defun ceamx-ui/gsettings-dark-theme ()
+  "Enable the dark GNOME/GTK theme."
+  (interactive)
+  (ceamx-ui/gsettings-set-theme "dark"))
+
+(defun ceamx-ui/gsettings-light-theme ()
+  "Enable the light GNOME/GTK theme."
+  (interactive)
+  (ceamx-ui/gsettings-set-theme "light"))
+
+
+(defun ceamx-ui-desktop-dark-theme-p ()
+  "Predicate whether a desktop environment is displaying a dark appearance."
+  (or (ceamx-ui-gsettings-dark-theme-p)))
+
+;; ~ceamx-ui-load-theme~: function to cleanly load a theme
+
+;; Similar to the theme-family-specific ~modus-themes-load-theme~.
+
+
+(defun ceamx-ui-load-theme (theme)
+  "Load THEME after resetting any previously-loaded themes."
+  (mapc #'disable-theme (remq theme custom-enabled-themes))
+  (load-theme theme :no-confirm))
+
+;; Commands to load a preferred light or dark Emacs theme
+
+
+(defun ceamx-ui/load-dark-theme ()
+  "Load a random dark theme."
+  (interactive)
+  (pcase ceamx-ui-theme-circadian-interval
+    ('buffet
+     (+theme-buffet--load-random-from-periods
+      ceamx-ui-theme-buffet-dark-periods))
+    (_
+     (load-theme ceamx-ui-theme-dark :no-confirm))))
+
+(defun ceamx-ui/load-light-theme ()
+  "Load a random light theme."
+  (interactive)
+  (pcase ceamx-ui-theme-circadian-interval
+    ('buffet
+     (+theme-buffet--load-random-from-periods
+      ceamx-ui-theme-buffet-light-periods))
+    (_
+     (load-theme ceamx-ui-theme-light :no-confirm))))
+
+;; Commands to globally set a preferred light or dark theme
+
+
+(defun ceamx-ui/light ()
+  "Activate a light theme globally."
+  (interactive)
+  (ceamx-ui/gsettings-light-theme)
+  ;;(ceamx-ui-kitty-set-theme "light")
+  (ceamx-ui/load-light-theme))
+
+(defun ceamx-ui/dark ()
+  "Activate a dark theme globally."
+  (interactive)
+  (ceamx-ui/gsettings-dark-theme)
+  ;;(ceamx-ui-kitty-set-theme "dark")
+  (ceamx-ui/load-dark-theme))
+
+;;;;; Cursor
+
+;; Modal keybinding systems will change the cursor dynamically to indicate current state.
+;; This value matches what I expect in an "insert" mode.
+(setq-default cursor-type 'bar)
+
+;; Enable cursor blinking.
+(blink-cursor-mode 1)
+
+;; Seeing a cursor in a window other than the active window is pretty confusing.
+(setq-default cursor-in-non-selected-windows nil)
+
+;;;;; Customize the Customization buffer and menu interface
+
+(setopt custom-theme-allow-multiple-selections nil)
+(setopt custom-unlispify-menu-entries nil)
+(setopt custom-unlispify-tag-names nil)
+(setopt custom-unlispify-remove-prefixes nil)
+
+(add-hook 'Custom-mode-hook #'custom-toggle-hide-all-widgets nil t)
+
+;;;;; Appearance: Theme
+
+;; Consider all themes "safe"
+(setopt custom-safe-themes t)
+
+(use-package modus-themes
+  :ensure t
+
+  (setopt modus-themes-italic-constructs t)
+  (setopt modus-themes-bold-constructs nil)
+  (setopt modus-themes-mixed-fonts t)
+  (setopt modus-themes-variable-pitch-ui nil)
+  (setopt modus-themes-disable-other-themes t)
+  (setopt modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi))
+
+  (setopt modus-themes-headings
+          '((agenda-structure . (variable-pitch light 2.2))
+            (agenda-date . (variable-pitch regular 1.3))
+            (t . (regular 1.0))))
+
+  (let ((overrides '((cursor blue)
+
+                     ;; Syntax
+                     (builtin magenta)
+                     (comment red-faint)
+                     (constant magenta-cooler)
+                     (docstring magenta-faint)
+                     (docmarkup green-faint)
+                     (fnname magenta-warmer)
+                     (keybind green-cooler)
+                     (keyword cyan)
+                     (preprocessor cyan-cooler)
+                     (string red-cooler)
+                     (type magenta-cooler)
+                     (variable blue-warmer)
+                     (rx-construct magenta-warmer)
+                     (rx-backslash blue-cooler)
+
+                     ;; Buttons
+                     (bg-button-active bg-main)
+                     (fg-button-active fg-main)
+                     (bg-button-inactive bg-inactive)
+                     (fg-button-inactive "gray50")
+
+                     ;; Mode-line
+                     (bg-mode-line-active bg-lavender)
+                     (fg-mode-line-active fg-main)
+                     (border-mode-line-active bg-lavender)
+                     (border-mode-line-inactive unspecified)
+
+                     ;; Fringe
+                     (fringe unspecified)
+
+                     ;; Prompts
+                     ;; (fg-prompt fg-main)
+                     ;; not really subtle! too loud.
+                     ;; (bg-prompt bg-yellow-subtle)
+
+                     ;; Pair-matching (parens)
+                     (bg-paren-match unspecified)
+                     (fg-paren-match magenta-intense)
+                     (underline-paren-match magenta-intense)
+
+                     ;; Link styles
+                     ;; (underline-link border)
+                     ;; (underline-link-visited border)
+                     )))
+    (setopt modus-operandi-palette-overrides overrides
+            modus-operandi-tinted-palette-overrides overrides
+            modus-vivendi-palette-overrides overrides
+            modus-vivendi-tinted-palette-overrides overrides)))
+
+(setopt ceamx-ui-theme-light 'modus-operandi-tinted)
+(setopt ceamx-ui-theme-dark 'modus-vivendi)
+
+;;;;; Appearance: Common libraries and other packages
+
+(use-package (grid :host github :repo "ichernyshovvv/grid.el"))
+
+(use-package hydra)
+
+(use-package pretty-hydra)
+
+(use-feature! transient
+  :init
+  ;; Restore the default location, overriding `no-littering'.  I consider these
+  ;; values configuration to be exposed, not state to be hidden.  See
+  ;; `transient-save-values' and related.
+  (setopt transient-values-file (locate-user-emacs-file "transient/values.el"))
+  :config
+  (keymap-set transient-map "<escape>" #'transient-quit-one))
+
+(use-package magit-section)
+
+(use-package avy
+  :init
+  ;; Reduce the number of possible candidates.
+  ;; Can be overridden with the universal argument.
+  (setopt avy-all-windows nil)
+  ;; Prevent conflicts with themes.
+  (setopt avy-background nil)
+  (setopt avy-style 'at-full)
+  ;; Anything lower feels unusable.
+  (setopt avy-timeout-seconds 0.25)
+
+  (keymap-global-set "M-j" #'avy-goto-char-timer)
+
+  (after! lispy
+    (defvar lispy-mode-map)
+    (declare-function lispy-join "lispy")
+    ;; Prevent conflict with newly-added M-j binding.
+    (keymap-set lispy-mode-map "M-J" #'lispy-join)))
+
+(use-feature! hl-line
+  :hook (prog-mode package-menu-mode))
+
+(use-package pulsar
+  :init
+  (pulsar-global-mode 1)
+
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line))
+
+(use-package nerd-icons
+  :demand t
+  :init
+  (setopt nerd-icons-font-family "Symbols Nerd Font Mono"))
+
+(use-package svg-lib)
+
+(use-package page-break-lines
+  :init
+  (global-page-break-lines-mode))
+
+;; Differentiate between focused and non-focused windows
+(setopt highlight-nonselected-windows nil)
+
+;;;;; Appearance: Frame / Window / Tab
+
+(undelete-frame-mode 1)
+(menu-bar-mode -1)
+(tab-bar-mode 1)
+
+;;;;; Appearance: Modeline
+
+(line-number-mode 1)
+(column-number-mode 1)
+
+
+
+(add-to-list 'default-frame-alist '(undecorated . t))
+
+;;;; Ceamx prefix commands/maps
+
+(keymap-global-set "C-c q" (define-prefix-command 'ceamx-session-prefix 'ceamx-session-prefix-map))
+
+
+
+
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; no-native-compile: t
+;; sentence-end-double-space: t
+;; End:

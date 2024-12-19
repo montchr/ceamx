@@ -1,5 +1,0 @@
-# name: jsdoc @returns
-# key: @r
-#condition: (= (js2-node-type (js2-node-at-point)) js2-COMMENT)
-# --
-* @returns {${1:type}}${2: Description.}

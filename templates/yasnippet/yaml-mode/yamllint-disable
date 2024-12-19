@@ -1,6 +1,0 @@
-# -*- mode: snippet; -*-
-# name: yamllint-disable
-# key: #disable
-# contributor: Chris Montgomery <chmont@protonmail.com>
-# --
-# yamllint disable-line${1: rule:${2:line-length}}
