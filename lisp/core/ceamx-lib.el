@@ -64,11 +64,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Dependencies
-;; :PROPERTIES:
-;; :VISIBILITY: folded
-;; :END:
-
 
 (require 'cl-lib)
 (require 'map)

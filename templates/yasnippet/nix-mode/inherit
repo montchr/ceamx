@@ -1,4 +1,0 @@
-# name: inherit
-# key: inherit
-# --
-inherit ($1) $2;$0

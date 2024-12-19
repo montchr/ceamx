@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: foreach
-# key: foreach
-# uuid: a685d2b2-c241-4be5-8d9d-28991cb4d5fe
-# group : control structure
-# --
-foreach (${1:$expr} as ${2:\$${3:key} => }\$${4:value}) {
-    $0
-}

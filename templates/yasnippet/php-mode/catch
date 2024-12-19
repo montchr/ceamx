@@ -1,9 +1,0 @@
-# name: catch
-# key: catch
-# uuid: 5aeb1156-d575-4899-a120-8337f2dd8323
-# group : control structure
-# --
-catch (${1:\Exception} ${2:$e}) {
-    $0
-    ${3:throw $2;}
-}

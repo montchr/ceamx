@@ -1,6 +1,0 @@
-# name: <input ... />
-# key: <input
-# contributor : Anders Bach Nielsen <abachn@abachn.net>
-# uuid: aeccd57b-80eb-4814-8bb4-b42b3eab8015
-# --
-<input type="$1" name="$2" value="$3" />

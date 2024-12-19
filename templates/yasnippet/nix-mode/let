@@ -1,6 +1,0 @@
-# name: let
-# key: let
-# --
-let
-  $0
-in

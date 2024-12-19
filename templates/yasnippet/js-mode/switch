@@ -1,9 +1,0 @@
-# name: switch
-# key: sw
-# --
-switch (${1:cond}) {
-  case ${2:expr}:
-    $0
-    break;
-  default:
-}
