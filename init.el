@@ -176,6 +176,17 @@
 
 (use-package f)
 
+;;;; Initialize Ceamx prefix commands and their keymaps
+
+(keymap-global-set "C-c q"
+  (cons "Session"
+    (define-prefix-command 'ceamx-session-prefix 'ceamx-session-prefix-map)))
+
+(keymap-global-set "C-c t"
+  (cons "Toggle"
+    (define-prefix-command 'ceamx-toggle-prefix 'ceamx-toggle-prefix-map)))
+
+
 ;;;; Environment Integration
 
 (use-package exec-path-from-shell
@@ -423,7 +434,7 @@ not retain the generic background set by the function
 ;; Seeing a cursor in a window other than the active window is pretty confusing.
 (setq-default cursor-in-non-selected-windows nil)
 
-;;;;; Customize the Customization buffer and menu interface
+;;;;; Customize the Customization interfaces
 
 (setopt custom-theme-allow-multiple-selections nil)
 (setopt custom-unlispify-menu-entries nil)
@@ -432,10 +443,12 @@ not retain the generic background set by the function
 
 (add-hook 'Custom-mode-hook #'custom-toggle-hide-all-widgets nil t)
 
-;;;;; Appearance: Theme
+;;;;; Theme
 
 ;; Consider all themes "safe"
 (setopt custom-safe-themes t)
+
+;;;;;; Modus Themes
 
 (use-package modus-themes
   :ensure t
@@ -448,66 +461,82 @@ not retain the generic background set by the function
   (setopt modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi))
 
   (setopt modus-themes-headings
-          '((agenda-structure . (variable-pitch light 2.2))
-            (agenda-date . (variable-pitch regular 1.3))
-            (t . (regular 1.0))))
+    '((agenda-structure . (variable-pitch light 2.2))
+       (agenda-date . (variable-pitch regular 1.3))
+       (t . (regular 1.0))))
 
   (let ((overrides '((cursor blue)
 
-                     ;; Syntax
-                     (builtin magenta)
-                     (comment red-faint)
-                     (constant magenta-cooler)
-                     (docstring magenta-faint)
-                     (docmarkup green-faint)
-                     (fnname magenta-warmer)
-                     (keybind green-cooler)
-                     (keyword cyan)
-                     (preprocessor cyan-cooler)
-                     (string red-cooler)
-                     (type magenta-cooler)
-                     (variable blue-warmer)
-                     (rx-construct magenta-warmer)
-                     (rx-backslash blue-cooler)
+                      ;; Syntax
+                      (builtin magenta)
+                      (comment red-faint)
+                      (constant magenta-cooler)
+                      (docstring magenta-faint)
+                      (docmarkup green-faint)
+                      (fnname magenta-warmer)
+                      (keybind green-cooler)
+                      (keyword cyan)
+                      (preprocessor cyan-cooler)
+                      (string red-cooler)
+                      (type magenta-cooler)
+                      (variable blue-warmer)
+                      (rx-construct magenta-warmer)
+                      (rx-backslash blue-cooler)
 
-                     ;; Buttons
-                     (bg-button-active bg-main)
-                     (fg-button-active fg-main)
-                     (bg-button-inactive bg-inactive)
-                     (fg-button-inactive "gray50")
+                      ;; Buttons
+                      (bg-button-active bg-main)
+                      (fg-button-active fg-main)
+                      (bg-button-inactive bg-inactive)
+                      (fg-button-inactive "gray50")
 
-                     ;; Mode-line
-                     (bg-mode-line-active bg-lavender)
-                     (fg-mode-line-active fg-main)
-                     (border-mode-line-active bg-lavender)
-                     (border-mode-line-inactive unspecified)
+                      ;; Mode-line
+                      (bg-mode-line-active bg-lavender)
+                      (fg-mode-line-active fg-main)
+                      (border-mode-line-active bg-lavender)
+                      (border-mode-line-inactive unspecified)
 
-                     ;; Fringe
-                     (fringe unspecified)
+                      ;; Fringe
+                      (fringe unspecified)
 
-                     ;; Prompts
-                     ;; (fg-prompt fg-main)
-                     ;; not really subtle! too loud.
-                     ;; (bg-prompt bg-yellow-subtle)
+                      ;; Prompts
+                      ;; (fg-prompt fg-main)
+                      ;; not really subtle! too loud.
+                      ;; (bg-prompt bg-yellow-subtle)
 
-                     ;; Pair-matching (parens)
-                     (bg-paren-match unspecified)
-                     (fg-paren-match magenta-intense)
-                     (underline-paren-match magenta-intense)
+                      ;; Pair-matching (parens)
+                      (bg-paren-match unspecified)
+                      (fg-paren-match magenta-intense)
+                      (underline-paren-match magenta-intense)
 
-                     ;; Link styles
-                     ;; (underline-link border)
-                     ;; (underline-link-visited border)
-                     )))
+                      ;; Link styles
+                      ;; (underline-link border)
+                      ;; (underline-link-visited border)
+                      )))
     (setopt modus-operandi-palette-overrides overrides
-            modus-operandi-tinted-palette-overrides overrides
-            modus-vivendi-palette-overrides overrides
-            modus-vivendi-tinted-palette-overrides overrides)))
+      modus-operandi-tinted-palette-overrides overrides
+      modus-vivendi-palette-overrides overrides
+      modus-vivendi-tinted-palette-overrides overrides)))
 
 (setopt ceamx-ui-theme-light 'modus-operandi-tinted)
 (setopt ceamx-ui-theme-dark 'modus-vivendi)
 
-;;;;; Appearance: Common libraries and other packages
+;;;;;; Ef-Themes
+
+(use-package ef-themes
+  :config
+  (setopt ef-themes-to-toggle '(ef-night ef-frost)
+          ef-themes-mixed-fonts t
+          ef-themes-variable-pitch-ui nil))
+
+;;;;;; Load a default theme
+
+;; Configure some user options dependent on the loaded packages:
+
+(setopt ceamx-ui-theme-light 'modus-operandi-tinted)
+(setopt ceamx-ui-theme-dark 'modus-vivendi)
+
+
+;;;;; Common libraries and other packages
 
 (use-package (grid :host github :repo "ichernyshovvv/grid.el"))
 
@@ -565,29 +594,210 @@ not retain the generic background set by the function
   :init
   (global-page-break-lines-mode))
 
-;; Differentiate between focused and non-focused windows
-(setopt highlight-nonselected-windows nil)
+(use-package rainbow-mode)
 
-;;;;; Appearance: Frame / Window / Tab
+;;;;; Menu Bar
 
-(undelete-frame-mode 1)
 (menu-bar-mode -1)
-(tab-bar-mode 1)
 
-;;;;; Appearance: Modeline
+;;;;; Tab Bar
+
+(use-feature! tab-bar
+  :init
+  (tab-bar-mode 1)
+
+  :config
+  (setopt tab-bar-auto-width t
+          tab-bar-auto-width-max '((80) 10)))
+
+
+;;;;; Modeline
 
 (line-number-mode 1)
 (column-number-mode 1)
 
+(setopt display-time-24hr-format t)
 
+(use-package keycast
+  :init
+  (keymap-set ceamx-toggle-prefix-map "k" #'keycast-mode-line-mode)
+
+  :config
+  (dolist (input '(self-insert-command org-self-insert-command))
+    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
+
+  (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
+    (add-to-list 'keycast-substitute-alist `(,event nil))))
+
+
+;;;;; Font
+
+(when (display-graphic-p)
+  ;; Text rendering and scaling
+  (setq x-underline-at-descent-line nil)
+  (setq-default text-scale-remap-header-line t))
+
+(use-package fontaine
+  :demand t
+  :wait t
+  :if (display-graphic-p)
+
+  :config
+
+  (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
+
+  ;; For some reason I do not yet understand, according to some hearsay, font
+  ;; sizes best scale in multiples of 3-point increments. So, each height value
+  ;; is a multiple of 3.
+  (setopt fontaine-presets
+    `((tiny
+        :bold-weight medium
+        :default-height ,(pcase (system-name)
+                           (_ 78))
+        :default-weight ,(pcase (system-name)
+                           (_ 'semilight)))
+       (small
+         :bold-weight medium
+         :default-height ,(pcase (system-name)
+                            (_ 90))
+         :default-weight ,(pcase (system-name)
+                            (_ 'regular)))
+       (regular)
+       (medium
+         :default-height ,(pcase (system-name)
+                            ("boschic" 124)
+                            ("tuuvok"
+                              120
+                              ;; 115
+                              )
+                            (_ 120)))
+       (large
+         :default-height ,(pcase (system-name)
+                            ;; ("tuuvok" 140)
+                            (_ 144))
+         :default-weight semilight
+         :bold-weight semibold)
+       (xlarge
+         :default-height ,(pcase (system-name)
+                            (_ 156))
+         :bold-weight bold)
+       (big-mclarge-huge
+         :default-weight semilight
+         :default-height ,(pcase (system-name)
+                            (_ 180))
+         :bold-weight extrabold)
+       (t
+         :default-family "Iosevka Comfy"
+         :default-weight regular
+         :default-slant normal
+         :default-height ,(pcase (system-name)
+                            ("tuuvok" 102)
+                            (_ 105))
+
+         :fixed-pitch-family "Iosevka Comfy"
+         :fixed-pitch-weight nil
+         :fixed-pitch-slant nil
+         :fixed-pitch-height 1.0
+
+         :fixed-pitch-serif-family nil
+         :fixed-pitch-serif-weight nil
+         :fixed-pitch-serif-slant nil
+         :fixed-pitch-serif-height 1.0
+
+         :variable-pitch-family "Iosevka Comfy Motion"
+         :variable-pitch-weight nil
+         :variable-pitch-slant nil
+         :variable-pitch-height 1.0
+
+         :header-line-family nil
+         :header-line-height 1.0
+         :header-line-slant nil
+         :header-line-weight nil
+
+         :line-number-family nil
+         :line-number-height 1.0
+         :line-number-slant nil
+         :line-number-weight nil
+
+         :mode-line-active-family nil
+         :mode-line-active-weight nil
+         :mode-line-active-slant nil
+         :mode-line-active-height 1.0
+
+         :mode-line-inactive-family nil
+         :mode-line-inactive-weight nil
+         :mode-line-inactive-slant nil
+         :mode-line-inactive-height 1.0
+
+         :tab-bar-family nil
+         :tab-bar-weight nil
+         :tab-bar-slant nil
+         :tab-bar-height 1.0
+
+         :tab-line-family nil
+         :tab-line-weight nil
+         :tab-line-slant nil
+         :tab-line-height 1.0
+
+         :bold-family nil
+         :bold-weight medium
+         ;; :bold-weight semibold
+         :bold-slant nil
+         :bold-height 1.0
+
+         :italic-family nil
+         :italic-weight nil
+         :italic-slant italic
+         :italic-height 1.0
+
+         :line-spacing 1)))
+
+  ;; Persist latest preset across sessions.
+  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+  (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
+
+(use-package ligature
+  :demand t
+  :wait t
+  :if (display-graphic-p)
+
+  :config
+
+  ;; Enable all Iosevka ligatures in programming modes
+  ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
+  (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
+                                        "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                        "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                        ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+
+  ;; Enables ligature checks globally in all buffers. You can also do it
+  ;; per mode with `ligature-mode'.
+  (global-ligature-mode t))
+
+;;;;; Miscellaneous
+
+;; Differentiate between focused and non-focused windows
+(setopt highlight-nonselected-windows nil)
+
+;;;;; Keybindings
+
+(define-keymap :keymap ceamx-session-prefix-map
+  "a" (cons "Appearance" (define-prefix-command 'ceamx-session-appearance-prefix-command))
+  "a f" #'fontaine-set-preset
+  "a d" #'ceamx-ui/dark
+  "a l" #'ceamx-ui/light
+  "a o" #'olivetti-mode
+
+  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
+  "f d" #'delete-frame)
+
+;;;; Frame
+
+(undelete-frame-mode 1)
 
 (add-to-list 'default-frame-alist '(undecorated . t))
 
-;;;; Ceamx prefix commands/maps
-
-(keymap-global-set "C-c q" (define-prefix-command 'ceamx-session-prefix 'ceamx-session-prefix-map))
-
-
+;;; The End
 
 
 ;; Local Variables:
