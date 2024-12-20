@@ -244,31 +244,6 @@
 (use-feature! delsel
   :hook (ceamx-after-init . delete-selection-mode))
 
-(defun prot/keyboard-quit-dwim ()
-  "Do-What-I-Mean behaviour for a general `keyboard-quit'.
-
-The generic `keyboard-quit' does not do the expected thing when
-the minibuffer is open.  Whereas we want it to close the
-minibuffer, even without explicitly focusing it.
-
-The DWIM behaviour of this command is as follows:
-
-- When the region is active, disable it.
-- When a minibuffer is open, but not focused, close the minibuffer.
-- When the Completions buffer is selected, close it.
-- In every other case use the regular `keyboard-quit'."
-  (interactive)
-  (cond
-   ((region-active-p)
-    (keyboard-quit))
-   ((derived-mode-p 'completion-list-mode)
-    (delete-completion-window))
-   ((> (minibuffer-depth) 0)
-    (abort-recursive-edit))
-   (t
-    (keyboard-quit))))
-
-(define-key global-map (kbd "C-g") #'prot/keyboard-quit-dwim)
 
 ;;;; Secrets
 
@@ -424,15 +399,40 @@ not retain the generic background set by the function
 
 ;;;;; Cursor
 
-;; Modal keybinding systems will change the cursor dynamically to indicate current state.
-;; This value matches what I expect in an "insert" mode.
-(setq-default cursor-type 'bar)
+(use-package cursory
+  :ensure t
+  :demand t
+  :if (display-graphic-p)
 
-;; Enable cursor blinking.
-(blink-cursor-mode 1)
+  :init
+  (keymap-set ceamx-session-map "a c" #'cursory-set-preset)
 
-;; Seeing a cursor in a window other than the active window is pretty confusing.
-(setq-default cursor-in-non-selected-windows nil)
+  :config
+  (setopt cursory-presets
+    '((box
+       :blink-cursor-interval 0.8)
+      (box-no-blink
+       :blink-cursor-mode -1)
+      (bar
+       :cursor-type (bar . 2)
+       :blink-cursor-interval 0.8)
+      (bar-no-other-window
+       :inherit bar
+       :cursor-in-non-selected-windows nil)
+      (bar-no-blink
+       :cursor-type (bar . 2)
+       :blink-cursor-mode -1)
+      (t
+       :cursor-type box
+       :cursor-in-non-selected-windows hollow
+       :blink-cursor-mode 1
+       :blink-cursor-blinks 10
+       :blink-cursor-interval 0.2
+       :blink-cursor-delay 0.2)))
+
+  (cursory-set-preset (or (cursory-restore-latest-preset) 'box))
+
+  (cursory-mode 1))
 
 ;;;;; Customize the Customization interfaces
 
@@ -555,25 +555,6 @@ not retain the generic background set by the function
 
 (use-package magit-section)
 
-(use-package avy
-  :init
-  ;; Reduce the number of possible candidates.
-  ;; Can be overridden with the universal argument.
-  (setopt avy-all-windows nil)
-  ;; Prevent conflicts with themes.
-  (setopt avy-background nil)
-  (setopt avy-style 'at-full)
-  ;; Anything lower feels unusable.
-  (setopt avy-timeout-seconds 0.25)
-
-  (keymap-global-set "M-j" #'avy-goto-char-timer)
-
-  (after! lispy
-    (defvar lispy-mode-map)
-    (declare-function lispy-join "lispy")
-    ;; Prevent conflict with newly-added M-j binding.
-    (keymap-set lispy-mode-map "M-J" #'lispy-join)))
-
 (use-feature! hl-line
   :hook (prog-mode package-menu-mode))
 
@@ -596,11 +577,35 @@ not retain the generic background set by the function
 
 (use-package rainbow-mode)
 
+;;;;; Density
+
+(use-package spacious-padding
+  :demand t
+  :if (display-graphic-p)
+  :hook (ceamx-after-init . spacious-padding-mode)
+  :init
+  (setopt spacious-padding-widths '( :internal-border-width 30
+                                     :header-line-width 4
+                                     :mode-line-width 6
+                                     :tab-width 4
+                                     :right-divider-width 30
+                                     :scroll-bar-width 8
+                                     :left-fringe-width 20
+                                     :right-fringe-width 20))
+
+  (setopt spacious-padding-subtle-mode-line
+    `( :mode-line-active default
+       :mode-line-inactive window-divider)))
+
 ;;;;; Menu Bar
+
+(keymap-set ceamx-toggle-map "M" #'menu-bar-mode)
 
 (menu-bar-mode -1)
 
 ;;;;; Tab Bar
+
+(keymap-set ceamx-toggle-map "T" #'tab-bar-mode)
 
 (use-feature! tab-bar
   :init
@@ -608,7 +613,7 @@ not retain the generic background set by the function
 
   :config
   (setopt tab-bar-auto-width t
-          tab-bar-auto-width-max '((80) 10)))
+    tab-bar-auto-width-max '((80) 10)))
 
 
 ;;;;; Modeline
@@ -774,6 +779,66 @@ not retain the generic background set by the function
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
+;;;;; Focused View
+
+;;;;;; =olivetti=: "Distraction-free" editing :package:
+
+;; <https://github.com/rnkn/olivetti>
+
+(use-package olivetti
+  :ensure t
+  :commands (olivetti-mode)
+  :config
+  (setopt olivetti-body-width 0.7
+    olivetti-minimum-body-width 80
+    olivetti-recall-visual-line-mode-entry-state t))
+
+;;;;;; =logos=: a simple focus mode with page breaks or outlines :package:
+
+(use-package logos
+  :ensure t
+  :init
+  (define-keymap :keymap (current-global-map)
+    "C-x n n" #'logos-narrow-dwim
+    "C-x ]" #'logos-forward-page-dwim
+    "C-x [" #'logos-backward-page-dwim
+    "M-]" #'logos-forward-page-dwim
+    "M-[" #'logos-backward-page-dwim)
+
+  (keymap-set ceamx-toggle-map "z" #'logos-focus-mode)
+
+  :config
+  (setopt logos-outlines-are-pages t)
+  (setopt logos-outline-regexp-alist
+    `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
+      (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
+      (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
+      (conf-toml-mode . "^\\[")))
+
+  ;; These apply buffer-locally when `logos-focus-mode' is enabled.
+  (setq-default logos-hide-mode-line t)
+  (setq-default logos-hide-header-line t)
+  (setq-default logos-hide-buffer-boundaries t)
+  (setq-default logos-hide-fringe t)
+  (setq-default logos-buffer-read-only nil)
+  (setq-default logos-scroll-lock nil)
+
+  (when (display-graphic-p)
+    (setq-default logos-variable-pitch t))
+
+  (when (fboundp 'olivetti-mode)
+    (setq-default logos-olivetti t))
+
+  (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+
+  (def-hook! ceamx-logos--recenter-top ()
+    '(logos-page-motion-hook)
+    "Place point at the top when changing pages in non-`prog-mode' modes."
+    (unless (derived-mode-p 'prog-mode)
+      ;; NOTE: '0' value will recenter at the absolute top.
+      (recenter 1))))
+
+
 ;;;;; Miscellaneous
 
 ;; Differentiate between focused and non-focused windows
@@ -787,6 +852,7 @@ not retain the generic background set by the function
   "a d" #'ceamx-ui/dark
   "a l" #'ceamx-ui/light
   "a o" #'olivetti-mode
+  "a z" #'logos-focus-mode
 
   "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
   "f d" #'delete-frame)
@@ -796,6 +862,618 @@ not retain the generic background set by the function
 (undelete-frame-mode 1)
 
 (add-to-list 'default-frame-alist '(undecorated . t))
+
+;;;; Keyboard
+
+;;;;; ~free-keys~: Show free keybindings for modkeys or prefixes
+;;
+;; <https://github.com/Fuco1/free-keys>
+;;
+;; > If called with prefix argument C-u, you can specify a prefix map to be
+;; > used, such as C-c or C-c C-x (these are specified as a string).
+
+(use-package free-keys)
+
+;;;;; Improve predictability of `keyboard-quit' behavior
+
+(defun prot/keyboard-quit-dwim ()
+  "Do-What-I-Mean behaviour for a general `keyboard-quit'.
+
+The generic `keyboard-quit' does not do the expected thing when
+the minibuffer is open.  Whereas we want it to close the
+minibuffer, even without explicitly focusing it.
+
+The DWIM behaviour of this command is as follows:
+
+- When the region is active, disable it.
+- When a minibuffer is open, but not focused, close the minibuffer.
+- When the Completions buffer is selected, close it.
+- In every other case use the regular `keyboard-quit'."
+  (interactive)
+  (cond
+    ((region-active-p)
+      (keyboard-quit))
+    ((derived-mode-p 'completion-list-mode)
+      (delete-completion-window))
+    ((> (minibuffer-depth) 0)
+      (abort-recursive-edit))
+    (t
+      (keyboard-quit))))
+
+(define-key global-map (kbd "C-g") #'prot/keyboard-quit-dwim)
+
+
+;;;;; `repeat-mode'
+
+(use-feature! repeat
+  :hook (ceamx-after-init . repeat-mode)
+
+  :init
+  (setopt repeat-exit-timeout 15
+    repeat-on-final-keystroke t
+    repeat-keep-prefix nil
+    ;; Allow any key sequence to exit `repeat-mode'
+    repeat-exit-key nil))
+
+;; Related, but not technically part of `repeat-mode':
+(setopt set-mark-command-repeat-pop t)
+
+
+
+;;;; Buffer Management
+
+(keymap-global-set "C-c b"
+  (cons "Buffer" (define-prefix-command 'ceamx-buffer-prefix 'ceamx-buffer-prefix-map)))
+
+;;;;; Variables
+
+(defcustom ceamx-fallback-buffer-name "*scratch*"
+  "The name of the buffer to fall back to if no other buffers exist.
+The buffer will be created if it does not exist."
+  :group 'ceamx
+  :type '(string))
+
+;;;;;; Define groups of commonly-related modes and buffer-name patterns
+
+;; <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+
+(defvar ceamx-occur-grep-modes-list
+  '(occur-mode
+     grep-mode
+     xref--xref-buffer-mode
+     flymake-diagnostics-buffer-mode)
+  "List of major-modes used in occur-type buffers.")
+
+(defvar ceamx-repl-modes-list
+  '(eshell-mode
+    inferior-emacs-lisp-mode            ; ielm
+    shell-mode
+    eat-mode
+    nix-repl-mode)
+  "List of major-modes used in REPL buffers.")
+
+(defvar ceamx-repl-buffer-names-list
+  '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
+    "\\*.*REPL.*\\*"
+    "\\*Inferior .*\\*$"
+    "\\*ielm\\*"
+    "\\*edebug\\*")
+  "List of buffer names used in REPL buffers.")
+
+(defvar ceamx-help-modes-list
+  '(helpful-mode
+    help-mode
+    eldoc-mode)
+  "List of major-modes used in documentation buffers.")
+
+(defvar ceamx-help-buffer-names-list
+  '("^\\*Apropos"
+    "^\\*eldoc\\*")
+  "List of buffer names used in help buffers.")
+
+(defvar ceamx-manual-modes-list '(Man-mode woman-mode)
+  "List of major-modes used in Man-type buffers.")
+
+(defvar ceamx-message-modes-list
+  '(compilation-mode
+    edebug-eval-mode)
+  "List of major-modes used in message buffers.")
+
+(defvar ceamx-buffer-read-only-dirs-list
+  (list ceamx-packages-dir)
+  "List of directories whose files should be opened in read-only buffers.")
+
+(defvar ceamx-checkers-buffer-names-regexp
+  (rx "*" (or "Flycheck" "Package-Lint")))
+
+
+;;;;; General buffer management customizations
+
+(setq-default indicate-empty-lines nil)
+(setq-default fill-column 80)
+
+;; Available cycle positions for `recenter-top-bottom'.
+(setopt recenter-positions '(top middle bottom))
+
+;; Disable buffer line wrapping by default.
+(setq-default truncate-lines t)
+
+;;;;; Improve scrolling behavior
+
+(setopt scroll-error-top-bottom t)
+
+;; Prevent unwanted horizontal scrolling upon navigation.
+(setopt scroll-preserve-screen-position t)
+
+(setopt scroll-conservatively 10000)
+
+;; Add a margin when scrolling vertically (or don't).
+;; (setq-default scroll-margin 4)
+
+(define-keymap :keymap (current-global-map)
+  ;; The default bindings feel backwards to me.
+  "C-x <" #'scroll-right
+  "C-x >" #'scroll-left
+
+  "<wheel-left>" #'scroll-left
+  "<wheel-right>" #'scroll-right)
+
+;;;;; Auto-revert buffers
+
+;; Ensure the non-file-visiting buffers are also auto-reverted as needed.  For
+;; example, this will cause Dired to refresh a file list when the directory
+;; contents have changed.
+(setopt global-auto-revert-non-file-buffers t)
+
+(setopt auto-revert-interval 2)
+
+;; Automatically revert a buffer if its file has changed on disk.
+(add-hook 'ceamx-after-init-hook #'global-auto-revert-mode)
+
+;;;;; `ibuffer'
+
+(setopt ibuffer-movement-cycle t)
+
+;;;;; Linkify web and email addresses
+
+(use-feature! goto-addr
+  :hook (prog-mode . goto-address-prog-mode))
+
+;;;;; Disambiguate buffer names
+
+(use-feature! uniquify
+  :config
+  (setopt uniquify-buffer-name-style 'forward)
+  (setopt uniquify-separator "/")
+
+  ;; Rename after killing uniquified buffer.
+  (setopt uniquify-after-kill-buffer-p t)
+
+  ;; Don't muck with special buffers.
+  (setopt uniquify-ignore-buffers-re "^\\*"))
+
+
+;;;;; `lentic' :: Create decoupled views of the same content
+
+(use-package lentic
+  :ensure t
+  :config
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+
+;;;;; Keybindings for buffer management
+
+(define-keymap :keymap (current-global-map)
+  "C-c [" #'previous-buffer
+  "C-c ]" #'next-buffer
+  "C-c `" #'mode-line-other-buffer
+
+  "C-x k" #'ceamx/kill-this-buffer      ; orig: `kill-buffer'
+  "C-x K" #'kill-buffer
+  "C-x C-b" #'ibuffer)
+
+(define-keymap :keymap ceamx-buffer-prefix-map
+  "b" #'consult-buffer
+  "k" #'ceamx/kill-this-buffer)
+
+
+;;;; Window Management
+
+(require 'ceamx-window-lib)
+
+(keymap-global-set "C-c w"
+  (cons "Window" (define-prefix-command 'ceamx-window-prefix 'ceamx-window-prefix-map)))
+
+;;;;; General buffer display settings
+
+(setopt switch-to-buffer-in-dedicated-window 'pop)
+
+;; Ensure interactive buffer switching behaves according to expectations.
+(setopt switch-to-buffer-obey-display-actions t)
+
+;; Hide buffer until there's output.
+;; Prevents an extra window appearing during init.
+(setopt async-shell-command-display-buffer nil)
+
+;; TODO: causes which-key squishing against tiny window maybe?
+(setopt fit-window-to-buffer-horizontally t)
+
+;; TODO: this might be a solution to issues with childframes for embark etc.
+(setopt fit-frame-to-buffer t)
+
+;; (setopt even-window-sizes nil)
+(setopt even-window-sizes 'height-only)
+(setopt window-combination-resize t)
+(setopt window-sides-vertical nil)
+(setopt window-resize-pixelwise t)
+
+(setopt display-buffer-base-action
+        '((display-buffer-reuse-window
+           display-buffer-in-previous-window)))
+
+;;;;; Declare rules for displaying buffers with `display-buffer-alist'
+
+;; <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+
+;; <karthink> has a helpful summary of `display-buffer' action functions and
+;; alist entries in their Emacs configuration, which I am also including here
+;; for my own reference.  Note that this list is not necessarily complete.
+
+;; ~display-buffer-action-functions~ are:
+
+;; - ~display-buffer-same-window~ :: Use the selected window
+;; - ~display-buffer-reuse-window~ :: Use a window already showing the buffer
+;; - ~display-buffer-reuse-mode-window~ :: Use a window with the same major-mode
+;; - ~display-buffer-in-previous-window~ :: Use a window that did show the buffer before
+;; - ~display-buffer-use-some-window~ :: Use some existing window
+;; - ~display-buffer-pop-up-window~ :: Pop up a new window
+;; - ~display-buffer-below-selected~ :: Use or pop up a window below the selected one
+;; - ~display-buffer-at-bottom~ :: Use or pop up a window at the bottom of the selected frame
+;; - ~display-buffer-pop-up-frame~ :: Show the buffer on a new frame
+;; - ~display-buffer-in-child-frame~ :: Show the buffer in a child frame
+;; - ~display-buffer-no-window~ :: Do not display the buffer and have ~display-buffer~ return nil immediately
+
+;; Action alist entries are:
+
+;; - ~inhibit-same-window~ :: A non-nil value prevents the sam
+;;     window from being used for display
+;; - ~inhibit-switch-frame~ :: A non-nil value prevents any fram
+;;     used for showing the buffer from being raised or selected
+;; - ~reusable-frames~ :: The value specifies the set of frames t
+;;     search for a window that already displays the buffer.
+;;     Possible values are nil (the selected frame), t (any live
+;;     frame), visible (any visible frame), 0 (any visible or
+;;     iconified frame) or an existing live frame.
+;; - ~pop-up-frame-parameters~ :: The value specifies an alist o
+;;     frame parameters to give a new frame, if one is created.
+;; - ~window-height~ :: The value specifies the desired height of th
+;;     window chosen and is either an integer (the total height of
+;;     the window), a floating point number (the fraction of its
+;;     total height with respect to the total height of the frame's
+;;     root window) or a function to be called with one argument -
+;;     the chosen window.  The function is supposed to adjust the
+;;     height of the window; its return value is ignored.  Suitable
+;;     functions are ~shrink-window-if-larger-than-buffer~ and
+;;     ~fit-window-to-buffer~.
+;; - ~window-width~ :: The value specifies the desired width of th
+;;     window chosen and is either an integer (the total width of
+;;     the window), a floating point number (the fraction of its
+;;     total width with respect to the width of the frame's root
+;;     window) or a function to be called with one argument - the
+;;     chosen window.  The function is supposed to adjust the width
+;;     of the window; its return value is ignored.
+;; - ~preserve-size~ :: The value should be either (t . nil) t
+;;     preserve the width of the chosen window, (nil . t) to
+;;     preserve its height or (t . t) to preserve its height and
+;;     width in future changes of the window configuration.
+;; - ~window-parameters~ :: The value specifies an alist of windo
+;;     parameters to give the chosen window.
+;; - ~allow-no-window~ :: A non-nil value means that `display-buffer
+;;     may not display the buffer and return nil immediately.
+
+;;     <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+
+(setopt display-buffer-alist
+        `(
+          ;; (,(rx "*" (or "Agenda Commands" "Org Select") "*")
+          ;;   (display-buffer-below-selected
+          ;;     display-buffer-in-side-window)
+          ;;   (body-function . select-window)
+          ;;   (window-parameters . ((mode-line-format . nil))))
+
+          (,ceamx-checkers-buffer-names-regexp
+           (display-buffer-in-direction
+            display-buffer-in-side-window)
+           (window-parameters . ((no-other-window . t))))
+
+          ;; TODO: is there not a simpler way than using `ceamx-buffer-mode'?
+          ;; e.g. `derived-mode-p' or similar
+          ((lambda (buf act) (member (ceamx-buffer-mode buf) ceamx-message-modes-list))
+           (display-buffer-at-bottom
+            display-buffer-in-side-window))
+
+          (,(rx "*" (group (or "Compile-Log" "Messages" "Warnings")) "*")
+           (display-buffer-at-bottom
+            display-buffer-in-side-window
+            display-buffer-in-direction))
+
+          (,(rx "*Backtrace*")
+           (display-buffer-in-side-window)
+           (window-height . 0.2)
+           (side . bottom))))
+
+;;;;; Handle popup windows
+
+;; <https://github.com/karthink/popper>
+
+(use-package popper
+  :init
+  (define-keymap :keymap (current-global-map)
+    "C-`" #'popper-toggle
+    "C-~" #'popper-cycle
+    "C-M-`" #'popper-toggle-type)
+
+  (setopt popper-reference-buffers
+    (append
+      ceamx-help-modes-list
+      ceamx-help-buffer-names-list
+      ceamx-manual-modes-list
+      ceamx-repl-modes-list
+      ceamx-repl-buffer-names-list
+      ceamx-occur-grep-modes-list
+      '(+popper-current-buffer-popup-p)
+      '(Custom-mode
+         compilation-mode
+         messages-buffer-mode)
+      (list
+        ceamx-checkers-buffer-names-regexp)
+
+      ;; The "Home" tabspace, if enabled, will display the Messages buffer.
+      (unless (fboundp 'ceamx-workspace-open-tabspace-after-init-h)
+        '("\\*Messages\\*"))
+
+      `(,(rx "Output*" eol)
+         ,(rx "*" (or
+                    "Async-native-compile-log"
+                    "Backtrace"
+                    "Compile-Log"
+                    "Completions"
+                    "compilation"
+                    "elpaca-diff"
+                    "Shell Command Output"
+                    "vc"
+                    "Warnings")
+            "*")
+         "^\\*Embark Export"
+         "^Calc:"
+         "\\*Async Shell Command\\*"
+         ;; ("\\*Async Shell Command\\*" . hide)
+         ("\\*Detached Shell Command\\*" . hide))))
+
+  ;; Load as early as possible to catch popups as early as possible.
+  (popper-mode)
+  (popper-echo-mode)
+
+  :config
+  (defvar-keymap popper-repeat-map
+    :repeat t
+    "`" #'popper-cycle
+    "~" #'popper-cycle-backwards))
+
+;;;;; Allow restoring previous window configurations
+
+(use-feature! winner
+  :hook (ceamx-after-init . winner-mode))
+
+;;;;; Add toggle for a window's "dedicated" flag
+
+(keymap-set ceamx-toggle-map "W" #'toggle-window-dedicated)
+
+;;;;; `ace-window' :: Interactively manage windows
+
+;; <https://github.com/abo-abo/ace-window>
+
+(use-package ace-window
+  :ensure t
+
+  :config
+  ;; Same frame only.  While it'd be nice to use the default (global), I really
+  ;; dislike that it orders window numbers leads to jarring gaps in window
+  ;; numbers in the same frame.  For example, frame A might have windows
+  ;; numbered 1 and 3 and frame B will have window 2.
+  (setopt aw-scope 'frame))
+
+
+;;;;; `transpose-frame' :: Rotate a frame's composite windows
+
+(use-package transpose-frame
+  :ensure t
+  :init
+  (keymap-global-set "C-c w SPC" #'transpose-frame))
+
+;;;;; Define the `ceamx/window-dispatch' window management menu
+
+(transient-define-prefix ceamx/window-dispatch ()
+  "Window management transient."
+  :transient-suffix 'transient--do-stay
+  [["Move"
+    ("h" "left" windmove-left)
+    ("j" "down" windmove-down)
+    ("k" "up" windmove-up )
+    ("l" "right" windmove-right)
+    ("w" "sel" ace-window)]
+
+   ["Resize"
+    ("=" "bal" balance-windows)
+    ("+" "bal: area" balance-windows-area)
+    ("-" "fit: buffer" fit-window-to-buffer)]
+
+   ["Buffer"
+    ("b" "buf" consult-buffer)
+    ;; ("f" "ff: p" project-find-file)
+    ("f" "file" find-file )
+    ("F" "file" find-file-other-window)
+    ("g" "grep" consult-ripgrep)]
+
+   ["Swarp"
+    ("H" "left" ceamx/window-move-left)
+    ("J" "down" ceamx/window-move-down)
+    ("K" "up" ceamx/window-move-up)
+    ("L" "right" ceamx/window-move-right)
+    ""
+    ("s" "swap" ace-swap-window)
+    ("2" "spl: dn" split-window-below)
+    ("3" "spl: rt" split-window-right)
+    ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
+
+   ["Scroll"
+    ;; TODO: allow selecting a window (with infix?) to act upon
+    ;; NOTE: These are the correct scroll direction commands, which might
+    ;; appear to be reversed when comparing with labels.
+    ("." "left" scroll-right)
+    ("," "right" scroll-left)
+    ("SPC" "down" scroll-up)
+    ("DEL" "up" scroll-down)]
+
+   ["Lifecycle"
+    ("d" "del (this)" delete-window)
+    ("D" "del (select)" ace-delete-window)
+    ;; ("D" "del: o" delete-other-windows :transient nil)
+    ("u" "undo" winner-undo)
+    ("U" "redo" winner-redo)
+    ""
+    ("0" "del" delete-window)
+    ("1" "del other" delete-other-windows)
+    ""
+    ("S" "[ ] sides" window-toggle-side-windows)
+    ("`" "[ ] popups" popper-toggle)
+    ""
+    ("q" "quit" transient-quit-all)]])
+
+;;;;; Keybindings for window management
+
+(define-keymap :keymap window-prefix-map
+  "w" #'ace-window
+
+  "d" #'ace-delete-window
+  "p" #'popper-toggle
+  "P" #'popper-toggle-type
+  "u" #'winner-undo
+
+  "h" #'windmove-left
+  "H" #'ceamx/window-move-left
+  "j" #'windmove-down
+  "J" #'ceamx/window-move-down
+  "k" #'windmove-up
+  "K" #'ceamx/window-move-up
+  "l" #'windmove-right
+  "L" #'ceamx/window-move-right
+
+  "=" #'balance-windows
+  "SPC" #'ceamx/swap-or-rotate-windows)
+
+(define-keymap :keymap (current-global-map)
+  "C-x o" #'ceamx/other-window
+  "C-x O" #'ace-window
+
+  "C-x =" #'balance-windows
+  "C-x +" #'balance-windows-area
+
+  "C-x C-n" #'next-buffer
+  "C-x C-p" #'previous-buffer
+
+  "C-x <up>" #'enlarge-window           ; also: C-x ^
+  "C-x <down>" #'shrink-window
+  "C-x <left>" #'shrink-window-horizontally
+  "C-x <right>" #'enlarge-window-horizontally)
+
+;;;;; Bind repeatable keys for resizing windows
+
+(define-keymap :keymap resize-window-repeat-map
+  "<up>" #'enlarge-window
+  "<down>" #'shrink-window
+  "<left>" #'shrink-window-horizontally
+  "<right>" #'enlarge-window-horizontally)
+
+;;;;; Bind repeatable keys for window actions
+
+;; This is very similar to `window-prefix-map'.  Unfortunately, it does not seem
+;; possible to create a functional `repeat-map' inheriting from a parent keymap.
+;; The commands bound in the parent map are unaffected by the `defvar-keymap'
+;; `:repeat' keyword of a child map.
+
+(defvar-keymap ceamx-window-repeat-map
+  :repeat t
+
+  "0" #'delete-window
+  "2" #'split-window-below
+  "3" #'split-window-right
+
+  "b" #'consult-buffer
+  "f" #'find-file
+
+  "o" #'ceamx/other-window
+  "P" #'popper-toggle-type
+  "u" #'winner-undo
+
+  "h" #'windmove-left
+  "H" #'ceamx/window-move-left
+  "j" #'windmove-down
+  "J" #'ceamx/window-move-down
+  "k" #'windmove-up
+  "K" #'ceamx/window-move-up
+  "l" #'windmove-right
+  "L" #'ceamx/window-move-right
+
+  "SPC" #'ceamx/swap-or-rotate-windows
+
+  "RET" #'repeat-exit
+  "ESC" #'repeat-exit)
+
+
+;;;; Navigation
+
+(use-package avy
+  :init
+  ;; Reduce the number of possible candidates.
+  ;; Can be overridden with the universal argument.
+  (setopt avy-all-windows nil)
+  ;; Prevent conflicts with themes.
+  (setopt avy-background nil)
+  (setopt avy-style 'at-full)
+  ;; Anything lower feels unusable.
+  (setopt avy-timeout-seconds 0.25)
+
+  (keymap-global-set "M-j" #'avy-goto-char-timer)
+
+  (after! lispy
+    (defvar lispy-mode-map)
+    (declare-function lispy-join "lispy")
+    ;; Prevent conflict with newly-added M-j binding.
+    (keymap-set lispy-mode-map "M-J" #'lispy-join)))
+
+(use-package link-hint
+  :ensure t
+  :init
+  (define-keymap :keymap (current-global-map)
+    "M-g u" #'link-hint-open-link
+    "M-g U" #'link-hint-copy-link))
+
+(use-package mwim
+  :ensure t
+  :demand t
+  :init
+  (keymap-global-set "C-a" #'mwim-beginning)
+  (keymap-global-set "C-e" #'mwim-end))
+
+(use-package expand-region
+  :ensure t
+  :init
+  (keymap-global-set "C-=" #'er/expand-region))
+
+
+;;;; Chaos
+
+
 
 ;;; The End
 
