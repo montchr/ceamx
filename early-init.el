@@ -188,6 +188,3 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 (setq inhibit-startup-screen t)
 (setq initial-buffer-choice nil)
-
-(provide 'early-init)
-;;; early-init.el ends here

@@ -584,6 +584,3 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (add-hook 'ceamx-after-init-hook
           (lambda ()
             (load (locate-user-emacs-file "chaos.el") t)))
-
-(provide 'init)
-;;; init.el ends here

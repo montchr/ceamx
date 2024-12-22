@@ -1079,10 +1079,13 @@ CLOSED: [2024-07-16 Tue 00:17]
 * Before Dawn :: =early-init.el=
 :PROPERTIES:
 :header-args: :tangle early-init.el :comments both
+:VISIBILITY: folded
 :END:
 
+** File Header
+
 #+begin_src emacs-lisp :tangle early-init.el :startup folded :noweb yes :comments no
-<<file-prop-line(feature="early-init",desc="Early initialization file",extraprops="no-byte-compile: t;")>>
+;;; early-init.el --- Early initialization file  -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
@@ -1554,7 +1557,7 @@ library will be loaded before packages are available.
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el :noweb yes :comments no
-<<file-prop-line(feature="ceamx-lib",desc="Ceamx common library")>>
+;;; core/ceamx-lib.el --- Ceamx common library  -*- lexical-binding: t;  -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2014-2023  Henrik Lissner
@@ -1949,6 +1952,13 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
         ((symbolp cmd) (put cmd 'repeat-map repeat-map))
         ((keymapp cmd) (process cmd))))
      keymap)))
+#+end_src
+
+*** File Footer
+
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el :comments no
+(provide 'ceamx-lib)
+;;; ceamx-lib.el ends here
 #+end_src
 
 
@@ -14736,24 +14746,6 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 (add-hook 'ceamx-after-init-hook
           (lambda ()
             (load (locate-user-emacs-file "chaos.el") t)))
-#+end_src
-
-
-* File Footers
-
-#+begin_src emacs-lisp :tangle early-init.el :comments no :noweb yes
-<<file-footer(feature="early-init")>>
-#+end_src
-
-#+begin_src emacs-lisp :tangle init.el :comments no :noweb yes
-<<file-footer(feature="init")>>
-#+end_src
-
-
-** Libraries (=lib-*.el=)
-
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el :comments no :noweb yes
-<<file-footer(feature="ceamx-lib")>>
 #+end_src
 
 

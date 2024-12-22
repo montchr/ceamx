@@ -1,4 +1,4 @@
-;;; ceamx-lib.el --- Ceamx common library  -*- lexical-binding: t;  -*-
+;;; core/ceamx-lib.el --- Ceamx common library  -*- lexical-binding: t;  -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2014-2023  Henrik Lissner
