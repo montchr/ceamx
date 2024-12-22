@@ -48,8 +48,8 @@
   ;; This is set to `nil' by default, which causes a wrong-type-arg error
   ;; when you use `markdown-open'. These are more sensible defaults.
   (setopt markdown-open-command (cond
-                                 (+sys-mac-p "open")
-                                 (+sys-linux-p "xdg-open")))
+                                 ((ceamx-host-macos-p) "open")
+                                 ((ceamx-host-gnu-linux-p) "xdg-open")))
 
   (with-eval-after-load 'org-src
     (add-to-list 'org-src-lang-modes '("md" . markdown))))

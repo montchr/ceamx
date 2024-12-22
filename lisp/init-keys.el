@@ -45,7 +45,7 @@
 ;; macOS: Remap modifier keys for the Apple keyboard layout
 
 
-(when (and +sys-mac-p (display-graphic-p))
+(when (and (ceamx-host-macos-p) (display-graphic-p))
   (setopt mac-control-modifier 'control)
   (setopt mac-option-modifier 'meta)
   (setopt ns-option-modifier 'meta)

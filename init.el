@@ -77,15 +77,6 @@
   :group 'ceamx
   :type '(boolean))
 
-;; Define variables describing the current environment-context :env:
-
-
-(require 'config-env)
-
-;; TODO: see bbatsov/prelude for prior art
-(when +sys-wsl-p
-  (require 'lib-env-wsl))
-
 ;; =site-lisp/on=: Define additional Emacs event hooks
 
 
@@ -385,16 +376,241 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; Prevent Emacs from pinging domain names unexpectedly.
 (setopt ffap-machine-p-known 'reject)
 
-;; Load Features
+;; Disable unnecessary OS-specific command-line options :macos:
 
 
-(require 'init-env)
-(require 'init-input-methods)
+(unless (ceamx-host-macos-p)
+  (setq command-line-ns-option-alist nil))
 
-;; Site-specific configuration, to be ignored by version control.
+(unless (ceamx-host-gnu-linux-p)
+  (setq command-line-x-option-alist nil))
+
+;; ~exec-path-from-shell~: Inherit environment variables from variable environments :package:
+
+
+(package! exec-path-from-shell
+  (require 'exec-path-from-shell)
+  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH" "LSP_USE_PLISTS"))
+    (add-to-list 'exec-path-from-shell-variables var))
+  (exec-path-from-shell-initialize))
+
+;; ~inheritenv~: Make temporary buffers inherit buffer-local environment variables :package:
+
+;; - website :: <https://github.com/purcell/inheritenv>
+
+
+(package! inheritenv
+  (with-eval-after-load 'exec-path-from-shell
+    (require 'inheritenv)))
+
+;; ~with-editor~: Ensure shell/term modes use session as =$EDITOR= :package:
+
+
+(package! with-editor
+  (keymap-global-set "<remap> <async-shell-command>"
+                     #'with-editor-async-shell-command)
+  (keymap-global-set "<remap> <shell-command>"
+                     #'with-editor-shell-command)
+
+  (add-hook 'shell-mode-hook #'with-editor-export-editor)
+  (add-hook 'eshell-mode-hook #'with-editor-export-editor)
+  (add-hook 'term-exec-hook #'with-editor-export-editor)
+
+  ;; Make sure that `eat' does not break `magit-commit'.
+  ;; <https://codeberg.org/akib/emacs-eat/issues/55#issuecomment-871388>
+  (with-eval-after-load 'eat
+    (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
+
+;; ~envrc~: Direnv integration :package:
+
+;; - src :: <https://github.com/purcell/envrc>
+;; - upstream :: <https://github.com/direnv/direnv>
+
+;; Q: How does this differ from `direnv.el`?
+
+;; <https://github.com/wbolster/emacs-direnv> repeatedly changes the global
+;; Emacs environment, based on tracking what buffer you're working on.
+
+;; Instead, `envrc.el` simply sets and stores the right environment in each
+;; buffer, as a buffer-local variable.
+
+
+(package! envrc
+  (with-eval-after-load 'exec-path-from-shell
+    (envrc-global-mode)))
+
+;; Elpaca-Wait № 3: ~exec-path-from-shell~ :wait:
+
+
+(elpaca-wait)
+
+;; TRAMP Support
+
+
+(setopt tramp-default-method "ssh")
+(setopt tramp-default-remote-shell "/bin/bash")
+(setopt tramp-connection-timeout (* 60 10))
+;; Do not auto-save remote files. Note the reversed logic.
+(setopt remote-file-name-inhibit-auto-save t)                 ; Emacs 30
+(setopt remote-file-name-inhibit-auto-save-visited t)
+;; Avoid expensive operations on remote files.
+(setopt remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
+
+(after! tramp
+  (dolist (path '("~/.local/bin"
+                  "~/.nix-profile/bin"
+                  "~/.local/state/nix/profiles/profile/bin/"
+                  "/nix/var/nix/profiles/default/bin"
+                  "/run/current-system/sw/bin"))
+    (add-to-list 'tramp-remote-path path)))
+
+;; Terminal/TTY Support
+
+
+(autoload 'mwheel-install "mwheel")
+
+(defun ceamx/console-frame-setup ()
+  (xterm-mouse-mode 1)
+  (mwheel-install))
+
+;; Make the mouse wheel scroll.
+(global-set-key [mouse-4] (lambda () (interactive) (scroll-down 1)))
+(global-set-key [mouse-5] (lambda () (interactive) (scroll-up 1)))
+
+;; (add-hook 'after-make-console-frame-hooks 'ceamx/console-frame-setup)
+
+;; Input languages
+
+
+(set-language-environment "UTF-8")
+
+;; `set-language-environment' also presumptively sets `default-input-method'.
+(setopt default-input-method nil)
+
+
+
+;; Disable bidirectional text scanning, because I don't need it:
+
+
+(setq-default bidi-display-reordering 'left-to-right)
+(setq-default bidi-paragraph-direction 'left-to-right)
+(setq bidi-inhibit-bpa t)
+
+;; Mouse input
+
+
+(setopt mouse-yank-at-point t)
+
+
+
+;; Avoid collision of mouse with point:
+
+
+(mouse-avoidance-mode 'exile)
+
+;; Disable graphical window system dialog boxes
+
+
+(setopt use-file-dialog nil)
+(setopt use-dialog-box nil)
+
+;; Load site-specific configuration, to be ignored by version control
+
+
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 
-(require 'init-secrets)
+;; Secrets :: =secrets= :secrets:
+;; :PROPERTIES:
+;; :header-args: :tangle init.el
+;; :END:
+
+;; - source :: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#auth-source-pass>
+
+
+(require 'epg)
+(require 'auth-source)
+(require 'auth-source-pass)
+
+;; Ensure secrets and auth credentials are not stored in plaintext
+
+;; It's best to list only a single file here to avoid confusion about where
+;; secrets might be stored:
+
+
+(setopt auth-sources (list "~/.authinfo.gpg"))
+
+;; Configure secrets lookup with ~auth-source~ and the Unix password store
+
+
+(use-feature! auth-source
+  :demand t)
+
+;; TODO: provide explanation as to why these functions are named like so -- they just magically work..?
+(use-feature! auth-source-pass
+  :demand t
+
+  :preface
+  (defvar auth-source-pass--cache (make-hash-table :test #'equal))
+
+  (defun auth-source-pass--reset-cache ()
+    (setq auth-source-pass--cache (make-hash-table :test #'equal)))
+
+  (defun auth-source-pass--read-entry (entry)
+    "Return a string with the file content of ENTRY."
+    (run-at-time 45 nil #'auth-source-pass--reset-cache)
+    (let ((cached (gethash entry auth-source-pass--cache)))
+      (or cached
+          (puthash
+           entry
+           (with-temp-buffer
+             (insert-file-contents (expand-file-name
+                                    (format "%s.gpg" entry)
+                                    (getenv "PASSWORD_STORE_DIR")))
+             (buffer-substring-no-properties (point-min) (point-max)))
+           auth-source-pass--cache))))
+
+  (defun ceamx-auth-source-pass-list-items ()
+    "Return a list of all password store items."
+    (let ((store-dir (getenv "PASSWORD_STORE_DIR")))
+      (mapcar
+       (lambda (file)
+         (file-name-sans-extension (file-relative-name file store-dir)))
+       (directory-files-recursively store-dir "\.gpg$"))))
+
+  :config
+  (auth-source-pass-enable))
+
+;; Use Emacs for =pinentry=
+
+
+(use-feature! epg
+  :defer 2
+  :config
+  (setopt epg-pinentry-mode 'loopback))
+
+;; Define helper function to lookup a password for a target host
+
+;; - source :: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#lookup-a-password-using-auth-source>
+
+
+(defun ceamx-lookup-password (host user port)
+  (require 'auth-source)
+  (require 'auth-source-pass)
+  (let ((auth (auth-source-search :host host :user user :port port)))
+    (if auth
+      (let ((secretf (plist-get (car auth) :secret)))
+        (if secretf
+          (funcall secretf)
+          (error "Auth entry for %s@%s:%s has no secret!"
+            user host port)))
+      (error "No auth entry found for %s@%s:%s" user host port))))
+
+;; =init.el=: Load Features
+;; :PROPERTIES:
+;; :header-args: :tangle init.el
+;; :END:
+
+
 
 ;;;; Displays + Appearance
 
@@ -556,7 +772,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; Otherwise, =yabai= will not "see" the Emacs GUI window.
 
 
-(when (and (display-graphic-p) +sys-mac-p)
+(when (and (ceamx-host-macos-p) (display-graphic-p))
   (def-hook! ceamx-after-init-restart-yabai-h ()
     'ceamx-after-init-hook
     "Restart the yabai service after init."

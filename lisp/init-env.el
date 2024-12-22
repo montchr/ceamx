@@ -33,10 +33,10 @@
 ;; Disable unnecessary OS-specific command-line options :macos:
 
 
-(unless +sys-mac-p
+(unless (ceamx-host-macos-p)
   (setq command-line-ns-option-alist nil))
 
-(unless +sys-linux-p
+(unless (ceamx-host-gnu-linux-p)
   (setq command-line-x-option-alist nil))
 
 ;; ~exec-path-from=shell~: Inherit environment variables from variable environments :package:

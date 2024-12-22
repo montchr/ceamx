@@ -344,14 +344,14 @@
 ;; macOS: Configure frame decorations :graphical:macos:
 
 
-(unless +sys-mac-p
+(unless (ceamx-host-macos-p)
   ;; Hide window decorations.
   (add-to-list 'default-frame-alist '(undecorated . t)))
 
 ;; Handle macOS-specific workarounds :macos:
 
 
-(when +sys-mac-p
+(when (ceamx-host-macos-p)
   ;; `undecorated-round' is macOS-specific.
   (add-to-list 'default-frame-alist '(undecorated-round . t))
 

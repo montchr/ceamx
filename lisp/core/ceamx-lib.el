@@ -74,12 +74,40 @@
 (require 'map)
 (require 'seq)
 
-;; ~ceamx-host-p~: Determine whether Emacs is running on a given host
+;; Environment Context
 
 
 (defun ceamx-host-p (name)
   "Whether Emacs is running on the machine NAME."
   (string= name (system-name)))
+
+(defun ceamx-host-macos-p ()
+  "Whether the current host system is macOS."
+  (or (memq window-system '(mac ns))
+      (eq system-type 'darwin)))
+
+(defun ceamx-host-gnu-linux-p ()
+  "Whether the current host system is GNU/Linux."
+  (eq system-type 'gnu/linux))
+
+;; WSL
+
+;; - source :: <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
+
+
+(defun ceamx-host-wsl-p ()
+  "Whether Emacs is currently running in WSL."
+  (and (eq system-type 'gnu/linux)
+       (or (getenv "WSLENV")
+           (getenv "WSL_DISTRO_NAME"))))
+
+(when (ceamx-host-wsl-p)
+  (defun ceamx-wsl/copy-selected-text (start end)
+    "In WSL, copy text region with START and END to the host clipboard."
+    (interactive "r")
+    (when (use-region-p)
+      (let ((text (buffer-substring-no-properties start end)))
+        (shell-command (concat "echo '" text "' | clip.exe"))))))
 
 ;; ~ceamx-unquote~: Unquote an Elisp expression
 

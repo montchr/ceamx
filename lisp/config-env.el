@@ -33,11 +33,11 @@
 (defvar +user-root-p
   (string-equal "root" (getenv "USER")))
 
-(defvar +sys-mac-p
+(defconst ceamx-env-is-macos
   (or (memq window-system '(mac ns))
       (eq system-type 'darwin)))
 
-(defvar +sys-linux-p
+(defconst ceamx-env-is-gnu-linux
   (eq system-type 'gnu/linux))
 
 (defvar +env-pgtk-p
