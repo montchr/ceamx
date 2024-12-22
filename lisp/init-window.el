@@ -241,15 +241,6 @@
 (package! dedicated
   (keymap-global-set "C-c W" #'dedicated-mode))
 
-;; =olivetti=: "Distraction-free" editing :package:
-
-;; <https://github.com/rnkn/olivetti>
-
-
-(package! olivetti)
-
-;;  (setopt olivetti-style 'fancy) ; might not play well with `org-modern'
-
 ;; =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
 
 

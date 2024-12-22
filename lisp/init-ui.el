@@ -421,6 +421,8 @@
 (unless (version< emacs-version "30")
   (tab-bar-mode 1))
 
+(keymap-set ceamx-toggle-map "T" #'tab-bar-mode)
+
 ;; Configure tab bar appearance and behavior
 
 
@@ -472,6 +474,65 @@
 
   (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
     (add-to-list 'keycast-substitute-alist `(,event nil))))
+
+;; =olivetti=: "Distraction-free" editing :package:
+
+;; <https://github.com/rnkn/olivetti>
+
+
+(use-package olivetti
+  :ensure t
+  :commands (olivetti-mode)
+  :config
+  (setopt olivetti-body-width 0.7
+    olivetti-minimum-body-width 80
+    olivetti-recall-visual-line-mode-entry-state t))
+
+;; =logos=: a simple focus mode with page breaks or outlines :package:
+
+
+(use-package logos
+  :ensure t
+  :init
+  (define-keymap :keymap (current-global-map)
+    "C-x n n" #'logos-narrow-dwim
+    "C-x ]" #'logos-forward-page-dwim
+    "C-x [" #'logos-backward-page-dwim
+    "M-]" #'logos-forward-page-dwim
+    "M-[" #'logos-backward-page-dwim)
+
+  (keymap-set ceamx-toggle-map "z" #'logos-focus-mode)
+
+  :config
+  (setopt logos-outlines-are-pages t)
+  (setopt logos-outline-regexp-alist
+    `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
+      (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
+      (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
+      (conf-toml-mode . "^\\[")))
+
+  ;; These apply buffer-locally when `logos-focus-mode' is enabled.
+  (setq-default logos-hide-mode-line t)
+  (setq-default logos-hide-header-line t)
+  (setq-default logos-hide-buffer-boundaries t)
+  (setq-default logos-hide-fringe t)
+  (setq-default logos-buffer-read-only nil)
+  (setq-default logos-scroll-lock nil)
+
+  (when (display-graphic-p)
+    (setq-default logos-variable-pitch t))
+
+  (when (fboundp 'olivetti-mode)
+    (setq-default logos-olivetti t))
+
+  (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+
+  (def-hook! ceamx-logos--recenter-top ()
+    '(logos-page-motion-hook)
+    "Place point at the top when changing pages in non-`prog-mode' modes."
+    (unless (derived-mode-p 'prog-mode)
+      ;; NOTE: '0' value will recenter at the absolute top.
+      (recenter 1))))
 
 ;; Keybindings :keybinds:
 
