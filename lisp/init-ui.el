@@ -33,15 +33,43 @@
 ;; Cursor
 
 
-;; Modal keybinding systems will change the cursor dynamically to indicate current state.
-;; This value matches what I expect in an "insert" mode.
-(setq-default cursor-type 'bar)
+(use-package cursory
+  :ensure t
+  :demand t
+  :if (display-graphic-p)
 
-;; Enable cursor blinking.
-(blink-cursor-mode 1)
+  :preface
+  (setopt cursory-latest-state-file (expand-file-name "cursory-latest-state.eld" ceamx-var-dir))
 
-;; Seeing a cursor in a window other than the active window is pretty confusing.
-(setq-default cursor-in-non-selected-windows nil)
+  :init
+  (keymap-set ceamx-session-map "a c" #'cursory-set-preset)
+
+  :config
+  (setopt cursory-presets
+          '((box
+             :blink-cursor-interval 0.8)
+            (box-no-blink
+             :blink-cursor-mode -1)
+            (bar
+             :cursor-type (bar . 2)
+             :blink-cursor-interval 0.8)
+            (bar-no-other-window
+             :inherit bar
+             :cursor-in-non-selected-windows nil)
+            (bar-no-blink
+             :cursor-type (bar . 2)
+             :blink-cursor-mode -1)
+            (t
+             :cursor-type box
+             :cursor-in-non-selected-windows hollow
+             :blink-cursor-mode 1
+             :blink-cursor-blinks 10
+             :blink-cursor-interval 0.2
+             :blink-cursor-delay 0.2)))
+
+  (cursory-set-preset (or (cursory-restore-latest-preset) 'box))
+
+  (cursory-mode 1))
 
 ;; Customize the Customization buffer and menu interface
 
