@@ -22,9 +22,6 @@
 
 ;; Configuration for terminal emulators running inside Emacs.
 
-;; Not to be confused with configurations for Emacs specific to a TTY
-;; environment, which are handled in `init-env-tty'.
-
 ;;; Code:
 
 (require 'ceamx-keymaps)

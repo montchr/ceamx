@@ -2712,7 +2712,6 @@ expect the value you arrive at to be as high as 100 MiB.
 (require 'init-embark)
 
 ;; Projects / Files
-(require 'init-project)
 (require 'init-vcs)
 (require 'init-files)
 (require 'init-dired)
@@ -2773,9 +2772,6 @@ expect the value you arrive at to be as high as 100 MiB.
 (require 'init-lang-php)
 (require 'init-lang-shell)
 (require 'init-lang-misc)
-
-;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
-(require 'init-shell-nu)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -5813,12 +5809,6 @@ keyword of a child map.
 (setopt ibuffer-movement-cycle t)
 #+end_src
 
-** ~mowie~: library to define repeatable "smart" point-moving commands :package:
-
-#+begin_src emacs-lisp
-(package! (mowie :host codeberg :repo "mekeor/mowie"))
-#+end_src
-
 ** ~mwim~: Move-Where-I-Mean line positions :package:
 
 + src :: <https://github.com/alezost/mwim.el/blob/master/README.org#usage>
@@ -6025,8 +6015,6 @@ See also [[*General buffer display settings]]
 #+begin_src emacs-lisp
 (delete-selection-mode 1)
 #+end_src
-
-*** TODO Meow does not seem to respect ~delete-selection-mode~?
 
 ** Improve sentence legibility and parsability with double-spaced ending
 
@@ -6258,7 +6246,7 @@ it selectively.
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
 #+end_src
 
-*** ~editorconfig~: EditorConfig integration
+*** ~editorconfig~: EditorConfig integration :package:
 
 #+begin_src emacs-lisp
 ;; <https://editorconfig.org>
@@ -6287,7 +6275,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
             #'+editorconfig-enforce-org-mode-tab-width-h))
 #+end_src
 
-*** [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT
+*** [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT :package:
 
 #+begin_src emacs-lisp
 (package! reformatter
@@ -6336,7 +6324,7 @@ not yet exist for Eglot (only LSP-Mode).
 
 **** TODO Inhibit on-save formatting with prefix argument
 
-*** [[https://github.com/radian-software/apheleia][radian-software/apheleia]]: opinionated code reformatting
+*** [[https://github.com/radian-software/apheleia][radian-software/apheleia]]: opinionated code reformatting :package:
 
 In case you run into issues with ~web-mode~ not updating syntax highlighting after
 formatting (or other arbitrary modifications):
@@ -6428,7 +6416,7 @@ As of <2024-05-24 Fri>
     (add-to-list 'apheleia-mode-alist '(mode . biome))))
 #+end_src
 
-** ~puni~: versatile structured editing
+** ~puni~: versatile structured editing :package:
 
 <https://github.com/AmaiKinono/puni>
 
@@ -6455,7 +6443,7 @@ As of <2024-05-24 Fri>
 ;; )
 #+end_src
 
-** ~drag-stuff~: drag stuff around in arbitrary directions
+** ~drag-stuff~: drag stuff around in arbitrary directions :package:
 
 <https://github.com/rejeep/drag-stuff.el>
 
@@ -6532,7 +6520,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
 #+end_src
 
-** ~multiple-cursors~: Sublime-esque multi-cursor editing
+** ~multiple-cursors~: Sublime-esque multi-cursor editing :package:
 
 <https://github.com/magnars/multiple-cursors.el>
 
@@ -6574,7 +6562,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       ("q" nil))))
 #+end_src
 
-** ~easy-kill~
+** ~easy-kill~ :package:
 
 <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
@@ -6598,7 +6586,7 @@ b => buffer name
   )
 #+end_src
 
-** ~ialign~: Interactively ~align-regexp~
+** ~ialign~: Interactively ~align-regexp~ :package:
 
 <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
 
@@ -7279,22 +7267,6 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 (package! breadcrumb
   (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 #+end_src
-
-** DISABLED ~bufler.el~: a butler for your butlers
-
-#+begin_src emacs-lisp :noweb-ref nil
-(package! bufler
-  (bufler-mode)
-
-  (add-hook 'tab-bar-mode-hook #'bufler-tabs-mode)
-
-  (keymap-set ceamx-buffer-prefix-map "b" #'bufler-switch-buffer)
-
-  (define-keymap :keymap (current-global-map)
-    "C-x C-b" #'bufler
-    "C-x b" #'bufler-switch-buffer))
-#+end_src
-
 
 * Help :: =help= :help:
 
@@ -8255,449 +8227,6 @@ Enable ~repeat-mode~, avoiding running mode-hooks too early:
 
 ;; FIXME: no effect? what does this actually do?
 (setopt which-key-show-remaining-keys t)
-#+end_src
-
-** DISABLED =meow= modal keybindings :meow:package:
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-#+begin_src emacs-lisp
-(package! meow
-  (require 'meow))
-#+end_src
-
-*** Elpaca-Wait № 6: modal keybinding framework :wait:
-
-Everything afterwards depends on Meow.
-
-#+begin_src emacs-lisp
-(elpaca-wait)
-#+end_src
-
-*** States
-**** Add initial keybindings to the Meow Leader keymap
-
-#+begin_src emacs-lisp
-(meow-leader-define-key
- ;; SPC j/k will run the original command in MOTION state.
- '("j" . "H-j")
- '("k" . "H-k")
-
- ;; Use SPC (0-9) for digit arguments.
- '("1" . meow-digit-argument)
- '("2" . meow-digit-argument)
- '("3" . meow-digit-argument)
- '("4" . meow-digit-argument)
- '("5" . meow-digit-argument)
- '("6" . meow-digit-argument)
- '("7" . meow-digit-argument)
- '("8" . meow-digit-argument)
- '("9" . meow-digit-argument)
- '("0" . meow-digit-argument)
- '("/" . meow-keypad-describe-key)
- '("?" . meow-cheatsheet))
-
-(meow-motion-overwrite-define-key
- '("j" . meow-next)
- '("k" . meow-prev)
- '("<escape>" . ignore))
-#+end_src
-
-**** Add initial keybindings to the INSERT state keymap
-
-Nothing yet.
-
-**** Add initial keybindings to the NORMAL state keymap
-
-#+begin_src emacs-lisp
-(meow-normal-define-key
- '("0" . meow-expand-0)
- '("9" . meow-expand-9)
- '("8" . meow-expand-8)
- '("7" . meow-expand-7)
- '("6" . meow-expand-6)
- '("5" . meow-expand-5)
- '("4" . meow-expand-4)
- '("3" . meow-expand-3)
- '("2" . meow-expand-2)
- '("1" . meow-expand-1)
- '("-" . negative-argument)
- '(";" . meow-reverse)
- '("," . meow-inner-of-thing)
- '("." . meow-bounds-of-thing)
- '("[" . meow-beginning-of-thing)
- '("]" . meow-end-of-thing)
- '("a" . meow-append)
- '("A" . meow-open-below)
- '("b" . meow-back-word)
- '("B" . meow-back-symbol)
- '("c" . meow-change-save)            ; default: `meow-change'
- '("d" . meow-delete)
- '("D" . meow-backward-delete)
- '("e" . meow-next-word)
- '("E" . meow-next-symbol)
- '("f" . meow-find)
- '("g" . meow-cancel-selection)
- '("G" . meow-grab)
- '("h" . meow-left)
- '("H" . meow-left-expand)
- '("i" . meow-insert)
- '("I" . meow-open-above)
- '("j" . meow-next)
- '("J" . meow-next-expand)
- '("k" . meow-prev)
- '("K" . meow-prev-expand)
- '("l" . meow-right)
- '("L" . meow-right-expand)
- '("m" . meow-join)
- '("n" . meow-search)
- '("o" . meow-block)
- '("O" . meow-to-block)
- '("p" . meow-yank)
- '("q" . meow-quit)
- ;; FIXME: duplicated with "X" binding
- '("Q" . meow-goto-line)
- '("r" . meow-replace)
- '("R" . meow-swap-grab)
- '("s" . meow-kill)
- '("t" . meow-till)
- '("T" . meow-till-expand)            ; custom addition
- '("u" . meow-undo)
- '("U" . meow-undo-in-selection)
- '("v" . meow-visit)
- '("w" . meow-mark-word)
- '("W" . meow-mark-symbol)
- '("x" . meow-line)
- ;; FIXME: duplicated with "Q" binding
- '("X" . meow-goto-line)
- '("y" . meow-save)
- '("Y" . meow-sync-grab)
- ;; There's no documentation, but this will essentially return to the
- ;; original position prior to beginning the selection.
- '("z" . meow-pop-selection)
- ;; TODO: no idea what the difference is at a glance, no docs
- ;; '("Z" . meow-pop-all-selection)    ; custom addition
- '("'" . repeat)
- '("<escape>" . ignore)
- '(":" . avy-goto-char-2))
-#+end_src
-
-**** Define the =org-motion= state for navigating Org-Mode trees
-
-Credit for the idea goes to this blog post:
-
-[[https://aatmunbaxi.netlify.app/comp/meow_state_org_speed/][A meow-state for speedy org structure navigation | Aatmun Baxi]]
-
-I made some adjustments for the sake of maintaining consistency with the default
-bindings in ~org-mode-map~ and ~outline-minor-mode-map~.  I would rather not mix
-up the motions switching between this state and the defaults.
-
-Note that the =-keymap= suffix aligns with Meow's naming conventions, though it
-differs from the usual Emacs Lisp convention of a =-map= suffix.
-
-To avoid confusion/conflicts, this =org-motion= state and
-~org-mode-navigation-repeat-map~ should be considered mutually exclusive.  When
-=org-motion= is available, make sure the repeat map is not defined (exclude it
-from tangling).
-
-#+begin_src emacs-lisp
-(defvar-keymap meow-org-motion-keymap
-  :full t
-
-  "<escape>" #'meow-normal-mode
-
-  "i" #'meow-insert-mode
-  "g" #'meow-normal-mode
-  "u" #'meow-undo
-
-  "k" #'org-previous-visible-heading
-  "j" #'org-next-visible-heading
-  "p" #'org-previous-visible-heading
-  "n" #'org-next-visible-heading
-
-  "b" #'org-backward-heading-same-level
-  "f" #'org-forward-heading-same-level
-
-  "B" #'org-previous-block
-  "F" #'org-next-block
-
-  ;; Narrowing/widening
-  "N" #'org-narrow-to-subtree
-  "W" #'widen
-
-  ;; Drag subtrees up/down
-  "K" #'org-metaup
-  "J" #'org-metadown
-
-  ;; Promote/demote subtrees
-  "L" #'org-demote-subtree
-  "H" #'org-promote-subtree
-
-  ;; Search
-  "v" #'consult-org-heading
-
-  ;; Setting subtree metadata
-  "P" #'org-set-property-and-value
-  "t" #'org-todo
-  "d" #'org-deadline
-  "s" #'org-schedule
-  "e" #'org-set-effort)
-#+end_src
-
-Define the state itself, using the keymap we just initialized:
-
-#+begin_src emacs-lisp
-(meow-define-state org-motion
-  "Org-Mode tree navigation"
-  :lighter "🅞"
-  :keymap meow-org-motion-keymap)
-#+end_src
-
-And provide access to this state:
-
-#+begin_src emacs-lisp
-(keymap-set meow-normal-state-keymap "O" #'meow-org-motion-mode)
-#+end_src
-
-**** Map preferred initial Meow states for some additional major-modes
-
-#+begin_src emacs-lisp
-(pushnew! meow-mode-state-list
-          ;; shells
-          ;; TODO: use `ceamx-repl-modes-list'
-          '(comint-mode . insert)
-          '(eat-mode . insert)
-          '(eshell-mode . insert)
-
-          ;; writing
-          '(diary-mode . normal)
-
-          ;; complex
-          '(magit-mode . insert)
-          ;; FIXME: no effect
-          '(ediff-mode . insert)
-
-          ;; read-only
-          ;; TODO: how to lock state? i.e. dont allow switching
-          ;; TODO: set for all read-only buffers?
-          '(Info-mode . motion)
-          '(read-only-mode . motion)
-          '(help-mode . motion))
-#+end_src
-
-*** Cheatsheet
-
-#+begin_src emacs-lisp
-;; NOTE: This is not a customizable variable, although it is required for meow.
-(setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-#+end_src
-
-*** Keypad
-
-#+begin_src emacs-lisp
-;; Don't pass through keys that aren't in keypad.
-(setopt meow-keypad-self-insert-undefined nil)
-#+end_src
-
-**** Avoid the default binding for ~meow-keypad~ in motion state
-
-The goal here is to preserve the established SPC/DEL keybindings to scroll in
-Info mode and some other similar modes.
-
-#+begin_src emacs-lisp
-(keymap-unset meow-motion-state-keymap "SPC" t)
-#+end_src
-
-**** Determine the dispatch target for the leader keymap
-
-I will maintain sections on both options, tangling only one at a time.
-
-I have not yet found a configuration with which I am completely comfortable -- I
-tend to switch between the two. Part of the reason for that is that I have not
-kept a record of my assessment of the benefits and drawbacks of the different
-values I have tried. So, here I will do just that.
-
-***** ACTIVE Leader keymap from ~meow-keymap-alist~ (default)
-
-When ~meow-keypad-leader-dispatch~ is nil, the leader will dispatch to the
-leader keymap in ~meow-keymap-alist~.
-
-This is the default behavior.
-
-| Pros                                               | Cons                                              |
-|----------------------------------------------------+---------------------------------------------------|
-| Filters out noise                                  | Requires additional keystroke =c= to get to =C-c= |
-| With =c= press, Ctrl mod is primed (i.e. =C-c C-=) |                                                   |
-
-#+begin_src emacs-lisp
-(setopt meow-keypad-leader-dispatch nil)
-#+end_src
-
-***** DISABLED Leader dispatch to ~mode-specific-map~ ("C-c")
-
-| Pros                                | Cons                                                                             |
-|-------------------------------------+----------------------------------------------------------------------------------|
-| Direct access, no need to press =c= | Noisy, especially in Org-Mode                                                    |
-| Direct access to Org-Mode keys      | Next keypress is unmodded, e.g. in Org: =SPC t= is "C-c t"                       |
-|                                     | *To access main Org bindings under =C-c C-<CHAR>=, you still need to press =c=!* |
-|                                     |                                                                                  |
-
-=C-c= might be better for leader-centric bindings a la Doom/Spacemacs.
-
-#+begin_src emacs-lisp :tangle no
-(setopt meow-keypad-leader-dispatch "C-c")
-#+end_src
-
-**** Disable the broken keypad binding description popup
-
-Meow's leader functionality has a custom keybinding visualization helper that
-looks almost exactly like ~which-key~ except that it is very buggy.  It does try
-to smooth over some of the guts of Meow, as ~which-key~ is cluttered with
-keybinding entries for ~meow-digit-argument~.  But even Meow's maintainers do not
-recommend using the custom keypad helper UI.
-
-Fortunately, the keybinding description popup can be disabled:
-
-#+begin_src emacs-lisp
-;; NOTE: The variable is not defined with `defcustom'.
-(setq meow-keypad-describe-keymap-function nil)
-#+end_src
-
-<2024-07-15 Mon>: *Un*-fortunately, I have yet to figure out how to make
-~meow-keypad-describe-keymap-function~ compatible with manually calling
-~embark-describe-bindings~ by keybind (usually that would be {C-h}).
-
-*** Bind a toggle for ~meow-global-mode~
-
-#+begin_src emacs-lisp
-(keymap-set ceamx-toggle-map "m" #'meow-global-mode)
-#+end_src
-
-*** Customize the appearance of the mode-line indicator for the current Meow state :modeline:
-
-This should happen before defining any new states so that they may provide their
-own values upon definition.
-
-#+begin_src emacs-lisp
-(setopt meow-replace-state-name-list
-        '( (normal . "🅝")
-           (beacon . "🅑")
-           (insert . "🅘")
-           (motion . "🅜")
-           (keypad . "🅚")))
-#+end_src
-
-*** Improve Meow integration with the default Emacs kill-ring and system clipboard
-
-[[https://github.com/meow-edit/meow/issues/543][Clipboard Confusing Defaults and Documentation · Issue #543 · meow-edit/meow · GitHub]]
-
-#+begin_src emacs-lisp
-(setopt meow-use-clipboard t)
-#+end_src
-
-*** Expand upon the default Meow pair-things
-
-#+begin_src emacs-lisp
-(meow-pair! 'angle "a" "<" ">")
-
-(ceamx-meow-bind-thing 'round "(")
-(ceamx-meow-bind-thing 'round ")")
-(ceamx-meow-bind-thing 'curly "{")
-(ceamx-meow-bind-thing 'curly "}")
-#+end_src
-
-**** Define helper functions and macros for pair-things :lib:
-:PROPERTIES:
-:header-args: :tangle lisp/lib-keys.el
-:END:
-
-***** ~meow-pair!~: Register a new meow-thing as a pair
-
-#+begin_src emacs-lisp
-(defmacro meow-pair! (thing char begin end)
-  "Register a new Meow THING as a pair of BEGIN and END, and map it to CHAR.
-This macro simplifies `meow-thing-register' by assuming that the
-INNER and BOUNDS arguments of `meow-thing-register' will be an
-identical pair expression. This macro also handles the additional
-and necessary step of adding the newly-registered THING to
-`meow-char-thing-table' as CHAR.
-
-THING is a symbol for registering the new thing with
-`meow-thing-register'. It may be quoted or unquoted.
-
-BEGIN is a string delimiting the beginning or opening of the pair
-while END is a string delimiting the end or closing of the pair.
-
-The THING will be added to `meow-char-thing-table' as CHAR. CHAR
-may either be a character constant matching `characterp' (e.g.
-`?a' or `97'), or a string which can be converted to a character
-with `string-to-char'. See Info node `(elisp) Basic Char Syntax)'
-and Info node `(elisp) String Conversion' for more info."
-  (declare (indent defun))
-  (cl-assert (char-or-string-p char) t)
-  (cl-assert (stringp begin) t)
-  (cl-assert (stringp end) t)
-  (let* ((sym (ceamx-unquote thing))
-         (char (ceamx-normalize-char char))
-         (open (list begin))
-         (close (list end))
-         (pair `(pair ,open ,close)))
-    (cl-assert (symbolp sym) t)
-    `(progn
-       (meow-thing-register ',sym
-        ',pair
-        ',pair)
-       (ceamx-meow-bind-thing ',sym ,char))))
-#+end_src
-
-***** ~ceamx-meow-bind-thing~: bind an existing meow-thing to a new key
-
-#+begin_src emacs-lisp
-(defun ceamx-meow-bind-thing (thing char)
-  "Add pre-registered THING to `meow-char-thing-table' as CHAR."
-  (defvar meow-char-thing-table '())
-  (let ((thing (ceamx-unquote thing))
-        (char (ceamx-normalize-char char)))
-    (add-to-list 'meow-char-thing-table `(,char . ,thing))))
-#+end_src
-
-***** ~ceamx-meow-unbind-thing~: remove an existing binding for a meow-thing
-
-#+begin_src emacs-lisp
-(defun ceamx-meow-unbind-thing (char)
-  "Remove the character association for character CHAR.
-This function will destructively modify the alist
-`meow-char-thing-table' by removing the association whose key
-matches CHAR.
-
-Note that despite its name, `meow-char-thing-table' is an alist,
-not a character table.
-
-CHAR may be a string or character constant, which will be passed
-as the CHAR argument to `ceamx-normalize-char'."
-  (defvar meow-char-thing-table '())
-  (assoc-delete-all (ceamx-normalize-char char) meow-char-thing-table #'eq))
-#+end_src
-
-*** ~meow-tree-sitter~: ~treesit~-powered motions for Meow :package:
-
-- source :: https://github.com/skissue/meow-tree-sitter
-
-#+begin_src emacs-lisp
-(package! meow-tree-sitter
-  (after! meow
-    (require 'meow-tree-sitter)
-    (meow-tree-sitter-register-defaults))
-
-  (setopt meow-tree-sitter-can-expand t
-          meow-tree-sitter-can-jump-forward t))
-#+end_src
-
-*** Activate Meow
-
-#+begin_src emacs-lisp
-(meow-global-mode 1)
 #+end_src
 
 ** File Footers
@@ -9720,9 +9249,6 @@ Embark will load the library automatically after Consult.
 
 ;; Configuration for terminal emulators running inside Emacs.
 
-;; Not to be confused with configurations for Emacs specific to a TTY
-;; environment, which are handled in `init-env-tty'.
-
 ;;; Code:
 
 (require 'ceamx-keymaps)
@@ -10063,43 +9589,6 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
        (concat ceamx-home-dir "Developer")))
   "The root directory for projects.")
 #+end_src
-
-
-#+begin_src emacs-lisp :tangle lisp/init-project.el :comments no
-;;; init-project.el --- Project support              -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Configuration for project support, primarily with project.el.
-
-;;; Code:
-
-;; TODO: something?
-
-(provide 'init-project)
-;;; init-project.el ends here
-#+end_src
-
-** DISABLED Projectile
-
 
 * Checkers (Flycheck + Flymake) :linter:checkers:
 
@@ -11490,132 +10979,6 @@ keywords are supported:
 (require 'ceamx-lib)
 #+end_src
 
-*** DISABLED LSP-Mode
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-**** Install ~lsp-mode~ and ~lsp-ui~
-
-#+begin_src emacs-lisp
-(package! lsp-mode
-  (setopt lsp-keymap-prefix "C-c l")
-  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
-
-(package! lsp-ui)
-
-(after! popper
-  (add-to-list 'popper-reference-buffers (rx bol "*lsp-" (group (or "help" "install")))))
-#+end_src
-
-**** LSP-Mode settings :formatting:
-
-#+begin_src emacs-lisp
-(setopt
- lsp-enable-folding nil
- lsp-enable-on-type-formatting nil
- lsp-headerline-breadcrumb-enable nil)
-#+end_src
-
-**** Adjust LSP-UI appearance :ui:
-
-#+begin_src emacs-lisp
-(setopt lsp-ui-peek-enable t
-        lsp-ui-doc-max-width 72
-        lsp-ui-doc-max-height 8
-        lsp-ui-doc-delay 0.2
-        ;; Prevent the doc flyout from disappearing on hover.
-        lsp-ui-doc-show-with-mouse nil
-        lsp-ui-doc-position 'at-point
-        ;; Prevent conflict with Flycheck error overlays.
-        lsp-ui-sideline-show-hover nil)
-
-(after! lsp-ui
-  lsp-ui-sideline-actions-icon lsp-ui-sideline-actions-icon-default)
-#+end_src
-
-**** Tell ~lsp-mode~ to respect ~corfu~ and ~orderless~ :capt:
-
-#+begin_src emacs-lisp
-(after! (lsp-mode corfu)
-  (setopt lsp-completion-provider :none)
-
-  (defun +orderless-dispatch-flex-first-h (_pattern index _total)
-    "Dispatch flex completion styles before all others.
-Intended for use as a hook function on `orderless-style-dispatchers'."
-    (and (eq index 0) 'orderless-flex))
-
-  (def-hook! +lsp-mode-setup-completion-h ()
-    'lsp-completion-mode-hook
-    "Use `orderless' completion style with `lsp-mode'."
-    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-          '(orderless))
-    ;; Consider the first word as a flex filter.
-    (add-hook 'orderless-style-dispatchers #'+orderless-dispatch-flex-first-h nil 'local)
-    (setq-local completion-at-point-functions
-                (list (cape-capf-buster #'lsp-completion-at-point)))))
-#+end_src
-
-**** Parse LSP JSON data as bytecode with =lsp-booster= :perf:
-
-- Source :: <https://github.com/blahgeek/emacs-lsp-booster/blob/master/README.md#configure-lsp-mode>
-
-#+begin_src emacs-lisp
-(require 'json)
-
-(after! lsp-mode
-  (def-advice! lsp-booster--json-parse-as-bytecode-a (old-fn &rest args)
-    :around #'json-parse-buffer
-    "Maybe parse JSON as bytecode from \"emacs-lsp-booster\"."
-    (or
-     (when (equal (following-char) ?#)
-       (let ((bytecode (read (current-buffer))))
-         (when (byte-code-function-p bytecode)
-           (funcall bytecode))))
-     (apply old-fn args))))
-#+end_src
-
-***** Wrap LSP server commands with =lsp-booster= :perf:
-
-- Source :: <https://github.com/blahgeek/emacs-lsp-booster/blob/master/README.md#configure-lsp-mode>
-
-#+begin_src emacs-lisp
-(after! lsp-mode
-  (def-advice! lsp-booster--resolve-final-command-a (old-fn cmd &optional test?)
-    :around #'lsp-resolve-final-command
-    "Wrap the LSP server command CMD with a call to \"emacs-lsp-booster\"."
-    (let ((orig-result (funcall old-fn cmd test?)))
-      (if (and (not test?)                             ;; for check lsp-server-present?
-               (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
-               lsp-use-plists
-               (not (functionp 'json-rpc-connection))  ;; native json-rpc
-               (executable-find "emacs-lsp-booster"))
-          (progn
-            (message "Using emacs-lsp-booster for %s!" orig-result)
-            (cons "emacs-lsp-booster" orig-result))
-        orig-result))))
-#+end_src
-
-**** Provide workspace symbols as Consult datasource :completion:
-
-#+begin_src emacs-lisp
-(package! consult-lsp)
-#+end_src
-
-**** Define function to change the priority of a pre-defined LSP client
-
-- source :: <https://github.com/doomemacs/doomemacs/blob/9620bb45ac4cd7b0274c497b2d9d93c4ad9364ee/modules/tools/lsp/autoload/lsp-mode.el#L4-L11>
-
-#+begin_src emacs-lisp :noweb-ref lib-prog
-(defun ceamx-lsp-client-set-priority (client priority)
-  "Change the PRIORITY of an LSP-Mode CLIENT."
-  (require 'lsp-mode)
-  (if-let (client (gethash client lsp-clients))
-      (setf (lsp--client-priority client)
-            priority)
-    (error "No LSP client named %S" client)))
-#+end_src
-
 *** Eglot
 
 #+begin_src emacs-lisp :noweb-ref config-feature-paths
@@ -11823,33 +11186,6 @@ Unless PROGRAM is provided, the program name used in
 #+begin_src emacs-lisp
 (package! yaml-mode)
 #+end_src
-
-**** DISABLED Install and configure ~yaml-pro~ for structural editing
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-
-
-- Note taken on [2024-12-09 Mon 20:01] \\
-  Disabled because it seems to be causing Emacs to crash after a few seconds of
-  idle time on an active YAML buffer.
-#+begin_src emacs-lisp
-(package! yaml-pro
-  (add-hook 'yaml-mode-hook #'yaml-pro-mode)
-  (add-hook 'yaml-ts-mode-hook #'yaml-pro-mode)
-
-  ;; The package does not expose `yaml-pro-ts-mode' until `yaml-pro-mode' is
-  ;; activated.  I consider this less-than-ideal behavior and should probably
-  ;; file a bug report.
-  (when (featurep 'treesit)
-    (add-hook 'yaml-pro-mode-hook (lambda () (yaml-pro-ts-mode)))))
-#+end_src
-
-
-***** TODO Configure repeat map
-
-<https://github.com/zkry/yaml-pro?tab=readme-ov-file#easy-movement-with-repeat-map>
 
 **** Start the LSP server
 
@@ -12364,50 +11700,6 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (keymap-set nix-repl-mode-map ceamx-keys-repl-toggle #'quit-window))
 #+end_src
 
-** Nushell
-
-#+begin_src emacs-lisp :tangle lisp/init-shell-nu.el :comments no
-;;; init-shell-nu.el --- Nushell support             -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Nushell integration and language major-mode.
-
-;; <https://github.com/mrkkrp/nushell-mode>
-
-;;; Code:
-
-;; TODO: move to ~init-lang-misc~
-
-(use-package nushell-mode
-
-  ;; FIXME: :elpaca (nushell-mode :host github :repo "mrkkrp/nushell-mode")
-  )
-
-
-(provide 'init-shell-nu)
-;;; init-shell-nu.el ends here
-#+end_src
-*** TODO Rename file to =init-lang-nushell.el= or include in =init-lang-shell.el=
-
 ** PHP
 :PROPERTIES:
 :header-args: :noweb-ref init-lang-php
@@ -12508,104 +11800,6 @@ Requires:
 (after! (:or php-mode phps-mode php-ts-mode)
   (when (featurep 'dap)
     (require 'dap-php)))
-#+end_src
-
-*** DISABLED Integration with the proprietary Intelephense language server
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-- docs :: <https://github.com/bmewburn/intelephense-docs>
-
-#+begin_src emacs-lisp :noweb-ref config-feature-paths
-(defvar ceamx-php-intelephense-global-storage-dir
-  (file-name-as-directory (concat ceamx-xdg-cache-dir "intelephense")))
-
-(defvar ceamx-eglot-php-iph-storage-dir
-  (file-name-as-directory (concat ceamx-eglot-storage-dir "php-iph")))
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref config-prog
-;; Available options listed in schema: https://github.com/bmewburn/intelephense-docs/blob/master/installation.md#configuration-options
-(defvar ceamx-php-iph-default-stubs
-  ["apache" "bcmath" "bz2" "calendar"
-   "com_dotnet" "Core" "ctype" "curl" "date" "dba" "dom" "enchant"
-   "exif" "fileinfo" "filter" "fpm" "ftp" "gd" "hash" "iconv" "imap" "interbase"
-   "intl" "json" "ldap" "libxml" "mbstring" "mcrypt" "meta" "mssql" "mysqli"
-   "oci8" "odbc" "openssl" "pcntl" "pcre" "PDO" "pdo_ibm" "pdo_mysql"
-   "pdo_pgsql" "pdo_sqlite" "pgsql" "Phar" "posix" "pspell" "readline" "recode"
-   "Reflection" "regex" "session" "shmop" "SimpleXML" "snmp" "soap" "sockets"
-   "sodium" "SPL" "sqlite3" "standard" "superglobals" "sybase" "sysvmsg"
-   "sysvsem" "sysvshm" "tidy" "tokenizer" "wddx" "xml" "xmlreader" "xmlrpc"
-   "xmlwriter" "Zend OPcache" "zip" "zlib"])
-
-(defvar ceamx-php-iph-extra-stubs [])
-
-(defvar ceamx-php-iph-stubs
-  (seq-concatenate 'vector ceamx-php-iph-default-stubs ceamx-php-iph-extra-stubs))
-#+end_src
-
-#+begin_src emacs-lisp
-(dolist (dir (list ceamx-eglot-storage-dir
-                   ceamx-php-intelephense-global-storage-dir
-                   ceamx-eglot-php-iph-storage-dir))
-  (unless (file-directory-p dir)
-    (make-directory dir)))
-#+end_src
-
-#+begin_src emacs-lisp
-;; <https://github.com/bmewburn/intelephense-docs/blob/master/installation.md#configuration-options>
-;; TODO: read from JSON file
-(defvar ceamx-eglot-php-iph-default-settings
-  `(:globalStoragePath ,ceamx-php-intelephense-global-storage-dir
-    :storagePath ,ceamx-eglot-php-iph-storage-dir
-    ;; FIXME: data corruption non-utf-8 when loading from `auth-source-pass'
-    ;;        currently i am defining this in site-config.el as a workaround
-    :licenceKey ,ceamx-php-iph-license-key
-    :intelephense (:completion (:maxItems 100)
-                   :diagnostics (:embeddedLanguages nil)
-                   :files (;; :exclude []
-                           :maxSize ,(* (* 1024 1024) 3))
-                   :format (:enable t
-                            :braces "psr12")
-                   :environment (:includePaths ["vendor"]
-                                 :phpVersion "8.2.0")
-                   :phpdoc (:returnVoid nil)
-                   :stubs ,ceamx-php-iph-stubs
-                   ))
-  "Initial settings for the Intelephense language server.")
-
-(add-to-list 'ceamx-eglot-server-configurations-alist
-             (cons "php-iph" ceamx-eglot-php-iph-default-settings))
-#+end_src
-
-#+begin_src emacs-lisp
-(after! eglot
-  (add-to-list 'eglot-server-programs
-    ;; TODO: add `phps-mode' (which is supported in eglot core btw)
-    ;; TODO: consider contributing documentation fix for `eglot-alternatives' to
-    ;;       indicate that it can accept `:initializationOptions' (see source code)
-    `((php-mode php-ts-mode) . ,(eglot-alternatives
-                                 ;; FIXME: somehow include phpactor here, but
-                                 ;; there's not really an easy way to simply
-                                 ;; append to or otherwise access the existing entry
-                                 (list
-                                  (ceamx-eglot-server-contact "php-iph" "intelephense" "--stdio"))))))
-#+end_src
-
-**** DISABLED LSP Mode integration
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-***** Keep Intelephense storage in its place
-
-E wants to avoid Intelephense but just in case it is still used in some case,
-its cache should stay out of the way.
-
-#+begin_src emacs-lisp
-(setopt lsp-intelephense-storage-path
-  (file-name-as-directory (concat ceamx-lsp-mode-cache-dir "server/intelephense/cache")))
 #+end_src
 
 *** [[https://github.com/emacs-php/phpstan.el][emacs-php/phpstan.el]]: Provide PHPStan checks :linter:package:
@@ -14475,27 +13669,6 @@ pull in all of the existing =*.el= files to =config.org=!
 Providing integrations with LLMs and other simulation machines.
 
 M is not eager to board the train bound for Hype City.
-
-*** DISABLED [[https://github.com/xenodium/chatgpt-shell/blob/main/README.org][xenodium/chatgpt-shell]]
-:PROPERTIES:
-:header-args:emacs-lisp: :noweb-ref nil
-:END:
-
-#+begin_src emacs-lisp :noweb-ref config-feature-paths
-(defconst ceamx-tools-chatgpt-shell-cache-dir
-  (file-name-as-directory (concat ceamx-var-dir "chatgpt-shell")))
-#+end_src
-
-
-#+BEGIN_SRC emacs-lisp
-(package! chatgpt-shell
-  (setopt chatgpt-shell-root-path ceamx-tools-chatgpt-shell-cache-dir))
-
-(after! chatgpt-shell
-    (setopt chatgpt-shell-openai-key
-            (lambda ()
-              (auth-source-pass-get 'secret "openai-key"))))
-#+END_SRC
 
 ** Personal Finance with =hledger=
 :PROPERTIES:

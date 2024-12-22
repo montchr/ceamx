@@ -440,7 +440,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-embark)
 
 ;; Projects / Files
-(require 'init-project)
 (require 'init-vcs)
 (require 'init-files)
 (require 'init-dired)
@@ -489,9 +488,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (require 'init-lang-php)
 (require 'init-lang-shell)
 (require 'init-lang-misc)
-
-;; FIXME: this is lang support, not integration -- rename to `init-lang-nu'
-(require 'init-shell-nu)
 
 ;;;; Miscellaneous
 

@@ -84,11 +84,6 @@
 
 (setopt ibuffer-movement-cycle t)
 
-;; ~mowie~: library to define repeatable "smart" point-moving commands :package:
-
-
-(package! (mowie :host codeberg :repo "mekeor/mowie"))
-
 ;; ~mwim~: Move-Where-I-Mean line positions :package:
 
 ;; + src :: <https://github.com/alezost/mwim.el/blob/master/README.org#usage>

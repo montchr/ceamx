@@ -110,11 +110,6 @@ Emacs version to prevent bytecode incompatibility.")
 Templates, in this sense, refer to the primary focus of packages
 like \"tempo\", \"tempel\", and \"yasnippet\".")
 (defvar ceamx-eglot-storage-dir (file-name-as-directory (concat ceamx-var-dir "eglot")))
-(defvar ceamx-php-intelephense-global-storage-dir
-  (file-name-as-directory (concat ceamx-xdg-cache-dir "intelephense")))
-
-(defvar ceamx-eglot-php-iph-storage-dir
-  (file-name-as-directory (concat ceamx-eglot-storage-dir "php-iph")))
 (defconst ceamx-notes-dir
   (file-name-as-directory (concat ceamx-home-dir "Documents/notes"))
   "Base directory for note storage.")
@@ -144,8 +139,6 @@ like \"tempo\", \"tempel\", and \"yasnippet\".")
 (defconst ceamx-default-capture-file
   (expand-file-name "inbox.org" ceamx-agenda-dir)
   "Absolute path to default inbox file for new G2D waiting to be processed.")
-(defconst ceamx-tools-chatgpt-shell-cache-dir
-  (file-name-as-directory (concat ceamx-var-dir "chatgpt-shell")))
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
 (defconst ceamx-ledger-main-journal-file (file-name-concat ceamx-ledger-dir "main.journal"))
 

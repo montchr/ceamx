@@ -24,13 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(defun ceamx-lsp-client-set-priority (client priority)
-  "Change the PRIORITY of an LSP-Mode CLIENT."
-  (require 'lsp-mode)
-  (if-let (client (gethash client lsp-clients))
-      (setf (lsp--client-priority client)
-            priority)
-    (error "No LSP client named %S" client)))
 (require 'config-prog)
 
 (defun ceamx-eglot-server-default-settings (name)
