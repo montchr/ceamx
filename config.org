@@ -4236,7 +4236,7 @@ Configure some user options dependent on the loaded packages:
 #+end_src
 
 ** Feedback
-*** ~rainbow-mode~: Colorize color names and hexcodes in buffers
+*** ~rainbow-mode~: Colorize color names and hexcodes in buffers :theme:
 
 <https://elpa.gnu.org/packages/rainbow-mode.html>
 
@@ -4276,14 +4276,14 @@ Configure some user options dependent on the loaded packages:
     (add-hook 'next-error-hook (function fn))))
 #+end_src
 
-** Frame/Window Appearance :frame:
-*** Allow restoring deleted frames :history:
+** Frame/Window Appearance :frame:window:
+*** Allow restoring deleted frames
 
 #+begin_src emacs-lisp
 (undelete-frame-mode 1)
 #+end_src
 
-*** Configure frame decorations :graphical:
+*** macOS: Configure frame decorations :graphical:macos:
 
 #+begin_src emacs-lisp
 (unless +sys-mac-p
@@ -4312,40 +4312,26 @@ Configure some user options dependent on the loaded packages:
   (keymap-global-unset "C-z" t))
 #+end_src
 
-*** Add frame borders and window dividers :window:
+*** Provide a more comfortably-spaced Emacs layout density with =spacious-padding= :package:graphical:
 
 #+begin_src emacs-lisp
-(modify-all-frames-parameters
- '((right-divider-width . 20)
-   (internal-border-width . 20)))
+(use-package spacious-padding
+  :if (display-graphic-p)
+  :hook (ceamx-after-init . spacious-padding-mode)
 
-(defun ceamx-ui-theme-update-colors-h ()
-"Set faces based on theme colors."
-  (let ((bg-main (face-background 'default))
-        (fg-main (face-foreground 'default)))
-    (custom-set-faces
-     `(fringe ((t :background ,bg-main)))
-     `(tab-bar-tab
-       ((t :box (:line-width 2
-                 :color ,(face-background 'tab-bar-tab nil 'tab-bar)))))
-     `(tab-bar-tab-inactive
-       ((t :box (:line-width 2
-                 :color ,(face-background 'tab-bar-tab-inactive nil 'tab-bar)))))
-     ;; `(tab-line-tab
-     ;;   ((t :box (:line-width 1
-     ;;             :color ,(face-background 'tab-line-tab nil 'tab-bar)))))
-     ;; `(tab-line-tab-active
-     ;;   ((t :box (:line-width 1
-     ;;             :color ,(face-background 'tab-line-tab-active nil 'tab-bar)))))
-     ;; `(tab-line-tab-inactive
-     ;;   ((t :box (:line-width 1
-     ;;             :color ,(face-background 'tab-line-tab-inactive nil 'tab-bar)))))
-     `(window-divider ((t :background ,bg-main :foreground ,bg-main)))
-     `(window-divider-first-pixel ((t :background ,bg-main :foreground ,bg-main)))
-     `(window-divider-last-pixel ((t :background ,bg-main :foreground ,bg-main))))))
+  :init
+  (setopt spacious-padding-widths '( :internal-border-width 30
+                                     :header-line-width 4
+                                     :mode-line-width 6
+                                     :tab-width 4
+                                     :right-divider-width 30
+                                     :scroll-bar-width 8
+                                     :left-fringe-width 20
+                                     :right-fringe-width 20))
 
-(remove-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
-(add-hook 'ceamx-after-enable-theme-hook #'ceamx-ui-theme-update-colors-h)
+  (setopt spacious-padding-subtle-mode-line
+    `( :mode-line-active default
+       :mode-line-inactive window-divider)))
 #+end_src
 
 ** Menu Bar :menubar:
