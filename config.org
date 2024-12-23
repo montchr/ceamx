@@ -1287,20 +1287,20 @@ See [[*=ceamx-paths= :: common path constants]]
 (setq byte-compile-warnings nil)
 #+end_src
 
-** Inhibit early annoyances
+** Disable the bell
 
 #+begin_src emacs-lisp
-;; No bells.
 (setq ring-bell-function #'ignore)
+#+end_src
 
-;; Allow answering yes/no questions with y/n.
+** Allow answering yes/no questions with y/n
+
+#+begin_src emacs-lisp
 (setq use-short-answers t)              ; affects `yes-or-no-p'
 (setq read-answer-short t)              ; affects `read-answer' (completion)
 #+end_src
 
-** Frames and window-system integration
-
-;; FIXME: seems to behave inconsistently when server is running?
+** Appearance: integrate with desktop environment
 
 #+begin_src emacs-lisp
 ;; Prevent X11 from taking control of visual behavior and appearance.
@@ -1311,11 +1311,41 @@ See [[*=ceamx-paths= :: common path constants]]
 
 ;; Allow resizing the frame to the maximum available space on the desktop.
 (setq frame-resize-pixelwise t)
+#+end_src
 
-;; Remove some unnecessary frame elements by default.
+#+begin_src emacs-lisp
+(defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
+
+(defun ceamx-ui-gsettings-theme ()
+  "Get the currently-active GNOME/GTK color scheme."
+  (shell-command-to-string (format "gsettings get %s color-scheme"
+                         ceamx-ui-gsettings-ui-namespace)))
+
+(defun ceamx-ui-gsettings-dark-theme-p ()
+  "Whether GNOME/GTK are using a theme with a dark color scheme."
+  (string-match-p "dark" (ceamx-ui-gsettings-theme)))
+
+(defun ceamx-ui-desktop-dark-theme-p ()
+  "Predicate whether a desktop environment is displaying a dark appearance."
+  (or (ceamx-ui-gsettings-dark-theme-p)))
+
+(defun ceamx-ui-re-enable-theme-in-frame (_frame)
+  "Re-enable active theme, if any, upon FRAME creation.
+Add this to `after-make-frame-functions' so that new frames do
+not retain the generic background set by the function
+`ceamx-prevent-initial-light-flash'."
+  (when-let* ((theme (car custom-enabled-themes)))
+    (enable-theme theme)))
+#+end_src
+
+** Appearance: hide some unwanted components
+
+#+begin_src emacs-lisp
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
+#+end_src
 
+#+begin_src emacs-lisp
 ;; `tooltip-mode' is broken for me in pgtk -- might be an Emacs bug, causes
 ;; constant errors when moving mouse over modeline.
 ;;
@@ -1325,7 +1355,21 @@ See [[*=ceamx-paths= :: common path constants]]
 (tooltip-mode -1)
 #+end_src
 
-*** Rename the default/initial frame
+** Appearance: avoid flash of light in a dark environment
+
+- source :: <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
+
+
+#+begin_src emacs-lisp
+(defun ceamx-prevent-initial-light-flash ()
+  "Avoid the bright flash of light during startup in dark environments."
+  (when (ceamx-ui-desktop-dark-theme-p)
+    (set-face-attribute 'default nil :background "#000000" :foreground "#ffffff")
+    (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
+    (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)))
+#+end_src
+
+** Rename the default/initial frame
 
 #+begin_src emacs-lisp
 (defvar ceamx-default-frame-name "home — [ceamx]"
@@ -1342,7 +1386,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 #+end_src
 
-** Quietize startup
+** Display the scratch buffer as initial buffer
 
 #+begin_src emacs-lisp
 (setq inhibit-startup-screen t)
@@ -3127,28 +3171,8 @@ secrets might be stored:
 
 * Appearance :: =ui= :ui:
 :PROPERTIES:
-:header-args: :tangle lisp/init-ui.el
+:header-args: :tangle init.el
 :END:
-
-** =lisp/config-ui.el=
-:PROPERTIES:
-:header-args: :tangle lisp/config-ui.el
-:END:
-
-#+begin_src emacs-lisp :tangle lisp/config-ui.el :comments no :noweb yes
-;;; config-ui.el --- User options for Emacs appearance  -*- lexical-binding: t;  -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-#+end_src
 
 ** =lisp/lib-ui.el=
 :PROPERTIES:
@@ -3171,57 +3195,8 @@ secrets might be stored:
 ;;; Code:
 #+end_src
 
-** =lisp/init-ui.el=
-:PROPERTIES:
-:header-args: :tangle lisp/init-ui.el
-:END:
 
-#+name: init-ui-file
-#+begin_src emacs-lisp :tangle lisp/init-ui.el :comments no :noweb yes
-;;; init-ui.el --- General user interface customizations  -*- lexical-binding: t;  -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-(require 'ceamx-paths)
-(require 'config-env)
-
-(require 'ceamx-lib)
-(require 'lib-ui)
-#+end_src
-
-** =lisp/init-ui-graphical.el=
-:PROPERTIES:
-:header-args: :tangle lisp/init-ui-graphical.el
-:END:
-
-#+name: init-ui-graphical-file
-#+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el :comments no :noweb yes
-;;; init-ui-graphical.el --- Appearance customizations for graphical environments  -*- lexical-binding: t;  -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-#+end_src
-
-
-
-** Cursor
+** Configure cursor appearance :graphical:
 
 #+begin_src emacs-lisp
 (use-package cursory
@@ -3263,7 +3238,8 @@ secrets might be stored:
   (cursory-mode 1))
 #+end_src
 
-** Customize the Customization buffer and menu interface
+
+** Customize the Customization buffers and menus
 
 #+begin_src emacs-lisp
 (setopt custom-theme-allow-multiple-selections nil)
@@ -3324,9 +3300,17 @@ applying margin, padding, borders.
 #+end_src
 
 ** Theme :theme:
-*** Configure the preferred theme family :config:
 
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
+*** Load the library functions
+
+#+begin_src emacs-lisp
+(require 'lib-ui)
+#+end_src
+
+
+*** Define customizable options relating to themes
+
+#+begin_src emacs-lisp
 (defcustom ceamx-ui-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
@@ -3341,11 +3325,7 @@ theme)."
           (const :tag "The `modus-themes' module" modus)
           (const :tag "The `standard-themes' module" standard)
           (const :tag "Do not load a theme module" nil)))
-#+end_src
 
-*** Configure the preferred light and dark themes :config:
-
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defcustom ceamx-ui-theme-light 'modus-operandi-tinted
   "The default light theme."
   :group 'ceamx
@@ -3355,13 +3335,7 @@ theme)."
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
-#+end_src
 
-*** TODO Define groupings of themes into dark/light or other qualities :config:
-
-Needs expansion for more than just the Modus Themes.
-
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defvar ceamx-ui-dark-themes-list nil)
 
 (defvar ceamx-ui-light-themes-list nil)
@@ -3384,25 +3358,6 @@ Needs expansion for more than just the Modus Themes.
 
 #+begin_src emacs-lisp
 (setopt custom-safe-themes t)
-#+end_src
-
-*** Ensure themes are applied in new frames to prevent flashing
-
-- Source :: <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
-
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
-;; via prot-emacs
-(defun ceamx-ui-re-enable-theme-in-frame (_frame)
-  "Re-enable active theme, if any, upon FRAME creation.
-Add this to `after-make-frame-functions' so that new frames do
-not retain the generic background set by the function
-`ceamx-ui-theme-no-bright-flash'."
-  (when-let ((theme (car custom-enabled-themes)))
-    (enable-theme theme)))
-#+end_src
-
-#+begin_src emacs-lisp
-(add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)
 #+end_src
 
 *** Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
@@ -3508,28 +3463,9 @@ not retain the generic background set by the function
           ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil))
 #+end_src
-*** DISABLED =unspecified-theme=: A theme-less theme for a uniform appearance :package:
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-#+begin_src emacs-lisp
-(package! (unspecified-theme :host codeberg :repo "mekeor/unspecified-theme"))
-#+end_src
-
-*** DISABLED =evenok= :package:
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-#+begin_src emacs-lisp
-(package! (evenok :host codeberg :repo "mekeor/evenok"))
-(elpaca-process-queues)
-#+end_src
-
 *** Theme Phasing Schedule
 
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
+#+begin_src emacs-lisp
 (defcustom ceamx-ui-theme-circadian-interval 'solar
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
@@ -3551,8 +3487,6 @@ unconditionally use `ceamx-ui-theme-default-light' and
 
 #+begin_src emacs-lisp
 (require 'cal-dst)
-(require 'config-ui)
-(require 'ceamx-lib)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3598,9 +3532,9 @@ well as Prot's modus-themes and ef-themes.
 #+end_quote
 
 
-***** Define darkness and lightness and apply these classifications to circadian structures :config:
+***** Define darkness and lightness and apply these classifications to circadian structures
 
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
+#+begin_src emacs-lisp
 (defconst ceamx-ui-theme-buffet-dark-periods
   '(:night :twilight :evening))
 
@@ -3696,30 +3630,12 @@ must be a valid `theme-buffet' period as defined in
 :END:
 
 #+begin_src emacs-lisp
-(require 'config-ui)
 (require 'ceamx-lib)
 #+end_src
 
 **** Integration with the GNOME/GTK/GSettings color scheme
 
-***** TODO Move to environment config
-
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
-(defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
-#+end_src
-
-***** Commands
-
 #+begin_src emacs-lisp
-(defun ceamx-ui-gsettings-theme ()
-  "Get the currently-active GNOME/GTK color scheme."
-  (shell-command-to-string (format "gsettings get %s color-scheme"
-                         ceamx-ui-gsettings-ui-namespace)))
-
-(defun ceamx-ui-gsettings-dark-theme-p ()
-  "Whether GNOME/GTK are using a theme with a dark color scheme."
-  (string-match-p "dark" (ceamx-ui-gsettings-theme)))
-
 (defun ceamx-ui/gsettings-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
   ;; FIXME: prompt with completion
@@ -3755,18 +3671,6 @@ POLARITY is a string matching either \"light\" or \"dark\"."
   (shell-command
    (format "kitty @set-colors -a -c $KITTY_CONFIG_DIRECTORY/theme-%s.conf"
            polarity)))
-#+end_src
-
-**** Generalized commands for desktop environment integration
-
-Taking all supported environments into account:
-
-+ [[*Integration with the GNOME/GTK/GSettings color scheme]]
-
-#+begin_src emacs-lisp
-(defun ceamx-ui-desktop-dark-theme-p ()
-  "Predicate whether a desktop environment is displaying a dark appearance."
-  (or (ceamx-ui-gsettings-dark-theme-p)))
 #+end_src
 
 **** ~ceamx-ui-load-theme~: function to cleanly load a theme
@@ -4014,21 +3918,10 @@ stable enough so far.
 #+end_src
 
 ** Typography :font:
-:PROPERTIES:
-:header-args: :tangle lisp/init-ui-graphical.el
-:END:
+
+*** Define a custom setting to adjust font height multiplier
 
 #+begin_src emacs-lisp
-(require 'ceamx-paths)
-(require 'config-env)
-
-(require 'ceamx-lib)
-(require 'lib-ui)
-#+end_src
-
-*** Define a custom setting to adjust font height multiplier :config:
-
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
 (defcustom ceamx-font-height-multiplier 1.0
   "Multiplier for display font size.
 Intended for use as a per-system (or, ideally, per-display)
@@ -4053,9 +3946,12 @@ TIP: You can test out alterations quickly with, for example:
      (internal-set-lisp-face-attribute 'default :weight 'semilight)
 
 #+begin_src emacs-lisp
-(package! fontaine
-  (require 'fontaine)
+(use-package fontaine
+  :ensure (:wait t)
+  :demand t
+  :if (display-graphic-p)
 
+  :init
   (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
 
   ;; For some reason I do not yet understand, according to some hearsay, font
@@ -4165,15 +4061,10 @@ TIP: You can test out alterations quickly with, for example:
 
               :line-spacing 1)))
 
+  :config
   ;; Persist latest preset across sessions.
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
-#+end_src
-
-*** Elpaca-Wait № 5: after baseline font settings :wait:
-
-#+begin_src emacs-lisp
-(elpaca-wait)
 #+end_src
 
 *** ~ligature.el~: improved ligature support :package:
@@ -4184,18 +4075,20 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
 <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
 
 #+begin_src emacs-lisp
-(package! ligature
-  (require 'ligature)
+(use-package ligature
+  :ensure t
+  :demand t
+  :if (display-graphic-p)
+  :after fontaine
 
-  ;; Enable all Iosevka ligatures in programming modes
+  :config
+  ;; Enable all Iosevka ligatures in programming modes.
   ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
   (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
                                        "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
                                        "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
                                        ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
 
-  ;; Enables ligature checks globally in all buffers. You can also do it
-  ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 #+end_src
 
@@ -4238,7 +4131,7 @@ A better implementation of ligature support than the builtin ~prettify-symbols-m
 
 ** Modeline :modeline:
 
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
+#+begin_src emacs-lisp
 (defcustom ceamx-modeline-provider nil
   "Modeline provider to load.
 Valid values are the symbols `doom', `nano', and `telephone'
@@ -4417,7 +4310,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 
 *** Measurement constants
 
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 (defconst ceamx-inch-as-mm 25.4
   "One inch in millimeters.")
 
@@ -4427,7 +4320,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 
 *** Function to get geometry attributes for the default display monitor
 
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 (defun ceamx-default-monitor-geometry ()
   "Return geometry for the first monitor in `display-monitor-attributes-list'."
   (let* ((first-monitor (car (display-monitor-attributes-list))))
@@ -4436,7 +4329,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
 
 *** Function to get the pixel pitch for a frame
 
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 ;; via <https://www.reddit.com/r/emacs/comments/7hzxb8/comment/dqywyqc/>
 (defun ceamx-pixel-pitch (&optional frame)
   "Return the pixel pitch for FRAME in millimeters.
@@ -4451,7 +4344,7 @@ center of its adjacent pixel."
 
 *** Function to calculate font height scaling
 
-#+begin_src emacs-lisp :tangle lisp/config-ui.el
+#+begin_src emacs-lisp :tangle lisp/lib-ui.el
 (defun ceamx-font-height (number &optional multiplier)
   "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
 NUMBER should be a whole number. MULTIPLIER should be a float.
@@ -4467,24 +4360,9 @@ will be used as default."
 :VISIBILITY: folded
 :END:
 
-#+begin_src emacs-lisp :tangle lisp/config-ui.el :comments no
-(provide 'config-ui)
-;;; config-ui.el ends here
-#+end_src
-
 #+begin_src emacs-lisp :tangle lisp/lib-ui.el :comments no
 (provide 'lib-ui)
 ;;; lib-ui.el ends here
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/init-ui.el :comments no
-(provide 'init-ui)
-;;; init-ui.el ends here
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/init-ui-graphical.el :comments no
-(provide 'init-ui-graphical)
-;;; init-ui-graphical.el ends here
 #+end_src
 
 
@@ -7705,7 +7583,6 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 ** Requirements
 
 #+begin_src emacs-lisp
-(require 'config-env)
 (require 'ceamx-lib)
 (require 'lib-keys)
 #+end_src
@@ -11026,8 +10903,6 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 ;;; Requirements
 
-(require 'config-env)
-
 (require 'ceamx-lib)
 
 ;;; Install ~markdown-mode~
@@ -13515,21 +13390,6 @@ Return the new `zone' timer."
 :PROPERTIES:
 :header-args: :tangle init.el
 :END:
-
-
-#+begin_src emacs-lisp
-;;;; Displays + Appearance
-#+end_src
-
-#+begin_src emacs-lisp
-;; Load configuration settings for conditional loading.
-(require 'config-ui)
-
-(require 'init-ui)
-
-(when (display-graphic-p)
-  (require 'init-ui-graphical))
-#+end_src
 
 #+begin_src emacs-lisp
 ;;;; Dashboard

@@ -131,19 +131,18 @@
 ;; packages, but there's nothing we can do about those.
 (setq byte-compile-warnings nil)
 
-;; Inhibit early annoyances
+;; Disable the bell
 
 
-;; No bells.
 (setq ring-bell-function #'ignore)
 
-;; Allow answering yes/no questions with y/n.
+;; Allow answering yes/no questions with y/n
+
+
 (setq use-short-answers t)              ; affects `yes-or-no-p'
 (setq read-answer-short t)              ; affects `read-answer' (completion)
 
-;; Frames and window-system integration
-
-;; ;; FIXME: seems to behave inconsistently when server is running?
+;; Appearance: integrate with desktop environment
 
 
 ;; Prevent X11 from taking control of visual behavior and appearance.
@@ -155,7 +154,32 @@
 ;; Allow resizing the frame to the maximum available space on the desktop.
 (setq frame-resize-pixelwise t)
 
-;; Remove some unnecessary frame elements by default.
+(defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
+
+(defun ceamx-ui-gsettings-theme ()
+  "Get the currently-active GNOME/GTK color scheme."
+  (shell-command-to-string (format "gsettings get %s color-scheme"
+                         ceamx-ui-gsettings-ui-namespace)))
+
+(defun ceamx-ui-gsettings-dark-theme-p ()
+  "Whether GNOME/GTK are using a theme with a dark color scheme."
+  (string-match-p "dark" (ceamx-ui-gsettings-theme)))
+
+(defun ceamx-ui-desktop-dark-theme-p ()
+  "Predicate whether a desktop environment is displaying a dark appearance."
+  (or (ceamx-ui-gsettings-dark-theme-p)))
+
+(defun ceamx-ui-re-enable-theme-in-frame (_frame)
+  "Re-enable active theme, if any, upon FRAME creation.
+Add this to `after-make-frame-functions' so that new frames do
+not retain the generic background set by the function
+`ceamx-prevent-initial-light-flash'."
+  (when-let* ((theme (car custom-enabled-themes)))
+    (enable-theme theme)))
+
+;; Appearance: hide some unwanted components
+
+
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 
@@ -166,6 +190,19 @@
 ;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
 ;; normally...  maybe needs to happen later in init?
 (tooltip-mode -1)
+
+;; Appearance: avoid flash of light in a dark environment
+
+;; - source :: <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
+
+
+
+(defun ceamx-prevent-initial-light-flash ()
+  "Avoid the bright flash of light during startup in dark environments."
+  (when (ceamx-ui-desktop-dark-theme-p)
+    (set-face-attribute 'default nil :background "#000000" :foreground "#ffffff")
+    (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
+    (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)))
 
 ;; Rename the default/initial frame
 
@@ -183,7 +220,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 
-;; Quietize startup
+;; Display the scratch buffer as initial buffer
 
 
 (setq inhibit-startup-screen t)

@@ -24,20 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Ensure themes are applied in new frames to prevent flashing
-
-;; - Source :: <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
-
-
-;; via prot-emacs
-(defun ceamx-ui-re-enable-theme-in-frame (_frame)
-  "Re-enable active theme, if any, upon FRAME creation.
-Add this to `after-make-frame-functions' so that new frames do
-not retain the generic background set by the function
-`ceamx-ui-theme-no-bright-flash'."
-  (when-let ((theme (car custom-enabled-themes)))
-    (enable-theme theme)))
-
 ;; Function to load a random theme from the specified periods :lib:
 
 
@@ -57,20 +43,10 @@ must be a valid `theme-buffet' period as defined in
 ;; :END:
 
 
-(require 'config-ui)
 (require 'ceamx-lib)
 
-;; Commands
+;; Integration with the GNOME/GTK/GSettings color scheme
 
-
-(defun ceamx-ui-gsettings-theme ()
-  "Get the currently-active GNOME/GTK color scheme."
-  (shell-command-to-string (format "gsettings get %s color-scheme"
-                         ceamx-ui-gsettings-ui-namespace)))
-
-(defun ceamx-ui-gsettings-dark-theme-p ()
-  "Whether GNOME/GTK are using a theme with a dark color scheme."
-  (string-match-p "dark" (ceamx-ui-gsettings-theme)))
 
 (defun ceamx-ui/gsettings-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
@@ -106,17 +82,6 @@ POLARITY is a string matching either \"light\" or \"dark\"."
   (shell-command
    (format "kitty @set-colors -a -c $KITTY_CONFIG_DIRECTORY/theme-%s.conf"
            polarity)))
-
-;; Generalized commands for desktop environment integration
-
-;; Taking all supported environments into account:
-
-;; + [[*Integration with the GNOME/GTK/GSettings color scheme]]
-
-
-(defun ceamx-ui-desktop-dark-theme-p ()
-  "Predicate whether a desktop environment is displaying a dark appearance."
-  (or (ceamx-ui-gsettings-dark-theme-p)))
 
 ;; ~ceamx-ui-load-theme~: function to cleanly load a theme
 
@@ -167,6 +132,48 @@ POLARITY is a string matching either \"light\" or \"dark\"."
   (ceamx-ui/gsettings-dark-theme)
   ;;(ceamx-ui-kitty-set-theme "dark")
   (ceamx-ui/load-dark-theme))
+
+;; Measurement constants
+
+
+(defconst ceamx-inch-as-mm 25.4
+  "One inch in millimeters.")
+
+(defconst ceamx-pt-as-mm 0.353
+  "One typographic point in millimeters.")
+
+;; Function to get geometry attributes for the default display monitor
+
+
+(defun ceamx-default-monitor-geometry ()
+  "Return geometry for the first monitor in `display-monitor-attributes-list'."
+  (let* ((first-monitor (car (display-monitor-attributes-list))))
+    (alist-get 'geometry first-monitor)))
+
+;; Function to get the pixel pitch for a frame
+
+
+;; via <https://www.reddit.com/r/emacs/comments/7hzxb8/comment/dqywyqc/>
+(defun ceamx-pixel-pitch (&optional frame)
+  "Return the pixel pitch for FRAME in millimeters.
+When FRAME is nil, the current frame will be used as default.
+
+Pixel pitch is the distance from the center of a pixel to the
+center of its adjacent pixel."
+  (let ((monitor-attrs (frame-monitor-attributes frame)))
+    (/ (float (nth 1 (assoc 'mm-size monitor-attrs)))
+       (nth 3 (assoc 'geometry monitor-attrs)))))
+
+;; Function to calculate font height scaling
+
+
+(defun ceamx-font-height (number &optional multiplier)
+  "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
+NUMBER should be a whole number. MULTIPLIER should be a float.
+
+If MULTIPLIER is nil, the value of `ceamx-font-height-multiplier'
+will be used as default."
+  (truncate (* number (or multiplier ceamx-font-height-multiplier))))
 
 (provide 'lib-ui)
 ;;; lib-ui.el ends here

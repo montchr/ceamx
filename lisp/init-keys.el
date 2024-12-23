@@ -27,7 +27,6 @@
 ;; Requirements
 
 
-(require 'config-env)
 (require 'ceamx-lib)
 (require 'lib-keys)
 

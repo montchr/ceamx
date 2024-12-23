@@ -605,22 +605,780 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
             user host port)))
       (error "No auth entry found for %s@%s:%s" user host port))))
 
+;; Configure cursor appearance :graphical:
+
+
+(use-package cursory
+  :ensure t
+  :demand t
+  :if (display-graphic-p)
+
+  :preface
+  (setopt cursory-latest-state-file (expand-file-name "cursory-latest-state.eld" ceamx-var-dir))
+
+  :init
+  (keymap-set ceamx-session-map "a c" #'cursory-set-preset)
+
+  :config
+  (setopt cursory-presets
+          '((box
+             :blink-cursor-interval 0.8)
+            (box-no-blink
+             :blink-cursor-mode -1)
+            (bar
+             :cursor-type (bar . 2)
+             :blink-cursor-interval 0.8)
+            (bar-no-other-window
+             :inherit bar
+             :cursor-in-non-selected-windows nil)
+            (bar-no-blink
+             :cursor-type (bar . 2)
+             :blink-cursor-mode -1)
+            (t
+             :cursor-type box
+             :cursor-in-non-selected-windows hollow
+             :blink-cursor-mode 1
+             :blink-cursor-blinks 10
+             :blink-cursor-interval 0.2
+             :blink-cursor-delay 0.2)))
+
+  (cursory-set-preset (or (cursory-restore-latest-preset) 'box))
+
+  (cursory-mode 1))
+
+;; Customize the Customization buffers and menus
+
+
+(setopt custom-theme-allow-multiple-selections nil)
+
+(setopt custom-unlispify-menu-entries nil)
+(setopt custom-unlispify-tag-names nil)
+(setopt custom-unlispify-remove-prefixes nil)
+
+(add-hook 'Custom-mode-hook #'custom-toggle-hide-all-widgets nil t)
+
+;; =grid=: Library for textual data table presentation :package:
+
+;; - Source :: [[https://github.com/ichernyshovvv/grid.el][ichernyshovvv/grid.el]]
+;; - Retrieved :: [2024-06-07 Fri 11:45]
+
+;; #+begin_quote
+;; This library allows you to put text data into boxes and align them horizontally,
+;; applying margin, padding, borders.
+;; #+end_quote
+
+
+(package! (grid :host github :repo "ichernyshovvv/grid.el"))
+
+;; =hydra= :package:hydra:
+
+;; - Documentation :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
+
+
+(package! hydra)
+(package! pretty-hydra)
+
+;; =transient= :package:transient:
+
+
+(package! transient
+  ;; Restore the default location, overriding `no-littering'.  I consider these
+  ;; values configuration to be exposed, not state to be hidden.  See
+  ;; `transient-save-values' and related.
+  (setopt transient-values-file (locate-user-emacs-file "transient/values.el")))
+
+(package! magit-section)
+
+;; Close any ~transient~ menu with the escape key
+
+
+(with-eval-after-load 'transient
+  (keymap-set transient-map "<escape>" #'transient-quit-one))
+
+;; Load the library functions
+
+
+(require 'lib-ui)
+
+;; Define customizable options relating to themes
+
+
+(defcustom ceamx-ui-theme-family 'modus
+  "Set of themes to load.
+Valid values are the symbols `ef', `modus', and `standard', which
+reference the `ef-themes', `modus-themes', and `standard-themes',
+respectively.
+
+A nil value does not load any of the above (use Emacs without a
+theme)."
+  :group 'ceamx
+  :type '(choice :tag "Set of themes to load" :value modus
+          (const :tag "The `ef-themes' module" ef)
+          (const :tag "The `modus-themes' module" modus)
+          (const :tag "The `standard-themes' module" standard)
+          (const :tag "Do not load a theme module" nil)))
+
+(defcustom ceamx-ui-theme-light 'modus-operandi-tinted
+  "The default light theme."
+  :group 'ceamx
+  :type 'symbol)
+
+(defcustom ceamx-ui-theme-dark 'modus-vivendi
+  "The default dark theme."
+  :group 'ceamx
+  :type 'symbol)
+
+(defvar ceamx-ui-dark-themes-list nil)
+
+(defvar ceamx-ui-light-themes-list nil)
+
+(after! modus-themes
+  (appendq! ceamx-ui-dark-themes-list
+            ;; `modus-vivendi' variants
+            (seq-filter
+             (lambda (sym) (string-prefix-p "modus-vivendi" (symbol-name sym)))
+             modus-themes-items))
+
+  (appendq! ceamx-ui-light-themes-list
+            ;; `modus-operandi' variants
+            (seq-filter
+             (lambda (sym) (string-prefix-p "modus-operandi" (symbol-name sym)))
+             modus-themes-items)))
+
+;; Consider all themes "safe"
+
+
+(setopt custom-safe-themes t)
+
+;; Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
+
+;; - Source :: <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+
+
+(defvar ceamx-after-enable-theme-hook nil)
+
+(defun ceamx-after-enable-theme (&rest _args)
+  "Hook to run after enabling theme."
+  (run-hooks 'ceamx-after-enable-theme-hook))
+
+(advice-add 'enable-theme :after #'ceamx-after-enable-theme)
+
+;; Modus Themes :package:
+
+;; - Website :: <https://protesilaos.com/modus-themes/>
+
+
+(package! modus-themes
+  (require 'modus-themes)
+
+  (setopt modus-themes-italic-constructs t)
+  (setopt modus-themes-bold-constructs nil)
+  (setopt modus-themes-mixed-fonts t)
+  (setopt modus-themes-variable-pitch-ui nil)
+  (setopt modus-themes-disable-other-themes t)
+  (setopt modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi))
+
+  (setopt modus-themes-headings
+          '((agenda-structure . (variable-pitch light 2.2))
+            (agenda-date . (variable-pitch regular 1.3))
+            (t . (regular 1.0))))
+
+  (let ((overrides '((cursor blue)
+
+                     ;; Syntax
+                     (builtin magenta)
+                     (comment red-faint)
+                     (constant magenta-cooler)
+                     (docstring magenta-faint)
+                     (docmarkup green-faint)
+                     (fnname magenta-warmer)
+                     (keybind green-cooler)
+                     (keyword cyan)
+                     (preprocessor cyan-cooler)
+                     (string red-cooler)
+                     (type magenta-cooler)
+                     (variable blue-warmer)
+                     (rx-construct magenta-warmer)
+                     (rx-backslash blue-cooler)
+
+                     ;; Buttons
+                     (bg-button-active bg-main)
+                     (fg-button-active fg-main)
+                     (bg-button-inactive bg-inactive)
+                     (fg-button-inactive "gray50")
+
+                     ;; Mode-line
+                     (bg-mode-line-active bg-lavender)
+                     (fg-mode-line-active fg-main)
+                     (border-mode-line-active bg-lavender)
+                     (border-mode-line-inactive unspecified)
+
+                     ;; Fringe
+                     (fringe unspecified)
+
+                     ;; Prompts
+                     ;; (fg-prompt fg-main)
+                     ;; not really subtle! too loud.
+                     ;; (bg-prompt bg-yellow-subtle)
+
+                     ;; Pair-matching (parens)
+                     (bg-paren-match unspecified)
+                     (fg-paren-match magenta-intense)
+                     (underline-paren-match magenta-intense)
+
+                     ;; Link styles
+                     ;; (underline-link border)
+                     ;; (underline-link-visited border)
+                     )))
+    (setopt modus-operandi-palette-overrides overrides
+            modus-operandi-tinted-palette-overrides overrides
+            modus-vivendi-palette-overrides overrides
+            modus-vivendi-tinted-palette-overrides overrides)))
+
+;; Ef-Themes :package:
+
+;; - Website :: <https://protesilaos.com/emacs/ef-themes>
+
+
+(defvar ceamx-font-headings-style-alist)
+
+(package! ef-themes
+  (require 'ef-themes)
+
+  (setopt ef-themes-to-toggle '(ef-night ef-frost)
+          ef-themes-mixed-fonts t
+          ef-themes-variable-pitch-ui nil))
+
+;; Theme Phasing Schedule
+
+
+(defcustom ceamx-ui-theme-circadian-interval 'solar
+  "The circadian theme switching interval.
+Value may be `period', `solar', or nil, corresponding
+respectively to period-based switching with `theme-buffet' or
+sunrise/sunset toggling from the combination of the `solar'
+library and the `circadian' package.
+
+A nil value means to disable automatic theme switching.
+Theme-switching commands `ceamx/light' and `ceamx/dark' will
+unconditionally use `ceamx-ui-theme-default-light' and
+`ceamx-ui-theme-default-dark', respectively."
+  :group 'ceamx
+  :type '(choice :tag "Circadian theme switching interval" :value nil
+          (const :tag "Time periods via `theme-buffet'" :value buffet)
+          (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
+
+;; Set approximate stomping coordinates for hyper-astronomic relativity calculations
+
+
+(require 'cal-dst)
+
+(setopt calendar-latitude 39.968)
+(setopt calendar-longitude -75.133)
+
+;; =circadian=: theme phasing based on sunrise/sunset time :package:
+
+
+(package! circadian
+  (when (eq 'solar ceamx-ui-theme-circadian-interval)
+    (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
+                               (:sunset . ,ceamx-ui-theme-dark)))
+    (circadian-setup)))
+
+;; FIXME
+;; (after! circadian
+;;   (def-hook! +circadian-after-load-theme-set-system-theme-h (theme)
+;;     'circadian-after-load-theme-hook
+;;     "Set the desktop environment theme based on THEME polarity."
+;;     (cond
+;;      ((memq theme ceamx-ui-dark-themes-list)
+;;       (ceamx-ui/gsettings-dark-theme))
+;;      ((memq theme ceamx-ui-light-themes-list)
+;;       (ceamx-ui/gsettings-light-theme))
+;;      (t nil))))
+
+;; Elpaca-Wait № 4: ensure availability of themes for integration :wait:
+
+
+(elpaca-wait)
+
+;; Load a default theme
+
+;; Configure some user options dependent on the loaded packages:
+
+
+(setopt ceamx-ui-theme-light 'modus-operandi-tinted)
+(setopt ceamx-ui-theme-dark 'modus-vivendi)
+
+(if (eq 'solar ceamx-ui-theme-circadian-interval)
+    (after! circadian (add-hook 'ceamx-after-init-hook #'circadian-setup))
+  (if (ceamx-ui-desktop-dark-theme-p)
+      (ceamx-ui/load-dark-theme)
+    (ceamx-ui/load-light-theme)))
+
+;; Avy :package:
+
+;; - Website :: <https://github.com/abo-abo/avy>
+;; - Ref :: <https://karthinks.com/software/avy-can-do-anything/>
+
+
+(package! avy
+  ;; Reduce the number of possible candidates.
+  ;; Can be overridden with the universal argument.
+  (setopt avy-all-windows nil)
+  ;; Prevent conflicts with themes.
+  (setopt avy-background nil)
+  (setopt avy-style 'at-full)
+  ;; Anything lower feels unusable.
+  (setopt avy-timeout-seconds 0.25)
+
+  (keymap-global-set "M-j" #'avy-goto-char-timer)
+
+  (after! lispy
+    (defvar lispy-mode-map)
+    (declare-function lispy-join "lispy")
+    ;; Prevent conflict with newly-added M-j binding.
+    (keymap-set lispy-mode-map "M-J" #'lispy-join)))
+
+;; ~rainbow-mode~: Colorize color names and hexcodes in buffers :theme:
+
+;; <https://elpa.gnu.org/packages/rainbow-mode.html>
+
+
+(package! rainbow-mode)
+
+;; Highlight the current line with ~hl-line-mode~ [builtin]
+
+
+(add-hook 'prog-mode-hook #'hl-line-mode)
+(add-hook 'package-menu-mode-hook #'hl-line-mode)
+
+;; Differentiate between focused and non-focused windows :window:
+
+
+(setopt highlight-nonselected-windows nil)
+
+;; =pulsar=: pulse current line after function invocations :package:animation:
+
+
+(package! pulsar
+  (pulsar-global-mode 1)
+
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line))
+
+(after! pulsar
+  (setopt pulsar-pulse t
+          pulsar-delay 0.055
+          pulsar-iterations 10
+          pulsar-face 'pulsar-magenta
+          pulsar-highlight-face 'pulsar-cyan)
+
+  (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
+    (add-hook 'next-error-hook (function fn))))
+
+;; Allow restoring deleted frames
+
+
+(undelete-frame-mode 1)
+
+;; macOS: Configure frame decorations :graphical:macos:
+
+
+(unless (ceamx-host-macos-p)
+  ;; Hide window decorations.
+  (add-to-list 'default-frame-alist '(undecorated . t)))
+
+;; Handle macOS-specific workarounds :macos:
+
+
+(when (ceamx-host-macos-p)
+  ;; `undecorated-round' is macOS-specific.
+  (add-to-list 'default-frame-alist '(undecorated-round . t))
+
+  ;; GUI menu bar is necessary otherwise Emacs will be treated as a
+  ;; non-application OS window (e.g. no focus capture).
+  ;; <https://github.com/doomemacs/doomemacs/blob/d657be1744a1481dc4646d0b62d5ee1d3e75d1d8/lisp/doom-start.el#L118-L128>
+  (def-hook! ceamx-frame--maybe-restore-gui-menu-bar-h (&optional frame)
+    '(after-make-frame-functions window-setup-hook)
+    "TODO: Provide source for this approach (Doom?), and why it does what it does."
+    (when-let (frame (or frame (selected-frame)))
+      (when (display-graphic-p frame)
+        (set-frame-parameter frame 'menu-bar-lines 1))))
+
+  ;; Stop C-z from minimizing windows.
+  (keymap-global-unset "C-z" t))
+
+;; Provide a more comfortably-spaced Emacs layout density with =spacious-padding= :package:graphical:
+
+
+(use-package spacious-padding
+  :if (display-graphic-p)
+  :hook (ceamx-after-init . spacious-padding-mode)
+
+  :init
+  (setopt spacious-padding-widths '( :internal-border-width 30
+                                     :header-line-width 4
+                                     :mode-line-width 6
+                                     :tab-width 4
+                                     :right-divider-width 30
+                                     :scroll-bar-width 8
+                                     :left-fringe-width 20
+                                     :right-fringe-width 20))
+
+  (setopt spacious-padding-subtle-mode-line
+    `( :mode-line-active default
+       :mode-line-inactive window-divider)))
+
+;; Menu Bar :menubar:
+
+;; Disable the menu bar by default:
+
+
+(menu-bar-mode -1)
+
+
+
+;; But allow toggling it manually:
+
+
+(keymap-set ceamx-toggle-map "M" #'menu-bar-mode)
+
+;; Enable ~tab-bar-mode~ in Emacs 30
+
+;; - ref :: <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
+
+;; ~tab-bar-mode~ is currently broken in Emacs 29 due to upstream bug.  The fix is
+;; present on the =master= branch (Emacs 30), but it will not be backported.
+
+;; Unfortunately, the bug is impossibly distracting.  So I am avoiding
+;; `tab-bar-mode' on Emacs 29.
+
+;; As of <2024-06-06>, I am using the =nix-community/emacs-overlay#emacs-pgtk= package tracking the
+;; Emacs =master= branch.  ~tab-bar-mode~ is that important to me.  Emacs 30 seems
+;; stable enough so far.
+
+
+(unless (version< emacs-version "30")
+  (tab-bar-mode 1))
+
+(keymap-set ceamx-toggle-map "T" #'tab-bar-mode)
+
+;; Configure tab bar appearance and behavior
+
+
+(setopt tab-bar-auto-width t
+        tab-bar-auto-width-max '((80) 10))
+
+;; Define a custom setting to adjust font height multiplier
+
+
+(defcustom ceamx-font-height-multiplier 1.0
+  "Multiplier for display font size.
+Intended for use as a per-system (or, ideally, per-display)
+accommodation for varying pixel densities."
+  :group 'ceamx
+  :type '(float))
+
+;; Text rendering and scaling
+
+
+(setq x-underline-at-descent-line nil)
+
+(setq-default text-scale-remap-header-line t)
+
+;; ~fontaine~: pre-configure font presets :package:
+
+;; <https://protesilaos.com/emacs/fontaine>
+
+;; TIP: You can test out alterations quickly with, for example:
+;;      (internal-set-lisp-face-attribute 'default :weight 'semilight)
+
+
+(use-package fontaine
+  :ensure (:wait t)
+  :demand t
+  :if (display-graphic-p)
+
+  :init
+  (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
+
+  ;; For some reason I do not yet understand, according to some hearsay, font
+  ;; sizes best scale in multiples of 3-point increments. So, each height value
+  ;; is a multiple of 3.
+  (setopt fontaine-presets
+          `( (tiny
+              :bold-weight medium
+              :default-height ,(pcase (system-name)
+                                (_ 78))
+              :default-weight ,(pcase (system-name)
+                                (_ 'semilight)))
+             (small
+              :bold-weight medium
+              :default-height ,(pcase (system-name)
+                                (_ 90))
+              :default-weight ,(pcase (system-name)
+                                (_ 'regular)))
+             (regular)
+             (medium
+              :default-height ,(pcase (system-name)
+                                ("boschic" 124)
+                                ("tuuvok"
+                                 120
+                                 ;; 115
+
+                                 )
+                                (_ 120)))
+             (large
+              :default-height ,(pcase (system-name)
+                                ;; ("tuuvok" 140)
+                                (_ 144))
+              :default-weight semilight
+              :bold-weight semibold)
+             (xlarge
+              :default-height ,(pcase (system-name)
+                                (_ 156))
+              :bold-weight bold)
+             (big-mclarge-huge
+              :default-weight semilight
+              :default-height ,(pcase (system-name)
+                                (_ 180))
+              :bold-weight extrabold)
+             (t
+              :default-family "Iosevka Comfy"
+              :default-weight regular
+              :default-slant normal
+              :default-height ,(pcase (system-name)
+                                ("tuuvok" 102)
+                                (_ 105))
+
+              :fixed-pitch-family "Iosevka Comfy"
+              :fixed-pitch-weight nil
+              :fixed-pitch-slant nil
+              :fixed-pitch-height 1.0
+
+              :fixed-pitch-serif-family nil
+              :fixed-pitch-serif-weight nil
+              :fixed-pitch-serif-slant nil
+              :fixed-pitch-serif-height 1.0
+
+              :variable-pitch-family "Iosevka Comfy Motion"
+              :variable-pitch-weight nil
+              :variable-pitch-slant nil
+              :variable-pitch-height 1.0
+
+              :header-line-family nil
+              :header-line-height 1.0
+              :header-line-slant nil
+              :header-line-weight nil
+
+              :line-number-family nil
+              :line-number-height 1.0
+              :line-number-slant nil
+              :line-number-weight nil
+
+              :mode-line-active-family nil
+              :mode-line-active-weight nil
+              :mode-line-active-slant nil
+              :mode-line-active-height 1.0
+
+              :mode-line-inactive-family nil
+              :mode-line-inactive-weight nil
+              :mode-line-inactive-slant nil
+              :mode-line-inactive-height 1.0
+
+              :tab-bar-family nil
+              :tab-bar-weight nil
+              :tab-bar-slant nil
+              :tab-bar-height 1.0
+
+              :tab-line-family nil
+              :tab-line-weight nil
+              :tab-line-slant nil
+              :tab-line-height 1.0
+
+              :bold-family nil
+              :bold-weight medium
+              ;; :bold-weight semibold
+              :bold-slant nil
+              :bold-height 1.0
+
+              :italic-family nil
+              :italic-weight nil
+              :italic-slant italic
+              :italic-height 1.0
+
+              :line-spacing 1)))
+
+  :config
+  ;; Persist latest preset across sessions.
+  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+  (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
+
+;; ~ligature.el~: improved ligature support :package:
+
+;; <https://github.com/mickeynp/ligature.el>
+
+;; A better implementation of ligature support than the builtin ~prettify-symbols-mode~.
+;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
+
+
+(use-package ligature
+  :ensure t
+  :demand t
+  :if (display-graphic-p)
+  :after fontaine
+
+  :config
+  ;; Enable all Iosevka ligatures in programming modes.
+  ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
+  (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
+                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+
+  (global-ligature-mode t))
+
+;; Provide common dependency: ~nerd-icons~ :package:
+
+
+(package! nerd-icons
+  (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
+  (require 'nerd-icons))
+
+;; Provide common dependency: ~svg-lib~ :package:
+
+
+(package! svg-lib)
+
+;; ~page-break-lines~: Improve appearance of form feed characters :package:
+
+;; - docs :: <https://github.com/purcell/page-break-lines/blob/master/README.md>
+
+
+(package! page-break-lines
+  (global-page-break-lines-mode))
+
+;; Modeline :modeline:
+
+
+(defcustom ceamx-modeline-provider nil
+  "Modeline provider to load.
+Valid values are the symbols `doom', `nano', and `telephone'
+which reference the `doom-modeline', `nano-modeline', and
+`telephone-line' modules respectively.
+
+A nil value will not load any modeline customizations (use Emacs
+with its default modeline)."
+  :group 'ceamx
+  :type '(choice :tag "Modeline to load" :value nil
+          (const :tag "The `doom-modeline' module" doom)
+          (const :tag "The `nano-modeline' module" nano)
+          (const :tag "The `telephone-line' module" telephone)
+          (const :tag "Do not load a modeline module" nil)))
+
+(line-number-mode 1)
+(column-number-mode 1)
+
+(setopt display-time-24hr-format t)
+
+;; Show current command and its binding with ~keycast~
+
+;; - Website :: <https://github.com/tarsius/keycast>
+
+;; Supports display in the mode-line, header-line, tab-bar, and as messages in a
+;; dedicated frame.
+
+;; NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
+;; =telephone-line=.
+
+
+(package! keycast
+  (keymap-set ceamx-toggle-map "k" #'keycast-mode-line-mode))
+
+(after! keycast
+  (dolist (input '(self-insert-command org-self-insert-command))
+    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
+
+  (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
+    (add-to-list 'keycast-substitute-alist `(,event nil))))
+
+;; =olivetti=: "Distraction-free" editing :package:
+
+;; <https://github.com/rnkn/olivetti>
+
+
+(use-package olivetti
+  :ensure t
+  :commands (olivetti-mode)
+  :config
+  (setopt olivetti-body-width 0.7
+    olivetti-minimum-body-width 80
+    olivetti-recall-visual-line-mode-entry-state t))
+
+;; =logos=: a simple focus mode with page breaks or outlines :package:
+
+
+(use-package logos
+  :ensure t
+  :init
+  (define-keymap :keymap (current-global-map)
+    "C-x n n" #'logos-narrow-dwim
+    "C-x ]" #'logos-forward-page-dwim
+    "C-x [" #'logos-backward-page-dwim
+    "M-]" #'logos-forward-page-dwim
+    "M-[" #'logos-backward-page-dwim)
+
+  (keymap-set ceamx-toggle-map "z" #'logos-focus-mode)
+
+  :config
+  (setopt logos-outlines-are-pages t)
+  (setopt logos-outline-regexp-alist
+    `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
+      (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
+      (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
+      (conf-toml-mode . "^\\[")))
+
+  ;; These apply buffer-locally when `logos-focus-mode' is enabled.
+  (setq-default logos-hide-mode-line t)
+  (setq-default logos-hide-header-line t)
+  (setq-default logos-hide-buffer-boundaries t)
+  (setq-default logos-hide-fringe t)
+  (setq-default logos-buffer-read-only nil)
+  (setq-default logos-scroll-lock nil)
+
+  (when (display-graphic-p)
+    (setq-default logos-variable-pitch t))
+
+  (when (fboundp 'olivetti-mode)
+    (setq-default logos-olivetti t))
+
+  (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+
+  (def-hook! ceamx-logos--recenter-top ()
+    '(logos-page-motion-hook)
+    "Place point at the top when changing pages in non-`prog-mode' modes."
+    (unless (derived-mode-p 'prog-mode)
+      ;; NOTE: '0' value will recenter at the absolute top.
+      (recenter 1))))
+
+;; Keybindings :keybinds:
+
+
+(define-keymap :keymap ceamx-session-map
+  "a" (cons "Appearance" (define-prefix-command 'ceamx-session-appearance-prefix-command))
+  "a f" #'fontaine-set-preset
+  "a d" #'ceamx-ui/dark
+  "a l" #'ceamx-ui/light
+  "a o" #'olivetti-mode
+
+  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
+  "f d" #'delete-frame)
+
 ;; =init.el=: Load Features
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el
 ;; :END:
 
-
-
-;;;; Displays + Appearance
-
-;; Load configuration settings for conditional loading.
-(require 'config-ui)
-
-(require 'init-ui)
-
-(when (display-graphic-p)
-  (require 'init-ui-graphical))
 
 ;;;; Dashboard
 
