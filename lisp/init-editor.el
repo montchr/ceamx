@@ -30,7 +30,7 @@
 
 (require 'ceamx-lib)
 (require 'lib-editor)
-(require 'lib-simple)
+(require 'ceamx-simple)
 (dolist (cmd '(downcase-region
                scroll-left
                upcase-region))

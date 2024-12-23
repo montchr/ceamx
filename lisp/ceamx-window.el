@@ -1,4 +1,4 @@
-;;; lib-window.el --- Window management support library  -*- lexical-binding: t;  -*-
+;;; ceamx-window.el --- Window management support library  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2023 Free Software Foundation, Inc.
@@ -8,10 +8,6 @@
 ;;         Vegard Øye <vegard_oye at hotmail.com>
 ;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
 ;;         Protesilaos Stavrou <public@protesilaos.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -31,15 +27,18 @@
 ;;; Commentary:
 ;;; Code:
 
+;;
+;;;; Dependencies
+
 (require 'windmove)
 
-(require 'config-window)
+;;
+;;;; Functions
 
-;; ~display-buffer~ functions
+;;
+;;;;; `display-buffer' functions
 
 ;; <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
-
-
 
 (defun ceamx-window-display-popup-at-bottom (buffer &optional alist)
   "Display popup-buffer BUFFER at the bottom of the screen.
@@ -104,26 +103,9 @@ such alists."
             (unless (cdr (assq 'inhibit-switch-frame alist))
               (window--maybe-raise-frame (window-frame window)))))))))
 
-(defmacro with-safe-side-windows! (&rest body)
-  "Toggle side windows, evaluate BODY, restore side windows.
-Copied from the `evil' macro `evil-save-side-windows'."
-  (declare (indent defun)
-           (debug (&rest form)))
-  (let ((sides (make-symbol "sidesvar")))
-    `(let ((,sides (and (fboundp 'window-toggle-side-windows)
-                    (window-with-parameter 'window-side))))
-      ;; (declare-function window-toggle-side-windows "window")
-      (when ,sides
-       (window-toggle-side-windows))
-      (unwind-protect
-          (progn ,@body)
-        (when ,sides
-         (window-toggle-side-windows))))))
+;;;;; Popups
 
-;; Define a custom predicate for identifying a "popup" buffer
-
-;; - Reference :: <https://github.com/karthink/popper/blob/master/popper.el#L265-L283>
-
+;; <https://github.com/karthink/popper/blob/master/popper.el#L265-L283>
 
 (defun +popper-current-buffer-popup-p (buf)
   "Whether the buffer BUF should be considered a popup.
@@ -154,12 +136,35 @@ Intended as a general hook function."
              (direction . below)
              (body-function . ,#'select-window))))
 
-;; Define commands for window management :lib:
 
-;; - Source :: <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
+;;
+;;;; Macros
+
+(defmacro with-safe-side-windows! (&rest body)
+  "Toggle side windows, evaluate BODY, restore side windows.
+Copied from the `evil' macro `evil-save-side-windows'."
+  (declare (indent defun)
+           (debug (&rest form)))
+  (let ((sides (make-symbol "sidesvar")))
+    `(let ((,sides (and (fboundp 'window-toggle-side-windows)
+                    (window-with-parameter 'window-side))))
+      ;; (declare-function window-toggle-side-windows "window")
+      (when ,sides
+       (window-toggle-side-windows))
+      (unwind-protect
+          (progn ,@body)
+        (when ,sides
+         (window-toggle-side-windows))))))
 
 
-;; FIXME: "display-buffer" is misleading
+;;
+;;;; Commands
+
+;;;;; Window Management
+
+;; <https://github.com/emacs-evil/evil/blob/5995f6f21f662484440ed67a28ce59e365feb9ad/evil-commands.el>
+
+;; FIXME: "display-buffer" name is misleading
 ;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 ;;;###autoload
 (defun ceamx/display-buffer-at-bottom ()
@@ -336,5 +341,5 @@ available, `switchy-window'."
       (call-interactively other-window-command)
       (setq this-command other-window-command))))
 
-(provide 'lib-window)
-;;; lib-window.el ends here
+(provide 'ceamx-window)
+;;; ceamx-window.el ends here

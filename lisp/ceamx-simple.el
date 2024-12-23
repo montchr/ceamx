@@ -1,4 +1,4 @@
-;;; lib-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
+;;; ceamx-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
 ;; Copyright (C) 2020-2023  Protesilaos Stavrou
@@ -31,11 +31,13 @@
 
 ;;; Code:
 
-;;; Requirements
+;;
+;;;; Requirements
 
 (require 'config-common)
 
-;;; Variables
+;;
+;;;; Variables
 
 (defgroup ceamx-simple ()
   "Generic utilities for editing."
@@ -52,6 +54,62 @@ Used by `ceamx/insert-date'."
 Used by `ceamx/insert-date'."
   :type 'string
   :group 'ceamx-simple)
+
+(defvar ceamx-simple-checkers-buffer-names-regexp
+  (rx "*" (or "Flycheck" "Package-Lint")))
+
+(defvar ceamx-occur-grep-modes-list
+  '(occur-mode
+    grep-mode
+    xref--xref-buffer-mode
+    flymake-diagnostics-buffer-mode)
+  "List of major-modes used in occur-type buffers.")
+
+(defvar ceamx-repl-modes-list
+  '(eshell-mode
+    inferior-emacs-lisp-mode            ; ielm
+    shell-mode
+    eat-mode
+    nix-repl-mode)
+  "List of major-modes used in REPL buffers.")
+
+(defvar ceamx-repl-buffer-names-list
+  '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
+    "\\*.*REPL.*\\*"
+    "\\*Inferior .*\\*$"
+    "\\*ielm\\*"
+    "\\*edebug\\*")
+  "List of buffer names used in REPL buffers.")
+
+(defvar ceamx-help-modes-list
+  '(helpful-mode
+    help-mode
+    eldoc-mode)
+  "List of major-modes used in documentation buffers.")
+
+(defvar ceamx-help-buffer-names-list
+  '("^\\*Apropos"
+    "^\\*eldoc\\*")
+  "List of buffer names used in help buffers.")
+
+(defvar ceamx-manual-modes-list '(Man-mode woman-mode)
+  "List of major-modes used in Man-type buffers.")
+
+(defvar ceamx-message-modes-list
+  '(compilation-mode
+    edebug-eval-mode)
+  "List of major-modes used in message buffers.")
+
+
+;;;; Functions
+
+(defun ceamx-simple-buffer-which-mode (&optional buffer-or-name)
+  "Return the major mode associated with a buffer.
+If BUFFER-OR-NAME is nil, return the current buffer's mode."
+  (buffer-local-value 'major-mode
+                      (if buffer-or-name
+                          (get-buffer buffer-or-name)
+                        (current-buffer))))
 
 ;;; Commands
 
@@ -142,5 +200,5 @@ Call the commands `ceamx/escape-url-line' and
       (set-mark (cdr b)))))
 
 
-(provide 'lib-simple)
-;;; lib-simple.el ends here
+(provide 'ceamx-simple)
+;;; ceamx-simple.el ends here
