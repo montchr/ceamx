@@ -34,10 +34,6 @@
 ;; EWW: Keybindings
 
 
-(define-keymap :keymap ceamx-launch-map
-  "b" #'eww
-  "W" #'ceamx/eww-wiki)
-
 (after! eww
   (define-keymap :keymap eww-mode-map
     "," '("scroll down" . scroll-up-command)

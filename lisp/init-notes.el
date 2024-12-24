@@ -108,29 +108,6 @@
   (denote-rename-buffer-mode 1))
 
 
-;; "Also check the commands ~denote-link-after-creating~,
-;; ~denote-link-or-create~.  You may want to bind them to keys as well."
-
-(define-keymap :keymap ceamx-note-map
-  "n" #'denote
-
-  "c" #'denote-region                 ; "contents"
-  "C" #'denote-type
-  "s" #'denote-subdirectory
-  "t" #'denote-template
-  "z" #'denote-signature              ; "zettelkasten"
-
-  "i" #'denote-link                   ; "insert link"
-  "I" #'denote-add-links
-  "b" #'denote-backlinks
-
-  "f" (cons "find..." (define-prefix-command 'ceamx-find-notes-prefix))
-  "f f" #'denote-find-link
-  "f b" #'denote-find-backlink
-
-  "r" #'denote-rename-file
-  "R" #'denote-rename-file-using-front-matter)
-
 (with-eval-after-load 'dired
   (define-keymap :keymap dired-mode-map
     "C-c C-d C-i" #'denote-link-dired-marked-notes

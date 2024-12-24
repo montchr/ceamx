@@ -26,7 +26,6 @@
 
 (require 'ceamx-lib)
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
-(keymap-set ceamx-launch-map "s" #'scratch-buffer)
 (require 'ceamx-lib)
 
 (package! activities

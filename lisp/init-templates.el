@@ -84,7 +84,6 @@ Capf, such that it will be tried first."
   (declare-function yas-hippie-try-expand "yasnippet")
 
   (add-hook 'hippie-expand-try-functions-list #'yas-hippie-try-expand -80))
-(keymap-set ceamx-insert-map "s" #'yas-insert-snippet)
 ;; Note that `yas-maybe-expand' is indeed a variable, not a function.
 (after! yasnippet
   (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand)
@@ -95,8 +94,7 @@ A final newline would be inserted literally into the snippet expansion."
   (setq-local require-final-newline nil))
 
 (add-hook 'snippet-mode-hook #'+yasnippet-snippet-mode-disable-final-newline-h nil t)
-(package! spdx
-  (keymap-set ceamx-insert-map "L" #'spdx-insert-spdx))
+(package! spdx)
 
 (provide 'init-templates)
 ;;; init-templates.el ends here

@@ -29,12 +29,6 @@
 (require 'ceamx-keymaps)
 (require 'ceamx-lib)
 
-(keymap-global-set "C-c o" '("Launch" . ceamx-launch-map))
-(keymap-global-set "C-c t" '("Toggle" . ceamx-toggle-map))
-
-(define-keymap :keymap ceamx-toggle-map
-  "l" #'display-line-numbers-mode
-  "w" '("side windows" . window-toggle-side-windows))
 
 (provide 'init-controls)
 ;;; init-controls.el ends here

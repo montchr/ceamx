@@ -101,12 +101,5 @@ Intended for use as a hook callback on `prog-mode-hook'."
 ;;                                 (emacs-lisp-mode . ielm)
 ;;                                 (nix-mode . nix-repl))))
 
-;;; Keybindings
-
-(keymap-global-set "C-c l" (cons "Code" (define-prefix-command 'ceamx-code-prefix)))
-
-(keymap-global-set "C-c l d" #'xref-find-definitions)
-(keymap-global-set "C-c l j" #'ceamx-prog-dumb-jump-dispatch/body)
-
 (provide 'init-prog)
 ;;; init-prog.el ends here

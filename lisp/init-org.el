@@ -172,7 +172,7 @@ Intended for use as a local hook function on
   "Add a local hook to control `tab-width' on `after-change-major-mode-hook'."
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
 (package! org-web-tools
-  (keymap-set ceamx-insert-map "l" #'org-web-tools-insert-link-for-url))
+  (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
 (package! org-sidebar)
 (package! org-bookmark-heading
   (after! org
@@ -210,78 +210,6 @@ Intended for use as a local hook function on
     (require 'org-rich-yank)
 
     (keymap-set org-mode-map "C-M-y" #'org-rich-yank)))
-(keymap-global-set "C-c c" #'org-capture)
-
-(define-keymap :keymap ceamx-launch-map
-  "a" #'org-agenda
-  "c" #'org-capture)
-(setopt org-return-follows-link t)
-(setopt org-special-ctrl-a/e t)
-;; While nil is the default value, it must be set explicitly to opt-in.
-(setopt org-support-shift-select nil)
-(with-eval-after-load 'org
-  (define-keymap :keymap org-mode-map
-    "C-c <up>" #'org-priority-up
-    "C-c <down>" #'org-priority-down
-
-    ;; "C-c l" #'org-store-link
-
-    ;; Kill subtree or table region.
-    "C-c s k" #'org-cut-special
-    "C-M-S-w" #'org-cut-special
-
-    ;; Swap these around, as I am more likely to adjust subtree than insert an
-    ;; arbitrary date from the calendar.
-    "C-c <" #'org-promote-subtree
-    "C-c C-<" #'org-date-from-calendar
-    "C-c >" #'org-demote-subtree
-    "C-c C->" #'org-goto-calendar
-
-    ;; C-c t :: `ceamx-toggle-map'
-    "C-c t l" #'org-toggle-link-display
-
-    "C-M-<return>" #'org-insert-subheading
-
-    ;; Override the global binding to `narrow-to-region', which is disabled by
-    ;; default.  I have not once (yet) wanted to actually use `narrow-to-regin',
-    ;; but I do often type "C-x n n" in `org-mode', expecting the behavior of
-    ;; `org-narrow-to-subtree'.  That's a waste of a potential DWIM key
-    ;; sequence.d
-    "C-x n n" #'org-narrow-to-subtree
-
-    ;; Mnemonic is the global key to goto definition/references.  Without this,
-    ;; C finds Elph using this unavailingly in src blocks.
-    "M-." #'org-edit-special ; also: C-c '
-
-    ;; Override earlier binding to `consult-outline'.
-    "M-g o" #'consult-org-heading))
-;; TODO: Activate with a dedicated easy-to-access binding...
-;;       Maybe the same binding for other per-major mode navigation maps?
-(defvar-keymap org-mode-navigation-repeat-map
-  :repeat t
-  ;; Double-edged sword; quick, but gets in the way usually.
-  ;; "TAB" #'org-cycle
-  ;; "S-TAB" #'org-cycle-global
-
-  "C-n" #'org-next-visible-heading
-  "C-p" #'org-previous-visible-heading
-  "C-f" #'org-forward-heading-same-level
-  "C-b" #'org-backward-heading-same-level
-  "C-u" #'outline-up-heading
-
-  "n" #'org-next-visible-heading
-  "p" #'org-previous-visible-heading
-  "f" #'org-forward-heading-same-level
-  "b" #'org-backward-heading-same-level
-  "u" #'outline-up-heading
-
-  "H" #'org-promote-subtree
-  "J" #'org-move-subtree-down
-  "K" #'org-move-subtree-up
-  "L" #'org-demote-subtree
-
-  "<" #'org-promote-subtree
-  ">" #'org-demote-subtree)
 
 (provide 'init-org)
 ;;; init-org.el ends here

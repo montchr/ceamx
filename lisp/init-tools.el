@@ -37,14 +37,7 @@
   )
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 (package! mugur)
-(package! uuidgen
-  (define-keymap :keymap ceamx-insert-map
-    "u" #'uuidgen
-    "U" (cons "uuid" (define-prefix-command 'ceamx-insert-uuid-prefix))
-    "U 1" #'uuidgen-1
-    "U 3" #'uuidgen-3
-    "U 4" #'uuidgen-4
-    "U 5" #'uuidgen-5))
+(package! uuidgen)
 (require 'ceamx-paths)
 
 (package! hledger-mode

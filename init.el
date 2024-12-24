@@ -146,21 +146,6 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
-;; Bind some commonly-used package management commands :keybinds:
-
-
-(define-keymap :keymap ceamx-packages-map
-  "f" #'elpaca-fetch-all
-  "m" #'elpaca-merge-all
-  "t" #'elpaca-try)
-
-(keymap-set ceamx-session-map "p" '("Packages" . ceamx-packages-map))
-
-;; TODO Move this global binding somewhere else... but where? :keybinds:
-
-
-(keymap-global-set "C-c q" ceamx-session-map)
-
 ;; Run our custom init and startup hooks on ~elpaca-after-init-hook~
 
 
@@ -623,9 +608,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
   :preface
   (setopt cursory-latest-state-file (expand-file-name "cursory-latest-state.eld" ceamx-var-dir))
 
-  :init
-  (keymap-set ceamx-session-map "a c" #'cursory-set-preset)
-
   :config
   (setopt cursory-presets
           '((box
@@ -935,15 +917,7 @@ unconditionally use `ceamx-ui-theme-default-light' and
   (setopt avy-background nil)
   (setopt avy-style 'at-full)
   ;; Anything lower feels unusable.
-  (setopt avy-timeout-seconds 0.25)
-
-  (keymap-global-set "M-j" #'avy-goto-char-timer)
-
-  (after! lispy
-    (defvar lispy-mode-map)
-    (declare-function lispy-join "lispy")
-    ;; Prevent conflict with newly-added M-j binding.
-    (keymap-set lispy-mode-map "M-J" #'lispy-join)))
+  (setopt avy-timeout-seconds 0.25))
 
 ;; ~rainbow-mode~: Colorize color names and hexcodes in buffers :theme:
 
@@ -1041,13 +1015,6 @@ unconditionally use `ceamx-ui-theme-default-light' and
 
 (menu-bar-mode -1)
 
-
-
-;; But allow toggling it manually:
-
-
-(keymap-set ceamx-toggle-map "M" #'menu-bar-mode)
-
 ;; Enable ~tab-bar-mode~ in Emacs 30
 
 ;; - ref :: <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
@@ -1065,8 +1032,6 @@ unconditionally use `ceamx-ui-theme-default-light' and
 
 (unless (version< emacs-version "30")
   (tab-bar-mode 1))
-
-(keymap-set ceamx-toggle-map "T" #'tab-bar-mode)
 
 ;; Configure tab bar appearance and behavior
 
@@ -1297,9 +1262,6 @@ with its default modeline)."
 ;; =telephone-line=.
 
 
-(package! keycast
-  (keymap-set ceamx-toggle-map "k" #'keycast-mode-line-mode))
-
 (after! keycast
   (dolist (input '(self-insert-command org-self-insert-command))
     (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
@@ -1325,15 +1287,6 @@ with its default modeline)."
 
 (use-package logos
   :ensure t
-  :init
-  (define-keymap :keymap (current-global-map)
-    "C-x n n" #'logos-narrow-dwim
-    "C-x ]" #'logos-forward-page-dwim
-    "C-x [" #'logos-backward-page-dwim
-    "M-]" #'logos-forward-page-dwim
-    "M-[" #'logos-backward-page-dwim)
-
-  (keymap-set ceamx-toggle-map "z" #'logos-focus-mode)
 
   :config
   (setopt logos-outlines-are-pages t)
@@ -1344,18 +1297,15 @@ with its default modeline)."
       (conf-toml-mode . "^\\[")))
 
   ;; These apply buffer-locally when `logos-focus-mode' is enabled.
-  (setq-default logos-hide-mode-line t)
-  (setq-default logos-hide-header-line t)
-  (setq-default logos-hide-buffer-boundaries t)
-  (setq-default logos-hide-fringe t)
-  (setq-default logos-buffer-read-only nil)
-  (setq-default logos-scroll-lock nil)
-
-  (when (display-graphic-p)
-    (setq-default logos-variable-pitch t))
-
-  (when (fboundp 'olivetti-mode)
-    (setq-default logos-olivetti t))
+  (setq-default logos-hide-cursor t
+                logos-hide-mode-line t
+                logos-hide-header-line t
+                logos-hide-buffer-boundaries t
+                logos-hide-fringe t
+                logos-variable-pitch nil
+                logos-buffer-read-only nil
+                logos-scroll-lock nil
+                logos-olivetti t)
 
   (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
 
@@ -1365,19 +1315,6 @@ with its default modeline)."
     (unless (derived-mode-p 'prog-mode)
       ;; NOTE: '0' value will recenter at the absolute top.
       (recenter 1))))
-
-;; Keybindings :keybinds:
-
-
-(define-keymap :keymap ceamx-session-map
-  "a" (cons "Appearance" (define-prefix-command 'ceamx-session-appearance-prefix-command))
-  "a f" #'fontaine-set-preset
-  "a d" #'ceamx-ui/dark
-  "a l" #'ceamx-ui/light
-  "a o" #'olivetti-mode
-
-  "f" (cons "Frame" (define-prefix-command 'ceamx-session-f-prefix))
-  "f d" #'delete-frame)
 
 ;; Window and Buffer Management
 ;; :PROPERTIES:
@@ -1596,8 +1533,7 @@ The buffer will be created if it does not exist."
 ;; <https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
 
 
-(package! dedicated
-  (keymap-global-set "C-c W" #'dedicated-mode))
+(package! dedicated)
 
 ;; =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
 
@@ -1621,10 +1557,7 @@ The buffer will be created if it does not exist."
 ;; =transpose-frame=: Transpose and rotate a frame's windows :package:
 
 
-(keymap-global-set "C-c w" (cons "Window" (define-prefix-command 'ceamx-custom-x-prefix)))
-
-(package! transpose-frame
-  (keymap-global-set "C-c w SPC" #'transpose-frame))
+(package! transpose-frame)
 
 ;; ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
 
@@ -1686,97 +1619,6 @@ The buffer will be created if it does not exist."
     ""
     ("q" "quit" transient-quit-all)]])
 
-;; Bind additional ~window-prefix-map~ keys (~window-prefix-map~) :keybinds:
-
-
-(define-keymap :keymap window-prefix-map
-  "w" #'ace-window
-
-  "d" #'ace-delete-window
-  "p" #'popper-toggle
-  "P" #'popper-toggle-type
-  "u" #'winner-undo
-
-  "h" #'windmove-left
-  "H" #'ceamx/window-move-left
-  "j" #'windmove-down
-  "J" #'ceamx/window-move-down
-  "k" #'windmove-up
-  "K" #'ceamx/window-move-up
-  "l" #'windmove-right
-  "L" #'ceamx/window-move-right
-
-  "=" #'balance-windows
-  "SPC" #'ceamx/swap-or-rotate-windows)
-
-;; Bind additional global keys :keybinds:
-
-
-(define-keymap :keymap (current-global-map)
-  "C-x o" #'ceamx/other-window
-  "C-x O" #'ace-window
-
-  "C-x =" #'balance-windows
-  "C-x +" #'balance-windows-area
-
-  "C-x C-n" #'next-buffer
-  "C-x C-p" #'previous-buffer
-
-  "C-x <up>" #'enlarge-window           ; also: C-x ^
-  "C-x <down>" #'shrink-window
-  "C-x <left>" #'shrink-window-horizontally
-  "C-x <right>" #'enlarge-window-horizontally)
-
-;; Bind repeatable keys for resizing windows (~resize-window-repeat-map~) :keybinds:
-
-
-(define-keymap :keymap resize-window-repeat-map
-  "<up>" #'enlarge-window
-  "<down>" #'shrink-window
-  "<left>" #'shrink-window-horizontally
-  "<right>" #'enlarge-window-horizontally)
-
-;; Bind repeatable keys for window actions (~ceamx-window-repeat-map~) :keybinds:
-
-;; This is very similar to ~window-prefix-map~.  Unfortunately, it does not seem
-;; possible to create a functional ~repeat-map~ inheriting from a parent keymap.  The
-;; commands bound in the parent map are unaffected by the ~defvar-keymap~ =:repeat=
-;; keyword of a child map.
-
-
-(defvar-keymap ceamx-window-repeat-map
-  :repeat t
-
-  "0" #'delete-window
-  "2" #'split-window-below
-  "3" #'split-window-right
-
-  "b" #'consult-buffer
-  "f" #'find-file
-
-  "o" #'ceamx/other-window
-  "P" #'popper-toggle-type
-  "u" #'winner-undo
-
-  "h" #'windmove-left
-  "H" #'ceamx/window-move-left
-  "j" #'windmove-down
-  "J" #'ceamx/window-move-down
-  "k" #'windmove-up
-  "K" #'ceamx/window-move-up
-  "l" #'windmove-right
-  "L" #'ceamx/window-move-right
-
-  "SPC" #'ceamx/swap-or-rotate-windows
-
-  "RET" #'repeat-exit
-  "ESC" #'repeat-exit)
-
-;; Bind ~ceamx-buffer-prefix~ to "C-c b" :keybinds:
-
-
-(keymap-global-set "C-c b" '("Buffer" . ceamx-buffer-prefix))
-
 ;; General
 
 
@@ -1833,9 +1675,7 @@ The buffer will be created if it does not exist."
 ;; + src :: <https://github.com/alezost/mwim.el/blob/master/README.org#usage>
 
 
-(package! mwim
-  (keymap-global-set "C-a" #'mwim-beginning)
-  (keymap-global-set "C-e" #'mwim-end))
+(package! mwim)
 
 ;; Linkify URLs and email addresses with ~goto-address~ [builtin]
 
@@ -1872,8 +1712,7 @@ The buffer will be created if it does not exist."
 ;; <https://github.com/magnars/expand-region.el>
 
 
-(package! expand-region
-  (keymap-global-set "C-=" #'er/expand-region))
+(package! expand-region)
 
 ;; ~lentic~: Create decoupled views of the same content :package:
 
@@ -1883,22 +1722,6 @@ The buffer will be created if it does not exist."
 
 (with-eval-after-load 'lentic
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
-
-;; Keybindings :keybinds:
-
-
-(define-keymap :keymap (current-global-map)
-  "C-c [" #'previous-buffer
-  "C-c ]" #'next-buffer
-  "C-c `" #'mode-line-other-buffer
-
-  "C-x k" #'ceamx/kill-this-buffer      ; orig: `kill-buffer'
-  "C-x K" #'kill-buffer
-  "C-x C-b" #'ibuffer)
-
-(define-keymap :keymap ceamx-buffer-prefix-map
-  "b" '("switch (local)..." . consult-buffer)
-  "k" #'ceamx/kill-this-buffer)
 
 ;; =init.el=: Load Features
 ;; :PROPERTIES:
@@ -2027,12 +1850,270 @@ The buffer will be created if it does not exist."
           ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
           ))
 
-;; The Keybindings of Uncertainty :keybinds:
+;; =init.el=: Keybindings
+;; :PROPERTIES:
+;; :header-args: :tangle init.el
+;; :END:
 
 
-(define-keymap :keymap ceamx-session-map
+(define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
+
+(define-prefix-command 'ceamx-appearance-prefix)
+(define-prefix-command 'ceamx-buffer-prefix)
+(define-prefix-command 'ceamx-code-prefix)
+(define-prefix-command 'ceamx-file-prefix)
+(define-prefix-command 'ceamx-insert-prefix)
+(define-prefix-command 'ceamx-launch-prefix)
+(define-prefix-command 'ceamx-note-prefix)
+(define-prefix-command 'ceamx-package-prefix)
+(define-prefix-command 'ceamx-replace-prefix)
+(define-prefix-command 'ceamx-session-prefix)
+(define-prefix-command 'ceamx-toggle-prefix)
+(define-prefix-command 'ceamx-window-prefix)
+
+;;
+;;;; Command Bindings
+
+;;;;; Prefix: [C-c]
+
+(define-keymap :keymap (current-global-map)
+  "C-c [" #'previous-buffer
+  "C-c ]" #'next-buffer
+  "C-c `" #'mode-line-other-buffer
+
+  "C-c a" #'org-agenda
+  "C-c b" (cons "+[buffer]" #'ceamx-buffer-prefix)
+  "C-c c" #'org-capture
+  "C-c f" (cons "+[file]" #'ceamx-file-prefix)
+  "C-c g" #'magit-dispatch
+  "C-c G" #'magit-file-dispatch
+  "C-c h" #'consult-history
+  "C-c i" (cons "+[insert]" #'ceamx-insert-prefix)
+  "C-c k" #'consult-kmacro
+  "C-c l" (cons "+[code]" #'ceamx-code-prefix)
+  "C-c o" (cons "+[launch]" #'ceamx-launch-prefix)
+  "C-c q" (cons "+[session]" #'ceamx-session-prefix)
+  "C-c t" (cons "+[toggle]" #'ceamx-toggle-prefix)
+  "C-c w" (cons "+[window]" #'ceamx-window-prefix))
+
+;;;;; Prefix: [C-x]
+
+(define-keymap :keymap (current-global-map)
+
+  "C-x k" #'ceamx/kill-this-buffer      ; orig: `kill-buffer'
+  "C-x K" #'kill-buffer
+
+  "C-x n n" #'logos-narrow-dwim
+  "C-x o" #'ace-window
+  ;; "C-x o" #'ceamx/other-window
+  "C-x O" #'ace-window
+
+  "C-x =" #'balance-windows
+  "C-x +" #'balance-windows-area
+  "C-x ]" #'logos-forward-page-dwim
+  "C-x [" #'logos-backward-page-dwim
+  "C-x SPC" #'hydra-rectangle/body
+
+  "C-x C-b" #'ibuffer
+  "C-x C-n" #'next-buffer
+  "C-x C-p" #'previous-buffer
+
+  "C-x M-r" #'rectangle-mark-mode
+
+  "C-x <up>" #'enlarge-window           ; also: C-x ^
+  "C-x <down>" #'shrink-window
+  "C-x <left>" #'shrink-window-horizontally
+  "C-x <right>" #'enlarge-window-horizontally)
+
+;;;;; Modifier: [C-]
+
+(after! mwim
+  (keymap-global-set "C-a" #'mwim-beginning)
+  (keymap-global-set "C-e" #'mwim-end))
+
+(define-keymap :keymap (current-global-map)
+  "C-=" #'er/expand-region
+  "C-<" #'ceamx/escape-url-dwim
+
+)
+
+;;;;; Modifier: [M-]
+
+(define-keymap :keymap (current-global-map)
+  "M-]" #'logos-forward-page-dwim
+  "M-[" #'logos-backward-page-dwim
+
+
+  "M-f" #'forward-word
+  "M-F" #'forward-symbol
+  "M-j" #'avy-goto-char-timer
+  "M-q" #'unfill-toggle
+  "M-Q" #'repunctuate-sentences
+  "M-w" #'easy-kill
+
+  "M-DEL" #'ceamx/backward-kill-word
+  )
+
+(after! (avy lispy)
+  ;; Prevent conflict with newly-added M-j binding.
+  (keymap-set lispy-mode-map "M-J" #'lispy-join))
+
+;;;;; [C-c b] :: Buffer
+
+(define-keymap :keymap ceamx-buffer-prefix
+  "b" #'consult-buffer
+  "k" #'ceamx/kill-this-buffer)
+
+;;;;; [C-c f] :: File
+
+(define-keymap :keymap ceamx-file-prefix
+  ;; TODO
+  ;; "y" #'+yank-this-file-name
+
+  "c" '("copy..." . ceamx/copy-this-file)
+  "d" '("delete" . ceamx/delete-this-file)
+  "f" #'find-file
+  "F" #'find-file-other-window
+  "r" '("rename/move..." . ceamx/move-this-file)
+  "s" #'save-buffer
+  "S" '("save as..." . write-file)
+  "U" #'ceamx/sudo-find-file
+
+  "C-d" '("diff with..." . ceamx/diff-with-file))
+
+;;;;; [C-c i] :: Insert
+
+(define-keymap :keymap ceamx-insert-prefix
+  "d" #'ceamx/insert-date
+  ;; "h" #'i-ching-insert-hexagram
+  "L" #'spdx-insert-spdx
+  "s" #'yas-insert-snippet
+  "u" #'uuidgen
+
+  "U" (cons "uuid" (define-prefix-command 'ceamx-insert-uuid-prefix))
+  "U 1" #'uuidgen-1
+  "U 3" #'uuidgen-3
+  "U 4" #'uuidgen-4
+  "U 5" #'uuidgen-5)
+
+;;;;; [C-c l] :: Code
+
+(define-keymap :keymap ceamx-code-prefix
+  "a" #'eglot-code-actions
+  "d" #'xref-find-definitions
+  "j" #'ceamx-prog-dumb-jump-dispatch/body
+  "o" #'consult-eglot-symbols
+  "r" #'eglot-rename
+  )
+
+;;;;; [C-c n] :: Note
+
+(define-keymap :keymap ceamx-note-prefix
+  "n" #'denote
+
+  "c" #'denote-region                   ; "contents"
+  "C" #'denote-type
+  "s" #'denote-subdirectory
+  "t" #'denote-template
+  "z" #'denote-signature                ; "zettelkasten"
+
+  "i" #'denote-link                     ; "insert link"
+  "I" #'denote-add-links
+  "b" #'denote-backlinks
+
+  "f" (cons "find..." (define-prefix-command 'ceamx-find-notes-prefix))
+  "f f" #'denote-find-link
+  "f b" #'denote-find-backlink
+
+  "r" #'denote-rename-file
+  "R" #'denote-rename-file-using-front-matter)
+
+
+;;;;; [C-c o] :: Launch
+
+(define-keymap :keymap ceamx-launch-prefix
+  "a" #'org-agenda
+  "b" #'eww
+  "c" #'org-capture
+  "f" #'elfeed
+  "s" #'scratch-buffer
+  "t" #'eat
+  "W" #'ceamx/eww-wiki)
+
+;;;;; [C-c q] :: Session
+
+(define-keymap :keymap ceamx-session-prefix
+  "a c" #'cursory-set-preset
+  "a d" #'ceamx-ui/dark
+  "a f" #'fontaine-set-preset
+  "a l" #'ceamx-ui/light
+  "a o" #'olivetti-mode
+
+  "p f" #'elpaca-fetch-all
+  "p m" #'elpaca-merge-all
+  "p t" #'elpaca-try
+
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs)
+
+;;;;; [C-c t] :: Toggle
+
+(define-keymap :keymap ceamx-toggle-prefix
+  "f" #'flycheck-mode
+  "k" #'keycast-mode-line-mode
+  "l" #'display-line-numbers-mode
+  "M" #'menu-bar-mode
+  "T" #'tab-bar-mode
+  "w" #'window-toggle-side-windows
+  "W" #'toggle-window-dedicated
+  "z" #'logos-focus-mode)
+
+;;;;; Window
+
+(define-keymap :keymap window-prefix-map
+  "w" #'ace-window
+
+  "d" #'ace-delete-window
+  "p" #'popper-toggle
+  "P" #'popper-toggle-type
+  "u" #'winner-undo
+
+  "h" #'windmove-left
+  "H" #'ceamx/window-move-left
+  "j" #'windmove-down
+  "J" #'ceamx/window-move-down
+  "k" #'windmove-up
+  "K" #'ceamx/window-move-up
+  "l" #'windmove-right
+  "L" #'ceamx/window-move-right
+
+  "SPC" #'transpose-frame
+  "=" #'balance-windows
+  "<" #'flip-frame
+  ">" #'flop-frame
+  "[" #'rotate-frame-clockwise
+  "]" #'rotate-frame-anticlockwise
+  "{" #'rotate-frame
+  "}" #'rotate-frame)
+
+(define-keymap :keymap resize-window-repeat-map
+  "<up>" #'enlarge-window
+  "<down>" #'shrink-window
+  "<left>" #'shrink-window-horizontally
+  "<right>" #'enlarge-window-horizontally)
+
+(defvar-keymap ceamx-window-repeat-map
+  :repeat t
+
+  "o" #'ace-window
+  "SPC" #'transpose-frame
+  "<" #'flip-frame
+  ">" #'flop-frame
+  "[" #'rotate-frame-clockwise
+  "]" #'rotate-frame-anticlockwise
+
+  "RET" #'repeat-exit
+  "ESC" #'repeat-exit)
 
 ;; Start the Emacs server process if not already running
 

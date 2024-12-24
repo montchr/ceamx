@@ -74,28 +74,6 @@
 
 ;; Save file-visiting buffers according to the configured timers.
 (auto-save-visited-mode)
-(global-keys!
-  "C-c f" '("[ File ]" . ceamx-file-map)
-
-  ;; I mistakenly hit this sequence frequently instead of C-x C-f, but have never
-  ;; once needed to configure `fill-column' on-demand (that should be configured
-  ;; explicitly, or simply call `set-fill-column' with M-x).
-  "C-x f" #'find-file)
-
-(define-keymap :keymap ceamx-file-map
-  ;; TODO
-  ;; "y" #'+yank-this-file-name
-
-  "c" '("copy..." . ceamx/copy-this-file)
-  "d" '("delete" . ceamx/delete-this-file)
-  "f" #'find-file
-  "F" #'find-file-other-window
-  "r" '("rename/move..." . ceamx/move-this-file)
-  "s" #'save-buffer
-  "S" '("save as..." . write-file)
-  "U" #'ceamx/sudo-find-file
-
-  "C-d" '("diff with..." . ceamx/diff-with-file))
 
 (provide 'init-files)
 ;;; init-files.el ends here

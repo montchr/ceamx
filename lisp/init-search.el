@@ -73,7 +73,7 @@
 
   (keymap-set minibuffer-local-isearch-map "M-/" #'isearch-complete-edit))
 (package! substitute
-  (define-keymap :keymap ceamx-replace-map
+  (define-keymap :keymap ceamx-replace-prefix
     "b" #'substitute-target-in-buffer
     "d" #'substitute-target-in-defun
     "r" #'substitute-target-above-point
@@ -91,7 +91,7 @@
 ;; "rx"     => recommended; advanced sexp regexp engine
 ;; "read"   => default, avoid: backslash hell
 (setopt reb-re-syntax 'string)
-(keymap-set search-map "r" '("replace..." . ceamx-replace-map))
+(keymap-set search-map "r" '("replace..." . ceamx-replace-prefix))
 
 (keymap-set minibuffer-local-map "C-c C-e" #'+vertico/embark-export-write)
 

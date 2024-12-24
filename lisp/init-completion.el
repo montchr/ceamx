@@ -36,10 +36,6 @@
 
 ;; Don't let `completion-at-point' interfere with indentation.
 (setopt tab-always-indent 'complete)
-
-;; `completion-at-point' is often bound to M-TAB, but that conflicts with OS behavior.
-;; We also want to preserve "C-S-SPC" , the Emacs default binding for `set-mark-command'.
-(keymap-global-set "C-S-SPC" #'completion-at-point)
 (setopt enable-recursive-minibuffers t)
 (setopt read-extended-command-predicate #'command-completion-default-include-p)
 (setopt minibuffer-prompt-properties '( read-only t
@@ -174,18 +170,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     (add-hook 'consult-after-jump-hook fn)))
 (define-keymap :keymap (current-global-map)
   "C-c M-x" #'consult-mode-command
-  "C-c h" #'consult-history
-  "C-c k" #'consult-kmacro
-  "C-c m" #'consult-man
-  ;; TODO: needs configuration? see `consult-mode-histories'
-  ;; "C-c h"   #'consult-history
-  "C-c K" #'consult-kmacro
-  "C-c M" #'consult-man
-
-  ;; FIXME: use a keymap for s prefix
-  ;; "C-c s h"  #'consult-history
-  ;; "C-c s m"  #'consult-mode-command
-  ;; "C-c s k"  #'consult-kmacro
 
   "<remap> <Info-search>" #'consult-info
 

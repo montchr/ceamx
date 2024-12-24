@@ -29,8 +29,7 @@
 
 (defconst ceamx-reading-dir (concat ceamx-home-dir "Documents/reading/"))
 
-(package! elfeed
-  (keymap-set ceamx-launch-map "f" #'elfeed))
+(package! elfeed)
 
 (package! elfeed-org
   (require 'elfeed-org)

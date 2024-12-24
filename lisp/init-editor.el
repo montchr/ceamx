@@ -35,11 +35,8 @@
                scroll-left
                upcase-region))
   (put cmd 'disabled nil))
-(keymap-global-set "C-c i" #'ceamx-insert-map)
 (delete-selection-mode 1)
 (setopt sentence-end-double-space t)
-
-(keymap-global-set "M-Q" #'repunctuate-sentences)
 (global-subword-mode -1)
 (require 'lib-editor)
 
@@ -58,8 +55,7 @@
 
 (dolist (mode-hook '(prog-mode-hook text-mode-hook))
   (add-hook mode-hook #'auto-fill-mode))
-(package! unfill
-  (keymap-global-set "M-q" #'unfill-toggle))
+(package! unfill)
 (keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
 (setopt blink-matching-paren t)
 ;; Avoid "expression" style, which looks too much like a selected region.
@@ -73,20 +69,6 @@
 
 (electric-pair-mode 1)
 (show-paren-mode 1)
-(define-keymap :keymap ceamx-pairs-map
-  "(" '("paren" . insert-pair)
-  "[" '("square-b" . insert-pair)
-  "{" '("curly-b" . insert-pair)
-  "<" '("angle-b" . insert-pair)
-  "'" '("s-quote" . insert-pair)
-  "\"" '("d-quote" . insert-pair)
-  "`" '("b-tick" . insert-pair)
-  "_" '("u-score" . insert-pair)
-  "*" '("star" . insert-pair)
-  "=" '("equals" . insert-pair)
-  ":" '("colon" . insert-pair))
-
-(keymap-set ceamx-insert-map "P" ceamx-pairs-map)
 (setopt require-final-newline t)
 (add-hook 'prog-mode-hook #'whitespace-mode)
 
@@ -312,16 +294,6 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ;; (map-keymap (lambda (_ cmd)
 ;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
 
-(keymap-set ceamx-insert-map "d" #'ceamx/insert-date)
-(define-keymap :keymap (current-global-map)
-  "C-=" #'ceamx/insert-date
-  "C-<" #'ceamx/escape-url-dwim
-
-  ;; Logical progression from M-f for `forward-word'.
-  ;; See also `forward-sexp'
-  "M-F" #'forward-symbol
-
-  "M-DEL" #'ceamx/backward-kill-word)
 
 (provide 'init-editor)
 ;;; init-editor.el ends here

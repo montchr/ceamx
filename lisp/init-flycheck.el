@@ -36,8 +36,6 @@
   (setopt flycheck-display-errors-delay 1.5)
   (setopt flycheck-buffer-switch-check-intermediate-buffers nil)
 
-  (keymap-set ceamx-toggle-map "f" #'flycheck-mode)
-
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
 (after! flycheck
   (setq-default
