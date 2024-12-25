@@ -62,20 +62,54 @@
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ;;; Commentary:
+
+;; This library is a requirement of just about every customization and library
+;; file.  It is loaded early during initialization before packages are loaded.
+;; Avoid any library dependencies which are not already part of Emacs.
+
+;;;; Sources
+
+;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
+;; <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
+;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
+
 ;;; Code:
 
-;; Dependencies
-;; :PROPERTIES:
-;; :VISIBILITY: folded
-;; :END:
-
+;;;; Requirements
 
 (require 'cl-lib)
 (require 'map)
 (require 'seq)
 
-;; Environment Context
+;;;; Variables
 
+;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
+(defconst ceamx-common-url-regexp
+  (concat
+   "~?\\<\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]*\\)"
+   "[.@]"
+   "\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]+\\)\\>/?")
+  "Regular expression to match (most?) URLs or email addresses.")
+
+;;;; Keymaps
+
+(define-prefix-command 'ceamx-appearance-prefix)
+(define-prefix-command 'ceamx-buffer-prefix)
+(define-prefix-command 'ceamx-code-prefix)
+(define-prefix-command 'ceamx-file-prefix)
+(define-prefix-command 'ceamx-insert-prefix)
+(define-prefix-command 'ceamx-launch-prefix)
+(define-prefix-command 'ceamx-note-prefix)
+(define-prefix-command 'ceamx-package-prefix)
+(define-prefix-command 'ceamx-replace-prefix)
+(define-prefix-command 'ceamx-session-prefix)
+(define-prefix-command 'ceamx-toggle-prefix)
+(define-prefix-command 'ceamx-window-prefix)
+(define-prefix-command 'ceamx-workspace-prefix)
+
+;;;; Functions
+
+;;;;; Environment Context
 
 (defun ceamx-host-p (name)
   "Whether Emacs is running on the machine NAME."
@@ -89,11 +123,6 @@
 (defun ceamx-host-gnu-linux-p ()
   "Whether the current host system is GNU/Linux."
   (eq system-type 'gnu/linux))
-
-;; WSL
-
-;; - source :: <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
-
 
 (defun ceamx-host-wsl-p ()
   "Whether Emacs is currently running in WSL."
@@ -109,8 +138,16 @@
       (let ((text (buffer-substring-no-properties start end)))
         (shell-command (concat "echo '" text "' | clip.exe"))))))
 
-;; ~ceamx-unquote~: Unquote an Elisp expression
+;;;;; Filesystem
 
+(defun ceamx-subdirs (parent-dir)
+  "Return every non-hidden subdirectory of PARENT-DIR."
+  (cl-remove-if-not
+   #'file-directory-p
+   (directory-files
+    (expand-file-name parent-dir) t "^[^\\.]")))
+
+;;;;; String Manipulation
 
 (defun ceamx-unquote (exp)
   "Return EXP unquoted."
@@ -119,10 +156,20 @@
     (setq exp (cadr exp)))
   exp)
 
-;; ~noop!~: Make the wrapped expression do nothing
+;;;;; Keybindings & Keymaps
 
-;; - source :: <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
+;; via <oantolin>: <https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/>
+(defun ceamx-repeatify-keymap (repeat-map)
+  "Set the `repeat-map' property on all commands bound in REPEAT-MAP."
+  (named-let process ((keymap (symbol-value repeat-map)))
+    (map-keymap
+     (lambda (_key cmd)
+       (cond
+        ((symbolp cmd) (put cmd 'repeat-map repeat-map))
+        ((keymapp cmd) (process cmd))))
+     keymap)))
 
+;;;; Macros
 
 (defmacro noop! (&rest _body)
   "Do nothing with BODY and return nil.
@@ -130,18 +177,7 @@ Unlike `ignore', produce no side effects."
   (declare (indent defun))
   nil)
 
-;; ~after!~: Evaluate an expression after the given feature(s) have loaded
-
-;; - Note taken on [2024-03-23 Sat 15:11] \\
-;;   Replaced the existing version with Doom's version for its logical operator
-;;   support.  Were it not for the logical operators, ~after!~ would be nothing
-;;   other than a fancy wrapper around ~with-eval-after-load~.
-
-;; - source :: <https://github.com/doomemacs/doomemacs/blob/bbadabda511027e515f02ccd7b70291ed03d8945/lisp/doom-lib.el#L628C1-L673C1>
-
-
-(require 'cl-lib)
-
+;; via <https://github.com/doomemacs/doomemacs/blob/bbadabda511027e515f02ccd7b70291ed03d8945/lisp/doom-lib.el#L628C1-L673C1>
 (defmacro after! (package &rest body)
   "Evaluate BODY after PACKAGE have loaded.
 
@@ -186,11 +222,7 @@ things you want byte-compiled in them! Like function/macro definitions."
                (setq body `((after! ,next ,@body)))))
             (`(after! (:and ,@package) ,@body))))))
 
-;; ~defer!~: Evaluate an expression after Emacs is idle for some time
-
-;; - source :: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
-
-
+;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
 (defmacro defer! (secs &rest body)
   "Run BODY when Emacs is idle for SECS seconds."
   (declare (indent defun) (debug t))
@@ -199,11 +231,7 @@ things you want byte-compiled in them! Like function/macro definitions."
     nil
     (lambda () ,@body)))
 
-;; ~defer-until!~: Evaluate an expression when a condition is non-nil
-
-;; - source :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
-
-
+;; via <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is non-nil.
 Leverages checks via `after-load-functions'.
@@ -222,38 +250,23 @@ Meant to serve as a predicated alternative to `after!'."
           (put ',fn 'permanent-local-hook t)
           (add-hook 'after-load-functions #',fn)))))
 
-;; ~appendq!~: Append lists to a symbol in place
-
-
 (defmacro appendq! (sym &rest lists)
   "Append LISTS to SYM in place."
   `(setq ,sym (append ,sym ,@lists)))
 
-;; ~prependq!~: Prepend lists to a symbol in place
-
-
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
   `(setq ,sym (append ,@lists ,sym)))
-
-;; ~appendopt!~ Append lists to an existing user option
-
 
 (defmacro appendopt! (variable &rest lists)
   "Append LISTS to the existing user option VARIABLE.
 This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,variable ,@lists)))
 
-;; ~prependopt!~: Prepend lists to an existing user option
-
-
 (defmacro prependopt! (variable &rest lists)
   "Prepend LISTS to the existing user option VARIABLE.
 This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,@lists ,variable)))
-
-;; ~delq!~: Delete an element from a list in-place
-
 
 (defmacro delq! (elt list &optional fetcher)
   "`delq' ELT from LIST in-place.
@@ -263,9 +276,6 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
                         elt)
                 ,list)))
 
-;; ~pushnew!~: Push values sequentially into a list uniquely
-
-
 ;; TODO: another version to test car of alist so that new additions with the
 ;;       same car will override the existing list
 (defmacro pushnew! (place &rest values)
@@ -274,19 +284,6 @@ This is a variadic `cl-pushnew'."
   (let ((var (make-symbol "result")))
     `(dolist (,var (list ,@values) (with-no-warnings ,place))
       (cl-pushnew ,var ,place :test #'equal))))
-
-;; ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
-
-
-(defun ceamx-subdirs (parent-dir)
-  "Return every non-hidden subdirectory of PARENT-DIR."
-  (cl-remove-if-not
-   #'file-directory-p
-   (directory-files
-    (expand-file-name parent-dir) t "^[^\\.]")))
-
-;; ~def-advice!~: Macro to define and add advice to a function
-
 
 (defmacro def-advice! (name arglist how symbol docstring &rest body)
   "Define an advice called NAME and add it to a function.
@@ -320,9 +317,6 @@ the newly-defined advice.  SYMBOL is the function to be advised."
      (advice-add ,symbol ',how #',name)
      ',name))
 
-;; ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
-
-
 (defmacro def-hook! (name arglist hooks docstring &rest body)
   "Define function NAME and add it to HOOKS.
 ARGLIST is as in `defun'.  HOOKS is a list of hooks to which to
@@ -347,9 +341,6 @@ as in `defun'."
        (dolist (hook ',hooks)
         (add-hook hook #',name)))))
 
-;; ~use-feature!~: Configuration-only wrapper for ~use-package~
-
-
 (defmacro use-feature! (name &rest args)
   "Configuration-only wrapper for `use-package', passing through NAME and ARGS.
 
@@ -364,11 +355,6 @@ will be nil."
      :ensure nil
      ,@args))
 
-;; ~package!~: Declare a package and its initial configuration
-
-;; Wrapper for ~elpaca~ to avoid having to declare its autoloads in every file.
-
-
 (defmacro package! (order &rest body)
   "Declare a package ORDER and its initial configuration BODY.
 Provides the necessary autoloads so that we can declare packages
@@ -378,60 +364,7 @@ without needing to declare autoloads for `elpaca' in every file."
      (autoload 'elpaca "elpaca" nil nil t)
      (elpaca ,order ,@body)))
 
-;; ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
-
-;; Usages of this function should be replaced with the result of evaluating
-;; ~string-to-char~.
-
-
-(defun ceamx-normalize-char (char)
-  "Normalize CHAR to a valid character matching `characterp'.
-CHAR may either be a valid character or a string convertable to a
-character with `string-to-char'.  If CHAR is already a character
-matching `characterp', then it will be returned as-is.
-
-When CHAR is a string containing more than one character, only
-the first character will be transformed.  See `string-to-char' for
-more info.
-
-This function is impure because the interpretation of CHAR can
-vary based on... various reasons?"
-  (declare (side-effect-free t)
-           (obsolete 'string-to-char "2024-03-23"))
-  (cl-assert (char-or-string-p char) t)
-  (if (stringp char)
-      (cond ((length= char 0)
-             (user-error "Character string `%s' is empty" char))
-            ((length> char 1)
-             (user-error "Character string `%s' should only contain a single character" char))
-            (t
-             (string-to-char char)))
-    char))
-
-;; ~global-keys!~: Define multiple global keybindings
-
-
-(defmacro global-keys! (&rest keys)
-  "Define keybindings KEYS in the global keymap.
-Wrapper for `define-keymap' with `current-global-map' as target keymap."
-  (declare (indent defun) (debug t))
-  `(define-keymap :keymap (current-global-map)
-     ,@keys))
-
-;; ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
-
-;; [[https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/][oantolin comments on Repeat-mode is awesome, share you useful configs]]
-
-
-(defun ceamx-repeatify-keymap (repeat-map)
-  "Set the `repeat-map' property on all commands bound in REPEAT-MAP."
-  (named-let process ((keymap (symbol-value repeat-map)))
-    (map-keymap
-     (lambda (_key cmd)
-       (cond
-        ((symbolp cmd) (put cmd 'repeat-map repeat-map))
-        ((keymapp cmd) (process cmd))))
-     keymap)))
+;;;; Footer
 
 (provide 'ceamx-lib)
 ;;; ceamx-lib.el ends here

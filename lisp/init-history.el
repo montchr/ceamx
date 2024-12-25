@@ -80,7 +80,7 @@
   (add-hook 'on-first-buffer-hook #'dogears-mode)
 
   ;; Also see `ceamx/dogears-dispatch'.
-  (global-keys!
+  (define-keymap :keymap (current-global-map)
     ;; TODO: find a new binding maybe
     ;; "M-g d" #'dogears-go
     "M-g M-b" #'dogears-back

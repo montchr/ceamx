@@ -1397,7 +1397,6 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 * Common Libraries :: =core/ceamx-*=
 
-
 ** =lisp/core/ceamx-paths.el= :: Paths
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el :comments no :noweb yes
@@ -1511,96 +1510,12 @@ Emacs version to prevent bytecode incompatibility.")
 #+end_src
 
 
-** =lisp/core/ceamx-keymaps.el= :: Keymaps
-
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-keymaps.el :comments no :noweb yes
-;;; ceamx-keymaps.el --- Keymap declarations               -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;
-
-;;; Code:
-
-(require 'ceamx-lib)
-
-(define-prefix-command 'ceamx-buffer-prefix 'ceamx-buffer-prefix-map)
-
-(defvar-keymap ceamx-file-map)
-(define-prefix-command 'ceamx-file-map)
-
-(defvar-keymap ceamx-insert-map)
-(define-prefix-command 'ceamx-insert-map)
-
-(defvar-keymap ceamx-launch-map)
-(define-prefix-command 'ceamx-launch-map)
-
-(defvar-keymap ceamx-note-map)
-(define-prefix-command 'ceamx-note-map)
-
-(defvar-keymap ceamx-packages-map)
-(define-prefix-command 'ceamx-packages-map)
-
-(defvar-keymap ceamx-pairs-map)
-(define-prefix-command 'ceamx-pairs-map)
-
-(defvar-keymap ceamx-replace-map)
-(define-prefix-command 'ceamx-replace-map)
-
-(defvar-keymap ceamx-session-map)
-(define-prefix-command 'ceamx-session-map)
-
-(defvar-keymap ceamx-toggle-map)
-(define-prefix-command 'ceamx-toggle-map)
-
-(define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
-
-(provide 'ceamx-keymaps)
-;;; ceamx-keymaps.el ends here
-#+end_src
-
-
 ** =lisp/core/ceamx-lib.el= :: Core Functions & Macros
 :PROPERTIES:
-:header-args: :tangle lisp/core/ceamx-lib.el :comments both
+:header-args: :tangle lisp/core/ceamx-lib.el
 :END:
 
-- src :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
-- src :: <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
-- src :: <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
-
-This library is a requirement of just about every customization and library
-file.  It is loaded early during initialization.
-
-General, common, and generic library functions.
-
-Avoid any library dependencies which are not already part of Emacs.  This
-library will be loaded before packages are available.
-
-*** File Header
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el :noweb yes :comments no
+#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el :comments no
 ;;; core/ceamx-lib.el --- Ceamx common library  -*- lexical-binding: t;  -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery <chmont@protonmail.com>
@@ -1620,28 +1535,100 @@ library will be loaded before packages are available.
 ;;         7696122 <7696122@gmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
 
-<<file-license>>
-<<file-license-mit>>
-<<file-license-bsd-2-clause>>
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+;; Permission is hereby granted, free of charge, to any person obtaining
+;; a copy of this software and associated documentation files (the
+;; "Software"), to deal in the Software without restriction, including
+;; without limitation the rights to use, copy, modify, merge, publish,
+;; distribute, sublicense, and/or sell copies of the Software, and to
+;; permit persons to whom the Software is furnished to do so, subject to
+;; the following conditions:
+;;
+;; The above copyright notice and this permission notice shall be
+;; included in all copies or substantial portions of the Software.
+;; Redistribution and use in source and binary forms, with or without
+;; modification, are permitted provided that the following conditions are met:
+;;
+;; 1. Redistributions of source code must retain the above copyright notice, this
+;;    list of conditions and the following disclaimer.
+;; 2. Redistributions in binary form must reproduce the above copyright notice,
+;;    this list of conditions and the following disclaimer in the documentation
+;;    and/or other materials provided with the distribution.
+;;
+;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ;;; Commentary:
+
+;; This library is a requirement of just about every customization and library
+;; file.  It is loaded early during initialization before packages are loaded.
+;; Avoid any library dependencies which are not already part of Emacs.
+
+;;;; Sources
+
+;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
+;; <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
+;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
+
 ;;; Code:
-#+end_src
 
-*** Dependencies
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
+;;;; Requirements
 
-#+begin_src emacs-lisp
 (require 'cl-lib)
 (require 'map)
 (require 'seq)
-#+end_src
 
-*** Environment Context
+;;;; Variables
 
-#+begin_src emacs-lisp
+;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
+(defconst ceamx-common-url-regexp
+  (concat
+   "~?\\<\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]*\\)"
+   "[.@]"
+   "\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]+\\)\\>/?")
+  "Regular expression to match (most?) URLs or email addresses.")
+
+;;;; Keymaps
+
+(define-prefix-command 'ceamx-appearance-prefix)
+(define-prefix-command 'ceamx-buffer-prefix)
+(define-prefix-command 'ceamx-code-prefix)
+(define-prefix-command 'ceamx-file-prefix)
+(define-prefix-command 'ceamx-insert-prefix)
+(define-prefix-command 'ceamx-launch-prefix)
+(define-prefix-command 'ceamx-note-prefix)
+(define-prefix-command 'ceamx-package-prefix)
+(define-prefix-command 'ceamx-replace-prefix)
+(define-prefix-command 'ceamx-session-prefix)
+(define-prefix-command 'ceamx-toggle-prefix)
+(define-prefix-command 'ceamx-window-prefix)
+(define-prefix-command 'ceamx-workspace-prefix)
+
+;;;; Functions
+
+;;;;; Environment Context
+
 (defun ceamx-host-p (name)
   "Whether Emacs is running on the machine NAME."
   (string= name (system-name)))
@@ -1654,13 +1641,7 @@ library will be loaded before packages are available.
 (defun ceamx-host-gnu-linux-p ()
   "Whether the current host system is GNU/Linux."
   (eq system-type 'gnu/linux))
-#+end_src
 
-**** WSL
-
-- source :: <https://emacsredux.com/blog/2021/12/19/wsl-specific-emacs-configuration/>
-
-#+begin_src emacs-lisp
 (defun ceamx-host-wsl-p ()
   "Whether Emacs is currently running in WSL."
   (and (eq system-type 'gnu/linux)
@@ -1674,44 +1655,47 @@ library will be loaded before packages are available.
     (when (use-region-p)
       (let ((text (buffer-substring-no-properties start end)))
         (shell-command (concat "echo '" text "' | clip.exe"))))))
-#+end_src
 
-**** ~ceamx-unquote~: Unquote an Elisp expression
+;;;;; Filesystem
 
-#+begin_src emacs-lisp
+(defun ceamx-subdirs (parent-dir)
+  "Return every non-hidden subdirectory of PARENT-DIR."
+  (cl-remove-if-not
+   #'file-directory-p
+   (directory-files
+    (expand-file-name parent-dir) t "^[^\\.]")))
+
+;;;;; String Manipulation
+
 (defun ceamx-unquote (exp)
   "Return EXP unquoted."
   (declare (pure t) (side-effect-free t))
   (while (memq (car-safe exp) '(quote function))
     (setq exp (cadr exp)))
   exp)
-#+end_src
 
-**** ~noop!~: Make the wrapped expression do nothing
+;;;;; Keybindings & Keymaps
 
-- source :: <https://protesilaos.com/emacs/dotemacs#h:3563ceb5-b70c-4191-9c81-f2f5a202c4da>
+;; via <oantolin>: <https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/>
+(defun ceamx-repeatify-keymap (repeat-map)
+  "Set the `repeat-map' property on all commands bound in REPEAT-MAP."
+  (named-let process ((keymap (symbol-value repeat-map)))
+    (map-keymap
+     (lambda (_key cmd)
+       (cond
+        ((symbolp cmd) (put cmd 'repeat-map repeat-map))
+        ((keymapp cmd) (process cmd))))
+     keymap)))
 
-#+begin_src emacs-lisp
+;;;; Macros
+
 (defmacro noop! (&rest _body)
   "Do nothing with BODY and return nil.
 Unlike `ignore', produce no side effects."
   (declare (indent defun))
   nil)
-#+end_src
 
-*** Loading and Evalling
-**** ~after!~: Evaluate an expression after the given feature(s) have loaded
-
-- Note taken on [2024-03-23 Sat 15:11] \\
-  Replaced the existing version with Doom's version for its logical operator
-  support.  Were it not for the logical operators, ~after!~ would be nothing
-  other than a fancy wrapper around ~with-eval-after-load~.
-
-- source :: <https://github.com/doomemacs/doomemacs/blob/bbadabda511027e515f02ccd7b70291ed03d8945/lisp/doom-lib.el#L628C1-L673C1>
-
-#+begin_src emacs-lisp
-(require 'cl-lib)
-
+;; via <https://github.com/doomemacs/doomemacs/blob/bbadabda511027e515f02ccd7b70291ed03d8945/lisp/doom-lib.el#L628C1-L673C1>
 (defmacro after! (package &rest body)
   "Evaluate BODY after PACKAGE have loaded.
 
@@ -1756,13 +1740,7 @@ things you want byte-compiled in them! Like function/macro definitions."
                (setq body `((after! ,next ,@body)))))
             (`(after! (:and ,@package) ,@body))))))
 
-#+end_src
-
-**** ~defer!~: Evaluate an expression after Emacs is idle for some time
-
-- source :: <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
-
-#+begin_src emacs-lisp
+;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
 (defmacro defer! (secs &rest body)
   "Run BODY when Emacs is idle for SECS seconds."
   (declare (indent defun) (debug t))
@@ -1770,13 +1748,8 @@ things you want byte-compiled in them! Like function/macro definitions."
     ,secs
     nil
     (lambda () ,@body)))
-#+end_src
 
-**** ~defer-until!~: Evaluate an expression when a condition is non-nil
-
-- source :: <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
-
-#+begin_src emacs-lisp
+;; via <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el#L686-L701>
 (defmacro defer-until! (condition &rest body)
   "Run BODY when CONDITION is non-nil.
 Leverages checks via `after-load-functions'.
@@ -1794,46 +1767,25 @@ Meant to serve as a predicated alternative to `after!'."
                         ,@body)))
           (put ',fn 'permanent-local-hook t)
           (add-hook 'after-load-functions #',fn)))))
-#+end_src
 
-*** Variable Mutation
-**** ~appendq!~: Append lists to a symbol in place
-
-#+begin_src emacs-lisp
 (defmacro appendq! (sym &rest lists)
   "Append LISTS to SYM in place."
   `(setq ,sym (append ,sym ,@lists)))
-#+end_src
 
-**** ~prependq!~: Prepend lists to a symbol in place
-
-#+begin_src emacs-lisp
 (defmacro prependq! (sym &rest lists)
   "Prepend LISTS to SYM in place."
   `(setq ,sym (append ,@lists ,sym)))
-#+end_src
 
-**** ~appendopt!~ Append lists to an existing user option
-
-#+begin_src emacs-lisp
 (defmacro appendopt! (variable &rest lists)
   "Append LISTS to the existing user option VARIABLE.
 This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,variable ,@lists)))
-#+end_src
 
-**** ~prependopt!~: Prepend lists to an existing user option
-
-#+begin_src emacs-lisp
 (defmacro prependopt! (variable &rest lists)
   "Prepend LISTS to the existing user option VARIABLE.
 This uses `setopt' to set the new value of VARIABLE."
   `(setopt ,variable (append ,@lists ,variable)))
-#+end_src
 
-**** ~delq!~: Delete an element from a list in-place
-
-#+begin_src emacs-lisp
 (defmacro delq! (elt list &optional fetcher)
   "`delq' ELT from LIST in-place.
 If FETCHER is a function, ELT is used as the key in LIST (an alist)."
@@ -1841,11 +1793,7 @@ If FETCHER is a function, ELT is used as the key in LIST (an alist)."
                           `(funcall ,fetcher ,elt ,list)
                         elt)
                 ,list)))
-#+end_src
 
-**** ~pushnew!~: Push values sequentially into a list uniquely
-
-#+begin_src emacs-lisp
 ;; TODO: another version to test car of alist so that new additions with the
 ;;       same car will override the existing list
 (defmacro pushnew! (place &rest values)
@@ -1854,24 +1802,7 @@ This is a variadic `cl-pushnew'."
   (let ((var (make-symbol "result")))
     `(dolist (,var (list ,@values) (with-no-warnings ,place))
       (cl-pushnew ,var ,place :test #'equal))))
-#+end_src
 
-*** Filesystem
-**** ~ceamx-subdirs~: List every non-hidden subdirectory of a parent directory
-
-#+begin_src emacs-lisp
-(defun ceamx-subdirs (parent-dir)
-  "Return every non-hidden subdirectory of PARENT-DIR."
-  (cl-remove-if-not
-   #'file-directory-p
-   (directory-files
-    (expand-file-name parent-dir) t "^[^\\.]")))
-#+end_src
-
-*** Hooks & Advice
-**** ~def-advice!~: Macro to define and add advice to a function
-
-#+begin_src emacs-lisp
 (defmacro def-advice! (name arglist how symbol docstring &rest body)
   "Define an advice called NAME and add it to a function.
 ARGLIST, DOCSTRING, and BODY are as in `defun'.
@@ -1903,11 +1834,7 @@ the newly-defined advice.  SYMBOL is the function to be advised."
        (declare-function ,name nil))
      (advice-add ,symbol ',how #',name)
      ',name))
-#+end_src
 
-**** ~def-hook!~: Macro to define a hook function and add it to the given hook(s)
-
-#+begin_src emacs-lisp
 (defmacro def-hook! (name arglist hooks docstring &rest body)
   "Define function NAME and add it to HOOKS.
 ARGLIST is as in `defun'.  HOOKS is a list of hooks to which to
@@ -1931,12 +1858,7 @@ as in `defun'."
         ,@body)
        (dolist (hook ',hooks)
         (add-hook hook #',name)))))
-#+end_src
 
-*** Packages & User Configuration
-**** ~use-feature!~: Configuration-only wrapper for ~use-package~
-
-#+begin_src emacs-lisp
 (defmacro use-feature! (name &rest args)
   "Configuration-only wrapper for `use-package', passing through NAME and ARGS.
 
@@ -1950,13 +1872,7 @@ will be nil."
   `(use-package ,name
      :ensure nil
      ,@args))
-#+end_src
 
-**** ~package!~: Declare a package and its initial configuration
-
-Wrapper for ~elpaca~ to avoid having to declare its autoloads in every file.
-
-#+begin_src emacs-lisp
 (defmacro package! (order &rest body)
   "Declare a package ORDER and its initial configuration BODY.
 Provides the necessary autoloads so that we can declare packages
@@ -1965,120 +1881,12 @@ without needing to declare autoloads for `elpaca' in every file."
   `(progn
      (autoload 'elpaca "elpaca" nil nil t)
      (elpaca ,order ,@body)))
-#+end_src
 
-*** Input and Keybindings
-**** ~ceamx-normalize-char~ :: Angry wrapper around ~string-to-char~
+;;;; Footer
 
-Usages of this function should be replaced with the result of evaluating
-~string-to-char~.
-
-#+begin_src emacs-lisp
-(defun ceamx-normalize-char (char)
-  "Normalize CHAR to a valid character matching `characterp'.
-CHAR may either be a valid character or a string convertable to a
-character with `string-to-char'.  If CHAR is already a character
-matching `characterp', then it will be returned as-is.
-
-When CHAR is a string containing more than one character, only
-the first character will be transformed.  See `string-to-char' for
-more info.
-
-This function is impure because the interpretation of CHAR can
-vary based on... various reasons?"
-  (declare (side-effect-free t)
-           (obsolete 'string-to-char "2024-03-23"))
-  (cl-assert (char-or-string-p char) t)
-  (if (stringp char)
-      (cond ((length= char 0)
-             (user-error "Character string `%s' is empty" char))
-            ((length> char 1)
-             (user-error "Character string `%s' should only contain a single character" char))
-            (t
-             (string-to-char char)))
-    char))
-#+end_src
-
-**** ~global-keys!~: Define multiple global keybindings
-
-#+begin_src emacs-lisp
-(defmacro global-keys! (&rest keys)
-  "Define keybindings KEYS in the global keymap.
-Wrapper for `define-keymap' with `current-global-map' as target keymap."
-  (declare (indent defun) (debug t))
-  `(define-keymap :keymap (current-global-map)
-     ,@keys))
-#+end_src
-
-**** ~ceamx-repeatify-keymap~: convert a regular keymap to a repeat-map
-
-[[https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/][oantolin comments on Repeat-mode is awesome, share you useful configs]]
-
-#+begin_src emacs-lisp
-(defun ceamx-repeatify-keymap (repeat-map)
-  "Set the `repeat-map' property on all commands bound in REPEAT-MAP."
-  (named-let process ((keymap (symbol-value repeat-map)))
-    (map-keymap
-     (lambda (_key cmd)
-       (cond
-        ((symbolp cmd) (put cmd 'repeat-map repeat-map))
-        ((keymapp cmd) (process cmd))))
-     keymap)))
-#+end_src
-
-*** File Footer
-
-#+begin_src emacs-lisp :tangle lisp/core/ceamx-lib.el :comments no
 (provide 'ceamx-lib)
 ;;; ceamx-lib.el ends here
 #+end_src
-
-
-* =lisp/config-common.el= :: Miscellaneous Settings
-
-#+begin_src emacs-lisp :tangle lisp/config-common.el :comments no :noweb yes
-;;; config-common.el --- Common and miscellaneous configuration settings  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-;; Copyright (C) 2020-2023  Protesilaos Stavrou
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;;         Protesilaos Stavrou <info@protesilaos.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Sources:
-
-;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
-
-;;; Code:
-
-;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
-(defconst ceamx-common-url-regexp
-  (concat
-    "~?\\<\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]*\\)"
-    "[.@]"
-    "\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]+\\)\\>/?")
-  "Regular expression to match (most?) URLs or email addresses.")
-
-(provide 'config-common)
-;;; config-common.el ends here
-#+end_src
-
 
 * =init.el=
 :PROPERTIES:
@@ -2088,30 +1896,22 @@ Wrapper for `define-keymap' with `current-global-map' as target keymap."
 ** File header
 
 #+begin_src emacs-lisp :tangle init.el :noweb yes :comments no
-<<file-prop-line(feature="init",desc="Initialize Ceamx",extraprops="no-byte-compile: t;")>>
+;;; init.el --- Initialize Ceamx  -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
 
 <<file-license>>
 
 ;;; Commentary:
 ;;; Code:
-#+end_src
 
-** Dependencies
+;;;; Requirements
 
-#+begin_src emacs-lisp
 (require 'cl-lib)
 
-;; Core variables
 (require 'ceamx-paths)
-(require 'ceamx-keymaps)
-
-;; Core functions and macros
 (require 'ceamx-lib)
 #+end_src
 
@@ -2700,19 +2500,15 @@ expect the value you arrive at to be as high as 100 MiB.
 
 ;;; Commentary:
 
-;;; Sources:
+;;;; Sources
 
 ;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/ceamx-lisp/ceamx-simple.el>
 ;; <https://github.com/BBoal/emacs-config/blob/95520648c5f2ed0784d42e98afff035a6964fd2f/bb-lisp/bb-simple.el>
 
 ;;; Code:
 
-;;
 ;;;; Requirements
 
-(require 'config-common)
-
-;;
 ;;;; Variables
 
 (defgroup ceamx-simple ()
@@ -2730,6 +2526,11 @@ Used by `ceamx/insert-date'."
 Used by `ceamx/insert-date'."
   :type 'string
   :group 'ceamx-simple)
+
+(defvar ceamx-point-in-comment-functions ()
+  "List of functions to run to determine if point is in a comment.
+Each function takes one argument: the position of the point.  Stops on the first
+function to return non-nil.")
 
 (defvar ceamx-simple-checkers-buffer-names-regexp
   (rx "*" (or "Flycheck" "Package-Lint")))
@@ -2786,6 +2587,14 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
                       (if buffer-or-name
                           (get-buffer buffer-or-name)
                         (current-buffer))))
+
+(defun ceamx-point-in-comment-p (&optional pos)
+  "Return non-nil if POS is in a comment.
+POS defaults to the current position."
+  (let ((pos (or pos (point))))
+    (if ceamx-point-in-comment-functions
+        (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
+      (nth 4 (syntax-ppss pos)))))
 
 ;;; Commands
 
@@ -2875,64 +2684,10 @@ Call the commands `ceamx/escape-url-line' and
       (goto-char (car b))
       (set-mark (cdr b)))))
 
-
 (provide 'ceamx-simple)
 ;;; ceamx-simple.el ends here
 #+end_src
 
-
-* =lisp/lib-text.el=: The Material Fabric of Uncertainty
-
-#+begin_src emacs-lisp :tangle lisp/lib-text.el :comments no :noweb-ref nil
-;;; lib-text.el --- Text utilities                   -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;;; Sources:
-
-;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/lib/text.el>
-
-;;; Code:
-
-;;;###autoload
-(defvar ceamx-point-in-comment-functions ()
-  "List of functions to run to determine if point is in a comment.
-
-Each function takes one argument: the position of the point. Stops on the first
-function to return non-nil.
-
-Used by `ceamx-point-in-comment-p'.")
-
-;;;###autoload
-(defun ceamx-point-in-comment-p (&optional pos)
-  "Return non-nil if POS is in a comment.
-POS defaults to the current position."
-  (let ((pos (or pos (point))))
-    (if ceamx-point-in-comment-functions
-        (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
-      (nth 4 (syntax-ppss pos)))))
-
-(provide 'lib-text)
-;;; lib-text.el ends here
-#+end_src
 
 * Environment :: =env= :env:
 :PROPERTIES:
@@ -4335,6 +4090,11 @@ will be used as default."
 #+end_src
 
 
+* Essentials
+:PROPERTIES:
+:header-args: :tangle init.el
+:END:
+
 * Window and Buffer Management
 :PROPERTIES:
 :header-args: :tangle init.el
@@ -4485,7 +4245,7 @@ Action alist entries are:
 
 #+begin_src emacs-lisp
 (package! popper
-  (global-keys!
+  (define-keymap :keymap (current-global-map)
     "C-`" #'popper-toggle
     "C-~" #'popper-cycle
     "C-M-`" #'popper-toggle-type)
@@ -4668,6 +4428,7 @@ Action alist entries are:
     ("q" "quit" transient-quit-all)]])
 #+end_src
 
+
 * Buffer :: =buffer= :buffer:
 :PROPERTIES:
 :header-args: :tangle init.el
@@ -4764,7 +4525,7 @@ Action alist entries are:
 
 #+begin_src emacs-lisp
 (package! link-hint
-  (global-keys!
+  (define-keymap :keymap (current-global-map)
     "M-g u" #'link-hint-open-link
     "M-g U" #'link-hint-copy-link))
 #+end_src
@@ -4787,14 +4548,13 @@ Action alist entries are:
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 #+end_src
 
+
 * Editing :: =editor= :editing:
 :PROPERTIES:
 :header-args: :noweb-ref init-editor
 :END:
 
 #+begin_src emacs-lisp
-(require 'ceamx-keymaps)
-
 (require 'config-editor)
 
 (require 'ceamx-lib)
@@ -5457,13 +5217,13 @@ its bindings generally would need ~puni-mode~ to be active.
 
 #+end_src
 
+
 * Files :: =files= :files:
 :PROPERTIES:
 :header-args: :noweb-ref init-files
 :END:
 
 #+begin_src emacs-lisp
-(require 'ceamx-keymaps)
 (require 'ceamx-paths)
 
 (require 'ceamx-lib)
@@ -5922,7 +5682,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 ;; Remove the default binding for the `describe-input-method' command.
 (keymap-global-unset "C-h I" t)
 
-(global-keys!
+(define-keymap :keymap (current-global-map)
   "C-h i"    #'ceamx/consult-info-dwim
   "C-h I c"  #'ceamx/completion-info
   "C-h I e"  #'ceamx/emacs-info
@@ -6317,7 +6077,7 @@ DOC is as in `devdocs-install'."
   (add-hook 'on-first-buffer-hook #'dogears-mode)
 
   ;; Also see `ceamx/dogears-dispatch'.
-  (global-keys!
+  (define-keymap :keymap (current-global-map)
     ;; TODO: find a new binding maybe
     ;; "M-g d" #'dogears-go
     "M-g M-b" #'dogears-back
@@ -6427,8 +6187,6 @@ these utilities.
 ** Requirements
 
   #+begin_src emacs-lisp
-(require 'ceamx-keymaps)
-
 (require 'ceamx-lib)
 (require 'lib-search)
 #+end_src
@@ -7763,7 +7521,6 @@ Embark will load the library automatically after Consult.
 
 ;;; Code:
 
-(require 'ceamx-keymaps)
 (require 'ceamx-lib)
 
 (use-feature! eshell
@@ -7781,8 +7538,6 @@ Embark will load the library automatically after Consult.
   :init
   (add-hook 'eshell-load-hook #'eat-eshell-mode)
   (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode)
-
-  (keymap-set ceamx-launch-map "t" #'eat)
 
   (use-feature! popper
     :config
@@ -8110,7 +7865,6 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 :END:
 
 #+begin_src emacs-lisp
-(require 'ceamx-keymaps)
 (require 'ceamx-lib)
 #+end_src
 
@@ -8493,8 +8247,6 @@ avoid further confusion.
 ;;; Code:
 
 ;;; Requirements
-
-(require 'ceamx-keymaps)
 
 (require 'ceamx-lib)
 (require 'lib-lisp)
@@ -9466,7 +9218,6 @@ keywords are supported:
 *** Requirements
 
 #+begin_src emacs-lisp
-(require 'ceamx-keymaps)
 (require 'ceamx-lib)
 #+end_src
 
@@ -10894,7 +10645,6 @@ Create the directories if they don't already exist (to prevent errors):
 ** Requirements
 
 #+BEGIN_SRC emacs-lisp
-(require 'ceamx-keymaps)
 (require 'ceamx-paths)
 (require 'ceamx-lib)
 #+END_SRC
@@ -11368,7 +11118,6 @@ What even is this though...?
 
 ;;; Requirements
 
-(require 'ceamx-keymaps)
 (require 'ceamx-lib)
 
 
@@ -11660,8 +11409,6 @@ CLOSED: [2024-07-16 Tue 00:00]
 ;;; Code:
 
 ;;; Requirements
-
-(require 'ceamx-keymaps)
 
 (require 'ceamx-lib)
 (require 'lib-eww)
@@ -11986,7 +11733,7 @@ pull in all of the existing =*.el= files to =config.org=!
     (seq-map (apply-partially #'file-name-concat user-emacs-directory)
       '("config-sync.org")))
 
-  (global-keys!
+  (define-keymap :keymap (current-global-map)
     "C-c M-i" #'org-tanglesync-process-buffer-interactive
     "C-c M-a" #'org-tanglesync-process-buffer-automatic))
 #+end_src
@@ -12443,22 +12190,6 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 #+begin_src emacs-lisp
 
-
-(define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
-
-(define-prefix-command 'ceamx-appearance-prefix)
-(define-prefix-command 'ceamx-buffer-prefix)
-(define-prefix-command 'ceamx-code-prefix)
-(define-prefix-command 'ceamx-file-prefix)
-(define-prefix-command 'ceamx-insert-prefix)
-(define-prefix-command 'ceamx-launch-prefix)
-(define-prefix-command 'ceamx-note-prefix)
-(define-prefix-command 'ceamx-package-prefix)
-(define-prefix-command 'ceamx-replace-prefix)
-(define-prefix-command 'ceamx-session-prefix)
-(define-prefix-command 'ceamx-toggle-prefix)
-(define-prefix-command 'ceamx-window-prefix)
-
 ;;
 ;;;; Command Bindings
 
@@ -12703,6 +12434,7 @@ Or, perhaps more accurately: stuff that needs a better home.
   "RET" #'repeat-exit
   "ESC" #'repeat-exit)
 #+end_src
+
 
 * =init.el=: Postlude
 :PROPERTIES:

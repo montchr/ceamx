@@ -8,8 +8,6 @@
 
 ;;; Requirements
 
-(require 'ceamx-keymaps)
-
 (require 'ceamx-lib)
 (require 'lib-eww)
 

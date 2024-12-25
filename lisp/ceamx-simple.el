@@ -24,19 +24,15 @@
 
 ;;; Commentary:
 
-;;; Sources:
+;;;; Sources
 
 ;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/ceamx-lisp/ceamx-simple.el>
 ;; <https://github.com/BBoal/emacs-config/blob/95520648c5f2ed0784d42e98afff035a6964fd2f/bb-lisp/bb-simple.el>
 
 ;;; Code:
 
-;;
 ;;;; Requirements
 
-(require 'config-common)
-
-;;
 ;;;; Variables
 
 (defgroup ceamx-simple ()
@@ -54,6 +50,11 @@ Used by `ceamx/insert-date'."
 Used by `ceamx/insert-date'."
   :type 'string
   :group 'ceamx-simple)
+
+(defvar ceamx-point-in-comment-functions ()
+  "List of functions to run to determine if point is in a comment.
+Each function takes one argument: the position of the point.  Stops on the first
+function to return non-nil.")
 
 (defvar ceamx-simple-checkers-buffer-names-regexp
   (rx "*" (or "Flycheck" "Package-Lint")))
@@ -110,6 +111,14 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
                       (if buffer-or-name
                           (get-buffer buffer-or-name)
                         (current-buffer))))
+
+(defun ceamx-point-in-comment-p (&optional pos)
+  "Return non-nil if POS is in a comment.
+POS defaults to the current position."
+  (let ((pos (or pos (point))))
+    (if ceamx-point-in-comment-functions
+        (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
+      (nth 4 (syntax-ppss pos)))))
 
 ;;; Commands
 
@@ -198,7 +207,6 @@ Call the commands `ceamx/escape-url-line' and
     (let ((b (bounds-of-thing-at-point 'symbol)))
       (goto-char (car b))
       (set-mark (cdr b)))))
-
 
 (provide 'ceamx-simple)
 ;;; ceamx-simple.el ends here

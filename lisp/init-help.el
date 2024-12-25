@@ -46,7 +46,7 @@
 ;; Remove the default binding for the `describe-input-method' command.
 (keymap-global-unset "C-h I" t)
 
-(global-keys!
+(define-keymap :keymap (current-global-map)
   "C-h i"    #'ceamx/consult-info-dwim
   "C-h I c"  #'ceamx/completion-info
   "C-h I e"  #'ceamx/emacs-info

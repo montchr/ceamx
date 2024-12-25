@@ -24,7 +24,6 @@
 
 ;;; Code:
 
-(require 'ceamx-keymaps)
 (require 'ceamx-lib)
 
 (use-feature! eshell
@@ -42,8 +41,6 @@
   :init
   (add-hook 'eshell-load-hook #'eat-eshell-mode)
   (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode)
-
-  (keymap-set ceamx-launch-map "t" #'eat)
 
   (use-feature! popper
     :config

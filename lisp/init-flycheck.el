@@ -24,7 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'ceamx-keymaps)
 (require 'ceamx-lib)
 (package! flycheck
   (setopt flycheck-emacs-lisp-load-path 'inherit)

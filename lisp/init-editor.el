@@ -24,8 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'ceamx-keymaps)
-
 (require 'config-editor)
 
 (require 'ceamx-lib)

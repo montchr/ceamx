@@ -24,8 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'ceamx-keymaps)
-
 (require 'ceamx-lib)
 (require 'lib-search)
 (setopt find-library-include-other-files nil)

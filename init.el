@@ -3,8 +3,6 @@
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -24,16 +22,11 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Dependencies
-
+;;;; Requirements
 
 (require 'cl-lib)
 
-;; Core variables
 (require 'ceamx-paths)
-(require 'ceamx-keymaps)
-
-;; Core functions and macros
 (require 'ceamx-lib)
 
 ;; Configure default identity
@@ -1462,7 +1455,7 @@ The buffer will be created if it does not exist."
 
 
 (package! popper
-  (global-keys!
+  (define-keymap :keymap (current-global-map)
     "C-`" #'popper-toggle
     "C-~" #'popper-cycle
     "C-M-`" #'popper-toggle-type)
@@ -1703,7 +1696,7 @@ The buffer will be created if it does not exist."
 
 
 (package! link-hint
-  (global-keys!
+  (define-keymap :keymap (current-global-map)
     "M-g u" #'link-hint-open-link
     "M-g U" #'link-hint-copy-link))
 
@@ -1855,21 +1848,6 @@ The buffer will be created if it does not exist."
 ;; :header-args: :tangle init.el
 ;; :END:
 
-
-(define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
-
-(define-prefix-command 'ceamx-appearance-prefix)
-(define-prefix-command 'ceamx-buffer-prefix)
-(define-prefix-command 'ceamx-code-prefix)
-(define-prefix-command 'ceamx-file-prefix)
-(define-prefix-command 'ceamx-insert-prefix)
-(define-prefix-command 'ceamx-launch-prefix)
-(define-prefix-command 'ceamx-note-prefix)
-(define-prefix-command 'ceamx-package-prefix)
-(define-prefix-command 'ceamx-replace-prefix)
-(define-prefix-command 'ceamx-session-prefix)
-(define-prefix-command 'ceamx-toggle-prefix)
-(define-prefix-command 'ceamx-window-prefix)
 
 ;;
 ;;;; Command Bindings

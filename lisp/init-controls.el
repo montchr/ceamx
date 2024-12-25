@@ -26,7 +26,6 @@
 
 ;;; Requirements
 
-(require 'ceamx-keymaps)
 (require 'ceamx-lib)
 
 

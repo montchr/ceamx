@@ -24,7 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'ceamx-keymaps)
 (require 'ceamx-lib)
 (setopt eglot-sync-connect 1)
 (setopt eglot-autoshutdown t)
