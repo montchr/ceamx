@@ -504,92 +504,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 
-;; Secrets :: =secrets= :secrets:
-;; :PROPERTIES:
-;; :header-args: :tangle init.el
-;; :END:
-
-;; - source :: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#auth-source-pass>
-
-
-(require 'epg)
-(require 'auth-source)
-(require 'auth-source-pass)
-
-;; Ensure secrets and auth credentials are not stored in plaintext
-
-;; It's best to list only a single file here to avoid confusion about where
-;; secrets might be stored:
-
-
-(setopt auth-sources (list "~/.authinfo.gpg"))
-
-;; Configure secrets lookup with ~auth-source~ and the Unix password store
-
-
-(use-feature! auth-source
-  :demand t)
-
-;; TODO: provide explanation as to why these functions are named like so -- they just magically work..?
-(use-feature! auth-source-pass
-  :demand t
-
-  :preface
-  (defvar auth-source-pass--cache (make-hash-table :test #'equal))
-
-  (defun auth-source-pass--reset-cache ()
-    (setq auth-source-pass--cache (make-hash-table :test #'equal)))
-
-  (defun auth-source-pass--read-entry (entry)
-    "Return a string with the file content of ENTRY."
-    (run-at-time 45 nil #'auth-source-pass--reset-cache)
-    (let ((cached (gethash entry auth-source-pass--cache)))
-      (or cached
-          (puthash
-           entry
-           (with-temp-buffer
-             (insert-file-contents (expand-file-name
-                                    (format "%s.gpg" entry)
-                                    (getenv "PASSWORD_STORE_DIR")))
-             (buffer-substring-no-properties (point-min) (point-max)))
-           auth-source-pass--cache))))
-
-  (defun ceamx-auth-source-pass-list-items ()
-    "Return a list of all password store items."
-    (let ((store-dir (getenv "PASSWORD_STORE_DIR")))
-      (mapcar
-       (lambda (file)
-         (file-name-sans-extension (file-relative-name file store-dir)))
-       (directory-files-recursively store-dir "\.gpg$"))))
-
-  :config
-  (auth-source-pass-enable))
-
-;; Use Emacs for =pinentry=
-
-
-(use-feature! epg
-  :defer 2
-  :config
-  (setopt epg-pinentry-mode 'loopback))
-
-;; Define helper function to lookup a password for a target host
-
-;; - source :: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#lookup-a-password-using-auth-source>
-
-
-(defun ceamx-lookup-password (host user port)
-  (require 'auth-source)
-  (require 'auth-source-pass)
-  (let ((auth (auth-source-search :host host :user user :port port)))
-    (if auth
-      (let ((secretf (plist-get (car auth) :secret)))
-        (if secretf
-          (funcall secretf)
-          (error "Auth entry for %s@%s:%s has no secret!"
-            user host port)))
-      (error "No auth entry found for %s@%s:%s" user host port))))
-
 ;; Configure cursor appearance
 
 
@@ -1309,18 +1223,6 @@ with its default modeline)."
       ;; NOTE: '0' value will recenter at the absolute top.
       (recenter 1))))
 
-;; Essentials
-;; :PROPERTIES:
-;; :header-args: :tangle init.el
-;; :END:
-
-
-(setq-default indicate-empty-lines nil)
-(setq-default fill-column 70)
-
-;; Disable buffer line wrapping by default.
-(setq-default truncate-lines t)
-
 ;; Enable some commands that Emacs disables by default
 
 
@@ -1329,27 +1231,27 @@ with its default modeline)."
                upcase-region))
   (put cmd 'disabled nil))
 
-;; Scrolling
+;; Configure sane window-scrolling behavior
 
 
-;; Available cycle positions for `recenter-top-bottom'.
-(setopt recenter-positions '(top middle bottom))
+(use-feature! window
+  :bind
+  ("C-x <" . scroll-right)
+  ("C-x >" . scroll-left)
+  ("<wheel-left>" . scroll-left)
+  ("<wheel-right>" . scroll-right)
 
-(setopt scroll-error-top-bottom t
-        ;; Prevent unwanted horizontal scrolling upon navigation.
-        scroll-preserve-screen-position t
-        scroll-conservatively 10000)
+  :config
+  ;; Available cycle positions for `recenter-top-bottom'.
+  (setopt recenter-positions '(top middle bottom))
 
-;; Add a margin when scrolling vertically (or don't).
-;; (setq-default scroll-margin 4)
+  (setopt scroll-error-top-bottom t
+          ;; Prevent unwanted horizontal scrolling upon navigation.
+          scroll-preserve-screen-position t
+          scroll-conservatively 10000)
 
-(define-keymap :keymap (current-global-map)
-  ;; The default bindings feel backwards to me.
-  "C-x <" #'scroll-right
-  "C-x >" #'scroll-left
-
-  "<wheel-left>" #'scroll-left
-  "<wheel-right>" #'scroll-right)
+  ;; Add a margin when scrolling vertically (or don't).
+  (setq-default scroll-margin 1))
 
 ;; Auto-revert buffers
 
@@ -1371,34 +1273,30 @@ with its default modeline)."
   :config
   (setopt ibuffer-movement-cycle t))
 
-;; Configure the behaviour of the TAB key
-
-
-(use-package emacs
-  :ensure nil
-  :config
-  (setq-default indent-tabs-mode nil
-                tab-width 8))
-
-;; Whitespace and indentation
+;; Normalize whitespace and indentation handling
 
 
 (use-feature! emacs
+  :hook ((before-save . delete-trailing-whitespace))
+
   :config
+  (setq-default indent-tabs-mode nil
+                tab-width 8)
 
+  (setopt backward-delete-char-untabify-method 'hungry)
+  (setopt mode-require-final-newline 'visit-save)
+  (setopt sentence-end-double-space t)
 
-  (setopt mode-require-final-newline 'visit-save))
+  (electric-indent-mode 1))
 
-
-
-;; Visualize unusual whitespace character usages in desired contexts by
-;; selectively enabling ~whitespace-mode~:
+;; Visualize notable and unusual whitespace
 
 
 (use-feature! emacs
   :hook ((prog-mode . whitespace-mode))
-  :config
 
+  :config
+  (setq-default indicate-empty-lines nil)
 
   (setopt whitespace-style
           '(face
@@ -1407,22 +1305,7 @@ with its default modeline)."
             trailing
             missing-newline-at-eof)))
 
-;; Indentation
-
-
-(setopt backward-delete-char-untabify-method 'untabify)
-
-;; ~electric-indent-mode~ [builtin]: Emacs' best attempt at automatic indentation
-
-
-(electric-indent-mode 1)
-
-;; Delete trailing whitespace before saving files
-
-
-(add-hook 'before-save-hook #'delete-trailing-whitespace)
-
-;; ~editorconfig~: Enforce EditorConfig settings
+;; Enforce EditorConfig settings
 
 ;; - website :: <https://editorconfig.org>
 
@@ -1445,35 +1328,6 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
   :config
   (add-hook 'editorconfig-after-apply-functions #'+editorconfig-enforce-org-mode-tab-width-h))
-
-;; Use two spaces after sentences for improved legibility and parsability
-
-;; Yes, it may appear strange and archaic, and yet... I realized that I actually
-;; do *prefer* this for readability.  And so, I am giving it a shot.  My
-;; grandfather, who was an English teacher for most of the 20th century, would
-;; be very proud.  Though even writing this paragraph has been difficult.
-
-;; [2024-07-13] Update:  Still double-spacing.  No longer "difficult".
-
-
-(setopt sentence-end-double-space t)
-
-;; Don't consider camelCaseWORDs as separate words
-
-;; While it can be useful in some contexts, I wish that ~subword-mode~ did not break
-;; ~ceamx/backward-kill-word~.  See also [[*Provide a command to intelligently kill
-;; words backwardsly]]
-
-
-(global-subword-mode -1)
-
-;; Provide commands to "unfill" text
-
-;; - src :: <https://github.com/purcell/unfill>
-
-
-(use-package unfill
-  :ensure t)
 
 ;; ~mwim~: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
 
@@ -1564,31 +1418,18 @@ This operation will respect the following rules:
 
 ;; <https://github.com/rejeep/drag-stuff.el>
 
-;;  This package appears to be abandoned since 2017.
-;;  But, as of <2023-09-06>, it still works well.
-
+;;  This package appears to be abandoned since 2017.  As of <2024-12-27>,
+;;  it still works relatively well.  However, there may be some subtle
+;;  conflicts with ~org-metaup~ and ~org-metadown~.
 
 
 (use-package drag-stuff
+  :ensure t
   :bind
   (([M-up] . drag-stuff-up)
    ([M-right] . drag-stuff-right)
    ([M-down] . drag-stuff-down)
    ([M-left] . drag-stuff-left)))
-
-;; Automatically wrap text at ~fill-column~ in some contexts
-
-
-(defun ceamx-langs-auto-fill-comments-only-h ()
-  "Set `auto-fill-mode' to only fill comments."
-  (setq-local comment-auto-fill-only-comments t))
-
-(use-package emacs
-  :ensure nil
-  :hook (((prog-mode text-mode) . auto-fill-mode)
-         (prog-mode . ceamx-langs-auto-fill-comments-only-h))
-  :config
-  (setopt comment-auto-fill-only-comments nil))
 
 ;; Visualize and electrify matching character pairs :pairs:
 
@@ -1608,6 +1449,15 @@ This operation will respect the following rules:
 
 (electric-pair-mode 1)
 (show-paren-mode 1)
+
+;; Don't consider camelCaseWORDs as separate words
+
+;; While it can be useful in some contexts, I wish that ~subword-mode~ did not break
+;; ~ceamx/backward-kill-word~.  See also [[*Provide a command to intelligently kill
+;; words backwardsly]]
+
+
+(global-subword-mode -1)
 
 ;; TODO ~string-inflection~: Commands to cycle through word casing
 
@@ -1682,6 +1532,79 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       (keymap-global-set "C-x SPC" #'hydra-rectangle/body)
       (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
 
+;; ~fill-column~-based line wrapping
+
+
+(use-feature! emacs
+  :hook (((prog-mode text-mode) . auto-fill-mode))
+
+  :config
+  (setq-default fill-column 70)
+  ;; Disable line soft-wrapping by default.
+  (setq-default truncate-lines t)
+
+  (setopt comment-auto-fill-only-comments t))
+
+(use-package unfill
+  :ensure t
+  :bind ("M-q" . unfill-toggle))
+
+;; Configure secrets lookup with ~auth-source~ and =password-store=
+
+;; - source :: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#auth-source-pass>
+
+
+(use-feature! auth-source
+  :demand t
+  :config
+  ;; Ensure the usage of an encrypted auth credentials file.  It's
+  ;; best to list only a single file here to avoid confusion about
+  ;; where secrets might be stored.
+  (setopt auth-sources (list "~/.authinfo.gpg")))
+
+;; TODO: provide explanation as to why these functions are named like so -- they just magically work..?
+(use-feature! auth-source-pass
+  :demand t
+
+  :preface
+  (defvar auth-source-pass--cache (make-hash-table :test #'equal))
+
+  (defun auth-source-pass--reset-cache ()
+    (setq auth-source-pass--cache (make-hash-table :test #'equal)))
+
+  (defun auth-source-pass--read-entry (entry)
+    "Return a string with the file content of ENTRY."
+    (run-at-time 45 nil #'auth-source-pass--reset-cache)
+    (let ((cached (gethash entry auth-source-pass--cache)))
+      (or cached
+          (puthash
+           entry
+           (with-temp-buffer
+             (insert-file-contents (expand-file-name
+                                    (format "%s.gpg" entry)
+                                    (getenv "PASSWORD_STORE_DIR")))
+             (buffer-substring-no-properties (point-min) (point-max)))
+           auth-source-pass--cache))))
+
+  (defun ceamx-auth-source-pass-list-items ()
+    "Return a list of all password store items."
+    (let ((store-dir (getenv "PASSWORD_STORE_DIR")))
+      (mapcar
+       (lambda (file)
+         (file-name-sans-extension (file-relative-name file store-dir)))
+       (directory-files-recursively store-dir "\.gpg$"))))
+
+  :config
+  (auth-source-pass-enable))
+
+;; Use Emacs for =pinentry=
+
+
+(use-feature! epg
+  :defer 2
+  :config
+  (setopt epg-pinentry-mode 'loopback))
+
 ;; ~ceamx-simple~: Simple & common commands
 
 
@@ -1729,6 +1652,70 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 (with-eval-after-load 'lentic
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+
+;; Manage backup files and prevent file-lock clutter
+
+
+(use-feature! emacs
+  :config
+  (setopt create-lockfiles nil
+          ;; TODO: enable under some conditions e.g. not a project,
+          ;; tramp remote file
+          make-backup-files nil
+          delete-by-moving-to-trash t)
+
+  (when make-backup-files
+    (setopt version-control t
+            delete-old-versions t
+            kept-new-versions 5
+            kept-old-versions 5)))
+
+;; Add file headers to new files
+
+
+(use-feature! autoinsert
+  :config
+  (auto-insert-mode 1))
+
+;; Configure finding of files
+
+
+(use-feature! emacs
+  :config
+  (setopt find-file-suppress-same-file-warnings t
+          find-file-visit-truename t)
+
+  ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
+  (def-hook! ceamx-find-file-create-paths-h ()
+    'find-file-not-found-functions
+    "Automatically create missing directories when creating new files."
+    (unless (file-remote-p buffer-file-name)
+      (let ((parent-directory (file-name-directory buffer-file-name)))
+        (and (not (file-directory-p parent-directory))
+             (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                               parent-directory))
+             (progn (make-directory parent-directory 'parents)
+                    t))))))
+
+;; Auto-save file-visiting buffers
+
+
+(use-feature! emacs
+  :config
+  (setopt
+   ;; Prevent creation of the list of all auto-saved files.
+   auto-save-list-file-prefix nil
+   ;; Number of input events before autosave
+   auto-save-interval 300
+   ;; Idle interval for all file-visiting buffers
+   auto-save-visited-interval 30
+   ;; Idle interval before autosave
+   auto-save-timeout 30
+   ;; Don't create auto-save "~" files.
+   auto-save-default nil)
+
+  ;; Save file-visiting buffers according to the configured timers.
+  (auto-save-visited-mode))
 
 ;; Window and Buffer Management
 ;; :PROPERTIES:
@@ -1856,7 +1843,7 @@ The buffer will be created if it does not exist."
 
           ;; TODO: is there not a simpler way than using `ceamx-simple-buffer-which-mode'?
           ;; e.g. `derived-mode-p' or similar
-          ((lambda (buf act) (member (ceamx-simple-buffer-which-mode buf) ceamx-message-modes-list))
+          ((lambda (buf act) (member (ceamx-simple-buffer-which-mode buf) ceamx-simple-message-modes-list))
            (display-buffer-at-bottom
             display-buffer-in-side-window))
 
@@ -1883,12 +1870,12 @@ The buffer will be created if it does not exist."
 
   (setopt popper-reference-buffers
           (append
-           ceamx-help-modes-list
-           ceamx-help-buffer-names-list
-           ceamx-manual-modes-list
-           ceamx-repl-modes-list
-           ceamx-repl-buffer-names-list
-           ceamx-occur-grep-modes-list
+           ceamx-simple-help-modes-list
+           ceamx-simple-help-buffer-names-list
+           ceamx-simple-manual-modes-list
+           ceamx-simple-repl-modes-list
+           ceamx-simple-repl-buffer-names-list
+           ceamx-simple-grep-modes-list
            '(+popper-current-buffer-popup-p)
            '(Custom-mode
              compilation-mode
@@ -2069,7 +2056,6 @@ The buffer will be created if it does not exist."
 
 ;; Projects / Files
 (require 'init-vcs)
-(require 'init-files)
 (require 'init-dired)
 
 ;;;; Workspaces + activities + contexts
@@ -2214,7 +2200,6 @@ The buffer will be created if it does not exist."
   "M-f" #'forward-word
   "M-F" #'forward-symbol
   "M-j" #'avy-goto-char-timer
-  "M-q" #'unfill-toggle
   "M-Q" #'repunctuate-sentences
   "M-w" #'easy-kill
 
@@ -2237,16 +2222,16 @@ The buffer will be created if it does not exist."
   ;; TODO
   ;; "y" #'+yank-this-file-name
 
-  "c" '("copy..." . ceamx/copy-this-file)
-  "d" '("delete" . ceamx/delete-this-file)
+  "c" '("copy..." . ceamx-simple/copy-current-file)
+  "d" '("delete" . ceamx-simple/delete-current-file)
   "f" #'find-file
   "F" #'find-file-other-window
-  "r" '("rename/move..." . ceamx/move-this-file)
+  "r" '("rename/move..." . ceamx-simple/move-current-file)
   "s" #'save-buffer
   "S" '("save as..." . write-file)
   "U" #'ceamx/sudo-find-file
 
-  "C-d" '("diff with..." . ceamx/diff-with-file))
+  "C-d" '("diff with..." . ceamx-simple/diff-with-file))
 
 ;;;;; [C-c i] :: Insert
 

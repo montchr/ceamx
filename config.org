@@ -394,68 +394,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 :VISIBILITY: folded
 :END:
 
-** =lisp/lib-files.el=
-
-#+name: lib-files-file
-#+begin_src emacs-lisp  :tangle lisp/lib-files.el :comments no :noweb yes
-<<file-prop-line(feature="lib-files",desc="Files support support")>>
-
-;; Copyright (C) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-;; Copyright (C) 2014-2022  Henrik Lissner
-;; Copyright (C) 2006-2021  Steve Purcell
-;; Copyright (C) 2008-2024  Jonas Bernoulli
-;; SPDX-License-Identifier: GPL-3.0-or-later AND MIT AND BSD-2-Clause
-
-;; Author: Henrik Lissner
-;;         Vegard Øye <vegard_oye at hotmail.com>
-;;         Steve Purcell
-;;         Chris Montgomery <chmont@protonmail.com>
-;;         Jonas Bernoulli <jonas@bernoul.li>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Created: 23 January 2023
-;; Version: 0.1.0
-
-<<file-license>>
-
-;; Permission is hereby granted, free of charge, to any person obtaining
-;; a copy of this software and associated documentation files (the
-;; "Software"), to deal in the Software without restriction, including
-;; without limitation the rights to use, copy, modify, merge, publish,
-;; distribute, sublicense, and/or sell copies of the Software, and to
-;; permit persons to whom the Software is furnished to do so, subject to
-;; the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be
-;; included in all copies or substantial portions of the Software.
-
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-;;
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-;;
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-;;; Commentary:
-;;; Code:
-
-<<lib-files>>
-
-<<file-footer(feature="lib-files")>>
-#+end_src
-
 ** =lisp/lib-completion.el=
 
 #+name: lib-completion-file
@@ -611,28 +549,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<init-dashboard>>
 
 <<file-footer(feature="init-dashboard")>>
-#+end_src
-
-** =lisp/init-files.el=
-
-#+name: init-files-file
-#+begin_src emacs-lisp  :tangle lisp/init-files.el :comments no :noweb yes
-<<file-prop-line(feature="init-files",desc="File handling")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-files>>
-
-<<file-footer(feature="init-files")>>
 #+end_src
 
 ** =lisp/init-flycheck.el=
@@ -2480,100 +2396,6 @@ Avoid collision of mouse with point:
 #+end_src
 
 
-* Secrets :: =secrets= :secrets:
-:PROPERTIES:
-:header-args: :tangle init.el
-:END:
-
-- source :: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#auth-source-pass>
-
-#+begin_src emacs-lisp
-(require 'epg)
-(require 'auth-source)
-(require 'auth-source-pass)
-#+end_src
-
-** Ensure secrets and auth credentials are not stored in plaintext
-
-It's best to list only a single file here to avoid confusion about where
-secrets might be stored:
-
-#+begin_src emacs-lisp
-(setopt auth-sources (list "~/.authinfo.gpg"))
-#+end_src
-
-** Configure secrets lookup with ~auth-source~ and the Unix password store
-
-#+begin_src emacs-lisp
-(use-feature! auth-source
-  :demand t)
-#+end_src
-
-#+begin_src emacs-lisp
-;; TODO: provide explanation as to why these functions are named like so -- they just magically work..?
-(use-feature! auth-source-pass
-  :demand t
-
-  :preface
-  (defvar auth-source-pass--cache (make-hash-table :test #'equal))
-
-  (defun auth-source-pass--reset-cache ()
-    (setq auth-source-pass--cache (make-hash-table :test #'equal)))
-
-  (defun auth-source-pass--read-entry (entry)
-    "Return a string with the file content of ENTRY."
-    (run-at-time 45 nil #'auth-source-pass--reset-cache)
-    (let ((cached (gethash entry auth-source-pass--cache)))
-      (or cached
-          (puthash
-           entry
-           (with-temp-buffer
-             (insert-file-contents (expand-file-name
-                                    (format "%s.gpg" entry)
-                                    (getenv "PASSWORD_STORE_DIR")))
-             (buffer-substring-no-properties (point-min) (point-max)))
-           auth-source-pass--cache))))
-
-  (defun ceamx-auth-source-pass-list-items ()
-    "Return a list of all password store items."
-    (let ((store-dir (getenv "PASSWORD_STORE_DIR")))
-      (mapcar
-       (lambda (file)
-         (file-name-sans-extension (file-relative-name file store-dir)))
-       (directory-files-recursively store-dir "\.gpg$"))))
-
-  :config
-  (auth-source-pass-enable))
-#+end_src
-
-** Use Emacs for =pinentry=
-
-#+begin_src emacs-lisp
-(use-feature! epg
-  :defer 2
-  :config
-  (setopt epg-pinentry-mode 'loopback))
-#+end_src
-
-** Define helper function to lookup a password for a target host
-
-- source :: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#lookup-a-password-using-auth-source>
-
-#+begin_src emacs-lisp
-(defun ceamx-lookup-password (host user port)
-  (require 'auth-source)
-  (require 'auth-source-pass)
-  (let ((auth (auth-source-search :host host :user user :port port)))
-    (if auth
-      (let ((secretf (plist-get (car auth) :secret)))
-        (if secretf
-          (funcall secretf)
-          (error "Auth entry for %s@%s:%s has no secret!"
-            user host port)))
-      (error "No auth entry found for %s@%s:%s" user host port))))
-#+end_src
-
-
 * Appearance :: =ui= :ui:
 :PROPERTIES:
 :header-args: :tangle init.el
@@ -3722,14 +3544,6 @@ will be used as default."
 :header-args: :tangle init.el
 :END:
 
-#+begin_src emacs-lisp
-(setq-default indicate-empty-lines nil)
-(setq-default fill-column 70)
-
-;; Disable buffer line wrapping by default.
-(setq-default truncate-lines t)
-#+end_src
-
 ** Enable some commands that Emacs disables by default
 
 #+begin_src emacs-lisp
@@ -3739,27 +3553,27 @@ will be used as default."
   (put cmd 'disabled nil))
 #+end_src
 
-** Scrolling
+** Configure sane window-scrolling behavior
 
 #+begin_src emacs-lisp
-;; Available cycle positions for `recenter-top-bottom'.
-(setopt recenter-positions '(top middle bottom))
+(use-feature! window
+  :bind
+  ("C-x <" . scroll-right)
+  ("C-x >" . scroll-left)
+  ("<wheel-left>" . scroll-left)
+  ("<wheel-right>" . scroll-right)
 
-(setopt scroll-error-top-bottom t
-        ;; Prevent unwanted horizontal scrolling upon navigation.
-        scroll-preserve-screen-position t
-        scroll-conservatively 10000)
+  :config
+  ;; Available cycle positions for `recenter-top-bottom'.
+  (setopt recenter-positions '(top middle bottom))
 
-;; Add a margin when scrolling vertically (or don't).
-;; (setq-default scroll-margin 4)
+  (setopt scroll-error-top-bottom t
+          ;; Prevent unwanted horizontal scrolling upon navigation.
+          scroll-preserve-screen-position t
+          scroll-conservatively 10000)
 
-(define-keymap :keymap (current-global-map)
-  ;; The default bindings feel backwards to me.
-  "C-x <" #'scroll-right
-  "C-x >" #'scroll-left
-
-  "<wheel-left>" #'scroll-left
-  "<wheel-right>" #'scroll-right)
+  ;; Add a margin when scrolling vertically (or don't).
+  (setq-default scroll-margin 1))
 #+end_src
 
 ** Auto-revert buffers
@@ -3784,34 +3598,32 @@ will be used as default."
   (setopt ibuffer-movement-cycle t))
 #+end_src
 
-** Configure the behaviour of the TAB key
-
-#+begin_src emacs-lisp
-(use-package emacs
-  :ensure nil
-  :config
-  (setq-default indent-tabs-mode nil
-                tab-width 8))
-#+end_src
-
 ** Whitespace and indentation
+*** Normalize whitespace and indentation handling
 
 #+begin_src emacs-lisp
 (use-feature! emacs
+  :hook ((before-save . delete-trailing-whitespace))
+
   :config
+  (setq-default indent-tabs-mode nil
+                tab-width 8)
 
+  (setopt backward-delete-char-untabify-method 'hungry)
+  (setopt mode-require-final-newline 'visit-save)
+  (setopt sentence-end-double-space t)
 
-  (setopt mode-require-final-newline 'visit-save))
+  (electric-indent-mode 1))
 #+end_src
 
-Visualize unusual whitespace character usages in desired contexts by
-selectively enabling ~whitespace-mode~:
+*** Visualize notable and unusual whitespace
 
 #+begin_src emacs-lisp
 (use-feature! emacs
   :hook ((prog-mode . whitespace-mode))
-  :config
 
+  :config
+  (setq-default indicate-empty-lines nil)
 
   (setopt whitespace-style
           '(face
@@ -3821,27 +3633,7 @@ selectively enabling ~whitespace-mode~:
             missing-newline-at-eof)))
 #+end_src
 
-*** Indentation
-
-#+begin_src emacs-lisp
-
-
-(setopt backward-delete-char-untabify-method 'untabify)
-#+end_src
-
-**** ~electric-indent-mode~ [builtin]: Emacs' best attempt at automatic indentation
-
-#+begin_src emacs-lisp
-(electric-indent-mode 1)
-#+end_src
-
-*** Delete trailing whitespace before saving files
-
-#+begin_src emacs-lisp
-(add-hook 'before-save-hook #'delete-trailing-whitespace)
-#+end_src
-
-** ~editorconfig~: Enforce EditorConfig settings
+*** Enforce EditorConfig settings
 
 - website :: <https://editorconfig.org>
 
@@ -3866,39 +3658,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (add-hook 'editorconfig-after-apply-functions #'+editorconfig-enforce-org-mode-tab-width-h))
 #+end_src
 
-** Use two spaces after sentences for improved legibility and parsability
-
-Yes, it may appear strange and archaic, and yet... I realized that I actually
-do *prefer* this for readability.  And so, I am giving it a shot.  My
-grandfather, who was an English teacher for most of the 20th century, would
-be very proud.  Though even writing this paragraph has been difficult.
-
-[2024-07-13] Update:  Still double-spacing.  No longer "difficult".
-
-#+begin_src emacs-lisp
-(setopt sentence-end-double-space t)
-#+end_src
-
-** Don't consider camelCaseWORDs as separate words
-
-While it can be useful in some contexts, I wish that ~subword-mode~ did not break
-~ceamx/backward-kill-word~.  See also [[*Provide a command to intelligently kill
-words backwardsly]]
-
-#+begin_src emacs-lisp
-(global-subword-mode -1)
-#+end_src
-
-** Provide commands to "unfill" text
-
-- src :: <https://github.com/purcell/unfill>
-
-#+begin_src emacs-lisp
-(use-package unfill
-  :ensure t)
-#+end_src
-
-** ~mwim~: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
+** Movement & Regions & Simple Editing
+*** ~mwim~: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
 
 #+begin_src emacs-lisp
 (use-package mwim
@@ -3908,7 +3669,7 @@ words backwardsly]]
   (keymap-global-set "C-e" #'mwim-end))
 #+end_src
 
-** INPRG Provide a command to intelligently kill words backwardsly
+*** INPRG Provide a command to intelligently kill words backwardsly
 
 - State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
   Needs a fix for compatibility with ~subword-mode~.  See also [[*Don't consider camelCaseWORDs as separate words]]
@@ -3949,14 +3710,13 @@ This operation will respect the following rules:
         (delete-char -1)))))
 #+end_src
 
-
-** Replace region when inserting text
+*** Replace region when inserting text
 
 #+begin_src emacs-lisp
 (delete-selection-mode 1)
 #+end_src
 
-** ~easy-kill~ :package:
+*** ~easy-kill~ :package:
 
 <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
@@ -3980,7 +3740,7 @@ b => buffer name
   )
 #+end_src
 
-** ~expand-region~: Increase/decrease the selection area
+*** ~expand-region~: Increase/decrease the selection area
 
 #+begin_src emacs-lisp
 (use-package expand-region
@@ -3989,16 +3749,17 @@ b => buffer name
   (keymap-global-set "C-=" #'er/expand-region))
 #+end_src
 
-** ~drag-stuff~: drag stuff around in arbitrary directions :package:
+*** ~drag-stuff~: drag stuff around in arbitrary directions :package:
 
 <https://github.com/rejeep/drag-stuff.el>
 
- This package appears to be abandoned since 2017.
- But, as of <2023-09-06>, it still works well.
-
+ This package appears to be abandoned since 2017.  As of <2024-12-27>,
+ it still works relatively well.  However, there may be some subtle
+ conflicts with ~org-metaup~ and ~org-metadown~.
 
 #+begin_src emacs-lisp
 (use-package drag-stuff
+  :ensure t
   :bind
   (([M-up] . drag-stuff-up)
    ([M-right] . drag-stuff-right)
@@ -4007,14 +3768,14 @@ b => buffer name
 #+end_src
 
 
-*** Issues
+**** Issues
 
 Note that as of [2023-07-20] there are numerous warnings about deprecated functions in
 recent versions of Emacs:
 
 <https://github.com/rejeep/drag-stuff.el/issues/36>
 
-*** Alternatives
+**** Alternatives
 
 I haven't yet found any other package to move arbitrary regions up/down while
 preserving column position.
@@ -4024,22 +3785,7 @@ this but fails pretty badly, moving the region/selection to the first column
 regardless of its original position.
 #+end_src
 
-** Automatically wrap text at ~fill-column~ in some contexts
-
-#+begin_src emacs-lisp
-(defun ceamx-langs-auto-fill-comments-only-h ()
-  "Set `auto-fill-mode' to only fill comments."
-  (setq-local comment-auto-fill-only-comments t))
-
-(use-package emacs
-  :ensure nil
-  :hook (((prog-mode text-mode) . auto-fill-mode)
-         (prog-mode . ceamx-langs-auto-fill-comments-only-h))
-  :config
-  (setopt comment-auto-fill-only-comments nil))
-#+end_src
-
-** Visualize and electrify matching character pairs :pairs:
+*** Visualize and electrify matching character pairs :pairs:
 
 See the Info node [[info:emacs#Matching]]
 
@@ -4059,7 +3805,17 @@ See the Info node [[info:emacs#Matching]]
 (show-paren-mode 1)
 #+end_src
 
-** TODO ~string-inflection~: Commands to cycle through word casing
+*** Don't consider camelCaseWORDs as separate words
+
+While it can be useful in some contexts, I wish that ~subword-mode~ did not break
+~ceamx/backward-kill-word~.  See also [[*Provide a command to intelligently kill
+words backwardsly]]
+
+#+begin_src emacs-lisp
+(global-subword-mode -1)
+#+end_src
+
+*** TODO ~string-inflection~: Commands to cycle through word casing
 
 Needs better bindings.
 
@@ -4086,7 +3842,7 @@ Needs better bindings.
     (_ (string-inflection-ruby-style-cycle))))
 #+end_src
 
-** ~ialign~: Interactively ~align-regexp~ :package:
+*** ~ialign~: Interactively ~align-regexp~ :package:
 
 <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
 
@@ -4095,7 +3851,7 @@ Needs better bindings.
   (keymap-global-set "C-x l" #'ialign))
 #+end_src
 
-** ~rect~ [builtin]: operate on a buffer rectangularly
+*** ~rect~ [builtin]: operate on a buffer rectangularly
 
 <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
 
@@ -4135,6 +3891,104 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     (when (fboundp 'hydra-rectangle/body)
       (keymap-global-set "C-x SPC" #'hydra-rectangle/body)
       (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
+#+end_src
+
+** ~fill-column~-based line wrapping
+
+#+begin_src emacs-lisp
+(use-feature! emacs
+  :hook (((prog-mode text-mode) . auto-fill-mode))
+
+  :config
+  (setq-default fill-column 70)
+  ;; Disable line soft-wrapping by default.
+  (setq-default truncate-lines t)
+
+  (setopt comment-auto-fill-only-comments t))
+
+(use-package unfill
+  :ensure t
+  :bind ("M-q" . unfill-toggle))
+#+end_src
+
+** Configure secrets lookup with ~auth-source~ and =password-store=
+
+- source :: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#auth-source-pass>
+
+#+begin_src emacs-lisp
+(use-feature! auth-source
+  :demand t
+  :config
+  ;; Ensure the usage of an encrypted auth credentials file.  It's
+  ;; best to list only a single file here to avoid confusion about
+  ;; where secrets might be stored.
+  (setopt auth-sources (list "~/.authinfo.gpg")))
+
+;; TODO: provide explanation as to why these functions are named like so -- they just magically work..?
+(use-feature! auth-source-pass
+  :demand t
+
+  :preface
+  (defvar auth-source-pass--cache (make-hash-table :test #'equal))
+
+  (defun auth-source-pass--reset-cache ()
+    (setq auth-source-pass--cache (make-hash-table :test #'equal)))
+
+  (defun auth-source-pass--read-entry (entry)
+    "Return a string with the file content of ENTRY."
+    (run-at-time 45 nil #'auth-source-pass--reset-cache)
+    (let ((cached (gethash entry auth-source-pass--cache)))
+      (or cached
+          (puthash
+           entry
+           (with-temp-buffer
+             (insert-file-contents (expand-file-name
+                                    (format "%s.gpg" entry)
+                                    (getenv "PASSWORD_STORE_DIR")))
+             (buffer-substring-no-properties (point-min) (point-max)))
+           auth-source-pass--cache))))
+
+  (defun ceamx-auth-source-pass-list-items ()
+    "Return a list of all password store items."
+    (let ((store-dir (getenv "PASSWORD_STORE_DIR")))
+      (mapcar
+       (lambda (file)
+         (file-name-sans-extension (file-relative-name file store-dir)))
+       (directory-files-recursively store-dir "\.gpg$"))))
+
+  :config
+  (auth-source-pass-enable))
+#+end_src
+
+*** Use Emacs for =pinentry=
+
+#+begin_src emacs-lisp
+(use-feature! epg
+  :defer 2
+  :config
+  (setopt epg-pinentry-mode 'loopback))
+#+end_src
+
+*** DISABLED Define helper function to lookup a password for a target host
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+- source :: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#lookup-a-password-using-auth-source>
+
+#+begin_src emacs-lisp
+(eval-when-compile (require 'auth-source))
+(eval-when-compile (require 'auth-source-pass))
+
+(defun ceamx-lookup-password (host user port)
+  (let ((auth (auth-source-search :host host :user user :port port)))
+    (if auth
+        (let ((secretf (plist-get (car auth) :secret)))
+          (if secretf
+              (funcall secretf)
+            (error "Auth entry for %s@%s:%s has no secret!"
+                   user host port)))
+      (error "No auth entry found for %s@%s:%s" user host port))))
 #+end_src
 
 ** ~ceamx-simple~: Simple & common commands
@@ -4190,33 +4044,23 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 #+end_src
 
-* Files :: =files= :files:
-:PROPERTIES:
-:header-args: :noweb-ref init-files
-:END:
-
-#+begin_src emacs-lisp
-(require 'ceamx-paths)
-
-(require 'ceamx-lib)
-(require 'lib-files)
-#+end_src
 
 ** Manage backup files and prevent file-lock clutter
 
 #+begin_src emacs-lisp
-(setopt create-lockfiles nil)
-(setopt make-backup-files nil)
+(use-feature! emacs
+  :config
+  (setopt create-lockfiles nil
+          ;; TODO: enable under some conditions e.g. not a project,
+          ;; tramp remote file
+          make-backup-files nil
+          delete-by-moving-to-trash t)
 
-(when make-backup-files
-  (setopt version-control t)
-  (setopt delete-old-versions t)
-  (setopt kept-new-versions 5)
-  (setopt kept-old-versions 5))
-
-(setopt delete-by-moving-to-trash t)
-
-
+  (when make-backup-files
+    (setopt version-control t
+            delete-old-versions t
+            kept-new-versions 5
+            kept-old-versions 5)))
 #+end_src
 
 ** Add file headers to new files
@@ -4224,234 +4068,49 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 #+begin_src emacs-lisp
 (use-feature! autoinsert
   :config
-  (auto-insert-mode t))
+  (auto-insert-mode 1))
 #+end_src
 
 ** Configure finding of files
 
 #+begin_src emacs-lisp
-(setopt find-file-suppress-same-file-warnings t)
-(setopt find-file-visit-truename t)
+(use-feature! emacs
+  :config
+  (setopt find-file-suppress-same-file-warnings t
+          find-file-visit-truename t)
+
+  ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
+  (def-hook! ceamx-find-file-create-paths-h ()
+    'find-file-not-found-functions
+    "Automatically create missing directories when creating new files."
+    (unless (file-remote-p buffer-file-name)
+      (let ((parent-directory (file-name-directory buffer-file-name)))
+        (and (not (file-directory-p parent-directory))
+             (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                               parent-directory))
+             (progn (make-directory parent-directory 'parents)
+                    t))))))
 #+end_src
 
-*** Prompt to create missing parent directories for not-found files
-
-<https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
+** Auto-save file-visiting buffers
 
 #+begin_src emacs-lisp
-(defun ceamx-create-missing-directories-h ()
-  "Automatically create missing directories when creating new files."
-  (unless (file-remote-p buffer-file-name)
-    (let ((parent-directory (file-name-directory buffer-file-name)))
-      (and (not (file-directory-p parent-directory))
-           (y-or-n-p (format "Directory `%s' does not exist! Create it?"
-                             parent-directory))
-           (progn (make-directory parent-directory 'parents)
-                  t)))))
+(use-feature! emacs
+  :config
+  (setopt
+   ;; Prevent creation of the list of all auto-saved files.
+   auto-save-list-file-prefix nil
+   ;; Number of input events before autosave
+   auto-save-interval 300
+   ;; Idle interval for all file-visiting buffers
+   auto-save-visited-interval 30
+   ;; Idle interval before autosave
+   auto-save-timeout 30
+   ;; Don't create auto-save "~" files.
+   auto-save-default nil)
 
-(add-hook 'find-file-not-found-functions #'ceamx-create-missing-directories-h)
-#+end_src
-
-** Configure auto-saving of file-visiting buffers
-
-#+begin_src emacs-lisp
-;; Prevent creation of the list of all auto-saved files.
-(setopt auto-save-list-file-prefix nil)
-
-;; Number of input events before autosave
-(setopt auto-save-interval 300)
-
-;; Idle interval for all file-visiting buffers
-(setopt auto-save-visited-interval 30)
-
-;; Idle interval before autosave
-(setopt auto-save-timeout 30)
-
-;; Don't create auto-save "~" files.
-(setopt auto-save-default nil)
-
-;; Save file-visiting buffers according to the configured timers.
-(auto-save-visited-mode)
-#+end_src
-
-** Functions and commands
-:PROPERTIES:
-:header-args: :noweb-ref lib-files
-:END:
-
-#+begin_src emacs-lisp
-(require 'cl-lib)
-#+end_src
-
-#+begin_src emacs-lisp
-;; FIXME: is this supposed to work on save? not working in either magit or projectile
-;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L369-L391>
-(defun ceamx-files--update-refs (&rest files)
-  "Ensure FILES are updated in `recentf', `magit' and `save-place'."
-  (let (toplevels)
-    (dolist (file files)
-      (when (featurep 'vc)
-        (vc-file-clearprops file)
-        (when-let (buffer (get-file-buffer file))
-          (with-current-buffer buffer
-            (vc-refresh-state))))
-      (when (featurep 'magit)
-        (when-let (default-directory (magit-toplevel (file-name-directory file)))
-          (cl-pushnew default-directory toplevels)))
-      (unless (file-readable-p file)
-        (when (bound-and-true-p recentf-mode)
-          (recentf-remove-if-non-kept file))
-        (when (and
-               (bound-and-true-p projectile-mode)
-               ;; FIXME: de-doom
-               ;; (doom-project-p)
-               ;; (projectile-file-cached-p file (doom-project-root))
-               )
-          (projectile-purge-file-from-cache file)))
-      )
-    (dolist (default-directory toplevels)
-      (magit-refresh))
-    (when (bound-and-true-p save-place-mode)
-      (save-place-forget-unreadable-files))))
-#+end_src
-
-*** Commands
-
-#+begin_src emacs-lisp
-;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L3325-L3332>
-(defun ceamx/file-edit (file &optional bang)
-  "Open FILE.
-If no FILE is specified, reload the current buffer from disk."
-  :repeat nil
-  (interactive "<f><!>")
-  (if file
-      (find-file file)
-    (revert-buffer bang (or bang (not (buffer-modified-p))) t)))
-#+end_src
-
-#+begin_src emacs-lisp
-;; via <https://github.com/emacs-evil/evil/blob/9eb69b7f5b3c72cfc66f69b3242e935015780654/evil-commands.el#L4652-L4660>
-(defun ceamx/buffer-new (&optional file)
-  "Edit a new unnamed buffer or FILE."
-  :repeat nil
-  (interactive "<f>")
-  (if file
-      (ceamx/file-edit file)
-    (let ((buffer (generate-new-buffer "*new*")))
-      (set-buffer-major-mode buffer)
-      (set-window-buffer nil buffer))))
-#+end_src
-
-#+begin_src emacs-lisp
-;; FIXME: this does not actually kill its buffers -- buffer must be deleted manually
-;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L397-L424>
-(defun ceamx/delete-this-file (&optional path force-p)
-  "Delete PATH, kill its buffers and expunge it from vc/magit cache.
-If PATH is not specified, default to the current buffer's file.
-If FORCE-P, delete without confirmation."
-  (interactive
-   (list (buffer-file-name (buffer-base-buffer))
-         current-prefix-arg))
-  (let* ((path (or path (buffer-file-name (buffer-base-buffer))))
-         (short-path (and path (abbreviate-file-name path))))
-    (unless path
-      (user-error "Buffer is not visiting any file"))
-    (unless (file-exists-p path)
-      (error "File doesn't exist: %s" path))
-    (unless (or force-p (y-or-n-p (format "Really delete %S?" short-path)))
-      (user-error "Aborted"))
-    (let ((buf (current-buffer)))
-      (unwind-protect
-          (progn (delete-file path t) t)
-        (if (file-exists-p path)
-            (error "Failed to delete %S" short-path)
-          ;; Ensures that windows displaying this buffer will be switched to
-          ;; real buffers (`doom-real-buffer-p')
-          ;; FIXME: implement -- invent the universe -- but the stuff within is very useful to us (e.g. doom-real-buffer-p and filtering buffers)...
-          ;; (doom/kill-this-buffer-in-all-windows buf t)
-          ;; TODO: remove when the above is implemented -- `kill-this-buffer' only removes the one buffer
-          (kill-this-buffer)
-          (ceamx-files--update-refs path)
-          (message "Deleted %S" short-path))))))
-#+end_src
-
-#+begin_src emacs-lisp
-;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
-(defun ceamx/copy-this-file (new-path &optional force-p)
-  "Copy current buffer's file to NEW-PATH.
-If FORCE-P, overwrite the destination file if it exists, without confirmation."
-  (interactive
-   (list (read-file-name "Copy file to: ")
-         current-prefix-arg))
-  (unless (and buffer-file-name (file-exists-p buffer-file-name))
-    (user-error "Buffer is not visiting any file"))
-  (let ((old-path (buffer-file-name (buffer-base-buffer)))
-        (new-path (expand-file-name new-path)))
-    (make-directory (file-name-directory new-path) 't)
-    (copy-file old-path new-path (or force-p 1))
-    (ceamx-files--update-refs old-path new-path)
-    (message "File copied to %S" (abbreviate-file-name new-path))))
-#+end_src
-
-#+begin_src emacs-lisp
-;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
-(defun ceamx/move-this-file (new-path &optional force-p)
-  "Move current buffer's file to NEW-PATH.
-If FORCE-P, overwrite the destination file if it exists, without confirmation."
-  (interactive
-   (list (read-file-name "Move file to: ")
-         current-prefix-arg))
-  (unless (and buffer-file-name (file-exists-p buffer-file-name))
-    (user-error "Buffer is not visiting any file"))
-  (let ((old-path (buffer-file-name (buffer-base-buffer)))
-        (new-path (expand-file-name new-path)))
-    (when (directory-name-p new-path)
-      (setq new-path (concat new-path (file-name-nondirectory old-path))))
-    (make-directory (file-name-directory new-path) 't)
-    (rename-file old-path new-path (or force-p 1))
-    (set-visited-file-name new-path t t)
-    (ceamx-files--update-refs old-path new-path)
-    (message "File moved to %S" (abbreviate-file-name new-path))))
-#+end_src
-
-#+begin_src emacs-lisp
-;; via <https://github.com/noctuid/dotfiles/blob/434ddb77c4b40f4b7ab2246cc2254aa4f408b16f/emacs/.emacs.d/awaken.org>
-(defun ceamx/kill-this-buffer ()
-  "`kill-this-buffer' with no menu-bar checks.
-`kill-this-buffer' is supposed to be called from the menu bar.
-See <https://www.reddit.com/r/emacs/comments/64xb3q/killthisbuffer_sometimes_just_stops_working/>."
-  (interactive)
-  (if (minibufferp)
-      (abort-recursive-edit)
-    (kill-buffer (current-buffer))))
-#+end_src
-
-#+begin_src emacs-lisp
-(defun ceamx/diff-with-file (&optional arg)
-  (interactive "P")
-  (let ((buffer (when arg (current-buffer))))
-    (diff-buffer-with-file buffer)))
-#+end_src
-
-#+begin_src emacs-lisp
-;; via <https://github.com/tarsius/fwb-cmds/blob/88e823809067983acfaeafa57d0bb6e889429ad2/fwb-cmds.el#L140C1-L156C78>
-;;;###autoload
-(defun ceamx/sudo-find-file (&optional arg)
-  "Edit the visited file as \"root\".
-If the current buffer does not visit a file, the visited file is
-writable or with a prefix argument, then read a file to visit."
-  (interactive "P")
-  (require 'tramp)
-  (if (or arg
-          (not buffer-file-name)
-          (file-writable-p buffer-file-name))
-      (let ((default-directory
-             (concat "/sudo:root@localhost:" default-directory)))
-        (apply #'find-file
-               (find-file-read-args
-                "Find file: "
-                (confirm-nonexistent-file-or-buffer))))
-    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+  ;; Save file-visiting buffers according to the configured timers.
+  (auto-save-visited-mode))
 #+end_src
 
 
@@ -5135,7 +4794,7 @@ Action alist entries are:
 
           ;; TODO: is there not a simpler way than using `ceamx-simple-buffer-which-mode'?
           ;; e.g. `derived-mode-p' or similar
-          ((lambda (buf act) (member (ceamx-simple-buffer-which-mode buf) ceamx-message-modes-list))
+          ((lambda (buf act) (member (ceamx-simple-buffer-which-mode buf) ceamx-simple-message-modes-list))
            (display-buffer-at-bottom
             display-buffer-in-side-window))
 
@@ -5163,12 +4822,12 @@ Action alist entries are:
 
   (setopt popper-reference-buffers
           (append
-           ceamx-help-modes-list
-           ceamx-help-buffer-names-list
-           ceamx-manual-modes-list
-           ceamx-repl-modes-list
-           ceamx-repl-buffer-names-list
-           ceamx-occur-grep-modes-list
+           ceamx-simple-help-modes-list
+           ceamx-simple-help-buffer-names-list
+           ceamx-simple-manual-modes-list
+           ceamx-simple-repl-modes-list
+           ceamx-simple-repl-buffer-names-list
+           ceamx-simple-grep-modes-list
            '(+popper-current-buffer-popup-p)
            '(Custom-mode
              compilation-mode
@@ -11258,7 +10917,6 @@ Return the new `zone' timer."
 
 ;; Projects / Files
 (require 'init-vcs)
-(require 'init-files)
 (require 'init-dired)
 #+end_src
 
@@ -11433,7 +11091,6 @@ Or, perhaps more accurately: stuff that needs a better home.
   "M-f" #'forward-word
   "M-F" #'forward-symbol
   "M-j" #'avy-goto-char-timer
-  "M-q" #'unfill-toggle
   "M-Q" #'repunctuate-sentences
   "M-w" #'easy-kill
 
@@ -11456,16 +11113,16 @@ Or, perhaps more accurately: stuff that needs a better home.
   ;; TODO
   ;; "y" #'+yank-this-file-name
 
-  "c" '("copy..." . ceamx/copy-this-file)
-  "d" '("delete" . ceamx/delete-this-file)
+  "c" '("copy..." . ceamx-simple/copy-current-file)
+  "d" '("delete" . ceamx-simple/delete-current-file)
   "f" #'find-file
   "F" #'find-file-other-window
-  "r" '("rename/move..." . ceamx/move-this-file)
+  "r" '("rename/move..." . ceamx-simple/move-current-file)
   "s" #'save-buffer
   "S" '("save as..." . write-file)
   "U" #'ceamx/sudo-find-file
 
-  "C-d" '("diff with..." . ceamx/diff-with-file))
+  "C-d" '("diff with..." . ceamx-simple/diff-with-file))
 
 ;;;;; [C-c i] :: Insert
 
@@ -11721,7 +11378,7 @@ Used by `ceamx/insert-date'."
   :type 'string
   :group 'ceamx-simple)
 
-(defvar ceamx-point-in-comment-functions ()
+(defvar ceamx-simple-point-in-comment-functions ()
   "List of functions to run to determine if point is in a comment.
 Each function takes one argument: the position of the point.  Stops on the first
 function to return non-nil.")
@@ -11729,14 +11386,14 @@ function to return non-nil.")
 (defvar ceamx-simple-checkers-buffer-names-regexp
   (rx "*" (or "Flycheck" "Package-Lint")))
 
-(defvar ceamx-occur-grep-modes-list
+(defvar ceamx-simple-grep-modes-list
   '(occur-mode
     grep-mode
     xref--xref-buffer-mode
     flymake-diagnostics-buffer-mode)
   "List of major-modes used in occur-type buffers.")
 
-(defvar ceamx-repl-modes-list
+(defvar ceamx-simple-repl-modes-list
   '(eshell-mode
     inferior-emacs-lisp-mode            ; ielm
     shell-mode
@@ -11744,7 +11401,7 @@ function to return non-nil.")
     nix-repl-mode)
   "List of major-modes used in REPL buffers.")
 
-(defvar ceamx-repl-buffer-names-list
+(defvar ceamx-simple-repl-buffer-names-list
   '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
     "\\*.*REPL.*\\*"
     "\\*Inferior .*\\*$"
@@ -11752,21 +11409,21 @@ function to return non-nil.")
     "\\*edebug\\*")
   "List of buffer names used in REPL buffers.")
 
-(defvar ceamx-help-modes-list
+(defvar ceamx-simple-help-modes-list
   '(helpful-mode
     help-mode
     eldoc-mode)
   "List of major-modes used in documentation buffers.")
 
-(defvar ceamx-help-buffer-names-list
+(defvar ceamx-simple-help-buffer-names-list
   '("^\\*Apropos"
     "^\\*eldoc\\*")
   "List of buffer names used in help buffers.")
 
-(defvar ceamx-manual-modes-list '(Man-mode woman-mode)
+(defvar ceamx-simple-manual-modes-list '(Man-mode woman-mode)
   "List of major-modes used in Man-type buffers.")
 
-(defvar ceamx-message-modes-list
+(defvar ceamx-simple-message-modes-list
   '(compilation-mode
     edebug-eval-mode)
   "List of major-modes used in message buffers.")
@@ -11784,11 +11441,11 @@ If BUFFER-OR-NAME is nil, return the current buffer's mode."
                           (get-buffer buffer-or-name)
                         (current-buffer))))
 
-(defun ceamx-point-in-comment-p (&optional pos)
+(defun ceamx-simple-point-in-comment-p (&optional pos)
   "Return non-nil if POS is in a comment.
 POS defaults to the current position."
   (let ((pos (or pos (point))))
-    (if ceamx-point-in-comment-functions
+    (if ceamx-simple-point-in-comment-functions
         (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
       (nth 4 (syntax-ppss pos)))))
 
@@ -11801,10 +11458,41 @@ POS defaults to the current position."
       (goto-char char)
       (re-search-forward ceamx-common-url-regexp (line-end-position) :noerror))))
 
+;; FIXME: is this supposed to work on save? not working in either magit or projectile
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L369-L391>
+(defun ceamx-simple--update-file-refs (&rest files)
+  "Ensure FILES are updated in `recentf', `magit' and `save-place'."
+  (let (toplevels)
+    (dolist (file files)
+      (when (featurep 'vc)
+        (vc-file-clearprops file)
+        (when-let (buffer (get-file-buffer file))
+          (with-current-buffer buffer
+            (vc-refresh-state))))
+      (when (featurep 'magit)
+        (when-let (default-directory (magit-toplevel (file-name-directory file)))
+          (cl-pushnew default-directory toplevels)))
+      (unless (file-readable-p file)
+        (when (bound-and-true-p recentf-mode)
+          (recentf-remove-if-non-kept file))
+        (when (and
+               (bound-and-true-p projectile-mode)
+               ;; FIXME: de-doom
+               ;; (doom-project-p)
+               ;; (projectile-file-cached-p file (doom-project-root))
+               )
+          (projectile-purge-file-from-cache file)))
+      )
+    (dolist (default-directory toplevels)
+      (magit-refresh))
+    (when (bound-and-true-p save-place-mode)
+      (save-place-forget-unreadable-files))))
+
+
 ;;; Commands
 
 ;;;###autoload
-(defun ceamx/insert-date (&optional arg)
+(defun ceamx-simple/insert-date (&optional arg)
   "Insert the current date as `ceamx-simple-date-specifier'.
 
 With optional prefix ARG (\\[universal-argument]) also append the
@@ -11814,15 +11502,14 @@ When region is active, delete the highlighted text and replace it
 with the specified date."
   (interactive "P")
   (let* ((date ceamx-simple-date-specifier)
-          (time ceamx-simple-time-specifier)
-          (format (if arg (format "%s %s" date time) date)))
+         (time ceamx-simple-time-specifier)
+         (format (if arg (format "%s %s" date time) date)))
     (when (use-region-p)
       (delete-region (region-beginning) (region-end)))
     (insert (format-time-string format))))
 
-
 ;;;###autoload
-(defun ceamx/escape-url-line (char)
+(defun ceamx-simple/escape-url-line (char)
   "Escape all URLs or email addresses on the current line.
 When called from Lisp CHAR is a buffer position to operate from
 until the end of the line.  In interactive use, CHAR corresponds
@@ -11842,11 +11529,11 @@ to `line-beginning-position'."
       (when (search-backward "\s" (line-beginning-position) :noerror)
         (forward-char 1))
       (insert "<"))
-    (ceamx/escape-url-line (1+ regexp-end)))
+    (ceamx-simple/escape-url-line (1+ regexp-end)))
   (goto-char (line-end-position)))
 
 ;;;###autoload
-(defun ceamx/escape-url-region (&optional beg end)
+(defun ceamx-simple/escape-url-region (&optional beg end)
   "Apply `ceamx/escape-url-line' on region lines between BEG and END."
   (interactive
    (if (region-active-p)
@@ -11858,22 +11545,22 @@ to `line-beginning-position'."
       (goto-char beg)
       (setq beg (line-beginning-position))
       (while (<= beg end)
-        (ceamx/escape-url-line beg)
+        (ceamx-simple/escape-url-line beg)
         (beginning-of-line 2)
         (setq beg (point))))))
 
 ;;;###autoload
-(defun ceamx/escape-url-dwim ()
+(defun ceamx-simple/escape-url-dwim ()
   "Escape URL on the current line or lines implied by the active region.
 Call the commands `ceamx/escape-url-line' and
 `ceamx/escape-url-region' ."
   (interactive)
   (if (region-active-p)
-    (ceamx/escape-url-region (region-beginning) (region-end))
-    (ceamx/escape-url-line (line-beginning-position))))
+    (ceamx-simple/escape-url-region (region-beginning) (region-end))
+    (ceamx-simple/escape-url-line (line-beginning-position))))
 
 ;;;###autoload
-(defun ceamx/mark-symbol-at-point ()
+(defun ceamx-simple/mark-symbol-at-point ()
   "Select the symbol under cursor.
 Copied from the `mc--mark-symbol-at-point' function from the
 `multiple-cursors' package."
@@ -11885,7 +11572,7 @@ Copied from the `mc--mark-symbol-at-point' function from the
 
 ;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
 ;;;###autoload
-(defun ceamx/continue-comment ()
+(defun ceamx-simple/continue-comment ()
   "Continue current comment, preserving trailing whitespace.
 This differs from `default-indent-new-line' in the following way:
 
@@ -11902,6 +11589,109 @@ the same."
   ;; line.  But when continuing a comment it's not desired.
   (cl-letf (((symbol-function #'delete-horizontal-space) #'ignore))
     (default-indent-new-line)))
+
+;;;;; Buffers
+
+;; FIXME: this does not actually kill its buffers -- buffer must be deleted manually
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L397-L424>
+(defun ceamx-simple/delete-current-file (&optional path force-p)
+  "Delete PATH, kill its buffers and expunge it from vc/magit cache.
+If PATH is not specified, default to the current buffer's file.
+If FORCE-P, delete without confirmation."
+  (interactive
+   (list (buffer-file-name (buffer-base-buffer))
+         current-prefix-arg))
+  (let* ((path (or path (buffer-file-name (buffer-base-buffer))))
+         (short-path (and path (abbreviate-file-name path))))
+    (unless path
+      (user-error "Buffer is not visiting any file"))
+    (unless (file-exists-p path)
+      (error "File doesn't exist: %s" path))
+    (unless (or force-p (y-or-n-p (format "Really delete %S?" short-path)))
+      (user-error "Aborted"))
+    (let ((buf (current-buffer)))
+      (unwind-protect
+          (progn (delete-file path t) t)
+        (if (file-exists-p path)
+            (error "Failed to delete %S" short-path)
+          ;; Ensures that windows displaying this buffer will be switched to
+          ;; real buffers (`doom-real-buffer-p')
+          ;; FIXME: implement -- invent the universe -- but the stuff within is very useful to us (e.g. doom-real-buffer-p and filtering buffers)...
+          ;; (doom/kill-this-buffer-in-all-windows buf t)
+          ;; TODO: remove when the above is implemented -- `kill-this-buffer' only removes the one buffer
+          (kill-this-buffer)
+          (ceamx-simple--update-file-refs path)
+          (message "Deleted %S" short-path))))))
+
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
+(defun ceamx-simple/copy-current-file (new-path &optional force-p)
+  "Copy current buffer's file to NEW-PATH.
+If FORCE-P, overwrite the destination file if it exists, without confirmation."
+  (interactive
+   (list (read-file-name "Copy file to: ")
+         current-prefix-arg))
+  (unless (and buffer-file-name (file-exists-p buffer-file-name))
+    (user-error "Buffer is not visiting any file"))
+  (let ((old-path (buffer-file-name (buffer-base-buffer)))
+        (new-path (expand-file-name new-path)))
+    (make-directory (file-name-directory new-path) 't)
+    (copy-file old-path new-path (or force-p 1))
+    (ceamx-simple--update-file-refs old-path new-path)
+    (message "File copied to %S" (abbreviate-file-name new-path))))
+
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L427-L441>
+(defun ceamx-simple/move-current-file (new-path &optional force-p)
+  "Move current buffer's file to NEW-PATH.
+If FORCE-P, overwrite the destination file if it exists, without confirmation."
+  (interactive
+   (list (read-file-name "Move file to: ")
+         current-prefix-arg))
+  (unless (and buffer-file-name (file-exists-p buffer-file-name))
+    (user-error "Buffer is not visiting any file"))
+  (let ((old-path (buffer-file-name (buffer-base-buffer)))
+        (new-path (expand-file-name new-path)))
+    (when (directory-name-p new-path)
+      (setq new-path (concat new-path (file-name-nondirectory old-path))))
+    (make-directory (file-name-directory new-path) 't)
+    (rename-file old-path new-path (or force-p 1))
+    (set-visited-file-name new-path t t)
+    (ceamx-simple--update-file-refs old-path new-path)
+    (message "File moved to %S" (abbreviate-file-name new-path))))
+
+;; via <https://protesilaos.com/emacs/dotemacs#h:f15bc843-2dd1-4792-95ec-9b7b6e561804>
+;;;###autoload
+(defun ceamx-simple/kill-buffer (buffer)
+  "Kill BUFFER without confirmation.
+When called interactively, prompt for BUFFER.  Otherwise, kill the
+current buffer."
+  (interactive (list (read-buffer "Select buffer: ")))
+  (let ((kill-buffer-query-functions nil))
+    (kill-buffer (or buffer (current-buffer)))))
+
+;;;###autoload
+(defun ceamx-simple/diff-with-file (&optional arg)
+  (interactive "P")
+  (let ((buffer (when arg (current-buffer))))
+    (diff-buffer-with-file buffer)))
+
+;; via <https://github.com/tarsius/fwb-cmds/blob/88e823809067983acfaeafa57d0bb6e889429ad2/fwb-cmds.el#L140C1-L156C78>
+;;;###autoload
+(defun ceamx-simple/sudo-find-file (&optional arg)
+  "Edit the visited file as \"root\".
+If the current buffer does not visit a file, the visited file is
+writable or with a prefix argument, then read a file to visit."
+  (interactive "P")
+  (require 'tramp)
+  (if (or arg
+          (not buffer-file-name)
+          (file-writable-p buffer-file-name))
+      (let ((default-directory
+             (concat "/sudo:root@localhost:" default-directory)))
+        (apply #'find-file
+               (find-file-read-args
+                "Find file: "
+                (confirm-nonexistent-file-or-buffer))))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
 (provide 'ceamx-simple)
 ;;; ceamx-simple.el ends here
