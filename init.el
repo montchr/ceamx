@@ -1309,6 +1309,427 @@ with its default modeline)."
       ;; NOTE: '0' value will recenter at the absolute top.
       (recenter 1))))
 
+;; Essentials
+;; :PROPERTIES:
+;; :header-args: :tangle init.el
+;; :END:
+
+
+(setq-default indicate-empty-lines nil)
+(setq-default fill-column 70)
+
+;; Disable buffer line wrapping by default.
+(setq-default truncate-lines t)
+
+;; Enable some commands that Emacs disables by default
+
+
+(dolist (cmd '(downcase-region
+               scroll-left
+               upcase-region))
+  (put cmd 'disabled nil))
+
+;; Scrolling
+
+
+;; Available cycle positions for `recenter-top-bottom'.
+(setopt recenter-positions '(top middle bottom))
+
+(setopt scroll-error-top-bottom t
+        ;; Prevent unwanted horizontal scrolling upon navigation.
+        scroll-preserve-screen-position t
+        scroll-conservatively 10000)
+
+;; Add a margin when scrolling vertically (or don't).
+;; (setq-default scroll-margin 4)
+
+(define-keymap :keymap (current-global-map)
+  ;; The default bindings feel backwards to me.
+  "C-x <" #'scroll-right
+  "C-x >" #'scroll-left
+
+  "<wheel-left>" #'scroll-left
+  "<wheel-right>" #'scroll-right)
+
+;; Auto-revert buffers
+
+
+(use-feature! autorevert
+  :hook (ceamx-after-init . global-auto-revert-mode)
+  :config
+  ;; Ensure the non-file-visiting buffers are also auto-reverted as needed.  For
+  ;; example, this will cause Dired to refresh a file list when the directory
+  ;; contents have changed.
+  (setopt global-auto-revert-non-file-buffers t)
+
+  (setopt auto-revert-interval 2))
+
+;; Buffer management
+
+
+(use-feature! ibuffer
+  :config
+  (setopt ibuffer-movement-cycle t))
+
+;; Configure the behaviour of the TAB key
+
+
+(use-package emacs
+  :ensure nil
+  :config
+  (setq-default indent-tabs-mode nil
+                tab-width 8))
+
+;; Whitespace and indentation
+
+
+(use-feature! emacs
+  :config
+
+
+  (setopt mode-require-final-newline 'visit-save))
+
+
+
+;; Visualize unusual whitespace character usages in desired contexts by
+;; selectively enabling ~whitespace-mode~:
+
+
+(use-feature! emacs
+  :hook ((prog-mode . whitespace-mode))
+  :config
+
+
+  (setopt whitespace-style
+          '(face
+            tabs
+            tab-mark
+            trailing
+            missing-newline-at-eof)))
+
+;; Indentation
+
+
+(setopt backward-delete-char-untabify-method 'untabify)
+
+;; ~electric-indent-mode~ [builtin]: Emacs' best attempt at automatic indentation
+
+
+(electric-indent-mode 1)
+
+;; Delete trailing whitespace before saving files
+
+
+(add-hook 'before-save-hook #'delete-trailing-whitespace)
+
+;; ~editorconfig~: Enforce EditorConfig settings
+
+;; - website :: <https://editorconfig.org>
+
+
+(use-package editorconfig
+  :ensure t
+  :hook (ceamx-emacs-startup . editorconfig-mode)
+
+  :preface
+  ;; via <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
+  (defun +editorconfig-enforce-org-mode-tab-width-h (props)
+  "Prevent `editorconfig' from changing `tab-width' in `org-mode'.
+A \"tab-width\" of any value other than 8 is an error state in
+org-mode, so it must not be changed.
+
+PROPS is as in `editorconfig-after-apply-functions'."
+  (when (and (gethash 'indent_size props)
+             (derived-mode-p 'org-mode))
+    (setq tab-width 8)))
+
+  :config
+  (add-hook 'editorconfig-after-apply-functions #'+editorconfig-enforce-org-mode-tab-width-h))
+
+;; Use two spaces after sentences for improved legibility and parsability
+
+;; Yes, it may appear strange and archaic, and yet... I realized that I actually
+;; do *prefer* this for readability.  And so, I am giving it a shot.  My
+;; grandfather, who was an English teacher for most of the 20th century, would
+;; be very proud.  Though even writing this paragraph has been difficult.
+
+;; [2024-07-13] Update:  Still double-spacing.  No longer "difficult".
+
+
+(setopt sentence-end-double-space t)
+
+;; Don't consider camelCaseWORDs as separate words
+
+;; While it can be useful in some contexts, I wish that ~subword-mode~ did not break
+;; ~ceamx/backward-kill-word~.  See also [[*Provide a command to intelligently kill
+;; words backwardsly]]
+
+
+(global-subword-mode -1)
+
+;; Provide commands to "unfill" text
+
+;; - src :: <https://github.com/purcell/unfill>
+
+
+(use-package unfill
+  :ensure t)
+
+;; ~mwim~: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
+
+
+(use-package mwim
+  :ensure t
+  :init
+  (keymap-global-set "C-a" #'mwim-beginning)
+  (keymap-global-set "C-e" #'mwim-end))
+
+;; INPRG Provide a command to intelligently kill words backwardsly
+
+;; - State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
+;;   Needs a fix for compatibility with ~subword-mode~.  See also [[*Don't consider camelCaseWORDs as separate words]]
+;; - src :: https://www.reddit.com/r/emacs/comments/bz9rxn/comment/er0bgll/
+;; - src :: https://github.com/yantar92/emacs-config/blob/master/config.org#smarter-backward-kill-word
+
+
+(defun ceamx/backward-kill-word ()
+  "Kill the previous word, smartly.
+This operation will respect the following rules:
+
+1. If the cursor is at the beginning of line, delete the '\n'.
+2. If there is *only* whitespace, delete only to beginning of line.
+3. If there is *some* whitespace, delete whitespace and check 4-5.
+4. If there are other characters instead of words, delete one only char.
+5. If it's a word at point, delete it."
+  (interactive)
+  (if (bolp)
+      ;; 1
+      (delete-char -1)
+    (if (string-match-p "^[[:space:]]+$"
+                        (buffer-substring-no-properties
+                         (line-beginning-position) (point)))
+        ;; 2
+        (delete-horizontal-space)
+      (when (thing-at-point 'whitespace)
+        ;; 3
+        (delete-horizontal-space))
+
+      (if (thing-at-point 'word)
+          ;; 5
+          (let ((start (car (bounds-of-thing-at-point 'word)))
+                (end (point)))
+            (if (> end start)
+                (delete-region start end)
+              (delete-char -1)))
+        ;; 4
+        (delete-char -1)))))
+
+;; Replace region when inserting text
+
+
+(delete-selection-mode 1)
+
+;; ~easy-kill~ :package:
+
+;; <https://github.com/leoliu/easy-kill/blob/master/README.rst>
+
+;; #+begin_example
+;; w => word
+;; s => sexp
+;; l => list
+;; d => defun
+;; D => defun name
+;; f => file
+;; b => buffer name
+;;        ->"-": `default-directory'
+;;        ->"+": full path
+;;        ->"0": basename
+;; #+end_example
+
+
+(package! easy-kill
+  (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
+  (keymap-global-set "C-M-@" #'easy-mark) ; override `mark-sexp'
+  )
+
+;; ~expand-region~: Increase/decrease the selection area
+
+
+(use-package expand-region
+  :ensure t
+  :init
+  (keymap-global-set "C-=" #'er/expand-region))
+
+;; ~drag-stuff~: drag stuff around in arbitrary directions :package:
+
+;; <https://github.com/rejeep/drag-stuff.el>
+
+;;  This package appears to be abandoned since 2017.
+;;  But, as of <2023-09-06>, it still works well.
+
+
+
+(use-package drag-stuff
+  :bind
+  (([M-up] . drag-stuff-up)
+   ([M-right] . drag-stuff-right)
+   ([M-down] . drag-stuff-down)
+   ([M-left] . drag-stuff-left)))
+
+;; Automatically wrap text at ~fill-column~ in some contexts
+
+
+(defun ceamx-langs-auto-fill-comments-only-h ()
+  "Set `auto-fill-mode' to only fill comments."
+  (setq-local comment-auto-fill-only-comments t))
+
+(use-package emacs
+  :ensure nil
+  :hook (((prog-mode text-mode) . auto-fill-mode)
+         (prog-mode . ceamx-langs-auto-fill-comments-only-h))
+  :config
+  (setopt comment-auto-fill-only-comments nil))
+
+;; Visualize and electrify matching character pairs :pairs:
+
+;; See the Info node [[info:emacs#Matching]]
+
+
+
+(setopt blink-matching-paren t)
+;; Avoid "expression" style, which looks too much like a selected region.
+(setopt show-paren-style 'parenthesis)
+
+(setopt electric-pair-preserve-balance t)
+(setopt electric-pair-delete-adjacent-pairs t)
+(setopt electric-pair-skip-whitespace t)
+;; TODO: evaluating...
+(setopt electric-pair-open-newline-between-pairs t)
+
+(electric-pair-mode 1)
+(show-paren-mode 1)
+
+;; TODO ~string-inflection~: Commands to cycle through word casing
+
+;; Needs better bindings.
+
+
+(require 'lib-editor)
+
+(package! string-inflection)
+
+(defvar-keymap ceamx-string-repeat-map
+  :repeat t
+
+  "c" #'ceamx/cycle-string-inflection)
+
+(defun ceamx/cycle-string-inflection ()
+  "Cycle through `string-inflection' styles appropriate to the major-mode."
+  (interactive)
+  (pcase major-mode
+    (`emacs-lisp-mode (string-inflection-all-cycle))
+    (`python-mode (string-inflection-python-style-cycle))
+    (`java-mode (string-inflection-java-style-cycle))
+    (`elixir-mode (string-inflection-elixir-style-cycle))
+    (_ (string-inflection-ruby-style-cycle))))
+
+;; ~ialign~: Interactively ~align-regexp~ :package:
+
+;; <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
+
+
+(package! ialign
+  (keymap-global-set "C-x l" #'ialign))
+
+;; ~rect~ [builtin]: operate on a buffer rectangularly
+
+;; <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
+
+
+(use-feature! rect
+  :config
+  (use-feature! hydra
+    :config
+    (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
+                                         :color pink
+                                         :hint nil
+                                         :post (deactivate-mark))
+      "
+  ^_k_^       _w_ copy      _o_pen       _N_umber-lines            |\\     -,,,--,,_
+_h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..  \-;;,_
+  ^_j_^       _d_ kill      _c_lear      _r_eset-region-mark      |,4-  ) )_   .;.(  `'-'
+^^^^          _u_ndo        _g_ quit     ^ ^                     '---''(./..)-'(_\_)
+"
+      ("k" rectangle-previous-line)
+      ("j" rectangle-next-line)
+      ("h" rectangle-backward-char)
+      ("l" rectangle-forward-char)
+      ("d" kill-rectangle)               ;; C-x r k
+      ("y" yank-rectangle)               ;; C-x r y
+      ("w" copy-rectangle-as-kill)       ;; C-x r M-w
+      ("o" open-rectangle)               ;; C-x r o
+      ("t" string-rectangle)             ;; C-x r t
+      ("c" clear-rectangle)              ;; C-x r c
+      ("e" rectangle-exchange-point-and-mark) ;; C-x C-x
+      ("N" rectangle-number-lines)            ;; C-x r N
+      ("r" (if (region-active-p)
+               (deactivate-mark)
+             (rectangle-mark-mode 1)))
+      ("u" undo nil)
+      ("g" nil))
+
+    (when (fboundp 'hydra-rectangle/body)
+      (keymap-global-set "C-x SPC" #'hydra-rectangle/body)
+      (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
+
+;; ~ceamx-simple~: Simple & common commands
+
+
+(use-feature! ceamx-simple
+  :demand t
+  :config
+  (keymap-global-set "C-<" #'ceamx/escape-url-dwim)
+  (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx/continue-comment))
+
+;; Linkify URLs and email addresses with ~goto-address~ [builtin]
+
+
+(autoload 'goto-address-prog-mode "goto-addr")
+
+(add-hook 'prog-mode-hook #'goto-address-prog-mode)
+
+;; Disambiguate buffer names with ~uniquify~ [builtin]
+
+
+(with-eval-after-load 'uniquify
+  (setopt uniquify-buffer-name-style 'forward)
+  (setopt uniquify-separator "/")
+
+  ;; Rename after killing uniquified buffer.
+  (setopt uniquify-after-kill-buffer-p t)
+
+  ;; Don't muck with special buffers.
+  (setopt uniquify-ignore-buffers-re "^\\*"))
+
+;; ~link-hint~: Activate links in buffer with ~avy~ :package:
+
+;; <https://github.com/noctuid/link-hint.el>
+
+
+(package! link-hint
+  (define-keymap :keymap (current-global-map)
+    "M-g u" #'link-hint-open-link
+    "M-g U" #'link-hint-copy-link))
+
+;; ~lentic~: Create decoupled views of the same content :package:
+
+
+(package! lentic
+  (global-lentic-mode))
+
+(with-eval-after-load 'lentic
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+
 ;; Window and Buffer Management
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el
@@ -1612,110 +2033,6 @@ The buffer will be created if it does not exist."
     ""
     ("q" "quit" transient-quit-all)]])
 
-;; General
-
-
-(setq-default indicate-empty-lines nil)
-(setq-default fill-column 80)
-
-;; Available cycle positions for `recenter-top-bottom'.
-(setopt recenter-positions '(top middle bottom))
-
-;; Disable buffer line wrapping by default.
-(setq-default truncate-lines t)
-
-;; Scrolling
-
-
-(setopt scroll-error-top-bottom t)
-
-;; Prevent unwanted horizontal scrolling upon navigation.
-(setopt scroll-preserve-screen-position t)
-
-(setopt scroll-conservatively 10000)
-
-;; Add a margin when scrolling vertically (or don't).
-;; (setq-default scroll-margin 4)
-
-(define-keymap :keymap (current-global-map)
-  ;; The default bindings feel backwards to me.
-  "C-x <" #'scroll-right
-  "C-x >" #'scroll-left
-
-  "<wheel-left>" #'scroll-left
-  "<wheel-right>" #'scroll-right)
-
-;; Auto-revert buffers
-
-
-;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For
-;; example, this will cause Dired to refresh a file list when the directory
-;; contents have changed.
-(setopt global-auto-revert-non-file-buffers t)
-
-(setopt auto-revert-interval 2)         ; default: 5
-
-;; Automatically revert a buffer if its file has changed on disk.
-(add-hook 'ceamx-after-init-hook #'global-auto-revert-mode)
-
-;; Diredishly operate on buffers with ~ibuffer~ [builtin]
-
-
-(setopt ibuffer-movement-cycle t)
-
-;; ~mwim~: Move-Where-I-Mean line positions :package:
-
-;; + src :: <https://github.com/alezost/mwim.el/blob/master/README.org#usage>
-
-
-(package! mwim)
-
-;; Linkify URLs and email addresses with ~goto-address~ [builtin]
-
-
-(autoload 'goto-address-prog-mode "goto-addr")
-
-(add-hook 'prog-mode-hook #'goto-address-prog-mode)
-
-;; Disambiguate buffer names with ~uniquify~ [builtin]
-
-
-(with-eval-after-load 'uniquify
-  (setopt uniquify-buffer-name-style 'forward)
-  (setopt uniquify-separator "/")
-
-  ;; Rename after killing uniquified buffer.
-  (setopt uniquify-after-kill-buffer-p t)
-
-  ;; Don't muck with special buffers.
-  (setopt uniquify-ignore-buffers-re "^\\*"))
-
-;; ~link-hint~: Activate links in buffer with ~avy~ :package:
-
-;; <https://github.com/noctuid/link-hint.el>
-
-
-(package! link-hint
-  (define-keymap :keymap (current-global-map)
-    "M-g u" #'link-hint-open-link
-    "M-g U" #'link-hint-copy-link))
-
-;; ~expand-region~: Expand your regions :package:
-
-;; <https://github.com/magnars/expand-region.el>
-
-
-(package! expand-region)
-
-;; ~lentic~: Create decoupled views of the same content :package:
-
-
-(package! lentic
-  (global-lentic-mode))
-
-(with-eval-after-load 'lentic
-  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
-
 ;; =init.el=: Load Features
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el
@@ -1760,8 +2077,7 @@ The buffer will be created if it does not exist."
 (require 'init-workspace)
 
 ;;;; Editing
-
-(require 'init-editor)
+(require 'ceamx-langs)
 (require 'init-writing)
 (require 'init-templates)
 
@@ -1782,23 +2098,7 @@ The buffer will be created if it does not exist."
 
 ;;;; Language/syntax support
 
-(require 'config-prog)
 (require 'lib-prog)
-
-(require 'init-prog)
-(require 'init-lisp)
-(require 'init-lsp)
-
-(require 'init-lang-data)
-(require 'init-lang-elisp)
-(require 'init-lang-html)
-(require 'init-lang-js)
-(require 'init-lang-lua)
-(require 'init-lang-markdown)
-(require 'init-lang-nix)
-(require 'init-lang-php)
-(require 'init-lang-shell)
-(require 'init-lang-misc)
 
 ;;;; Miscellaneous
 
@@ -1905,22 +2205,11 @@ The buffer will be created if it does not exist."
 
 ;;;;; Modifier: [C-]
 
-(after! mwim
-  (keymap-global-set "C-a" #'mwim-beginning)
-  (keymap-global-set "C-e" #'mwim-end))
-
-(define-keymap :keymap (current-global-map)
-  "C-=" #'er/expand-region
-  "C-<" #'ceamx/escape-url-dwim
-
-)
-
 ;;;;; Modifier: [M-]
 
 (define-keymap :keymap (current-global-map)
   "M-]" #'logos-forward-page-dwim
   "M-[" #'logos-backward-page-dwim
-
 
   "M-f" #'forward-word
   "M-F" #'forward-symbol

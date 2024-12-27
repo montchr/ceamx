@@ -24,8 +24,8 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'config-prog)
-
+(defvar ceamx-eglot-server-configurations-alist '()
+  "Alist of language server initialization options as accepted in `eglot-server-programs'.")
 (defun ceamx-eglot-server-default-settings (name)
   "Return the custom initialization options for the NAME language server."
   (alist-get name ceamx-eglot-server-configurations-alist nil nil #'string=))

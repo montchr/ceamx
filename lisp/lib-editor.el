@@ -49,15 +49,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(defun ceamx/cycle-string-inflection ()
-  "Cycle through `string-inflection' styles appropriate to the major-mode."
-  (interactive)
-  (pcase major-mode
-    (`emacs-lisp-mode (string-inflection-all-cycle))
-    (`python-mode (string-inflection-python-style-cycle))
-    (`java-mode (string-inflection-java-style-cycle))
-    (`elixir-mode (string-inflection-elixir-style-cycle))
-    (_ (string-inflection-ruby-style-cycle))))
 (defun ceamx/backward-kill-word ()
   "Kill the previous word, smartly.
 This operation will respect the following rules:
@@ -89,29 +80,15 @@ This operation will respect the following rules:
               (delete-char -1)))
         ;; 4
         (delete-char -1)))))
-(defun ceamx/continue-comment ()
-  "Continue current comment, preserving trailing whitespace.
-This differs from `default-indent-new-line' in the following way:
-
-If you have a comment like \";; Some text\" with point at the end
-of the line, then running `default-indent-new-line' will get you
-a new line with \";; \", but running it again will get you a line
-with only \";;\" (no trailing whitespace). This is annoying for
-inserting a new paragraph in a comment. With this command, the
-two inserted lines are the same."
+(defun ceamx/cycle-string-inflection ()
+  "Cycle through `string-inflection' styles appropriate to the major-mode."
   (interactive)
-  ;; `default-indent-new-line' uses `delete-horizontal-space'
-  ;; because in auto-filling we want to avoid the space character at
-  ;; the end of the line from being put at the beginning of the next
-  ;; line. But when continuing a comment it's not desired.
-  (cl-letf (((symbol-function #'delete-horizontal-space) #'ignore))
-    (default-indent-new-line)))
-(defun ceamx-editor-format-maybe-inhibit-h ()
-  "Check if formatting should be disabled for current buffer."
-  (or (eq major-mode 'fundamental-mode)
-      (string-blank-p (buffer-name))
-      (eq ceamx-format-on-save-disabled-modes t)
-      (not (null (memq major-mode ceamx-format-on-save-disabled-modes)))))
+  (pcase major-mode
+    (`emacs-lisp-mode (string-inflection-all-cycle))
+    (`python-mode (string-inflection-python-style-cycle))
+    (`java-mode (string-inflection-java-style-cycle))
+    (`elixir-mode (string-inflection-elixir-style-cycle))
+    (_ (string-inflection-ruby-style-cycle))))
 
 (provide 'lib-editor)
 ;;; lib-editor.el ends here

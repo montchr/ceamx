@@ -104,6 +104,8 @@ function to return non-nil.")
 
 ;;;; Functions
 
+;;;;; Public
+
 (defun ceamx-simple-buffer-which-mode (&optional buffer-or-name)
   "Return the major mode associated with a buffer.
 If BUFFER-OR-NAME is nil, return the current buffer's mode."
@@ -119,6 +121,15 @@ POS defaults to the current position."
     (if ceamx-point-in-comment-functions
         (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
       (nth 4 (syntax-ppss pos)))))
+
+;;;;; Private
+
+(defun ceamx-simple--pos-url-on-line (char)
+  "Return position of `ceamx-common-url-regexp' at CHAR."
+  (when (integer-or-marker-p char)
+    (save-excursion
+      (goto-char char)
+      (re-search-forward ceamx-common-url-regexp (line-end-position) :noerror))))
 
 ;;; Commands
 
@@ -139,12 +150,6 @@ with the specified date."
       (delete-region (region-beginning) (region-end)))
     (insert (format-time-string format))))
 
-(defun ceamx-simple--pos-url-on-line (char)
-  "Return position of `ceamx-common-url-regexp' at CHAR."
-  (when (integer-or-marker-p char)
-    (save-excursion
-      (goto-char char)
-      (re-search-forward ceamx-common-url-regexp (line-end-position) :noerror))))
 
 ;;;###autoload
 (defun ceamx/escape-url-line (char)
@@ -197,16 +202,36 @@ Call the commands `ceamx/escape-url-line' and
     (ceamx/escape-url-region (region-beginning) (region-end))
     (ceamx/escape-url-line (line-beginning-position))))
 
-;;; Selections
-
-;; copied from `mc--mark-symbol-at-point'
+;;;###autoload
 (defun ceamx/mark-symbol-at-point ()
-  "Select the symbol under cursor."
+  "Select the symbol under cursor.
+Copied from the `mc--mark-symbol-at-point' function from the
+`multiple-cursors' package."
   (interactive)
   (when (not (use-region-p))
     (let ((b (bounds-of-thing-at-point 'symbol)))
       (goto-char (car b))
       (set-mark (cdr b)))))
+
+;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
+;;;###autoload
+(defun ceamx/continue-comment ()
+  "Continue current comment, preserving trailing whitespace.
+This differs from `default-indent-new-line' in the following way:
+
+If you have a comment like \";; Some text\" with point at the end of the
+line, then running `default-indent-new-line' will get you a new line
+with \";; \", but running it again will get you a line with only
+\";;\" (no trailing whitespace).  This is annoying for inserting a new
+paragraph in a comment.  With this command, the two inserted lines are
+the same."
+  (interactive)
+  ;; `default-indent-new-line' uses `delete-horizontal-space'
+  ;; because in auto-filling we want to avoid the space character at
+  ;; the end of the line from being put at the beginning of the next
+  ;; line.  But when continuing a comment it's not desired.
+  (cl-letf (((symbol-function #'delete-horizontal-space) #'ignore))
+    (default-indent-new-line)))
 
 (provide 'ceamx-simple)
 ;;; ceamx-simple.el ends here

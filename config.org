@@ -394,50 +394,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 :VISIBILITY: folded
 :END:
 
-** =lisp/config-editor.el=
-
-#+name: config-editor-file
-#+begin_src emacs-lisp  :tangle lisp/config-editor.el :comments no :noweb yes
-<<file-prop-line(feature="config-editor",desc="User options for editing")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-editor>>
-
-<<file-footer(feature="config-editor")>>
-#+end_src
-
-** =lisp/config-prog.el=
-
-#+name: config-prog-file
-#+begin_src emacs-lisp :tangle lisp/config-prog.el :comments no :noweb yes
-<<file-prop-line(feature="config-prog",desc="User options for programming modes")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-prog>>
-
-<<file-footer(feature="config-prog")>>
-#+end_src
-
 ** =lisp/lib-files.el=
 
 #+name: lib-files-file
@@ -876,28 +832,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<file-footer(feature="init-search")>>
 #+end_src
 
-** =lisp/init-editor.el=
-
-#+name: init-editor-file
-#+begin_src emacs-lisp  :tangle lisp/init-editor.el :comments no :noweb yes
-<<file-prop-line(feature="init-editor",desc="Editor customizations")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-editor>>
-
-<<file-footer(feature="init-editor")>>
-#+end_src
-
 ** =lisp/init-workspace.el=
 
 #+name: init-workspace-file
@@ -940,94 +874,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<init-vcs>>
 
 <<file-footer(feature="init-vcs")>>
-#+end_src
-
-** =lisp/init-lsp.el=
-
-#+name: init-lsp-file
-#+begin_src emacs-lisp :tangle lisp/init-lsp.el :comments no :noweb yes
-<<file-prop-line(feature="init-lsp",desc="Eglot support")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lsp>>
-
-<<file-footer(feature="init-lsp")>>
-#+end_src
-
-** =lisp/init-lang-data.el=
-
-#+name: init-lang-data-file
-#+begin_src emacs-lisp :tangle lisp/init-lang-data.el :comments no :noweb yes
-<<file-prop-line(feature="init-lang-data",desc="Language support for data syntaxes")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lang-data>>
-
-<<file-footer(feature="init-lang-data")>>
-#+end_src
-
-** =lisp/init-lang-nix.el=
-
-#+name: init-lang-nix-file
-#+begin_src emacs-lisp :tangle lisp/init-lang-nix.el :comments no :noweb yes
-<<file-prop-line(feature="init-lang-nix",desc="Nix language support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lang-nix>>
-
-<<file-footer(feature="init-lang-nix")>>
-#+end_src
-
-** =lisp/init-lang-php.el=
-
-#+name: init-lang-php-file
-#+begin_src emacs-lisp :tangle lisp/init-lang-php.el :comments no :noweb yes
-<<file-prop-line(feature="init-lang-php",desc="PHP language support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lang-php>>
-
-<<file-footer(feature="init-lang-php")>>
 #+end_src
 
 ** =lisp/init-writing.el=
@@ -1395,9 +1241,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 
 
-* Common Libraries :: =core/ceamx-*=
-
-** =lisp/core/ceamx-paths.el= :: Paths
+* =lisp/core/ceamx-paths.el= :: Paths
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el :comments no :noweb yes
 ;;; ceamx-paths.el --- Common paths variables        -*- lexical-binding: t; -*-
@@ -1510,7 +1354,7 @@ Emacs version to prevent bytecode incompatibility.")
 #+end_src
 
 
-** =lisp/core/ceamx-lib.el= :: Core Functions & Macros
+* =lisp/core/ceamx-lib.el= :: Core Functions & Macros
 :PROPERTIES:
 :header-args: :tangle lisp/core/ceamx-lib.el
 :END:
@@ -1887,6 +1731,7 @@ without needing to declare autoloads for `elpaca' in every file."
 (provide 'ceamx-lib)
 ;;; ceamx-lib.el ends here
 #+end_src
+
 
 * =init.el=
 :PROPERTIES:
@@ -2469,224 +2314,6 @@ expect the value you arrive at to be as high as 100 MiB.
 (setopt ffap-machine-p-known 'reject)
 #+end_src
 
-
-
-* =lisp/ceamx-simple.el=: The Library of Uncertain Simplicity
-
-#+begin_src emacs-lisp :tangle lisp/ceamx-simple.el :comments no :noweb-ref nil
-;;; ceamx-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-;; Copyright (C) 2020-2023  Protesilaos Stavrou
-;; Copyright (c) 2023  Bruno Boal <egomet@bboal.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;;         Protesilaos Stavrou <info@protesilaos.com>
-;;         Bruno Boal <egomet@bboal.com>
-;; Keywords: local, convenience
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;;; Sources
-
-;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/ceamx-lisp/ceamx-simple.el>
-;; <https://github.com/BBoal/emacs-config/blob/95520648c5f2ed0784d42e98afff035a6964fd2f/bb-lisp/bb-simple.el>
-
-;;; Code:
-
-;;;; Requirements
-
-;;;; Variables
-
-(defgroup ceamx-simple ()
-  "Generic utilities for editing."
-  :group 'editing)
-
-(defcustom ceamx-simple-date-specifier "%F"
-  "Date specifier for `format-time-string'.
-Used by `ceamx/insert-date'."
-  :type 'string
-  :group 'ceamx-simple)
-
-(defcustom ceamx-simple-time-specifier "%R %z"
-  "Time specifier for `format-time-string'.
-Used by `ceamx/insert-date'."
-  :type 'string
-  :group 'ceamx-simple)
-
-(defvar ceamx-point-in-comment-functions ()
-  "List of functions to run to determine if point is in a comment.
-Each function takes one argument: the position of the point.  Stops on the first
-function to return non-nil.")
-
-(defvar ceamx-simple-checkers-buffer-names-regexp
-  (rx "*" (or "Flycheck" "Package-Lint")))
-
-(defvar ceamx-occur-grep-modes-list
-  '(occur-mode
-    grep-mode
-    xref--xref-buffer-mode
-    flymake-diagnostics-buffer-mode)
-  "List of major-modes used in occur-type buffers.")
-
-(defvar ceamx-repl-modes-list
-  '(eshell-mode
-    inferior-emacs-lisp-mode            ; ielm
-    shell-mode
-    eat-mode
-    nix-repl-mode)
-  "List of major-modes used in REPL buffers.")
-
-(defvar ceamx-repl-buffer-names-list
-  '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
-    "\\*.*REPL.*\\*"
-    "\\*Inferior .*\\*$"
-    "\\*ielm\\*"
-    "\\*edebug\\*")
-  "List of buffer names used in REPL buffers.")
-
-(defvar ceamx-help-modes-list
-  '(helpful-mode
-    help-mode
-    eldoc-mode)
-  "List of major-modes used in documentation buffers.")
-
-(defvar ceamx-help-buffer-names-list
-  '("^\\*Apropos"
-    "^\\*eldoc\\*")
-  "List of buffer names used in help buffers.")
-
-(defvar ceamx-manual-modes-list '(Man-mode woman-mode)
-  "List of major-modes used in Man-type buffers.")
-
-(defvar ceamx-message-modes-list
-  '(compilation-mode
-    edebug-eval-mode)
-  "List of major-modes used in message buffers.")
-
-
-;;;; Functions
-
-(defun ceamx-simple-buffer-which-mode (&optional buffer-or-name)
-  "Return the major mode associated with a buffer.
-If BUFFER-OR-NAME is nil, return the current buffer's mode."
-  (buffer-local-value 'major-mode
-                      (if buffer-or-name
-                          (get-buffer buffer-or-name)
-                        (current-buffer))))
-
-(defun ceamx-point-in-comment-p (&optional pos)
-  "Return non-nil if POS is in a comment.
-POS defaults to the current position."
-  (let ((pos (or pos (point))))
-    (if ceamx-point-in-comment-functions
-        (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
-      (nth 4 (syntax-ppss pos)))))
-
-;;; Commands
-
-;;;###autoload
-(defun ceamx/insert-date (&optional arg)
-  "Insert the current date as `ceamx-simple-date-specifier'.
-
-With optional prefix ARG (\\[universal-argument]) also append the
-current time understood as `ceamx-simple-time-specifier'.
-
-When region is active, delete the highlighted text and replace it
-with the specified date."
-  (interactive "P")
-  (let* ((date ceamx-simple-date-specifier)
-          (time ceamx-simple-time-specifier)
-          (format (if arg (format "%s %s" date time) date)))
-    (when (use-region-p)
-      (delete-region (region-beginning) (region-end)))
-    (insert (format-time-string format))))
-
-(defun ceamx-simple--pos-url-on-line (char)
-  "Return position of `ceamx-common-url-regexp' at CHAR."
-  (when (integer-or-marker-p char)
-    (save-excursion
-      (goto-char char)
-      (re-search-forward ceamx-common-url-regexp (line-end-position) :noerror))))
-
-;;;###autoload
-(defun ceamx/escape-url-line (char)
-  "Escape all URLs or email addresses on the current line.
-When called from Lisp CHAR is a buffer position to operate from
-until the end of the line.  In interactive use, CHAR corresponds
-to `line-beginning-position'."
-  (interactive
-   (list
-    (if current-prefix-arg
-        (re-search-forward
-         ceamx-common-url-regexp
-         (line-end-position) :no-error
-         (prefix-numeric-value current-prefix-arg))
-      (line-beginning-position))))
-  (when-let ((regexp-end (ceamx-simple--pos-url-on-line char)))
-    (goto-char regexp-end)
-    (unless (looking-at ">")
-      (insert ">")
-      (when (search-backward "\s" (line-beginning-position) :noerror)
-        (forward-char 1))
-      (insert "<"))
-    (ceamx/escape-url-line (1+ regexp-end)))
-  (goto-char (line-end-position)))
-
-;;;###autoload
-(defun ceamx/escape-url-region (&optional beg end)
-  "Apply `ceamx/escape-url-line' on region lines between BEG and END."
-  (interactive
-   (if (region-active-p)
-       (list (region-beginning) (region-end))
-     (error "There is no region!")))
-  (let ((beg (min beg end))
-        (end (max beg end)))
-    (save-excursion
-      (goto-char beg)
-      (setq beg (line-beginning-position))
-      (while (<= beg end)
-        (ceamx/escape-url-line beg)
-        (beginning-of-line 2)
-        (setq beg (point))))))
-
-;;;###autoload
-(defun ceamx/escape-url-dwim ()
-  "Escape URL on the current line or lines implied by the active region.
-Call the commands `ceamx/escape-url-line' and
-`ceamx/escape-url-region' ."
-  (interactive)
-  (if (region-active-p)
-    (ceamx/escape-url-region (region-beginning) (region-end))
-    (ceamx/escape-url-line (line-beginning-position))))
-
-;;; Selections
-
-;; copied from `mc--mark-symbol-at-point'
-(defun ceamx/mark-symbol-at-point ()
-  "Select the symbol under cursor."
-  (interactive)
-  (when (not (use-region-p))
-    (let ((b (bounds-of-thing-at-point 'symbol)))
-      (goto-char (car b))
-      (set-mark (cdr b)))))
-
-(provide 'ceamx-simple)
-;;; ceamx-simple.el ends here
-#+end_src
 
 
 * Environment :: =env= :env:
@@ -4095,367 +3722,33 @@ will be used as default."
 :header-args: :tangle init.el
 :END:
 
-* Window and Buffer Management
-:PROPERTIES:
-:header-args: :tangle init.el
-:END:
-
-#+begin_src emacs-lisp
-(require 'ceamx-simple)
-(require 'ceamx-window)
-#+end_src
-
-** Define the user option specifying a fallback buffer :buffer:
-
-#+begin_src emacs-lisp
-(defcustom ceamx-fallback-buffer-name "*scratch*"
-  "The name of the buffer to fall back to if no other buffers exist.
-The buffer will be created if it does not exist."
-  :group 'ceamx
-  :type '(string))
-#+end_src
-
-** General buffer display settings :buffer:frame:display_buffer:
-
-#+begin_src emacs-lisp
-(setopt switch-to-buffer-in-dedicated-window 'pop)
-
-;; Ensure interactive buffer switching behaves according to expectations.
-(setopt switch-to-buffer-obey-display-actions t)
-
-;; Hide buffer until there's output.
-;; Prevents an extra window appearing during init.
-(setopt async-shell-command-display-buffer nil)
-
-;; TODO: causes which-key squishing against tiny window maybe?
-(setopt fit-window-to-buffer-horizontally t)
-
-;; TODO: this might be a solution to issues with childframes for embark etc.
-(setopt fit-frame-to-buffer t)
-
-;; (setopt even-window-sizes nil)
-(setopt even-window-sizes 'height-only)
-(setopt window-combination-resize t)
-(setopt window-sides-vertical nil)
-(setopt window-resize-pixelwise t)
-
-(setopt display-buffer-base-action
-        '((display-buffer-reuse-window
-           display-buffer-in-previous-window)))
-#+end_src
-
-** Declare rules for displaying buffers with ~display-buffer-alist~ :display_buffer:
-
-- Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
-
-<karthink> has a helpful summary of ~display-buffer~ action functions and
-alist entries in their Emacs configuration, which I am also including here
-for my own reference. Note that this list is not necessarily complete.
-
-~display-buffer-action-functions~ are:
-
-- ~display-buffer-same-window~ :: Use the selected window
-- ~display-buffer-reuse-window~ :: Use a window already showing the buffer
-- ~display-buffer-reuse-mode-window~ :: Use a window with the same major-mode
-- ~display-buffer-in-previous-window~ :: Use a window that did show the buffer before
-- ~display-buffer-use-some-window~ :: Use some existing window
-- ~display-buffer-pop-up-window~ :: Pop up a new window
-- ~display-buffer-below-selected~ :: Use or pop up a window below the selected one
-- ~display-buffer-at-bottom~ :: Use or pop up a window at the bottom of the selected frame
-- ~display-buffer-pop-up-frame~ :: Show the buffer on a new frame
-- ~display-buffer-in-child-frame~ :: Show the buffer in a child frame
-- ~display-buffer-no-window~ :: Do not display the buffer and have ~display-buffer~ return nil immediately
-
-Action alist entries are:
-
-- ~inhibit-same-window~ :: A non-nil value prevents the sam
-    window from being used for display
-- ~inhibit-switch-frame~ :: A non-nil value prevents any fram
-    used for showing the buffer from being raised or selected
-- ~reusable-frames~ :: The value specifies the set of frames t
-    search for a window that already displays the buffer.
-    Possible values are nil (the selected frame), t (any live
-    frame), visible (any visible frame), 0 (any visible or
-    iconified frame) or an existing live frame.
-- ~pop-up-frame-parameters~ :: The value specifies an alist o
-    frame parameters to give a new frame, if one is created.
-- ~window-height~ :: The value specifies the desired height of th
-    window chosen and is either an integer (the total height of
-    the window), a floating point number (the fraction of its
-    total height with respect to the total height of the frame's
-    root window) or a function to be called with one argument -
-    the chosen window.  The function is supposed to adjust the
-    height of the window; its return value is ignored.  Suitable
-    functions are ~shrink-window-if-larger-than-buffer~ and
-    ~fit-window-to-buffer~.
-- ~window-width~ :: The value specifies the desired width of th
-    window chosen and is either an integer (the total width of
-    the window), a floating point number (the fraction of its
-    total width with respect to the width of the frame's root
-    window) or a function to be called with one argument - the
-    chosen window.  The function is supposed to adjust the width
-    of the window; its return value is ignored.
-- ~preserve-size~ :: The value should be either (t . nil) t
-    preserve the width of the chosen window, (nil . t) to
-    preserve its height or (t . t) to preserve its height and
-    width in future changes of the window configuration.
-- ~window-parameters~ :: The value specifies an alist of windo
-    parameters to give the chosen window.
-- ~allow-no-window~ :: A non-nil value means that `display-buffer
-    may not display the buffer and return nil immediately.
-
-
-    <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
-
-
-    #+begin_src emacs-lisp
-(setopt display-buffer-alist
-        `(
-          ;; (,(rx "*" (or "Agenda Commands" "Org Select") "*")
-          ;;   (display-buffer-below-selected
-          ;;     display-buffer-in-side-window)
-          ;;   (body-function . select-window)
-          ;;   (window-parameters . ((mode-line-format . nil))))
-
-          (,ceamx-simple-checkers-buffer-names-regexp
-           (display-buffer-in-direction
-            display-buffer-in-side-window)
-           (window-parameters . ((no-other-window . t))))
-
-          ;; TODO: is there not a simpler way than using `ceamx-simple-buffer-which-mode'?
-          ;; e.g. `derived-mode-p' or similar
-          ((lambda (buf act) (member (ceamx-simple-buffer-which-mode buf) ceamx-message-modes-list))
-           (display-buffer-at-bottom
-            display-buffer-in-side-window))
-
-          (,(rx "*" (group (or "Compile-Log" "Messages" "Warnings")) "*")
-           (display-buffer-at-bottom
-            display-buffer-in-side-window
-            display-buffer-in-direction))
-
-          (,(rx "*Backtrace*")
-           (display-buffer-in-side-window)
-           (window-height . 0.2)
-           (side . bottom))))
-    #+end_src
-
-** ~popper~: Summon and dismiss "popup" windows :popups:package:
-
-- Website :: <https://github.com/karthink/popper>
-
-#+begin_src emacs-lisp
-(package! popper
-  (define-keymap :keymap (current-global-map)
-    "C-`" #'popper-toggle
-    "C-~" #'popper-cycle
-    "C-M-`" #'popper-toggle-type)
-
-  (setopt popper-reference-buffers
-          (append
-           ceamx-help-modes-list
-           ceamx-help-buffer-names-list
-           ceamx-manual-modes-list
-           ceamx-repl-modes-list
-           ceamx-repl-buffer-names-list
-           ceamx-occur-grep-modes-list
-           '(+popper-current-buffer-popup-p)
-           '(Custom-mode
-             compilation-mode
-             messages-buffer-mode)
-           (list
-            ceamx-simple-checkers-buffer-names-regexp)
-
-           ;; The "Home" tabspace, if enabled, will display the Messages buffer.
-           (unless (fboundp 'ceamx-workspace-open-tabspace-after-init-h)
-             '("\\*Messages\\*"))
-
-           `(,(rx "Output*" eol)
-             ,(rx "*" (or
-                       "Async-native-compile-log"
-                       "Backtrace"
-                       "Compile-Log"
-                       "Completions"
-                       "compilation"
-                       "elpaca-diff"
-                       "Shell Command Output"
-                       "vc"
-                       "Warnings")
-               "*")
-             "^\\*Embark Export"
-             "^Calc:"
-             "\\*Async Shell Command\\*"
-             ;; ("\\*Async Shell Command\\*" . hide)
-             ("\\*Detached Shell Command\\*" . hide))))
-
-  ;; Load as early as possible to catch popups as early as possible.
-  (popper-mode)
-  (popper-echo-mode))
-#+end_src
-
-*** Configure overrides in ~popper-repeat-map~
-
-#+begin_src emacs-lisp
-(after! popper
-  (defvar-keymap popper-repeat-map
-    :repeat t
-    "`" #'popper-cycle
-    "~" #'popper-cycle-backwards))
-#+end_src
-
-*** DISABLED Configure popup display control rules manually
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-<https://github.com/karthink/popper/blob/master/README.org#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
-
-#+begin_src emacs-lisp
-(after! popper
-  (setopt popper-display-control nil)
-
-  (prependopt! display-buffer-alist
-               '((popper-display-control-p
-                  (ceamx-window-display-popup)
-                  (window-height . ,popper-window-height)))))
-#+end_src
-
-*** Configure ~projectile~ integration
-
-#+begin_src emacs-lisp
-(after! (popper projectile)
-  (setopt popper-group-function #'popper-group-by-projectile))
-#+end_src
-
-** Restore previous window configurations with ~winner-mode~ [builtin] :history:
-
-#+begin_src emacs-lisp
-(add-hook 'ceamx-after-init-hook #'winner-mode)
-#+end_src
-
-** =dedicated=: Toggle a window's "dedicated" flag :package:
-
-<https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
-
-#+begin_src emacs-lisp
-(package! dedicated)
-#+end_src
-
-** =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
-
-#+begin_src emacs-lisp
-(package! golden-ratio
-  (setopt golden-ratio-auto-scale t)
-  (setopt golden-ratio-max-width 100))
-#+end_src
-
-** =ace-window=: Interactively manage windows :package:
-
-<https://github.com/abo-abo/ace-window>
-
-#+begin_src emacs-lisp
-(package! ace-window
-  ;; Same frame only. While it'd be nice to use the default (global), I really
-  ;; dislike that it orders window numbers leads to jarring gaps in window
-  ;; numbers in the same frame. For example, frame A might have windows numbered
-  ;; 1 and 3 and frame B will have window 2.
-  (setopt aw-scope 'frame))
-#+end_src
-
-** =transpose-frame=: Transpose and rotate a frame's windows :package:
-
-#+begin_src emacs-lisp
-(package! transpose-frame)
-#+end_src
-
-** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
-
-#+begin_src emacs-lisp
-(transient-define-prefix ceamx/window-dispatch ()
-  "Window management transient."
-  :transient-suffix 'transient--do-stay
-  [["Move"
-    ("h" "left" windmove-left)
-    ("j" "down" windmove-down)
-    ("k" "up" windmove-up )
-    ("l" "right" windmove-right)
-    ("w" "sel" ace-window)]
-
-   ["Resize"
-    ("=" "bal" balance-windows)
-    ("+" "bal: area" balance-windows-area)
-    ("-" "fit: buffer" fit-window-to-buffer)]
-
-   ["Buffer"
-    ("b" "buf" consult-buffer)
-    ;; ("f" "ff: p" project-find-file)
-    ("f" "file" find-file )
-    ("F" "file" find-file-other-window)
-    ("g" "grep" consult-ripgrep)]
-
-   ["Swarp"
-    ("H" "left" ceamx/window-move-left)
-    ("J" "down" ceamx/window-move-down)
-    ("K" "up" ceamx/window-move-up)
-    ("L" "right" ceamx/window-move-right)
-    ""
-    ("s" "swap" ace-swap-window)
-    ("2" "spl: dn" split-window-below)
-    ("3" "spl: rt" split-window-right)
-    ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
-
-   ["Scroll"
-    ;; TODO: allow selecting a window (with infix?) to act upon
-    ;; NOTE: These are the correct scroll direction commands, which might
-    ;; appear to be reversed when comparing with labels.
-    ("." "left" scroll-right)
-    ("," "right" scroll-left)
-    ("SPC" "down" scroll-up)
-    ("DEL" "up" scroll-down)]
-
-   ["Lifecycle"
-    ("d" "del (this)" delete-window)
-    ("D" "del (select)" ace-delete-window)
-    ;; ("D" "del: o" delete-other-windows :transient nil)
-    ("u" "undo" winner-undo)
-    ("U" "redo" winner-redo)
-    ""
-    ("0" "del" delete-window)
-    ("1" "del other" delete-other-windows)
-    ""
-    ("S" "[ ] sides" window-toggle-side-windows)
-    ("`" "[ ] popups" popper-toggle)
-    ""
-    ("q" "quit" transient-quit-all)]])
-#+end_src
-
-
-* Buffer :: =buffer= :buffer:
-:PROPERTIES:
-:header-args: :tangle init.el
-:END:
-
-** General
-
 #+begin_src emacs-lisp
 (setq-default indicate-empty-lines nil)
-(setq-default fill-column 80)
-
-;; Available cycle positions for `recenter-top-bottom'.
-(setopt recenter-positions '(top middle bottom))
+(setq-default fill-column 70)
 
 ;; Disable buffer line wrapping by default.
 (setq-default truncate-lines t)
 #+end_src
 
+** Enable some commands that Emacs disables by default
+
+#+begin_src emacs-lisp
+(dolist (cmd '(downcase-region
+               scroll-left
+               upcase-region))
+  (put cmd 'disabled nil))
+#+end_src
+
 ** Scrolling
 
 #+begin_src emacs-lisp
-(setopt scroll-error-top-bottom t)
+;; Available cycle positions for `recenter-top-bottom'.
+(setopt recenter-positions '(top middle bottom))
 
-;; Prevent unwanted horizontal scrolling upon navigation.
-(setopt scroll-preserve-screen-position t)
-
-(setopt scroll-conservatively 10000)
+(setopt scroll-error-top-bottom t
+        ;; Prevent unwanted horizontal scrolling upon navigation.
+        scroll-preserve-screen-position t
+        scroll-conservatively 10000)
 
 ;; Add a margin when scrolling vertically (or don't).
 ;; (setq-default scroll-margin 4)
@@ -4472,112 +3765,108 @@ Action alist entries are:
 ** Auto-revert buffers
 
 #+begin_src emacs-lisp
-;; Ensure the non-file-visiting buffers are also auto-reverted as needed. For
-;; example, this will cause Dired to refresh a file list when the directory
-;; contents have changed.
-(setopt global-auto-revert-non-file-buffers t)
+(use-feature! autorevert
+  :hook (ceamx-after-init . global-auto-revert-mode)
+  :config
+  ;; Ensure the non-file-visiting buffers are also auto-reverted as needed.  For
+  ;; example, this will cause Dired to refresh a file list when the directory
+  ;; contents have changed.
+  (setopt global-auto-revert-non-file-buffers t)
 
-(setopt auto-revert-interval 2)         ; default: 5
-
-;; Automatically revert a buffer if its file has changed on disk.
-(add-hook 'ceamx-after-init-hook #'global-auto-revert-mode)
+  (setopt auto-revert-interval 2))
 #+end_src
 
-** Diredishly operate on buffers with ~ibuffer~ [builtin]
+** Buffer management
 
 #+begin_src emacs-lisp
-(setopt ibuffer-movement-cycle t)
+(use-feature! ibuffer
+  :config
+  (setopt ibuffer-movement-cycle t))
 #+end_src
 
-** ~mwim~: Move-Where-I-Mean line positions :package:
-
-+ src :: <https://github.com/alezost/mwim.el/blob/master/README.org#usage>
+** Configure the behaviour of the TAB key
 
 #+begin_src emacs-lisp
-(package! mwim)
+(use-package emacs
+  :ensure nil
+  :config
+  (setq-default indent-tabs-mode nil
+                tab-width 8))
 #+end_src
 
-** Linkify URLs and email addresses with ~goto-address~ [builtin]
+** Whitespace and indentation
 
 #+begin_src emacs-lisp
-(autoload 'goto-address-prog-mode "goto-addr")
+(use-feature! emacs
+  :config
 
-(add-hook 'prog-mode-hook #'goto-address-prog-mode)
+
+  (setopt mode-require-final-newline 'visit-save))
 #+end_src
 
-** Disambiguate buffer names with ~uniquify~ [builtin]
+Visualize unusual whitespace character usages in desired contexts by
+selectively enabling ~whitespace-mode~:
 
 #+begin_src emacs-lisp
-(with-eval-after-load 'uniquify
-  (setopt uniquify-buffer-name-style 'forward)
-  (setopt uniquify-separator "/")
+(use-feature! emacs
+  :hook ((prog-mode . whitespace-mode))
+  :config
 
-  ;; Rename after killing uniquified buffer.
-  (setopt uniquify-after-kill-buffer-p t)
 
-  ;; Don't muck with special buffers.
-  (setopt uniquify-ignore-buffers-re "^\\*"))
+  (setopt whitespace-style
+          '(face
+            tabs
+            tab-mark
+            trailing
+            missing-newline-at-eof)))
 #+end_src
 
-** ~link-hint~: Activate links in buffer with ~avy~ :package:
-
-<https://github.com/noctuid/link-hint.el>
+*** Indentation
 
 #+begin_src emacs-lisp
-(package! link-hint
-  (define-keymap :keymap (current-global-map)
-    "M-g u" #'link-hint-open-link
-    "M-g U" #'link-hint-copy-link))
+
+
+(setopt backward-delete-char-untabify-method 'untabify)
 #+end_src
 
-** ~expand-region~: Expand your regions :package:
-
-<https://github.com/magnars/expand-region.el>
+**** ~electric-indent-mode~ [builtin]: Emacs' best attempt at automatic indentation
 
 #+begin_src emacs-lisp
-(package! expand-region)
+(electric-indent-mode 1)
 #+end_src
 
-** ~lentic~: Create decoupled views of the same content :package:
+*** Delete trailing whitespace before saving files
 
 #+begin_src emacs-lisp
-(package! lentic
-  (global-lentic-mode))
-
-(with-eval-after-load 'lentic
-  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+(add-hook 'before-save-hook #'delete-trailing-whitespace)
 #+end_src
 
+** ~editorconfig~: Enforce EditorConfig settings
 
-* Editing :: =editor= :editing:
-:PROPERTIES:
-:header-args: :noweb-ref init-editor
-:END:
+- website :: <https://editorconfig.org>
 
 #+begin_src emacs-lisp
-(require 'config-editor)
+(use-package editorconfig
+  :ensure t
+  :hook (ceamx-emacs-startup . editorconfig-mode)
 
-(require 'ceamx-lib)
-(require 'lib-editor)
-(require 'ceamx-simple)
+  :preface
+  ;; via <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
+  (defun +editorconfig-enforce-org-mode-tab-width-h (props)
+  "Prevent `editorconfig' from changing `tab-width' in `org-mode'.
+A \"tab-width\" of any value other than 8 is an error state in
+org-mode, so it must not be changed.
+
+PROPS is as in `editorconfig-after-apply-functions'."
+  (when (and (gethash 'indent_size props)
+             (derived-mode-p 'org-mode))
+    (setq tab-width 8)))
+
+  :config
+  (add-hook 'editorconfig-after-apply-functions #'+editorconfig-enforce-org-mode-tab-width-h))
 #+end_src
 
-** Enable some commands that Emacs disables by default
-
-#+begin_src emacs-lisp
-(dolist (cmd '(downcase-region
-               scroll-left
-               upcase-region))
-  (put cmd 'disabled nil))
-#+end_src
-
-** Replace region when inserting text
-
-#+begin_src emacs-lisp
-(delete-selection-mode 1)
-#+end_src
-
-** Improve sentence legibility and parsability with double-spaced ending
+** Use two spaces after sentences for improved legibility and parsability
 
 Yes, it may appear strange and archaic, and yet... I realized that I actually
 do *prefer* this for readability.  And so, I am giving it a shot.  My
@@ -4600,31 +3889,23 @@ words backwardsly]]
 (global-subword-mode -1)
 #+end_src
 
-** TODO ~string-inflection~: Commands to cycle through word casing
+** Provide commands to "unfill" text
 
-Needs better bindings.
+- src :: <https://github.com/purcell/unfill>
 
 #+begin_src emacs-lisp
-(require 'lib-editor)
-
-(package! string-inflection)
-
-(defvar-keymap ceamx-string-repeat-map
-  :repeat t
-
-  "c" #'ceamx/cycle-string-inflection)
+(use-package unfill
+  :ensure t)
 #+end_src
 
-#+begin_src emacs-lisp :noweb-ref lib-editor
-(defun ceamx/cycle-string-inflection ()
-  "Cycle through `string-inflection' styles appropriate to the major-mode."
-  (interactive)
-  (pcase major-mode
-    (`emacs-lisp-mode (string-inflection-all-cycle))
-    (`python-mode (string-inflection-python-style-cycle))
-    (`java-mode (string-inflection-java-style-cycle))
-    (`elixir-mode (string-inflection-elixir-style-cycle))
-    (_ (string-inflection-ruby-style-cycle))))
+** ~mwim~: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
+
+#+begin_src emacs-lisp
+(use-package mwim
+  :ensure t
+  :init
+  (keymap-global-set "C-a" #'mwim-beginning)
+  (keymap-global-set "C-e" #'mwim-end))
 #+end_src
 
 ** INPRG Provide a command to intelligently kill words backwardsly
@@ -4668,318 +3949,44 @@ This operation will respect the following rules:
         (delete-char -1)))))
 #+end_src
 
-** Automatically wrap text at ~fill-column~ in some contexts
+
+** Replace region when inserting text
 
 #+begin_src emacs-lisp
-(setopt comment-auto-fill-only-comments nil)
-
-(def-hook! +prog-mode-auto-fill-comments-only-h ()
-  'prog-mode-hook
-  "Set `auto-fill-mode' to only fill comments when in programming modes."
-  (setq-local comment-auto-fill-only-comments t))
-
-(dolist (mode-hook '(prog-mode-hook text-mode-hook))
-  (add-hook mode-hook #'auto-fill-mode))
+(delete-selection-mode 1)
 #+end_src
 
-** Provide commands to "unfill" text
+** ~easy-kill~ :package:
 
-- Website :: <https://github.com/purcell/unfill>
+<https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
-#+begin_src emacs-lisp
-(package! unfill)
-#+end_src
-
-** Comments
-
-#+begin_src emacs-lisp
-(keymap-global-set "<remap> <default-indent-new-line>" #'ceamx/continue-comment)
-#+end_src
-
-*** ~ceamx/continue-comment~
-:PROPERTIES:
-:header-args: :noweb-ref lib-editor
-:END:
-
-<https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
+#+begin_example
+w => word
+s => sexp
+l => list
+d => defun
+D => defun name
+f => file
+b => buffer name
+       ->"-": `default-directory'
+       ->"+": full path
+       ->"0": basename
+#+end_example
 
 #+begin_src emacs-lisp
-(defun ceamx/continue-comment ()
-  "Continue current comment, preserving trailing whitespace.
-This differs from `default-indent-new-line' in the following way:
-
-If you have a comment like \";; Some text\" with point at the end
-of the line, then running `default-indent-new-line' will get you
-a new line with \";; \", but running it again will get you a line
-with only \";;\" (no trailing whitespace). This is annoying for
-inserting a new paragraph in a comment. With this command, the
-two inserted lines are the same."
-  (interactive)
-  ;; `default-indent-new-line' uses `delete-horizontal-space'
-  ;; because in auto-filling we want to avoid the space character at
-  ;; the end of the line from being put at the beginning of the next
-  ;; line. But when continuing a comment it's not desired.
-  (cl-letf (((symbol-function #'delete-horizontal-space) #'ignore))
-    (default-indent-new-line)))
-#+end_src
-
-** Semantic pair matching :pairs:
-
-See the Info node [[info:emacs#Matching]]
-
-
-#+begin_src emacs-lisp
-(setopt blink-matching-paren t)
-;; Avoid "expression" style, which looks too much like a selected region.
-(setopt show-paren-style 'parenthesis)
-
-(setopt electric-pair-preserve-balance t)
-(setopt electric-pair-delete-adjacent-pairs t)
-(setopt electric-pair-skip-whitespace t)
-;; TODO: evaluating...
-(setopt electric-pair-open-newline-between-pairs t)
-
-(electric-pair-mode 1)
-(show-paren-mode 1)
-#+end_src
-
-** Formatting :formatting:
-
-#+begin_src emacs-lisp
-(setopt require-final-newline t)
-#+end_src
-
-*** ~whitespace-mode~ [builtin]: visualize whitespace
-
-This mode is buffer-local. It might be undesireable in some cases, so enable
-it selectively.
-
-#+begin_src emacs-lisp
-(add-hook 'prog-mode-hook #'whitespace-mode)
-
-(setopt whitespace-style
-        '(face
-          tabs
-          tab-mark
-          trailing
-          missing-newline-at-eof))
-#+end_src
-
-*** Indentation
-
-#+begin_src emacs-lisp
-(setq-default indent-tabs-mode nil)
-(setopt indent-tabs-mode nil)
-(setopt backward-delete-char-untabify-method 'untabify)
-#+end_src
-
-**** ~electric-indent-mode~ [builtin]: Emacs' best attempt at automatic indentation
-
-#+begin_src emacs-lisp
-(electric-indent-mode 1)
-#+end_src
-
-*** Delete trailing whitespace before saving files
-
-#+begin_src emacs-lisp
-(add-hook 'before-save-hook #'delete-trailing-whitespace)
-#+end_src
-
-*** ~editorconfig~: EditorConfig integration :package:
-
-#+begin_src emacs-lisp
-;; <https://editorconfig.org>
-
-(package! editorconfig
-  (add-hook 'ceamx-emacs-startup-hook #'editorconfig-mode))
-#+end_src
-
-**** Prevent ~editorconfig~ from exploding ~org-mode~ buffers
-
-#+begin_src emacs-lisp
-;; <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
-
-(defun +editorconfig-enforce-org-mode-tab-width-h (props)
-  "Prevent `editorconfig' from changing `tab-width' in `org-mode'.
-A \"tab-width\" of any value other than 8 is an error state in
-org-mode, so it must not be changed.
-
-PROPS is as in `editorconfig-after-apply-functions'."
-  (when (and (gethash 'indent_size props)
-             (derived-mode-p 'org-mode))
-    (setq tab-width 8)))
-
-(with-eval-after-load 'editorconfig
-  (add-hook 'editorconfig-after-apply-functions
-            #'+editorconfig-enforce-org-mode-tab-width-h))
-#+end_src
-
-*** [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT :package:
-
-#+begin_src emacs-lisp
-(package! reformatter
-  (require 'reformatter))
-#+end_src
-
-**** Configure generalized polyglot formatters
-
-***** =biome=
-
-- Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
-
-This should, possibly more ideally, be run as an LSP client, but AFAIK one does
-not yet exist for Eglot (only LSP-Mode).
-
-#+begin_src emacs-lisp
-(after! reformatter
-  (reformatter-define biome-format
-    :program "biome"
-    :args (list "format" "--stdin-file-path" (buffer-file-name))))
-#+end_src
-
-***** =prettier=
-
-- Source :: <https://github.com/akirak/flake-templates/blob/629b04932dc71e3e0213d66a0aa8a08cd0b64922/README.md#emacs>
-
-#+begin_src emacs-lisp
-(after! reformatter
-  (reformatter-define prettier
-    :program "prettier"
-    :args (list (concat "--plugin-search-dir="
-                        (expand-file-name
-                         (locate-dominating-file default-directory "package.json")))
-                "--stdin-filepath" (buffer-file-name))))
-#+end_src
-
-***** treefmt
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'reformatter
-  (reformatter-define treefmt
-    :group 'ceamx
-    :program "treefmt"
-    :args (list "--stdin" (buffer-file-name))))
-#+end_src
-
-**** TODO Inhibit on-save formatting with prefix argument
-
-*** [[https://github.com/radian-software/apheleia][radian-software/apheleia]]: opinionated code reformatting :package:
-
-In case you run into issues with ~web-mode~ not updating syntax highlighting after
-formatting (or other arbitrary modifications):
-<https://github.com/doomemacs/doomemacs/blob/35dc13632b3177b9efedad212f2180f69e756853/modules/editor/format/config.el#L74-L83>
-
-#+begin_src emacs-lisp
-(package! apheleia
-  ;; (apheleia-global-mode 1)
+(package! easy-kill
+  (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
+  (keymap-global-set "C-M-@" #'easy-mark) ; override `mark-sexp'
   )
-
-(after! (apheleia)
-  (blackout 'apheleia-mode " Aph"))
 #+end_src
 
-**** Inhibit automatic formatting in some contexts
-
-Unlike ~reformatter~, ~apheleia~ will /always/ run if it can.  A blessing and a curse.
-This section handles the curse.
-
-#+begin_src emacs-lisp :noweb-ref config-editor
-(defcustom ceamx-format-on-save-disabled-modes
-  '(emacs-lisp-mode                     ; conflict with `lispy' indent
-    org-msg-edit-mode)
-  "A list of major modes in which to not reformat the buffer upon saving.
-When nil, buffers will always be formatted upon save. When
-non-nil, buffers will never be formatted upon save."
-  :group 'ceamx
-  :type '(choice boolean (repeat symbol)))
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref lib-editor
-(defun ceamx-editor-format-maybe-inhibit-h ()
-  "Check if formatting should be disabled for current buffer."
-  (or (eq major-mode 'fundamental-mode)
-      (string-blank-p (buffer-name))
-      (eq ceamx-format-on-save-disabled-modes t)
-      (not (null (memq major-mode ceamx-format-on-save-disabled-modes)))))
-#+end_src
+** ~expand-region~: Increase/decrease the selection area
 
 #+begin_src emacs-lisp
-(require 'lib-editor)
-
-(after! (apheleia)
-  (add-to-list 'apheleia-inhibit-functions #'ceamx-editor-format-maybe-inhibit-h))
-#+end_src
-
-**** Inhibit on-save formatting with prefix argument
-
-- Source :: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
-
-#+begin_src emacs-lisp
-;; FIXME: only add advice after package load!!!
-(def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
-  :around #'save-buffer
-  "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
-  (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
-    (funcall func)))
-#+end_src
-
-*** Use the Biome formatter for supported major modes :lang:
-
-- Reference :: <https://biomejs.dev/internals/language-support/>
-
-As of <2024-05-24 Fri>
-
-#+begin_src emacs-lisp :noweb-ref config-editor
-;; As of <2024-05-24 Fri>
-;; <https://biomejs.dev/internals/language-support/>
-(defconst ceamx-editor-format-biome-modes-list
-  '(javascript-mode js-mode js-ts-mode js3-mode
-    typescript-mode typescript-ts-mode
-    js-jsx-mode tsx-ts-mode
-    json-mode json-ts-mode)
-  "List of major-mode symbols for the languages supported by the Biome formatter.")
-#+end_src
-
-#+begin_src emacs-lisp
-(after! reformatter
-  (require 'derived)
-  (dolist (hook (mapcar #'derived-mode-hook-name ceamx-editor-format-biome-modes-list))
-    (add-hook hook #'biome-format-on-save-mode)))
-#+end_src
-
-#+begin_src emacs-lisp
-(after! apheleia
-  (add-to-list 'apheleia-formatters '(biome "biome" "format" "--stdin-file-path" filepath))
-
-  (dolist (mode ceamx-editor-format-biome-modes-list)
-    (add-to-list 'apheleia-mode-alist '(mode . biome))))
-#+end_src
-
-** ~puni~: versatile structured editing :package:
-
-<https://github.com/AmaiKinono/puni>
-
-#+begin_src emacs-lisp
-(package! puni
-  ;; (puni-global-mode)
-  ;; (add-hook 'prog-mode-hook #'puni-mode)
-  ;; (add-hook 'term-mode-hook #'puni-disable-puni-mode)
-  )
-
-;; (after! puni
-;;     ;; (define-keymap :keymap puni-mode-map
-;;   ;;   "C-M-f" #'puni-forward-sexp
-;;   ;;   "C-M-b" #'puni-backward-sexp
-;;   ;;   "C-M-a" #'puni-beginning-of-sexp
-;;   ;;   "C-M-e" #'puni-end-of-sexp
-;;   ;;   "C-M-[" #'puni-backward-sexp-or-up-list
-;;   ;;   "C-M-]" #'puni-forward-sexp-or-up-list
-
-;;   ;;   "M-(" #'puni-syntactic-forward-punct
-;;   ;;   "M-)" #'puni-syntactic-backward-punct
-;;   ;;   )
-
-;; )
+(use-package expand-region
+  :ensure t
+  :init
+  (keymap-global-set "C-=" #'er/expand-region))
 #+end_src
 
 ** ~drag-stuff~: drag stuff around in arbitrary directions :package:
@@ -5015,6 +4022,77 @@ preserving column position.
 ~move-text-mode~ <https://github.com/emacsfodder/move-text>, claims to do
 this but fails pretty badly, moving the region/selection to the first column
 regardless of its original position.
+#+end_src
+
+** Automatically wrap text at ~fill-column~ in some contexts
+
+#+begin_src emacs-lisp
+(defun ceamx-langs-auto-fill-comments-only-h ()
+  "Set `auto-fill-mode' to only fill comments."
+  (setq-local comment-auto-fill-only-comments t))
+
+(use-package emacs
+  :ensure nil
+  :hook (((prog-mode text-mode) . auto-fill-mode)
+         (prog-mode . ceamx-langs-auto-fill-comments-only-h))
+  :config
+  (setopt comment-auto-fill-only-comments nil))
+#+end_src
+
+** Visualize and electrify matching character pairs :pairs:
+
+See the Info node [[info:emacs#Matching]]
+
+
+#+begin_src emacs-lisp
+(setopt blink-matching-paren t)
+;; Avoid "expression" style, which looks too much like a selected region.
+(setopt show-paren-style 'parenthesis)
+
+(setopt electric-pair-preserve-balance t)
+(setopt electric-pair-delete-adjacent-pairs t)
+(setopt electric-pair-skip-whitespace t)
+;; TODO: evaluating...
+(setopt electric-pair-open-newline-between-pairs t)
+
+(electric-pair-mode 1)
+(show-paren-mode 1)
+#+end_src
+
+** TODO ~string-inflection~: Commands to cycle through word casing
+
+Needs better bindings.
+
+#+begin_src emacs-lisp
+(require 'lib-editor)
+
+(package! string-inflection)
+
+(defvar-keymap ceamx-string-repeat-map
+  :repeat t
+
+  "c" #'ceamx/cycle-string-inflection)
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref lib-editor
+(defun ceamx/cycle-string-inflection ()
+  "Cycle through `string-inflection' styles appropriate to the major-mode."
+  (interactive)
+  (pcase major-mode
+    (`emacs-lisp-mode (string-inflection-all-cycle))
+    (`python-mode (string-inflection-python-style-cycle))
+    (`java-mode (string-inflection-java-style-cycle))
+    (`elixir-mode (string-inflection-elixir-style-cycle))
+    (_ (string-inflection-ruby-style-cycle))))
+#+end_src
+
+** ~ialign~: Interactively ~align-regexp~ :package:
+
+<https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
+
+#+begin_src emacs-lisp
+(package! ialign
+  (keymap-global-set "C-x l" #'ialign))
 #+end_src
 
 ** ~rect~ [builtin]: operate on a buffer rectangularly
@@ -5059,164 +4137,58 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
 #+end_src
 
-** ~multiple-cursors~: Sublime-esque multi-cursor editing :package:
-
-<https://github.com/magnars/multiple-cursors.el>
+** ~ceamx-simple~: Simple & common commands
 
 #+begin_src emacs-lisp
-(use-package multiple-cursors
+(use-feature! ceamx-simple
   :demand t
-  ;; :autoload (mc/num-cursors)
-
   :config
-
-  (use-feature! hydra
-    :config
-
-    ;; TODO: convert to transient
-    (defhydra hydra-multiple-cursors (:hint nil)
-      "
- Up^^             Down^^           Miscellaneous           % 2(mc/num-cursors) cursor%s(if (> (mc/num-cursors) 1) \"s\" \"\")
-------------------------------------------------------------------
- [_p_]   Next     [_n_]   Next     [_l_] Edit lines  [_0_] Insert numbers
- [_P_]   Skip     [_N_]   Skip     [_a_] Mark all    [_A_] Insert letters
- [_M-p_] Unmark   [_M-n_] Unmark   [_s_] Search      [_q_] Quit
- [_|_] Align with input CHAR       [Click] Cursor at point"
-      ("l" mc/edit-lines :exit t)
-      ("a" mc/mark-all-like-this :exit t)
-      ("n" mc/mark-next-like-this)
-      ("N" mc/skip-to-next-like-this)
-      ("M-n" mc/unmark-next-like-this)
-      ("p" mc/mark-previous-like-this)
-      ("P" mc/skip-to-previous-like-this)
-      ("M-p" mc/unmark-previous-like-this)
-      ("|" mc/vertical-align)
-      ("s" mc/mark-all-in-region-regexp :exit t)
-      ("0" mc/insert-numbers :exit t)
-      ("A" mc/insert-letters :exit t)
-      ("<mouse-1>" mc/add-cursor-on-click)
-      ;; Help with click recognition in this hydra
-      ("<down-mouse-1>" ignore)
-      ("<drag-mouse-1>" ignore)
-      ("q" nil))))
+  (keymap-global-set "C-<" #'ceamx/escape-url-dwim)
+  (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx/continue-comment))
 #+end_src
 
-** ~easy-kill~ :package:
-
-<https://github.com/leoliu/easy-kill/blob/master/README.rst>
-
-#+begin_example
-w => word
-s => sexp
-l => list
-d => defun
-D => defun name
-f => file
-b => buffer name
-       ->"-": `default-directory'
-       ->"+": full path
-       ->"0": basename
-#+end_example
+** Linkify URLs and email addresses with ~goto-address~ [builtin]
 
 #+begin_src emacs-lisp
-(package! easy-kill
-  (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
-  (keymap-global-set "C-M-@" #'easy-mark) ; override `mark-sexp'
-  )
+(autoload 'goto-address-prog-mode "goto-addr")
+
+(add-hook 'prog-mode-hook #'goto-address-prog-mode)
 #+end_src
 
-** ~ialign~: Interactively ~align-regexp~ :package:
-
-<https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
+** Disambiguate buffer names with ~uniquify~ [builtin]
 
 #+begin_src emacs-lisp
-(package! ialign
-  (keymap-global-set "C-x l" #'ialign))
+(with-eval-after-load 'uniquify
+  (setopt uniquify-buffer-name-style 'forward)
+  (setopt uniquify-separator "/")
+
+  ;; Rename after killing uniquified buffer.
+  (setopt uniquify-after-kill-buffer-p t)
+
+  ;; Don't muck with special buffers.
+  (setopt uniquify-ignore-buffers-re "^\\*"))
 #+end_src
 
-** Structural editing
+** ~link-hint~: Activate links in buffer with ~avy~ :package:
 
-Prepare a prefix commands for binding structural editing commands:
+<https://github.com/noctuid/link-hint.el>
 
 #+begin_src emacs-lisp
-(define-prefix-command 'ceamx-structural-editing-prefix)
-(keymap-global-set "C-c s" #'ceamx-structural-editing-prefix)
+(package! link-hint
+  (define-keymap :keymap (current-global-map)
+    "M-g u" #'link-hint-open-link
+    "M-g U" #'link-hint-copy-link))
 #+end_src
 
-#+begin_src emacs-lisp :noweb-ref config-editor
-(defcustom ceamx-structured-editing-style 'lispy
-  "The structured editing provider."
-  :group 'ceamx
-  :type '(choice :tag "Structured editing style" :value lispy
-          (const :tag "Lispy" lispy)
-          (const :tag "Puni" puni)))
-#+end_src
-
-*** Structural editing with ~puni~
-
-Work in progress.
-
-This is still not quite usable as a Lispy replacement.  The goal is to use
-similar structureal editing keybindings across many major-modes.
-
-Note that this repeat-map should not be used in tandem with ~lispy-mode~ because
-its bindings generally would need ~puni-mode~ to be active.
-
-- <https://karthinks.com/software/a-consistent-structural-editing-interface/>
-- <https://github.com/suliveevil/emacs.d?tab=readme-ov-file#repeat-repeat-mode>
-- <https://github.com/karthink/.emacs.d/blob/master/init.el#L3209-L3241>
-
-
-- [ ] Disable ~repeat-exit-timeout~ for this map only
+** ~lentic~: Create decoupled views of the same content :package:
 
 #+begin_src emacs-lisp
-(after! puni
+(package! lentic
+  (global-lentic-mode))
 
-  (defvar-keymap structural-editing-map
-    :repeat t
-
-    "d" #'puni-forward-delete-char
-    ;; "DEL" #'puni-backward-delete-char
-    ;; "D" #'puni-forward-kill-word
-    ;; "M-DEL" #'puni-backward-kill-word
-    ;; "C-k" #'puni-kill-line
-    ;; "M-k" #'puni-backward-kill-line
-    "k" #'kill-sexp
-
-    "f" #'puni-forward-sexp
-    "b" #'puni-backward-sexp
-    "[" #'puni-backward-sexp-or-up-list
-    "]" #'puni-forward-sexp-or-up-list
-    "a" #'puni-beginning-of-sexp
-    "e" #'puni-end-of-sexp
-    "u" #'puni-up-list
-    "M-(" #'puni-syntactic-forward-punct
-    "M-)" #'puni-syntactic-backward-punct
-
-    "\\" #'indent-region
-    "/" #'undo
-
-    ">" #'puni-slurp-forward
-    "<" #'puni-slurp-backward
-    "}" #'puni-barf-forward
-    "{" #'puni-barf-backward
-    "R" #'puni-raise
-    "t" #'puni-transpose
-    "C" #'puni-convolute
-    ;; FIXME: avoid meow dependency -- no puni equivalent
-    ;; "J" #'meow-join-sexp
-    "S" #'puni-split
-    ;; FIXME: for `emacs-lisp-mode' only
-    "x" #'eval-defun
-
-    ))
-
-;; FIXME: wrong type argument symbolp
-;; (map-keymap (lambda (_ cmd)
-;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
-
+(with-eval-after-load 'lentic
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 #+end_src
-
 
 * Files :: =files= :files:
 :PROPERTIES:
@@ -5231,6 +4203,7 @@ its bindings generally would need ~puni-mode~ to be active.
 #+end_src
 
 ** Manage backup files and prevent file-lock clutter
+
 #+begin_src emacs-lisp
 (setopt create-lockfiles nil)
 (setopt make-backup-files nil)
@@ -5481,144 +4454,6 @@ writable or with a prefix argument, then read a file to visit."
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 #+end_src
 
-
-* Workspace :: =workspace= :workspace:
-:PROPERTIES:
-:header-args: :noweb-ref init-workspace
-:END:
-
-** Requirements
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-#+end_src
-
-#+begin_src emacs-lisp
-(defvar edebug-inhibit-emacs-lisp-mode-bindings)
-#+end_src
-
-** DISABLED Beframe :package:
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-#+begin_src emacs-lisp
-(package! beframe
-  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
-
-  (beframe-mode 1))
-#+end_src
-
-*** Provide Consult integration :consult:
-
-- source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
-
-#+begin_src emacs-lisp
-(defface +beframe-buffer
-  '((t :inherit font-lock-string-face))
-  "Face for `consult' framed buffers.")
-
-(defun +beframe-buffer-names-sorted (&optional frame)
-  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
-With optional argument FRAME, return the list of buffers of FRAME."
-  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
-
-(after! (beframe consult)
-  (declare-function consult--buffer-state "consult")
-
-  (defvar +beframe-consult-source
-    `(:name "Frame-specific buffers (current frame)"
-      :narrow ?F
-      :category buffer
-      :face +beframe-buffer
-      :history beframe-history
-      :items ,#'+beframe-buffer-names-sorted
-      :action ,#'switch-to-buffer
-      :state ,#'consult--buffer-state))
-
-  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
-#+end_src
-
-*** Provide ~ibuffer~ integration :ibuffer:
-
-- source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
-
-#+begin_src emacs-lisp
-(defun +beframe-buffer-in-frame-p (buf frame)
-  "Return non-nil if BUF is in FRAME."
-  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
-
-(defun +beframe-frame-name-list ()
-  "Return list with frame names."
-  (mapcar #'car (make-frame-names-alist)))
-
-(defun +beframe-generate-ibuffer-filter-groups ()
-  "Create a set of ibuffer filter groups based on the Frame of buffers."
-  (mapcar
-   (lambda (frame)
-     (list (format "%s" frame)
-           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
-   (+beframe-frame-name-list)))
-
-(after! (beframe ibuffer)
-  (setq ibuffer-saved-filter-groups
-        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
-
-  (define-ibuffer-filter frame
-      "Limit current view to buffers in frames."
-    (:description "frame")
-    (memq buf (beframe-buffer-list))))
-#+end_src
-
-** ~activites~: workspace by activity :package:tabs:
-
-- Website :: <https://github.com/alphapapa/activities.el>
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-
-(package! activities
-  (activities-mode)
-
-  (when tab-bar-mode
-    (activities-tabs-mode)))
-#+end_src
-
-*** Activities.el Keybindings :keybinds:
-
-#+begin_src emacs-lisp
-(defun ceamx-after-init-define-activities-keys-h ()
-  "Define keybindings for `activities' late to override `edebug'.
-Intended for use as a hook on `ceamx-after-init-hook'."
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-
-  ;; (keymap-global-unset "C-x C-a" t)
-  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
-
-  ;; TODO: still shares bindings with edebug which is confusing
-  (define-keymap :keymap (current-global-map)
-    "C-x C-a C-n" #'activities-new
-    "C-x C-a C-d" #'activities-define
-    "C-x C-a C-a" #'activities-resume
-    "C-x C-a C-s" #'activities-suspend
-    "C-x C-a C-k" #'activities-kill
-    "C-x C-a RET" #'activities-switch
-
-    "C-x C-a b" #'activities-switch-buffer
-    "C-x C-a g" #'activities-revert
-    "C-x C-a l" #'activities-list))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
-#+end_src
-
-** ~breadcrumb~: header-line wayfinding
-
-- Website :: <https://github.com/joaotavora/breadcrumb>
-
-#+begin_src emacs-lisp
-(package! breadcrumb
-  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
-#+end_src
 
 * Help :: =help= :help:
 
@@ -6170,6 +5005,478 @@ DOC is as in `devdocs-install'."
 ;;; init-history.el ends here
 #+end_src
 
+
+* Window and Buffer Management
+:PROPERTIES:
+:header-args: :tangle init.el
+:END:
+
+#+begin_src emacs-lisp
+(require 'ceamx-simple)
+(require 'ceamx-window)
+#+end_src
+
+** Define the user option specifying a fallback buffer :buffer:
+
+#+begin_src emacs-lisp
+(defcustom ceamx-fallback-buffer-name "*scratch*"
+  "The name of the buffer to fall back to if no other buffers exist.
+The buffer will be created if it does not exist."
+  :group 'ceamx
+  :type '(string))
+#+end_src
+
+** General buffer display settings :buffer:frame:display_buffer:
+
+#+begin_src emacs-lisp
+(setopt switch-to-buffer-in-dedicated-window 'pop)
+
+;; Ensure interactive buffer switching behaves according to expectations.
+(setopt switch-to-buffer-obey-display-actions t)
+
+;; Hide buffer until there's output.
+;; Prevents an extra window appearing during init.
+(setopt async-shell-command-display-buffer nil)
+
+;; TODO: causes which-key squishing against tiny window maybe?
+(setopt fit-window-to-buffer-horizontally t)
+
+;; TODO: this might be a solution to issues with childframes for embark etc.
+(setopt fit-frame-to-buffer t)
+
+;; (setopt even-window-sizes nil)
+(setopt even-window-sizes 'height-only)
+(setopt window-combination-resize t)
+(setopt window-sides-vertical nil)
+(setopt window-resize-pixelwise t)
+
+(setopt display-buffer-base-action
+        '((display-buffer-reuse-window
+           display-buffer-in-previous-window)))
+#+end_src
+
+** Declare rules for displaying buffers with ~display-buffer-alist~ :display_buffer:
+
+- Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+
+<karthink> has a helpful summary of ~display-buffer~ action functions and
+alist entries in their Emacs configuration, which I am also including here
+for my own reference. Note that this list is not necessarily complete.
+
+~display-buffer-action-functions~ are:
+
+- ~display-buffer-same-window~ :: Use the selected window
+- ~display-buffer-reuse-window~ :: Use a window already showing the buffer
+- ~display-buffer-reuse-mode-window~ :: Use a window with the same major-mode
+- ~display-buffer-in-previous-window~ :: Use a window that did show the buffer before
+- ~display-buffer-use-some-window~ :: Use some existing window
+- ~display-buffer-pop-up-window~ :: Pop up a new window
+- ~display-buffer-below-selected~ :: Use or pop up a window below the selected one
+- ~display-buffer-at-bottom~ :: Use or pop up a window at the bottom of the selected frame
+- ~display-buffer-pop-up-frame~ :: Show the buffer on a new frame
+- ~display-buffer-in-child-frame~ :: Show the buffer in a child frame
+- ~display-buffer-no-window~ :: Do not display the buffer and have ~display-buffer~ return nil immediately
+
+Action alist entries are:
+
+- ~inhibit-same-window~ :: A non-nil value prevents the sam
+    window from being used for display
+- ~inhibit-switch-frame~ :: A non-nil value prevents any fram
+    used for showing the buffer from being raised or selected
+- ~reusable-frames~ :: The value specifies the set of frames t
+    search for a window that already displays the buffer.
+    Possible values are nil (the selected frame), t (any live
+    frame), visible (any visible frame), 0 (any visible or
+    iconified frame) or an existing live frame.
+- ~pop-up-frame-parameters~ :: The value specifies an alist o
+    frame parameters to give a new frame, if one is created.
+- ~window-height~ :: The value specifies the desired height of th
+    window chosen and is either an integer (the total height of
+    the window), a floating point number (the fraction of its
+    total height with respect to the total height of the frame's
+    root window) or a function to be called with one argument -
+    the chosen window.  The function is supposed to adjust the
+    height of the window; its return value is ignored.  Suitable
+    functions are ~shrink-window-if-larger-than-buffer~ and
+    ~fit-window-to-buffer~.
+- ~window-width~ :: The value specifies the desired width of th
+    window chosen and is either an integer (the total width of
+    the window), a floating point number (the fraction of its
+    total width with respect to the width of the frame's root
+    window) or a function to be called with one argument - the
+    chosen window.  The function is supposed to adjust the width
+    of the window; its return value is ignored.
+- ~preserve-size~ :: The value should be either (t . nil) t
+    preserve the width of the chosen window, (nil . t) to
+    preserve its height or (t . t) to preserve its height and
+    width in future changes of the window configuration.
+- ~window-parameters~ :: The value specifies an alist of windo
+    parameters to give the chosen window.
+- ~allow-no-window~ :: A non-nil value means that `display-buffer
+    may not display the buffer and return nil immediately.
+
+
+    <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+
+
+    #+begin_src emacs-lisp
+(setopt display-buffer-alist
+        `(
+          ;; (,(rx "*" (or "Agenda Commands" "Org Select") "*")
+          ;;   (display-buffer-below-selected
+          ;;     display-buffer-in-side-window)
+          ;;   (body-function . select-window)
+          ;;   (window-parameters . ((mode-line-format . nil))))
+
+          (,ceamx-simple-checkers-buffer-names-regexp
+           (display-buffer-in-direction
+            display-buffer-in-side-window)
+           (window-parameters . ((no-other-window . t))))
+
+          ;; TODO: is there not a simpler way than using `ceamx-simple-buffer-which-mode'?
+          ;; e.g. `derived-mode-p' or similar
+          ((lambda (buf act) (member (ceamx-simple-buffer-which-mode buf) ceamx-message-modes-list))
+           (display-buffer-at-bottom
+            display-buffer-in-side-window))
+
+          (,(rx "*" (group (or "Compile-Log" "Messages" "Warnings")) "*")
+           (display-buffer-at-bottom
+            display-buffer-in-side-window
+            display-buffer-in-direction))
+
+          (,(rx "*Backtrace*")
+           (display-buffer-in-side-window)
+           (window-height . 0.2)
+           (side . bottom))))
+    #+end_src
+
+** ~popper~: Summon and dismiss "popup" windows :popups:package:
+
+- Website :: <https://github.com/karthink/popper>
+
+#+begin_src emacs-lisp
+(package! popper
+  (define-keymap :keymap (current-global-map)
+    "C-`" #'popper-toggle
+    "C-~" #'popper-cycle
+    "C-M-`" #'popper-toggle-type)
+
+  (setopt popper-reference-buffers
+          (append
+           ceamx-help-modes-list
+           ceamx-help-buffer-names-list
+           ceamx-manual-modes-list
+           ceamx-repl-modes-list
+           ceamx-repl-buffer-names-list
+           ceamx-occur-grep-modes-list
+           '(+popper-current-buffer-popup-p)
+           '(Custom-mode
+             compilation-mode
+             messages-buffer-mode)
+           (list
+            ceamx-simple-checkers-buffer-names-regexp)
+
+           ;; The "Home" tabspace, if enabled, will display the Messages buffer.
+           (unless (fboundp 'ceamx-workspace-open-tabspace-after-init-h)
+             '("\\*Messages\\*"))
+
+           `(,(rx "Output*" eol)
+             ,(rx "*" (or
+                       "Async-native-compile-log"
+                       "Backtrace"
+                       "Compile-Log"
+                       "Completions"
+                       "compilation"
+                       "elpaca-diff"
+                       "Shell Command Output"
+                       "vc"
+                       "Warnings")
+               "*")
+             "^\\*Embark Export"
+             "^Calc:"
+             "\\*Async Shell Command\\*"
+             ;; ("\\*Async Shell Command\\*" . hide)
+             ("\\*Detached Shell Command\\*" . hide))))
+
+  ;; Load as early as possible to catch popups as early as possible.
+  (popper-mode)
+  (popper-echo-mode))
+#+end_src
+
+*** Configure overrides in ~popper-repeat-map~
+
+#+begin_src emacs-lisp
+(after! popper
+  (defvar-keymap popper-repeat-map
+    :repeat t
+    "`" #'popper-cycle
+    "~" #'popper-cycle-backwards))
+#+end_src
+
+*** DISABLED Configure popup display control rules manually
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+<https://github.com/karthink/popper/blob/master/README.org#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
+
+#+begin_src emacs-lisp
+(after! popper
+  (setopt popper-display-control nil)
+
+  (prependopt! display-buffer-alist
+               '((popper-display-control-p
+                  (ceamx-window-display-popup)
+                  (window-height . ,popper-window-height)))))
+#+end_src
+
+*** Configure ~projectile~ integration
+
+#+begin_src emacs-lisp
+(after! (popper projectile)
+  (setopt popper-group-function #'popper-group-by-projectile))
+#+end_src
+
+** Restore previous window configurations with ~winner-mode~ [builtin] :history:
+
+#+begin_src emacs-lisp
+(add-hook 'ceamx-after-init-hook #'winner-mode)
+#+end_src
+
+** =dedicated=: Toggle a window's "dedicated" flag :package:
+
+<https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
+
+#+begin_src emacs-lisp
+(package! dedicated)
+#+end_src
+
+** =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
+
+#+begin_src emacs-lisp
+(package! golden-ratio
+  (setopt golden-ratio-auto-scale t)
+  (setopt golden-ratio-max-width 100))
+#+end_src
+
+** =ace-window=: Interactively manage windows :package:
+
+<https://github.com/abo-abo/ace-window>
+
+#+begin_src emacs-lisp
+(package! ace-window
+  ;; Same frame only. While it'd be nice to use the default (global), I really
+  ;; dislike that it orders window numbers leads to jarring gaps in window
+  ;; numbers in the same frame. For example, frame A might have windows numbered
+  ;; 1 and 3 and frame B will have window 2.
+  (setopt aw-scope 'frame))
+#+end_src
+
+** =transpose-frame=: Transpose and rotate a frame's windows :package:
+
+#+begin_src emacs-lisp
+(package! transpose-frame)
+#+end_src
+
+** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
+
+#+begin_src emacs-lisp
+(transient-define-prefix ceamx/window-dispatch ()
+  "Window management transient."
+  :transient-suffix 'transient--do-stay
+  [["Move"
+    ("h" "left" windmove-left)
+    ("j" "down" windmove-down)
+    ("k" "up" windmove-up )
+    ("l" "right" windmove-right)
+    ("w" "sel" ace-window)]
+
+   ["Resize"
+    ("=" "bal" balance-windows)
+    ("+" "bal: area" balance-windows-area)
+    ("-" "fit: buffer" fit-window-to-buffer)]
+
+   ["Buffer"
+    ("b" "buf" consult-buffer)
+    ;; ("f" "ff: p" project-find-file)
+    ("f" "file" find-file )
+    ("F" "file" find-file-other-window)
+    ("g" "grep" consult-ripgrep)]
+
+   ["Swarp"
+    ("H" "left" ceamx/window-move-left)
+    ("J" "down" ceamx/window-move-down)
+    ("K" "up" ceamx/window-move-up)
+    ("L" "right" ceamx/window-move-right)
+    ""
+    ("s" "swap" ace-swap-window)
+    ("2" "spl: dn" split-window-below)
+    ("3" "spl: rt" split-window-right)
+    ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
+
+   ["Scroll"
+    ;; TODO: allow selecting a window (with infix?) to act upon
+    ;; NOTE: These are the correct scroll direction commands, which might
+    ;; appear to be reversed when comparing with labels.
+    ("." "left" scroll-right)
+    ("," "right" scroll-left)
+    ("SPC" "down" scroll-up)
+    ("DEL" "up" scroll-down)]
+
+   ["Lifecycle"
+    ("d" "del (this)" delete-window)
+    ("D" "del (select)" ace-delete-window)
+    ;; ("D" "del: o" delete-other-windows :transient nil)
+    ("u" "undo" winner-undo)
+    ("U" "redo" winner-redo)
+    ""
+    ("0" "del" delete-window)
+    ("1" "del other" delete-other-windows)
+    ""
+    ("S" "[ ] sides" window-toggle-side-windows)
+    ("`" "[ ] popups" popper-toggle)
+    ""
+    ("q" "quit" transient-quit-all)]])
+#+end_src
+
+
+* Workspace :: =workspace= :workspace:
+:PROPERTIES:
+:header-args: :noweb-ref init-workspace
+:END:
+
+** Requirements
+
+#+begin_src emacs-lisp
+(require 'ceamx-lib)
+#+end_src
+
+#+begin_src emacs-lisp
+(defvar edebug-inhibit-emacs-lisp-mode-bindings)
+#+end_src
+
+** DISABLED Beframe :package:
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+#+begin_src emacs-lisp
+(package! beframe
+  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
+
+  (beframe-mode 1))
+#+end_src
+
+*** Provide Consult integration :consult:
+
+- source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
+
+#+begin_src emacs-lisp
+(defface +beframe-buffer
+  '((t :inherit font-lock-string-face))
+  "Face for `consult' framed buffers.")
+
+(defun +beframe-buffer-names-sorted (&optional frame)
+  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+With optional argument FRAME, return the list of buffers of FRAME."
+  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+
+(after! (beframe consult)
+  (declare-function consult--buffer-state "consult")
+
+  (defvar +beframe-consult-source
+    `(:name "Frame-specific buffers (current frame)"
+      :narrow ?F
+      :category buffer
+      :face +beframe-buffer
+      :history beframe-history
+      :items ,#'+beframe-buffer-names-sorted
+      :action ,#'switch-to-buffer
+      :state ,#'consult--buffer-state))
+
+  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
+#+end_src
+
+*** Provide ~ibuffer~ integration :ibuffer:
+
+- source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
+
+#+begin_src emacs-lisp
+(defun +beframe-buffer-in-frame-p (buf frame)
+  "Return non-nil if BUF is in FRAME."
+  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
+
+(defun +beframe-frame-name-list ()
+  "Return list with frame names."
+  (mapcar #'car (make-frame-names-alist)))
+
+(defun +beframe-generate-ibuffer-filter-groups ()
+  "Create a set of ibuffer filter groups based on the Frame of buffers."
+  (mapcar
+   (lambda (frame)
+     (list (format "%s" frame)
+           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
+   (+beframe-frame-name-list)))
+
+(after! (beframe ibuffer)
+  (setq ibuffer-saved-filter-groups
+        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
+
+  (define-ibuffer-filter frame
+      "Limit current view to buffers in frames."
+    (:description "frame")
+    (memq buf (beframe-buffer-list))))
+#+end_src
+
+** ~activites~: workspace by activity :package:tabs:
+
+- Website :: <https://github.com/alphapapa/activities.el>
+
+#+begin_src emacs-lisp
+(require 'ceamx-lib)
+
+(package! activities
+  (activities-mode)
+
+  (when tab-bar-mode
+    (activities-tabs-mode)))
+#+end_src
+
+*** Activities.el Keybindings :keybinds:
+
+#+begin_src emacs-lisp
+(defun ceamx-after-init-define-activities-keys-h ()
+  "Define keybindings for `activities' late to override `edebug'.
+Intended for use as a hook on `ceamx-after-init-hook'."
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+
+  ;; (keymap-global-unset "C-x C-a" t)
+  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
+
+  ;; TODO: still shares bindings with edebug which is confusing
+  (define-keymap :keymap (current-global-map)
+    "C-x C-a C-n" #'activities-new
+    "C-x C-a C-d" #'activities-define
+    "C-x C-a C-a" #'activities-resume
+    "C-x C-a C-s" #'activities-suspend
+    "C-x C-a C-k" #'activities-kill
+    "C-x C-a RET" #'activities-switch
+
+    "C-x C-a b" #'activities-switch-buffer
+    "C-x C-a g" #'activities-revert
+    "C-x C-a l" #'activities-list))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
+#+end_src
+
+** ~breadcrumb~: header-line wayfinding
+
+- Website :: <https://github.com/joaotavora/breadcrumb>
+
+#+begin_src emacs-lisp
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+#+end_src
 
 * Search :: =search= :search:
 :PROPERTIES:
@@ -8216,11 +7523,14 @@ avoid further confusion.
 
 
 * Language Support :lang:
+:PROPERTIES:
+:header-args: :tangle lisp/ceamx-langs.el
+:END:
 
-** General Programming (~prog-mode~ derived modes)
+** =lisp/ceamx-langs.el=: File Header
 
-#+begin_src emacs-lisp :tangle lisp/init-prog.el :comments no
-;;; init-prog.el --- Programming mode support        -*- lexical-binding: t; -*-
+#+begin_src emacs-lisp :tangle lisp/ceamx-langs.el :comments no
+;;; ceamx-langs.el --- Language support -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023-2024  Chris Montgomery
 
@@ -8241,68 +7551,151 @@ avoid further confusion.
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;; When programming happens, here we are.
-
 ;;; Code:
 
-;;; Requirements
+;;;; Requirements
 
 (require 'ceamx-lib)
 (require 'lib-lisp)
+#+end_src
 
-;;; Hooks
+** ~prog-mode~ derived modes
 
-(defun ceamx-prog-mode-init-h ()
-  "Enable features and defaults useful in any `prog-mode'-derived major modes.
-This function is especially useful to ensure functions are called
-in a specific order. For this reason, condition checks on
+#+begin_src emacs-lisp
+(def-hook! ceamx-prog-mode-init-h ()
+  '(prog-mode-hook)
+  "Enable load-order-dependent features and defaults for all `prog-mode'-derived major modes.
+To ensure a predictable execution order, condition checks on
 `boundp'/`fboundp' are preferable to using `after!' or
-`with-eval-after-load', as the latter may result in a
-non-deterministic execution order.
-
-Intended for use as a hook callback on `prog-mode-hook'."
+`with-eval-after-load', as the latter may result in a non-deterministic
+execution order."
 
   ;; `highlight-function-calls-mode' should be enabled after other highlighters
   ;; (e.g. `rainbow-delimiters-mode'), according to its readme.
   (when (fboundp 'highlight-function-calls-mode)
     (highlight-function-calls-mode 1)))
-
-(add-hook 'prog-mode-hook #'ceamx-prog-mode-init-h)
 #+end_src
 
-*** Configure ~xref~
+** Structural Editing
 
-#+begin_src emacs-lisp :tangle lisp/config-prog.el :comments no
-(defvar xref-ignored-files '()
-  "List of files to be ignored by `xref'.")
+*** Define the user option for structured editing flavour
+
+#+begin_src emacs-lisp
+(defcustom ceamx-structured-editing-style 'lispy
+  "The structured editing provider."
+  :group 'ceamx
+  :type '(choice :tag "Structured editing style" :value lispy
+          (const :tag "Lispy" lispy)
+          (const :tag "Puni" puni)))
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-prog.el :comments no
-;; Always find references of symbol at point.
-(setopt xref-prompt-for-identifier nil)
+*** ~puni~: versatile structured editing :package:
+
+<https://github.com/AmaiKinono/puni>
+
+#+begin_src emacs-lisp
+(package! puni
+  ;; (puni-global-mode)
+  ;; (add-hook 'prog-mode-hook #'puni-mode)
+  ;; (add-hook 'term-mode-hook #'puni-disable-puni-mode)
+  )
+
+;; (after! puni
+;;     ;; (define-keymap :keymap puni-mode-map
+;;   ;;   "C-M-f" #'puni-forward-sexp
+;;   ;;   "C-M-b" #'puni-backward-sexp
+;;   ;;   "C-M-a" #'puni-beginning-of-sexp
+;;   ;;   "C-M-e" #'puni-end-of-sexp
+;;   ;;   "C-M-[" #'puni-backward-sexp-or-up-list
+;;   ;;   "C-M-]" #'puni-forward-sexp-or-up-list
+
+;;   ;;   "M-(" #'puni-syntactic-forward-punct
+;;   ;;   "M-)" #'puni-syntactic-backward-punct
+;;   ;;   )
+
+;; )
 #+end_src
 
-*** Packages
+*** Prepare a prefix commands for binding structural editing commands
 
-#+begin_src emacs-lisp :tangle lisp/init-prog.el
-;;; hl-todo :: <https://github.com/tarsius/hl-todo>
-;;  Highlight TODO and other codetags in comments and strings
-;;  <https://peps.python.org/pep-0350/#specification>
-(use-package hl-todo
-  :commands (hl-todo-mode)
-  :init
-  (add-hook 'prog-mode-hook #'hl-todo-mode))
+#+begin_src emacs-lisp
+(define-prefix-command 'ceamx-structural-editing-prefix)
+(keymap-global-set "C-c s" #'ceamx-structural-editing-prefix)
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-prog.el
-;;; ~dumb-jump~ :: <https://github.com/jacktasia/dumb-jump>
+*** Structural editing with ~puni~
 
-;;  "zero-configuration" jump-to-definition package with support for many langs
+Work in progress.
 
-(package! dumb-jump
-  ;; Add to end of list as a fallback for when there are no smart options.
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 100))
+This is still not quite usable as a Lispy replacement.  The goal is to use
+similar structureal editing keybindings across many major-modes.
+
+Note that this repeat-map should not be used in tandem with ~lispy-mode~ because
+its bindings generally would need ~puni-mode~ to be active.
+
+- <https://karthinks.com/software/a-consistent-structural-editing-interface/>
+- <https://github.com/suliveevil/emacs.d?tab=readme-ov-file#repeat-repeat-mode>
+- <https://github.com/karthink/.emacs.d/blob/master/init.el#L3209-L3241>
+
+
+- [ ] Disable ~repeat-exit-timeout~ for this map only
+
+#+begin_src emacs-lisp
+(after! puni
+
+  (defvar-keymap structural-editing-map
+    :repeat t
+
+    "d" #'puni-forward-delete-char
+    ;; "DEL" #'puni-backward-delete-char
+    ;; "D" #'puni-forward-kill-word
+    ;; "M-DEL" #'puni-backward-kill-word
+    ;; "C-k" #'puni-kill-line
+    ;; "M-k" #'puni-backward-kill-line
+    "k" #'kill-sexp
+
+    "f" #'puni-forward-sexp
+    "b" #'puni-backward-sexp
+    "[" #'puni-backward-sexp-or-up-list
+    "]" #'puni-forward-sexp-or-up-list
+    "a" #'puni-beginning-of-sexp
+    "e" #'puni-end-of-sexp
+    "u" #'puni-up-list
+    "M-(" #'puni-syntactic-forward-punct
+    "M-)" #'puni-syntactic-backward-punct
+
+    "\\" #'indent-region
+    "/" #'undo
+
+    ">" #'puni-slurp-forward
+    "<" #'puni-slurp-backward
+    "}" #'puni-barf-forward
+    "{" #'puni-barf-backward
+    "R" #'puni-raise
+    "t" #'puni-transpose
+    "C" #'puni-convolute
+    ;; FIXME: avoid meow dependency -- no puni equivalent
+    ;; "J" #'meow-join-sexp
+    "S" #'puni-split
+    ;; FIXME: for `emacs-lisp-mode' only
+    "x" #'eval-defun
+
+    ))
+
+;; FIXME: wrong type argument symbolp
+;; (map-keymap (lambda (_ cmd)
+;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
+
+#+end_src
+
+
+** ~dumb-jump~: multi-lang do-what-i-mean jump-to-definition
+
+- src :: <https://github.com/jacktasia/dumb-jump>
+
+#+begin_src emacs-lisp
+(use-package dumb-jump
+  :ensure t)
 
 (after! (hydra)
   ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
@@ -8317,30 +7710,190 @@ Intended for use as a hook callback on `prog-mode-hook'."
     ("b" dumb-jump-back "Back")))
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-prog.el
-;;; ~rainbow-delimiters~ :: <https://github.com/Fanael/rainbow-delimiters>
+** TODO ~prism~
+
+**  DISABLED ~rainbow-delimiters~
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+- src :: <https://github.com/Fanael/rainbow-delimiters>
+
+#+begin_src emacs-lisp
 (use-package rainbow-delimiters
   :commands (rainbow-delimiters-mode)
   :init
   (add-hook 'ceamx-lisp-init-hook #'rainbow-delimiters-mode))
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-prog.el
-;;; ~repl-toggle~ :: <https://git.sr.ht/~tomterl/repl-toggle>
-;;  Switch between `prog-mode' buffers and their corresponding REPLs.
-;; FIXME: "cannot load"
-;; (use-package repl-toggle
-;;   :defines (rtog/mode-repl-alist)
-;;   :config
-;;   ;; TODO: `setopt'?
-;;   (setq rtog/mode-repl-alist '( (php-mode . psysh)
-;;                                 (emacs-lisp-mode . ielm)
-;;                                 (nix-mode . nix-repl))))
+** Configure ~xref~
+
+#+begin_src emacs-lisp
+(defvar xref-ignored-files '()
+  "List of files to be ignored by `xref'.")
+
+(use-feature! xref
+  :config
+  (setopt xref-prompt-for-identifier nil))
+
+(use-feature! dumb-jump
+  :commands (dumb-jump-xref-activate)
+  :init
+  ;; Add to end of list as a fallback for when there are no smart options.
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 100))
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-prog.el :comments no
-(provide 'init-prog)
-;;; init-prog.el ends here
+** ~hl-todo~: Highlight "TODO" and other codetags in comments and strings
+
+- website :: <https://github.com/tarsius/hl-todo>
+- reference :: <https://peps.python.org/pep-0350/#specification>
+
+#+begin_src emacs-lisp
+(use-package hl-todo
+  :ensure t
+  :hook (prog-mode . hl-todo-mode))
+#+end_src
+
+** Formatters
+*** [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT :package:
+
+#+begin_src emacs-lisp
+(package! reformatter
+  (require 'reformatter))
+#+end_src
+
+**** Configure generalized polyglot formatters
+
+***** =biome=
+
+- Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
+
+This should, possibly more ideally, be run as an LSP client, but AFAIK one does
+not yet exist for Eglot (only LSP-Mode).
+
+#+begin_src emacs-lisp
+(after! reformatter
+  (reformatter-define biome-format
+    :program "biome"
+    :args (list "format" "--stdin-file-path" (buffer-file-name))))
+#+end_src
+
+***** =prettier=
+
+- Source :: <https://github.com/akirak/flake-templates/blob/629b04932dc71e3e0213d66a0aa8a08cd0b64922/README.md#emacs>
+
+#+begin_src emacs-lisp
+(after! reformatter
+  (reformatter-define prettier
+    :program "prettier"
+    :args (list (concat "--plugin-search-dir="
+                        (expand-file-name
+                         (locate-dominating-file default-directory "package.json")))
+                "--stdin-filepath" (buffer-file-name))))
+#+end_src
+
+***** treefmt
+
+#+begin_src emacs-lisp
+(with-eval-after-load 'reformatter
+  (reformatter-define treefmt
+    :group 'ceamx
+    :program "treefmt"
+    :args (list "--stdin" (buffer-file-name))))
+#+end_src
+
+**** TODO Inhibit on-save formatting with prefix argument
+
+*** [[https://github.com/radian-software/apheleia][radian-software/apheleia]]: opinionated code reformatting :package:
+
+In case you run into issues with ~web-mode~ not updating syntax highlighting after
+formatting (or other arbitrary modifications):
+<https://github.com/doomemacs/doomemacs/blob/35dc13632b3177b9efedad212f2180f69e756853/modules/editor/format/config.el#L74-L83>
+
+#+begin_src emacs-lisp
+(package! apheleia
+  ;; (apheleia-global-mode 1)
+  )
+
+(after! (apheleia)
+  (blackout 'apheleia-mode " Aph"))
+#+end_src
+
+*** Use the Biome formatter for supported major modes :lang:
+
+- Reference :: <https://biomejs.dev/internals/language-support/>
+
+As of <2024-05-24 Fri>
+
+#+begin_src emacs-lisp
+;; As of <2024-05-24 Fri>
+;; <https://biomejs.dev/internals/language-support/>
+(defconst ceamx-editor-format-biome-modes-list
+  '(javascript-mode js-mode js-ts-mode js3-mode
+    typescript-mode typescript-ts-mode
+    js-jsx-mode tsx-ts-mode
+    json-mode json-ts-mode)
+  "List of major-mode symbols for the languages supported by the Biome formatter.")
+#+end_src
+
+#+begin_src emacs-lisp
+(after! reformatter
+  (require 'derived)
+  (dolist (hook (mapcar #'derived-mode-hook-name ceamx-editor-format-biome-modes-list))
+    (add-hook hook #'biome-format-on-save-mode)))
+#+end_src
+
+#+begin_src emacs-lisp
+(after! apheleia
+  (add-to-list 'apheleia-formatters '(biome "biome" "format" "--stdin-file-path" filepath))
+
+  (dolist (mode ceamx-editor-format-biome-modes-list)
+    (add-to-list 'apheleia-mode-alist '(mode . biome))))
+#+end_src
+
+*** Define user option to disable format-on-save for some modes
+
+#+begin_src emacs-lisp
+(defcustom ceamx-format-on-save-disabled-modes
+  '(emacs-lisp-mode                     ; conflict with `lispy' indent
+    org-msg-edit-mode)
+  "A list of major modes in which to not reformat the buffer upon saving.
+When nil, buffers will always be formatted upon save. When
+non-nil, buffers will never be formatted upon save."
+  :group 'ceamx
+  :type '(choice boolean (repeat symbol)))
+#+end_src
+
+*** Inhibit automatic formatting in some contexts
+
+Unlike ~reformatter~, ~apheleia~ will /always/ run if it can.  A blessing and a curse.
+This section handles the curse.
+
+#+begin_src emacs-lisp
+(defun ceamx-editor-format-maybe-inhibit-h ()
+  "Check if formatting should be disabled for current buffer."
+  (or (eq major-mode 'fundamental-mode)
+      (string-blank-p (buffer-name))
+      (eq ceamx-format-on-save-disabled-modes t)
+      (not (null (memq major-mode ceamx-format-on-save-disabled-modes)))))
+#+end_src
+
+#+begin_src emacs-lisp
+(after! (apheleia)
+  (add-to-list 'apheleia-inhibit-functions #'ceamx-editor-format-maybe-inhibit-h))
+#+end_src
+
+*** Inhibit on-save formatting with prefix argument
+
+- Source :: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
+
+#+begin_src emacs-lisp
+;; FIXME: only add advice after package load!!!
+(def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
+  :around #'save-buffer
+  "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
+  (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
+    (funcall func)))
 #+end_src
 
 ** Tree-Sitter
@@ -8463,47 +8016,6 @@ Configuration for working with Lisps of all kinds.
 
 *** Target Files
 
-**** =init-lisp.el=
-
-#+begin_src emacs-lisp :tangle lisp/init-lisp.el :noweb yes :comments no
-<<file-prop-line(feature="init-lisp",desc="Lisp support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-lisp>>
-
-<<file-footer(feature="init-lisp")>>
-#+end_src
-
-**** =config-lisp.el=
-
-#+begin_src emacs-lisp  :tangle lisp/config-lisp.el :comments no :noweb yes
-<<file-prop-line(feature="config-lisp",desc="Lispy variable definitions")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<config-lisp>>
-
-<<file-footer(feature="config-lisp")>>
-#+end_src
 
 **** =lib-lisp.el=
 
@@ -8527,17 +8039,11 @@ Configuration for working with Lisps of all kinds.
 #+end_src
 
 *** Code
-:PROPERTIES:
-:header-args: :noweb-ref init-lisp
-:END:
 
 #+begin_src emacs-lisp
 (require 'derived)
 
-(require 'ceamx-lib)
 (require 'lib-lisp)
-
-(require 'config-lisp)
 #+end_src
 
 **** Configure behavior for all Lisp modes with ~ceamx-lisp-init-hook~
@@ -8630,24 +8136,20 @@ Unfortunately, we need to do this because whitespace is used to convey
 non-syntactic meaning to the reader.
 
 #+begin_src emacs-lisp
-(require 'config-editor)
-(require 'ceamx-lib)
-
 (after! kbd-mode
   (add-to-list 'ceamx-format-on-save-disabled-modes #'kbd-mode)
   (after! lispy
     (add-to-list 'lispy-no-indent-modes #'kbd-mode)))
 #+end_src
 
-***** TODO Add =kanata= symbols to list of fontified
-
-
-*** Options & Variables
+*** Library
 :PROPERTIES:
-:header-args: :noweb-ref config-lisp
+:header-args: :noweb-ref lib-lisp
 :END:
 
 #+begin_src emacs-lisp
+;;;; Variables
+
 (defvar ceamx-lisp-modes-list '(emacs-lisp-mode
                                 ielm-mode
                                 lisp-mode
@@ -8658,18 +8160,13 @@ non-syntactic meaning to the reader.
 (defvar +emacs-lisp-outline-regexp "[ \t]*;;;\\(;*\\**\\) [^ \t\n]"
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
-#+end_src
 
-*** Library
-:PROPERTIES:
-:header-args: :noweb-ref lib-lisp
-:END:
-
-**** ~ceamx-lisp-init-hook~
-
-#+begin_src emacs-lisp
 (defvar ceamx-lisp-init-hook '()
   "Hook to run in all supported Lisp modes.")
+
+;;;; Functions
+
+;;;;; Public
 
 (defun ceamx-lisp-init ()
   "Enable features useful in any Lisp mode."
@@ -8902,40 +8399,11 @@ lists."
 
 *** Customizations
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-elisp.el :comments no
-;;; init-lang-elisp.el --- Emacs Lisp development support  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local, lisp
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
-
-;;; Requirements
-
+#+begin_src emacs-lisp
 (require 'config-keys)
-(require 'config-lisp)
 
 (require 'ceamx-lib)
 (require 'lib-lisp)
-
-(declare-function blackout "blackout")
 
 ;;; Hooks
 
@@ -9056,9 +8524,6 @@ The original function fails in the presence of whitespace after a sexp."
 ;; TODO: keybindings...
 
 (package! xr)
-
-(provide 'init-lang-elisp)
-;;; init-lang-elisp.el ends here
 #+end_src
 
 
@@ -9196,11 +8661,8 @@ keywords are supported:
 #+end_src
 
 ** Language Server and Debugger Protocol Support :lsp:lang:
-:PROPERTIES:
-:header-args: :noweb-ref init-lsp
-:END:
 
-#+begin_src emacs-lisp :noweb-ref config-prog
+#+begin_src emacs-lisp
 (defcustom ceamx-lsp-client 'eglot
   "The preferred LSP client."
   :group 'ceamx
@@ -9209,16 +8671,6 @@ keywords are supported:
           (const :tag "LSP-Mode" lsp-mode)))
 
 (defvar ceamx-lsp-mode-cache-dir (file-name-as-directory (concat ceamx-var-dir "lsp")))
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref config-prog
-(setopt ceamx-lsp-client 'eglot)
-#+end_src
-
-*** Requirements
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
 #+end_src
 
 *** Eglot
@@ -9286,14 +8738,12 @@ The timing here may be delicate...
 
 **** Define helper functions for specifying server configurations
 
-#+begin_src emacs-lisp :noweb-ref config-prog
+#+begin_src emacs-lisp :noweb-ref lib-prog
 (defvar ceamx-eglot-server-configurations-alist '()
   "Alist of language server initialization options as accepted in `eglot-server-programs'.")
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref lib-prog
-(require 'config-prog)
-
 (defun ceamx-eglot-server-default-settings (name)
   "Return the custom initialization options for the NAME language server."
   (alist-get name ceamx-eglot-server-configurations-alist nil nil #'string=))
@@ -9376,26 +8826,7 @@ Unless PROGRAM is provided, the program name used in
 ** Data Formats (JSON, TOML, YAML, XML, CSV...)
 :PROPERTIES:
 :ID:       137d1e04-d0dc-4512-a450-fbafeef65804
-:header-args: :noweb-ref init-lang-data
 :END:
-
-*** Requirements
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-#+end_src
-
-*** JSON [builtin]
-
-**** Navigate arborescent JSON structures with ~json-navigator~
-
-+ website :: <https://github.com/DamienCassou/json-navigator>
-
-#+begin_src emacs-lisp
-;; TODO: add bindings
-
-;; (package! json-navigator)
-#+end_src
 
 *** TOML
 **** Register =taplo= formatter
@@ -9429,8 +8860,10 @@ Unless PROGRAM is provided, the program name used in
 (package! yaml-mode)
 #+end_src
 
-**** Start the LSP server
+**** TODO Start the LSP server
 
+- Note taken on [2024-12-26 Thu 21:21] \\
+  Needs eglot
 Install the =yaml-language-server= from Nixpkgs first.
 
 #+begin_src emacs-lisp
@@ -9488,35 +8921,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 ** Web-Mode
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-html.el :comments no
-;;; init-lang-html.el ---HTML and templating engine support  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords:
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Configuration for ~web-mode~ and related.
-
-;; <https://web-mode.org/>
-
-;;; Code:
-
+#+begin_src emacs-lisp
 (package! web-mode
   ;; TODO: refactor
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
@@ -9539,7 +8944,9 @@ Install the =yaml-language-server= from Nixpkgs first.
           web-mode-enable-block-face t
           web-mode-enable-part-face t
           web-mode-enable-current-element-highlight t))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; emmet-mode
 
 ;; - website :: <https://github.com/smihica/emmet-mode>
@@ -9554,43 +8961,12 @@ Install the =yaml-language-server= from Nixpkgs first.
   (add-hook 'css-mode-hook #'emmet-mode)
   (after! web-mode
     (add-hook 'web-mode-hook #'emmet-mode)))
-
-(provide 'init-lang-html)
-;;; init-lang-html.el ends here
 #+end_src
 
 ** JavaScript
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-js.el :comments no
-;;; init-lang-js.el --- JavaScript/TypeScript language support improvements  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local, languages
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Emacs supports JavaScript and TypeScript out of the box, however it needs some help.
-
+#+begin_src emacs-lisp
 ;; TODO: try <https://github.com/llemaitre19/jtsx> but it's not in melpa or nixpkgs yet
-
-;;; Code:
-
-(require 'ceamx-lib)
 
 (defun ceamx-init-javascript-modes ()
   (setopt js-indent-level 2)
@@ -9611,52 +8987,14 @@ Install the =yaml-language-server= from Nixpkgs first.
 (use-feature! typescript-ts-mode
   :init
   (add-hook 'typescript-ts-base-mode #'ceamx-init-javascript-modes))
-
-(provide 'init-lang-js)
-;;; init-lang-js.el ends here
 #+end_src
 
 ** Lua
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-lua.el :comments no
-;;; init-lang-lua.el --- Lua language support        -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: languages, local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Lua language support.
-
-;;;; Sources:
-
-;; - <https://github.com/purcell/emacs.d/blob/28194a035ca9a259030ba7ef58089561078c4893/lisp/init-lua.el>
-
-;;; Code:
-
-(require 'ceamx-lib)
-
+#+begin_src emacs-lisp
 (use-package lua-mode
   :config
   (setq-default lua-indent-level 2))
-
-(provide 'init-lang-lua)
-;;; init-lang-lua.el ends here
 #+end_src
 
 ** Markdown
@@ -9664,39 +9002,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 *** Customization
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-markdown.el :comments no
-;;; init-lang-markdown.el --- Markdown support customizations  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local, languages
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
-
-;;; Requirements
-
-(require 'ceamx-lib)
-
-;;; Install ~markdown-mode~
-
-;; <https://github.com/jrblevin/markdown-mode>
-
+#+begin_src emacs-lisp
 (package! markdown-mode
   (setopt markdown-enable-wiki-links t)
   (setopt markdown-italic-underscore t)
@@ -9738,13 +9044,10 @@ This prevents a mis-feature wherein if the first line of a
 Markdown document has a colon in it, then it's distractingly and
 usually wrongly fontified as a metadata block."
     (ignore (goto-char (point-max)))))
-
-(provide 'init-lang-markdown)
-;;; init-lang-markdown.el ends here
 #+end_src
 
 
-*** Library
+*** =lisp/lib-lang-markdown.el= :: Language: Markdown: Library
 
 #+begin_src emacs-lisp :tangle lisp/lib-lang-markdown.el :comments no
 ;;; lib-lang-markdown.el --- Markdown helpers        -*- lexical-binding: t; -*-
@@ -9787,18 +9090,9 @@ Returns process exit code."
 ;;; lib-lang-markdown.el ends here
 #+end_src
 
-** Nix :lang:
-:PROPERTIES:
-:header-args: :noweb-ref init-lang-nix
-:END:
-
-*** Requirements
+** Nix
 
 #+begin_src emacs-lisp
-(require 'ceamx-lib)
-
-(require 'config-prog)
-
 (require 'lib-help)
 #+end_src
 
@@ -9865,7 +9159,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 *** Configure Nix language servers :lsp:
 
-#+begin_src emacs-lisp :noweb-ref config-prog
+#+begin_src emacs-lisp
 ;; TODO: defcustom
 (defvar ceamx-lsp-server-nix-lang "nix-nixd")
 
@@ -9884,7 +9178,6 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 #+end_src
 
 #+begin_src emacs-lisp
-(require 'config-prog)
 (require 'lib-prog)
 
 (add-to-list 'ceamx-eglot-server-configurations-alist '("nix-nil" . nil))
@@ -9940,23 +9233,11 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (keymap-set nix-repl-mode-map ceamx-keys-repl-toggle #'quit-window))
 #+end_src
 
-** PHP
-:PROPERTIES:
-:header-args: :noweb-ref init-lang-php
-:END:
-
-*** Requirements
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-#+end_src
+** Language Support for PHP
 
 *** Feature Settings
 
-#+begin_src emacs-lisp :noweb-ref config-prog
+#+begin_src emacs-lisp
 (defconst ceamx-lang-php-extension-regexp "\\.\\(php\\|phtml\\)\\'"
   "Pattern matching files with PHP syntax.")
 #+end_src
@@ -9992,21 +9273,11 @@ able to run ~php-ts-mode-install-parsers~ as suggested in the error message, but
 the missing grammar should really be added to Nixpkgs and the current stateful
 installation might get confusing.
 
-#+begin_src emacs-lisp :noweb-ref nil
+#+begin_src emacs-lisp :tangle no
 (when (and (fboundp 'php-ts-mode)
            (treesit-language-available-p 'php))
   (add-to-list 'major-mode-remap-alist '(php-mode . php-ts-mode))
   (add-to-list 'major-mode-remap-alist '(php-mode-maybe . php-ts-mode)))
-#+end_src
-
-**** DISABLED [[https://github.com/cjohansson/emacs-phps-mode][cjohansson/phps-mode]] :package:
-
-I don't even know.
-
-#+begin_src emacs-lisp :noweb-ref nil
-(package! phps-mode
-  (when (eq 'phps-mode ceamx-lang-php-major-mode-provider)
-    (add-to-list 'auto-mode-alist `(,ceamx-lang-php-extension-regexp . phps-mode))))
 #+end_src
 
 *** Display line numbers in PHP buffers
@@ -10052,7 +9323,7 @@ Requires:
     (require 'flycheck-phpstan)))
 #+end_src
 
-#+begin_src emacs-lisp :noweb-ref nil
+#+begin_src emacs-lisp :tangle no
 (package! flymake-phpstan
   (when (featurep 'flymake-flycheck)
     (add-hook 'php-mode-hook #'flymake-phpstan-turn-on)
@@ -10182,38 +9453,12 @@ Requires:
   ;;   :yield "use")
   #+end_example
 
-** Shell Scripting
+** Shell scripts
 
-#+begin_src emacs-lisp :tangle lisp/init-lang-shell.el :comments no
-;;; init-lang-shell.el --- Shell script language support  -*- lexical-binding: t; -*-
+Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
+~flymake~ will handle it just fine.
 
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; NOTE: Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
-;; ~flymake~ will handle it just fine.
-
-;;; Code:
-
-(require 'ceamx-lib)
-
+#+begin_src emacs-lisp
 (use-feature! emacs
   :config
   ;; Make files executable if their first line has a shebang.
@@ -10232,92 +9477,42 @@ Requires:
   :config
   (add-hook 'sh-mode-hook #'flymake-mode)
   (add-hook 'bash-ts-mode-hook #'flymake-mode))
-
-(provide 'init-lang-shell)
-;;; init-lang-shell.el ends here
 #+end_src
 
-** Miscellaneous Languages
-:PROPERTIES:
-:header-args: :tangle lisp/init-lang-misc.el
-:END:
-
-Configuration for miscellaneous languages that don't warrant
-their own initialization files.
-
-*** Customizations
-
-**** File Header
-
-#+begin_src emacs-lisp  :tangle lisp/init-lang-misc.el :comments no
-;;; init-lang-misc.el --- Miscellaneous language support -*- lexical-binding: t -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;; Code:
-
-(require 'ceamx-lib)
-#+end_src
-
-**** Language support for Apache Web Server configuration files
+** ~apache-mode~: Language support for Apache Web Server configuration files
 
 #+begin_src emacs-lisp
-(package! apache-mode)
+(use-package apache-mode
+  :ensure t)
 #+end_src
 
-**** Language support for the Just task runner configuration files
+** ~just-mode~: Language support for the Just task runner configuration files
 
 #+begin_src emacs-lisp
-(package! just-mode)
+(use-package just-mode
+  :ensure t)
 #+end_src
 
-**** Syntax highlighting for robots.txt files
-
-#+begin_src emacs-lisp
-(package! robots-txt-mode)
-#+end_src
-
-**** Language support for =vimrc= syntax
+** ~vimrc-mode~: Language support for =vimrc= syntax
 
 #+begin_src emacs-lisp
 (package! vimrc-mode
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
 #+end_src
 
-**** Language support for Dotenv environment configuration files :package:major_mode:
+** ~dotenv-mode~: Language support for Dotenv environment configuration files :package:major_mode:
 
-- website :: <https://github.com/preetpalS/emacs-dotenv-mode>
+- src :: <https://github.com/preetpalS/emacs-dotenv-mode>
 
 #+begin_src emacs-lisp
 (package! dotenv-mode)
 #+end_src
 
-**** File Footer
+** =lisp/ceamx-langs.el=: File Footer
 
-#+begin_src emacs-lisp  :tangle lisp/init-lang-misc.el :comments no
-(provide 'init-lang-misc)
-;;; init-lang-misc.el ends here
+#+begin_src emacs-lisp :tangle lisp/ceamx-langs.el :comments no
+(provide 'ceamx-langs)
+;;; ceamx-langs.el ends here
 #+end_src
 
 
@@ -10459,7 +9654,7 @@ they are not detected from within emacs.
 
 Despite all that:
 
-#+begin_src shell :noweb-ref nil
+#+begin_src shell :noweb-ref nil :tangle no
 enchant-lsmod-2 -list-dicts
 #+end_src
 
@@ -12075,8 +11270,7 @@ Return the new `zone' timer."
 
 #+begin_src emacs-lisp
 ;;;; Editing
-
-(require 'init-editor)
+(require 'ceamx-langs)
 (require 'init-writing)
 (require 'init-templates)
 #+end_src
@@ -12105,23 +11299,7 @@ Return the new `zone' timer."
 #+begin_src emacs-lisp
 ;;;; Language/syntax support
 
-(require 'config-prog)
 (require 'lib-prog)
-
-(require 'init-prog)
-(require 'init-lisp)
-(require 'init-lsp)
-
-(require 'init-lang-data)
-(require 'init-lang-elisp)
-(require 'init-lang-html)
-(require 'init-lang-js)
-(require 'init-lang-lua)
-(require 'init-lang-markdown)
-(require 'init-lang-nix)
-(require 'init-lang-php)
-(require 'init-lang-shell)
-(require 'init-lang-misc)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -12246,22 +11424,11 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 ;;;;; Modifier: [C-]
 
-(after! mwim
-  (keymap-global-set "C-a" #'mwim-beginning)
-  (keymap-global-set "C-e" #'mwim-end))
-
-(define-keymap :keymap (current-global-map)
-  "C-=" #'er/expand-region
-  "C-<" #'ceamx/escape-url-dwim
-
-)
-
 ;;;;; Modifier: [M-]
 
 (define-keymap :keymap (current-global-map)
   "M-]" #'logos-forward-page-dwim
   "M-[" #'logos-backward-page-dwim
-
 
   "M-f" #'forward-word
   "M-F" #'forward-symbol
@@ -12497,6 +11664,249 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
+
+** The =ceamx-simple= library: Common utility commands
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-simple.el :comments no :noweb-ref nil
+;;; ceamx-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2024  Chris Montgomery
+;; Copyright (C) 2020-2023  Protesilaos Stavrou
+;; Copyright (c) 2023  Bruno Boal <egomet@bboal.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;;         Protesilaos Stavrou <info@protesilaos.com>
+;;         Bruno Boal <egomet@bboal.com>
+;; Keywords: local, convenience
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;;; Sources
+
+;; <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/ceamx-lisp/ceamx-simple.el>
+;; <https://github.com/BBoal/emacs-config/blob/95520648c5f2ed0784d42e98afff035a6964fd2f/bb-lisp/bb-simple.el>
+
+;;; Code:
+
+;;;; Requirements
+
+;;;; Variables
+
+(defgroup ceamx-simple ()
+  "Generic utilities for editing."
+  :group 'editing)
+
+(defcustom ceamx-simple-date-specifier "%F"
+  "Date specifier for `format-time-string'.
+Used by `ceamx/insert-date'."
+  :type 'string
+  :group 'ceamx-simple)
+
+(defcustom ceamx-simple-time-specifier "%R %z"
+  "Time specifier for `format-time-string'.
+Used by `ceamx/insert-date'."
+  :type 'string
+  :group 'ceamx-simple)
+
+(defvar ceamx-point-in-comment-functions ()
+  "List of functions to run to determine if point is in a comment.
+Each function takes one argument: the position of the point.  Stops on the first
+function to return non-nil.")
+
+(defvar ceamx-simple-checkers-buffer-names-regexp
+  (rx "*" (or "Flycheck" "Package-Lint")))
+
+(defvar ceamx-occur-grep-modes-list
+  '(occur-mode
+    grep-mode
+    xref--xref-buffer-mode
+    flymake-diagnostics-buffer-mode)
+  "List of major-modes used in occur-type buffers.")
+
+(defvar ceamx-repl-modes-list
+  '(eshell-mode
+    inferior-emacs-lisp-mode            ; ielm
+    shell-mode
+    eat-mode
+    nix-repl-mode)
+  "List of major-modes used in REPL buffers.")
+
+(defvar ceamx-repl-buffer-names-list
+  '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
+    "\\*.*REPL.*\\*"
+    "\\*Inferior .*\\*$"
+    "\\*ielm\\*"
+    "\\*edebug\\*")
+  "List of buffer names used in REPL buffers.")
+
+(defvar ceamx-help-modes-list
+  '(helpful-mode
+    help-mode
+    eldoc-mode)
+  "List of major-modes used in documentation buffers.")
+
+(defvar ceamx-help-buffer-names-list
+  '("^\\*Apropos"
+    "^\\*eldoc\\*")
+  "List of buffer names used in help buffers.")
+
+(defvar ceamx-manual-modes-list '(Man-mode woman-mode)
+  "List of major-modes used in Man-type buffers.")
+
+(defvar ceamx-message-modes-list
+  '(compilation-mode
+    edebug-eval-mode)
+  "List of major-modes used in message buffers.")
+
+
+;;;; Functions
+
+;;;;; Public
+
+(defun ceamx-simple-buffer-which-mode (&optional buffer-or-name)
+  "Return the major mode associated with a buffer.
+If BUFFER-OR-NAME is nil, return the current buffer's mode."
+  (buffer-local-value 'major-mode
+                      (if buffer-or-name
+                          (get-buffer buffer-or-name)
+                        (current-buffer))))
+
+(defun ceamx-point-in-comment-p (&optional pos)
+  "Return non-nil if POS is in a comment.
+POS defaults to the current position."
+  (let ((pos (or pos (point))))
+    (if ceamx-point-in-comment-functions
+        (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
+      (nth 4 (syntax-ppss pos)))))
+
+;;;;; Private
+
+(defun ceamx-simple--pos-url-on-line (char)
+  "Return position of `ceamx-common-url-regexp' at CHAR."
+  (when (integer-or-marker-p char)
+    (save-excursion
+      (goto-char char)
+      (re-search-forward ceamx-common-url-regexp (line-end-position) :noerror))))
+
+;;; Commands
+
+;;;###autoload
+(defun ceamx/insert-date (&optional arg)
+  "Insert the current date as `ceamx-simple-date-specifier'.
+
+With optional prefix ARG (\\[universal-argument]) also append the
+current time understood as `ceamx-simple-time-specifier'.
+
+When region is active, delete the highlighted text and replace it
+with the specified date."
+  (interactive "P")
+  (let* ((date ceamx-simple-date-specifier)
+          (time ceamx-simple-time-specifier)
+          (format (if arg (format "%s %s" date time) date)))
+    (when (use-region-p)
+      (delete-region (region-beginning) (region-end)))
+    (insert (format-time-string format))))
+
+
+;;;###autoload
+(defun ceamx/escape-url-line (char)
+  "Escape all URLs or email addresses on the current line.
+When called from Lisp CHAR is a buffer position to operate from
+until the end of the line.  In interactive use, CHAR corresponds
+to `line-beginning-position'."
+  (interactive
+   (list
+    (if current-prefix-arg
+        (re-search-forward
+         ceamx-common-url-regexp
+         (line-end-position) :no-error
+         (prefix-numeric-value current-prefix-arg))
+      (line-beginning-position))))
+  (when-let ((regexp-end (ceamx-simple--pos-url-on-line char)))
+    (goto-char regexp-end)
+    (unless (looking-at ">")
+      (insert ">")
+      (when (search-backward "\s" (line-beginning-position) :noerror)
+        (forward-char 1))
+      (insert "<"))
+    (ceamx/escape-url-line (1+ regexp-end)))
+  (goto-char (line-end-position)))
+
+;;;###autoload
+(defun ceamx/escape-url-region (&optional beg end)
+  "Apply `ceamx/escape-url-line' on region lines between BEG and END."
+  (interactive
+   (if (region-active-p)
+       (list (region-beginning) (region-end))
+     (error "There is no region!")))
+  (let ((beg (min beg end))
+        (end (max beg end)))
+    (save-excursion
+      (goto-char beg)
+      (setq beg (line-beginning-position))
+      (while (<= beg end)
+        (ceamx/escape-url-line beg)
+        (beginning-of-line 2)
+        (setq beg (point))))))
+
+;;;###autoload
+(defun ceamx/escape-url-dwim ()
+  "Escape URL on the current line or lines implied by the active region.
+Call the commands `ceamx/escape-url-line' and
+`ceamx/escape-url-region' ."
+  (interactive)
+  (if (region-active-p)
+    (ceamx/escape-url-region (region-beginning) (region-end))
+    (ceamx/escape-url-line (line-beginning-position))))
+
+;;;###autoload
+(defun ceamx/mark-symbol-at-point ()
+  "Select the symbol under cursor.
+Copied from the `mc--mark-symbol-at-point' function from the
+`multiple-cursors' package."
+  (interactive)
+  (when (not (use-region-p))
+    (let ((b (bounds-of-thing-at-point 'symbol)))
+      (goto-char (car b))
+      (set-mark (cdr b)))))
+
+;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
+;;;###autoload
+(defun ceamx/continue-comment ()
+  "Continue current comment, preserving trailing whitespace.
+This differs from `default-indent-new-line' in the following way:
+
+If you have a comment like \";; Some text\" with point at the end of the
+line, then running `default-indent-new-line' will get you a new line
+with \";; \", but running it again will get you a line with only
+\";;\" (no trailing whitespace).  This is annoying for inserting a new
+paragraph in a comment.  With this command, the two inserted lines are
+the same."
+  (interactive)
+  ;; `default-indent-new-line' uses `delete-horizontal-space'
+  ;; because in auto-filling we want to avoid the space character at
+  ;; the end of the line from being put at the beginning of the next
+  ;; line.  But when continuing a comment it's not desired.
+  (cl-letf (((symbol-function #'delete-horizontal-space) #'ignore))
+    (default-indent-new-line)))
+
+(provide 'ceamx-simple)
+;;; ceamx-simple.el ends here
+#+end_src
+
 
 ** The =ceamx-window.el= library
 
