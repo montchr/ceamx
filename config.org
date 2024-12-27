@@ -2232,7 +2232,7 @@ expect the value you arrive at to be as high as 100 MiB.
 
 
 
-* Environment :: =env= :env:
+* =init.el=: Environment
 :PROPERTIES:
 :header-args: :tangle init.el
 :END:
@@ -2396,7 +2396,7 @@ Avoid collision of mouse with point:
 #+end_src
 
 
-* Appearance :: =ui= :ui:
+* =init.el=: Appearance
 :PROPERTIES:
 :header-args: :tangle init.el
 :END:
@@ -2599,20 +2599,24 @@ theme)."
 - Website :: <https://protesilaos.com/modus-themes/>
 
 #+begin_src emacs-lisp
-(package! modus-themes
-  (require 'modus-themes)
+(use-package modus-themes
+  :ensure t
+  :demand t
 
-  (setopt modus-themes-italic-constructs t)
-  (setopt modus-themes-bold-constructs nil)
-  (setopt modus-themes-mixed-fonts t)
-  (setopt modus-themes-variable-pitch-ui nil)
+  :config
+  (setopt modus-themes-italic-constructs t
+          modus-themes-bold-constructs t
+          modus-themes-mixed-fonts t
+          modus-themes-variable-pitch-ui nil)
+
+  (setopt modus-themes-to-toggle
+          '(modus-operandi-tinted modus-vivendi))
   (setopt modus-themes-disable-other-themes t)
-  (setopt modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi))
 
   (setopt modus-themes-headings
           '((agenda-structure . (variable-pitch light 2.2))
             (agenda-date . (variable-pitch regular 1.3))
-            (t . (regular 1.0))))
+            (t . (regular 1.1))))
 
   (let ((overrides '((cursor blue)
 
@@ -3539,7 +3543,7 @@ will be used as default."
 #+end_src
 
 
-* Essentials
+* =init.el=: Essentials
 :PROPERTIES:
 :header-args: :tangle init.el
 :END:
@@ -3588,14 +3592,6 @@ will be used as default."
   (setopt global-auto-revert-non-file-buffers t)
 
   (setopt auto-revert-interval 2))
-#+end_src
-
-** Buffer management
-
-#+begin_src emacs-lisp
-(use-feature! ibuffer
-  :config
-  (setopt ibuffer-movement-cycle t))
 #+end_src
 
 ** Whitespace and indentation
@@ -3893,7 +3889,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
 #+end_src
 
-** ~fill-column~-based line wrapping
+** Line wrapping
 
 #+begin_src emacs-lisp
 (use-feature! emacs
@@ -3997,8 +3993,8 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (use-feature! ceamx-simple
   :demand t
   :config
-  (keymap-global-set "C-<" #'ceamx/escape-url-dwim)
-  (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx/continue-comment))
+  (keymap-global-set "C-<" #'ceamx-simple/escape-url-dwim)
+  (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment))
 #+end_src
 
 ** Linkify URLs and email addresses with ~goto-address~ [builtin]
@@ -4009,21 +4005,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (add-hook 'prog-mode-hook #'goto-address-prog-mode)
 #+end_src
 
-** Disambiguate buffer names with ~uniquify~ [builtin]
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'uniquify
-  (setopt uniquify-buffer-name-style 'forward)
-  (setopt uniquify-separator "/")
-
-  ;; Rename after killing uniquified buffer.
-  (setopt uniquify-after-kill-buffer-p t)
-
-  ;; Don't muck with special buffers.
-  (setopt uniquify-ignore-buffers-re "^\\*"))
-#+end_src
-
-** ~link-hint~: Activate links in buffer with ~avy~ :package:
+** ~link-hint~: Activate links in buffer with ~avy~
 
 <https://github.com/noctuid/link-hint.el>
 
@@ -4033,17 +4015,6 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     "M-g u" #'link-hint-open-link
     "M-g U" #'link-hint-copy-link))
 #+end_src
-
-** ~lentic~: Create decoupled views of the same content :package:
-
-#+begin_src emacs-lisp
-(package! lentic
-  (global-lentic-mode))
-
-(with-eval-after-load 'lentic
-  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
-#+end_src
-
 
 ** Manage backup files and prevent file-lock clutter
 
@@ -4061,14 +4032,6 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
             delete-old-versions t
             kept-new-versions 5
             kept-old-versions 5)))
-#+end_src
-
-** Add file headers to new files
-
-#+begin_src emacs-lisp
-(use-feature! autoinsert
-  :config
-  (auto-insert-mode 1))
 #+end_src
 
 ** Configure finding of files
@@ -4113,199 +4076,10 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (auto-save-visited-mode))
 #+end_src
 
+** Help
+*** Provide "Casual" transient menus for complex modes
 
-* Help :: =help= :help:
-
-** Define the directory containing cheatsheets
-
-#+begin_src emacs-lisp :noweb-ref config-feature-paths
-(defconst ceamx-cheatsheets-dir
-  (file-name-as-directory
-   (concat ceamx-home-dir "Documents/cheatsheets"))
-  "Absolute path to the directory containing user cheatsheets.")
-#+end_src
-
-** Code:
-
-#+begin_src emacs-lisp :tangle lisp/init-help.el :comments no
-;;; init-help.el --- Help -*- lexical-binding: t; -*-
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; "It looks like you're writing an Emacs.  Would you like help?"
-
-;;; Code:
-
-(require 'ceamx-lib)
-(require 'lib-help)
-
-;;; Configure window behavior for help buffers
-
-;; Focus newly-opened help windows.
-(setopt help-window-select t)
-
-;; Also focus newly-opened manpages, which still do not follow `display-buffer'
-;; rules (as of <2024-03-06>).
-(setopt Man-notify-method 'aggressive)
-
-;;; Bind commands to call ~consult-info~ filtered by commonly-used manual collections
-
-(declare-function consult-info "consult-info")
-
-;; Remove the default binding for the `describe-input-method' command.
-(keymap-global-unset "C-h I" t)
-
-(define-keymap :keymap (current-global-map)
-  "C-h i"    #'ceamx/consult-info-dwim
-  "C-h I c"  #'ceamx/completion-info
-  "C-h I e"  #'ceamx/emacs-info
-  "C-h I i"  #'consult-info
-  "C-h I o"  #'ceamx/org-info)
-
-;;; Peruse local ~devdocs~ docsets corresponding to the current major-mode
-
-;; <https://github.com/astoff/devdocs.el>
-
-;; NOTE: Must run ~devdocs-install~ before a docset is available for reference.
-;;
-;; TODO: Install docsets automatically.
-;;       See ~lib-help~ for WIP.
-
-(package! devdocs
-  (define-keymap :keymap help-map
-    ;; Replace default `apropos-documentation' binding.
-    "d" #'devdocs-lookup
-    "D" #'apropos-documentation)
-
-  ;; FIXME: on a stale timer! every week! not every session...
-  (devdocs-update-all))
-
-(after! popper
-  (add-to-list 'popper-reference-buffers "\\*devdocs\\*"))
-
-;;; Display keyboard macros or latest interactive commands as Elisp via ~elmacro~
-
-;; <https://github.com/Silex/elmacro>
-
-;; Avoid enabling this mode globally. It may cause some recurring errors, and
-;; the package has not been updated in years. By nature, it is also quite
-;; invasive, and should probably only be used as a development tool as needed.
-
-(package! elmacro
-  (setopt elmacro-show-last-commands-default 30)
-
-  ;; <https://github.com/Silex/elmacro/blob/master/README.md#org-mode-smartparens-etc>
-  ;; <https://github.com/Silex/elmacro/blob/master/README.md#elmacro-processor-prettify-inserts>
-  (setopt elmacro-processor-prettify-inserts
-          (unless (or (bound-and-true-p lispy-mode) ; not actually sure about lispy-mode
-                      (bound-and-true-p smartparens-mode)
-                      (bound-and-true-p org-mode))))
-
-  ;; "a" "b" "c" => "abc"
-  ;; FIXME: maybe causes errors?
-  (setopt elmacro-processor-concatenate-inserts t))
-
-;;; Provide improved alternatives to the builtin `describe-*' utilities with ~helpful~
-
-;; <https://github.com/Wilfred/helpful>
-
-;; NOTE: there are some blocking bugs that have gone unfixed for quite a while
-;;        some symbols' helpful pages cannot be displayed.
-;;        <https://github.com/Wilfred/helpful/issues/329>
-
-(package! helpful
-  ;; Avoid a first-time lag when asking for help, which often happens before an
-  ;; idle timer has the chance to run.
-  (require 'helpful)
-  (define-keymap :keymap help-map
-    "c" #'helpful-callable
-    "C" #'helpful-command
-    "f" #'helpful-function              ; orig: `describe-face'
-    "h" #'helpful-at-point
-    ;; TODO: consider swapping with the original as a trial?
-    "k" #'helpful-key                   ; orig: `describe-key-briefly'
-    "o" #'helpful-symbol
-    "v" #'helpful-variable
-
-    ;; Parity with the corresponding unmodded keys.
-    ;; Primarily for Meow keypad, but also sometimes feels more natural to keep
-    ;; holding Ctrl anyway.
-    "C-k" #'helpful-key
-    "C-o" #'helpful-symbol
-
-    ;; Rebind the originals
-    "F" #'describe-face
-    "K" #'describe-key-briefly
-
-    ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
-    "C-h" nil))
-
-;;; Eldoc: Display multiple composed messages
-
-(setopt eldoc-documentation-function #'eldoc-documentation-compose)
-
-;;; Display usage examples for Elisp callables inside their help buffers
-
-;; <https://github.com/xuchunyang/elisp-demos>
-
-(package! elisp-demos
-  (after! helpful
-    (require 'elisp-demos)
-    (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
-    (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update)))
-
-;;; DISABLED Improve display of hints in an active ~repeat-mode~ keymap
-
-;; <https://github.com/karthink/repeat-help>
-
-;; Essential reading for context and usage ideas:
-;; <https://karthinks.com/software/it-bears-repeating/>
-
-;; DISABLED:
-;; - Hides default help, which I generally do want to see.
-;; - No straightforward way to disable or customize per-map
-
-(package! repeat-help
-  (setopt repeat-help-auto nil)
-  (setopt repeat-help-key (kbd "?"))
-
-  ;; If `repeat-help' detects `which-key' because `embark' has not yet loaded,
-  ;; then its default popup type will be `which-key', not `embark'. This does
-  ;; not quite line up with the intended behavior as stated in the `repeat-help'
-  ;; README.
-  ;; Note, also, that Embark will not be loaded until one of its autoloaded
-  ;; commands are invoked.
-  ;; <https://github.com/karthink/repeat-help/issues/10>
-  (with-eval-after-load 'embark
-    (setopt repeat-help-popup-type 'embark))
-
-  ;; (require 'repeat-help)
-  ;; (add-hook 'repeat-mode-hook #'repeat-help-mode)
-  )
-
-;;; Provide "Casual" transient menus for complex modes
-
+#+begin_src emacs-lisp
 (package! casual-suite
   (require 'casual-suite)
 
@@ -4348,14 +4122,61 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
   (after! org-agenda
     (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)))
+#+end_src
 
-;;; `Info-mode' enchantments
+*** `Info-mode' enchantments
 
-(add-hook 'Info-mode-hook #'hl-line-mode)
-(add-hook 'Info-mode-hook #'scroll-lock-mode)
+#+begin_src emacs-lisp
+(use-feature! info
+  :hook ((Info-mode . hl-line-mode)
+         (Info-mode . scroll-lock-mode)))
+#+end_src
 
-;;; Keybindings
+*** ~helpful~: Provide improved alternatives to the builtin "describe" utilities
 
+- Source code :: <https://github.com/Wilfred/helpful>
+
+Note that there is a severe but edge-case bug that has gone unfixed
+for quite a while.  ~helpful~ cannot display documentation for symbols
+defined in Emacs C source code:
+
+<https://github.com/Wilfred/helpful/issues/329>
+
+
+#+begin_src emacs-lisp
+(use-package helpful
+  :ensure t
+  ;; Avoid a first-time lag when asking for help, which often happens before an
+  ;; idle timer has the chance to run.
+  :demand t
+
+  :init
+  (define-keymap :keymap help-map
+    "c" #'helpful-callable
+    "C" #'helpful-command
+    "f" #'helpful-function              ; orig: `describe-face'
+    "h" #'helpful-at-point
+    ;; TODO: consider swapping with the original as a trial?
+    "k" #'helpful-key                   ; orig: `describe-key-briefly'
+    "o" #'helpful-symbol
+    "v" #'helpful-variable
+
+    ;; Parity with the corresponding unmodded keys.
+    ;; Primarily for Meow keypad, but also sometimes feels more natural to keep
+    ;; holding Ctrl anyway.
+    "C-k" #'helpful-key
+    "C-o" #'helpful-symbol
+
+    ;; Rebind the originals
+    "F" #'describe-face
+    "K" #'describe-key-briefly
+
+    ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
+    "C-h" nil))
+#+end_src
+*** Rebind some default keybindings in the [C-h] ~help-map~
+
+#+begin_src emacs-lisp
 (define-keymap :keymap help-map
   "l" #'find-library
   ;; I actually prefer the default `man' over `consult-man'.
@@ -4370,183 +4191,36 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
   ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
   "C-h" nil)
-
-(provide 'init-help)
-;;; init-help.el ends here
 #+end_src
 
+** History & Undo
+*** Record some variables' values with ~savehist~ [builtin]
 
-** Library
-
-#+begin_src emacs-lisp :tangle lisp/lib-help.el :comments no
-;;; lib-help.el --- Helpers for help and documentation  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local, help
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; We all need help sometimes.
-
-;;; Code:
-
-(require 'ceamx-lib)
-
-(defvar devdocs-data-dir)
-
-(declare-function consult-info "consult")
-
-;;; Functions
-
-;;;; Pre-defined filters for ~consult-info~ searches
-
-;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
-(defun ceamx/emacs-info ()
-  "Search through Emacs info pages."
-  (interactive)
-  (consult-info "emacs" "efaq" "elisp" "cl"))
-
-(defun ceamx/org-info ()
-  "Search through the Org info page."
-  (interactive)
-  (consult-info "org"))
-
-(defun ceamx/completion-info ()
-  "Search through completion info pages."
-  (interactive)
-  (consult-info "vertico" "consult" "marginalia" "orderless" "embark"
-                "corfu" "cape" "tempel"))
-
-(defun ceamx/consult-info-dwim (&optional buffer)
-  "Search Info manuals appropriate to BUFFER's major-mode."
-  (interactive)
-  (with-current-buffer (or buffer (current-buffer))
-    (let* ((mode major-mode)
-           (fn (pcase mode
-                 ((pred (lambda (x) (memq x '(emacs-lisp-mode))))
-                  #'ceamx/emacs-info)
-                 ((pred (lambda (x) (memq x '(org-mode org-agenda-mode))))
-                  #'ceamx/org-info)
-                 (_ #'consult-info))))
-      (command-execute fn))))
-
-;;;; ~devdocs~ support
-
-(defun +devdocs--doc-directory-exists-p (slug)
-  "Whether the directory for the doc SLUG exists."
-  (file-directory-p (expand-file-name slug devdocs-data-dir)))
-
-(defun +devdocs--doc-installed-p (slug)
-  "Whether the document named SLUG is installed.
-Installation can be defined as whether there exists a metadata
-file inside a directory named SLUG within `devdocs-data-dir'."
-  (defvar devdocs-data-dir)
-  (let ((file (expand-file-name (concat slug "/metadata") devdocs-data-dir)))
-    (file-exists-p file)))
-
-(defun +devdocs-maybe-install (doc)
-  "Install the `devdocs' documentation set for DOC if not already installed.
-DOC is as in `devdocs-install'."
-  (declare-function devdocs-install "devdocs")
-  (unless (+devdocs--doc-installed-p doc)
-    (devdocs-install doc)))
-
-(defun +devdocs-maybe-install-docs (docs)
-  "Install each `devdocs' documentation set in DOCS if not already installed.
-DOCS is a quoted list of `devdocs' documentation identifiers as
-accepted by `+devdocs-maybe-install'."
-  (dolist (doc docs)
-    (+devdocs-maybe-install doc)))
-
-;; FIXME: return t if exists, whatever if new, otherwise throw
-(defun ceamx/devdocs-maybe-install (doc)
-  "Install the `devdocs' documentation set for DOC if not already installed.
-DOC is as in `devdocs-install'."
-  ;; TODO: prompt for selecting from available docs (see `devdocs-install')
-  (interactive "s")
-  (+devdocs-maybe-install doc))
-
-(provide 'lib-help)
-;;; lib-help.el ends here
-#+end_src
-
-
-* History :: =history= :history:
-
-#+begin_src emacs-lisp :tangle lisp/init-history.el :comments no
-;;; init-history.el --- History management           -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local, lisp
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; " Nothing here now but the recordings... "
-
-;; Configuration for session history like undo/redo, edits, kill-ring,
-;; recent files, and so on.
-
-;;; Code:
-
-;;; Requirements
-
-(require 'cl-lib)
-
-(require 'ceamx-paths)
-(require 'ceamx-lib)
-
-;;; Record some variables' values with ~savehist~ [builtin]
-
+#+begin_src emacs-lisp
 (use-feature! savehist
   :init
   (savehist-mode)
 
   :config
   (cl-dolist (save '(kill-ring
-                      regexp-search-ring
-                      search-ring))
+                     regexp-search-ring
+                     search-ring))
     (cl-pushnew save savehist-additional-variables))
 
   (setopt savehist-autosave-interval 60))
+#+end_src
 
-;;; Record point position in buffers with ~saveplace~ [builtin]
+*** Record point position in buffers with ~saveplace~ [builtin]
 
+#+begin_src emacs-lisp
 (use-feature! saveplace
   :init
   (save-place-mode))
+#+end_src
 
-;;; Record recently-accessed files with ~recentf~ [builtin]
+*** Record recently-accessed files with ~recentf~ [builtin]
 
+#+begin_src emacs-lisp
 (use-feature! recentf
   :init
   (recentf-mode)
@@ -4562,11 +4236,85 @@ DOC is as in `devdocs-install'."
   ;; Exclude internal plumbing files.
   (dolist (path '(ceamx-etc-dir ceamx-var-dir))
     (add-to-list 'recentf-exclude path)))
+#+end_src
 
-;;; Return to previously-visited buffer positions with ~dogears~
+*** Increase undo history limits
 
-;; <https://github.com/alphapapa/dogears.el>
+Advice from the author of ~undo-fu~:
 
+#+begin_quote
+The default undo limits for emacs are quite low _(0.15mb at time of
+writing)_ undo-tree for example increases these limits.
+
+On modern systems you may wish to use much higher limits.
+
+This example sets the limit to 64mb, 1.5x (96mb) for the strong limit
+and 10x (960mb) for the outer limit.  Emacs uses 100x for the outer
+limit but this may be too high when using increased limits.
+#+end_quote
+
+via <https://codeberg.org/ideasman42/emacs-undo-fu#undo-limits>
+
+#+begin_src emacs-lisp
+(setopt undo-limit 67108864) ; 64mb.
+(setopt undo-strong-limit 100663296) ; 96mb.
+(setopt undo-outer-limit 1006632960) ; 960mb.
+#+end_src
+
+*** ~undo-fu~: Support optional linear undo/redo
+
+- Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu>
+
+#+begin_src emacs-lisp
+(package! undo-fu
+  (keymap-global-set "C-z" #'undo-fu-only-undo)
+  (keymap-global-set "C-S-z" #'undo-fu-only-redo))
+#+end_src
+
+*** ~undo-fu-session~: Record undo/redo steps across Emacs sessions
+
+- Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
+
+NOTE: This is *NOT* just for use with ~undo-fu~!  It's an essential
+enhancement to the builtin Emacs undo system as well.
+
+#+begin_src emacs-lisp
+(defvar undo-fu-session-directory
+  (expand-file-name "undo-fu-session" ceamx-var-dir))
+
+(package! undo-fu-session
+  (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+  (setopt undo-fu-session-ignore-temp-files t)
+  (setopt undo-fu-session-ignore-encrypted-files t)
+
+  (setopt undo-fu-session-compression 'zst)
+
+  (undo-fu-session-global-mode))
+#+end_src
+
+*** ~vundo~: Visualize the Emacs undo tree
+
+- Source code :: <https://github.com/casouri/vundo>
+
+#+begin_src emacs-lisp
+(use-package vundo
+  :ensure t
+  :defer t
+  :defines vundo-unicode-symbols
+
+  :bind
+  ("C-x u" . vundo)
+
+  :config
+  (setopt vundo-glyph-alist vundo-unicode-symbols))
+#+end_src
+
+** Bookmarks
+*** ~dogears~: Return to previously-visited buffer positions
+
+- Source code :: <https://github.com/alphapapa/dogears.el>
+
+#+begin_src emacs-lisp
 (package! dogears
   (add-hook 'on-first-buffer-hook #'dogears-mode)
 
@@ -4590,82 +4338,20 @@ DOC is as in `devdocs-install'."
   (transient-define-prefix ceamx/dogears-dispatch ()
     "Transient menu for `dogears' history navigation commands."
     [["Navigate"
-       ("b" "back" dogears-back :transient transient--do-stay)
-       ("f" "forward" dogears-forward :transient transient--do-stay)]
-      ;; TODO: when quit one of these Find commands, return to transient
-      ["Find"
-        ("d" "go..." dogears-go)
-        ("l" "list" dogears-list)
-        ("S" "sidebar" dogears-sidebar)]])
+      ("b" "back" dogears-back :transient transient--do-stay)
+      ("f" "forward" dogears-forward :transient transient--do-stay)]
+     ;; TODO: when quit one of these Find commands, return to transient
+     ["Find"
+      ("d" "go..." dogears-go)
+      ("l" "list" dogears-list)
+      ("S" "sidebar" dogears-sidebar)]])
 
   (defer-until! (fboundp 'ceamx/dogears-dispatch)
     (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
-
-;;; Undo/redo
-
-;;;; Increase undo history limits
-
-;; Advice from the author of ~undo-fu~:
-;;
-;; > The default undo limits for emacs are quite low _(0.15mb at time of
-;; > writing)_ undo-tree for example increases these limits.
-;; >
-;; > On modern systems you may wish to use much higher limits.
-;; >
-;; > This example sets the limit to 64mb, 1.5x (96mb) for the strong
-;; > limit and 10x (960mb) for the outer limit. Emacs uses 100x for the
-;; > outer limit but this may be too high when using increased limits.
-;;
-;; via <https://codeberg.org/ideasman42/emacs-undo-fu#undo-limits>
-
-(setopt undo-limit 67108864) ; 64mb.
-(setopt undo-strong-limit 100663296) ; 96mb.
-(setopt undo-outer-limit 1006632960) ; 960mb.
-
-;;;; Support optional linear undo/redo with ~undo-fu~
-
-;; <https://codeberg.org/ideasman42/emacs-undo-fu>
-
-(package! undo-fu
-  (keymap-global-set "C-z" #'undo-fu-only-undo)
-  (keymap-global-set "C-S-z" #'undo-fu-only-redo))
-
-;;;; Record undo/redo steps across Emacs sessions with ~undo-fu-session~
-
-;; <https://codeberg.org/ideasman42/emacs-undo-fu-session>
-
-;; NOTE: This is *NOT* just for use with ~undo-fu~! It's an essential
-;; enhancement to the builtin Emacs undo system as well.
-
-(defvar undo-fu-session-directory
-  (expand-file-name "undo-fu-session" ceamx-var-dir))
-
-(package! undo-fu-session
-  (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
-  (setopt undo-fu-session-ignore-temp-files t)
-  (setopt undo-fu-session-ignore-encrypted-files t)
-
-  (setopt undo-fu-session-compression 'zst)
-
-  (undo-fu-session-global-mode))
-
-;;;; Visualize the Emacs undo tree with ~vundo~ (visual undo)
-
-;; <https://github.com/casouri/vundo>
-
-(package! vundo
-  (keymap-global-set "C-x u" #'vundo))
-
-(after! vundo
-  (defvar vundo-unicode-symbols)
-  (setopt vundo-glyph-alist vundo-unicode-symbols))
-
-(provide 'init-history)
-;;; init-history.el ends here
 #+end_src
 
 
-* Window and Buffer Management
+* =init.el=: Window
 :PROPERTIES:
 :header-args: :tangle init.el
 :END:
@@ -4683,6 +4369,42 @@ DOC is as in `devdocs-install'."
 The buffer will be created if it does not exist."
   :group 'ceamx
   :type '(string))
+#+end_src
+
+** Configure window behavior for help buffers
+
+#+begin_src emacs-lisp
+;; Focus newly-opened help windows.
+(setopt help-window-select t)
+
+;; Also focus newly-opened manpages, which still do not follow `display-buffer'
+;; rules (as of <2024-03-06>).
+(setopt Man-notify-method 'aggressive)
+#+end_src
+
+** ~lentic~: Create decoupled views of the same content :package:
+
+#+begin_src emacs-lisp
+(package! lentic
+  (global-lentic-mode))
+
+(with-eval-after-load 'lentic
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+#+end_src
+
+** Disambiguate/uniquify buffer names
+
+#+begin_src emacs-lisp
+(use-feature! emacs
+  :config
+  (setopt uniquify-buffer-name-style 'forward)
+  (setopt uniquify-separator "/")
+
+  ;; Rename after killing uniquified buffer.
+  (setopt uniquify-after-kill-buffer-p t)
+
+  ;; Don't muck with special buffers.
+  (setopt uniquify-ignore-buffers-re "^\\*"))
 #+end_src
 
 ** General buffer display settings :buffer:frame:display_buffer:
@@ -4900,14 +4622,6 @@ Action alist entries are:
 
 #+begin_src emacs-lisp
 (add-hook 'ceamx-after-init-hook #'winner-mode)
-#+end_src
-
-** =dedicated=: Toggle a window's "dedicated" flag :package:
-
-<https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
-
-#+begin_src emacs-lisp
-(package! dedicated)
 #+end_src
 
 ** =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
@@ -5136,6 +4850,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 (package! breadcrumb
   (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 #+end_src
+
 
 * Search :: =search= :search:
 :PROPERTIES:
@@ -5479,6 +5194,43 @@ Enable ~repeat-mode~, avoiding running mode-hooks too early:
 
 ;; FIXME: no effect? what does this actually do?
 (setopt which-key-show-remaining-keys t)
+#+end_src
+
+** DISABLED Improve display of hints in an active ~repeat-mode~ keymap
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+- Source code :: <https://github.com/karthink/repeat-help>
+- Background :: <https://karthinks.com/software/it-bears-repeating/>
+
+This package is disabled for now because:
+
++ Hides default help, which I generally do want to see.
++ No straightforward way to disable or customize per-map
+
+Note also that Emacs 30 will provide a builtin way to specify =:hints= for repeat maps:
+
++ https://github.com/karthink/repeat-help/issues/11
+
+#+begin_src emacs-lisp
+(package! repeat-help
+  (setopt repeat-help-auto nil)
+  (setopt repeat-help-key (kbd "?"))
+
+  ;; If `repeat-help' detects `which-key' because `embark' has not yet loaded,
+  ;; then its default popup type will be `which-key', not `embark'. This does
+  ;; not quite line up with the intended behavior as stated in the `repeat-help'
+  ;; README.
+  ;; Note, also, that Embark will not be loaded until one of its autoloaded
+  ;; commands are invoked.
+  ;; <https://github.com/karthink/repeat-help/issues/10>
+  (with-eval-after-load 'embark
+    (setopt repeat-help-popup-type 'embark))
+
+  ;; (require 'repeat-help)
+  ;; (add-hook 'repeat-mode-hook #'repeat-help-mode)
+  )
 #+end_src
 
 ** File Footers
@@ -5936,6 +5688,66 @@ Not really what I wanted...
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'embark-prefix-help-command))
 #+end_src
 
+** Pre-defined filters for ~consult-info~ searches
+
+#+begin_src emacs-lisp :noweb-ref lib-completion
+;;;;; Pre-defined filters for ~consult-info~ searches
+
+(require 'ceamx-lib)
+
+(defvar devdocs-data-dir)
+
+(declare-function consult-info "consult")
+
+;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
+(defun ceamx/emacs-info ()
+  "Search through Emacs info pages."
+  (interactive)
+  (consult-info "emacs" "efaq" "elisp" "cl"))
+
+(defun ceamx/org-info ()
+  "Search through the Org info page."
+  (interactive)
+  (consult-info "org"))
+
+(defun ceamx/completion-info ()
+  "Search through completion info pages."
+  (interactive)
+  (consult-info "vertico" "consult" "marginalia" "orderless" "embark"
+                "corfu" "cape" "tempel"))
+
+(defun ceamx/consult-info-dwim (&optional buffer)
+  "Search Info manuals appropriate to BUFFER's major-mode."
+  (interactive)
+  (with-current-buffer (or buffer (current-buffer))
+    (let* ((mode major-mode)
+           (fn (pcase mode
+                 ((pred (lambda (x) (memq x '(emacs-lisp-mode))))
+                  #'ceamx/emacs-info)
+                 ((pred (lambda (x) (memq x '(org-mode org-agenda-mode))))
+                  #'ceamx/org-info)
+                 (_ #'consult-info))))
+      (command-execute fn))))
+#+end_src
+
+
+** Bind commands to call ~consult-info~ filtered by commonly-used manual collections
+
+Refile... somewhere...
+
+#+begin_src emacs-lisp
+(declare-function consult-info "consult-info")
+
+;; Remove the default binding for the `describe-input-method' command.
+(keymap-global-unset "C-h I" t)
+
+(define-keymap :keymap (current-global-map)
+  "C-h i"    #'ceamx/consult-info-dwim
+  "C-h I c"  #'ceamx/completion-info
+  "C-h I e"  #'ceamx/emacs-info
+  "C-h I i"  #'consult-info
+  "C-h I o"  #'ceamx/org-info)
+#+end_src
 
 ** Marginalia for minibuffer completion candidates :minibuffer:help:
 
@@ -6319,6 +6131,13 @@ This was not my idea, and I would like to savor the full ~dabbrev~ experience
   (advice-add #'lsp-completion-at-point :around #'cape-wrap-nonexclusive))
 #+end_src
 
+** Buffer management
+
+#+begin_src emacs-lisp
+(use-feature! ibuffer
+  :config
+  (setopt ibuffer-movement-cycle t))
+#+end_src
 
 * Actions :: =embark= :actions:embark:
 
@@ -7186,8 +7005,6 @@ avoid further confusion.
 :header-args: :tangle lisp/ceamx-langs.el
 :END:
 
-** =lisp/ceamx-langs.el=: File Header
-
 #+begin_src emacs-lisp :tangle lisp/ceamx-langs.el :comments no
 ;;; ceamx-langs.el --- Language support -*- lexical-binding: t; -*-
 
@@ -7235,119 +7052,6 @@ execution order."
     (highlight-function-calls-mode 1)))
 #+end_src
 
-** Structural Editing
-
-*** Define the user option for structured editing flavour
-
-#+begin_src emacs-lisp
-(defcustom ceamx-structured-editing-style 'lispy
-  "The structured editing provider."
-  :group 'ceamx
-  :type '(choice :tag "Structured editing style" :value lispy
-          (const :tag "Lispy" lispy)
-          (const :tag "Puni" puni)))
-#+end_src
-
-*** ~puni~: versatile structured editing :package:
-
-<https://github.com/AmaiKinono/puni>
-
-#+begin_src emacs-lisp
-(package! puni
-  ;; (puni-global-mode)
-  ;; (add-hook 'prog-mode-hook #'puni-mode)
-  ;; (add-hook 'term-mode-hook #'puni-disable-puni-mode)
-  )
-
-;; (after! puni
-;;     ;; (define-keymap :keymap puni-mode-map
-;;   ;;   "C-M-f" #'puni-forward-sexp
-;;   ;;   "C-M-b" #'puni-backward-sexp
-;;   ;;   "C-M-a" #'puni-beginning-of-sexp
-;;   ;;   "C-M-e" #'puni-end-of-sexp
-;;   ;;   "C-M-[" #'puni-backward-sexp-or-up-list
-;;   ;;   "C-M-]" #'puni-forward-sexp-or-up-list
-
-;;   ;;   "M-(" #'puni-syntactic-forward-punct
-;;   ;;   "M-)" #'puni-syntactic-backward-punct
-;;   ;;   )
-
-;; )
-#+end_src
-
-*** Prepare a prefix commands for binding structural editing commands
-
-#+begin_src emacs-lisp
-(define-prefix-command 'ceamx-structural-editing-prefix)
-(keymap-global-set "C-c s" #'ceamx-structural-editing-prefix)
-#+end_src
-
-*** Structural editing with ~puni~
-
-Work in progress.
-
-This is still not quite usable as a Lispy replacement.  The goal is to use
-similar structureal editing keybindings across many major-modes.
-
-Note that this repeat-map should not be used in tandem with ~lispy-mode~ because
-its bindings generally would need ~puni-mode~ to be active.
-
-- <https://karthinks.com/software/a-consistent-structural-editing-interface/>
-- <https://github.com/suliveevil/emacs.d?tab=readme-ov-file#repeat-repeat-mode>
-- <https://github.com/karthink/.emacs.d/blob/master/init.el#L3209-L3241>
-
-
-- [ ] Disable ~repeat-exit-timeout~ for this map only
-
-#+begin_src emacs-lisp
-(after! puni
-
-  (defvar-keymap structural-editing-map
-    :repeat t
-
-    "d" #'puni-forward-delete-char
-    ;; "DEL" #'puni-backward-delete-char
-    ;; "D" #'puni-forward-kill-word
-    ;; "M-DEL" #'puni-backward-kill-word
-    ;; "C-k" #'puni-kill-line
-    ;; "M-k" #'puni-backward-kill-line
-    "k" #'kill-sexp
-
-    "f" #'puni-forward-sexp
-    "b" #'puni-backward-sexp
-    "[" #'puni-backward-sexp-or-up-list
-    "]" #'puni-forward-sexp-or-up-list
-    "a" #'puni-beginning-of-sexp
-    "e" #'puni-end-of-sexp
-    "u" #'puni-up-list
-    "M-(" #'puni-syntactic-forward-punct
-    "M-)" #'puni-syntactic-backward-punct
-
-    "\\" #'indent-region
-    "/" #'undo
-
-    ">" #'puni-slurp-forward
-    "<" #'puni-slurp-backward
-    "}" #'puni-barf-forward
-    "{" #'puni-barf-backward
-    "R" #'puni-raise
-    "t" #'puni-transpose
-    "C" #'puni-convolute
-    ;; FIXME: avoid meow dependency -- no puni equivalent
-    ;; "J" #'meow-join-sexp
-    "S" #'puni-split
-    ;; FIXME: for `emacs-lisp-mode' only
-    "x" #'eval-defun
-
-    ))
-
-;; FIXME: wrong type argument symbolp
-;; (map-keymap (lambda (_ cmd)
-;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
-
-#+end_src
-
-
 ** ~dumb-jump~: multi-lang do-what-i-mean jump-to-definition
 
 - src :: <https://github.com/jacktasia/dumb-jump>
@@ -7371,7 +7075,7 @@ its bindings generally would need ~puni-mode~ to be active.
 
 ** TODO ~prism~
 
-**  DISABLED ~rainbow-delimiters~
+** DISABLED ~rainbow-delimiters~
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -7411,6 +7115,76 @@ its bindings generally would need ~puni-mode~ to be active.
 (use-package hl-todo
   :ensure t
   :hook (prog-mode . hl-todo-mode))
+#+end_src
+
+** ~devdocs~: Peruse local ~devdocs~ docsets
+
+- Source code :: <https://github.com/astoff/devdocs.el>
+
+NOTE: Must run ~devdocs-install~ before a docset is available for reference.
+
+#+begin_src emacs-lisp
+(use-package devdocs
+  :ensure t
+  :defer t
+
+  :bind
+  (:map help-map
+        ("D" . devdocs-lookup))
+
+  :init
+  (after! popper
+    (add-to-list 'popper-reference-buffers "\\*devdocs\\*"))
+
+  :config
+  ;; FIXME: on a stale timer! every week! not every session...
+  ;; (devdocs-update-all)
+
+  )
+#+end_src
+
+WIP: Define some helper functions for installing docsets automatically:
+
+#+begin_src emacs-lisp :noweb-ref lib-prog
+(defun +devdocs--doc-directory-exists-p (slug)
+  "Whether the directory for the doc SLUG exists."
+  (file-directory-p (expand-file-name slug devdocs-data-dir)))
+
+(defun +devdocs--doc-installed-p (slug)
+  "Whether the document named SLUG is installed.
+Installation can be defined as whether there exists a metadata
+file inside a directory named SLUG within `devdocs-data-dir'."
+  (defvar devdocs-data-dir)
+  (let ((file (expand-file-name (concat slug "/metadata") devdocs-data-dir)))
+    (file-exists-p file)))
+
+(defun +devdocs-maybe-install (doc)
+  "Install the `devdocs' documentation set for DOC if not already installed.
+DOC is as in `devdocs-install'."
+  (declare-function devdocs-install "devdocs")
+  (unless (+devdocs--doc-installed-p doc)
+    (devdocs-install doc)))
+
+(defun +devdocs-maybe-install-docs (docs)
+  "Install each `devdocs' documentation set in DOCS if not already installed.
+DOCS is a quoted list of `devdocs' documentation identifiers as
+accepted by `+devdocs-maybe-install'."
+  (dolist (doc docs)
+    (+devdocs-maybe-install doc)))
+
+;; FIXME: return t if exists, whatever if new, otherwise throw
+(defun ceamx/devdocs-maybe-install (doc)
+  "Install the `devdocs' documentation set for DOC if not already installed.
+DOC is as in `devdocs-install'."
+  ;; TODO: prompt for selecting from available docs (see `devdocs-install')
+  (interactive "s")
+  (+devdocs-maybe-install doc))
+#+end_src
+
+** Display multiple composed messages inside ~eldoc~
+
+#+begin_src emacs-lisp
+(setopt eldoc-documentation-function #'eldoc-documentation-compose)
 #+end_src
 
 ** Formatters
@@ -7555,6 +7329,118 @@ This section handles the curse.
     (funcall func)))
 #+end_src
 
+** Structural Editing
+
+*** Define the user option for structured editing flavour
+
+#+begin_src emacs-lisp
+(defcustom ceamx-structured-editing-style 'lispy
+  "The structured editing provider."
+  :group 'ceamx
+  :type '(choice :tag "Structured editing style" :value lispy
+          (const :tag "Lispy" lispy)
+          (const :tag "Puni" puni)))
+#+end_src
+
+*** ~puni~: versatile structured editing :package:
+
+<https://github.com/AmaiKinono/puni>
+
+#+begin_src emacs-lisp
+(package! puni
+  ;; (puni-global-mode)
+  ;; (add-hook 'prog-mode-hook #'puni-mode)
+  ;; (add-hook 'term-mode-hook #'puni-disable-puni-mode)
+  )
+
+;; (after! puni
+;;     ;; (define-keymap :keymap puni-mode-map
+;;   ;;   "C-M-f" #'puni-forward-sexp
+;;   ;;   "C-M-b" #'puni-backward-sexp
+;;   ;;   "C-M-a" #'puni-beginning-of-sexp
+;;   ;;   "C-M-e" #'puni-end-of-sexp
+;;   ;;   "C-M-[" #'puni-backward-sexp-or-up-list
+;;   ;;   "C-M-]" #'puni-forward-sexp-or-up-list
+
+;;   ;;   "M-(" #'puni-syntactic-forward-punct
+;;   ;;   "M-)" #'puni-syntactic-backward-punct
+;;   ;;   )
+
+;; )
+#+end_src
+
+*** Prepare a prefix commands for binding structural editing commands
+
+#+begin_src emacs-lisp
+(define-prefix-command 'ceamx-structural-editing-prefix)
+(keymap-global-set "C-c s" #'ceamx-structural-editing-prefix)
+#+end_src
+
+*** Structural editing with ~puni~
+
+Work in progress.
+
+This is still not quite usable as a Lispy replacement.  The goal is to use
+similar structureal editing keybindings across many major-modes.
+
+Note that this repeat-map should not be used in tandem with ~lispy-mode~ because
+its bindings generally would need ~puni-mode~ to be active.
+
+- <https://karthinks.com/software/a-consistent-structural-editing-interface/>
+- <https://github.com/suliveevil/emacs.d?tab=readme-ov-file#repeat-repeat-mode>
+- <https://github.com/karthink/.emacs.d/blob/master/init.el#L3209-L3241>
+
+
+- [ ] Disable ~repeat-exit-timeout~ for this map only
+
+#+begin_src emacs-lisp
+(after! puni
+
+  (defvar-keymap structural-editing-map
+    :repeat t
+
+    "d" #'puni-forward-delete-char
+    ;; "DEL" #'puni-backward-delete-char
+    ;; "D" #'puni-forward-kill-word
+    ;; "M-DEL" #'puni-backward-kill-word
+    ;; "C-k" #'puni-kill-line
+    ;; "M-k" #'puni-backward-kill-line
+    "k" #'kill-sexp
+
+    "f" #'puni-forward-sexp
+    "b" #'puni-backward-sexp
+    "[" #'puni-backward-sexp-or-up-list
+    "]" #'puni-forward-sexp-or-up-list
+    "a" #'puni-beginning-of-sexp
+    "e" #'puni-end-of-sexp
+    "u" #'puni-up-list
+    "M-(" #'puni-syntactic-forward-punct
+    "M-)" #'puni-syntactic-backward-punct
+
+    "\\" #'indent-region
+    "/" #'undo
+
+    ">" #'puni-slurp-forward
+    "<" #'puni-slurp-backward
+    "}" #'puni-barf-forward
+    "{" #'puni-barf-backward
+    "R" #'puni-raise
+    "t" #'puni-transpose
+    "C" #'puni-convolute
+    ;; FIXME: avoid meow dependency -- no puni equivalent
+    ;; "J" #'meow-join-sexp
+    "S" #'puni-split
+    ;; FIXME: for `emacs-lisp-mode' only
+    "x" #'eval-defun
+
+    ))
+
+;; FIXME: wrong type argument symbolp
+;; (map-keymap (lambda (_ cmd)
+;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
+
+#+end_src
+
 ** Tree-Sitter
 :PROPERTIES:
 :header-args: :tangle lisp/init-treesitter.el
@@ -7667,6 +7553,14 @@ Increase the amount of syntax-highlighted structures:
 #+begin_src emacs-lisp :tangle lisp/init-treesitter.el :comments no
 (provide 'init-treesitter)
 ;;; init-treesitter.el ends here
+#+end_src
+
+** Apply ~autoinsert~ skeletons to new files
+
+#+begin_src emacs-lisp
+(use-feature! autoinsert
+  :config
+  (auto-insert-mode 1))
 #+end_src
 
 ** General LISPs
@@ -8056,8 +7950,6 @@ lists."
 
 ** Emacs Lisp
 
-*** Customizations
-
 #+begin_src emacs-lisp
 (require 'config-keys)
 
@@ -8185,6 +8077,48 @@ The original function fails in the presence of whitespace after a sexp."
 (package! xr)
 #+end_src
 
+
+*** ~elmacro~: Display keyboard macros or latest interactive commands as Elisp
+
+- Source code :: <https://github.com/Silex/elmacro>
+
+Avoid enabling this mode globally.  It may cause some recurring errors, and
+the package has not been updated in years.  By nature, it is also quite
+invasive, and should probably only be used as a development tool as needed.
+
+#+begin_src emacs-lisp
+(use-package elmacro
+  :ensure t
+  :config
+  (setopt elmacro-show-last-commands-default 30)
+
+  ;; <https://github.com/Silex/elmacro/blob/master/README.md#org-mode-smartparens-etc>
+  ;; <https://github.com/Silex/elmacro/blob/master/README.md#elmacro-processor-prettify-inserts>
+  (setopt elmacro-processor-prettify-inserts
+          (unless (or (bound-and-true-p lispy-mode) ; not actually sure about lispy-mode
+                      (bound-and-true-p smartparens-mode)
+                      (bound-and-true-p org-mode))))
+
+  ;; "a" "b" "c" => "abc"
+  ;; FIXME: maybe causes errors?
+  (setopt elmacro-processor-concatenate-inserts t))
+#+end_src
+
+*** ~elisp-demos~: Display usage examples for Elisp callables inside their help buffers
+
+- Source code :: <https://github.com/xuchunyang/elisp-demos>
+
+#+begin_src emacs-lisp
+(use-package elisp-demos
+  :ensure t
+  :defer 5
+  :after (helpful)
+  :functions (elisp-demos-advice-helpful-update)
+  :config
+  (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
+
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+#+end_src
 
 *** Library
 
@@ -8750,11 +8684,6 @@ Returns process exit code."
 #+end_src
 
 ** Nix
-
-#+begin_src emacs-lisp
-(require 'lib-help)
-#+end_src
-
 *** Install and configure ~nix-mode~ :package:
 
 <https://github.com/NixOS/nix-mode>
@@ -8866,6 +8795,8 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 *** Install ~devdocs~ Nix docset :docs:
 
 #+begin_src emacs-lisp
+(require 'lib-prog)
+
 (def-hook! +devdocs-install-nix-docs ()
   '(nix-mode-hook nix-ts-mode-hook)
   "Install `devdocs' documents for the Nix language."
@@ -9220,11 +9151,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 
 ** ~outli~: Enable simple comment-based outline features in many modes
 
-- Note taken on [2024-07-02 Tue 10:45] \\
-  Disabled because I think it causes errors when reverting buffers for some
-  major-modes?
-
-- source :: <https://github.com/jdtsmith/outli>
+- Source code :: <https://github.com/jdtsmith/outli>
 
 #+begin_src emacs-lisp
 ;; NOTE: In `emacs-lisp-mode' buffers, `outli-mode' should be enabled *after*
@@ -9249,7 +9176,9 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   (declare-function outline-promote "outline")
   (declare-function outline-demote "outline")
 
+  ;; FIXME: this example from the readme results in errors due to mismatched signature
   (advice-add 'load-theme :after #'outli-reset-all-faces)
+  ;; (advice-remove 'load-theme #'outli-reset-all-faces)
 
   (define-keymap :keymap outli-mode-map
     "C-c C-n" #'outline-next-heading
@@ -10175,10 +10104,9 @@ What even is this though...?
 (require 'ceamx-lib)
 
 (use-feature! printing
-  :defer 2
+  :defer 10
   :commands (pr-update-menus)
   :config
-  (require 'printing)
   ;; EPSON WF-3520
   (setopt printer-name "LABORTTY")
   ;; (setopt lpr-switches '())
@@ -10187,10 +10115,6 @@ What even is this though...?
 (provide 'init-printing)
 ;;; init-printing.el ends here
 #+end_src
-
-
-**
-
 
 * Newsreader :: =news= :news:
 
@@ -10875,25 +10799,8 @@ Return the new `zone' timer."
 :END:
 
 #+begin_src emacs-lisp
-;;;; Dashboard
-
 (require 'init-dashboard)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Keyboard support
-
 (require 'init-keys)
-#+end_src
-
-#+begin_src emacs-lisp
-;; FIXME: load earlier / in another section
-(require 'init-history)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Text Expansion
-
 (require 'init-abbrevs)
 #+end_src
 
@@ -10902,12 +10809,6 @@ Return the new `zone' timer."
 
 (require 'init-search)
 (require 'init-completion)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Help
-
-(require 'init-help)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -11055,7 +10956,7 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 (define-keymap :keymap (current-global-map)
 
-  "C-x k" #'ceamx/kill-this-buffer      ; orig: `kill-buffer'
+  "C-x k" #'ceamx-simple/kill-buffer      ; orig: `kill-buffer'
   "C-x K" #'kill-buffer
 
   "C-x n n" #'logos-narrow-dwim
@@ -11105,7 +11006,7 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 (define-keymap :keymap ceamx-buffer-prefix
   "b" #'consult-buffer
-  "k" #'ceamx/kill-this-buffer)
+  "k" #'ceamx-simple/kill-buffer)
 
 ;;;;; [C-c f] :: File
 
@@ -11120,14 +11021,14 @@ Or, perhaps more accurately: stuff that needs a better home.
   "r" '("rename/move..." . ceamx-simple/move-current-file)
   "s" #'save-buffer
   "S" '("save as..." . write-file)
-  "U" #'ceamx/sudo-find-file
+  "U" #'ceamx-simple/sudo-find-file
 
   "C-d" '("diff with..." . ceamx-simple/diff-with-file))
 
 ;;;;; [C-c i] :: Insert
 
 (define-keymap :keymap ceamx-insert-prefix
-  "d" #'ceamx/insert-date
+  "d" #'ceamx-simple/insert-date
   ;; "h" #'i-ching-insert-hexagram
   "L" #'spdx-insert-spdx
   "s" #'yas-insert-snippet

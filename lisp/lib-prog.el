@@ -24,6 +24,39 @@
 ;;; Commentary:
 ;;; Code:
 
+(defun +devdocs--doc-directory-exists-p (slug)
+  "Whether the directory for the doc SLUG exists."
+  (file-directory-p (expand-file-name slug devdocs-data-dir)))
+
+(defun +devdocs--doc-installed-p (slug)
+  "Whether the document named SLUG is installed.
+Installation can be defined as whether there exists a metadata
+file inside a directory named SLUG within `devdocs-data-dir'."
+  (defvar devdocs-data-dir)
+  (let ((file (expand-file-name (concat slug "/metadata") devdocs-data-dir)))
+    (file-exists-p file)))
+
+(defun +devdocs-maybe-install (doc)
+  "Install the `devdocs' documentation set for DOC if not already installed.
+DOC is as in `devdocs-install'."
+  (declare-function devdocs-install "devdocs")
+  (unless (+devdocs--doc-installed-p doc)
+    (devdocs-install doc)))
+
+(defun +devdocs-maybe-install-docs (docs)
+  "Install each `devdocs' documentation set in DOCS if not already installed.
+DOCS is a quoted list of `devdocs' documentation identifiers as
+accepted by `+devdocs-maybe-install'."
+  (dolist (doc docs)
+    (+devdocs-maybe-install doc)))
+
+;; FIXME: return t if exists, whatever if new, otherwise throw
+(defun ceamx/devdocs-maybe-install (doc)
+  "Install the `devdocs' documentation set for DOC if not already installed.
+DOC is as in `devdocs-install'."
+  ;; TODO: prompt for selecting from available docs (see `devdocs-install')
+  (interactive "s")
+  (+devdocs-maybe-install doc))
 (defvar ceamx-eglot-server-configurations-alist '()
   "Alist of language server initialization options as accepted in `eglot-server-programs'.")
 (defun ceamx-eglot-server-default-settings (name)

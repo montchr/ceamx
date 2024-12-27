@@ -95,10 +95,6 @@ Emacs version to prevent bytecode incompatibility.")
 
 ;;; Feature-Specific Paths
 
-(defconst ceamx-cheatsheets-dir
-  (file-name-as-directory
-   (concat ceamx-home-dir "Documents/cheatsheets"))
-  "Absolute path to the directory containing user cheatsheets.")
 (defconst ceamx-projects-dir
   (file-name-as-directory
    (or (getenv "XDG_PROJECTS_DIR")

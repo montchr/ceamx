@@ -662,20 +662,24 @@ theme)."
 ;; - Website :: <https://protesilaos.com/modus-themes/>
 
 
-(package! modus-themes
-  (require 'modus-themes)
+(use-package modus-themes
+  :ensure t
+  :demand t
 
-  (setopt modus-themes-italic-constructs t)
-  (setopt modus-themes-bold-constructs nil)
-  (setopt modus-themes-mixed-fonts t)
-  (setopt modus-themes-variable-pitch-ui nil)
+  :config
+  (setopt modus-themes-italic-constructs t
+          modus-themes-bold-constructs t
+          modus-themes-mixed-fonts t
+          modus-themes-variable-pitch-ui nil)
+
+  (setopt modus-themes-to-toggle
+          '(modus-operandi-tinted modus-vivendi))
   (setopt modus-themes-disable-other-themes t)
-  (setopt modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi))
 
   (setopt modus-themes-headings
           '((agenda-structure . (variable-pitch light 2.2))
             (agenda-date . (variable-pitch regular 1.3))
-            (t . (regular 1.0))))
+            (t . (regular 1.1))))
 
   (let ((overrides '((cursor blue)
 
@@ -1266,13 +1270,6 @@ with its default modeline)."
 
   (setopt auto-revert-interval 2))
 
-;; Buffer management
-
-
-(use-feature! ibuffer
-  :config
-  (setopt ibuffer-movement-cycle t))
-
 ;; Normalize whitespace and indentation handling
 
 
@@ -1532,7 +1529,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       (keymap-global-set "C-x SPC" #'hydra-rectangle/body)
       (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
 
-;; ~fill-column~-based line wrapping
+;; Line wrapping
 
 
 (use-feature! emacs
@@ -1611,8 +1608,8 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (use-feature! ceamx-simple
   :demand t
   :config
-  (keymap-global-set "C-<" #'ceamx/escape-url-dwim)
-  (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx/continue-comment))
+  (keymap-global-set "C-<" #'ceamx-simple/escape-url-dwim)
+  (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment))
 
 ;; Linkify URLs and email addresses with ~goto-address~ [builtin]
 
@@ -1621,20 +1618,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 (add-hook 'prog-mode-hook #'goto-address-prog-mode)
 
-;; Disambiguate buffer names with ~uniquify~ [builtin]
-
-
-(with-eval-after-load 'uniquify
-  (setopt uniquify-buffer-name-style 'forward)
-  (setopt uniquify-separator "/")
-
-  ;; Rename after killing uniquified buffer.
-  (setopt uniquify-after-kill-buffer-p t)
-
-  ;; Don't muck with special buffers.
-  (setopt uniquify-ignore-buffers-re "^\\*"))
-
-;; ~link-hint~: Activate links in buffer with ~avy~ :package:
+;; ~link-hint~: Activate links in buffer with ~avy~
 
 ;; <https://github.com/noctuid/link-hint.el>
 
@@ -1643,15 +1627,6 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (define-keymap :keymap (current-global-map)
     "M-g u" #'link-hint-open-link
     "M-g U" #'link-hint-copy-link))
-
-;; ~lentic~: Create decoupled views of the same content :package:
-
-
-(package! lentic
-  (global-lentic-mode))
-
-(with-eval-after-load 'lentic
-  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 
 ;; Manage backup files and prevent file-lock clutter
 
@@ -1669,13 +1644,6 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
             delete-old-versions t
             kept-new-versions 5
             kept-old-versions 5)))
-
-;; Add file headers to new files
-
-
-(use-feature! autoinsert
-  :config
-  (auto-insert-mode 1))
 
 ;; Configure finding of files
 
@@ -1717,7 +1685,267 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   ;; Save file-visiting buffers according to the configured timers.
   (auto-save-visited-mode))
 
-;; Window and Buffer Management
+;; Provide "Casual" transient menus for complex modes
+
+
+(package! casual-suite
+  (require 'casual-suite)
+
+  (keymap-global-set "C-o" #'casual-editkit-main-tmenu)
+  (keymap-set symbol-overlay-map "C-o" #'casual-symbol-overlay-tmenu)
+
+  ;; <https://github.com/kickingvegas/casual-avy>
+  ;; M-g M-g
+  (keymap-set goto-map "M-g" #'casual-avy-tmenu)
+
+  ;; <https://github.com/kickingvegas/casual-calc>
+  (after! calc
+    (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu))
+  (after! calc-alg
+    (keymap-set calc-alg-map "C-o" #'casual-calc-tmenu))
+
+  ;; <https://github.com/kickingvegas/casual-dired>
+  (after! dired
+    (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu))
+
+  ;; <https://github.com/kickingvegas/casual-info>
+  (after! info
+    (keymap-set Info-mode-map "C-o" #'casual-info-tmenu))
+
+  ;; <https://github.com/kickingvegas/casual-isearch>
+  (after! isearch
+    (keymap-set isearch-mode-map "<f2>" #'casual-isearch-tmenu))
+
+  (after! ibuffer
+    (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
+    (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
+    (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu))
+
+  (after! re-builder
+    (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
+    (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu))
+
+  (after! bookmark
+    (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu))
+
+  (after! org-agenda
+    (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)))
+
+;; `Info-mode' enchantments
+
+
+(use-feature! info
+  :hook ((Info-mode . hl-line-mode)
+         (Info-mode . scroll-lock-mode)))
+
+;; ~helpful~: Provide improved alternatives to the builtin "describe" utilities
+
+;; - Source code :: <https://github.com/Wilfred/helpful>
+
+;; Note that there is a severe but edge-case bug that has gone unfixed
+;; for quite a while.  ~helpful~ cannot display documentation for symbols
+;; defined in Emacs C source code:
+
+;; <https://github.com/Wilfred/helpful/issues/329>
+
+
+
+(use-package helpful
+  :ensure t
+  ;; Avoid a first-time lag when asking for help, which often happens before an
+  ;; idle timer has the chance to run.
+  :demand t
+
+  :init
+  (define-keymap :keymap help-map
+    "c" #'helpful-callable
+    "C" #'helpful-command
+    "f" #'helpful-function              ; orig: `describe-face'
+    "h" #'helpful-at-point
+    ;; TODO: consider swapping with the original as a trial?
+    "k" #'helpful-key                   ; orig: `describe-key-briefly'
+    "o" #'helpful-symbol
+    "v" #'helpful-variable
+
+    ;; Parity with the corresponding unmodded keys.
+    ;; Primarily for Meow keypad, but also sometimes feels more natural to keep
+    ;; holding Ctrl anyway.
+    "C-k" #'helpful-key
+    "C-o" #'helpful-symbol
+
+    ;; Rebind the originals
+    "F" #'describe-face
+    "K" #'describe-key-briefly
+
+    ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
+    "C-h" nil))
+
+;; Rebind some default keybindings in the [C-h] ~help-map~
+
+
+(define-keymap :keymap help-map
+  "l" #'find-library
+  ;; I actually prefer the default `man' over `consult-man'.
+  "m" #'man                     ; orig: `describe-mode'
+  "M" #'describe-mode
+
+  ;; FIXME: no lambda binding
+  ;; "t" `("text-props (pt)" . ,(cmd!!
+  ;;                              #'describe-text-properties
+  ;;                              current-prefix-arg
+  ;;                              (point)))
+
+  ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
+  "C-h" nil)
+
+;; Record some variables' values with ~savehist~ [builtin]
+
+
+(use-feature! savehist
+  :init
+  (savehist-mode)
+
+  :config
+  (cl-dolist (save '(kill-ring
+                     regexp-search-ring
+                     search-ring))
+    (cl-pushnew save savehist-additional-variables))
+
+  (setopt savehist-autosave-interval 60))
+
+;; Record point position in buffers with ~saveplace~ [builtin]
+
+
+(use-feature! saveplace
+  :init
+  (save-place-mode))
+
+;; Record recently-accessed files with ~recentf~ [builtin]
+
+
+(use-feature! recentf
+  :init
+  (recentf-mode)
+
+  :config
+  (setopt recentf-max-saved-items 50)   ; default => 20
+  (setopt recentf-max-menu-items 15)    ; default => 10
+
+  ;; Disable recentf-cleanup on Emacs start, because it can cause
+  ;; problems with remote files.
+  (setopt recentf-auto-cleanup 'never)
+
+  ;; Exclude internal plumbing files.
+  (dolist (path '(ceamx-etc-dir ceamx-var-dir))
+    (add-to-list 'recentf-exclude path)))
+
+;; Increase undo history limits
+
+;; Advice from the author of ~undo-fu~:
+
+;; #+begin_quote
+;; The default undo limits for emacs are quite low _(0.15mb at time of
+;; writing)_ undo-tree for example increases these limits.
+
+;; On modern systems you may wish to use much higher limits.
+
+;; This example sets the limit to 64mb, 1.5x (96mb) for the strong limit
+;; and 10x (960mb) for the outer limit.  Emacs uses 100x for the outer
+;; limit but this may be too high when using increased limits.
+;; #+end_quote
+
+;; via <https://codeberg.org/ideasman42/emacs-undo-fu#undo-limits>
+
+
+(setopt undo-limit 67108864) ; 64mb.
+(setopt undo-strong-limit 100663296) ; 96mb.
+(setopt undo-outer-limit 1006632960) ; 960mb.
+
+;; ~undo-fu~: Support optional linear undo/redo
+
+;; - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu>
+
+
+(package! undo-fu
+  (keymap-global-set "C-z" #'undo-fu-only-undo)
+  (keymap-global-set "C-S-z" #'undo-fu-only-redo))
+
+;; ~undo-fu-session~: Record undo/redo steps across Emacs sessions
+
+;; - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
+
+;; NOTE: This is *NOT* just for use with ~undo-fu~!  It's an essential
+;; enhancement to the builtin Emacs undo system as well.
+
+
+(defvar undo-fu-session-directory
+  (expand-file-name "undo-fu-session" ceamx-var-dir))
+
+(package! undo-fu-session
+  (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+  (setopt undo-fu-session-ignore-temp-files t)
+  (setopt undo-fu-session-ignore-encrypted-files t)
+
+  (setopt undo-fu-session-compression 'zst)
+
+  (undo-fu-session-global-mode))
+
+;; ~vundo~: Visualize the Emacs undo tree
+
+;; - Source code :: <https://github.com/casouri/vundo>
+
+
+(use-package vundo
+  :ensure t
+  :defer t
+  :defines vundo-unicode-symbols
+
+  :bind
+  ("C-x u" . vundo)
+
+  :config
+  (setopt vundo-glyph-alist vundo-unicode-symbols))
+
+;; ~dogears~: Return to previously-visited buffer positions
+
+;; - Source code :: <https://github.com/alphapapa/dogears.el>
+
+
+(package! dogears
+  (add-hook 'on-first-buffer-hook #'dogears-mode)
+
+  ;; Also see `ceamx/dogears-dispatch'.
+  (define-keymap :keymap (current-global-map)
+    ;; TODO: find a new binding maybe
+    ;; "M-g d" #'dogears-go
+    "M-g M-b" #'dogears-back
+    "M-g M-f" #'dogears-forward
+    "M-g M-d" #'dogears-list
+    "M-g M-D" #'dogears-sidebar)
+
+  ;; Persist `dogears-list' between Emacs sessions.
+  ;; via <https://github.com/alphapapa/dogears.el/issues/4>
+  (after! savehist
+    (when (boundp 'savehist-additional-variables)
+      (add-to-list 'savehist-additional-variables #'dogears-list))))
+
+;; TODO: provide a little more context in transient (label for dogears, links maybe...)
+(after! (transient dogears)
+  (transient-define-prefix ceamx/dogears-dispatch ()
+    "Transient menu for `dogears' history navigation commands."
+    [["Navigate"
+      ("b" "back" dogears-back :transient transient--do-stay)
+      ("f" "forward" dogears-forward :transient transient--do-stay)]
+     ;; TODO: when quit one of these Find commands, return to transient
+     ["Find"
+      ("d" "go..." dogears-go)
+      ("l" "list" dogears-list)
+      ("S" "sidebar" dogears-sidebar)]])
+
+  (defer-until! (fboundp 'ceamx/dogears-dispatch)
+    (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
+
+;; =init.el=: Window
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el
 ;; :END:
@@ -1734,6 +1962,39 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 The buffer will be created if it does not exist."
   :group 'ceamx
   :type '(string))
+
+;; Configure window behavior for help buffers
+
+
+;; Focus newly-opened help windows.
+(setopt help-window-select t)
+
+;; Also focus newly-opened manpages, which still do not follow `display-buffer'
+;; rules (as of <2024-03-06>).
+(setopt Man-notify-method 'aggressive)
+
+;; ~lentic~: Create decoupled views of the same content :package:
+
+
+(package! lentic
+  (global-lentic-mode))
+
+(with-eval-after-load 'lentic
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+
+;; Disambiguate/uniquify buffer names
+
+
+(use-feature! emacs
+  :config
+  (setopt uniquify-buffer-name-style 'forward)
+  (setopt uniquify-separator "/")
+
+  ;; Rename after killing uniquified buffer.
+  (setopt uniquify-after-kill-buffer-p t)
+
+  ;; Don't muck with special buffers.
+  (setopt uniquify-ignore-buffers-re "^\\*"))
 
 ;; General buffer display settings :buffer:frame:display_buffer:
 
@@ -1929,13 +2190,6 @@ The buffer will be created if it does not exist."
 
 (add-hook 'ceamx-after-init-hook #'winner-mode)
 
-;; =dedicated=: Toggle a window's "dedicated" flag :package:
-
-;; <https://github.com/emacsorphanage/dedicated/tree/f47b504c0c56fa5ab9d1028417ca1f65a713a2f0>
-
-
-(package! dedicated)
-
 ;; =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
 
 
@@ -2026,29 +2280,14 @@ The buffer will be created if it does not exist."
 ;; :END:
 
 
-;;;; Dashboard
-
 (require 'init-dashboard)
-
-;;;; Keyboard support
-
 (require 'init-keys)
-
-;; FIXME: load earlier / in another section
-(require 'init-history)
-
-;;;; Text Expansion
-
 (require 'init-abbrevs)
 
 ;;;; Completions and Selections
 
 (require 'init-search)
 (require 'init-completion)
-
-;;;; Help
-
-(require 'init-help)
 
 ;;;; Actions
 
@@ -2164,7 +2403,7 @@ The buffer will be created if it does not exist."
 
 (define-keymap :keymap (current-global-map)
 
-  "C-x k" #'ceamx/kill-this-buffer      ; orig: `kill-buffer'
+  "C-x k" #'ceamx-simple/kill-buffer      ; orig: `kill-buffer'
   "C-x K" #'kill-buffer
 
   "C-x n n" #'logos-narrow-dwim
@@ -2214,7 +2453,7 @@ The buffer will be created if it does not exist."
 
 (define-keymap :keymap ceamx-buffer-prefix
   "b" #'consult-buffer
-  "k" #'ceamx/kill-this-buffer)
+  "k" #'ceamx-simple/kill-buffer)
 
 ;;;;; [C-c f] :: File
 
@@ -2229,14 +2468,14 @@ The buffer will be created if it does not exist."
   "r" '("rename/move..." . ceamx-simple/move-current-file)
   "s" #'save-buffer
   "S" '("save as..." . write-file)
-  "U" #'ceamx/sudo-find-file
+  "U" #'ceamx-simple/sudo-find-file
 
   "C-d" '("diff with..." . ceamx-simple/diff-with-file))
 
 ;;;;; [C-c i] :: Insert
 
 (define-keymap :keymap ceamx-insert-prefix
-  "d" #'ceamx/insert-date
+  "d" #'ceamx-simple/insert-date
   ;; "h" #'i-ching-insert-hexagram
   "L" #'spdx-insert-spdx
   "s" #'yas-insert-snippet

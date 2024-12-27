@@ -24,6 +24,43 @@
 ;;; Commentary:
 ;;; Code:
 
+;;;;; Pre-defined filters for ~consult-info~ searches
+
+(require 'ceamx-lib)
+
+(defvar devdocs-data-dir)
+
+(declare-function consult-info "consult")
+
+;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
+(defun ceamx/emacs-info ()
+  "Search through Emacs info pages."
+  (interactive)
+  (consult-info "emacs" "efaq" "elisp" "cl"))
+
+(defun ceamx/org-info ()
+  "Search through the Org info page."
+  (interactive)
+  (consult-info "org"))
+
+(defun ceamx/completion-info ()
+  "Search through completion info pages."
+  (interactive)
+  (consult-info "vertico" "consult" "marginalia" "orderless" "embark"
+                "corfu" "cape" "tempel"))
+
+(defun ceamx/consult-info-dwim (&optional buffer)
+  "Search Info manuals appropriate to BUFFER's major-mode."
+  (interactive)
+  (with-current-buffer (or buffer (current-buffer))
+    (let* ((mode major-mode)
+           (fn (pcase mode
+                 ((pred (lambda (x) (memq x '(emacs-lisp-mode))))
+                  #'ceamx/emacs-info)
+                 ((pred (lambda (x) (memq x '(org-mode org-agenda-mode))))
+                  #'ceamx/org-info)
+                 (_ #'consult-info))))
+      (command-execute fn))))
 (defvar +dabbrev-friend-buffer-size-max (* 1 1024 1024) ; 1 MB
   "Size limit for a buffer to be scanned for dynamic abbreviations.")
 

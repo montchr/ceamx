@@ -222,6 +222,17 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (after! consult
   ;; Make narrowing help available in the minibuffer.
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'embark-prefix-help-command))
+(declare-function consult-info "consult-info")
+
+;; Remove the default binding for the `describe-input-method' command.
+(keymap-global-unset "C-h I" t)
+
+(define-keymap :keymap (current-global-map)
+  "C-h i"    #'ceamx/consult-info-dwim
+  "C-h I c"  #'ceamx/completion-info
+  "C-h I e"  #'ceamx/emacs-info
+  "C-h I i"  #'consult-info
+  "C-h I o"  #'ceamx/org-info)
 (package! marginalia
   (keymap-set minibuffer-local-map "M-A" #'marginalia-cycle)
 
@@ -418,6 +429,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (after! lsp-mode
   (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
   (advice-add #'lsp-completion-at-point :around #'cape-wrap-nonexclusive))
+(use-feature! ibuffer
+  :config
+  (setopt ibuffer-movement-cycle t))
 
 (provide 'init-completion)
 ;;; init-completion.el ends here

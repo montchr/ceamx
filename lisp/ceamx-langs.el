@@ -42,111 +42,6 @@ execution order."
   (when (fboundp 'highlight-function-calls-mode)
     (highlight-function-calls-mode 1)))
 
-;; Define the user option for structured editing flavour
-
-
-(defcustom ceamx-structured-editing-style 'lispy
-  "The structured editing provider."
-  :group 'ceamx
-  :type '(choice :tag "Structured editing style" :value lispy
-          (const :tag "Lispy" lispy)
-          (const :tag "Puni" puni)))
-
-;; ~puni~: versatile structured editing :package:
-
-;; <https://github.com/AmaiKinono/puni>
-
-
-(package! puni
-  ;; (puni-global-mode)
-  ;; (add-hook 'prog-mode-hook #'puni-mode)
-  ;; (add-hook 'term-mode-hook #'puni-disable-puni-mode)
-  )
-
-;; (after! puni
-;;     ;; (define-keymap :keymap puni-mode-map
-;;   ;;   "C-M-f" #'puni-forward-sexp
-;;   ;;   "C-M-b" #'puni-backward-sexp
-;;   ;;   "C-M-a" #'puni-beginning-of-sexp
-;;   ;;   "C-M-e" #'puni-end-of-sexp
-;;   ;;   "C-M-[" #'puni-backward-sexp-or-up-list
-;;   ;;   "C-M-]" #'puni-forward-sexp-or-up-list
-
-;;   ;;   "M-(" #'puni-syntactic-forward-punct
-;;   ;;   "M-)" #'puni-syntactic-backward-punct
-;;   ;;   )
-
-;; )
-
-;; Prepare a prefix commands for binding structural editing commands
-
-
-(define-prefix-command 'ceamx-structural-editing-prefix)
-(keymap-global-set "C-c s" #'ceamx-structural-editing-prefix)
-
-;; Structural editing with ~puni~
-
-;; Work in progress.
-
-;; This is still not quite usable as a Lispy replacement.  The goal is to use
-;; similar structureal editing keybindings across many major-modes.
-
-;; Note that this repeat-map should not be used in tandem with ~lispy-mode~ because
-;; its bindings generally would need ~puni-mode~ to be active.
-
-;; - <https://karthinks.com/software/a-consistent-structural-editing-interface/>
-;; - <https://github.com/suliveevil/emacs.d?tab=readme-ov-file#repeat-repeat-mode>
-;; - <https://github.com/karthink/.emacs.d/blob/master/init.el#L3209-L3241>
-
-
-;; - [ ] Disable ~repeat-exit-timeout~ for this map only
-
-
-(after! puni
-
-  (defvar-keymap structural-editing-map
-    :repeat t
-
-    "d" #'puni-forward-delete-char
-    ;; "DEL" #'puni-backward-delete-char
-    ;; "D" #'puni-forward-kill-word
-    ;; "M-DEL" #'puni-backward-kill-word
-    ;; "C-k" #'puni-kill-line
-    ;; "M-k" #'puni-backward-kill-line
-    "k" #'kill-sexp
-
-    "f" #'puni-forward-sexp
-    "b" #'puni-backward-sexp
-    "[" #'puni-backward-sexp-or-up-list
-    "]" #'puni-forward-sexp-or-up-list
-    "a" #'puni-beginning-of-sexp
-    "e" #'puni-end-of-sexp
-    "u" #'puni-up-list
-    "M-(" #'puni-syntactic-forward-punct
-    "M-)" #'puni-syntactic-backward-punct
-
-    "\\" #'indent-region
-    "/" #'undo
-
-    ">" #'puni-slurp-forward
-    "<" #'puni-slurp-backward
-    "}" #'puni-barf-forward
-    "{" #'puni-barf-backward
-    "R" #'puni-raise
-    "t" #'puni-transpose
-    "C" #'puni-convolute
-    ;; FIXME: avoid meow dependency -- no puni equivalent
-    ;; "J" #'meow-join-sexp
-    "S" #'puni-split
-    ;; FIXME: for `emacs-lisp-mode' only
-    "x" #'eval-defun
-
-    ))
-
-;; FIXME: wrong type argument symbolp
-;; (map-keymap (lambda (_ cmd)
-;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
-
 ;; ~dumb-jump~: multi-lang do-what-i-mean jump-to-definition
 
 ;; - src :: <https://github.com/jacktasia/dumb-jump>
@@ -192,6 +87,75 @@ execution order."
 (use-package hl-todo
   :ensure t
   :hook (prog-mode . hl-todo-mode))
+
+;; ~devdocs~: Peruse local ~devdocs~ docsets
+
+;; - Source code :: <https://github.com/astoff/devdocs.el>
+
+;; NOTE: Must run ~devdocs-install~ before a docset is available for reference.
+
+
+(use-package devdocs
+  :ensure t
+  :defer t
+
+  :bind
+  (:map help-map
+        ("D" . devdocs-lookup))
+
+  :init
+  (after! popper
+    (add-to-list 'popper-reference-buffers "\\*devdocs\\*"))
+
+  :config
+  ;; FIXME: on a stale timer! every week! not every session...
+  ;; (devdocs-update-all)
+
+  )
+
+
+
+;; WIP: Define some helper functions for installing docsets automatically:
+
+
+(defun +devdocs--doc-directory-exists-p (slug)
+  "Whether the directory for the doc SLUG exists."
+  (file-directory-p (expand-file-name slug devdocs-data-dir)))
+
+(defun +devdocs--doc-installed-p (slug)
+  "Whether the document named SLUG is installed.
+Installation can be defined as whether there exists a metadata
+file inside a directory named SLUG within `devdocs-data-dir'."
+  (defvar devdocs-data-dir)
+  (let ((file (expand-file-name (concat slug "/metadata") devdocs-data-dir)))
+    (file-exists-p file)))
+
+(defun +devdocs-maybe-install (doc)
+  "Install the `devdocs' documentation set for DOC if not already installed.
+DOC is as in `devdocs-install'."
+  (declare-function devdocs-install "devdocs")
+  (unless (+devdocs--doc-installed-p doc)
+    (devdocs-install doc)))
+
+(defun +devdocs-maybe-install-docs (docs)
+  "Install each `devdocs' documentation set in DOCS if not already installed.
+DOCS is a quoted list of `devdocs' documentation identifiers as
+accepted by `+devdocs-maybe-install'."
+  (dolist (doc docs)
+    (+devdocs-maybe-install doc)))
+
+;; FIXME: return t if exists, whatever if new, otherwise throw
+(defun ceamx/devdocs-maybe-install (doc)
+  "Install the `devdocs' documentation set for DOC if not already installed.
+DOC is as in `devdocs-install'."
+  ;; TODO: prompt for selecting from available docs (see `devdocs-install')
+  (interactive "s")
+  (+devdocs-maybe-install doc))
+
+;; Display multiple composed messages inside ~eldoc~
+
+
+(setopt eldoc-documentation-function #'eldoc-documentation-compose)
 
 ;; [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT :package:
 
@@ -315,6 +279,118 @@ non-nil, buffers will never be formatted upon save."
   (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
     (funcall func)))
 
+;; Define the user option for structured editing flavour
+
+
+(defcustom ceamx-structured-editing-style 'lispy
+  "The structured editing provider."
+  :group 'ceamx
+  :type '(choice :tag "Structured editing style" :value lispy
+          (const :tag "Lispy" lispy)
+          (const :tag "Puni" puni)))
+
+;; ~puni~: versatile structured editing :package:
+
+;; <https://github.com/AmaiKinono/puni>
+
+
+(package! puni
+  ;; (puni-global-mode)
+  ;; (add-hook 'prog-mode-hook #'puni-mode)
+  ;; (add-hook 'term-mode-hook #'puni-disable-puni-mode)
+  )
+
+;; (after! puni
+;;     ;; (define-keymap :keymap puni-mode-map
+;;   ;;   "C-M-f" #'puni-forward-sexp
+;;   ;;   "C-M-b" #'puni-backward-sexp
+;;   ;;   "C-M-a" #'puni-beginning-of-sexp
+;;   ;;   "C-M-e" #'puni-end-of-sexp
+;;   ;;   "C-M-[" #'puni-backward-sexp-or-up-list
+;;   ;;   "C-M-]" #'puni-forward-sexp-or-up-list
+
+;;   ;;   "M-(" #'puni-syntactic-forward-punct
+;;   ;;   "M-)" #'puni-syntactic-backward-punct
+;;   ;;   )
+
+;; )
+
+;; Prepare a prefix commands for binding structural editing commands
+
+
+(define-prefix-command 'ceamx-structural-editing-prefix)
+(keymap-global-set "C-c s" #'ceamx-structural-editing-prefix)
+
+;; Structural editing with ~puni~
+
+;; Work in progress.
+
+;; This is still not quite usable as a Lispy replacement.  The goal is to use
+;; similar structureal editing keybindings across many major-modes.
+
+;; Note that this repeat-map should not be used in tandem with ~lispy-mode~ because
+;; its bindings generally would need ~puni-mode~ to be active.
+
+;; - <https://karthinks.com/software/a-consistent-structural-editing-interface/>
+;; - <https://github.com/suliveevil/emacs.d?tab=readme-ov-file#repeat-repeat-mode>
+;; - <https://github.com/karthink/.emacs.d/blob/master/init.el#L3209-L3241>
+
+
+;; - [ ] Disable ~repeat-exit-timeout~ for this map only
+
+
+(after! puni
+
+  (defvar-keymap structural-editing-map
+    :repeat t
+
+    "d" #'puni-forward-delete-char
+    ;; "DEL" #'puni-backward-delete-char
+    ;; "D" #'puni-forward-kill-word
+    ;; "M-DEL" #'puni-backward-kill-word
+    ;; "C-k" #'puni-kill-line
+    ;; "M-k" #'puni-backward-kill-line
+    "k" #'kill-sexp
+
+    "f" #'puni-forward-sexp
+    "b" #'puni-backward-sexp
+    "[" #'puni-backward-sexp-or-up-list
+    "]" #'puni-forward-sexp-or-up-list
+    "a" #'puni-beginning-of-sexp
+    "e" #'puni-end-of-sexp
+    "u" #'puni-up-list
+    "M-(" #'puni-syntactic-forward-punct
+    "M-)" #'puni-syntactic-backward-punct
+
+    "\\" #'indent-region
+    "/" #'undo
+
+    ">" #'puni-slurp-forward
+    "<" #'puni-slurp-backward
+    "}" #'puni-barf-forward
+    "{" #'puni-barf-backward
+    "R" #'puni-raise
+    "t" #'puni-transpose
+    "C" #'puni-convolute
+    ;; FIXME: avoid meow dependency -- no puni equivalent
+    ;; "J" #'meow-join-sexp
+    "S" #'puni-split
+    ;; FIXME: for `emacs-lisp-mode' only
+    "x" #'eval-defun
+
+    ))
+
+;; FIXME: wrong type argument symbolp
+;; (map-keymap (lambda (_ cmd)
+;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
+
+;; Apply ~autoinsert~ skeletons to new files
+
+
+(use-feature! autoinsert
+  :config
+  (auto-insert-mode 1))
+
 ;; Code
 
 
@@ -407,7 +483,7 @@ non-nil, buffers will never be formatted upon save."
   (after! lispy
     (add-to-list 'lispy-no-indent-modes #'kbd-mode)))
 
-;; Customizations
+;; Emacs Lisp
 
 
 (require 'config-keys)
@@ -534,6 +610,46 @@ The original function fails in the presence of whitespace after a sexp."
 ;; TODO: keybindings...
 
 (package! xr)
+
+;; ~elmacro~: Display keyboard macros or latest interactive commands as Elisp
+
+;; - Source code :: <https://github.com/Silex/elmacro>
+
+;; Avoid enabling this mode globally.  It may cause some recurring errors, and
+;; the package has not been updated in years.  By nature, it is also quite
+;; invasive, and should probably only be used as a development tool as needed.
+
+
+(use-package elmacro
+  :ensure t
+  :config
+  (setopt elmacro-show-last-commands-default 30)
+
+  ;; <https://github.com/Silex/elmacro/blob/master/README.md#org-mode-smartparens-etc>
+  ;; <https://github.com/Silex/elmacro/blob/master/README.md#elmacro-processor-prettify-inserts>
+  (setopt elmacro-processor-prettify-inserts
+          (unless (or (bound-and-true-p lispy-mode) ; not actually sure about lispy-mode
+                      (bound-and-true-p smartparens-mode)
+                      (bound-and-true-p org-mode))))
+
+  ;; "a" "b" "c" => "abc"
+  ;; FIXME: maybe causes errors?
+  (setopt elmacro-processor-concatenate-inserts t))
+
+;; ~elisp-demos~: Display usage examples for Elisp callables inside their help buffers
+
+;; - Source code :: <https://github.com/xuchunyang/elisp-demos>
+
+
+(use-package elisp-demos
+  :ensure t
+  :defer 5
+  :after (helpful)
+  :functions (elisp-demos-advice-helpful-update)
+  :config
+  (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
+
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
 ;; Language Server and Debugger Protocol Support :lsp:lang:
 
@@ -870,11 +986,6 @@ Markdown document has a colon in it, then it's distractingly and
 usually wrongly fontified as a metadata block."
     (ignore (goto-char (point-max)))))
 
-;; Nix
-
-
-(require 'lib-help)
-
 ;; Install and configure ~nix-mode~ :package:
 
 ;; <https://github.com/NixOS/nix-mode>
@@ -971,6 +1082,8 @@ usually wrongly fontified as a metadata block."
 
 ;; Install ~devdocs~ Nix docset :docs:
 
+
+(require 'lib-prog)
 
 (def-hook! +devdocs-install-nix-docs ()
   '(nix-mode-hook nix-ts-mode-hook)

@@ -27,10 +27,9 @@
 (require 'ceamx-lib)
 
 (use-feature! printing
-  :defer 2
+  :defer 10
   :commands (pr-update-menus)
   :config
-  (require 'printing)
   ;; EPSON WF-3520
   (setopt printer-name "LABORTTY")
   ;; (setopt lpr-switches '())
