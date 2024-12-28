@@ -1408,6 +1408,8 @@ This operation will respect the following rules:
 
 (use-package expand-region
   :ensure t
+  :defer t
+
   :init
   (keymap-global-set "C-=" #'er/expand-region))
 
@@ -1415,9 +1417,18 @@ This operation will respect the following rules:
 
 ;; <https://github.com/rejeep/drag-stuff.el>
 
-;;  This package appears to be abandoned since 2017.  As of <2024-12-27>,
-;;  it still works relatively well.  However, there may be some subtle
-;;  conflicts with ~org-metaup~ and ~org-metadown~.
+;; This package appears to be abandoned since 2017.  As of <2024-12-27>,
+;; it still works relatively well, but has some issues:
+
+;; + Possible subtle conflicts with ~org-metaup~ and ~org-metadown~?
+;; + Numerous warnings about deprecated functions <https://github.com/rejeep/drag-stuff.el/issues/36>
+
+;; I haven't yet found any other package to move arbitrary regions
+;; up/down while preserving column position.
+
+;; ~move-text-mode~ <https://github.com/emacsfodder/move-text> claims to do
+;; this, but fails pretty badly, moving the region/selection to the first
+;; column regardless of its original position.
 
 
 (use-package drag-stuff
@@ -1608,7 +1619,27 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (use-feature! ceamx-simple
   :demand t
   :config
-  (keymap-global-set "C-<" #'ceamx-simple/escape-url-dwim)
+  (define-keymap :keymap (current-global-map)
+    "C-x k" #'ceamx-simple/kill-buffer  ; orig: `kill-buffer'
+    "C-x K" #'kill-buffer
+    "C-<" #'ceamx-simple/escape-url-dwim
+    ;; FIXME: move to `ceamx-simple'
+    "M-DEL" #'ceamx/backward-kill-word)
+
+  (define-keymap :keymap ceamx-buffer-prefix
+    "k" #'ceamx-simple/kill-buffer)
+
+  (define-keymap :keymap ceamx-file-prefix
+    "c" '("copy..." . ceamx-simple/copy-current-file)
+    "d" '("delete" . ceamx-simple/delete-current-file)
+    "r" '("move..." . ceamx-simple/move-current-file)
+    "U" #'ceamx-simple/sudo-find-file
+
+    "C-d" '("diff with..." . ceamx-simple/diff-with-file))
+
+  (define-keymap :keymap ceamx-insert-prefix
+    "d" '("date" . ceamx-simple/insert-date))
+
   (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment))
 
 ;; Linkify URLs and email addresses with ~goto-address~ [builtin]
@@ -1954,7 +1985,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (require 'ceamx-simple)
 (require 'ceamx-window)
 
-;; Define the user option specifying a fallback buffer :buffer:
+;; Define the user option specifying a fallback buffer
 
 
 (defcustom ceamx-fallback-buffer-name "*scratch*"
@@ -1972,15 +2003,6 @@ The buffer will be created if it does not exist."
 ;; Also focus newly-opened manpages, which still do not follow `display-buffer'
 ;; rules (as of <2024-03-06>).
 (setopt Man-notify-method 'aggressive)
-
-;; ~lentic~: Create decoupled views of the same content :package:
-
-
-(package! lentic
-  (global-lentic-mode))
-
-(with-eval-after-load 'lentic
-  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 
 ;; Disambiguate/uniquify buffer names
 
@@ -2214,6 +2236,15 @@ The buffer will be created if it does not exist."
 
 (package! transpose-frame)
 
+;; =lentic=: Create decoupled views of the same content
+
+
+(package! lentic
+  (global-lentic-mode))
+
+(with-eval-after-load 'lentic
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+
 ;; ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
 
 
@@ -2302,7 +2333,7 @@ The buffer will be created if it does not exist."
 (require 'init-workspace)
 
 ;;;; Editing
-(require 'ceamx-langs)
+(require 'ceamx-init-langs)
 (require 'init-writing)
 (require 'init-templates)
 
@@ -2310,7 +2341,7 @@ The buffer will be created if it does not exist."
 
 (require 'init-notes)
 (require 'init-outline)
-(require 'init-org)
+(require 'ceamx-init-org)
 
 ;;;; Linting
 
@@ -2335,8 +2366,6 @@ The buffer will be created if it does not exist."
 (require 'init-printing)
 
 (require 'init-fun)
-
-(require 'init-controls)
 
 ;; TODO ~hippie-expand~
 
@@ -2403,9 +2432,6 @@ The buffer will be created if it does not exist."
 
 (define-keymap :keymap (current-global-map)
 
-  "C-x k" #'ceamx-simple/kill-buffer      ; orig: `kill-buffer'
-  "C-x K" #'kill-buffer
-
   "C-x n n" #'logos-narrow-dwim
   "C-x o" #'ace-window
   ;; "C-x o" #'ceamx/other-window
@@ -2440,10 +2466,7 @@ The buffer will be created if it does not exist."
   "M-F" #'forward-symbol
   "M-j" #'avy-goto-char-timer
   "M-Q" #'repunctuate-sentences
-  "M-w" #'easy-kill
-
-  "M-DEL" #'ceamx/backward-kill-word
-  )
+  "M-w" #'easy-kill)
 
 (after! (avy lispy)
   ;; Prevent conflict with newly-added M-j binding.
@@ -2568,6 +2591,7 @@ The buffer will be created if it does not exist."
   "p" #'popper-toggle
   "P" #'popper-toggle-type
   "u" #'winner-undo
+  "U" #'winner-redo
 
   "h" #'windmove-left
   "H" #'ceamx/window-move-left
@@ -2593,18 +2617,21 @@ The buffer will be created if it does not exist."
   "<left>" #'shrink-window-horizontally
   "<right>" #'enlarge-window-horizontally)
 
-(defvar-keymap ceamx-window-repeat-map
+(defvar-keymap ceamx-window-transposition-repeat-map
   :repeat t
 
-  "o" #'ace-window
   "SPC" #'transpose-frame
   "<" #'flip-frame
   ">" #'flop-frame
   "[" #'rotate-frame-clockwise
-  "]" #'rotate-frame-anticlockwise
+  "]" #'rotate-frame-anticlockwise)
 
-  "RET" #'repeat-exit
-  "ESC" #'repeat-exit)
+(defvar-keymap ceamx-window-lifecycle-repeat-map
+  :repeat t
+
+  "2" #'split-window-below
+  "3" #'split-window-right
+  "o" #'ace-window)
 
 ;; Start the Emacs server process if not already running
 
