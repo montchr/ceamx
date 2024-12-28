@@ -659,7 +659,10 @@ The original function fails in the presence of whitespace after a sexp."
 ;; Requires =emacs-lsp-booster= to be installed into the environment.  Available by that name in Nixpkgs.
 
 
-(package! (eglot-booster :host github :repo "jdtsmith/eglot-booster")
+(use-package eglot-booster
+  :ensure (:host github :repo "jdtsmith/eglot-booster")
+  :commands (eglot-booster-mode)
+  :init
   (after! eglot
     (eglot-booster-mode)))
 

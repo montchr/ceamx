@@ -324,6 +324,45 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (elpaca-wait)
 
+;; Install and configure =setup.el=
+
+
+(elpaca setup
+  (require 'setup))
+
+(elpaca-wait)
+
+(defun +setup-wrap-to-install-elpaca-package (body _name)
+  "Wrap BODY in an `elpaca' block when `:ensure' is provided."
+  (if (assq 'ensure setup-attributes)
+      `(elpaca ,(cdr (assq 'ensure setup-attributes))
+         ,@(macroexp-unprogn body))
+    body))
+
+(add-to-list 'setup-modifier-list #'+setup-wrap-to-install-elpaca-package)
+
+(setup-define :ensure
+  (lambda (order &rest recipe)
+    (push (cond
+           ((eq order t) `(ensure . ,(setup-get 'feature)))
+           ((eq order nil) `(ensure . nil))
+           (`(ensure . (,order ,@recipe))))
+          setup-attributes)
+    ;; If the macro returned non-nil, it would try to insert the
+    ;; modified list returned by `push'.  As this value usually cannot
+    ;; be evaluated, it is better to return nil (which the byte
+    ;; compiler will optimize away).
+    nil)
+  :documentation "Install ORDER with the `elpaca' package manager.
+The ORDER can be used to deduce the feature context."
+  :shorthand #'cadr)
+
+(setup (:ensure prism))
+
+(setup (:ensure chess))
+
+(setup org-remark (:ensure t))
+
 ;; ~gcmh~: manage running garbage collection on idle :package:perf:
 
 ;; - Website :: <https://akrl.sdf.org/>

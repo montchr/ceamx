@@ -77,7 +77,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   (declare-function outline-demote "outline")
 
   ;; FIXME: this example from the readme results in errors due to mismatched signature
-  (advice-add 'load-theme :after #'outli-reset-all-faces)
+  ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
   ;; (advice-remove 'load-theme #'outli-reset-all-faces)
 
   (define-keymap :keymap outli-mode-map
