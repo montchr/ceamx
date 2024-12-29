@@ -3609,7 +3609,6 @@ will be used as default."
 :header-args: :tangle init.el
 :END:
 
-
 ** Baseline configurations
 
 #+begin_src emacs-lisp
@@ -3672,10 +3671,11 @@ will be used as default."
     ;; TODO: redundant with `easy-kill'
     "C-S-w" #'ceamx-simple/copy-line
     "C-S-y" #'ceamx-simple/yank-replace-line-or-region
-    "C-v" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
-    "<next>" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
-    "M-v" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
-    "<prior>" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
+    ;; FIXME: these have weird quirks esp. in folded org-mode buffers
+    ;; "C-v" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
+    ;; "<next>" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
+    ;; "M-v" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
+    ;; "<prior>" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
     "C-RET" #'ceamx-simple/new-line-below
     "C-S-RET" #'ceamx-simple/new-line-above
 
@@ -3805,6 +3805,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-a" #'mwim-beginning)
   (keymap-global-set "C-e" #'mwim-end))
 #+end_src
+
 *** INPRG Provide a command to intelligently kill words backwardsly
 
 - State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
@@ -5294,29 +5295,23 @@ Enable ~repeat-mode~, avoiding running mode-hooks too early:
 (package! free-keys)
 #+end_src
 
-** DISABLED ~which-key~ [builtin]
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
+** ~which-key~ [builtin]
 
 #+begin_src emacs-lisp
-(when (fboundp 'which-key-mode)
-  (add-hook 'ceamx-after-init-hook #'which-key-mode))
+(use-feature! which-key
+  :hook (ceamx-after-init . which-key-mode)
 
-;; Determine whether keys have been rebound, considering the active keymaps.
-(setopt which-key-compute-remaps t)
-(setopt which-key-idle-delay 1.0)
+  :config
+  (setopt which-key-compute-remaps t)
+  (setopt which-key-idle-delay 1.0)
+  (setopt which-key-sort-order 'which-key-prefix-then-key-order
+          which-key-sort-uppercase-first nil)
 
-;; Sort non-prefix-keys above prefix keys.
-(setopt which-key-sort-order 'which-key-prefix-then-key-order)
+  ;; The default (0) is difficult to read.
+  (setopt which-key-add-column-padding 2)
 
-(setopt which-key-sort-uppercase-first nil)
-
-;; The default (0) is difficult to read.
-(setopt which-key-add-column-padding 2)
-
-;; FIXME: no effect? what does this actually do?
-(setopt which-key-show-remaining-keys t)
+  ;; FIXME: no effect? what does this actually do?
+  (setopt which-key-show-remaining-keys t))
 #+end_src
 
 ** DISABLED Improve display of hints in an active ~repeat-mode~ keymap
@@ -6329,9 +6324,9 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
   (add-to-list 'vertico-multiform-categories '(embark-keybinding grid)))
 #+end_src
 
-*** Use Embark's completion UI for displaying available key help
+*** DISABLED Use Embark's completion UI for displaying available key help
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (setopt prefix-help-command #'embark-prefix-help-command)
 #+end_src
 

@@ -43,8 +43,6 @@
 (after! vertico
   (add-to-list 'vertico-multiform-categories '(embark-keybinding grid)))
 
-(setopt prefix-help-command #'embark-prefix-help-command)
-
 (package! embark-consult
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 

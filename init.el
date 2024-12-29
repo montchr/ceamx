@@ -1342,10 +1342,11 @@ with its default modeline)."
     ;; TODO: redundant with `easy-kill'
     "C-S-w" #'ceamx-simple/copy-line
     "C-S-y" #'ceamx-simple/yank-replace-line-or-region
-    "C-v" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
-    "<next>" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
-    "M-v" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
-    "<prior>" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
+    ;; FIXME: these have weird quirks esp. in folded org-mode buffers
+    ;; "C-v" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
+    ;; "<next>" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
+    ;; "M-v" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
+    ;; "<prior>" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
     "C-RET" #'ceamx-simple/new-line-below
     "C-S-RET" #'ceamx-simple/new-line-above
 

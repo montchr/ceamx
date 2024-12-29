@@ -100,5 +100,23 @@
 
 (package! free-keys)
 
+;; ~which-key~ [builtin]
+
+
+(use-feature! which-key
+  :hook (ceamx-after-init . which-key-mode)
+
+  :config
+  (setopt which-key-compute-remaps t)
+  (setopt which-key-idle-delay 1.0)
+  (setopt which-key-sort-order 'which-key-prefix-then-key-order
+          which-key-sort-uppercase-first nil)
+
+  ;; The default (0) is difficult to read.
+  (setopt which-key-add-column-padding 2)
+
+  ;; FIXME: no effect? what does this actually do?
+  (setopt which-key-show-remaining-keys t))
+
 (provide 'init-keys)
 ;;; init-keys.el ends here
