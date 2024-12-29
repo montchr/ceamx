@@ -485,28 +485,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<file-footer(feature="lib-editor")>>
 #+end_src
 
-** =lisp/lib-search.el=
-
-#+name: lib-search-file
-#+begin_src emacs-lisp  :tangle lisp/lib-search.el :comments no :noweb yes
-<<file-prop-line(feature="lib-search",desc="Search support functions")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-search>>
-
-<<file-footer(feature="lib-search")>>
-#+end_src
-
 ** =lisp/lib-prog.el=
 
 #+name: lib-prog-file
@@ -702,28 +680,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<init-outline>>
 
 <<file-footer(feature="init-outline")>>
-#+end_src
-
-** =lisp/init-search.el=
-
-#+name: init-search-file
-#+begin_src emacs-lisp  :tangle lisp/init-search.el :comments no :noweb yes
-<<file-prop-line(feature="init-search",desc="Searching and replacing features")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-search>>
-
-<<file-footer(feature="init-search")>>
 #+end_src
 
 ** =lisp/init-workspace.el=
@@ -4976,9 +4932,9 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 #+end_src
 
 
-* Search :: =search= :search:
+* =ceamx-init-search= :: Search & Replace
 :PROPERTIES:
-:header-args: :noweb-ref init-search
+:header-args: :tangle lisp/ceamx-init-search.el
 :END:
 
 Configuration for search-related utilities like ~isearch~ and
@@ -4993,25 +4949,19 @@ these utilities.
 
   #+begin_src emacs-lisp
 (require 'ceamx-lib)
-(require 'lib-search)
 #+end_src
 
-** Finding a library means finding a library
+** Baseline search configuration
 
 #+begin_src emacs-lisp
-(setopt find-library-include-other-files nil)
+(use-feature! emacs
+  :config
+  (setopt find-library-include-other-files nil)
+
+  (keymap-set search-map "r" '("replace..." . ceamx-replace-prefix)))
 #+end_src
 
-** ~isearch~ [builtin]
-
-#+begin_src emacs-lisp :noweb-ref lib-search
-(defun ceamx/replace-symbol-at-point ()
-  "Run `query-replace-regexp' for the symbol at point."
-  (interactive)
-  (require 'isearch)
-  (isearch-forward-symbol-at-point)
-  (isearch-query-replace-regexp))
-#+end_src
+** Configure interactive searching with ~isearch~
 
 #+begin_src emacs-lisp
 (setopt search-highlight t)
@@ -5041,8 +4991,7 @@ these utilities.
     "r" #'isearch-repeat-backward)
 
   (define-keymap :keymap (current-global-map)
-    "M-s M-o" #'multi-occur
-    "M-s %" #'ceamx/replace-symbol-at-point)
+    "M-s M-o" #'multi-occur)
 
   (define-keymap :keymap isearch-mode-map
     "M-<" #'isearch-beginning-of-buffer
@@ -5059,7 +5008,7 @@ these utilities.
   (keymap-set minibuffer-local-isearch-map "M-/" #'isearch-complete-edit))
 #+end_src
 
-** ~substitute~: Efficiently replace targets in the buffer or context
+** ~substitute~: efficiently replace contextual targets
 
 <https://protesilaos.com/emacs/substitute>
 
@@ -5080,41 +5029,24 @@ these utilities.
 
 ** ~wgrep~: writable grep buffers
 
-"Writable grep buffer and apply the changes to files"
-
-<https://github.com/mhayashi1120/Emacs-wgrep>
++ Package :: <https://github.com/mhayashi1120/Emacs-wgrep>
 
 #+begin_src emacs-lisp
-(package! wgrep
-  (setopt wgrep-auto-save-buffer t)
-  (setopt wgrep-change-readonly-file t))
+(use-package wgrep
+  :ensure t
+
+  :bind
+  ((nil . nil)
+   :map dired-mode-map
+   ("C-c C-e" . wgrep-change-to-wgrep-mode)
+   :map grep-mode-map
+   ("W" . wgrep-change-to-wgrep-mode))
+
+  :config
+  (setopt wgrep-auto-save-buffer t))
 #+end_src
 
-
-#+begin_src emacs-lisp :noweb-ref lib-search
-;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
-;;;###autoload
-(defun +vertico/embark-export-write ()
-  "Export the current vertico results to a writable buffer if possible.
-Supports exporting consult-grep to wgrep, file to wdeired,
-and consult-location to occur-edit."
-  (interactive)
-  (require 'embark)
-  (require 'wgrep)
-  (let* ((edit-command
-          (pcase-let ((`(,type . ,candidates)
-                       (run-hook-with-args-until-success 'embark-candidate-collectors)))
-            (pcase type
-              ('consult-grep #'wgrep-change-to-wgrep-mode)
-              ('file #'wdired-change-to-wdired-mode)
-              ('consult-location #'occur-edit-mode)
-              (x (user-error "Embark category %S doesn't support writable export" x)))))
-         (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
-    (embark-export)))
-#+end_src
-
-**** Keybindings
-** ~re-builder~ [builtin]: the regular expression builder
+** Configure ~re-builder~, the regular expression builder
 
 <https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder>
 <https://francismurillo.github.io/2017-03-30-Exploring-Emacs-rx-Macro/>
@@ -5122,30 +5054,19 @@ and consult-location to occur-edit."
 Unfortunately, ~re-builder~ itself is poorly-documented.
 
 #+begin_src emacs-lisp
-;; "string" => recommended: \\(foo\\\|bar\\)
-;; "rx"     => recommended; advanced sexp regexp engine
-;; "read"   => default, avoid: backslash hell
-(setopt reb-re-syntax 'string)
+(use-feature! re-builder
+  :config
+  ;; "string" => recommended: \\(foo\\\|bar\\)
+  ;; "rx"     => recommended; advanced sexp regexp engine
+  ;; "read"   => default, avoid: backslash hell
+  (setopt reb-re-syntax 'string))
 #+end_src
 
-** Keybindings
+** Provide ~ceamx-search~ feature
 
 #+begin_src emacs-lisp
-(keymap-set search-map "r" '("replace..." . ceamx-replace-prefix))
-
-(keymap-set minibuffer-local-map "C-c C-e" #'+vertico/embark-export-write)
-
-(after! dired
-  (keymap-set dired-mode-map "C-c C-e" #'wgrep-change-to-wgrep-mode))
-
-(after! grep
-  (keymap-set grep-mode-map "W" #'wgrep-change-to-wgrep-mode))
-
-;; FIXME: wrong num args
-;; the intention is to close the wgrep popup after abort/finish
-;; (after! popper
-;;   (advice-add #'wgrep-abort-changes :after #'popper-toggle)
-;;   (advice-add #'wgrep-finish-edit :after #'popper-toggle))
+(provide 'ceamx-init-search)
+;;; ceamx-init-search.el ends here
 #+end_src
 
 
@@ -5501,11 +5422,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 ** VERTical Interactive COmpletion :ui:minibuffer:
 
-+ website :: <https://github.com/minad/vertico>
-
-#+begin_src emacs-lisp
-(defvar savehist-additional-variables)
-#+end_src
++ Package :: <https://github.com/minad/vertico>
 
 *** Install Vertico and configure its global settings
 
@@ -5598,6 +5515,39 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
             (symbol (vertico-sort-function . vertico-sort-alpha))))
 
   (vertico-multiform-mode))
+#+end_src
+
+*** Add command to export completion candidates to a writable buffer
+
+#+begin_src emacs-lisp
+(keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write)
+#+end_src
+
+Note the dependencies on ~embark~ and ~wgrep~!
+
+#+begin_src emacs-lisp :noweb-ref lib-completion
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
+;;;###autoload
+(defun ceamx-completion/embark-export-write ()
+  "Export the current `vertico' candidates to a writable buffer.
+Supported export flows include the following:
+
+`consult-grep'      => `wgrep'
+files               => `wdired'
+`consult-location'  => `occur-edit'"
+  (interactive)
+  (require 'embark)
+  (require 'wgrep)
+  (let* ((edit-command
+          (pcase-let ((`(,type . ,candidates)
+                       (run-hook-with-args-until-success 'embark-candidate-collectors)))
+            (pcase type
+              ('consult-grep #'wgrep-change-to-wgrep-mode)
+              ('file #'wdired-change-to-wdired-mode)
+              ('consult-location #'occur-edit-mode)
+              (x (user-error "Embark category %S doesn't support writable export" x)))))
+         (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
+    (embark-export)))
 #+end_src
 
 ** CONSULTing completing-read :minibuffer:search:
@@ -5809,8 +5759,6 @@ Not really what I wanted...
 ** Pre-defined filters for ~consult-info~ searches
 
 #+begin_src emacs-lisp :noweb-ref lib-completion
-;;;;; Pre-defined filters for ~consult-info~ searches
-
 (require 'ceamx-lib)
 
 (defvar devdocs-data-dir)
@@ -5847,7 +5795,6 @@ Not really what I wanted...
                  (_ #'consult-info))))
       (command-execute fn))))
 #+end_src
-
 
 ** Bind commands to call ~consult-info~ filtered by commonly-used manual collections
 
@@ -10908,33 +10855,12 @@ Return the new `zone' timer."
 (require 'init-dashboard)
 (require 'init-keys)
 (require 'init-abbrevs)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Completions and Selections
-
-(require 'init-search)
+(require 'ceamx-init-search)
 (require 'init-completion)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Actions
-
 (require 'init-embark)
-
-;; Projects / Files
 (require 'init-vcs)
 (require 'init-dired)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Workspaces + activities + contexts
-
 (require 'init-workspace)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Editing
 (require 'ceamx-init-langs)
 (require 'init-writing)
 (require 'init-templates)

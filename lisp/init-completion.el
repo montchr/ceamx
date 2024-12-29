@@ -56,7 +56,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
         (cdr args)))
 
 (advice-add #'completing-read-multiple :filter-args #'+crm-indicator)
-(defvar savehist-additional-variables)
 (package! vertico
   (setopt vertico-count 8)
   (setopt vertico-resize t)
@@ -123,6 +122,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
             (symbol (vertico-sort-function . vertico-sort-alpha))))
 
   (vertico-multiform-mode))
+(keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write)
 (package! consult
   (require 'consult))
 (setopt consult-narrow-key ">")         ; suggested: "<"

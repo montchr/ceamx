@@ -2421,25 +2421,12 @@ The buffer will be created if it does not exist."
 (require 'init-dashboard)
 (require 'init-keys)
 (require 'init-abbrevs)
-
-;;;; Completions and Selections
-
-(require 'init-search)
+(require 'ceamx-init-search)
 (require 'init-completion)
-
-;;;; Actions
-
 (require 'init-embark)
-
-;; Projects / Files
 (require 'init-vcs)
 (require 'init-dired)
-
-;;;; Workspaces + activities + contexts
-
 (require 'init-workspace)
-
-;;;; Editing
 (require 'ceamx-init-langs)
 (require 'init-writing)
 (require 'init-templates)
