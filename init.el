@@ -1462,10 +1462,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;; ~mwim~: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
 
 
-(use-package mwim
-  :ensure t
-  :demand t
-  :init
+(package! mwim
   ;; FIXME: overrides `org-mode' bindings!
   (keymap-global-set "C-a" #'mwim-beginning)
   (keymap-global-set "C-e" #'mwim-end))
@@ -1888,13 +1885,10 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 
 
-(use-package helpful
-  :ensure t
-  ;; Avoid a first-time lag when asking for help, which often happens before an
-  ;; idle timer has the chance to run.
-  :demand t
+(package! helpful
+  (defer! 2
+    (require 'helpful))
 
-  :init
   (define-keymap :keymap help-map
     "c" #'helpful-callable
     "C" #'helpful-command
