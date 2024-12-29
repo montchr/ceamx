@@ -109,7 +109,7 @@
   ;; "read"   => default, avoid: backslash hell
   (setopt reb-re-syntax 'string))
 
-;; Provide ~ceamx-search~ feature
+;; Provide ~ceamx-init-search~ feature
 
 
 (provide 'ceamx-init-search)

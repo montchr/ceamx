@@ -2463,11 +2463,12 @@ The buffer will be created if it does not exist."
 
 ;; TODO ~hippie-expand~
 
+;; + [ ] Adds noticeable lag to startup
+
 
 (setopt hippie-expand-verbose t
         hippie-expand-dabbrev-skip-space t)
 
-;; These are mostly from the default value, for visibility.
 (setopt hippie-expand-try-functions-list
         '(try-complete-file-name-partially
           try-complete-file-name

@@ -14,9 +14,8 @@
 
 This is a user configuration for GNU Emacs.
 
-The target operating system is the NixOS distribution of GNU/Linux, though the
-configuration will usually also work on macOS.  E would like Ceamx to run well
-on WSL2 when E is running MS Windows, however that is a very low priority.
+The target operating system is GNU/Linux, though the configuration
+will usually also work on macOS.
 
 ** Styleguide
 :PROPERTIES:
@@ -275,8 +274,15 @@ Example table:
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #+end_src
 
-** Maintenance
-*** Functions to clean and re-tangle Elisp files
+** Resources
+
+- [[info:elisp#Tips][(elisp) Tips]]
+- [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
+
+
+* Maintenance
+
+** Functions to clean and re-tangle Elisp files
 
 #+begin_src emacs-lisp :noweb yes :results silent
 <<ceamx-tangle-src>>
@@ -330,7 +336,7 @@ default source file."
 #+end_src
 
 
-*** Debugging
+** Debugging
 
 - Source :: [[https://github.com/progfolio/.emacs.d/blob/master/init.org?plain=1][.emacs.d/init.org at master · progfolio/.emacs.d]]
 - Retrieved :: [2024-06-04 Tue 22:20]
@@ -368,11 +374,6 @@ mutation of a variable.
 #+begin_src emacs-lisp :tangle no
 (setq debug-on-error t)
 #+end_src
-
-** Resources
-
-- [[info:elisp#Tips][(elisp) Tips]]
-- [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
 
 
 * Agenda
@@ -1081,6 +1082,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 #+end_src
+
 
 * =ceamx-paths= :: Paths
 
@@ -5062,7 +5064,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
   (setopt reb-re-syntax 'string))
 #+end_src
 
-** Provide ~ceamx-search~ feature
+** Provide ~ceamx-init-search~ feature
 
 #+begin_src emacs-lisp
 (provide 'ceamx-init-search)
@@ -10918,13 +10920,12 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 ** TODO ~hippie-expand~
 
++ [ ] Adds noticeable lag to startup
+
 #+begin_src emacs-lisp
 (setopt hippie-expand-verbose t
         hippie-expand-dabbrev-skip-space t)
-#+end_src
 
-#+begin_src emacs-lisp
-;; These are mostly from the default value, for visibility.
 (setopt hippie-expand-try-functions-list
         '(try-complete-file-name-partially
           try-complete-file-name
