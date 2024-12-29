@@ -136,23 +136,11 @@
 
 (setq ring-bell-function #'ignore)
 
-;; Allow answering yes/no questions with y/n
-
-
-(setq use-short-answers t)              ; affects `yes-or-no-p'
-(setq read-answer-short t)              ; affects `read-answer' (completion)
-
 ;; Appearance: integrate with desktop environment
 
 
 ;; Prevent X11 from taking control of visual behavior and appearance.
 (setq inhibit-x-resources t)
-
-;; Avoid expensive frame resizing.
-(setq frame-inhibit-implied-resize t)
-
-;; Allow resizing the frame to the maximum available space on the desktop.
-(setq frame-resize-pixelwise t)
 
 (defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
 
@@ -177,18 +165,31 @@ not retain the generic background set by the function
   (when-let* ((theme (car custom-enabled-themes)))
     (enable-theme theme)))
 
-;; Appearance: hide some unwanted components
+;; Appearance: basic frame settings
 
 
+(setq frame-resize-pixelwise t
+      frame-inhibit-implied-resize t
+      frame-title-format '("%b")
+      use-dialog-box t
+      use-file-dialog nil
+      use-short-answers t              ; affects `yes-or-no-p'
+      read-answer-short t              ; affects `read-answer' (completion)
+      inhibit-splash-screen t
+      inhibit-startup-screen t
+      inhibit-startup-echo-area-message user-login-name
+      inhibit-startup-buffer-menu t)
+
+(menu-bar-mode -1)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 
-;; `tooltip-mode' is broken for me in pgtk -- might be an Emacs bug, causes
-;; constant errors when moving mouse over modeline.
+;; `tooltip-mode' is broken for me in pgtk -- might be an Emacs bug,
+;; causes constant errors when moving mouse over modeline.
 ;;
-;; FIXME: actually, this is behaving inconsistently: disabling it does not
-;; necessarily work, and toggling it off/on allows `tooltip-mode' to function
-;; normally...  maybe needs to happen later in init?
+;; FIXME: actually, this is behaving inconsistently: disabling it does
+;; not necessarily work, and toggling it off/on allows `tooltip-mode'
+;; to function normally...  maybe needs to happen later in init?
 (tooltip-mode -1)
 
 ;; Appearance: avoid flash of light in a dark environment
@@ -197,17 +198,19 @@ not retain the generic background set by the function
 
 
 
-(defun ceamx-prevent-initial-light-flash ()
+(defun ceamx-init-prevent-initial-light-flash ()
   "Avoid the bright flash of light during startup in dark environments."
   (when (ceamx-ui-desktop-dark-theme-p)
     (set-face-attribute 'default nil :background "#000000" :foreground "#ffffff")
     (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
     (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)))
 
+(ceamx-init-prevent-initial-light-flash)
+
 ;; Rename the default/initial frame
 
 
-(defvar ceamx-default-frame-name "home — [ceamx]"
+(defvar ceamx-default-frame-name "home"
   "Name for the default Emacs frame.")
 
 (defun ceamx-after-init-default-frame-name-h ()
@@ -219,9 +222,3 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
   (set-frame-name ceamx-default-frame-name))
 
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
-
-;; Display the scratch buffer as initial buffer
-
-
-(setq inhibit-startup-screen t)
-(setq initial-buffer-choice nil)

@@ -358,6 +358,12 @@ Intended for use as a local hook function on
   (after! org
     (require 'org-bookmark-heading)))
 
+;; TODO ~org-remark~
+
+
+(use-package org-remark
+  :ensure t)
+
 ;; =ox-gfm=: org-export to GitHub Flavored Markdown (GFM) :package:
 
 

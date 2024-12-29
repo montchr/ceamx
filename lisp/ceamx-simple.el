@@ -1,7 +1,7 @@
 ;;; ceamx-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery
-;; Copyright (C) 2020-2023  Protesilaos Stavrou
+;; Copyright (C) 2020-2024  Protesilaos Stavrou
 ;; Copyright (c) 2023  Bruno Boal <egomet@bboal.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
@@ -32,6 +32,8 @@
 ;;; Code:
 
 ;;;; Requirements
+
+(require 'ceamx-lib)
 
 ;;;; Variables
 
@@ -125,11 +127,11 @@ POS defaults to the current position."
 ;;;;; Private
 
 (defun ceamx-simple--pos-url-on-line (char)
-  "Return position of `ceamx-common-url-regexp' at CHAR."
+  "Return position of `ceamx-url-regexp' at CHAR."
   (when (integer-or-marker-p char)
     (save-excursion
       (goto-char char)
-      (re-search-forward ceamx-common-url-regexp (line-end-position) :noerror))))
+      (re-search-forward ceamx-url-regexp (line-end-position) :noerror))))
 
 ;; FIXME: is this supposed to work on save? not working in either magit or projectile
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L369-L391>
@@ -161,8 +163,104 @@ POS defaults to the current position."
     (when (bound-and-true-p save-place-mode)
       (save-place-forget-unreadable-files))))
 
+(defun ceamx-simple--mark (bounds)
+  "Mark between BOUNDS as a cons cell of beginning and end positions."
+  (push-mark (car bounds))
+  (goto-char (cdr bounds))
+  (activate-mark))
 
 ;;; Commands
+
+;;;###autoload
+(defun ceamx-simple/new-line-below (n)
+  "Create N empty lines below the current one.
+When called interactively without a prefix numeric argument, N is
+1."
+  (interactive "p")
+  (goto-char (line-end-position))
+  (dotimes (_ n) (insert "\n")))
+
+;;;###autoload
+(defun ceamx-simple/new-line-above (n)
+  "Create N empty lines above the current one.
+When called interactively without a prefix numeric argument, N is
+1."
+  (interactive "p")
+  (let ((point-min (point-min)))
+    (if (or (bobp)
+            (eq (point) point-min)
+            (eq (line-number-at-pos point-min) 1))
+        (progn
+          (goto-char (line-beginning-position))
+          (dotimes (_ n) (insert "\n"))
+          (forward-line (- n)))
+      (forward-line (- n))
+      (ceamx-simple/new-line-below n))))
+
+;;;###autoload
+(defun ceamx-simple/copy-line ()
+  "Copy the current line to the `kill-ring'."
+  (interactive)
+  (copy-region-as-kill (line-beginning-position) (line-end-position)))
+
+;;;###autoload
+(defun ceamx-simple/kill-ring-save (beg end)
+  "Copy the current region or line.
+When the region is active, use `kill-ring-save' between the BEG and END
+positions.  Otherwise, copy the current line."
+  (interactive "r")
+  (if (region-active-p)
+      (kill-ring-save beg end)
+    (ceamx-simple/copy-line)))
+
+(defun ceamx-simple--duplicate-buffer-substring (boundaries)
+  "Duplicate buffer substring between BOUNDARIES.
+BOUNDARIES is a cons cell representing buffer positions."
+  (unless (consp boundaries)
+    (error "`%s' is not a cons cell" boundaries))
+  (let ((beg (car boundaries))
+        (end (cdr boundaries)))
+    (goto-char end)
+    (newline)
+    (insert (buffer-substring-no-properties beg end))))
+
+;;;###autoload
+(defun ceamx-simple/duplicate-line-or-region ()
+  "Duplicate the current line or active region."
+  (interactive)
+  (unless mark-ring                  ; needed when entering a new buffer
+    (push-mark (point) t nil))
+  (ceamx-simple--duplicate-buffer-substring
+   (if (region-active-p)
+       (cons (region-beginning) (region-end))
+     (cons (line-beginning-position) (line-end-position)))))
+
+;;;###autoload
+(defun ceamx-simple/yank-replace-line-or-region ()
+  "Replace line or region with latest kill.
+This command can then be followed by the standard
+`yank-pop' (default is bound to \\[yank-pop])."
+  (interactive)
+  (if (use-region-p)
+      (delete-region (region-beginning) (region-end))
+    (delete-region (line-beginning-position) (line-end-position)))
+  (yank))
+
+;;;###autoload
+(defun ceamx-simple/mark-sexp ()
+  "Mark symbolic expression at or near point.
+Repeat to extend the region forward to the next symbolic
+expression."
+  (interactive)
+  (if (and (region-active-p)
+           (eq last-command this-command))
+      (ignore-errors (forward-sexp 1))
+    (when-let* ((thing (cond
+                        ((thing-at-point 'url) 'url)
+                        ((thing-at-point 'sexp) 'sexp)
+                        ((thing-at-point 'string) 'string)
+                        ((thing-at-point 'word) 'word))))
+      (ceamx-simple--mark (bounds-of-thing-at-point thing)))))
 
 ;;;###autoload
 (defun ceamx-simple/insert-date (&optional arg)
@@ -191,11 +289,11 @@ to `line-beginning-position'."
    (list
     (if current-prefix-arg
         (re-search-forward
-         ceamx-common-url-regexp
+         ceamx-url-regexp
          (line-end-position) :no-error
          (prefix-numeric-value current-prefix-arg))
       (line-beginning-position))))
-  (when-let ((regexp-end (ceamx-simple--pos-url-on-line char)))
+  (when-let* ((regexp-end (ceamx-simple--pos-url-on-line char)))
     (goto-char regexp-end)
     (unless (looking-at ">")
       (insert ">")
@@ -233,15 +331,15 @@ Call the commands `ceamx/escape-url-line' and
     (ceamx-simple/escape-url-line (line-beginning-position))))
 
 ;;;###autoload
-(defun ceamx-simple/mark-symbol-at-point ()
-  "Select the symbol under cursor.
-Copied from the `mc--mark-symbol-at-point' function from the
-`multiple-cursors' package."
-  (interactive)
-  (when (not (use-region-p))
-    (let ((b (bounds-of-thing-at-point 'symbol)))
-      (goto-char (car b))
-      (set-mark (cdr b)))))
+(defun ceamx-simple/zap-to-char-backward (char &optional arg)
+  "Backward `zap-to-char' for CHAR.
+Optional ARG is a numeric prefix to match ARGth occurance of
+CHAR."
+  (interactive
+   (list
+    (read-char-from-minibuffer "Zap to char: " nil 'read-char-history)
+    (prefix-numeric-value current-prefix-arg)))
+  (zap-to-char (- arg) char t))
 
 ;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
 ;;;###autoload
@@ -264,6 +362,43 @@ the same."
     (default-indent-new-line)))
 
 ;;;;; Buffers
+
+(defun ceamx-simple--buffer-major-mode-prompt ()
+  "Prompt of `ceamx-simple/buffers-major-mode'.
+Limit list of buffers to those matching the current
+`major-mode' or its derivatives."
+  (let ((read-buffer-function nil)
+        (current-major-mode major-mode))
+    (read-buffer
+     (format "Buffer for %s: " major-mode)
+     nil
+     :require-match
+     (lambda (pair) ; pair is (name-string . buffer-object)
+       (with-current-buffer (cdr pair)
+         (derived-mode-p current-major-mode))))))
+
+;;;###autoload
+(defun ceamx-simple/buffers-major-mode ()
+  "Select BUFFER matching the current one's major mode."
+  (interactive)
+  (switch-to-buffer (ceamx-simple--buffer-major-mode-prompt)))
+
+(defun ceamx-simple--buffer-vc-root-prompt ()
+  "Prompt of `ceamx-simple/buffers-vc-root'."
+  (let ((root (or (vc-root-dir)
+                  (locate-dominating-file "." ".git")))
+        (read-buffer-function nil))
+    (read-buffer
+     (format "Buffers in %s: " root)
+     nil t
+     (lambda (pair) ; pair is (name-string . buffer-object)
+       (with-current-buffer (cdr pair) (string-match-p root default-directory))))))
+
+;;;###autoload
+(defun ceamx-simple/buffers-vc-root ()
+  "Select buffer matching the current one's VC root."
+  (interactive)
+  (switch-to-buffer (ceamx-simple--buffer-vc-root-prompt)))
 
 ;; FIXME: this does not actually kill its buffers -- buffer must be deleted manually
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/lib/files.el#L397-L424>
@@ -341,6 +476,22 @@ current buffer."
   (let ((kill-buffer-query-functions nil))
     (kill-buffer (or buffer (current-buffer)))))
 
+;; via prot-emacs
+;;;###autoload
+(defun ceamx-simple/kill-current-buffer (&optional arg)
+  "Kill current buffer.
+With optional prefix ARG (\\[universal-argument]) delete the
+buffer's window as well.  Kill the window regardless of ARG if it
+satisfies `ceamx-window-small-p' and it has no previous
+buffers in its history."
+  (interactive "P")
+  (let ((kill-buffer-query-functions nil))
+    (if (or (and (ceamx-window-small-p)
+                 (null (window-prev-buffers)))
+            (and arg (not (one-window-p))))
+        (kill-buffer-and-window)
+      (kill-buffer))))
+
 ;;;###autoload
 (defun ceamx-simple/diff-with-file (&optional arg)
   (interactive "P")
@@ -365,6 +516,28 @@ writable or with a prefix argument, then read a file to visit."
                 "Find file: "
                 (confirm-nonexistent-file-or-buffer))))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+
+;;;; Movement
+
+;;;###autoload
+(defun ceamx-simple/multi-line-below ()
+  "Move half a screen below."
+  (interactive)
+  (forward-line (floor (window-height) 2))
+  (setq this-command 'scroll-up-command))
+
+;;;###autoload
+(defun ceamx-simple/multi-line-above ()
+  "Move half a screen above."
+  (interactive)
+  (forward-line (- (floor (window-height) 2)))
+  (setq this-command 'scroll-down-command))
+
+;;;###autoload
+(defun ceamx-simple/kill-line-backward ()
+  "Kill from point to the beginning of the line."
+  (interactive)
+  (kill-line 0))
 
 (provide 'ceamx-simple)
 ;;; ceamx-simple.el ends here

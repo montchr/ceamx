@@ -3,7 +3,7 @@
 ;; Copyright (C) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2014-2023  Henrik Lissner
 ;; Copyright (C) 2006-2021  Steve Purcell
-;; Copyright (C) 2016–2022  Radian LLC and contributors
+;; Copyright (C) 2016–2022  Ceamx LLC and contributors
 ;; Copyright (C) 2018  Adam Porter
 ;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
 ;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
@@ -15,7 +15,6 @@
 ;;         Adam Porter <adam@alphapapa.net>
 ;;         Bailey Ling <bling@live.ca>
 ;;         7696122 <7696122@gmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -70,7 +69,7 @@
 ;;;; Sources
 
 ;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
-;; <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
+;; <https://github.com/ceamx-software/ceamx/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/ceamx.el>
 ;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
 
 ;;; Code:
@@ -83,8 +82,8 @@
 
 ;;;; Variables
 
-;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/prot-common.el>
-(defconst ceamx-common-url-regexp
+;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/ceamx.el>
+(defconst ceamx-url-regexp
   (concat
    "~?\\<\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]*\\)"
    "[.@]"
@@ -107,7 +106,10 @@
 (define-prefix-command 'ceamx-window-prefix)
 (define-prefix-command 'ceamx-workspace-prefix)
 
-;;;; Functions
+;;;; Commands
+
+
+;;;; Functions (Public)
 
 ;;;;; Environment Context
 
@@ -168,6 +170,61 @@
         ((symbolp cmd) (put cmd 'repeat-map repeat-map))
         ((keymapp cmd) (process cmd))))
      keymap)))
+
+;;;;; Window
+
+;; via prot-emacs
+;;;###autoload
+(defun ceamx-window-bounds ()
+  "Return start and end points in the window as a cons cell."
+  (cons (window-start) (window-end)))
+
+;; via prot-emacs
+;;;###autoload
+(defun ceamx-window-small-p ()
+  "Return non-nil if window is small.
+Check if the `window-width' or `window-height' is less than
+`split-width-threshold' and `split-height-threshold', respectively."
+  (or (and (numberp split-width-threshold)
+           (< (window-total-width) split-width-threshold))
+      (and (numberp split-height-threshold)
+           (> (window-total-height) split-height-threshold))))
+
+;; via prot-emacs
+;;;###autoload
+(defun ceamx-window-narrow-p ()
+  "Return non-nil if window is narrow.
+Check if the `window-width' is less than `split-width-threshold'."
+  (and (numberp split-width-threshold)
+       (< (window-total-width) split-width-threshold)))
+
+;;;###autoload
+(defun ceamx-three-or-more-windows-p (&optional frame)
+  "Return non-nil if three or more windows occupy FRAME.
+If FRAME is non-nil, inspect the current frame."
+  (>= (length (window-list frame :no-minibuffer)) 3))
+
+;;;;; Buffer
+
+;; via prot-emacs
+;;;###autoload
+(defun ceamx-page-p ()
+  "Return non-nil if there is a `page-delimiter' in the buffer."
+  (or (save-excursion (re-search-forward page-delimiter nil t))
+      (save-excursion (re-search-backward page-delimiter nil t))))
+
+;;;; Functions (Private)
+
+;; via <https://github.com/radian-software/radian/blob/31b28372df6c24b82a53ba9c89140b4888c16f88/emacs/radian.el#L641C1-L654C38>
+(defun ceamx--remove-sharp-quotes (form)
+  "Remove sharp quotes in all sub-forms of FORM."
+  (pcase form
+    (`(function ,x) (ceamx--remove-sharp-quotes x))
+    (`(,x . ,y) (cons (ceamx--remove-sharp-quotes x)
+                      (ceamx--remove-sharp-quotes y)))
+    ((pred vectorp)
+     (apply #'vector (mapcar #'ceamx--remove-sharp-quotes form)))
+    (x x)))
 
 ;;;; Macros
 

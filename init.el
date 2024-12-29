@@ -48,12 +48,6 @@
                               (time-subtract (current-time) before-init-time)))
                      gcs-done)))
 
-;; Add the =site-lisp= directory to ~load-path~
-
-
-(add-to-list 'load-path ceamx-site-lisp-dir)
-(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
-
 ;; Initialize the =ceamx= user options
 
 
@@ -76,6 +70,40 @@
   "Whether to load the user `custom-file' (custom.el)."
   :group 'ceamx
   :type '(boolean))
+
+;; Enable/disable some commands that are disabled/enabled by default
+
+
+;; Enable these commands
+(dolist (cmd '(downcase-region
+               list-timers
+               narrow-to-page
+               narrow-to-region
+               upcase-region))
+  (put cmd 'disabled nil))
+
+;; Disable these commands
+(dolist (cmd '(diary iconify-frame overwrite-mode))
+  (put cmd 'disabled t))
+
+;; Display the scratch buffer as initial buffer
+
+
+(setq initial-buffer-choice nil
+      initial-major-mode 'lisp-interaction-mode
+      inhibit-startup-screen t)
+(setq initial-scratch-message
+      (format ";; This is `%s'.  Use `%s' to evaluate and print results.\n\n"
+              'lisp-interaction-mode
+              (propertize
+               (substitute-command-keys "\\<lisp-interaction-mode-map>\\[eval-print-last-sexp]")
+               'face 'help-key-binding)))
+
+;; Add the =site-lisp= directory to ~load-path~
+
+
+(add-to-list 'load-path ceamx-site-lisp-dir)
+(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
 
 ;; =site-lisp/on=: Define additional Emacs event hooks
 
@@ -269,60 +297,48 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (elpaca (org :autoloads "org-loaddefs.el"))
 
-;; Install the latest version of Use-Package
+;; Install the latest version of ~use-package~
 
 
 (elpaca use-package)
 
-;; Integrate Elpaca and Use-Package
+;; ~elpaca-use-package~: integrate ~elpaca~ and ~use-package~
 
 
 (elpaca elpaca-use-package
   (elpaca-use-package-mode))
 
-;; Use-Package: Ensure package installation by default
-
-;; Equivalent to manually specifying =:ensure t= in each ~use-package~ expression.
-
-
-(setopt use-package-always-ensure t)
-
-;; Elpaca-Wait № 1: finish processing current queue :wait:
+;; Elpaca-Wait № 1: ~no-littering~ + ~use-package~ :wait:
 
 ;; Reason:
 
-;; - Continuing otherwise will result in race conditions on the definition of storage paths
-;; - ~use-package~ must be loaded for byte-compilation checks in [[*Configure ~use-package~ for improved debuggability and introspectability]]
+;; - Continuing otherwise will result in race conditions on the
+;;   definition of storage paths.
+;; - ~use-package~ must be loaded for byte-compilation checks
 
 
 (elpaca-wait)
 
-;; Configure ~use-package~ for improved debuggability and introspectability
+;; Configure ~use-package~ behavior
 
 
-(setopt use-package-expand-minimally nil)
+(setopt use-package-always-ensure t)
+(setopt use-package-expand-minimally t)
+
 (when (bound-and-true-p init-file-debug)
   (require 'use-package)
   (setopt use-package-expand-minimally nil)
   (setopt use-package-verbose t)
   (setopt use-package-compute-statistics t))
 
-;; Install ~blackout~ for adjusting modeline indicators :modeline:
+;; ~blackout~: adjust mode-line lighters :modeline:
 
-;; - Keyword :: =:blackout=
-
-
-(elpaca blackout
-  (require 'blackout))
-
-;; Elpaca-Wait № 2: finish processing current queue :wait:
-
-;; - Reason :: Continuing otherwise will result in race conditions where the newly-installed
-;; ~use-package~ keywords may or may not be available, resulting in sporadic
-;; initialization errors.
+;; - Use-Package keyword :: =:blackout=
 
 
-(elpaca-wait)
+(use-package blackout
+  :ensure (:wait t)
+  :demand t)
 
 ;; Install and configure =setup.el=
 
@@ -356,12 +372,6 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
   :documentation "Install ORDER with the `elpaca' package manager.
 The ORDER can be used to deduce the feature context."
   :shorthand #'cadr)
-
-(setup (:ensure prism))
-
-(setup (:ensure chess))
-
-(setup org-remark (:ensure t))
 
 ;; ~gcmh~: manage running garbage collection on idle :package:perf:
 
@@ -463,7 +473,7 @@ The ORDER can be used to deduce the feature context."
   (with-eval-after-load 'exec-path-from-shell
     (envrc-global-mode)))
 
-;; Elpaca-Wait № 3: ~exec-path-from-shell~ :wait:
+;; Elpaca-Wait № 3 :wait:
 
 
 (elpaca-wait)
@@ -488,21 +498,6 @@ The ORDER can be used to deduce the feature context."
                   "/run/current-system/sw/bin"))
     (add-to-list 'tramp-remote-path path)))
 
-;; Terminal/TTY Support
-
-
-(autoload 'mwheel-install "mwheel")
-
-(defun ceamx/console-frame-setup ()
-  (xterm-mouse-mode 1)
-  (mwheel-install))
-
-;; Make the mouse wheel scroll.
-(global-set-key [mouse-4] (lambda () (interactive) (scroll-down 1)))
-(global-set-key [mouse-5] (lambda () (interactive) (scroll-up 1)))
-
-;; (add-hook 'after-make-console-frame-hooks 'ceamx/console-frame-setup)
-
 ;; Input languages
 
 
@@ -511,32 +506,45 @@ The ORDER can be used to deduce the feature context."
 ;; `set-language-environment' also presumptively sets `default-input-method'.
 (setopt default-input-method nil)
 
+;; Disable bidirectional text scanning
+;; (setq-default bidi-display-reordering 'left-to-right)
+;; (setq-default bidi-paragraph-direction 'left-to-right)
+;; (setq bidi-inhibit-bpa t)
 
-
-;; Disable bidirectional text scanning, because I don't need it:
-
-
-(setq-default bidi-display-reordering 'left-to-right)
-(setq-default bidi-paragraph-direction 'left-to-right)
-(setq bidi-inhibit-bpa t)
-
-;; Mouse input
+;; Mouse support
 
 
 (setopt mouse-yank-at-point t)
 
-
-
-;; Avoid collision of mouse with point:
-
-
+;; Avoid collision of mouse with point
 (mouse-avoidance-mode 'exile)
 
-;; Disable graphical window system dialog boxes
 
 
-(setopt use-file-dialog nil)
-(setopt use-dialog-box nil)
+;; Support scrolling with the mouse wheel or trackpad gestures within
+;; non-graphical frames.  Mouse support is available by default in
+;; graphical frames.
+
+
+(unless (display-graphic-p)
+
+  ;; Basic mouse support e.g. click and drag
+  (xterm-mouse-mode 1)
+
+  ;; By default, `scroll-down' and `scroll-up' scroll by a huge amount.
+  (eval-and-compile
+    (defun ceamx/scroll-down ()
+      "Scroll down one line."
+      (interactive)
+      (scroll-down 1))
+
+    (defun ceamx/scroll-up ()
+      "Scroll up one line."
+      (interactive)
+      (scroll-up 1)))
+
+  (global-set-key [mouse-4] #'ceamx/scroll-down)
+  (global-set-key [mouse-5] #'ceamx/scroll-up))
 
 ;; Load site-specific configuration, to be ignored by version control
 
@@ -656,7 +664,7 @@ theme)."
   :group 'ceamx
   :type 'symbol)
 
-(defcustom ceamx-ui-theme-dark 'modus-vivendi
+(defcustom ceamx-ui-theme-dark 'modus-vivendi-tinted
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
@@ -720,57 +728,58 @@ theme)."
             (agenda-date . (variable-pitch regular 1.3))
             (t . (regular 1.1))))
 
-  (let ((overrides '((cursor blue)
+  ;; (let ((overrides '((cursor blue)
 
-                     ;; Syntax
-                     (builtin magenta)
-                     (comment red-faint)
-                     (constant magenta-cooler)
-                     (docstring magenta-faint)
-                     (docmarkup green-faint)
-                     (fnname magenta-warmer)
-                     (keybind green-cooler)
-                     (keyword cyan)
-                     (preprocessor cyan-cooler)
-                     (string red-cooler)
-                     (type magenta-cooler)
-                     (variable blue-warmer)
-                     (rx-construct magenta-warmer)
-                     (rx-backslash blue-cooler)
+  ;;                    ;; Syntax
+  ;;                    (builtin magenta)
+  ;;                    (comment red-faint)
+  ;;                    (constant magenta-cooler)
+  ;;                    (docstring magenta-faint)
+  ;;                    (docmarkup green-faint)
+  ;;                    (fnname magenta-warmer)
+  ;;                    (keybind green-cooler)
+  ;;                    (keyword cyan)
+  ;;                    (preprocessor cyan-cooler)
+  ;;                    (string red-cooler)
+  ;;                    (type magenta-cooler)
+  ;;                    (variable blue-warmer)
+  ;;                    (rx-construct magenta-warmer)
+  ;;                    (rx-backslash blue-cooler)
 
-                     ;; Buttons
-                     (bg-button-active bg-main)
-                     (fg-button-active fg-main)
-                     (bg-button-inactive bg-inactive)
-                     (fg-button-inactive "gray50")
+  ;;                    ;; Buttons
+  ;;                    (bg-button-active bg-main)
+  ;;                    (fg-button-active fg-main)
+  ;;                    (bg-button-inactive bg-inactive)
+  ;;                    (fg-button-inactive "gray50")
 
-                     ;; Mode-line
-                     (bg-mode-line-active bg-lavender)
-                     (fg-mode-line-active fg-main)
-                     (border-mode-line-active bg-lavender)
-                     (border-mode-line-inactive unspecified)
+  ;;                    ;; Mode-line
+  ;;                    (bg-mode-line-active bg-lavender)
+  ;;                    (fg-mode-line-active fg-main)
+  ;;                    (border-mode-line-active bg-lavender)
+  ;;                    (border-mode-line-inactive unspecified)
 
-                     ;; Fringe
-                     (fringe unspecified)
+  ;;                    ;; Fringe
+  ;;                    (fringe unspecified)
 
-                     ;; Prompts
-                     ;; (fg-prompt fg-main)
-                     ;; not really subtle! too loud.
-                     ;; (bg-prompt bg-yellow-subtle)
+  ;;                    ;; Prompts
+  ;;                    ;; (fg-prompt fg-main)
+  ;;                    ;; not really subtle! too loud.
+  ;;                    ;; (bg-prompt bg-yellow-subtle)
 
-                     ;; Pair-matching (parens)
-                     (bg-paren-match unspecified)
-                     (fg-paren-match magenta-intense)
-                     (underline-paren-match magenta-intense)
+  ;;                    ;; Pair-matching (parens)
+  ;;                    (bg-paren-match unspecified)
+  ;;                    (fg-paren-match magenta-intense)
+  ;;                    (underline-paren-match magenta-intense)
 
-                     ;; Link styles
-                     ;; (underline-link border)
-                     ;; (underline-link-visited border)
-                     )))
-    (setopt modus-operandi-palette-overrides overrides
-            modus-operandi-tinted-palette-overrides overrides
-            modus-vivendi-palette-overrides overrides
-            modus-vivendi-tinted-palette-overrides overrides)))
+  ;;                    ;; Link styles
+  ;;                    ;; (underline-link border)
+  ;;                    ;; (underline-link-visited border)
+  ;;                    )))
+  ;;   (setopt modus-operandi-palette-overrides overrides
+  ;;           modus-operandi-tinted-palette-overrides overrides
+  ;;           modus-vivendi-palette-overrides overrides
+  ;;           modus-vivendi-tinted-palette-overrides overrides))
+  )
 
 ;; Ef-Themes :package:
 
@@ -845,7 +854,7 @@ unconditionally use `ceamx-ui-theme-default-light' and
 
 
 (setopt ceamx-ui-theme-light 'modus-operandi-tinted)
-(setopt ceamx-ui-theme-dark 'modus-vivendi)
+(setopt ceamx-ui-theme-dark 'modus-vivendi-tinted)
 
 (if (eq 'solar ceamx-ui-theme-circadian-interval)
     (after! circadian (add-hook 'ceamx-after-init-hook #'circadian-setup))
@@ -869,56 +878,109 @@ unconditionally use `ceamx-ui-theme-default-light' and
   ;; Anything lower feels unusable.
   (setopt avy-timeout-seconds 0.25))
 
-;; ~rainbow-mode~: Colorize color names and hexcodes in buffers :theme:
-
-;; <https://elpa.gnu.org/packages/rainbow-mode.html>
+;; Focus: Line
 
 
-(package! rainbow-mode)
-
-;; Highlight the current line with ~hl-line-mode~ [builtin]
-
-
-(add-hook 'prog-mode-hook #'hl-line-mode)
-(add-hook 'package-menu-mode-hook #'hl-line-mode)
-
-;; Differentiate between focused and non-focused windows :window:
+(use-feature! hl-line
+  :hook ((prog-mode) . hl-line-mode)
+  :config
+  ;; Disable line highlight in unfocused windows.
+  (setopt hl-line-sticky-flag nil))
 
 
-(setopt highlight-nonselected-windows nil)
 
-;; =pulsar=: pulse current line after function invocations :package:animation:
+;; Improve line-highlighting for major-modes orientated around line selection:
 
 
-(package! pulsar
-  (pulsar-global-mode 1)
+(use-package lin
+  :ensure t
+  :hook (ceamx-after-init . lin-global-mode))
 
-  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line))
 
-(after! pulsar
+
+;; Pulse current line after function invocations:
+
+
+(use-package pulsar
+  :ensure t
+  :hook ((ceamx-after-init . pulsar-global-mode)
+         (minibuffer-setup . pulsar-pulse-line)
+         (next-error-hook . (pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry)))
+  :config
   (setopt pulsar-pulse t
           pulsar-delay 0.055
           pulsar-iterations 10
           pulsar-face 'pulsar-magenta
           pulsar-highlight-face 'pulsar-cyan)
 
-  (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
-    (add-hook 'next-error-hook (function fn))))
+
+;; (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
+;;     (add-hook 'next-error-hook (function fn)))
+  )
+
+;; Focus: Window
+
+
+(setopt highlight-nonselected-windows nil)
+
+;; Focus: Buffer: =olivetti=: "Distraction-free" editing :package:
+
+;; - Code :: <https://github.com/rnkn/olivetti>
+
+
+(use-package olivetti
+  :ensure t
+  :commands (olivetti-mode)
+  :config
+  (setopt olivetti-body-width 0.7
+    olivetti-minimum-body-width 80
+    olivetti-recall-visual-line-mode-entry-state t))
+
+;; Focus: Present: =logos=: a simple focus mode with page breaks or outlines :package:
+
+
+(use-package logos
+  :ensure t
+
+  :config
+  (setopt logos-outlines-are-pages t)
+  (setopt logos-outline-regexp-alist
+    `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
+      (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
+      (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
+      (conf-toml-mode . "^\\[")))
+
+  ;; These apply buffer-locally when `logos-focus-mode' is enabled.
+  (setq-default logos-hide-cursor t
+                logos-hide-mode-line t
+                logos-hide-header-line t
+                logos-hide-buffer-boundaries t
+                logos-hide-fringe t
+                logos-variable-pitch nil
+                logos-buffer-read-only nil
+                logos-scroll-lock nil
+                logos-olivetti t)
+
+  (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+
+  (def-hook! ceamx-logos--recenter-top ()
+    '(logos-page-motion-hook)
+    "Place point at the top when changing pages in non-`prog-mode' modes."
+    (unless (derived-mode-p 'prog-mode)
+      ;; NOTE: '0' value will recenter at the absolute top.
+      (recenter 1))))
 
 ;; Allow restoring deleted frames
 
 
 (undelete-frame-mode 1)
 
-;; macOS: Configure frame decorations :graphical:macos:
+;; Frame decorations
 
 
 (unless (ceamx-host-macos-p)
   ;; Hide window decorations.
   (add-to-list 'default-frame-alist '(undecorated . t)))
-
-;; Handle macOS-specific workarounds :macos:
-
 
 (when (ceamx-host-macos-p)
   ;; `undecorated-round' is macOS-specific.
@@ -937,7 +999,7 @@ unconditionally use `ceamx-ui-theme-default-light' and
   ;; Stop C-z from minimizing windows.
   (keymap-global-unset "C-z" t))
 
-;; Provide a more comfortably-spaced Emacs layout density with =spacious-padding= :package:graphical:
+;; ~spacious-padding~: a comfortable layout density
 
 
 (use-package spacious-padding
@@ -1219,60 +1281,83 @@ with its default modeline)."
   (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
     (add-to-list 'keycast-substitute-alist `(,event nil))))
 
-;; =olivetti=: "Distraction-free" editing :package:
-
-;; <https://github.com/rnkn/olivetti>
+;; Baseline configurations
 
 
-(use-package olivetti
-  :ensure t
-  :commands (olivetti-mode)
+(use-feature! emacs
   :config
-  (setopt olivetti-body-width 0.7
-    olivetti-minimum-body-width 80
-    olivetti-recall-visual-line-mode-entry-state t))
+  (define-keymap :keymap (current-global-map)
+    "M-c" #'capitalize-dwim
+    "M-f" #'forward-word
+    "M-F" #'forward-symbol
+    "M-l" #'downcase-dwim
+    "M-o" #'delete-blank-lines
+    "M-Q" #'repunctuate-sentences
+    "M-u" #'upcase-dwim
+    "M-z" #'zap-up-to-char              ; orig: `zap-to-char'
+    "M-=" #'count-words
+    "M-SPC" #'cycle-spacing
 
-;; =logos=: a simple focus mode with page breaks or outlines :package:
+    "C-h F" #'apropos-function
+    "C-h L" #'apropos-library
+    "C-h U" #'apropos-user-option
+    "C-h V" #'apropos-variable
+
+    ;; TODO: move to window config
+    "C-x O" #'next-multiframe-window)
+
+  ;; Keymap for buffers
+  ;; TODO: copy some of these to `ceamx-toggle-prefix'
+  (define-keymap :keymap ctl-x-x-map
+    "f" #'follow-mode
+    "l" #'visual-line-mode
+    "r" #'rename-uniquely)
+
+  (define-keymap :keymap prog-mode-map
+    ;; Move forward out of one sexp level
+    "C-M-d" #'up-list))
+
+;; ~ceamx-simple~: Simple & common commands
 
 
-(use-package logos
-  :ensure t
-
+(use-feature! ceamx-simple
+  :demand t
   :config
-  (setopt logos-outlines-are-pages t)
-  (setopt logos-outline-regexp-alist
-    `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
-      (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
-      (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
-      (conf-toml-mode . "^\\[")))
+  (define-keymap :keymap (current-global-map)
+    "C-x k" #'ceamx-simple/kill-current-buffer ; orig: `kill-buffer'
+    "C-x K" #'kill-buffer
 
-  ;; These apply buffer-locally when `logos-focus-mode' is enabled.
-  (setq-default logos-hide-cursor t
-                logos-hide-mode-line t
-                logos-hide-header-line t
-                logos-hide-buffer-boundaries t
-                logos-hide-fringe t
-                logos-variable-pitch nil
-                logos-buffer-read-only nil
-                logos-scroll-lock nil
-                logos-olivetti t)
+    ;; FIXME: move defun to `ceamx-simple'
+    "M-DEL" #'ceamx/backward-kill-word
 
-  (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+    "C-M-SPC" #'ceamx-simple/mark-sexp
 
-  (def-hook! ceamx-logos--recenter-top ()
-    '(logos-page-motion-hook)
-    "Place point at the top when changing pages in non-`prog-mode' modes."
-    (unless (derived-mode-p 'prog-mode)
-      ;; NOTE: '0' value will recenter at the absolute top.
-      (recenter 1))))
+    ;; Commands for lines
+    ;; TODO: currently `easy-kill'
+    ;; "M-w" #'ceamx-simple/kill-ring-save
+    "M-k" #'ceamx-simple/kill-line-backward
+    ;; TODO: currently `avy-goto-char-timer'
+    ;; "M-j" #'delete-indentation
+    "C-S-d" #'ceamx-simple/duplicate-line-or-region
+    ;; TODO: redundant with `easy-kill'
+    "C-S-w" #'ceamx-simple/copy-line
+    "C-S-y" #'ceamx-simple/yank-replace-line-or-region
+    "C-v" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
+    "<next>" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
+    "M-v" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
+    "<prior>" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
+    "C-RET" #'ceamx-simple/new-line-below
+    "C-S-RET" #'ceamx-simple/new-line-above
 
-;; Enable some commands that Emacs disables by default
+    ;; Commands for text insertion or manipulation
+    "C-<" #'ceamx-simple/escape-url-dwim
+    "M-Z" #'ceamx-simple/zap-to-char-backward
 
+    ;; Commands for buffers
+    "M-s b" #'ceamx-simple/buffers-major-mode
+    "M-s v" #'ceamx-simple/buffers-vc-root)
 
-(dolist (cmd '(downcase-region
-               scroll-left
-               upcase-region))
-  (put cmd 'disabled nil))
+  (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment))
 
 ;; Configure sane window-scrolling behavior
 
@@ -1309,7 +1394,9 @@ with its default modeline)."
 
   (setopt auto-revert-interval 2))
 
-;; Normalize whitespace and indentation handling
+;; Whitespace and indentation
+
+;; Normalize whitespace and indentation handling:
 
 
 (use-feature! emacs
@@ -1325,7 +1412,9 @@ with its default modeline)."
 
   (electric-indent-mode 1))
 
-;; Visualize notable and unusual whitespace
+
+
+;; Visualize notable and unusual whitespace:
 
 
 (use-feature! emacs
@@ -1339,7 +1428,11 @@ with its default modeline)."
             tabs
             tab-mark
             trailing
-            missing-newline-at-eof)))
+            missing-newline-at-eof
+            ;; space-after-tab::space
+            ;; space-before-tab::space
+            space-after-tab
+            space-before-tab)))
 
 ;; Enforce EditorConfig settings
 
@@ -1370,7 +1463,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (use-package mwim
   :ensure t
+  :demand t
   :init
+  ;; FIXME: overrides `org-mode' bindings!
   (keymap-global-set "C-a" #'mwim-beginning)
   (keymap-global-set "C-e" #'mwim-end))
 
@@ -1414,14 +1509,9 @@ This operation will respect the following rules:
         ;; 4
         (delete-char -1)))))
 
-;; Replace region when inserting text
-
-
-(delete-selection-mode 1)
-
 ;; ~easy-kill~ :package:
 
-;; <https://github.com/leoliu/easy-kill/blob/master/README.rst>
+;; + Package documentation :: <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
 ;; #+begin_example
 ;; w => word
@@ -1437,18 +1527,25 @@ This operation will respect the following rules:
 ;; #+end_example
 
 
-(package! easy-kill
+(use-package easy-kill
+  :ensure t
+  :commands (easy-kill easy-mark)
+  :init
   (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
   (keymap-global-set "C-M-@" #'easy-mark) ; override `mark-sexp'
   )
+
+;; Replace region when inserting text
+
+
+(delete-selection-mode 1)
 
 ;; ~expand-region~: Increase/decrease the selection area
 
 
 (use-package expand-region
   :ensure t
-  :defer t
-
+  :commands (er/expand-region)
   :init
   (keymap-global-set "C-=" #'er/expand-region))
 
@@ -1652,41 +1749,11 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   :config
   (setopt epg-pinentry-mode 'loopback))
 
-;; ~ceamx-simple~: Simple & common commands
+;; Buttonize URLs and email addresses with ~goto-address~ [builtin]
 
 
-(use-feature! ceamx-simple
-  :demand t
-  :config
-  (define-keymap :keymap (current-global-map)
-    "C-x k" #'ceamx-simple/kill-buffer  ; orig: `kill-buffer'
-    "C-x K" #'kill-buffer
-    "C-<" #'ceamx-simple/escape-url-dwim
-    ;; FIXME: move to `ceamx-simple'
-    "M-DEL" #'ceamx/backward-kill-word)
-
-  (define-keymap :keymap ceamx-buffer-prefix
-    "k" #'ceamx-simple/kill-buffer)
-
-  (define-keymap :keymap ceamx-file-prefix
-    "c" '("copy..." . ceamx-simple/copy-current-file)
-    "d" '("delete" . ceamx-simple/delete-current-file)
-    "r" '("move..." . ceamx-simple/move-current-file)
-    "U" #'ceamx-simple/sudo-find-file
-
-    "C-d" '("diff with..." . ceamx-simple/diff-with-file))
-
-  (define-keymap :keymap ceamx-insert-prefix
-    "d" '("date" . ceamx-simple/insert-date))
-
-  (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment))
-
-;; Linkify URLs and email addresses with ~goto-address~ [builtin]
-
-
-(autoload 'goto-address-prog-mode "goto-addr")
-
-(add-hook 'prog-mode-hook #'goto-address-prog-mode)
+(use-feature! goto-addr
+  :hook (prog-mode . goto-address-prog-mode))
 
 ;; ~link-hint~: Activate links in buffer with ~avy~
 
@@ -1755,7 +1822,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   ;; Save file-visiting buffers according to the configured timers.
   (auto-save-visited-mode))
 
-;; Provide "Casual" transient menus for complex modes
+;; ~casual-suite~: transient-dispatch menus for complex modes
 
 
 (package! casual-suite
@@ -1801,7 +1868,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (after! org-agenda
     (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)))
 
-;; `Info-mode' enchantments
+;; ~Info-mode~ enchantments
 
 
 (use-feature! info
@@ -1850,7 +1917,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
     "C-h" nil))
 
-;; Rebind some default keybindings in the [C-h] ~help-map~
+;; Rebind some default ~help-map~ keybindings
 
 
 (define-keymap :keymap help-map
@@ -1868,7 +1935,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
   "C-h" nil)
 
-;; Record some variables' values with ~savehist~ [builtin]
+;; Record some variables' values with ~savehist~
 
 
 (use-feature! savehist
@@ -1883,14 +1950,14 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
   (setopt savehist-autosave-interval 60))
 
-;; Record point position in buffers with ~saveplace~ [builtin]
+;; Record point position in buffers with ~saveplace~
 
 
 (use-feature! saveplace
   :init
   (save-place-mode))
 
-;; Record recently-accessed files with ~recentf~ [builtin]
+;; Record recently-accessed files with ~recentf~
 
 
 (use-feature! recentf
@@ -2493,18 +2560,12 @@ The buffer will be created if it does not exist."
   "C-x <left>" #'shrink-window-horizontally
   "C-x <right>" #'enlarge-window-horizontally)
 
-;;;;; Modifier: [C-]
-
 ;;;;; Modifier: [M-]
 
 (define-keymap :keymap (current-global-map)
   "M-]" #'logos-forward-page-dwim
   "M-[" #'logos-backward-page-dwim
-
-  "M-f" #'forward-word
-  "M-F" #'forward-symbol
   "M-j" #'avy-goto-char-timer
-  "M-Q" #'repunctuate-sentences
   "M-w" #'easy-kill)
 
 (after! (avy lispy)
@@ -2515,7 +2576,7 @@ The buffer will be created if it does not exist."
 
 (define-keymap :keymap ceamx-buffer-prefix
   "b" #'consult-buffer
-  "k" #'ceamx-simple/kill-buffer)
+  "k" #'ceamx-simple/kill-current-buffer)
 
 ;;;;; [C-c f] :: File
 
@@ -2527,9 +2588,8 @@ The buffer will be created if it does not exist."
   "d" '("delete" . ceamx-simple/delete-current-file)
   "f" #'find-file
   "F" #'find-file-other-window
-  "r" '("rename/move..." . ceamx-simple/move-current-file)
+  "r" '("move..." . ceamx-simple/move-current-file)
   "s" #'save-buffer
-  "S" '("save as..." . write-file)
   "U" #'ceamx-simple/sudo-find-file
 
   "C-d" '("diff with..." . ceamx-simple/diff-with-file))

@@ -34,6 +34,13 @@ execution order."
     ("l" dumb-jump-quick-look "Quick look")
     ("b" dumb-jump-back "Back")))
 
+;; ~rainbow-mode~: Colorize color names and hexcodes in buffers :theme:
+
+;; <https://elpa.gnu.org/packages/rainbow-mode.html>
+
+
+(package! rainbow-mode)
+
 ;; Configure ~xref~
 
 
