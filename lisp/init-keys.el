@@ -28,7 +28,6 @@
 
 
 (require 'ceamx-lib)
-(require 'lib-keys)
 
 ;; Bind some CUA-like hotkeys for editing operations
 

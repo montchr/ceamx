@@ -465,8 +465,6 @@ non-nil, buffers will never be formatted upon save."
 ;; Emacs Lisp
 
 
-(require 'config-keys)
-
 (require 'ceamx-lib)
 (require 'lib-lisp)
 
@@ -517,13 +515,13 @@ non-nil, buffers will never be formatted upon save."
 (keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
 
 (define-keymap :keymap emacs-lisp-mode-map
-  ceamx-keys-repl-toggle #'ielm
+  "C-:" #'ielm
 
   "C-S-t" #'transpose-sexps)
 
 (with-eval-after-load 'ielm
   (defvar ielm-map)
-  (keymap-set ielm-map ceamx-keys-repl-toggle #'quit-window))
+  (keymap-set ielm-map "C-:" #'quit-window))
 
 ;;; Packages
 
@@ -1075,21 +1073,17 @@ usually wrongly fontified as a metadata block."
 ;; Keybindings :keybinds:
 
 
-(require 'config-keys)
+(after! nix-mode
+  (keymap-set nix-mode-map "C-:" #'nix-repl))
 
-(with-eval-after-load 'nix-mode
-  (keymap-set nix-mode-map ceamx-keys-repl-toggle #'nix-repl)
+(after! (nix-mode tempel)
+  (tempel-key "C-c i t a" modargs nix-mode-map))
 
-  ;; FIXME: this is dumb, but the simplest way i found to avoid yelling without use-package
-  (with-eval-after-load 'tempel
-    ;; (eval-when-compile (require 'tempel))
-    (tempel-key "C-c i t a" modargs nix-mode-map)))
+(after! nix-ts-mode
+  (keymap-set nix-ts-mode-map "C-:" #'nix-repl))
 
-(with-eval-after-load 'nix-ts-mode
-  (keymap-set nix-ts-mode-map ceamx-keys-repl-toggle #'nix-repl))
-
-(with-eval-after-load 'nix-repl
-  (keymap-set nix-repl-mode-map ceamx-keys-repl-toggle #'quit-window))
+(after! nix-repl
+  (keymap-set nix-repl-mode-map "C-:" #'quit-window))
 
 ;; Feature Settings
 

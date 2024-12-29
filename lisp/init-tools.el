@@ -37,6 +37,7 @@
   )
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 (package! mugur)
+(package! free-keys)
 (package! uuidgen)
 (require 'ceamx-paths)
 

@@ -3562,9 +3562,9 @@ will be used as default."
 #+end_src
 
 
-* =init.el=: Essentials
+* =ceamx-init-essentials= :: Essentials
 :PROPERTIES:
-:header-args: :tangle init.el
+:header-args: :tangle lisp/ceamx-init-essentials.el
 :END:
 
 ** Baseline configurations
@@ -4426,505 +4426,78 @@ enhancement to the builtin Emacs undo system as well.
     (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
 #+end_src
 
-
-* =init.el=: Window
-:PROPERTIES:
-:header-args: :tangle init.el
-:END:
+** ~which-key~ [builtin]
 
 #+begin_src emacs-lisp
-(require 'ceamx-simple)
-(require 'ceamx-window)
-#+end_src
+(use-feature! which-key
+  :hook (ceamx-after-init . which-key-mode)
 
-** Define the user option specifying a fallback buffer
-
-#+begin_src emacs-lisp
-(defcustom ceamx-fallback-buffer-name "*scratch*"
-  "The name of the buffer to fall back to if no other buffers exist.
-The buffer will be created if it does not exist."
-  :group 'ceamx
-  :type '(string))
-#+end_src
-
-** Configure window behavior for help buffers
-
-#+begin_src emacs-lisp
-;; Focus newly-opened help windows.
-(setopt help-window-select t)
-
-;; Also focus newly-opened manpages, which still do not follow `display-buffer'
-;; rules (as of <2024-03-06>).
-(setopt Man-notify-method 'aggressive)
-#+end_src
-
-** Disambiguate/uniquify buffer names
-
-#+begin_src emacs-lisp
-(use-feature! emacs
   :config
-  (setopt uniquify-buffer-name-style 'forward)
-  (setopt uniquify-separator "/")
+  (setopt which-key-compute-remaps t)
+  (setopt which-key-idle-delay 1.0)
+  (setopt which-key-sort-order 'which-key-prefix-then-key-order
+          which-key-sort-uppercase-first nil)
 
-  ;; Rename after killing uniquified buffer.
-  (setopt uniquify-after-kill-buffer-p t)
+  ;; The default (0) is difficult to read.
+  (setopt which-key-add-column-padding 2)
 
-  ;; Don't muck with special buffers.
-  (setopt uniquify-ignore-buffers-re "^\\*"))
+  ;; FIXME: no effect? what does this actually do?
+  (setopt which-key-show-remaining-keys t))
 #+end_src
 
-** General buffer display settings :buffer:frame:display_buffer:
+** macOS: Remap modifier keys for the Apple keyboard layout
 
 #+begin_src emacs-lisp
-(setopt switch-to-buffer-in-dedicated-window 'pop)
-
-;; Ensure interactive buffer switching behaves according to expectations.
-(setopt switch-to-buffer-obey-display-actions t)
-
-;; Hide buffer until there's output.
-;; Prevents an extra window appearing during init.
-(setopt async-shell-command-display-buffer nil)
-
-;; TODO: causes which-key squishing against tiny window maybe?
-(setopt fit-window-to-buffer-horizontally t)
-
-;; TODO: this might be a solution to issues with childframes for embark etc.
-(setopt fit-frame-to-buffer t)
-
-;; (setopt even-window-sizes nil)
-(setopt even-window-sizes 'height-only)
-(setopt window-combination-resize t)
-(setopt window-sides-vertical nil)
-(setopt window-resize-pixelwise t)
-
-(setopt display-buffer-base-action
-        '((display-buffer-reuse-window
-           display-buffer-in-previous-window)))
-#+end_src
-
-** Declare rules for displaying buffers with ~display-buffer-alist~ :display_buffer:
-
-- Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
-
-<karthink> has a helpful summary of ~display-buffer~ action functions and
-alist entries in their Emacs configuration, which I am also including here
-for my own reference. Note that this list is not necessarily complete.
-
-~display-buffer-action-functions~ are:
-
-- ~display-buffer-same-window~ :: Use the selected window
-- ~display-buffer-reuse-window~ :: Use a window already showing the buffer
-- ~display-buffer-reuse-mode-window~ :: Use a window with the same major-mode
-- ~display-buffer-in-previous-window~ :: Use a window that did show the buffer before
-- ~display-buffer-use-some-window~ :: Use some existing window
-- ~display-buffer-pop-up-window~ :: Pop up a new window
-- ~display-buffer-below-selected~ :: Use or pop up a window below the selected one
-- ~display-buffer-at-bottom~ :: Use or pop up a window at the bottom of the selected frame
-- ~display-buffer-pop-up-frame~ :: Show the buffer on a new frame
-- ~display-buffer-in-child-frame~ :: Show the buffer in a child frame
-- ~display-buffer-no-window~ :: Do not display the buffer and have ~display-buffer~ return nil immediately
-
-Action alist entries are:
-
-- ~inhibit-same-window~ :: A non-nil value prevents the sam
-    window from being used for display
-- ~inhibit-switch-frame~ :: A non-nil value prevents any fram
-    used for showing the buffer from being raised or selected
-- ~reusable-frames~ :: The value specifies the set of frames t
-    search for a window that already displays the buffer.
-    Possible values are nil (the selected frame), t (any live
-    frame), visible (any visible frame), 0 (any visible or
-    iconified frame) or an existing live frame.
-- ~pop-up-frame-parameters~ :: The value specifies an alist o
-    frame parameters to give a new frame, if one is created.
-- ~window-height~ :: The value specifies the desired height of th
-    window chosen and is either an integer (the total height of
-    the window), a floating point number (the fraction of its
-    total height with respect to the total height of the frame's
-    root window) or a function to be called with one argument -
-    the chosen window.  The function is supposed to adjust the
-    height of the window; its return value is ignored.  Suitable
-    functions are ~shrink-window-if-larger-than-buffer~ and
-    ~fit-window-to-buffer~.
-- ~window-width~ :: The value specifies the desired width of th
-    window chosen and is either an integer (the total width of
-    the window), a floating point number (the fraction of its
-    total width with respect to the width of the frame's root
-    window) or a function to be called with one argument - the
-    chosen window.  The function is supposed to adjust the width
-    of the window; its return value is ignored.
-- ~preserve-size~ :: The value should be either (t . nil) t
-    preserve the width of the chosen window, (nil . t) to
-    preserve its height or (t . t) to preserve its height and
-    width in future changes of the window configuration.
-- ~window-parameters~ :: The value specifies an alist of windo
-    parameters to give the chosen window.
-- ~allow-no-window~ :: A non-nil value means that `display-buffer
-    may not display the buffer and return nil immediately.
-
-
-    <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
-
-
-    #+begin_src emacs-lisp
-(setopt display-buffer-alist
-        `(
-          ;; (,(rx "*" (or "Agenda Commands" "Org Select") "*")
-          ;;   (display-buffer-below-selected
-          ;;     display-buffer-in-side-window)
-          ;;   (body-function . select-window)
-          ;;   (window-parameters . ((mode-line-format . nil))))
-
-          (,ceamx-simple-checkers-buffer-names-regexp
-           (display-buffer-in-direction
-            display-buffer-in-side-window)
-           (window-parameters . ((no-other-window . t))))
-
-          ;; TODO: is there not a simpler way than using `ceamx-simple-buffer-which-mode'?
-          ;; e.g. `derived-mode-p' or similar
-          ((lambda (buf act) (member (ceamx-simple-buffer-which-mode buf) ceamx-simple-message-modes-list))
-           (display-buffer-at-bottom
-            display-buffer-in-side-window))
-
-          (,(rx "*" (group (or "Compile-Log" "Messages" "Warnings")) "*")
-           (display-buffer-at-bottom
-            display-buffer-in-side-window
-            display-buffer-in-direction))
-
-          (,(rx "*Backtrace*")
-           (display-buffer-in-side-window)
-           (window-height . 0.2)
-           (side . bottom))))
-    #+end_src
-
-** ~popper~: Summon and dismiss "popup" windows :popups:package:
-
-- Website :: <https://github.com/karthink/popper>
-
-#+begin_src emacs-lisp
-(package! popper
+(when (and (ceamx-host-macos-p) (display-graphic-p))
+  (setopt mac-control-modifier 'control)
+  (setopt mac-option-modifier 'meta)
+  (setopt ns-option-modifier 'meta)
+  (setopt mac-command-modifier 'super)
+  (setopt ns-command-modifier 'super)
+  ;; Free up the right-side option key for character composition.
+  (setopt mac-right-option-modifier 'none)
+  (setopt ns-right-option-modifier 'none)
+  ;; Common system hotkeys.
   (define-keymap :keymap (current-global-map)
-    "C-`" #'popper-toggle
-    "C-~" #'popper-cycle
-    "C-M-`" #'popper-toggle-type)
-
-  (setopt popper-reference-buffers
-          (append
-           ceamx-simple-help-modes-list
-           ceamx-simple-help-buffer-names-list
-           ceamx-simple-manual-modes-list
-           ceamx-simple-repl-modes-list
-           ceamx-simple-repl-buffer-names-list
-           ceamx-simple-grep-modes-list
-           '(+popper-current-buffer-popup-p)
-           '(Custom-mode
-             compilation-mode
-             messages-buffer-mode)
-           (list
-            ceamx-simple-checkers-buffer-names-regexp)
-
-           ;; The "Home" tabspace, if enabled, will display the Messages buffer.
-           (unless (fboundp 'ceamx-workspace-open-tabspace-after-init-h)
-             '("\\*Messages\\*"))
-
-           `(,(rx "Output*" eol)
-             ,(rx "*" (or
-                       "Async-native-compile-log"
-                       "Backtrace"
-                       "Compile-Log"
-                       "Completions"
-                       "compilation"
-                       "elpaca-diff"
-                       "Shell Command Output"
-                       "vc"
-                       "Warnings")
-               "*")
-             "^\\*Embark Export"
-             "^Calc:"
-             "\\*Async Shell Command\\*"
-             ;; ("\\*Async Shell Command\\*" . hide)
-             ("\\*Detached Shell Command\\*" . hide))))
-
-  ;; Load as early as possible to catch popups as early as possible.
-  (popper-mode)
-  (popper-echo-mode))
+    "s-c" #'kill-ring-save
+    "s-v" #'yank
+    "s-x" #'kill-region
+    "s-q" #'save-buffers-kill-emacs))
 #+end_src
 
-*** Configure overrides in ~popper-repeat-map~
+** Enable and configure ~repeat-mode~
 
 #+begin_src emacs-lisp
-(after! popper
-  (defvar-keymap popper-repeat-map
-    :repeat t
-    "`" #'popper-cycle
-    "~" #'popper-cycle-backwards))
+(setopt repeat-exit-timeout 15)
+(setopt repeat-on-final-keystroke t)
+(setopt repeat-keep-prefix nil)
 #+end_src
 
-*** DISABLED Configure popup display control rules manually
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-<https://github.com/karthink/popper/blob/master/README.org#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
+Allow any key sequence to exit ~repeat-mode~:
 
 #+begin_src emacs-lisp
-(after! popper
-  (setopt popper-display-control nil)
-
-  (prependopt! display-buffer-alist
-               '((popper-display-control-p
-                  (ceamx-window-display-popup)
-                  (window-height . ,popper-window-height)))))
+(setopt repeat-exit-key nil)
 #+end_src
 
-*** Configure ~projectile~ integration
+Related, but not technically part of ~repeat-mode~:
 
 #+begin_src emacs-lisp
-(after! (popper projectile)
-  (setopt popper-group-function #'popper-group-by-projectile))
+(setopt set-mark-command-repeat-pop t)
 #+end_src
 
-** Restore previous window configurations with ~winner-mode~ [builtin] :history:
+Enable ~repeat-mode~, avoiding running mode-hooks too early:
 
 #+begin_src emacs-lisp
-(add-hook 'ceamx-after-init-hook #'winner-mode)
+(add-hook 'ceamx-after-init-hook #'repeat-mode)
 #+end_src
 
-** =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
+** TODO <https://github.com/jwiegley/dot-emacs/blob/master/init.org#smart-newline>
+** TODO <https://github.com/ainame/smart-newline.el/tree/c50ab035839b307c66d439083b6761cb7db5e972>
+** Provide ~ceamx-init-essentials~ feature
 
 #+begin_src emacs-lisp
-(package! golden-ratio
-  (setopt golden-ratio-auto-scale t)
-  (setopt golden-ratio-max-width 100))
-#+end_src
-
-** =ace-window=: Interactively manage windows :package:
-
-<https://github.com/abo-abo/ace-window>
-
-#+begin_src emacs-lisp
-(package! ace-window
-  ;; Same frame only. While it'd be nice to use the default (global), I really
-  ;; dislike that it orders window numbers leads to jarring gaps in window
-  ;; numbers in the same frame. For example, frame A might have windows numbered
-  ;; 1 and 3 and frame B will have window 2.
-  (setopt aw-scope 'frame))
-#+end_src
-
-** =transpose-frame=: Transpose and rotate a frame's windows :package:
-
-#+begin_src emacs-lisp
-(package! transpose-frame)
-#+end_src
-
-** =lentic=: Create decoupled views of the same content
-
-#+begin_src emacs-lisp
-(package! lentic
-  (global-lentic-mode))
-
-(with-eval-after-load 'lentic
-  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
-#+end_src
-
-** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
-
-#+begin_src emacs-lisp
-(transient-define-prefix ceamx/window-dispatch ()
-  "Window management transient."
-  :transient-suffix 'transient--do-stay
-  [["Move"
-    ("h" "left" windmove-left)
-    ("j" "down" windmove-down)
-    ("k" "up" windmove-up )
-    ("l" "right" windmove-right)
-    ("w" "sel" ace-window)]
-
-   ["Resize"
-    ("=" "bal" balance-windows)
-    ("+" "bal: area" balance-windows-area)
-    ("-" "fit: buffer" fit-window-to-buffer)]
-
-   ["Buffer"
-    ("b" "buf" consult-buffer)
-    ;; ("f" "ff: p" project-find-file)
-    ("f" "file" find-file )
-    ("F" "file" find-file-other-window)
-    ("g" "grep" consult-ripgrep)]
-
-   ["Swarp"
-    ("H" "left" ceamx/window-move-left)
-    ("J" "down" ceamx/window-move-down)
-    ("K" "up" ceamx/window-move-up)
-    ("L" "right" ceamx/window-move-right)
-    ""
-    ("s" "swap" ace-swap-window)
-    ("2" "spl: dn" split-window-below)
-    ("3" "spl: rt" split-window-right)
-    ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
-
-   ["Scroll"
-    ;; TODO: allow selecting a window (with infix?) to act upon
-    ;; NOTE: These are the correct scroll direction commands, which might
-    ;; appear to be reversed when comparing with labels.
-    ("." "left" scroll-right)
-    ("," "right" scroll-left)
-    ("SPC" "down" scroll-up)
-    ("DEL" "up" scroll-down)]
-
-   ["Lifecycle"
-    ("d" "del (this)" delete-window)
-    ("D" "del (select)" ace-delete-window)
-    ;; ("D" "del: o" delete-other-windows :transient nil)
-    ("u" "undo" winner-undo)
-    ("U" "redo" winner-redo)
-    ""
-    ("0" "del" delete-window)
-    ("1" "del other" delete-other-windows)
-    ""
-    ("S" "[ ] sides" window-toggle-side-windows)
-    ("`" "[ ] popups" popper-toggle)
-    ""
-    ("q" "quit" transient-quit-all)]])
-#+end_src
-
-
-* Workspace :: =workspace= :workspace:
-:PROPERTIES:
-:header-args: :noweb-ref init-workspace
-:END:
-
-** Requirements
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-#+end_src
-
-#+begin_src emacs-lisp
-(defvar edebug-inhibit-emacs-lisp-mode-bindings)
-#+end_src
-
-** DISABLED Beframe :package:
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-#+begin_src emacs-lisp
-(package! beframe
-  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
-
-  (beframe-mode 1))
-#+end_src
-
-*** Provide Consult integration :consult:
-
-- source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
-
-#+begin_src emacs-lisp
-(defface +beframe-buffer
-  '((t :inherit font-lock-string-face))
-  "Face for `consult' framed buffers.")
-
-(defun +beframe-buffer-names-sorted (&optional frame)
-  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
-With optional argument FRAME, return the list of buffers of FRAME."
-  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
-
-(after! (beframe consult)
-  (declare-function consult--buffer-state "consult")
-
-  (defvar +beframe-consult-source
-    `(:name "Frame-specific buffers (current frame)"
-      :narrow ?F
-      :category buffer
-      :face +beframe-buffer
-      :history beframe-history
-      :items ,#'+beframe-buffer-names-sorted
-      :action ,#'switch-to-buffer
-      :state ,#'consult--buffer-state))
-
-  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
-#+end_src
-
-*** Provide ~ibuffer~ integration :ibuffer:
-
-- source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
-
-#+begin_src emacs-lisp
-(defun +beframe-buffer-in-frame-p (buf frame)
-  "Return non-nil if BUF is in FRAME."
-  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
-
-(defun +beframe-frame-name-list ()
-  "Return list with frame names."
-  (mapcar #'car (make-frame-names-alist)))
-
-(defun +beframe-generate-ibuffer-filter-groups ()
-  "Create a set of ibuffer filter groups based on the Frame of buffers."
-  (mapcar
-   (lambda (frame)
-     (list (format "%s" frame)
-           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
-   (+beframe-frame-name-list)))
-
-(after! (beframe ibuffer)
-  (setq ibuffer-saved-filter-groups
-        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
-
-  (define-ibuffer-filter frame
-      "Limit current view to buffers in frames."
-    (:description "frame")
-    (memq buf (beframe-buffer-list))))
-#+end_src
-
-** ~activites~: workspace by activity :package:tabs:
-
-- Website :: <https://github.com/alphapapa/activities.el>
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-
-(package! activities
-  (activities-mode)
-
-  (when tab-bar-mode
-    (activities-tabs-mode)))
-#+end_src
-
-*** Activities.el Keybindings :keybinds:
-
-#+begin_src emacs-lisp
-(defun ceamx-after-init-define-activities-keys-h ()
-  "Define keybindings for `activities' late to override `edebug'.
-Intended for use as a hook on `ceamx-after-init-hook'."
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-
-  ;; (keymap-global-unset "C-x C-a" t)
-  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
-
-  ;; TODO: still shares bindings with edebug which is confusing
-  (define-keymap :keymap (current-global-map)
-    "C-x C-a C-n" #'activities-new
-    "C-x C-a C-d" #'activities-define
-    "C-x C-a C-a" #'activities-resume
-    "C-x C-a C-s" #'activities-suspend
-    "C-x C-a C-k" #'activities-kill
-    "C-x C-a RET" #'activities-switch
-
-    "C-x C-a b" #'activities-switch-buffer
-    "C-x C-a g" #'activities-revert
-    "C-x C-a l" #'activities-list))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
-#+end_src
-
-** ~breadcrumb~: header-line wayfinding
-
-- Website :: <https://github.com/joaotavora/breadcrumb>
-
-#+begin_src emacs-lisp
-(package! breadcrumb
-  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+(provide 'ceamx-init-essentials)
+;;; ceamx-init-essentials.el ends here
 #+end_src
 
 
@@ -5063,226 +4636,6 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+begin_src emacs-lisp
 (provide 'ceamx-init-search)
 ;;; ceamx-init-search.el ends here
-#+end_src
-
-
-* Keys :: =keys= :keys:
-:PROPERTIES:
-:header-args: :tangle lisp/init-keys.el
-:END:
-
-** TODO <https://github.com/jwiegley/dot-emacs/blob/master/init.org#smart-newline>
-** TODO <https://github.com/ainame/smart-newline.el/tree/c50ab035839b307c66d439083b6761cb7db5e972>
-** File Headers
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-#+begin_src emacs-lisp :tangle lisp/config-keys.el :comments no :noweb yes
-<<file-prop-line(feature="config-keys",desc="Keybinding constants and variables")>>
-
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/lib-keys.el :comments no :noweb yes
-<<file-prop-line(feature="lib-keys",desc="Keybinding helper library")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-(require 'ceamx-lib)
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/init-keys.el :comments no :noweb yes
-<<file-prop-line(feature="init-keys",desc="Keybindings")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-#+end_src
-
-** Settings :: =config-keys=
-:PROPERTIES:
-:header-args: :tangle lisp/config-keys.el
-:END:
-
-#+begin_src emacs-lisp
-(defconst ceamx-keys-repl-toggle "C-:")
-#+end_src
-
-** Requirements
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-(require 'lib-keys)
-#+end_src
-
-** Bind some CUA-like hotkeys for editing operations
-
-"C-S" prefix is inspired by the use of this mod combo in terminal emulators,
-where "C-c" for example would kill the current process.
-
-#+begin_src emacs-lisp
-(define-keymap :keymap (current-global-map)
-  "C-S-c" #'kill-ring-save
-  "C-S-v" #'yank
-  "C-S-x" #'kill-region)
-#+end_src
-
-** macOS: Remap modifier keys for the Apple keyboard layout
-
-#+begin_src emacs-lisp
-(when (and (ceamx-host-macos-p) (display-graphic-p))
-  (setopt mac-control-modifier 'control)
-  (setopt mac-option-modifier 'meta)
-  (setopt ns-option-modifier 'meta)
-  (setopt mac-command-modifier 'super)
-  (setopt ns-command-modifier 'super)
-  ;; Free up the right-side option key for character composition.
-  (setopt mac-right-option-modifier 'none)
-  (setopt ns-right-option-modifier 'none)
-  ;; Common system hotkeys.
-  (define-keymap :keymap (current-global-map)
-    "s-c" #'kill-ring-save
-    "s-v" #'yank
-    "s-x" #'kill-region
-    "s-q" #'save-buffers-kill-emacs))
-#+end_src
-
-** Enable and configure ~repeat-mode~
-
-#+begin_src emacs-lisp
-(setopt repeat-exit-timeout 15)
-(setopt repeat-on-final-keystroke t)
-(setopt repeat-keep-prefix nil)
-#+end_src
-
-Allow any key sequence to exit ~repeat-mode~:
-
-#+begin_src emacs-lisp
-(setopt repeat-exit-key nil)
-#+end_src
-
-Related, but not technically part of ~repeat-mode~:
-
-#+begin_src emacs-lisp
-(setopt set-mark-command-repeat-pop t)
-#+end_src
-
-Enable ~repeat-mode~, avoiding running mode-hooks too early:
-
-#+begin_src emacs-lisp
-(add-hook 'ceamx-after-init-hook #'repeat-mode)
-#+end_src
-
-** ~free-keys~: Show free keybindings for modkeys or prefixes :package:
-
-- pkgsrc :: <https://github.com/Fuco1/free-keys>
-
-#+begin_src emacs-lisp
-;;
-
-;; > If called with prefix argument C-u, you can specify a prefix map to be
-;; > used, such as C-c or C-c C-x (these are specified as a string).
-
-(package! free-keys)
-#+end_src
-
-** ~which-key~ [builtin]
-
-#+begin_src emacs-lisp
-(use-feature! which-key
-  :hook (ceamx-after-init . which-key-mode)
-
-  :config
-  (setopt which-key-compute-remaps t)
-  (setopt which-key-idle-delay 1.0)
-  (setopt which-key-sort-order 'which-key-prefix-then-key-order
-          which-key-sort-uppercase-first nil)
-
-  ;; The default (0) is difficult to read.
-  (setopt which-key-add-column-padding 2)
-
-  ;; FIXME: no effect? what does this actually do?
-  (setopt which-key-show-remaining-keys t))
-#+end_src
-
-** DISABLED Improve display of hints in an active ~repeat-mode~ keymap
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-- Source code :: <https://github.com/karthink/repeat-help>
-- Background :: <https://karthinks.com/software/it-bears-repeating/>
-
-This package is disabled for now because:
-
-+ Hides default help, which I generally do want to see.
-+ No straightforward way to disable or customize per-map
-
-Note also that Emacs 30 will provide a builtin way to specify =:hints= for repeat maps:
-
-+ https://github.com/karthink/repeat-help/issues/11
-
-#+begin_src emacs-lisp
-(package! repeat-help
-  (setopt repeat-help-auto nil)
-  (setopt repeat-help-key (kbd "?"))
-
-  ;; If `repeat-help' detects `which-key' because `embark' has not yet loaded,
-  ;; then its default popup type will be `which-key', not `embark'. This does
-  ;; not quite line up with the intended behavior as stated in the `repeat-help'
-  ;; README.
-  ;; Note, also, that Embark will not be loaded until one of its autoloaded
-  ;; commands are invoked.
-  ;; <https://github.com/karthink/repeat-help/issues/10>
-  (with-eval-after-load 'embark
-    (setopt repeat-help-popup-type 'embark))
-
-  ;; (require 'repeat-help)
-  ;; (add-hook 'repeat-mode-hook #'repeat-help-mode)
-  )
-#+end_src
-
-** File Footers
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-#+begin_src emacs-lisp :tangle lisp/config-keys.el :comments no :noweb yes
-<<file-footer(feature="config-keys")>>
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/lib-keys.el :comments no :noweb yes
-<<file-footer(feature="lib-keys")>>
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/init-keys.el :comments no :noweb yes
-<<file-footer(feature="init-keys")>>
 #+end_src
 
 
@@ -6336,6 +5689,507 @@ Embark will load the library automatically after Consult.
 #+begin_src emacs-lisp
 (provide 'init-embark)
 ;;; init-embark.el ends here
+#+end_src
+
+
+* =init.el=: Window
+:PROPERTIES:
+:header-args: :tangle init.el
+:END:
+
+#+begin_src emacs-lisp
+(require 'ceamx-simple)
+(require 'ceamx-window)
+#+end_src
+
+** Define the user option specifying a fallback buffer
+
+#+begin_src emacs-lisp
+(defcustom ceamx-fallback-buffer-name "*scratch*"
+  "The name of the buffer to fall back to if no other buffers exist.
+The buffer will be created if it does not exist."
+  :group 'ceamx
+  :type '(string))
+#+end_src
+
+** Configure window behavior for help buffers
+
+#+begin_src emacs-lisp
+;; Focus newly-opened help windows.
+(setopt help-window-select t)
+
+;; Also focus newly-opened manpages, which still do not follow `display-buffer'
+;; rules (as of <2024-03-06>).
+(setopt Man-notify-method 'aggressive)
+#+end_src
+
+** Disambiguate/uniquify buffer names
+
+#+begin_src emacs-lisp
+(use-feature! emacs
+  :config
+  (setopt uniquify-buffer-name-style 'forward)
+  (setopt uniquify-separator "/")
+
+  ;; Rename after killing uniquified buffer.
+  (setopt uniquify-after-kill-buffer-p t)
+
+  ;; Don't muck with special buffers.
+  (setopt uniquify-ignore-buffers-re "^\\*"))
+#+end_src
+
+** General buffer display settings :buffer:frame:display_buffer:
+
+#+begin_src emacs-lisp
+(setopt switch-to-buffer-in-dedicated-window 'pop)
+
+;; Ensure interactive buffer switching behaves according to expectations.
+(setopt switch-to-buffer-obey-display-actions t)
+
+;; Hide buffer until there's output.
+;; Prevents an extra window appearing during init.
+(setopt async-shell-command-display-buffer nil)
+
+;; TODO: causes which-key squishing against tiny window maybe?
+(setopt fit-window-to-buffer-horizontally t)
+
+;; TODO: this might be a solution to issues with childframes for embark etc.
+(setopt fit-frame-to-buffer t)
+
+;; (setopt even-window-sizes nil)
+(setopt even-window-sizes 'height-only)
+(setopt window-combination-resize t)
+(setopt window-sides-vertical nil)
+(setopt window-resize-pixelwise t)
+
+(setopt display-buffer-base-action
+        '((display-buffer-reuse-window
+           display-buffer-in-previous-window)))
+#+end_src
+
+** Declare rules for displaying buffers with ~display-buffer-alist~ :display_buffer:
+
+- Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+
+<karthink> has a helpful summary of ~display-buffer~ action functions and
+alist entries in their Emacs configuration, which I am also including here
+for my own reference. Note that this list is not necessarily complete.
+
+~display-buffer-action-functions~ are:
+
+- ~display-buffer-same-window~ :: Use the selected window
+- ~display-buffer-reuse-window~ :: Use a window already showing the buffer
+- ~display-buffer-reuse-mode-window~ :: Use a window with the same major-mode
+- ~display-buffer-in-previous-window~ :: Use a window that did show the buffer before
+- ~display-buffer-use-some-window~ :: Use some existing window
+- ~display-buffer-pop-up-window~ :: Pop up a new window
+- ~display-buffer-below-selected~ :: Use or pop up a window below the selected one
+- ~display-buffer-at-bottom~ :: Use or pop up a window at the bottom of the selected frame
+- ~display-buffer-pop-up-frame~ :: Show the buffer on a new frame
+- ~display-buffer-in-child-frame~ :: Show the buffer in a child frame
+- ~display-buffer-no-window~ :: Do not display the buffer and have ~display-buffer~ return nil immediately
+
+Action alist entries are:
+
+- ~inhibit-same-window~ :: A non-nil value prevents the sam
+    window from being used for display
+- ~inhibit-switch-frame~ :: A non-nil value prevents any fram
+    used for showing the buffer from being raised or selected
+- ~reusable-frames~ :: The value specifies the set of frames t
+    search for a window that already displays the buffer.
+    Possible values are nil (the selected frame), t (any live
+    frame), visible (any visible frame), 0 (any visible or
+    iconified frame) or an existing live frame.
+- ~pop-up-frame-parameters~ :: The value specifies an alist o
+    frame parameters to give a new frame, if one is created.
+- ~window-height~ :: The value specifies the desired height of th
+    window chosen and is either an integer (the total height of
+    the window), a floating point number (the fraction of its
+    total height with respect to the total height of the frame's
+    root window) or a function to be called with one argument -
+    the chosen window.  The function is supposed to adjust the
+    height of the window; its return value is ignored.  Suitable
+    functions are ~shrink-window-if-larger-than-buffer~ and
+    ~fit-window-to-buffer~.
+- ~window-width~ :: The value specifies the desired width of th
+    window chosen and is either an integer (the total width of
+    the window), a floating point number (the fraction of its
+    total width with respect to the width of the frame's root
+    window) or a function to be called with one argument - the
+    chosen window.  The function is supposed to adjust the width
+    of the window; its return value is ignored.
+- ~preserve-size~ :: The value should be either (t . nil) t
+    preserve the width of the chosen window, (nil . t) to
+    preserve its height or (t . t) to preserve its height and
+    width in future changes of the window configuration.
+- ~window-parameters~ :: The value specifies an alist of windo
+    parameters to give the chosen window.
+- ~allow-no-window~ :: A non-nil value means that `display-buffer
+    may not display the buffer and return nil immediately.
+
+
+    <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
+
+
+    #+begin_src emacs-lisp
+(setopt display-buffer-alist
+        `(
+          ;; (,(rx "*" (or "Agenda Commands" "Org Select") "*")
+          ;;   (display-buffer-below-selected
+          ;;     display-buffer-in-side-window)
+          ;;   (body-function . select-window)
+          ;;   (window-parameters . ((mode-line-format . nil))))
+
+          (,ceamx-simple-checkers-buffer-names-regexp
+           (display-buffer-in-direction
+            display-buffer-in-side-window)
+           (window-parameters . ((no-other-window . t))))
+
+          ;; TODO: is there not a simpler way than using `ceamx-simple-buffer-which-mode'?
+          ;; e.g. `derived-mode-p' or similar
+          ((lambda (buf act) (member (ceamx-simple-buffer-which-mode buf) ceamx-simple-message-modes-list))
+           (display-buffer-at-bottom
+            display-buffer-in-side-window))
+
+          (,(rx "*" (group (or "Compile-Log" "Messages" "Warnings")) "*")
+           (display-buffer-at-bottom
+            display-buffer-in-side-window
+            display-buffer-in-direction))
+
+          (,(rx "*Backtrace*")
+           (display-buffer-in-side-window)
+           (window-height . 0.2)
+           (side . bottom))))
+    #+end_src
+
+** ~popper~: Summon and dismiss "popup" windows :popups:package:
+
+- Website :: <https://github.com/karthink/popper>
+
+#+begin_src emacs-lisp
+(package! popper
+  (define-keymap :keymap (current-global-map)
+    "C-`" #'popper-toggle
+    "C-~" #'popper-cycle
+    "C-M-`" #'popper-toggle-type)
+
+  (setopt popper-reference-buffers
+          (append
+           ceamx-simple-help-modes-list
+           ceamx-simple-help-buffer-names-list
+           ceamx-simple-manual-modes-list
+           ceamx-simple-repl-modes-list
+           ceamx-simple-repl-buffer-names-list
+           ceamx-simple-grep-modes-list
+           '(+popper-current-buffer-popup-p)
+           '(Custom-mode
+             compilation-mode
+             messages-buffer-mode)
+           (list
+            ceamx-simple-checkers-buffer-names-regexp)
+
+           ;; The "Home" tabspace, if enabled, will display the Messages buffer.
+           (unless (fboundp 'ceamx-workspace-open-tabspace-after-init-h)
+             '("\\*Messages\\*"))
+
+           `(,(rx "Output*" eol)
+             ,(rx "*" (or
+                       "Async-native-compile-log"
+                       "Backtrace"
+                       "Compile-Log"
+                       "Completions"
+                       "compilation"
+                       "elpaca-diff"
+                       "Shell Command Output"
+                       "vc"
+                       "Warnings")
+               "*")
+             "^\\*Embark Export"
+             "^Calc:"
+             "\\*Async Shell Command\\*"
+             ;; ("\\*Async Shell Command\\*" . hide)
+             ("\\*Detached Shell Command\\*" . hide))))
+
+  ;; Load as early as possible to catch popups as early as possible.
+  (popper-mode)
+  (popper-echo-mode))
+#+end_src
+
+*** Configure overrides in ~popper-repeat-map~
+
+#+begin_src emacs-lisp
+(after! popper
+  (defvar-keymap popper-repeat-map
+    :repeat t
+    "`" #'popper-cycle
+    "~" #'popper-cycle-backwards))
+#+end_src
+
+*** DISABLED Configure popup display control rules manually
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+<https://github.com/karthink/popper/blob/master/README.org#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
+
+#+begin_src emacs-lisp
+(after! popper
+  (setopt popper-display-control nil)
+
+  (prependopt! display-buffer-alist
+               '((popper-display-control-p
+                  (ceamx-window-display-popup)
+                  (window-height . ,popper-window-height)))))
+#+end_src
+
+*** Configure ~projectile~ integration
+
+#+begin_src emacs-lisp
+(after! (popper projectile)
+  (setopt popper-group-function #'popper-group-by-projectile))
+#+end_src
+
+** Restore previous window configurations with ~winner-mode~ [builtin] :history:
+
+#+begin_src emacs-lisp
+(add-hook 'ceamx-after-init-hook #'winner-mode)
+#+end_src
+
+** =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
+
+#+begin_src emacs-lisp
+(package! golden-ratio
+  (setopt golden-ratio-auto-scale t)
+  (setopt golden-ratio-max-width 100))
+#+end_src
+
+** =ace-window=: Interactively manage windows :package:
+
+<https://github.com/abo-abo/ace-window>
+
+#+begin_src emacs-lisp
+(package! ace-window
+  ;; Same frame only. While it'd be nice to use the default (global), I really
+  ;; dislike that it orders window numbers leads to jarring gaps in window
+  ;; numbers in the same frame. For example, frame A might have windows numbered
+  ;; 1 and 3 and frame B will have window 2.
+  (setopt aw-scope 'frame))
+#+end_src
+
+** =transpose-frame=: Transpose and rotate a frame's windows :package:
+
+#+begin_src emacs-lisp
+(package! transpose-frame)
+#+end_src
+
+** =lentic=: Create decoupled views of the same content
+
+#+begin_src emacs-lisp
+(package! lentic
+  (global-lentic-mode))
+
+(with-eval-after-load 'lentic
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+#+end_src
+
+** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
+
+#+begin_src emacs-lisp
+(transient-define-prefix ceamx/window-dispatch ()
+  "Window management transient."
+  :transient-suffix 'transient--do-stay
+  [["Move"
+    ("h" "left" windmove-left)
+    ("j" "down" windmove-down)
+    ("k" "up" windmove-up )
+    ("l" "right" windmove-right)
+    ("w" "sel" ace-window)]
+
+   ["Resize"
+    ("=" "bal" balance-windows)
+    ("+" "bal: area" balance-windows-area)
+    ("-" "fit: buffer" fit-window-to-buffer)]
+
+   ["Buffer"
+    ("b" "buf" consult-buffer)
+    ;; ("f" "ff: p" project-find-file)
+    ("f" "file" find-file )
+    ("F" "file" find-file-other-window)
+    ("g" "grep" consult-ripgrep)]
+
+   ["Swarp"
+    ("H" "left" ceamx/window-move-left)
+    ("J" "down" ceamx/window-move-down)
+    ("K" "up" ceamx/window-move-up)
+    ("L" "right" ceamx/window-move-right)
+    ""
+    ("s" "swap" ace-swap-window)
+    ("2" "spl: dn" split-window-below)
+    ("3" "spl: rt" split-window-right)
+    ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
+
+   ["Scroll"
+    ;; TODO: allow selecting a window (with infix?) to act upon
+    ;; NOTE: These are the correct scroll direction commands, which might
+    ;; appear to be reversed when comparing with labels.
+    ("." "left" scroll-right)
+    ("," "right" scroll-left)
+    ("SPC" "down" scroll-up)
+    ("DEL" "up" scroll-down)]
+
+   ["Lifecycle"
+    ("d" "del (this)" delete-window)
+    ("D" "del (select)" ace-delete-window)
+    ;; ("D" "del: o" delete-other-windows :transient nil)
+    ("u" "undo" winner-undo)
+    ("U" "redo" winner-redo)
+    ""
+    ("0" "del" delete-window)
+    ("1" "del other" delete-other-windows)
+    ""
+    ("S" "[ ] sides" window-toggle-side-windows)
+    ("`" "[ ] popups" popper-toggle)
+    ""
+    ("q" "quit" transient-quit-all)]])
+#+end_src
+
+
+* Workspace :: =workspace= :workspace:
+:PROPERTIES:
+:header-args: :noweb-ref init-workspace
+:END:
+
+** Requirements
+
+#+begin_src emacs-lisp
+(require 'ceamx-lib)
+#+end_src
+
+#+begin_src emacs-lisp
+(defvar edebug-inhibit-emacs-lisp-mode-bindings)
+#+end_src
+
+** DISABLED Beframe :package:
+:PROPERTIES:
+:header-args: :noweb-ref nil
+:END:
+
+#+begin_src emacs-lisp
+(package! beframe
+  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
+
+  (beframe-mode 1))
+#+end_src
+
+*** Provide Consult integration :consult:
+
+- source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
+
+#+begin_src emacs-lisp
+(defface +beframe-buffer
+  '((t :inherit font-lock-string-face))
+  "Face for `consult' framed buffers.")
+
+(defun +beframe-buffer-names-sorted (&optional frame)
+  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+With optional argument FRAME, return the list of buffers of FRAME."
+  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+
+(after! (beframe consult)
+  (declare-function consult--buffer-state "consult")
+
+  (defvar +beframe-consult-source
+    `(:name "Frame-specific buffers (current frame)"
+      :narrow ?F
+      :category buffer
+      :face +beframe-buffer
+      :history beframe-history
+      :items ,#'+beframe-buffer-names-sorted
+      :action ,#'switch-to-buffer
+      :state ,#'consult--buffer-state))
+
+  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
+#+end_src
+
+*** Provide ~ibuffer~ integration :ibuffer:
+
+- source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
+
+#+begin_src emacs-lisp
+(defun +beframe-buffer-in-frame-p (buf frame)
+  "Return non-nil if BUF is in FRAME."
+  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
+
+(defun +beframe-frame-name-list ()
+  "Return list with frame names."
+  (mapcar #'car (make-frame-names-alist)))
+
+(defun +beframe-generate-ibuffer-filter-groups ()
+  "Create a set of ibuffer filter groups based on the Frame of buffers."
+  (mapcar
+   (lambda (frame)
+     (list (format "%s" frame)
+           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
+   (+beframe-frame-name-list)))
+
+(after! (beframe ibuffer)
+  (setq ibuffer-saved-filter-groups
+        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
+
+  (define-ibuffer-filter frame
+      "Limit current view to buffers in frames."
+    (:description "frame")
+    (memq buf (beframe-buffer-list))))
+#+end_src
+
+** ~activites~: workspace by activity :package:tabs:
+
+- Website :: <https://github.com/alphapapa/activities.el>
+
+#+begin_src emacs-lisp
+(require 'ceamx-lib)
+
+(package! activities
+  (activities-mode)
+
+  (when tab-bar-mode
+    (activities-tabs-mode)))
+#+end_src
+
+*** Activities.el Keybindings :keybinds:
+
+#+begin_src emacs-lisp
+(defun ceamx-after-init-define-activities-keys-h ()
+  "Define keybindings for `activities' late to override `edebug'.
+Intended for use as a hook on `ceamx-after-init-hook'."
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+
+  ;; (keymap-global-unset "C-x C-a" t)
+  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
+
+  ;; TODO: still shares bindings with edebug which is confusing
+  (define-keymap :keymap (current-global-map)
+    "C-x C-a C-n" #'activities-new
+    "C-x C-a C-d" #'activities-define
+    "C-x C-a C-a" #'activities-resume
+    "C-x C-a C-s" #'activities-suspend
+    "C-x C-a C-k" #'activities-kill
+    "C-x C-a RET" #'activities-switch
+
+    "C-x C-a b" #'activities-switch-buffer
+    "C-x C-a g" #'activities-revert
+    "C-x C-a l" #'activities-list))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
+#+end_src
+
+** ~breadcrumb~: header-line wayfinding
+
+- Website :: <https://github.com/joaotavora/breadcrumb>
+
+#+begin_src emacs-lisp
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
 #+end_src
 
 
@@ -8030,8 +7884,6 @@ lists."
 ** Emacs Lisp
 
 #+begin_src emacs-lisp
-(require 'config-keys)
-
 (require 'ceamx-lib)
 (require 'lib-lisp)
 
@@ -8082,13 +7934,13 @@ lists."
 (keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
 
 (define-keymap :keymap emacs-lisp-mode-map
-  ceamx-keys-repl-toggle #'ielm
+  "C-:" #'ielm
 
   "C-S-t" #'transpose-sexps)
 
 (with-eval-after-load 'ielm
   (defvar ielm-map)
-  (keymap-set ielm-map ceamx-keys-repl-toggle #'quit-window))
+  (keymap-set ielm-map "C-:" #'quit-window))
 
 ;;; Packages
 
@@ -8888,21 +8740,17 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 *** Keybindings :keybinds:
 
 #+begin_src emacs-lisp
-(require 'config-keys)
+(after! nix-mode
+  (keymap-set nix-mode-map "C-:" #'nix-repl))
 
-(with-eval-after-load 'nix-mode
-  (keymap-set nix-mode-map ceamx-keys-repl-toggle #'nix-repl)
+(after! (nix-mode tempel)
+  (tempel-key "C-c i t a" modargs nix-mode-map))
 
-  ;; FIXME: this is dumb, but the simplest way i found to avoid yelling without use-package
-  (with-eval-after-load 'tempel
-    ;; (eval-when-compile (require 'tempel))
-    (tempel-key "C-c i t a" modargs nix-mode-map)))
+(after! nix-ts-mode
+  (keymap-set nix-ts-mode-map "C-:" #'nix-repl))
 
-(with-eval-after-load 'nix-ts-mode
-  (keymap-set nix-ts-mode-map ceamx-keys-repl-toggle #'nix-repl))
-
-(with-eval-after-load 'nix-repl
-  (keymap-set nix-repl-mode-map ceamx-keys-repl-toggle #'quit-window))
+(after! nix-repl
+  (keymap-set nix-repl-mode-map "C-:" #'quit-window))
 #+end_src
 
 ** Language Support for PHP
@@ -10222,7 +10070,7 @@ CLOSED: [2024-07-16 Tue 00:00]
 - State "DONE"       from "TODO"       [2024-07-16 Tue 00:00]
 
 
-* Surfing the Wild Web of Words :: =eww= :web:
+* Web Browsing :: =eww= :web:
 
 #+begin_src emacs-lisp :tangle lisp/init-eww.el :comments no
 ;;; init-eww.el --- Surfing the Wild Web of Words  -*- lexical-binding: t; -*-
@@ -10532,38 +10380,13 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 (package! mugur)
 #+end_src
 
-** DISABLED ~org-tanglesync~: sync tangled src blocks
-:PROPERTIES:
-:header-args: :tangle no
-:END:
+** ~free-keys~: Show free keybindings for modkeys or prefixes
 
-This mode... works?!  Kind of.  It is actually kind of unpredictable, at least in
-my initial usage of it.  I would only enable it as needed.  It did really help me
-pull in all of the existing =*.el= files to =config.org=!
++ Package :: <https://github.com/Fuco1/free-keys>
 
 #+begin_src emacs-lisp
-(package! org-tanglesync
-  ;; FIXME: try to not do this
-  (require 'org-tanglesync)
-
-  (add-hook 'org-mode-hook #'org-tanglesync-mode)
-  ;; (remove-hook 'org-mode-hook #'org-tanglesync-mode)
-
-  (add-hook 'prog-mode-hook #'org-tanglesync-watch-mode)
-  ;; (remove-hook 'prog-mode-hook #'org-tanglesync-watch-mode)
-
-  ;; (add-hook 'text-mode-hook #'org-tanglesync-watch-mode)
-  ;; (remove-hook 'text-mode-hook #'org-tanglesync-watch-mode)
-
-  (setopt org-tanglesync-watch-files
-    (seq-map (apply-partially #'file-name-concat user-emacs-directory)
-      '("config-sync.org")))
-
-  (define-keymap :keymap (current-global-map)
-    "C-c M-i" #'org-tanglesync-process-buffer-interactive
-    "C-c M-a" #'org-tanglesync-process-buffer-automatic))
+(package! free-keys)
 #+end_src
-
 
 ** ~uuidgen~: Generate and insert UUIDs
 
@@ -10736,7 +10559,7 @@ some separate binaries.
 
 ** TODO <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
 ** TODO =saveplace-pdf-view=
-** I Ching / Yijing / Yi
+** Yijing aka I Ching
 
 Unfortunately, due to copyright restrictions, there are no modern translations
 available for legal distribution.
@@ -10848,15 +10671,15 @@ Return the new `zone' timer."
 :END:
 
 #+begin_src emacs-lisp
-(require 'init-dashboard)
-(require 'init-keys)
-(require 'init-abbrevs)
+(require 'ceamx-init-essentials)
 (require 'ceamx-init-search)
 (require 'init-completion)
+(require 'init-abbrevs)
 (require 'init-embark)
-(require 'init-vcs)
 (require 'init-dired)
 (require 'init-workspace)
+(require 'init-dashboard)
+(require 'init-vcs)
 (require 'ceamx-init-langs)
 (require 'init-writing)
 (require 'init-templates)
