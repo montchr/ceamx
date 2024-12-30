@@ -24,28 +24,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
-;;;###autoload
-(defun ceamx-completion/embark-export-write ()
-  "Export the current `vertico' candidates to a writable buffer.
-Supported export flows include the following:
-
-`consult-grep'      => `wgrep'
-files               => `wdired'
-`consult-location'  => `occur-edit'"
-  (interactive)
-  (require 'embark)
-  (require 'wgrep)
-  (let* ((edit-command
-          (pcase-let ((`(,type . ,candidates)
-                       (run-hook-with-args-until-success 'embark-candidate-collectors)))
-            (pcase type
-              ('consult-grep #'wgrep-change-to-wgrep-mode)
-              ('file #'wdired-change-to-wdired-mode)
-              ('consult-location #'occur-edit-mode)
-              (x (user-error "Embark category %S doesn't support writable export" x)))))
-         (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
-    (embark-export)))
 (require 'ceamx-lib)
 
 (defvar devdocs-data-dir)
@@ -81,12 +59,28 @@ files               => `wdired'
                   #'ceamx/org-info)
                  (_ #'consult-info))))
       (command-execute fn))))
-(defvar +dabbrev-friend-buffer-size-max (* 1 1024 1024) ; 1 MB
-  "Size limit for a buffer to be scanned for dynamic abbreviations.")
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
+;;;###autoload
+(defun ceamx-completion/embark-export-write ()
+  "Export the current `vertico' candidates to a writable buffer.
+Supported export flows include the following:
 
-(defun +dabbrev-friend-buffer-p (buf)
-  "Whether to consider BUF a `dabbrev' friend buffer."
-  (< (buffer-size buf) +dabbrev-friend-buffer-size-max))
+`consult-grep'      => `wgrep'
+files               => `wdired'
+`consult-location'  => `occur-edit'"
+  (interactive)
+  (require 'embark)
+  (require 'wgrep)
+  (let* ((edit-command
+          (pcase-let ((`(,type . ,candidates)
+                       (run-hook-with-args-until-success 'embark-candidate-collectors)))
+            (pcase type
+              ('consult-grep #'wgrep-change-to-wgrep-mode)
+              ('file #'wdired-change-to-wdired-mode)
+              ('consult-location #'occur-edit-mode)
+              (x (user-error "Embark category %S doesn't support writable export" x)))))
+         (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
+    (embark-export)))
 
 (provide 'lib-completion)
 ;;; lib-completion.el ends here

@@ -659,7 +659,8 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
                      regexp-search-ring
                      search-ring))
     (cl-pushnew save savehist-additional-variables))
-
+  (setopt history-length 100
+          history-delete-duplicates t)
   (setopt savehist-autosave-interval 60))
 
 ;; Record point position in buffers with ~saveplace~

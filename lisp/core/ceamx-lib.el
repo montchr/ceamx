@@ -398,15 +398,37 @@ as in `defun'."
        (dolist (hook ',hooks)
         (add-hook hook #',name)))))
 
+(defmacro abbrevs! (table &rest defs)
+  "Expand `abbrev' definitions DEFS for the given TABLE.
+DEFS is a sequence of any of the following:
+
+  - Pair of strings mapping ABBREV to its literal EXPANSION
+
+  - Pair of string to symbol mapping ABBREV to a function EXPANSION
+    returning the expanded string
+
+\(fn TABLE &rest [ABBREV EXPANSION]...)"
+  (declare (indent 1))
+  (unless (zerop (% (length defs) 2))
+    (error "Uneven number of abbrev/expansion pairs: %s" defs))
+  `(if (abbrev-table-p ,table)
+       (progn
+         ,@(mapcar
+            (lambda (pair)
+              (let ((abbrev (nth 0 pair))
+                    (expansion (nth 1 pair)))
+               (if (stringp expansion)
+                   `(define-abbrev ,table ,abbrev ,expansion)
+                 `(define-abbrev ,table ,abbrev "" ,expansion))))
+            (seq-split defs 2)))
+     (error "%s is not an abbrev table" ,table)))
+
 (defmacro use-feature! (name &rest args)
-  "Configuration-only wrapper for `use-package', passing through NAME and ARGS.
+  "Configure feature NAME with `use-package' without package installation.
+ARGS are as in `use-package', which see.
 
-This macro is a wrapper for `use-package' (which see) disabling package
-installation by setting package installation keywords to nil.
-
-If `use-package-always-ensure' is non-nil, its effect will be
-ignored in this `use-package' macro expansion because `:ensure'
-will be nil."
+If `use-package-always-ensure' is non-nil, its effect will be ignored
+here because `:ensure' will be nil."
   (declare (indent defun))
   `(use-package ,name
      :ensure nil

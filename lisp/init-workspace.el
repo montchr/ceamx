@@ -26,6 +26,9 @@
 
 (require 'ceamx-lib)
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
+(use-feature! ibuffer
+  :config
+  (setopt ibuffer-movement-cycle t))
 (require 'ceamx-lib)
 
 (package! activities

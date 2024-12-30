@@ -280,6 +280,7 @@ Example table:
 - [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
 
 
+*** [[https://github.com/james-stoup/emacs-org-mode-tutorial][GitHub - james-stoup/emacs-org-mode-tutorial: A primer for users trying to make sense of Org Mode]]
 * Maintenance
 
 ** Functions to clean and re-tangle Elisp files
@@ -571,50 +572,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<init-flymake>>
 
 <<file-footer(feature="init-flymake")>>
-#+end_src
-
-** =lisp/init-abbrevs.el=
-
-#+name: init-abbrevs-file
-#+begin_src emacs-lisp :tangle lisp/init-abbrevs.el :comments no :noweb yes
-<<file-prop-line(feature="init-abbrevs",desc="Abbrevs support")>>
-
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-abbrevs>>
-
-<<file-footer(feature="init-abbrevs")>>
-#+end_src
-
-** =lisp/init-completion.el=
-
-#+name: init-completion-file
-#+begin_src emacs-lisp :tangle lisp/init-completion.el :comments no :noweb yes
-<<file-prop-line(feature="init-completion",desc="Completion enhancements")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-completion>>
-
-<<file-footer(feature="init-completion")>>
 #+end_src
 
 ** =lisp/init-templates.el=
@@ -1603,15 +1560,37 @@ as in `defun'."
        (dolist (hook ',hooks)
         (add-hook hook #',name)))))
 
+(defmacro abbrevs! (table &rest defs)
+  "Expand `abbrev' definitions DEFS for the given TABLE.
+DEFS is a sequence of any of the following:
+
+  - Pair of strings mapping ABBREV to its literal EXPANSION
+
+  - Pair of string to symbol mapping ABBREV to a function EXPANSION
+    returning the expanded string
+
+\(fn TABLE &rest [ABBREV EXPANSION]...)"
+  (declare (indent 1))
+  (unless (zerop (% (length defs) 2))
+    (error "Uneven number of abbrev/expansion pairs: %s" defs))
+  `(if (abbrev-table-p ,table)
+       (progn
+         ,@(mapcar
+            (lambda (pair)
+              (let ((abbrev (nth 0 pair))
+                    (expansion (nth 1 pair)))
+               (if (stringp expansion)
+                   `(define-abbrev ,table ,abbrev ,expansion)
+                 `(define-abbrev ,table ,abbrev "" ,expansion))))
+            (seq-split defs 2)))
+     (error "%s is not an abbrev table" ,table)))
+
 (defmacro use-feature! (name &rest args)
-  "Configuration-only wrapper for `use-package', passing through NAME and ARGS.
+  "Configure feature NAME with `use-package' without package installation.
+ARGS are as in `use-package', which see.
 
-This macro is a wrapper for `use-package' (which see) disabling package
-installation by setting package installation keywords to nil.
-
-If `use-package-always-ensure' is non-nil, its effect will be
-ignored in this `use-package' macro expansion because `:ensure'
-will be nil."
+If `use-package-always-ensure' is non-nil, its effect will be ignored
+here because `:ensure' will be nil."
   (declare (indent defun))
   `(use-package ,name
      :ensure nil
@@ -2568,12 +2547,12 @@ theme)."
           (const :tag "The `standard-themes' module" standard)
           (const :tag "Do not load a theme module" nil)))
 
-(defcustom ceamx-ui-theme-light 'modus-operandi-tinted
+(defcustom ceamx-ui-theme-light 'modus-operandi
   "The default light theme."
   :group 'ceamx
   :type 'symbol)
 
-(defcustom ceamx-ui-theme-dark 'modus-vivendi-tinted
+(defcustom ceamx-ui-theme-dark 'modus-vivendi
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
@@ -2621,77 +2600,19 @@ theme)."
 - Website :: <https://protesilaos.com/modus-themes/>
 
 #+begin_src emacs-lisp
-(use-package modus-themes
-  :ensure t
-  :demand t
+(package! modus-themes
+  (require 'modus-themes)
 
-  :config
   (setopt modus-themes-italic-constructs t
           modus-themes-bold-constructs t
           modus-themes-mixed-fonts t
           modus-themes-variable-pitch-ui nil)
-
-  (setopt modus-themes-to-toggle
-          '(modus-operandi-tinted modus-vivendi))
+  (setopt modus-themes-to-toggle '(modus-operandi modus-vivendi))
   (setopt modus-themes-disable-other-themes t)
-
   (setopt modus-themes-headings
           '((agenda-structure . (variable-pitch light 2.2))
             (agenda-date . (variable-pitch regular 1.3))
-            (t . (regular 1.1))))
-
-  ;; (let ((overrides '((cursor blue)
-
-  ;;                    ;; Syntax
-  ;;                    (builtin magenta)
-  ;;                    (comment red-faint)
-  ;;                    (constant magenta-cooler)
-  ;;                    (docstring magenta-faint)
-  ;;                    (docmarkup green-faint)
-  ;;                    (fnname magenta-warmer)
-  ;;                    (keybind green-cooler)
-  ;;                    (keyword cyan)
-  ;;                    (preprocessor cyan-cooler)
-  ;;                    (string red-cooler)
-  ;;                    (type magenta-cooler)
-  ;;                    (variable blue-warmer)
-  ;;                    (rx-construct magenta-warmer)
-  ;;                    (rx-backslash blue-cooler)
-
-  ;;                    ;; Buttons
-  ;;                    (bg-button-active bg-main)
-  ;;                    (fg-button-active fg-main)
-  ;;                    (bg-button-inactive bg-inactive)
-  ;;                    (fg-button-inactive "gray50")
-
-  ;;                    ;; Mode-line
-  ;;                    (bg-mode-line-active bg-lavender)
-  ;;                    (fg-mode-line-active fg-main)
-  ;;                    (border-mode-line-active bg-lavender)
-  ;;                    (border-mode-line-inactive unspecified)
-
-  ;;                    ;; Fringe
-  ;;                    (fringe unspecified)
-
-  ;;                    ;; Prompts
-  ;;                    ;; (fg-prompt fg-main)
-  ;;                    ;; not really subtle! too loud.
-  ;;                    ;; (bg-prompt bg-yellow-subtle)
-
-  ;;                    ;; Pair-matching (parens)
-  ;;                    (bg-paren-match unspecified)
-  ;;                    (fg-paren-match magenta-intense)
-  ;;                    (underline-paren-match magenta-intense)
-
-  ;;                    ;; Link styles
-  ;;                    ;; (underline-link border)
-  ;;                    ;; (underline-link-visited border)
-  ;;                    )))
-  ;;   (setopt modus-operandi-palette-overrides overrides
-  ;;           modus-operandi-tinted-palette-overrides overrides
-  ;;           modus-vivendi-palette-overrides overrides
-  ;;           modus-vivendi-tinted-palette-overrides overrides))
-  )
+            (t . (regular 1.1)))))
 #+end_src
 
 *** Ef-Themes :package:
@@ -2985,8 +2906,8 @@ Similar to the theme-family-specific ~modus-themes-load-theme~.
 Configure some user options dependent on the loaded packages:
 
 #+begin_src emacs-lisp
-(setopt ceamx-ui-theme-light 'modus-operandi-tinted)
-(setopt ceamx-ui-theme-dark 'modus-vivendi-tinted)
+(setopt ceamx-ui-theme-light 'modus-operandi)
+(setopt ceamx-ui-theme-dark 'modus-vivendi)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -3569,7 +3490,7 @@ will be used as default."
 #+end_src
 
 
-* =ceamx-init-essentials= :: Essentials
+* ~ceamx-init-essentials~ :: Essentials
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-essentials.el
 :END:
@@ -4289,7 +4210,8 @@ defined in Emacs C source code:
                      regexp-search-ring
                      search-ring))
     (cl-pushnew save savehist-additional-variables))
-
+  (setopt history-length 100
+          history-delete-duplicates t)
   (setopt savehist-autosave-interval 60))
 #+end_src
 
@@ -4506,7 +4428,7 @@ Enable ~repeat-mode~, avoiding running mode-hooks too early:
 #+end_src
 
 
-* =ceamx-init-search= :: Search & Replace
+* ~ceamx-init-search~ :: Search
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-search.el
 :END:
@@ -4644,7 +4566,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+end_src
 
 
-* ~ceamx-init-completion~ :: Completions & Selections
+* ~ceamx-init-completion~ :: Completion
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-completion.el
 :END:
@@ -4656,52 +4578,55 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 (require 'lib-completion)
 #+end_src
 
-** Global Settings
+** Baseline completion settings
 
 #+begin_src emacs-lisp
-;; Always resize mini-windows to fit their contents.
-(setopt resize-mini-windows t)
+(use-feature! minibuffer
+  :hook ((minibuffer-setup . cursor-intangible-mode)
+         (ceamx-after-init . minibuffer-electric-default-mode))
 
-;; Hide commands in M-x which do not apply to the current mode.  Corfu commands
-;; are hidden, since they are not used via M-x.  This setting is useful beyond
-;; Corfu.
-(setopt read-extended-command-predicate #'command-completion-default-include-p)
+  :config
 
-;; Don't let `completion-at-point' interfere with indentation.
-(setopt tab-always-indent 'complete)
+  (setopt echo-keystrokes 0.25)
+  (setopt savehist-save-minibuffer-history t)
+
+  ;; Always resize mini-windows to fit their contents.
+  (setopt resize-mini-windows t)
+  ;; Hide commands in M-x which do not apply to the current mode.
+  (setopt read-extended-command-predicate #'command-completion-default-include-p)
+
+  (setopt minibuffer-prompt-properties
+          '(read-only t
+            cursor-intangible t         ; see `cursor-intangible-mode'
+            face minibuffer-prompt))
+
+  ;; TODO: isn't this handled somewhere else?  case-insensitive until
+  ;; proven otherwise?
+  ;; (setopt completion-ignore-case t
+  ;;         read-buffer-completion-ignore-case t
+  ;;         read-file-name-completion-ignore-case t)
+  ;; (setq-default case-fold-search t)
+
+  (setopt minibuffer-default-prompt-format " [%s]")
+
+  )
+
+(add-hook 'ceamx-after-init-hook #'minibuffer-depth-indicate-mode)
+
+(after! mb-depth
+  (setopt enable-recursive-minibuffers t)
+  ;; TODO: evaluate...
+  (setopt read-minibuffer-restore-windows nil))
 #+end_src
 
-*** Enable recursive minibuffers
-
-#+begin_src emacs-lisp
-(setopt enable-recursive-minibuffers t)
-#+end_src
-
-*** Hide M-x commands which do not work in the current mode
-
-Vertico commands are hidden in normal buffers.
-
-#+begin_src emacs-lisp
-(setopt read-extended-command-predicate #'command-completion-default-include-p)
-#+end_src
-
-*** Do not allow the cursor in the minibuffer prompt
-
-#+begin_src emacs-lisp
-(setopt minibuffer-prompt-properties '( read-only t
-                                        cursor-intangible t
-                                        face minibuffer-prompt))
-
-(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-#+end_src
-
-*** Add an indicator to the ~completing-read-multiple~ prompt :ui:
+** Add an indicator to the ~completing-read-multiple~ prompt
 
 #+begin_src emacs-lisp
 (defvar crm-separator)
 
-(defun +crm-indicator (args)
-  "Add prompt indicator to `completing-read-multiple' (ARGS are candidates).
+(def-advice! ceamx-completion-crm-indicator-a (args)
+  :filter-args #'completing-read-multiple
+  "Add prompt indicator to `completing-read-multiple' for candidates ARGS.
 We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (cons (format "[CRM%s] %s"
                 (replace-regexp-in-string
@@ -4709,91 +4634,120 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
                  crm-separator)
                 (car args))
         (cdr args)))
-
-(advice-add #'completing-read-multiple :filter-args #'+crm-indicator)
 #+end_src
 
-** VERTical Interactive COmpletion :ui:minibuffer:
+** ~orderless~ :: completion-matching multiple regular expressions :search:
+
++ Package :: <https://github.com/oantolin/orderless>
+
+#+begin_src emacs-lisp
+(package! orderless
+  (after! minibuffer
+    (require 'orderless))
+
+  (setopt orderless-matching-styles '(orderless-prefixes orderless-regexp))
+  ;; Spaces & dash & slash & underscore
+  (setopt orderless-component-separator " +\\|[-/_]")
+
+  ;; [SPC] should never trigger a completion.
+  (keymap-set minibuffer-local-completion-map "SPC" nil)
+  ;; [?] should not interfere with regexp symbols
+  (keymap-set minibuffer-local-completion-map "?" nil))
+#+end_src
+
+** Define custom completion styles
+*** ~+orderless-fast-dispatch~
+
+- source :: <https://github.com/minad/corfu/blob/main/README.org#auto-completion>
+
+#+begin_src emacs-lisp
+(defun +orderless-fast-dispatch (word index total)
+  "Fast-dispatch `orderless' completion style for `corfu'."
+  (and (= index 0) (= total 1) (length< word 4)
+       (cons 'orderless-literal-prefix word)))
+#+end_src
+
+#+begin_src emacs-lisp
+(after! orderless
+  (orderless-define-completion-style +orderless-fast
+    "Fast completion style, intended for usage with `corfu'."
+    (orderless-style-dispatchers '(+orderless-fast-dispatch))
+    (orderless-matching-styles '(orderless-literal orderless-regexp))))
+#+end_src
+
+*** ~+orderless-with-initialism~
+
+#+begin_src emacs-lisp
+(after! orderless
+  (orderless-define-completion-style +orderless-with-initialism
+    (orderless-matching-styles '(orderless-initialism
+                                 orderless-literal
+                                 orderless-regexp))))
+#+end_src
+
+** Configure preferred completion styles
+
+#+begin_src emacs-lisp
+;; See also `completion-category-overrides'
+(setopt completion-styles
+        '(basic
+          substring
+          initials
+          flex
+          orderless))
+
+;; Make `partial-completion' behave like `substring'.
+(setopt completion-pcm-leading-wildcard t)
+
+;; Reset per-category defaults to force the use of the standard
+;; `completion-styles'.  Customizations can be specified in
+;; `completion-category-overrides'.
+(setq completion-category-defaults nil)
+
+(setopt completion-category-overrides
+        '((file (styles . (basic partial-completion orderless)))
+          (bookmark (styles . (basic substring)))
+          (library (styles . (basic substring)))
+          (embark-keybinding (styles . (basic substring)))
+          (imenu (styles . (basic substring orderless)))
+          (consult-location (styles .  (basic substring orderless)))
+          (kill-ring (styles . (emacs22 orderless)))
+          (eglot (styles . (emacs22 substring orderless)))))
+#+end_src
+
+** ~vertico~ :: VERT(ical )I(nteractive )CO(mpletion)
 
 + Package :: <https://github.com/minad/vertico>
 
-*** Install Vertico and configure its global settings
-
 #+begin_src emacs-lisp
 (package! vertico
-  (setopt vertico-count 8)
-  (setopt vertico-resize t)
-  ;; Enable cycling for `vertico-next' and `vertico-previous'.
+  (add-hook 'ceamx-after-init-hook #'vertico-mode)
+
   (setopt vertico-cycle t)
+  (setopt vertico-count 5
+          vertico-resize t
+          vertico-scroll-margin 0)
 
-  (vertico-mode))
-
-;; Avy-like candidate selection
-(after! vertico
-  (keymap-set vertico-map "M-q" #'vertico-quick-insert)
-  (keymap-set vertico-map "C-q" #'vertico-quick-exit))
-#+end_src
-
-*** Prefix current candidate with arrow
-
-+ src :: <https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow>
-
-#+begin_src emacs-lisp
-(after! vertico
-  (advice-add #'vertico--format-candidate :around
-    (lambda (orig cand prefix suffix index start)
-      (setq cand (funcall orig cand prefix suffix index start))
-      (concat (if (= vertico--index index)
-                  (propertize "» " 'face 'vertico-current)
-                "  ")
-              cand))))
-#+end_src
-
-*** Set up the ~vertico-directory~ extension
-
-#+begin_src emacs-lisp
-(after! vertico
-  ;; FIXME: why is this disabled?
-  ;; via <https://github.com/minad/vertico/wiki#additions-for-moving-up-and-down-directories-in-find-file>
-  ;; (defun ceamx/vertico-directory-delete-entry ()
-  ;;   "Delete directory or entire entry before point."
-  ;;   (interactive)
-  ;;   (when (and (> (point) (minibuffer-prompt-end))
-  ;;              ;; Check vertico--base for stepwise file path completion
-  ;;              (not (equal vertico--base ""))
-  ;;              (eq 'file (vertico--metadata-get 'category)))
-  ;;     (save-excursion
-  ;;       (goto-char (1- (point)))
-  ;;       (when (search-backward "/" (minibuffer-prompt-end) t)
-  ;;         (delete-region (1+ (point)) (point-max))
-  ;;         t))))
-
-  (define-keymap :keymap vertico-map
-    "RET"     #'vertico-directory-enter
-    "DEL"     #'vertico-directory-delete-char
-    "M-DEL"   #'vertico-directory-delete-word)
+  (after! (vertico savehist)
+    (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
+    (add-to-list 'savehist-additional-variables #'vertico-repeat-history))
 
   ;; Tidy shadowed file names -- e.g. cleans `~/foo/bar///' to `/', and `~/foo/bar/~/' to `~/'.
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
+
+(after! vertico
+  (define-keymap :keymap vertico-map
+    "RET" #'vertico-directory-enter
+    "DEL" #'vertico-directory-delete-char
+    "M-DEL" #'vertico-directory-delete-word
+    "M-q" #'vertico-quick-insert
+    "C-q" #'vertico-quick-exit))
 #+end_src
 
-*** Set up the ~vertico-repeat~ extension for recalling session history
+Fine-tune Vertico appearance per-command or per-category with
+~vertico-multiform~:
 
 #+begin_src emacs-lisp
-(after! (vertico savehist)
-  (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
-  (add-to-list 'savehist-additional-variables #'vertico-repeat-history))
-#+end_src
-
-*** Fine-tune Vertico appearance per-command or per-category
-
-#+begin_src emacs-lisp
-;;   M-B -> `vertico-multiform-buffer'
-;;   M-F -> `vertico-multiform-flat'
-;;   M-G -> `vertico-multiform-grid'
-;;   M-R -> `vertico-multiform-reverse'
-;;   M-U -> `vertico-multiform-unobtrusive'
-;;   M-V -> `vertico-multiform-vertical'
 (after! vertico
   ;; NOTE: Takes precedence over `vertico-multiform-categories'.
   (setopt vertico-multiform-commands
@@ -4808,42 +4762,12 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
             (symbol (vertico-sort-function . vertico-sort-alpha))))
 
   (vertico-multiform-mode))
+
+(after! vertico-multiform
+  (keymap-set vertico-multiform-map "C-l" #'vertico-multiform-vertical))
 #+end_src
 
-*** Add command to export completion candidates to a writable buffer
-
-#+begin_src emacs-lisp
-(keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write)
-#+end_src
-
-Note the dependencies on ~embark~ and ~wgrep~!
-
-#+begin_src emacs-lisp :noweb-ref lib-completion
-;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
-;;;###autoload
-(defun ceamx-completion/embark-export-write ()
-  "Export the current `vertico' candidates to a writable buffer.
-Supported export flows include the following:
-
-`consult-grep'      => `wgrep'
-files               => `wdired'
-`consult-location'  => `occur-edit'"
-  (interactive)
-  (require 'embark)
-  (require 'wgrep)
-  (let* ((edit-command
-          (pcase-let ((`(,type . ,candidates)
-                       (run-hook-with-args-until-success 'embark-candidate-collectors)))
-            (pcase type
-              ('consult-grep #'wgrep-change-to-wgrep-mode)
-              ('file #'wdired-change-to-wdired-mode)
-              ('consult-location #'occur-edit-mode)
-              (x (user-error "Embark category %S doesn't support writable export" x)))))
-         (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
-    (embark-export)))
-#+end_src
-
-** CONSULTing completing-read :minibuffer:search:
+** ~consult~ :: CONSULT(ing ~completing-read~)
 
 - website :: <https://github.com/minad/consult>
 - ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
@@ -5107,9 +5031,9 @@ Refile... somewhere...
   "C-h I o"  #'ceamx/org-info)
 #+end_src
 
-** Marginalia for minibuffer completion candidates :minibuffer:help:
+** ~marginalia~ :: minibuffer completion annotations
 
-- website :: <https://github.com/minad/marginalia>
++ Package :: <https://github.com/minad/marginalia>
 
 #+begin_src emacs-lisp
 (package! marginalia
@@ -5118,411 +5042,56 @@ Refile... somewhere...
   (marginalia-mode))
 #+end_src
 
-*** Projectile integration
+** Dynamic text expansion with ~dabbrev~
 
 #+begin_src emacs-lisp
-(after! (marginalia)
-  (when (featurep 'projectile)
-    (add-to-list 'marginalia-command-categories '(projectile-find-file . file))))
+(setopt dabbrev-abbrev-char-regexp "\\sw\\|\\s_"
+        dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
+(setopt dabbrev-backward-only nil)
+(setopt dabbrev-case-distinction 'case-replace
+        dabbrev-case-fold-search nil
+        dabbrev-upcase-means-case-search t)
+(setopt dabbrev-check-other-buffers t)
+(setopt dabbrev-eliminate-newlines t)
+(setopt dabbrev-ignored-buffer-regexps '("\\` ")
+        dabbrev-ignored-buffer-modes '(archive-mode doc-view-mode image-mode
+                                       pdf-view-mode tags-table-mode))
 #+end_src
 
-** Orderlessly completion-match multiple regular expressions :search:
-
-+ website :: <https://github.com/oantolin/orderless>
-+ source :: <https://github.com/oantolin/orderless?tab=readme-ov-file#style-dispatchers>
-+ source :: <https://github.com/minad/consult/wiki#minads-orderless-configuration>
+** Static text expansion with ~abbrev~
+*** Configure ~abbrev-mode~ settings
 
 #+begin_src emacs-lisp
-(package! orderless
-  (require 'orderless)
+(use-feature! abbrev
+  ;; NOTE: `message-mode' derives from `text-mode', so it does not
+  ;; need to be listed for coverage here.
+  :hook ((text-mode prog-mode git-commit-mode) . abbrev-mode)
 
-  ;; Spaces & dash & slash & underscore
-  (setopt orderless-component-separator " +\\|[-/_]"))
-#+end_src
-
-Query syntax additions through style dispatchers:
-
-#+begin_src emacs-lisp :noweb-ref nil
-(defun +orderless--consult-suffix ()
-  "Regexp which matches the end of string with Consult tofu support."
-  (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
-      (format "[%c-%c]*$"
-              consult--tofu-char
-              (+ consult--tofu-char consult--tofu-range -1))
-    "$"))
-
-;; Recognizes the following patterns:
-;; + .ext (file extension)
-;; + regexp$ (regexp matching at end)
-(defun +orderless-consult-dispatch (word _index _total)
-  (cond
-   ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
-   ((string-suffix-p "$" word)
-    `(orderless-regexp . ,(concat (substring word 0 -1) (+orderless--consult-suffix))))
-   ;; File extensions
-   ((and (or minibuffer-completing-file-name
-             (derived-mode-p 'eshell-mode))
-         (string-match-p "\\`\\.." word))
-    `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--consult-suffix))))))
-#+end_src
-
-*** Define custom completion syntax styles
-
-**** ~+orderless-fast-dispatch~
-
-- source :: <https://github.com/minad/corfu/blob/main/README.org#auto-completion>
-
-#+begin_src emacs-lisp
-(defun +orderless-fast-dispatch (word index total)
-  "Fast-dispatch `orderless' completion style for `corfu'."
-  (and (= index 0) (= total 1) (length< word 4)
-       (cons 'orderless-literal-prefix word)))
-#+end_src
-
-#+begin_src emacs-lisp
-(after! orderless
-  (orderless-define-completion-style +orderless-fast
-    "Fast completion style, intended for usage with `corfu'."
-    (orderless-style-dispatchers '(+orderless-fast-dispatch))
-    (orderless-matching-styles '(orderless-literal orderless-regexp))))
-#+end_src
-
-**** ~+orderless-with-initialism~
-
-#+begin_src emacs-lisp
-(after! orderless
-  (orderless-define-completion-style +orderless-with-initialism
-    (orderless-matching-styles '(orderless-initialism
-                                 orderless-literal
-                                 orderless-regexp))))
-#+end_src
-
-*** Configure custom completion styles
-
-#+begin_src emacs-lisp
-(after! orderless
-  (setopt completion-styles '(;; +orderless-fast
-                              +orderless-with-initialism
-                              ;; orderless
-                              basic))
-
-  (setopt completion-category-overrides
-          '(;; The "file" category override is required for TRAMP hostname
-            ;; completion.  "partial-completion" allows for wildcard/partial
-            ;; paths (e.g. "/u/s/l" for "/usr/share/local").
-            (file (styles basic partial-completion))))
-
-  ;; Available matching styles:
-  ;;
-  ;; - `orderless-regexp'
-  ;; - `orderless-literal'
-  ;; - `orderless-literal-prefix'
-  ;; - `orderless-prefixes' :: split component at word bounds and match word
-  ;;   bounds in candidate (in order)
-  ;; - `orderless-initialism' :: each char is the beginning of a word in
-  ;;   candidate, in order;  e.g. ‘abc’ => ‘\<.*\<b.*\c’
-  ;; - `orderless-flex' :: chars in component appear in candidate in order, but
-  ;;   not necessarily consecutively;  e.g. ‘abc’ => ‘a.*b.*c’
-  ;;
-  ;; <https://github.com/oantolin/orderless/blob/master/README.org#component-matching-styles>
-  ;; (setopt orderless-matching-styles (list #'orderless-literal
-  ;;                                         #'orderless-regexp))
-
-  ;; Style dispatchers:
-  ;;
-  ;; `orderless-affix-dispatch' :: support a mini-syntax using special
-  ;; characters as prefix or suffix, as follows:
-  ;;
-  ;; - '!' :: negate component with `orderless-not' e.g. "!bad" and "bad!" match
-  ;;          strings that do *not* contain "bad"
-  ;; - '&' :: match candidate by annotation with `orderless-annotation'
-  ;; - ',' :: use `orderless-initialism'
-  ;; - '=' :: use `orderless-literal'
-  ;; - '^' :: use `orderless-literal-prefix'
-  ;; - '~' :: use `orderless-flex'
-  ;; - '%' :: ignore diacritics and character inflections
-  ;; (setopt orderless-style-dispatchers (list #'orderless-affix-dispatch))
-
-
-  )
-#+end_src
-
-** COmpletion in Region FUnction :capfs:
-
-+ website :: <https://github.com/minad/corfu>
-+ website :: <https://github.com/minad/cape>
-+ ref :: <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
-
-*** Install Corfu and configure its global settings
-
-#+begin_src emacs-lisp
-(package! corfu
-  (require 'corfu)
-
-  (setopt corfu-count 12
-          corfu-cycle t
-          corfu-max-width 80
-          corfu-min-width 25
-          corfu-scroll-margin 5)
-  ;; cf. `orderless-component-separator'
-  (setopt corfu-separator ?_)
-  (setopt corfu-on-exact-match 'insert
-          corfu-preselect 'prompt
-          corfu-quit-at-boundary 'separator
-          corfu-quit-no-match t)
-
-  (keymap-set corfu-map "M-SPC" #'corfu-insert-separator)
-
-  ;; Prevent excessive completion-spamming.
-  ;; Without this, on Emacs 30.0, typing causes constant `corfu' errors.
-  ;; <https://github.com/minad/corfu/discussions/457>
-  (setopt text-mode-ispell-word-completion nil)
-
-  (global-corfu-mode))
-#+end_src
-
-*** Trigger completions automatically
-
-#+begin_src emacs-lisp
-(setopt corfu-auto t
-        corfu-auto-delay 0.2
-        corfu-auto-prefix 2)
-#+end_src
-
-*** Conditionally enable/disable Corfu in minibuffers :minibuffer:
-
-#+begin_src emacs-lisp
-(defun +corfu-minibuffer-enable-p ()
-  "Whether to enable `corfu' completion in a currently-active minibuffer."
-  (not (or (bound-and-true-p mct--active)
-           (bound-and-true-p vertico--input)
-           (eq (current-local-map) read-passwd-map))))
-#+end_src
-
-#+begin_src emacs-lisp
-(setopt global-corfu-minibuffer #'+corfu-minibuffer-enable-p)
-#+end_src
-
-*** Ensure Corfu flyout closes when leaving insert state :keybinds:
-
-#+begin_src emacs-lisp
-(after! meow
-  (add-hook 'meow-insert-exit-hook #'corfu-quit))
-#+end_src
-
-*** ~corfu-echo-mode~: Show candidate docs in echo area :messages:help:
-
-#+begin_src emacs-lisp
-(setopt corfu-echo-delay '(0.25 . 0.25))
-
-(after! corfu
-  (unless corfu-popupinfo-mode
-    (corfu-echo-mode 1)))
-#+end_src
-
-*** ~corfu-history-mode~: Sort candidates by history position :history:
-
-#+begin_src emacs-lisp
-(after! corfu
-  (corfu-history-mode))
-
-;; Persist Corfu history across sessions.
-(after! (savehist corfu-history)
-  (add-to-list 'savehist-additional-variables 'corfu-history))
-#+end_src
-
-*** Install ~corfu-terminal~ for Corfu terminal support :package:
-
-+ website :: <https://codeberg.org/akib/emacs-corfu-terminal>
-
-Corfu-endorsed solution to making it usable in terminal.
-
-See also ~popon~, the utility library powering the interface.
-
-#+begin_src emacs-lisp
-(package! corfu-terminal
-  (after! (corfu)
-    (unless (display-graphic-p)
-      (corfu-terminal-mode 1))))
-#+end_src
-
-*** Install ~kind-icon~ to add icons to completion-at-point candidates :ui:icons:
-
-<https://github.com/jdtsmith/kind-icon>
-
-#+begin_src emacs-lisp
-(package! kind-icon
-  (setopt kind-icon-use-icons (display-graphic-p))
-  (setopt kind-icon-blend-background t)
-
-  (require 'kind-icon)
-
-  (after! corfu
-    (setopt kind-icon-default-face 'corfu-default)
-    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
-#+end_src
-
-**** Reduce icon size slightly
-
-If you change this value, make sure to call ~kind-icon-reset-cache~ afterwards,
-otherwise the icon size will likely not be accurate.
-
-#+begin_src emacs-lisp
-(after! kind-icon
-  (plist-put kind-icon-default-style :height 0.9))
-#+end_src
-
-**** Update icon apperance after enabling a theme
-
-#+begin_src emacs-lisp
-(after! kind-icon
-  ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-  (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
-#+end_src
-
-*** ~dabbrev~: Dynamic Abbreviations
-
-#+begin_src emacs-lisp
-(setopt dabbrev-upcase-means-case-search t)
-#+end_src
-
-**** Exclude some buffers and modes from ~dabbrev~ sources
-
-#+begin_src emacs-lisp
-(setopt dabbrev-ignored-buffer-regexps '("\\` "))
-
-(after! dabbrev
-  (dolist (mode '(doc-view-mode pdf-view-mode tags-table-mode))
-    (add-to-list 'dabbrev-ignored-buffer-modes mode)))
-#+end_src
-
-**** Ignore sources buffers above size threshold
-
-#+begin_src emacs-lisp :noweb-ref lib-completion
-(defvar +dabbrev-friend-buffer-size-max (* 1 1024 1024) ; 1 MB
-  "Size limit for a buffer to be scanned for dynamic abbreviations.")
-
-(defun +dabbrev-friend-buffer-p (buf)
-  "Whether to consider BUF a `dabbrev' friend buffer."
-  (< (buffer-size buf) +dabbrev-friend-buffer-size-max))
-#+end_src
-
-#+begin_src emacs-lisp
-(setopt dabbrev-friend-buffer-function #'+dabbrev-friend-buffer-p)
-#+end_src
-
-**** DISABLED Override default ~dabbrev~ keybindings :keybinds:
-
-This was not my idea, and I would like to savor the full ~dabbrev~ experience
-
-#+begin_src emacs-lisp :noweb-ref nil
-(after! dabbrev
-  ;; Swap M-/ and C-M-/
-  (keymap-global-set "M-/" #'dabbrev-completion)
-  (keymap-global-set "C-M-/" #'dabbrev-expand))
-#+end_src
-
-** Completion-At-Point Extensions (Cape)
-
-- website :: <https://github.com/minad/cape/blob/main/README.org>
-
-#+begin_src emacs-lisp
-(package! cape
-  ;; Ensure keymap availability.
-  (require 'cape)
-
-  (setopt cape-dabbrev-check-other-buffers t)
-
-  (def-hook! +corfu-add-cape-file-h ()
-    'prog-mode-hook
-    "Register the `cape-file' `completion-at-point-functions'."
-    (add-hook 'completion-at-point-functions #'cape-file 0 t))
-
-  (def-hook! +corfu-add-cape-elisp-block-h ()
-    '(org-mode-hook markdown-mode-hook)
-    "Register Elisp src block symbol completions."
-    (add-hook 'completion-at-point-functions #'cape-elisp-block 0 t))
-
-  (def-hook! +corfu-add-cape-dabbrev-h ()
-    '(prog-mode-hook
-      text-mode-hook
-      conf-mode-hook
-      comint-mode-hook
-      eshell-mode-hook)
-    "Register `dabbrev' completions."
-    (add-hook 'completion-at-point-functions #'cape-dabbrev 40 t))
-
-  ;; TODO: also for config.org
-  (def-hook! +corfu-add-cape-elisp-symbol-h ()
-    '(emacs-lisp-mode-hook)
-    "Register Emacs Lisp symbol completions."
-    (add-hook 'completion-at-point-functions #'cape-elisp-symbol 30 t))
-
-  ;; (advice-add #'pcomplete-completions-at-point :around #'cape-wrap-nonexclusive)
-
-  ;; FIXME: Enabling any of these outright will override everything else above!
-  ;; maybe change order? i.e. move these closer to beginning of expression
-  ;; (add-to-list 'completion-at-point-functions #'cape-history)
-  ;; (add-to-list 'completion-at-point-functions #'cape-keyword)
-  ;; (add-to-list 'completion-at-point-functions #'cape-sgml)
-  ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
-  ;; (add-to-list 'completion-at-point-functions #'cape-dict)
-
-  ;; (add-to-list 'completion-at-point-functions #'cape-line)
-  ;; "Character Mnemonics & Character Sets": <https://datatracker.ietf.org/doc/html/rfc1345>
-  ;; (add-to-list 'completion-at-point-functions #'cape-rfc1345)
-
-  (keymap-global-set "C-c p" cape-prefix-map))
-#+end_src
-
-**** Advise some modes' completion-at-point functions to work alongside ~cape~
-
-#+begin_src emacs-lisp
-(after! comint
-  (advice-add #'comint-completion-at-point :around #'cape-wrap-nonexclusive))
-
-(after! eglot
-  (advice-add #'eglot-completion-at-point :around #'cape-wrap-nonexclusive))
-
-(after! lsp-mode
-  (advice-add #'lsp-completion-at-point :around #'cape-wrap-noninterruptible)
-  (advice-add #'lsp-completion-at-point :around #'cape-wrap-nonexclusive))
-#+end_src
-
-** Buffer management
-
-#+begin_src emacs-lisp
-(use-feature! ibuffer
   :config
-  (setopt ibuffer-movement-cycle t))
+  (setopt only-global-abbrevs nil)
+  (setopt abbrev-suggest t)
+
+  ;; Our abbrevs are defined in configuration, no need to save elsewhere
+  (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save)
+
+  ;; Because the *scratch* buffer is produced before we load this, we
+  ;; have to explicitly activate the mode there.
+  (when-let* ((scratch (get-buffer "*scratch*")))
+    (with-current-buffer scratch
+      (abbrev-mode 1))))
 #+end_src
 
-
-* Abbrevs (~abbrev-mode~) :: =abbrevs=
-:PROPERTIES:
-:header-args: :noweb-ref init-abbrevs
-:END:
-
-** Re-locate the abbrev file to the ~user-emacs-directory~ for quick access
+*** Define the custom ~abbrevs~
 
 #+begin_src emacs-lisp
-(setopt abbrev-file-name (locate-user-emacs-file "abbrev-defs"))
+(abbrevs! text-mode-abbrev-table
+  "javascript"		"JavaScript"
+  "typescript"		"TypeScript"
+  "wordpress"		"WordPress"
+  "youtube"		"YouTube")
 #+end_src
 
-** Load custom abbrevs from ~abbrev-file-name~
-
-#+begin_src emacs-lisp
-(when (file-exists-p abbrev-file-name)
-  (quietly-read-abbrev-file))
-#+end_src
-
-** Display suggestions for available abbrevs
-
-#+begin_src emacs-lisp
-(setopt abbrev-suggest t)
-#+end_src
-
-** DISABLED Allow abbrevs with a prefix colon, semicolon, or underscore
+*** DISABLED Allow abbrevs with a prefix colon, semicolon, or underscore
 
 Disabled to test interference with other completion-at-point behavior wired
 together through [[*Completion-At-Point Extensions (Cape)]].
@@ -5549,14 +5118,160 @@ Adapted from Prot's original version with the following changes:
     (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
 #+end_src
 
-** Enable =abbrev-mode=
+** ~corfu~ :: CO(mpletion in )R(egion )FU(nction)
+
++ Package :: <https://github.com/minad/corfu>
++ Reference :: <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
 
 #+begin_src emacs-lisp
-(dolist (hook '(text-mode-hook prog-mode-hook git-commit-mode-hook))
-  (add-hook hook #'abbrev-mode))
+(package! corfu
+  (add-hook 'ceamx-after-init-hook #'global-corfu-mode)
+
+  (setopt corfu-count 12
+          corfu-cycle t
+          corfu-max-width 80
+          corfu-min-width 20
+          corfu-scroll-margin 3)
+  ;; cf. `orderless-component-separator'
+  (setopt corfu-separator ?_)
+  (setopt corfu-on-exact-match 'insert
+          corfu-preselect 'prompt
+          corfu-quit-at-boundary 'separator
+          corfu-quit-no-match t)
+  (setopt corfu-echo-delay '(0.3 . 0.3))
+  (setopt corfu-popupinfo-delay '(1.25 . 0.5))
+  (setopt corfu-auto t
+          corfu-auto-delay 0.3
+          corfu-auto-prefix 3)
+
+  ;; Setting this here again for good measure, just in case it is
+  ;; changed elsewhere.
+  (setopt tab-always-indent 'complete)
+
+  ;; Prevent excessive completion-spamming.
+  ;; Without this, on Emacs 30.0, typing causes constant `corfu' errors.
+  ;; <https://github.com/minad/corfu/discussions/457>
+  (setopt text-mode-ispell-word-completion nil)
+
+  (after! corfu
+    (keymap-set corfu-map "M-SPC" #'corfu-insert-separator)
+
+    ;; NOTE: Requires `tab-always-indent' to be set to `complete',
+    ;; otherwise TAB will *never* indent!
+    (keymap-set corfu-map "TAB" #'corfu-complete)
+
+    (unless corfu-popupinfo-mode
+      (corfu-echo-mode 1)))
+
+  (after! (corfu savehist)
+    (corfu-history-mode 1)
+
+    (add-to-list 'savehist-additional-variables 'corfu-history)))
 #+end_src
 
+Conditionally enable/disable Corfu in minibuffers
 
+#+begin_src emacs-lisp
+(setopt global-corfu-minibuffer #'ceamx-completion-corfu-minibuffer-enable-p)
+#+end_src
+
+#+begin_src emacs-lisp
+(defun ceamx-completion-corfu-minibuffer-enable-p ()
+  "Whether to enable `corfu' completion in a currently-active minibuffer."
+  (not (or (bound-and-true-p mct--active)
+           (bound-and-true-p vertico--input)
+           (eq (current-local-map) read-passwd-map))))
+#+end_src
+
+** ~corfu-terminal~ :: Corfu terminal support
+
++ Package :: <https://codeberg.org/akib/emacs-corfu-terminal>
+
+Corfu-endorsed solution to making it usable in terminal.
+
+See also ~popon~, the utility library powering the interface.
+
+#+begin_src emacs-lisp
+(package! corfu-terminal
+  (after! (corfu)
+    (unless (display-graphic-p)
+      (corfu-terminal-mode 1))))
+#+end_src
+
+** ~kind-icon~ :: icons for ~completion-at-point~ candidates :icons:
+
++ Package :: <https://github.com/jdtsmith/kind-icon>
+
+#+begin_src emacs-lisp
+(package! kind-icon
+  (require 'kind-icon)
+
+  (setopt kind-icon-use-icons (display-graphic-p))
+  (setopt kind-icon-blend-background t)
+
+  (after! corfu
+    (setopt kind-icon-default-face 'corfu-default)
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
+#+end_src
+
+*** Reduce icon size slightly
+
+If you change this value, make sure to call ~kind-icon-reset-cache~ afterwards,
+otherwise the icon size will likely not be accurate.
+
+#+begin_src emacs-lisp
+(after! kind-icon
+  (plist-put kind-icon-default-style :height 0.9))
+#+end_src
+
+*** Update icon apperance after enabling a theme
+
+#+begin_src emacs-lisp
+(after! kind-icon
+  ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
+  (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
+#+end_src
+
+** ~cape~ :: C(ompletion-)A(t-)P(oint )E(xtensions)
+** Add command to export completion candidates to a writable buffer
+
+#+begin_src emacs-lisp
+(keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write)
+#+end_src
+
+Note the dependencies on ~embark~ and ~wgrep~!
+
+#+begin_src emacs-lisp :noweb-ref lib-completion
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
+;;;###autoload
+(defun ceamx-completion/embark-export-write ()
+  "Export the current `vertico' candidates to a writable buffer.
+Supported export flows include the following:
+
+`consult-grep'      => `wgrep'
+files               => `wdired'
+`consult-location'  => `occur-edit'"
+  (interactive)
+  (require 'embark)
+  (require 'wgrep)
+  (let* ((edit-command
+          (pcase-let ((`(,type . ,candidates)
+                       (run-hook-with-args-until-success 'embark-candidate-collectors)))
+            (pcase type
+              ('consult-grep #'wgrep-change-to-wgrep-mode)
+              ('file #'wdired-change-to-wdired-mode)
+              ('consult-location #'occur-edit-mode)
+              (x (user-error "Embark category %S doesn't support writable export" x)))))
+         (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
+    (embark-export)))
+#+end_src
+
+** Provide feature ~ceamx-init-completion~
+
+#+begin_src emacs-lisp
+(provide 'ceamx-init-completion)
+;;; ceamx-init-completion.el ends here
+#+end_src
 
 
 * Actions :: =embark= :actions:embark:
@@ -6072,6 +5787,14 @@ Action alist entries are:
 
 #+begin_src emacs-lisp
 (defvar edebug-inhibit-emacs-lisp-mode-bindings)
+#+end_src
+
+** Interactive buffer management with ~ibuffer~
+
+#+begin_src emacs-lisp
+(use-feature! ibuffer
+  :config
+  (setopt ibuffer-movement-cycle t))
 #+end_src
 
 ** DISABLED Beframe :package:
@@ -6880,23 +6603,25 @@ Furthermore Tempel supports syntax extensions:
 ** Commentary
 *** ~tempel~ vs ~yasnippet~
 
-~tempel~ is simple and powerful, built on top of the Emacs internal ~tempo~
-library.  I prefer to use ~tempel~ where possible.
+~tempel~ is simple and powerful, built on top of the Emacs internal
+~tempo~ library.  I prefer to use ~tempel~ where possible.
 
-~yasnippet~, by the author of ~eglot~, is generally much more powerful.
-~yasnippet~ supports nested template fields and provides many more opportunities
-for complex interactive prompts.  ~yasnippet~ has been around for quite a few
-years and provides a large degree of compatibility with the text-expansion
-template syntax established by the classic macOS text editor TextMate.
+~yasnippet~, by the author of ~eglot~, is generally much more
+powerful.  ~yasnippet~ supports nested template fields and provides
+many more opportunities for complex interactive prompts.  ~yasnippet~
+has been around for quite a few years and provides a large degree of
+compatibility with the text-expansion template syntax established by
+the classic macOS text editor TextMate.
 
-Wait...  Why am I explaining this?  Who is my audience?  What drives this desire
-to /explain/ information that is readily-available?  Could it be that I am
-compelled to reproduce the empty rhetorical stylings of a mad parrot-god whose
-half-digested productions drop from its beak as worm-words crawling in-to and
-out-from every crack and corner of this arachnid desert, driven by some kind of
-hive-mind manufacturing reductive, homogenizing, totalitarian thoughtforms?  And
-if so, what is this parrot-god's end goal?  I have so many questions.  I think a
-table of pros/cons and a list of differences would likely suffice.
+Wait...  Why am I explaining this?  Who is my audience?  What drives
+this desire to *explain* information that is readily-available?  Could
+it be that I am compelled to reproduce the empty rhetorical stylings
+of a mad parrot-god whose half-digested productions drop from its beak
+as worm-words crawling in-to and out-from every crack and corner of
+this arachnid desert, driven by some kind of hive-mind manufacturing
+reductive, homogenizing, totalitarian thoughtforms?  And if so, what
+is this parrot-god's end goal?  I have so many questions.  I think a
+table of pros&cons and a list of differences would likely suffice.
 
 *** "Templates" or "Snippets"?"
 
@@ -9500,8 +9225,8 @@ Intended for use as a local hook function on
 
 ** Appearance
 
-+ Source code :: <https://github.com/minad/org-modern>
-+ Source code :: <https://github.com/awth13/org-appear>
++ Package :: <https://github.com/minad/org-modern>
++ Package :: <https://github.com/awth13/org-appear>
 
 #+begin_src emacs-lisp
 (use-feature! org
@@ -9510,10 +9235,9 @@ Intended for use as a local hook function on
   :config
   (setopt org-pretty-entities t
           org-pretty-entities-include-sub-superscripts nil)
+  ;; TODO: show markers for bold and italic, hide everything else
   (setopt org-hide-emphasis-markers t)
   (setopt org-link-descriptive t)
-  ;; NOTE: Despite the `org-src' prefix, this setting does in fact
-  ;; come from `org'.
   (setopt org-src-fontify-natively t)
 
   ;; Indentation
@@ -9521,8 +9245,9 @@ Intended for use as a local hook function on
   (setopt org-startup-indented nil)
 
   ;; Ellipses
-  (setopt org-ellipsis "…")
-  ;; (setopt org-ellipsis " ⇢") ; prefix is nbsp
+  ;; (setopt org-ellipsis "…")
+  (setopt org-ellipsis " ⇢") ; prefix is nbsp
+  ;; Bring attention when point is on `org-ellipsis'
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
 (use-package org-modern
@@ -9552,7 +9277,7 @@ Intended for use as a local hook function on
           org-appear-autoentities t
           org-appear-autokeywords t
           org-appear-inside-latex t)
-  (setopt org-appear-delay 0.0)
+  (setopt org-appear-delay 0.25)
   (setopt org-appear-trigger 'always))
 #+end_src
 
@@ -9567,8 +9292,14 @@ Intended for use as a local hook function on
     (add-hook hook #'pulsar-reveal-entry)))
 #+end_src
 
-** Prevent TAB behavior oddities at the end of headlines
+** TODO Prevent TAB behavior oddities at the end of headlines
 
+- Note taken on [2024-12-30 Mon 12:47] \\
+  The new weird behavior may be related to ~mwim~ commands overriding
+  =org-*-of-line= commands due to a recent Ceamx change.
+- Note taken on [2024-12-30 Mon 12:42] \\
+  The source code here does not relate.  Was something deleted?  TAB
+  is doing that weird thing again.
 When nil, pressing TAB at the end of a headline whose content is folded will act
 on the folded (non-visible) area instead of the headline, which may cause
 unexpected changes to the content (depending on the setting of
@@ -9631,6 +9362,7 @@ unexpected changes to the content (depending on the setting of
   (setopt org-refile-use-cache nil))
 #+end_src
 
+** TODO Refiling: Append not prepend when working on Ceamx config
 ** Capture
 
 Define the Org-Capture templates:
@@ -9671,7 +9403,7 @@ Define the Org-Capture templates:
   :ensure t)
 #+END_SRC
 
-** Baseline customizations for editing source code with Org-Src/Org-Babel
+** Literate programming
 
 #+BEGIN_SRC emacs-lisp
 (use-feature! org-src
@@ -9804,13 +9536,11 @@ I don't think this is working properly...
 #+END_SRC
 
 ** TODO Org-Mode: electric-pair for equals-sign
-** Resources
-*** [[https://github.com/james-stoup/emacs-org-mode-tutorial][GitHub - james-stoup/emacs-org-mode-tutorial: A primer for users trying to make sense of Org Mode]]
-** =ceamx-init-org=: File Footer
+** Footer: Provide the =ceamx-init-org= feature
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-org.el :comments no
 (provide 'ceamx-init-org)
-;; ceamx-init-org.el ends here
+;;; ceamx-init-org.el ends here
 #+end_src
 
 
@@ -10686,10 +10416,9 @@ Return the new `zone' timer."
 
 #+begin_src emacs-lisp
 (require 'ceamx-init-essentials)
-(require 'ceamx-init-search)
-(require 'init-completion)
-(require 'init-abbrevs)
+(require 'ceamx-init-completion)
 (require 'init-embark)
+(require 'ceamx-init-search)
 (require 'init-dired)
 (require 'init-workspace)
 (require 'init-dashboard)

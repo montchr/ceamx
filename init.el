@@ -658,12 +658,12 @@ theme)."
           (const :tag "The `standard-themes' module" standard)
           (const :tag "Do not load a theme module" nil)))
 
-(defcustom ceamx-ui-theme-light 'modus-operandi-tinted
+(defcustom ceamx-ui-theme-light 'modus-operandi
   "The default light theme."
   :group 'ceamx
   :type 'symbol)
 
-(defcustom ceamx-ui-theme-dark 'modus-vivendi-tinted
+(defcustom ceamx-ui-theme-dark 'modus-vivendi
   "The default dark theme."
   :group 'ceamx
   :type 'symbol)
@@ -708,77 +708,19 @@ theme)."
 ;; - Website :: <https://protesilaos.com/modus-themes/>
 
 
-(use-package modus-themes
-  :ensure t
-  :demand t
+(package! modus-themes
+  (require 'modus-themes)
 
-  :config
   (setopt modus-themes-italic-constructs t
           modus-themes-bold-constructs t
           modus-themes-mixed-fonts t
           modus-themes-variable-pitch-ui nil)
-
-  (setopt modus-themes-to-toggle
-          '(modus-operandi-tinted modus-vivendi))
+  (setopt modus-themes-to-toggle '(modus-operandi modus-vivendi))
   (setopt modus-themes-disable-other-themes t)
-
   (setopt modus-themes-headings
           '((agenda-structure . (variable-pitch light 2.2))
             (agenda-date . (variable-pitch regular 1.3))
-            (t . (regular 1.1))))
-
-  ;; (let ((overrides '((cursor blue)
-
-  ;;                    ;; Syntax
-  ;;                    (builtin magenta)
-  ;;                    (comment red-faint)
-  ;;                    (constant magenta-cooler)
-  ;;                    (docstring magenta-faint)
-  ;;                    (docmarkup green-faint)
-  ;;                    (fnname magenta-warmer)
-  ;;                    (keybind green-cooler)
-  ;;                    (keyword cyan)
-  ;;                    (preprocessor cyan-cooler)
-  ;;                    (string red-cooler)
-  ;;                    (type magenta-cooler)
-  ;;                    (variable blue-warmer)
-  ;;                    (rx-construct magenta-warmer)
-  ;;                    (rx-backslash blue-cooler)
-
-  ;;                    ;; Buttons
-  ;;                    (bg-button-active bg-main)
-  ;;                    (fg-button-active fg-main)
-  ;;                    (bg-button-inactive bg-inactive)
-  ;;                    (fg-button-inactive "gray50")
-
-  ;;                    ;; Mode-line
-  ;;                    (bg-mode-line-active bg-lavender)
-  ;;                    (fg-mode-line-active fg-main)
-  ;;                    (border-mode-line-active bg-lavender)
-  ;;                    (border-mode-line-inactive unspecified)
-
-  ;;                    ;; Fringe
-  ;;                    (fringe unspecified)
-
-  ;;                    ;; Prompts
-  ;;                    ;; (fg-prompt fg-main)
-  ;;                    ;; not really subtle! too loud.
-  ;;                    ;; (bg-prompt bg-yellow-subtle)
-
-  ;;                    ;; Pair-matching (parens)
-  ;;                    (bg-paren-match unspecified)
-  ;;                    (fg-paren-match magenta-intense)
-  ;;                    (underline-paren-match magenta-intense)
-
-  ;;                    ;; Link styles
-  ;;                    ;; (underline-link border)
-  ;;                    ;; (underline-link-visited border)
-  ;;                    )))
-  ;;   (setopt modus-operandi-palette-overrides overrides
-  ;;           modus-operandi-tinted-palette-overrides overrides
-  ;;           modus-vivendi-palette-overrides overrides
-  ;;           modus-vivendi-tinted-palette-overrides overrides))
-  )
+            (t . (regular 1.1)))))
 
 ;; Ef-Themes :package:
 
@@ -852,8 +794,8 @@ unconditionally use `ceamx-ui-theme-default-light' and
 ;; Configure some user options dependent on the loaded packages:
 
 
-(setopt ceamx-ui-theme-light 'modus-operandi-tinted)
-(setopt ceamx-ui-theme-dark 'modus-vivendi-tinted)
+(setopt ceamx-ui-theme-light 'modus-operandi)
+(setopt ceamx-ui-theme-dark 'modus-vivendi)
 
 (if (eq 'solar ceamx-ui-theme-circadian-interval)
     (after! circadian (add-hook 'ceamx-after-init-hook #'circadian-setup))
@@ -1623,10 +1565,9 @@ The buffer will be created if it does not exist."
 
 
 (require 'ceamx-init-essentials)
-(require 'ceamx-init-search)
-(require 'init-completion)
-(require 'init-abbrevs)
+(require 'ceamx-init-completion)
 (require 'init-embark)
+(require 'ceamx-init-search)
 (require 'init-dired)
 (require 'init-workspace)
 (require 'init-dashboard)

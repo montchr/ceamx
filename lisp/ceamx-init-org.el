@@ -95,8 +95,8 @@ Intended for use as a local hook function on
 
 ;; Appearance
 
-;; + Source code :: <https://github.com/minad/org-modern>
-;; + Source code :: <https://github.com/awth13/org-appear>
+;; + Package :: <https://github.com/minad/org-modern>
+;; + Package :: <https://github.com/awth13/org-appear>
 
 
 (use-feature! org
@@ -105,10 +105,9 @@ Intended for use as a local hook function on
   :config
   (setopt org-pretty-entities t
           org-pretty-entities-include-sub-superscripts nil)
+  ;; TODO: show markers for bold and italic, hide everything else
   (setopt org-hide-emphasis-markers t)
   (setopt org-link-descriptive t)
-  ;; NOTE: Despite the `org-src' prefix, this setting does in fact
-  ;; come from `org'.
   (setopt org-src-fontify-natively t)
 
   ;; Indentation
@@ -116,8 +115,9 @@ Intended for use as a local hook function on
   (setopt org-startup-indented nil)
 
   ;; Ellipses
-  (setopt org-ellipsis "…")
-  ;; (setopt org-ellipsis " ⇢") ; prefix is nbsp
+  ;; (setopt org-ellipsis "…")
+  (setopt org-ellipsis " ⇢") ; prefix is nbsp
+  ;; Bring attention when point is on `org-ellipsis'
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
 (use-package org-modern
@@ -147,7 +147,7 @@ Intended for use as a local hook function on
           org-appear-autoentities t
           org-appear-autokeywords t
           org-appear-inside-latex t)
-  (setopt org-appear-delay 0.0)
+  (setopt org-appear-delay 0.25)
   (setopt org-appear-trigger 'always))
 
 ;; Appearance: Display visual feedback after actions
@@ -160,8 +160,14 @@ Intended for use as a local hook function on
     (add-hook hook #'pulsar-recenter-center)
     (add-hook hook #'pulsar-reveal-entry)))
 
-;; Prevent TAB behavior oddities at the end of headlines
+;; TODO Prevent TAB behavior oddities at the end of headlines
 
+;; - Note taken on [2024-12-30 Mon 12:47] \\
+;;   The new weird behavior may be related to ~mwim~ commands overriding
+;;   =org-*-of-line= commands due to a recent Ceamx change.
+;; - Note taken on [2024-12-30 Mon 12:42] \\
+;;   The source code here does not relate.  Was something deleted?  TAB
+;;   is doing that weird thing again.
 ;; When nil, pressing TAB at the end of a headline whose content is folded will act
 ;; on the folded (non-visible) area instead of the headline, which may cause
 ;; unexpected changes to the content (depending on the setting of
@@ -257,7 +263,7 @@ Intended for use as a local hook function on
 (use-package org-super-agenda
   :ensure t)
 
-;; Baseline customizations for editing source code with Org-Src/Org-Babel
+;; Literate programming
 
 
 (use-feature! org-src
@@ -379,4 +385,4 @@ Intended for use as a local hook function on
   :commands (auto-tangle-mode))
 
 (provide 'ceamx-init-org)
-;; ceamx-init-org.el ends here
+;;; ceamx-init-org.el ends here
