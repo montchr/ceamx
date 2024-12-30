@@ -600,7 +600,7 @@ The ORDER can be used to deduce the feature context."
 
 (add-hook 'Custom-mode-hook #'custom-toggle-hide-all-widgets nil t)
 
-;; =grid=: Library for textual data table presentation :package:
+;; =grid=: textual data table presentation
 
 ;; - Source :: [[https://github.com/ichernyshovvv/grid.el][ichernyshovvv/grid.el]]
 ;; - Retrieved :: [2024-06-07 Fri 11:45]
@@ -613,13 +613,18 @@ The ORDER can be used to deduce the feature context."
 
 (package! (grid :host github :repo "ichernyshovvv/grid.el"))
 
-;; =hydra= :package:hydra:
+;; =hydra=
 
 ;; - Documentation :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 
 (package! hydra)
 (package! pretty-hydra)
+
+;; =symbol-overlay= :: highlight symbols with keymap-enabled overlays
+
+
+(package! symbol-overlay)
 
 ;; =transient=
 
@@ -629,12 +634,6 @@ The ORDER can be used to deduce the feature context."
   :demand t
   :config
   (keymap-set transient-map "<escape>" #'transient-quit-one))
-
-;; =magit-section=
-
-
-(use-package magit-section
-  :ensure t)
 
 ;; Load the library functions
 
@@ -862,10 +861,10 @@ unconditionally use `ceamx-ui-theme-default-light' and
       (ceamx-ui/load-dark-theme)
     (ceamx-ui/load-light-theme)))
 
-;; Avy :package:
+;; =avy= :: can do anything
 
-;; - Website :: <https://github.com/abo-abo/avy>
-;; - Ref :: <https://karthinks.com/software/avy-can-do-anything/>
+;; + Package :: <https://github.com/abo-abo/avy>
+;; + Article :: <https://karthinks.com/software/avy-can-do-anything/>
 
 
 (package! avy
@@ -878,7 +877,7 @@ unconditionally use `ceamx-ui-theme-default-light' and
   ;; Anything lower feels unusable.
   (setopt avy-timeout-seconds 0.25))
 
-;; Focus: Line
+;; Focus-Line
 
 
 (use-feature! hl-line
@@ -918,12 +917,12 @@ unconditionally use `ceamx-ui-theme-default-light' and
 ;;     (add-hook 'next-error-hook (function fn)))
   )
 
-;; Focus: Window
+;; Focus-Window
 
 
 (setopt highlight-nonselected-windows nil)
 
-;; Focus: Buffer: =olivetti=: "Distraction-free" editing :package:
+;; Focus-Buffer :: =olivetti= :: "distraction-free" editing
 
 ;; - Code :: <https://github.com/rnkn/olivetti>
 
@@ -936,7 +935,7 @@ unconditionally use `ceamx-ui-theme-default-light' and
     olivetti-minimum-body-width 80
     olivetti-recall-visual-line-mode-entry-state t))
 
-;; Focus: Present: =logos=: a simple focus mode with page breaks or outlines :package:
+;; Focus-Present :: =logos= :: a simple focus mode with page breaks or outlines :present:
 
 
 (use-package logos
@@ -969,6 +968,13 @@ unconditionally use `ceamx-ui-theme-default-light' and
     (unless (derived-mode-p 'prog-mode)
       ;; NOTE: '0' value will recenter at the absolute top.
       (recenter 1))))
+
+;; Focus-Present :: =moc= :: "Master of Ceremonies" presentation utilities :present:
+
+;; + Package :: <https://github.com/positron-solutions/moc/>
+
+
+(package! (moc :host github :repo "positron-solutions/moc"))
 
 ;; Allow restoring deleted frames
 

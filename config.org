@@ -2503,7 +2503,7 @@ Required as dependencies for multiple packages, either as more recent versions
 than those available in Emacs (e.g. ~transient~), or, including some packages
 (like ~nix-mode~) who don't properly declare their dependencies.
 
-*** =grid=: Library for textual data table presentation :package:
+*** =grid=: textual data table presentation
 
 - Source :: [[https://github.com/ichernyshovvv/grid.el][ichernyshovvv/grid.el]]
 - Retrieved :: [2024-06-07 Fri 11:45]
@@ -2517,13 +2517,19 @@ applying margin, padding, borders.
 (package! (grid :host github :repo "ichernyshovvv/grid.el"))
 #+end_src
 
-*** =hydra= :package:hydra:
+*** =hydra=
 
 - Documentation :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 #+begin_src emacs-lisp
 (package! hydra)
 (package! pretty-hydra)
+#+end_src
+
+*** =symbol-overlay= :: highlight symbols with keymap-enabled overlays
+
+#+begin_src emacs-lisp
+(package! symbol-overlay)
 #+end_src
 
 *** =transient=
@@ -2534,13 +2540,6 @@ applying margin, padding, borders.
   :demand t
   :config
   (keymap-set transient-map "<escape>" #'transient-quit-one))
-#+end_src
-
-*** =magit-section=
-
-#+begin_src emacs-lisp
-(use-package magit-section
-  :ensure t)
 #+end_src
 
 ** Theme :theme:
@@ -2998,10 +2997,10 @@ Configure some user options dependent on the loaded packages:
     (ceamx-ui/load-light-theme)))
 #+end_src
 
-** Avy :package:
+** =avy= :: can do anything
 
-- Website :: <https://github.com/abo-abo/avy>
-- Ref :: <https://karthinks.com/software/avy-can-do-anything/>
++ Package :: <https://github.com/abo-abo/avy>
++ Article :: <https://karthinks.com/software/avy-can-do-anything/>
 
 #+begin_src emacs-lisp
 (package! avy
@@ -3015,7 +3014,7 @@ Configure some user options dependent on the loaded packages:
   (setopt avy-timeout-seconds 0.25))
 #+end_src
 
-** Focus: Line
+** Focus-Line
 
 #+begin_src emacs-lisp
 (use-feature! hl-line
@@ -3054,13 +3053,13 @@ Pulse current line after function invocations:
   )
 #+end_src
 
-** Focus: Window
+** Focus-Window
 
 #+begin_src emacs-lisp
 (setopt highlight-nonselected-windows nil)
 #+end_src
 
-** Focus: Buffer: =olivetti=: "Distraction-free" editing :package:
+** Focus-Buffer :: =olivetti= :: "distraction-free" editing
 
 - Code :: <https://github.com/rnkn/olivetti>
 
@@ -3074,7 +3073,7 @@ Pulse current line after function invocations:
     olivetti-recall-visual-line-mode-entry-state t))
 #+end_src
 
-** Focus: Present: =logos=: a simple focus mode with page breaks or outlines :package:
+** Focus-Present :: =logos= :: a simple focus mode with page breaks or outlines :present:
 
 #+begin_src emacs-lisp
 (use-package logos
@@ -3107,6 +3106,14 @@ Pulse current line after function invocations:
     (unless (derived-mode-p 'prog-mode)
       ;; NOTE: '0' value will recenter at the absolute top.
       (recenter 1))))
+#+end_src
+
+** Focus-Present :: =moc= :: "Master of Ceremonies" presentation utilities :present:
+
++ Package :: <https://github.com/positron-solutions/moc/>
+
+#+begin_src emacs-lisp
+(package! (moc :host github :repo "positron-solutions/moc"))
 #+end_src
 
 ** Allow restoring deleted frames
@@ -4426,7 +4433,7 @@ enhancement to the builtin Emacs undo system as well.
     (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
 #+end_src
 
-** ~which-key~ [builtin]
+** ~which-key~
 
 #+begin_src emacs-lisp
 (use-feature! which-key
@@ -4491,8 +4498,6 @@ Enable ~repeat-mode~, avoiding running mode-hooks too early:
 (add-hook 'ceamx-after-init-hook #'repeat-mode)
 #+end_src
 
-** TODO <https://github.com/jwiegley/dot-emacs/blob/master/init.org#smart-newline>
-** TODO <https://github.com/ainame/smart-newline.el/tree/c50ab035839b307c66d439083b6761cb7db5e972>
 ** Provide ~ceamx-init-essentials~ feature
 
 #+begin_src emacs-lisp
@@ -4639,70 +4644,9 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+end_src
 
 
-* Abbrevs (~abbrev-mode~) :: =abbrevs=
+* ~ceamx-init-completion~ :: Completions & Selections
 :PROPERTIES:
-:header-args: :noweb-ref init-abbrevs
-:END:
-
-** Re-locate the abbrev file to the ~user-emacs-directory~ for quick access
-
-#+begin_src emacs-lisp
-(setopt abbrev-file-name (locate-user-emacs-file "abbrev-defs"))
-#+end_src
-
-** Load custom abbrevs from ~abbrev-file-name~
-
-#+begin_src emacs-lisp
-(when (file-exists-p abbrev-file-name)
-  (quietly-read-abbrev-file))
-#+end_src
-
-** Display suggestions for available abbrevs
-
-#+begin_src emacs-lisp
-(setopt abbrev-suggest t)
-#+end_src
-
-** DISABLED Allow abbrevs with a prefix colon, semicolon, or underscore
-
-Disabled to test interference with other completion-at-point behavior wired
-together through [[*Completion-At-Point Extensions (Cape)]].
-
-- Source :: <https://github.com/protesilaos/dotfiles/blob/8fc72724cd6debd12c8258bf64adf6822a0bc90c/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion.el#L215-L225>
-- Background :: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>
-
-Adapted from Prot's original version with the following changes:
-
-- Converted the duplicated regexp string into an ~rx~ form via the ~xr~ utility.
-- Abstracted the regexp to a variable ~ceamx-abbrev-prefix-regexp~ for reuse
-  across =abbrev-table= contexts.
-
-#+begin_src emacs-lisp :noweb-ref nil
-(defconst ceamx-abbrev-prefix-regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:_].*\\|.*\\)")
-
-(after! abbrev
-  (abbrev-table-put global-abbrev-table :regexp ceamx-abbrev-prefix-regexp)
-
-  (with-eval-after-load 'text-mode
-    (abbrev-table-put text-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp))
-
-  (with-eval-after-load 'org
-    (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
-#+end_src
-
-** Enable =abbrev-mode=
-
-#+begin_src emacs-lisp
-(dolist (hook '(text-mode-hook prog-mode-hook git-commit-mode-hook))
-  (add-hook hook #'abbrev-mode))
-#+end_src
-
-
-
-
-* Completions and Selections :: =completion= :completions:completion:
-:PROPERTIES:
-:header-args: :noweb-ref init-completion
+:header-args: :tangle lisp/ceamx-init-completion.el
 :END:
 
 ** Requirements
@@ -5552,6 +5496,67 @@ This was not my idea, and I would like to savor the full ~dabbrev~ experience
   :config
   (setopt ibuffer-movement-cycle t))
 #+end_src
+
+
+* Abbrevs (~abbrev-mode~) :: =abbrevs=
+:PROPERTIES:
+:header-args: :noweb-ref init-abbrevs
+:END:
+
+** Re-locate the abbrev file to the ~user-emacs-directory~ for quick access
+
+#+begin_src emacs-lisp
+(setopt abbrev-file-name (locate-user-emacs-file "abbrev-defs"))
+#+end_src
+
+** Load custom abbrevs from ~abbrev-file-name~
+
+#+begin_src emacs-lisp
+(when (file-exists-p abbrev-file-name)
+  (quietly-read-abbrev-file))
+#+end_src
+
+** Display suggestions for available abbrevs
+
+#+begin_src emacs-lisp
+(setopt abbrev-suggest t)
+#+end_src
+
+** DISABLED Allow abbrevs with a prefix colon, semicolon, or underscore
+
+Disabled to test interference with other completion-at-point behavior wired
+together through [[*Completion-At-Point Extensions (Cape)]].
+
+- Source :: <https://github.com/protesilaos/dotfiles/blob/8fc72724cd6debd12c8258bf64adf6822a0bc90c/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion.el#L215-L225>
+- Background :: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>
+
+Adapted from Prot's original version with the following changes:
+
+- Converted the duplicated regexp string into an ~rx~ form via the ~xr~ utility.
+- Abstracted the regexp to a variable ~ceamx-abbrev-prefix-regexp~ for reuse
+  across =abbrev-table= contexts.
+
+#+begin_src emacs-lisp :noweb-ref nil
+(defconst ceamx-abbrev-prefix-regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:_].*\\|.*\\)")
+
+(after! abbrev
+  (abbrev-table-put global-abbrev-table :regexp ceamx-abbrev-prefix-regexp)
+
+  (with-eval-after-load 'text-mode
+    (abbrev-table-put text-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp))
+
+  (with-eval-after-load 'org
+    (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
+#+end_src
+
+** Enable =abbrev-mode=
+
+#+begin_src emacs-lisp
+(dolist (hook '(text-mode-hook prog-mode-hook git-commit-mode-hook))
+  (add-hook hook #'abbrev-mode))
+#+end_src
+
+
 
 
 * Actions :: =embark= :actions:embark:
@@ -6939,6 +6944,14 @@ execution order."
     (highlight-function-calls-mode 1)))
 #+end_src
 
+** ~smart-newline~: a newline command for programming modes
+
+#+begin_src emacs-lisp
+(use-package smart-newline
+  :ensure t
+  :hook (prog-mode . smart-newline-mode))
+#+end_src
+
 ** ~dumb-jump~: multi-lang do-what-i-mean jump-to-definition
 
 - src :: <https://github.com/jacktasia/dumb-jump>
@@ -7549,7 +7562,7 @@ the process of formatting Lisp code in Emacs.
 
 ***** Always indent Lisp code with two spaces
 
-Even if Emacs core does things differently.
+Even if GNU Emacs defaults sometimes do things differently.
 
 #+begin_src emacs-lisp
 (dolist (sym '(add-function add-to-list advice-add plist-put))
@@ -7561,7 +7574,7 @@ Even if Emacs core does things differently.
 [[https://emacs.stackexchange.com/a/52789/40956][indentation - How to indent keywords aligned? - Emacs Stack Exchange]]
 
 #+begin_src emacs-lisp
-(advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
+(advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent)
 #+end_src
 
 **** ~lispy~: the structural expression editing experience
@@ -7683,7 +7696,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
              (locate-file file-base (custom-theme--load-path) '(".elc" ".el"))))))
 #+end_src
 
-**** ~ceamx/indent-last-sexp~: format the s-expression before pint
+**** ~ceamx/indent-last-sexp~: format the s-expression before point
 
 #+begin_src emacs-lisp
 (defun ceamx/indent-last-sexp ()
@@ -7694,22 +7707,19 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     (indent-sexp)))
 #+end_src
 
-**** ~ceamx-calculate-lisp-indent-a~: improve indentation logic
+**** ~ceamx-calculate-lisp-indent~: improve indentation logic
 
 - URL :: <https://emacs.stackexchange.com/a/52789/40956>
 - SPDX-License-Identifier :: CC-BY-SA-4.0
 
 #+begin_src emacs-lisp
-(defun ceamx-calculate-lisp-indent-a (&optional parse-start)
+(defun ceamx-calculate-lisp-indent (&optional parse-start)
   "Calculate Lisp indentation from PARSE-START with proper quoted list handling.
 Intended as overriding advice to `calculate-lisp-indent'.
 
 This function improves upon `calculate-lisp-indent' by fixing
 longstanding bugs with its handling of quoted and backquoted
 lists."
-  ;; This line because `calculate-lisp-indent-last-sexp` was defined with `defvar`
-  ;; with it's value ommited, marking it special and only defining it locally. So
-  ;; if you don't have this, you'll get a void variable error.
   (defvar calculate-lisp-indent-last-sexp)
   (save-excursion
     (beginning-of-line)
@@ -7759,19 +7769,21 @@ lists."
                  )
                 ((> (save-excursion (forward-line 1) (point))
                     calculate-lisp-indent-last-sexp)
-                 ;; This is the first line to start within the containing sexp.
-                 ;; It's almost certainly a function call.
+                 ;; This is the first line to start within the
+                 ;; containing sexp.  It's almost certainly a function
+                 ;; call.
                  (if (or
                       ;; Containing sexp has nothing before this line
-                      ;; except the first element. Indent under that element.
+                      ;; except the first element.  Indent under that element.
                       (= (point) calculate-lisp-indent-last-sexp)
 
-                      ;; First sexp after `containing-sexp' is a keyword. This
-                      ;; condition is more debatable. It's so that I can have
-                      ;; unquoted plists in macros. It assumes that you won't
-                      ;; make a function whose name is a keyword.
-                      ;; (when-let (char-after (char-after (1+ containing-sexp)))
-                      ;;   (char-equal char-after ?:))
+                      ;; First sexp after `containing-sexp' is a
+                      ;; keyword.  This condition is more debatable.
+                      ;; It's so that I can have unquoted plists in
+                      ;; macros.  It assumes that you won't make a
+                      ;; function whose name is a keyword.
+                      (when-let (char-after (char-after (1+ containing-sexp)))
+                        (char-equal char-after ?:))
 
                       ;; Check for quotes or backquotes around.
                       (let* ((positions (elt state 9))
@@ -7797,10 +7809,12 @@ lists."
                                        "\\(?:back\\)?quote[\t\n\f\s]+(")))))
                            any-quoted-p))))
                      ;; Containing sexp has nothing before this line
-                     ;; except the first element.  Indent under that element.
+                     ;; except the first element.  Indent under that
+                     ;; element.
                      nil
-                   ;; Skip the first element, find start of second (the first
-                   ;; argument of the function call) and indent under.
+                   ;; Skip the first element, find start of second
+                   ;; (the first argument of the function call) and
+                   ;; indent under.
                    (progn (forward-sexp 1)
                           (parse-partial-sexp (point)
                                               calculate-lisp-indent-last-sexp
@@ -7815,9 +7829,10 @@ lists."
                  (parse-partial-sexp (point) calculate-lisp-indent-last-sexp
                                      0 t)
                  (backward-prefix-chars)))))
-      ;; Point is at the point to indent under unless we are inside a string.
-      ;; Call indentation hook except when overridden by lisp-indent-offset
-      ;; or if the desired indentation has already been computed.
+      ;; Point is at the point to indent under unless we are inside a
+      ;; string.  Call indentation hook except when overridden by
+      ;; `lisp-indent-offset' or if the desired indentation has
+      ;; already been computed.
       (let ((normal-indent (current-column)))
         (cond ((elt state 3)
                ;; Inside a string, don't change indentation.
@@ -7826,25 +7841,24 @@ lists."
                ;; Indent by constant offset
                (goto-char containing-sexp)
                (+ (current-column) lisp-indent-offset))
-              ;; in this case calculate-lisp-indent-last-sexp is not nil
               (calculate-lisp-indent-last-sexp
                (or
                 ;; try to align the parameters of a known function
                 (and lisp-indent-function
                      (not retry)
                      (funcall lisp-indent-function indent-point state))
-                ;; If the function has no special alignment
-                ;; or it does not apply to this argument,
-                ;; try to align a constant-symbol under the last
-                ;; preceding constant symbol, if there is such one of
-                ;; the last 2 preceding symbols, in the previous
-                ;; uncommented line.
+                ;; If the function has no special alignment or it does
+                ;; not apply to this argument, try to align a
+                ;; constant-symbol under the last preceding constant
+                ;; symbol, if there is such one of the last 2
+                ;; preceding symbols, in the previous uncommented
+                ;; line.
                 (and (save-excursion
                        (goto-char indent-point)
                        (skip-chars-forward " \t")
                        (looking-at ":"))
                      ;; The last sexp may not be at the indentation
-                     ;; where it begins, so find that one, instead.
+                     ;; where it begins, so find that one instead.
                      (save-excursion
                        (goto-char calculate-lisp-indent-last-sexp)
                        ;; Handle prefix characters and whitespace

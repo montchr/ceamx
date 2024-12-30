@@ -794,7 +794,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (defer-until! (fboundp 'ceamx/dogears-dispatch)
     (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
 
-;; ~which-key~ [builtin]
+;; ~which-key~
 
 
 (use-feature! which-key

@@ -14,6 +14,13 @@ execution order."
   (when (fboundp 'highlight-function-calls-mode)
     (highlight-function-calls-mode 1)))
 
+;; ~smart-newline~: a newline command for programming modes
+
+
+(use-package smart-newline
+  :ensure t
+  :hook (prog-mode . smart-newline-mode))
+
 ;; ~dumb-jump~: multi-lang do-what-i-mean jump-to-definition
 
 ;; - src :: <https://github.com/jacktasia/dumb-jump>
@@ -388,7 +395,7 @@ non-nil, buffers will never be formatted upon save."
 
 ;; Always indent Lisp code with two spaces
 
-;; Even if Emacs core does things differently.
+;; Even if GNU Emacs defaults sometimes do things differently.
 
 
 (dolist (sym '(add-function add-to-list advice-add plist-put))
@@ -399,7 +406,7 @@ non-nil, buffers will never be formatted upon save."
 ;; [[https://emacs.stackexchange.com/a/52789/40956][indentation - How to indent keywords aligned? - Emacs Stack Exchange]]
 
 
-(advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent-a)
+(advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent)
 
 ;; ~lispy~: the structural expression editing experience
 

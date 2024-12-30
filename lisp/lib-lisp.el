@@ -72,16 +72,13 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
   (save-excursion
     (backward-list)
     (indent-sexp)))
-(defun ceamx-calculate-lisp-indent-a (&optional parse-start)
+(defun ceamx-calculate-lisp-indent (&optional parse-start)
   "Calculate Lisp indentation from PARSE-START with proper quoted list handling.
 Intended as overriding advice to `calculate-lisp-indent'.
 
 This function improves upon `calculate-lisp-indent' by fixing
 longstanding bugs with its handling of quoted and backquoted
 lists."
-  ;; This line because `calculate-lisp-indent-last-sexp` was defined with `defvar`
-  ;; with it's value ommited, marking it special and only defining it locally. So
-  ;; if you don't have this, you'll get a void variable error.
   (defvar calculate-lisp-indent-last-sexp)
   (save-excursion
     (beginning-of-line)
@@ -131,19 +128,21 @@ lists."
                  )
                 ((> (save-excursion (forward-line 1) (point))
                     calculate-lisp-indent-last-sexp)
-                 ;; This is the first line to start within the containing sexp.
-                 ;; It's almost certainly a function call.
+                 ;; This is the first line to start within the
+                 ;; containing sexp.  It's almost certainly a function
+                 ;; call.
                  (if (or
                       ;; Containing sexp has nothing before this line
-                      ;; except the first element. Indent under that element.
+                      ;; except the first element.  Indent under that element.
                       (= (point) calculate-lisp-indent-last-sexp)
 
-                      ;; First sexp after `containing-sexp' is a keyword. This
-                      ;; condition is more debatable. It's so that I can have
-                      ;; unquoted plists in macros. It assumes that you won't
-                      ;; make a function whose name is a keyword.
-                      ;; (when-let (char-after (char-after (1+ containing-sexp)))
-                      ;;   (char-equal char-after ?:))
+                      ;; First sexp after `containing-sexp' is a
+                      ;; keyword.  This condition is more debatable.
+                      ;; It's so that I can have unquoted plists in
+                      ;; macros.  It assumes that you won't make a
+                      ;; function whose name is a keyword.
+                      (when-let (char-after (char-after (1+ containing-sexp)))
+                        (char-equal char-after ?:))
 
                       ;; Check for quotes or backquotes around.
                       (let* ((positions (elt state 9))
@@ -169,10 +168,12 @@ lists."
                                        "\\(?:back\\)?quote[\t\n\f\s]+(")))))
                            any-quoted-p))))
                      ;; Containing sexp has nothing before this line
-                     ;; except the first element.  Indent under that element.
+                     ;; except the first element.  Indent under that
+                     ;; element.
                      nil
-                   ;; Skip the first element, find start of second (the first
-                   ;; argument of the function call) and indent under.
+                   ;; Skip the first element, find start of second
+                   ;; (the first argument of the function call) and
+                   ;; indent under.
                    (progn (forward-sexp 1)
                           (parse-partial-sexp (point)
                                               calculate-lisp-indent-last-sexp
@@ -187,9 +188,10 @@ lists."
                  (parse-partial-sexp (point) calculate-lisp-indent-last-sexp
                                      0 t)
                  (backward-prefix-chars)))))
-      ;; Point is at the point to indent under unless we are inside a string.
-      ;; Call indentation hook except when overridden by lisp-indent-offset
-      ;; or if the desired indentation has already been computed.
+      ;; Point is at the point to indent under unless we are inside a
+      ;; string.  Call indentation hook except when overridden by
+      ;; `lisp-indent-offset' or if the desired indentation has
+      ;; already been computed.
       (let ((normal-indent (current-column)))
         (cond ((elt state 3)
                ;; Inside a string, don't change indentation.
@@ -198,25 +200,24 @@ lists."
                ;; Indent by constant offset
                (goto-char containing-sexp)
                (+ (current-column) lisp-indent-offset))
-              ;; in this case calculate-lisp-indent-last-sexp is not nil
               (calculate-lisp-indent-last-sexp
                (or
                 ;; try to align the parameters of a known function
                 (and lisp-indent-function
                      (not retry)
                      (funcall lisp-indent-function indent-point state))
-                ;; If the function has no special alignment
-                ;; or it does not apply to this argument,
-                ;; try to align a constant-symbol under the last
-                ;; preceding constant symbol, if there is such one of
-                ;; the last 2 preceding symbols, in the previous
-                ;; uncommented line.
+                ;; If the function has no special alignment or it does
+                ;; not apply to this argument, try to align a
+                ;; constant-symbol under the last preceding constant
+                ;; symbol, if there is such one of the last 2
+                ;; preceding symbols, in the previous uncommented
+                ;; line.
                 (and (save-excursion
                        (goto-char indent-point)
                        (skip-chars-forward " \t")
                        (looking-at ":"))
                      ;; The last sexp may not be at the indentation
-                     ;; where it begins, so find that one, instead.
+                     ;; where it begins, so find that one instead.
                      (save-excursion
                        (goto-char calculate-lisp-indent-last-sexp)
                        ;; Handle prefix characters and whitespace
