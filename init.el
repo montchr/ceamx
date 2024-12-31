@@ -554,15 +554,18 @@ The ORDER can be used to deduce the feature context."
 ;; Configure cursor appearance
 
 
-(use-package cursory
-  :ensure t
-  :demand t
-  :if (display-graphic-p)
+(package! cursory
+  (require 'cursory)
 
-  :preface
-  (setopt cursory-latest-state-file (expand-file-name "cursory-latest-state.eld" ceamx-var-dir))
+  (def-hook! ceamx-init-theme-cursory-h ()
+    'ceamx-after-init-hook
+    "Enable `cursory-mode' and load the latest preset."
+    (cursory-mode 1)
+    (cursory-set-preset (or (cursory-restore-latest-preset) 'box)))
 
-  :config
+  (setopt cursory-latest-state-file
+          (expand-file-name "cursory-latest-state.eld" ceamx-var-dir))
+
   (setopt cursory-presets
           '((box
              :blink-cursor-interval 0.8)
@@ -583,11 +586,7 @@ The ORDER can be used to deduce the feature context."
              :blink-cursor-mode 1
              :blink-cursor-blinks 10
              :blink-cursor-interval 0.2
-             :blink-cursor-delay 0.2)))
-
-  (cursory-set-preset (or (cursory-restore-latest-preset) 'box))
-
-  (cursory-mode 1))
+             :blink-cursor-delay 0.2))))
 
 ;; Customize the Customization buffers and menus
 
@@ -819,7 +818,7 @@ unconditionally use `ceamx-ui-theme-default-light' and
   ;; Anything lower feels unusable.
   (setopt avy-timeout-seconds 0.25))
 
-;; Focus-Line
+;; Line highlighting
 
 
 (use-feature! hl-line
@@ -859,75 +858,15 @@ unconditionally use `ceamx-ui-theme-default-light' and
 ;;     (add-hook 'next-error-hook (function fn)))
   )
 
-;; Focus-Window
+;; Window highlighting
 
 
 (setopt highlight-nonselected-windows nil)
 
-;; Focus-Buffer :: =olivetti= :: "distraction-free" editing
-
-;; - Code :: <https://github.com/rnkn/olivetti>
-
-
-(use-package olivetti
-  :ensure t
-  :commands (olivetti-mode)
-  :config
-  (setopt olivetti-body-width 0.7
-    olivetti-minimum-body-width 80
-    olivetti-recall-visual-line-mode-entry-state t))
-
-;; Focus-Present :: =logos= :: a simple focus mode with page breaks or outlines :present:
-
-
-(use-package logos
-  :ensure t
-
-  :config
-  (setopt logos-outlines-are-pages t)
-  (setopt logos-outline-regexp-alist
-    `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
-      (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
-      (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
-      (conf-toml-mode . "^\\[")))
-
-  ;; These apply buffer-locally when `logos-focus-mode' is enabled.
-  (setq-default logos-hide-cursor t
-                logos-hide-mode-line t
-                logos-hide-header-line t
-                logos-hide-buffer-boundaries t
-                logos-hide-fringe t
-                logos-variable-pitch nil
-                logos-buffer-read-only nil
-                logos-scroll-lock nil
-                logos-olivetti t)
-
-  (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
-
-  (def-hook! ceamx-logos--recenter-top ()
-    '(logos-page-motion-hook)
-    "Place point at the top when changing pages in non-`prog-mode' modes."
-    (unless (derived-mode-p 'prog-mode)
-      ;; NOTE: '0' value will recenter at the absolute top.
-      (recenter 1))))
-
-;; Focus-Present :: =moc= :: "Master of Ceremonies" presentation utilities :present:
-
-;; + Package :: <https://github.com/positron-solutions/moc/>
-
-
-(package! (moc :host github :repo "positron-solutions/moc"))
-
-;; Allow restoring deleted frames
-
-
-(undelete-frame-mode 1)
-
-;; Frame decorations
+;; Hide frame decorations
 
 
 (unless (ceamx-host-macos-p)
-  ;; Hide window decorations.
   (add-to-list 'default-frame-alist '(undecorated . t)))
 
 (when (ceamx-host-macos-p)
@@ -950,23 +889,80 @@ unconditionally use `ceamx-ui-theme-default-light' and
 ;; ~spacious-padding~: a comfortable layout density
 
 
-(use-package spacious-padding
-  :if (display-graphic-p)
-  :hook (ceamx-after-init . spacious-padding-mode)
+(package! spacious-padding
+  (add-hook 'ceamx-after-init-hook #'spacious-padding-mode))
 
-  :init
-  (setopt spacious-padding-widths '( :internal-border-width 30
-                                     :header-line-width 4
-                                     :mode-line-width 6
-                                     :tab-width 4
-                                     :right-divider-width 30
-                                     :scroll-bar-width 8
-                                     :left-fringe-width 20
-                                     :right-fringe-width 20))
+(after! spacious-padding
+  (setopt spacious-padding-widths
+          '( :internal-border-width 30
+             :header-line-width 4
+             :mode-line-width 6
+             :tab-width 4
+             :right-divider-width 30
+             :scroll-bar-width 8
+             :left-fringe-width 20
+             :right-fringe-width 20))
 
   (setopt spacious-padding-subtle-mode-line
-    `( :mode-line-active default
-       :mode-line-inactive window-divider)))
+          `( :mode-line-active default
+             :mode-line-inactive window-divider)))
+
+;; =olivetti= :: "distraction-free" editing
+
+;; - Package :: <https://github.com/rnkn/olivetti>
+
+
+(package! olivetti
+  (keymap-set ctl-x-x-map "o" #'olivetti-mode))
+
+(after! olivetti
+  (setopt olivetti-body-width 0.7
+          olivetti-minimum-body-width 80
+          olivetti-recall-visual-line-mode-entry-state t))
+
+;; =logos= :: a simple focus mode with page breaks or outlines :present:
+
+
+(package! logos
+  (after! logos
+    (setopt logos-outlines-are-pages t)
+    (setopt logos-outline-regexp-alist
+            `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
+              (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
+              (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
+              (conf-toml-mode . "^\\[")))
+
+    ;; These apply buffer-locally when `logos-focus-mode' is enabled.
+    (setq-default logos-hide-cursor t
+                  logos-hide-mode-line t
+                  logos-hide-header-line t
+                  logos-hide-buffer-boundaries t
+                  logos-hide-fringe t
+                  logos-variable-pitch nil
+                  logos-buffer-read-only nil
+                  logos-scroll-lock nil
+                  logos-olivetti t)
+
+    (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+
+    (def-hook! ceamx-essentials-logos-recenter-top-h ()
+      '(logos-page-motion-hook)
+      "Place point at the top when changing pages in non-`prog-mode' modes."
+      (unless (derived-mode-p 'prog-mode)
+        ;; NOTE: '0' value will recenter at the absolute top.
+        (recenter 1)))))
+
+;; =moc= :: "Master of Ceremonies" presentation utilities :present:
+
+;; + Package :: <https://github.com/positron-solutions/moc/>
+
+
+(package! (moc :host github :repo "positron-solutions/moc"))
+
+;; Allow restoring deleted frames
+
+
+(undelete-frame-mode 1)
 
 ;; Menu Bar :menubar:
 
@@ -975,23 +971,12 @@ unconditionally use `ceamx-ui-theme-default-light' and
 
 (menu-bar-mode -1)
 
-;; Enable ~tab-bar-mode~ in Emacs 30
+;; Tab Bar :tabs:
 
-;; - ref :: <https://lists.gnu.org/r/bug-gnu-emacs/2023-07/msg01594.html>
-
-;; ~tab-bar-mode~ is currently broken in Emacs 29 due to upstream bug.  The fix is
-;; present on the =master= branch (Emacs 30), but it will not be backported.
-
-;; Unfortunately, the bug is impossibly distracting.  So I am avoiding
-;; `tab-bar-mode' on Emacs 29.
-
-;; As of <2024-06-06>, I am using the =nix-community/emacs-overlay#emacs-pgtk= package tracking the
-;; Emacs =master= branch.  ~tab-bar-mode~ is that important to me.  Emacs 30 seems
-;; stable enough so far.
+;; Enable the tab bar:
 
 
-(unless (version< emacs-version "30")
-  (tab-bar-mode 1))
+(tab-bar-mode 1)
 
 ;; Configure tab bar appearance and behavior
 
@@ -1016,7 +1001,7 @@ accommodation for varying pixel densities."
 
 (setq-default text-scale-remap-header-line t)
 
-;; ~fontaine~: pre-configure font presets :package:
+;; ~fontaine~ :: pre-configure font presets
 
 ;; <https://protesilaos.com/emacs/fontaine>
 
@@ -1024,149 +1009,156 @@ accommodation for varying pixel densities."
 ;;      (internal-set-lisp-face-attribute 'default :weight 'semilight)
 
 
-(use-package fontaine
-  :ensure (:wait t)
-  :demand t
-  :if (display-graphic-p)
+(package! fontaine
+  (when (display-graphic-p)
+    (def-hook! ceamx-init-theme-activate-fontaine-h ()
+      'ceamx-after-init-hook
+      "Activate `fontaine-mode' with the last-saved preset.
+If there is no previous preset state to load, fall back to the
+\"regular\" preset."
+      (fontaine-mode)
+      (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
 
-  :init
-  (setopt fontaine-latest-state-file (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
+(after! fontaine
+  (setopt fontaine-latest-state-file
+          (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
 
-  ;; For some reason I do not yet understand, according to some hearsay, font
-  ;; sizes best scale in multiples of 3-point increments. So, each height value
-  ;; is a multiple of 3.
+  ;; For some reason I do not yet understand, according to some
+  ;; hearsay, font sizes best scale in multiples of 3-point
+  ;; increments.
   (setopt fontaine-presets
-          `( (tiny
-              :bold-weight medium
-              :default-height ,(pcase (system-name)
-                                (_ 78))
-              :default-weight ,(pcase (system-name)
-                                (_ 'semilight)))
-             (small
-              :bold-weight medium
-              :default-height ,(pcase (system-name)
-                                (_ 90))
-              :default-weight ,(pcase (system-name)
-                                (_ 'regular)))
-             (regular)
-             (medium
-              :default-height ,(pcase (system-name)
-                                ("boschic" 124)
-                                ("tuuvok"
-                                 120
-                                 ;; 115
+          `((tiny
+             :bold-weight medium
+             :default-height ,(pcase (system-name)
+                               (_ 78))
+             :default-weight ,(pcase (system-name)
+                               (_ 'semilight)))
 
-                                 )
-                                (_ 120)))
-             (large
-              :default-height ,(pcase (system-name)
-                                ;; ("tuuvok" 140)
-                                (_ 144))
-              :default-weight semilight
-              :bold-weight semibold)
-             (xlarge
-              :default-height ,(pcase (system-name)
-                                (_ 156))
-              :bold-weight bold)
-             (big-mclarge-huge
-              :default-weight semilight
-              :default-height ,(pcase (system-name)
-                                (_ 180))
-              :bold-weight extrabold)
-             (t
-              :default-family "Iosevka Comfy"
-              :default-weight regular
-              :default-slant normal
-              :default-height ,(pcase (system-name)
-                                ("tuuvok" 102)
-                                (_ 105))
+            (small
+             :bold-weight semibold
+             :default-height ,(pcase (system-name)
+                               (_ 90))
+             :default-weight ,(pcase (system-name)
+                               (_ 'regular)))
 
-              :fixed-pitch-family "Iosevka Comfy"
-              :fixed-pitch-weight nil
-              :fixed-pitch-slant nil
-              :fixed-pitch-height 1.0
+            (regular
+             :bold-weight semibold)
 
-              :fixed-pitch-serif-family nil
-              :fixed-pitch-serif-weight nil
-              :fixed-pitch-serif-slant nil
-              :fixed-pitch-serif-height 1.0
+            (medium
+             :default-height ,(pcase (system-name)
+                               ("boschic" 124)
+                               (_ 120)))
 
-              :variable-pitch-family "Iosevka Comfy Motion"
-              :variable-pitch-weight nil
-              :variable-pitch-slant nil
-              :variable-pitch-height 1.0
+            (large
+             :default-height ,(pcase (system-name)
+                               (_ 144))
+             :default-weight semilight)
 
-              :header-line-family nil
-              :header-line-height 1.0
-              :header-line-slant nil
-              :header-line-weight nil
+            (xlarge
+             :default-height ,(pcase (system-name)
+                               (_ 156)))
 
-              :line-number-family nil
-              :line-number-height 1.0
-              :line-number-slant nil
-              :line-number-weight nil
+            (big-mclarge-huge
+             :default-weight semilight
+             :default-height ,(pcase (system-name)
+                               (_ 180))
+             :bold-weight extrabold)
 
-              :mode-line-active-family nil
-              :mode-line-active-weight nil
-              :mode-line-active-slant nil
-              :mode-line-active-height 1.0
+            (t
+             :default-family "Iosevka Comfy"
+             :default-weight regular
+             :default-height ,(pcase (system-name)
+                               ("tuuvok" 102)
+                               (_ 105))
 
-              :mode-line-inactive-family nil
-              :mode-line-inactive-weight nil
-              :mode-line-inactive-slant nil
-              :mode-line-inactive-height 1.0
+             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-weight nil
+             :fixed-pitch-height 1.0
 
-              :tab-bar-family nil
-              :tab-bar-weight nil
-              :tab-bar-slant nil
-              :tab-bar-height 1.0
+             :fixed-pitch-serif-family nil
+             :fixed-pitch-serif-weight nil
+             :fixed-pitch-serif-height 1.0
 
-              :tab-line-family nil
-              :tab-line-weight nil
-              :tab-line-slant nil
-              :tab-line-height 1.0
+             :variable-pitch-family "Iosevka Comfy Motion Duo"
+             :variable-pitch-weight nil
+             :variable-pitch-height 1.0
 
-              :bold-family nil
-              :bold-weight medium
-              ;; :bold-weight semibold
-              :bold-slant nil
-              :bold-height 1.0
+             :mode-line-active-family nil
+             :mode-line-active-weight nil
+             :mode-line-active-height 0.9
 
-              :italic-family nil
-              :italic-weight nil
-              :italic-slant italic
-              :italic-height 1.0
+             :mode-line-inactive-family nil
+             :mode-line-inactive-weight nil
+             :mode-line-inactive-height 0.9
 
-              :line-spacing 1)))
+             :header-line-family nil
+             :header-line-weight nil
+             :header-line-height 0.9
 
-  :config
-  ;; Persist latest preset across sessions.
-  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
-  (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset))
+             :line-number-family nil
+             :line-number-weight nil
+             :line-number-height 0.9
 
-;; ~ligature.el~: improved ligature support :package:
+             :tab-bar-family nil
+             :tab-bar-weight nil
+             :tab-bar-height 1.0
 
-;; <https://github.com/mickeynp/ligature.el>
+             :bold-family nil
+             :bold-weight bold
 
-;; A better implementation of ligature support than the builtin ~prettify-symbols-mode~.
+             :italic-family nil
+             :italic-weight nil
+             :italic-slant italic
+
+             :line-spacing nil))))
+
+;; ~ligature.el~ :: improved ligature support
+
+;; + Package :: <https://github.com/mickeynp/ligature.el>
+
+;; A better implementation of ligature support than the builtin
+;; ~prettify-symbols-mode~.
+
 ;; <https://old.reddit.com/r/emacs/comments/keji66/what_is_bad_about_prettifysymbolsmode/>
 
 
-(use-package ligature
-  :ensure t
-  :demand t
-  :if (display-graphic-p)
-  :after fontaine
+(package! ligature
+  (when (display-graphic-p)
+    (after! fontaine
+      (global-ligature-mode 1))))
 
-  :config
+(after! ligature
   ;; Enable all Iosevka ligatures in programming modes.
   ;; <https://github.com/mickeynp/ligature.el/wiki#iosevka>
-  (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
-                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
-                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
-                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+  (ligature-set-ligatures
+   'prog-mode
+   '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->"
+     "<---->" "<!--" "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">="
+     "<=>" "<==>" "<===>" "<====>" "<!---" "<~~" "<~" "~>" "~~>"
+     "::" ":::" "==" "!=" "===" "!==" ":=" ":-" ":+" "<*" "<*>"
+     "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++")))
 
-  (global-ligature-mode t))
+;; ~show-font~ :: a tool to preview fonts
+
+;; + Package :: <https://protesilaos.com/emacs/show-font>
+
+
+(when (display-graphic-p)
+  (package! show-font)
+
+  (after! show-font
+    (setopt show-font-pangram 'ceamx)
+    (setopt show-font-character-sample
+            "
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyz
+0123456789   !@#$¢%^&*~|
+`'\"‘’“”.,;:  ()[]{}—-_+=<>
+
+()[]{}<>«»‹› 6bB8&0ODdoa 1tiIlL|\/
+!ij c¢ 5$Ss 7Z2z 9gqp nmMNNMW uvvwWuuw
+x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
+")))
 
 ;; Provide common dependency: ~nerd-icons~ :package:
 

@@ -203,6 +203,7 @@ not retain the generic background set by the function
   (when (ceamx-ui-desktop-dark-theme-p)
     (set-face-attribute 'default nil :background "#000000" :foreground "#ffffff")
     (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
+    (add-hook 'ceamx-after-init-hook #'ceamx-ui-re-enable-theme-in-frame)
     (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)))
 
 (ceamx-init-prevent-initial-light-flash)
