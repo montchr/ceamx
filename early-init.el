@@ -38,7 +38,7 @@
 
 (setq package-enable-at-startup nil)
 
-;; Set up indirect init/startup hooks
+;; Define proxy hooks for ~after-init-hook~ and ~emacs-startup-hook~
 
 
 (defvar ceamx-after-init-hook '())
@@ -48,23 +48,6 @@
 (defvar ceamx-emacs-startup-hook '())
 (defun ceamx-emacs-startup-hook ()
   (run-hooks 'ceamx-emacs-startup-hook))
-
-;; Language servers
-
-;; <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
-
-
-(setenv "LSP_USE_PLISTS" "true")
-(setq lsp-use-plists t)
-
-;; Read JSON streams in 1MiB chunks instead of the default 4kB.
-;;
-;; Language server responses tend to be in the 800kB to 3MB range,
-;; according to the lsp-mode documentation (linked above).
-;;
-;; This is a general LSP concern, not specific to any particular implementation.
-(when (functionp 'json-serialize)
-  (setq read-process-output-max (* 1024 1024)))
 
 ;; Provide insight into garbage-collection activity to inform tuning decisions
 
@@ -93,21 +76,12 @@
 
 (require 'ceamx-paths)
 
-;; Configure ~custom-file~ location
-
-
-;; Normally, options configured in `user-init-file' won't need to be persisted
-;; to `custom-file', but by default, when using package.el for package
-;; management, `package-selected-packages' will always be written to
-;; `custom-file' if available.  See `init-package' for details.
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-
 ;; Store packages in the designated directory
 
 
 (setq package-user-dir ceamx-packages-dir)
 
-;; Use preferred cache directories for native-comp
+;; Use preferred cache directories for native compilation
 
 
 (startup-redirect-eln-cache ceamx-eln-dir)
@@ -203,8 +177,10 @@ not retain the generic background set by the function
   (when (ceamx-ui-desktop-dark-theme-p)
     (set-face-attribute 'default nil :background "#000000" :foreground "#ffffff")
     (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
-    (add-hook 'ceamx-after-init-hook #'ceamx-ui-re-enable-theme-in-frame)
-    (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)))
+    ;; FIXME: errors wrong num args
+    ;;    (add-hook 'ceamx-after-init-hook #'ceamx-ui-re-enable-theme-in-frame)
+    ;; (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)
+    ))
 
 (ceamx-init-prevent-initial-light-flash)
 

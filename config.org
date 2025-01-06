@@ -768,7 +768,7 @@ When non-nil, there is no need to invoke ~package-initialize~.
 (setq package-enable-at-startup nil)
 #+end_src
 
-** Set up indirect init/startup hooks
+** Define proxy hooks for ~after-init-hook~ and ~emacs-startup-hook~
 
 #+begin_src emacs-lisp
 (defvar ceamx-after-init-hook '())
@@ -781,24 +781,6 @@ When non-nil, there is no need to invoke ~package-initialize~.
 #+end_src
 
 ** Performance
-*** Language servers
-
-<https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
-
-#+begin_src emacs-lisp
-(setenv "LSP_USE_PLISTS" "true")
-(setq lsp-use-plists t)
-
-;; Read JSON streams in 1MiB chunks instead of the default 4kB.
-;;
-;; Language server responses tend to be in the 800kB to 3MB range,
-;; according to the lsp-mode documentation (linked above).
-;;
-;; This is a general LSP concern, not specific to any particular implementation.
-(when (functionp 'json-serialize)
-  (setq read-process-output-max (* 1024 1024)))
-#+end_src
-
 *** Minimize garbage collection during startup
 
 [[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii comments on An easy trick I found to improve Emacs start-up time]]:
@@ -899,23 +881,13 @@ See [[*=ceamx-paths= :: common path constants]]
 (require 'ceamx-paths)
 #+end_src
 
-*** Configure ~custom-file~ location
-
-#+begin_src emacs-lisp
-;; Normally, options configured in `user-init-file' won't need to be persisted
-;; to `custom-file', but by default, when using package.el for package
-;; management, `package-selected-packages' will always be written to
-;; `custom-file' if available.  See `init-package' for details.
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-#+end_src
-
 *** Store packages in the designated directory
 
 #+begin_src emacs-lisp
 (setq package-user-dir ceamx-packages-dir)
 #+end_src
 
-*** Use preferred cache directories for native-comp
+*** Use preferred cache directories for native compilation
 
 #+begin_src emacs-lisp
 (startup-redirect-eln-cache ceamx-eln-dir)
@@ -1018,8 +990,10 @@ not retain the generic background set by the function
   (when (ceamx-ui-desktop-dark-theme-p)
     (set-face-attribute 'default nil :background "#000000" :foreground "#ffffff")
     (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
-    (add-hook 'ceamx-after-init-hook #'ceamx-ui-re-enable-theme-in-frame)
-    (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)))
+    ;; FIXME: errors wrong num args
+    ;;    (add-hook 'ceamx-after-init-hook #'ceamx-ui-re-enable-theme-in-frame)
+    ;; (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)
+    ))
 
 (ceamx-init-prevent-initial-light-flash)
 #+end_src
@@ -1621,7 +1595,7 @@ without needing to declare autoloads for `elpaca' in every file."
 ** File header
 
 #+begin_src emacs-lisp :tangle init.el :noweb yes :comments no
-;;; init.el --- Initialize Ceamx  -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; init.el --- Ceamx -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
@@ -1631,9 +1605,11 @@ without needing to declare autoloads for `elpaca' in every file."
 
 ;;; Commentary:
 ;;; Code:
+#+end_src
 
-;;;; Requirements
+** Requirements
 
+#+begin_src emacs-lisp
 (require 'cl-lib)
 
 (require 'ceamx-paths)
@@ -1702,6 +1678,14 @@ ELP is useful for seeing which functions in a package are "hot":
   "Whether to load the user `custom-file' (custom.el)."
   :group 'ceamx
   :type '(boolean))
+#+end_src
+
+** Configure ~custom-file~ location
+
+#+begin_src emacs-lisp
+(setq custom-file (if ceamx-load-custom-file
+                      (locate-user-emacs-file "custom.el")
+                    (make-temp-file "ceamx-custom-")))
 #+end_src
 
 ** Enable/disable some commands that are disabled/enabled by default
@@ -1886,7 +1870,7 @@ find myself still prone to indecision in this field.
 
 On that note, I have since switched back to Elpaca.
 
-*** Run our custom init and startup hooks on ~elpaca-after-init-hook~
+*** Run the custom init and startup hooks on ~elpaca-after-init-hook~
 
 #+begin_src emacs-lisp
 (add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
@@ -2213,7 +2197,7 @@ factor of 2 until you see only insignificant speedups. I would not
 expect the value you arrive at to be as high as 100 MiB.
 #+end_quote
 
-** Install utility libraries :package:
+** Install utility libraries
 
 #+begin_src emacs-lisp
 ;; FIXME: remove or alias (`##' is very difficult to search for)
@@ -2221,22 +2205,6 @@ expect the value you arrive at to be as high as 100 MiB.
                                         ;  <https://git.sr.ht/~tarsius/llama>
 
 (use-package f)
-#+end_src
-
-** TODO Miscellaneous things that should go somewhere else
-
-#+begin_src emacs-lisp
-;; Increase number of messages saved in log.
-(setq message-log-max 10000)
-
-;; Unbind `suspend-frame'.
-(global-unset-key (kbd "C-x C-z"))
-
-;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
-(setopt auto-mode-case-fold nil)
-
-;; Prevent Emacs from pinging domain names unexpectedly.
-(setopt ffap-machine-p-known 'reject)
 #+end_src
 
 
@@ -2634,7 +2602,7 @@ theme)."
 *** Theme Phasing Schedule
 
 #+begin_src emacs-lisp
-(defcustom ceamx-ui-theme-circadian-interval 'solar
+(defcustom ceamx-ui-theme-circadian-interval nil
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
 respectively to period-based switching with `theme-buffet' or
@@ -2924,12 +2892,17 @@ Configure some user options dependent on the loaded packages:
 
 #+begin_src emacs-lisp
 (package! avy
-  ;; Reduce the number of possible candidates.
-  ;; Can be overridden with the universal argument.
-  (setopt avy-all-windows nil)
+  (defer! 3
+    (require 'avy)))
+
+(after! avy
+  (setopt avy-style 'at-full)
+  (setopt avy-all-windows t)
+  (setopt avy-case-fold-search t)
+
   ;; Prevent conflicts with themes.
   (setopt avy-background nil)
-  (setopt avy-style 'at-full)
+
   ;; Anything lower feels unusable.
   (setopt avy-timeout-seconds 0.25))
 #+end_src
@@ -2937,9 +2910,9 @@ Configure some user options dependent on the loaded packages:
 ** Line highlighting
 
 #+begin_src emacs-lisp
-(use-feature! hl-line
-  :hook ((prog-mode) . hl-line-mode)
-  :config
+(add-hook 'prog-mode-hook #'hl-line-mode)
+
+(after! hl-line
   ;; Disable line highlight in unfocused windows.
   (setopt hl-line-sticky-flag nil))
 #+end_src
@@ -2947,30 +2920,28 @@ Configure some user options dependent on the loaded packages:
 Improve line-highlighting for major-modes orientated around line selection:
 
 #+begin_src emacs-lisp
-(use-package lin
-  :ensure t
-  :hook (ceamx-after-init . lin-global-mode))
+(package! lin
+  (add-hook 'ceamx-after-init-hook #'lin-global-mode))
 #+end_src
 
 Pulse current line after function invocations:
 
 #+begin_src emacs-lisp
-(use-package pulsar
-  :ensure t
-  :hook ((ceamx-after-init . pulsar-global-mode)
-         (minibuffer-setup . pulsar-pulse-line)
-         (next-error-hook . (pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry)))
-  :config
+(package! pulsar
+  (add-hook 'ceamx-after-init-hook #'pulsar-global-mode)
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line))
+
+(after! pulsar
   (setopt pulsar-pulse t
           pulsar-delay 0.055
-          pulsar-iterations 10
-          pulsar-face 'pulsar-magenta
+          pulsar-iterations 10)
+  (setopt pulsar-face 'pulsar-magenta
           pulsar-highlight-face 'pulsar-cyan)
 
-
-;; (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
-;;     (add-hook 'next-error-hook (function fn)))
-  )
+  (dolist (fn '(pulsar-pulse-line-red
+                pulsar-recenter-top
+                pulsar-reveal-entry))
+    (add-hook 'next-error-hook #'fn)))
 #+end_src
 
 ** Window highlighting
@@ -3486,41 +3457,55 @@ will be used as default."
 :header-args: :tangle lisp/ceamx-init-essentials.el
 :END:
 
+** File Header & Requirements
+
+#+begin_src emacs-lisp :comments no
+;; -*- lexical-binding: t -*-
+#+end_src
+
 ** Baseline configurations
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
-  (define-keymap :keymap (current-global-map)
-    "M-c" #'capitalize-dwim
-    "M-f" #'forward-word
-    "M-F" #'forward-symbol
-    "M-l" #'downcase-dwim
-    "M-o" #'delete-blank-lines
-    "M-Q" #'repunctuate-sentences
-    "M-u" #'upcase-dwim
-    "M-z" #'zap-up-to-char              ; orig: `zap-to-char'
-    "M-=" #'count-words
-    "M-SPC" #'cycle-spacing
+;; Increase number of messages saved in log.
+(setopt message-log-max 10000)
 
-    "C-h F" #'apropos-function
-    "C-h L" #'apropos-library
-    "C-h U" #'apropos-user-option
-    "C-h V" #'apropos-variable
+;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
+(setopt auto-mode-case-fold nil)
 
-    ;; TODO: move to window config
-    "C-x O" #'next-multiframe-window)
+;; Prevent Emacs from pinging domain names unexpectedly.
+(setopt ffap-machine-p-known 'reject)
 
-  ;; Keymap for buffers
-  ;; TODO: copy some of these to `ceamx-toggle-prefix'
-  (define-keymap :keymap ctl-x-x-map
-    "f" #'follow-mode
-    "l" #'visual-line-mode
-    "r" #'rename-uniquely)
+(define-keymap :keymap (current-global-map)
+  "M-c" #'capitalize-dwim
+  "M-f" #'forward-word
+  "M-F" #'forward-symbol
+  "M-l" #'downcase-dwim
+  "M-o" #'delete-blank-lines
+  "M-Q" #'repunctuate-sentences
+  "M-u" #'upcase-dwim
+  "M-z" #'zap-up-to-char              ; orig: `zap-to-char'
+  "M-=" #'count-words
+  "M-SPC" #'cycle-spacing
 
-  (define-keymap :keymap prog-mode-map
-    ;; Move forward out of one sexp level
-    "C-M-d" #'up-list))
+  "C-h F" #'apropos-function
+  "C-h L" #'apropos-library
+  "C-h U" #'apropos-user-option
+  "C-h V" #'apropos-variable
+
+  ;; TODO: move to window config
+  "C-x O" #'next-multiframe-window
+
+  ;; Minimizing frames is the job of the window manager.
+  "C-x C-z" nil)
+
+;; Keymap for buffers
+;; TODO: copy some of these to `ceamx-toggle-prefix'
+(define-keymap :keymap ctl-x-x-map
+  "f" #'follow-mode
+  "l" #'visual-line-mode
+  "r" #'rename-uniquely)
+
+
 #+end_src
 
 ** ~ceamx-simple~: Simple & common commands
@@ -3563,6 +3548,9 @@ will be used as default."
     ;; Commands for buffers
     "M-s b" #'ceamx-simple/buffers-major-mode
     "M-s v" #'ceamx-simple/buffers-vc-root)
+
+  (define-keymap :keymap prog-mode-map
+    "M-RET" #'ceamx-simple/continue-comment)
 
   (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment))
 #+end_src
@@ -4434,7 +4422,9 @@ these utilities.
 
 ** Requirements
 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp :comments no
+;; -*- lexical-binding: t -*-
+
 (require 'ceamx-lib)
 #+end_src
 
@@ -4564,7 +4554,9 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 ** Requirements
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :comments no
+;; -*- lexical-binding: t -*-
+
 (require 'ceamx-lib)
 (require 'lib-completion)
 #+end_src
@@ -4633,8 +4625,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 #+begin_src emacs-lisp
 (package! orderless
-  (after! minibuffer
-    (require 'orderless))
+  (require 'orderless)
 
   (setopt orderless-matching-styles '(orderless-prefixes orderless-regexp))
   ;; Spaces & dash & slash & underscore
@@ -4679,14 +4670,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 ** Configure preferred completion styles
 
 #+begin_src emacs-lisp
-;; See also `completion-category-overrides'
-(setopt completion-styles
-        '(basic
-          substring
-          initials
-          flex
-          orderless))
-
 ;; Make `partial-completion' behave like `substring'.
 (setopt completion-pcm-leading-wildcard t)
 
@@ -4695,15 +4678,23 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 ;; `completion-category-overrides'.
 (setq completion-category-defaults nil)
 
-(setopt completion-category-overrides
-        '((file (styles . (basic partial-completion orderless)))
-          (bookmark (styles . (basic substring)))
-          (library (styles . (basic substring)))
-          (embark-keybinding (styles . (basic substring)))
-          (imenu (styles . (basic substring orderless)))
-          (consult-location (styles .  (basic substring orderless)))
-          (kill-ring (styles . (emacs22 orderless)))
-          (eglot (styles . (emacs22 substring orderless)))))
+(after! orderless
+  (setopt completion-styles '(basic substring initials flex orderless))
+  (setopt completion-category-overrides
+          '((file (styles basic partial-completion orderless))
+            (bookmark (styles basic substring))
+            (library (styles basic substring))
+            (imenu (styles basic substring orderless))
+            (kill-ring (styles emacs22 orderless))
+            (eglot (styles emacs22 substring orderless)))))
+
+(after! (consult orderless)
+  (add-to-list 'completion-category-overrides
+      '(consult-location (styles basic substring orderless))))
+
+(after! embark
+  (add-to-list 'completion-category-overrides
+      '(embark-keybinding (styles basic substring))))
 #+end_src
 
 ** ~vertico~ :: VERT(ical )I(nteractive )CO(mpletion)
@@ -4714,8 +4705,8 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (package! vertico
   (add-hook 'ceamx-after-init-hook #'vertico-mode)
 
-  (setopt vertico-cycle t)
   (setopt vertico-count 5
+          vertico-cycle t
           vertico-resize t
           vertico-scroll-margin 0)
 
@@ -4763,53 +4754,45 @@ Fine-tune Vertico appearance per-command or per-category with
 - website :: <https://github.com/minad/consult>
 - ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
 
-*** Install and require the Consult package
-
 #+begin_src emacs-lisp
 (package! consult
-  (require 'consult))
+  ;; Enable automatic preview at point in the *Completions* buffer.
+  ;; This is relevant when you use the default completion UI.
+  (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
+
+  ;; Improve previews for `consult-register' and other register commands
+  (setopt register-preview-delay 0.5)
+  (setopt register-preview-function #'consult-register-format)
+  (advice-add #'register-preview :override #'consult-register-window)
+
+  ;; Display xref locations with previews
+  (setopt xref-show-definitions-function #'consult-xref)
+  (setopt xref-show-xrefs-function #'consult-xref))
+
+(after! consult
+  (require 'consult-imenu)
+
+  (setopt consult-narrow-key "<")       ; alternative: "C-+"
+  (setopt consult-line-numbers-widen t)
+  (setopt consult-async-min-input 3
+          consult-async-input-debounce 0.5
+          consult-async-input-throttle 0.8)
+
+  (after! pulsar
+    (setq consult-after-jump-hook nil)
+    (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
+      (add-hook 'consult-after-jump-hook fn))))
 #+end_src
 
-*** Narrow/filter Consult candidates
-
-#+begin_src emacs-lisp
-(setopt consult-narrow-key ">")         ; suggested: "<"
-#+end_src
-
-*** Configure the display of candidate previews :ui:completions:
-
-#+begin_src emacs-lisp
-(setopt consult-preview-key 'any)
-#+end_src
-
-#+begin_src emacs-lisp
-;; Enable automatic preview at point in the *Completions* buffer. This is
-;; relevant when you use the default completion UI.
-(add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
-#+end_src
-
-In addition to executing the standard mode hooks and hooks on =find-file-hook=,
-allow some light font-locking hooks:
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'consult
-  (dolist (hook '(;; local modes on prog-mode hooks
-                  hl-todo-mode
-                  elide-head-mode
-                  ;; enabled global modes
-                  global-org-modern-mode
-                  global-hl-todo-mode))
-    (add-to-list 'consult-preview-allowed-hooks hook)))
-#+end_src
-
-Granularly refine per-command preview behavior:
+Refine preview appearance and behavior:
 
 #+begin_src emacs-lisp
 (after! consult
-  (consult-customize consult-theme
-                     :preview-key '(:debounce 0.2 any))
+  (setopt consult-preview-key 'any)
 
   (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
    consult--source-bookmark consult--source-file-register
@@ -4818,28 +4801,17 @@ Granularly refine per-command preview behavior:
    :preview-key '(:debounce 0.4 any)))
 #+end_src
 
-**** Improve previews for ~consult-register~ and other register commands :registers:
-
-#+begin_src emacs-lisp
-(setopt register-preview-delay 0.5)
-(setopt register-preview-function #'consult-register-format)
-
-(advice-add #'register-preview :override #'consult-register-window)
-#+end_src
-
-**** Display xref locations with previews :xref:
-
-#+begin_src emacs-lisp
-(setopt xref-show-definitions-function #'consult-xref)
-(setopt xref-show-xrefs-function #'consult-xref)
-#+end_src
-
-**** Preview files in =find-file=
+Preview files in =find-file=:
 
 - source :: <https://github.com/minad/consult/wiki#previewing-files-in-find-file>
 
 #+begin_src emacs-lisp
-(defun +consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
+(after! consult
+  (setq read-file-name-function #'ceamx-completion/consult-find-file-with-preview))
+#+end_src
+
+#+begin_src emacs-lisp :tangle lisp/lib-completion.el
+(defun ceamx-completion/consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
   (interactive)
   (let ((default-directory (or dir default-directory))
         (minibuffer-completing-file-name t))
@@ -4850,49 +4822,7 @@ Granularly refine per-command preview behavior:
                    :predicate pred)))
 #+end_src
 
-#+begin_src emacs-lisp :noweb-ref nil
-(after! consult
-  (setq read-file-name-function #'+consult-find-file-with-preview))
-#+end_src
-
-*** Pulse line for visual feedback upon Consult selection jump :ui:navigation:
-
-+ [ ] Why after ~consult-imenu~?
-
-#+begin_src emacs-lisp
-(after! (consult consult-imenu pulsar)
-  (setq consult-after-jump-hook nil)
-  (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
-    (add-hook 'consult-after-jump-hook fn)))
-#+end_src
-
-*** DISABLED Hide all non-normal buffer sources in default ~consult-buffer~ list
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-Not really what I wanted...
-
-#+begin_src emacs-lisp
-(after! consult
-  (dolist (src consult-buffer-sources)
-    (unless (memq src '(consult--source-modified-buffer
-                        ;; this is basically everything
-                        ;; consult--source-buffer
-                        consult--source-project-buffer))
-      (set src (plist-put (symbol-value src) :hidden t)))))
-
-;; or, if you messed up, revert:
-;; (if (memq src '(consult--source-modified-buffer
-;;                 consult--source-buffer
-;;                 consult--source-project-buffer))
-;;     (set src (plist-put (symbol-value src) :hidden nil))
-;;   (set src (plist-put (symbol-value src) :hidden t)))
-#+end_src
-
 *** Keybindings :keybinds:
-
-**** Define global keybindings for Consult commands
 
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
@@ -4900,23 +4830,25 @@ Not really what I wanted...
 
   "<remap> <Info-search>" #'consult-info
 
-  "C-x M-:" #'consult-complex-command     ; orig. `repeat-complex-command'
-  "C-x b" #'consult-buffer                ; orig. `switch-to-buffer'
+  "C-x M-:" #'consult-complex-command ; orig. `repeat-complex-command'
+  "C-x b" #'consult-buffer            ; orig. `switch-to-buffer'
   "C-x 4 b" #'consult-buffer-other-window ; orig. `switch-to-buffer-other-window'
-  "C-x 5 b" #'consult-buffer-other-frame  ; orig. `switch-to-buffer-other-frame'
-  "C-x t b" #'consult-buffer-other-tab    ; orig. `switch-to-buffer-other-tab'
-  "C-x r b" #'consult-bookmark            ; orig. `bookmark-jump'
-  "C-x p b" #'consult-project-buffer      ; orig. `project-switch-to-buffer'
+  "C-x 5 b" #'consult-buffer-other-frame ; orig. `switch-to-buffer-other-frame'
+  "C-x t b" #'consult-buffer-other-tab ; orig. `switch-to-buffer-other-tab'
+  "C-x r b" #'consult-bookmark         ; orig. `bookmark-jump'
+  "C-x p b" #'consult-project-buffer ; orig. `project-switch-to-buffer'
 
   ;; Custom M-# bindings for fast register access
   "M-#"    #'consult-register-load
-  "M-'"    #'consult-register-store     ; orig. `abbrev-prefix-mark' (unrelated)
+  "M-'"    #'consult-register-store ; orig. `abbrev-prefix-mark' (unrelated)
   "C-M-#"  #'consult-register
 
-  ;; Other custom bindings
+  ;; TODO: reconcile with current binding for `forward-symbol'
+  ;; "M-F" #'consult-focus-lines
+  "M-K" #'consult-keep-lines
   "M-y" #'consult-yank-pop              ; orig. `yank-pop'
 
-  ;; M-g bindings (goto-map)
+  ;; M-g bindings (`goto-map')
   "M-g e"  #'consult-compile-error
   "M-g f"  #'consult-flymake            ; or: `consult-flycheck'
   "M-g g"  #'consult-goto-line          ; orig. `goto-line'
@@ -4927,21 +4859,18 @@ Not really what I wanted...
   "M-g i"  #'consult-imenu
   "M-g I"  #'consult-imenu-multi
 
-  ;; M-s bindings (search-map)
+  ;; M-s bindings (`search-map')
   "M-s d"  #'consult-fd                 ; or `consult-find'
   "M-s c"  #'consult-locate
   "M-s e"  #'consult-isearch-history
   "M-s g"  #'consult-ripgrep
   "M-s G"  #'consult-git-grep
+  "M-s k"  #'consult-keep-lines
   "M-s l"  #'consult-line
   "M-s L"  #'consult-line-multi
-  "M-s k"  #'consult-keep-lines
-  "M-s u"  #'consult-focus-lines)
-#+end_src
+  "M-s u"  #'consult-focus-lines
+  "M-s M-s" #'consult-outline)
 
-**** Define keybindings in ~isearch-mode-map~ for ~consult-line~ integration :isearch:
-
-#+begin_src emacs-lisp
 (after! isearch
   (define-keymap :keymap isearch-mode-map
     "M-e"   #'consult-isearch-history   ; orig. `isearch-edit-string'
@@ -4949,22 +4878,33 @@ Not really what I wanted...
     "M-s l" #'consult-line              ; needed by `consult-line' to detect `isearch'
     "M-s L" #'consult-line-multi        ; needed by `consult-line' to detect `isearch'
     ))
-#+end_src
 
-**** Define minibuffer-local keybindings for searching its history :minibuffer:history:
-
-#+begin_src emacs-lisp
 (keymap-set minibuffer-local-map "M-s" #'consult-history) ; orig. `next-matching-history-element'
 (keymap-set minibuffer-local-map "M-r" #'consult-history) ; orig. `previous-matching-history-element'
-#+end_src
 
-#+begin_src emacs-lisp
 (after! consult
   ;; Make narrowing help available in the minibuffer.
+  (define-keymap :keymap consult-narrow-map
+    "?" #'consult-narrow-help)
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'embark-prefix-help-command))
 #+end_src
 
-** Pre-defined filters for ~consult-info~ searches
+** Define commands to search pre-defined sets of Info pages
+
+#+begin_src emacs-lisp
+;; Remove the default binding for the `describe-input-method' command.
+(keymap-global-unset "C-h I" t)
+(keymap-global-unset "C-h i" t)
+
+(define-prefix-command 'ceamx-info-prefix )
+
+(define-keymap :keymap help-map
+  "I" #'consult-info
+  "i i" #'ceamx/consult-info-dwim
+  "i c" #'ceamx/completion-info
+  "i e" #'ceamx/emacs-info
+  "i o" #'ceamx/org-info)
+#+end_src
 
 #+begin_src emacs-lisp :noweb-ref lib-completion
 (require 'ceamx-lib)
@@ -4975,12 +4915,12 @@ Not really what I wanted...
 
 ;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
 (defun ceamx/emacs-info ()
-  "Search through Emacs info pages."
+  "Search through common Emacs info pages."
   (interactive)
   (consult-info "emacs" "efaq" "elisp" "cl"))
 
 (defun ceamx/org-info ()
-  "Search through the Org info page."
+  "Search through the Org-Mode info page."
   (interactive)
   (consult-info "org"))
 
@@ -5011,15 +4951,6 @@ Refile... somewhere...
 #+begin_src emacs-lisp
 (declare-function consult-info "consult-info")
 
-;; Remove the default binding for the `describe-input-method' command.
-(keymap-global-unset "C-h I" t)
-
-(define-keymap :keymap (current-global-map)
-  "C-h i"    #'ceamx/consult-info-dwim
-  "C-h I c"  #'ceamx/completion-info
-  "C-h I e"  #'ceamx/emacs-info
-  "C-h I i"  #'consult-info
-  "C-h I o"  #'ceamx/org-info)
 #+end_src
 
 ** ~marginalia~ :: minibuffer completion annotations
@@ -6643,10 +6574,26 @@ avoid further confusion.
 :header-args: :tangle lisp/ceamx-init-langs.el
 :END:
 
+** Requirements
+
+#+begin_src emacs-lisp :comments no
+;; -*- lexical-binding: t -*-
+
+(require 'ceamx-lib)
+#+end_src
+
+
 ** Programming modes
 
 #+begin_src emacs-lisp
-(def-hook! ceamx-prog-mode-init-h ()
+(after! prog-mode
+  (define-keymap :keymap prog-mode-map
+    ;; Move forward out of one sexp level
+    "C-M-d" #'up-list))
+#+end_src
+
+#+begin_src emacs-lisp
+(def-hook! ceamx-init-lang-prog-mode-h ()
   '(prog-mode-hook)
   "Enable load-order-dependent features and defaults for all `prog-mode'-derived major modes.
 To ensure a predictable execution order, condition checks on
@@ -9087,10 +9034,11 @@ Create the directories if they don't already exist (to prevent errors):
 
 ** Requirements
 
-#+BEGIN_SRC emacs-lisp
-;; (require 'ceamx-paths)
-;; (require 'ceamx-lib)
-#+END_SRC
+#+begin_src emacs-lisp :comments no
+;; -*- lexical-binding: t -*-
+
+(require 'ceamx-lib)
+#+end_src
 
 ** Set up essential files & directories :paths:
 
@@ -10742,16 +10690,12 @@ Or, perhaps more accurately: stuff that needs a better home.
 ** Start the Emacs server process if not already running
 
 #+begin_src emacs-lisp
-(defun ceamx/maybe-start-server ()
-  "Allow this Emacs process to act as server process if not already running."
+(def-hook! ceamx-init-maybe-start-server-h ()
+  'ceamx-emacs-startup-hook
+  "Allow this Emacs process to act as server if a server is not already running."
   (require 'server)
-  (unless (and (fboundp 'server-running-p)
-               (server-running-p))
+  (unless (server-running-p)
     (server-start)))
-#+end_src
-
-#+begin_src emacs-lisp
-(add-hook 'ceamx-emacs-startup-hook #'ceamx/maybe-start-server)
 #+end_src
 
 ** macOS: Restart Yabai after init
@@ -10770,25 +10714,15 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 ** Optionally load the ~custom-file~
 
 #+begin_src emacs-lisp
-(defun ceamx/load-custom-file ()
-  "Load the user `custom-file'."
-  (interactive)
-  (when (file-exists-p custom-file)
-    (load custom-file 'noerror)))
+(when ceamx-load-custom-file
+  (load custom-file t))
 #+end_src
+** Re-enable theme
 
-#+begin_src emacs-lisp
-(add-hook 'ceamx-after-init-hook #'ceamx/load-custom-file)
-#+end_src
-
-
-** Load the chaos file
-
-#+begin_src emacs-lisp
-(add-hook 'ceamx-after-init-hook
-          (lambda ()
-            (load (locate-user-emacs-file "chaos.el") t)))
-#+end_src
+ #+begin_src emacs-lisp :tangle init.el
+;; FIXME: wrong num args
+;; (ceamx-ui-re-enable-theme-in-frame)
+ #+end_src
 
 
 * Libraries
@@ -11142,6 +11076,7 @@ CHAR."
     (prefix-numeric-value current-prefix-arg)))
   (zap-to-char (- arg) char t))
 
+;; TODO: support point at bol
 ;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
 ;;;###autoload
 (defun ceamx-simple/continue-comment ()

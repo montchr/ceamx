@@ -1,7 +1,16 @@
+;; -*- lexical-binding: t -*-
+
+(require 'ceamx-lib)
+
 ;; Programming modes
 
 
-(def-hook! ceamx-prog-mode-init-h ()
+(after! prog-mode
+  (define-keymap :keymap prog-mode-map
+    ;; Move forward out of one sexp level
+    "C-M-d" #'up-list))
+
+(def-hook! ceamx-init-lang-prog-mode-h ()
   '(prog-mode-hook)
   "Enable load-order-dependent features and defaults for all `prog-mode'-derived major modes.
 To ensure a predictable execution order, condition checks on

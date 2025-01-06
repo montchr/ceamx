@@ -341,6 +341,7 @@ CHAR."
     (prefix-numeric-value current-prefix-arg)))
   (zap-to-char (- arg) char t))
 
+;; TODO: support point at bol
 ;; via <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L1781-L1797>
 ;;;###autoload
 (defun ceamx-simple/continue-comment ()

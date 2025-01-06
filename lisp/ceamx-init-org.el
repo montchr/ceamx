@@ -1,8 +1,6 @@
-;; Requirements
+;; -*- lexical-binding: t -*-
 
-
-;; (require 'ceamx-paths)
-;; (require 'ceamx-lib)
+(require 'ceamx-lib)
 
 
 

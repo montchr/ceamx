@@ -1,5 +1,4 @@
-;; Requirements
-
+;; -*- lexical-binding: t -*-
 
 (require 'ceamx-lib)
 (require 'lib-completion)
@@ -66,8 +65,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (package! orderless
-  (after! minibuffer
-    (require 'orderless))
+  (require 'orderless)
 
   (setopt orderless-matching-styles '(orderless-prefixes orderless-regexp))
   ;; Spaces & dash & slash & underscore
@@ -106,14 +104,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 ;; Configure preferred completion styles
 
 
-;; See also `completion-category-overrides'
-(setopt completion-styles
-        '(basic
-          substring
-          initials
-          flex
-          orderless))
-
 ;; Make `partial-completion' behave like `substring'.
 (setopt completion-pcm-leading-wildcard t)
 
@@ -122,15 +112,23 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 ;; `completion-category-overrides'.
 (setq completion-category-defaults nil)
 
-(setopt completion-category-overrides
-        '((file (styles . (basic partial-completion orderless)))
-          (bookmark (styles . (basic substring)))
-          (library (styles . (basic substring)))
-          (embark-keybinding (styles . (basic substring)))
-          (imenu (styles . (basic substring orderless)))
-          (consult-location (styles .  (basic substring orderless)))
-          (kill-ring (styles . (emacs22 orderless)))
-          (eglot (styles . (emacs22 substring orderless)))))
+(after! orderless
+  (setopt completion-styles '(basic substring initials flex orderless))
+  (setopt completion-category-overrides
+          '((file (styles basic partial-completion orderless))
+            (bookmark (styles basic substring))
+            (library (styles basic substring))
+            (imenu (styles basic substring orderless))
+            (kill-ring (styles emacs22 orderless))
+            (eglot (styles emacs22 substring orderless)))))
+
+(after! (consult orderless)
+  (add-to-list 'completion-category-overrides
+      '(consult-location (styles basic substring orderless))))
+
+(after! embark
+  (add-to-list 'completion-category-overrides
+      '(embark-keybinding (styles basic substring))))
 
 ;; ~vertico~ :: VERT(ical )I(nteractive )CO(mpletion)
 
@@ -140,8 +138,8 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (package! vertico
   (add-hook 'ceamx-after-init-hook #'vertico-mode)
 
-  (setopt vertico-cycle t)
   (setopt vertico-count 5
+          vertico-cycle t
           vertico-resize t
           vertico-scroll-margin 0)
 
@@ -184,51 +182,51 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (after! vertico-multiform
   (keymap-set vertico-multiform-map "C-l" #'vertico-multiform-vertical))
 
-;; Install and require the Consult package
+;; ~consult~ :: CONSULT(ing ~completing-read~)
+
+;; - website :: <https://github.com/minad/consult>
+;; - ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
 
 
 (package! consult
-  (require 'consult))
+  ;; Enable automatic preview at point in the *Completions* buffer.
+  ;; This is relevant when you use the default completion UI.
+  (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
 
-;; Narrow/filter Consult candidates
+  ;; Improve previews for `consult-register' and other register commands
+  (setopt register-preview-delay 0.5)
+  (setopt register-preview-function #'consult-register-format)
+  (advice-add #'register-preview :override #'consult-register-window)
 
+  ;; Display xref locations with previews
+  (setopt xref-show-definitions-function #'consult-xref)
+  (setopt xref-show-xrefs-function #'consult-xref))
 
-(setopt consult-narrow-key ">")         ; suggested: "<"
+(after! consult
+  (require 'consult-imenu)
 
-;; Configure the display of candidate previews :ui:completions:
+  (setopt consult-narrow-key "<")       ; alternative: "C-+"
+  (setopt consult-line-numbers-widen t)
+  (setopt consult-async-min-input 3
+          consult-async-input-debounce 0.5
+          consult-async-input-throttle 0.8)
 
-
-(setopt consult-preview-key 'any)
-
-;; Enable automatic preview at point in the *Completions* buffer. This is
-;; relevant when you use the default completion UI.
-(add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
-
-
-
-;; In addition to executing the standard mode hooks and hooks on =find-file-hook=,
-;; allow some light font-locking hooks:
-
-
-(with-eval-after-load 'consult
-  (dolist (hook '(;; local modes on prog-mode hooks
-                  hl-todo-mode
-                  elide-head-mode
-                  ;; enabled global modes
-                  global-org-modern-mode
-                  global-hl-todo-mode))
-    (add-to-list 'consult-preview-allowed-hooks hook)))
+  (after! pulsar
+    (setq consult-after-jump-hook nil)
+    (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
+      (add-hook 'consult-after-jump-hook fn))))
 
 
 
-;; Granularly refine per-command preview behavior:
+;; Refine preview appearance and behavior:
 
 
 (after! consult
-  (consult-customize consult-theme
-                     :preview-key '(:debounce 0.2 any))
+  (setopt consult-preview-key 'any)
 
   (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
    consult--source-bookmark consult--source-file-register
@@ -236,49 +234,17 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
    ;; :preview-key (kbd "M-.")
    :preview-key '(:debounce 0.4 any)))
 
-;; Improve previews for ~consult-register~ and other register commands :registers:
 
 
-(setopt register-preview-delay 0.5)
-(setopt register-preview-function #'consult-register-format)
-
-(advice-add #'register-preview :override #'consult-register-window)
-
-;; Display xref locations with previews :xref:
-
-
-(setopt xref-show-definitions-function #'consult-xref)
-(setopt xref-show-xrefs-function #'consult-xref)
-
-;; Preview files in =find-file=
+;; Preview files in =find-file=:
 
 ;; - source :: <https://github.com/minad/consult/wiki#previewing-files-in-find-file>
 
 
-(defun +consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
-  (interactive)
-  (let ((default-directory (or dir default-directory))
-        (minibuffer-completing-file-name t))
-    (consult--read #'read-file-name-internal :state (consult--file-preview)
-                   :prompt prompt
-                   :initial initial
-                   :require-match mustmatch
-                   :predicate pred)))
-
 (after! consult
-  (setq read-file-name-function #'+consult-find-file-with-preview))
+  (setq read-file-name-function #'ceamx-completion/consult-find-file-with-preview))
 
-;; Pulse line for visual feedback upon Consult selection jump :ui:navigation:
-
-;; + [ ] Why after ~consult-imenu~?
-
-
-(after! (consult consult-imenu pulsar)
-  (setq consult-after-jump-hook nil)
-  (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
-    (add-hook 'consult-after-jump-hook fn)))
-
-;; Define global keybindings for Consult commands
+;; Keybindings :keybinds:
 
 
 (define-keymap :keymap (current-global-map)
@@ -286,23 +252,25 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
   "<remap> <Info-search>" #'consult-info
 
-  "C-x M-:" #'consult-complex-command     ; orig. `repeat-complex-command'
-  "C-x b" #'consult-buffer                ; orig. `switch-to-buffer'
+  "C-x M-:" #'consult-complex-command ; orig. `repeat-complex-command'
+  "C-x b" #'consult-buffer            ; orig. `switch-to-buffer'
   "C-x 4 b" #'consult-buffer-other-window ; orig. `switch-to-buffer-other-window'
-  "C-x 5 b" #'consult-buffer-other-frame  ; orig. `switch-to-buffer-other-frame'
-  "C-x t b" #'consult-buffer-other-tab    ; orig. `switch-to-buffer-other-tab'
-  "C-x r b" #'consult-bookmark            ; orig. `bookmark-jump'
-  "C-x p b" #'consult-project-buffer      ; orig. `project-switch-to-buffer'
+  "C-x 5 b" #'consult-buffer-other-frame ; orig. `switch-to-buffer-other-frame'
+  "C-x t b" #'consult-buffer-other-tab ; orig. `switch-to-buffer-other-tab'
+  "C-x r b" #'consult-bookmark         ; orig. `bookmark-jump'
+  "C-x p b" #'consult-project-buffer ; orig. `project-switch-to-buffer'
 
   ;; Custom M-# bindings for fast register access
   "M-#"    #'consult-register-load
-  "M-'"    #'consult-register-store     ; orig. `abbrev-prefix-mark' (unrelated)
+  "M-'"    #'consult-register-store ; orig. `abbrev-prefix-mark' (unrelated)
   "C-M-#"  #'consult-register
 
-  ;; Other custom bindings
+  ;; TODO: reconcile with current binding for `forward-symbol'
+  ;; "M-F" #'consult-focus-lines
+  "M-K" #'consult-keep-lines
   "M-y" #'consult-yank-pop              ; orig. `yank-pop'
 
-  ;; M-g bindings (goto-map)
+  ;; M-g bindings (`goto-map')
   "M-g e"  #'consult-compile-error
   "M-g f"  #'consult-flymake            ; or: `consult-flycheck'
   "M-g g"  #'consult-goto-line          ; orig. `goto-line'
@@ -313,19 +281,17 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   "M-g i"  #'consult-imenu
   "M-g I"  #'consult-imenu-multi
 
-  ;; M-s bindings (search-map)
+  ;; M-s bindings (`search-map')
   "M-s d"  #'consult-fd                 ; or `consult-find'
   "M-s c"  #'consult-locate
   "M-s e"  #'consult-isearch-history
   "M-s g"  #'consult-ripgrep
   "M-s G"  #'consult-git-grep
+  "M-s k"  #'consult-keep-lines
   "M-s l"  #'consult-line
   "M-s L"  #'consult-line-multi
-  "M-s k"  #'consult-keep-lines
-  "M-s u"  #'consult-focus-lines)
-
-;; Define keybindings in ~isearch-mode-map~ for ~consult-line~ integration :isearch:
-
+  "M-s u"  #'consult-focus-lines
+  "M-s M-s" #'consult-outline)
 
 (after! isearch
   (define-keymap :keymap isearch-mode-map
@@ -335,18 +301,30 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     "M-s L" #'consult-line-multi        ; needed by `consult-line' to detect `isearch'
     ))
 
-;; Define minibuffer-local keybindings for searching its history :minibuffer:history:
-
-
 (keymap-set minibuffer-local-map "M-s" #'consult-history) ; orig. `next-matching-history-element'
 (keymap-set minibuffer-local-map "M-r" #'consult-history) ; orig. `previous-matching-history-element'
 
 (after! consult
   ;; Make narrowing help available in the minibuffer.
+  (define-keymap :keymap consult-narrow-map
+    "?" #'consult-narrow-help)
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'embark-prefix-help-command))
 
-;; Pre-defined filters for ~consult-info~ searches
+;; Define commands to search pre-defined sets of Info pages
 
+
+;; Remove the default binding for the `describe-input-method' command.
+(keymap-global-unset "C-h I" t)
+(keymap-global-unset "C-h i" t)
+
+(define-prefix-command 'ceamx-info-prefix )
+
+(define-keymap :keymap help-map
+  "I" #'consult-info
+  "i i" #'ceamx/consult-info-dwim
+  "i c" #'ceamx/completion-info
+  "i e" #'ceamx/emacs-info
+  "i o" #'ceamx/org-info)
 
 (require 'ceamx-lib)
 
@@ -356,12 +334,12 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 ;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
 (defun ceamx/emacs-info ()
-  "Search through Emacs info pages."
+  "Search through common Emacs info pages."
   (interactive)
   (consult-info "emacs" "efaq" "elisp" "cl"))
 
 (defun ceamx/org-info ()
-  "Search through the Org info page."
+  "Search through the Org-Mode info page."
   (interactive)
   (consult-info "org"))
 
@@ -390,16 +368,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (declare-function consult-info "consult-info")
-
-;; Remove the default binding for the `describe-input-method' command.
-(keymap-global-unset "C-h I" t)
-
-(define-keymap :keymap (current-global-map)
-  "C-h i"    #'ceamx/consult-info-dwim
-  "C-h I c"  #'ceamx/completion-info
-  "C-h I e"  #'ceamx/emacs-info
-  "C-h I i"  #'consult-info
-  "C-h I o"  #'ceamx/org-info)
 
 ;; ~marginalia~ :: minibuffer completion annotations
 

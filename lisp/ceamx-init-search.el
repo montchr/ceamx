@@ -1,5 +1,4 @@
-;; Requirements
-
+;; -*- lexical-binding: t -*-
 
 (require 'ceamx-lib)
 

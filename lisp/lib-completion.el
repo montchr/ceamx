@@ -32,12 +32,12 @@
 
 ;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
 (defun ceamx/emacs-info ()
-  "Search through Emacs info pages."
+  "Search through common Emacs info pages."
   (interactive)
   (consult-info "emacs" "efaq" "elisp" "cl"))
 
 (defun ceamx/org-info ()
-  "Search through the Org info page."
+  "Search through the Org-Mode info page."
   (interactive)
   (consult-info "org"))
 
@@ -84,3 +84,13 @@ files               => `wdired'
 
 (provide 'lib-completion)
 ;;; lib-completion.el ends here
+
+(defun ceamx-completion/consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
+  (interactive)
+  (let ((default-directory (or dir default-directory))
+        (minibuffer-completing-file-name t))
+    (consult--read #'read-file-name-internal :state (consult--file-preview)
+                   :prompt prompt
+                   :initial initial
+                   :require-match mustmatch
+                   :predicate pred)))

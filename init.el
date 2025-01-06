@@ -1,4 +1,4 @@
-;;; init.el --- Initialize Ceamx  -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; init.el --- Ceamx -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
@@ -22,7 +22,8 @@
 ;;; Commentary:
 ;;; Code:
 
-;;;; Requirements
+;; Requirements
+
 
 (require 'cl-lib)
 
@@ -70,6 +71,13 @@
   "Whether to load the user `custom-file' (custom.el)."
   :group 'ceamx
   :type '(boolean))
+
+;; Configure ~custom-file~ location
+
+
+(setq custom-file (if ceamx-load-custom-file
+                      (locate-user-emacs-file "custom.el")
+                    (make-temp-file "ceamx-custom-")))
 
 ;; Enable/disable some commands that are disabled/enabled by default
 
@@ -167,7 +175,7 @@
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 
-;; Run our custom init and startup hooks on ~elpaca-after-init-hook~
+;; Run the custom init and startup hooks on ~elpaca-after-init-hook~
 
 
 (add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
@@ -386,7 +394,7 @@ The ORDER can be used to deduce the feature context."
   (blackout 'gcmh-mode)
   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
 
-;; Install utility libraries :package:
+;; Install utility libraries
 
 
 ;; FIXME: remove or alias (`##' is very difficult to search for)
@@ -394,21 +402,6 @@ The ORDER can be used to deduce the feature context."
                                         ;  <https://git.sr.ht/~tarsius/llama>
 
 (use-package f)
-
-;; TODO Miscellaneous things that should go somewhere else
-
-
-;; Increase number of messages saved in log.
-(setq message-log-max 10000)
-
-;; Unbind `suspend-frame'.
-(global-unset-key (kbd "C-x C-z"))
-
-;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
-(setopt auto-mode-case-fold nil)
-
-;; Prevent Emacs from pinging domain names unexpectedly.
-(setopt ffap-machine-p-known 'reject)
 
 ;; Disable unnecessary OS-specific command-line options :macos:
 
@@ -738,7 +731,7 @@ theme)."
 ;; Theme Phasing Schedule
 
 
-(defcustom ceamx-ui-theme-circadian-interval 'solar
+(defcustom ceamx-ui-theme-circadian-interval nil
   "The circadian theme switching interval.
 Value may be `period', `solar', or nil, corresponding
 respectively to period-based switching with `theme-buffet' or
@@ -809,21 +802,26 @@ unconditionally use `ceamx-ui-theme-default-light' and
 
 
 (package! avy
-  ;; Reduce the number of possible candidates.
-  ;; Can be overridden with the universal argument.
-  (setopt avy-all-windows nil)
+  (defer! 3
+    (require 'avy)))
+
+(after! avy
+  (setopt avy-style 'at-full)
+  (setopt avy-all-windows t)
+  (setopt avy-case-fold-search t)
+
   ;; Prevent conflicts with themes.
   (setopt avy-background nil)
-  (setopt avy-style 'at-full)
+
   ;; Anything lower feels unusable.
   (setopt avy-timeout-seconds 0.25))
 
 ;; Line highlighting
 
 
-(use-feature! hl-line
-  :hook ((prog-mode) . hl-line-mode)
-  :config
+(add-hook 'prog-mode-hook #'hl-line-mode)
+
+(after! hl-line
   ;; Disable line highlight in unfocused windows.
   (setopt hl-line-sticky-flag nil))
 
@@ -832,31 +830,29 @@ unconditionally use `ceamx-ui-theme-default-light' and
 ;; Improve line-highlighting for major-modes orientated around line selection:
 
 
-(use-package lin
-  :ensure t
-  :hook (ceamx-after-init . lin-global-mode))
+(package! lin
+  (add-hook 'ceamx-after-init-hook #'lin-global-mode))
 
 
 
 ;; Pulse current line after function invocations:
 
 
-(use-package pulsar
-  :ensure t
-  :hook ((ceamx-after-init . pulsar-global-mode)
-         (minibuffer-setup . pulsar-pulse-line)
-         (next-error-hook . (pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry)))
-  :config
+(package! pulsar
+  (add-hook 'ceamx-after-init-hook #'pulsar-global-mode)
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line))
+
+(after! pulsar
   (setopt pulsar-pulse t
           pulsar-delay 0.055
-          pulsar-iterations 10
-          pulsar-face 'pulsar-magenta
+          pulsar-iterations 10)
+  (setopt pulsar-face 'pulsar-magenta
           pulsar-highlight-face 'pulsar-cyan)
 
-
-;; (dolist (fn '(pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
-;;     (add-hook 'next-error-hook (function fn)))
-  )
+  (dolist (fn '(pulsar-pulse-line-red
+                pulsar-recenter-top
+                pulsar-reveal-entry))
+    (add-hook 'next-error-hook #'fn)))
 
 ;; Window highlighting
 
@@ -1861,14 +1857,12 @@ The buffer will be created if it does not exist."
 ;; Start the Emacs server process if not already running
 
 
-(defun ceamx/maybe-start-server ()
-  "Allow this Emacs process to act as server process if not already running."
+(def-hook! ceamx-init-maybe-start-server-h ()
+  'ceamx-emacs-startup-hook
+  "Allow this Emacs process to act as server if a server is not already running."
   (require 'server)
-  (unless (and (fboundp 'server-running-p)
-               (server-running-p))
+  (unless (server-running-p)
     (server-start)))
-
-(add-hook 'ceamx-emacs-startup-hook #'ceamx/maybe-start-server)
 
 ;; macOS: Restart Yabai after init
 
@@ -1885,17 +1879,11 @@ The buffer will be created if it does not exist."
 ;; Optionally load the ~custom-file~
 
 
-(defun ceamx/load-custom-file ()
-  "Load the user `custom-file'."
-  (interactive)
-  (when (file-exists-p custom-file)
-    (load custom-file 'noerror)))
+(when ceamx-load-custom-file
+  (load custom-file t))
 
-(add-hook 'ceamx-after-init-hook #'ceamx/load-custom-file)
-
-;; Load the chaos file
+;; Re-enable theme
 
 
-(add-hook 'ceamx-after-init-hook
-          (lambda ()
-            (load (locate-user-emacs-file "chaos.el") t)))
+;; FIXME: wrong num args
+;; (ceamx-ui-re-enable-theme-in-frame)

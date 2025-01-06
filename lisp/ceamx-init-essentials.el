@@ -1,38 +1,46 @@
+;; -*- lexical-binding: t -*-
+
 ;; Baseline configurations
 
 
-(use-feature! emacs
-  :config
-  (define-keymap :keymap (current-global-map)
-    "M-c" #'capitalize-dwim
-    "M-f" #'forward-word
-    "M-F" #'forward-symbol
-    "M-l" #'downcase-dwim
-    "M-o" #'delete-blank-lines
-    "M-Q" #'repunctuate-sentences
-    "M-u" #'upcase-dwim
-    "M-z" #'zap-up-to-char              ; orig: `zap-to-char'
-    "M-=" #'count-words
-    "M-SPC" #'cycle-spacing
+;; Increase number of messages saved in log.
+(setopt message-log-max 10000)
 
-    "C-h F" #'apropos-function
-    "C-h L" #'apropos-library
-    "C-h U" #'apropos-user-option
-    "C-h V" #'apropos-variable
+;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
+(setopt auto-mode-case-fold nil)
 
-    ;; TODO: move to window config
-    "C-x O" #'next-multiframe-window)
+;; Prevent Emacs from pinging domain names unexpectedly.
+(setopt ffap-machine-p-known 'reject)
 
-  ;; Keymap for buffers
-  ;; TODO: copy some of these to `ceamx-toggle-prefix'
-  (define-keymap :keymap ctl-x-x-map
-    "f" #'follow-mode
-    "l" #'visual-line-mode
-    "r" #'rename-uniquely)
+(define-keymap :keymap (current-global-map)
+  "M-c" #'capitalize-dwim
+  "M-f" #'forward-word
+  "M-F" #'forward-symbol
+  "M-l" #'downcase-dwim
+  "M-o" #'delete-blank-lines
+  "M-Q" #'repunctuate-sentences
+  "M-u" #'upcase-dwim
+  "M-z" #'zap-up-to-char              ; orig: `zap-to-char'
+  "M-=" #'count-words
+  "M-SPC" #'cycle-spacing
 
-  (define-keymap :keymap prog-mode-map
-    ;; Move forward out of one sexp level
-    "C-M-d" #'up-list))
+  "C-h F" #'apropos-function
+  "C-h L" #'apropos-library
+  "C-h U" #'apropos-user-option
+  "C-h V" #'apropos-variable
+
+  ;; TODO: move to window config
+  "C-x O" #'next-multiframe-window
+
+  ;; Minimizing frames is the job of the window manager.
+  "C-x C-z" nil)
+
+;; Keymap for buffers
+;; TODO: copy some of these to `ceamx-toggle-prefix'
+(define-keymap :keymap ctl-x-x-map
+  "f" #'follow-mode
+  "l" #'visual-line-mode
+  "r" #'rename-uniquely)
 
 ;; ~ceamx-simple~: Simple & common commands
 
@@ -74,6 +82,9 @@
     ;; Commands for buffers
     "M-s b" #'ceamx-simple/buffers-major-mode
     "M-s v" #'ceamx-simple/buffers-vc-root)
+
+  (define-keymap :keymap prog-mode-map
+    "M-RET" #'ceamx-simple/continue-comment)
 
   (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment))
 
