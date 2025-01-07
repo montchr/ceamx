@@ -791,9 +791,11 @@ unconditionally use `ceamx-ui-theme-default-light' and
 
 (if (eq 'solar ceamx-ui-theme-circadian-interval)
     (after! circadian (add-hook 'ceamx-after-init-hook #'circadian-setup))
-  (if (ceamx-ui-desktop-dark-theme-p)
-      (ceamx-ui/load-dark-theme)
-    (ceamx-ui/load-light-theme)))
+  (add-hook 'ceamx-after-init-hook
+            (lambda ()
+              (if (ceamx-ui-desktop-dark-theme-p)
+                  (ceamx-ui/load-dark-theme)
+                (ceamx-ui/load-light-theme)))))
 
 ;; =avy= :: can do anything
 
@@ -1556,9 +1558,8 @@ The buffer will be created if it does not exist."
 (require 'ceamx-init-completion)
 (require 'init-embark)
 (require 'ceamx-init-search)
-(require 'init-dired)
+(require 'ceamx-init-dired)
 (require 'init-workspace)
-(require 'init-dashboard)
 (require 'init-vcs)
 (require 'ceamx-init-langs)
 (require 'init-writing)
@@ -1642,19 +1643,19 @@ The buffer will be created if it does not exist."
   "C-c `" #'mode-line-other-buffer
 
   "C-c a" #'org-agenda
-  "C-c b" (cons "+[buffer]" #'ceamx-buffer-prefix)
+  "C-c b" (cons "[buffer]" #'ceamx-buffer-prefix)
   "C-c c" #'org-capture
-  "C-c f" (cons "+[file]" #'ceamx-file-prefix)
+  "C-c f" (cons "[file]" #'ceamx-file-prefix)
   "C-c g" #'magit-dispatch
   "C-c G" #'magit-file-dispatch
   "C-c h" #'consult-history
-  "C-c i" (cons "+[insert]" #'ceamx-insert-prefix)
+  "C-c i" (cons "[insert]" #'ceamx-insert-prefix)
   "C-c k" #'consult-kmacro
-  "C-c l" (cons "+[code]" #'ceamx-code-prefix)
-  "C-c o" (cons "+[launch]" #'ceamx-launch-prefix)
-  "C-c q" (cons "+[session]" #'ceamx-session-prefix)
-  "C-c t" (cons "+[toggle]" #'ceamx-toggle-prefix)
-  "C-c w" (cons "+[window]" #'ceamx-window-prefix))
+  "C-c l" (cons "[code]" #'ceamx-code-prefix)
+  "C-c o" (cons "[launch]" #'ceamx-launch-prefix)
+  "C-c q" (cons "[session]" #'ceamx-session-prefix)
+  "C-c t" (cons "[toggle]" #'ceamx-toggle-prefix)
+  "C-c w" (cons "[window]" #'ceamx-window-prefix))
 
 ;;;;; Prefix: [C-x]
 

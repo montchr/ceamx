@@ -52,14 +52,15 @@ must be a valid `theme-buffet' period as defined in
   "Set the GNOME/GTK theme to THEME."
   ;; FIXME: prompt with completion
   (interactive "s")
-  (let* ((namespace ceamx-ui-gsettings-ui-namespace)
-         (value (pcase theme
+  (let* ((value (pcase theme
                   ((rx (optional "prefer-") "dark")
                    "prefer-dark")
                   ((rx (optional "prefer-") "light")
                    "prefer-light")
                   (_ "prefer-dark")))
-         (cmd (format "gsettings set %s color-scheme %s" namespace value)))
+         (cmd (format "gsettings set %s color-scheme %s"
+                      ceamx-ui-gsettings-ui-namespace
+                      value)))
     (shell-command cmd)))
 
 (defun ceamx-ui/gsettings-dark-theme ()

@@ -1,7 +1,6 @@
 ;; -*- lexical-binding: t -*-
 
 (require 'ceamx-lib)
-(require 'lib-completion)
 
 ;; Baseline completion settings
 
@@ -67,8 +66,11 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (package! orderless
   (require 'orderless)
 
-  (setopt orderless-matching-styles '(orderless-prefixes orderless-regexp))
-  ;; Spaces & dash & slash & underscore
+  (setopt orderless-matching-styles
+          '(orderless-prefixes
+            orderless-regexp))
+
+  ;; spaces & dash & slash & underscore
   (setopt orderless-component-separator " +\\|[-/_]")
 
   ;; [SPC] should never trigger a completion.
@@ -113,7 +115,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (setq completion-category-defaults nil)
 
 (after! orderless
-  (setopt completion-styles '(basic substring initials flex orderless))
+  (setopt completion-styles '(orderless substring initials flex basic))
   (setopt completion-category-overrides
           '((file (styles basic partial-completion orderless))
             (bookmark (styles basic substring))
@@ -130,7 +132,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (add-to-list 'completion-category-overrides
       '(embark-keybinding (styles basic substring))))
 
-;; ~vertico~ :: VERT(ical )I(nteractive )CO(mpletion)
+;; ~vertico~ :: VERT(ical )I(nteractive )CO(mpletion) :minibuffer:
 
 ;; + Package :: <https://github.com/minad/vertico>
 
@@ -182,7 +184,17 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (after! vertico-multiform
   (keymap-set vertico-multiform-map "C-l" #'vertico-multiform-vertical))
 
-;; ~consult~ :: CONSULT(ing ~completing-read~)
+;; ~marginalia~ :: minibuffer completion annotations :minibuffer:
+
+;; + Package :: <https://github.com/minad/marginalia>
+
+
+(package! marginalia
+  (keymap-set minibuffer-local-map "M-A" #'marginalia-cycle)
+
+  (marginalia-mode))
+
+;; ~consult~ :: CONSULT(ing ~completing-read~) :minibuffer:
 
 ;; - website :: <https://github.com/minad/consult>
 ;; - ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
@@ -241,10 +253,37 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 ;; - source :: <https://github.com/minad/consult/wiki#previewing-files-in-find-file>
 
 
-(after! consult
+(use-feature! ceamx-completion
+  :demand t
+  :after consult
+  :commands (ceamx-completion/consult-find-file-with-preview)
+  :init
   (setq read-file-name-function #'ceamx-completion/consult-find-file-with-preview))
 
-;; Keybindings :keybinds:
+
+
+;; Define commands to search pre-defined sets of Info pages with
+;; ~consult-info~:
+
+
+(define-prefix-command 'ceamx-info-prefix 'ceamx-info-prefix-map)
+
+(keymap-global-set "C-h i" (cons "[info]" #'ceamx-info-prefix))
+
+(use-feature! ceamx-completion
+  :after consult
+  :commands (ceamx/consult-info-dwim
+             ceamx/completion-info
+             ceamx/emacs-info
+             ceamx/org-info)
+  :init
+  (define-keymap :keymap help-map
+    "i i" #'ceamx/consult-info-dwim
+    "i c" #'ceamx/completion-info
+    "i e" #'ceamx/emacs-info
+    "i o" #'ceamx/org-info))
+
+;; Define keybindings for ~consult~ and its extensions :keybinds:
 
 
 (define-keymap :keymap (current-global-map)
@@ -259,6 +298,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   "C-x t b" #'consult-buffer-other-tab ; orig. `switch-to-buffer-other-tab'
   "C-x r b" #'consult-bookmark         ; orig. `bookmark-jump'
   "C-x p b" #'consult-project-buffer ; orig. `project-switch-to-buffer'
+
+  ;; [C-h] bindings (`help-map')
+  "C-h I" #'consult-info ; orig. `describe-input-method'
 
   ;; Custom M-# bindings for fast register access
   "M-#"    #'consult-register-load
@@ -309,75 +351,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (define-keymap :keymap consult-narrow-map
     "?" #'consult-narrow-help)
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'embark-prefix-help-command))
-
-;; Define commands to search pre-defined sets of Info pages
-
-
-;; Remove the default binding for the `describe-input-method' command.
-(keymap-global-unset "C-h I" t)
-(keymap-global-unset "C-h i" t)
-
-(define-prefix-command 'ceamx-info-prefix )
-
-(define-keymap :keymap help-map
-  "I" #'consult-info
-  "i i" #'ceamx/consult-info-dwim
-  "i c" #'ceamx/completion-info
-  "i e" #'ceamx/emacs-info
-  "i o" #'ceamx/org-info)
-
-(require 'ceamx-lib)
-
-(defvar devdocs-data-dir)
-
-(declare-function consult-info "consult")
-
-;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
-(defun ceamx/emacs-info ()
-  "Search through common Emacs info pages."
-  (interactive)
-  (consult-info "emacs" "efaq" "elisp" "cl"))
-
-(defun ceamx/org-info ()
-  "Search through the Org-Mode info page."
-  (interactive)
-  (consult-info "org"))
-
-(defun ceamx/completion-info ()
-  "Search through completion info pages."
-  (interactive)
-  (consult-info "vertico" "consult" "marginalia" "orderless" "embark"
-                "corfu" "cape" "tempel"))
-
-(defun ceamx/consult-info-dwim (&optional buffer)
-  "Search Info manuals appropriate to BUFFER's major-mode."
-  (interactive)
-  (with-current-buffer (or buffer (current-buffer))
-    (let* ((mode major-mode)
-           (fn (pcase mode
-                 ((pred (lambda (x) (memq x '(emacs-lisp-mode))))
-                  #'ceamx/emacs-info)
-                 ((pred (lambda (x) (memq x '(org-mode org-agenda-mode))))
-                  #'ceamx/org-info)
-                 (_ #'consult-info))))
-      (command-execute fn))))
-
-;; Bind commands to call ~consult-info~ filtered by commonly-used manual collections
-
-;; Refile... somewhere...
-
-
-(declare-function consult-info "consult-info")
-
-;; ~marginalia~ :: minibuffer completion annotations
-
-;; + Package :: <https://github.com/minad/marginalia>
-
-
-(package! marginalia
-  (keymap-set minibuffer-local-map "M-A" #'marginalia-cycle)
-
-  (marginalia-mode))
 
 ;; Dynamic text expansion with ~dabbrev~
 
@@ -457,8 +430,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (package! corfu
-  (add-hook 'ceamx-after-init-hook #'global-corfu-mode)
+  (add-hook 'ceamx-after-init-hook #'global-corfu-mode))
 
+(after! corfu
   (setopt corfu-count 12
           corfu-cycle t
           corfu-max-width 80
@@ -476,6 +450,8 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
           corfu-auto-delay 0.3
           corfu-auto-prefix 3)
 
+  (setopt global-corfu-minibuffer #'ceamx-completion-corfu-minibuffer-enable-p)
+
   ;; Setting this here again for good measure, just in case it is
   ;; changed elsewhere.
   (setopt tab-always-indent 'complete)
@@ -485,33 +461,19 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   ;; <https://github.com/minad/corfu/discussions/457>
   (setopt text-mode-ispell-word-completion nil)
 
-  (after! corfu
-    (keymap-set corfu-map "M-SPC" #'corfu-insert-separator)
+  (keymap-set corfu-map "M-SPC" #'corfu-insert-separator)
 
-    ;; NOTE: Requires `tab-always-indent' to be set to `complete',
-    ;; otherwise TAB will *never* indent!
-    (keymap-set corfu-map "TAB" #'corfu-complete)
+  ;; NOTE: Requires `tab-always-indent' to be set to `complete',
+  ;; otherwise TAB will *never* indent!
+  (keymap-set corfu-map "TAB" #'corfu-complete)
 
-    (unless corfu-popupinfo-mode
-      (corfu-echo-mode 1)))
+  (corfu-popupinfo-mode 1)
+  (corfu-echo-mode -1)
 
-  (after! (corfu savehist)
+  ;; Sort candidates by input history.
+  (after! savehist
     (corfu-history-mode 1)
-
     (add-to-list 'savehist-additional-variables 'corfu-history)))
-
-
-
-;; Conditionally enable/disable Corfu in minibuffers
-
-
-(setopt global-corfu-minibuffer #'ceamx-completion-corfu-minibuffer-enable-p)
-
-(defun ceamx-completion-corfu-minibuffer-enable-p ()
-  "Whether to enable `corfu' completion in a currently-active minibuffer."
-  (not (or (bound-and-true-p mct--active)
-           (bound-and-true-p vertico--input)
-           (eq (current-local-map) read-passwd-map))))
 
 ;; ~corfu-terminal~ :: Corfu terminal support
 
@@ -558,38 +520,22 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 
+;; ~nerd-icons-completion~ :: icons for minibuffer completions :icons:minibuffer:
+
+
+(package! nerd-icons-completion
+  (after! marginalia
+    (nerd-icons-completion-mode)
+    (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
+
 ;; Add command to export completion candidates to a writable buffer
 
 
-(keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write)
-
-
-
-;; Note the dependencies on ~embark~ and ~wgrep~!
-
-
-;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
-;;;###autoload
-(defun ceamx-completion/embark-export-write ()
-  "Export the current `vertico' candidates to a writable buffer.
-Supported export flows include the following:
-
-`consult-grep'      => `wgrep'
-files               => `wdired'
-`consult-location'  => `occur-edit'"
-  (interactive)
-  (require 'embark)
-  (require 'wgrep)
-  (let* ((edit-command
-          (pcase-let ((`(,type . ,candidates)
-                       (run-hook-with-args-until-success 'embark-candidate-collectors)))
-            (pcase type
-              ('consult-grep #'wgrep-change-to-wgrep-mode)
-              ('file #'wdired-change-to-wdired-mode)
-              ('consult-location #'occur-edit-mode)
-              (x (user-error "Embark category %S doesn't support writable export" x)))))
-         (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
-    (embark-export)))
+(use-feature! ceamx-completion
+  :after minibuffer
+  :commands (ceamx-completion/embark-export-write)
+  :init
+  (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
 
 ;; Provide feature ~ceamx-init-completion~
 

@@ -182,7 +182,7 @@ not retain the generic background set by the function
     ;; (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)
     ))
 
-(ceamx-init-prevent-initial-light-flash)
+;; (ceamx-init-prevent-initial-light-flash)
 
 ;; Rename the default/initial frame
 

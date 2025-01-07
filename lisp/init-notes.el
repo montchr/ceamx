@@ -71,6 +71,16 @@
 (package! denote
   (require 'denote)
 
+  ;; Integrations
+
+  (add-hook 'find-file-hook #'denote-fontify-links-mode)
+  (after! dired
+    (add-hook 'dired-mode-hook #'denote-dired-mode))
+  (after! mouse
+    (add-hook 'context-menu-functions #'denote-context-menu))
+
+  ;; Customizations
+
   (setopt denote-directory ceamx-notes-default-dir)
   (setopt denote-save-buffers nil)
   (setopt denote-known-keywords '("emacs" "philosophy" "correspondence" "language" "work"))
@@ -79,35 +89,25 @@
   (setopt denote-file-type nil)         ; Org is the default
   (setopt denote-prompts '(title keywords))
   (setopt denote-excluded-directories-regexp "\\.archive")
-  (setopt denote-excluded-keywords-regexp nil)
   (setopt denote-rename-confirmations '(modify-file-name
                                         rewrite-front-matter))
 
   ;; Pick dates, where relevant, with Org's advanced interface.
   (setopt denote-date-prompt-use-org-read-date t)
 
-  (setopt denote-date-format nil)       ; read doc string
+  ;; Use a file-type-specific date format.
+  (setopt denote-date-format nil)
 
   ;; also: `denote-link-backlinks-display-buffer-action'
   (setopt denote-backlinks-show-context t)
-
-  ;; FIXME: still non-existent function! but how? it is available in M-x
-  (add-hook 'find-file-hook #'denote-fontify-links-mode)
-  (add-hook 'dired-mode-hook #'denote-dired-mode)
-
-  ;; If you want to have Denote commands available via a right click
-  ;; context menu, use the following and then enable
-  ;; ~context-menu-mode~.
-  (add-hook 'context-menu-functions #'denote-context-menu)
 
   (setopt denote-dired-directories
           (list denote-directory
                 (thread-last denote-directory (expand-file-name "attachments"))))
 
-  ;; Automatically rename Denote buffers using the `denote-rename-buffer-format'.
+  ;; Automatically rename Denote buffers using the
+  ;; `denote-rename-buffer-format'.
   (denote-rename-buffer-mode 1))
-
-
 (with-eval-after-load 'dired
   (define-keymap :keymap dired-mode-map
     "C-c C-d C-i" #'denote-link-dired-marked-notes

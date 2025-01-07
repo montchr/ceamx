@@ -1,10 +1,9 @@
-;;; lib-completion.el --- Completion helpers  -*- lexical-binding: t;  -*-
+;;; ceamx-completion.el --- Ceamx: Completions Library  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -24,29 +23,56 @@
 ;;; Commentary:
 ;;; Code:
 
+;;;; Requirements
+
 (require 'ceamx-lib)
 
-(defvar devdocs-data-dir)
+(autoload #'consult-info "consult")
+(autoload #'consult--file-preview "consult")
+(autoload #'consult--read "consult")
+(autoload #'embark-export "embark")
+(autoload #'wgrep-change-to-wgrep-mode "wgrep")
 
-(declare-function consult-info "consult")
+
+;;;; Variables
+
+;;;; Customization
+
+;;;; Functions
+
+;;;;; Public
+
+(defun ceamx-completion-corfu-minibuffer-enable-p ()
+  "Whether to enable `corfu' completion in a currently-active minibuffer."
+  (not (or (bound-and-true-p mct--active)
+           (bound-and-true-p vertico--input)
+           (eq (current-local-map) read-passwd-map))))
+
+;;;;; Private
+
+;;;; Commands
 
 ;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
+;;;###autoload
 (defun ceamx/emacs-info ()
   "Search through common Emacs info pages."
   (interactive)
   (consult-info "emacs" "efaq" "elisp" "cl"))
 
+;;;###autoload
 (defun ceamx/org-info ()
   "Search through the Org-Mode info page."
   (interactive)
   (consult-info "org"))
 
+;;;###autoload
 (defun ceamx/completion-info ()
   "Search through completion info pages."
   (interactive)
   (consult-info "vertico" "consult" "marginalia" "orderless" "embark"
                 "corfu" "cape" "tempel"))
 
+;;;###autoload
 (defun ceamx/consult-info-dwim (&optional buffer)
   "Search Info manuals appropriate to BUFFER's major-mode."
   (interactive)
@@ -59,6 +85,7 @@
                   #'ceamx/org-info)
                  (_ #'consult-info))))
       (command-execute fn))))
+
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/modules/completion/vertico/autoload/vertico.el#L91-L108>
 ;;;###autoload
 (defun ceamx-completion/embark-export-write ()
@@ -82,9 +109,7 @@ files               => `wdired'
          (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
     (embark-export)))
 
-(provide 'lib-completion)
-;;; lib-completion.el ends here
-
+;;;###autoload
 (defun ceamx-completion/consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
   (interactive)
   (let ((default-directory (or dir default-directory))
@@ -94,3 +119,6 @@ files               => `wdired'
                    :initial initial
                    :require-match mustmatch
                    :predicate pred)))
+
+(provide 'ceamx-completion)
+;;; ceamx-completion.el ends here
