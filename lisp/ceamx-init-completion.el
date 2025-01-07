@@ -450,8 +450,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
           corfu-auto-delay 0.3
           corfu-auto-prefix 3)
 
-  (setopt global-corfu-minibuffer #'ceamx-completion-corfu-minibuffer-enable-p)
-
   ;; Setting this here again for good measure, just in case it is
   ;; changed elsewhere.
   (setopt tab-always-indent 'complete)
@@ -474,6 +472,14 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (after! savehist
     (corfu-history-mode 1)
     (add-to-list 'savehist-additional-variables 'corfu-history)))
+
+;; FIXME: `ceamx-completion-corfu-minibuffer-enable-p' not a function
+;; maybe?  type mismatch
+;; (use-feature! ceamx-completion
+;;   :after corfu
+;;   :functions (ceamx-completion-corfu-minibuffer-enable-p)
+;;   :init
+;;   (setopt global-corfu-minibuffer #'ceamx-completion-corfu-minibuffer-enable-p))
 
 ;; ~corfu-terminal~ :: Corfu terminal support
 
