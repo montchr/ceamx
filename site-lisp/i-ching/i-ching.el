@@ -28,55 +28,48 @@
 ;; <https://www.emacswiki.org/emacs/i-ching.el>
 
 ;; NOTE: The original package's copyright line implied the usage of a
-;; "(by)(nc)(sa)" license.  I assume the author means the CC-BY-NC-SA license,
-;; though there is also no license version provided.  That said, the file
-;; included an old "GPL-2.0-only" license header (referring to the FSF's
-;; physical mailing address and no website).  Since the license header states
-;; the license in plain English, I am going to assume the original was licensed
-;; as GPL-2.0-only.
+;; "(by)(nc)(sa)" license.  I assume the author means the CC-BY-NC-SA
+;; license, though there is also no license version provided.  That
+;; said, the file included an old "GPL-2.0-only" license header
+;; (referring to the FSF's physical mailing address and no website).
+;; Since the license header states the license in plain English, I am
+;; going to assume the original was licensed as GPL-2.0-only.
 
 ;; Hexagram interpretations are from:
 
 ;; https://en.wikipedia.org/wiki/I_Ching_hexagrams
 
-(require 'cl)
+;;;; TODO:
 
-(defconst i-ching-version "0.3.0")
-
-;;; Commentary:
-(defgroup i-ching '()
-  "This package will show you an iching hexigram, and give you the
-translation from the i-ching.
-
-You can even plug in your own randomizer function, and/or hexagram
-grenrator.  This package comes provided with a standard randomizer,
-and a coin generator, but you could (for instance) build a generator
-that grabs a random lolcat from icanhazcheezburger, and turns it into
-a hexagram.")
-
-;;; Installation:
-;; Put i-ching.el somewhere in your load-path.
-;; (Use M-x show-variable RET load-path to see what your load path is.)
-;; Add this to your Emacs init file.
-                                        ;(require 'i-ching)
-
-
-;;; TODO:
-;; - the traditional Chinese casting method based on the date of the Chinese
+;; - @jonnay: the traditional Chinese casting method based on the date of the Chinese
 ;;   calendar would be hella coo.  Finding info about that is HARD.
-;; - yarrow stalk method
-;; - buffer method
+;; - @jonnay: yarrow stalk method
+;; - @jonnay: buffer method
 
-;;; CHANGELOG:
-;; v 0.2 - Hexagram lookup
+;;;; Changelog:
+
+;; v0.3.0 - Cleanup code
+;; v0.2 - Hexagram lookup
 ;;       - Added Translated Judgment and commentary
 ;;       - added random.org randomizer source
 ;;       - added changing lines interpretation
-;; v 0.1 - Initial release
+;; v0.1 - Initial release
 
 ;;; Code:
 
-;;* custom random
+;;;; Requirements
+
+(require 'cl-lib)
+
+;;;; Variables
+
+(defconst i-ching-version "0.4.0")
+
+;;;; Customization
+
+(defgroup i-ching '()
+  "Package providing methods for I Ching hexagram generation and interpretation.")
+
 (defcustom i-ching-randomize-method 'i-ching-standard-randomizer
   "Method of randomization for i-ching.
 
@@ -92,7 +85,6 @@ for an example."
   :type 'function
   :group 'i-ching)
 
-;;* custom cast
 (defcustom i-ching-casting-method 'i-ching-coin-caster
   "Method of casting the i-ching.
 
@@ -116,19 +108,12 @@ example."
   :type 'function
   :group 'i-ching)
 
-;;* custom bigram
 (defcustom i-ching-bigram-interpretation
   '(("::" "Old Yin,    Changing, Winter, Thymine")
      ("|:" "Young Yin,  Static,   Spring, Cytosine")
 	   ("||" "Old Yang,   Changing, Summer, Adenine")
 	   (":|" "Young Yang, Static,   Autumn, Guanine"))
-  "Interpretation of the 'bi-grams'.
-
-In case you don't agree with my interpretations, you can add to, or edit this
-variable as you see fit.
-
-Note, these interpretations, and the use of bigrams are not strictly of Chinese
-origin.")
+  "Interpretation of the bigrams.")
 
 ;;* custom trigram
 (defcustom i-ching-trigram-interpretation
@@ -141,17 +126,34 @@ origin.")
 	   ("||:" . "兌 The Joyous,    Open,     Buoyant Resivoir,  W,  澤 Swamp,    Pleasure,          Tranquil")
 	   ("|||" . "乾 The Creative,  Force,    Pure Yang,         NW, 天 Sky,      Strong,            Creative"))
   "Interpretation of the Trigrams.
-
-Just in case you don't agree with my interpretation, you can edit this variable
-and change it.   It is an a-list in the format of: (trigram interpretation).
-Each trigram is described as a series of 3 colons (:) or vertical bars (|),
-thus, Heaven/The Creative is `|||' and Earth/The Receptive is `:::'.
-The leftmost position is the bottom, and rightmost is the top.
-i.e. |:: Arousing, ::| Stilling"
+An alist in the format of: (trigram interpretation)."
   :type '(alist :key-type string :value-type string)
   :group 'i-ching)
 
-;;* custom hexagram
+;; TODO: mapping from ascii to unicode
+;; (defcustom i-ching-bigram-interpretation
+;;   '(("⚋⚋" "Old Yin			::	Changing	:	Winter	:	Thymine")
+;;      ("⚊⚋" "Young Yin	::	Static		:	Spring	:	Cytosine")
+;;      ("⚊⚊" "Old Yang		::	Changing	: Summer		:	Adenine")
+;;      ("⚋⚊" "Young Yang	::	Static		:	Autumn	:	Guanine"))
+;;   "Interpretation of the bigrams.")
+
+;; TODO: mapping from ascii to unicode
+;; (defcustom i-ching-trigram-interpretation
+;;   '(("☷" . "坤 The Receptive,  Field,    Pure Yin,          SW, 地 Earth,    Devoted,           Receptive")
+;;      ("☶" . "艮 Keeping Still, Bound,    Articulated Limit, NE, 山 Mountain, Resting,           Completion")
+;;      ("☵" . "坎 The Abysmal,   Gorge,    Axial Rotation,    N,  水 Water,    Dangerous,         In-motion")
+;;      ("☴" . "巽 The Gentle,    Ground,   Softness,          SE, 風 Wind,     Penetrating,       Gentle entrance")
+;;      ("☳" . "震 The Arousing,  Shake,    Spark,             E,  雷 Thunder,  Inciting Movement, Initiative ")
+;;      ("☲" . "離 The Clinging,  Radiance, Cohesion,          S,  火 Fire,     Light Giving,      Clinging ")
+;;      ("☱" . "兌 The Joyous,    Open,     Buoyant Reservoir, W,  澤 Swamp,    Pleasure,          Tranquil")
+;;      ("☰" . "乾 The Creative,  Force,    Pure Yang,         NW, 天 Heaven,   Strong,            Creative"))
+;;   "Interpretation of the trigrams.
+
+;; An alist in the format of: (trigram interpretation)."
+;;   :type '(alist :key-type string :value-type string)
+;;   :group 'i-ching)
+
 (defcustom i-ching-hexagram-interpretation
   '(("||||||" . "01. Force                 (乾)   The Creative    Possessing Creative Power & Skill ")
      ("::::::" . "02. Field                 (坤)   The Receptive   Needing Knowledge & Skill ; Do not force matters and go with the flow ,  ; ;")
@@ -217,22 +219,21 @@ i.e. |:: Arousing, ::| Stilling"
      ("::||::" . "62. Small Exceeding       (小過) Small Preponderance     Small Surpassing")
      ("|:|:|:" . "63. Already Fording       (既濟) After Completion    Completion")
      (":|:|:|" . "64. Not-Yet Fording       (未濟) Before Completion   Incompletion"))
-  "Interpretation of the Hexigrams.
+  "Interpretation of the hexagrams.
 
 So far this is just a direct copy of the content from wikipedia."
   :type '(alist :key-type string :value-type string)
   :group 'i-ching)
 
-;;* hexagram custom fixme
 (defcustom i-ching-hexagram-translation
   '(("||||||" "THE CREATIVE works sublime success,\nFurthering through perseverance."
-	    "The movement of heaven is full of power. \nThus the superior man makes himself strong and \nuntiring."
-			"Nine at the beginning means:\nHidden dragon. Do not act."
-			"Nine in the second place means:\nDragon appearing in the field.\nIt furthers one to see the great man."
-			"Nine in the third place means:\nAll day long the superior man is creatively active.\nAt nightfall his mind is still beset with cares.\nDanger. No blame."
-			"Nine in the fourth place means:\nWavering flight over the depths.\nNo blame."
-			"°Nine in the fifth place means:\nFlying dragon in the heavens.\nIt furthers one to see the great man."
-			"Nine at the top means:\nArrogant dragon will have cause to repent.")
+      "The movement of heaven is full of power. \nThus the superior man makes himself strong and \nuntiring."
+      "Nine at the beginning means:\nHidden dragon. Do not act."
+      "Nine in the second place means:\nDragon appearing in the field.\nIt furthers one to see the great man."
+      "Nine in the third place means:\nAll day long the superior man is creatively active.\nAt nightfall his mind is still beset with cares.\nDanger. No blame."
+      "Nine in the fourth place means:\nWavering flight over the depths.\nNo blame."
+      "°Nine in the fifth place means:\nFlying dragon in the heavens.\nIt furthers one to see the great man."
+      "Nine at the top means:\nArrogant dragon will have cause to repent.")
      ("::::::" "THE RECEPTIVE brings about sublime success,\nFurthering through the perseverance of a mare.\nIf the superior man undertakes something and tries to lead,\nHe goes astray;\nBut if he follows, he finds guidance.\nIt is favorable to find friends in the west and south,\nTo forego friends in the east and north.\nQuiet perseverance brings good fortune." ;
        "The earth's condition is receptive devotion.\nThus the superior man who has breadth of character\nCarries the outer world."
        "Six at the beginning means:\nWhen there is hoarfrost underfoot,\nSolid ice is not far off."
@@ -246,7 +247,7 @@ So far this is just a direct copy of the content from wikipedia."
        "°Nine at the beginning means:\nHesitation and hindrance.\nIt furthers one to remain persevering.\nIt furthers one to appoint helpers."
        "Six in the second place means:\nDifficulties pile up.\nHorse and wagon part.\nHe is not a robber;\nHe wants to woo when the time comes.\nThe maiden is chaste,\nShe does not pledge herself.\nTen years--then she pledges herself."
        "Six in the third place means:\nWhoever hunts deer without the forester\nOnly loses his way in the forest.\nThe superior man understands the signs of the time\nAnd prefers to desist.\nTo go on brings humiliation."
-       "	\nSix in the fourth place means:\nHorse and wagon part.\nStrive for union.\nTo go brings good fortune.\nEverything acts to further."
+       "  \nSix in the fourth place means:\nHorse and wagon part.\nStrive for union.\nTo go brings good fortune.\nEverything acts to further."
        "° Nine in the fifth place means:\nDifficulties in blessing.\nA little perseverance brings good fortune.\nGreat perseverance brings misfortune."
        "Six at the top means:\nHorse and wagon part.\nBloody tears flow.")
      (":|:::|" "YOUTHFUL FOLLY has success.\nIt is not I who seek the young fool;\nThe young fool seeks me.\nAt the first oracle I inform him. \nIf he asks two or three times, it is importunity.\nIf he importunes, I give him no information.\nPerseverance furthers."
@@ -255,7 +256,7 @@ So far this is just a direct copy of the content from wikipedia."
        "° Nine in the second place means:\nTo bear with fools in kindliness brings good fortune.\nTo know how to take women\nBrings good fortune.\nThe son is capable of taking charge of the household."
        "Six in the third place means:\nTake not a maiden who. When she sees a man of bronze,\nLoses possession of herself.\nNothing furthers."
        "Six in the fourth place means:\nEntangled folly bring humiliation.\n"
-			 "° Six in the fifth place means:\nChildlike folly brings good fortune. "
+       "° Six in the fifth place means:\nChildlike folly brings good fortune. "
        "Nine at the top means:\nIn punishing folly\nIt does not further one\nTo commit transgressions.\nThe only thing that furthers \nIs to prevent transgressions.")
      ("|||:|:" "WAITING. If you are sincere, \nYou have light and success.\nPerseverance brings good fortune.\nIt furthers one to cross the great water."
        "Clouds rise up to heaven:\nThe image of WAITING.\nThus the superior man eats and drinks,\nIs joyous and of good cheer. "
@@ -285,17 +286,17 @@ So far this is just a direct copy of the content from wikipedia."
        "On the earth is water:\nThe image of HOLDING TOGETHER.\nThus the kings of antiquity\nBestowed the different states as fiefs\nAnd cultivated friendly relations\nWith the feudal lords."
        "Six at the beginning means:\nHold to him in truth and loyalty;\nThis is without blame.\nTruth, like a full earthen bowl\nThus in the end\nGood fortune comes from without."
        "Hold to him inwardly.\nPerseverance brings good fortune.\n"
-			 "Six in the third place means:\nYou hold together with the wrong people."
+       "Six in the third place means:\nYou hold together with the wrong people."
        "Six in the fourth place means:\nHold to him outwardly also.\nPerseverance brings good fortune."
        "° Nine in the fifth place means:\nManifestation of holding together.\nIn the hunt the king uses beaters on three sides only\nAnd forgoes game that runs off in front.\nThe citizens need no warning.\nGood fortune.\n"
-			 "\nSix at the top means:\nHe finds no head for holding together.\nMisfortune.\n")
+       "\nSix at the top means:\nHe finds no head for holding together.\nMisfortune.\n")
      ("|||:||" "THE TAMING POWER OF THE SMALL\nHas success.\nDense clouds, no rain from our western region."
        "The wind drives across heaven:\nThe image of THE TAMING POWER OF THE SMALL.\nThus the superior man\nRefines the outward aspect of his nature."
        "Nine at the beginning means:\nReturn to the way.\nHow could there be blame in this?\nGood fortune."
        "Nine in the second place means:\nHe allows himself to be drawn into returning.\nGood fortune."
        "Nine in the third place means:\nThe spokes burst out of the wagon wheels.\nMan and wife roll their eyes.\n"
-			 "°Six in the fourth place means:\nIf you are sincere, blood vanishes and fear gives way.\nNo blame.\n"
-			 "°Nine in the fifth place means:\nIf you are sincere and loyally attached, \nYou are rich in your neighbor."
+       "°Six in the fourth place means:\nIf you are sincere, blood vanishes and fear gives way.\nNo blame.\n"
+       "°Nine in the fifth place means:\nIf you are sincere and loyally attached, \nYou are rich in your neighbor."
        "\nNine at the top means:\nThe rain comes, there is rest.\nThis is due to the lasting effect of character.\nPerseverance brings the woman into danger.\nThe moon is nearly full.\nIf the superior man persists,\nMisfortune comes.")
      ("||:|||" "TREADING. Treading upon the tail of the tiger.\nIt does not bite the man. Success."
        "Heaven above, the lake below:\nThe image of TREADING.\nThus the superior man discriminates between high and low,\nAnd thereby fortifies the thinking of the people."
@@ -317,7 +318,7 @@ So far this is just a direct copy of the content from wikipedia."
        "Heaven and earth do not unite:\nThe image of STANDSTILL.\nThus the superior man falls back upon his inner worth \nIn order to escape the difficulties.\nHe does not permit himself to be honored with revenue."
        "Six at the beginning means:\nWhen ribbon grass is pulled up, the sod comes with it.\nEach according to his kind.\nPerseverance brings good fortune and success."
        "°Six in the second place means:\nThey bear and endure;\nThis means good fortune for inferior people.\nThe standstill serves to help the great man to attain success."
-       "	\nSix in the third place means:\nThey bear shame."
+       "  \nSix in the third place means:\nThey bear shame."
        "\nNine in the fourth place means:\nHe who acts at the command of the highest \nRemains without blame.\nThose of like mind partake of the blessing."
        "° Nine in the fifth place means:\nStandstill is giving way.\nGood fortune for the great man.\n"What if it should fail, what if it should fail?"In this way he ties it to a cluster of mulberry shoots."
        "Nine at the top means:\nThe standstill comes to an end.\nFirst standstill, then good fortune.")
@@ -341,18 +342,18 @@ So far this is just a direct copy of the content from wikipedia."
        "Within the earth, a mountain:\nThe image of MODESTY.\nThus the superior man reduces that which is too much,\nAnd augments that which is too little.\nHe weighs things and makes them equal."
        "Six at the beginning means:\nA superior man modest about his modesty\nMay cross the great water.\nGood fortune."
        "Six in the second place means:\nModesty that comes to expression. Perseverance brings good fortune."
-			 "°Nine in the third place means:\nA superior man of modesty and merit\nCarries things to conclusion.\nGood fortune."
+       "°Nine in the third place means:\nA superior man of modesty and merit\nCarries things to conclusion.\nGood fortune."
        "Six in the fourth place means:\nNothing that would not further modesty\nIn movement."
        "Six in the fifth place means:\nNo boasting of wealth before one's neighbor. \nIt is favorable to attack with force.\nNothing that would not further."
        "Six at the top means:\nModesty that comes to expression.\nIt is favorable to set armies marching\nTo chastise one's own city and one's country.")
      (":::|::" "ENTHUSIASM. It furthers one to install helpers\nAnd to set armies marching."
        "Thunder comes resounding out of the earth:\nThe image of ENTHUSIASM.\nThus the ancient kings made music \nIn order to honor merit,\nAnd offered it with splendor\nTo the Supreme Deity,\nInviting their ancestors to be present."
        "Six at the beginning means:\nEnthusiasm that expresses itself\nBrings misfortune."
-       "Six in the second place means:\nFirm as a rock. Not a whole day.\nPerseverance brings good fortune.	Firm as a rock, what need of a whole day?\nThe judgment can be known.\nThe superior man knows what is hidden and what is evident.\nHe knows weakness, he knows strength as well.\nHence the myriads look up to him."
+       "Six in the second place means:\nFirm as a rock. Not a whole day.\nPerseverance brings good fortune.   Firm as a rock, what need of a whole day?\nThe judgment can be known.\nThe superior man knows what is hidden and what is evident.\nHe knows weakness, he knows strength as well.\nHence the myriads look up to him."
        "Six in the third place means:\nEnthusiasm that looks upward creates remorse.\nHesitation brings remorse."
        "°Nine in the fourth place means:\nThe source of enthusiasm.\nHe achieves great things.\nDoubt not.\nYou gather friends around you\nAs a hair clasp gathers the hair."
        "Six in the fifth place means:\nPersistently ill, and still does not die."
-       "Six at the top means:	\nDeluded enthusiasm.\nBut if after completion one changes, \nThere is no blame.")
+       "Six at the top means:   \nDeluded enthusiasm.\nBut if after completion one changes, \nThere is no blame.")
      ("|::||:" "FOLLOWING has supreme success.\nPerseverance furthers. No blame."
        "Thunder in the middle of the lake:\nThe image of FOLLOWING.\nThus the superior man at nightfall\nGoes indoors for rest and recuperation."
        "°Nine at the beginning means:\nThe standard is changing.\nPerseverance brings good fortune.\nTo go out of the door in company\nProduces deeds."
@@ -410,7 +411,7 @@ So far this is just a direct copy of the content from wikipedia."
        "Six in the fifth place means:\nA shoal of fishes. Favor comes through the court ladies.\nEverything acts to further."
        "° Nine at the top means:\nThere is a large fruit still uneaten.\nThe superior man receives a carriage.\nThe house of the inferior man is split apart.")
      ("|:::::" "RETURN. Success.\nGoing out and coming in without error.\nFriends come without blame.\nTo and fro goes the way.\nOn the seventh day comes return.\nIt furthers one to have somewhere to go."
-       "Thunder within the earth:\nThe image of THE TURNING POINT.	\nThus the kings of antiquity closed the passes \nAt the time of solstice.\nMerchants and strangers did not go about,\nAnd the ruler\nDid not travel through the provinces."
+       "Thunder within the earth:\nThe image of THE TURNING POINT.  \nThus the kings of antiquity closed the passes \nAt the time of solstice.\nMerchants and strangers did not go about,\nAnd the ruler\nDid not travel through the provinces."
        "° Nine at the beginning means:\nReturn from a short distance.\nNo need for remorse.\nGreat good fortune."
        "Six in the second place means:\nQuiet return. Good fortune."
        "Six in the third place means:\nRepeated return. Danger. No blame."
@@ -574,7 +575,7 @@ So far this is just a direct copy of the content from wikipedia."
        "Six at the beginning means:\nIt must be checked with a brake of bronze.\nPerseverance brings good fortune.\nIf one lets it take its course, one experiences misfortune.\nEven a lean pig has it in him to rage around."
        "° Nine in the second place means:\nThere is a fish in the tank. No blame.\nDoes not further guests."
        "Nine in the third place means: \nThere is no skin on his thighs,\nAnd walking comes hard.\nIf one is mindful of the danger,\nNo great mistake is made."
-       " 	Nine in the fourth place means:\nNo fish in the tank.\nThis leads to misfortune."
+       "    Nine in the fourth place means:\nNo fish in the tank.\nThis leads to misfortune."
        "  ° Nine in the fifth place means:\nA melon covered with willow leaves.\nHidden lines.\nThen it drops down to one from heave."
        "Nine at the top means:\nHe comes to meet with his horns.\nHumiliation. No blame.")
      (":::||:" "GATHERING TOGETHER. Success.\nThe king approaches his temple.\nIt furthers one to see the great man.\nThis brings success. Perseverance furthers.\nTo bring great offerings creates good fortune.\nIt furthers one to undertake something."
@@ -714,29 +715,29 @@ So far this is just a direct copy of the content from wikipedia."
        "° Nine in the fifth place means:\nHe possesses truth, which links together.\nNo blame."
        "Nine at the top means:\nCockcrow penetrating to heaven.\nPerseverance brings misfortune.")
      ("::||::" "PREPONDERANCE OF THE SMALL. Success.\nPerseverance furthers.\nSmall things may be done; great things should not be done.\nThe flying bird brings the message:\nIt is not well to strive upward,\nIt is well to remain below.\nGreat good fortune."
-	     "Thunder on the mountain:\nThe image of PREPONDERANCE OF THE SMALL.\nThus in his conduct the superior man gives preponderance to reverence.\nIn bereavement he gives preponderance to grief.\nIn his expenditures he gives preponderance to thrift."
-	     "Six at the beginning means:\nThe bird meets with misfortune through flying."
-	     "° Six in the second place means:\nShe passes by her ancestor\nAnd meets her ancestress.\nHe does not reach his prince\nAnd meets the official.\nNo blame."
-	     "Nine in the third place means:\nIf one is not extremely careful,\nSomebody may come up from behind and strike him.\nMisfortune."
-	     "Nine in the fourth place means:\nNo blame. He meets him without passing by.\nGoing brings danger. One must be on guard.\nDo not act. Be constantly persevering."
-	     "° Six in the fifth place means:\nDense clouds,\nNo rain from our western territory.\nThe prince shoots and hits him who is in the cave."
-	     "Six at the top means:\nHe passes him by, not meeting him.\nThe flying bird leaves him.\nMisfortune.\nThis means bad luck and injury.")
+       "Thunder on the mountain:\nThe image of PREPONDERANCE OF THE SMALL.\nThus in his conduct the superior man gives preponderance to reverence.\nIn bereavement he gives preponderance to grief.\nIn his expenditures he gives preponderance to thrift."
+       "Six at the beginning means:\nThe bird meets with misfortune through flying."
+       "° Six in the second place means:\nShe passes by her ancestor\nAnd meets her ancestress.\nHe does not reach his prince\nAnd meets the official.\nNo blame."
+       "Nine in the third place means:\nIf one is not extremely careful,\nSomebody may come up from behind and strike him.\nMisfortune."
+       "Nine in the fourth place means:\nNo blame. He meets him without passing by.\nGoing brings danger. One must be on guard.\nDo not act. Be constantly persevering."
+       "° Six in the fifth place means:\nDense clouds,\nNo rain from our western territory.\nThe prince shoots and hits him who is in the cave."
+       "Six at the top means:\nHe passes him by, not meeting him.\nThe flying bird leaves him.\nMisfortune.\nThis means bad luck and injury.")
      ("|:|:|:" "AFTER COMPLETION. Success in small matters.\nPerseverance furthers.\nAt the beginning good fortune.\nAt the end disorder."
-	     "Water over fire: the image of the condition \nIn AFTER COMPLETION.\nThus the superior man \nTakes thought of misfortune\nAnd arms himself against it in advance."
-	     "Nine at the beginning means:\nHe breaks his wheels.\nHe gets his tail in the water.\nNo blame."
-	     "° Six in the second place means:\nThe woman loses the curtain of her carriage.\nDo not run after it;\nOn the seventh day you will get it."
-	     "Nine in the third place means:\nThe Illustrious Ancestor\nDisciplines the Devil's Country.\nAfter three years he conquers it.\nInferior people must not be employed."
-	     "Six in the fourth place means:\nThe finest clothes turn to rags.\nBe careful all day long."
-	     "Nine in the fifth place means:\nThe neighbor in the east who slaughters an ox\nDoes not attain as much real happiness\nAs the neighbor in the west\nWith his small offering."
-	     "Six at the top means:\nHe gets his head in the water. Danger.")
+       "Water over fire: the image of the condition \nIn AFTER COMPLETION.\nThus the superior man \nTakes thought of misfortune\nAnd arms himself against it in advance."
+       "Nine at the beginning means:\nHe breaks his wheels.\nHe gets his tail in the water.\nNo blame."
+       "° Six in the second place means:\nThe woman loses the curtain of her carriage.\nDo not run after it;\nOn the seventh day you will get it."
+       "Nine in the third place means:\nThe Illustrious Ancestor\nDisciplines the Devil's Country.\nAfter three years he conquers it.\nInferior people must not be employed."
+       "Six in the fourth place means:\nThe finest clothes turn to rags.\nBe careful all day long."
+       "Nine in the fifth place means:\nThe neighbor in the east who slaughters an ox\nDoes not attain as much real happiness\nAs the neighbor in the west\nWith his small offering."
+       "Six at the top means:\nHe gets his head in the water. Danger.")
      (":|:|:|" "BEFORE COMPLETION. Success.\nBut if the little fox, after nearly completing the crossing,\nGets his tail in the water,\nThere is nothing that would further."
-	     "Fire over water:\nThe image of the condition before transition.\nThus the superior man is careful\nIn the differentiation of things,\nSo that each finds its place."
-	     "Six at the beginning means:\nHe gets his tail in the water.\nHumiliating."
-	     "Nine in the second place means:\nHe brakes his wheels.\nPerseverance brings good fortune."
-	     "Six in the third place means:\nBefore completion, attack brings misfortune.\nIt furthers one to cross the great water."
-	     "Nine in the fourth place means:\nPerseverance brings good fortune.\nRemorse disappears.\nShock, thus to discipline the Devil's Country.\nFor three years, great realms are rewarded."
-	     "° Six in the fifth place means:\nPerseverance brings good fortune.\nNo remorse.\nThe light of the superior man is true.\nGood fortune."
-	     "Nine at the top means:\nThere is drinking of wine\nIn genuine confidence. No blame.\nBut if one wets his head,\nHe loses it, in truth."))
+       "Fire over water:\nThe image of the condition before transition.\nThus the superior man is careful\nIn the differentiation of things,\nSo that each finds its place."
+       "Six at the beginning means:\nHe gets his tail in the water.\nHumiliating."
+       "Nine in the second place means:\nHe brakes his wheels.\nPerseverance brings good fortune."
+       "Six in the third place means:\nBefore completion, attack brings misfortune.\nIt furthers one to cross the great water."
+       "Nine in the fourth place means:\nPerseverance brings good fortune.\nRemorse disappears.\nShock, thus to discipline the Devil's Country.\nFor three years, great realms are rewarded."
+       "° Six in the fifth place means:\nPerseverance brings good fortune.\nNo remorse.\nThe light of the superior man is true.\nGood fortune."
+       "Nine at the top means:\nThere is drinking of wine\nIn genuine confidence. No blame.\nBut if one wets his head,\nHe loses it, in truth."))
   "Text of the i-ching (translated).
 
 This is the full text of the representative chapter in the i-ching.
@@ -750,119 +751,119 @@ nth-line is the commentary on changing lines."
   :type '(alist :key-type 'string :value-type (list 'string 'string 'string 'string 'string 'string 'string 'string))
   :group 'i-ching)
 
+;;;; Faces
+
 (defface i-ching-title-face
   '((default
-	    (:weight bold :overline "black"
-	      :box (:line-width 4 :color "black" :style nil)
-	      :foreground "white" :background "black"))
-	   (nil nil))
+      (:weight bold :overline "black"
+        :box (:line-width 4 :color "black" :style nil)
+        :foreground "white" :background "black"))
+     (nil nil))
   "Face for title bars"
   :group 'i-ching)
 
 (defface i-ching-subtitle-face
   '((default
-	    (:weight bold)
-	    :underline "black"))
+      (:weight bold)
+      :underline "black"))
   "Face for sub-titles"
   :group 'i-ching)
 
-;;* interactive
+;;;; Functions
+
+;;;; Commands
+
 ;;;###autoload
-(defun i-ching-lookup ()
+(defun i-ching/lookup ()
   "Look up an i-ching hexagram."
   (interactive)
   (let ((i-ching-casting-method 'i-ching-lookup-caster))
-	  (i-ching-cast)))
+    (i-ching/cast)))
 
-;;* interactive display
 ;;;###autoload
-(defun i-ching-cast ()
+(defun i-ching/cast ()
   "Cast an i-ching, and put the result into an i-ching buffer."
   (interactive)
   (pop-to-buffer (get-buffer-create "*i-ching*"))
   (read-only-mode -1)
   (erase-buffer)
   (let* ((hexagram (i-ching-cast-hexagram))
-		      (changing (> (apply 'max hexagram) 1))
-		      (change (i-ching-change-hexagram hexagram))
-		      (catalyst (i-ching-catalyst-hexagram hexagram)))
-	  (i-ching-title "Main Hexagram")
+          (changing (> (apply 'max hexagram) 1))
+          (change (i-ching-change-hexagram hexagram))
+          (catalyst (i-ching-catalyst-hexagram hexagram)))
+    (i-ching-title "Main Hexagram")
     (insert (i-ching-full-hexagram-interpretation hexagram))
-	  (insert "\n")
-	  (if changing
-		  (progn
-		    (insert (i-ching-changing-translation hexagram catalyst))
-		    (insert "\n\n")
-		    (i-ching-title "Changing Hexagram")
-		    (insert (i-ching-full-hexagram-interpretation change))
-		    (insert "\n")
-		    (i-ching-title "Catalyzing Hexagram")
-		    (insert (i-ching-full-hexagram-interpretation catalyst)))
-		  "Static Hexagram.")
-	  (insert "\n")
-	  (i-ching-title "Correctness Hexagram")
-	  (insert (i-ching-hexagram-string (i-ching-correctness-hexagram hexagram)))
-	  (insert "\n\n")
-	  (i-ching-title "Correspondence Trigram")
-	  (insert (format "%s" (apply 'i-ching-trigram (i-ching-correspond-trigram hexagram)))))
+    (insert "\n")
+    (if changing
+      (progn
+        (insert (i-ching-changing-translation hexagram catalyst))
+        (insert "\n\n")
+        (i-ching-title "Changing Hexagram")
+        (insert (i-ching-full-hexagram-interpretation change))
+        (insert "\n")
+        (i-ching-title "Catalyzing Hexagram")
+        (insert (i-ching-full-hexagram-interpretation catalyst)))
+      "Static Hexagram.")
+    (insert "\n")
+    (i-ching-title "Correctness Hexagram")
+    (insert (i-ching-hexagram-string (i-ching-correctness-hexagram hexagram)))
+    (insert "\n\n")
+    (i-ching-title "Correspondence Trigram")
+    (insert (format "%s" (apply 'i-ching-trigram (i-ching-correspond-trigram hexagram)))))
   (goto-char (point-min))
   (read-only-mode 1))
 
-;;* display helper
+;;;; Functions
+
 (defun i-ching-title (title)
   "Return a nice TITLE string."
   (insert (propertize (concat title "\n")
-					  'face "i-ching-title-face")))
+            'face "i-ching-title-face")))
 
-;;* display helper
 (defun i-ching-full-hexagram-interpretation (hex)
   "Output a full interpretation of HEX.
 
 The full interpretation is the interpretation of a hex, plus its components."
   (concat (i-ching-hexagram-string hex)
-		"\n"
-		(i-ching-hexagram-components hex)
-		"\n"
-		(i-ching-hexagram-translation hex)))
+    "\n"
+    (i-ching-hexagram-components hex)
+    "\n"
+    (i-ching-hexagram-translation hex)))
 
-;;* display helper change
-(defun  i-ching-changing-translation (hex catalyst)
+(defun i-ching-changing-translation (hex catalyst)
   "Show translations for changing line in HEX, with catalyst hexagram CATALYST."
   (let ((changing-trans (cdr (cdr (cdr (assoc (i-ching-number-to-ascii hex)
-											                   i-ching-hexagram-translation))))))
-	  (loop for line in catalyst
-		  for num from 0
-		  append
-		  (case line
-			  (0 '(" "))
-			  (1 (list (format "Changing Line %s:\n%s\n" (+ 1 num) (nth num changing-trans)))))
-		  into out
-		  finally return (apply 'concat out))))
+                                              i-ching-hexagram-translation))))))
+    (cl-loop for line in catalyst
+             for num from 0
+             append
+             (cl-case line
+               (0 '(" "))
+               (1 (list (format "Changing Line %s:\n%s\n" (+ 1 num) (nth num changing-trans)))))
+             into out
+             finally return (apply 'concat out))))
 
-;;* display helper
 (defun i-ching-hexagram-translation (hexagram)
   "Return the full translation of a HEXAGRAM as a string."
   (let ((trans (assoc (i-ching-number-to-ascii hexagram) i-ching-hexagram-translation)))
-	  (format "Judgment:\n%s\n\nImage:\n%s\n\n" (nth 1 trans) (nth 2 trans))))
+    (format "Judgment:\n%s\n\nImage:\n%s\n\n" (nth 1 trans) (nth 2 trans))))
 
-;;* display
 (defun i-ching-hexagram-string (hexagram)
   "Return a nicely formatted string from HEXAGRAM."
   (format "%s - %s"
-		(car (apply 'i-ching-hexagram hexagram))
-		(cdr (apply 'i-ching-hexagram hexagram))))
+    (car (apply 'i-ching-hexagram hexagram))
+    (cdr (apply 'i-ching-hexagram hexagram))))
 
-;;* display
 (defun i-ching-number-to-ascii (hex)
   "Display a given HEX graphically."
-  (loop for line in hex
-		append
-		(case line
-		  (0 '(":"))
-		  (1 '("|"))
-		  (2 '(":"))
-		  (3 '("|"))) into out
-		finally return (apply 'concat out)))
+  (cl-loop for line in hex
+    append
+    (cl-case line
+      (0 '(":"))
+      (1 '("|"))
+      (2 '(":"))
+      (3 '("|"))) into out
+    finally return (apply 'concat out)))
 
 (defun i-ching-ascii-to-number (hex)
   "Grab the numeric values from a hexagram from ascii.
@@ -873,106 +874,104 @@ HEX is a string representation of a hexagram, consisting of:
 | = 7 (1 internally)
 X = 6 (2 internally)
 O = 9 (3 internally)"
-  (loop for line in (append hex nil) ; turn it into a string
-		append
-		(case line
-		  (?| '(1))
-		  (?: '(0))
-		  (?X '(2))
-		  (?O '(3))
-		  (t (error "Unexpected token %s in %s" line hex))) into out
-		finally return out))
+  (cl-loop for line in (append hex nil) ; turn it into a string
+    append
+    (cl-case line
+      (?| '(1))
+      (?: '(0))
+      (?X '(2))
+      (?O '(3))
+      (t (error "Unexpected token %s in %s" line hex))) into out
+    finally return out))
 
-(when nil
-	(i-ching-ascii-to-number "||:O|::|:X:|")
-	(append "abc" nil)
-	)
+;; FIXME: original author left this here...
+;; (when nil
+;;   (i-ching-ascii-to-number "||:O|::|:X:|")
+;;   (append "abc" nil))
 
-;;* display
 (defun i-ching-hexagram-components (hex)
   "Return a textual representaiton of the breakdown of hexagram HEX."
   (format (concat (propertize "Trigrams:\n"
-							      'face "i-ching-subtitle-face")
-				    " %s\n %s\n\n"
-				    (propertize "Bigrams:\n"
-							'face "i-ching-subtitle-face")
-				    " %s\n %s\n %s\n")
-		(i-ching-trigram (fourth hex) (fifth hex) (sixth hex))
-		(i-ching-trigram (first hex) (second hex) (third hex))
-		(i-ching-bigram (sixth hex)  (fifth hex))
-		(i-ching-bigram (fourth hex) (third hex))
-		(i-ching-bigram (second hex) (first hex))))
+                    'face "i-ching-subtitle-face")
+            " %s\n %s\n\n"
+            (propertize "Bigrams:\n"
+              'face "i-ching-subtitle-face")
+            " %s\n %s\n %s\n")
+    (i-ching-trigram (fourth hex) (fifth hex) (sixth hex))
+    (i-ching-trigram (first hex) (second hex) (third hex))
+    (i-ching-bigram (sixth hex)  (fifth hex))
+    (i-ching-bigram (fourth hex) (third hex))
+    (i-ching-bigram (second hex) (first hex))))
 
-(when nil
-	(i-ching-hexagram-components (list 1 2 1 0 3 1)))
+;; FIXME: original author left this here...
+;; (when nil
+;;   (i-ching-hexagram-components (list 1 2 1 0 3 1)))
 
-;;* unigram boolean
+;;;;; Unigrams
+
 (defun i-ching-not (a)
   "Perform a not operation on unigram A."
   (i-ching-numerize
     (let ((a (i-ching-normalize a))
-		       (b (i-ching-normalize b)))
-	    (or (and a (not b)) (and (not a) b)))))
+           (b (i-ching-normalize b)))
+      (or (and a (not b)) (and (not a) b)))))
 
-;;* unigram boolean
 (defun i-ching-xor (a b)
   "Perform a xor operation on unigrams A and B."
   (i-ching-numerize
     (let ((a (i-ching-normalize a))
-		       (b (i-ching-normalize b)))
-	    (or (and a (not b)) (and (not a) b)))))
+           (b (i-ching-normalize b)))
+      (or (and a (not b)) (and (not a) b)))))
 
-;;* unigram boolean
 (defun i-ching-or (a b)
   "Perform an or operation on unigrams A and B."
   (i-ching-numerize
     (let ((a (i-ching-normalize a))
-		       (b (i-ching-normalize b)))
-	    (or a b))))
+           (b (i-ching-normalize b)))
+      (or a b))))
 
-;;* unigram boolean
 (defun i-ching-and (a b)
   "Perform an and operation on hexagrams A and B."
   (i-ching-numerize
     (let ((a (i-ching-normalize a))
-		       (b (i-ching-normalize b)))
-	    (and a b))))
+           (b (i-ching-normalize b)))
+      (and a b))))
 
-;;* unigram
 (defun i-ching-normalize (a)
   "Normalize unigram A to a boolean value.
 
 Note that this operation will destroy any changing data."
   (= 1 (% a 2)))
 
-;;* unigram
 (defun i-ching-numerize (a)
   "Turn a boolean value A into a number."
   (if a 1 0))
 
-;;* bigram
+;;;;; Bigrams
+
 (defun i-ching-bigram (a b)
   "Take two lines (A B) and return a bigram."
   (assoc (i-ching-number-to-ascii (list a b))
-		i-ching-bigram-interpretation))
+    i-ching-bigram-interpretation))
 
-;;* trigram
+;;;;; Trigrams
+
 (defun i-ching-trigram (a b c)
   "Take three lines (A B C) and return a trigram."
   (assoc (i-ching-number-to-ascii (list a b c))
-		i-ching-trigram-interpretation))
+    i-ching-trigram-interpretation))
 
-;;* hexagram
 (defun i-ching-hexagram (a b c d e f)
   "Take 6 lines (A B C D E F) and return a hexagram."
   (assoc (i-ching-number-to-ascii (list a b c d e f))
-		i-ching-hexagram-interpretation))
-(when nil
-	(i-ching-number-to-ascii (list 1 2 0 1 3 2))
-	(i-ching-hexagram 0 1 0 1 1 0)
-	(i-ching-trigram 1 1 1))
+    i-ching-hexagram-interpretation))
 
-;;* cast interface
+;; FIXME: orig. author testing
+;; (when nil
+;;   (i-ching-number-to-ascii (list 1 2 0 1 3 2))
+;;   (i-ching-hexagram 0 1 0 1 1 0)
+;;   (i-ching-trigram 1 1 1))
+
 (defun i-ching-cast-hexagram ()
   "Casts a hexagram, and return a list.
 
@@ -990,18 +989,16 @@ of the list will be a number:
 Note that this is subject to change!"
   (apply i-ching-casting-method nil))
 
-;;* change
 (defun i-ching-change-hexagram (hex)
   "Take hexigram HEX and perform the changing line transformation."
   (mapcar (lambda (x)
-			      (case x
-			        (0 0)
-			        (1 1)
-			        (2 1)
-			        (3 0)))
-	  hex))
+            (cl-case x
+              (0 0)
+              (1 1)
+              (2 1)
+              (3 0)))
+    hex))
 
-;;*change
 (defun i-ching-catalyst-hexagram (hex)
   "Build a catalyst hexagram from HEX.
 
@@ -1010,15 +1007,15 @@ hexagram, would emit the changing hexagram.
 
 This is not traditional to the i-ching."
   (mapcar (lambda (x)
-			      (if (> x 1) 1 0)) hex))
+            (if (> x 1) 1 0)) hex))
 
-(when nil
-	(i-ching-change-hexagram (list 0 1 2 3 0 1 2 3))
-	(i-ching-catalyst-hexagram (list 0 1 2 3 3 2 1))
-	(i-ching-catalyst-hexagram (list 3 0 1 3 1 2))
-	(i-ching-change-hexagram (list 1 1 3 1 0 0 2 0)))
+;; FIXME: tests
+;; (when nil
+;;   (i-ching-change-hexagram (list 0 1 2 3 0 1 2 3))
+;;   (i-ching-catalyst-hexagram (list 0 1 2 3 3 2 1))
+;;   (i-ching-catalyst-hexagram (list 3 0 1 3 1 2))
+;;   (i-ching-change-hexagram (list 1 1 3 1 0 0 2 0)))
 
-;;* correspond nontrad
 (defun i-ching-correspond-trigram (hex)
   "Given hexagram HEX, return a trigram representing the correspondence.
 
@@ -1031,15 +1028,15 @@ But the hexagram :|::|: is not.
 
 I do not think this is traditional in the i-ching."
   (list (i-ching-xor (first hex) (fourth hex))
-		(i-ching-xor (second hex) (fifth hex))
-		(i-ching-xor (third hex)  (sixth hex))))
+    (i-ching-xor (second hex) (fifth hex))
+    (i-ching-xor (third hex)  (sixth hex))))
 
-(when nil
-	(i-ching-correspond-trigram (list 0 1 0 3 2 1))
-	(i-ching-correspond-trigram (list 1 0 1 1 0 1))
-	(i-ching-correspond-trigram (list 1 2 0 3 2 1)))
+;; FIXME: tests
+;; (when nil
+;;   (i-ching-correspond-trigram (list 0 1 0 3 2 1))
+;;   (i-ching-correspond-trigram (list 1 0 1 1 0 1))
+;;   (i-ching-correspond-trigram (list 1 2 0 3 2 1)))
 
-;;* correctness nontrad
 (defun i-ching-correctness-hexagram (hex)
   "Given a hexagram HEX, return a hexagram showing its correctness.
 Correctness is when a hexagram has yang lines in yang positions
@@ -1048,75 +1045,55 @@ to be fully correct.
 
 I do not think this is traditional in the i-ching."
   (list (i-ching-xor 0 (first hex))
-		(i-ching-xor 1 (second hex))
-		(i-ching-xor 0 (third hex))
-		(i-ching-xor 1 (fourth hex))
-		(i-ching-xor 0 (fifth hex))
-		(i-ching-xor 1 (sixth hex))))
+    (i-ching-xor 1 (second hex))
+    (i-ching-xor 0 (third hex))
+    (i-ching-xor 1 (fourth hex))
+    (i-ching-xor 0 (fifth hex))
+    (i-ching-xor 1 (sixth hex))))
 
-(when nil
-	(i-ching-correctness-hexagram (list 0 1 0 1 0 1))
-	(i-ching-correctness-hexagram (list 1 0 1 0 1 0))
-	(i-ching-correctness-hexagram (list 1 1 1 1 1 1))
-	(i-ching-correctness-hexagram (list 0 0 0 0 0 0))
-	(i-ching-correctness-hexagram (list 0 1 2 3 3 2)))
+;; FIXME: tests
+;; (when nil
+;;   (i-ching-correctness-hexagram (list 0 1 0 1 0 1))
+;;   (i-ching-correctness-hexagram (list 1 0 1 0 1 0))
+;;   (i-ching-correctness-hexagram (list 1 1 1 1 1 1))
+;;   (i-ching-correctness-hexagram (list 0 0 0 0 0 0))
+;;   (i-ching-correctness-hexagram (list 0 1 2 3 3 2)))
 
-;;* cast interactive
 (defun i-ching-lookup-caster ()
-  "Do a look up on an i-ching hexagram.  Technically this is a casting."
+  "Do a look up on an i-ching hexagram.
+Technically this is a casting."
   (i-ching-ascii-to-number (completing-read "Hexagram (: = yin, | = yang, X = changing yin, O = changing yang): "
-											       (mapcar 'car i-ching-hexagram-interpretation))))
+                             (mapcar 'car i-ching-hexagram-interpretation))))
 
-;;* cast coin
 (defun i-ching-coin-caster ()
   "Cast the i-ching using the flipping-three-coins method."
   (list (i-ching-coin-helper)
-		(i-ching-coin-helper)
-		(i-ching-coin-helper)
-		(i-ching-coin-helper)
-		(i-ching-coin-helper)
-		(i-ching-coin-helper)))
+    (i-ching-coin-helper)
+    (i-ching-coin-helper)
+    (i-ching-coin-helper)
+    (i-ching-coin-helper)
+    (i-ching-coin-helper)))
 
-;;* cast coin
 (defun i-ching-coin-helper ()
   "Helper function for `i-ching-coin-caster'."
-  (case (+ (apply i-ching-randomize-method (list 2 3))
-		      (apply i-ching-randomize-method (list 2 3))
-		      (apply i-ching-randomize-method (list 2 3)))
-	  (6 2)
-	  (7 1)
-	  (8 0)
-	  (9 3)))
+  (cl-case (+ (apply i-ching-randomize-method (list 2 3))
+          (apply i-ching-randomize-method (list 2 3))
+          (apply i-ching-randomize-method (list 2 3)))
+    (6 2)
+    (7 1)
+    (8 0)
+    (9 3)))
 
-;;* cast buffer
 (defun i-ching-buffer-caster ()
   "Spit out an i-ching hexagram based on the md5 hash on the current buffer.
 
 Note that the md5 hash is in the form of:
 33483acc0fd3602a086fb7eeeedf4d95
 
-::::|: - 08. Grouping (比 bǐ) 	Holding Together 	Union
-|:::|: - 03. Sprouting (屯 chún) 	Difficulty at the Beginning  	Sprouting"
+::::|: - 08. Grouping (比 bǐ)   Holding Together    Union
+|:::|: - 03. Sprouting (屯 chún)    Difficulty at the Beginning     Sprouting"
   (md5 (get-buffer "i-ching.el")))
 
-;;* cast bead helper
-(when (not (fboundp 'ring-convert-sequence-to-ring))
-	(defun ring-convert-sequence-to-ring (seq)
-		"Convert sequence SEQ to a ring.  Return the ring.
-If SEQ is already a ring, return it."
-		(if (ring-p seq)
-			seq
-			(let* ((size (length seq))
-				      (ring (make-ring size))
-				      (count 0))
-			  (while (< count size)
-					(if (or (ring-empty-p ring)
-							  (not (equal (ring-ref ring 0) (elt seq count))))
-						(ring-insert-at-beginning ring (elt seq count)))
-					(setq count (1+ count)))
-			  ring))))
-
-;;* cast bead test
 (defun i-ching-bead-caster ()
   "Cast the i-ching by selecting from a virtual string of beads.
 
@@ -1138,31 +1115,23 @@ when you reach the last hexagrams you 'wrap around' the code...
 "
 
   (let ((casting-pos (apply i-ching-randomize-method 0 63))
-		     (casting-string
-		       (ring-convert-sequence-to-ring
-		         (list 0 0 0 0 0 0 1 0
-				       0 1 0 0 0 1 0 1
-				       0 1 0 0 0 0 1 1
-				       0 1 0 0 1 1 0 0
-				       1 0 1 1 0 1 1 0
-				       0 0 1 1 1 0 1 0
-				       1 1 1 0 0 1 1 1
-				       1 0 1 1 1 1 1 1))))
-	  (list (ring-plus1 casting-pos casting-string)
-		  (ring-plus1 (+ 1 casting-pos) casting-string)
-		  (ring-plus1 (+ 2 casting-pos) casting-string)
-		  (ring-plus1 (+ 3 casting-pos) casting-string)
-		  (ring-plus1 (+ 4 casting-pos) casting-string)
-		  (ring-plus1 (+ 5 casting-pos) casting-string))))
+         (casting-string
+           (ring-convert-sequence-to-ring
+             (list 0 0 0 0 0 0 1 0
+               0 1 0 0 0 1 0 1
+               0 1 0 0 0 0 1 1
+               0 1 0 0 1 1 0 0
+               1 0 1 1 0 1 1 0
+               0 0 1 1 1 0 1 0
+               1 1 1 0 0 1 1 1
+               1 0 1 1 1 1 1 1))))
+    (list (ring-plus1 casting-pos casting-string)
+      (ring-plus1 (+ 1 casting-pos) casting-string)
+      (ring-plus1 (+ 2 casting-pos) casting-string)
+      (ring-plus1 (+ 3 casting-pos) casting-string)
+      (ring-plus1 (+ 4 casting-pos) casting-string)
+      (ring-plus1 (+ 5 casting-pos) casting-string))))
 
-;;* cast todo
-(defun i-ching-chinese-date-caster ()
-  "Cast the i-ching based on todays date on the chinese calendar.
-
-Untill I can learn more about this method, I cannot actually write it.  :/"
-  (calendar-chinese-date-string))
-
-;;* cast nontrad
 (defun i-ching-western-date-caster ()
   "Cast the i-ching according to todays date.
 
@@ -1173,63 +1142,63 @@ This method is completely non-traditional, and may only be
 loosely based on the plum-blossem method."
   (debug)
   (let* ((number-to-trigram
-		       '((1 . (1 1 1))
-			        (2 . (1 1 0))
-			        (3 . (1 0 1))
-			        (4 . (1 0 0))
-			        (5 . (0 1 1))
-			        (6 . (0 1 0))
-			        (7 . (0 0 1))
-			        (8 . (0 0 0))))
-		      (dst-time (decode-time))
-		      (time (decode-time (encode-time (nth 0 dst-time)
-										           (nth 1 dst-time)
-										           (- (nth 2 dst-time)
-											           (if (nth 7 dst-time) 1 0))
-										           (nth 3 dst-time)
-										           (nth 4 dst-time)
-										           (nth 5 dst-time))))
-		      (year (+ 1 (% (nth 5 time)
-					             12)))
-		      (outer (+ 1 (% (+ (nth 3 time)
-						               (nth 4 time)
-						               year)
-						            8)))
-		      (inner (+ 1 (% (+ (nth 3 time)
-						               (nth 4 time)
-						               year
-						               (nth 2 time))
-						            8)))
-		      (yao (% (+ (nth 3 time)
-					          (nth 4 time)
-					          year
-					          (nth 2 time))
-				         6))
-		      (hexagram (append (cdr (assoc inner number-to-trigram))
-						          (cdr (assoc outer number-to-trigram)))))
-	  (loop for line in hexagram
-		  for num from 0
-		  collect
-		  (if (= yao num)
-			  (+ 2 line)
-			  line) into out
-		  finally return out)))
+           '((1 . (1 1 1))
+              (2 . (1 1 0))
+              (3 . (1 0 1))
+              (4 . (1 0 0))
+              (5 . (0 1 1))
+              (6 . (0 1 0))
+              (7 . (0 0 1))
+              (8 . (0 0 0))))
+          (dst-time (decode-time))
+          (time (decode-time (encode-time (nth 0 dst-time)
+                               (nth 1 dst-time)
+                               (- (nth 2 dst-time)
+                                 (if (nth 7 dst-time) 1 0))
+                               (nth 3 dst-time)
+                               (nth 4 dst-time)
+                               (nth 5 dst-time))))
+          (year (+ 1 (% (nth 5 time)
+                       12)))
+          (outer (+ 1 (% (+ (nth 3 time)
+                           (nth 4 time)
+                           year)
+                        8)))
+          (inner (+ 1 (% (+ (nth 3 time)
+                           (nth 4 time)
+                           year
+                           (nth 2 time))
+                        8)))
+          (yao (% (+ (nth 3 time)
+                    (nth 4 time)
+                    year
+                    (nth 2 time))
+                 6))
+          (hexagram (append (cdr (assoc inner number-to-trigram))
+                      (cdr (assoc outer number-to-trigram)))))
+    (cl-loop for line in hexagram
+      for num from 0
+      collect
+      (if (= yao num)
+        (+ 2 line)
+        line) into out
+      finally return out)))
 
-(when nil
-	(let ((i-ching-casting-method 'i-ching-western-date-caster))
-		(i-ching-cast))
-	)
+;; FIXME: tests
+;; (when nil
+;;   (let ((i-ching-casting-method 'i-ching-western-date-caster))
+;;     (i-ching/cast))
+;;   )
 
-;;* random
+;;;;; Randomization
+
 (defun i-ching-standard-randomizer (min max)
   "A standard randomization function.  Return a number between MIN and MAX."
   (+ min (random (- (+ 1 max) min))))
 
-;;* random
 (defvar i-ching-random-org-cache nil
   "A cache of random numbers retrieved from `i-ching-random-org-randomizer'.")
 
-;;* random
 (defun i-ching-random-org-randomizer (min max)
   "Pull a random number from http://www.random.org/clients/http/ .
 
@@ -1237,31 +1206,32 @@ Returns a nubmer between MIN and MAX.
 
 Uses a cache (`i-ching-random-org-cache') so repeated requests are not made."
   (when (null i-ching-random-org-cache)
-		(save-excursion
-		  (let ((random-buffer (url-retrieve-synchronously "http://www.random.org/integers/?num=100&min=1&max=999999&col=1&base=10&format=plain&rnd=new")))
-		    (set-buffer random-buffer)
-		    (goto-char (point-min))
-		    (re-search-forward "HTTP/[0-9]+\\.[0-9]+ ")
-		    (when (> (string-to-number (buffer-substring (point) (search-forward " ")))
-					      399)
-				  (kill-buffer random-buffer)
-				  (error "Cannot cast i-ching,  HTTP error from random.org"))
-		    (search-forward "\n\n")
-		    (let ((result (read (concat "(" (buffer-substring (point) (point-max)) ")"))))
-			    (kill-buffer random-buffer)
-			    (when (null result)
-				    (error "Cannot read random numbers from random.org"))
-			    (setq i-ching-random-org-cache result)))))
+    (save-excursion
+      (let ((random-buffer (url-retrieve-synchronously "http://www.random.org/integers/?num=100&min=1&max=999999&col=1&base=10&format=plain&rnd=new")))
+        (set-buffer random-buffer)
+        (goto-char (point-min))
+        (re-search-forward "HTTP/[0-9]+\\.[0-9]+ ")
+        (when (> (string-to-number (buffer-substring (point) (search-forward " ")))
+                399)
+          (kill-buffer random-buffer)
+          (error "Cannot cast i-ching,  HTTP error from random.org"))
+        (search-forward "\n\n")
+        (let ((result (read (concat "(" (buffer-substring (point) (point-max)) ")"))))
+          (kill-buffer random-buffer)
+          (when (null result)
+            (error "Cannot read random numbers from random.org"))
+          (setq i-ching-random-org-cache result)))))
   (let ((rand-val (car i-ching-random-org-cache)))
-	  (setq i-ching-random-org-cache (cdr i-ching-random-org-cache))
-	  (+ min (% rand-val
-			       (- (+ 1 max) min)))))
+    (setq i-ching-random-org-cache (cdr i-ching-random-org-cache))
+    (+ min (% rand-val
+             (- (+ 1 max) min)))))
 
-(when nil
-	(i-ching-random-org-randomizer 1 4)
-	(i-ching-random-org-randomizer 2 3))
+;; FIXME: tests
+;; (when nil
+;;   (i-ching-random-org-randomizer 1 4)
+;;   (i-ching-random-org-randomizer 2 3))
 
-;;* random todo
+;; TODO:
 (defun i-ching-fuckup-randomizer (min max)
   "Perform an i-ching randomization function, using a process similar to FUCKUP.
 
@@ -1269,14 +1239,21 @@ This function should use a similar version of randomization as the computer
 FUCKUP, as described by Robert Anton Wilson and Robert Shaes Illuminatus
 Trology.
 
-Uses standard MIN MAX arguments."
-  )
+Uses standard MIN MAX arguments.
 
+From /The Illuminatus! Trilogy Wiki/:
 
-;;*todo
-;; Think about using these UTF-8 characters
-"¦|"
+    Hagbard Celine interacts with his computer, FUCKUP [First Universal
+    Cybernetic- Kinetic-Ultramicro-Programmer], in order to obtain a
+    reading from the I Ching, a traditional Chinese divination method.
+    FUCKUP is programmed with a stochastic process that generates an I
+    Ching hexagram by randomly interpreting open circuits as
+    broken (yin) lines and closed circuits as full (yang) lines, and
+    combining these into a hexagram.  The resulting hexagram is then
+    interpreted using the I Ching tradition, combined with FUCKUP's
+    current readings of political, economic, meteorological,
+    astrological, astronomical, and technological data.")
+
 
 (provide 'i-ching)
-
-;;; i-ching ends here
+;;; i-ching.el ends here

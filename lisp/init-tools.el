@@ -75,8 +75,6 @@
     (require pkg))
   (pdf-tools-install))
 (require 'i-ching)
-;; (use-package saveplace-pdf-view
-;;   :defer 5)
 
 (provide 'init-tools)
 ;;; init-tools.el ends here

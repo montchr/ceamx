@@ -10139,21 +10139,16 @@ Does not support changing line commentaries!
 + src :: https://www.emacswiki.org/emacs/i-ching.el
 
 This package is generally more *interesting* than the simpler and
-more-discoverable [[https://github.com/zzkt/i-ching][=i-ching= package on MELPA]].  It also, most importantly,
-supports the display of commentaries on individual changing lines.
+more-discoverable [[https://github.com/zzkt/i-ching][=i-ching= package on MELPA]].  It also, most
+importantly, supports the display of commentaries on individual
+changing lines.
 
 
 #+begin_src emacs-lisp
-(require 'i-ching)
+(use-feature! i-ching
+  :commands (i-ching/lookup
+             i-ching/cast))
 #+end_src
-
-**
-
-#+begin_src emacs-lisp
-;; (use-package saveplace-pdf-view
-;;   :defer 5)
-#+end_src
-
 
 * "Fun" :: =fun= :fun:
 
