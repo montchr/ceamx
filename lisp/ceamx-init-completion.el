@@ -140,7 +140,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (package! vertico
   (add-hook 'ceamx-after-init-hook #'vertico-mode)
 
-  (setopt vertico-count 5
+  (setopt vertico-count 8
           vertico-cycle t
           vertico-resize t
           vertico-scroll-margin 0)
