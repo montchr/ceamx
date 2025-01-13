@@ -6692,11 +6692,14 @@ not yet exist for Eglot (only LSP-Mode).
 ***** treefmt
 
 #+begin_src emacs-lisp
-(with-eval-after-load 'reformatter
+(after! reformatter
   (reformatter-define treefmt
     :group 'ceamx
     :program "treefmt"
     :args (list "--stdin" (buffer-file-name))))
+
+(after! popper
+  (push "\\*treefmt-errors\\*" popper-reference-buffers))
 #+end_src
 
 **** TODO Inhibit on-save formatting with prefix argument
@@ -6785,12 +6788,12 @@ This section handles the curse.
 - Source :: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
 
 #+begin_src emacs-lisp
-;; FIXME: only add advice after package load!!!
-(def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
-  :around #'save-buffer
-  "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
-  (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
-    (funcall func)))
+(after! apheleia
+  (def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
+    :around #'save-buffer
+    "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
+    (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
+      (funcall func))))
 #+end_src
 
 ** Structural Editing
@@ -9475,7 +9478,9 @@ I don't think this is working properly...
             (concat "\\."
                     "\\(mkv\\|webm\\|mp4\\|mp3\\|ogg\\|m4a"
                     "\\|gz\\|zst\\|tar\\|xz\\|rar\\|zip"
-                    "\\|iso\\|epub\\|pdf\\)"))))
+                    "\\|iso\\|epub\\|pdf\\)"))
+
+    (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode)))
 #+end_src
 
 ** Provide the ~ceamx-init-dired~ feature

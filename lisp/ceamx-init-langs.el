@@ -188,11 +188,14 @@ DOC is as in `devdocs-install'."
 ;; treefmt
 
 
-(with-eval-after-load 'reformatter
+(after! reformatter
   (reformatter-define treefmt
     :group 'ceamx
     :program "treefmt"
     :args (list "--stdin" (buffer-file-name))))
+
+(after! popper
+  (push "\\*treefmt-errors\\*" popper-reference-buffers))
 
 ;; [[https://github.com/radian-software/apheleia][radian-software/apheleia]]: opinionated code reformatting :package:
 
@@ -268,12 +271,12 @@ non-nil, buffers will never be formatted upon save."
 ;; - Source :: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
 
 
-;; FIXME: only add advice after package load!!!
-(def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
-  :around #'save-buffer
-  "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
-  (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
-    (funcall func)))
+(after! apheleia
+  (def-advice! +apheleia-save-buffer-maybe-reformat-a (func &optional arg)
+    :around #'save-buffer
+    "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
+    (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
+      (funcall func))))
 
 ;; Define the user option for structured editing flavour
 

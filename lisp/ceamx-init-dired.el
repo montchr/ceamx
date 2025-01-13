@@ -113,7 +113,9 @@
             (concat "\\."
                     "\\(mkv\\|webm\\|mp4\\|mp3\\|ogg\\|m4a"
                     "\\|gz\\|zst\\|tar\\|xz\\|rar\\|zip"
-                    "\\|iso\\|epub\\|pdf\\)"))))
+                    "\\|iso\\|epub\\|pdf\\)"))
+
+    (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode)))
 
 (provide 'ceamx-init-dired)
 ;;; ceamx-init-dired.el ends here

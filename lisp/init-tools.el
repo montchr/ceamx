@@ -74,7 +74,9 @@
          pdf-util pdf-view pdf-virtual))
     (require pkg))
   (pdf-tools-install))
-(require 'i-ching)
+(use-feature! i-ching
+  :commands (i-ching/lookup
+             i-ching/cast))
 
 (provide 'init-tools)
 ;;; init-tools.el ends here
