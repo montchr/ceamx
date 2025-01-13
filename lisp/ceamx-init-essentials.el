@@ -123,9 +123,7 @@
 
   (setopt auto-revert-interval 2))
 
-;; Whitespace and indentation
-
-;; Normalize whitespace and indentation handling:
+;; Normalize whitespace and indentation handling
 
 
 (use-feature! emacs
@@ -141,9 +139,7 @@
 
   (electric-indent-mode 1))
 
-
-
-;; Visualize notable and unusual whitespace:
+;; Visualize notable and unusual whitespace
 
 
 (use-feature! emacs
@@ -163,13 +159,13 @@
             space-after-tab
             space-before-tab)))
 
-;; Enforce EditorConfig settings
+;; ~editorconfig~ :: enforce EditorConfig settings
 
-;; - website :: <https://editorconfig.org>
+;; - Website :: <https://editorconfig.org>
 
 
 (use-package editorconfig
-  :ensure t
+  ;; :ensure t
   :hook (ceamx-emacs-startup . editorconfig-mode)
 
   :preface
@@ -254,7 +250,7 @@ This operation will respect the following rules:
 
 
 (use-package easy-kill
-  :ensure t
+  ;; :ensure t
   :commands (easy-kill easy-mark)
   :init
   (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
@@ -270,7 +266,7 @@ This operation will respect the following rules:
 
 
 (use-package expand-region
-  :ensure t
+  ;; :ensure t
   :commands (er/expand-region)
   :init
   (keymap-global-set "C-=" #'er/expand-region))
@@ -294,7 +290,7 @@ This operation will respect the following rules:
 
 
 (use-package drag-stuff
-  :ensure t
+  ;; :ensure t
   :bind
   (([M-up] . drag-stuff-up)
    ([M-right] . drag-stuff-right)
@@ -416,7 +412,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (setopt comment-auto-fill-only-comments t))
 
 (use-package unfill
-  :ensure t
+  ;; :ensure t
   :bind ("M-q" . unfill-toggle))
 
 ;; Configure secrets lookup with ~auth-source~ and =password-store=
@@ -757,7 +753,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 
 (use-package vundo
-  :ensure t
+  ;; :ensure t
   :defer t
   :defines vundo-unicode-symbols
 

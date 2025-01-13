@@ -118,25 +118,24 @@
 
 (require 'on)
 
-;; Set the Elpaca installer version
-
-
-(defvar elpaca-installer-version 0.8)
-
-;; Show the Elpaca to its house
+;; Elpaca
 
 
 (defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
 
-;; Summon the Elpaca
-
-;; The installation code only needs to be changed when the Elpaca warns about an
-;; installer version mismatch.
-
-;; This should be copied verbatim from the Elpaca documentation, sans the
-;; definitions for ~elpaca-installer-version~ and ~elpaca-directory~.
+;; Avoid aggressive GitHub API rate limiting.
+(defvar elpaca-queue-limit 10)
 
 
+
+;; The installation code only needs to be changed when the Elpaca warns
+;; about an installer version mismatch.
+
+;; This should be copied verbatim from the Elpaca documentation, with the
+;; definition for ~elpaca-directory~ removed.
+
+
+(defvar elpaca-installer-version 0.8)
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"

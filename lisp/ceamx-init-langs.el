@@ -27,7 +27,7 @@ execution order."
 
 
 (use-package smart-newline
-  :ensure t
+  ;; :ensure t
   :hook (prog-mode . smart-newline-mode))
 
 ;; ~dumb-jump~: multi-lang do-what-i-mean jump-to-definition
@@ -36,7 +36,8 @@ execution order."
 
 
 (use-package dumb-jump
-  :ensure t)
+  ;;:ensure t
+  )
 
 (after! (hydra)
   ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
@@ -80,7 +81,7 @@ execution order."
 
 
 (use-package hl-todo
-  :ensure t
+  ;;:ensure t
   :hook (prog-mode . hl-todo-mode))
 
 ;; ~devdocs~: Peruse local ~devdocs~ docsets
@@ -91,7 +92,7 @@ execution order."
 
 
 (use-package devdocs
-  :ensure t
+  ;; :ensure t
   :defer t
 
   :bind
@@ -614,7 +615,7 @@ The original function fails in the presence of whitespace after a sexp."
 
 
 (use-package elmacro
-  :ensure t
+  ;; :ensure t
   :config
   (setopt elmacro-show-last-commands-default 30)
 
@@ -635,7 +636,7 @@ The original function fails in the presence of whitespace after a sexp."
 
 
 (use-package elisp-demos
-  :ensure t
+  ;; :ensure t
   :defer 5
   :after (helpful)
   :functions (elisp-demos-advice-helpful-update)
@@ -1280,13 +1281,15 @@ usually wrongly fontified as a metadata block."
 
 
 (use-package apache-mode
-  :ensure t)
+  ;; :ensure t
+  )
 
 ;; ~just-mode~: Language support for the Just task runner configuration files
 
 
 (use-package just-mode
-  :ensure t)
+  ;;:ensure t
+  )
 
 ;; ~vimrc-mode~: Language support for =vimrc= syntax
 

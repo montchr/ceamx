@@ -119,7 +119,7 @@ Intended for use as a local hook function on
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
 (use-package org-modern
-  :ensure t
+  ;; :ensure t
   :commands (org-modern-mode)
   :hook ((org-mode . org-modern-mode)
          (org-agenda-finalize . org-modern-agenda))
@@ -136,7 +136,7 @@ Intended for use as a local hook function on
   (setopt org-modern-star nil))
 
 (use-package org-appear
-  :ensure t
+  ;; :ensure t
   :hook (org-mode . org-appear-mode)
   :config
   (setopt org-appear-autoemphasis t
@@ -184,7 +184,7 @@ Intended for use as a local hook function on
 
 
 (use-package doct
-  :ensure t
+  ;; :ensure t
   :demand t
   :functions (doct))
 
@@ -194,7 +194,8 @@ Intended for use as a local hook function on
 
 
 (use-package org-ql
-  :ensure t)
+  ;; :ensure t
+  )
 
 ;; ~org-contrib~: a library of unmaintained community packages
 
@@ -202,7 +203,7 @@ Intended for use as a local hook function on
 
 
 (use-package org-contrib
-  :ensure t
+  ;; :ensure t
   :after (org)
 
   :init
@@ -259,7 +260,8 @@ Intended for use as a local hook function on
           "⭠ now ─────────────────────────────────────────────────"))
 
 (use-package org-super-agenda
-  :ensure t)
+  ;; :ensure t
+  )
 
 ;; Literate programming
 
@@ -366,7 +368,8 @@ Intended for use as a local hook function on
 
 
 (use-package org-remark
-  :ensure t)
+  ;; :ensure t
+  )
 
 ;; =ox-gfm=: org-export to GitHub Flavored Markdown (GFM) :package:
 

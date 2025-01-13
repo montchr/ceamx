@@ -81,7 +81,7 @@
 
 
 (use-package wgrep
-  :ensure t
+  ;; :ensure t
 
   :bind
   ((nil . nil)

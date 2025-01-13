@@ -1699,27 +1699,22 @@ Packages are installed with Elpaca.
 Previously, I have used =package.el= or Nixpkgs to manage packages.  See the
 [[*Alternatives]] subheading for details
 **** Elpaca
-***** Set the Elpaca installer version
-
-#+begin_src emacs-lisp
-(defvar elpaca-installer-version 0.8)
-#+end_src
-
-***** Show the Elpaca to its house
 
 #+begin_src emacs-lisp
 (defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
+
+;; Avoid aggressive GitHub API rate limiting.
+(defvar elpaca-queue-limit 10)
 #+end_src
 
-***** Summon the Elpaca
+The installation code only needs to be changed when the Elpaca warns
+about an installer version mismatch.
 
-The installation code only needs to be changed when the Elpaca warns about an
-installer version mismatch.
-
-This should be copied verbatim from the Elpaca documentation, sans the
-definitions for ~elpaca-installer-version~ and ~elpaca-directory~.
+This should be copied verbatim from the Elpaca documentation, with the
+definition for ~elpaca-directory~ removed.
 
 #+begin_src emacs-lisp
+(defvar elpaca-installer-version 0.8)
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
@@ -2638,7 +2633,7 @@ well as Prot's modus-themes and ef-themes.
 
 #+begin_src emacs-lisp
 (use-package theme-buffet
-  :ensure t
+  ;; :ensure t
   :demand t
   :when (eq 'buffet ceamx-ui-theme-circadian-interval)
 
@@ -3550,9 +3545,7 @@ will be used as default."
   (setopt auto-revert-interval 2))
 #+end_src
 
-** Whitespace and indentation
-
-Normalize whitespace and indentation handling:
+** Normalize whitespace and indentation handling
 
 #+begin_src emacs-lisp
 (use-feature! emacs
@@ -3569,7 +3562,7 @@ Normalize whitespace and indentation handling:
   (electric-indent-mode 1))
 #+end_src
 
-Visualize notable and unusual whitespace:
+** Visualize notable and unusual whitespace
 
 #+begin_src emacs-lisp
 (use-feature! emacs
@@ -3590,13 +3583,13 @@ Visualize notable and unusual whitespace:
             space-before-tab)))
 #+end_src
 
-*** Enforce EditorConfig settings
+** ~editorconfig~ :: enforce EditorConfig settings
 
-- website :: <https://editorconfig.org>
+- Website :: <https://editorconfig.org>
 
 #+begin_src emacs-lisp
 (use-package editorconfig
-  :ensure t
+  ;; :ensure t
   :hook (ceamx-emacs-startup . editorconfig-mode)
 
   :preface
@@ -3685,7 +3678,7 @@ b => buffer name
 
 #+begin_src emacs-lisp
 (use-package easy-kill
-  :ensure t
+  ;; :ensure t
   :commands (easy-kill easy-mark)
   :init
   (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
@@ -3703,7 +3696,7 @@ b => buffer name
 
 #+begin_src emacs-lisp
 (use-package expand-region
-  :ensure t
+  ;; :ensure t
   :commands (er/expand-region)
   :init
   (keymap-global-set "C-=" #'er/expand-region))
@@ -3728,7 +3721,7 @@ column regardless of its original position.
 
 #+begin_src emacs-lisp
 (use-package drag-stuff
-  :ensure t
+  ;; :ensure t
   :bind
   (([M-up] . drag-stuff-up)
    ([M-right] . drag-stuff-right)
@@ -3858,7 +3851,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (setopt comment-auto-fill-only-comments t))
 
 (use-package unfill
-  :ensure t
+  ;; :ensure t
   :bind ("M-q" . unfill-toggle))
 #+end_src
 
@@ -4240,7 +4233,7 @@ enhancement to the builtin Emacs undo system as well.
 
 #+begin_src emacs-lisp
 (use-package vundo
-  :ensure t
+  ;; :ensure t
   :defer t
   :defines vundo-unicode-symbols
 
@@ -4468,7 +4461,7 @@ these utilities.
 
 #+begin_src emacs-lisp
 (use-package wgrep
-  :ensure t
+  ;; :ensure t
 
   :bind
   ((nil . nil)
@@ -6503,7 +6496,7 @@ execution order."
 
 #+begin_src emacs-lisp
 (use-package smart-newline
-  :ensure t
+  ;; :ensure t
   :hook (prog-mode . smart-newline-mode))
 #+end_src
 
@@ -6513,7 +6506,8 @@ execution order."
 
 #+begin_src emacs-lisp
 (use-package dumb-jump
-  :ensure t)
+  ;;:ensure t
+  )
 
 (after! (hydra)
   ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
@@ -6542,7 +6536,7 @@ Not my cup of tee...
 
 #+begin_src emacs-lisp :tangle no
 (use-package prism
-  :ensure t
+  ;; :ensure t
   :hook (((lisp-mode emacs-lisp-mode) . prism-mode)
          ((python-mode yaml-mode) . prism-whitespace-mode))
   :config
@@ -6614,7 +6608,7 @@ Not my cup of tee...
 
 #+begin_src emacs-lisp
 (use-package hl-todo
-  :ensure t
+  ;;:ensure t
   :hook (prog-mode . hl-todo-mode))
 #+end_src
 
@@ -6626,7 +6620,7 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
 
 #+begin_src emacs-lisp
 (use-package devdocs
-  :ensure t
+  ;; :ensure t
   :defer t
 
   :bind
@@ -7588,7 +7582,7 @@ invasive, and should probably only be used as a development tool as needed.
 
 #+begin_src emacs-lisp
 (use-package elmacro
-  :ensure t
+  ;; :ensure t
   :config
   (setopt elmacro-show-last-commands-default 30)
 
@@ -7610,7 +7604,7 @@ invasive, and should probably only be used as a development tool as needed.
 
 #+begin_src emacs-lisp
 (use-package elisp-demos
-  :ensure t
+  ;; :ensure t
   :defer 5
   :after (helpful)
   :functions (elisp-demos-advice-helpful-update)
@@ -8572,14 +8566,16 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 
 #+begin_src emacs-lisp
 (use-package apache-mode
-  :ensure t)
+  ;; :ensure t
+  )
 #+end_src
 
 ** ~just-mode~: Language support for the Just task runner configuration files
 
 #+begin_src emacs-lisp
 (use-package just-mode
-  :ensure t)
+  ;;:ensure t
+  )
 #+end_src
 
 ** ~vimrc-mode~: Language support for =vimrc= syntax
@@ -9082,7 +9078,7 @@ Intended for use as a local hook function on
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
 (use-package org-modern
-  :ensure t
+  ;; :ensure t
   :commands (org-modern-mode)
   :hook ((org-mode . org-modern-mode)
          (org-agenda-finalize . org-modern-agenda))
@@ -9099,7 +9095,7 @@ Intended for use as a local hook function on
   (setopt org-modern-star nil))
 
 (use-package org-appear
-  :ensure t
+  ;; :ensure t
   :hook (org-mode . org-appear-mode)
   :config
   (setopt org-appear-autoemphasis t
@@ -9150,7 +9146,7 @@ unexpected changes to the content (depending on the setting of
 
 #+BEGIN_SRC emacs-lisp
 (use-package doct
-  :ensure t
+  ;; :ensure t
   :demand t
   :functions (doct))
 #+END_SRC
@@ -9161,7 +9157,8 @@ unexpected changes to the content (depending on the setting of
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-ql
-  :ensure t)
+  ;; :ensure t
+  )
 #+END_SRC
 
 ** ~org-contrib~: a library of unmaintained community packages
@@ -9170,7 +9167,7 @@ unexpected changes to the content (depending on the setting of
 
 #+begin_src emacs-lisp
 (use-package org-contrib
-  :ensure t
+  ;; :ensure t
   :after (org)
 
   :init
@@ -9231,7 +9228,8 @@ Define the Org-Capture templates:
           "⭠ now ─────────────────────────────────────────────────"))
 
 (use-package org-super-agenda
-  :ensure t)
+  ;; :ensure t
+  )
 #+END_SRC
 
 ** Literate programming
@@ -9346,7 +9344,8 @@ I don't think this is working properly...
 
 #+begin_src emacs-lisp
 (use-package org-remark
-  :ensure t)
+  ;; :ensure t
+  )
 #+end_src
 
 ** Exporters
