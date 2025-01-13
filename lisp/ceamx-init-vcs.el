@@ -1,10 +1,8 @@
-;;; init-vcs.el --- Version control support  -*- lexical-binding: t;  -*-
+;;; ceamx-init-vcs.el --- Version control support  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -26,20 +24,23 @@
 
 (require 'ceamx-paths)
 (require 'ceamx-lib)
+
+;; TODO: is this really a customizable variable?  source file unknown
 (setopt ediff-window-setup-function #'ediff-setup-windows-plain)
+
 ;; Version control support is essential as soon as possible.
 (require 'vc)
 
 (setopt vc-follow-symlinks t)
-
-;; No need for all that other nonsense.
 (setopt vc-handled-backends '(Git))
 
-;; NOTE: According to the documentation for ~diff-hl~, the diff algorithm
-;; cannot be determined based on the user's global git config =diff.algorithm=
-;; setting. The website source they linked to has disappeared with no archived
-;; page available. So I have not verified this for certain.
+;; NOTE: According to the documentation for ~diff-hl~, the diff
+;; algorithm cannot be determined based on the user's global git
+;; config =diff.algorithm= setting.  The website source they linked to
+;; has disappeared with no archived page available.  So I have not
+;; verified this for certain.
 (setopt vc-git-diff-switches '("--histogram"))
+
 (package! diff-hl
   (add-hook 'ceamx-after-init-hook #'global-diff-hl-mode)
 
@@ -60,17 +61,9 @@
 
   (after! dired
     (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
-(package! git-commit
-  (require 'git-commit)
-  (add-hook 'ceamx-after-init-hook #'global-git-commit-mode))
-(after! (git-commit evil)
-  (declare-function evil-insert-state "evil")
-  (add-hook 'git-commit-mode-hook #'evil-insert-state))
 
-(after! (git-commit meow)
-  (declare-function meow-insert-mode "meow")
-  (add-hook 'git-commit-mode-hook #'meow-insert-mode))
 (package! git-modes)
+
 (package! git-timemachine
   (keymap-global-set "C-x v t" #'git-timemachine))
 
@@ -113,41 +106,23 @@
                     (propertize author 'face 'git-timemachine-minibuffer-author-face)
                     (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
                     date-full date-relative)))))
-(package! browse-at-remote
-  (keymap-set vc-prefix-map "o" #'browse-at-remote))
-(package! magit)
-(with-eval-after-load 'magit
-  (defvar magit-mode-map)
-  (defvar magit-status-mode-map)
 
-  (declare-function magit-discard "magit-apply")
-  (declare-function magit-dispatch "magit")
-  (declare-function magit-display-buffer-fullframe-status-v1 "magit-mode")
-  (declare-function magit-file-dispatch "magit-files")
-  (declare-function magit-restore-window-configuration "magit-mode")
-  (declare-function magit-revert "magit-sequence")
-  (declare-function magit-status "magit-status")
+(package! magit
+  (define-keymap :keymap (current-global-map)
+    "C-x g" #'magit-status
+    "C-x M-g" #'magit-dispatch))
 
-  (setopt magit-diff-refine-hunk t)     ; show granular diffs in selected hunk
-  (setopt magit-save-repository-buffers nil) ; avoid side-effects (e.g. auto-format)
-  ;; (setopt magit-revision-insert-related-refs nil) ; parent/related refs: rarely useful
-  (setopt magit-process-finish-apply-ansi-colors t) ; render ANSI colors in process output
+(after! magit
+  (setopt magit-diff-refine-hunk t)
+  ;; Avoid side-effects (e.g. formatting-on-save)
+  (setopt magit-save-repository-buffers nil)
+  (setopt magit-process-finish-apply-ansi-colors t)
 
   (setopt magit-bury-buffer-function #'magit-restore-window-configuration)
   ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
-  (setopt magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
-(after! magit
-  (remove-hook 'magit-section-movement-hook 'magit-hunk-set-window-start)
-  (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
-(setopt magit-process-popup-time 3)
-(package! forge
-  (after! magit
-    (require 'forge)))
-(define-keymap :keymap (current-global-map)
-  "C-x g"    #'magit-status
-  "C-x M-g"  #'magit-dispatch)
+  (setopt magit-display-buffer-function
+          #'magit-display-buffer-fullframe-status-v1)
 
-(after! magit
   (define-keymap :keymap magit-status-mode-map
     "_" #'magit-revert
     ;; "V" nil
@@ -162,5 +137,27 @@
   (transient-append-suffix 'magit-pull "-r"
     '("-a" "Autostash" "--autostash")))
 
-(provide 'init-vcs)
-;;; init-vcs.el ends here
+(after! magit
+  (remove-hook 'magit-section-movement-hook 'magit-hunk-set-window-start)
+  (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
+
+(after! magit
+  (setopt magit-process-popup-time 3))
+
+(package! magit-todos
+  (after! magit
+    (require 'magit-todos)
+    (magit-todos-mode 1)))
+
+;; (package! (forge :tag "v0.4.6"))
+
+;; (after! magit
+;;   (require 'forge)
+
+;;   ;; FIXME: not yet released
+;;   ;; (keymap-set vc-prefix-map "o" #'forge-browse-commit)
+
+;;   )
+
+(provide 'ceamx-init-vcs)
+;;; ceamx-init-vcs.el ends here

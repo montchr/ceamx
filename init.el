@@ -620,10 +620,10 @@ The ORDER can be used to deduce the feature context."
 ;; =transient=
 
 
-(use-package transient
-  :ensure t
-  :demand t
-  :config
+(package! transient
+  (require 'transient))
+
+(after! transient
   (keymap-set transient-map "<escape>" #'transient-quit-one))
 
 ;; Load the library functions
@@ -1559,7 +1559,7 @@ The buffer will be created if it does not exist."
 (require 'ceamx-init-search)
 (require 'ceamx-init-dired)
 (require 'init-workspace)
-(require 'init-vcs)
+(require 'ceamx-init-vcs)
 (require 'ceamx-init-langs)
 (require 'init-writing)
 (require 'init-templates)

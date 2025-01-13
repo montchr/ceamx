@@ -618,28 +618,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<file-footer(feature="init-workspace")>>
 #+end_src
 
-** =lisp/init-vcs.el=
-
-#+name: init-vcs-file
-#+begin_src emacs-lisp :tangle lisp/init-vcs.el :comments no :noweb yes
-<<file-prop-line(feature="init-vcs",desc="Version control support")>>
-
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-vcs>>
-
-<<file-footer(feature="init-vcs")>>
-#+end_src
-
 ** =lisp/init-writing.el=
 
 #+name: init-writing-file
@@ -2433,10 +2411,10 @@ applying margin, padding, borders.
 *** =transient=
 
 #+begin_src emacs-lisp
-(use-package transient
-  :ensure t
-  :demand t
-  :config
+(package! transient
+  (require 'transient))
+
+(after! transient
   (keymap-set transient-map "<escape>" #'transient-quit-one))
 #+end_src
 
@@ -5787,14 +5765,38 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 #+end_src
 
 
-* Version Control (Git) :: =vcs= :vcs:git:
+* =ceamx-init-vcs= :: Version Control (Git) :vcs:git:
 :PROPERTIES:
-:header-args:emacs-lisp: :noweb-ref init-vcs
+:header-args:emacs-lisp: :tangle lisp/ceamx-init-vcs.el
 :END:
 
-** Requirements
+** Define the =lisp/ceamx-init-vcs.el= file header
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-vcs.el :comments no
+;;; ceamx-init-vcs.el --- Version control support  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;; Code:
+
 (require 'ceamx-paths)
 (require 'ceamx-lib)
 #+end_src
@@ -5802,24 +5804,24 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 ** Keep the ~ediff~ control panel in the same frame
 
 #+begin_src emacs-lisp
+;; TODO: is this really a customizable variable?  source file unknown
 (setopt ediff-window-setup-function #'ediff-setup-windows-plain)
 #+end_src
 
-** Configure the builtin =vc= support
+** Configure the builtin ~vc-mode~ support
 
 #+begin_src emacs-lisp
 ;; Version control support is essential as soon as possible.
 (require 'vc)
 
 (setopt vc-follow-symlinks t)
-
-;; No need for all that other nonsense.
 (setopt vc-handled-backends '(Git))
 
-;; NOTE: According to the documentation for ~diff-hl~, the diff algorithm
-;; cannot be determined based on the user's global git config =diff.algorithm=
-;; setting. The website source they linked to has disappeared with no archived
-;; page available. So I have not verified this for certain.
+;; NOTE: According to the documentation for ~diff-hl~, the diff
+;; algorithm cannot be determined based on the user's global git
+;; config =diff.algorithm= setting.  The website source they linked to
+;; has disappeared with no archived page available.  So I have not
+;; verified this for certain.
 (setopt vc-git-diff-switches '("--histogram"))
 #+end_src
 
@@ -5852,29 +5854,7 @@ NOTE: Fringe indicators will conflict with Flycheck.
     (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
 #+end_src
 
-** ~git-commit~: Mode for editing Git commit messages
-
-- Website :: <https://magit.vc/>
-
-#+begin_src emacs-lisp
-(package! git-commit
-  (require 'git-commit)
-  (add-hook 'ceamx-after-init-hook #'global-git-commit-mode))
-#+end_src
-
-*** Ensure ~git-commit-mode~ opens in modal insert state
-
-#+begin_src emacs-lisp
-(after! (git-commit evil)
-  (declare-function evil-insert-state "evil")
-  (add-hook 'git-commit-mode-hook #'evil-insert-state))
-
-(after! (git-commit meow)
-  (declare-function meow-insert-mode "meow")
-  (add-hook 'git-commit-mode-hook #'meow-insert-mode))
-#+end_src
-
-** Install additional major modes for Git-related files
+** ~git-modes~ :: major modes for Git-related files
 
 - website :: <https://github.com/magit/git-modes>
 
@@ -5931,139 +5911,25 @@ NOTE: Fringe indicators will conflict with Flycheck.
                     date-full date-relative)))))
 #+end_src
 
-** ~browse-at-remote~: Open the current Git repo's remote forge page in a browser
-
-- Website :: <https://github.com/rmuslimov/browse-at-remote>
+** ~magit~ :: a Git porcelain inside Emacs
 
 #+begin_src emacs-lisp
-(package! browse-at-remote
-  (keymap-set vc-prefix-map "o" #'browse-at-remote))
-#+end_src
+(package! magit
+  (define-keymap :keymap (current-global-map)
+    "C-x g" #'magit-status
+    "C-x M-g" #'magit-dispatch))
 
-** Magit
-*** Install Magit
-
-#+begin_src emacs-lisp
-(package! magit)
-#+end_src
-
-*** Configure Magit
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'magit
-  (defvar magit-mode-map)
-  (defvar magit-status-mode-map)
-
-  (declare-function magit-discard "magit-apply")
-  (declare-function magit-dispatch "magit")
-  (declare-function magit-display-buffer-fullframe-status-v1 "magit-mode")
-  (declare-function magit-file-dispatch "magit-files")
-  (declare-function magit-restore-window-configuration "magit-mode")
-  (declare-function magit-revert "magit-sequence")
-  (declare-function magit-status "magit-status")
-
-  (setopt magit-diff-refine-hunk t)     ; show granular diffs in selected hunk
-  (setopt magit-save-repository-buffers nil) ; avoid side-effects (e.g. auto-format)
-  ;; (setopt magit-revision-insert-related-refs nil) ; parent/related refs: rarely useful
-  (setopt magit-process-finish-apply-ansi-colors t) ; render ANSI colors in process output
+(after! magit
+  (setopt magit-diff-refine-hunk t)
+  ;; Avoid side-effects (e.g. formatting-on-save)
+  (setopt magit-save-repository-buffers nil)
+  (setopt magit-process-finish-apply-ansi-colors t)
 
   (setopt magit-bury-buffer-function #'magit-restore-window-configuration)
   ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
-  (setopt magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1))
-#+end_src
+  (setopt magit-display-buffer-function
+          #'magit-display-buffer-fullframe-status-v1)
 
-*** Keep ~magit-section~ sections at the top of the window
-
-- Reference :: <https://emacs.stackexchange.com/questions/3380/how-to-scroll-up-when-expanding-a-section-in-magit-status#comment4819_3383>
-
-#+begin_src emacs-lisp
-(after! magit
-  (remove-hook 'magit-section-movement-hook 'magit-hunk-set-window-start)
-  (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
-#+end_src
-
-*** DISABLED [[https://github.com/alphapapa/magit-todos][alphapapa/magit-todos]]: Show source-code comment reminders in ~magit-status~
-
-- Note taken on [2024-07-12 Fri 14:30] \\
-  Broken as of <2024-07-12 Fri 14:30>
-- docs :: <https://github.com/alphapapa/magit-todos/blob/master/README.org>
-
-#+begin_src emacs-lisp :noweb-ref nil
-(package! magit-todos
-  (after! magit
-    (magit-todos-mode 1)))
-#+end_src
-
-**** TODO Customize appearance to always keep folded, to reduce noise
-
-e.g. "M-4" should not expand this section -- it should only be expanded manually
-
-*** Show process output popup after N seconds :popups:
-
-This is pretty important when a project has =pre-commit= or =commit-msg= hooks that
-are wont to fail.
-
-#+begin_src emacs-lisp
-(setopt magit-process-popup-time 3)
-#+end_src
-
-** Configure Forge integration :package:secrets:api:
-
-#+begin_src emacs-lisp
-(package! forge
-  (after! magit
-    (require 'forge)))
-#+end_src
-
-*** Tell Forge which remote to track
-
-Forge will prefer, in order, =upstream= and then =origin=.  I use that convention
-for repositories where I am a contributor.  For personal repositories, I tend to
-use Git remotes named after the forge.  For example, =github= or =codeberg=.  In
-those cases, the recommended option for my setup is to set the Git config
-setting =forge.remote= /per repository/ (not globally).
-
-#+begin_src shell
-git config forge.remote 'github'
-#+end_src
-
-*** GitHub token authentication
-
-- Docs :: <https://magit.vc/manual/ghub.html#Creating-and-Storing-a-Token>
-- Docs :: <https://magit.vc/manual/forge.html#Token-Creation>
-- Docs :: [[info:auth#The Unix password store][info "(auth) The Unix password store"]]
-
-Create the token at https://github.com/settings/tokens/new with these scopes:
-
-+ =repo=  grants full read/write access to private and public repositories.
-+ =user=  grants access to profile information.
-+ =read:org=  grants read-only access to organization membership.
-
-Add the token to the password store:
-
-  #+begin_src shell
-pass insert api.github.com/montchr^forge
-#+end_src
-
-Note that =^forge= is required by the =ghub= backend to denote the package using the
-stored token:
-
-#+begin_quote
-The default Auth-Source backends only support storing three values per entry;
-the "machine", the "login" and the "password". Because Ghub uses separate tokens
-for each package, it has to squeeze four values into those three slots, and it
-does that by using "USERNAME /^PACKAGE/ " as the "login".
-#+end_quote
-
-
-** Keybindings
-
-#+begin_src emacs-lisp
-(define-keymap :keymap (current-global-map)
-  "C-x g"    #'magit-status
-  "C-x M-g"  #'magit-dispatch)
-
-(after! magit
   (define-keymap :keymap magit-status-mode-map
     "_" #'magit-revert
     ;; "V" nil
@@ -6077,6 +5943,109 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 
   (transient-append-suffix 'magit-pull "-r"
     '("-a" "Autostash" "--autostash")))
+#+end_src
+
+*** Keep ~magit-section~ sections at the top of the window
+
+- Reference :: <https://emacs.stackexchange.com/questions/3380/how-to-scroll-up-when-expanding-a-section-in-magit-status#comment4819_3383>
+
+#+begin_src emacs-lisp
+(after! magit
+  (remove-hook 'magit-section-movement-hook 'magit-hunk-set-window-start)
+  (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
+#+end_src
+
+*** Show ~magit-process~ output popup after N seconds :popups:
+
+This is pretty important when a project has =pre-commit= or =commit-msg=
+hooks that are wont to fail.  I also find it helpful for getting
+insight into long-running =post-receive= hooks (and similar).
+
+#+begin_src emacs-lisp
+(after! magit
+  (setopt magit-process-popup-time 3))
+#+end_src
+
+*** =alphapapa/magit-todo= :: display codetag comment reminders in ~magit-status~
+
+- Docs :: <https://github.com/alphapapa/magit-todos/blob/master/README.org>
+
+#+begin_src emacs-lisp
+(package! magit-todos
+  (after! magit
+    (require 'magit-todos)
+    (magit-todos-mode 1)))
+#+end_src
+
+**** TODO Customize appearance to always keep folded, to reduce noise
+
+e.g. "M-4" should not expand this section -- it should only be expanded manually
+
+** DISABLED ~forge~ :: interact with online source code forges through Magit
+
+*Warning*: /development versions of ~forge~ may expect a different ~magit~
+version!/ Make sure to pin ~forge~ to a stable tag.  And then, make sure
+~magit~ is pinned to a stable tag.  And then, make sure every other
+Magit dependency is pinned...
+
+#+begin_src emacs-lisp
+;; (package! (forge :tag "v0.4.6"))
+
+;; (after! magit
+;;   (require 'forge)
+
+;;   ;; FIXME: not yet released
+;;   ;; (keymap-set vc-prefix-map "o" #'forge-browse-commit)
+
+;;   )
+#+end_src
+
+Forge will prefer, in order, =upstream= and then =origin=.  I use that convention
+for repositories where I am a contributor.  For personal repositories, I tend to
+use Git remotes named after the forge.  For example, =github= or =codeberg=.  In
+those cases, the recommended option for my setup is to set the Git config
+setting =forge.remote= /per repository/ (not globally).
+
+#+begin_src shell :tangle no
+git config forge.remote 'github'
+#+end_src
+
+*** Set up GitHub token authentication :secrets:
+
+- Docs :: <https://magit.vc/manual/ghub.html#Creating-and-Storing-a-Token>
+- Docs :: <https://magit.vc/manual/forge.html#Token-Creation>
+- Docs :: [[info:auth#The Unix password store][info "(auth) The Unix password store"]]
+
+Create the token at https://github.com/settings/tokens/new with these scopes:
+
++ =repo=  grants full read/write access to private and public repositories.
++ =user=  grants access to profile information.
++ =read:org=  grants read-only access to organization membership.
+
+Add the token to the password store:
+
+  #+begin_src shell :tangle no
+pass insert api.github.com/montchr^forge
+#+end_src
+
+Note that =^forge= is required by the =ghub= backend to denote the package using the
+stored token:
+
+#+begin_quote
+The default Auth-Source backends only support storing three values per entry;
+the "machine", the "login" and the "password". Because Ghub uses separate tokens
+for each package, it has to squeeze four values into those three slots, and it
+does that by using "USERNAME /^PACKAGE/ " as the "login".
+#+end_quote
+
+** Provide the ~ceamx-init-vcs~ feature
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-vcs.el :comments no
+(provide 'ceamx-init-vcs)
+;;; ceamx-init-vcs.el ends here
 #+end_src
 
 
@@ -10224,7 +10193,7 @@ Return the new `zone' timer."
 (require 'ceamx-init-search)
 (require 'ceamx-init-dired)
 (require 'init-workspace)
-(require 'init-vcs)
+(require 'ceamx-init-vcs)
 (require 'ceamx-init-langs)
 (require 'init-writing)
 (require 'init-templates)
