@@ -860,6 +860,9 @@ See [[*=ceamx-paths= :: common path constants]]
 (setq inhibit-x-resources t)
 #+end_src
 
+** FIXME these should be renamed or moved as their namespace indicates
+they would normally live in the ~ceamx-ui~ feature.
+
 #+begin_src emacs-lisp
 (defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
 
@@ -2130,13 +2133,13 @@ expect the value you arrive at to be as high as 100 MiB.
 
 #+begin_src emacs-lisp
 ;; FIXME: remove or alias (`##' is very difficult to search for)
-(use-package llama) ;  `##' lambda shorthand =>
-                                        ;  <https://git.sr.ht/~tarsius/llama>
-
-(use-package f)
+(package! llama) ;  `##' lambda shorthand
+(package! f)
+(package! transient
+  (require 'transient)
+  (after! transient
+    (keymap-set transient-map "<escape>" #'transient-quit-one)))
 #+end_src
-
-
 
 * =init.el=: Environment
 :PROPERTIES:
@@ -2298,30 +2301,39 @@ graphical frames.
 
 * =init.el=: Appearance
 :PROPERTIES:
-:header-args: :tangle init.el
+:header-args: :tangle lisp/ceamx-init-ui.el
 :END:
 
-** =lisp/lib-ui.el=
+** =lisp/ceamx-init-ui.el=
 :PROPERTIES:
-:header-args: :tangle lisp/lib-ui.el
+:VISIBILITY: folded
 :END:
 
-#+name: lib-ui-file
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el :comments no :noweb yes
-;;; lib-ui.el --- Appearance helper functions  -*- lexical-binding: t;  -*-
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-ui.el :comments no
+;;; ceamx-init-ui.el --- User interface & appearance customizations  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
 
-<<file-license>>
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 ;;; Code:
 #+end_src
-
 
 ** Configure cursor appearance
 
@@ -2375,9 +2387,9 @@ graphical frames.
 
 ** Load common interface toolkits
 
-Required as dependencies for multiple packages, either as more recent versions
-than those available in Emacs (e.g. ~transient~), or, including some packages
-(like ~nix-mode~) who don't properly declare their dependencies.
+Required as dependencies for multiple packages, including some
+packages (like ~nix-mode~) who don't properly declare their
+dependencies.
 
 *** =grid=: textual data table presentation
 
@@ -2408,77 +2420,27 @@ applying margin, padding, borders.
 (package! symbol-overlay)
 #+end_src
 
-*** =transient=
+** Customize the ~ceamx-ui~ library features
 
 #+begin_src emacs-lisp
-(package! transient
-  (require 'transient))
-
-(after! transient
-  (keymap-set transient-map "<escape>" #'transient-quit-one))
+(use-feature! ceamx-ui
+  :demand t
+  :config
+  (setopt ceamx-ui-theme-light
+          (when (eq 'modus ceamx-ui-theme-family)
+            'modus-operandi))
+  (setopt ceamx-ui-theme-dark
+          (when (eq 'modus ceamx-ui-theme-family)
+            'modus-vivendi)))
 #+end_src
 
-** Theme :theme:
-
-*** Load the library functions
-
-#+begin_src emacs-lisp
-(require 'lib-ui)
-#+end_src
-
-*** Define customizable options relating to themes
-
-#+begin_src emacs-lisp
-(defcustom ceamx-ui-theme-family 'modus
-  "Set of themes to load.
-Valid values are the symbols `ef', `modus', and `standard', which
-reference the `ef-themes', `modus-themes', and `standard-themes',
-respectively.
-
-A nil value does not load any of the above (use Emacs without a
-theme)."
-  :group 'ceamx
-  :type '(choice :tag "Set of themes to load" :value modus
-          (const :tag "The `ef-themes' module" ef)
-          (const :tag "The `modus-themes' module" modus)
-          (const :tag "The `standard-themes' module" standard)
-          (const :tag "Do not load a theme module" nil)))
-
-(defcustom ceamx-ui-theme-light 'modus-operandi
-  "The default light theme."
-  :group 'ceamx
-  :type 'symbol)
-
-(defcustom ceamx-ui-theme-dark 'modus-vivendi
-  "The default dark theme."
-  :group 'ceamx
-  :type 'symbol)
-
-(defvar ceamx-ui-dark-themes-list nil)
-
-(defvar ceamx-ui-light-themes-list nil)
-
-(after! modus-themes
-  (appendq! ceamx-ui-dark-themes-list
-            ;; `modus-vivendi' variants
-            (seq-filter
-             (lambda (sym) (string-prefix-p "modus-vivendi" (symbol-name sym)))
-             modus-themes-items))
-
-  (appendq! ceamx-ui-light-themes-list
-            ;; `modus-operandi' variants
-            (seq-filter
-             (lambda (sym) (string-prefix-p "modus-operandi" (symbol-name sym)))
-             modus-themes-items)))
-#+end_src
-
-*** Consider all themes "safe"
+** Consider all themes "safe"
 
 #+begin_src emacs-lisp
 (setopt custom-safe-themes t)
 #+end_src
 
-*** Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
+** Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
 
 - Source :: <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
 
@@ -2492,7 +2454,7 @@ theme)."
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
 #+end_src
 
-*** Modus Themes :package:
+** Modus Themes :package:
 
 - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -2512,13 +2474,9 @@ theme)."
             (t . (regular 1.1)))))
 #+end_src
 
-*** Ef-Themes :package:
+** Ef-Themes :package:
 
 - Website :: <https://protesilaos.com/emacs/ef-themes>
-
-#+begin_src emacs-lisp
-(defvar ceamx-font-headings-style-alist)
-#+end_src
 
 #+begin_src emacs-lisp
 (package! ef-themes
@@ -2528,46 +2486,33 @@ theme)."
           ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil))
 #+end_src
-*** Theme Phasing Schedule
 
-#+begin_src emacs-lisp
-(defcustom ceamx-ui-theme-circadian-interval nil
-  "The circadian theme switching interval.
-Value may be `period', `solar', or nil, corresponding
-respectively to period-based switching with `theme-buffet' or
-sunrise/sunset toggling from the combination of the `solar'
-library and the `circadian' package.
-
-A nil value means to disable automatic theme switching.
-Theme-switching commands `ceamx/light' and `ceamx/dark' will
-unconditionally use `ceamx-ui-theme-default-light' and
-`ceamx-ui-theme-default-dark', respectively."
-  :group 'ceamx
-  :type '(choice :tag "Circadian theme switching interval" :value nil
-          (const :tag "Time periods via `theme-buffet'" :value buffet)
-          (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
-#+end_src
-
-**** Set approximate stomping coordinates for hyper-astronomic relativity calculations
+** Set approximate stomping coordinates for hyper-astronomic relativity calculations
 
 #+begin_src emacs-lisp
 (require 'cal-dst)
-#+end_src
 
-#+begin_src emacs-lisp
 (setopt calendar-latitude 39.968)
 (setopt calendar-longitude -75.133)
 #+end_src
 
-
-**** =circadian=: theme phasing based on sunrise/sunset time :package:
+** ~circadian~ :: theme phasing based on sunrise/sunset time :package:
 
 #+begin_src emacs-lisp
 (package! circadian
-  (when (eq 'solar ceamx-ui-theme-circadian-interval)
-    (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
-                               (:sunset . ,ceamx-ui-theme-dark)))
-    (circadian-setup)))
+  (require 'ceamx-ui)
+
+  (if (eq 'solar ceamx-ui-theme-circadian-interval)
+      (progn
+        (add-hook 'ceamx-after-init-hook #'circadian-setup)
+
+        (setopt circadian-themes `((:sunrise . ,ceamx-ui-theme-light)
+                                   (:sunset . ,ceamx-ui-theme-dark))))
+    (add-hook 'ceamx-after-init-hook
+              (lambda ()
+                (if (ceamx-ui-desktop-dark-theme-p)
+                    (ceamx-ui/load-dark-theme)
+                  (ceamx-ui/load-light-theme))))))
 
 ;; FIXME
 ;; (after! circadian
@@ -2582,241 +2527,13 @@ unconditionally use `ceamx-ui-theme-default-light' and
 ;;      (t nil))))
 #+end_src
 
-**** DISABLED =theme-buffet=: Phase-of-day theme-shift interval :package:
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-- Website :: <https://git.sr.ht/~bboal/theme-buffet>
-
-  #+begin_quote
-The theme-buffet package arranges to automatically change themes during specific
-times of the day or at fixed intervals. The collection of themes is
-customisable, with the default options covering the built-in Emacs themes as
-well as Prot's modus-themes and ef-themes.
-#+end_quote
-
-
-***** Define darkness and lightness and apply these classifications to circadian structures
-
-#+begin_src emacs-lisp
-(defconst ceamx-ui-theme-buffet-dark-periods
-  '(:night :twilight :evening))
-
-(defconst ceamx-ui-theme-buffet-light-periods
-  '(:morning :day :afternoon))
-#+end_src
-
-***** Install and configure =theme-buffet= package
-
-#+begin_src emacs-lisp
-(use-package theme-buffet
-  ;; :ensure t
-  :demand t
-  :when (eq 'buffet ceamx-ui-theme-circadian-interval)
-
-  :commands (theme-buffet-modus-ef)
-  :defines (theme-buffet-menu)
-
-  :init
-
-  ;; Take Daylight Savings Time offset into account for time period boundaries.
-  ;; I am not sure why the additional `1+' is necessary, but this is copied from
-  ;; the author's recommendation.
-  ;; via <https://git.sr.ht/~bboal/theme-buffet/tree/06f1be349e9c3d124520b18742911307de9abda3/item/theme-buffet.el#L68-70>
-  (setopt theme-buffet-time-offset (1+ (/ (cadr (calendar-current-time-zone)) 60)))
-
-  (setopt theme-buffet-menu 'end-user)
-
-  (setopt theme-buffet-end-user
-          '(:night (;; ef-autumn
-                    ef-duo-dark
-                    ef-trio-dark
-                    ef-night
-                    ef-winter
-                    ef-dark)
-            :twilight (ef-bio
-                       ef-cherie
-                       ef-dream
-                       ef-rosa
-                       modus-vivendi)
-            :morning (ef-elea-light
-                      ef-maris-light
-                      ef-reverie
-                      ef-spring)
-            :day (ef-frost
-                  ef-light
-                  ef-spring
-                  ef-trio-light
-                  modus-operandi)
-            :afternoon (ef-cyprus
-                        ;; ef-arbutus
-                        ef-day
-                        ef-duo-light
-                        ef-kassio
-                        ef-melissa-light
-                        ef-reverie
-                        ef-summer
-                        modus-operandi-tinted)
-            :evening (ef-elea-dark
-                      ef-dream
-                      ef-maris-dark
-                      ;; ef-melissa-dark
-                      ef-symbiosis
-                      ef-trio-dark
-                      modus-vivendi-tinted)))
-
-  :config
-
-  (theme-buffet-end-user)
-
-  ;; Activate some theme in the current period.
-  (theme-buffet-a-la-carte))
-#+end_src
-
-***** Function to load a random theme from the specified periods :lib:
-
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
-(declare-function theme-buffet--load-random "theme-buffet")
-
-(defun +theme-buffet--load-random-from-periods (periods)
-  "Load a random theme from the specified `theme-buffet' PERIODS.
-PERIODS can be a single keyword or list of keywords. Each keyword
-must be a valid `theme-buffet' period as defined in
-`theme-buffet--keywords'."
-  (let ((period (if (listp periods) (seq-random-elt periods) periods)))
-    (theme-buffet--load-random period)))
-#+end_src
-
-*** Desktop environment integration :lib:graphical:
-:PROPERTIES:
-:header-args: :tangle lisp/lib-ui.el
-:END:
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-#+end_src
-
-**** Integration with the GNOME/GTK/GSettings color scheme
-
-#+begin_src emacs-lisp
-(defun ceamx-ui/gsettings-set-theme (theme)
-  "Set the GNOME/GTK theme to THEME."
-  ;; FIXME: prompt with completion
-  (interactive "s")
-  (let* ((value (pcase theme
-                  ((rx (optional "prefer-") "dark")
-                   "prefer-dark")
-                  ((rx (optional "prefer-") "light")
-                   "prefer-light")
-                  (_ "prefer-dark")))
-         (cmd (format "gsettings set %s color-scheme %s"
-                      ceamx-ui-gsettings-ui-namespace
-                      value)))
-    (shell-command cmd)))
-
-(defun ceamx-ui/gsettings-dark-theme ()
-  "Enable the dark GNOME/GTK theme."
-  (interactive)
-  (ceamx-ui/gsettings-set-theme "dark"))
-
-(defun ceamx-ui/gsettings-light-theme ()
-  "Enable the light GNOME/GTK theme."
-  (interactive)
-  (ceamx-ui/gsettings-set-theme "light"))
-#+end_src
-
-**** Integration with Kitty terminal theme :tty:
-
-#+begin_src emacs-lisp
-;; FIXME: error open /dev/tty: no such address or device
-(defun ceamx-ui-kitty-set-theme (polarity)
-  "Set the Kitty terminal emulator colors to POLARITY.
-POLARITY is a string matching either \"light\" or \"dark\"."
-  (shell-command
-   (format "kitty @set-colors -a -c $KITTY_CONFIG_DIRECTORY/theme-%s.conf"
-           polarity)))
-#+end_src
-
-**** ~ceamx-ui-load-theme~: function to cleanly load a theme
-
-Similar to the theme-family-specific ~modus-themes-load-theme~.
-
-#+begin_src emacs-lisp
-(defun ceamx-ui-load-theme (theme)
-  "Load THEME after resetting any previously-loaded themes."
-  (mapc #'disable-theme (remq theme custom-enabled-themes))
-  (load-theme theme :no-confirm))
-#+end_src
-
-**** Commands to load a preferred light or dark Emacs theme
-
-#+begin_src emacs-lisp
-(defun ceamx-ui/load-dark-theme ()
-  "Load a random dark theme."
-  (interactive)
-  (pcase ceamx-ui-theme-circadian-interval
-    ('buffet
-     (+theme-buffet--load-random-from-periods
-      ceamx-ui-theme-buffet-dark-periods))
-    (_
-     (load-theme ceamx-ui-theme-dark :no-confirm))))
-
-(defun ceamx-ui/load-light-theme ()
-  "Load a random light theme."
-  (interactive)
-  (pcase ceamx-ui-theme-circadian-interval
-    ('buffet
-     (+theme-buffet--load-random-from-periods
-      ceamx-ui-theme-buffet-light-periods))
-    (_
-     (load-theme ceamx-ui-theme-light :no-confirm))))
-#+end_src
-
-**** Commands to globally set a preferred light or dark theme
-
-#+begin_src emacs-lisp
-(defun ceamx-ui/light ()
-  "Activate a light theme globally."
-  (interactive)
-  (ceamx-ui/gsettings-light-theme)
-  ;;(ceamx-ui-kitty-set-theme "light")
-  (ceamx-ui/load-light-theme))
-
-(defun ceamx-ui/dark ()
-  "Activate a dark theme globally."
-  (interactive)
-  (ceamx-ui/gsettings-dark-theme)
-  ;;(ceamx-ui-kitty-set-theme "dark")
-  (ceamx-ui/load-dark-theme))
-#+end_src
-
-*** Elpaca-Wait № 4: ensure availability of themes for integration :wait:
+** Elpaca-Wait № 4: ensure availability of themes for integration :wait:
 
 #+begin_src emacs-lisp
 (elpaca-wait)
 #+end_src
 
-*** Load a default theme
-
-Configure some user options dependent on the loaded packages:
-
-#+begin_src emacs-lisp
-(setopt ceamx-ui-theme-light 'modus-operandi)
-(setopt ceamx-ui-theme-dark 'modus-vivendi)
-#+end_src
-
-#+begin_src emacs-lisp
-(if (eq 'solar ceamx-ui-theme-circadian-interval)
-    (after! circadian (add-hook 'ceamx-after-init-hook #'circadian-setup))
-  (add-hook 'ceamx-after-init-hook
-            (lambda ()
-              (if (ceamx-ui-desktop-dark-theme-p)
-                  (ceamx-ui/load-dark-theme)
-                (ceamx-ui/load-light-theme)))))
-#+end_src
-
-** =avy= :: can do anything
+** ~avy~ :: can do anything
 
 + Package :: <https://github.com/abo-abo/avy>
 + Article :: <https://karthinks.com/software/avy-can-do-anything/>
@@ -2838,7 +2555,7 @@ Configure some user options dependent on the loaded packages:
   (setopt avy-timeout-seconds 0.25))
 #+end_src
 
-** Line highlighting
+** Highlight current line in programming modes
 
 #+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'hl-line-mode)
@@ -2848,14 +2565,14 @@ Configure some user options dependent on the loaded packages:
   (setopt hl-line-sticky-flag nil))
 #+end_src
 
-Improve line-highlighting for major-modes orientated around line selection:
+** ~lin~ :: improve line-highlighting for major-modes orientated around line selection
 
 #+begin_src emacs-lisp
 (package! lin
   (add-hook 'ceamx-after-init-hook #'lin-global-mode))
 #+end_src
 
-Pulse current line after function invocations:
+** ~pulsar~ :: pulse current line after function invocations
 
 #+begin_src emacs-lisp
 (package! pulsar
@@ -2905,7 +2622,7 @@ Pulse current line after function invocations:
   (keymap-global-unset "C-z" t))
 #+end_src
 
-** ~spacious-padding~: a comfortable layout density
+** ~spacious-padding~ :: a comfortable layout density
 
 #+begin_src emacs-lisp
 (package! spacious-padding
@@ -2927,7 +2644,7 @@ Pulse current line after function invocations:
              :mode-line-inactive window-divider)))
 #+end_src
 
-** =olivetti= :: "distraction-free" editing
+** ~olivetti~ :: "distraction-free" editing
 
 - Package :: <https://github.com/rnkn/olivetti>
 
@@ -2941,7 +2658,7 @@ Pulse current line after function invocations:
           olivetti-recall-visual-line-mode-entry-state t))
 #+end_src
 
-** =logos= :: a simple focus mode with page breaks or outlines :present:
+** ~logos~ :: a simple focus mode with page breaks or outlines :present:
 
 #+begin_src emacs-lisp
 (package! logos
@@ -2974,7 +2691,7 @@ Pulse current line after function invocations:
         (recenter 1)))))
 #+end_src
 
-** =moc= :: "Master of Ceremonies" presentation utilities :present:
+** ~moc~ :: "Master of Ceremonies" presentation utilities :present:
 
 + Package :: <https://github.com/positron-solutions/moc/>
 
@@ -2987,7 +2704,7 @@ Pulse current line after function invocations:
 #+begin_src emacs-lisp
 (undelete-frame-mode 1)
 #+end_src
-** Menu Bar :menubar:
+** Customize menu bar appearance :menubar:
 
 Disable the menu bar by default:
 
@@ -2995,7 +2712,7 @@ Disable the menu bar by default:
 (menu-bar-mode -1)
 #+end_src
 
-** Tab Bar :tabs:
+** Customize tab bar appearance :tabs:
 
 Enable the tab bar:
 
@@ -3011,17 +2728,6 @@ Enable the tab bar:
 #+end_src
 
 ** Typography :font:
-*** Define a custom setting to adjust font height multiplier
-
-#+begin_src emacs-lisp
-(defcustom ceamx-font-height-multiplier 1.0
-  "Multiplier for display font size.
-Intended for use as a per-system (or, ideally, per-display)
-accommodation for varying pixel densities."
-  :group 'ceamx
-  :type '(float))
-#+end_src
-
 *** Text rendering and scaling
 
 #+begin_src emacs-lisp
@@ -3197,8 +2903,10 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 
 #+begin_src emacs-lisp
 (package! nerd-icons
-  (setopt nerd-icons-font-family "Symbols Nerd Font Mono")
   (require 'nerd-icons))
+
+(after! nerd-icons
+  (setopt nerd-icons-font-family "Symbols Nerd Font Mono"))
 #+end_src
 
 *** Provide common dependency: ~svg-lib~ :package:
@@ -3207,13 +2915,13 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 (package! svg-lib)
 #+end_src
 
-*** ~page-break-lines~: Improve appearance of form feed characters :package:
+*** ~page-break-lines~ :: improve appearance of form feed characters :package:
 
 - docs :: <https://github.com/purcell/page-break-lines/blob/master/README.md>
 
 #+begin_src emacs-lisp
 (package! page-break-lines
-  (global-page-break-lines-mode))
+  (add-hook 'ceamx-after-init-hook #'global-page-break-lines-mode))
 #+end_src
 
 *** TODO ~svg-tag-mode~: Decorate buffer elements with SVG :package:
@@ -3232,48 +2940,28 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 ** Modeline :modeline:
 
 #+begin_src emacs-lisp
-(defcustom ceamx-modeline-provider nil
-  "Modeline provider to load.
-Valid values are the symbols `doom', `nano', and `telephone'
-which reference the `doom-modeline', `nano-modeline', and
-`telephone-line' modules respectively.
-
-A nil value will not load any modeline customizations (use Emacs
-with its default modeline)."
-  :group 'ceamx
-  :type '(choice :tag "Modeline to load" :value nil
-          (const :tag "The `doom-modeline' module" doom)
-          (const :tag "The `nano-modeline' module" nano)
-          (const :tag "The `telephone-line' module" telephone)
-          (const :tag "Do not load a modeline module" nil)))
-#+end_src
-
-#+begin_src emacs-lisp
 (line-number-mode 1)
 (column-number-mode 1)
 
 (setopt display-time-24hr-format t)
 #+end_src
 
-*** DISABLED Minimize many mode-line minor-modes with ~minions~
-:PROPERTIES:
-:header-args: :tangle no
-:END:
+*** ~minions~ :: minimize many mode-line minor-modes
 
 #+begin_src emacs-lisp
 (package! minions
-  (minions-mode 1))
+  (add-hook 'ceamx-after-init-hook #'minions-mode))
 #+end_src
 
-*** Show current command and its binding with ~keycast~
+*** ~keycast~ :: show current command and its binding :present:
 
 - Website :: <https://github.com/tarsius/keycast>
 
-Supports display in the mode-line, header-line, tab-bar, and as messages in a
-dedicated frame.
+Supports display in the mode-line, header-line, tab-bar, and as
+messages in a dedicated frame.
 
-NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
-=telephone-line=.
+NOTE: Incompatible with kitchen-sink modeline packages like
+=doom-modeline= and =telephone-line=.
 
 #+begin_src emacs-lisp
 (after! keycast
@@ -3284,102 +2972,14 @@ NOTE: Incompatible with kitchen-sink modeline packages like =doom-modeline= and
     (add-to-list 'keycast-substitute-alist `(,event nil))))
 #+end_src
 
-*** DISABLED Doom-Modeline
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-#+begin_src emacs-lisp
-(package! doom-modeline
-  (setopt doom-modeline-support-imenu t)
-  (setopt doom-modeline-unicode-fallback t)
-  (setopt doom-modeline-buffer-encoding nil)
-  (setopt doom-modeline-github nil)
-  (setopt doom-modeline-buffer-file-name-style 'truncate-upto-project)
-
-  ;; Enable HUD mode, providing a micromap of buffer position.
-  (setopt doom-modeline-hud t)
-
-  (setopt doom-modeline-icon t)
-
-  ;; note that the major mode icon is not missing like most others.
-  ;; git branch icon is also fine.
-  (setopt doom-modeline-major-mode-icon t)
-
-  ;; FIXME: missing icons when using nix-installed icon font
-  (setopt doom-modeline-buffer-state-icon t)
-  (setopt doom-modeline-buffer-modification-icon t)
-
-  (setopt doom-modeline-modal t)
-  ;; FIXME: missing icon with nix-installed font... but only when non-nil?! when nil, icon displays properly...
-  (setopt doom-modeline-modal-icon t)
-
-  (doom-modeline-mode 1))
-#+end_src
-
-** TODO Calculate sizes based on display monitor attributes
-:PROPERTIES:
-:header-args: :tangle lisp/lib-ui.el
-:END:
-
-- Source :: <https://github.com/noctuid/dotfiles/blob/master/emacs/.emacs.d/awaken.org#gui-related>
-- Ref :: <https://photo.stackexchange.com/questions/18494/what-is-the-difference-between-pixel-pitch-and-pixel-density>
-- Ref :: <https://insights.samsung.com/2023/10/05/what-is-pixel-pitch-understanding-fine-pixel-pitch-led-displays/>
-
-*** Measurement constants
-
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
-(defconst ceamx-inch-as-mm 25.4
-  "One inch in millimeters.")
-
-(defconst ceamx-pt-as-mm 0.353
-  "One typographic point in millimeters.")
-#+end_src
-
-*** Function to get geometry attributes for the default display monitor
-
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
-(defun ceamx-default-monitor-geometry ()
-  "Return geometry for the first monitor in `display-monitor-attributes-list'."
-  (let* ((first-monitor (car (display-monitor-attributes-list))))
-    (alist-get 'geometry first-monitor)))
-#+end_src
-
-*** Function to get the pixel pitch for a frame
-
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
-;; via <https://www.reddit.com/r/emacs/comments/7hzxb8/comment/dqywyqc/>
-(defun ceamx-pixel-pitch (&optional frame)
-  "Return the pixel pitch for FRAME in millimeters.
-When FRAME is nil, the current frame will be used as default.
-
-Pixel pitch is the distance from the center of a pixel to the
-center of its adjacent pixel."
-  (let ((monitor-attrs (frame-monitor-attributes frame)))
-    (/ (float (nth 1 (assoc 'mm-size monitor-attrs)))
-       (nth 3 (assoc 'geometry monitor-attrs)))))
-#+end_src
-
-*** Function to calculate font height scaling
-
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el
-(defun ceamx-font-height (number &optional multiplier)
-  "Return a numeric font height based on NUMBER multiplied by MULTIPLIER.
-NUMBER should be a whole number. MULTIPLIER should be a float.
-
-If MULTIPLIER is nil, the value of `ceamx-font-height-multiplier'
-will be used as default."
-  (truncate (* number (or multiplier ceamx-font-height-multiplier))))
-#+end_src
-
-** File Footers
+** Provide the ~ceamx-init-ui~ feature
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
 
-#+begin_src emacs-lisp :tangle lisp/lib-ui.el :comments no
-(provide 'lib-ui)
-;;; lib-ui.el ends here
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-ui.el :comments no
+(provide 'ceamx-init-ui)
+;;; ceamx-init-ui.el ends here
 #+end_src
 
 
@@ -5198,14 +4798,47 @@ Embark will load the library automatically after Consult.
 #+end_src
 
 
-* =init.el=: Window
+* ~ceamx-init-window~ :: Window & Buffer Management
 :PROPERTIES:
-:header-args: :tangle init.el
+:header-args: :tangle lisp/ceamx-init-window.el
 :END:
 
-#+begin_src emacs-lisp
+** The file header for =lisp/ceamx-init-window.el=
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-window.el :comments no
+;;; ceamx-init-window.el --- Window & buffer management customizations  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;; Code:
+
+;;;; Requirements
+
 (require 'ceamx-simple)
 (require 'ceamx-window)
+
+;;;; Customizations
 #+end_src
 
 ** Define the user option specifying a fallback buffer
@@ -5448,13 +5081,6 @@ Action alist entries are:
                   (window-height . ,popper-window-height)))))
 #+end_src
 
-*** Configure ~projectile~ integration
-
-#+begin_src emacs-lisp
-(after! (popper projectile)
-  (setopt popper-group-function #'popper-group-by-projectile))
-#+end_src
-
 ** Restore previous window configurations with ~winner-mode~ [builtin] :history:
 
 #+begin_src emacs-lisp
@@ -5559,6 +5185,15 @@ Action alist entries are:
     ("q" "quit" transient-quit-all)]])
 #+end_src
 
+** Provide the ~ceamx-init-window~ feature
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-window.el :comments no
+(provide 'ceamx-init-window)
+;;; ceamx-init-window.el ends here
+#+end_src
 
 * Workspace :: =workspace= :workspace:
 :PROPERTIES:
@@ -10192,11 +9827,13 @@ Return the new `zone' timer."
 :END:
 
 #+begin_src emacs-lisp
+(require 'ceamx-init-ui)
 (require 'ceamx-init-essentials)
 (require 'ceamx-init-completion)
 (require 'init-embark)
 (require 'ceamx-init-search)
 (require 'ceamx-init-dired)
+(require 'ceamx-init-window)
 (require 'init-workspace)
 (require 'ceamx-init-vcs)
 (require 'ceamx-init-langs)
@@ -10454,6 +10091,13 @@ Or, perhaps more accurately: stuff that needs a better home.
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs)
 
+;; (use-feature! ceamx-ui
+;;   :commands (ceamx-ui/dark ceamx-ui/light)
+;;   :config
+;;   (define-keymap :keymap ceamx-session-prefix
+;;     "a d" #'ceamx-ui/dark
+;;     "a l" #'ceamx-ui/light))
+
 ;;;;; [C-c t] :: Toggle
 
 (define-keymap :keymap ceamx-toggle-prefix
@@ -10566,6 +10210,202 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
+
+** The ~ceamx-ui~ library
+:PROPERTIES:
+:header-args: :tangle site-lisp/ceamx-ui.el
+:END:
+
+#+begin_src emacs-lisp :tangle site-lisp/ceamx-ui.el :comments no
+;;; ceamx-ui.el --- Ceamx: User interface & appearance library  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;; Code:
+
+;;;; Requirements
+
+(eval-when-compile
+  (require 'ceamx-lib))
+
+;;;; Variables
+
+(defvar ceamx-ui-dark-themes-list nil)
+(defvar ceamx-ui-light-themes-list nil)
+
+(after! modus-themes
+  (appendq! ceamx-ui-dark-themes-list
+            ;; `modus-vivendi' variants
+            (seq-filter
+             (lambda (sym) (string-prefix-p "modus-vivendi" (symbol-name sym)))
+             modus-themes-items))
+
+  (appendq! ceamx-ui-light-themes-list
+            ;; `modus-operandi' variants
+            (seq-filter
+             (lambda (sym) (string-prefix-p "modus-operandi" (symbol-name sym)))
+             modus-themes-items)))
+
+;;;; Customization
+
+(defcustom ceamx-ui-theme-family 'modus
+  "Set of themes to load.
+Valid values are the symbols `ef', `modus', and `standard', which
+reference the `ef-themes', `modus-themes', and `standard-themes',
+respectively.
+
+A nil value does not load any of the above (use Emacs without a
+theme)."
+  :group 'ceamx
+  :type '(choice :tag "Set of themes to load" :value modus
+          (const :tag "The `ef-themes' module" ef)
+          (const :tag "The `modus-themes' module" modus)
+          (const :tag "The `standard-themes' module" standard)
+          (const :tag "Do not load a theme module" nil)))
+
+(defcustom ceamx-ui-theme-light 'modus-operandi
+  "The default light theme."
+  :group 'ceamx
+  :type 'symbol)
+
+(defcustom ceamx-ui-theme-dark 'modus-vivendi
+  "The default dark theme."
+  :group 'ceamx
+  :type 'symbol)
+
+(defcustom ceamx-ui-theme-circadian-interval nil
+  "The circadian theme switching interval.
+Value may be `period', `solar', or nil, corresponding
+respectively to period-based switching with `theme-buffet' or
+sunrise/sunset toggling from the combination of the `solar'
+library and the `circadian' package.
+
+A nil value means to disable automatic theme switching.
+Theme-switching commands `ceamx/light' and `ceamx/dark' will
+unconditionally use `ceamx-ui-theme-default-light' and
+`ceamx-ui-theme-default-dark', respectively."
+  :group 'ceamx
+  :type '(choice :tag "Circadian theme switching interval" :value nil
+          (const :tag "Time periods via `theme-buffet'" :value buffet)
+          (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
+
+(defcustom ceamx-modeline-provider nil
+  "Modeline provider to load.
+Valid values are the symbols `doom', `nano', and `telephone'
+which reference the `doom-modeline', `nano-modeline', and
+`telephone-line' modules respectively.
+
+A nil value will not load any modeline customizations (use Emacs
+with its default modeline)."
+  :group 'ceamx
+  :type '(choice :tag "Modeline to load" :value nil
+          (const :tag "The `doom-modeline' module" doom)
+          (const :tag "The `nano-modeline' module" nano)
+          (const :tag "The `telephone-line' module" telephone)
+          (const :tag "Do not load a modeline module" nil)))
+
+;;;; Functions
+
+;;;;; Public
+
+(defun ceamx-ui-load-theme (theme)
+  "Load THEME after resetting any previously-loaded themes.
+See also `modus-themes-load-theme'."
+  (mapc #'disable-theme (remq theme custom-enabled-themes))
+  (load-theme theme :no-confirm))
+
+;;;;; Private
+
+;;;; Commands
+
+;;;###autoload
+(defun ceamx-ui/gsettings-set-theme (theme)
+  "Set the GNOME/GTK theme to THEME."
+  ;; FIXME: prompt with completion
+  (interactive "s")
+  (let* ((value (pcase theme
+                  ((rx (optional "prefer-") "dark")
+                   "prefer-dark")
+                  ((rx (optional "prefer-") "light")
+                   "prefer-light")
+                  (_ "prefer-dark")))
+         (cmd (format "gsettings set %s color-scheme %s"
+                      ceamx-ui-gsettings-ui-namespace
+                      value)))
+    (shell-command cmd)))
+
+;;;###autoload
+(defun ceamx-ui/gsettings-dark-theme ()
+  "Enable the dark GNOME/GTK theme."
+  (interactive)
+  (ceamx-ui/gsettings-set-theme "dark"))
+
+;;;###autoload
+(defun ceamx-ui/gsettings-light-theme ()
+  "Enable the light GNOME/GTK theme."
+  (interactive)
+  (ceamx-ui/gsettings-set-theme "light"))
+
+;;;###autoload
+(defun ceamx-ui/load-dark-theme ()
+  "Load a random dark theme."
+  (interactive)
+  (pcase ceamx-ui-theme-circadian-interval
+    ('buffet
+     (+theme-buffet--load-random-from-periods
+      ceamx-ui-theme-buffet-dark-periods))
+    (_
+     (load-theme ceamx-ui-theme-dark :no-confirm))))
+
+;;;###autoload
+(defun ceamx-ui/load-light-theme ()
+  "Load a random light theme."
+  (interactive)
+  (pcase ceamx-ui-theme-circadian-interval
+    ('buffet
+     (+theme-buffet--load-random-from-periods
+      ceamx-ui-theme-buffet-light-periods))
+    (_
+     (load-theme ceamx-ui-theme-light :no-confirm))))
+
+;;;###autoload
+(defun ceamx-ui/light ()
+  "Activate a light theme globally."
+  (interactive)
+  (ceamx-ui/gsettings-light-theme)
+  (ceamx-ui/load-light-theme))
+
+;;;###autoload
+(defun ceamx-ui/dark ()
+  "Activate a dark theme globally."
+  (interactive)
+  (ceamx-ui/gsettings-dark-theme)
+  (ceamx-ui/load-dark-theme))
+
+;;;; Footer
+
+(provide 'ceamx-ui)
+;;; ceamx-ui.el ends here
+#+end_src
+
 
 ** The =ceamx-simple= library: Common utility commands
 

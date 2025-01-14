@@ -116,6 +116,10 @@
 ;; Prevent X11 from taking control of visual behavior and appearance.
 (setq inhibit-x-resources t)
 
+;; FIXME these should be renamed or moved as their namespace indicates
+;; they would normally live in the ~ceamx-ui~ feature.
+
+
 (defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
 
 (defun ceamx-ui-gsettings-theme ()
