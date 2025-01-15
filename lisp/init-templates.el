@@ -1,6 +1,6 @@
 ;;; init-templates.el --- Expandable file templates and abbrevs  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx

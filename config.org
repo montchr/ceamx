@@ -402,7 +402,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp :tangle lisp/lib-tools.el :comments no :noweb yes
 <<file-prop-line(feature="lib-tools",desc="Library for miscellaneous tooling")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -471,7 +471,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp :tangle lisp/lib-prog.el :comments no :noweb yes
 <<file-prop-line(feature="lib-prog",desc="Assorted helper callables for programming modes")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -492,7 +492,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp :tangle lisp/init-flycheck.el :comments no :noweb yes
 <<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -514,7 +514,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp :tangle lisp/init-flymake.el :comments no :noweb yes
 <<file-prop-line(feature="init-flymake",desc="Flymake support")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -536,7 +536,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp :tangle lisp/init-templates.el :comments no :noweb yes
 <<file-prop-line(feature="init-templates",desc="Expandable file templates and abbrevs")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -558,7 +558,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp :tangle lisp/init-notes.el :comments no :noweb yes
 <<file-prop-line(feature="init-notes",desc="Notetaking features")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -580,7 +580,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp  :tangle lisp/init-outline.el :comments no :noweb yes
 <<file-prop-line(feature="init-outline",desc="Customizations for outline structures")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -602,7 +602,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp :tangle lisp/init-workspace.el :comments no :noweb yes
 <<file-prop-line(feature="init-workspace",desc="Workspaces, activities, scopes, and other organizational closures")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -624,7 +624,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp :tangle lisp/init-writing.el :comments no :noweb yes
 <<file-prop-line(feature="init-writing",desc="Writing augmentation")>>
 
-;; Copyright (c) 2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -646,7 +646,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp  :tangle lisp/init-tools.el :comments no :noweb yes
 <<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
 
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2023-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -675,7 +675,7 @@ CLOSED: [2024-07-16 Tue 00:17]
 #+begin_src emacs-lisp :tangle early-init.el :startup folded :noweb yes :comments no
 ;;; early-init.el --- Early initialization file  -*- lexical-binding: t; no-byte-compile: t; -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -1551,7 +1551,7 @@ without needing to declare autoloads for `elpaca' in every file."
 #+begin_src emacs-lisp :tangle init.el :noweb yes :comments no
 ;;; init.el --- Ceamx -*- lexical-binding: t; no-byte-compile: t; -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 
@@ -2375,7 +2375,7 @@ graphical frames.
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-ui.el :comments no
 ;;; ceamx-init-ui.el --- User interface & appearance customizations  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 
@@ -4941,7 +4941,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-window.el :comments no
 ;;; ceamx-init-window.el --- Window & buffer management customizations  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 
@@ -5394,7 +5394,7 @@ Action alist entries are:
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-vcs.el :comments no
 ;;; ceamx-init-vcs.el --- Version control support  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 
@@ -6695,7 +6695,7 @@ Configuration for working with Lisps of all kinds.
 #+begin_src emacs-lisp  :tangle lisp/lib-lisp.el :comments no :noweb yes
 <<file-prop-line(feature="lib-lisp",desc="Lisp support functions")>>
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx
@@ -9013,7 +9013,7 @@ I don't think this is working properly...
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-dired.el :comments no :startup folded
 ;;; ceamx-init-dired.el --- Dired customizations -*- lexical-binding: t -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 
@@ -10242,7 +10242,7 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 #+begin_src emacs-lisp :tangle site-lisp/ceamx-ui.el :comments no
 ;;; ceamx-ui.el --- Ceamx: User interface & appearance library  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 
@@ -10985,7 +10985,7 @@ writable or with a prefix argument, then read a file to visit."
 #+begin_src emacs-lisp :tangle lisp/ceamx-window.el :comments no :noweb yes
 ;;; ceamx-window.el --- Window management support library  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2023 Free Software Foundation, Inc.
 ;; Copyright (C) 2024  Protesilaos Stavrou
 
@@ -11323,7 +11323,7 @@ available, `switchy-window'."
 #+begin_src emacs-lisp :tangle site-lisp/ceamx-completion.el :comments no
 ;;; ceamx-completion.el --- Ceamx: Completions Library  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx

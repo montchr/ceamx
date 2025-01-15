@@ -1,6 +1,6 @@
 ;;; init-tools.el --- Tools and utilities  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2023-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2023-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; URL: https://git.sr.ht/~montchr/ceamx

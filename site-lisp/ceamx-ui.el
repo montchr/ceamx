@@ -1,6 +1,6 @@
 ;;; ceamx-ui.el --- Ceamx: User interface & appearance library  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 
