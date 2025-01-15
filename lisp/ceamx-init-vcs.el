@@ -25,6 +25,9 @@
 (require 'ceamx-paths)
 (require 'ceamx-lib)
 
+;; Set up ~ediff~
+
+
 (setup ediff
   (:autoload #'ediff-buffers
              #'ediff-files
@@ -37,6 +40,9 @@
           ;; Keep the ~ediff~ control panel in the same frame.
           ediff-window-setup-function #'ediff-setup-windows-plain))
 
+;; Set up ~diff-mode~
+
+
 (setup diff-mode
   (setopt diff-default-read-only t)
   (setopt diff-advance-after-apply-hunk t)
@@ -44,6 +50,9 @@
   (setopt diff-refine 'font-lock)
   (setopt diff-font-lock-prettify t
           diff-font-lock-syntax 'hunk-also))
+
+;; Set up version control integration with ~vc-mode~
+
 
 ;; Version control support is essential as soon as possible.
 (require 'vc)
@@ -58,12 +67,22 @@
 ;; verified this for certain.
 (setopt vc-git-diff-switches '("--histogram"))
 
+;; Set up project management with =project.el=
+
+
 (setup project
   (:global "C-x p ." #'project-dired
            "C-x p RET" #'project-dired
            "C-x p DEL" #'project-forget-project)
   (setopt project-vc-extra-root-markers '(".project"))
   (setopt project-key-prompt-style t))
+
+;; ~diff-hl~: Display version control status indicators in margins
+
+;; - Website :: <https://github.com/dgutov/diff-hl>
+
+;; NOTE: Fringe indicators will conflict with Flycheck.
+
 
 (package! diff-hl
   (add-hook 'ceamx-after-init-hook #'global-diff-hl-mode)
@@ -86,7 +105,17 @@
   (after! dired
     (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
 
+;; ~git-modes~ :: major modes for Git-related files
+
+;; - website :: <https://github.com/magit/git-modes>
+
+
 (package! git-modes)
+
+;; ~git-timemachine~: Interactively explore files' Git histories
+
+;; <https://codeberg.org/pidu/git-timemachine>
+
 
 (package! git-timemachine
   (keymap-global-set "C-x v t" #'git-timemachine))
@@ -131,6 +160,9 @@
                     (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
                     date-full date-relative)))))
 
+;; ~magit~ :: a Git porcelain inside Emacs
+
+
 (package! magit
   (define-keymap :keymap (current-global-map)
     "C-x g" #'magit-status
@@ -161,17 +193,37 @@
   (transient-append-suffix 'magit-pull "-r"
     '("-a" "Autostash" "--autostash")))
 
+;; Keep ~magit-section~ sections at the top of the window
+
+;; - Reference :: <https://emacs.stackexchange.com/questions/3380/how-to-scroll-up-when-expanding-a-section-in-magit-status#comment4819_3383>
+
+
 (after! magit
   (remove-hook 'magit-section-movement-hook 'magit-hunk-set-window-start)
   (add-hook 'magit-section-movement-hook #'magit-section-set-window-start))
 
+;; Show ~magit-process~ output popup after N seconds :popups:
+
+;; This is pretty important when a project has =pre-commit= or =commit-msg=
+;; hooks that are wont to fail.  I also find it helpful for getting
+;; insight into long-running =post-receive= hooks (and similar).
+
+
 (after! magit
   (setopt magit-process-popup-time 3))
+
+;; =alphapapa/magit-todo= :: display codetag comment reminders in ~magit-status~
+
+;; - Docs :: <https://github.com/alphapapa/magit-todos/blob/master/README.org>
+
 
 (package! magit-todos
   (after! magit
     (require 'magit-todos)
     (magit-todos-mode 1)))
+
+;; ~magit-repos~
+
 
 (setup magit-repos
   ;; FIXME: Make sure feature is available
@@ -181,6 +233,14 @@
           `((,(file-name-concat ceamx-projects-dir "work") . 2)
             (,(file-name-concat ceamx-projects-dir "sources") . 1)
             (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
+
+;; DISABLED ~forge~ :: interact with online source code forges through Magit
+
+;; *Warning*: /development versions of ~forge~ may expect a different ~magit~
+;; version!/ Make sure to pin ~forge~ to a stable tag.  And then, make sure
+;; ~magit~ is pinned to a stable tag.  And then, make sure every other
+;; Magit dependency is pinned...
+
 
 ;; (package! (forge :tag "v0.4.6"))
 

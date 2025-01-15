@@ -396,28 +396,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 :VISIBILITY: folded
 :END:
 
-** =lisp/lib-tools.el=
-
-#+name: lib-tools-file
-#+begin_src emacs-lisp :tangle lisp/lib-tools.el :comments no :noweb yes
-<<file-prop-line(feature="lib-tools",desc="Library for miscellaneous tooling")>>
-
-;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-tools>>
-
-<<file-footer(feature="lib-tools")>>
-#+end_src
-
 ** =lisp/lib-editor.el=
 
 #+name: lib-editor-file
@@ -485,49 +463,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<lib-prog>>
 
 <<file-footer(feature="lib-prog")>>
-#+end_src
-
-** =lisp/init-flycheck.el=
-
-#+begin_src emacs-lisp :tangle lisp/init-flycheck.el :comments no :noweb yes
-<<file-prop-line(feature="init-flycheck",desc="Flycheck support")>>
-
-;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-flycheck>>
-
-<<file-footer(feature="init-flycheck")>>
-#+end_src
-
-** =lisp/init-flymake.el=
-
-#+name: init-flymake-file
-#+begin_src emacs-lisp :tangle lisp/init-flymake.el :comments no :noweb yes
-<<file-prop-line(feature="init-flymake",desc="Flymake support")>>
-
-;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-flymake>>
-
-<<file-footer(feature="init-flymake")>>
 #+end_src
 
 ** =lisp/init-templates.el=
@@ -639,30 +574,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 
 <<file-footer(feature="init-writing")>>
 #+end_src
-
-** =lisp/init-tools.el=
-
-#+name: init-tools-file
-#+begin_src emacs-lisp  :tangle lisp/init-tools.el :comments no :noweb yes
-<<file-prop-line(feature="init-tools",desc="Tools and utilities")>>
-
-;; Copyright (c) 2023-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-tools>>
-
-<<file-footer(feature="init-tools")>>
-#+end_src
-
-
 
 * =early-init.el=
 :PROPERTIES:
@@ -952,7 +863,6 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-default-frame-name-h)
 #+end_src
 
-
 * =ceamx-paths= :: Paths
 
 #+begin_src emacs-lisp :tangle lisp/core/ceamx-paths.el :comments no :noweb yes
@@ -1070,7 +980,6 @@ Emacs version to prevent bytecode incompatibility.")
 ;; no-update-autoloads: t
 ;; End:
 #+end_src
-
 
 * =ceamx-lib= :: Core Functions & Macros
 :PROPERTIES:
@@ -1539,7 +1448,6 @@ without needing to declare autoloads for `elpaca' in every file."
 (provide 'ceamx-lib)
 ;;; ceamx-lib.el ends here
 #+end_src
-
 
 * =init.el=
 :PROPERTIES:
@@ -2203,7 +2111,6 @@ expect the value you arrive at to be as high as 100 MiB.
     (keymap-set transient-map "<escape>" #'transient-quit-one)))
 #+end_src
 
-
 * =init.el=: Environment
 :PROPERTIES:
 :header-args: :tangle init.el
@@ -2361,41 +2268,20 @@ graphical frames.
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 #+end_src
 
-
-* ~ceamx-init-ui~ :: User Interface & Appearance
+* ~ui~ :: User Interface & Appearance
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-ui.el
 :END:
 
-** =lisp/ceamx-init-ui.el=
+** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-ui.el :comments no
-;;; ceamx-init-ui.el --- User interface & appearance customizations  -*- lexical-binding: t;  -*-
+;; -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-;;; Code:
+(require 'ceamx-lib)
 #+end_src
 
 ** Configure cursor appearance
@@ -3045,24 +2931,18 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 ;;; ceamx-init-ui.el ends here
 #+end_src
 
-
-* ~ceamx-init-essentials~ :: Essentials
+* ~essentials~ :: Essentials
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-essentials.el
 :END:
 
-** Interactive buffer management with ~ibuffer~
+** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
-#+begin_src emacs-lisp
-(use-feature! ibuffer
-  :config
-  (setopt ibuffer-movement-cycle t))
-#+end_src
-
-** File Header & Requirements
-
-#+begin_src emacs-lisp :comments no
-;; -*- lexical-binding: t -*-
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-essentials.el :comments no
+;; -*- lexical-binding: t; -*-
 #+end_src
 
 ** Baseline configurations
@@ -3662,6 +3542,14 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (auto-save-visited-mode))
 #+end_src
 
+** Interactive buffer management with ~ibuffer~
+
+#+begin_src emacs-lisp
+(use-feature! ibuffer
+  :config
+  (setopt ibuffer-movement-cycle t))
+#+end_src
+
 ** Help
 *** ~casual-suite~: transient-dispatch menus for complex modes
 
@@ -4006,8 +3894,7 @@ Enable ~repeat-mode~, avoiding running mode-hooks too early:
 ;;; ceamx-init-essentials.el ends here
 #+end_src
 
-
-* ~ceamx-init-search~ :: Search
+* ~search~ :: Search
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-search.el
 :END:
@@ -4021,6 +3908,9 @@ these utilities.
 - Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-isearch.el>
 
 ** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+begin_src emacs-lisp :comments no
 ;; -*- lexical-binding: t -*-
@@ -4146,8 +4036,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 ;;; ceamx-init-search.el ends here
 #+end_src
 
-
-* ~ceamx-init-completion~ :: Completion
+* ~completion~ :: Completion
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-completion.el
 :END:
@@ -4582,7 +4471,7 @@ Adapted from Prot's original version with the following changes:
 - Abstracted the regexp to a variable ~ceamx-abbrev-prefix-regexp~ for reuse
   across =abbrev-table= contexts.
 
-#+begin_src emacs-lisp :noweb-ref nil
+#+begin_src emacs-lisp :tangle no
 (defconst ceamx-abbrev-prefix-regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:_].*\\|.*\\)")
 
 (after! abbrev
@@ -4803,172 +4692,21 @@ Define Embark actions for acting on tabs:
 ;;; ceamx-init-completion.el ends here
 #+end_src
 
-
-* ~ceamx-init-window~ :: Window & Buffer Management
+* ~window~ :: Window & Buffer Management
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-window.el
 :END:
 
-** ~activites~: workspace by activity :package:tabs:
-
-- Website :: <https://github.com/alphapapa/activities.el>
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-
-(package! activities
-  (activities-mode)
-
-  (when tab-bar-mode
-    (activities-tabs-mode)))
-#+end_src
-
-*** Activities.el Keybindings :keybinds:
-
-#+begin_src emacs-lisp
-(defun ceamx-after-init-define-activities-keys-h ()
-  "Define keybindings for `activities' late to override `edebug'.
-Intended for use as a hook on `ceamx-after-init-hook'."
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-
-  ;; (keymap-global-unset "C-x C-a" t)
-  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
-
-  ;; TODO: still shares bindings with edebug which is confusing
-  (define-keymap :keymap (current-global-map)
-    "C-x C-a C-n" #'activities-new
-    "C-x C-a C-d" #'activities-define
-    "C-x C-a C-a" #'activities-resume
-    "C-x C-a C-s" #'activities-suspend
-    "C-x C-a C-k" #'activities-kill
-    "C-x C-a RET" #'activities-switch
-
-    "C-x C-a b" #'activities-switch-buffer
-    "C-x C-a g" #'activities-revert
-    "C-x C-a l" #'activities-list))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
-#+end_src
-
-** DISABLED Beframe :package:
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-#+begin_src emacs-lisp
-(package! beframe
-  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
-
-  (beframe-mode 1))
-#+end_src
-
-*** Provide Consult integration :consult:
-
-- source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
-
-#+begin_src emacs-lisp
-(defface +beframe-buffer
-  '((t :inherit font-lock-string-face))
-  "Face for `consult' framed buffers.")
-
-(defun +beframe-buffer-names-sorted (&optional frame)
-  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
-With optional argument FRAME, return the list of buffers of FRAME."
-  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
-
-(after! (beframe consult)
-  (declare-function consult--buffer-state "consult")
-
-  (defvar +beframe-consult-source
-    `(:name "Frame-specific buffers (current frame)"
-      :narrow ?F
-      :category buffer
-      :face +beframe-buffer
-      :history beframe-history
-      :items ,#'+beframe-buffer-names-sorted
-      :action ,#'switch-to-buffer
-      :state ,#'consult--buffer-state))
-
-  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
-#+end_src
-
-*** Provide ~ibuffer~ integration :ibuffer:
-
-- source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
-
-#+begin_src emacs-lisp
-(defun +beframe-buffer-in-frame-p (buf frame)
-  "Return non-nil if BUF is in FRAME."
-  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
-
-(defun +beframe-frame-name-list ()
-  "Return list with frame names."
-  (mapcar #'car (make-frame-names-alist)))
-
-(defun +beframe-generate-ibuffer-filter-groups ()
-  "Create a set of ibuffer filter groups based on the Frame of buffers."
-  (mapcar
-   (lambda (frame)
-     (list (format "%s" frame)
-           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
-   (+beframe-frame-name-list)))
-
-(after! (beframe ibuffer)
-  (setq ibuffer-saved-filter-groups
-        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
-
-  (define-ibuffer-filter frame
-      "Limit current view to buffers in frames."
-    (:description "frame")
-    (memq buf (beframe-buffer-list))))
-#+end_src
-
-** ~breadcrumb~ :: header-line wayfinding
-
-- Package :: <https://github.com/joaotavora/breadcrumb>
-
-#+begin_src emacs-lisp
-(package! breadcrumb
-  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
-#+end_src
-
-
-** The file header for =lisp/ceamx-init-window.el=
+** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-window.el :comments no
-;;; ceamx-init-window.el --- Window & buffer management customizations  -*- lexical-binding: t;  -*-
-
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-;;; Code:
-
-;;;; Requirements
+;; -*- lexical-binding: t; -*-
 
 (require 'ceamx-simple)
 (require 'ceamx-window)
-
-;;;; Customizations
 #+end_src
 
 ** Define the user option specifying a fallback buffer
@@ -5131,6 +4869,15 @@ Action alist entries are:
            (side . bottom))))
     #+end_src
 
+** ~breadcrumb~ :: header-line wayfinding
+
+- Package :: <https://github.com/joaotavora/breadcrumb>
+
+#+begin_src emacs-lisp
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+#+end_src
+
 ** ~popper~: Summon and dismiss "popup" windows :popups:package:
 
 - Website :: <https://github.com/karthink/popper>
@@ -5254,6 +5001,120 @@ Action alist entries are:
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 #+end_src
 
+** ~activites~ :: organize window+buffer by activity :package:tabs:
+
+- Website :: <https://github.com/alphapapa/activities.el>
+
+#+begin_src emacs-lisp
+(require 'ceamx-lib)
+
+(package! activities
+  (activities-mode)
+
+  (when tab-bar-mode
+    (activities-tabs-mode)))
+#+end_src
+
+*** Activities.el Keybindings :keybinds:
+
+#+begin_src emacs-lisp
+(defun ceamx-after-init-define-activities-keys-h ()
+  "Define keybindings for `activities' late to override `edebug'.
+Intended for use as a hook on `ceamx-after-init-hook'."
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+
+  ;; (keymap-global-unset "C-x C-a" t)
+  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
+
+  ;; TODO: still shares bindings with edebug which is confusing
+  (define-keymap :keymap (current-global-map)
+    "C-x C-a C-n" #'activities-new
+    "C-x C-a C-d" #'activities-define
+    "C-x C-a C-a" #'activities-resume
+    "C-x C-a C-s" #'activities-suspend
+    "C-x C-a C-k" #'activities-kill
+    "C-x C-a RET" #'activities-switch
+
+    "C-x C-a b" #'activities-switch-buffer
+    "C-x C-a g" #'activities-revert
+    "C-x C-a l" #'activities-list))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
+#+end_src
+
+** DISABLED ~beframe~ :: scope buffer lists to frame :package:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+#+begin_src emacs-lisp
+(package! beframe
+  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
+
+  (beframe-mode 1))
+#+end_src
+
+*** Provide Consult integration :consult:
+
+- source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
+
+#+begin_src emacs-lisp
+(defface +beframe-buffer
+  '((t :inherit font-lock-string-face))
+  "Face for `consult' framed buffers.")
+
+(defun +beframe-buffer-names-sorted (&optional frame)
+  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+With optional argument FRAME, return the list of buffers of FRAME."
+  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+
+(after! (beframe consult)
+  (declare-function consult--buffer-state "consult")
+
+  (defvar +beframe-consult-source
+    `(:name "Frame-specific buffers (current frame)"
+      :narrow ?F
+      :category buffer
+      :face +beframe-buffer
+      :history beframe-history
+      :items ,#'+beframe-buffer-names-sorted
+      :action ,#'switch-to-buffer
+      :state ,#'consult--buffer-state))
+
+  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
+#+end_src
+
+*** Provide ~ibuffer~ integration :ibuffer:
+
+- source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
+
+#+begin_src emacs-lisp
+(defun +beframe-buffer-in-frame-p (buf frame)
+  "Return non-nil if BUF is in FRAME."
+  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
+
+(defun +beframe-frame-name-list ()
+  "Return list with frame names."
+  (mapcar #'car (make-frame-names-alist)))
+
+(defun +beframe-generate-ibuffer-filter-groups ()
+  "Create a set of ibuffer filter groups based on the Frame of buffers."
+  (mapcar
+   (lambda (frame)
+     (list (format "%s" frame)
+           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
+   (+beframe-frame-name-list)))
+
+(after! (beframe ibuffer)
+  (setq ibuffer-saved-filter-groups
+        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
+
+  (define-ibuffer-filter frame
+      "Limit current view to buffers in frames."
+    (:description "frame")
+    (memq buf (beframe-buffer-list))))
+#+end_src
+
 ** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
 
 #+begin_src emacs-lisp
@@ -5325,68 +5186,9 @@ Action alist entries are:
 ;;; ceamx-init-window.el ends here
 #+end_src
 
-
-* Terminal Emulation :: =term=
-
-#+begin_src emacs-lisp :tangle lisp/init-term.el :comments no
-;;; init-term.el --- Terminal emulators inside Emacs  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; Configuration for terminal emulators running inside Emacs.
-
-;;; Code:
-
-(require 'ceamx-lib)
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/init-term.el :comments no
-(after! eshell
-  (setopt eshell-scroll-to-bottom-on-input 'this))
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/init-term.el :comments no
-;;; ~eat~ :: <https://codeberg.org/akib/emacs-eat/>
-
-;; "Emulate A Terminal"
-
-(package! eat
-  (after! eshell
-    (add-hook 'eshell-load-hook #'eat-eshell-mode)
-    (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
-
-  (after! popper
-    (setopt popper-reference-buffers
-            (append popper-reference-buffers '("\\*eat\\*")))))
-#+end_src
-
-#+begin_src emacs-lisp :tangle lisp/init-term.el :comments no
-(provide 'init-term)
-;;; init-term.el ends here
-#+end_src
-
-
-* ~ceamx-init-vcs~ :: Version Control (Git) :vcs:git:
+* ~vcs~ :: Version Control :vcs:
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle lisp/ceamx-init-vcs.el
+:header-args: :tangle lisp/ceamx-init-vcs.el
 :END:
 
 ** Define the =lisp/ceamx-init-vcs.el= file header
@@ -5712,140 +5514,6 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 ;;; ceamx-init-vcs.el ends here
 #+end_src
 
-
-* Checkers (Flycheck + Flymake) :linter:checkers:
-
-<https://www.flycheck.org/en/latest/index.html>
-<https://www.flycheck.org/en/latest/user/flycheck-versus-flymake.html>
-
-*** Flycheck :: =flycheck=
-:PROPERTIES:
-:header-args: :noweb-ref init-flycheck
-:END:
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-#+end_src
-
-**** Install and configure Flycheck :package:
-
-#+begin_src emacs-lisp
-(package! flycheck
-  (setopt flycheck-emacs-lisp-load-path 'inherit)
-
-  ;; The default includes `newline', which is just too often.
-  (setopt flycheck-check-syntax-automatically '(save idle-change mode-enabled))
-
-  (setopt flycheck-idle-change-delay 3.0)
-  (setopt flycheck-display-errors-delay 1.5)
-  (setopt flycheck-buffer-switch-check-intermediate-buffers nil)
-
-  (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
-#+end_src
-
-**** Disable Flycheck for modes supported by Flymake
-
-#+begin_src emacs-lisp
-(after! flycheck
-  (setq-default
-   flycheck-disabled-checkers
-   (append (default-value 'flycheck-disabled-checkers)
-           '(emacs-lisp emacs-lisp-checkdoc emacs-lisp-package sh-shellcheck))))
-#+end_src
-
-**** ~consult-flycheck~: integration with Consult :package:
-
-#+begin_src emacs-lisp
-(package! consult-flycheck
-  (keymap-global-set "M-g f" #'consult-flycheck)
-
-  (after! (consult flycheck)
-    (require 'consult-flycheck)))
-#+end_src
-
-*** Flymake [builtin] :: =flymake=
-:PROPERTIES:
-:header-args: :noweb-ref init-flymake
-:END:
-
-#+begin_src emacs-lisp :noweb-ref nil
-(add-hook 'prog-mode-hook #'flymake-mode)
-(add-hook 'text-mode-hook #'flymake-mode)
-#+end_src
-
-Configure Flymake behavior and apperance:
-
-#+begin_src emacs-lisp
-(setopt flymake-no-changes-timeout 1.0
-        flymake-wrap-around t
-        flymake-fringe-indicator-position 'right-fringe)
-#+end_src
-
-**** DISABLED Display Flymake diagnostics in a childframe with ~flymake-popon~
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-- Website :: [[https://codeberg.org/akib/emacs-flymake-popon][akib/emacs-flymake-popon: Flymake diagnostics on cursor hover - Codeberg.org]]
-
-#+begin_src emacs-lisp
-(package! flymake-popon
-  (add-hook 'flymake-mode-hook #'flymake-popon-mode)
-
-  (setopt flymake-popon-method 'popon))
-#+end_src
-
-**** DISABLED Display diagnostics alongside Eldoc output
-
-This is a bit noisy and causes a distracting resize of the minibuffer every time
-diagnostics change.
-
-#+begin_src emacs-lisp :noweb-ref nil
-(after! (eldoc flymake)
-  (def-hook! ceamx-flymake-eldoc-function-h ()
-    'flymake-mode-hook
-    "Use Flymake's Eldoc integration."
-    (add-hook 'eldoc-documentation-functions #'flymake-eldoc-function nil t)))
-#+end_src
-
-**** DISABLED Tell Flymake how to digest Flycheck checkers :package:
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-- Website :: [[https://github.com/purcell/flymake-flycheck][purcell/flymake-flycheck: Use any Emacs flycheck checker as a flymake backend]]
-
-#+begin_src emacs-lisp
-(package! flymake-flycheck
-  (add-hook 'flymake-mode-hook #'flymake-flycheck-auto))
-#+end_src
-
-***** Caveats
-
-- Source :: [[https://github.com/purcell/flymake-flycheck][purcell/flymake-flycheck: Use any Emacs flycheck checker as a flymake backend]]
-- Retrieved :: [2024-05-21 Tue 09:25]
-
-+ Flycheck UI packages will have no idea of what the checkers are doing, because
-  they are run without flycheck's coordination.
-+ Flycheck's notion of "chained checkers" is not handled automatically, so
-  although multiple chained checkers can be used, they will all be executed
-  simultaneously even if earlier checkers fail.  This could either be considered
-  a feature, or lead to redundant confusing messages.
-
-**** Keybindings :keybinds:
-
-Mirror the Flycheck default prefix of =C-c !=
-
-#+begin_src emacs-lisp
-(after! flymake
-  (define-keymap :keymap flymake-mode-map
-    "C-c ! l" #'flymake-show-buffer-diagnostics
-    "C-c ! n" #'flymake-goto-next-error
-    "C-c ! p" #'flymake-goto-previous-error
-    "C-c ! c" #'flymake-show-buffer-diagnostics))
-#+end_src
-
-
 * Template Expansion :: =templates= :snippets:
 :PROPERTIES:
 :header-args: :noweb-ref init-templates
@@ -6075,8 +5743,7 @@ avoid further confusion.
 
 *** TODO Add this package's Tempo templates to Tempel
 
-
-* =ceamx-init-langs= :: Language Support
+* ~langs~ :: Language Support
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-langs.el
 :END:
@@ -6088,7 +5755,6 @@ avoid further confusion.
 
 (require 'ceamx-lib)
 #+end_src
-
 
 ** Programming modes
 
@@ -6302,6 +5968,51 @@ DOC is as in `devdocs-install'."
 
 #+begin_src emacs-lisp
 (setopt eldoc-documentation-function #'eldoc-documentation-compose)
+#+end_src
+
+** Linting files with the builtin ~flymake~ feature
+
+#+begin_src emacs-lisp
+(setup flymake
+  (:hook-into ceamx-after-init-hook)
+  ;; Mirror the [C-c !] Flycheck prefix.
+  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
+         "C-c ! n" #'flymake-goto-next-error
+         "C-c ! p" #'flymake-goto-previous-error
+         "C-c ! c" #'flymake-show-buffer-diagnostics)
+  (:when-loaded
+    (setopt flymake-fringe-indicator-position 'right-fringe)
+    (setopt flymake-no-changes-timeout 1.0)
+    (setopt flymake-wrap-around t)))
+#+end_src
+
+** Linting files with the ~flycheck~ package :lint:
+
+#+begin_src emacs-lisp
+(package! flycheck
+  (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
+
+(package! consult-flycheck
+  (keymap-global-set "M-g f" #'consult-flycheck)
+
+  (after! (consult flycheck)
+    (require 'consult-flycheck)))
+
+(after! flycheck
+  (setopt flycheck-emacs-lisp-load-path 'inherit)
+  (setopt flycheck-idle-change-delay 3.0
+          flycheck-display-errors-delay 1.5)
+  (setopt flycheck-check-syntax-automatically
+          '(save idle-change mode-enabled))
+  (setopt flycheck-buffer-switch-check-intermediate-buffers nil)
+
+  ;; Disable Flycheck for modes supported by Flymake
+  (setq-default flycheck-disabled-checkers
+                (append (default-value 'flycheck-disabled-checkers)
+                        '(emacs-lisp
+                          emacs-lisp-checkdoc
+                          emacs-lisp-package
+                          sh-shellcheck))))
 #+end_src
 
 ** Formatters
@@ -7526,7 +7237,7 @@ Unless PROGRAM is provided, the program name used in
 
 *** TODO Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
 :PROPERTIES:
-:header-args: :noweb-ref nil
+:header-args: :tangle no
 :END:
 
 - website :: <https://github.com/emacs-lsp/dap-mode>
@@ -8226,7 +7937,6 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ;;; ceamx-init-langs.el ends here
 #+end_src
 
-
 * Outlines :: =outline= :outline:
 :PROPERTIES:
 :header-args: :noweb-ref init-outline
@@ -8337,7 +8047,6 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 ;; "))
 #+end_src
 
-
 * Writing :: =writing= :writing:
 :PROPERTIES:
 :header-args: :noweb-ref init-writing
@@ -8381,7 +8090,6 @@ enchant-lsmod-2 -list-dicts
 
 (setopt jinx-languages "en")
 #+end_src
-
 
 * Notetaking :: =notes= :notes:writing:
 :PROPERTIES:
@@ -8540,8 +8248,7 @@ Create the directories if they don't already exist (to prevent errors):
         :jump-to-captured t)))
 #+end_src
 
-
-* =ceamx-init-org= :: Org-Mode
+* =org= :: Org-Mode
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-org.el
 :END:
@@ -8907,7 +8614,7 @@ Define the Org-Capture templates:
 
 I don't think this is working properly...
 
-#+begin_src emacs-lisp :noweb-ref nil
+#+begin_src emacs-lisp :tangle no
 (require 'ceamx-paths)
 
 (defun ceamx/org-clean-up-inbox ()
@@ -8999,8 +8706,7 @@ I don't think this is working properly...
 ;;; ceamx-init-org.el ends here
 #+end_src
 
-
-* =ceamx-init-dired= :: Dired, the Directory Editor :dired:
+* =dired= :: Dired, the Directory Editor :dired:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-dired.el
 :END:
@@ -9144,7 +8850,6 @@ I don't think this is working properly...
 ;;; ceamx-init-dired.el ends here
 #+end_src
 
-
 * Printing :: =printing=
 
 #+begin_src emacs-lisp :tangle lisp/init-printing.el :comments no
@@ -9188,7 +8893,6 @@ I don't think this is working properly...
 (provide 'init-printing)
 ;;; init-printing.el ends here
 #+end_src
-
 
 * Newsreader :: =news= :news:
 
@@ -9248,7 +8952,6 @@ CLOSED: [2024-07-16 Tue 00:00]
 
 
 - State "DONE"       from "TODO"       [2024-07-16 Tue 00:00]
-
 
 * Web Browsing :: =eww= :web:
 
@@ -9520,16 +9223,65 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 
 *** [[https://gitlab.com/howardabrams/spacemacs.d/-/blob/51196e861da9a76a02f1159397ba85b936cdfe27/layers/ha-eww/funcs.el][layers/ha-eww/funcs.el · 51196e861da9a76a02f1159397ba85b936cdfe27 · Howard Abrams / spacemacs.d · GitLab]]
 
-
 * Tools :: =tools= :tools:
 :PROPERTIES:
-:header-args: :noweb-ref init-tools
+:header-args: :tangle lisp/ceamx-init-tools.el
 :END:
 
-#+begin_src emacs-lisp
+** The =lisp/ceamx-init-tools.el= file header
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-tools.el :comments no
+;;; ceamx-init-tools.el --- Tools and utilities  -*- lexical-binding: t;  -*-
+
+;; Copyright (c) 2023-2025  Chris Montgomery <chmont@protonmail.com>
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+
+;; This file is NOT part of GNU Emacs.
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;; Code:
+
 (require 'seq)
 
 (require 'ceamx-lib)
+#+end_src
+
+** Set up ~eshell~, the Emacs-Lisp shell
+
+#+begin_src emacs-lisp
+(after! eshell
+  (setopt eshell-scroll-to-bottom-on-input 'this))
+#+end_src
+
+** ~eat~ :: [E]mulate [A] [T]erminal
+
++ Package :: <https://codeberg.org/akib/emacs-eat/>
+
+#+begin_src emacs-lisp
+(package! eat
+  (after! eshell
+    (add-hook 'eshell-load-hook #'eat-eshell-mode)
+    (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
+  (after! popper
+    (setopt popper-reference-buffers
+            (append popper-reference-buffers '("\\*eat\\*")))))
 #+end_src
 
 ** [[https://joostkremers.github.io/pandoc-mode/][Pandoc-mode]]: filetype conversion multitool
@@ -9581,13 +9333,10 @@ Providing integrations with LLMs and other simulation machines.
 M is not eager to board the train bound for Hype City.
 
 ** Personal Finance with =hledger=
-:PROPERTIES:
-:header-args: :noweb-ref init-tools
-:END:
 
-- website :: <https://hledger.org/>
-- docs :: <https://hledger.org/1.30/hledger.html#journal>
-- website :: <https://github.com/narendraj9/hledger-mode>
+- Website :: <https://hledger.org/>
+- Docs :: <https://hledger.org/1.30/hledger.html#journal>
+- Package :: <https://github.com/narendraj9/hledger-mode>
 
 *** Define important feature paths :paths:
 
@@ -9605,24 +9354,11 @@ M is not eager to board the train bound for Hype City.
   (setopt hledger-jfile ceamx-ledger-main-journal-file))
 #+end_src
 
-*** Register buffers as popups :window:
+*** Register ~hledger-mode~ buffers as popups :window:
 
 #+begin_src emacs-lisp
 (after! popper
   (add-to-list 'popper-reference-buffers "\\*Personal Finance\\*"))
-#+end_src
-
-*** Keybindings :kbd:
-
-#+begin_src emacs-lisp
-(require 'lib-tools)
-
-(after! hledger-mode
-  (define-keymap :keymap hledger-mode-map
-    "C-c e" #'hledger-jentry
-    ;; NOTE: Overrides global binding for completion-at-point/cape commands.
-    "M-p" #'ceamx/hledger-prev-entry
-    "M-n" #'ceamx/hledger-next-entry))
 #+end_src
 
 *** Register the =hledger= checker for =Flycheck= :checkers:
@@ -9634,85 +9370,6 @@ M is not eager to board the train bound for Hype City.
 
   (setopt flycheck-hledger-strict t))
 #+end_src
-
-*** TODO =hledger-input= :package:
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-#+begin_src emacs-lisp
-;; TODO
-;; (use-package hledger-input
-;;   ;; :pin manual
-;;   ;; :load-path "packages/rest/hledger-mode/"
-;;   ;; :bind (("C-c e" . hledger-capture)
-;;   ;;        :map hledger-input-mode-map
-;;   ;;        ("C-c C-b" . popup-balance-at-point))
-;;   :preface
-;;   (defun popup-balance-at-point ()
-;;     "Show balance for account at point in a popup."
-;;     (interactive)
-;;     (if-let ((account (thing-at-point 'hledger-account)))
-;;         (message (hledger-shell-command-to-string (format " balance -N %s "
-;;                                                           account)))
-;;       (message "No account at point")))
-
-;;   :config
-;;   (setq hledger-input-buffer-height 20)
-;;   (add-hook 'hledger-input-post-commit-hook #'hledger-show-new-balances)
-;;   (add-hook 'hledger-input-mode-hook #'auto-fill-mode)
-;;   (add-hook 'hledger-input-mode-hook
-;;             (lambda ()
-;;               (make-local-variable 'company-idle-delay)
-;;               (setq-local company-idle-delay 0.1))))
-#+end_src
-
-*** Define =hledger= helper commands
-
-#+begin_src emacs-lisp :noweb-ref lib-tools
-(defun ceamx-finance/hledger-next-entry ()
-  "Move to next entry and pulse."
-  (interactive)
-  (declare-function hledger-next-or-new-entry "hledger-mode")
-  (declare-function hledger-pulse-momentary-current-entry "hledger-mode")
-
-  (hledger-next-or-new-entry)
-  (hledger-pulse-momentary-current-entry))
-
-(defun ceamx-finance/hledger-prev-entry ()
-  "Move to last entry and pulse."
-  (interactive)
-  (declare-function hledger-backward-entry "hledger-mode")
-  (declare-function hledger-pulse-momentary-current-entry "hledger-mode")
-
-  (hledger-backward-entry)
-  (hledger-pulse-momentary-current-entry))
-#+end_src
-
-*** Register completions for =hledger= data :capfs:
-
-#+begin_src emacs-lisp
-(require 'lib-tools)
-
-(after! hledger-mode
-  (add-hook 'hledger-mode-hook #'+hledger-accounts-capf-h))
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref lib-tools
-(defun +hledger-accounts-completion-at-point ()
-  "Return completion candidates for hledger accounts."
-
-  (when-let ((bounds (and (boundp 'hledger-accounts-cache)
-                          (bounds-of-thing-at-point 'symbol))))
-    (list (car bounds) (point) hledger-accounts-cache)))
-
-(defun +hledger-accounts-capf-h ()
-  "Add hledger accounts to `completion-at-point' functions."
-  (add-hook 'completion-at-point-functions
-            '+hledger-accounts-completion-at-point 20 t))
-#+end_src
-
-
 
 ** PDF-Tools
 
@@ -9746,7 +9403,7 @@ available for legal distribution.
 
 *** DISABLED [[https://github.com/zzkt/i-ching][zzkt/i-ching]] (via MELPA)
 :PROPERTIES:
-:header-args:emacs-lisp: :noweb-ref nil
+:header-args: :tangle no
 :END:
 
 Does not support changing line commentaries!
@@ -9775,6 +9432,15 @@ changing lines.
 (use-feature! i-ching
   :commands (i-ching/lookup
              i-ching/cast))
+#+end_src
+** Provide the ~ceamx-init-tools~ feature
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-tools.el :comments no
+(provide 'ceamx-init-tools)
+;;; ceamx-init-tools.el ends here
 #+end_src
 
 * "Fun" :: =fun= :fun:
@@ -9839,7 +9505,6 @@ Return the new `zone' timer."
 ;;; init-fun.el ends here
 #+end_src
 
-
 * =init.el=: Load Features
 :PROPERTIES:
 :header-args: :tangle init.el
@@ -9868,13 +9533,6 @@ Return the new `zone' timer."
 #+end_src
 
 #+begin_src emacs-lisp
-;;;; Linting
-
-(require 'init-flymake)
-(require 'init-flycheck)
-#+end_src
-
-#+begin_src emacs-lisp
 ;;;; Tree-Sitter
 
 (require 'init-treesitter)
@@ -9889,16 +9547,14 @@ Return the new `zone' timer."
 #+begin_src emacs-lisp
 ;;;; Miscellaneous
 
-(require 'init-tools)
+(require 'ceamx-init-tools)
 
-(require 'init-term)
 (require 'init-news)
 (require 'init-eww)
 (require 'init-printing)
 
 (require 'init-fun)
 #+end_src
-
 
 * =init.el=: The Bucket of Uncertainty
 :PROPERTIES:
@@ -9945,7 +9601,6 @@ Or, perhaps more accurately: stuff that needs a better home.
             ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
             )))
 #+end_src
-
 
 * =init.el=: Keybindings
 :PROPERTIES:
@@ -10185,7 +9840,6 @@ Or, perhaps more accurately: stuff that needs a better home.
   "o" #'ace-window)
 #+end_src
 
-
 * =init.el=: Postlude
 :PROPERTIES:
 :header-args: :tangle init.el
@@ -10227,7 +9881,6 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 ;; FIXME: wrong num args
 ;; (ceamx-ui-re-enable-theme-in-frame)
  #+end_src
-
 
 * Libraries
 :PROPERTIES:
@@ -10432,7 +10085,7 @@ See also `modus-themes-load-theme'."
 
 ** The =ceamx-simple= library: Common utility commands
 
-#+begin_src emacs-lisp :tangle lisp/ceamx-simple.el :comments no :noweb-ref nil
+#+begin_src emacs-lisp :tangle lisp/ceamx-simple.el :comments no
 ;;; ceamx-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Chris Montgomery

@@ -153,6 +153,49 @@ DOC is as in `devdocs-install'."
 
 (setopt eldoc-documentation-function #'eldoc-documentation-compose)
 
+;; Linting files with the builtin ~flymake~ feature
+
+
+(setup flymake
+  (:hook-into ceamx-after-init-hook)
+  ;; Mirror the [C-c !] Flycheck prefix.
+  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
+         "C-c ! n" #'flymake-goto-next-error
+         "C-c ! p" #'flymake-goto-previous-error
+         "C-c ! c" #'flymake-show-buffer-diagnostics)
+  (:when-loaded
+    (setopt flymake-fringe-indicator-position 'right-fringe)
+    (setopt flymake-no-changes-timeout 1.0)
+    (setopt flymake-wrap-around t)))
+
+;; Linting files with the ~flycheck~ package :lint:
+
+
+(package! flycheck
+  (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
+
+(package! consult-flycheck
+  (keymap-global-set "M-g f" #'consult-flycheck)
+
+  (after! (consult flycheck)
+    (require 'consult-flycheck)))
+
+(after! flycheck
+  (setopt flycheck-emacs-lisp-load-path 'inherit)
+  (setopt flycheck-idle-change-delay 3.0
+          flycheck-display-errors-delay 1.5)
+  (setopt flycheck-check-syntax-automatically
+          '(save idle-change mode-enabled))
+  (setopt flycheck-buffer-switch-check-intermediate-buffers nil)
+
+  ;; Disable Flycheck for modes supported by Flymake
+  (setq-default flycheck-disabled-checkers
+                (append (default-value 'flycheck-disabled-checkers)
+                        '(emacs-lisp
+                          emacs-lisp-checkdoc
+                          emacs-lisp-package
+                          sh-shellcheck))))
+
 ;; [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT :package:
 
 

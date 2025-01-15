@@ -397,32 +397,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   "wordpress"		"WordPress"
   "youtube"		"YouTube")
 
-;; DISABLED Allow abbrevs with a prefix colon, semicolon, or underscore
-
-;; Disabled to test interference with other completion-at-point behavior wired
-;; together through [[*Completion-At-Point Extensions (Cape)]].
-
-;; - Source :: <https://github.com/protesilaos/dotfiles/blob/8fc72724cd6debd12c8258bf64adf6822a0bc90c/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion.el#L215-L225>
-;; - Background :: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>
-
-;; Adapted from Prot's original version with the following changes:
-
-;; - Converted the duplicated regexp string into an ~rx~ form via the ~xr~ utility.
-;; - Abstracted the regexp to a variable ~ceamx-abbrev-prefix-regexp~ for reuse
-;;   across =abbrev-table= contexts.
-
-
-(defconst ceamx-abbrev-prefix-regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:_].*\\|.*\\)")
-
-(after! abbrev
-  (abbrev-table-put global-abbrev-table :regexp ceamx-abbrev-prefix-regexp)
-
-  (with-eval-after-load 'text-mode
-    (abbrev-table-put text-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp))
-
-  (with-eval-after-load 'org
-    (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
-
 ;; ~corfu~ :: [CO]mpletion in [R]egion [FU]nction
 
 ;; + Package :: <https://github.com/minad/corfu>

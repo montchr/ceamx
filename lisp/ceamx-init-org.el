@@ -303,38 +303,6 @@ Intended for use as a local hook function on
         (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
       (apply orig-fun args))))
 
-;; TODO Provide commands to archive DONE tasks
-
-;; | Author | Sacha Chua                                                                                 |
-;; | URL    | <https://pages.sachachua.com/.emacs.d/Sacha.html#quick-way-to-archive-all-done-from-inbox> |
-
-;; I don't think this is working properly...
-
-
-(require 'ceamx-paths)
-
-(defun ceamx/org-clean-up-inbox ()
-  "Archive all DONE tasks and sort the remainder by TODO order."
-  (interactive)
-  (with-current-buffer (find-file ceamx-default-capture-file)
-    (ceamx/org-archive-done-tasks 'file)
-    (goto-char (point-min))
-    (if (org-at-heading-p) (save-excursion (insert "\n")))
-    (org-sort-entries nil ?p)
-    (goto-char (point-min))
-    (org-sort-entries nil ?o)
-    (save-buffer)))
-
-(defun ceamx/org-archive-done-tasks (&optional scope)
-  "Archive finished or cancelled tasks.
-       SCOPE can be 'file or 'tree."
-  (interactive)
-  (org-map-entries
-   (lambda ()
-     (org-archive-subtree)
-     (setq org-map-continue-from (outline-previous-heading)))
-   "TODO=\"DONE\"|TODO=\"CANCELLED\"" (or scope (if (org-before-first-heading-p) 'file 'tree))))
-
 ;; ~org-download~: support dragging-and-dropping images into Org buffers :media:network:package:
 
 ;; <https://github.com/abo-abo/org-download>

@@ -618,11 +618,6 @@ The ORDER can be used to deduce the feature context."
 (require 'init-outline)
 (require 'ceamx-init-org)
 
-;;;; Linting
-
-(require 'init-flymake)
-(require 'init-flycheck)
-
 ;;;; Tree-Sitter
 
 (require 'init-treesitter)
@@ -633,9 +628,8 @@ The ORDER can be used to deduce the feature context."
 
 ;;;; Miscellaneous
 
-(require 'init-tools)
+(require 'ceamx-init-tools)
 
-(require 'init-term)
 (require 'init-news)
 (require 'init-eww)
 (require 'init-printing)

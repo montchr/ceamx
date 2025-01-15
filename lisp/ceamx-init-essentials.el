@@ -1,11 +1,4 @@
-;; Interactive buffer management with ~ibuffer~
-
-
-(use-feature! ibuffer
-  :config
-  (setopt ibuffer-movement-cycle t))
-
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; -*-
 
 ;; Baseline configurations
 
@@ -550,6 +543,13 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
   ;; Save file-visiting buffers according to the configured timers.
   (auto-save-visited-mode))
+
+;; Interactive buffer management with ~ibuffer~
+
+
+(use-feature! ibuffer
+  :config
+  (setopt ibuffer-movement-cycle t))
 
 ;; ~casual-suite~: transient-dispatch menus for complex modes
 
