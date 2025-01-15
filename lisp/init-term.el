@@ -26,27 +26,21 @@
 
 (require 'ceamx-lib)
 
-(use-feature! eshell
-  :config
+(after! eshell
   (setopt eshell-scroll-to-bottom-on-input 'this))
 
 ;;; ~eat~ :: <https://codeberg.org/akib/emacs-eat/>
 
 ;; "Emulate A Terminal"
 
-(use-package eat
-  :commands ( eat
-              eat-eshell-mode
-              eat-eshell-visual-command-mode)
-  :init
-  (add-hook 'eshell-load-hook #'eat-eshell-mode)
-  (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode)
+(package! eat
+  (after! eshell
+    (add-hook 'eshell-load-hook #'eat-eshell-mode)
+    (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
 
-  (use-feature! popper
-    :config
-    (defvar popper-reference-buffers)
+  (after! popper
     (setopt popper-reference-buffers
-      (append popper-reference-buffers '("\\*eat\\*")))))
+            (append popper-reference-buffers '("\\*eat\\*")))))
 
 (provide 'init-term)
 ;;; init-term.el ends here

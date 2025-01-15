@@ -126,6 +126,10 @@
   "Whether the current host system is GNU/Linux."
   (eq system-type 'gnu/linux))
 
+(defun ceamx-host-nixos-p ()
+  "Whether the operating system is NixOS."
+  (string-match-p "NixOS" (shell-command-to-string "uname -v")))
+
 (defun ceamx-host-wsl-p ()
   "Whether Emacs is currently running in WSL."
   (and (eq system-type 'gnu/linux)
@@ -139,6 +143,13 @@
     (when (use-region-p)
       (let ((text (buffer-substring-no-properties start end)))
         (shell-command (concat "echo '" text "' | clip.exe"))))))
+
+;;;;; Emacs
+
+(defun ceamx-emacs-nix-build-date ()
+  "Return the Nix build date for this version of Emacs."
+  (string-match "--prefix.*emacs.*\\([[:digit:]]\\{8\\}\\)" system-configuration-options)
+  (string-to-number (match-string 1 system-configuration-options)))
 
 ;;;;; Filesystem
 

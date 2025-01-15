@@ -100,6 +100,7 @@ Emacs version to prevent bytecode incompatibility.")
    (or (getenv "XDG_PROJECTS_DIR")
        (concat ceamx-home-dir "Developer")))
   "The root directory for projects.")
+
 (defconst ceamx-templates-dir
   (file-name-as-directory (file-name-concat user-emacs-directory "templates"))
   "Directory for user-defined expandable templates.

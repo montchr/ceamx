@@ -1,3 +1,10 @@
+;; Interactive buffer management with ~ibuffer~
+
+
+(use-feature! ibuffer
+  :config
+  (setopt ibuffer-movement-cycle t))
+
 ;; -*- lexical-binding: t -*-
 
 ;; Baseline configurations

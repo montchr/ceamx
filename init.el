@@ -128,6 +128,19 @@
 
 
 
+;; Elpaca needs to know about the Nix build date of the current version
+;; of Emacs to set ~elpaca-core-date~ correctly.  [[https://github.com/progfolio/elpaca/wiki/Usage-with-Nix#retrieving-the-date-via-file-name][From the wiki]]:
+
+
+(require 'ceamx-lib)
+
+;; TODO: this should probably take effect for *any* Nix-built Emacs
+;; package, not just on NixOS
+(when (ceamx-host-nixos-p)
+  (setq elpaca-core-date (list (ceamx-emacs-nix-build-date))))
+
+
+
 ;; The installation code only needs to be changed when the Elpaca warns
 ;; about an installer version mismatch.
 
@@ -355,6 +368,11 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (elpaca-wait)
 
+
+
+;; Add Elpaca support to =setup.el=:
+
+
 (defun +setup-wrap-to-install-elpaca-package (body _name)
   "Wrap BODY in an `elpaca' block when `:ensure' is provided."
   (if (assq 'ensure setup-attributes)
@@ -379,6 +397,37 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
   :documentation "Install ORDER with the `elpaca' package manager.
 The ORDER can be used to deduce the feature context."
   :shorthand #'cadr)
+
+
+
+;; Add the =:autoload= contextual macro:
+
+
+;; <https://www.emacswiki.org/emacs/SetupEl#h5o-7>
+(setup-define :autoload
+  (lambda (func)
+    (let ((fn (if (memq (car-safe func) '(quote function))
+                  (cadr func)
+                func)))
+      `(unless (fboundp (quote ,fn))
+         (autoload (function ,fn) ,(symbol-name (setup-get 'feature)) nil t))))
+  :documentation "Autoload COMMAND if not already bound."
+  :debug '(form)
+  :repeatable t
+  :signature '(FUNC ...))
+
+
+
+;; Add the =:load-after= contextual macro:
+
+
+(setup-define :load-after
+    (lambda (&rest features)
+      (let ((body `(require ',(setup-get 'feature))))
+        (dolist (feature (nreverse features))
+          (setq body `(with-eval-after-load ',feature ,body)))
+        body))
+    :documentation "Load the current feature after FEATURES.")
 
 ;; ~gcmh~: manage running garbage collection on idle :package:perf:
 
@@ -598,31 +647,36 @@ The ORDER can be used to deduce the feature context."
 ;; + [ ] Adds noticeable lag to startup
 
 
-(setopt hippie-expand-verbose t
-        hippie-expand-dabbrev-skip-space t)
+(after! hippie-exp
+  ;; (defer! 5
+  ;;   (require 'hippie-exp))
 
-(setopt hippie-expand-try-functions-list
-        '(try-complete-file-name-partially
-          try-complete-file-name
+  (setopt hippie-expand-verbose t
+          hippie-expand-dabbrev-skip-space t)
 
-          ;; Remove `try-expand-all-abbrevs' to disable automatic abbrev expansion.
-          try-expand-all-abbrevs
+  (setopt hippie-expand-try-functions-list
+          '(try-complete-file-name-partially
+            try-complete-file-name
 
-          try-expand-list
+            ;; Remove `try-expand-all-abbrevs' to disable automatic
+            ;; abbrev expansion.
+            try-expand-all-abbrevs
 
-          ;; TODO: enable for shell modes only?
-          ;; try-expand-line
+            try-expand-list
 
-          try-expand-dabbrev            ; see: `dabbrev-expand'
-          try-expand-dabbrev-all-buffers
-          ;; try-expand-dabbrev-from-kill
+            ;; TODO: enable for shell modes only?
+            ;; try-expand-line
 
-          ;; Redundant with `completion-at-point'... *except* in the literate
-          ;; config file, where elisp symbols won't normally be available.
-          ;; TODO: enable for config.org
-          ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
-          ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
-          ))
+            try-expand-dabbrev          ; see: `dabbrev-expand'
+            try-expand-dabbrev-all-buffers
+            ;; try-expand-dabbrev-from-kill
+
+            ;; Redundant with `completion-at-point'... *except* in the literate
+            ;; config file, where elisp symbols won't normally be available.
+            ;; TODO: enable for config.org
+            ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
+            ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
+            )))
 
 ;; =init.el=: Keybindings
 ;; :PROPERTIES:

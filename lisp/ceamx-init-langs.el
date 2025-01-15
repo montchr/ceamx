@@ -414,13 +414,6 @@ non-nil, buffers will never be formatted upon save."
 (dolist (sym '(add-function add-to-list advice-add plist-put))
   (put sym 'lisp-indent-function 2))
 
-;; Prevent ~calculate-lisp-indent~ from indenting quoted lists as functions
-
-;; [[https://emacs.stackexchange.com/a/52789/40956][indentation - How to indent keywords aligned? - Emacs Stack Exchange]]
-
-
-(advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent)
-
 ;; ~lispy~: the structural expression editing experience
 
 ;; - Website :: [[https://github.com/abo-abo/lispy][GitHub - abo-abo/lispy: Short and sweet LISP editing]]

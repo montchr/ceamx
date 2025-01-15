@@ -1,3 +1,50 @@
+;; ~activites~: workspace by activity :package:tabs:
+
+;; - Website :: <https://github.com/alphapapa/activities.el>
+
+
+(require 'ceamx-lib)
+
+(package! activities
+  (activities-mode)
+
+  (when tab-bar-mode
+    (activities-tabs-mode)))
+
+;; Activities.el Keybindings :keybinds:
+
+
+(defun ceamx-after-init-define-activities-keys-h ()
+  "Define keybindings for `activities' late to override `edebug'.
+Intended for use as a hook on `ceamx-after-init-hook'."
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+
+  ;; (keymap-global-unset "C-x C-a" t)
+  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
+
+  ;; TODO: still shares bindings with edebug which is confusing
+  (define-keymap :keymap (current-global-map)
+    "C-x C-a C-n" #'activities-new
+    "C-x C-a C-d" #'activities-define
+    "C-x C-a C-a" #'activities-resume
+    "C-x C-a C-s" #'activities-suspend
+    "C-x C-a C-k" #'activities-kill
+    "C-x C-a RET" #'activities-switch
+
+    "C-x C-a b" #'activities-switch-buffer
+    "C-x C-a g" #'activities-revert
+    "C-x C-a l" #'activities-list))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
+
+;; ~breadcrumb~ :: header-line wayfinding
+
+;; - Package :: <https://github.com/joaotavora/breadcrumb>
+
+
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+
 ;;; ceamx-init-window.el --- Window & buffer management customizations  -*- lexical-binding: t;  -*-
 
 ;; Copyright (c) 2022-2024  Chris Montgomery <chmont@protonmail.com>

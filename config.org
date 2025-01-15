@@ -1053,6 +1053,12 @@ Emacs version to prevent bytecode incompatibility.")
 
 ;;; Feature-Specific Paths
 
+(defconst ceamx-projects-dir
+  (file-name-as-directory
+   (or (getenv "XDG_PROJECTS_DIR")
+       (concat ceamx-home-dir "Developer")))
+  "The root directory for projects.")
+
 <<config-feature-paths>>
 
 (provide 'ceamx-paths)
@@ -1200,6 +1206,10 @@ Emacs version to prevent bytecode incompatibility.")
   "Whether the current host system is GNU/Linux."
   (eq system-type 'gnu/linux))
 
+(defun ceamx-host-nixos-p ()
+  "Whether the operating system is NixOS."
+  (string-match-p "NixOS" (shell-command-to-string "uname -v")))
+
 (defun ceamx-host-wsl-p ()
   "Whether Emacs is currently running in WSL."
   (and (eq system-type 'gnu/linux)
@@ -1213,6 +1223,13 @@ Emacs version to prevent bytecode incompatibility.")
     (when (use-region-p)
       (let ((text (buffer-substring-no-properties start end)))
         (shell-command (concat "echo '" text "' | clip.exe"))))))
+
+;;;;; Emacs
+
+(defun ceamx-emacs-nix-build-date ()
+  "Return the Nix build date for this version of Emacs."
+  (string-match "--prefix.*emacs.*\\([[:digit:]]\\{8\\}\\)" system-configuration-options)
+  (string-to-number (match-string 1 system-configuration-options)))
 
 ;;;;; Filesystem
 
@@ -1688,6 +1705,18 @@ Previously, I have used =package.el= or Nixpkgs to manage packages.  See the
 (defvar elpaca-queue-limit 10)
 #+end_src
 
+Elpaca needs to know about the Nix build date of the current version
+of Emacs to set ~elpaca-core-date~ correctly.  [[https://github.com/progfolio/elpaca/wiki/Usage-with-Nix#retrieving-the-date-via-file-name][From the wiki]]:
+
+#+begin_src emacs-lisp
+(require 'ceamx-lib)
+
+;; TODO: this should probably take effect for *any* Nix-built Emacs
+;; package, not just on NixOS
+(when (ceamx-host-nixos-p)
+  (setq elpaca-core-date (list (ceamx-emacs-nix-build-date))))
+#+end_src
+
 The installation code only needs to be changed when the Elpaca warns
 about an installer version mismatch.
 
@@ -2033,7 +2062,11 @@ Reason:
   (require 'setup))
 
 (elpaca-wait)
+#+end_src
 
+Add Elpaca support to =setup.el=:
+
+#+begin_src emacs-lisp
 (defun +setup-wrap-to-install-elpaca-package (body _name)
   "Wrap BODY in an `elpaca' block when `:ensure' is provided."
   (if (assq 'ensure setup-attributes)
@@ -2058,6 +2091,35 @@ Reason:
   :documentation "Install ORDER with the `elpaca' package manager.
 The ORDER can be used to deduce the feature context."
   :shorthand #'cadr)
+#+end_src
+
+Add the =:autoload= contextual macro:
+
+#+begin_src emacs-lisp
+;; <https://www.emacswiki.org/emacs/SetupEl#h5o-7>
+(setup-define :autoload
+  (lambda (func)
+    (let ((fn (if (memq (car-safe func) '(quote function))
+                  (cadr func)
+                func)))
+      `(unless (fboundp (quote ,fn))
+         (autoload (function ,fn) ,(symbol-name (setup-get 'feature)) nil t))))
+  :documentation "Autoload COMMAND if not already bound."
+  :debug '(form)
+  :repeatable t
+  :signature '(FUNC ...))
+#+end_src
+
+Add the =:load-after= contextual macro:
+
+#+begin_src emacs-lisp
+(setup-define :load-after
+    (lambda (&rest features)
+      (let ((body `(require ',(setup-get 'feature))))
+        (dolist (feature (nreverse features))
+          (setq body `(with-eval-after-load ',feature ,body)))
+        body))
+    :documentation "Load the current feature after FEATURES.")
 #+end_src
 
 ** ~gcmh~: manage running garbage collection on idle :package:perf:
@@ -2140,6 +2202,7 @@ expect the value you arrive at to be as high as 100 MiB.
   (after! transient
     (keymap-set transient-map "<escape>" #'transient-quit-one)))
 #+end_src
+
 
 * =init.el=: Environment
 :PROPERTIES:
@@ -2987,6 +3050,14 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-essentials.el
 :END:
+
+** Interactive buffer management with ~ibuffer~
+
+#+begin_src emacs-lisp
+(use-feature! ibuffer
+  :config
+  (setopt ibuffer-movement-cycle t))
+#+end_src
 
 ** File Header & Requirements
 
@@ -4738,6 +4809,130 @@ Define Embark actions for acting on tabs:
 :header-args: :tangle lisp/ceamx-init-window.el
 :END:
 
+** ~activites~: workspace by activity :package:tabs:
+
+- Website :: <https://github.com/alphapapa/activities.el>
+
+#+begin_src emacs-lisp
+(require 'ceamx-lib)
+
+(package! activities
+  (activities-mode)
+
+  (when tab-bar-mode
+    (activities-tabs-mode)))
+#+end_src
+
+*** Activities.el Keybindings :keybinds:
+
+#+begin_src emacs-lisp
+(defun ceamx-after-init-define-activities-keys-h ()
+  "Define keybindings for `activities' late to override `edebug'.
+Intended for use as a hook on `ceamx-after-init-hook'."
+  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
+
+  ;; (keymap-global-unset "C-x C-a" t)
+  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
+
+  ;; TODO: still shares bindings with edebug which is confusing
+  (define-keymap :keymap (current-global-map)
+    "C-x C-a C-n" #'activities-new
+    "C-x C-a C-d" #'activities-define
+    "C-x C-a C-a" #'activities-resume
+    "C-x C-a C-s" #'activities-suspend
+    "C-x C-a C-k" #'activities-kill
+    "C-x C-a RET" #'activities-switch
+
+    "C-x C-a b" #'activities-switch-buffer
+    "C-x C-a g" #'activities-revert
+    "C-x C-a l" #'activities-list))
+
+(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
+#+end_src
+
+** DISABLED Beframe :package:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+#+begin_src emacs-lisp
+(package! beframe
+  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
+
+  (beframe-mode 1))
+#+end_src
+
+*** Provide Consult integration :consult:
+
+- source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
+
+#+begin_src emacs-lisp
+(defface +beframe-buffer
+  '((t :inherit font-lock-string-face))
+  "Face for `consult' framed buffers.")
+
+(defun +beframe-buffer-names-sorted (&optional frame)
+  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+With optional argument FRAME, return the list of buffers of FRAME."
+  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+
+(after! (beframe consult)
+  (declare-function consult--buffer-state "consult")
+
+  (defvar +beframe-consult-source
+    `(:name "Frame-specific buffers (current frame)"
+      :narrow ?F
+      :category buffer
+      :face +beframe-buffer
+      :history beframe-history
+      :items ,#'+beframe-buffer-names-sorted
+      :action ,#'switch-to-buffer
+      :state ,#'consult--buffer-state))
+
+  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
+#+end_src
+
+*** Provide ~ibuffer~ integration :ibuffer:
+
+- source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
+
+#+begin_src emacs-lisp
+(defun +beframe-buffer-in-frame-p (buf frame)
+  "Return non-nil if BUF is in FRAME."
+  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
+
+(defun +beframe-frame-name-list ()
+  "Return list with frame names."
+  (mapcar #'car (make-frame-names-alist)))
+
+(defun +beframe-generate-ibuffer-filter-groups ()
+  "Create a set of ibuffer filter groups based on the Frame of buffers."
+  (mapcar
+   (lambda (frame)
+     (list (format "%s" frame)
+           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
+   (+beframe-frame-name-list)))
+
+(after! (beframe ibuffer)
+  (setq ibuffer-saved-filter-groups
+        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
+
+  (define-ibuffer-filter frame
+      "Limit current view to buffers in frames."
+    (:description "frame")
+    (memq buf (beframe-buffer-list))))
+#+end_src
+
+** ~breadcrumb~ :: header-line wayfinding
+
+- Package :: <https://github.com/joaotavora/breadcrumb>
+
+#+begin_src emacs-lisp
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+#+end_src
+
+
 ** The file header for =lisp/ceamx-init-window.el=
 :PROPERTIES:
 :VISIBILITY: folded
@@ -5131,153 +5326,6 @@ Action alist entries are:
 #+end_src
 
 
-* Workspace :: =workspace= :workspace:
-:PROPERTIES:
-:header-args: :noweb-ref init-workspace
-:END:
-
-** Requirements
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-#+end_src
-
-#+begin_src emacs-lisp
-(defvar edebug-inhibit-emacs-lisp-mode-bindings)
-#+end_src
-
-** Interactive buffer management with ~ibuffer~
-
-#+begin_src emacs-lisp
-(use-feature! ibuffer
-  :config
-  (setopt ibuffer-movement-cycle t))
-#+end_src
-
-** DISABLED Beframe :package:
-:PROPERTIES:
-:header-args: :noweb-ref nil
-:END:
-
-#+begin_src emacs-lisp
-(package! beframe
-  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
-
-  (beframe-mode 1))
-#+end_src
-
-*** Provide Consult integration :consult:
-
-- source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
-
-#+begin_src emacs-lisp
-(defface +beframe-buffer
-  '((t :inherit font-lock-string-face))
-  "Face for `consult' framed buffers.")
-
-(defun +beframe-buffer-names-sorted (&optional frame)
-  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
-With optional argument FRAME, return the list of buffers of FRAME."
-  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
-
-(after! (beframe consult)
-  (declare-function consult--buffer-state "consult")
-
-  (defvar +beframe-consult-source
-    `(:name "Frame-specific buffers (current frame)"
-      :narrow ?F
-      :category buffer
-      :face +beframe-buffer
-      :history beframe-history
-      :items ,#'+beframe-buffer-names-sorted
-      :action ,#'switch-to-buffer
-      :state ,#'consult--buffer-state))
-
-  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
-#+end_src
-
-*** Provide ~ibuffer~ integration :ibuffer:
-
-- source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
-
-#+begin_src emacs-lisp
-(defun +beframe-buffer-in-frame-p (buf frame)
-  "Return non-nil if BUF is in FRAME."
-  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
-
-(defun +beframe-frame-name-list ()
-  "Return list with frame names."
-  (mapcar #'car (make-frame-names-alist)))
-
-(defun +beframe-generate-ibuffer-filter-groups ()
-  "Create a set of ibuffer filter groups based on the Frame of buffers."
-  (mapcar
-   (lambda (frame)
-     (list (format "%s" frame)
-           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
-   (+beframe-frame-name-list)))
-
-(after! (beframe ibuffer)
-  (setq ibuffer-saved-filter-groups
-        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
-
-  (define-ibuffer-filter frame
-      "Limit current view to buffers in frames."
-    (:description "frame")
-    (memq buf (beframe-buffer-list))))
-#+end_src
-
-** ~activites~: workspace by activity :package:tabs:
-
-- Website :: <https://github.com/alphapapa/activities.el>
-
-#+begin_src emacs-lisp
-(require 'ceamx-lib)
-
-(package! activities
-  (activities-mode)
-
-  (when tab-bar-mode
-    (activities-tabs-mode)))
-#+end_src
-
-*** Activities.el Keybindings :keybinds:
-
-#+begin_src emacs-lisp
-(defun ceamx-after-init-define-activities-keys-h ()
-  "Define keybindings for `activities' late to override `edebug'.
-Intended for use as a hook on `ceamx-after-init-hook'."
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-
-  ;; (keymap-global-unset "C-x C-a" t)
-  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
-
-  ;; TODO: still shares bindings with edebug which is confusing
-  (define-keymap :keymap (current-global-map)
-    "C-x C-a C-n" #'activities-new
-    "C-x C-a C-d" #'activities-define
-    "C-x C-a C-a" #'activities-resume
-    "C-x C-a C-s" #'activities-suspend
-    "C-x C-a C-k" #'activities-kill
-    "C-x C-a RET" #'activities-switch
-
-    "C-x C-a b" #'activities-switch-buffer
-    "C-x C-a g" #'activities-revert
-    "C-x C-a l" #'activities-list))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
-#+end_src
-
-** ~breadcrumb~: header-line wayfinding
-
-- Website :: <https://github.com/joaotavora/breadcrumb>
-
-#+begin_src emacs-lisp
-(package! breadcrumb
-  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
-#+end_src
-
-
 * Terminal Emulation :: =term=
 
 #+begin_src emacs-lisp :tangle lisp/init-term.el :comments no
@@ -5308,35 +5356,35 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 ;;; Code:
 
 (require 'ceamx-lib)
+#+end_src
 
-(use-feature! eshell
-  :config
+#+begin_src emacs-lisp :tangle lisp/init-term.el :comments no
+(after! eshell
   (setopt eshell-scroll-to-bottom-on-input 'this))
+#+end_src
 
+#+begin_src emacs-lisp :tangle lisp/init-term.el :comments no
 ;;; ~eat~ :: <https://codeberg.org/akib/emacs-eat/>
 
 ;; "Emulate A Terminal"
 
-(use-package eat
-  :commands ( eat
-              eat-eshell-mode
-              eat-eshell-visual-command-mode)
-  :init
-  (add-hook 'eshell-load-hook #'eat-eshell-mode)
-  (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode)
+(package! eat
+  (after! eshell
+    (add-hook 'eshell-load-hook #'eat-eshell-mode)
+    (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
 
-  (use-feature! popper
-    :config
-    (defvar popper-reference-buffers)
+  (after! popper
     (setopt popper-reference-buffers
-      (append popper-reference-buffers '("\\*eat\\*")))))
+            (append popper-reference-buffers '("\\*eat\\*")))))
+#+end_src
 
+#+begin_src emacs-lisp :tangle lisp/init-term.el :comments no
 (provide 'init-term)
 ;;; init-term.el ends here
 #+end_src
 
 
-* =ceamx-init-vcs= :: Version Control (Git) :vcs:git:
+* ~ceamx-init-vcs~ :: Version Control (Git) :vcs:git:
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle lisp/ceamx-init-vcs.el
 :END:
@@ -5372,14 +5420,35 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 (require 'ceamx-lib)
 #+end_src
 
-** Keep the ~ediff~ control panel in the same frame
+** Set up ~ediff~
 
 #+begin_src emacs-lisp
-;; TODO: is this really a customizable variable?  source file unknown
-(setopt ediff-window-setup-function #'ediff-setup-windows-plain)
+(setup ediff
+  (:autoload #'ediff-buffers
+             #'ediff-files
+             #'ediff-buffers3
+             #'ediff-files3)
+  (setopt ediff-keep-variants nil
+          ediff-make-buffers-readonly-at-startup nil
+          ediff-merge-revisions-with-ancestor t
+          ediff-show-clashes-only t
+          ;; Keep the ~ediff~ control panel in the same frame.
+          ediff-window-setup-function #'ediff-setup-windows-plain))
 #+end_src
 
-** Configure the builtin ~vc-mode~ support
+** Set up ~diff-mode~
+
+#+begin_src emacs-lisp
+(setup diff-mode
+  (setopt diff-default-read-only t)
+  (setopt diff-advance-after-apply-hunk t)
+  (setopt diff-update-on-the-fly t)
+  (setopt diff-refine 'font-lock)
+  (setopt diff-font-lock-prettify t
+          diff-font-lock-syntax 'hunk-also))
+#+end_src
+
+** Set up version control integration with ~vc-mode~
 
 #+begin_src emacs-lisp
 ;; Version control support is essential as soon as possible.
@@ -5394,6 +5463,17 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 ;; has disappeared with no archived page available.  So I have not
 ;; verified this for certain.
 (setopt vc-git-diff-switches '("--histogram"))
+#+end_src
+
+** Set up project management with =project.el=
+
+#+begin_src emacs-lisp
+(setup project
+  (:global "C-x p ." #'project-dired
+           "C-x p RET" #'project-dired
+           "C-x p DEL" #'project-forget-project)
+  (setopt project-vc-extra-root-markers '(".project"))
+  (setopt project-key-prompt-style t))
 #+end_src
 
 ** ~diff-hl~: Display version control status indicators in margins
@@ -5552,6 +5632,19 @@ insight into long-running =post-receive= hooks (and similar).
 
 e.g. "M-4" should not expand this section -- it should only be expanded manually
 
+** ~magit-repos~
+
+#+begin_src emacs-lisp
+(setup magit-repos
+  ;; FIXME: Make sure feature is available
+  ;;  (:load-after magit)
+  (:autoload #'magit-list-repositories)
+  (setopt magit-repository-directories
+          `((,(file-name-concat ceamx-projects-dir "work") . 2)
+            (,(file-name-concat ceamx-projects-dir "sources") . 1)
+            (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
+#+end_src
+
 ** DISABLED ~forge~ :: interact with online source code forges through Magit
 
 *Warning*: /development versions of ~forge~ may expect a different ~magit~
@@ -5617,17 +5710,6 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-vcs.el :comments no
 (provide 'ceamx-init-vcs)
 ;;; ceamx-init-vcs.el ends here
-#+end_src
-
-
-* Projects :: =project= :projects:
-
-#+begin_src emacs-lisp :noweb-ref config-feature-paths
-(defconst ceamx-projects-dir
-  (file-name-as-directory
-   (or (getenv "XDG_PROJECTS_DIR")
-       (concat ceamx-home-dir "Developer")))
-  "The root directory for projects.")
 #+end_src
 
 
@@ -6661,12 +6743,13 @@ Even if GNU Emacs defaults sometimes do things differently.
   (put sym 'lisp-indent-function 2))
 #+end_src
 
-***** Prevent ~calculate-lisp-indent~ from indenting quoted lists as functions
+***** DISABLED Prevent ~calculate-lisp-indent~ from indenting quoted lists as functions
 
 [[https://emacs.stackexchange.com/a/52789/40956][indentation - How to indent keywords aligned? - Emacs Stack Exchange]]
 
-#+begin_src emacs-lisp
-(advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent)
+#+begin_src emacs-lisp :tangle no
+;; (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent)
+;; (advice-remove 'calculate-lisp-indent #'ceamx-calculate-lisp-indent)
 #+end_src
 
 **** ~lispy~: the structural expression editing experience
@@ -9831,31 +9914,36 @@ Or, perhaps more accurately: stuff that needs a better home.
 + [ ] Adds noticeable lag to startup
 
 #+begin_src emacs-lisp
-(setopt hippie-expand-verbose t
-        hippie-expand-dabbrev-skip-space t)
+(after! hippie-exp
+  ;; (defer! 5
+  ;;   (require 'hippie-exp))
 
-(setopt hippie-expand-try-functions-list
-        '(try-complete-file-name-partially
-          try-complete-file-name
+  (setopt hippie-expand-verbose t
+          hippie-expand-dabbrev-skip-space t)
 
-          ;; Remove `try-expand-all-abbrevs' to disable automatic abbrev expansion.
-          try-expand-all-abbrevs
+  (setopt hippie-expand-try-functions-list
+          '(try-complete-file-name-partially
+            try-complete-file-name
 
-          try-expand-list
+            ;; Remove `try-expand-all-abbrevs' to disable automatic
+            ;; abbrev expansion.
+            try-expand-all-abbrevs
 
-          ;; TODO: enable for shell modes only?
-          ;; try-expand-line
+            try-expand-list
 
-          try-expand-dabbrev            ; see: `dabbrev-expand'
-          try-expand-dabbrev-all-buffers
-          ;; try-expand-dabbrev-from-kill
+            ;; TODO: enable for shell modes only?
+            ;; try-expand-line
 
-          ;; Redundant with `completion-at-point'... *except* in the literate
-          ;; config file, where elisp symbols won't normally be available.
-          ;; TODO: enable for config.org
-          ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
-          ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
-          ))
+            try-expand-dabbrev          ; see: `dabbrev-expand'
+            try-expand-dabbrev-all-buffers
+            ;; try-expand-dabbrev-from-kill
+
+            ;; Redundant with `completion-at-point'... *except* in the literate
+            ;; config file, where elisp symbols won't normally be available.
+            ;; TODO: enable for config.org
+            ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
+            ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
+            )))
 #+end_src
 
 

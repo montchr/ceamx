@@ -25,8 +25,25 @@
 (require 'ceamx-paths)
 (require 'ceamx-lib)
 
-;; TODO: is this really a customizable variable?  source file unknown
-(setopt ediff-window-setup-function #'ediff-setup-windows-plain)
+(setup ediff
+  (:autoload #'ediff-buffers
+             #'ediff-files
+             #'ediff-buffers3
+             #'ediff-files3)
+  (setopt ediff-keep-variants nil
+          ediff-make-buffers-readonly-at-startup nil
+          ediff-merge-revisions-with-ancestor t
+          ediff-show-clashes-only t
+          ;; Keep the ~ediff~ control panel in the same frame.
+          ediff-window-setup-function #'ediff-setup-windows-plain))
+
+(setup diff-mode
+  (setopt diff-default-read-only t)
+  (setopt diff-advance-after-apply-hunk t)
+  (setopt diff-update-on-the-fly t)
+  (setopt diff-refine 'font-lock)
+  (setopt diff-font-lock-prettify t
+          diff-font-lock-syntax 'hunk-also))
 
 ;; Version control support is essential as soon as possible.
 (require 'vc)
@@ -40,6 +57,13 @@
 ;; has disappeared with no archived page available.  So I have not
 ;; verified this for certain.
 (setopt vc-git-diff-switches '("--histogram"))
+
+(setup project
+  (:global "C-x p ." #'project-dired
+           "C-x p RET" #'project-dired
+           "C-x p DEL" #'project-forget-project)
+  (setopt project-vc-extra-root-markers '(".project"))
+  (setopt project-key-prompt-style t))
 
 (package! diff-hl
   (add-hook 'ceamx-after-init-hook #'global-diff-hl-mode)
@@ -148,6 +172,15 @@
   (after! magit
     (require 'magit-todos)
     (magit-todos-mode 1)))
+
+(setup magit-repos
+  ;; FIXME: Make sure feature is available
+  ;;  (:load-after magit)
+  (:autoload #'magit-list-repositories)
+  (setopt magit-repository-directories
+          `((,(file-name-concat ceamx-projects-dir "work") . 2)
+            (,(file-name-concat ceamx-projects-dir "sources") . 1)
+            (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
 
 ;; (package! (forge :tag "v0.4.6"))
 
