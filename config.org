@@ -2299,7 +2299,7 @@ graphical frames.
 #+end_src
 
 
-* =init.el=: Appearance
+* ~ceamx-init-ui~ :: User Interface & Appearance
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-ui.el
 :END:
@@ -4228,7 +4228,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
       '(embark-keybinding (styles basic substring))))
 #+end_src
 
-** ~vertico~ :: VERT(ical )I(nteractive )CO(mpletion) :minibuffer:
+** ~vertico~ :: [VERT]ical [I]nteractive [CO]mpletion :minibuffer:
 
 + Package :: <https://github.com/minad/vertico>
 
@@ -4291,7 +4291,7 @@ Fine-tune Vertico appearance per-command or per-category with
   (marginalia-mode))
 #+end_src
 
-** ~consult~ :: CONSULT(ing ~completing-read~) :minibuffer:
+** ~consult~ :: [CONSULT]ing ~completing-read~ :minibuffer:
 
 - website :: <https://github.com/minad/consult>
 - ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
@@ -4524,7 +4524,7 @@ Adapted from Prot's original version with the following changes:
     (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
 #+end_src
 
-** ~corfu~ :: CO(mpletion in )R(egion )FU(nction)
+** ~corfu~ :: [CO]mpletion in [R]egion [FU]nction
 
 + Package :: <https://github.com/minad/corfu>
 + Reference :: <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
@@ -4641,7 +4641,7 @@ otherwise the icon size will likely not be accurate.
     (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
 #+end_src
 
-** ~cape~ :: C(ompletion-)A(t-)P(oint )E(xtensions)
+** ~cape~ :: [C]ompletion-[A]t-[P]oint [E]xtensions
 ** Add command to export completion candidates to a writable buffer
 
 #+begin_src emacs-lisp
@@ -4651,64 +4651,35 @@ otherwise the icon size will likely not be accurate.
   :init
   (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
 #+end_src
+** ~embark~ :: [E]macs [M]ini-[B]uffer [A]ctions [R]ooted in [K]eymaps
 
-** Provide feature ~ceamx-init-completion~
-
-#+begin_src emacs-lisp
-(provide 'ceamx-init-completion)
-;;; ceamx-init-completion.el ends here
-#+end_src
-
-
-* Actions :: =embark= :actions:embark:
-
-#+begin_quote
-Emacs Mini-Buffer Actions Rooted in Keymaps
-#+end_quote
-
-<https://github.com/oantolin/embark>
-
-
-** Customizations
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle lisp/init-embark.el
-:END:
-
-
-#+begin_src emacs-lisp :tangle lisp/init-embark.el :comments no
-;;; init-embark.el --- Configuration for Embark  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-
-;;; Code:
-#+end_src
-
-*** Install and pre-configure the Embark package
+- Package :: <https://github.com/oantolin/embark>
 
 #+begin_src emacs-lisp
-(require 'ceamx-lib)
-
 (package! embark
-  (require 'embark)
+  ;; Embark is a heavy package.  Load in the background to avoid
+  ;; delays upon invoking autoloaded commands.
+  (defer! 3
+    (require 'embark))
 
+  ;; NOTE: This key might be bound to emoji input in GNOME Desktop.
+  ;; However, I have not encountered a conflict on GNOME, so I must be
+  ;; doing something conveniently correct in my GNOME configurations.
+  ;; FWIW, I have enabled the Emacs-style keybindings there.
+  (keymap-global-set "C-." #'embark-act)
+
+  ;; The result of calling `embark-dwim' on a symbol still ends up
+  ;; calling `xref-find-definitions' as the default do-what-i-mean
+  ;; action.
+  (keymap-global-set "M-." #'embark-dwim) ; orig. `xref-find-definitions'
+
+  (keymap-global-set "C-h b" #'embark-bindings) ; orig: `describe-bindings'
+  (keymap-global-set "C-h B" #'describe-bindings)
+
+  (unless (bound-and-true-p which-key-mode)
+    (setopt prefix-help-command #'embark-prefix-help-command)))
+
+(after! embark
   (setopt embark-indicators '(;; embark--vertico-indicator
                               ;; embark-mixed-indicator
                               embark-minimal-indicator
@@ -4720,47 +4691,22 @@ Emacs Mini-Buffer Actions Rooted in Keymaps
   ;; with a "C-u" prefix argument.
   ;; For finer control, e.g.: `((kill-buffer . t) (t . nil))'
   ;; This only affects the behavior of `embark-act' inside the minibuffer.
-  (setopt embark-quit-after-action nil))
+  (setopt embark-quit-after-action nil)
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+      '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+        nil
+        (window-parameters (mode-line-format . none)))))
 
 (after! vertico
   (add-to-list 'vertico-multiform-categories '(embark-keybinding grid)))
-#+end_src
 
-*** DISABLED Use Embark's completion UI for displaying available key help
-
-#+begin_src emacs-lisp :tangle no
-(setopt prefix-help-command #'embark-prefix-help-command)
-#+end_src
-
-*** Install ~embark-consult~ for Embark integration :package:consult:
-
-Embark will load the library automatically after Consult.
-
-#+begin_src emacs-lisp
 (package! embark-consult
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 #+end_src
 
-*** Keybindings :keybinds:
-
-#+begin_src emacs-lisp
-;; NOTE: This key may be the default in GNOME Desktop for emoji input.  However,
-;; I have not encountered a conflict on GNOME, so I must be doing something
-;; conveniently correct in my GNOME configurations.  FWIW, I have enabled the
-;; Emacs-style keybindings there.
-(keymap-global-set "C-." #'embark-act)
-
-;; NOTE: While this overrides the default binding for `xref-find-definitions',
-;; the result of calling `embark-dwim' on a symbol still ends up calling
-;; `xref-find-definitions' as the default "dwim" action.
-(keymap-global-set "M-." #'embark-dwim)
-
-(keymap-global-set "C-h b" #'embark-bindings) ; orig: `describe-bindings'
-;; TODO: make sure this doesn't override something, and if it does, note it
-;; (keymap-global-set "C-h B" #'describe-bindings)
-#+end_src
-
-**** Define actions for acting on tabs :tabs:
+Define Embark actions for acting on tabs:
 
 #+begin_src emacs-lisp
 (after! embark
@@ -4779,22 +4725,11 @@ Embark will load the library automatically after Consult.
                    embark-pre-action-hooks)))
 #+end_src
 
-*** Configure ~display-buffer-alist~ rules for Embark windows
+** Provide feature ~ceamx-init-completion~
 
 #+begin_src emacs-lisp
-(with-eval-after-load 'embark
-  ;; Hide the mode line of the Embark live/completions buffers
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
-#+end_src
-
-*** Footer
-
-#+begin_src emacs-lisp
-(provide 'init-embark)
-;;; init-embark.el ends here
+(provide 'ceamx-init-completion)
+;;; ceamx-init-completion.el ends here
 #+end_src
 
 
@@ -5194,6 +5129,7 @@ Action alist entries are:
 (provide 'ceamx-init-window)
 ;;; ceamx-init-window.el ends here
 #+end_src
+
 
 * Workspace :: =workspace= :workspace:
 :PROPERTIES:
@@ -9830,7 +9766,6 @@ Return the new `zone' timer."
 (require 'ceamx-init-ui)
 (require 'ceamx-init-essentials)
 (require 'ceamx-init-completion)
-(require 'init-embark)
 (require 'ceamx-init-search)
 (require 'ceamx-init-dired)
 (require 'ceamx-init-window)

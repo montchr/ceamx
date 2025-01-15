@@ -132,7 +132,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (add-to-list 'completion-category-overrides
       '(embark-keybinding (styles basic substring))))
 
-;; ~vertico~ :: VERT(ical )I(nteractive )CO(mpletion) :minibuffer:
+;; ~vertico~ :: [VERT]ical [I]nteractive [CO]mpletion :minibuffer:
 
 ;; + Package :: <https://github.com/minad/vertico>
 
@@ -194,7 +194,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
   (marginalia-mode))
 
-;; ~consult~ :: CONSULT(ing ~completing-read~) :minibuffer:
+;; ~consult~ :: [CONSULT]ing ~completing-read~ :minibuffer:
 
 ;; - website :: <https://github.com/minad/consult>
 ;; - ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
@@ -423,7 +423,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (with-eval-after-load 'org
     (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
 
-;; ~corfu~ :: CO(mpletion in )R(egion )FU(nction)
+;; ~corfu~ :: [CO]mpletion in [R]egion [FU]nction
 
 ;; + Package :: <https://github.com/minad/corfu>
 ;; + Reference :: <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
@@ -542,6 +542,80 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   :commands (ceamx-completion/embark-export-write)
   :init
   (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
+
+;; ~embark~ :: [E]macs [M]ini-[B]uffer [A]ctions [R]ooted in [K]eymaps
+
+;; - Package :: <https://github.com/oantolin/embark>
+
+
+(package! embark
+  ;; Embark is a heavy package.  Load in the background to avoid
+  ;; delays upon invoking autoloaded commands.
+  (defer! 3
+    (require 'embark))
+
+  ;; NOTE: This key might be bound to emoji input in GNOME Desktop.
+  ;; However, I have not encountered a conflict on GNOME, so I must be
+  ;; doing something conveniently correct in my GNOME configurations.
+  ;; FWIW, I have enabled the Emacs-style keybindings there.
+  (keymap-global-set "C-." #'embark-act)
+
+  ;; The result of calling `embark-dwim' on a symbol still ends up
+  ;; calling `xref-find-definitions' as the default do-what-i-mean
+  ;; action.
+  (keymap-global-set "M-." #'embark-dwim) ; orig. `xref-find-definitions'
+
+  (keymap-global-set "C-h b" #'embark-bindings) ; orig: `describe-bindings'
+  (keymap-global-set "C-h B" #'describe-bindings)
+
+  (unless (bound-and-true-p which-key-mode)
+    (setopt prefix-help-command #'embark-prefix-help-command)))
+
+(after! embark
+  (setopt embark-indicators '(;; embark--vertico-indicator
+                              ;; embark-mixed-indicator
+                              embark-minimal-indicator
+                              embark-highlight-indicator
+                              embark-isearch-highlight-indicator))
+  (setopt embark-mixed-indicator-delay 2.0)
+
+  ;; You can reverse the configured behavior at any time by calling `embark-act'
+  ;; with a "C-u" prefix argument.
+  ;; For finer control, e.g.: `((kill-buffer . t) (t . nil))'
+  ;; This only affects the behavior of `embark-act' inside the minibuffer.
+  (setopt embark-quit-after-action nil)
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+      '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+        nil
+        (window-parameters (mode-line-format . none)))))
+
+(after! vertico
+  (add-to-list 'vertico-multiform-categories '(embark-keybinding grid)))
+
+(package! embark-consult
+  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
+
+
+
+;; Define Embark actions for acting on tabs:
+
+
+(after! embark
+  (defvar-keymap ceamx-embark-tab-actions
+    :doc "Keymap for Embark actions for `tab-bar' tabs (when mentioned by name)."
+    :parent embark-general-map
+
+    "s" #'tab-bar-select-tab-by-name
+    "d" #'tab-bar-close-tab-by-name
+    "R" #'tab-bar-rename-tab-by-name)
+
+  (add-to-list 'embark-keymap-alist '(tab . ceamx-embark-tab-actions))
+
+  (push #'embark--confirm
+        (alist-get 'tab-bar-close-tab-by-name
+                   embark-pre-action-hooks)))
 
 ;; Provide feature ~ceamx-init-completion~
 

@@ -554,7 +554,6 @@ The ORDER can be used to deduce the feature context."
 (require 'ceamx-init-ui)
 (require 'ceamx-init-essentials)
 (require 'ceamx-init-completion)
-(require 'init-embark)
 (require 'ceamx-init-search)
 (require 'ceamx-init-dired)
 (require 'ceamx-init-window)
