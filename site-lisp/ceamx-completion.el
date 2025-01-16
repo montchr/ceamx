@@ -57,7 +57,40 @@
       (message "Template %s not found" (cadr elt))
       nil)))
 
+;;;###autoload
+(defun ceamx-completion-orderless-consult-dispatch (word _index _total)
+  "Orderless dispatcher for Consult with support for custom syntax.
+Recognizes the following patterns:
+
+    * .ext (file extension)
+    * regexp$ (regexp matching at end)
+
+Sourced from the Consult Wiki."
+  (cond
+   ;; Ensure that $ works with Consult commands, which add
+   ;; disambiguation suffixes.
+   ((string-suffix-p "$" word)
+    `(orderless-regexp . ,(concat (substring word 0 -1)
+                                  (ceamx-completion-orderless--consult-suffix))))
+   ;; File extensions
+   ((and (or minibuffer-completing-file-name
+             (derived-mode-p 'eshell-mode))
+         (string-match-p "\\`\\.." word))
+    `(orderless-regexp . ,(concat "\\."
+                                  (substring word 1)
+                                  (ceamx-completion-orderless--consult-suffix))))))
+
+
 ;;;;; Private
+
+ (defun ceamx-completion-orderless--consult-suffix ()
+    "Regexp which matches the end of string with Consult tofu support."
+    (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
+        (format "[%c-%c]*$"
+                consult--tofu-char
+                (+ consult--tofu-char consult--tofu-range -1))
+      "$"))
+
 
 ;;;; Commands
 

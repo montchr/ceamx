@@ -635,42 +635,6 @@ The ORDER can be used to deduce the feature context."
 
 (require 'init-fun)
 
-;; TODO ~hippie-expand~
-
-;; + [ ] Adds noticeable lag to startup
-
-
-(after! hippie-exp
-  ;; (defer! 5
-  ;;   (require 'hippie-exp))
-
-  (setopt hippie-expand-verbose t
-          hippie-expand-dabbrev-skip-space t)
-
-  (setopt hippie-expand-try-functions-list
-          '(try-complete-file-name-partially
-            try-complete-file-name
-
-            ;; Remove `try-expand-all-abbrevs' to disable automatic
-            ;; abbrev expansion.
-            try-expand-all-abbrevs
-
-            try-expand-list
-
-            ;; TODO: enable for shell modes only?
-            ;; try-expand-line
-
-            try-expand-dabbrev          ; see: `dabbrev-expand'
-            try-expand-dabbrev-all-buffers
-            ;; try-expand-dabbrev-from-kill
-
-            ;; Redundant with `completion-at-point'... *except* in the literate
-            ;; config file, where elisp symbols won't normally be available.
-            ;; TODO: enable for config.org
-            ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
-            ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
-            )))
-
 ;; =init.el=: Keybindings
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el

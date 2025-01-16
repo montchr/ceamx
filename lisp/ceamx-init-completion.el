@@ -70,8 +70,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
           '(orderless-prefixes
             orderless-regexp))
 
+  (setopt orderless-component-separator #'orderless-escapable-split-on-space)
   ;; spaces & dash & slash & underscore
-  (setopt orderless-component-separator " +\\|[-/_]")
+  ;; (setopt orderless-component-separator " +\\|[-/_]")
 
   ;; [SPC] should never trigger a completion.
   (keymap-set minibuffer-local-completion-map "SPC" nil)
@@ -109,28 +110,43 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 ;; Make `partial-completion' behave like `substring'.
 (setopt completion-pcm-leading-wildcard t)
 
-;; Reset per-category defaults to force the use of the standard
-;; `completion-styles'.  Customizations can be specified in
-;; `completion-category-overrides'.
-(setq completion-category-defaults nil)
-
 (after! orderless
-  (setopt completion-styles '(orderless substring initials flex basic))
+  ;; Reset per-category defaults to force the use of the standard
+  ;; `completion-styles'.  Customizations can be specified in
+  ;; `completion-category-overrides'.
+  (setq completion-category-defaults nil)
+  (setopt completion-styles '(orderless basic))
   (setopt completion-category-overrides
-          '((file (styles basic partial-completion orderless))
+          '((file (styles partial-completion orderless))
             (bookmark (styles basic substring))
             (library (styles basic substring))
-            (imenu (styles basic substring orderless))
+            (imenu (styles orderless substring basic))
             (kill-ring (styles emacs22 orderless))
-            (eglot (styles emacs22 substring orderless)))))
+            ;; enable initialism by default for symbols
+            (command (styles +orderless-with-initialism))
+            (variable (styles +orderless-with-initialism))
+            (symbol (styles +orderless-with-initialism)))))
 
 (after! (consult orderless)
   (add-to-list 'completion-category-overrides
       '(consult-location (styles basic substring orderless))))
 
+(after! eglot
+  (add-to-list 'completion-category-overrides '(eglot (styles orderless)))
+  ;; FIXME: who provides `eglot-capf'?
+  (add-to-list 'completion-category-overrides '(eglot-capf (styles orderless))))
+
 (after! embark
   (add-to-list 'completion-category-overrides
       '(embark-keybinding (styles basic substring))))
+
+(use-feature! ceamx-completion
+  :after (orderless consult)
+  :functions (ceamx-completion-orderless-consult-dispatch)
+  :init
+  (setopt orderless-style-dispatchers
+          (list #'ceamx-completion-orderless-consult-dispatch
+                #'orderless-affix-dispatch)))
 
 ;; ~vertico~ :: [VERT]ical [I]nteractive [CO]mpletion :minibuffer:
 
@@ -397,6 +413,42 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   "wordpress"		"WordPress"
   "youtube"		"YouTube")
 
+;; TODO ~hippie-expand~
+
+;; + [ ] Adds noticeable lag to startup
+
+
+(after! hippie-exp
+  ;; (defer! 5
+  ;;   (require 'hippie-exp))
+
+  (setopt hippie-expand-verbose t
+          hippie-expand-dabbrev-skip-space t)
+
+  (setopt hippie-expand-try-functions-list
+          '(try-complete-file-name-partially
+            try-complete-file-name
+
+            ;; Remove `try-expand-all-abbrevs' to disable automatic
+            ;; abbrev expansion.
+            try-expand-all-abbrevs
+
+            try-expand-list
+
+            ;; TODO: enable for shell modes only?
+            ;; try-expand-line
+
+            try-expand-dabbrev          ; see: `dabbrev-expand'
+            try-expand-dabbrev-all-buffers
+            ;; try-expand-dabbrev-from-kill
+
+            ;; Redundant with `completion-at-point'... *except* in the literate
+            ;; config file, where elisp symbols won't normally be available.
+            ;; TODO: enable for config.org
+            ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
+            ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
+            )))
+
 ;; ~tempel~ :: simple template expansions
 
 ;; + Package :: <https://github.com/minad/tempel>
@@ -640,6 +692,29 @@ A final newline would be inserted literally into the snippet expansion."
   (after! marginalia
     (nerd-icons-completion-mode)
     (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
+
+;; ~cape~ :: [C]ompletion-[A]t-[P]oint [E]xtensions
+
+
+(package! cape
+  (keymap-global-set "C-c p" '("COMPLETE" . cape-prefix-map))
+
+  ;; Add to the global default value of
+  ;; `completion-at-point-functions' which is used by
+  ;; `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of
+  ;; buffer-local completion functions takes precedence over the
+  ;; global list.
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  (add-hook 'completion-at-point-functions #'cape-history)
+
+  (after! eglot
+    ;; NOTE: This may cause a significant performance hit.  Consider
+    ;; enabling per-language-server.
+    ;; <https://github.com/minad/corfu/wiki#continuously-update-the-candidates>
+    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)))
 
 ;; Add command to export completion candidates to a writable buffer
 
