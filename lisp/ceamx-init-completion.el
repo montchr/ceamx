@@ -397,6 +397,139 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   "wordpress"		"WordPress"
   "youtube"		"YouTube")
 
+;; ~tempel~ :: simple template expansions
+
+;; + Package :: <https://github.com/minad/tempel>
+;; + Package :: <https://github.com/Crandel/tempel-collection>
+
+;; - info :: [[info:autotype#Skeleton Language][(autotype) Skeleton Language]]
+;; - Source :: [[https://github.com/minad/tempel/blob/main/README.org#template-syntax][tempel/README.org at main · minad/tempel · GitHub]]
+
+;; All the Tempo syntax elements are fully supported.  The syntax
+;; elements are described in detail in the docstring of
+;; ~tempo-define-template~ in tempo.el.  We document the important ones
+;; here:
+
+;; - “string” Inserts a string literal.
+;; - =p=  Inserts an unnamed placeholder field.
+;; - =n=  Inserts a newline.
+;; - =>= Indents with ~indent-according-to-mode~ .
+;; - =r=  Inserts the current region. If no region is active, quits the containing template when jumped to.
+;; - =r>= Acts like =r= , but indent region.
+;; - =n>=  Inserts a newline and indents.
+;; - =&=  Insert newline unless there is only whitespace between line start and point.
+;; - =%=  Insert newline unless there is only whitespace between point and line end.
+;; - =o= Like =%=  but leaves the point before newline.
+;; - =(s NAME)=  Inserts a named field.
+;; - =(p PROMPT <NAME> <NOINSERT>)= Insert an optionally named field with a prompt. The =PROMPT= is displayed directly in the buffer as default value. If =NOINSERT= is non-nil, no field is inserted. Then the minibuffer is used for prompting and the value is bound to =NAME= .
+;; - =(r PROMPT <NAME> <NOINSERT>)= Insert region or act like =(p ...)= .
+;; - =(r> PROMPT <NAME> <NOINSERT>)= Act like =(r ...)= , but indent region.
+
+;; Furthermore Tempel supports syntax extensions:
+
+;; - =(p FORM <NAME> <NOINSERT>)= Like =p= described above, but =FORM=  is evaluated.
+;; - =(FORM ...)=  Other Lisp forms are evaluated. Named fields are lexically bound.
+;; - =q=  Quits the containing template when jumped to.
+
+
+
+(package! tempel
+  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
+
+  ;; Require this prefix before triggering template name completion.
+  (setopt tempel-trigger-prefix "<")
+
+(define-keymap :keymap (current-global-map)
+  "M-+" #'tempel-complete
+  "M-*" #'tempel-insert)
+
+  ;; Setup completion at point for Tempel templates.
+  (def-hook! +tempel-setup-capf-h ()
+    '(conf-mode-hook prog-mode-hook text-mode-hook)
+    "Add the Tempel Capf to `completion-at-point-functions'.
+
+`tempel-expand' only triggers on exact matches.  Alternatively
+use `tempel-complete' if you want to see all matches, but then
+you should also configure `tempel-trigger-prefix', such that
+Tempel does not trigger too often when you don't expect it.
+
+NOTE: We add `tempel-expand' *before* the main programming mode
+Capf, such that it will be tried first."
+    (setq-local completion-at-point-functions
+                (cons #'tempel-expand
+                      completion-at-point-functions))))
+
+(after! tempel
+  (define-keymap :keymap tempel-map
+    "TAB" #'tempel-next
+    "S-TAB" #'tempel-previous))
+
+(use-feature! ceamx-completion
+  :after tempel
+  :functions (ceamx-completion--tempel-include)
+  :init
+  (add-to-list 'tempel-user-elements #'ceamx-completion--tempel-include))
+
+(package! tempel-collection
+  (setup tempel-collection
+    (:load-after tempel)))
+
+;; ~yasnippet~ :: robust template expansions
+
+;; - Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
+
+
+(package! yasnippet
+  (setopt yas-snippet-dirs
+          (list (file-name-concat ceamx-templates-dir "yasnippet")))
+
+  (defer! 3
+    (yas-global-mode 1)))
+
+(after! yasnippet
+  (defer! 2
+    (require 'hippie-exp))
+
+  (setopt yas-prompt-functions '(yas-completing-prompt
+                                 yas-no-prompt))
+
+  ;; Insanely helpful when =key= is sensible, but insanely annoying
+  ;; if not.  Unless there is an available snippet expansion, the
+  ;; key will still call ~self-insert-command~ as usual.  Note that
+  ;; `yas-maybe-expand' is indeed a variable, not a function.
+  (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand)
+  (keymap-set yas-minor-mode-map "RET" yas-maybe-expand))
+
+(after! (yasnippet hippie-exp)
+  (add-hook 'hippie-expand-try-functions-list #'yas-hippie-try-expand -80))
+
+
+
+;; Disable automatic whitespace modifications in snippet files:
+
+;; <https://joaotavora.github.io/yasnippet/faq.html#org64f1b8c>
+
+;; #+begin_quote
+;; If there is a newline at the end of a snippet definition file, YASnippet will
+;; add a newline when expanding that snippet. When editing or saving a snippet
+;; file, please be careful not to accidentally add a terminal newline.
+;; #+end_quote
+
+
+(defun +yasnippet-snippet-mode-disable-final-newline-h ()
+  "Prevent appendage of a final newline in `snippet-mode' files.
+A final newline would be inserted literally into the snippet expansion."
+  (setq-local require-final-newline nil))
+
+(add-hook 'snippet-mode-hook #'+yasnippet-snippet-mode-disable-final-newline-h nil t)
+
+;; ~spdx~ :: insertable SPDX license headers
+
+;; - src :: <https://github.com/condy0919/spdx.el>
+
+
+(package! spdx)
+
 ;; ~corfu~ :: [CO]mpletion in [R]egion [FU]nction
 
 ;; + Package :: <https://github.com/minad/corfu>

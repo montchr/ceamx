@@ -1,31 +1,4 @@
-;;; ceamx-init-dired.el --- Dired customizations -*- lexical-binding: t -*-
-
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;;  Configuration for Dired and extensions.
-
-;; FIXME: Hide directories like ".git" and ".direnv" by default...
-
-;;; Code:
+;;; -*- lexical-binding: t -*-
 
 (require 'ceamx-lib)
 
@@ -33,28 +6,32 @@
 
 
 (after! dired
+  (add-hook 'dired-mode-hook #'dired-hide-details-mode)
   ;; cf. `dired-omit-files', `dired-omit-lines', `dired-omit-extensions'
   (add-hook 'dired-mode-hook #'dired-omit-mode)
+
+  ;; -A => dotfiles without . and ..
+  ;; -F => append special chars to special files
+  ;; -G => omit group name
+  ;; -h => human-readable file sizes
+  ;; -l => long listing, required by dired
+  ;; -v => sort files by version number, not lexicographic
+  (setopt dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso")
 
   (setopt dired-auto-revert-buffer t)
   (setopt dired-dwim-target t)
   (setopt dired-kill-when-opening-new-dired-buffer t)
-  (setopt dired-listing-switches "-al --group-directories-first")
-
-  (setopt dired-backup-overwrite 'always)
   (setopt dired-vc-rename-file t)
-
   (setopt dired-clean-confirm-killing-deleted-buffers nil)
   (setopt dired-clean-up-buffers-too t)
-
   (setopt dired-create-destination-dirs 'ask
           dired-create-destination-dirs-on-trailing-dirsep t
           dired-recursive-deletes 'always
-          dired-recursive-copies 'always)
+          dired-recursive-copies 'always
+          dired-backup-overwrite 'always)
+  (setopt dired-mouse-drag-files t)
 
   (setopt delete-by-moving-to-trash t)
-
-  (setopt dired-mouse-drag-files t)
   (setopt mouse-drag-and-drop-region-cross-program t))
 
 ;; ~dired-subtree~ :: insert subdirs arboreally
@@ -75,7 +52,6 @@
 
 
 (package! trashed)
-
 (after! trashed
   (setopt trashed-action-confirmer #'y-or-n-p)
   (setopt trashed-use-header-line t)

@@ -48,6 +48,15 @@
            (bound-and-true-p vertico--input)
            (eq (current-local-map) read-passwd-map))))
 
+;;;###autoload
+(defun ceamx-completion--tempel-include (elt)
+  "Tempel user element ELT to include a nested template."
+  (when (eq (car-safe elt) 'i)
+    (if-let (template (alist-get (cadr elt) (tempel--templates)))
+        (cons 'l template)
+      (message "Template %s not found" (cadr elt))
+      nil)))
+
 ;;;;; Private
 
 ;;;; Commands

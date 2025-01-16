@@ -224,6 +224,13 @@ If FRAME is non-nil, inspect the current frame."
   (or (save-excursion (re-search-forward page-delimiter nil t))
       (save-excursion (re-search-backward page-delimiter nil t))))
 
+;; via prot-emacs
+;;;###autoload
+(defun ceamx-truncate-lines-silently ()
+  "Toggle line truncation without printing messages."
+  (let ((inhibit-message t))
+    (toggle-truncate-lines t)))
+
 ;;;; Functions (Private)
 
 ;; via <https://github.com/radian-software/radian/blob/31b28372df6c24b82a53ba9c89140b4888c16f88/emacs/radian.el#L641C1-L654C38>

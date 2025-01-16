@@ -14,26 +14,33 @@
 ;; Configure interactive searching with ~isearch~
 
 
-(setopt search-highlight t)
-(setopt isearch-lazy-highlight t)
-(setopt isearch-lazy-count t)
-(setopt lazy-count-prefix-format "[%s/%s] ")
-(setopt lazy-count-suffix-format nil)
-(setopt isearch-allow-scroll 'unlimited)
-
-;; Allow extending search string by holding shift and using motion commands.
-(setopt isearch-yank-on-move 'shift)
-
-;; TODO: monitor behavior
-;;       specifically, it looks like that regexp will consider any
-;;       non-alphanumeric character to be whitespace, which might be a bit much.
-;; via <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-isearch.el>
-(setopt search-whitespace-regexp ".*?")
-(setopt isearch-lax-whitespace t)
-(setopt isearch-regexp-lax-whitespace nil)
-
 (after! isearch
   (blackout 'isearch)
+
+  ;;
+  ;; Settings
+
+  (setopt search-highlight t
+          isearch-lazy-highlight t
+          lazy-highlight-initial-delay 0.5
+          lazy-highlight-no-delay-length 4)
+  (setopt isearch-lazy-count t
+          lazy-count-prefix-format "[%s/%s] "
+          lazy-count-suffix-format nil)
+  (setopt isearch-allow-scroll 'unlimited)
+  (setopt isearch-wrap-pause t
+          isearch-repeat-on-direction-change t)
+
+  ;; Allow extending search string by holding shift and using motion
+  ;; commands.
+  (setopt isearch-yank-on-move 'shift)
+
+  (setopt search-whitespace-regexp ".*?"
+          isearch-lax-whitespace t
+          isearch-regexp-lax-whitespace nil)
+
+  ;;
+  ;; Keybindings
 
   (defvar-keymap isearch-repeat-map
     :repeat t
@@ -52,10 +59,22 @@
     "M-s <" #'isearch-beginning-of-buffer
     "M-s >" #'isearch-end-of-buffer
 
+    "C-g" #'isearch-cancel              ; orig. `isearch-abort'
+
     "C-w" nil
     "M-e" nil)
 
   (keymap-set minibuffer-local-isearch-map "M-/" #'isearch-complete-edit))
+
+;; Customize the ~occur~ buffer
+
+
+(after! isearch
+  (add-hook 'occur-mode-hook #'ceamx-truncate-lines-silently)
+
+  (setopt list-matching-lines-jump-to-current-line nil)
+
+  (keymap-set occur-mode-map "t" #'toggle-truncate-lines))
 
 ;; ~substitute~: efficiently replace contextual targets
 
@@ -107,6 +126,18 @@
   ;; "rx"     => recommended; advanced sexp regexp engine
   ;; "read"   => default, avoid: backslash hell
   (setopt reb-re-syntax 'string))
+
+;; Configure ~xref~
+
+
+(defvar xref-ignored-files '()
+  "List of files to be ignored by `xref'.")
+
+(after! xref
+  (setopt xref-file-name-display 'project-relative)
+  (setopt xref-prompt-for-identifier nil)
+  (setopt xref-show-definitions-function #'xref-show-definitions-completing-read)
+  (setopt xref-show-xrefs-function #'xref-show-definitions-buffer))
 
 ;; Provide ~ceamx-init-search~ feature
 

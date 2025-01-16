@@ -32,24 +32,25 @@ execution order."
 
 ;; ~dumb-jump~: multi-lang do-what-i-mean jump-to-definition
 
-;; - src :: <https://github.com/jacktasia/dumb-jump>
+;; - Package :: <https://github.com/jacktasia/dumb-jump>
 
 
-(use-package dumb-jump
-  ;;:ensure t
-  )
+(package! dumb-jump
+  ;; Add to end of `xref-backend-functions' as a dumb fallback when
+  ;; there are no smart options.
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 100)
 
-(after! (hydra)
-  ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
-  (defhydra ceamx-prog-dumb-jump-dispatch (:color blue :columns 3)
-    "Jump (dumbly)"
-    ("j" dumb-jump-go "Go")
-    ("o" dumb-jump-go-other-window "Other window")
-    ("e" dumb-jump-go-prefer-external "Go external")
-    ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
-    ("i" dumb-jump-go-prompt "Prompt")
-    ("l" dumb-jump-quick-look "Quick look")
-    ("b" dumb-jump-back "Back")))
+  (after! (hydra)
+    ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
+    (defhydra ceamx-prog-dumb-jump-dispatch (:color blue :columns 3)
+      "Jump (dumbly)"
+      ("j" dumb-jump-go "Go")
+      ("o" dumb-jump-go-other-window "Other window")
+      ("e" dumb-jump-go-prefer-external "Go external")
+      ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
+      ("i" dumb-jump-go-prompt "Prompt")
+      ("l" dumb-jump-quick-look "Quick look")
+      ("b" dumb-jump-back "Back"))))
 
 ;; ~rainbow-mode~: Colorize color names and hexcodes in buffers :theme:
 
@@ -57,22 +58,6 @@ execution order."
 
 
 (package! rainbow-mode)
-
-;; Configure ~xref~
-
-
-(defvar xref-ignored-files '()
-  "List of files to be ignored by `xref'.")
-
-(use-feature! xref
-  :config
-  (setopt xref-prompt-for-identifier nil))
-
-(use-feature! dumb-jump
-  :commands (dumb-jump-xref-activate)
-  :init
-  ;; Add to end of list as a fallback for when there are no smart options.
-  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 100))
 
 ;; ~hl-todo~: Highlight "TODO" and other codetags in comments and strings
 
