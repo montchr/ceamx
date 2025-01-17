@@ -216,13 +216,20 @@ Intended for use as a local hook function on
 (use-feature! org-refile
   :config
   (setopt org-outline-path-complete-in-steps nil)
+
+  (setopt org-refile-use-outline-path 'file)
+  (setopt org-refile-allow-creating-parent-nodes 'confirm)
+  (setopt org-refile-use-cache nil)
+
   (setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 2))
                                ;; (org-agenda-files . (:maxlevel . 1))
                                (,(locate-user-emacs-file "TODO.org") . (:level . 1))
                                (nil . (:maxlevel . 5))))
-  (setopt org-refile-use-outline-path 'file)
-  (setopt org-refile-allow-creating-parent-nodes 'confirm)
-  (setopt org-refile-use-cache nil))
+  ;; TODO: how to accept any value of `:maxlevel'?
+  (add-to-list 'safe-local-variable-values
+      '(org-refile-targets (nil :maxlevel . 4)))
+  (add-to-list 'safe-local-variable-values
+      '(org-refile-targets (nil :maxlevel . 6))))
 
 ;; Capture
 
@@ -344,7 +351,10 @@ Intended for use as a local hook function on
 
 (package! ox-gfm
   (after! org
-    (require 'ox-gfm)))
+    (require 'ox-gfm))
+
+  (add-to-list 'safe-local-variable-values
+      '(eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
 
 ;; ~auto-tangle-mode~: a minor-mode to automatically tangle Org files
 

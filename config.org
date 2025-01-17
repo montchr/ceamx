@@ -1533,6 +1533,20 @@ ELP is useful for seeing which functions in a package are "hot":
                     (make-temp-file "ceamx-custom-")))
 #+end_src
 
+** Declare safe local variable directories and values relating to Emacs initialization
+
+#+begin_src emacs-lisp
+  (setopt safe-local-variable-directories
+          ;; NOTE: `user-emacs-directory' is intentionally not included
+          ;; here because its value can change based on the value of the
+          ;; "--init-directory" initialization flag.
+          (list (file-name-concat ceamx-config-dir "emacs")
+                (file-name-concat ceamx-config-dir "ceamx")))
+
+  (setopt safe-local-variable-values
+          '((eval load-file "./ceamx-dev-loader.el")))
+#+end_src
+
 ** Enable/disable some commands that are disabled/enabled by default
 
 #+begin_src emacs-lisp
@@ -8627,13 +8641,20 @@ unexpected changes to the content (depending on the setting of
 (use-feature! org-refile
   :config
   (setopt org-outline-path-complete-in-steps nil)
+
+  (setopt org-refile-use-outline-path 'file)
+  (setopt org-refile-allow-creating-parent-nodes 'confirm)
+  (setopt org-refile-use-cache nil)
+
   (setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 2))
                                ;; (org-agenda-files . (:maxlevel . 1))
                                (,(locate-user-emacs-file "TODO.org") . (:level . 1))
                                (nil . (:maxlevel . 5))))
-  (setopt org-refile-use-outline-path 'file)
-  (setopt org-refile-allow-creating-parent-nodes 'confirm)
-  (setopt org-refile-use-cache nil))
+  ;; TODO: how to accept any value of `:maxlevel'?
+  (add-to-list 'safe-local-variable-values
+      '(org-refile-targets (nil :maxlevel . 4)))
+  (add-to-list 'safe-local-variable-values
+      '(org-refile-targets (nil :maxlevel . 6))))
 #+end_src
 
 ** TODO Refiling: Append not prepend when working on Ceamx config
@@ -8800,7 +8821,10 @@ I don't think this is working properly...
 #+begin_src emacs-lisp
 (package! ox-gfm
   (after! org
-    (require 'ox-gfm)))
+    (require 'ox-gfm))
+
+  (add-to-list 'safe-local-variable-values
+      '(eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
 #+end_src
 
 ** ~auto-tangle-mode~: a minor-mode to automatically tangle Org files
