@@ -726,7 +726,7 @@ A final newline would be inserted literally into the snippet expansion."
 (package! embark
   ;; Embark is a heavy package.  Load in the background to avoid
   ;; delays upon invoking autoloaded commands.
-  (defer! 3
+  (defer! 1
     (require 'embark))
 
   ;; NOTE: This key might be bound to emoji input in GNOME Desktop.
@@ -754,10 +754,11 @@ A final newline would be inserted literally into the snippet expansion."
                               embark-isearch-highlight-indicator))
   (setopt embark-mixed-indicator-delay 2.0)
 
-  ;; You can reverse the configured behavior at any time by calling `embark-act'
-  ;; with a "C-u" prefix argument.
+  ;; This setting only affects the behavior of `embark-act' inside the
+  ;; minibuffer.  You can reverse the configured behavior at any time
+  ;; by calling `embark-act' with a "C-u" prefix argument.
+  ;;
   ;; For finer control, e.g.: `((kill-buffer . t) (t . nil))'
-  ;; This only affects the behavior of `embark-act' inside the minibuffer.
   (setopt embark-quit-after-action nil)
 
   ;; Hide the mode line of the Embark live/completions buffers
