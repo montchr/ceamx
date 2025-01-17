@@ -676,7 +676,6 @@ The ORDER can be used to deduce the feature context."
   ;; "C-c m"
   ;; "C-c n"
   "C-c o" (cons "[ LAUNCH   ]" #'ceamx-launch-prefix)
-  "C-c p" (cons "[ COMPLETE ]" cape-prefix-map)
   "C-c q" (cons "[ SESSION  ]" #'ceamx-session-prefix)
   ;; "C-c r"
   ;; "C-c s"
@@ -691,6 +690,9 @@ The ORDER can be used to deduce the feature context."
   "C-c [" #'previous-buffer
   "C-c ]" #'next-buffer
   "C-c `" #'mode-line-other-buffer)
+
+(after! cape
+  (keymap-global-set "C-c p" (cons "[ COMPLETE ]" cape-prefix-map)))
 
 ;;;;; Prefix: [C-x]
 
