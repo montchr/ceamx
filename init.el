@@ -75,9 +75,7 @@
 ;; Configure ~custom-file~ location
 
 
-(setq custom-file (if ceamx-load-custom-file
-                      (locate-user-emacs-file "custom.el")
-                    (make-temp-file "ceamx-custom-")))
+(setq custom-file (locate-user-emacs-file "custom.el"))
 
 ;; Declare safe local variable directories and values relating to Emacs initialization
 
@@ -458,7 +456,6 @@ The ORDER can be used to deduce the feature context."
 ;; Install utility libraries
 
 
-;; FIXME: remove or alias (`##' is very difficult to search for)
 (package! llama) ;  `##' lambda shorthand
 (package! f)
 (package! transient

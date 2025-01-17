@@ -1528,9 +1528,7 @@ ELP is useful for seeing which functions in a package are "hot":
 ** Configure ~custom-file~ location
 
 #+begin_src emacs-lisp
-(setq custom-file (if ceamx-load-custom-file
-                      (locate-user-emacs-file "custom.el")
-                    (make-temp-file "ceamx-custom-")))
+(setq custom-file (locate-user-emacs-file "custom.el"))
 #+end_src
 
 ** Declare safe local variable directories and values relating to Emacs initialization
@@ -2099,7 +2097,6 @@ expect the value you arrive at to be as high as 100 MiB.
 ** Install utility libraries
 
 #+begin_src emacs-lisp
-;; FIXME: remove or alias (`##' is very difficult to search for)
 (package! llama) ;  `##' lambda shorthand
 (package! f)
 (package! transient
