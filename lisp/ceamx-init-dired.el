@@ -5,8 +5,13 @@
 ;; General Dired customizations
 
 
+(setopt delete-by-moving-to-trash t)
+(setopt mouse-drag-and-drop-region-cross-program t)
+
 (after! dired
   (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+  (add-hook 'dired-mode-hook #'hl-line-mode)
+
   ;; cf. `dired-omit-files', `dired-omit-lines', `dired-omit-extensions'
   (add-hook 'dired-mode-hook #'dired-omit-mode)
 
@@ -18,7 +23,11 @@
   ;; -v => sort files by version number, not lexicographic
   (setopt dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso")
 
-  (setopt dired-auto-revert-buffer t)
+  (setopt dired-auto-revert-buffer #'dired-directory-changed-p)
+  (setopt dired-do-revert-buffer (##not (file-remote-p %)))
+
+  ;; When there are multiple Dired panes open, automatically use the
+  ;; other pane as target for some actions (e.g. copying, moving).
   (setopt dired-dwim-target t)
   (setopt dired-kill-when-opening-new-dired-buffer t)
   (setopt dired-vc-rename-file t)
@@ -29,10 +38,16 @@
           dired-recursive-deletes 'always
           dired-recursive-copies 'always
           dired-backup-overwrite 'always)
+  (setopt dired-free-space nil)
+  (setopt dired-make-directory-clickable t)
   (setopt dired-mouse-drag-files t)
 
-  (setopt delete-by-moving-to-trash t)
-  (setopt mouse-drag-and-drop-region-cross-program t))
+  ;;
+  ;; Keybindings
+
+  (define-keymap :keymap dired-mode-map
+    "C-+" #'dired-create-empty-file
+    "C-RET" #'dired-do-open))
 
 ;; ~dired-subtree~ :: insert subdirs arboreally
 
@@ -47,6 +62,32 @@
 
 (after! dired-subtree
   (setopt dired-subtree-use-backgrounds nil))
+
+;; Writable Dired buffers with the ~wdired~ feature
+
+
+(after! dired
+  (keymap-set dired-mode-map "C-c C-e" #'wdired-change-to-wdired-mode))
+
+(after! wdired
+  (keymap-set wdired-mode-map "C-c C-k" #'wdired-change-to-dired-mode)
+
+  (setopt wdired-create-parent-directories t)
+  (setopt wdired-allow-to-change-permissions t))
+
+;; Preview images in Dired with the ~image-dired~ feature
+
+
+(after! dired
+  (keymap-set dired-mode-map "C-c t i" #'image-dired))
+
+(after! image-dired
+  (keymap-set image-dired-thumbnail-mode-map "RET" #'image-dired-thumbnail-display-external)
+
+  (setopt image-dired-thumbnail-storage 'standard)
+  (setopt image-dired-external-viewer "xdg-open")
+  (setopt image-dired-thumb-relief 2
+          image-dired-thumbs-per-row 4))
 
 ;; ~trashed~ :: interact with operating system trash diredly
 
