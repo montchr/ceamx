@@ -456,7 +456,9 @@ The ORDER can be used to deduce the feature context."
 ;; Install utility libraries
 
 
-(package! llama) ;  `##' lambda shorthand
+;; <https://github.com/tarsius/llama>
+(package! llama
+  (require 'llama))
 (package! f)
 (package! transient
   (require 'transient)

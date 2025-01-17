@@ -2075,7 +2075,9 @@ expect the value you arrive at to be as high as 100 MiB.
 ** Install utility libraries
 
 #+begin_src emacs-lisp
-(package! llama) ;  `##' lambda shorthand
+;; <https://github.com/tarsius/llama>
+(package! llama
+  (require 'llama))
 (package! f)
 (package! transient
   (require 'transient)
