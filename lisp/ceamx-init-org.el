@@ -287,8 +287,7 @@ Intended for use as a local hook function on
   ;; (setopt org-src-window-setup 'current-window)
   (setopt org-src-window-setup 'other-window))
 
-(use-feature! org
-  :config
+(after! org
   ;; Ensure common languages are loaded.
   (setopt org-babel-load-languages '((emacs-lisp . t)
                                      (shell . t)
@@ -299,8 +298,7 @@ Intended for use as a local hook function on
 ;; + source :: <https://github.com/Icy-Thought/emacs.d/blob/e9c75d87bf61c456b26332787cde27bdfc188830/config.org#org-babel-language-on-demand>
 
 
-(use-feature! ob-core
-  :config
+(after! ob-core
   (def-advice! +org-babel-load-language-on-demand-a (orig-fun &rest args)
     :around #'org-babel-execute-src-block
     "Load language if needed before executing a source block."
