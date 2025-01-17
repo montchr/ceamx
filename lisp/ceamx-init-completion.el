@@ -370,17 +370,18 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 ;; Dynamic text expansion with ~dabbrev~
 
 
-(setopt dabbrev-abbrev-char-regexp "\\sw\\|\\s_"
-        dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
-(setopt dabbrev-backward-only nil)
-(setopt dabbrev-case-distinction 'case-replace
-        dabbrev-case-fold-search nil
-        dabbrev-upcase-means-case-search t)
-(setopt dabbrev-check-other-buffers t)
-(setopt dabbrev-eliminate-newlines t)
-(setopt dabbrev-ignored-buffer-regexps '("\\` ")
-        dabbrev-ignored-buffer-modes '(archive-mode doc-view-mode image-mode
-                                       pdf-view-mode tags-table-mode))
+(after! dabbrev
+  (setopt dabbrev-abbrev-char-regexp "\\sw\\|\\s_"
+          dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
+  (setopt dabbrev-backward-only nil)
+  (setopt dabbrev-case-distinction 'case-replace
+          dabbrev-case-fold-search nil
+          dabbrev-upcase-means-case-search t)
+  (setopt dabbrev-check-other-buffers t)
+  (setopt dabbrev-eliminate-newlines t)
+  (setopt dabbrev-ignored-buffer-regexps '("\\` ")
+          dabbrev-ignored-buffer-modes '(archive-mode doc-view-mode image-mode
+                                                      pdf-view-mode tags-table-mode)))
 
 ;; Configure ~abbrev-mode~ settings
 
