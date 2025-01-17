@@ -24,6 +24,12 @@
 (after! org
   (setopt org-blank-before-new-entry '((heading . auto)
                                        (plain-list-item . nil)))
+
+  ;;
+  ;; Links
+
+  (setopt org-link-context-for-files t)
+  (setopt org-link-keep-stored-after-insertion nil)
   (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 
   ;;
@@ -31,12 +37,15 @@
 
   (setopt org-special-ctrl-a/e t
           org-special-ctrl-k t
-          org-special-ctrl-o t)
-  (setopt org-ctrl-k-protect-subtree t)
-  (setopt org-M-RET-may-split-line '((default . nil)))
-  (setopt org-insert-heading-respect-content t)
+          org-special-ctrl-o t
+          org-ctrl-k-protect-subtree t)
   (setopt org-reverse-note-order nil)
   (setopt org-list-use-circular-motion t)
+
+  (setopt org-M-RET-may-split-line '((default . nil))
+          org-insert-heading-respect-content t)
+  (keymap-set org-mode-map "C-M-<return>" #'org-insert-subheading)
+  (keymap-set org-mode-map "C-M-S-<return>" #'org-insert-todo-subheading)
 
   ;;
   ;; Tags
@@ -61,11 +70,7 @@
 
   (setopt org-enforce-todo-dependencies t
           org-enforce-todo-checkbox-dependencies t)
-  (setopt org-log-done 'time
-          org-log-redeadline 'time
-          org-log-refile 'time)
-  (setopt org-log-into-drawer t
-          org-log-states-order-reversed nil)
+
   (setopt org-todo-keywords '((sequence
                                "TODO(t)"
                                "INPRG(i@/!)"
@@ -75,6 +80,16 @@
                                "|"
                                "DONE(d!)"
                                "CANCELLED(x@/!)")))
+
+  ;;
+  ;; Logging
+
+  (setopt org-log-done 'time
+          org-log-redeadline 'time
+          org-log-refile 'time)
+  (setopt org-log-into-drawer t)
+  (setopt org-log-states-order-reversed nil)
+  (setopt org-log-note-clock-out nil)
 
   ;;
   ;; Rich media & attachments
@@ -156,6 +171,9 @@ Intended for use as a local hook function on
   ;; Bring attention when point is on `org-ellipsis'.
   ;; FIXME: not correct
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
+
+(after! org-modern
+  (setopt org-modern-star nil))
 
 (after! org-appear
   (setopt org-appear-autoemphasis t
@@ -240,6 +258,25 @@ Intended for use as a local hook function on
   (add-to-list 'safe-local-variable-values
       '(org-refile-targets (nil :maxlevel . 6))))
 
+;; Customize the ~org-navigation-repeat-map~ :keybinds:
+
+;; I find myself accidentally exiting out of this repeat map immediately
+;; because I instinctively want to continue pressing the final key in the
+;; original command that triggered the repeat map.  For example, if I
+;; press [C-c C-n] for ~org-next-visible-heading~, I want to continue
+;; pressing [C-n] to repeat the command.  I thought there was a setting
+;; for this behavior, but neither ~repeat-keep-prefix~ or ~repeat-check-key~
+;; seem to have an effect.
+
+
+(after! org
+  (define-keymap :keymap org-navigation-repeat-map
+    "C-b" #'org-backward-heading-same-level
+    "C-f" #'org-forward-heading-same-level
+    "C-n" #'org-next-visible-heading
+    "C-p" #'org-previous-visible-heading
+    "C-u" #'org-up-heading))
+
 ;; Archiving
 
 
@@ -284,24 +321,24 @@ Intended for use as a local hook function on
 ;; Literate programming
 
 
-(after! org-src
-  ;; Changing the indentation of source code is unhelpful and destructive.
-  (setopt org-edit-src-content-indentation 0)
+  (after! org-src
+    ;; Changing the indentation of source code is unhelpful and destructive.
+    (setopt org-edit-src-content-indentation 0)
 
-  (setopt org-edit-src-persistent-message nil)
-  (setopt org-src-ask-before-returning-to-edit-buffer nil)
-  (setopt org-src-preserve-indentation t)
-  (setopt org-src-tab-acts-natively t)
+    (setopt org-edit-src-persistent-message nil)
+    (setopt org-src-ask-before-returning-to-edit-buffer nil)
+    (setopt org-src-preserve-indentation t)
+    (setopt org-src-tab-acts-natively t)
 
-  ;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
-  ;; (setopt org-src-window-setup 'other-window)
-  (setopt org-src-window-setup 'current-window))
+    ;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
+    ;; (setopt org-src-window-setup 'other-window)
+    (setopt org-src-window-setup 'current-window))
 
-(after! org
-  ;; Ensure common languages are loaded.
-  (setopt org-babel-load-languages '((emacs-lisp . t)
-                                     (shell . t)
-                                     (sql . t))))
+  (after! org
+    ;; Ensure common languages are loaded.
+    (setopt org-babel-load-languages '((emacs-lisp . t)
+                                       (shell . t)
+                                       (sql . t))))
 
 ;; Org-Babel: Load other supported languages on-demand during execution
 

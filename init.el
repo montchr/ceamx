@@ -80,15 +80,15 @@
 ;; Declare safe local variable directories and values relating to Emacs initialization
 
 
-(setopt safe-local-variable-directories
-        ;; NOTE: `user-emacs-directory' is intentionally not included
-        ;; here because its value can change based on the value of the
-        ;; "--init-directory" initialization flag.
-        (list (file-name-concat ceamx-config-dir "emacs")
-              (file-name-concat ceamx-config-dir "ceamx")))
+  (setopt safe-local-variable-directories
+          ;; NOTE: `user-emacs-directory' is intentionally not included
+          ;; here because its value can change based on the value of the
+          ;; "--init-directory" initialization flag.
+          (list (file-name-concat ceamx-config-dir "emacs")
+                (file-name-concat ceamx-config-dir "ceamx")))
 
-(setopt safe-local-variable-values
-        '((eval load-file "./ceamx-dev-loader.el")))
+  (setopt safe-local-variable-values
+          '((eval load-file "./ceamx-dev-loader.el")))
 
 ;; Enable/disable some commands that are disabled/enabled by default
 
@@ -625,7 +625,6 @@ The ORDER can be used to deduce the feature context."
 ;;;; Outlines & Memex
 
 (require 'init-notes)
-(require 'init-outline)
 (require 'ceamx-init-org)
 
 ;;;; Tree-Sitter
@@ -842,6 +841,7 @@ The ORDER can be used to deduce the feature context."
   "k" #'keycast-mode-line-mode
   "l" #'display-line-numbers-mode
   "M" #'menu-bar-mode
+  "o" #'outline-minor-mode
   "T" #'tab-bar-mode
   "w" #'window-toggle-side-windows
   "W" #'toggle-window-dedicated

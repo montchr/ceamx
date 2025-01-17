@@ -157,6 +157,36 @@ CLOSED: [2024-06-08 Sat 16:55]
 :ARCHIVE_TODO: DONE
 :END:
 - State "DONE"       from "TODO"       [2024-06-08 Sat 16:55]
+** 2024-07 July
+*** 2024-07-14 Sunday
+**** CANCELLED <https://github.com/tarsius/org-elisp-help/blob/main/org-elisp-help.el>
+CLOSED: [2024-07-14 Sun 21:34]
+:PROPERTIES:
+:ARCHIVE_TIME: 2025-01-17 Fri 12:28
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: CANCELLED
+:ARCHIVE_OLPATH: Agenda
+:END:
+- State "CANCELLED"  from "TODO"       [2024-07-14 Sun 21:34]
+
+*** 2024-07-16 Tuesday
+**** DONE <https://orgmode.org/worg/org-contrib/org-choose.html>
+CLOSED: [2024-07-16 Tue 00:17]
+:PROPERTIES:
+:ARCHIVE_TIME: 2025-01-17 Fri 12:28
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_OLPATH: Agenda
+:END:
+
+
+- State "DONE"       from "INPRG"      [2024-07-16 Tue 00:17]
+- State "INPRG"      from "TODO"       [2024-07-14 Sun 21:41] \\
+  See section on ~org-contrib~
+
+
 ** 2024-12 December
 *** 2024-12-01 Sunday
 **** CANCELLED Consolidate ~lib-simple~ and ~lib-text~

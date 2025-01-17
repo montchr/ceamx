@@ -854,16 +854,13 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ;; Enable and configure ~repeat-mode~
 
 
-(setopt repeat-exit-timeout 15)
-(setopt repeat-on-final-keystroke t)
-(setopt repeat-keep-prefix nil)
+(add-hook 'ceamx-after-init-hook #'repeat-mode)
 
-
-
-;; Allow any key sequence to exit ~repeat-mode~:
-
-
-(setopt repeat-exit-key nil)
+(after! repeat
+  (setopt repeat-exit-timeout 10)
+  (setopt repeat-on-final-keystroke t)
+  (setopt repeat-keep-prefix t)
+  (setopt repeat-exit-key "<return>"))
 
 
 
@@ -871,13 +868,6 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 
 (setopt set-mark-command-repeat-pop t)
-
-
-
-;; Enable ~repeat-mode~, avoiding running mode-hooks too early:
-
-
-(add-hook 'ceamx-after-init-hook #'repeat-mode)
 
 ;; Provide ~ceamx-init-essentials~ feature
 

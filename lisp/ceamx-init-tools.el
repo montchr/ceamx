@@ -134,9 +134,21 @@
     (require pkg))
   (pdf-tools-install))
 
-;; ~ready-player~ :: multimedia file previews
+;; ~ready-player~ :: multimedia file previews :nixpkgs:
+
+;; + Package :: <https://github.com/xenodium/ready-player>
+;; + Dependencies :: =ffmpeg= =ffmpegthumbnailer= =mpv=
+
+;; This should be installed via Nixpkgs due to external dependencies.
 
 
+(use-feature! ready-player
+  :mode
+  ("\\.\\(aiff\\|flac\\|mp3\\|m4a\\|mp4\\|mkv\\|opus\\|wav\\|webm\\)\\'" . ready-player-major-mode)
+  :config
+  (setopt ready-player-autoplay nil
+          ready-player-repeat nil
+          ready-player-shuffle nil))
 
 ;; emacswiki:i-ching.el
 
