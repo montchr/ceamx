@@ -153,7 +153,7 @@ DOC is as in `devdocs-install'."
     (setopt flymake-no-changes-timeout 1.0)
     (setopt flymake-wrap-around t)))
 
-;; Linting files with the ~flycheck~ package :lint:
+;; ~Linting files with the ~flycheck~ package :lint:
 
 
 (package! flycheck
@@ -180,6 +180,18 @@ DOC is as in `devdocs-install'."
                           emacs-lisp-checkdoc
                           emacs-lisp-package
                           sh-shellcheck))))
+
+(autoload 'global-jinx-mode "jinx")
+(autoload 'jinx-correct "jinx")
+(autoload 'jinx-languages "jinx")
+
+(add-hook 'ceamx-emacs-startup-hook #'global-jinx-mode)
+
+(keymap-global-set "M-$" #'jinx-correct)
+(keymap-global-set "C-M-$" #'jinx-languages)
+
+(after! jinx
+  (setopt jinx-languages "en"))
 
 ;; [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT :package:
 

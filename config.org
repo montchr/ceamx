@@ -529,28 +529,6 @@ CLOSED: [2024-07-16 Tue 00:17]
 <<file-footer(feature="init-workspace")>>
 #+end_src
 
-** =lisp/init-writing.el=
-
-#+name: init-writing-file
-#+begin_src emacs-lisp :tangle lisp/init-writing.el :comments no :noweb yes
-<<file-prop-line(feature="init-writing",desc="Writing augmentation")>>
-
-;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-writing>>
-
-<<file-footer(feature="init-writing")>>
-#+end_src
-
 * =early-init.el=
 :PROPERTIES:
 :header-args: :tangle early-init.el :comments both
@@ -6108,7 +6086,7 @@ DOC is as in `devdocs-install'."
     (setopt flymake-wrap-around t)))
 #+end_src
 
-** Linting files with the ~flycheck~ package :lint:
+** ~Linting files with the ~flycheck~ package :lint:
 
 #+begin_src emacs-lisp
 (package! flycheck
@@ -6135,6 +6113,37 @@ DOC is as in `devdocs-install'."
                           emacs-lisp-checkdoc
                           emacs-lisp-package
                           sh-shellcheck))))
+#+end_src
+
+** ~jinx~ :: the enchanted spell checker :nixpkgs:
+- Refiled on [2025-01-17 Fri 00:48]
+- Docs :: <https://github.com/minad/jinx/wiki>
+
+Ideally =emacsPackages.jinx= from Nixpkgs would install the required =enchant=
+package, as =jinx= depends on the latter.  Unfortunately, as of
+<2024-05-24 Fri 15:21>, the autoloads from the Nixpkgs package are not set up
+properly, and even after setting up autoloads manually below, dictionaries are
+unavailable.  Apparently =aspell= dictionaries are used behind the scenes, but
+they are not detected from within emacs.
+
+Despite all that:
+
+#+begin_src shell :noweb-ref nil :tangle no
+enchant-lsmod-2 -list-dicts
+#+end_src
+
+#+begin_src emacs-lisp
+(autoload 'global-jinx-mode "jinx")
+(autoload 'jinx-correct "jinx")
+(autoload 'jinx-languages "jinx")
+
+(add-hook 'ceamx-emacs-startup-hook #'global-jinx-mode)
+
+(keymap-global-set "M-$" #'jinx-correct)
+(keymap-global-set "C-M-$" #'jinx-languages)
+
+(after! jinx
+  (setopt jinx-languages "en"))
 #+end_src
 
 ** Formatters
@@ -8169,49 +8178,6 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 ;; "))
 #+end_src
 
-* TODO Writing :: =writing= :writing:
-:PROPERTIES:
-:header-args: :noweb-ref init-writing
-:END:
-
-#+begin_src emacs-lisp :noweb-ref ceamx-augmentation
-(require 'init-writing)
-#+end_src
-
-#+begin_src emacs-lisp
-#+end_src
-
-** [[https://github.com/minad/jinx][minad/jinx]]: the enchanted spell checker :broken:
-
-- Docs :: <https://github.com/minad/jinx/wiki>
-
-Ideally =emacsPackages.jinx= from Nixpkgs would install the required =enchant=
-package, as =jinx= depends on the latter.  Unfortunately, as of
-<2024-05-24 Fri 15:21>, the autoloads from the Nixpkgs package are not set up
-properly, and even after setting up autoloads manually below, dictionaries are
-unavailable.  Apparently =aspell= dictionaries are used behind the scenes, but
-they are not detected from within emacs.
-
-Despite all that:
-
-#+begin_src shell :noweb-ref nil :tangle no
-enchant-lsmod-2 -list-dicts
-#+end_src
-
-#+begin_src emacs-lisp
-(autoload 'global-jinx-mode "jinx")
-(autoload 'jinx-correct "jinx")
-(autoload 'jinx-languages "jinx")
-
-(add-hook 'ceamx-emacs-startup-hook #'global-jinx-mode)
-#+end_src
-
-#+begin_src emacs-lisp
-(keymap-global-set "M-$" #'jinx-correct)
-(keymap-global-set "C-M-$" #'jinx-languages)
-
-(setopt jinx-languages "en")
-#+end_src
 
 * TODO Notetaking :: =notes= :notes:writing:
 :PROPERTIES:
@@ -8415,7 +8381,6 @@ to take control of these paths.
   "Absolute path to default inbox file for new G2D waiting to be processed.")
 #+end_src
 
-
 The value of ~org-directory~ will be used as a default destination for
 new notes, especially as they relate to tasks and agendas.  For that
 reason, use the ~ceamx-agenda-dir~.
@@ -8423,8 +8388,9 @@ reason, use the ~ceamx-agenda-dir~.
 #+BEGIN_SRC emacs-lisp
 (defvar org-directory ceamx-agenda-dir)
 
-;; TODO: I would prefer to check for the directory's existence explicitly --
-;; this feels strange at the top-level.
+;; TODO: I would prefer to check for the directory's existence
+;; explicitly -- this feels strange at the top-level.  Maybe move this
+;; to the section where `ceamx-agenda-dir' is defined.
 (f-mkdir-full-path org-directory)
 
 (setopt org-agenda-files ceamx-default-agenda-files)
@@ -8438,33 +8404,46 @@ reason, use the ~ceamx-agenda-dir~.
                                        (plain-list-item . nil)))
   (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 
+  ;;
   ;; Editing
+
   (setopt org-special-ctrl-a/e t
           org-special-ctrl-k t
           org-special-ctrl-o t)
   (setopt org-ctrl-k-protect-subtree t)
+  (setopt org-M-RET-may-split-line '((default . nil)))
+  (setopt org-insert-heading-respect-content t)
   (setopt org-reverse-note-order nil)
   (setopt org-list-use-circular-motion t)
 
+  ;;
   ;; Tags
+
   (setopt org-auto-align-tags nil
           org-tags-column 0)
 
+  ;;
   ;; Folding
+
   (setopt org-cycle-emulate-tab t)
   (setopt org-startup-folded 'content)
   (setopt org-fold-catch-invisible-edits 'show-and-error)
 
+  ;;
   ;; Priority
+
   (setopt org-priority-start-cycle-with-default nil)
 
-  ;; Workflow state
+  ;;
+  ;; Workflow states
+
   (setopt org-enforce-todo-dependencies t
           org-enforce-todo-checkbox-dependencies t)
   (setopt org-log-done 'time
           org-log-redeadline 'time
           org-log-refile 'time)
-  (setopt org-log-states-order-reversed nil)
+  (setopt org-log-into-drawer t
+          org-log-states-order-reversed nil)
   (setopt org-todo-keywords '((sequence
                                "TODO(t)"
                                "INPRG(i@/!)"
@@ -8475,11 +8454,15 @@ reason, use the ~ceamx-agenda-dir~.
                                "DONE(d!)"
                                "CANCELLED(x@/!)")))
 
+  ;;
   ;; Rich media & attachments
+
   (setopt org-image-actual-width 480)
   (setopt org-startup-with-inline-images t)
 
+  ;;
   ;; Miscellaneous
+
   (setopt org-structure-template-alist
           '(("s" . "src")
             ("e" . "src emacs-lisp")
@@ -8525,47 +8508,36 @@ Intended for use as a local hook function on
 + Package :: <https://github.com/awth13/org-appear>
 
 #+begin_src emacs-lisp
-(after! org
-  (add-hook 'org-mode-hook #'prettify-symbols-mode)
-
-  (setopt org-pretty-entities t
-          org-pretty-entities-include-sub-superscripts nil)
-  ;; TODO: show markers for bold and italic, hide everything else
-  (setopt org-hide-emphasis-markers t)
-  (setopt org-link-descriptive t)
-  (setopt org-src-fontify-natively t)
-
-  ;; Indentation
-  (setopt org-indent-indentation-per-level 2)
-  (setopt org-startup-indented nil)
-
-  ;; Ellipses
-  ;; (setopt org-ellipsis "…")
-  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
-  ;; Bring attention when point is on `org-ellipsis'
-  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
-
-(use-package org-modern
-  ;; :ensure t
-  :commands (org-modern-mode)
-  :hook ((org-mode . org-modern-mode)
-         (org-agenda-finalize . org-modern-agenda))
-
-  :init
+(package! org-modern
+  (add-hook 'org-mode-hook #'org-modern-mode)
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
   (after! org
     (keymap-set org-mode-map "C-c t p" #'org-modern-mode))
   (after! org-agenda
-    (keymap-set org-agenda-mode-map "C-c t p" #'org-modern-mode))
+    (keymap-set org-agenda-mode-map "C-c t p" #'org-modern-mode)))
 
-  :config
-  ;; Emulate "indentation" by replacing leading stars with whitespace
-  (setopt org-modern-hide-stars "   ")
-  (setopt org-modern-star nil))
+(package! org-appear
+  (add-hook 'org-mode-hook #'org-appear-mode))
 
-(use-package org-appear
-  ;; :ensure t
-  :hook (org-mode . org-appear-mode)
-  :config
+(after! org
+  (add-hook 'org-mode-hook #'prettify-symbols-mode)
+
+  (setopt org-auto-align-tags nil
+          org-tags-column 0
+          org-agenda-tags-column 0)
+  (setopt org-pretty-entities t
+          org-pretty-entities-include-sub-superscripts nil)
+  (setopt org-src-fontify-natively t)
+  ;; TODO: show markers for bold and italic, hide everything else
+  (setopt org-hide-emphasis-markers t)
+  (setopt org-link-descriptive t)
+  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
+
+  ;; Bring attention when point is on `org-ellipsis'.
+  ;; FIXME: not correct
+  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
+
+(after! org-appear
   (setopt org-appear-autoemphasis t
           org-appear-autolinks t
           org-appear-autosubmarkers t
@@ -8574,6 +8546,23 @@ Intended for use as a local hook function on
           org-appear-inside-latex t)
   (setopt org-appear-delay 0.25)
   (setopt org-appear-trigger 'always))
+#+end_src
+
+** Appearance: Create the effect of visual indentation
+
+~org-modern~ is incompatible with Org indentation.  But we can pretend.
+
+#+begin_src emacs-lisp :tangle no
+(after! org
+  (setopt org-indent-indentation-per-level 2)
+  (setopt org-startup-indented nil))
+
+(after! org-modern
+  ;; Emulate "indentation" by replacing leading stars with whitespace.
+  ;; One space will replace one star.  Additional spaces will appear
+  ;; as whitespace, creating the effect of visual indentation.
+  (setopt org-modern-hide-stars "   ")
+  (setopt org-modern-star nil))
 #+end_src
 
 ** Appearance: Display visual feedback after actions
@@ -8587,28 +8576,7 @@ Intended for use as a local hook function on
     (add-hook hook #'pulsar-reveal-entry)))
 #+end_src
 
-** TODO Prevent TAB behavior oddities at the end of headlines
-
-- Note taken on [2024-12-30 Mon 12:47] \\
-  The new weird behavior may be related to ~mwim~ commands overriding
-  =org-*-of-line= commands due to a recent Ceamx change.
-- Note taken on [2024-12-30 Mon 12:42] \\
-  The source code here does not relate.  Was something deleted?  TAB
-  is doing that weird thing again.
-When nil, pressing TAB at the end of a headline whose content is folded will act
-on the folded (non-visible) area instead of the headline, which may cause
-unexpected changes to the content (depending on the setting of
-~org-catch-invisible-edits~.
-
-#+BEGIN_SRC emacs-lisp
-;; Instead of forcing this always, use the function
-;; `org-insert-heading-respect-content' directly, bound to [C-<return>].
-(setopt org-insert-heading-respect-content nil)
-
-(setopt org-M-RET-may-split-line nil)
-#+END_SRC
-
-** ~doct~: a template engine for ~org-capture~
+** ~doct~ :: a template engine for ~org-capture~
 
 - Source code :: <https://github.com/progfolio/doct>
 
@@ -8619,7 +8587,7 @@ unexpected changes to the content (depending on the setting of
   :functions (doct))
 #+END_SRC
 
-** ~org-ql~: a query-builder for ~org-mode~ elements
+** ~org-ql~ :: a query-builder for ~org-mode~ elements
 
 - Source code :: <https://github.com/alphapapa/org-ql>
 
@@ -8629,7 +8597,7 @@ unexpected changes to the content (depending on the setting of
   )
 #+END_SRC
 
-** ~org-contrib~: a library of unmaintained community packages
+** ~org-contrib~ :: a library of unmaintained community packages
 
 - Website :: <https://orgmode.org/worg/org-contrib/>
 
@@ -8792,7 +8760,7 @@ I don't think this is working properly...
    "TODO=\"DONE\"|TODO=\"CANCELLED\"" (or scope (if (org-before-first-heading-p) 'file 'tree))))
 #+end_src
 
-** ~org-download~: support dragging-and-dropping images into Org buffers :media:network:package:
+** ~org-download~ :: support dragging-and-dropping images into Org buffers :media:network:package:
 
 <https://github.com/abo-abo/org-download>
 
@@ -8802,14 +8770,14 @@ I don't think this is working properly...
   (add-hook 'dired-mode-hook #'org-download-enable))
 #+END_SRC
 
-** ~org-web-tools~: view, capture, and archive webpages in org-mode :package:network:web:
+** ~org-web-tools~ :: view, capture, and archive webpages in org-mode :package:network:web:
 
 #+BEGIN_SRC emacs-lisp
 (package! org-web-tools
   (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
 #+END_SRC
 
-** ~org-sidebar~: provide a sidebar for Org buffers :package:
+** ~org-sidebar~ :: provide a sidebar for Org buffers :package:
 
 <https://github.com/alphapapa/org-sidebar>
 
@@ -8817,7 +8785,7 @@ I don't think this is working properly...
 (package! org-sidebar)
 #+END_SRC
 
-** ~org-bookmark-heading~: Support heading bookmarks :bookmarks:package:
+** ~org-bookmark-heading~ :: Support heading bookmarks :bookmarks:package:
 
 #+begin_src emacs-lisp
 (package! org-bookmark-heading
@@ -8834,7 +8802,7 @@ I don't think this is working properly...
 #+end_src
 
 ** Exporters
-*** =ox-gfm=: org-export to GitHub Flavored Markdown (GFM) :package:
+*** =ox-gfm= :: org-export to GitHub Flavored Markdown (GFM) :package:
 
 #+begin_src emacs-lisp
 (package! ox-gfm
@@ -8845,7 +8813,7 @@ I don't think this is working properly...
       '(eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
 #+end_src
 
-** ~auto-tangle-mode~: a minor-mode to automatically tangle Org files
+** ~auto-tangle-mode~ :: a minor-mode to automatically tangle Org files
 
 #+BEGIN_SRC emacs-lisp
 (use-package auto-tangle-mode
@@ -8853,7 +8821,7 @@ I don't think this is working properly...
   :commands (auto-tangle-mode))
 #+END_SRC
 
-** TODO Org-Mode: electric-pair for equals-sign
+** TODO Org-Mode: electric-pair for equals-sign and tilde
 ** Footer: Provide the =ceamx-init-org= feature
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-org.el :comments no
@@ -9531,7 +9499,6 @@ Return the new `zone' timer."
 (require 'init-workspace)
 (require 'ceamx-init-vcs)
 (require 'ceamx-init-langs)
-(require 'init-writing)
 #+end_src
 
 #+begin_src emacs-lisp

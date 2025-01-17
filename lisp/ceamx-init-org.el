@@ -4,7 +4,6 @@
 
 
 
-
 ;; The value of ~org-directory~ will be used as a default destination for
 ;; new notes, especially as they relate to tasks and agendas.  For that
 ;; reason, use the ~ceamx-agenda-dir~.
@@ -12,8 +11,9 @@
 
 (defvar org-directory ceamx-agenda-dir)
 
-;; TODO: I would prefer to check for the directory's existence explicitly --
-;; this feels strange at the top-level.
+;; TODO: I would prefer to check for the directory's existence
+;; explicitly -- this feels strange at the top-level.  Maybe move this
+;; to the section where `ceamx-agenda-dir' is defined.
 (f-mkdir-full-path org-directory)
 
 (setopt org-agenda-files ceamx-default-agenda-files)
@@ -26,33 +26,46 @@
                                        (plain-list-item . nil)))
   (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
 
+  ;;
   ;; Editing
+
   (setopt org-special-ctrl-a/e t
           org-special-ctrl-k t
           org-special-ctrl-o t)
   (setopt org-ctrl-k-protect-subtree t)
+  (setopt org-M-RET-may-split-line '((default . nil)))
+  (setopt org-insert-heading-respect-content t)
   (setopt org-reverse-note-order nil)
   (setopt org-list-use-circular-motion t)
 
+  ;;
   ;; Tags
+
   (setopt org-auto-align-tags nil
           org-tags-column 0)
 
+  ;;
   ;; Folding
+
   (setopt org-cycle-emulate-tab t)
   (setopt org-startup-folded 'content)
   (setopt org-fold-catch-invisible-edits 'show-and-error)
 
+  ;;
   ;; Priority
+
   (setopt org-priority-start-cycle-with-default nil)
 
-  ;; Workflow state
+  ;;
+  ;; Workflow states
+
   (setopt org-enforce-todo-dependencies t
           org-enforce-todo-checkbox-dependencies t)
   (setopt org-log-done 'time
           org-log-redeadline 'time
           org-log-refile 'time)
-  (setopt org-log-states-order-reversed nil)
+  (setopt org-log-into-drawer t
+          org-log-states-order-reversed nil)
   (setopt org-todo-keywords '((sequence
                                "TODO(t)"
                                "INPRG(i@/!)"
@@ -63,11 +76,15 @@
                                "DONE(d!)"
                                "CANCELLED(x@/!)")))
 
+  ;;
   ;; Rich media & attachments
+
   (setopt org-image-actual-width 480)
   (setopt org-startup-with-inline-images t)
 
+  ;;
   ;; Miscellaneous
+
   (setopt org-structure-template-alist
           '(("s" . "src")
             ("e" . "src emacs-lisp")
@@ -111,47 +128,36 @@ Intended for use as a local hook function on
 ;; + Package :: <https://github.com/awth13/org-appear>
 
 
-(after! org
-  (add-hook 'org-mode-hook #'prettify-symbols-mode)
-
-  (setopt org-pretty-entities t
-          org-pretty-entities-include-sub-superscripts nil)
-  ;; TODO: show markers for bold and italic, hide everything else
-  (setopt org-hide-emphasis-markers t)
-  (setopt org-link-descriptive t)
-  (setopt org-src-fontify-natively t)
-
-  ;; Indentation
-  (setopt org-indent-indentation-per-level 2)
-  (setopt org-startup-indented nil)
-
-  ;; Ellipses
-  ;; (setopt org-ellipsis "…")
-  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
-  ;; Bring attention when point is on `org-ellipsis'
-  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
-
-(use-package org-modern
-  ;; :ensure t
-  :commands (org-modern-mode)
-  :hook ((org-mode . org-modern-mode)
-         (org-agenda-finalize . org-modern-agenda))
-
-  :init
+(package! org-modern
+  (add-hook 'org-mode-hook #'org-modern-mode)
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
   (after! org
     (keymap-set org-mode-map "C-c t p" #'org-modern-mode))
   (after! org-agenda
-    (keymap-set org-agenda-mode-map "C-c t p" #'org-modern-mode))
+    (keymap-set org-agenda-mode-map "C-c t p" #'org-modern-mode)))
 
-  :config
-  ;; Emulate "indentation" by replacing leading stars with whitespace
-  (setopt org-modern-hide-stars "   ")
-  (setopt org-modern-star nil))
+(package! org-appear
+  (add-hook 'org-mode-hook #'org-appear-mode))
 
-(use-package org-appear
-  ;; :ensure t
-  :hook (org-mode . org-appear-mode)
-  :config
+(after! org
+  (add-hook 'org-mode-hook #'prettify-symbols-mode)
+
+  (setopt org-auto-align-tags nil
+          org-tags-column 0
+          org-agenda-tags-column 0)
+  (setopt org-pretty-entities t
+          org-pretty-entities-include-sub-superscripts nil)
+  (setopt org-src-fontify-natively t)
+  ;; TODO: show markers for bold and italic, hide everything else
+  (setopt org-hide-emphasis-markers t)
+  (setopt org-link-descriptive t)
+  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
+
+  ;; Bring attention when point is on `org-ellipsis'.
+  ;; FIXME: not correct
+  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
+
+(after! org-appear
   (setopt org-appear-autoemphasis t
           org-appear-autolinks t
           org-appear-autosubmarkers t
@@ -171,27 +177,7 @@ Intended for use as a local hook function on
     (add-hook hook #'pulsar-recenter-center)
     (add-hook hook #'pulsar-reveal-entry)))
 
-;; TODO Prevent TAB behavior oddities at the end of headlines
-
-;; - Note taken on [2024-12-30 Mon 12:47] \\
-;;   The new weird behavior may be related to ~mwim~ commands overriding
-;;   =org-*-of-line= commands due to a recent Ceamx change.
-;; - Note taken on [2024-12-30 Mon 12:42] \\
-;;   The source code here does not relate.  Was something deleted?  TAB
-;;   is doing that weird thing again.
-;; When nil, pressing TAB at the end of a headline whose content is folded will act
-;; on the folded (non-visible) area instead of the headline, which may cause
-;; unexpected changes to the content (depending on the setting of
-;; ~org-catch-invisible-edits~.
-
-
-;; Instead of forcing this always, use the function
-;; `org-insert-heading-respect-content' directly, bound to [C-<return>].
-(setopt org-insert-heading-respect-content nil)
-
-(setopt org-M-RET-may-split-line nil)
-
-;; ~doct~: a template engine for ~org-capture~
+;; ~doct~ :: a template engine for ~org-capture~
 
 ;; - Source code :: <https://github.com/progfolio/doct>
 
@@ -201,7 +187,7 @@ Intended for use as a local hook function on
   :demand t
   :functions (doct))
 
-;; ~org-ql~: a query-builder for ~org-mode~ elements
+;; ~org-ql~ :: a query-builder for ~org-mode~ elements
 
 ;; - Source code :: <https://github.com/alphapapa/org-ql>
 
@@ -210,7 +196,7 @@ Intended for use as a local hook function on
   ;; :ensure t
   )
 
-;; ~org-contrib~: a library of unmaintained community packages
+;; ~org-contrib~ :: a library of unmaintained community packages
 
 ;; - Website :: <https://orgmode.org/worg/org-contrib/>
 
@@ -332,7 +318,7 @@ Intended for use as a local hook function on
         (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
       (apply orig-fun args))))
 
-;; ~org-download~: support dragging-and-dropping images into Org buffers :media:network:package:
+;; ~org-download~ :: support dragging-and-dropping images into Org buffers :media:network:package:
 
 ;; <https://github.com/abo-abo/org-download>
 
@@ -341,20 +327,20 @@ Intended for use as a local hook function on
   (require 'org-download)
   (add-hook 'dired-mode-hook #'org-download-enable))
 
-;; ~org-web-tools~: view, capture, and archive webpages in org-mode :package:network:web:
+;; ~org-web-tools~ :: view, capture, and archive webpages in org-mode :package:network:web:
 
 
 (package! org-web-tools
   (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
 
-;; ~org-sidebar~: provide a sidebar for Org buffers :package:
+;; ~org-sidebar~ :: provide a sidebar for Org buffers :package:
 
 ;; <https://github.com/alphapapa/org-sidebar>
 
 
 (package! org-sidebar)
 
-;; ~org-bookmark-heading~: Support heading bookmarks :bookmarks:package:
+;; ~org-bookmark-heading~ :: Support heading bookmarks :bookmarks:package:
 
 
 (package! org-bookmark-heading
@@ -368,7 +354,7 @@ Intended for use as a local hook function on
   ;; :ensure t
   )
 
-;; =ox-gfm=: org-export to GitHub Flavored Markdown (GFM) :package:
+;; =ox-gfm= :: org-export to GitHub Flavored Markdown (GFM) :package:
 
 
 (package! ox-gfm
@@ -378,7 +364,7 @@ Intended for use as a local hook function on
   (add-to-list 'safe-local-variable-values
       '(eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
 
-;; ~auto-tangle-mode~: a minor-mode to automatically tangle Org files
+;; ~auto-tangle-mode~ :: a minor-mode to automatically tangle Org files
 
 
 (use-package auto-tangle-mode

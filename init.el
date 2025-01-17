@@ -619,7 +619,6 @@ The ORDER can be used to deduce the feature context."
 (require 'init-workspace)
 (require 'ceamx-init-vcs)
 (require 'ceamx-init-langs)
-(require 'init-writing)
 
 ;;;; Outlines & Memex
 
