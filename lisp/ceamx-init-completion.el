@@ -412,9 +412,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   "wordpress"		"WordPress"
   "youtube"		"YouTube")
 
-;; TODO ~hippie-expand~
-
-;; + [ ] Adds noticeable lag to startup
+;; ~hippie-expand~
 
 
 (after! hippie-exp

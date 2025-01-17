@@ -4658,9 +4658,7 @@ Adapted from Prot's original version with the following changes:
     (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
 #+end_src
 
-** TODO ~hippie-expand~
-
-+ [ ] Adds noticeable lag to startup
+** ~hippie-expand~
 
 #+begin_src emacs-lisp
 (after! hippie-exp
