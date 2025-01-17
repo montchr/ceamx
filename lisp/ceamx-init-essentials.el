@@ -100,7 +100,12 @@
 
   :config
   ;; Available cycle positions for `recenter-top-bottom'.
-  (setopt recenter-positions '(top middle bottom))
+  ;; (setopt recenter-positions '(top middle bottom))
+  (setopt recenter-positions '(middle top bottom)) ; default
+
+  ;; Horizontally-scroll only the current line when point column moves
+  ;; beyond window boundaries.
+  (setopt auto-hscroll-mode 'current-line)
 
   (setopt scroll-error-top-bottom t
           ;; Prevent unwanted horizontal scrolling upon navigation.

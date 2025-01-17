@@ -216,10 +216,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (package! consult
-  ;; Enable automatic preview at point in the *Completions* buffer.
-  ;; This is relevant when you use the default completion UI.
-  (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
-
   ;; Improve previews for `consult-register' and other register commands
   (setopt register-preview-delay 0.5)
   (setopt register-preview-function #'consult-register-format)
@@ -604,8 +600,9 @@ A final newline would be inserted literally into the snippet expansion."
   (setopt corfu-echo-delay '(0.3 . 0.3))
   (setopt corfu-popupinfo-delay '(1.25 . 0.5))
   (setopt corfu-auto t
-          corfu-auto-delay 0.3
-          corfu-auto-prefix 6)
+          ;; corfu-auto-delay 0.3
+          corfu-auto-delay 1.3
+          corfu-auto-prefix 3)
 
   ;; Setting this here again for good measure, just in case it is
   ;; changed elsewhere.
