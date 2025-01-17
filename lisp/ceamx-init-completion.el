@@ -140,13 +140,12 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (add-to-list 'completion-category-overrides
       '(embark-keybinding (styles basic substring))))
 
-(use-feature! ceamx-completion
-  :after (orderless consult)
-  :functions (ceamx-completion-orderless-consult-dispatch)
-  :init
+(after! (orderless consult)
+  (require 'ceamx-completion)
+
   (setopt orderless-style-dispatchers
-          (list #'ceamx-completion-orderless-consult-dispatch
-                #'orderless-affix-dispatch)))
+          '(ceamx-completion-orderless-consult-dispatch
+            orderless-affix-dispatch)))
 
 ;; ~vertico~ :: [VERT]ical [I]nteractive [CO]mpletion :minibuffer:
 
@@ -697,8 +696,6 @@ A final newline would be inserted literally into the snippet expansion."
 
 
 (package! cape
-  (keymap-global-set "C-c p" '("COMPLETE" . cape-prefix-map))
-
   ;; Add to the global default value of
   ;; `completion-at-point-functions' which is used by
   ;; `completion-at-point'.  The order of the functions matters, the
