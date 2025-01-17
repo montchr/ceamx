@@ -660,24 +660,37 @@ The ORDER can be used to deduce the feature context."
 ;;;;; Prefix: [C-c]
 
 (define-keymap :keymap (current-global-map)
-  "C-c [" #'previous-buffer
-  "C-c ]" #'next-buffer
-  "C-c `" #'mode-line-other-buffer
-
   "C-c a" #'org-agenda
-  "C-c b" (cons "[buffer]" #'ceamx-buffer-prefix)
+  "C-c b" (cons "[ BUFFER   ]" #'ceamx-buffer-prefix)
   "C-c c" #'org-capture
-  "C-c f" (cons "[file]" #'ceamx-file-prefix)
+  ;; "C-c d"
+  ;; "C-c e"
+  "C-c f" (cons "[ FILE     ]" #'ceamx-file-prefix)
   "C-c g" #'magit-dispatch
   "C-c G" #'magit-file-dispatch
   "C-c h" #'consult-history
-  "C-c i" (cons "[insert]" #'ceamx-insert-prefix)
+  "C-c i" (cons "[ INSERT   ]" #'ceamx-insert-prefix)
+  ;; "C-c j"
   "C-c k" #'consult-kmacro
-  "C-c l" (cons "[code]" #'ceamx-code-prefix)
-  "C-c o" (cons "[launch]" #'ceamx-launch-prefix)
-  "C-c q" (cons "[session]" #'ceamx-session-prefix)
-  "C-c t" (cons "[toggle]" #'ceamx-toggle-prefix)
-  "C-c w" (cons "[window]" #'ceamx-window-prefix))
+  "C-c l" (cons "[ CODE     ]" #'ceamx-code-prefix)
+  ;; "C-c m"
+  ;; "C-c n"
+  "C-c o" (cons "[ LAUNCH   ]" #'ceamx-launch-prefix)
+  "C-c p" (cons "[ COMPLETE ]" cape-prefix-map)
+  "C-c q" (cons "[ SESSION  ]" #'ceamx-session-prefix)
+  ;; "C-c r"
+  ;; "C-c s"
+  "C-c t" (cons "[ TOGGLE   ]" #'ceamx-toggle-prefix)
+  ;; "C-c u"
+  ;; "C-c v"
+  "C-c w" (cons "[ WINDOW   ]" #'ceamx-window-prefix)
+  ;; "C-c x"
+  ;; "C-c y"
+  ;; "C-c z"
+
+  "C-c [" #'previous-buffer
+  "C-c ]" #'next-buffer
+  "C-c `" #'mode-line-other-buffer)
 
 ;;;;; Prefix: [C-x]
 
@@ -812,7 +825,8 @@ The ORDER can be used to deduce the feature context."
   "p t" #'elpaca-try
 
   "q" #'save-buffers-kill-emacs
-  "Q" #'kill-emacs)
+  "Q" #'kill-emacs
+  "r" #'restart-emacs)
 
 ;; (use-feature! ceamx-ui
 ;;   :commands (ceamx-ui/dark ceamx-ui/light)
@@ -834,6 +848,9 @@ The ORDER can be used to deduce the feature context."
   "z" #'logos-focus-mode)
 
 ;;;;; Window
+
+(define-keymap :keymap ceamx-window-prefix
+  "w" #'ceamx/window-dispatch)
 
 (define-keymap :keymap window-prefix-map
   "w" #'ace-window
