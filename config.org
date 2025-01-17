@@ -9421,6 +9421,22 @@ some separate binaries.
 
 ** TODO <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
 ** TODO =saveplace-pdf-view=
+** ~ready-player~ :: multimedia file previews :nixpkgs:
+
++ Package :: <https://github.com/xenodium/ready-player>
++ Dependencies :: =ffmpeg= =ffmpegthumbnailer= =mpv=
+
+This should be installed via Nixpkgs due to external dependencies.
+
+#+begin_src emacs-lisp
+(use-feature! ready-player
+  :mode
+  ("\\.\\(aiff\\|flac\\|mp3\\|m4a\\|mp4\\|mkv\\|opus\\|wav\\|webm\\)\\'" . ready-player-major-mode)
+  :config
+  (setopt ready-player-autoplay nil
+          ready-player-repeat nil
+          ready-player-shuffle nil))
+#+end_src
 ** Yijing aka I Ching
 
 Unfortunately, due to copyright restrictions, there are no modern translations

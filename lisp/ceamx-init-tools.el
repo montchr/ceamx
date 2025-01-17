@@ -134,6 +134,10 @@
     (require pkg))
   (pdf-tools-install))
 
+;; ~ready-player~ :: multimedia file previews
+
+
+
 ;; emacswiki:i-ching.el
 
 ;; + src :: https://www.emacswiki.org/emacs/i-ching.el
