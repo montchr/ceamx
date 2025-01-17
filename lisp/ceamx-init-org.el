@@ -321,24 +321,24 @@ Intended for use as a local hook function on
 ;; Literate programming
 
 
-  (after! org-src
-    ;; Changing the indentation of source code is unhelpful and destructive.
-    (setopt org-edit-src-content-indentation 0)
+(after! org-src
+  ;; Changing the indentation of source code is unhelpful and destructive.
+  (setopt org-edit-src-content-indentation 0)
 
-    (setopt org-edit-src-persistent-message nil)
-    (setopt org-src-ask-before-returning-to-edit-buffer nil)
-    (setopt org-src-preserve-indentation t)
-    (setopt org-src-tab-acts-natively t)
+  (setopt org-edit-src-persistent-message nil)
+  (setopt org-src-ask-before-returning-to-edit-buffer nil)
+  (setopt org-src-preserve-indentation t)
+  (setopt org-src-tab-acts-natively t)
 
-    ;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
-    ;; (setopt org-src-window-setup 'other-window)
-    (setopt org-src-window-setup 'current-window))
+  ;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
+  ;; (setopt org-src-window-setup 'other-window)
+  (setopt org-src-window-setup 'current-window))
 
-  (after! org
-    ;; Ensure common languages are loaded.
-    (setopt org-babel-load-languages '((emacs-lisp . t)
-                                       (shell . t)
-                                       (sql . t))))
+(after! org
+  ;; Ensure common languages are loaded.
+  (setopt org-babel-load-languages '((emacs-lisp . t)
+                                     (shell . t)
+                                     (sql . t))))
 
 ;; Org-Babel: Load other supported languages on-demand during execution
 
