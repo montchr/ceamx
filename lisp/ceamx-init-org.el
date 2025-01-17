@@ -21,12 +21,18 @@
 ;; Baseline customizations
 
 
-(use-feature! org
-  :config
-
-  (setopt org-blank-before-new-entry '((heading . auto) (plain-list-item . nil)))
+(after! org
+  (setopt org-blank-before-new-entry '((heading . auto)
+                                       (plain-list-item . nil)))
   (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
-  (setopt org-reverse-note-order t)
+
+  ;; Editing
+  (setopt org-special-ctrl-a/e t
+          org-special-ctrl-k t
+          org-special-ctrl-o t)
+  (setopt org-ctrl-k-protect-subtree t)
+  (setopt org-reverse-note-order nil)
+  (setopt org-list-use-circular-motion t)
 
   ;; Tags
   (setopt org-auto-align-tags nil
@@ -37,8 +43,16 @@
   (setopt org-startup-folded 'content)
   (setopt org-fold-catch-invisible-edits 'show-and-error)
 
+  ;; Priority
+  (setopt org-priority-start-cycle-with-default nil)
+
   ;; Workflow state
-  (setopt org-log-done 'time)
+  (setopt org-enforce-todo-dependencies t
+          org-enforce-todo-checkbox-dependencies t)
+  (setopt org-log-done 'time
+          org-log-redeadline 'time
+          org-log-refile 'time)
+  (setopt org-log-states-order-reversed nil)
   (setopt org-todo-keywords '((sequence
                                "TODO(t)"
                                "INPRG(i@/!)"
@@ -50,7 +64,7 @@
                                "CANCELLED(x@/!)")))
 
   ;; Rich media & attachments
-  (setopt org-image-actual-width 300)
+  (setopt org-image-actual-width 480)
   (setopt org-startup-with-inline-images t)
 
   ;; Miscellaneous
@@ -97,10 +111,9 @@ Intended for use as a local hook function on
 ;; + Package :: <https://github.com/awth13/org-appear>
 
 
-(use-feature! org
-  :hook (org-mode . prettify-symbols-mode)
+(after! org
+  (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
-  :config
   (setopt org-pretty-entities t
           org-pretty-entities-include-sub-superscripts nil)
   ;; TODO: show markers for bold and italic, hide everything else
@@ -114,7 +127,7 @@ Intended for use as a local hook function on
 
   ;; Ellipses
   ;; (setopt org-ellipsis "…")
-  (setopt org-ellipsis " ⇢") ; prefix is nbsp
+  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
   ;; Bring attention when point is on `org-ellipsis'
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
@@ -207,14 +220,24 @@ Intended for use as a local hook function on
   :after (org)
 
   :init
+  (require 'org-checklist)
   (require 'org-choose)
+  (add-to-list 'org-modules 'org-checklist)
   (add-to-list 'org-modules 'org-choose))
 
-;; Refiling
+;; Navigation & Refiling
 
 
-(use-feature! org-refile
-  :config
+(defvar ceamx-org-outline-search-max-level 5)
+
+(after! org
+  (setopt org-imenu-depth ceamx-org-outline-search-max-level))
+
+(after! org-goto
+  (setopt org-goto-interface 'outline-path-completion
+          org-goto-max-level ceamx-org-outline-search-max-level))
+
+(after! org-refile
   (setopt org-outline-path-complete-in-steps nil)
 
   (setopt org-refile-use-outline-path 'file)
@@ -223,22 +246,27 @@ Intended for use as a local hook function on
 
   (setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 2))
                                ;; (org-agenda-files . (:maxlevel . 1))
-                               (,(locate-user-emacs-file "TODO.org") . (:level . 1))
-                               (nil . (:maxlevel . 5))))
+                               (nil . (:maxlevel . ,ceamx-org-outline-search-max-level))))
+
   ;; TODO: how to accept any value of `:maxlevel'?
   (add-to-list 'safe-local-variable-values
       '(org-refile-targets (nil :maxlevel . 4)))
   (add-to-list 'safe-local-variable-values
       '(org-refile-targets (nil :maxlevel . 6))))
 
+;; Archiving
+
+
+(after! org-archive
+  (setopt org-archive-save-context-info
+          '(time file category todo itags olpath ltags)))
+
 ;; Capture
 
 ;; Define the Org-Capture templates:
 
 
-(use-feature! org-capture
-  :after (doct)
-  :init
+(after! (org-capture doct)
   (setopt org-capture-templates
           (doct `(("Inbox"
                    :keys "t"
@@ -255,8 +283,7 @@ Intended for use as a local hook function on
 ;; Agenda
 
 
-(use-feature! org-agenda
-  :config
+(after! org-agenda
   (setopt org-agenda-tags-column 0)
   (setopt org-agenda-block-separator ?─)
   (setopt org-agenda-time-grid
@@ -266,26 +293,23 @@ Intended for use as a local hook function on
   (setopt org-agenda-current-time-string
           "⭠ now ─────────────────────────────────────────────────"))
 
-(use-package org-super-agenda
-  ;; :ensure t
-  )
+(package! org-super-agenda)
 
 ;; Literate programming
 
 
-(use-feature! org-src
-  :config
-
+(after! org-src
   ;; Changing the indentation of source code is unhelpful and destructive.
   (setopt org-edit-src-content-indentation 0)
 
   (setopt org-edit-src-persistent-message nil)
+  (setopt org-src-ask-before-returning-to-edit-buffer nil)
   (setopt org-src-preserve-indentation t)
   (setopt org-src-tab-acts-natively t)
 
   ;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
-  ;; (setopt org-src-window-setup 'current-window)
-  (setopt org-src-window-setup 'other-window))
+  ;; (setopt org-src-window-setup 'other-window)
+  (setopt org-src-window-setup 'current-window))
 
 (after! org
   ;; Ensure common languages are loaded.
