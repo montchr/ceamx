@@ -591,7 +591,7 @@ A final newline would be inserted literally into the snippet expansion."
 (after! corfu
   (setopt corfu-count 12
           corfu-cycle t
-          corfu-max-width 80
+          ;; corfu-max-width 80
           corfu-min-width 20
           corfu-scroll-margin 3)
   ;; cf. `orderless-component-separator'
