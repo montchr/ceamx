@@ -3134,7 +3134,7 @@ This operation will respect the following rules:
         ;; 4
         (delete-char -1)))))
 #+end_src
-*** ~easy-kill~ :package:
+*** ~easy-kill~ :: killing is easy when you're emacs :package:
 
 + Package documentation :: <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
@@ -3167,7 +3167,7 @@ b => buffer name
 (delete-selection-mode 1)
 #+end_src
 
-*** ~expand-region~: Increase/decrease the selection area
+*** ~expand-region~ :: Increase/decrease the selection area
 
 #+begin_src emacs-lisp
 (use-package expand-region
@@ -3177,7 +3177,7 @@ b => buffer name
   (keymap-global-set "C-=" #'er/expand-region))
 #+end_src
 
-*** ~drag-stuff~: drag stuff around in arbitrary directions :package:
+*** ~drag-stuff~ :: drag stuff around in arbitrary directions :package:
 
 <https://github.com/rejeep/drag-stuff.el>
 
@@ -3234,7 +3234,7 @@ words backwardsly]]
 (global-subword-mode -1)
 #+end_src
 
-*** TODO ~string-inflection~: Commands to cycle through word casing
+*** TODO ~string-inflection~ :: commands to cycle through word casing
 
 Needs better bindings.
 
@@ -3261,7 +3261,7 @@ Needs better bindings.
     (_ (string-inflection-ruby-style-cycle))))
 #+end_src
 
-*** ~ialign~: Interactively ~align-regexp~ :package:
+*** ~ialign~ :: Interactively ~align-regexp~ :package:
 
 <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
 
@@ -3270,7 +3270,7 @@ Needs better bindings.
   (keymap-global-set "C-x l" #'ialign))
 #+end_src
 
-*** ~rect~ [builtin]: operate on a buffer rectangularly
+*** Operate on buffers rectangularly with the ~rect~ feature
 
 <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
 
@@ -7070,12 +7070,9 @@ lists."
 
 ** Emacs Lisp
 
+*** General Elisp support customizations
+
 #+begin_src emacs-lisp
-(require 'ceamx-lib)
-(require 'lib-lisp)
-
-;;; Hooks
-
 (defun ceamx-emacs-lisp-init ()
   "Sensible defaults for `emacs-lisp-mode'."
   (ceamx-lisp-init)
@@ -7088,34 +7085,44 @@ lists."
 
 (when (boundp 'eval-expression-minibuffer-setup-hook)
   (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
+#+end_src
 
-;;; Advices
+*** Use current ~load-path~ during compilation to tone down Flymake
 
-;; via <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
++ Source :: <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
+
+#+begin_src emacs-lisp
 (def-advice! +elisp-flymake-byte-compile-fix-load-path-a (orig-fn &rest args)
   :around #'elisp-flymake-byte-compile
   "Set load path for the `emacs-lisp' byte compilation `flymake' backend."
   (let ((elisp-flymake-byte-compile-load-path
          (append elisp-flymake-byte-compile-load-path load-path)))
     (apply orig-fn args)))
+#+end_src
 
-;; via <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
+*** Display variable value next to ~eldoc~ output
+
++ Source :: <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
+
+#+begin_src emacs-lisp
 (def-advice! +emacs-lisp-append-value-to-eldoc-a (fn sym)
   :around #'elisp-get-var-docstring
   "Display variable value next to documentation in eldoc."
   (when-let (ret (funcall fn sym))
     (if (boundp sym)
-      (concat ret " "
-        (let* ((truncated " [...]")
-                (print-escape-newlines t)
-                (str (symbol-value sym))
-                (str (prin1-to-string str))
-                (limit (- (frame-width) (length ret) (length truncated) 1)))
-          (format (format "%%0.%ds%%s" (max limit 0))
-            (propertize str 'face 'warning)
-            (if (< (length str) limit) "" truncated))))
+        (concat ret " "
+                (let* ((truncated " [...]")
+                       (print-escape-newlines t)
+                       (str (symbol-value sym))
+                       (str (prin1-to-string str))
+                       (limit (- (frame-width) (length ret) (length truncated) 1)))
+                  (format (format "%%0.%ds%%s" (max limit 0))
+                          (propertize str 'face 'warning)
+                          (if (< (length str) limit) "" truncated))))
       ret)))
+#+end_src
 
+#+begin_src emacs-lisp
 ;;; Keybinds
 
 (keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
@@ -7128,13 +7135,13 @@ lists."
 (with-eval-after-load 'ielm
   (defvar ielm-map)
   (keymap-set ielm-map "C-:" #'quit-window))
+#+end_src
 
-;;; Packages
+*** ~eros~ :: [E]valuation [R]esult [O]verlay[S]
 
-;;;; ~eros~ :: <https://github.com/xiongtx/eros>
++ Website :: <https://github.com/xiongtx/eros>
 
-;;  Evaluation Result OverlayS for Emacs Lisp
-
+#+begin_src emacs-lisp
 (use-package eros
   :commands (eros-mode eros-eval-last-sexp)
   :init
@@ -7153,21 +7160,24 @@ lists."
       ;;
       ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
+#+end_src
 
-;;;; ~suggest~ :: <https://github.com/Wilfred/suggest.el>
+*** ~suggest~ :: meet the elisp function of your dreams
 
-;;  discover elisp functions that do what you want,
-;;  brought to you by enumerative program synthesis
++ Package :: <https://github.com/Wilfred/suggest.el>
 
+#+begin_src emacs-lisp
 (use-package suggest
   :commands (suggest)
   :init
   (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
+#+end_src
 
-;;;; ~macrostep~ :: <https://github.com/emacsorphanage/macrostep>
+*** ~macrostep~ :: interactive macro-explorer
 
-;;  "interactive macro-expander for Emacs"
++ Package :: <https://github.com/emacsorphanage/macrostep>
 
+#+begin_src emacs-lisp
 (use-package macrostep
   :commands (macrostep-expand)
 
@@ -7179,30 +7189,30 @@ lists."
 The original function fails in the presence of whitespace after a sexp."
     (interactive)
     (when (and (= ?\n (char-after))
-            (= (point) (cdr (bounds-of-thing-at-point 'sexp))))
+               (= (point) (cdr (bounds-of-thing-at-point 'sexp))))
       (backward-char))
     (macrostep-expand))
 
   :init
   (keymap-set emacs-lisp-mode-map "C-c x" #'ceamx/macrostep-expand))
+#+end_src
 
-;;; Install ~xr~ to convert string regexps to ~rx~ forms
+*** ~xr~ :: convert string regexps to ~rx~ forms
 
-;; <https://github.com/mattiase/xr>
++ Package :: <https://github.com/mattiase/xr>
 
-;; TODO: keybindings...
-
+#+begin_src emacs-lisp
 (package! xr)
 #+end_src
 
-
 *** ~elmacro~: Display keyboard macros or latest interactive commands as Elisp
 
-- Source code :: <https://github.com/Silex/elmacro>
++ Package :: <https://github.com/Silex/elmacro>
 
-Avoid enabling this mode globally.  It may cause some recurring errors, and
-the package has not been updated in years.  By nature, it is also quite
-invasive, and should probably only be used as a development tool as needed.
+Avoid enabling this mode globally.  It may cause some recurring
+errors, and the package has not been updated in years.  By nature, it
+is also quite invasive, and should probably only be used as a
+development tool as needed.
 
 #+begin_src emacs-lisp
 (use-package elmacro
@@ -7222,9 +7232,9 @@ invasive, and should probably only be used as a development tool as needed.
   (setopt elmacro-processor-concatenate-inserts t))
 #+end_src
 
-*** ~elisp-demos~: Display usage examples for Elisp callables inside their help buffers
+*** ~elisp-demos~ :: display elisp usage examples inside help buffers
 
-- Source code :: <https://github.com/xuchunyang/elisp-demos>
+- Package :: <https://github.com/xuchunyang/elisp-demos>
 
 #+begin_src emacs-lisp
 (use-package elisp-demos
