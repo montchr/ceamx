@@ -589,20 +589,26 @@ This is a more general and less stringent variant of
 
 ;;;; Mode
 
+;; FIXME: toggling does not actually change the format!  this is
+;; because `mode-line-format' is set in user config.  but setting it
+;; in `ceamx-modeline' resulted in a blank modeline...?
+
 ;;;###autoload
 (define-minor-mode ceamx-modeline-mode
   "Ceamx custom modeline mode."
   :group 'ceamx-modeline
   :global t
   (if ceamx-modeline-mode
-      (progn
-        (setq ceamx-modeline--original-format (default-value 'mode-line-format))
-        (setq mode-line-right-align-edge 'right-margin)
-        (setq-default mode-line-format ceamx-modeline-format))
+    (progn
+      (setq ceamx-modeline--original-format (default-value 'mode-line-format))
+      (setq mode-line-right-align-edge 'right-margin)
+      ;; (setq-default mode-line-format ceamx-modeline-format)
+      )
     (progn
       (setq mode-line-right-align-edge
         (default-value 'mode-line-right-align-edge))
-      (setq-default mode-line-format ceamx-modeline--original-format))))
+      ;; (setq-default mode-line-format ceamx-modeline--original-format)
+      )))
 
 ;;; Footer:
 

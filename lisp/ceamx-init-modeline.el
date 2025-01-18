@@ -12,6 +12,8 @@
 
 (use-feature! ceamx-modeline
   :hook (ceamx-after-init . ceamx-modeline-mode)
+  :init
+  (keymap-set ceamx-toggle-prefix "m" #'ceamx-modeline-mode)
   :config
   (setq-default mode-line-format
                 '("%e"
