@@ -709,6 +709,9 @@ The ORDER can be used to deduce the feature context."
   "C-x C-b" #'ibuffer
   "C-x C-n" #'next-buffer
   "C-x C-p" #'previous-buffer
+  ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
+  ;; that `comment-line' is bound to [C-x C-;].
+  "C-x M-;" #'comment-line
 
   "C-x M-r" #'rectangle-mark-mode
 

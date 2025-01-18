@@ -43,7 +43,10 @@
   (setopt org-list-use-circular-motion t)
 
   (setopt org-M-RET-may-split-line '((default . nil))
-          org-insert-heading-respect-content t)
+          ;; Invoke `org-insert-heading-respect-content' directly with
+          ;; [C-<return>], but let `org-insert-heading' ([M-<return>])
+          ;; insert a heading wherever.
+          org-insert-heading-respect-content nil)
   (keymap-set org-mode-map "C-M-<return>" #'org-insert-subheading)
   (keymap-set org-mode-map "C-M-S-<return>" #'org-insert-todo-subheading)
 

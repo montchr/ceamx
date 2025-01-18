@@ -657,13 +657,8 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   (after! lispy
     (add-to-list 'lispy-no-indent-modes #'kbd-mode)))
 
-;; Emacs Lisp
+;; General Elisp support customizations
 
-
-(require 'ceamx-lib)
-(require 'lib-lisp)
-
-;;; Hooks
 
 (defun ceamx-emacs-lisp-init ()
   "Sensible defaults for `emacs-lisp-mode'."
@@ -678,9 +673,11 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 (when (boundp 'eval-expression-minibuffer-setup-hook)
   (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
 
-;;; Advices
+;; Use current ~load-path~ during compilation to tone down Flymake
 
-;; via <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
+;; + Source :: <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
+
+
 (def-advice! +elisp-flymake-byte-compile-fix-load-path-a (orig-fn &rest args)
   :around #'elisp-flymake-byte-compile
   "Set load path for the `emacs-lisp' byte compilation `flymake' backend."
@@ -688,21 +685,25 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
          (append elisp-flymake-byte-compile-load-path load-path)))
     (apply orig-fn args)))
 
-;; via <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
+;; Display variable value next to ~eldoc~ output
+
+;; + Source :: <https://github.com/doomemacs/doomemacs/blob/98d753e1036f76551ccaa61f5c810782cda3b48a/modules/lang/emacs-lisp/config.el#L124C1-L138C15>
+
+
 (def-advice! +emacs-lisp-append-value-to-eldoc-a (fn sym)
   :around #'elisp-get-var-docstring
   "Display variable value next to documentation in eldoc."
   (when-let (ret (funcall fn sym))
     (if (boundp sym)
-      (concat ret " "
-        (let* ((truncated " [...]")
-                (print-escape-newlines t)
-                (str (symbol-value sym))
-                (str (prin1-to-string str))
-                (limit (- (frame-width) (length ret) (length truncated) 1)))
-          (format (format "%%0.%ds%%s" (max limit 0))
-            (propertize str 'face 'warning)
-            (if (< (length str) limit) "" truncated))))
+        (concat ret " "
+                (let* ((truncated " [...]")
+                       (print-escape-newlines t)
+                       (str (symbol-value sym))
+                       (str (prin1-to-string str))
+                       (limit (- (frame-width) (length ret) (length truncated) 1)))
+                  (format (format "%%0.%ds%%s" (max limit 0))
+                          (propertize str 'face 'warning)
+                          (if (< (length str) limit) "" truncated))))
       ret)))
 
 ;;; Keybinds
@@ -718,11 +719,10 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   (defvar ielm-map)
   (keymap-set ielm-map "C-:" #'quit-window))
 
-;;; Packages
+;; ~eros~ :: [E]valuation [R]esult [O]verlay[S]
 
-;;;; ~eros~ :: <https://github.com/xiongtx/eros>
+;; + Website :: <https://github.com/xiongtx/eros>
 
-;;  Evaluation Result OverlayS for Emacs Lisp
 
 (use-package eros
   :commands (eros-mode eros-eval-last-sexp)
@@ -743,19 +743,20 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
       ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
 
-;;;; ~suggest~ :: <https://github.com/Wilfred/suggest.el>
+;; ~suggest~ :: meet the elisp function of your dreams
 
-;;  discover elisp functions that do what you want,
-;;  brought to you by enumerative program synthesis
+;; + Package :: <https://github.com/Wilfred/suggest.el>
+
 
 (use-package suggest
   :commands (suggest)
   :init
   (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
 
-;;;; ~macrostep~ :: <https://github.com/emacsorphanage/macrostep>
+;; ~macrostep~ :: interactive macro-explorer
 
-;;  "interactive macro-expander for Emacs"
+;; + Package :: <https://github.com/emacsorphanage/macrostep>
+
 
 (use-package macrostep
   :commands (macrostep-expand)
@@ -768,28 +769,28 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 The original function fails in the presence of whitespace after a sexp."
     (interactive)
     (when (and (= ?\n (char-after))
-            (= (point) (cdr (bounds-of-thing-at-point 'sexp))))
+               (= (point) (cdr (bounds-of-thing-at-point 'sexp))))
       (backward-char))
     (macrostep-expand))
 
   :init
   (keymap-set emacs-lisp-mode-map "C-c x" #'ceamx/macrostep-expand))
 
-;;; Install ~xr~ to convert string regexps to ~rx~ forms
+;; ~xr~ :: convert string regexps to ~rx~ forms
 
-;; <https://github.com/mattiase/xr>
+;; + Package :: <https://github.com/mattiase/xr>
 
-;; TODO: keybindings...
 
 (package! xr)
 
 ;; ~elmacro~: Display keyboard macros or latest interactive commands as Elisp
 
-;; - Source code :: <https://github.com/Silex/elmacro>
+;; + Package :: <https://github.com/Silex/elmacro>
 
-;; Avoid enabling this mode globally.  It may cause some recurring errors, and
-;; the package has not been updated in years.  By nature, it is also quite
-;; invasive, and should probably only be used as a development tool as needed.
+;; Avoid enabling this mode globally.  It may cause some recurring
+;; errors, and the package has not been updated in years.  By nature, it
+;; is also quite invasive, and should probably only be used as a
+;; development tool as needed.
 
 
 (use-package elmacro
@@ -808,9 +809,9 @@ The original function fails in the presence of whitespace after a sexp."
   ;; FIXME: maybe causes errors?
   (setopt elmacro-processor-concatenate-inserts t))
 
-;; ~elisp-demos~: Display usage examples for Elisp callables inside their help buffers
+;; ~elisp-demos~ :: display elisp usage examples inside help buffers
 
-;; - Source code :: <https://github.com/xuchunyang/elisp-demos>
+;; - Package :: <https://github.com/xuchunyang/elisp-demos>
 
 
 (use-package elisp-demos
@@ -822,6 +823,25 @@ The original function fails in the presence of whitespace after a sexp."
   (setopt elisp-demos-user-files (list (expand-file-name  "docs/elisp-demos.org" user-emacs-directory)))
 
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+
+;; ~morlock~ :: more font-lock keywords for some eldritch expressions
+
+;; + Package :: <https://github.com/tarsius/morlock>
+
+
+(package! morlock
+  (global-morlock-mode))
+
+;; ~paren-face~ :: parentheses are beautiful
+
+
+(package! paren-face
+  (global-paren-face-mode))
+
+;; ~keymap-utils~ :: dev library for working with keymaps
+
+
+(package! keymap-utils)
 
 ;; Language Server and Debugger Protocol Support :lsp:lang:
 

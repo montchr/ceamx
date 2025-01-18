@@ -196,6 +196,11 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-a" #'mwim-beginning)
   (keymap-global-set "C-e" #'mwim-end))
 
+;; Comment entire lines by default
+
+
+
+
 ;; INPRG Provide a command to intelligently kill words backwardsly
 
 ;; - State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
@@ -236,7 +241,7 @@ This operation will respect the following rules:
         ;; 4
         (delete-char -1)))))
 
-;; ~easy-kill~ :package:
+;; ~easy-kill~ :: killing is easy when you're emacs :package:
 
 ;; + Package documentation :: <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
@@ -267,7 +272,7 @@ This operation will respect the following rules:
 
 (delete-selection-mode 1)
 
-;; ~expand-region~: Increase/decrease the selection area
+;; ~expand-region~ :: Increase/decrease the selection area
 
 
 (use-package expand-region
@@ -276,7 +281,7 @@ This operation will respect the following rules:
   :init
   (keymap-global-set "C-=" #'er/expand-region))
 
-;; ~drag-stuff~: drag stuff around in arbitrary directions :package:
+;; ~drag-stuff~ :: drag stuff around in arbitrary directions :package:
 
 ;; <https://github.com/rejeep/drag-stuff.el>
 
@@ -330,7 +335,7 @@ This operation will respect the following rules:
 
 (global-subword-mode -1)
 
-;; TODO ~string-inflection~: Commands to cycle through word casing
+;; TODO ~string-inflection~ :: commands to cycle through word casing
 
 ;; Needs better bindings.
 
@@ -354,7 +359,7 @@ This operation will respect the following rules:
     (`elixir-mode (string-inflection-elixir-style-cycle))
     (_ (string-inflection-ruby-style-cycle))))
 
-;; ~ialign~: Interactively ~align-regexp~ :package:
+;; ~ialign~ :: Interactively ~align-regexp~ :package:
 
 ;; <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
 
@@ -362,7 +367,7 @@ This operation will respect the following rules:
 (package! ialign
   (keymap-global-set "C-x l" #'ialign))
 
-;; ~rect~ [builtin]: operate on a buffer rectangularly
+;; Operate on buffers rectangularly with the ~rect~ feature
 
 ;; <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
 
