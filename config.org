@@ -1079,6 +1079,37 @@ Emacs version to prevent bytecode incompatibility.")
     (setq exp (cadr exp)))
   exp)
 
+(defun ceamx-string-first-char (str)
+  "Return first character from STR."
+  (substring str 0 1))
+
+(defun ceamx-string-truncate-middle (string length)
+  "If STRING is longer than LENGTH, return a version truncated in the middle.
+When truncating, \"...\" is always inserting in the middle of the
+string, so the resulting string may be longer than the original if
+LENGTH is 3 or smaller."
+  (declare (pure t) (side-effect-free t))
+  (let ((half (floor ceamx-modeline-string-truncate-length 2)))
+    (concat (substring str 0 half) "..." (substring str (- half)))))
+
+(defun ceamx-string-truncate-right (string length)
+  "If STRING is longer than LENGTH, return a truncated version.
+When truncating, \"...\" is always appended to the string, so
+the resulting string may be longer than the original if LENGTH is
+3 or smaller.
+
+This function is based on `string-truncate-left' (which see) from the
+`subr-x' library."
+  (declare (pure t) (side-effect-free t))
+  (let ((strlen (length string)))
+    (if (<= strlen length)
+        string
+      (setq length (max 0 (- length 3)))
+      (concat
+       (substring string (min (1- strlen)
+                              (max 0 (- strlen length))))
+       "..."))))
+
 ;;;;; Keybindings & Keymaps
 
 ;; via <oantolin>: <https://old.reddit.com/r/emacs/comments/1adwnse/repeatmode_is_awesome_share_you_useful_configs/kk9vpif/>
@@ -2834,6 +2865,32 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 (column-number-mode 1)
 
 (setopt display-time-24hr-format t)
+
+(use-feature! ceamx-modeline
+  :hook (ceamx-after-init . ceamx-modeline)
+  :config
+  (setq-default mode-line-format
+                '("%e"
+                  ceamx-modeline-kbd-macro
+                  ceamx-modeline-narrow
+                  ceamx-modeline-buffer-status
+                  ceamx-modeline-window-dedicated-status
+                  "  "
+                  ceamx-modeline-buffer-identification
+                  "  "
+                  ceamx-modeline-major-mode
+                  ceamx-modeline-process
+                  "  "
+                  ceamx-modeline-vc-branch
+                  "  "
+                  ceamx-modeline-eglot
+                  "  "
+                  ;; ceamx-modeline-flymake
+                  "  "
+                  mode-line-format-right-align ; Emacs 30
+                  ;; ceamx-modeline-notmuch-indicator
+                  "  "
+                  ceamx-modeline-misc-info)))
 #+end_src
 
 *** ~minions~ :: minimize many mode-line minor-modes

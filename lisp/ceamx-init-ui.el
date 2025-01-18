@@ -558,6 +558,32 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 
 (setopt display-time-24hr-format t)
 
+(use-feature! ceamx-modeline
+  :hook (ceamx-after-init . ceamx-modeline)
+  :config
+  (setq-default mode-line-format
+                '("%e"
+                  ceamx-modeline-kbd-macro
+                  ceamx-modeline-narrow
+                  ceamx-modeline-buffer-status
+                  ceamx-modeline-window-dedicated-status
+                  "  "
+                  ceamx-modeline-buffer-identification
+                  "  "
+                  ceamx-modeline-major-mode
+                  ceamx-modeline-process
+                  "  "
+                  ceamx-modeline-vc-branch
+                  "  "
+                  ceamx-modeline-eglot
+                  "  "
+                  ;; ceamx-modeline-flymake
+                  "  "
+                  mode-line-format-right-align ; Emacs 30
+                  ;; ceamx-modeline-notmuch-indicator
+                  "  "
+                  ceamx-modeline-misc-info)))
+
 ;; ~minions~ :: minimize many mode-line minor-modes
 
 
