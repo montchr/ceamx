@@ -86,7 +86,6 @@
         ;; "--init-directory" initialization flag.
         (list (file-name-concat ceamx-config-dir "emacs")
               (file-name-concat ceamx-config-dir "ceamx")))
-
 (setopt safe-local-variable-values
         '((eval load-file "./ceamx-dev-loader.el")))
 

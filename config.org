@@ -1510,15 +1510,14 @@ ELP is useful for seeing which functions in a package are "hot":
 ** Declare safe local variable directories and values relating to Emacs initialization
 
 #+begin_src emacs-lisp
-  (setopt safe-local-variable-directories
-          ;; NOTE: `user-emacs-directory' is intentionally not included
-          ;; here because its value can change based on the value of the
-          ;; "--init-directory" initialization flag.
-          (list (file-name-concat ceamx-config-dir "emacs")
-                (file-name-concat ceamx-config-dir "ceamx")))
-
-  (setopt safe-local-variable-values
-          '((eval load-file "./ceamx-dev-loader.el")))
+(setopt safe-local-variable-directories
+        ;; NOTE: `user-emacs-directory' is intentionally not included
+        ;; here because its value can change based on the value of the
+        ;; "--init-directory" initialization flag.
+        (list (file-name-concat ceamx-config-dir "emacs")
+              (file-name-concat ceamx-config-dir "ceamx")))
+(setopt safe-local-variable-values
+        '((eval load-file "./ceamx-dev-loader.el")))
 #+end_src
 
 ** Enable/disable some commands that are disabled/enabled by default
@@ -8363,7 +8362,7 @@ Create the directories if they don't already exist (to prevent errors):
         :jump-to-captured t)))
 #+end_src
 
-* =org= :: Org-Mode
+* Org-Mode :: =org=
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-org.el
 :END:
@@ -8758,24 +8757,24 @@ Define the Org-Capture templates:
 ** Literate programming
 
 #+BEGIN_SRC emacs-lisp
-  (after! org-src
-    ;; Changing the indentation of source code is unhelpful and destructive.
-    (setopt org-edit-src-content-indentation 0)
+(after! org-src
+  ;; Changing the indentation of source code is unhelpful and destructive.
+  (setopt org-edit-src-content-indentation 0)
 
-    (setopt org-edit-src-persistent-message nil)
-    (setopt org-src-ask-before-returning-to-edit-buffer nil)
-    (setopt org-src-preserve-indentation t)
-    (setopt org-src-tab-acts-natively t)
+  (setopt org-edit-src-persistent-message nil)
+  (setopt org-src-ask-before-returning-to-edit-buffer nil)
+  (setopt org-src-preserve-indentation t)
+  (setopt org-src-tab-acts-natively t)
 
-    ;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
-    ;; (setopt org-src-window-setup 'other-window)
-    (setopt org-src-window-setup 'current-window))
+  ;; TODO: current window when narrow/short frame, but otherwise reorganize-frame is good
+  ;; (setopt org-src-window-setup 'other-window)
+  (setopt org-src-window-setup 'current-window))
 
-  (after! org
-    ;; Ensure common languages are loaded.
-    (setopt org-babel-load-languages '((emacs-lisp . t)
-                                       (shell . t)
-                                       (sql . t))))
+(after! org
+  ;; Ensure common languages are loaded.
+  (setopt org-babel-load-languages '((emacs-lisp . t)
+                                     (shell . t)
+                                     (sql . t))))
 #+END_SRC
 
 ** Org-Babel: Load other supported languages on-demand during execution
