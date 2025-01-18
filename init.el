@@ -613,6 +613,7 @@ The ORDER can be used to deduce the feature context."
 
 
 (require 'ceamx-init-ui)
+(require 'ceamx-init-modeline)
 (require 'ceamx-init-essentials)
 (require 'ceamx-init-completion)
 (require 'ceamx-init-search)

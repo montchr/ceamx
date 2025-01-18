@@ -2858,7 +2858,33 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
   (add-hook 'text-mode-hook #'svg-tag-mode))
 #+end_src
 
-** Modeline :modeline:
+** Provide the ~ceamx-init-ui~ feature
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-ui.el :comments no
+(provide 'ceamx-init-ui)
+;;; ceamx-init-ui.el ends here
+#+end_src
+
+* Modeline :modeline:
+:PROPERTIES:
+:header-args: :tangle lisp/ceamx-init-modeline.el
+:END:
+
+** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-modeline.el :comments no
+;; -*- lexical-binding: t; -*-
+
+(require 'ceamx-lib)
+#+end_src
+
+** Set up the ~ceamx-modeline~
 
 #+begin_src emacs-lisp
 (line-number-mode 1)
@@ -2893,14 +2919,14 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
                   ceamx-modeline-misc-info)))
 #+end_src
 
-*** ~minions~ :: minimize many mode-line minor-modes
+** ~minions~ :: minimize many mode-line minor-modes
 
 #+begin_src emacs-lisp
 (package! minions
   (add-hook 'ceamx-after-init-hook #'minions-mode))
 #+end_src
 
-*** ~keycast~ :: show current command and its binding :present:
+** ~keycast~ :: show current command and its binding :present:
 
 - Website :: <https://github.com/tarsius/keycast>
 
@@ -2919,14 +2945,14 @@ NOTE: Incompatible with kitchen-sink modeline packages like
     (add-to-list 'keycast-substitute-alist `(,event nil))))
 #+end_src
 
-** Provide the ~ceamx-init-ui~ feature
+** Provide the ~ceamx-init-modeline~ feature
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
 
-#+begin_src emacs-lisp :tangle lisp/ceamx-init-ui.el :comments no
-(provide 'ceamx-init-ui)
-;;; ceamx-init-ui.el ends here
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-modeline.el :comments no
+(provide 'ceamx-init-modeline)
+;;; ceamx-init-modeline.el ends here
 #+end_src
 
 * Essentials :: =essentials=
@@ -9548,6 +9574,7 @@ Return the new `zone' timer."
 
 #+begin_src emacs-lisp
 (require 'ceamx-init-ui)
+(require 'ceamx-init-modeline)
 (require 'ceamx-init-essentials)
 (require 'ceamx-init-completion)
 (require 'ceamx-init-search)
