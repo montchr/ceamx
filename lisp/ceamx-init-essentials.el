@@ -196,11 +196,6 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-a" #'mwim-beginning)
   (keymap-global-set "C-e" #'mwim-end))
 
-;; Comment entire lines by default
-
-
-
-
 ;; INPRG Provide a command to intelligently kill words backwardsly
 
 ;; - State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\

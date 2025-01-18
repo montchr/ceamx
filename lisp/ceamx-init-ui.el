@@ -559,7 +559,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 (setopt display-time-24hr-format t)
 
 (use-feature! ceamx-modeline
-  :hook (ceamx-after-init . ceamx-modeline)
+  :hook (ceamx-after-init . ceamx-modeline-mode)
   :config
   (setq-default mode-line-format
                 '("%e"
