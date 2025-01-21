@@ -217,6 +217,22 @@ Intended for use as a local hook function on
   ;; :ensure t
   )
 
+;; ~org-node~ :: a lightweight roam-like
+
+;; + Package :: <https://github.com/meedstrom/org-node>
+
+
+(package! org-node
+  (keymap-set global-map "M-s M-f" #'org-node-find)
+  (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link))
+
+(after! org-node
+  (setopt org-node-extra-id-dirs
+          (list ceamx-agenda-dir))
+
+  (org-node-backlink-mode)
+  (org-node-cache-mode))
+
 ;; ~org-contrib~ :: a library of unmaintained community packages
 
 ;; - Website :: <https://orgmode.org/worg/org-contrib/>
