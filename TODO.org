@@ -11,30 +11,46 @@
   (kmacro "C-k C-k C-k C-p C-p <return> <return> C-p C-y C-p C-p C-d C-d C-d * * * C-n C-k C-k C-s ; ; ; <return> C-a"))
 #+end_src
 
+
 * Improvements
 
-** PROJ Moda.el
+** PROJ Moda.el [0/2]
 *** TODO quick keybinding like meow's =x= to mark line without meow
 
 muscles men-or-y
 
 *** TODO =q= to bury buff (musecles menory)
 
+
 * Bugs
 
 ** TODO Why can I not refile to this file from the other file?
 
-** TODO block cursor when meow disabled
+** CANCELLED block cursor when meow disabled
+CLOSED: [2025-01-21 Tue 12:18]
+:LOGBOOK:
+- State "CANCELLED"  from "TODO"       [2025-01-21 Tue 12:18]
+- State "DONE"       from "CANCELLED"  [2025-01-21 Tue 12:18]
+- State "CANCELLED"  from "DONE"       [2025-01-21 Tue 12:18]
+:END:
 
 block cursor is garbage mess
 
-** TODO =shell= src blocks get tangled without explicit =:noweb-ref nil= header-arg
+** DONE =shell= src blocks get tangled without explicit =:noweb-ref nil= header-arg
+CLOSED: [2025-01-21 Tue 12:18]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2025-01-21 Tue 12:18]
+:END:
+
 
 * Packages
+
 
 * Kleptography
 ** TODO [[https://github.com/nanasess/dotfiles/blob/ac4f3f479d6cad6f91a6d3333a598299c3daa382/.emacs.d/init.el#L961][dotfiles/.emacs.d/init.el at ac4f3f479d6cad6f91a6d3333a598299c3daa382 · nanasess/dotfiles · GitHub]] :php:lang:
 ** TODO [[https://github.com/Gleek/emacs.d/blob/acbd5ea94b21571fc6cc1d28a8e0581410f402be/core/lang/core-php.el][emacs.d/core/lang/core-php.el at acbd5ea94b21571fc6cc1d28a8e0581410f402be · Gleek/emacs.d · GitHub]] :php:
+
+
 * Meta
 
 
