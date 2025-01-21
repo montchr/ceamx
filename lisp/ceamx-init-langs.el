@@ -830,7 +830,7 @@ The original function fails in the presence of whitespace after a sexp."
 
 
 (package! morlock
-  (global-morlock-mode))
+  (add-hook 'ceamx-after-init-hook #'morlock-mode))
 
 ;; ~paren-face~ :: parentheses are beautiful
 

@@ -7337,7 +7337,7 @@ development tool as needed.
 
 #+begin_src emacs-lisp
 (package! morlock
-  (global-morlock-mode))
+  (add-hook 'ceamx-after-init-hook #'morlock-mode))
 #+end_src
 
 *** ~paren-face~ :: parentheses are beautiful
