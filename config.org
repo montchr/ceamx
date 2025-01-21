@@ -1008,7 +1008,8 @@ Emacs version to prevent bytecode incompatibility.")
 (define-prefix-command 'ceamx-file-prefix)
 (define-prefix-command 'ceamx-insert-prefix)
 (define-prefix-command 'ceamx-launch-prefix)
-(define-prefix-command 'ceamx-note-prefix)
+(define-prefix-command 'ceamx-note-prefix 'ceamx-note-prefix-map)
+(define-prefix-command 'ceamx-journal-prefix 'ceamx-journal-prefix-map)
 (define-prefix-command 'ceamx-package-prefix)
 (define-prefix-command 'ceamx-replace-prefix)
 (define-prefix-command 'ceamx-session-prefix)
@@ -8301,6 +8302,15 @@ Create the directories if they don't already exist (to prevent errors):
 
 (package! denote
   (require 'denote)
+  (require 'denote-journal-extras)
+
+  (define-prefix-command 'ceamx-notes-prefix 'ceamx-notes-prefix-map)
+  (define-prefix-command 'ceamx-journal-prefix 'ceamx-journal-prefix-map)
+
+  (keymap-global-set "C-c j" #'ceamx-notes-prefix)
+  (define-keymap :keymap ceamx-notes-prefix-map
+    "j" #'ceamx-journal-prefix
+    "j j" #'denote-journal-extras-new-entry)
 
   ;; Integrations
 
@@ -8314,7 +8324,7 @@ Create the directories if they don't already exist (to prevent errors):
 
   (setopt denote-directory ceamx-notes-default-dir)
   (setopt denote-save-buffers nil)
-  (setopt denote-known-keywords '("emacs" "philosophy" "correspondence" "language" "work"))
+  (setopt denote-known-keywords '("emacs" "philosophy" "correspondence" "language" "work" "journal" "blog"))
   (setopt denote-infer-keywords t)
   (setopt denote-sort-keywords t)
   (setopt denote-file-type nil)         ; Org is the default
@@ -9669,7 +9679,7 @@ Or, perhaps more accurately: stuff that needs a better home.
   "C-c k" #'consult-kmacro
   "C-c l" (cons "[ CODE     ]" #'ceamx-code-prefix)
   ;; "C-c m"
-  ;; "C-c n"
+  "C-c n" (cons "[ NOTES    ]" #'ceamx-note-prefix)
   "C-c o" (cons "[ LAUNCH   ]" #'ceamx-launch-prefix)
   "C-c q" (cons "[ SESSION  ]" #'ceamx-session-prefix)
   ;; "C-c r"
@@ -9779,25 +9789,26 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 ;;;;; [C-c n] :: Note
 
-(define-keymap :keymap ceamx-note-prefix
+(define-keymap :keymap ceamx-note-prefix-map
   "n" #'denote
 
+  "b" #'denote-backlinks
   "c" #'denote-region                   ; "contents"
   "C" #'denote-type
+  "f" (cons "[ FIND    ]" (define-prefix-command 'ceamx-note-f-prefix))
+  "i" #'denote-link                     ; "insert link"
+  "I" #'denote-add-links
+  "j" (cons "[ JOURNAL ]" #'ceamx-journal-prefix)
+  "r" #'denote-rename-file
+  "R" #'denote-rename-file-using-front-matter
   "s" #'denote-subdirectory
   "t" #'denote-template
   "z" #'denote-signature                ; "zettelkasten"
 
-  "i" #'denote-link                     ; "insert link"
-  "I" #'denote-add-links
-  "b" #'denote-backlinks
-
-  "f" (cons "find..." (define-prefix-command 'ceamx-find-notes-prefix))
   "f f" #'denote-find-link
   "f b" #'denote-find-backlink
 
-  "r" #'denote-rename-file
-  "R" #'denote-rename-file-using-front-matter)
+  "j j" #'denote-journal-extras-new-or-existing-entry)
 
 
 ;;;;; [C-c o] :: Launch

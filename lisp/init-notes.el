@@ -70,6 +70,15 @@
 
 (package! denote
   (require 'denote)
+  (require 'denote-journal-extras)
+
+  (define-prefix-command 'ceamx-notes-prefix 'ceamx-notes-prefix-map)
+  (define-prefix-command 'ceamx-journal-prefix 'ceamx-journal-prefix-map)
+
+  (keymap-global-set "C-c j" #'ceamx-notes-prefix)
+  (define-keymap :keymap ceamx-notes-prefix-map
+    "j" #'ceamx-journal-prefix
+    "j j" #'denote-journal-extras-new-entry)
 
   ;; Integrations
 
@@ -83,7 +92,7 @@
 
   (setopt denote-directory ceamx-notes-default-dir)
   (setopt denote-save-buffers nil)
-  (setopt denote-known-keywords '("emacs" "philosophy" "correspondence" "language" "work"))
+  (setopt denote-known-keywords '("emacs" "philosophy" "correspondence" "language" "work" "journal" "blog"))
   (setopt denote-infer-keywords t)
   (setopt denote-sort-keywords t)
   (setopt denote-file-type nil)         ; Org is the default

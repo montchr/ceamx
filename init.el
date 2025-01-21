@@ -670,7 +670,7 @@ The ORDER can be used to deduce the feature context."
   "C-c k" #'consult-kmacro
   "C-c l" (cons "[ CODE     ]" #'ceamx-code-prefix)
   ;; "C-c m"
-  ;; "C-c n"
+  "C-c n" (cons "[ NOTES    ]" #'ceamx-note-prefix)
   "C-c o" (cons "[ LAUNCH   ]" #'ceamx-launch-prefix)
   "C-c q" (cons "[ SESSION  ]" #'ceamx-session-prefix)
   ;; "C-c r"
@@ -780,25 +780,26 @@ The ORDER can be used to deduce the feature context."
 
 ;;;;; [C-c n] :: Note
 
-(define-keymap :keymap ceamx-note-prefix
+(define-keymap :keymap ceamx-note-prefix-map
   "n" #'denote
 
+  "b" #'denote-backlinks
   "c" #'denote-region                   ; "contents"
   "C" #'denote-type
+  "f" (cons "[ FIND    ]" (define-prefix-command 'ceamx-note-f-prefix))
+  "i" #'denote-link                     ; "insert link"
+  "I" #'denote-add-links
+  "j" (cons "[ JOURNAL ]" #'ceamx-journal-prefix)
+  "r" #'denote-rename-file
+  "R" #'denote-rename-file-using-front-matter
   "s" #'denote-subdirectory
   "t" #'denote-template
   "z" #'denote-signature                ; "zettelkasten"
 
-  "i" #'denote-link                     ; "insert link"
-  "I" #'denote-add-links
-  "b" #'denote-backlinks
-
-  "f" (cons "find..." (define-prefix-command 'ceamx-find-notes-prefix))
   "f f" #'denote-find-link
   "f b" #'denote-find-backlink
 
-  "r" #'denote-rename-file
-  "R" #'denote-rename-file-using-front-matter)
+  "j j" #'denote-journal-extras-new-or-existing-entry)
 
 
 ;;;;; [C-c o] :: Launch
