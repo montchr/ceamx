@@ -617,31 +617,16 @@ The ORDER can be used to deduce the feature context."
 (require 'ceamx-init-search)
 (require 'ceamx-init-dired)
 (require 'ceamx-init-window)
-(require 'init-workspace)
 (require 'ceamx-init-vcs)
 (require 'ceamx-init-langs)
-
-;;;; Outlines & Memex
-
-(require 'init-notes)
+(require 'ceamx-init-notes)
 (require 'ceamx-init-org)
-
-;;;; Tree-Sitter
-
 (require 'init-treesitter)
-
-;;;; Language/syntax support
-
 (require 'lib-prog)
-
-;;;; Miscellaneous
-
 (require 'ceamx-init-tools)
-
 (require 'init-news)
 (require 'init-eww)
 (require 'init-printing)
-
 (require 'init-fun)
 
 ;; =init.el=: Keybindings
@@ -782,6 +767,7 @@ The ORDER can be used to deduce the feature context."
 
 (define-keymap :keymap ceamx-note-prefix-map
   "n" #'denote
+  "N" #'consult-notes
 
   "b" #'denote-backlinks
   "c" #'denote-region                   ; "contents"

@@ -257,9 +257,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
    ;; :preview-key (kbd "M-.")
    :preview-key '(:debounce 0.4 any)))
 
-
-
-;; Preview files in =find-file=:
+;; Preview files in =find-file= with ~consult~
 
 ;; - source :: <https://github.com/minad/consult/wiki#previewing-files-in-find-file>
 
@@ -271,10 +269,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   :init
   (setq read-file-name-function #'ceamx-completion/consult-find-file-with-preview))
 
-
-
-;; Define commands to search pre-defined sets of Info pages with
-;; ~consult-info~:
+;; Search pre-defined sets of Info pages with ~consult-info~
 
 
 (define-prefix-command 'ceamx-info-prefix 'ceamx-info-prefix-map)

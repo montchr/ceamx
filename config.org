@@ -452,50 +452,6 @@ mutation of a variable.
 <<file-footer(feature="lib-prog")>>
 #+end_src
 
-** =lisp/init-notes.el=
-
-#+name: init-notes-file
-#+begin_src emacs-lisp :tangle lisp/init-notes.el :comments no :noweb yes
-<<file-prop-line(feature="init-notes",desc="Notetaking features")>>
-
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-notes>>
-
-<<file-footer(feature="init-notes")>>
-#+end_src
-
-** =lisp/init-workspace.el=
-
-#+name: init-workspace-file
-#+begin_src emacs-lisp :tangle lisp/init-workspace.el :comments no :noweb yes
-<<file-prop-line(feature="init-workspace",desc="Workspaces, activities, scopes, and other organizational closures")>>
-
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<init-workspace>>
-
-<<file-footer(feature="init-workspace")>>
-#+end_src
-
 * =early-init.el=
 :PROPERTIES:
 :header-args: :tangle early-init.el :comments both
@@ -4534,7 +4490,7 @@ Refine preview appearance and behavior:
    :preview-key '(:debounce 0.4 any)))
 #+end_src
 
-Preview files in =find-file=:
+** Preview files in =find-file= with ~consult~
 
 - source :: <https://github.com/minad/consult/wiki#previewing-files-in-find-file>
 
@@ -4547,8 +4503,7 @@ Preview files in =find-file=:
   (setq read-file-name-function #'ceamx-completion/consult-find-file-with-preview))
 #+end_src
 
-Define commands to search pre-defined sets of Info pages with
-~consult-info~:
+** Search pre-defined sets of Info pages with ~consult-info~
 
 #+begin_src emacs-lisp
 (define-prefix-command 'ceamx-info-prefix 'ceamx-info-prefix-map)
@@ -8209,40 +8164,24 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 
 * TODO Notetaking :: =notes= :notes:writing:
 :PROPERTIES:
-:header-args: :noweb-ref init-notes
+:header-args:emacs-lisp: :tangle lisp/ceamx-init-notes.el
 :END:
 
-** Define locations for important directories and files
-
-#+begin_src emacs-lisp :noweb-ref config-feature-paths
-(defconst ceamx-notes-dir
-  (file-name-as-directory (concat ceamx-home-dir "Documents/notes"))
-  "Base directory for note storage.")
-
-(defconst ceamx-agenda-dir
-  (file-name-as-directory (concat ceamx-notes-dir "g2d")))
-
-(defconst ceamx-dailies-dir
-  (file-name-as-directory (concat ceamx-notes-dir "daily")))
-
-(defconst ceamx-notes-default-dir
-  (file-name-as-directory (concat ceamx-notes-dir "default")))
-
-(defconst ceamx-journal-dir
-  (file-name-as-directory (concat ceamx-notes-dir "journal")))
-
-(defconst ceamx-work-notes-dir
-  (file-name-as-directory (concat ceamx-notes-dir "work")))
-#+end_src
-
-Create the directories if they don't already exist (to prevent errors):
+** Requirements
 
 #+begin_src emacs-lisp
-(require 'f)
-(require 'ceamx-paths)
+;; -*- lexical-binding: t; -*-
 
-(dolist (dir (list ceamx-notes-dir ceamx-journal-dir ceamx-agenda-dir))
-  (f-mkdir-full-path dir))
+(require 'f)
+
+(require 'ceamx-lib)
+(require 'ceamx-note)
+
+(use-feature! ceamx-note
+  :config
+  ;; Ensure essential directories exist to prevent errors.
+  (dolist (dir (list ceamx-note-dir ceamx-note-journal-dir))
+    (f-mkdir-full-path dir)))
 #+end_src
 
 ** =consult-notes= :: provide notes as a Consult datasource :package:consult:
@@ -8254,16 +8193,18 @@ Create the directories if they don't already exist (to prevent errors):
 
 (after! consult-notes
   (setopt consult-notes-file-dir-sources
-          `(("Default" ?D ,ceamx-notes-default-dir)
-            ("Org" ?o ,org-directory)))
+          `(("Default" ?D ,ceamx-note-default-dir)
+            ("Work" ?w ,ceamx-note-work-dir)
+            ("Journal" ?j ,ceamx-note-journal-dir :hidden t)))
+  (setopt consult-notes-org-headings-files
+          (append (f-entries ceamx-note-default-dir (##f-ext-p % "org") t)))
 
-  (setopt consult-notes-org-headings-files org-agenda-files)
   (consult-notes-org-headings-mode)
 
-  ;; Integrate with Denote if available.
   (when (locate-library "denote")
-    (consult-notes-denote-mode))
-  (setopt consult-notes-denote-files-function (lambda () (denote-directory-files nil t t))))
+    (setopt consult-notes-denote-files-function
+            (lambda () (denote-directory-files nil t t)))
+    (consult-notes-denote-mode)))
 #+end_src
 
 ** TODO Embark integration for ~consult-notes~ :embark:
@@ -8298,19 +8239,9 @@ Create the directories if they don't already exist (to prevent errors):
 - website :: <https://protesilaos.com/emacs/denote>
 
 #+begin_src emacs-lisp
-(require 'ceamx-paths)
-
 (package! denote
   (require 'denote)
   (require 'denote-journal-extras)
-
-  (define-prefix-command 'ceamx-notes-prefix 'ceamx-notes-prefix-map)
-  (define-prefix-command 'ceamx-journal-prefix 'ceamx-journal-prefix-map)
-
-  (keymap-global-set "C-c j" #'ceamx-notes-prefix)
-  (define-keymap :keymap ceamx-notes-prefix-map
-    "j" #'ceamx-journal-prefix
-    "j j" #'denote-journal-extras-new-entry)
 
   ;; Integrations
 
@@ -8322,7 +8253,7 @@ Create the directories if they don't already exist (to prevent errors):
 
   ;; Customizations
 
-  (setopt denote-directory ceamx-notes-default-dir)
+  (setopt denote-directory ceamx-note-default-dir)
   (setopt denote-save-buffers nil)
   (setopt denote-known-keywords '("emacs" "philosophy" "correspondence" "language" "work" "journal" "blog"))
   (setopt denote-infer-keywords t)
@@ -8373,17 +8304,30 @@ Create the directories if they don't already exist (to prevent errors):
         :jump-to-captured t)))
 #+end_src
 
+** Provide the ~ceamx-init-notes~ feature
+
+#+begin_src emacs-lisp
+(provide 'ceamx-init-notes)
+;;; ceamx-init-notes.el ends here
+#+end_src
+
 * Org-Mode :: =org=
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-org.el
 :END:
 
 ** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+begin_src emacs-lisp :comments no
 ;; -*- lexical-binding: t -*-
 
+(require 'f)
+
 (require 'ceamx-lib)
+(require 'ceamx-note)
 #+end_src
 
 ** Set up essential files & directories :paths:
@@ -8404,7 +8348,13 @@ Syncthing is not set up yet, then any directory created via the Emacs
 configuration will probably result in a conflict when Syncthing tries
 to take control of these paths.
 
-#+begin_src emacs-lisp :tangle no :noweb-ref config-feature-paths
+#+begin_src emacs-lisp
+(defcustom ceamx-agenda-dir
+  (file-name-as-directory (concat ceamx-note-dir "g2d"))
+  "Base directory for Org-Agenda."
+  :type 'directory
+  :group 'ceamx)
+
 (defconst ceamx-default-agenda-files
   (file-expand-wildcards (file-name-concat ceamx-agenda-dir "*.org"))
   "List of absolute paths of all files that should be included in the agenda.")
@@ -8425,9 +8375,6 @@ reason, use the ~ceamx-agenda-dir~.
 #+BEGIN_SRC emacs-lisp
 (defvar org-directory ceamx-agenda-dir)
 
-;; TODO: I would prefer to check for the directory's existence
-;; explicitly -- this feels strange at the top-level.  Maybe move this
-;; to the section where `ceamx-agenda-dir' is defined.
 (f-mkdir-full-path org-directory)
 
 (setopt org-agenda-files ceamx-default-agenda-files)
@@ -8441,11 +8388,21 @@ reason, use the ~ceamx-agenda-dir~.
                                        (plain-list-item . nil)))
 
   ;;
-  ;; Links
+  ;; Links & IDs
 
   (setopt org-link-context-for-files t)
   (setopt org-link-keep-stored-after-insertion nil)
   (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+  (setopt org-clone-delete-id t)
+  (setopt org-id-search-archives nil)
+  ;; Ensure IDs for bookmarked headings within `ceamx-note-dir'.
+  (setopt org-bookmark-heading-make-ids
+          (lambda ()
+            (when-let* ((buffer-file-name
+                         (or (buffer-file-name)
+                             (when (buffer-base-buffer)
+                               (buffer-file-name (buffer-base-buffer))))))
+              (file-in-directory-p buffer-file-name ceamx-note-dir))))
 
   ;;
   ;; Editing
@@ -8498,6 +8455,11 @@ reason, use the ~ceamx-agenda-dir~.
                                "|"
                                "DONE(d!)"
                                "CANCELLED(x@/!)")))
+
+  ;;
+  ;; Clocking
+
+  (setopt org-clock-in-switch-to-state "INPRG")
 
   ;;
   ;; Logging
@@ -8582,6 +8544,8 @@ Intended for use as a local hook function on
           org-agenda-tags-column 0)
   (setopt org-pretty-entities t
           org-pretty-entities-include-sub-superscripts nil)
+  (setopt org-indent-indentation-per-level 2
+          org-startup-indented nil)
   (setopt org-src-fontify-natively t)
   ;; TODO: show markers for bold and italic, hide everything else
   (setopt org-hide-emphasis-markers t)
@@ -8593,7 +8557,7 @@ Intended for use as a local hook function on
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
 (after! org-modern
-  (setopt org-modern-star nil))
+  (setopt org-modern-star 'replace))
 
 (after! org-appear
   (setopt org-appear-autoemphasis t
@@ -8611,16 +8575,11 @@ Intended for use as a local hook function on
 ~org-modern~ is incompatible with Org indentation.  But we can pretend.
 
 #+begin_src emacs-lisp :tangle no
-(after! org
-  (setopt org-indent-indentation-per-level 2)
-  (setopt org-startup-indented nil))
-
 (after! org-modern
   ;; Emulate "indentation" by replacing leading stars with whitespace.
   ;; One space will replace one star.  Additional spaces will appear
   ;; as whitespace, creating the effect of visual indentation.
-  (setopt org-modern-hide-stars "   ")
-  (setopt org-modern-star nil))
+  (setopt org-modern-hide-stars (string-pad " " (+ 1 org-indent-indentation-per-level))))
 #+end_src
 
 ** Appearance: Display visual feedback after actions
@@ -8665,8 +8624,8 @@ Intended for use as a local hook function on
   (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link))
 
 (after! org-node
-  (setopt org-node-extra-id-dirs
-          (list ceamx-agenda-dir))
+  (setopt org-node-extra-id-dirs (list ceamx-agenda-dir))
+  (add-to-list 'org-node-extra-id-dirs-exclude ceamx-note-journal-dir)
 
   (org-node-backlink-mode)
   (org-node-cache-mode))
@@ -9365,6 +9324,22 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 #+end_src
+
+** ~verb~ :: organize and send http requests
+
++ Package :: https://github.com/federicotdn/verb
+
+#+begin_src emacs-lisp
+(package! verb
+  (after! org
+    ;; FIXME: is there a better way to bind `verb-command-map', the
+    ;; primary entrypoint?
+    ;; (defer! 2
+    ;;   (require 'verb))
+    (keymap-set org-mode-map "C-c C-r" verb-command-map) ; orig. `org-fold-reveal'
+    ))
+#+end_src
+
 ** [[https://github.com/hniksic/emacs-htmlize][hniksic/emacs-htmlize]]: Convert buffer text and decorations to HTML
 
 #+begin_src emacs-lisp
@@ -9607,39 +9582,16 @@ Return the new `zone' timer."
 (require 'ceamx-init-search)
 (require 'ceamx-init-dired)
 (require 'ceamx-init-window)
-(require 'init-workspace)
 (require 'ceamx-init-vcs)
 (require 'ceamx-init-langs)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Outlines & Memex
-
-(require 'init-notes)
+(require 'ceamx-init-notes)
 (require 'ceamx-init-org)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Tree-Sitter
-
 (require 'init-treesitter)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Language/syntax support
-
 (require 'lib-prog)
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Miscellaneous
-
 (require 'ceamx-init-tools)
-
 (require 'init-news)
 (require 'init-eww)
 (require 'init-printing)
-
 (require 'init-fun)
 #+end_src
 
@@ -9791,6 +9743,7 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 (define-keymap :keymap ceamx-note-prefix-map
   "n" #'denote
+  "N" #'consult-notes
 
   "b" #'denote-backlinks
   "c" #'denote-region                   ; "contents"
@@ -10156,9 +10109,7 @@ See also `modus-themes-load-theme'."
 ;;; ceamx-ui.el ends here
 #+end_src
 
-
 ** The ~ceamx-modeline~ library
-
 
 
 ** The =ceamx-simple= library: Common utility commands
@@ -10710,7 +10661,6 @@ writable or with a prefix argument, then read a file to visit."
 ;;; ceamx-simple.el ends here
 #+end_src
 
-
 ** The =ceamx-window.el= library
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-window.el :comments no :noweb yes
@@ -11048,7 +10998,6 @@ available, `switchy-window'."
 ;;; ceamx-window.el ends here
 #+end_src
 
-
 ** The =ceamx-completion.el= library
 
 #+begin_src emacs-lisp :tangle site-lisp/ceamx-completion.el :comments no
@@ -11205,6 +11154,7 @@ files               => `wdired'
          (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
     (embark-export)))
 
+;; via <https://github.com/minad/consult/wiki#previewing-files-in-find-file>
 ;;;###autoload
 (defun ceamx-completion/consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
   (interactive)
@@ -11218,6 +11168,77 @@ files               => `wdired'
 
 (provide 'ceamx-completion)
 ;;; ceamx-completion.el ends here
+#+end_src
+
+** The ~ceamx-note~ library
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle site-lisp/ceamx-note.el :comments no
+;;; ceamx-note.el --- Ceamx: Notetaking helpers      -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2025  Chris Montgomery
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; Keywords: files, local
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;; Code:
+
+;;;; Customization
+
+(defgroup ceamx-note nil
+  "Ceamx notetaking"
+  :group 'ceamx)
+
+(defcustom ceamx-note-dir
+  (file-name-as-directory (concat ceamx-home-dir "Documents/notes"))
+  "Base directory for note storage."
+  :type 'directory
+  :group 'ceamx-note)
+
+(defcustom ceamx-note-dailies-dir
+  (file-name-as-directory (concat ceamx-note-dir "daily"))
+  "Base directory for daily logs."
+  :type 'directory
+  :group 'ceamx-note)
+
+(defcustom ceamx-note-default-dir
+  (file-name-as-directory (concat ceamx-note-dir "default"))
+  "Base directory for the default notes scope."
+  :type 'directory
+  :group 'ceamx-note)
+
+(defcustom ceamx-note-journal-dir
+  (file-name-as-directory (concat ceamx-note-dir "journal"))
+  "Base directory for the journal notes scope."
+  :type 'directory
+  :group 'ceamx-note)
+
+(defcustom ceamx-note-work-dir
+  (file-name-as-directory (concat ceamx-note-dir "work"))
+  "Base directory for the work notes scope."
+  :type 'directory
+  :group 'ceamx-note)
+
+;;; Footer
+
+(provide 'ceamx-note)
+;;; ceamx-note.el ends here
 #+end_src
 
 ** The =lisp/lib-elisp.el= library

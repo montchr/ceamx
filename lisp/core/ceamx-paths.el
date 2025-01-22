@@ -107,35 +107,6 @@ Emacs version to prevent bytecode incompatibility.")
 Templates, in this sense, refer to the primary focus of packages
 like \"tempo\", \"tempel\", and \"yasnippet\".")
 (defvar ceamx-eglot-storage-dir (file-name-as-directory (concat ceamx-var-dir "eglot")))
-(defconst ceamx-notes-dir
-  (file-name-as-directory (concat ceamx-home-dir "Documents/notes"))
-  "Base directory for note storage.")
-
-(defconst ceamx-agenda-dir
-  (file-name-as-directory (concat ceamx-notes-dir "g2d")))
-
-(defconst ceamx-dailies-dir
-  (file-name-as-directory (concat ceamx-notes-dir "daily")))
-
-(defconst ceamx-notes-default-dir
-  (file-name-as-directory (concat ceamx-notes-dir "default")))
-
-(defconst ceamx-journal-dir
-  (file-name-as-directory (concat ceamx-notes-dir "journal")))
-
-(defconst ceamx-work-notes-dir
-  (file-name-as-directory (concat ceamx-notes-dir "work")))
-(defconst ceamx-default-agenda-files
-  (file-expand-wildcards (file-name-concat ceamx-agenda-dir "*.org"))
-  "List of absolute paths of all files that should be included in the agenda.")
-
-(defconst ceamx-default-todo-file
-  (expand-file-name "todo.org" ceamx-agenda-dir)
-  "Absolute path to default file for active G2D.")
-
-(defconst ceamx-default-capture-file
-  (expand-file-name "inbox.org" ceamx-agenda-dir)
-  "Absolute path to default inbox file for new G2D waiting to be processed.")
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
 (defconst ceamx-ledger-main-journal-file (file-name-concat ceamx-ledger-dir "main.journal"))
 

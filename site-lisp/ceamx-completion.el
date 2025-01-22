@@ -151,6 +151,7 @@ files               => `wdired'
          (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
     (embark-export)))
 
+;; via <https://github.com/minad/consult/wiki#previewing-files-in-find-file>
 ;;;###autoload
 (defun ceamx-completion/consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
   (interactive)

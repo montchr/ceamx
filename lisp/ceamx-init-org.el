@@ -1,6 +1,46 @@
 ;; -*- lexical-binding: t -*-
 
+(require 'f)
+
 (require 'ceamx-lib)
+(require 'ceamx-note)
+
+;; Set up essential files & directories :paths:
+
+;; These must be set before loading Org-Mode or any of its sub-features
+;; are used.
+
+;; Most notes will be stored in ~ceamx-notes-dir~, defined in ~ceamx-paths~.
+
+;; Because these directories are managed by Syncthing, creating them
+;; automatically is not a great idea if they do not already exist.  A
+;; better workaround to the issue of Org-Mode failing to load might be
+;; setting the default target to a subdirectory of ~user-emacs-directory~.
+
+;; Why?  Because you do not want to end up with two Syncthing entries
+;; with the same intended target path but with different IDs.  If
+;; Syncthing is not set up yet, then any directory created via the Emacs
+;; configuration will probably result in a conflict when Syncthing tries
+;; to take control of these paths.
+
+
+(defcustom ceamx-agenda-dir
+  (file-name-as-directory (concat ceamx-note-dir "g2d"))
+  "Base directory for Org-Agenda."
+  :type 'directory
+  :group 'ceamx)
+
+(defconst ceamx-default-agenda-files
+  (file-expand-wildcards (file-name-concat ceamx-agenda-dir "*.org"))
+  "List of absolute paths of all files that should be included in the agenda.")
+
+(defconst ceamx-default-todo-file
+  (expand-file-name "todo.org" ceamx-agenda-dir)
+  "Absolute path to default file for active G2D.")
+
+(defconst ceamx-default-capture-file
+  (expand-file-name "inbox.org" ceamx-agenda-dir)
+  "Absolute path to default inbox file for new G2D waiting to be processed.")
 
 
 
@@ -11,9 +51,6 @@
 
 (defvar org-directory ceamx-agenda-dir)
 
-;; TODO: I would prefer to check for the directory's existence
-;; explicitly -- this feels strange at the top-level.  Maybe move this
-;; to the section where `ceamx-agenda-dir' is defined.
 (f-mkdir-full-path org-directory)
 
 (setopt org-agenda-files ceamx-default-agenda-files)
@@ -26,11 +63,21 @@
                                        (plain-list-item . nil)))
 
   ;;
-  ;; Links
+  ;; Links & IDs
 
   (setopt org-link-context-for-files t)
   (setopt org-link-keep-stored-after-insertion nil)
   (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+  (setopt org-clone-delete-id t)
+  (setopt org-id-search-archives nil)
+  ;; Ensure IDs for bookmarked headings within `ceamx-note-dir'.
+  (setopt org-bookmark-heading-make-ids
+          (lambda ()
+            (when-let* ((buffer-file-name
+                         (or (buffer-file-name)
+                             (when (buffer-base-buffer)
+                               (buffer-file-name (buffer-base-buffer))))))
+              (file-in-directory-p buffer-file-name ceamx-note-dir))))
 
   ;;
   ;; Editing
@@ -83,6 +130,11 @@
                                "|"
                                "DONE(d!)"
                                "CANCELLED(x@/!)")))
+
+  ;;
+  ;; Clocking
+
+  (setopt org-clock-in-switch-to-state "INPRG")
 
   ;;
   ;; Logging
@@ -165,6 +217,8 @@ Intended for use as a local hook function on
           org-agenda-tags-column 0)
   (setopt org-pretty-entities t
           org-pretty-entities-include-sub-superscripts nil)
+  (setopt org-indent-indentation-per-level 2
+          org-startup-indented nil)
   (setopt org-src-fontify-natively t)
   ;; TODO: show markers for bold and italic, hide everything else
   (setopt org-hide-emphasis-markers t)
@@ -176,7 +230,7 @@ Intended for use as a local hook function on
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
 (after! org-modern
-  (setopt org-modern-star nil))
+  (setopt org-modern-star 'replace))
 
 (after! org-appear
   (setopt org-appear-autoemphasis t
@@ -227,8 +281,8 @@ Intended for use as a local hook function on
   (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link))
 
 (after! org-node
-  (setopt org-node-extra-id-dirs
-          (list ceamx-agenda-dir))
+  (setopt org-node-extra-id-dirs (list ceamx-agenda-dir))
+  (add-to-list 'org-node-extra-id-dirs-exclude ceamx-note-journal-dir)
 
   (org-node-backlink-mode)
   (org-node-cache-mode))

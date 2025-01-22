@@ -53,6 +53,20 @@
 
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 
+;; ~verb~ :: organize and send http requests
+
+;; + Package :: https://github.com/federicotdn/verb
+
+
+(package! verb
+  (after! org
+    ;; FIXME: is there a better way to bind `verb-command-map', the
+    ;; primary entrypoint?
+    ;; (defer! 2
+    ;;   (require 'verb))
+    (keymap-set org-mode-map "C-c C-r" verb-command-map) ; orig. `org-fold-reveal'
+    ))
+
 ;; [[https://github.com/hniksic/emacs-htmlize][hniksic/emacs-htmlize]]: Convert buffer text and decorations to HTML
 
 

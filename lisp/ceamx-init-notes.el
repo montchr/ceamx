@@ -1,48 +1,33 @@
-;;; init-notes.el --- Notetaking features  -*- lexical-binding: t;  -*-
-
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-;;; Code:
+;; -*- lexical-binding: t; -*-
 
 (require 'f)
-(require 'ceamx-paths)
 
-(dolist (dir (list ceamx-notes-dir ceamx-journal-dir ceamx-agenda-dir))
-  (f-mkdir-full-path dir))
+(require 'ceamx-lib)
+(require 'ceamx-note)
+
+(use-feature! ceamx-note
+  :config
+  ;; Ensure essential directories exist to prevent errors.
+  (dolist (dir (list ceamx-note-dir ceamx-note-journal-dir))
+    (f-mkdir-full-path dir)))
+
 (package! consult-notes)
 
 (after! consult-notes
   (setopt consult-notes-file-dir-sources
-          `(("Default" ?D ,ceamx-notes-default-dir)
-            ("Org" ?o ,org-directory)))
+          `(("Default" ?D ,ceamx-note-default-dir)
+            ("Work" ?w ,ceamx-note-work-dir)
+            ("Journal" ?j ,ceamx-note-journal-dir :hidden t)))
+  (setopt consult-notes-org-headings-files
+          (append (f-entries ceamx-note-default-dir (##f-ext-p % "org") t)))
 
-  (setopt consult-notes-org-headings-files org-agenda-files)
   (consult-notes-org-headings-mode)
 
-  ;; Integrate with Denote if available.
   (when (locate-library "denote")
-    (consult-notes-denote-mode))
-  (setopt consult-notes-denote-files-function (lambda () (denote-directory-files nil t t))))
+    (setopt consult-notes-denote-files-function
+            (lambda () (denote-directory-files nil t t)))
+    (consult-notes-denote-mode)))
+
 ;; via <https://github.com/mclear-tools/consult-notes#embark-support>
 ;; (after! (consult-notes embark)
 ;; 	(defun ceamx/consult-notes-embark-action (cand)
@@ -66,19 +51,10 @@
 
 ;;   ;; Make `embark-export' use dired for notes.
 ;;   (setf (alist-get consult-notes-category embark-exporters-alist) #'embark-export-dired))
-(require 'ceamx-paths)
 
 (package! denote
   (require 'denote)
   (require 'denote-journal-extras)
-
-  (define-prefix-command 'ceamx-notes-prefix 'ceamx-notes-prefix-map)
-  (define-prefix-command 'ceamx-journal-prefix 'ceamx-journal-prefix-map)
-
-  (keymap-global-set "C-c j" #'ceamx-notes-prefix)
-  (define-keymap :keymap ceamx-notes-prefix-map
-    "j" #'ceamx-journal-prefix
-    "j j" #'denote-journal-extras-new-entry)
 
   ;; Integrations
 
@@ -90,7 +66,7 @@
 
   ;; Customizations
 
-  (setopt denote-directory ceamx-notes-default-dir)
+  (setopt denote-directory ceamx-note-default-dir)
   (setopt denote-save-buffers nil)
   (setopt denote-known-keywords '("emacs" "philosophy" "correspondence" "language" "work" "journal" "blog"))
   (setopt denote-infer-keywords t)
@@ -117,6 +93,7 @@
   ;; Automatically rename Denote buffers using the
   ;; `denote-rename-buffer-format'.
   (denote-rename-buffer-mode 1))
+
 (with-eval-after-load 'dired
   (define-keymap :keymap dired-mode-map
     "C-c C-d C-i" #'denote-link-dired-marked-notes
@@ -135,5 +112,5 @@
         :kill-buffer t
         :jump-to-captured t)))
 
-(provide 'init-notes)
-;;; init-notes.el ends here
+(provide 'ceamx-init-notes)
+;;; ceamx-init-notes.el ends here
