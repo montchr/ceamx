@@ -556,6 +556,23 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   :config
   (setopt ibuffer-movement-cycle t))
 
+;; Rebind some default ~help-map~ keybindings
+
+
+(define-keymap :keymap help-map
+  "K" (cons "[ KEYBINDINGS ]" #'ceamx-help-keybindings-prefix)
+  "l" #'find-library
+  ;; I prefer the default `man' over `consult-man'.  The latter does
+  ;; not really work well since it does not show unfiltered candidates
+  ;; by default, and two-character-named programs are too short to
+  ;; trigger the query.
+  "m" #'man                             ; orig: `describe-mode'
+  "M" #'describe-mode
+  "t" #'describe-text-properties
+
+  ;; Allow `which-key' pagination in `help-map'.
+  "C-h" nil)
+
 ;; ~casual-suite~: transient-dispatch menus for complex modes
 
 
@@ -620,51 +637,19 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ;; <https://github.com/Wilfred/helpful/issues/329>
 
 
-
 (package! helpful
-  (defer! 2
+  (defer! 1
     (require 'helpful))
 
   (define-keymap :keymap help-map
     "c" #'helpful-callable
     "C" #'helpful-command
     "f" #'helpful-function              ; orig: `describe-face'
-    "h" #'helpful-at-point
-    ;; TODO: consider swapping with the original as a trial?
-    "k" #'helpful-key                   ; orig: `describe-key-briefly'
-    "o" #'helpful-symbol
-    "v" #'helpful-variable
-
-    ;; Parity with the corresponding unmodded keys.
-    ;; Primarily for Meow keypad, but also sometimes feels more natural to keep
-    ;; holding Ctrl anyway.
-    "C-k" #'helpful-key
-    "C-o" #'helpful-symbol
-
-    ;; Rebind the originals
     "F" #'describe-face
-    "K" #'describe-key-briefly
-
-    ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
-    "C-h" nil))
-
-;; Rebind some default ~help-map~ keybindings
-
-
-(define-keymap :keymap help-map
-  "l" #'find-library
-  ;; I actually prefer the default `man' over `consult-man'.
-  "m" #'man                     ; orig: `describe-mode'
-  "M" #'describe-mode
-
-  ;; FIXME: no lambda binding
-  ;; "t" `("text-props (pt)" . ,(cmd!!
-  ;;                              #'describe-text-properties
-  ;;                              current-prefix-arg
-  ;;                              (point)))
-
-  ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
-  "C-h" nil)
+    "h" #'helpful-at-point
+    "K K" #'helpful-key
+    "o" #'helpful-symbol
+    "v" #'helpful-variable))
 
 ;; Record some variables' values with ~savehist~
 

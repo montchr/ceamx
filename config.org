@@ -962,6 +962,7 @@ Emacs version to prevent bytecode incompatibility.")
 (define-prefix-command 'ceamx-buffer-prefix)
 (define-prefix-command 'ceamx-code-prefix)
 (define-prefix-command 'ceamx-file-prefix)
+(define-prefix-command 'ceamx-help-keybindings-prefix 'ceamx-help-keybindings-prefix-map)
 (define-prefix-command 'ceamx-insert-prefix)
 (define-prefix-command 'ceamx-launch-prefix)
 (define-prefix-command 'ceamx-note-prefix 'ceamx-note-prefix-map)
@@ -3537,6 +3538,24 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 #+end_src
 
 ** Help
+*** Rebind some default ~help-map~ keybindings
+
+#+begin_src emacs-lisp
+(define-keymap :keymap help-map
+  "K" (cons "[ KEYBINDINGS ]" #'ceamx-help-keybindings-prefix)
+  "l" #'find-library
+  ;; I prefer the default `man' over `consult-man'.  The latter does
+  ;; not really work well since it does not show unfiltered candidates
+  ;; by default, and two-character-named programs are too short to
+  ;; trigger the query.
+  "m" #'man                             ; orig: `describe-mode'
+  "M" #'describe-mode
+  "t" #'describe-text-properties
+
+  ;; Allow `which-key' pagination in `help-map'.
+  "C-h" nil)
+#+end_src
+
 *** ~casual-suite~: transient-dispatch menus for complex modes
 
 #+begin_src emacs-lisp
@@ -3602,52 +3621,21 @@ defined in Emacs C source code:
 
 <https://github.com/Wilfred/helpful/issues/329>
 
-
 #+begin_src emacs-lisp
 (package! helpful
-  (defer! 2
+  (defer! 1
     (require 'helpful))
 
   (define-keymap :keymap help-map
     "c" #'helpful-callable
     "C" #'helpful-command
     "f" #'helpful-function              ; orig: `describe-face'
-    "h" #'helpful-at-point
-    ;; TODO: consider swapping with the original as a trial?
-    "k" #'helpful-key                   ; orig: `describe-key-briefly'
-    "o" #'helpful-symbol
-    "v" #'helpful-variable
-
-    ;; Parity with the corresponding unmodded keys.
-    ;; Primarily for Meow keypad, but also sometimes feels more natural to keep
-    ;; holding Ctrl anyway.
-    "C-k" #'helpful-key
-    "C-o" #'helpful-symbol
-
-    ;; Rebind the originals
     "F" #'describe-face
-    "K" #'describe-key-briefly
+    "h" #'helpful-at-point
+    "K K" #'helpful-key
+    "o" #'helpful-symbol
+    "v" #'helpful-variable))
 
-    ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
-    "C-h" nil))
-#+end_src
-*** Rebind some default ~help-map~ keybindings
-
-#+begin_src emacs-lisp
-(define-keymap :keymap help-map
-  "l" #'find-library
-  ;; I actually prefer the default `man' over `consult-man'.
-  "m" #'man                     ; orig: `describe-mode'
-  "M" #'describe-mode
-
-  ;; FIXME: no lambda binding
-  ;; "t" `("text-props (pt)" . ,(cmd!!
-  ;;                              #'describe-text-properties
-  ;;                              current-prefix-arg
-  ;;                              (point)))
-
-  ;; Unbind the default binding for "C-h C-h" to allow `which-key' paging.
-  "C-h" nil)
 #+end_src
 
 ** History & Undo
@@ -10110,8 +10098,6 @@ See also `modus-themes-load-theme'."
 #+end_src
 
 ** The ~ceamx-modeline~ library
-
-
 ** The =ceamx-simple= library: Common utility commands
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-simple.el :comments no
