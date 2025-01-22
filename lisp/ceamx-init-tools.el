@@ -92,6 +92,14 @@
 
 (package! free-keys)
 
+;; ~help-find~ :: introspect keybindings
+
+
+(package! help-find
+  (define-keymap :keymap help-map
+    "K b" #'help-find-keybinding
+    "K f" #'help-find-function))
+
 ;; ~uuidgen~: Generate and insert UUIDs
 
 

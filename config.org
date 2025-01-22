@@ -9356,6 +9356,15 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 (package! free-keys)
 #+end_src
 
+** ~help-find~ :: introspect keybindings
+
+#+begin_src emacs-lisp
+(package! help-find
+  (define-keymap :keymap help-map
+    "K b" #'help-find-keybinding
+    "K f" #'help-find-function))
+#+end_src
+
 ** ~uuidgen~: Generate and insert UUIDs
 
 #+begin_src emacs-lisp
