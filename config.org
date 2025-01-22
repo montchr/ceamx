@@ -8562,12 +8562,12 @@ Intended for use as a local hook function on
 
 ~org-modern~ is incompatible with Org indentation.  But we can pretend.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (after! org-modern
   ;; Emulate "indentation" by replacing leading stars with whitespace.
   ;; One space will replace one star.  Additional spaces will appear
   ;; as whitespace, creating the effect of visual indentation.
-  (setopt org-modern-hide-stars (string-pad " " (+ 1 org-indent-indentation-per-level))))
+  (setopt org-modern-hide-stars (string-pad " " org-indent-indentation-per-level)))
 #+end_src
 
 ** Appearance: Display visual feedback after actions

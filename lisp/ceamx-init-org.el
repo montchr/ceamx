@@ -242,6 +242,17 @@ Intended for use as a local hook function on
   (setopt org-appear-delay 0.25)
   (setopt org-appear-trigger 'always))
 
+;; Appearance: Create the effect of visual indentation
+
+;; ~org-modern~ is incompatible with Org indentation.  But we can pretend.
+
+
+(after! org-modern
+  ;; Emulate "indentation" by replacing leading stars with whitespace.
+  ;; One space will replace one star.  Additional spaces will appear
+  ;; as whitespace, creating the effect of visual indentation.
+  (setopt org-modern-hide-stars (string-pad " " org-indent-indentation-per-level)))
+
 ;; Appearance: Display visual feedback after actions
 
 ;; - Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
