@@ -21,6 +21,13 @@
 ;;; Commentary:
 ;;; Code:
 
+;;;; Requirements
+
+(autoload 'denote "denote")
+(autoload 'denote-subdirectory "denote")
+(autoload 'denote-template "denote")
+(autoload 'denote-type "denote")
+
 ;;;; Customization
 
 (defgroup ceamx-note nil
