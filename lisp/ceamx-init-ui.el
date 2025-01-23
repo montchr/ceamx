@@ -1,7 +1,7 @@
-  ;; -*- lexical-binding: t;  -*-
+;; -*- lexical-binding: t;  -*-
 
-  (require 'ceamx-lib)
-  (require 'ceamx-ui)
+(require 'ceamx-lib)
+(require 'ceamx-ui)
 
 ;; Configure cursor appearance
 
@@ -134,7 +134,7 @@
   (setopt modus-themes-italic-constructs t
           modus-themes-bold-constructs t
           modus-themes-mixed-fonts t
-          modus-themes-variable-pitch-ui nil)
+          modus-themes-variable-pitch-ui t)
   (setopt modus-themes-to-toggle
           (ceamx-ui-theme-family-preferred-themes 'modus))
   (setopt modus-themes-disable-other-themes t)
@@ -156,7 +156,7 @@
 
   (setopt ef-themes-to-toggle (ceamx-ui-theme-family-preferred-themes 'ef))
   (setopt ef-themes-mixed-fonts t
-          ef-themes-variable-pitch-ui nil))
+          ef-themes-variable-pitch-ui t))
 
 ;; Configure the preferred themes
 
@@ -457,7 +457,7 @@ If there is no previous preset state to load, fall back to the
              :fixed-pitch-serif-weight nil
              :fixed-pitch-serif-height 1.0
 
-             :variable-pitch-family "Iosevka Comfy Motion Duo"
+             :variable-pitch-family "Iosevka Comfy Motion"
              :variable-pitch-weight nil
              :variable-pitch-height 1.0
 
