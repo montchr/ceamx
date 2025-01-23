@@ -47,15 +47,46 @@
 
 (defcustom ceamx-note-journal-dir
   (file-name-as-directory (concat ceamx-note-dir "journal"))
-  "Base directory for the journal notes scope."
+  "Base directory for the Journal notes silo."
   :type 'directory
   :group 'ceamx-note)
 
 (defcustom ceamx-note-work-dir
   (file-name-as-directory (concat ceamx-note-dir "work"))
-  "Base directory for the work notes scope."
+  "Base directory for the Work notes silo."
   :type 'directory
   :group 'ceamx-note)
+
+(defcustom ceamx-note-silo-directories nil
+  "List of filesystem directories pointing to the note silo roots."
+  :type '(directory)
+  :group 'ceamx-note)
+
+(defcustom ceamx-note-denote-silo-commands
+  '(denote
+    denote-date
+    denote-subdirectory
+    denote-template
+    denote-type)
+  "List of Denote commands to call after selecting a silo.
+This is a list of symbols that specify the note-creating interactive
+functions that Denote provides."
+  :type '(symbol)
+  :group 'ceamx-note)
+
+;;;; Functions
+
+(defun ceamx-note/denote/pick-silo-then-command (silo command)
+  "Select SILO and run Denote COMMAND within.
+SILO is a filesystem directory listed in `ceamx-note-silo-directories'.
+COMMAND is a command listed in `ceamx-note-denote-silo-commands'."
+  (interactive
+   (list (completing-read "Select a silo: " ceamx-note-silo-directories nil t)
+         (intern (completing-read
+                  "Run command in silo: "
+                  ceamx-note-denote-silo-commands nil t))))
+  (let ((denote-directory silo))
+    (call-interactively command)))
 
 ;;; Footer
 

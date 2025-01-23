@@ -25,99 +25,131 @@
 ;;;; Requirements
 
 (eval-when-compile
+  (require 'cl-lib)
   (require 'ceamx-lib))
 
 ;;;; Variables
 
-(defvar ceamx-ui-dark-themes-list nil)
-(defvar ceamx-ui-light-themes-list nil)
+;; TODO: add standard-themes
+(defvar ceamx-ui-dark-themes-list
+  (remove 'nil (append (when (locate-library "modus-themes")
+                         (seq-filter
+                          (##string-prefix-p "modus-vivendi" (symbol-name %))
+                          modus-themes-items))
+                       (when (locate-library "ef-themes")
+                         ef-themes-dark-themes))))
 
-(after! modus-themes
-  (appendq! ceamx-ui-dark-themes-list
-            ;; `modus-vivendi' variants
-            (seq-filter
-             (lambda (sym) (string-prefix-p "modus-vivendi" (symbol-name sym)))
-             modus-themes-items))
+;; TODO: add standard-themes
+(defvar ceamx-ui-light-themes-list
+  (remove 'nil (append (when (locate-library "modus-themes")
+                         (seq-filter
+                          (##string-prefix-p "modus-operandi" (symbol-name %))
+                          modus-themes-items))
+                       (when (locate-library "ef-themes")
+                         ef-themes-light-themes))))
 
-  (appendq! ceamx-ui-light-themes-list
-            ;; `modus-operandi' variants
-            (seq-filter
-             (lambda (sym) (string-prefix-p "modus-operandi" (symbol-name sym)))
-             modus-themes-items)))
+  ;;;; Customization
 
-;;;; Customization
+(defgroup ceamx-ui ()
+  "Ceamx user interface"
+  :group 'faces)
 
 (defcustom ceamx-ui-theme-family 'modus
   "Set of themes to load.
-Valid values are the symbols `ef', `modus', and `standard', which
-reference the `ef-themes', `modus-themes', and `standard-themes',
-respectively.
+  Valid values are the symbols `ef', `modus', and `standard', which
+  reference the `ef-themes', `modus-themes', and `standard-themes',
+  respectively.
 
-A nil value does not load any of the above (use Emacs without a
-theme)."
-  :group 'ceamx
+  A nil value does not load any of the above (use Emacs without a
+  theme)."
+  :group 'ceamx-ui
   :type '(choice :tag "Set of themes to load" :value modus
-          (const :tag "The `ef-themes' module" ef)
-          (const :tag "The `modus-themes' module" modus)
-          (const :tag "The `standard-themes' module" standard)
-          (const :tag "Do not load a theme module" nil)))
+                 (const :tag "The `ef-themes' module" ef)
+                 (const :tag "The `modus-themes' module" modus)
+                 (const :tag "The `standard-themes' module" standard)
+                 (const :tag "Do not load a theme module" nil)))
 
-(defcustom ceamx-ui-theme-light 'modus-operandi
-  "The default light theme."
-  :group 'ceamx
+(defcustom ceamx-ui-preferred-dark-theme nil
+  "Alist of preferred dark themes per supported `ceamx-ui-theme-family'.
+  The car of the alist cells should either be nil or match one of the
+  `ceamx-ui-theme-family' options.
+
+  The cdr must be a symbol for a theme provided by one of the supported
+  theme options.  The theme should be a theme with a dark background.
+
+  When car is nil, the theme specified in the cdr will be used as fallback
+  when `ceamx-ui-theme-family' is nil."
+  :type '(alist :key-type symbol
+                :value-type symbol)
+  :group 'ceamx-ui)
+
+(defcustom ceamx-ui-preferred-light-theme nil
+  "Alist of preferred light themes per supported `ceamx-ui-theme-family'.
+  The car of the alist cells should either be nil or match one of the
+  `ceamx-ui-theme-family' options.
+
+  The cdr must be a symbol for a theme provided by one of the supported
+  theme options.  The theme should be a theme with a light background.
+
+  When car is nil, the theme specified in the cdr will be used as fallback
+  when `ceamx-ui-theme-family' is nil."
+  :type '(alist :key-type symbol
+                :value-type symbol)
+  :group 'ceamx-ui)
+
+(defcustom ceamx-ui-theme-dark
+  (or (alist-get ceamx-ui-theme-family ceamx-ui-preferred-dark-theme)
+      'modus-vivendi)
+  "The default dark theme."
+  :group 'ceamx-ui
   :type 'symbol)
 
-(defcustom ceamx-ui-theme-dark 'modus-vivendi
-  "The default dark theme."
-  :group 'ceamx
+(defcustom ceamx-ui-theme-light
+  (or (alist-get ceamx-ui-theme-family ceamx-ui-preferred-light-theme)
+      'modus-operandi)
+  "The default light theme."
+  :group 'ceamx-ui
   :type 'symbol)
 
 (defcustom ceamx-ui-theme-circadian-interval nil
   "The circadian theme switching interval.
-Value may be `period', `solar', or nil, corresponding
-respectively to period-based switching with `theme-buffet' or
-sunrise/sunset toggling from the combination of the `solar'
-library and the `circadian' package.
+  Value may be `period', `solar', or nil, corresponding
+  respectively to period-based switching with `theme-buffet' or
+  sunrise/sunset toggling from the combination of the `solar'
+  library and the `circadian' package.
 
-A nil value means to disable automatic theme switching.
-Theme-switching commands `ceamx/light' and `ceamx/dark' will
-unconditionally use `ceamx-ui-theme-default-light' and
-`ceamx-ui-theme-default-dark', respectively."
-  :group 'ceamx
+  A nil value means to disable automatic theme switching.
+  Theme-switching commands `ceamx/light' and `ceamx/dark' will
+  unconditionally use `ceamx-ui-theme-default-light' and
+  `ceamx-ui-theme-default-dark', respectively."
+  :group 'ceamx-ui
   :type '(choice :tag "Circadian theme switching interval" :value nil
-          (const :tag "Time periods via `theme-buffet'" :value buffet)
-          (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
+                 (const :tag "Time periods via `theme-buffet'" :value buffet)
+                 (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
 
-(defcustom ceamx-modeline-provider nil
-  "Modeline provider to load.
-Valid values are the symbols `doom', `nano', and `telephone'
-which reference the `doom-modeline', `nano-modeline', and
-`telephone-line' modules respectively.
+  ;;;; Functions
 
-A nil value will not load any modeline customizations (use Emacs
-with its default modeline)."
-  :group 'ceamx
-  :type '(choice :tag "Modeline to load" :value nil
-          (const :tag "The `doom-modeline' module" doom)
-          (const :tag "The `nano-modeline' module" nano)
-          (const :tag "The `telephone-line' module" telephone)
-          (const :tag "Do not load a modeline module" nil)))
+(defun ceamx-ui-define-preferred-themes (theme-family dark-theme light-theme)
+  "Define the preferred DARK-THEME and LIGHT-THEME for THEME-FAMILY."
+  (cl-pushnew `(,theme-family . ,dark-theme) ceamx-ui-preferred-dark-theme)
+  (cl-pushnew `(,theme-family . ,light-theme) ceamx-ui-preferred-light-theme))
 
-;;;; Functions
-
-;;;;; Public
+(defun ceamx-ui-theme-family-preferred-themes (theme-family)
+  "Return a list of preferred dark and light themes for THEME-FAMILY."
+  (list (or (alist-get theme-family ceamx-ui-preferred-dark-theme)
+            (alist-get nil ceamx-ui-preferred-dark-theme))
+        (or (alist-get theme-family ceamx-ui-preferred-light-theme)
+            (alist-get nil ceamx-ui-preferred-dark-theme))))
 
 (defun ceamx-ui-load-theme (theme)
   "Load THEME after resetting any previously-loaded themes.
-See also `modus-themes-load-theme'."
+  See also `modus-themes-load-theme'."
   (mapc #'disable-theme (remq theme custom-enabled-themes))
   (load-theme theme :no-confirm))
 
-;;;;; Private
+  ;;;; Commands
 
-;;;; Commands
-
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/gsettings-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
   ;; FIXME: prompt with completion
@@ -133,20 +165,32 @@ See also `modus-themes-load-theme'."
                       value)))
     (shell-command cmd)))
 
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/gsettings-dark-theme ()
   "Enable the dark GNOME/GTK theme."
   (interactive)
   (ceamx-ui/gsettings-set-theme "dark"))
 
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/gsettings-light-theme ()
   "Enable the light GNOME/GTK theme."
   (interactive)
   (ceamx-ui/gsettings-set-theme "light"))
 
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/load-dark-theme ()
+  "Load the preferred dark theme."
+  (interactive)
+  (load-theme ceamx-ui-theme-dark :no-confirm))
+
+  ;;;###autoload
+(defun ceamx-ui/load-light-theme ()
+  "Load the preferred light theme."
+  (interactive)
+  (load-theme ceamx-ui-theme-light :no-confirm))
+
+  ;;;###autoload
+(defun ceamx-ui/load-random-dark-theme ()
   "Load a random dark theme."
   (interactive)
   (pcase ceamx-ui-theme-circadian-interval
@@ -154,10 +198,11 @@ See also `modus-themes-load-theme'."
      (+theme-buffet--load-random-from-periods
       ceamx-ui-theme-buffet-dark-periods))
     (_
-     (load-theme ceamx-ui-theme-dark :no-confirm))))
+     (let ((theme (seq-random-elt ceamx-ui-dark-themes-list)))
+       (load-theme theme :no-confirm)))))
 
-;;;###autoload
-(defun ceamx-ui/load-light-theme ()
+  ;;;###autoload
+(defun ceamx-ui/load-random-light-theme ()
   "Load a random light theme."
   (interactive)
   (pcase ceamx-ui-theme-circadian-interval
@@ -165,23 +210,24 @@ See also `modus-themes-load-theme'."
      (+theme-buffet--load-random-from-periods
       ceamx-ui-theme-buffet-light-periods))
     (_
-     (load-theme ceamx-ui-theme-light :no-confirm))))
+     (let ((theme (seq-random-elt ceamx-ui-light-themes-list)))
+       (load-theme theme :no-confirm)))))
 
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/light ()
   "Activate a light theme globally."
   (interactive)
   (ceamx-ui/gsettings-light-theme)
   (ceamx-ui/load-light-theme))
 
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/dark ()
   "Activate a dark theme globally."
   (interactive)
   (ceamx-ui/gsettings-dark-theme)
   (ceamx-ui/load-dark-theme))
 
-;;;; Footer
+  ;;;; Footer
 
 (provide 'ceamx-ui)
-;;; ceamx-ui.el ends here
+  ;;; ceamx-ui.el ends here

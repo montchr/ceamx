@@ -196,6 +196,15 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-a" #'mwim-beginning)
   (keymap-global-set "C-e" #'mwim-end))
 
+;; ~beginend~ :: rebind context-sensitive =(beginning,end)-of-buffer=
+
+;; + Package :: https://github.com/DamienCassou/beginend
+
+
+(package! beginend
+  (blackout 'beginend-global-mode)
+  (beginend-global-mode))
+
 ;; INPRG Provide a command to intelligently kill words backwardsly
 
 ;; - State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
@@ -361,47 +370,6 @@ This operation will respect the following rules:
 
 (package! ialign
   (keymap-global-set "C-x l" #'ialign))
-
-;; Operate on buffers rectangularly with the ~rect~ feature
-
-;; <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
-
-
-(use-feature! rect
-  :config
-  (use-feature! hydra
-    :config
-    (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
-                                         :color pink
-                                         :hint nil
-                                         :post (deactivate-mark))
-      "
-  ^_k_^       _w_ copy      _o_pen       _N_umber-lines            |\\     -,,,--,,_
-_h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..  \-;;,_
-  ^_j_^       _d_ kill      _c_lear      _r_eset-region-mark      |,4-  ) )_   .;.(  `'-'
-^^^^          _u_ndo        _g_ quit     ^ ^                     '---''(./..)-'(_\_)
-"
-      ("k" rectangle-previous-line)
-      ("j" rectangle-next-line)
-      ("h" rectangle-backward-char)
-      ("l" rectangle-forward-char)
-      ("d" kill-rectangle)               ;; C-x r k
-      ("y" yank-rectangle)               ;; C-x r y
-      ("w" copy-rectangle-as-kill)       ;; C-x r M-w
-      ("o" open-rectangle)               ;; C-x r o
-      ("t" string-rectangle)             ;; C-x r t
-      ("c" clear-rectangle)              ;; C-x r c
-      ("e" rectangle-exchange-point-and-mark) ;; C-x C-x
-      ("N" rectangle-number-lines)            ;; C-x r N
-      ("r" (if (region-active-p)
-               (deactivate-mark)
-             (rectangle-mark-mode 1)))
-      ("u" undo nil)
-      ("g" nil))
-
-    (when (fboundp 'hydra-rectangle/body)
-      (keymap-global-set "C-x SPC" #'hydra-rectangle/body)
-      (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
 
 ;; Line wrapping
 

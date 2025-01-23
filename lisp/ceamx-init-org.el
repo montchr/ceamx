@@ -55,7 +55,10 @@
 
 (setopt org-agenda-files ceamx-default-agenda-files)
 
-;; Baseline customizations
+;; Baseline Org-Mode customizations
+;; :PROPERTIES:
+;; :ID:       8b25886e-a1cd-44de-9a78-6a79720ea5d2
+;; :END:
 
 
 (after! org
@@ -71,13 +74,16 @@
   (setopt org-clone-delete-id t)
   (setopt org-id-search-archives nil)
   ;; Ensure IDs for bookmarked headings within `ceamx-note-dir'.
-  (setopt org-bookmark-heading-make-ids
-          (lambda ()
-            (when-let* ((buffer-file-name
-                         (or (buffer-file-name)
-                             (when (buffer-base-buffer)
-                               (buffer-file-name (buffer-base-buffer))))))
-              (file-in-directory-p buffer-file-name ceamx-note-dir))))
+  ;; FIXME: This is nice, but ~dogears~ (or something else that uses
+  ;; bookmarks for locations) makes just about /every/ heading a bookmark.
+  ;; (setopt org-bookmark-heading-make-ids
+  ;;         (lambda ()
+  ;;           (when-let* ((buffer-file-name
+  ;;                        (or (buffer-file-name)
+  ;;                            (when (buffer-base-buffer)
+  ;;                              (buffer-file-name (buffer-base-buffer))))))
+  ;;             (file-in-directory-p buffer-file-name ceamx-note-dir))))
+  (setopt org-bookmark-heading-make-ids nil)
 
   ;;
   ;; Editing

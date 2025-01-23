@@ -629,21 +629,14 @@ The ORDER can be used to deduce the feature context."
 (require 'init-printing)
 (require 'init-fun)
 
-;; =init.el=: Keybindings
-;; :PROPERTIES:
-;; :header-args: :tangle init.el
-;; :END:
+;; Prefix: [C-c]
 
-
-;;
-;;;; Command Bindings
-
-;;;;; Prefix: [C-c]
 
 (define-keymap :keymap (current-global-map)
   "C-c a" #'org-agenda
   "C-c b" (cons "[ BUFFER   ]" #'ceamx-buffer-prefix)
   "C-c c" #'org-capture
+  "C-c C" (cons "[ CAPTURE  ]" #'ceamx-capture-prefix)
   ;; "C-c d"
   ;; "C-c e"
   "C-c f" (cons "[ FILE     ]" #'ceamx-file-prefix)
@@ -675,10 +668,10 @@ The ORDER can be used to deduce the feature context."
 (after! cape
   (keymap-global-set "C-c p" (cons "[ COMPLETE ]" cape-prefix-map)))
 
-;;;;; Prefix: [C-x]
+;; Prefix: [C-x]
+
 
 (define-keymap :keymap (current-global-map)
-
   "C-x n n" #'logos-narrow-dwim
   "C-x o" #'ace-window
   ;; "C-x o" #'ceamx/other-window
@@ -704,7 +697,8 @@ The ORDER can be used to deduce the feature context."
   "C-x <left>" #'shrink-window-horizontally
   "C-x <right>" #'enlarge-window-horizontally)
 
-;;;;; Modifier: [M-]
+;; Modifier: [M-]
+
 
 (define-keymap :keymap (current-global-map)
   "M-]" #'logos-forward-page-dwim
@@ -716,13 +710,20 @@ The ORDER can be used to deduce the feature context."
   ;; Prevent conflict with newly-added M-j binding.
   (keymap-set lispy-mode-map "M-J" #'lispy-join))
 
-;;;;; [C-c b] :: Buffer
+;; [C-c b] :: Buffer
+
 
 (define-keymap :keymap ceamx-buffer-prefix
   "b" #'consult-buffer
   "k" #'ceamx-simple/kill-current-buffer)
 
-;;;;; [C-c f] :: File
+;; [C-c C] :: Capture
+
+
+
+
+;; [C-c f] :: File
+
 
 (define-keymap :keymap ceamx-file-prefix
   ;; TODO
@@ -738,7 +739,8 @@ The ORDER can be used to deduce the feature context."
 
   "C-d" '("diff with..." . ceamx-simple/diff-with-file))
 
-;;;;; [C-c i] :: Insert
+;; [C-c i] :: Insert
+
 
 (define-keymap :keymap ceamx-insert-prefix
   "d" #'ceamx-simple/insert-date
@@ -753,17 +755,18 @@ The ORDER can be used to deduce the feature context."
   "U 4" #'uuidgen-4
   "U 5" #'uuidgen-5)
 
-;;;;; [C-c l] :: Code
+;; [C-c l] :: Code
+
 
 (define-keymap :keymap ceamx-code-prefix
   "a" #'eglot-code-actions
   "d" #'xref-find-definitions
   "j" #'ceamx-prog-dumb-jump-dispatch/body
   "o" #'consult-eglot-symbols
-  "r" #'eglot-rename
-  )
+  "r" #'eglot-rename)
 
-;;;;; [C-c n] :: Note
+;; [C-c n] :: Note
+
 
 (define-keymap :keymap ceamx-note-prefix-map
   "n" #'denote
@@ -775,7 +778,8 @@ The ORDER can be used to deduce the feature context."
   "f" (cons "[ FIND    ]" (define-prefix-command 'ceamx-note-f-prefix))
   "i" #'denote-link                     ; "insert link"
   "I" #'denote-add-links
-  "j" (cons "[ JOURNAL ]" #'ceamx-journal-prefix)
+  ;; "j" (cons "[ JOURNAL ]" #'ceamx-journal-prefix)
+  "j" (cons "( journal )" #'denote-journal-extras-new-or-existing-entry)
   "r" #'denote-rename-file
   "R" #'denote-rename-file-using-front-matter
   "s" #'denote-subdirectory
@@ -783,12 +787,10 @@ The ORDER can be used to deduce the feature context."
   "z" #'denote-signature                ; "zettelkasten"
 
   "f f" #'denote-find-link
-  "f b" #'denote-find-backlink
+  "f b" #'denote-find-backlink)
 
-  "j j" #'denote-journal-extras-new-or-existing-entry)
+;; [C-c o] :: Launch
 
-
-;;;;; [C-c o] :: Launch
 
 (define-keymap :keymap ceamx-launch-prefix
   "a" #'org-agenda
@@ -799,7 +801,8 @@ The ORDER can be used to deduce the feature context."
   "t" #'eat
   "W" #'ceamx/eww-wiki)
 
-;;;;; [C-c q] :: Session
+;; [C-c q] :: Session
+
 
 (define-keymap :keymap ceamx-session-prefix
   "a c" #'cursory-set-preset
@@ -823,7 +826,8 @@ The ORDER can be used to deduce the feature context."
 ;;     "a d" #'ceamx-ui/dark
 ;;     "a l" #'ceamx-ui/light))
 
-;;;;; [C-c t] :: Toggle
+;; [C-c t] :: Toggle
+
 
 (define-keymap :keymap ceamx-toggle-prefix
   "f" #'flycheck-mode
@@ -836,7 +840,8 @@ The ORDER can be used to deduce the feature context."
   "W" #'toggle-window-dedicated
   "z" #'logos-focus-mode)
 
-;;;;; Window
+;; Window
+
 
 (define-keymap :keymap ceamx-window-prefix
   "w" #'ceamx/window-dispatch)

@@ -1,6 +1,7 @@
-;; -*- lexical-binding: t;  -*-
+  ;; -*- lexical-binding: t;  -*-
 
-(require 'ceamx-lib)
+  (require 'ceamx-lib)
+  (require 'ceamx-ui)
 
 ;; Configure cursor appearance
 
@@ -68,26 +69,14 @@
 ;; - Documentation :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 
-(package! hydra)
+(package! hydra
+  (require 'hydra))
 (package! pretty-hydra)
 
 ;; =symbol-overlay= :: highlight symbols with keymap-enabled overlays
 
 
 (package! symbol-overlay)
-
-;; Customize the ~ceamx-ui~ library features
-
-
-(use-feature! ceamx-ui
-  :demand t
-  :config
-  (setopt ceamx-ui-theme-light
-          (when (eq 'modus ceamx-ui-theme-family)
-            'modus-operandi))
-  (setopt ceamx-ui-theme-dark
-          (when (eq 'modus ceamx-ui-theme-family)
-            'modus-vivendi)))
 
 ;; Consider all themes "safe"
 
@@ -107,7 +96,31 @@
 
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
 
-;; Modus Themes :package:
+;; ~standard-themes~ :: themes like the default but more consistent
+
+
+(when (display-graphic-p)
+  (package! standard-themes
+    (require 'standard-themes)))
+
+(after! standard-themes
+  (ceamx-ui-define-preferred-themes
+   'standard 'standard-dark 'standard-light)
+
+  (setopt standard-themes-bold-constructs t
+          standard-themes-italic-constructs t)
+  (setopt standard-themes-disable-other-themes t)
+  (setopt standard-themes-mixed-fonts t
+          standard-themes-variable-pitch-ui t)
+  (setopt standard-themes-prompts '(extrabold italic))
+  (setopt standard-themes-to-toggle (ceamx-ui-theme-family-preferred-themes 'standard))
+  (setopt standard-themes-to-rotate
+          '(standard-dark
+            standard-dark-tinted
+            standard-light
+            standard-light-tinted)))
+
+;; ~modus-themes~
 
 ;; - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -115,18 +128,22 @@
 (package! modus-themes
   (require 'modus-themes)
 
+  (ceamx-ui-define-preferred-themes
+   'modus 'modus-vivendi-tinted 'modus-operandi)
+
   (setopt modus-themes-italic-constructs t
           modus-themes-bold-constructs t
           modus-themes-mixed-fonts t
           modus-themes-variable-pitch-ui nil)
-  (setopt modus-themes-to-toggle '(modus-operandi modus-vivendi))
+  (setopt modus-themes-to-toggle
+          (ceamx-ui-theme-family-preferred-themes 'modus))
   (setopt modus-themes-disable-other-themes t)
   (setopt modus-themes-headings
           '((agenda-structure . (variable-pitch light 2.2))
             (agenda-date . (variable-pitch regular 1.3))
             (t . (regular 1.1)))))
 
-;; Ef-Themes :package:
+;; ~ef-themes~
 
 ;; - Website :: <https://protesilaos.com/emacs/ef-themes>
 
@@ -134,8 +151,11 @@
 (package! ef-themes
   (require 'ef-themes)
 
-  (setopt ef-themes-to-toggle '(ef-night ef-frost)
-          ef-themes-mixed-fonts t
+  (ceamx-ui-define-preferred-themes
+   'ef 'ef-winter 'ef-frost)
+
+  (setopt ef-themes-to-toggle (ceamx-ui-theme-family-preferred-themes 'ef))
+  (setopt ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil))
 
 ;; Set approximate stomping coordinates for hyper-astronomic relativity calculations
@@ -163,23 +183,6 @@
                 (if (ceamx-ui-desktop-dark-theme-p)
                     (ceamx-ui/load-dark-theme)
                   (ceamx-ui/load-light-theme))))))
-
-;; FIXME
-;; (after! circadian
-;;   (def-hook! +circadian-after-load-theme-set-system-theme-h (theme)
-;;     'circadian-after-load-theme-hook
-;;     "Set the desktop environment theme based on THEME polarity."
-;;     (cond
-;;      ((memq theme ceamx-ui-dark-themes-list)
-;;       (ceamx-ui/gsettings-dark-theme))
-;;      ((memq theme ceamx-ui-light-themes-list)
-;;       (ceamx-ui/gsettings-light-theme))
-;;      (t nil))))
-
-;; Elpaca-Wait № 4: ensure availability of themes for integration :wait:
-
-
-(elpaca-wait)
 
 ;; ~avy~ :: can do anything
 

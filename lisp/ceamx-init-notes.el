@@ -54,63 +54,109 @@
 
 (package! denote
   (require 'denote)
-  (require 'denote-journal-extras)
 
+  ;;
   ;; Integrations
 
   (add-hook 'find-file-hook #'denote-fontify-links-mode)
+
   (after! dired
-    (add-hook 'dired-mode-hook #'denote-dired-mode))
+    (add-hook 'dired-mode-hook #'denote-dired-mode)
+
+    (define-keymap :keymap dired-mode-map
+      "C-c C-d C-i" #'denote-link-dired-marked-notes
+      "C-c C-d C-r" #'denote-dired-rename-marked-files
+      "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
+      "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
+
   (after! mouse
     (add-hook 'context-menu-functions #'denote-context-menu))
 
-  ;; Customizations
+  (after! org
+    (keymap-set org-mode-map "C-c n h" #'denote-org-extras-extract-org-subtree)))
 
+(after! denote
   (setopt denote-directory ceamx-note-default-dir)
-  (setopt denote-save-buffers nil)
-  (setopt denote-known-keywords '("emacs" "philosophy" "correspondence" "language" "work" "journal" "blog"))
-  (setopt denote-infer-keywords t)
-  (setopt denote-sort-keywords t)
-  (setopt denote-file-type nil)         ; Org is the default
-  (setopt denote-prompts '(title keywords))
   (setopt denote-excluded-directories-regexp "\\.archive")
-  (setopt denote-rename-confirmations '(modify-file-name
-                                        rewrite-front-matter))
+  (setopt denote-dired-directories
+          (list denote-directory
+                (thread-last denote-directory
+                             (expand-file-name "attachments"))))
 
-  ;; Pick dates, where relevant, with Org's advanced interface.
+  (setopt denote-save-buffers nil)
+  (setopt denote-infer-keywords t
+          denote-sort-keywords t)
+  (setopt denote-known-keywords
+          '("emacs"
+            "philosophy"
+            "correspondence"
+            "language"
+            "jobwork"
+            "journal"
+            "blog"))
+  (setopt denote-prompts '(title keywords))
+  (setopt denote-org-capture-specifiers "%l\n%i\n%?")
   (setopt denote-date-prompt-use-org-read-date t)
-
-  ;; Use a file-type-specific date format.
-  (setopt denote-date-format nil)
-
   ;; also: `denote-link-backlinks-display-buffer-action'
   (setopt denote-backlinks-show-context t)
 
-  (setopt denote-dired-directories
-          (list denote-directory
-                (thread-last denote-directory (expand-file-name "attachments"))))
-
-  ;; Automatically rename Denote buffers using the
-  ;; `denote-rename-buffer-format'.
+  ;; Auto-rename Denote buffers with `denote-rename-buffer-format'.
+  (setopt denote-rename-confirmations '(modify-file-name
+                                        rewrite-front-matter))
   (denote-rename-buffer-mode 1))
 
-(with-eval-after-load 'dired
-  (define-keymap :keymap dired-mode-map
-    "C-c C-d C-i" #'denote-link-dired-marked-notes
-    "C-c C-d C-r" #'denote-dired-rename-marked-files
-    "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
-    "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
-
-(with-eval-after-load 'org-capture
-  (setopt denote-org-capture-specifiers "%l\n%i\n%?")
+(after! (denote org-capture)
+  ;; (appendopt! org-capture-templates
+  ;;     (doct '(("New note" :keys "n"
+  ;;              :type plain
+  ;;              :file denote-last-path
+  ;;              :template denote-org-capture
+  ;;              :no-save t
+  ;;              :immediate-finish nil
+  ;;              :kill-buffer t
+  ;;              :jump-to-captured t))))
   (add-to-list 'org-capture-templates
-      '("n" "New note (with denote.el)" plain
+      '("n" "New note" plain
         (file denote-last-path)
         #'denote-org-capture
         :no-save t
         :immediate-finish nil
         :kill-buffer t
         :jump-to-captured t)))
+
+(use-feature! ceamx-note
+  :after denote
+  :commands (ceamx-note/denote/pick-silo-then-command)
+  :config
+  (setopt ceamx-note-silo-directories
+          (list ceamx-note-journal-dir
+                ceamx-note-work-dir)))
+
+
+
+(defun ceamx-note/create-or-visit-journal-entry ()
+  "Invoke `denote-journal-extras-new-or-existing-entry' scoped to the
+ Journal silo."
+  (interactive)
+  (let ((denote-directory ceamx-note-journal-dir))
+    (call-interactively #'denote-journal-extras-new-or-existing-entry)))
+
+(after! denote
+  (define-keymap :keymap ceamx-capture-prefix-map
+    ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
+    "r" #'denote-region))
+
+(after! denote
+  (require 'denote-journal-extras)
+
+  (setopt denote-journal-extras-directory ceamx-note-journal-dir)
+  (setopt denote-journal-extras-keyword '("journal"))
+
+  (after! org-capture
+    ;; (appendopt! org-capture-templates
+    ;;             (doct "Journal" :keys "j"
+    ;;                   :file denote-journal-extras-))
+    ))
 
 (provide 'ceamx-init-notes)
 ;;; ceamx-init-notes.el ends here

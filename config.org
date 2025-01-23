@@ -960,6 +960,7 @@ Emacs version to prevent bytecode incompatibility.")
 
 (define-prefix-command 'ceamx-appearance-prefix)
 (define-prefix-command 'ceamx-buffer-prefix)
+(define-prefix-command 'ceamx-capture-prefix 'ceamx-capture-prefix-map)
 (define-prefix-command 'ceamx-code-prefix)
 (define-prefix-command 'ceamx-file-prefix)
 (define-prefix-command 'ceamx-help-keybindings-prefix 'ceamx-help-keybindings-prefix-map)
@@ -2196,7 +2197,7 @@ graphical frames.
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 #+end_src
 
-* User Interface & Appearance :: =ui=
+* User Interface & Appearance :ui:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-ui.el
 :END:
@@ -2207,9 +2208,10 @@ graphical frames.
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-ui.el :comments no
-;; -*- lexical-binding: t;  -*-
+  ;; -*- lexical-binding: t;  -*-
 
-(require 'ceamx-lib)
+  (require 'ceamx-lib)
+  (require 'ceamx-ui)
 #+end_src
 
 ** Configure cursor appearance
@@ -2287,7 +2289,8 @@ applying margin, padding, borders.
 - Documentation :: <https://github.com/jerrypnz/major-mode-hydra.el/#pretty-hydra>
 
 #+begin_src emacs-lisp
-(package! hydra)
+(package! hydra
+  (require 'hydra))
 (package! pretty-hydra)
 #+end_src
 
@@ -2295,20 +2298,6 @@ applying margin, padding, borders.
 
 #+begin_src emacs-lisp
 (package! symbol-overlay)
-#+end_src
-
-** Customize the ~ceamx-ui~ library features
-
-#+begin_src emacs-lisp
-(use-feature! ceamx-ui
-  :demand t
-  :config
-  (setopt ceamx-ui-theme-light
-          (when (eq 'modus ceamx-ui-theme-family)
-            'modus-operandi))
-  (setopt ceamx-ui-theme-dark
-          (when (eq 'modus ceamx-ui-theme-family)
-            'modus-vivendi)))
 #+end_src
 
 ** Consider all themes "safe"
@@ -2331,7 +2320,32 @@ applying margin, padding, borders.
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
 #+end_src
 
-** Modus Themes :package:
+** ~standard-themes~ :: themes like the default but more consistent
+
+#+begin_src emacs-lisp
+(when (display-graphic-p)
+  (package! standard-themes
+    (require 'standard-themes)))
+
+(after! standard-themes
+  (ceamx-ui-define-preferred-themes
+   'standard 'standard-dark 'standard-light)
+
+  (setopt standard-themes-bold-constructs t
+          standard-themes-italic-constructs t)
+  (setopt standard-themes-disable-other-themes t)
+  (setopt standard-themes-mixed-fonts t
+          standard-themes-variable-pitch-ui t)
+  (setopt standard-themes-prompts '(extrabold italic))
+  (setopt standard-themes-to-toggle (ceamx-ui-theme-family-preferred-themes 'standard))
+  (setopt standard-themes-to-rotate
+          '(standard-dark
+            standard-dark-tinted
+            standard-light
+            standard-light-tinted)))
+#+end_src
+
+** ~modus-themes~
 
 - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -2339,11 +2353,15 @@ applying margin, padding, borders.
 (package! modus-themes
   (require 'modus-themes)
 
+  (ceamx-ui-define-preferred-themes
+   'modus 'modus-vivendi-tinted 'modus-operandi)
+
   (setopt modus-themes-italic-constructs t
           modus-themes-bold-constructs t
           modus-themes-mixed-fonts t
           modus-themes-variable-pitch-ui nil)
-  (setopt modus-themes-to-toggle '(modus-operandi modus-vivendi))
+  (setopt modus-themes-to-toggle
+          (ceamx-ui-theme-family-preferred-themes 'modus))
   (setopt modus-themes-disable-other-themes t)
   (setopt modus-themes-headings
           '((agenda-structure . (variable-pitch light 2.2))
@@ -2351,7 +2369,7 @@ applying margin, padding, borders.
             (t . (regular 1.1)))))
 #+end_src
 
-** Ef-Themes :package:
+** ~ef-themes~
 
 - Website :: <https://protesilaos.com/emacs/ef-themes>
 
@@ -2359,8 +2377,11 @@ applying margin, padding, borders.
 (package! ef-themes
   (require 'ef-themes)
 
-  (setopt ef-themes-to-toggle '(ef-night ef-frost)
-          ef-themes-mixed-fonts t
+  (ceamx-ui-define-preferred-themes
+   'ef 'ef-winter 'ef-frost)
+
+  (setopt ef-themes-to-toggle (ceamx-ui-theme-family-preferred-themes 'ef))
+  (setopt ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil))
 #+end_src
 
@@ -2390,25 +2411,8 @@ applying margin, padding, borders.
                 (if (ceamx-ui-desktop-dark-theme-p)
                     (ceamx-ui/load-dark-theme)
                   (ceamx-ui/load-light-theme))))))
-
-;; FIXME
-;; (after! circadian
-;;   (def-hook! +circadian-after-load-theme-set-system-theme-h (theme)
-;;     'circadian-after-load-theme-hook
-;;     "Set the desktop environment theme based on THEME polarity."
-;;     (cond
-;;      ((memq theme ceamx-ui-dark-themes-list)
-;;       (ceamx-ui/gsettings-dark-theme))
-;;      ((memq theme ceamx-ui-light-themes-list)
-;;       (ceamx-ui/gsettings-light-theme))
-;;      (t nil))))
 #+end_src
 
-** Elpaca-Wait № 4: ensure availability of themes for integration :wait:
-
-#+begin_src emacs-lisp
-(elpaca-wait)
-#+end_src
 
 ** ~avy~ :: can do anything
 
@@ -3135,6 +3139,16 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-e" #'mwim-end))
 #+end_src
 
+*** ~beginend~ :: rebind context-sensitive =(beginning,end)-of-buffer=
+
++ Package :: https://github.com/DamienCassou/beginend
+
+  #+begin_src emacs-lisp
+(package! beginend
+  (blackout 'beginend-global-mode)
+  (beginend-global-mode))
+#+end_src
+
 *** INPRG Provide a command to intelligently kill words backwardsly
 
 - State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
@@ -3315,42 +3329,43 @@ Needs better bindings.
 
 <https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-feature! rect
   :config
-  (use-feature! hydra
-    :config
-    (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
-                                         :color pink
-                                         :hint nil
-                                         :post (deactivate-mark))
-      "
+  ;; FIXME: no such file or directory hydra ?!! why did this change?
+  (require 'hydra)
+
+  (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
+                                       :color pink
+                                       :hint nil
+                                       :post (deactivate-mark))
+    "
   ^_k_^       _w_ copy      _o_pen       _N_umber-lines            |\\     -,,,--,,_
 _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..  \-;;,_
   ^_j_^       _d_ kill      _c_lear      _r_eset-region-mark      |,4-  ) )_   .;.(  `'-'
 ^^^^          _u_ndo        _g_ quit     ^ ^                     '---''(./..)-'(_\_)
 "
-      ("k" rectangle-previous-line)
-      ("j" rectangle-next-line)
-      ("h" rectangle-backward-char)
-      ("l" rectangle-forward-char)
-      ("d" kill-rectangle)               ;; C-x r k
-      ("y" yank-rectangle)               ;; C-x r y
-      ("w" copy-rectangle-as-kill)       ;; C-x r M-w
-      ("o" open-rectangle)               ;; C-x r o
-      ("t" string-rectangle)             ;; C-x r t
-      ("c" clear-rectangle)              ;; C-x r c
-      ("e" rectangle-exchange-point-and-mark) ;; C-x C-x
-      ("N" rectangle-number-lines)            ;; C-x r N
-      ("r" (if (region-active-p)
-               (deactivate-mark)
-             (rectangle-mark-mode 1)))
-      ("u" undo nil)
-      ("g" nil))
+    ("k" rectangle-previous-line)
+    ("j" rectangle-next-line)
+    ("h" rectangle-backward-char)
+    ("l" rectangle-forward-char)
+    ("d" kill-rectangle)                    ;; C-x r k
+    ("y" yank-rectangle)                    ;; C-x r y
+    ("w" copy-rectangle-as-kill)            ;; C-x r M-w
+    ("o" open-rectangle)                    ;; C-x r o
+    ("t" string-rectangle)                  ;; C-x r t
+    ("c" clear-rectangle)                   ;; C-x r c
+    ("e" rectangle-exchange-point-and-mark) ;; C-x C-x
+    ("N" rectangle-number-lines)            ;; C-x r N
+    ("r" (if (region-active-p)
+             (deactivate-mark)
+           (rectangle-mark-mode 1)))
+    ("u" undo nil)
+    ("g" nil))
 
-    (when (fboundp 'hydra-rectangle/body)
-      (keymap-global-set "C-x SPC" #'hydra-rectangle/body)
-      (keymap-global-set "C-x M-r" #'rectangle-mark-mode))))
+  (when (fboundp 'hydra-rectangle/body)
+    (keymap-global-set "C-x SPC" #'hydra-rectangle/body)
+    (keymap-global-set "C-x M-r" #'rectangle-mark-mode)))
 #+end_src
 
 ** Line wrapping
@@ -8229,61 +8244,69 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 #+begin_src emacs-lisp
 (package! denote
   (require 'denote)
-  (require 'denote-journal-extras)
 
+  ;;
   ;; Integrations
 
   (add-hook 'find-file-hook #'denote-fontify-links-mode)
+
   (after! dired
-    (add-hook 'dired-mode-hook #'denote-dired-mode))
+    (add-hook 'dired-mode-hook #'denote-dired-mode)
+
+    (define-keymap :keymap dired-mode-map
+      "C-c C-d C-i" #'denote-link-dired-marked-notes
+      "C-c C-d C-r" #'denote-dired-rename-marked-files
+      "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
+      "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
+
   (after! mouse
     (add-hook 'context-menu-functions #'denote-context-menu))
 
-  ;; Customizations
+  (after! org
+    (keymap-set org-mode-map "C-c n h" #'denote-org-extras-extract-org-subtree)))
 
+(after! denote
   (setopt denote-directory ceamx-note-default-dir)
-  (setopt denote-save-buffers nil)
-  (setopt denote-known-keywords '("emacs" "philosophy" "correspondence" "language" "work" "journal" "blog"))
-  (setopt denote-infer-keywords t)
-  (setopt denote-sort-keywords t)
-  (setopt denote-file-type nil)         ; Org is the default
-  (setopt denote-prompts '(title keywords))
   (setopt denote-excluded-directories-regexp "\\.archive")
-  (setopt denote-rename-confirmations '(modify-file-name
-                                        rewrite-front-matter))
+  (setopt denote-dired-directories
+          (list denote-directory
+                (thread-last denote-directory
+                             (expand-file-name "attachments"))))
 
-  ;; Pick dates, where relevant, with Org's advanced interface.
+  (setopt denote-save-buffers nil)
+  (setopt denote-infer-keywords t
+          denote-sort-keywords t)
+  (setopt denote-known-keywords
+          '("emacs"
+            "philosophy"
+            "correspondence"
+            "language"
+            "jobwork"
+            "journal"
+            "blog"))
+  (setopt denote-prompts '(title keywords))
+  (setopt denote-org-capture-specifiers "%l\n%i\n%?")
   (setopt denote-date-prompt-use-org-read-date t)
-
-  ;; Use a file-type-specific date format.
-  (setopt denote-date-format nil)
-
   ;; also: `denote-link-backlinks-display-buffer-action'
   (setopt denote-backlinks-show-context t)
 
-  (setopt denote-dired-directories
-          (list denote-directory
-                (thread-last denote-directory (expand-file-name "attachments"))))
-
-  ;; Automatically rename Denote buffers using the
-  ;; `denote-rename-buffer-format'.
+  ;; Auto-rename Denote buffers with `denote-rename-buffer-format'.
+  (setopt denote-rename-confirmations '(modify-file-name
+                                        rewrite-front-matter))
   (denote-rename-buffer-mode 1))
-#+end_src
 
-** Keybindings
-
-#+begin_src emacs-lisp
-(with-eval-after-load 'dired
-  (define-keymap :keymap dired-mode-map
-    "C-c C-d C-i" #'denote-link-dired-marked-notes
-    "C-c C-d C-r" #'denote-dired-rename-marked-files
-    "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
-    "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
-
-(with-eval-after-load 'org-capture
-  (setopt denote-org-capture-specifiers "%l\n%i\n%?")
+(after! (denote org-capture)
+  ;; (appendopt! org-capture-templates
+  ;;     (doct '(("New note" :keys "n"
+  ;;              :type plain
+  ;;              :file denote-last-path
+  ;;              :template denote-org-capture
+  ;;              :no-save t
+  ;;              :immediate-finish nil
+  ;;              :kill-buffer t
+  ;;              :jump-to-captured t))))
   (add-to-list 'org-capture-templates
-      '("n" "New note (with denote.el)" plain
+      '("n" "New note" plain
         (file denote-last-path)
         #'denote-org-capture
         :no-save t
@@ -8291,6 +8314,53 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
         :kill-buffer t
         :jump-to-captured t)))
 #+end_src
+
+** Define Denote silos for isolated note environments
+
+#+begin_src emacs-lisp
+(use-feature! ceamx-note
+  :after denote
+  :commands (ceamx-note/denote/pick-silo-then-command)
+  :config
+  (setopt ceamx-note-silo-directories
+          (list ceamx-note-journal-dir
+                ceamx-note-work-dir)))
+#+end_src
+
+** Silo: Work
+
+#+begin_src emacs-lisp
+
+#+end_src
+
+** Silo: Journalling
+
+#+begin_src emacs-lisp
+(defun ceamx-note/create-or-visit-journal-entry ()
+  "Invoke `denote-journal-extras-new-or-existing-entry' scoped to the
+ Journal silo."
+  (interactive)
+  (let ((denote-directory ceamx-note-journal-dir))
+    (call-interactively #'denote-journal-extras-new-or-existing-entry)))
+
+(after! denote
+  (define-keymap :keymap ceamx-capture-prefix-map
+    ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
+    "r" #'denote-region))
+
+(after! denote
+  (require 'denote-journal-extras)
+
+  (setopt denote-journal-extras-directory ceamx-note-journal-dir)
+  (setopt denote-journal-extras-keyword '("journal"))
+
+  (after! org-capture
+    ;; (appendopt! org-capture-templates
+    ;;             (doct "Journal" :keys "j"
+    ;;                   :file denote-journal-extras-))
+    ))
+#+end_src
+
 
 ** Provide the ~ceamx-init-notes~ feature
 
@@ -8368,7 +8438,10 @@ reason, use the ~ceamx-agenda-dir~.
 (setopt org-agenda-files ceamx-default-agenda-files)
 #+END_SRC
 
-** Baseline customizations
+** Baseline Org-Mode customizations
+:PROPERTIES:
+:ID:       8b25886e-a1cd-44de-9a78-6a79720ea5d2
+:END:
 
 #+begin_src emacs-lisp
 (after! org
@@ -8384,13 +8457,16 @@ reason, use the ~ceamx-agenda-dir~.
   (setopt org-clone-delete-id t)
   (setopt org-id-search-archives nil)
   ;; Ensure IDs for bookmarked headings within `ceamx-note-dir'.
-  (setopt org-bookmark-heading-make-ids
-          (lambda ()
-            (when-let* ((buffer-file-name
-                         (or (buffer-file-name)
-                             (when (buffer-base-buffer)
-                               (buffer-file-name (buffer-base-buffer))))))
-              (file-in-directory-p buffer-file-name ceamx-note-dir))))
+  ;; FIXME: This is nice, but ~dogears~ (or something else that uses
+  ;; bookmarks for locations) makes just about /every/ heading a bookmark.
+  ;; (setopt org-bookmark-heading-make-ids
+  ;;         (lambda ()
+  ;;           (when-let* ((buffer-file-name
+  ;;                        (or (buffer-file-name)
+  ;;                            (when (buffer-base-buffer)
+  ;;                              (buffer-file-name (buffer-base-buffer))))))
+  ;;             (file-in-directory-p buffer-file-name ceamx-note-dir))))
+  (setopt org-bookmark-heading-make-ids nil)
 
   ;;
   ;; Editing
@@ -9601,22 +9677,19 @@ Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
 
 Or, perhaps more accurately: stuff that needs a better home.
 
-* =init.el=: Keybindings
+* =init.el=: Command Bindings
 :PROPERTIES:
 :header-args: :tangle init.el
 :END:
 
+** Prefix: [C-c]
+
 #+begin_src emacs-lisp
-
-;;
-;;;; Command Bindings
-
-;;;;; Prefix: [C-c]
-
 (define-keymap :keymap (current-global-map)
   "C-c a" #'org-agenda
   "C-c b" (cons "[ BUFFER   ]" #'ceamx-buffer-prefix)
   "C-c c" #'org-capture
+  "C-c C" (cons "[ CAPTURE  ]" #'ceamx-capture-prefix)
   ;; "C-c d"
   ;; "C-c e"
   "C-c f" (cons "[ FILE     ]" #'ceamx-file-prefix)
@@ -9647,11 +9720,12 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 (after! cape
   (keymap-global-set "C-c p" (cons "[ COMPLETE ]" cape-prefix-map)))
+#+end_src
 
-;;;;; Prefix: [C-x]
+** Prefix: [C-x]
 
+#+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
-
   "C-x n n" #'logos-narrow-dwim
   "C-x o" #'ace-window
   ;; "C-x o" #'ceamx/other-window
@@ -9676,9 +9750,11 @@ Or, perhaps more accurately: stuff that needs a better home.
   "C-x <down>" #'shrink-window
   "C-x <left>" #'shrink-window-horizontally
   "C-x <right>" #'enlarge-window-horizontally)
+#+end_src
 
-;;;;; Modifier: [M-]
+** Modifier: [M-]
 
+#+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
   "M-]" #'logos-forward-page-dwim
   "M-[" #'logos-backward-page-dwim
@@ -9688,15 +9764,24 @@ Or, perhaps more accurately: stuff that needs a better home.
 (after! (avy lispy)
   ;; Prevent conflict with newly-added M-j binding.
   (keymap-set lispy-mode-map "M-J" #'lispy-join))
+#+end_src
 
-;;;;; [C-c b] :: Buffer
+** [C-c b] :: Buffer
 
+#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-buffer-prefix
   "b" #'consult-buffer
   "k" #'ceamx-simple/kill-current-buffer)
+#+end_src
+** [C-c C] :: Capture
 
-;;;;; [C-c f] :: File
+#+begin_src emacs-lisp
 
+#+end_src
+
+** [C-c f] :: File
+
+#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-file-prefix
   ;; TODO
   ;; "y" #'+yank-this-file-name
@@ -9710,9 +9795,11 @@ Or, perhaps more accurately: stuff that needs a better home.
   "U" #'ceamx-simple/sudo-find-file
 
   "C-d" '("diff with..." . ceamx-simple/diff-with-file))
+#+end_src
 
-;;;;; [C-c i] :: Insert
+** [C-c i] :: Insert
 
+#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-insert-prefix
   "d" #'ceamx-simple/insert-date
   ;; "h" #'i-ching-insert-hexagram
@@ -9725,19 +9812,22 @@ Or, perhaps more accurately: stuff that needs a better home.
   "U 3" #'uuidgen-3
   "U 4" #'uuidgen-4
   "U 5" #'uuidgen-5)
+#+end_src
 
-;;;;; [C-c l] :: Code
+** [C-c l] :: Code
 
+#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-code-prefix
   "a" #'eglot-code-actions
   "d" #'xref-find-definitions
   "j" #'ceamx-prog-dumb-jump-dispatch/body
   "o" #'consult-eglot-symbols
-  "r" #'eglot-rename
-  )
+  "r" #'eglot-rename)
+#+end_src
 
-;;;;; [C-c n] :: Note
+** [C-c n] :: Note
 
+#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-note-prefix-map
   "n" #'denote
   "N" #'consult-notes
@@ -9748,7 +9838,8 @@ Or, perhaps more accurately: stuff that needs a better home.
   "f" (cons "[ FIND    ]" (define-prefix-command 'ceamx-note-f-prefix))
   "i" #'denote-link                     ; "insert link"
   "I" #'denote-add-links
-  "j" (cons "[ JOURNAL ]" #'ceamx-journal-prefix)
+  ;; "j" (cons "[ JOURNAL ]" #'ceamx-journal-prefix)
+  "j" (cons "( journal )" #'denote-journal-extras-new-or-existing-entry)
   "r" #'denote-rename-file
   "R" #'denote-rename-file-using-front-matter
   "s" #'denote-subdirectory
@@ -9756,13 +9847,12 @@ Or, perhaps more accurately: stuff that needs a better home.
   "z" #'denote-signature                ; "zettelkasten"
 
   "f f" #'denote-find-link
-  "f b" #'denote-find-backlink
+  "f b" #'denote-find-backlink)
+#+end_src
 
-  "j j" #'denote-journal-extras-new-or-existing-entry)
+** [C-c o] :: Launch
 
-
-;;;;; [C-c o] :: Launch
-
+#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-launch-prefix
   "a" #'org-agenda
   "b" #'eww
@@ -9771,9 +9861,11 @@ Or, perhaps more accurately: stuff that needs a better home.
   "s" #'scratch-buffer
   "t" #'eat
   "W" #'ceamx/eww-wiki)
+#+end_src
 
-;;;;; [C-c q] :: Session
+** [C-c q] :: Session
 
+#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-session-prefix
   "a c" #'cursory-set-preset
   "a d" #'ceamx-ui/dark
@@ -9795,9 +9887,11 @@ Or, perhaps more accurately: stuff that needs a better home.
 ;;   (define-keymap :keymap ceamx-session-prefix
 ;;     "a d" #'ceamx-ui/dark
 ;;     "a l" #'ceamx-ui/light))
+#+end_src
 
-;;;;; [C-c t] :: Toggle
+** [C-c t] :: Toggle
 
+#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-toggle-prefix
   "f" #'flycheck-mode
   "k" #'keycast-mode-line-mode
@@ -9808,9 +9902,11 @@ Or, perhaps more accurately: stuff that needs a better home.
   "w" #'window-toggle-side-windows
   "W" #'toggle-window-dedicated
   "z" #'logos-focus-mode)
+#+end_src
 
-;;;;; Window
+** Window
 
+#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-window-prefix
   "w" #'ceamx/window-dispatch)
 
@@ -9944,99 +10040,131 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 ;;;; Requirements
 
 (eval-when-compile
+  (require 'cl-lib)
   (require 'ceamx-lib))
 
 ;;;; Variables
 
-(defvar ceamx-ui-dark-themes-list nil)
-(defvar ceamx-ui-light-themes-list nil)
+;; TODO: add standard-themes
+(defvar ceamx-ui-dark-themes-list
+  (remove 'nil (append (when (locate-library "modus-themes")
+                         (seq-filter
+                          (##string-prefix-p "modus-vivendi" (symbol-name %))
+                          modus-themes-items))
+                       (when (locate-library "ef-themes")
+                         ef-themes-dark-themes))))
 
-(after! modus-themes
-  (appendq! ceamx-ui-dark-themes-list
-            ;; `modus-vivendi' variants
-            (seq-filter
-             (lambda (sym) (string-prefix-p "modus-vivendi" (symbol-name sym)))
-             modus-themes-items))
+;; TODO: add standard-themes
+(defvar ceamx-ui-light-themes-list
+  (remove 'nil (append (when (locate-library "modus-themes")
+                         (seq-filter
+                          (##string-prefix-p "modus-operandi" (symbol-name %))
+                          modus-themes-items))
+                       (when (locate-library "ef-themes")
+                         ef-themes-light-themes))))
 
-  (appendq! ceamx-ui-light-themes-list
-            ;; `modus-operandi' variants
-            (seq-filter
-             (lambda (sym) (string-prefix-p "modus-operandi" (symbol-name sym)))
-             modus-themes-items)))
+  ;;;; Customization
 
-;;;; Customization
+(defgroup ceamx-ui ()
+  "Ceamx user interface"
+  :group 'faces)
 
 (defcustom ceamx-ui-theme-family 'modus
   "Set of themes to load.
-Valid values are the symbols `ef', `modus', and `standard', which
-reference the `ef-themes', `modus-themes', and `standard-themes',
-respectively.
+  Valid values are the symbols `ef', `modus', and `standard', which
+  reference the `ef-themes', `modus-themes', and `standard-themes',
+  respectively.
 
-A nil value does not load any of the above (use Emacs without a
-theme)."
-  :group 'ceamx
+  A nil value does not load any of the above (use Emacs without a
+  theme)."
+  :group 'ceamx-ui
   :type '(choice :tag "Set of themes to load" :value modus
-          (const :tag "The `ef-themes' module" ef)
-          (const :tag "The `modus-themes' module" modus)
-          (const :tag "The `standard-themes' module" standard)
-          (const :tag "Do not load a theme module" nil)))
+                 (const :tag "The `ef-themes' module" ef)
+                 (const :tag "The `modus-themes' module" modus)
+                 (const :tag "The `standard-themes' module" standard)
+                 (const :tag "Do not load a theme module" nil)))
 
-(defcustom ceamx-ui-theme-light 'modus-operandi
-  "The default light theme."
-  :group 'ceamx
+(defcustom ceamx-ui-preferred-dark-theme nil
+  "Alist of preferred dark themes per supported `ceamx-ui-theme-family'.
+  The car of the alist cells should either be nil or match one of the
+  `ceamx-ui-theme-family' options.
+
+  The cdr must be a symbol for a theme provided by one of the supported
+  theme options.  The theme should be a theme with a dark background.
+
+  When car is nil, the theme specified in the cdr will be used as fallback
+  when `ceamx-ui-theme-family' is nil."
+  :type '(alist :key-type symbol
+                :value-type symbol)
+  :group 'ceamx-ui)
+
+(defcustom ceamx-ui-preferred-light-theme nil
+  "Alist of preferred light themes per supported `ceamx-ui-theme-family'.
+  The car of the alist cells should either be nil or match one of the
+  `ceamx-ui-theme-family' options.
+
+  The cdr must be a symbol for a theme provided by one of the supported
+  theme options.  The theme should be a theme with a light background.
+
+  When car is nil, the theme specified in the cdr will be used as fallback
+  when `ceamx-ui-theme-family' is nil."
+  :type '(alist :key-type symbol
+                :value-type symbol)
+  :group 'ceamx-ui)
+
+(defcustom ceamx-ui-theme-dark
+  (or (alist-get ceamx-ui-theme-family ceamx-ui-preferred-dark-theme)
+      'modus-vivendi)
+  "The default dark theme."
+  :group 'ceamx-ui
   :type 'symbol)
 
-(defcustom ceamx-ui-theme-dark 'modus-vivendi
-  "The default dark theme."
-  :group 'ceamx
+(defcustom ceamx-ui-theme-light
+  (or (alist-get ceamx-ui-theme-family ceamx-ui-preferred-light-theme)
+      'modus-operandi)
+  "The default light theme."
+  :group 'ceamx-ui
   :type 'symbol)
 
 (defcustom ceamx-ui-theme-circadian-interval nil
   "The circadian theme switching interval.
-Value may be `period', `solar', or nil, corresponding
-respectively to period-based switching with `theme-buffet' or
-sunrise/sunset toggling from the combination of the `solar'
-library and the `circadian' package.
+  Value may be `period', `solar', or nil, corresponding
+  respectively to period-based switching with `theme-buffet' or
+  sunrise/sunset toggling from the combination of the `solar'
+  library and the `circadian' package.
 
-A nil value means to disable automatic theme switching.
-Theme-switching commands `ceamx/light' and `ceamx/dark' will
-unconditionally use `ceamx-ui-theme-default-light' and
-`ceamx-ui-theme-default-dark', respectively."
-  :group 'ceamx
+  A nil value means to disable automatic theme switching.
+  Theme-switching commands `ceamx/light' and `ceamx/dark' will
+  unconditionally use `ceamx-ui-theme-default-light' and
+  `ceamx-ui-theme-default-dark', respectively."
+  :group 'ceamx-ui
   :type '(choice :tag "Circadian theme switching interval" :value nil
-          (const :tag "Time periods via `theme-buffet'" :value buffet)
-          (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
+                 (const :tag "Time periods via `theme-buffet'" :value buffet)
+                 (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
 
-(defcustom ceamx-modeline-provider nil
-  "Modeline provider to load.
-Valid values are the symbols `doom', `nano', and `telephone'
-which reference the `doom-modeline', `nano-modeline', and
-`telephone-line' modules respectively.
+  ;;;; Functions
 
-A nil value will not load any modeline customizations (use Emacs
-with its default modeline)."
-  :group 'ceamx
-  :type '(choice :tag "Modeline to load" :value nil
-          (const :tag "The `doom-modeline' module" doom)
-          (const :tag "The `nano-modeline' module" nano)
-          (const :tag "The `telephone-line' module" telephone)
-          (const :tag "Do not load a modeline module" nil)))
+(defun ceamx-ui-define-preferred-themes (theme-family dark-theme light-theme)
+  "Define the preferred DARK-THEME and LIGHT-THEME for THEME-FAMILY."
+  (cl-pushnew `(,theme-family . ,dark-theme) ceamx-ui-preferred-dark-theme)
+  (cl-pushnew `(,theme-family . ,light-theme) ceamx-ui-preferred-light-theme))
 
-;;;; Functions
-
-;;;;; Public
+(defun ceamx-ui-theme-family-preferred-themes (theme-family)
+  "Return a list of preferred dark and light themes for THEME-FAMILY."
+  (list (or (alist-get theme-family ceamx-ui-preferred-dark-theme)
+            (alist-get nil ceamx-ui-preferred-dark-theme))
+        (or (alist-get theme-family ceamx-ui-preferred-light-theme)
+            (alist-get nil ceamx-ui-preferred-dark-theme))))
 
 (defun ceamx-ui-load-theme (theme)
   "Load THEME after resetting any previously-loaded themes.
-See also `modus-themes-load-theme'."
+  See also `modus-themes-load-theme'."
   (mapc #'disable-theme (remq theme custom-enabled-themes))
   (load-theme theme :no-confirm))
 
-;;;;; Private
+  ;;;; Commands
 
-;;;; Commands
-
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/gsettings-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
   ;; FIXME: prompt with completion
@@ -10052,20 +10180,32 @@ See also `modus-themes-load-theme'."
                       value)))
     (shell-command cmd)))
 
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/gsettings-dark-theme ()
   "Enable the dark GNOME/GTK theme."
   (interactive)
   (ceamx-ui/gsettings-set-theme "dark"))
 
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/gsettings-light-theme ()
   "Enable the light GNOME/GTK theme."
   (interactive)
   (ceamx-ui/gsettings-set-theme "light"))
 
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/load-dark-theme ()
+  "Load the preferred dark theme."
+  (interactive)
+  (load-theme ceamx-ui-theme-dark :no-confirm))
+
+  ;;;###autoload
+(defun ceamx-ui/load-light-theme ()
+  "Load the preferred light theme."
+  (interactive)
+  (load-theme ceamx-ui-theme-light :no-confirm))
+
+  ;;;###autoload
+(defun ceamx-ui/load-random-dark-theme ()
   "Load a random dark theme."
   (interactive)
   (pcase ceamx-ui-theme-circadian-interval
@@ -10073,10 +10213,11 @@ See also `modus-themes-load-theme'."
      (+theme-buffet--load-random-from-periods
       ceamx-ui-theme-buffet-dark-periods))
     (_
-     (load-theme ceamx-ui-theme-dark :no-confirm))))
+     (let ((theme (seq-random-elt ceamx-ui-dark-themes-list)))
+       (load-theme theme :no-confirm)))))
 
-;;;###autoload
-(defun ceamx-ui/load-light-theme ()
+  ;;;###autoload
+(defun ceamx-ui/load-random-light-theme ()
   "Load a random light theme."
   (interactive)
   (pcase ceamx-ui-theme-circadian-interval
@@ -10084,30 +10225,31 @@ See also `modus-themes-load-theme'."
      (+theme-buffet--load-random-from-periods
       ceamx-ui-theme-buffet-light-periods))
     (_
-     (load-theme ceamx-ui-theme-light :no-confirm))))
+     (let ((theme (seq-random-elt ceamx-ui-light-themes-list)))
+       (load-theme theme :no-confirm)))))
 
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/light ()
   "Activate a light theme globally."
   (interactive)
   (ceamx-ui/gsettings-light-theme)
   (ceamx-ui/load-light-theme))
 
-;;;###autoload
+  ;;;###autoload
 (defun ceamx-ui/dark ()
   "Activate a dark theme globally."
   (interactive)
   (ceamx-ui/gsettings-dark-theme)
   (ceamx-ui/load-dark-theme))
 
-;;;; Footer
+  ;;;; Footer
 
 (provide 'ceamx-ui)
-;;; ceamx-ui.el ends here
+  ;;; ceamx-ui.el ends here
 #+end_src
 
 ** The ~ceamx-modeline~ library
-** The =ceamx-simple= library: Common utility commands
+** The ~ceamx-simple~ library: Common utility commands
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-simple.el :comments no
 ;;; ceamx-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
@@ -10656,7 +10798,7 @@ writable or with a prefix argument, then read a file to visit."
 ;;; ceamx-simple.el ends here
 #+end_src
 
-** The =ceamx-window.el= library
+** The ~ceamx-window~ library
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-window.el :comments no :noweb yes
 ;;; ceamx-window.el --- Window management support library  -*- lexical-binding: t;  -*-
@@ -10993,7 +11135,7 @@ available, `switchy-window'."
 ;;; ceamx-window.el ends here
 #+end_src
 
-** The =ceamx-completion.el= library
+** The ~ceamx-completion~ library
 
 #+begin_src emacs-lisp :tangle site-lisp/ceamx-completion.el :comments no
 ;;; ceamx-completion.el --- Ceamx: Completions Library  -*- lexical-binding: t;  -*-
@@ -11220,15 +11362,46 @@ files               => `wdired'
 
 (defcustom ceamx-note-journal-dir
   (file-name-as-directory (concat ceamx-note-dir "journal"))
-  "Base directory for the journal notes scope."
+  "Base directory for the Journal notes silo."
   :type 'directory
   :group 'ceamx-note)
 
 (defcustom ceamx-note-work-dir
   (file-name-as-directory (concat ceamx-note-dir "work"))
-  "Base directory for the work notes scope."
+  "Base directory for the Work notes silo."
   :type 'directory
   :group 'ceamx-note)
+
+(defcustom ceamx-note-silo-directories nil
+  "List of filesystem directories pointing to the note silo roots."
+  :type '(directory)
+  :group 'ceamx-note)
+
+(defcustom ceamx-note-denote-silo-commands
+  '(denote
+    denote-date
+    denote-subdirectory
+    denote-template
+    denote-type)
+  "List of Denote commands to call after selecting a silo.
+This is a list of symbols that specify the note-creating interactive
+functions that Denote provides."
+  :type '(symbol)
+  :group 'ceamx-note)
+
+;;;; Functions
+
+(defun ceamx-note/denote/pick-silo-then-command (silo command)
+  "Select SILO and run Denote COMMAND within.
+SILO is a filesystem directory listed in `ceamx-note-silo-directories'.
+COMMAND is a command listed in `ceamx-note-denote-silo-commands'."
+  (interactive
+   (list (completing-read "Select a silo: " ceamx-note-silo-directories nil t)
+         (intern (completing-read
+                  "Run command in silo: "
+                  ceamx-note-denote-silo-commands nil t))))
+  (let ((denote-directory silo))
+    (call-interactively command)))
 
 ;;; Footer
 
