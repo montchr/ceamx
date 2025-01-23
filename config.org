@@ -2300,13 +2300,15 @@ applying margin, padding, borders.
 (package! symbol-overlay)
 #+end_src
 
-** Consider all themes "safe"
+** Theme :theme:
+
+*** Consider all themes "safe"
 
 #+begin_src emacs-lisp
 (setopt custom-safe-themes t)
 #+end_src
 
-** Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
+*** Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
 
 - Source :: <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
 
@@ -2320,7 +2322,7 @@ applying margin, padding, borders.
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
 #+end_src
 
-** ~standard-themes~ :: themes like the default but more consistent
+*** ~standard-themes~ :: themes like the default but more consistent
 
 #+begin_src emacs-lisp
 (when (display-graphic-p)
@@ -2345,7 +2347,7 @@ applying margin, padding, borders.
             standard-light-tinted)))
 #+end_src
 
-** ~modus-themes~
+*** ~modus-themes~
 
 - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -2369,7 +2371,7 @@ applying margin, padding, borders.
             (t . (regular 1.1)))))
 #+end_src
 
-** ~ef-themes~
+*** ~ef-themes~
 
 - Website :: <https://protesilaos.com/emacs/ef-themes>
 
@@ -2385,7 +2387,7 @@ applying margin, padding, borders.
           ef-themes-variable-pitch-ui nil))
 #+end_src
 
-** Set approximate stomping coordinates for hyper-astronomic relativity calculations
+*** Set approximate stomping coordinates for hyper-astronomic relativity calculations
 
 #+begin_src emacs-lisp
 (require 'cal-dst)
@@ -2394,7 +2396,7 @@ applying margin, padding, borders.
 (setopt calendar-longitude -75.133)
 #+end_src
 
-** ~circadian~ :: theme phasing based on sunrise/sunset time :package:
+*** ~circadian~ :: theme phasing based on sunrise/sunset time
 
 #+begin_src emacs-lisp
 (package! circadian
@@ -2412,7 +2414,6 @@ applying margin, padding, borders.
                     (ceamx-ui/load-dark-theme)
                   (ceamx-ui/load-light-theme))))))
 #+end_src
-
 
 ** ~avy~ :: can do anything
 

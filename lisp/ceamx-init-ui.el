@@ -166,7 +166,7 @@
 (setopt calendar-latitude 39.968)
 (setopt calendar-longitude -75.133)
 
-;; ~circadian~ :: theme phasing based on sunrise/sunset time :package:
+;; ~circadian~ :: theme phasing based on sunrise/sunset time
 
 
 (package! circadian
