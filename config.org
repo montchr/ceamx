@@ -2347,7 +2347,7 @@ applying margin, padding, borders.
             standard-light-tinted)))
 #+end_src
 
-*** ~modus-themes~
+*** ~modus-themes~ :: accessible theme conforming to WCAG AAA
 
 - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -8349,13 +8349,13 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
                 ceamx-note-work-dir)))
 #+end_src
 
-** Silo: Work
+*** Silo: Work
 
 #+begin_src emacs-lisp
 
 #+end_src
 
-** Silo: Journalling
+*** Silo: Journalling
 
 #+begin_src emacs-lisp
 (defun ceamx-note/create-or-visit-journal-entry ()

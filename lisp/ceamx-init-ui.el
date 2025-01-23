@@ -120,7 +120,7 @@
             standard-light
             standard-light-tinted)))
 
-;; ~modus-themes~
+;; ~modus-themes~ :: accessible theme conforming to WCAG AAA
 
 ;; - Website :: <https://protesilaos.com/modus-themes/>
 
