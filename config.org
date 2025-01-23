@@ -7575,6 +7575,19 @@ Install the =yaml-language-server= from Nixpkgs first.
     "t" #'csv-transpose))
 #+end_src
 
+** ~jq-mode~ :: major mode for editing =jq= queries
+
++ Package :: <https://github.com/ljos/jq-mode>
+
+#+begin_src emacs-lisp
+(package! jq-mode
+  (add-to-list 'auto-mode-alist '("\\.jq$" . jq-mode))
+  (after! json
+    (keymap-set js-json-mode-map "C-c o r" #'jq-interactively))
+  (after! json-ts-mode
+    (keymap-set json-ts-mode-map "C-c o r" #'jq-interactively)))
+#+end_src
+
 ** Web-Mode
 
 #+begin_src emacs-lisp

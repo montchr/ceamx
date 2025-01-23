@@ -1063,6 +1063,18 @@ Unless PROGRAM is provided, the program name used in
     "k" #'csv-kill-fields
     "t" #'csv-transpose))
 
+;; ~jq-mode~ :: major mode for editing =jq= queries
+
+;; + Package :: <https://github.com/ljos/jq-mode>
+
+
+(package! jq-mode
+  (add-to-list 'auto-mode-alist '("\\.jq$" . jq-mode))
+  (after! json
+    (keymap-set js-json-mode-map "C-c o r" #'jq-interactively))
+  (after! json-ts-mode
+    (keymap-set json-ts-mode-map "C-c o r" #'jq-interactively)))
+
 ;; Web-Mode
 
 
