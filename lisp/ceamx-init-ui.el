@@ -158,6 +158,13 @@
   (setopt ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil))
 
+;; Configure the preferred themes
+
+
+(use-feature! ceamx-ui
+  :config
+  (setopt ceamx-ui-theme-family 'ef))
+
 ;; Set approximate stomping coordinates for hyper-astronomic relativity calculations
 
 

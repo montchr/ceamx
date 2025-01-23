@@ -2387,6 +2387,14 @@ applying margin, padding, borders.
           ef-themes-variable-pitch-ui nil))
 #+end_src
 
+*** Configure the preferred themes
+
+#+begin_src emacs-lisp
+(use-feature! ceamx-ui
+  :config
+  (setopt ceamx-ui-theme-family 'ef))
+#+end_src
+
 *** Set approximate stomping coordinates for hyper-astronomic relativity calculations
 
 #+begin_src emacs-lisp
