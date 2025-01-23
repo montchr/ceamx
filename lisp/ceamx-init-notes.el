@@ -158,5 +158,12 @@
     ;;                   :file denote-journal-extras-))
     ))
 
+(package! consult-denote
+  (define-keymap :keymap ceamx-note-prefix-map
+    "f f" #'consult-denote-find
+    "g" #'consult-denote-grep)
+
+  (consult-denote-mode 1))
+
 (provide 'ceamx-init-notes)
 ;;; ceamx-init-notes.el ends here

@@ -8383,6 +8383,18 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
     ))
 #+end_src
 
+** ~consult-denote~ :: enchance Denote with Consult features
+
++ Website :: <https://protesilaos.com/emacs/consult-denote>
+
+#+begin_src emacs-lisp
+(package! consult-denote
+  (define-keymap :keymap ceamx-note-prefix-map
+    "f f" #'consult-denote-find
+    "g" #'consult-denote-grep)
+
+  (consult-denote-mode 1))
+#+end_src
 
 ** Provide the ~ceamx-init-notes~ feature
 
@@ -9852,7 +9864,6 @@ Or, perhaps more accurately: stuff that needs a better home.
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-note-prefix-map
   "n" #'denote
-  "N" #'consult-notes
 
   "b" #'denote-backlinks
   "c" #'denote-region                   ; "contents"
@@ -9868,8 +9879,8 @@ Or, perhaps more accurately: stuff that needs a better home.
   "t" #'denote-template
   "z" #'denote-signature                ; "zettelkasten"
 
-  "f f" #'denote-find-link
-  "f b" #'denote-find-backlink)
+  "f b" #'denote-find-backlink
+  "f l" #'denote-find-link)
 #+end_src
 
 ** [C-c o] :: Launch

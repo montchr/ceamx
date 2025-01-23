@@ -770,7 +770,6 @@ The ORDER can be used to deduce the feature context."
 
 (define-keymap :keymap ceamx-note-prefix-map
   "n" #'denote
-  "N" #'consult-notes
 
   "b" #'denote-backlinks
   "c" #'denote-region                   ; "contents"
@@ -786,8 +785,8 @@ The ORDER can be used to deduce the feature context."
   "t" #'denote-template
   "z" #'denote-signature                ; "zettelkasten"
 
-  "f f" #'denote-find-link
-  "f b" #'denote-find-backlink)
+  "f b" #'denote-find-backlink
+  "f l" #'denote-find-link)
 
 ;; [C-c o] :: Launch
 
