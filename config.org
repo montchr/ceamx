@@ -376,8 +376,12 @@ mutation of a variable.
 (setq debug-on-error t)
 #+end_src
 
-* Agenda
-** TODO Promising alternative to =org-roam= or =denote= <https://github.com/meedstrom/org-node>
+* Agenda [1/1]
+** DONE Promising alternative to =org-roam= or =denote= <https://github.com/meedstrom/org-node>
+CLOSED: [2025-01-24 Fri 10:55]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2025-01-24 Fri 10:55]
+:END:
 * Target Files
 :PROPERTIES:
 :VISIBILITY: folded
@@ -2530,9 +2534,7 @@ applying margin, padding, borders.
              :left-fringe-width 12
              :right-fringe-width 12))
 
-  (setopt spacious-padding-subtle-mode-line
-          `( :mode-line-active default
-             :mode-line-inactive window-divider)))
+  (setopt spacious-padding-subtle-mode-line t))
 #+end_src
 
 ** ~olivetti~ :: "distraction-free" editing
@@ -2622,13 +2624,9 @@ Enable the tab bar:
 
 #+begin_src emacs-lisp
 (tab-bar-mode 1)
-#+end_src
 
-*** Configure tab bar appearance and behavior
-
-#+begin_src emacs-lisp
 (setopt tab-bar-auto-width t
-        tab-bar-auto-width-max '((80) 10))
+        tab-bar-auto-width-max '((120) 20))
 #+end_src
 
 ** Typography :font:

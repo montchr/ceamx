@@ -279,7 +279,7 @@
 
 
 (package! spacious-padding
-  (add-hook 'ceamx-after-init-hook #'spacious-padding-mode))
+  (spacious-padding-mode))
 
 (after! spacious-padding
   (setopt spacious-padding-widths
@@ -292,9 +292,7 @@
              :left-fringe-width 12
              :right-fringe-width 12))
 
-  (setopt spacious-padding-subtle-mode-line
-          `( :mode-line-active default
-             :mode-line-inactive window-divider)))
+  (setopt spacious-padding-subtle-mode-line t))
 
 ;; ~olivetti~ :: "distraction-free" editing
 
@@ -379,11 +377,8 @@
 
 (tab-bar-mode 1)
 
-;; Configure tab bar appearance and behavior
-
-
 (setopt tab-bar-auto-width t
-        tab-bar-auto-width-max '((80) 10))
+        tab-bar-auto-width-max '((120) 20))
 
 ;; Text rendering and scaling
 
