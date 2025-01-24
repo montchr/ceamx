@@ -276,14 +276,14 @@ This operation will respect the following rules:
 
 (delete-selection-mode 1)
 
-;; ~expand-region~ :: Increase/decrease the selection area
+;; ~expreg~ :: simple alternativate to ~expand-region~ using ~treesit~
+
+;; + Package :: <https://github.com/casouri/expreg>
 
 
-(use-package expand-region
-  ;; :ensure t
-  :commands (er/expand-region)
-  :init
-  (keymap-global-set "C-=" #'er/expand-region))
+(package! expreg
+  (keymap-global-set "C-+" #'expreg-expand)
+  (keymap-global-set "C-=" #'expreg-contract))
 
 ;; ~drag-stuff~ :: drag stuff around in arbitrary directions :package:
 
@@ -727,45 +727,6 @@ This operation will respect the following rules:
 
   :config
   (setopt vundo-glyph-alist vundo-unicode-symbols))
-
-;; ~dogears~: Return to previously-visited buffer positions
-
-;; - Source code :: <https://github.com/alphapapa/dogears.el>
-
-
-(package! dogears
-  (add-hook 'on-first-buffer-hook #'dogears-mode)
-
-  ;; Also see `ceamx/dogears-dispatch'.
-  (define-keymap :keymap (current-global-map)
-    ;; TODO: find a new binding maybe
-    ;; "M-g d" #'dogears-go
-    "M-g M-b" #'dogears-back
-    "M-g M-f" #'dogears-forward
-    "M-g M-d" #'dogears-list
-    "M-g M-D" #'dogears-sidebar)
-
-  ;; Persist `dogears-list' between Emacs sessions.
-  ;; via <https://github.com/alphapapa/dogears.el/issues/4>
-  (after! savehist
-    (when (boundp 'savehist-additional-variables)
-      (add-to-list 'savehist-additional-variables #'dogears-list))))
-
-;; TODO: provide a little more context in transient (label for dogears, links maybe...)
-(after! (transient dogears)
-  (transient-define-prefix ceamx/dogears-dispatch ()
-    "Transient menu for `dogears' history navigation commands."
-    [["Navigate"
-      ("b" "back" dogears-back :transient transient--do-stay)
-      ("f" "forward" dogears-forward :transient transient--do-stay)]
-     ;; TODO: when quit one of these Find commands, return to transient
-     ["Find"
-      ("d" "go..." dogears-go)
-      ("l" "list" dogears-list)
-      ("S" "sidebar" dogears-sidebar)]])
-
-  (defer-until! (fboundp 'ceamx/dogears-dispatch)
-    (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
 
 ;; ~which-key~
 

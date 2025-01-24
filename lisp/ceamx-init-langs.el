@@ -1,6 +1,26 @@
 ;; -*- lexical-binding: t -*-
 
+(require 'treesit)
+
 (require 'ceamx-lib)
+
+;; ~typo~ :: typographical correctneß
+
+;; + Package :: <https://github.com/jorgenschaefer/typoel>
+
+;; *Before*:	The "quick" brown --- ffiox.
+;; *After*:	The “quick” brown — ffiox.
+
+
+(package! typo
+  ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
+  (typo-global-mode 1)
+
+  ;; Cycle through typographical variants of commonly-mistyped
+  ;; characters like quotation marks and dashes.
+  (add-hook 'text-mode-hook #'typo-mode)
+
+  (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
 
 ;; Programming modes
 
@@ -22,6 +42,109 @@ execution order."
   ;; (e.g. `rainbow-delimiters-mode'), according to its readme.
   (when (fboundp 'highlight-function-calls-mode)
     (highlight-function-calls-mode 1)))
+
+;; General customizations for ~outline-mode~ and ~outline-minor-mode~
+
+;; Remember that ~org-mode~ is derived from ~outline-mode~.
+
+
+(keymap-global-set "<f9>" #'outline-minor-mode)
+
+(after! outline
+  (setopt outline-minor-mode-highlight t)
+  (setopt outline-minor-mode-cycle t)
+  (setopt outline-minor-mode-use-buttons nil))
+
+;; ~outli~ :: mode-agnostic comment-based outlines
+
+;; - Package :: <https://github.com/jdtsmith/outli>
+
+
+(package! (outli :host github :repo "jdtsmith/outli")
+  (def-hook! +outli-mode-maybe-enable-h ()
+    '(prog-mode-hook text-mode-hook)
+    "Enable `outli-mode' conditionally, excluding some modes.
+Note that `emacs-lisp-mode' is excluded here due to a conflict with
+`lispy-mode'.  `outli-mode' must be loaded after `lispy-mode'."
+    (let ((exclude-modes '(emacs-lisp-mode))
+          (excludep (lambda (excluded-mode)
+                      (eq major-mode excluded-mode))))
+      (unless (seq-some excludep exclude-modes)
+        (outli-mode)))))
+
+(after! outli
+  ;; FIXME: this example from the readme results in errors due to mismatched signature
+  ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
+  ;; (advice-remove 'load-theme #'outli-reset-all-faces)
+
+  (define-keymap :keymap outli-mode-map
+    "C-c C-n" #'outline-next-heading
+    "C-c C-p" #'outline-previous-heading
+    ;; "C-c C-p" #'outline-back-to-heading
+    "C-c M-h" #'outline-promote
+    "C-c M-l" #'outline-demote))
+
+;; TODO Expand the existing repeat map for outline navigation
+
+;; I think this needs to be /contracted/ a bit.  Some of these aren't even real commands.
+
+
+(after! (repeat outline)
+  (define-keymap :keymap outline-navigation-repeat-map
+    "C-x" #'foldout-exit-fold
+    "x" #'foldout-exit-fold
+    "C-z" #'foldout-zoom-subtree
+    "z" #'foldout-zoom-subtree
+    "C-a" #'outline-show-all
+    "a" #'outline-show-all
+    "C-c" #'outline-hide-entry
+    "c" #'outline-hide-entry
+    "C-d" #'outline-hide-subtree
+    "C-e" #'outline-show-entry
+    "e" #'outline-show-entry
+    "TAB" #'outline-show-children
+    "C-k" #'outline-show-branches
+    "k" #'outline-show-branches
+    "C-l" #'outline-hide-leaves
+    "l" #'outline-hide-leaves
+    "RET" #'outline-insert-heading
+    "C-o" #'outline-hide-other
+    "o" #'outline-hide-other
+    "C-q" #'outline-hide-sublevels
+    "q" #'outline-hide-sublevels
+    "C-s" #'outline-show-subtree
+    "s" #'outline-show-subtree
+    "C-t" #'outline-hide-body
+    "t" #'outline-hide-body
+    "@" #'outline-mark-subtree)
+
+  (ceamx-repeatify-keymap 'outline-navigation-repeat-map))
+
+;; TODO A transient menu for outline navigation
+
+
+;; (after! (transient outline)
+;;   (transient-define-prefix ceamx/outline-dispatch ()
+;;     "Outline navigation transient menu."
+;;     [["Navigate"
+;;       ("u" "up" outline-up-heading)
+;;       ("n" "next" outline-next-visible-heading)
+;;       ("p" "prev" outline-previous-visible-heading)
+;;       ("f" "forward" outline-forward-same-level)
+;;       ("b" "backward" outline-backward-same-level)]]))
+
+;; (after! (hydra outline)
+;;   (defhydra ceamx/outline-hydra ( :color red)
+;;     "
+;; ^Navigate^            ^Subtree^        ^Metadata^
+;; ^--------^----------  ^-------^-----  ^---------^--
+;; _n_ext visible        _I_: drag up    _t_odo-state
+;; _p_revious visible    _J_: promote    _d_eadline
+;; _f_orward same level  _K_: drag down  _s_chedule
+;; _b_ack same level     _L_: demote
+;; _u_p level            _N_: narrow     _xp_: set property
+;;                       _W_: widen
+;; "))
 
 ;; ~smart-newline~: a newline command for programming modes
 
@@ -462,108 +585,69 @@ non-nil, buffers will never be formatted upon save."
 ;; (map-keymap (lambda (_ cmd)
 ;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
 
-;; General customizations for ~outline-mode~ and ~outline-minor-mode~
+;; ~treesit-auto~ :: automatically use available ~treesit~ modes
 
-;; Remember that ~org-mode~ is derived from ~outline-mode~.
+;; + Package :: <https://github.com/renzmann/treesit-auto>
 
+;; NOTE: This package does *not* automatically manage mode-hook
+;; translation.  Those should be managed manually on a case-by-case
+;; basis. For example, ~nix-ts-mode-hook~ does not currently inherit the
+;; value of ~nix-mode-hook~.  Some Tree-Sitter modes, however, still derive
+;; from their non-Tree-Sitter predecessor, and so will also run that
+;; mode's hooks in addition to its own.
 
-(keymap-global-set "<f9>" #'outline-minor-mode)
+;; NOTE: This feature is intended to be loaded *after* all other language
+;; packages have been installed so that ~treesit-auto~ it can override
+;; ~auto-mode-alist~.
 
-(after! outline
-  (setopt outline-minor-mode-highlight t)
-  (setopt outline-minor-mode-cycle t)
-  (setopt outline-minor-mode-use-buttons nil))
+;; By default, Emacs plays it safe with tree-sitter language support so
+;; as not to override legacy mode file extension associations.  This
+;; makes sense as a default, but it's a pain to have to override
+;; ~auto-mode-alist~ for every language individually.
 
-;; ~outli~ :: mode-agnostic comment-based outlines
+;; ~treesit-auto~ is pretty smart about how it handles these behaviors; its
+;; readme provides more in-depth details.
 
-;; - Package :: <https://github.com/jdtsmith/outli>
+;; In short, ~global-treesit-auto-mode~ will:
 
+;; - Automatically switch to <name>-ts-mode when the grammar for <name>
+;;   is installed
+;; - Stick with <name>-mode if the grammar isn’t installed
+;; - Automatically install a grammar before opening a compatible file
+;; - Modify auto-mode-alist for tree-sitter modes
 
-(package! (outli :host github :repo "jdtsmith/outli")
-  (def-hook! +outli-mode-maybe-enable-h ()
-    '(prog-mode-hook text-mode-hook)
-    "Enable `outli-mode' conditionally, excluding some modes.
-Note that `emacs-lisp-mode' is excluded here due to a conflict with
-`lispy-mode'.  `outli-mode' must be loaded after `lispy-mode'."
-    (let ((exclude-modes '(emacs-lisp-mode))
-          (excludep (lambda (excluded-mode)
-                      (eq major-mode excluded-mode))))
-      (unless (seq-some excludep exclude-modes)
-        (outli-mode)))))
-
-(after! outli
-  ;; FIXME: this example from the readme results in errors due to mismatched signature
-  ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
-  ;; (advice-remove 'load-theme #'outli-reset-all-faces)
-
-  (define-keymap :keymap outli-mode-map
-    "C-c C-n" #'outline-next-heading
-    "C-c C-p" #'outline-previous-heading
-    ;; "C-c C-p" #'outline-back-to-heading
-    "C-c M-h" #'outline-promote
-    "C-c M-l" #'outline-demote))
-
-;; TODO Expand the existing repeat map for outline navigation
-
-;; I think this needs to be /contracted/ a bit.  Some of these aren't even real commands.
+;;   See also
+;;   <https://github.com/purcell/emacs.d/blob/master/lisp/init-treesitter.el>
+;;   for a more manual approach.
 
 
-(after! (repeat outline)
-  (define-keymap :keymap outline-navigation-repeat-map
-    "C-x" #'foldout-exit-fold
-    "x" #'foldout-exit-fold
-    "C-z" #'foldout-zoom-subtree
-    "z" #'foldout-zoom-subtree
-    "C-a" #'outline-show-all
-    "a" #'outline-show-all
-    "C-c" #'outline-hide-entry
-    "c" #'outline-hide-entry
-    "C-d" #'outline-hide-subtree
-    "C-e" #'outline-show-entry
-    "e" #'outline-show-entry
-    "TAB" #'outline-show-children
-    "C-k" #'outline-show-branches
-    "k" #'outline-show-branches
-    "C-l" #'outline-hide-leaves
-    "l" #'outline-hide-leaves
-    "RET" #'outline-insert-heading
-    "C-o" #'outline-hide-other
-    "o" #'outline-hide-other
-    "C-q" #'outline-hide-sublevels
-    "q" #'outline-hide-sublevels
-    "C-s" #'outline-show-subtree
-    "s" #'outline-show-subtree
-    "C-t" #'outline-hide-body
-    "t" #'outline-hide-body
-    "@" #'outline-mark-subtree)
+(package! treesit-auto
+  (require 'treesit-auto)
 
-  (ceamx-repeatify-keymap 'outline-navigation-repeat-map))
+  ;; Grammars should be installed via Nixpkgs.
+  (setopt treesit-auto-install nil)
 
-;; TODO A transient menu for outline navigation
+  (treesit-auto-add-to-auto-mode-alist 'all)
+
+  (global-treesit-auto-mode))
 
 
-;; (after! (transient outline)
-;;   (transient-define-prefix ceamx/outline-dispatch ()
-;;     "Outline navigation transient menu."
-;;     [["Navigate"
-;;       ("u" "up" outline-up-heading)
-;;       ("n" "next" outline-next-visible-heading)
-;;       ("p" "prev" outline-previous-visible-heading)
-;;       ("f" "forward" outline-forward-same-level)
-;;       ("b" "backward" outline-backward-same-level)]]))
 
-;; (after! (hydra outline)
-;;   (defhydra ceamx/outline-hydra ( :color red)
-;;     "
-;; ^Navigate^            ^Subtree^        ^Metadata^
-;; ^--------^----------  ^-------^-----  ^---------^--
-;; _n_ext visible        _I_: drag up    _t_odo-state
-;; _p_revious visible    _J_: promote    _d_eadline
-;; _f_orward same level  _K_: drag down  _s_chedule
-;; _b_ack same level     _L_: demote
-;; _u_p level            _N_: narrow     _xp_: set property
-;;                       _W_: widen
-;; "))
+;; Increase the amount of syntax-highlighted structures:
+
+
+(setopt treesit-font-lock-level 4)
+
+;; TODO ~treesit-fold~ :: code folding with ~treesit~
+
+;; + Package :: <https://github.com/emacs-tree-sitter/treesit-fold>
+
+;;   There is a lot to configure…
+
+
+(package! treesit-fold
+  (global-treesit-fold-mode 1)
+  (global-treesit-fold-indicators-mode 1))
 
 ;; Apply ~autoinsert~ skeletons to new files
 

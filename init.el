@@ -621,7 +621,6 @@ The ORDER can be used to deduce the feature context."
 (require 'ceamx-init-langs)
 (require 'ceamx-init-notes)
 (require 'ceamx-init-org)
-(require 'init-treesitter)
 (require 'lib-prog)
 (require 'ceamx-init-tools)
 (require 'init-news)
@@ -634,29 +633,29 @@ The ORDER can be used to deduce the feature context."
 
 (define-keymap :keymap (current-global-map)
   "C-c a" #'org-agenda
-  "C-c b" (cons "[ BUFFER   ]" #'ceamx-buffer-prefix)
+  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
   "C-c c" #'org-capture
-  "C-c C" (cons "[ CAPTURE  ]" #'ceamx-capture-prefix)
+  "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
   ;; "C-c e"
-  "C-c f" (cons "[ FILE     ]" #'ceamx-file-prefix)
+  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
   "C-c g" #'magit-dispatch
   "C-c G" #'magit-file-dispatch
   "C-c h" #'consult-history
-  "C-c i" (cons "[ INSERT   ]" #'ceamx-insert-prefix)
+  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
   ;; "C-c j"
   "C-c k" #'consult-kmacro
-  "C-c l" (cons "[ CODE     ]" #'ceamx-code-prefix)
+  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
   ;; "C-c m"
-  "C-c n" (cons "[ NOTES    ]" #'ceamx-note-prefix)
-  "C-c o" (cons "[ LAUNCH   ]" #'ceamx-launch-prefix)
-  "C-c q" (cons "[ SESSION  ]" #'ceamx-session-prefix)
+  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
+  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
   ;; "C-c r"
   ;; "C-c s"
-  "C-c t" (cons "[ TOGGLE   ]" #'ceamx-toggle-prefix)
+  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
   ;; "C-c u"
   ;; "C-c v"
-  "C-c w" (cons "[ WINDOW   ]" #'ceamx-window-prefix)
+  "C-c w" (cons "[ WORKSPACE ]" #'ceamx-window-prefix)
   ;; "C-c x"
   ;; "C-c y"
   ;; "C-c z"
@@ -672,7 +671,7 @@ The ORDER can be used to deduce the feature context."
 
 
 (define-keymap :keymap (current-global-map)
-  "C-x n n" #'logos-narrow-dwim
+  "C-x n N" #'logos-narrow-dwim
   "C-x o" #'ace-window
   ;; "C-x o" #'ceamx/other-window
   "C-x O" #'ace-window

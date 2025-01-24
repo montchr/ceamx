@@ -973,7 +973,7 @@ Emacs version to prevent bytecode incompatibility.")
 (define-prefix-command 'ceamx-session-prefix)
 (define-prefix-command 'ceamx-toggle-prefix)
 (define-prefix-command 'ceamx-window-prefix)
-(define-prefix-command 'ceamx-workspace-prefix)
+(define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
 
 ;;;; Commands
 
@@ -2582,6 +2582,19 @@ applying margin, padding, borders.
         (recenter 1)))))
 #+end_src
 
+** ~focus~ :: a lexical focus mode
+
++ Package :: <https://github.com/larstvei/Focus>
+
+Focusing by sentence, paragraph, or code block.
+
+#+begin_src emacs-lisp
+;; TODO: keybindings to C-c t z as prefix
+(package! focus
+  (define-keymap :keymap ceamx-toggle-prefix
+    "Z" #'focus-mode))
+#+end_src
+
 ** ~moc~ :: "Master of Ceremonies" presentation utilities :present:
 
 + Package :: <https://github.com/positron-solutions/moc/>
@@ -3232,14 +3245,24 @@ b => buffer name
 (delete-selection-mode 1)
 #+end_src
 
-*** ~expand-region~ :: Increase/decrease the selection area
+*** DISABLED ~expand-region~ :: Increase/decrease the selection area
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package expand-region
   ;; :ensure t
   :commands (er/expand-region)
   :init
   (keymap-global-set "C-=" #'er/expand-region))
+#+end_src
+
+*** ~expreg~ :: simple alternativate to ~expand-region~ using ~treesit~
+
++ Package :: <https://github.com/casouri/expreg>
+
+#+begin_src emacs-lisp
+(package! expreg
+  (keymap-global-set "C-+" #'expreg-expand)
+  (keymap-global-set "C-=" #'expreg-contract))
 #+end_src
 
 *** ~drag-stuff~ :: drag stuff around in arbitrary directions :package:
@@ -3785,7 +3808,7 @@ enhancement to the builtin Emacs undo system as well.
 
 - Source code :: <https://github.com/alphapapa/dogears.el>
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (package! dogears
   (add-hook 'on-first-buffer-hook #'dogears-mode)
 
@@ -4865,6 +4888,9 @@ A final newline would be inserted literally into the snippet expansion."
 #+end_src
 
 ** ~corfu~ :: [CO]mpletion in [R]egion [FU]nction
+:PROPERTIES:
+:ID:       d8073181-6d05-40d2-a954-0e6bb65449a2
+:END:
 
 + Package :: <https://github.com/minad/corfu>
 + Reference :: <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
@@ -4882,7 +4908,8 @@ A final newline would be inserted literally into the snippet expansion."
   ;; cf. `orderless-component-separator'
   (setopt corfu-separator ?_)
   (setopt corfu-on-exact-match 'insert
-          corfu-preselect 'prompt
+          ;; TODO: evaluate...
+          corfu-preselect 'first
           corfu-quit-at-boundary 'separator
           corfu-quit-no-match t)
   (setopt corfu-echo-delay '(0.3 . 0.3))
@@ -5403,21 +5430,42 @@ Action alist entries are:
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 #+end_src
 
-** ~activites~ :: organize window+buffer by activity :package:tabs:
+** Workspace Isolation :workspace:
+
+#+begin_src emacs-lisp
+(use-feature! ceamx-window
+  :demand t
+  :config
+  (setopt ceamx-window-workspace-provider 'activities))
+#+end_src
+
+*** ~activites~ :: organize window+buffer by activity :tabs:
+:PROPERTIES:
+:ID:       91310539-1562-4d0c-9648-0f3aa56cc2f0
+:END:
 
 - Website :: <https://github.com/alphapapa/activities.el>
 
 #+begin_src emacs-lisp
-(require 'ceamx-lib)
-
 (package! activities
-  (activities-mode)
+  (when (eq 'activities ceamx-window-workspace-provider)
+    (activities-mode 1)
+    (activities-tabs-mode 1)
 
-  (when tab-bar-mode
-    (activities-tabs-mode)))
+    ;; Synchronize with future `tab-bar-mode' state changes.
+    (add-hook 'tab-bar-mode-hook #'activities-tabs-mode)
+
+    (setopt edebug-inhibit-emacs-lisp-mode-bindings t)))
+
+(after! activities
+  (setopt activities-name-prefix "Ⓐ ")
+  ;; Don't interfere with the bookmark system.
+  (setopt activities-bookmark-store nil)
+  ;; Kill buffers upon invocation of `activities-suspend'.
+  (setopt activities-kill-buffers t))
 #+end_src
 
-*** Activities.el Keybindings :keybinds:
+**** Activities.el Keybindings :keybinds:
 
 #+begin_src emacs-lisp
 (defun ceamx-after-init-define-activities-keys-h ()
@@ -5444,19 +5492,23 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
 #+end_src
 
-** DISABLED ~beframe~ :: scope buffer lists to frame :package:
+*** ~beframe~ :: scope buffer lists to frame
 :PROPERTIES:
-:header-args: :tangle no
+:ID:       803b3fad-6c5b-4dbb-a819-2028cb6f0d34
 :END:
 
 #+begin_src emacs-lisp
 (package! beframe
   ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
 
-  (beframe-mode 1))
+  (when (eq 'beframe ceamx-window-workspace-provider)
+    (beframe-mode 1)))
 #+end_src
 
-*** Provide Consult integration :consult:
+**** Provide ~consult~ integration :consult:
+:PROPERTIES:
+:ID:       1a75dce4-5496-4edb-b4a4-b6f3e8193795
+:END:
 
 - source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
 
@@ -5486,7 +5538,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
   (add-to-list 'consult-buffer-sources '+beframe-consult-source))
 #+end_src
 
-*** Provide ~ibuffer~ integration :ibuffer:
+**** Provide ~ibuffer~ integration :ibuffer:
 
 - source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
 
@@ -5515,6 +5567,32 @@ With optional argument FRAME, return the list of buffers of FRAME."
       "Limit current view to buffers in frames."
     (:description "frame")
     (memq buf (beframe-buffer-list))))
+#+end_src
+
+*** ~bufler~ :: group buffers with programmable rules
+
+#+begin_src emacs-lisp
+(package! (bufler :files (:defaults (:exclude "helm-bufler.el")))
+  (when (eq 'bufler ceamx-window-workspace-provider)
+    (bufler-mode 1)
+
+    (define-keymap :keymap (current-global-map)
+      "C-x b" #'bufler-switch-buffer
+      "C-x B" #'bufler-workspace-focus-buffer
+      "C-x C-b" #'bufler                ; orig. `ibuffer'
+      "C-x C-B" #'ibuffer
+
+      "C-x w o" #'bufler-workspace-open
+      "C-x w r" #'bufler-workspace-reset
+      "C-x w s" #'bufler-workspace-save ; orig. `window-toggle-side-windows'
+      )
+
+    (define-keymap :keymap ceamx-workspace-prefix-map
+      "TAB" #'bufler-workspace-open
+      "b" #'bufler-workspace-switch-buffer
+      "B" #'bufler-workspace-focus-buffer
+      "r" #'bufler-workspace-reset
+      "s" #'bufler-workspace-save)))
 #+end_src
 
 ** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
@@ -5922,11 +6000,37 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 :END:
 
 ** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+begin_src emacs-lisp :comments no
 ;; -*- lexical-binding: t -*-
 
+(require 'treesit)
+
 (require 'ceamx-lib)
+#+end_src
+
+** Writing modes
+
+*** ~typo~ :: typographical correctneß
+
++ Package :: <https://github.com/jorgenschaefer/typoel>
+
+*Before*:	The "quick" brown --- ffiox.
+*After*:	The “quick” brown — ffiox.
+
+#+begin_src emacs-lisp
+(package! typo
+  ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
+  (typo-global-mode 1)
+
+  ;; Cycle through typographical variants of commonly-mistyped
+  ;; characters like quotation marks and dashes.
+  (add-hook 'text-mode-hook #'typo-mode)
+
+  (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
 #+end_src
 
 ** Programming modes
@@ -5951,6 +6055,118 @@ execution order."
   ;; (e.g. `rainbow-delimiters-mode'), according to its readme.
   (when (fboundp 'highlight-function-calls-mode)
     (highlight-function-calls-mode 1)))
+#+end_src
+
+** Outline modes :org:
+:LOGBOOK:
+- Refiled on [2025-01-17 Fri 11:44]
+:END:
+
+*** General customizations for ~outline-mode~ and ~outline-minor-mode~
+
+Remember that ~org-mode~ is derived from ~outline-mode~.
+
+#+begin_src emacs-lisp
+(keymap-global-set "<f9>" #'outline-minor-mode)
+
+(after! outline
+  (setopt outline-minor-mode-highlight t)
+  (setopt outline-minor-mode-cycle t)
+  (setopt outline-minor-mode-use-buttons nil))
+#+end_src
+
+*** ~outli~ :: mode-agnostic comment-based outlines
+
+- Package :: <https://github.com/jdtsmith/outli>
+
+#+begin_src emacs-lisp
+(package! (outli :host github :repo "jdtsmith/outli")
+  (def-hook! +outli-mode-maybe-enable-h ()
+    '(prog-mode-hook text-mode-hook)
+    "Enable `outli-mode' conditionally, excluding some modes.
+Note that `emacs-lisp-mode' is excluded here due to a conflict with
+`lispy-mode'.  `outli-mode' must be loaded after `lispy-mode'."
+    (let ((exclude-modes '(emacs-lisp-mode))
+          (excludep (lambda (excluded-mode)
+                      (eq major-mode excluded-mode))))
+      (unless (seq-some excludep exclude-modes)
+        (outli-mode)))))
+
+(after! outli
+  ;; FIXME: this example from the readme results in errors due to mismatched signature
+  ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
+  ;; (advice-remove 'load-theme #'outli-reset-all-faces)
+
+  (define-keymap :keymap outli-mode-map
+    "C-c C-n" #'outline-next-heading
+    "C-c C-p" #'outline-previous-heading
+    ;; "C-c C-p" #'outline-back-to-heading
+    "C-c M-h" #'outline-promote
+    "C-c M-l" #'outline-demote))
+#+end_src
+
+*** TODO Expand the existing repeat map for outline navigation
+
+I think this needs to be /contracted/ a bit.  Some of these aren't even real commands.
+
+#+begin_src emacs-lisp
+(after! (repeat outline)
+  (define-keymap :keymap outline-navigation-repeat-map
+    "C-x" #'foldout-exit-fold
+    "x" #'foldout-exit-fold
+    "C-z" #'foldout-zoom-subtree
+    "z" #'foldout-zoom-subtree
+    "C-a" #'outline-show-all
+    "a" #'outline-show-all
+    "C-c" #'outline-hide-entry
+    "c" #'outline-hide-entry
+    "C-d" #'outline-hide-subtree
+    "C-e" #'outline-show-entry
+    "e" #'outline-show-entry
+    "TAB" #'outline-show-children
+    "C-k" #'outline-show-branches
+    "k" #'outline-show-branches
+    "C-l" #'outline-hide-leaves
+    "l" #'outline-hide-leaves
+    "RET" #'outline-insert-heading
+    "C-o" #'outline-hide-other
+    "o" #'outline-hide-other
+    "C-q" #'outline-hide-sublevels
+    "q" #'outline-hide-sublevels
+    "C-s" #'outline-show-subtree
+    "s" #'outline-show-subtree
+    "C-t" #'outline-hide-body
+    "t" #'outline-hide-body
+    "@" #'outline-mark-subtree)
+
+  (ceamx-repeatify-keymap 'outline-navigation-repeat-map))
+#+end_src
+
+*** TODO A transient menu for outline navigation
+
+#+begin_src emacs-lisp
+;; (after! (transient outline)
+;;   (transient-define-prefix ceamx/outline-dispatch ()
+;;     "Outline navigation transient menu."
+;;     [["Navigate"
+;;       ("u" "up" outline-up-heading)
+;;       ("n" "next" outline-next-visible-heading)
+;;       ("p" "prev" outline-previous-visible-heading)
+;;       ("f" "forward" outline-forward-same-level)
+;;       ("b" "backward" outline-backward-same-level)]]))
+
+;; (after! (hydra outline)
+;;   (defhydra ceamx/outline-hydra ( :color red)
+;;     "
+;; ^Navigate^            ^Subtree^        ^Metadata^
+;; ^--------^----------  ^-------^-----  ^---------^--
+;; _n_ext visible        _I_: drag up    _t_odo-state
+;; _p_revious visible    _J_: promote    _d_eadline
+;; _f_orward same level  _K_: drag down  _s_chedule
+;; _b_ack same level     _L_: demote
+;; _u_p level            _N_: narrow     _xp_: set property
+;;                       _W_: widen
+;; "))
 #+end_src
 
 ** ~smart-newline~: a newline command for programming modes
@@ -6388,8 +6604,7 @@ This section handles the curse.
       (funcall func))))
 #+end_src
 
-** Structural Editing
-
+** Structural editing & Tree-Sitter
 *** Define the user option for structured editing flavour
 
 #+begin_src emacs-lisp
@@ -6500,208 +6715,40 @@ its bindings generally would need ~puni-mode~ to be active.
 
 #+end_src
 
-** Outline Modes :org:
-:LOGBOOK:
-- Refiled on [2025-01-17 Fri 11:44]
-:END:
+*** ~treesit-auto~ :: automatically use available ~treesit~ modes
 
-*** General customizations for ~outline-mode~ and ~outline-minor-mode~
++ Package :: <https://github.com/renzmann/treesit-auto>
 
-Remember that ~org-mode~ is derived from ~outline-mode~.
+NOTE: This package does *not* automatically manage mode-hook
+translation.  Those should be managed manually on a case-by-case
+basis. For example, ~nix-ts-mode-hook~ does not currently inherit the
+value of ~nix-mode-hook~.  Some Tree-Sitter modes, however, still derive
+from their non-Tree-Sitter predecessor, and so will also run that
+mode's hooks in addition to its own.
 
-#+begin_src emacs-lisp
-(keymap-global-set "<f9>" #'outline-minor-mode)
+NOTE: This feature is intended to be loaded *after* all other language
+packages have been installed so that ~treesit-auto~ it can override
+~auto-mode-alist~.
 
-(after! outline
-  (setopt outline-minor-mode-highlight t)
-  (setopt outline-minor-mode-cycle t)
-  (setopt outline-minor-mode-use-buttons nil))
-#+end_src
+By default, Emacs plays it safe with tree-sitter language support so
+as not to override legacy mode file extension associations.  This
+makes sense as a default, but it's a pain to have to override
+~auto-mode-alist~ for every language individually.
 
-*** ~outli~ :: mode-agnostic comment-based outlines
+~treesit-auto~ is pretty smart about how it handles these behaviors; its
+readme provides more in-depth details.
 
-- Package :: <https://github.com/jdtsmith/outli>
+In short, ~global-treesit-auto-mode~ will:
 
-#+begin_src emacs-lisp
-(package! (outli :host github :repo "jdtsmith/outli")
-  (def-hook! +outli-mode-maybe-enable-h ()
-    '(prog-mode-hook text-mode-hook)
-    "Enable `outli-mode' conditionally, excluding some modes.
-Note that `emacs-lisp-mode' is excluded here due to a conflict with
-`lispy-mode'.  `outli-mode' must be loaded after `lispy-mode'."
-    (let ((exclude-modes '(emacs-lisp-mode))
-          (excludep (lambda (excluded-mode)
-                      (eq major-mode excluded-mode))))
-      (unless (seq-some excludep exclude-modes)
-        (outli-mode)))))
+- Automatically switch to <name>-ts-mode when the grammar for <name>
+  is installed
+- Stick with <name>-mode if the grammar isn’t installed
+- Automatically install a grammar before opening a compatible file
+- Modify auto-mode-alist for tree-sitter modes
 
-(after! outli
-  ;; FIXME: this example from the readme results in errors due to mismatched signature
-  ;; (advice-add 'load-theme :after #'outli-reset-all-faces)
-  ;; (advice-remove 'load-theme #'outli-reset-all-faces)
-
-  (define-keymap :keymap outli-mode-map
-    "C-c C-n" #'outline-next-heading
-    "C-c C-p" #'outline-previous-heading
-    ;; "C-c C-p" #'outline-back-to-heading
-    "C-c M-h" #'outline-promote
-    "C-c M-l" #'outline-demote))
-#+end_src
-
-*** TODO Expand the existing repeat map for outline navigation
-
-I think this needs to be /contracted/ a bit.  Some of these aren't even real commands.
-
-#+begin_src emacs-lisp
-(after! (repeat outline)
-  (define-keymap :keymap outline-navigation-repeat-map
-    "C-x" #'foldout-exit-fold
-    "x" #'foldout-exit-fold
-    "C-z" #'foldout-zoom-subtree
-    "z" #'foldout-zoom-subtree
-    "C-a" #'outline-show-all
-    "a" #'outline-show-all
-    "C-c" #'outline-hide-entry
-    "c" #'outline-hide-entry
-    "C-d" #'outline-hide-subtree
-    "C-e" #'outline-show-entry
-    "e" #'outline-show-entry
-    "TAB" #'outline-show-children
-    "C-k" #'outline-show-branches
-    "k" #'outline-show-branches
-    "C-l" #'outline-hide-leaves
-    "l" #'outline-hide-leaves
-    "RET" #'outline-insert-heading
-    "C-o" #'outline-hide-other
-    "o" #'outline-hide-other
-    "C-q" #'outline-hide-sublevels
-    "q" #'outline-hide-sublevels
-    "C-s" #'outline-show-subtree
-    "s" #'outline-show-subtree
-    "C-t" #'outline-hide-body
-    "t" #'outline-hide-body
-    "@" #'outline-mark-subtree)
-
-  (ceamx-repeatify-keymap 'outline-navigation-repeat-map))
-#+end_src
-
-*** TODO A transient menu for outline navigation
-
-#+begin_src emacs-lisp
-;; (after! (transient outline)
-;;   (transient-define-prefix ceamx/outline-dispatch ()
-;;     "Outline navigation transient menu."
-;;     [["Navigate"
-;;       ("u" "up" outline-up-heading)
-;;       ("n" "next" outline-next-visible-heading)
-;;       ("p" "prev" outline-previous-visible-heading)
-;;       ("f" "forward" outline-forward-same-level)
-;;       ("b" "backward" outline-backward-same-level)]]))
-
-;; (after! (hydra outline)
-;;   (defhydra ceamx/outline-hydra ( :color red)
-;;     "
-;; ^Navigate^            ^Subtree^        ^Metadata^
-;; ^--------^----------  ^-------^-----  ^---------^--
-;; _n_ext visible        _I_: drag up    _t_odo-state
-;; _p_revious visible    _J_: promote    _d_eadline
-;; _f_orward same level  _K_: drag down  _s_chedule
-;; _b_ack same level     _L_: demote
-;; _u_p level            _N_: narrow     _xp_: set property
-;;                       _W_: widen
-;; "))
-#+end_src
-
-** Tree-Sitter
-:PROPERTIES:
-:header-args: :tangle lisp/init-treesitter.el
-:END:
-
-#+begin_src emacs-lisp :tangle lisp/init-treesitter.el :comments no
-;;; init-treesitter.el --- Tree-Sitter support          -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: languages, local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Requirements:
-
-;; Emacs 29+ built with tree-sitter support.
-;; If using Nix, this is handled by default, done.
-;;
-;; Linux: `pkgs.emacs29' or `emacs-overlay.packages.emacs-unstable-pgtk'
-;; Darwin: `pkgs.emacs29-macport'
-
-;; Add these to `programs.emacs.extraPackages':
-;;
-;;  - `epkgs.treesit-auto'
-;;  - `epkgs.treesit-grammars.with-all-grammars'
-#+end_src
-
-#+begin_src emacs-lisp
-;;;; Mode Association:
-
-;; NOTE: This feature is intended to be loaded *after* all other language
-;;       packages have been installed so that ~treesit-auto~ it can override ~auto-mode-alist~.
-
-;;  By default, Emacs plays it safe with tree-sitter language support so as not
-;;  to override legacy mode file extension associations. This makes sense as a
-;;  default, but it's a pain to have to override ~auto-mode-alist~ for every
-;;  language individually.
-;;
-;;  ~treesit-auto~ is pretty smart about how it handles these behaviors; its
-;;  readme provides more in-depth details.
-
-;;  In short, ~global-treesit-auto-mode~ will:
-;;
-;;  - Automatically switch to <name>-ts-mode when the grammar for <name> is installed
-;;  - Stick with <name>-mode if the grammar isn’t installed
-;;  - Automatically install a grammar before opening a compatible file
-;;  - Modify auto-mode-alist for tree-sitter modes
-
-;;  See also <https://github.com/purcell/emacs.d/blob/master/lisp/init-treesitter.el>
-;;  for a more manual approach.
-
-;;; Code:
-#+end_src
-
-#+begin_src emacs-lisp
-(require 'treesit)
-
-(require 'ceamx-lib)
-#+end_src
-
-#+begin_src emacs-lisp
-;;; Automatically use available ~treesit~ modes via ~treesit-auto~
-
-;; <https://github.com/renzmann/treesit-auto>
-#+end_src
-
-#+begin_src emacs-lisp
-;; NOTE: This package does *not* automatically manage mode-hook translation.
-;; Those should be managed manually on a case-by-case basis. For example,
-;; ~nix-ts-mode-hook~ does not currently inherit the value of ~nix-mode-hook~.
-;; Some Tree-Sitter modes, however, still derive from their non-Tree-Sitter
-;; predecessor, and so will also run that mode's hooks in addition to its own.
-#+end_src
+  See also
+  <https://github.com/purcell/emacs.d/blob/master/lisp/init-treesitter.el>
+  for a more manual approach.
 
 #+begin_src emacs-lisp
 (package! treesit-auto
@@ -6721,9 +6768,16 @@ Increase the amount of syntax-highlighted structures:
 (setopt treesit-font-lock-level 4)
 #+end_src
 
-#+begin_src emacs-lisp :tangle lisp/init-treesitter.el :comments no
-(provide 'init-treesitter)
-;;; init-treesitter.el ends here
+*** TODO ~treesit-fold~ :: code folding with ~treesit~
+
++ Package :: <https://github.com/emacs-tree-sitter/treesit-fold>
+
+  There is a lot to configure…
+
+  #+begin_src emacs-lisp
+(package! treesit-fold
+  (global-treesit-fold-mode 1)
+  (global-treesit-fold-indicators-mode 1))
 #+end_src
 
 ** Apply ~autoinsert~ skeletons to new files
@@ -8796,6 +8850,7 @@ seem to have an effect.
     "C-p" #'org-previous-visible-heading
     "C-u" #'org-up-heading))
 #+end_src
+
 ** Archiving
 
 #+begin_src emacs-lisp
@@ -8944,6 +8999,10 @@ I don't think this is working properly...
 (package! org-bookmark-heading
   (after! org
     (require 'org-bookmark-heading)))
+
+(after! org-bookmark-heading
+  (setopt org-bookmark-heading-make-ids t
+          org-bookmark-heading-jump-indirect nil))
 #+end_src
 
 ** TODO ~org-remark~
@@ -9695,7 +9754,6 @@ Return the new `zone' timer."
 (require 'ceamx-init-langs)
 (require 'ceamx-init-notes)
 (require 'ceamx-init-org)
-(require 'init-treesitter)
 (require 'lib-prog)
 (require 'ceamx-init-tools)
 (require 'init-news)
@@ -9723,29 +9781,29 @@ Or, perhaps more accurately: stuff that needs a better home.
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
   "C-c a" #'org-agenda
-  "C-c b" (cons "[ BUFFER   ]" #'ceamx-buffer-prefix)
+  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
   "C-c c" #'org-capture
-  "C-c C" (cons "[ CAPTURE  ]" #'ceamx-capture-prefix)
+  "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
   ;; "C-c e"
-  "C-c f" (cons "[ FILE     ]" #'ceamx-file-prefix)
+  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
   "C-c g" #'magit-dispatch
   "C-c G" #'magit-file-dispatch
   "C-c h" #'consult-history
-  "C-c i" (cons "[ INSERT   ]" #'ceamx-insert-prefix)
+  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
   ;; "C-c j"
   "C-c k" #'consult-kmacro
-  "C-c l" (cons "[ CODE     ]" #'ceamx-code-prefix)
+  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
   ;; "C-c m"
-  "C-c n" (cons "[ NOTES    ]" #'ceamx-note-prefix)
-  "C-c o" (cons "[ LAUNCH   ]" #'ceamx-launch-prefix)
-  "C-c q" (cons "[ SESSION  ]" #'ceamx-session-prefix)
+  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
+  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
   ;; "C-c r"
   ;; "C-c s"
-  "C-c t" (cons "[ TOGGLE   ]" #'ceamx-toggle-prefix)
+  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
   ;; "C-c u"
   ;; "C-c v"
-  "C-c w" (cons "[ WINDOW   ]" #'ceamx-window-prefix)
+  "C-c w" (cons "[ WORKSPACE ]" #'ceamx-window-prefix)
   ;; "C-c x"
   ;; "C-c y"
   ;; "C-c z"
@@ -9762,7 +9820,7 @@ Or, perhaps more accurately: stuff that needs a better home.
 
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
-  "C-x n n" #'logos-narrow-dwim
+  "C-x n N" #'logos-narrow-dwim
   "C-x o" #'ace-window
   ;; "C-x o" #'ceamx/other-window
   "C-x O" #'ace-window
@@ -10848,6 +10906,9 @@ writable or with a prefix argument, then read a file to visit."
 #+end_src
 
 ** The ~ceamx-window~ library
+:PROPERTIES:
+:ID:       ccc96dbd-97ed-45c1-b014-24178f80cd6b
+:END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-window.el :comments no :noweb yes
 ;;; ceamx-window.el --- Window management support library  -*- lexical-binding: t;  -*-
@@ -10870,6 +10931,25 @@ writable or with a prefix argument, then read a file to visit."
 ;;;; Dependencies
 
 (require 'windmove)
+
+;;
+;;;; Customization
+
+(defcustom ceamx-window-workspace-provider 'activities
+  "Workspace management implementation.
+Valid values are the symbols `activities', `beframe', `tabspaces',
+`perspective', and `bufferlo', which reference the eponymous packages.
+
+A nil value does not load any of the above (use Emacs without a
+workspace manager)."
+  :group 'ceamx-ui
+  :type '(choice :tag "Workspace management provider" :value modus
+                 (const :tag "The `activities' module" activities)
+                 (const :tag "The `beframe' module" beframe)
+                 (const :tag "The `tabspaces' module" tabspaces)
+                 (const :tag "The `perspective' module" perspective)
+                 (const :tag "The `bufferlo' module" bufferlo)
+                 (const :tag "Do not load a workspace module" nil)))
 
 ;;
 ;;;; Functions

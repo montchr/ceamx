@@ -572,6 +572,9 @@ A final newline would be inserted literally into the snippet expansion."
 (package! spdx)
 
 ;; ~corfu~ :: [CO]mpletion in [R]egion [FU]nction
+;; :PROPERTIES:
+;; :ID:       d8073181-6d05-40d2-a954-0e6bb65449a2
+;; :END:
 
 ;; + Package :: <https://github.com/minad/corfu>
 ;; + Reference :: <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
@@ -589,7 +592,8 @@ A final newline would be inserted literally into the snippet expansion."
   ;; cf. `orderless-component-separator'
   (setopt corfu-separator ?_)
   (setopt corfu-on-exact-match 'insert
-          corfu-preselect 'prompt
+          ;; TODO: evaluate...
+          corfu-preselect 'first
           corfu-quit-at-boundary 'separator
           corfu-quit-no-match t)
   (setopt corfu-echo-delay '(0.3 . 0.3))

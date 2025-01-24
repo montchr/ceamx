@@ -474,6 +474,10 @@ Intended for use as a local hook function on
   (after! org
     (require 'org-bookmark-heading)))
 
+(after! org-bookmark-heading
+  (setopt org-bookmark-heading-make-ids t
+          org-bookmark-heading-jump-indirect nil))
+
 ;; TODO ~org-remark~
 
 

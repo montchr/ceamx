@@ -27,8 +27,7 @@
 
 (require 'ceamx-lib)
 
-;; FIXME: wrong location?
-;; (autoload #'consult-info "consult")
+(autoload #'consult-info "consult-info")
 (autoload #'consult--file-preview "consult")
 (autoload #'consult--read "consult")
 (autoload #'embark-export "embark")

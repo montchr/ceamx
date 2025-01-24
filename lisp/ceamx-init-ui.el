@@ -341,6 +341,18 @@
         ;; NOTE: '0' value will recenter at the absolute top.
         (recenter 1)))))
 
+;; ~focus~ :: a lexical focus mode
+
+;; + Package :: <https://github.com/larstvei/Focus>
+
+;; Focusing by sentence, paragraph, or code block.
+
+
+;; TODO: keybindings to C-c t z as prefix
+(package! focus
+  (define-keymap :keymap ceamx-toggle-prefix
+    "Z" #'focus-mode))
+
 ;; ~moc~ :: "Master of Ceremonies" presentation utilities :present:
 
 ;; + Package :: <https://github.com/positron-solutions/moc/>

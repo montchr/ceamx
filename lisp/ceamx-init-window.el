@@ -265,18 +265,38 @@ The buffer will be created if it does not exist."
 (with-eval-after-load 'lentic
   (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
 
-;; ~activites~ :: organize window+buffer by activity :package:tabs:
+;; Workspace Isolation :workspace:
+
+
+(use-feature! ceamx-window
+  :demand t
+  :config
+  (setopt ceamx-window-workspace-provider 'activities))
+
+;; ~activites~ :: organize window+buffer by activity :tabs:
+;; :PROPERTIES:
+;; :ID:       91310539-1562-4d0c-9648-0f3aa56cc2f0
+;; :END:
 
 ;; - Website :: <https://github.com/alphapapa/activities.el>
 
 
-(require 'ceamx-lib)
-
 (package! activities
-  (activities-mode)
+  (when (eq 'activities ceamx-window-workspace-provider)
+    (activities-mode 1)
+    (activities-tabs-mode 1)
 
-  (when tab-bar-mode
-    (activities-tabs-mode)))
+    ;; Synchronize with future `tab-bar-mode' state changes.
+    (add-hook 'tab-bar-mode-hook #'activities-tabs-mode)
+
+    (setopt edebug-inhibit-emacs-lisp-mode-bindings t)))
+
+(after! activities
+  (setopt activities-name-prefix "Ⓐ ")
+  ;; Don't interfere with the bookmark system.
+  (setopt activities-bookmark-store nil)
+  ;; Kill buffers upon invocation of `activities-suspend'.
+  (setopt activities-kill-buffers t))
 
 ;; Activities.el Keybindings :keybinds:
 
@@ -303,6 +323,105 @@ Intended for use as a hook on `ceamx-after-init-hook'."
     "C-x C-a l" #'activities-list))
 
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
+
+;; ~beframe~ :: scope buffer lists to frame
+;; :PROPERTIES:
+;; :ID:       803b3fad-6c5b-4dbb-a819-2028cb6f0d34
+;; :END:
+
+
+(package! beframe
+  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
+
+  (when (eq 'beframe ceamx-window-workspace-provider)
+    (beframe-mode 1)))
+
+;; Provide ~consult~ integration :consult:
+;; :PROPERTIES:
+;; :ID:       1a75dce4-5496-4edb-b4a4-b6f3e8193795
+;; :END:
+
+;; - source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
+
+
+(defface +beframe-buffer
+  '((t :inherit font-lock-string-face))
+  "Face for `consult' framed buffers.")
+
+(defun +beframe-buffer-names-sorted (&optional frame)
+  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+With optional argument FRAME, return the list of buffers of FRAME."
+  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+
+(after! (beframe consult)
+  (declare-function consult--buffer-state "consult")
+
+  (defvar +beframe-consult-source
+    `(:name "Frame-specific buffers (current frame)"
+      :narrow ?F
+      :category buffer
+      :face +beframe-buffer
+      :history beframe-history
+      :items ,#'+beframe-buffer-names-sorted
+      :action ,#'switch-to-buffer
+      :state ,#'consult--buffer-state))
+
+  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
+
+;; Provide ~ibuffer~ integration :ibuffer:
+
+;; - source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
+
+
+(defun +beframe-buffer-in-frame-p (buf frame)
+  "Return non-nil if BUF is in FRAME."
+  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
+
+(defun +beframe-frame-name-list ()
+  "Return list with frame names."
+  (mapcar #'car (make-frame-names-alist)))
+
+(defun +beframe-generate-ibuffer-filter-groups ()
+  "Create a set of ibuffer filter groups based on the Frame of buffers."
+  (mapcar
+   (lambda (frame)
+     (list (format "%s" frame)
+           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
+   (+beframe-frame-name-list)))
+
+(after! (beframe ibuffer)
+  (setq ibuffer-saved-filter-groups
+        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
+
+  (define-ibuffer-filter frame
+      "Limit current view to buffers in frames."
+    (:description "frame")
+    (memq buf (beframe-buffer-list))))
+
+;; ~bufler~ :: group buffers with programmable rules
+
+
+(package! (bufler :files (:defaults (:exclude "helm-bufler.el")))
+  (when (eq 'bufler ceamx-window-workspace-provider)
+    (bufler-mode 1)
+
+    (define-keymap :keymap (current-global-map)
+      "C-x b" #'bufler-switch-buffer
+      "C-x B" #'bufler-workspace-focus-buffer
+      "C-x C-b" #'bufler                ; orig. `ibuffer'
+      "C-x C-B" #'ibuffer
+
+      "C-x w o" #'bufler-workspace-open
+      "C-x w r" #'bufler-workspace-reset
+      "C-x w s" #'bufler-workspace-save ; orig. `window-toggle-side-windows'
+      )
+
+    (define-keymap :keymap ceamx-workspace-prefix-map
+      "TAB" #'bufler-workspace-open
+      "b" #'bufler-workspace-switch-buffer
+      "B" #'bufler-workspace-focus-buffer
+      "r" #'bufler-workspace-reset
+      "s" #'bufler-workspace-save)))
 
 ;; ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
 

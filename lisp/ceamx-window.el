@@ -33,6 +33,25 @@
 (require 'windmove)
 
 ;;
+;;;; Customization
+
+(defcustom ceamx-window-workspace-provider 'activities
+  "Workspace management implementation.
+Valid values are the symbols `activities', `beframe', `tabspaces',
+`perspective', and `bufferlo', which reference the eponymous packages.
+
+A nil value does not load any of the above (use Emacs without a
+workspace manager)."
+  :group 'ceamx-ui
+  :type '(choice :tag "Workspace management provider" :value modus
+                 (const :tag "The `activities' module" activities)
+                 (const :tag "The `beframe' module" beframe)
+                 (const :tag "The `tabspaces' module" tabspaces)
+                 (const :tag "The `perspective' module" perspective)
+                 (const :tag "The `bufferlo' module" bufferlo)
+                 (const :tag "Do not load a workspace module" nil)))
+
+;;
 ;;;; Functions
 
 ;;
