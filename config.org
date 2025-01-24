@@ -11185,6 +11185,9 @@ available, `switchy-window'."
 #+end_src
 
 ** The ~ceamx-completion~ library
+:PROPERTIES:
+:ID:       3a0b57bf-aa27-45d2-b283-ae23e6af27cf
+:END:
 
 #+begin_src emacs-lisp :tangle site-lisp/ceamx-completion.el :comments no
 ;;; ceamx-completion.el --- Ceamx: Completions Library  -*- lexical-binding: t;  -*-
@@ -11216,7 +11219,7 @@ available, `switchy-window'."
 
 (require 'ceamx-lib)
 
-(autoload #'consult-info "consult")
+(autoload #'consult-info "consult-info")
 (autoload #'consult--file-preview "consult")
 (autoload #'consult--read "consult")
 (autoload #'embark-export "embark")
@@ -11228,8 +11231,6 @@ available, `switchy-window'."
 ;;;; Customization
 
 ;;;; Functions
-
-;;;;; Public
 
 (defun ceamx-completion-corfu-minibuffer-enable-p ()
   "Whether to enable `corfu' completion in a currently-active minibuffer."
@@ -11268,9 +11269,6 @@ Sourced from the Consult Wiki."
     `(orderless-regexp . ,(concat "\\."
                                   (substring word 1)
                                   (ceamx-completion-orderless--consult-suffix))))))
-
-
-;;;;; Private
 
  (defun ceamx-completion-orderless--consult-suffix ()
     "Regexp which matches the end of string with Consult tofu support."

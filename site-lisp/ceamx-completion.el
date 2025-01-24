@@ -27,7 +27,8 @@
 
 (require 'ceamx-lib)
 
-(autoload #'consult-info "consult")
+;; FIXME: wrong location?
+;; (autoload #'consult-info "consult")
 (autoload #'consult--file-preview "consult")
 (autoload #'consult--read "consult")
 (autoload #'embark-export "embark")
@@ -39,8 +40,6 @@
 ;;;; Customization
 
 ;;;; Functions
-
-;;;;; Public
 
 (defun ceamx-completion-corfu-minibuffer-enable-p ()
   "Whether to enable `corfu' completion in a currently-active minibuffer."
@@ -79,9 +78,6 @@ Sourced from the Consult Wiki."
     `(orderless-regexp . ,(concat "\\."
                                   (substring word 1)
                                   (ceamx-completion-orderless--consult-suffix))))))
-
-
-;;;;; Private
 
  (defun ceamx-completion-orderless--consult-suffix ()
     "Regexp which matches the end of string with Consult tofu support."
