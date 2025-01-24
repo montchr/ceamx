@@ -48,7 +48,7 @@
                        (when (locate-library "ef-themes")
                          ef-themes-light-themes))))
 
-  ;;;; Customization
+;;;; Customization
 
 (defgroup ceamx-ui ()
   "Ceamx user interface"
@@ -69,7 +69,7 @@
                  (const :tag "The `standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
-(defcustom ceamx-ui-preferred-dark-theme nil
+(defcustom ceamx-ui-preferred-dark-themes nil
   "Alist of preferred dark themes per supported `ceamx-ui-theme-family'.
   The car of the alist cells should either be nil or match one of the
   `ceamx-ui-theme-family' options.
@@ -83,7 +83,7 @@
                 :value-type symbol)
   :group 'ceamx-ui)
 
-(defcustom ceamx-ui-preferred-light-theme nil
+(defcustom ceamx-ui-preferred-light-themes nil
   "Alist of preferred light themes per supported `ceamx-ui-theme-family'.
   The car of the alist cells should either be nil or match one of the
   `ceamx-ui-theme-family' options.
@@ -97,16 +97,12 @@
                 :value-type symbol)
   :group 'ceamx-ui)
 
-(defcustom ceamx-ui-theme-dark
-  (or (alist-get ceamx-ui-theme-family ceamx-ui-preferred-dark-theme)
-      'modus-vivendi)
+(defcustom ceamx-ui-theme-dark nil
   "The default dark theme."
   :group 'ceamx-ui
   :type 'symbol)
 
-(defcustom ceamx-ui-theme-light
-  (or (alist-get ceamx-ui-theme-family ceamx-ui-preferred-light-theme)
-      'modus-operandi)
+(defcustom ceamx-ui-theme-light nil
   "The default light theme."
   :group 'ceamx-ui
   :type 'symbol)
@@ -127,19 +123,37 @@
                  (const :tag "Time periods via `theme-buffet'" :value buffet)
                  (const :tag "Sunrise or sunset via `solar' and `circadian'" :value solar)))
 
-  ;;;; Functions
+;;;; Functions
+
+(defun ceamx-ui-theme-dark ()
+  "Dark theme to toggle.
+The theme specified in the customizable variable `ceamx-ui-theme-dark'
+will take priority over themes inferred based on `ceamx-ui-theme-family'
+and `ceamx-ui-preferred-dark-themes'."
+  (or ceamx-ui-theme-dark
+      (alist-get ceamx-ui-theme-family ceamx-ui-preferred-dark-themes)
+      'modus-vivendi))
+
+(defun ceamx-ui-theme-light ()
+  "Light theme to toggle.
+The theme specified in the customizable variable `ceamx-ui-theme-light'
+will take priority over themes inferred based on `ceamx-ui-theme-family'
+and `ceamx-ui-preferred-light-themes'."
+  (or ceamx-ui-theme-light
+      (alist-get ceamx-ui-theme-family ceamx-ui-preferred-light-themes)
+      'modus-operandi))
 
 (defun ceamx-ui-define-preferred-themes (theme-family dark-theme light-theme)
   "Define the preferred DARK-THEME and LIGHT-THEME for THEME-FAMILY."
-  (cl-pushnew `(,theme-family . ,dark-theme) ceamx-ui-preferred-dark-theme)
-  (cl-pushnew `(,theme-family . ,light-theme) ceamx-ui-preferred-light-theme))
+  (cl-pushnew `(,theme-family . ,dark-theme) ceamx-ui-preferred-dark-themes)
+  (cl-pushnew `(,theme-family . ,light-theme) ceamx-ui-preferred-light-themes))
 
 (defun ceamx-ui-theme-family-preferred-themes (theme-family)
   "Return a list of preferred dark and light themes for THEME-FAMILY."
-  (list (or (alist-get theme-family ceamx-ui-preferred-dark-theme)
-            (alist-get nil ceamx-ui-preferred-dark-theme))
-        (or (alist-get theme-family ceamx-ui-preferred-light-theme)
-            (alist-get nil ceamx-ui-preferred-dark-theme))))
+  (list (or (alist-get theme-family ceamx-ui-preferred-dark-themes)
+            (alist-get nil ceamx-ui-preferred-dark-themes))
+        (or (alist-get theme-family ceamx-ui-preferred-light-themes)
+            (alist-get nil ceamx-ui-preferred-dark-themes))))
 
 (defun ceamx-ui-load-theme (theme)
   "Load THEME after resetting any previously-loaded themes.
@@ -147,9 +161,9 @@
   (mapc #'disable-theme (remq theme custom-enabled-themes))
   (load-theme theme :no-confirm))
 
-  ;;;; Commands
+;;;; Commands
 
-  ;;;###autoload
+;;;###autoload
 (defun ceamx-ui/gsettings-set-theme (theme)
   "Set the GNOME/GTK theme to THEME."
   ;; FIXME: prompt with completion
@@ -181,13 +195,13 @@
 (defun ceamx-ui/load-dark-theme ()
   "Load the preferred dark theme."
   (interactive)
-  (load-theme ceamx-ui-theme-dark :no-confirm))
+  (load-theme (ceamx-ui-theme-dark) :no-confirm))
 
   ;;;###autoload
 (defun ceamx-ui/load-light-theme ()
   "Load the preferred light theme."
   (interactive)
-  (load-theme ceamx-ui-theme-light :no-confirm))
+  (load-theme (ceamx-ui-theme-light) :no-confirm))
 
   ;;;###autoload
 (defun ceamx-ui/load-random-dark-theme ()
@@ -227,7 +241,7 @@
   (ceamx-ui/gsettings-dark-theme)
   (ceamx-ui/load-dark-theme))
 
-  ;;;; Footer
+;;;; Footer
 
 (provide 'ceamx-ui)
   ;;; ceamx-ui.el ends here

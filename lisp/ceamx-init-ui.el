@@ -137,13 +137,14 @@
           modus-themes-variable-pitch-ui t)
   (setopt modus-themes-to-toggle
           (ceamx-ui-theme-family-preferred-themes 'modus))
-  (setopt modus-themes-disable-other-themes t)
+  (setopt modus-themes-disable-other-themes nil)
   (setopt modus-themes-headings
-          '((agenda-structure . (variable-pitch light 2.2))
+          '((1 . (variable-pitch bold 1.1))
+            (agenda-structure . (variable-pitch light 2.2))
             (agenda-date . (variable-pitch regular 1.3))
-            (t . (regular 1.1)))))
+            (t . (variable-pitch semibold 1.0)))))
 
-;; ~ef-themes~
+;; ~ef-themes~ :: colorful yet legible themes
 
 ;; - Website :: <https://protesilaos.com/emacs/ef-themes>
 
