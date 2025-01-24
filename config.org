@@ -4567,7 +4567,9 @@ Refine preview appearance and behavior:
   "<remap> <Info-search>" #'consult-info
 
   "C-x M-:" #'consult-complex-command ; orig. `repeat-complex-command'
-  "C-x b" #'consult-buffer            ; orig. `switch-to-buffer'
+
+  ;; "C-x b" #'consult-buffer              ; orig. `switch-to-buffer'
+
   "C-x 4 b" #'consult-buffer-other-window ; orig. `switch-to-buffer-other-window'
   "C-x 5 b" #'consult-buffer-other-frame ; orig. `switch-to-buffer-other-frame'
   "C-x t b" #'consult-buffer-other-tab ; orig. `switch-to-buffer-other-tab'
@@ -4575,7 +4577,7 @@ Refine preview appearance and behavior:
   "C-x p b" #'consult-project-buffer ; orig. `project-switch-to-buffer'
 
   ;; [C-h] bindings (`help-map')
-  "C-h I" #'consult-info ; orig. `describe-input-method'
+  "C-h I" #'consult-info               ; orig. `describe-input-method'
 
   ;; Custom M-# bindings for fast register access
   "M-#"    #'consult-register-load
@@ -5463,7 +5465,10 @@ Action alist entries are:
   (setopt activities-kill-buffers t))
 #+end_src
 
-**** Activities.el Keybindings :keybinds:
+
+The keybindings conflict with ~edebug~, so they need to be defined later
+than usual.  Or at least that’s how things used to be… maybe the
+conflict is handled more cleanly since I last checked.
 
 #+begin_src emacs-lisp
 (defun ceamx-after-init-define-activities-keys-h ()
@@ -5568,29 +5573,149 @@ With optional argument FRAME, return the list of buffers of FRAME."
 #+end_src
 
 *** ~bufler~ :: group buffers with programmable rules
+:PROPERTIES:
+:ID:       82ed50ad-45b4-4a0c-9ae5-e978de65cdcd
+:END:
 
 #+begin_src emacs-lisp
 (package! (bufler :files (:defaults (:exclude "helm-bufler.el")))
-  (when (eq 'bufler ceamx-window-workspace-provider)
-    (bufler-mode 1)
+  (bufler-mode 1)
+  (bufler-workspace-mode 1)
 
-    (define-keymap :keymap (current-global-map)
-      "C-x b" #'bufler-switch-buffer
-      "C-x B" #'bufler-workspace-focus-buffer
-      "C-x C-b" #'bufler                ; orig. `ibuffer'
-      "C-x C-B" #'ibuffer
+  (define-keymap :keymap (current-global-map)
+    "C-x b" #'bufler-switch-buffer
+    "C-x B" #'bufler-workspace-focus-buffer
+    "C-x C-b" #'bufler                  ; orig. `ibuffer'
+    "C-x C-B" #'ibuffer
 
-      "C-x w o" #'bufler-workspace-open
-      "C-x w r" #'bufler-workspace-reset
-      "C-x w s" #'bufler-workspace-save ; orig. `window-toggle-side-windows'
-      )
+    "C-x w o" #'bufler-workspace-open
+    "C-x w r" #'bufler-workspace-reset
+    "C-x w s" #'bufler-workspace-save ; orig. `window-toggle-side-windows'
+    )
 
-    (define-keymap :keymap ceamx-workspace-prefix-map
-      "TAB" #'bufler-workspace-open
-      "b" #'bufler-workspace-switch-buffer
-      "B" #'bufler-workspace-focus-buffer
-      "r" #'bufler-workspace-reset
-      "s" #'bufler-workspace-save)))
+  (define-keymap :keymap ceamx-workspace-prefix-map
+    "TAB" #'bufler-workspace-open
+    "b" #'bufler-workspace-switch-buffer
+    "B" #'bufler-workspace-focus-buffer
+    "r" #'bufler-workspace-reset
+    "s" #'bufler-workspace-save))
+#+end_src
+
+Here are the customizations for Bufler:
+
+#+begin_src emacs-lisp
+(after! bufler
+  (setopt bufler-reverse t)
+  (setopt bufler-initial-face-depth 1)
+  (after! prism
+    (setopt bufler-face-prefix "prism-level-")))
+#+end_src
+
+Here are the definitions for the Bufler grouping rules:
+
+#+begin_src emacs-lisp
+(after! bufler
+  ;; FIXME: void function nil
+  (setopt
+   bufler-groups
+   (with-demoted-errors (bufler-defgroups
+                          (group
+                           ;; Subgroup collecting all named workspaces.
+                           (auto-workspace))
+
+                          (group (mode-match "Ement" (rx bos "ement-")))
+                          (group (group-or "Elfeed"
+                                           (mode-match "*Elfeed*" (rx bos "elfeed-"))
+                                           (name-match "elfeed config" (rx bos "elfeed." (or "el" "org")))))
+
+                          ;;
+                          ;; Help / info / manuals
+                          (group
+                           (group-or "*Help/Info*"
+                                     (mode-match "*Help*" (rx bos "help-"))
+                                     (mode-match "*Info*" (rx bos "info-"))))
+
+                          ;;
+                          ;; Special buffers
+                          (group
+                           ;; Subgroup collecting all special buffers (i.e. ones that are
+                           ;; not file-backed), except `magit-status-mode' buffers (which
+                           ;; are allowed to fall through to other groups, so they end up
+                           ;; grouped with their project buffers).
+                           (group-not "*Special*"
+                                      (group-or "*Special*"
+                                                (mode-match "Magit" (rx bos "magit-status"))
+                                                (mode-match "Forge" (rx bos "forge-"))
+                                                (mode-match "Org" (rx bos "org-"))
+                                                (auto-file)
+                                                (mode-match "Dired" (rx bos "dired"))))
+                           (group
+                            ;; Subgroup collecting these "special special" buffers
+                            ;; separately for convenience.
+                            (name-match "**Special**"
+                                        (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace") "*")))
+                           (group
+                            ;; Subgroup collecting all other Magit buffers, grouped by
+                            ;; directory.
+                            (mode-match "*Magit* (non-status)"
+                                        (rx bos (or "magit" "forge") "-"))
+                            (auto-directory))
+                           (auto-mode))
+
+                          ;;
+                          ;; Ceamx
+                          (group
+                           (dir user-emacs-directory)
+                           (auto-parent-project))
+
+                          ;;
+                          ;; Jobwork
+                          (group
+                           ;; TODO: make ~/Projects/work a variable `ceamx-jobwork-dir'
+                           (dir (list (file-name-concat ceamx-projects-dir "work")
+                                      ;; TODO: make ~/Documents a variable `ceamx-documents-dir'
+                                      (file-name-concat (alist-get "DOCUMENTS" xdg-user-dirs) "work")))
+                           (dir '("~/Projects/work/applications") 1)
+                           (dir ceamx-note-work-dir)
+                           (group (auto-indirect))
+                           (auto-parent-project))
+
+                          ;;
+                          ;; Org and notes
+                          ;; TODO: group journal dir separately for isolation
+                          (group
+                           (dir ceamx-agenda-dir)
+                           (dir ceamx-note-default-dir)
+                           (dir ceamx-note-journal-dir)
+                           (group
+                            ;; Subgroup collecting indirect Org buffers, grouping them by
+                            ;; file.  This is very useful when used with
+                            ;; `org-tree-to-indirect-buffer'.
+                            (auto-indirect)
+                            (auto-file))
+                           ;; Group remaining buffers by whether they're file backed, then
+                           ;; by mode.
+                           (group-not "*special*" (auto-file))
+                           (auto-mode))
+
+                          (group-or "Home"
+                                    (dir '("/etc/nixos" "~/.config")))
+
+                          (group
+                           (auto-parent-project)
+                           (auto-indirect))
+
+                          (auto-directory)
+                          (auto-mode)))))
+#+end_src
+
+*** Switch buffers with scoped buffer lists
+
+#+begin_src emacs-lisp
+(use-feature! ceamx-window
+  :commands (ceamx/switch-to-buffer)
+  :bind
+  ("C-x b" . #'ceamx/switch-to-buffer))
 #+end_src
 
 ** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
@@ -10355,6 +10480,9 @@ and `ceamx-ui-preferred-light-themes'."
 
 ** The ~ceamx-modeline~ library
 ** The ~ceamx-simple~ library: Common utility commands
+:PROPERTIES:
+:ID:       96bb5545-b1bb-4ed0-9bde-8e67b3e851c4
+:END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-simple.el :comments no
 ;;; ceamx-simple.el --- Common utility commands        -*- lexical-binding: t; -*-
@@ -10911,7 +11039,7 @@ writable or with a prefix argument, then read a file to visit."
 #+begin_src emacs-lisp :tangle lisp/ceamx-window.el :comments no :noweb yes
 ;;; ceamx-window.el --- Window management support library  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (C) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2023 Free Software Foundation, Inc.
 ;; Copyright (C) 2024  Protesilaos Stavrou
 
@@ -10925,12 +11053,10 @@ writable or with a prefix argument, then read a file to visit."
 ;;; Commentary:
 ;;; Code:
 
-;;
 ;;;; Dependencies
 
 (require 'windmove)
 
-;;
 ;;;; Customization
 
 (defcustom ceamx-window-workspace-provider 'activities
@@ -10952,7 +11078,6 @@ workspace manager)."
 ;;
 ;;;; Functions
 
-;;
 ;;;;; `display-buffer' functions
 
 ;; <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
@@ -11257,6 +11382,18 @@ available, `switchy-window'."
                                     (function other-window))))
       (call-interactively other-window-command)
       (setq this-command other-window-command))))
+
+;;;;; Buffer management
+
+(defun ceamx/switch-to-buffer ()
+  "Switch to buffer offered from various sources.
+If an `activities-mode' activity is current, use
+`activities-switch-buffer'.  Otherwise, use `bufler-switch-buffer'."
+  (interactive)
+  (cond ((or (equal '(16) current-prefix-arg)
+             (not (activities-current)))
+         (call-interactively #'bufler-switch-buffer))
+        (t (call-interactively #'activities-switch-buffer))))
 
 (provide 'ceamx-window)
 ;;; ceamx-window.el ends here

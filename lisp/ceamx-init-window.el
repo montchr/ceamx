@@ -298,7 +298,13 @@ The buffer will be created if it does not exist."
   ;; Kill buffers upon invocation of `activities-suspend'.
   (setopt activities-kill-buffers t))
 
-;; Activities.el Keybindings :keybinds:
+
+
+
+
+;; The keybindings conflict with ~edebug~, so they need to be defined later
+;; than usual.  Or at least that’s how things used to be… maybe the
+;; conflict is handled more cleanly since I last checked.
 
 
 (defun ceamx-after-init-define-activities-keys-h ()
@@ -399,29 +405,150 @@ With optional argument FRAME, return the list of buffers of FRAME."
     (memq buf (beframe-buffer-list))))
 
 ;; ~bufler~ :: group buffers with programmable rules
+;; :PROPERTIES:
+;; :ID:       82ed50ad-45b4-4a0c-9ae5-e978de65cdcd
+;; :END:
 
 
 (package! (bufler :files (:defaults (:exclude "helm-bufler.el")))
-  (when (eq 'bufler ceamx-window-workspace-provider)
-    (bufler-mode 1)
+  (bufler-mode 1)
+  (bufler-workspace-mode 1)
 
-    (define-keymap :keymap (current-global-map)
-      "C-x b" #'bufler-switch-buffer
-      "C-x B" #'bufler-workspace-focus-buffer
-      "C-x C-b" #'bufler                ; orig. `ibuffer'
-      "C-x C-B" #'ibuffer
+  (define-keymap :keymap (current-global-map)
+    "C-x b" #'bufler-switch-buffer
+    "C-x B" #'bufler-workspace-focus-buffer
+    "C-x C-b" #'bufler                  ; orig. `ibuffer'
+    "C-x C-B" #'ibuffer
 
-      "C-x w o" #'bufler-workspace-open
-      "C-x w r" #'bufler-workspace-reset
-      "C-x w s" #'bufler-workspace-save ; orig. `window-toggle-side-windows'
-      )
+    "C-x w o" #'bufler-workspace-open
+    "C-x w r" #'bufler-workspace-reset
+    "C-x w s" #'bufler-workspace-save ; orig. `window-toggle-side-windows'
+    )
 
-    (define-keymap :keymap ceamx-workspace-prefix-map
-      "TAB" #'bufler-workspace-open
-      "b" #'bufler-workspace-switch-buffer
-      "B" #'bufler-workspace-focus-buffer
-      "r" #'bufler-workspace-reset
-      "s" #'bufler-workspace-save)))
+  (define-keymap :keymap ceamx-workspace-prefix-map
+    "TAB" #'bufler-workspace-open
+    "b" #'bufler-workspace-switch-buffer
+    "B" #'bufler-workspace-focus-buffer
+    "r" #'bufler-workspace-reset
+    "s" #'bufler-workspace-save))
+
+
+
+;; Here are the customizations for Bufler:
+
+
+(after! bufler
+  (setopt bufler-reverse t)
+  (setopt bufler-initial-face-depth 1)
+  (after! prism
+    (setopt bufler-face-prefix "prism-level-")))
+
+
+
+;; Here are the definitions for the Bufler grouping rules:
+
+
+(after! bufler
+  ;; FIXME: void function nil
+  (setopt
+   bufler-groups
+   (with-demoted-errors (bufler-defgroups
+                          (group
+                           ;; Subgroup collecting all named workspaces.
+                           (auto-workspace))
+
+                          (group (mode-match "Ement" (rx bos "ement-")))
+                          (group (group-or "Elfeed"
+                                           (mode-match "*Elfeed*" (rx bos "elfeed-"))
+                                           (name-match "elfeed config" (rx bos "elfeed." (or "el" "org")))))
+
+                          ;;
+                          ;; Help / info / manuals
+                          (group
+                           (group-or "*Help/Info*"
+                                     (mode-match "*Help*" (rx bos "help-"))
+                                     (mode-match "*Info*" (rx bos "info-"))))
+
+                          ;;
+                          ;; Special buffers
+                          (group
+                           ;; Subgroup collecting all special buffers (i.e. ones that are
+                           ;; not file-backed), except `magit-status-mode' buffers (which
+                           ;; are allowed to fall through to other groups, so they end up
+                           ;; grouped with their project buffers).
+                           (group-not "*Special*"
+                                      (group-or "*Special*"
+                                                (mode-match "Magit" (rx bos "magit-status"))
+                                                (mode-match "Forge" (rx bos "forge-"))
+                                                (mode-match "Org" (rx bos "org-"))
+                                                (auto-file)
+                                                (mode-match "Dired" (rx bos "dired"))))
+                           (group
+                            ;; Subgroup collecting these "special special" buffers
+                            ;; separately for convenience.
+                            (name-match "**Special**"
+                                        (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace") "*")))
+                           (group
+                            ;; Subgroup collecting all other Magit buffers, grouped by
+                            ;; directory.
+                            (mode-match "*Magit* (non-status)"
+                                        (rx bos (or "magit" "forge") "-"))
+                            (auto-directory))
+                           (auto-mode))
+
+                          ;;
+                          ;; Ceamx
+                          (group
+                           (dir user-emacs-directory)
+                           (auto-parent-project))
+
+                          ;;
+                          ;; Jobwork
+                          (group
+                           ;; TODO: make ~/Projects/work a variable `ceamx-jobwork-dir'
+                           (dir (list (file-name-concat ceamx-projects-dir "work")
+                                      ;; TODO: make ~/Documents a variable `ceamx-documents-dir'
+                                      (file-name-concat (alist-get "DOCUMENTS" xdg-user-dirs) "work")))
+                           (dir '("~/Projects/work/applications") 1)
+                           (dir ceamx-note-work-dir)
+                           (group (auto-indirect))
+                           (auto-parent-project))
+
+                          ;;
+                          ;; Org and notes
+                          ;; TODO: group journal dir separately for isolation
+                          (group
+                           (dir ceamx-agenda-dir)
+                           (dir ceamx-note-default-dir)
+                           (dir ceamx-note-journal-dir)
+                           (group
+                            ;; Subgroup collecting indirect Org buffers, grouping them by
+                            ;; file.  This is very useful when used with
+                            ;; `org-tree-to-indirect-buffer'.
+                            (auto-indirect)
+                            (auto-file))
+                           ;; Group remaining buffers by whether they're file backed, then
+                           ;; by mode.
+                           (group-not "*special*" (auto-file))
+                           (auto-mode))
+
+                          (group-or "Home"
+                                    (dir '("/etc/nixos" "~/.config")))
+
+                          (group
+                           (auto-parent-project)
+                           (auto-indirect))
+
+                          (auto-directory)
+                          (auto-mode)))))
+
+;; Switch buffers with scoped buffer lists
+
+
+(use-feature! ceamx-window
+  :commands (ceamx/switch-to-buffer)
+  :bind
+  ("C-x b" . #'ceamx/switch-to-buffer))
 
 ;; ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
 

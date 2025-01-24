@@ -1,6 +1,6 @@
 ;;; ceamx-window.el --- Window management support library  -*- lexical-binding: t;  -*-
 
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (C) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2023 Free Software Foundation, Inc.
 ;; Copyright (C) 2024  Protesilaos Stavrou
 
@@ -27,12 +27,10 @@
 ;;; Commentary:
 ;;; Code:
 
-;;
 ;;;; Dependencies
 
 (require 'windmove)
 
-;;
 ;;;; Customization
 
 (defcustom ceamx-window-workspace-provider 'activities
@@ -54,7 +52,6 @@ workspace manager)."
 ;;
 ;;;; Functions
 
-;;
 ;;;;; `display-buffer' functions
 
 ;; <https://github.com/karthink/popper/blob/570b0820f884a9c0e3d9cb07e7f7f523b39b836f/popper.el#L265-L283>
@@ -359,6 +356,18 @@ available, `switchy-window'."
                                     (function other-window))))
       (call-interactively other-window-command)
       (setq this-command other-window-command))))
+
+;;;;; Buffer management
+
+(defun ceamx/switch-to-buffer ()
+  "Switch to buffer offered from various sources.
+If an `activities-mode' activity is current, use
+`activities-switch-buffer'.  Otherwise, use `bufler-switch-buffer'."
+  (interactive)
+  (cond ((or (equal '(16) current-prefix-arg)
+             (not (activities-current)))
+         (call-interactively #'bufler-switch-buffer))
+        (t (call-interactively #'activities-switch-buffer))))
 
 (provide 'ceamx-window)
 ;;; ceamx-window.el ends here
