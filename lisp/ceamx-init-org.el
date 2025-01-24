@@ -475,7 +475,10 @@ Intended for use as a local hook function on
     (require 'org-bookmark-heading)))
 
 (after! org-bookmark-heading
-  (setopt org-bookmark-heading-make-ids t
+  ;; FIXME: `org-bookmark-heading-make-ids' does not work well with
+  ;; `activities-mode'
+  ;; <https://github.com/alphapapa/activities.el/issues/134>
+  (setopt org-bookmark-heading-make-ids nil
           org-bookmark-heading-jump-indirect nil))
 
 ;; TODO ~org-remark~
