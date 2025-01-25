@@ -442,61 +442,34 @@ This operation will respect the following rules:
 ;; Configure GnuPG integration with ~epa~ & ~epg~
 
 
-;; (defcustom ceamx-user-primary-sub)
-
-(defvar ceamx-user-gpg-key "0x135EEDD0F71934F3")
-
-;; via <https://github.com/jwiegley/dot-emacs/blob/master/init.org#epa>
-(defun epa--key-widget-value-create (widget)
-  (let* ((key (widget-get widget :value))
-         (primary-sub-key (car (last (epg-key-sub-key-list key) 3)))
-         (primary-user-id (car (epg-key-user-id-list key))))
-    (insert (format "%c "
-                    (if (epg-sub-key-validity primary-sub-key)
-                        (car (rassq (epg-sub-key-validity primary-sub-key)
-                                    epg-key-validity-alist))
-                      ? ))
-            (epg-sub-key-id primary-sub-key)
-            " "
-            (if primary-user-id
-                (if (stringp (epg-user-id-string primary-user-id))
-                    (epg-user-id-string primary-user-id)
-                  (epg-decode-dn (epg-user-id-string primary-user-id)))
-              ""))))
-
 (use-feature! epa
+  :demand t
   :config
+  (require 'ceamx-cryption)
+
   (define-keymap :keymap ceamx-file-prefix
     "e" #'epa-encrypt-file
     "d" #'epa-decrypt-file)
 
-  (setq-default epa-file-encrypt-to user-mail-address)
-  (setq-default epa-file-inhibit-auto-save t)
+  (define-keymap :keymap ceamx-cryption-prefix-map
+    "d" (cons "decrypt..." (define-prefix-command 'ceamx-cryption-d-prefix))
+    "d d" #'epa-decrypt-file
+    "d r" #'epa-decrypt-region
+    "e" (cons "encrypt..." (define-prefix-command 'ceamx-cryption-e-prefix))
+    "e e" #'epa-encrypt-file
+    "e r" #'epa-encrypt-region
+    "k" #'epa-list-keys)
+
+  ;; HACK: No need to set a recipient every single time!
+  (setq-default epa-file-encrypt-to (ceamx-cryption+epa-default-recipient))
+  (advice-add #'epa-file-write-region :before #'ceamx-cryption+epa-disable-key-prompt-a)
 
   ;; Enable automatic cryption of *.gpg files.
-(epa-file-enable)
+  (epa-file-enable))
 
-  )
-
-(define-prefix-command 'ceamx-encryption-prefix 'ceamx-encryption-prefix-map)
-(keymap-global-set "C-c E" #'ceamx-encryption-prefix)
-
-(define-keymap :keymap ceamx-encryption-prefix-map
-  "d" (cons "decrypt..." (define-prefix-command 'ceamx-encryption-d-prefix))
-  "d d" #'epa-decrypt-file
-  "d r" #'epa-decrypt-region
-
-  "e" (cons "encrypt..." (define-prefix-command 'ceamx-encryption-e-prefix))
-  "e e" #'epa-encrypt-file
-  "e f" #'epa-encrypt-file
-  "e r" #'epa-encrypt-region
-
-  "k" (cons "keys..." (define-prefix-command 'ceamx-encryption-k-prefix))
-  "k k" #'epa-list-keys
-  "k K" #'epa-list-secret-keys
-  "k s" #'epa-search-keys)
-
-(after! dired
+(use-feature! dired
+  :after epa
+  :config
   ;; Also see the ':' prefix!
   (define-keymap :keymap dired-mode-map
     "C-c e e" #'epa-dired-do-encrypt
@@ -504,7 +477,7 @@ This operation will respect the following rules:
 
 (use-feature! epg
   :config
-  ;; Enable pinentry within Emacs itself.
+  ;; Handle pinentry within Emacs.
   (setopt epg-pinentry-mode 'loopback))
 
 ;; Buttonize URLs and email addresses with ~goto-address~ [builtin]

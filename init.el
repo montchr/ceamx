@@ -638,6 +638,7 @@ The ORDER can be used to deduce the feature context."
   "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
   "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
+  "C-c E" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
   "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
   "C-c g" #'magit-dispatch
   "C-c G" #'magit-file-dispatch

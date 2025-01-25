@@ -966,6 +966,7 @@ Emacs version to prevent bytecode incompatibility.")
 (define-prefix-command 'ceamx-buffer-prefix)
 (define-prefix-command 'ceamx-capture-prefix 'ceamx-capture-prefix-map)
 (define-prefix-command 'ceamx-code-prefix)
+(define-prefix-command 'ceamx-cryption-prefix 'ceamx-cryption-prefix-map)
 (define-prefix-command 'ceamx-file-prefix)
 (define-prefix-command 'ceamx-help-keybindings-prefix 'ceamx-help-keybindings-prefix-map)
 (define-prefix-command 'ceamx-insert-prefix)
@@ -3473,61 +3474,34 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ** Configure GnuPG integration with ~epa~ & ~epg~
 
 #+begin_src emacs-lisp
-;; (defcustom ceamx-user-primary-sub)
-
-(defvar ceamx-user-gpg-key "0x135EEDD0F71934F3")
-
-;; via <https://github.com/jwiegley/dot-emacs/blob/master/init.org#epa>
-(defun epa--key-widget-value-create (widget)
-  (let* ((key (widget-get widget :value))
-         (primary-sub-key (car (last (epg-key-sub-key-list key) 3)))
-         (primary-user-id (car (epg-key-user-id-list key))))
-    (insert (format "%c "
-                    (if (epg-sub-key-validity primary-sub-key)
-                        (car (rassq (epg-sub-key-validity primary-sub-key)
-                                    epg-key-validity-alist))
-                      ? ))
-            (epg-sub-key-id primary-sub-key)
-            " "
-            (if primary-user-id
-                (if (stringp (epg-user-id-string primary-user-id))
-                    (epg-user-id-string primary-user-id)
-                  (epg-decode-dn (epg-user-id-string primary-user-id)))
-              ""))))
-
 (use-feature! epa
+  :demand t
   :config
+  (require 'ceamx-cryption)
+
   (define-keymap :keymap ceamx-file-prefix
     "e" #'epa-encrypt-file
     "d" #'epa-decrypt-file)
 
-  (setq-default epa-file-encrypt-to user-mail-address)
-  (setq-default epa-file-inhibit-auto-save t)
+  (define-keymap :keymap ceamx-cryption-prefix-map
+    "d" (cons "decrypt..." (define-prefix-command 'ceamx-cryption-d-prefix))
+    "d d" #'epa-decrypt-file
+    "d r" #'epa-decrypt-region
+    "e" (cons "encrypt..." (define-prefix-command 'ceamx-cryption-e-prefix))
+    "e e" #'epa-encrypt-file
+    "e r" #'epa-encrypt-region
+    "k" #'epa-list-keys)
+
+  ;; HACK: No need to set a recipient every single time!
+  (setq-default epa-file-encrypt-to (ceamx-cryption+epa-default-recipient))
+  (advice-add #'epa-file-write-region :before #'ceamx-cryption+epa-disable-key-prompt-a)
 
   ;; Enable automatic cryption of *.gpg files.
-(epa-file-enable)
+  (epa-file-enable))
 
-  )
-
-(define-prefix-command 'ceamx-encryption-prefix 'ceamx-encryption-prefix-map)
-(keymap-global-set "C-c E" #'ceamx-encryption-prefix)
-
-(define-keymap :keymap ceamx-encryption-prefix-map
-  "d" (cons "decrypt..." (define-prefix-command 'ceamx-encryption-d-prefix))
-  "d d" #'epa-decrypt-file
-  "d r" #'epa-decrypt-region
-
-  "e" (cons "encrypt..." (define-prefix-command 'ceamx-encryption-e-prefix))
-  "e e" #'epa-encrypt-file
-  "e f" #'epa-encrypt-file
-  "e r" #'epa-encrypt-region
-
-  "k" (cons "keys..." (define-prefix-command 'ceamx-encryption-k-prefix))
-  "k k" #'epa-list-keys
-  "k K" #'epa-list-secret-keys
-  "k s" #'epa-search-keys)
-
-(after! dired
+(use-feature! dired
+  :after epa
+  :config
   ;; Also see the ':' prefix!
   (define-keymap :keymap dired-mode-map
     "C-c e e" #'epa-dired-do-encrypt
@@ -3535,7 +3509,7 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 (use-feature! epg
   :config
-  ;; Enable pinentry within Emacs itself.
+  ;; Handle pinentry within Emacs.
   (setopt epg-pinentry-mode 'loopback))
 #+end_src
 
@@ -9647,6 +9621,7 @@ Or, perhaps more accurately: stuff that needs a better home.
   "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
   "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
+  "C-c E" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
   "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
   "C-c g" #'magit-dispatch
   "C-c G" #'magit-file-dispatch
@@ -10807,7 +10782,7 @@ writable or with a prefix argument, then read a file to visit."
 ;;; ceamx-simple.el ends here
 #+end_src
 
-** The ~ceamx-window~ library
+** The ~ceamx-window~ library for window, buffer, and workspace extensions
 :PROPERTIES:
 :ID:       ccc96dbd-97ed-45c1-b014-24178f80cd6b
 :END:
@@ -11175,7 +11150,7 @@ If an `activities-mode' activity is current, use
 ;;; ceamx-window.el ends here
 #+end_src
 
-** The ~ceamx-completion~ library
+** The ~ceamx-completion~ library for completion extensions
 :PROPERTIES:
 :ID:       3a0b57bf-aa27-45d2-b283-ae23e6af27cf
 :END:
@@ -11345,7 +11320,7 @@ files               => `wdired'
 ;;; ceamx-completion.el ends here
 #+end_src
 
-** The ~ceamx-note~ library
+** The ~ceamx-note~ library for notetaking
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
@@ -11454,7 +11429,71 @@ COMMAND is a command listed in `ceamx-note-denote-silo-commands'."
 ;;; ceamx-note.el ends here
 #+end_src
 
-** The =lisp/lib-elisp.el= library
+** The ~ceamx-cryption~ library for cryptographic extensions
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle site-lisp/ceamx-cryption.el :comments no
+;;; ceamx-cryption.el --- Ceamx: Cryptography        -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2025  Chris Montgomery
+
+;; Author: Chris Montgomery <chmont@protonmail.com>
+;; Keywords: extensions
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;; Code:
+
+(require 'epa)
+
+;; source :: <https://github.com/doomemacs/doomemacs/blob/2bc052425ca45a41532be0648ebd976d1bd2e6c1/modules/config/default/config.el#L45C1-L63C81>
+(defun ceamx-cryption+epa-default-recipient ()
+  "Infer a default encryption recipient for `epa-file-encrypt-to'.
+
+Defaults to, in order:
+
+    - The default value of `epa-file-encrypt-to'
+    - The first enabled and non-expired key in the keyring
+    - The value of `user-mail-address'"
+  (or (default-value 'epa-file-encrypt-to)
+      (unless (string-empty-p user-full-name)
+        (when-let (context (ignore-errors (epg-make-context)))
+          (cl-loop for key in (epg-list-keys context user-full-name 'public)
+                   for subkey = (car (epg-key-sub-key-list key))
+                   if (not (memq 'disabled (epg-sub-key-capability subkey)))
+                   if (< (or (epg-sub-key-expiration-time subkey) 0)
+                         (time-to-seconds))
+                   collect (epg-sub-key-fingerprint subkey))))
+      user-mail-address))
+
+;; source :: <https://github.com/doomemacs/doomemacs/blob/2bc052425ca45a41532be0648ebd976d1bd2e6c1/modules/config/default/config.el#L45C1-L63C81>
+(defun ceamx-cryption+epa-disable-key-prompt-a (&rest _)
+  "Suppress `epa' prompts if `epa-file-encrypt-to' has a global default value.
+File-local values for `epa-file-encrypt-to' will not be overwritten.
+
+Intended as advice for `epa-file-write-region' (which see)."
+  (unless (local-variable-p 'epa-file-encrypt-to)
+    (setq-local epa-file-encrypt-to (default-value 'epa-file-encrypt-to))))
+
+(provide 'ceamx-cryption)
+;;; ceamx-cryption.el ends here
+#+end_src
+
+** TODO The =lisp/lib-elisp.el= library
 :LOGBOOK:
 - Refiled on [2025-01-18 Sat 00:05]
 :END:

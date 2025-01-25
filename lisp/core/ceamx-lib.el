@@ -96,6 +96,7 @@
 (define-prefix-command 'ceamx-buffer-prefix)
 (define-prefix-command 'ceamx-capture-prefix 'ceamx-capture-prefix-map)
 (define-prefix-command 'ceamx-code-prefix)
+(define-prefix-command 'ceamx-cryption-prefix 'ceamx-cryption-prefix-map)
 (define-prefix-command 'ceamx-file-prefix)
 (define-prefix-command 'ceamx-help-keybindings-prefix 'ceamx-help-keybindings-prefix-map)
 (define-prefix-command 'ceamx-insert-prefix)
