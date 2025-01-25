@@ -10710,8 +10710,25 @@ If FORCE-P, overwrite the destination file if it exists, without confirmation."
     (make-directory (file-name-directory new-path) 't)
     (rename-file old-path new-path (or force-p 1))
     (set-visited-file-name new-path t t)
+    ;; FIXME: save file immediately to trigger auto-encryption
+    ;; (when (and auto-encryption-mode
+    ;;            (epa-file-name-p new-path))
+    ;;   (save-buffer buffer-file-name))
     (ceamx-simple--update-file-refs old-path new-path)
-    (message "File moved to %S" (abbreviate-file-name new-path))))
+    (message "File moved to %S" (abbreviate-file-name new-path))
+    ;; TODO: encrypt/decrypt based on old/new paths
+    ;; (cond
+    ;;  ((and (not (epa-file-name-p old-path))
+    ;;        (epa-file-name-p new-path))
+    ;;   (epa-encrypt-file new-path epa-file-encrypt-to)
+    ;;   (message "File encrypted and moved to %S" (abbreviate-file-name new-path)))
+    ;;  ((and (epa-file-name-p old-path)
+    ;;        (not (epa-file-name-p new-path)))
+    ;;   (epa-decrypt-file new-path)
+    ;;   (message "File *de*crypted and moved to %S" (abbreviate-file-name new-path)))
+    ;;  (nil
+    ;;   (message "File moved to %S" (abbreviate-file-name new-path))))
+    ))
 
 ;; via <https://protesilaos.com/emacs/dotemacs#h:f15bc843-2dd1-4792-95ec-9b7b6e561804>
 ;;;###autoload
