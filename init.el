@@ -637,7 +637,7 @@ The ORDER can be used to deduce the feature context."
   "C-c c" #'org-capture
   "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
-  ;; "C-c e"
+  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
   "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
   "C-c g" #'magit-dispatch
   "C-c G" #'magit-file-dispatch
@@ -651,7 +651,7 @@ The ORDER can be used to deduce the feature context."
   "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
   "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
   ;; "C-c r"
-  ;; "C-c s"
+  ;; "C-c s" (cons "[ ]")
   "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
   ;; "C-c u"
   ;; "C-c v"

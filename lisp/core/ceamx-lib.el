@@ -105,6 +105,7 @@
 (define-prefix-command 'ceamx-package-prefix)
 (define-prefix-command 'ceamx-replace-prefix)
 (define-prefix-command 'ceamx-session-prefix)
+(define-prefix-command 'ceamx-structural-editing-prefix 'ceamx-structural-editing-prefix-map)
 (define-prefix-command 'ceamx-toggle-prefix)
 (define-prefix-command 'ceamx-window-prefix)
 (define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)

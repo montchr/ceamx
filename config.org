@@ -975,6 +975,7 @@ Emacs version to prevent bytecode incompatibility.")
 (define-prefix-command 'ceamx-package-prefix)
 (define-prefix-command 'ceamx-replace-prefix)
 (define-prefix-command 'ceamx-session-prefix)
+(define-prefix-command 'ceamx-structural-editing-prefix 'ceamx-structural-editing-prefix-map)
 (define-prefix-command 'ceamx-toggle-prefix)
 (define-prefix-command 'ceamx-window-prefix)
 (define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
@@ -6728,72 +6729,46 @@ This section handles the curse.
 #+end_src
 
 ** Structural editing & Tree-Sitter
-*** Define the user option for structured editing flavour
-
-#+begin_src emacs-lisp
-(defcustom ceamx-structured-editing-style 'lispy
-  "The structured editing provider."
-  :group 'ceamx
-  :type '(choice :tag "Structured editing style" :value lispy
-          (const :tag "Lispy" lispy)
-          (const :tag "Puni" puni)))
-#+end_src
-
-*** ~puni~: versatile structured editing :package:
+*** ~puni~ :: versatile structural editing
 
 <https://github.com/AmaiKinono/puni>
 
 #+begin_src emacs-lisp
 (package! puni
-  ;; (puni-global-mode)
-  ;; (add-hook 'prog-mode-hook #'puni-mode)
-  ;; (add-hook 'term-mode-hook #'puni-disable-puni-mode)
-  )
+  (puni-global-mode)
+  (add-hook 'prog-mode-hook #'puni-mode)
+  (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 
-;; (after! puni
-;;     ;; (define-keymap :keymap puni-mode-map
-;;   ;;   "C-M-f" #'puni-forward-sexp
-;;   ;;   "C-M-b" #'puni-backward-sexp
-;;   ;;   "C-M-a" #'puni-beginning-of-sexp
-;;   ;;   "C-M-e" #'puni-end-of-sexp
-;;   ;;   "C-M-[" #'puni-backward-sexp-or-up-list
-;;   ;;   "C-M-]" #'puni-forward-sexp-or-up-list
+(after! puni
+  (define-keymap :keymap puni-mode-map
+    "C-M-f" #'puni-forward-sexp
+    "C-M-b" #'puni-backward-sexp
+    "C-M-a" #'puni-beginning-of-sexp
+    "C-M-e" #'puni-end-of-sexp
+    "C-M-[" #'puni-backward-sexp-or-up-list
+    "C-M-]" #'puni-forward-sexp-or-up-list
 
-;;   ;;   "M-(" #'puni-syntactic-forward-punct
-;;   ;;   "M-)" #'puni-syntactic-backward-punct
-;;   ;;   )
-
-;; )
+    "M-(" #'puni-syntactic-forward-punct
+    "M-)" #'puni-syntactic-backward-punct))
 #+end_src
-
-*** Prepare a prefix commands for binding structural editing commands
-
-#+begin_src emacs-lisp
-(define-prefix-command 'ceamx-structural-editing-prefix)
-(keymap-global-set "C-c s" #'ceamx-structural-editing-prefix)
-#+end_src
-
-*** Structural editing with ~puni~
 
 Work in progress.
 
-This is still not quite usable as a Lispy replacement.  The goal is to use
-similar structureal editing keybindings across many major-modes.
+This is still not quite usable as a Lispy replacement.  The goal is to
+use similar structureal editing keybindings across many major-modes.
 
-Note that this repeat-map should not be used in tandem with ~lispy-mode~ because
-its bindings generally would need ~puni-mode~ to be active.
+Note that this repeat-map should not be used in tandem with ~lispy-mode~
+because its bindings generally would need ~puni-mode~ to be active.
 
 - <https://karthinks.com/software/a-consistent-structural-editing-interface/>
 - <https://github.com/suliveevil/emacs.d?tab=readme-ov-file#repeat-repeat-mode>
 - <https://github.com/karthink/.emacs.d/blob/master/init.el#L3209-L3241>
 
-
 - [ ] Disable ~repeat-exit-timeout~ for this map only
 
 #+begin_src emacs-lisp
 (after! puni
-
-  (defvar-keymap structural-editing-map
+  (defvar-keymap ceamx-structural-editing-repeat-map
     :repeat t
 
     "d" #'puni-forward-delete-char
@@ -6811,8 +6786,8 @@ its bindings generally would need ~puni-mode~ to be active.
     "a" #'puni-beginning-of-sexp
     "e" #'puni-end-of-sexp
     "u" #'puni-up-list
-    "M-(" #'puni-syntactic-forward-punct
-    "M-)" #'puni-syntactic-backward-punct
+    "M-[" #'puni-syntactic-forward-punct
+    "M-]" #'puni-syntactic-backward-punct
 
     "\\" #'indent-region
     "/" #'undo
@@ -6826,16 +6801,11 @@ its bindings generally would need ~puni-mode~ to be active.
     "C" #'puni-convolute
     ;; FIXME: avoid meow dependency -- no puni equivalent
     ;; "J" #'meow-join-sexp
-    "S" #'puni-split
-    ;; FIXME: for `emacs-lisp-mode' only
-    "x" #'eval-defun
-
-    ))
+    "S" #'puni-split))
 
 ;; FIXME: wrong type argument symbolp
 ;; (map-keymap (lambda (_ cmd)
 ;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
-
 #+end_src
 
 *** ~treesit-auto~ :: automatically use available ~treesit~ modes
@@ -6957,38 +6927,21 @@ Configuration for working with Lisps of all kinds.
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 #+end_src
 
-**** Configure indentation and formatting
+**** Always indent Lisp code with two spaces
 
-I am honestly surprised at how complex, sometimes-broken, and inconsistent is
-the process of formatting Lisp code in Emacs.
-
-***** Always indent Lisp code with two spaces
-
-Even if GNU Emacs defaults sometimes do things differently.
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (dolist (sym '(add-function add-to-list advice-add plist-put))
   (put sym 'lisp-indent-function 2))
 #+end_src
 
-***** DISABLED Prevent ~calculate-lisp-indent~ from indenting quoted lists as functions
-
-[[https://emacs.stackexchange.com/a/52789/40956][indentation - How to indent keywords aligned? - Emacs Stack Exchange]]
-
-#+begin_src emacs-lisp :tangle no
-;; (advice-add #'calculate-lisp-indent :override #'ceamx-calculate-lisp-indent)
-;; (advice-remove 'calculate-lisp-indent #'ceamx-calculate-lisp-indent)
-#+end_src
-
-**** ~lispy~: the structural expression editing experience
+**** DISABLED ~lispy~ :: the structural expression editing experience
 
 - Website :: [[https://github.com/abo-abo/lispy][GitHub - abo-abo/lispy: Short and sweet LISP editing]]
 - API Reference :: [[https://oremacs.com/lispy/][lispy.el function reference]]
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (package! lispy
-  (when (eq 'lispy ceamx-structured-editing-style)
-    (add-hook 'ceamx-lisp-init-hook #'lispy-mode)))
+  (add-hook 'ceamx-lisp-init-hook #'lispy-mode))
 
 (after! lispy
     ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
@@ -7024,17 +6977,15 @@ Even if GNU Emacs defaults sometimes do things differently.
       (push "\\*lispy-message\\*" popper-reference-buffers)))
 #+end_src
 
-**** ~kbd-mode~: syntax support for =kmonad= and =kanata= configs
+**** ~kbd-mode~ :: syntax support for =kmonad= and =kanata= configs
 
-[[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
++ Package :: [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
 
 #+begin_src emacs-lisp
 (package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
 #+end_src
 
-***** Inhibit formatters
-
-Unfortunately, we need to do this because whitespace is used to convey
+Unfortunately, we need to inhibit formatters because whitespace is used to convey
 non-syntactic meaning to the reader.
 
 #+begin_src emacs-lisp
@@ -7072,8 +7023,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 (defun ceamx-lisp-init ()
   "Enable features useful in any Lisp mode."
-
-  (when (and (fboundp 'lispy-mode) (eq 'lispy ceamx-structured-editing-style))
+  (when (and (fboundp 'lispy-mode))
     (lispy-mode))
 
   ;; `outli' overrides some `lispy' features.
@@ -7082,11 +7032,7 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     (outli-mode))
 
   (run-hooks 'ceamx-lisp-init-hook))
-#+end_src
 
-***** Check for unmatched parentheses upon saving files
-
-#+begin_src emacs-lisp
 (defun ceamx-enable-check-parens-on-save ()
   "Run `check-parens' when the current buffer is saved."
   (add-hook 'after-save-hook #'check-parens nil t))
@@ -7097,205 +7043,13 @@ This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
     (and (derived-mode-p 'emacs-lisp-mode)
          (or (null file-base)
              (locate-file file-base (custom-theme--load-path) '(".elc" ".el"))))))
-#+end_src
 
-**** ~ceamx/indent-last-sexp~: format the s-expression before point
-
-#+begin_src emacs-lisp
 (defun ceamx/indent-last-sexp ()
   "Apply indentation to sexp before point."
   (interactive)
   (save-excursion
     (backward-list)
     (indent-sexp)))
-#+end_src
-
-**** ~ceamx-calculate-lisp-indent~: improve indentation logic
-
-- URL :: <https://emacs.stackexchange.com/a/52789/40956>
-- SPDX-License-Identifier :: CC-BY-SA-4.0
-
-#+begin_src emacs-lisp
-(defun ceamx-calculate-lisp-indent (&optional parse-start)
-  "Calculate Lisp indentation from PARSE-START with proper quoted list handling.
-Intended as overriding advice to `calculate-lisp-indent'.
-
-This function improves upon `calculate-lisp-indent' by fixing
-longstanding bugs with its handling of quoted and backquoted
-lists."
-  (defvar calculate-lisp-indent-last-sexp)
-  (save-excursion
-    (beginning-of-line)
-    (let ((indent-point (point))
-          state
-          ;; setting this to a number inhibits calling hook
-          (desired-indent nil)
-          (retry t)
-          calculate-lisp-indent-last-sexp containing-sexp)
-      (cond ((or (markerp parse-start) (integerp parse-start))
-             (goto-char parse-start))
-            ((null parse-start) (beginning-of-defun))
-            (t (setq state parse-start)))
-      (unless state
-        ;; Find outermost containing sexp
-        (while (< (point) indent-point)
-          (setq state (parse-partial-sexp (point) indent-point 0))))
-      ;; Find innermost containing sexp
-      (while (and retry
-                  state
-                  (> (elt state 0) 0))
-        (setq retry nil)
-        (setq calculate-lisp-indent-last-sexp (elt state 2))
-        (setq containing-sexp (elt state 1))
-        ;; Position following last unclosed open.
-        (goto-char (1+ containing-sexp))
-        ;; Is there a complete sexp since then?
-        (if (and calculate-lisp-indent-last-sexp
-                 (> calculate-lisp-indent-last-sexp (point)))
-            ;; Yes, but is there a containing sexp after that?
-            (let ((peek (parse-partial-sexp calculate-lisp-indent-last-sexp
-                                            indent-point 0)))
-              (if (setq retry (car (cdr peek))) (setq state peek)))))
-      (if retry
-          nil
-        ;; Innermost containing sexp found
-        (goto-char (1+ containing-sexp))
-        (if (not calculate-lisp-indent-last-sexp)
-            ;; indent-point immediately follows open paren.
-            ;; Don't call hook.
-            (setq desired-indent (current-column))
-          ;; Find the start of first element of containing sexp.
-          (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
-          (cond ((looking-at "\\s(")
-                 ;; First element of containing sexp is a list.
-                 ;; Indent under that list.
-                 )
-                ((> (save-excursion (forward-line 1) (point))
-                    calculate-lisp-indent-last-sexp)
-                 ;; This is the first line to start within the
-                 ;; containing sexp.  It's almost certainly a function
-                 ;; call.
-                 (if (or
-                      ;; Containing sexp has nothing before this line
-                      ;; except the first element.  Indent under that element.
-                      (= (point) calculate-lisp-indent-last-sexp)
-
-                      ;; First sexp after `containing-sexp' is a
-                      ;; keyword.  This condition is more debatable.
-                      ;; It's so that I can have unquoted plists in
-                      ;; macros.  It assumes that you won't make a
-                      ;; function whose name is a keyword.
-                      (when-let (char-after (char-after (1+ containing-sexp)))
-                        (char-equal char-after ?:))
-
-                      ;; Check for quotes or backquotes around.
-                      (let* ((positions (elt state 9))
-                             (last (car (last positions)))
-                             (rest (reverse (butlast positions)))
-                             (any-quoted-p nil)
-                             (point nil))
-                        (or
-                         (when-let (char (char-before last))
-                           (or (char-equal char ?')
-                               (char-equal char ?`)))
-                         (progn
-                           (while (and rest (not any-quoted-p))
-                             (setq point (pop rest))
-                             (setq any-quoted-p
-                                   (or
-                                    (when-let (char (char-before point))
-                                      (or (char-equal char ?')
-                                          (char-equal char ?`)))
-                                    (save-excursion
-                                      (goto-char (1+ point))
-                                      (looking-at-p
-                                       "\\(?:back\\)?quote[\t\n\f\s]+(")))))
-                           any-quoted-p))))
-                     ;; Containing sexp has nothing before this line
-                     ;; except the first element.  Indent under that
-                     ;; element.
-                     nil
-                   ;; Skip the first element, find start of second
-                   ;; (the first argument of the function call) and
-                   ;; indent under.
-                   (progn (forward-sexp 1)
-                          (parse-partial-sexp (point)
-                                              calculate-lisp-indent-last-sexp
-                                              0 t)))
-                 (backward-prefix-chars))
-                (t
-                 ;; Indent beneath first sexp on same line as
-                 ;; `calculate-lisp-indent-last-sexp'.  Again, it's
-                 ;; almost certainly a function call.
-                 (goto-char calculate-lisp-indent-last-sexp)
-                 (beginning-of-line)
-                 (parse-partial-sexp (point) calculate-lisp-indent-last-sexp
-                                     0 t)
-                 (backward-prefix-chars)))))
-      ;; Point is at the point to indent under unless we are inside a
-      ;; string.  Call indentation hook except when overridden by
-      ;; `lisp-indent-offset' or if the desired indentation has
-      ;; already been computed.
-      (let ((normal-indent (current-column)))
-        (cond ((elt state 3)
-               ;; Inside a string, don't change indentation.
-               nil)
-              ((and (integerp lisp-indent-offset) containing-sexp)
-               ;; Indent by constant offset
-               (goto-char containing-sexp)
-               (+ (current-column) lisp-indent-offset))
-              (calculate-lisp-indent-last-sexp
-               (or
-                ;; try to align the parameters of a known function
-                (and lisp-indent-function
-                     (not retry)
-                     (funcall lisp-indent-function indent-point state))
-                ;; If the function has no special alignment or it does
-                ;; not apply to this argument, try to align a
-                ;; constant-symbol under the last preceding constant
-                ;; symbol, if there is such one of the last 2
-                ;; preceding symbols, in the previous uncommented
-                ;; line.
-                (and (save-excursion
-                       (goto-char indent-point)
-                       (skip-chars-forward " \t")
-                       (looking-at ":"))
-                     ;; The last sexp may not be at the indentation
-                     ;; where it begins, so find that one instead.
-                     (save-excursion
-                       (goto-char calculate-lisp-indent-last-sexp)
-                       ;; Handle prefix characters and whitespace
-                       ;; following an open paren.  (Bug#1012)
-                       (backward-prefix-chars)
-                       (while (not (or (looking-back "^[ \t]*\\|([ \t]+"
-                                                     (line-beginning-position))
-                                       (and containing-sexp
-                                            (>= (1+ containing-sexp) (point)))))
-                         (forward-sexp -1)
-                         (backward-prefix-chars))
-                       (setq calculate-lisp-indent-last-sexp (point)))
-                     (> calculate-lisp-indent-last-sexp
-                        (save-excursion
-                          (goto-char (1+ containing-sexp))
-                          (parse-partial-sexp (point) calculate-lisp-indent-last-sexp 0 t)
-                          (point)))
-                     (let ((parse-sexp-ignore-comments t)
-                           indent)
-                       (goto-char calculate-lisp-indent-last-sexp)
-                       (or (and (looking-at ":")
-                                (setq indent (current-column)))
-                           (and (< (line-beginning-position)
-                                   (prog2 (backward-sexp) (point)))
-                                (looking-at ":")
-                                (setq indent (current-column))))
-                       indent))
-                ;; another symbols or constants not preceded by a constant
-                ;; as defined above.
-                normal-indent))
-              ;; in this case calculate-lisp-indent-last-sexp is nil
-              (desired-indent)
-              (t
-               normal-indent))))))
 #+end_src
 
 ** Emacs Lisp
@@ -7355,7 +7109,7 @@ lists."
 #+begin_src emacs-lisp
 ;;; Keybinds
 
-(keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
+;; (keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
 
 (define-keymap :keymap emacs-lisp-mode-map
   "C-:" #'ielm
@@ -7487,13 +7241,6 @@ development tool as needed.
   (add-hook 'ceamx-after-init-hook #'morlock-mode))
 #+end_src
 
-*** ~paren-face~ :: parentheses are beautiful
-
-#+begin_src emacs-lisp
-(package! paren-face
-  (global-paren-face-mode))
-#+end_src
-
 *** ~keymap-utils~ :: dev library for working with keymaps
 
 #+begin_src emacs-lisp
@@ -7501,17 +7248,6 @@ development tool as needed.
 #+end_src
 
 ** Language Server and Debugger Protocol Support :lsp:lang:
-
-#+begin_src emacs-lisp
-(defcustom ceamx-lsp-client 'eglot
-  "The preferred LSP client."
-  :group 'ceamx
-  :type '(choice :tag "LSP client" :value eglot
-          (const :tag "Eglot [builtin]" eglot)
-          (const :tag "LSP-Mode" lsp-mode)))
-
-(defvar ceamx-lsp-mode-cache-dir (file-name-as-directory (concat ceamx-var-dir "lsp")))
-#+end_src
 
 *** Eglot
 
@@ -7651,7 +7387,7 @@ Unless PROGRAM is provided, the program name used in
     (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 #+end_src
 
-*** TODO Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
+** TODO Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -7707,32 +7443,10 @@ Unless PROGRAM is provided, the program name used in
 
 - Note taken on [2024-12-26 Thu 21:21] \\
   Needs eglot
+
 Install the =yaml-language-server= from Nixpkgs first.
 
-#+begin_src emacs-lisp
-(when (eq 'lsp ceamx-lsp-client)
-  (after! (yaml-mode)
-    (add-hook 'yaml-mode-hook #'lsp-deferred)
-    (add-hook 'yaml-ts-mode-hook #'lsp-deferred)))
-#+end_src
-
-**** Add support for YAML Schema validation
-
-#+begin_src emacs-lisp
-(when (eq 'lsp ceamx-lsp-client)
-  (setopt lsp-yaml-schemas nil)
-
-  ;; Keep this cached file with all of the other LSP server caches.
-  (setopt lsp-yaml-schema-store-local-db
-          (file-name-concat ceamx-lsp-mode-cache-dir "server/yaml/lsp-yaml-schemas.json"))
-
-  ;; Download the YAML Schema Store database if not present.
-  ;; FIXME: handle periodic updates of cached data
-  (after! lsp-yaml
-    (defer! 2
-      (unless (file-exists-p lsp-yaml-schema-store-local-db)
-        (lsp-yaml-download-schema-store-db)))))
-#+end_src
+**** TODO Add support for YAML Schema validation
 
 *** XML [builtin]
 
@@ -7955,10 +7669,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 #+begin_src emacs-lisp
 (package! nix-mode
-  (when (eq 'eglot ceamx-lsp-client)
-    (add-hook 'nix-mode-hook #'eglot-ensure))
-  (when (eq 'lsp-mode ceamx-lsp-client)
-    (add-hook 'nix-mode-hook #'lsp-deferred)))
+  (add-hook 'nix-mode-hook #'eglot-ensure))
 #+end_src
 
 *** Install and configure ~nix-ts-mode~ :package:
@@ -7967,14 +7678,10 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 #+begin_src emacs-lisp
 (package! nix-ts-mode
-  (when (eq 'eglot ceamx-lsp-client)
-    (add-hook 'nix-ts-mode-hook #'eglot-ensure))
-  (when (eq 'lsp-mode ceamx-lsp-client)
-    (add-hook 'nix-ts-mode-hook #'lsp-deferred)))
+  (add-hook 'nix-ts-mode-hook #'eglot-ensure))
 #+end_src
 
-*** Configure formatters :formatting:
-**** Set the official formatter (=nixfmt=) as the default formatter
+*** Set the official formatter (=nixfmt=) as the default formatter :formatting:
 
 #+begin_src emacs-lisp
 (after! reformatter
@@ -7993,7 +7700,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt)))
 #+end_src
 
-**** Register =alejandra= as an additional formatter
+*** Register =alejandra= as an additional formatter :formatting:
 
 #+begin_src emacs-lisp
 (after! reformatter
@@ -8026,9 +7733,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
                                      "nixosConfigurations"
                                      (system-name)
                                      (user-login-name))))))
-#+end_src
 
-#+begin_src emacs-lisp
 (require 'lib-prog)
 
 (add-to-list 'ceamx-eglot-server-configurations-alist '("nix-nil" . nil))
@@ -8041,18 +7746,6 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (add-to-list 'eglot-server-programs
                (cons '(nix-mode nix-ts-mode)
                      (ceamx-eglot-server-contact ceamx-lsp-server-nix-lang))))
-#+end_src
-
-#+begin_src emacs-lisp
-(after! lsp-nix
-  (setopt lsp-nix-nil-formatter nil)
-
-  (when (string= "nix-nixd" ceamx-lsp-server-nix-lang)
-    (lsp-register-client
-     (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
-                      :major-modes '(nix-mode nix-ts-mode)
-                      :priority 0
-                      :server-id 'nixd))))
 #+end_src
 
 *** Install ~devdocs~ Nix docset :docs:
@@ -8314,16 +8007,12 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
   (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p))
 
 (after! eglot
-  (add-to-list 'eglot-server-programs '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))))
+  (add-to-list 'eglot-server-programs
+      '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))))
 
-(let ((lsp-fn (if (eq 'lsp-mode ceamx-lsp-client)
-                  #'lsp-deferred
-                #'eglot-ensure)))
-  (add-hook 'sh-mode-hook lsp-fn)
-  (add-hook 'bash-ts-mode-hook lsp-fn))
-
-(use-feature! flymake
-  :config
+(after! sh-script
+  (add-hook 'sh-mode-hook #'eglot-ensure)
+  (add-hook 'bash-ts-mode-hook #'eglot-ensure)
   (add-hook 'sh-mode-hook #'flymake-mode)
   (add-hook 'bash-ts-mode-hook #'flymake-mode))
 #+end_src
@@ -9911,7 +9600,7 @@ Or, perhaps more accurately: stuff that needs a better home.
   "C-c c" #'org-capture
   "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
-  ;; "C-c e"
+  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
   "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
   "C-c g" #'magit-dispatch
   "C-c G" #'magit-file-dispatch
@@ -9925,7 +9614,7 @@ Or, perhaps more accurately: stuff that needs a better home.
   "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
   "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
   ;; "C-c r"
-  ;; "C-c s"
+  ;; "C-c s" (cons "[ ]")
   "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
   ;; "C-c u"
   ;; "C-c v"

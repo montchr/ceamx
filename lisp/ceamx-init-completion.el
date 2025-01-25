@@ -290,9 +290,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     "i o" #'ceamx/org-info))
 
 ;; Define keybindings for ~consult~ and its extensions :keybinds:
-;; :PROPERTIES:
-;; :ID:       21493b14-f0a2-4268-91d5-395d0103b895
-;; :END:
 
 
 (define-keymap :keymap (current-global-map)

@@ -480,69 +480,47 @@ non-nil, buffers will never be formatted upon save."
     (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
       (funcall func))))
 
-;; Define the user option for structured editing flavour
-
-
-(defcustom ceamx-structured-editing-style 'lispy
-  "The structured editing provider."
-  :group 'ceamx
-  :type '(choice :tag "Structured editing style" :value lispy
-          (const :tag "Lispy" lispy)
-          (const :tag "Puni" puni)))
-
-;; ~puni~: versatile structured editing :package:
+;; ~puni~ :: versatile structural editing
 
 ;; <https://github.com/AmaiKinono/puni>
 
 
 (package! puni
-  ;; (puni-global-mode)
-  ;; (add-hook 'prog-mode-hook #'puni-mode)
-  ;; (add-hook 'term-mode-hook #'puni-disable-puni-mode)
-  )
+  (puni-global-mode)
+  (add-hook 'prog-mode-hook #'puni-mode)
+  (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 
-;; (after! puni
-;;     ;; (define-keymap :keymap puni-mode-map
-;;   ;;   "C-M-f" #'puni-forward-sexp
-;;   ;;   "C-M-b" #'puni-backward-sexp
-;;   ;;   "C-M-a" #'puni-beginning-of-sexp
-;;   ;;   "C-M-e" #'puni-end-of-sexp
-;;   ;;   "C-M-[" #'puni-backward-sexp-or-up-list
-;;   ;;   "C-M-]" #'puni-forward-sexp-or-up-list
+(after! puni
+  (define-keymap :keymap puni-mode-map
+    "C-M-f" #'puni-forward-sexp
+    "C-M-b" #'puni-backward-sexp
+    "C-M-a" #'puni-beginning-of-sexp
+    "C-M-e" #'puni-end-of-sexp
+    "C-M-[" #'puni-backward-sexp-or-up-list
+    "C-M-]" #'puni-forward-sexp-or-up-list
 
-;;   ;;   "M-(" #'puni-syntactic-forward-punct
-;;   ;;   "M-)" #'puni-syntactic-backward-punct
-;;   ;;   )
-
-;; )
-
-;; Prepare a prefix commands for binding structural editing commands
+    "M-(" #'puni-syntactic-forward-punct
+    "M-)" #'puni-syntactic-backward-punct))
 
 
-(define-prefix-command 'ceamx-structural-editing-prefix)
-(keymap-global-set "C-c s" #'ceamx-structural-editing-prefix)
-
-;; Structural editing with ~puni~
 
 ;; Work in progress.
 
-;; This is still not quite usable as a Lispy replacement.  The goal is to use
-;; similar structureal editing keybindings across many major-modes.
+;; This is still not quite usable as a Lispy replacement.  The goal is to
+;; use similar structureal editing keybindings across many major-modes.
 
-;; Note that this repeat-map should not be used in tandem with ~lispy-mode~ because
-;; its bindings generally would need ~puni-mode~ to be active.
+;; Note that this repeat-map should not be used in tandem with ~lispy-mode~
+;; because its bindings generally would need ~puni-mode~ to be active.
 
 ;; - <https://karthinks.com/software/a-consistent-structural-editing-interface/>
 ;; - <https://github.com/suliveevil/emacs.d?tab=readme-ov-file#repeat-repeat-mode>
 ;; - <https://github.com/karthink/.emacs.d/blob/master/init.el#L3209-L3241>
 
-
 ;; - [ ] Disable ~repeat-exit-timeout~ for this map only
 
 
 (after! puni
-
-  (defvar-keymap structural-editing-map
+  (defvar-keymap ceamx-structural-editing-repeat-map
     :repeat t
 
     "d" #'puni-forward-delete-char
@@ -560,8 +538,8 @@ non-nil, buffers will never be formatted upon save."
     "a" #'puni-beginning-of-sexp
     "e" #'puni-end-of-sexp
     "u" #'puni-up-list
-    "M-(" #'puni-syntactic-forward-punct
-    "M-)" #'puni-syntactic-backward-punct
+    "M-[" #'puni-syntactic-forward-punct
+    "M-]" #'puni-syntactic-backward-punct
 
     "\\" #'indent-region
     "/" #'undo
@@ -575,11 +553,7 @@ non-nil, buffers will never be formatted upon save."
     "C" #'puni-convolute
     ;; FIXME: avoid meow dependency -- no puni equivalent
     ;; "J" #'meow-join-sexp
-    "S" #'puni-split
-    ;; FIXME: for `emacs-lisp-mode' only
-    "x" #'eval-defun
-
-    ))
+    "S" #'puni-split))
 
 ;; FIXME: wrong type argument symbolp
 ;; (map-keymap (lambda (_ cmd)
@@ -672,67 +646,16 @@ non-nil, buffers will never be formatted upon save."
 (dolist (mode ceamx-lisp-modes-list)
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 
-;; Always indent Lisp code with two spaces
+;; ~kbd-mode~ :: syntax support for =kmonad= and =kanata= configs
 
-;; Even if GNU Emacs defaults sometimes do things differently.
-
-
-(dolist (sym '(add-function add-to-list advice-add plist-put))
-  (put sym 'lisp-indent-function 2))
-
-;; ~lispy~: the structural expression editing experience
-
-;; - Website :: [[https://github.com/abo-abo/lispy][GitHub - abo-abo/lispy: Short and sweet LISP editing]]
-;; - API Reference :: [[https://oremacs.com/lispy/][lispy.el function reference]]
-
-
-(package! lispy
-  (when (eq 'lispy ceamx-structured-editing-style)
-    (add-hook 'ceamx-lisp-init-hook #'lispy-mode)))
-
-(after! lispy
-    ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
-    ;; in favor of just moving past the closing quote as I would expect.
-    ;;
-    ;; FIXME: This actually results in creating the quote pair *after* the
-    ;; closing quote. "for example:"" "
-;;    (setopt lispy-close-quotes-at-end-p t)
-
-    (setopt lispy-completion-method 'default)
-
-    (setopt lispy-eval-display-style 'message)
-
-    ;; I have mixed feelings about this one because it can be jarring and easily
-    ;; lead to mass-commenting expressions. Default is non-nil.
-    (setopt lispy-move-after-commenting t)
-
-    (define-keymap :keymap lispy-mode-map
-      "M-j" nil                         ; shadows custom binding
-
-      ;; via <https://github.com/abo-abo/lispy/pull/619>
-      "`" #'self-insert-command)
-
-    (after! outli
-      ;; `outli-mode' overrides `lispy-mode' outline functionality, so it must
-      ;; be activated afterwards.
-      (add-hook 'ceamx-lisp-init-hook #'outli-mode))
-
-    (after! macrostep
-      (push 'macrostep lispy-compat))
-
-    (after! popper
-      (push "\\*lispy-message\\*" popper-reference-buffers)))
-
-;; ~kbd-mode~: syntax support for =kmonad= and =kanata= configs
-
-;; [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
+;; + Package :: [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
 
 
 (package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
 
-;; Inhibit formatters
 
-;; Unfortunately, we need to do this because whitespace is used to convey
+
+;; Unfortunately, we need to inhibit formatters because whitespace is used to convey
 ;; non-syntactic meaning to the reader.
 
 
@@ -792,7 +715,7 @@ non-nil, buffers will never be formatted upon save."
 
 ;;; Keybinds
 
-(keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
+;; (keymap-global-set "<remap> <indent-pp-sexp>" #'ceamx/indent-last-sexp)
 
 (define-keymap :keymap emacs-lisp-mode-map
   "C-:" #'ielm
@@ -916,28 +839,10 @@ The original function fails in the presence of whitespace after a sexp."
 (package! morlock
   (add-hook 'ceamx-after-init-hook #'morlock-mode))
 
-;; ~paren-face~ :: parentheses are beautiful
-
-
-(package! paren-face
-  (global-paren-face-mode))
-
 ;; ~keymap-utils~ :: dev library for working with keymaps
 
 
 (package! keymap-utils)
-
-;; Language Server and Debugger Protocol Support :lsp:lang:
-
-
-(defcustom ceamx-lsp-client 'eglot
-  "The preferred LSP client."
-  :group 'ceamx
-  :type '(choice :tag "LSP client" :value eglot
-          (const :tag "Eglot [builtin]" eglot)
-          (const :tag "LSP-Mode" lsp-mode)))
-
-(defvar ceamx-lsp-mode-cache-dir (file-name-as-directory (concat ceamx-var-dir "lsp")))
 
 ;; Eglot
 
@@ -1091,35 +996,6 @@ Unless PROGRAM is provided, the program name used in
 
 
 (package! yaml-mode)
-
-;; TODO Start the LSP server
-
-;; - Note taken on [2024-12-26 Thu 21:21] \\
-;;   Needs eglot
-;; Install the =yaml-language-server= from Nixpkgs first.
-
-
-(when (eq 'lsp ceamx-lsp-client)
-  (after! (yaml-mode)
-    (add-hook 'yaml-mode-hook #'lsp-deferred)
-    (add-hook 'yaml-ts-mode-hook #'lsp-deferred)))
-
-;; Add support for YAML Schema validation
-
-
-(when (eq 'lsp ceamx-lsp-client)
-  (setopt lsp-yaml-schemas nil)
-
-  ;; Keep this cached file with all of the other LSP server caches.
-  (setopt lsp-yaml-schema-store-local-db
-          (file-name-concat ceamx-lsp-mode-cache-dir "server/yaml/lsp-yaml-schemas.json"))
-
-  ;; Download the YAML Schema Store database if not present.
-  ;; FIXME: handle periodic updates of cached data
-  (after! lsp-yaml
-    (defer! 2
-      (unless (file-exists-p lsp-yaml-schema-store-local-db)
-        (lsp-yaml-download-schema-store-db)))))
 
 ;; XML [builtin]
 
@@ -1285,10 +1161,7 @@ usually wrongly fontified as a metadata block."
 
 
 (package! nix-mode
-  (when (eq 'eglot ceamx-lsp-client)
-    (add-hook 'nix-mode-hook #'eglot-ensure))
-  (when (eq 'lsp-mode ceamx-lsp-client)
-    (add-hook 'nix-mode-hook #'lsp-deferred)))
+  (add-hook 'nix-mode-hook #'eglot-ensure))
 
 ;; Install and configure ~nix-ts-mode~ :package:
 
@@ -1296,12 +1169,9 @@ usually wrongly fontified as a metadata block."
 
 
 (package! nix-ts-mode
-  (when (eq 'eglot ceamx-lsp-client)
-    (add-hook 'nix-ts-mode-hook #'eglot-ensure))
-  (when (eq 'lsp-mode ceamx-lsp-client)
-    (add-hook 'nix-ts-mode-hook #'lsp-deferred)))
+  (add-hook 'nix-ts-mode-hook #'eglot-ensure))
 
-;; Set the official formatter (=nixfmt=) as the default formatter
+;; Set the official formatter (=nixfmt=) as the default formatter :formatting:
 
 
 (after! reformatter
@@ -1317,7 +1187,7 @@ usually wrongly fontified as a metadata block."
   (add-to-list 'apheleia-mode-alist '(nix-mode . nixfmt))
   (add-to-list 'apheleia-mode-alist '(nix-ts-mode . nixfmt)))
 
-;; Register =alejandra= as an additional formatter
+;; Register =alejandra= as an additional formatter :formatting:
 
 
 (after! reformatter
@@ -1360,16 +1230,6 @@ usually wrongly fontified as a metadata block."
   (add-to-list 'eglot-server-programs
                (cons '(nix-mode nix-ts-mode)
                      (ceamx-eglot-server-contact ceamx-lsp-server-nix-lang))))
-
-(after! lsp-nix
-  (setopt lsp-nix-nil-formatter nil)
-
-  (when (string= "nix-nixd" ceamx-lsp-server-nix-lang)
-    (lsp-register-client
-     (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
-                      :major-modes '(nix-mode nix-ts-mode)
-                      :priority 0
-                      :server-id 'nixd))))
 
 ;; Install ~devdocs~ Nix docset :docs:
 
@@ -1558,16 +1418,12 @@ usually wrongly fontified as a metadata block."
   (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p))
 
 (after! eglot
-  (add-to-list 'eglot-server-programs '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))))
+  (add-to-list 'eglot-server-programs
+      '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))))
 
-(let ((lsp-fn (if (eq 'lsp-mode ceamx-lsp-client)
-                  #'lsp-deferred
-                #'eglot-ensure)))
-  (add-hook 'sh-mode-hook lsp-fn)
-  (add-hook 'bash-ts-mode-hook lsp-fn))
-
-(use-feature! flymake
-  :config
+(after! sh-script
+  (add-hook 'sh-mode-hook #'eglot-ensure)
+  (add-hook 'bash-ts-mode-hook #'eglot-ensure)
   (add-hook 'sh-mode-hook #'flymake-mode)
   (add-hook 'bash-ts-mode-hook #'flymake-mode))
 

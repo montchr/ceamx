@@ -1,7 +1,7 @@
-;; -*- lexical-binding: t;  -*-
+  ;; -*- lexical-binding: t;  -*-
 
-(require 'ceamx-lib)
-(require 'ceamx-ui)
+  (require 'ceamx-lib)
+  (require 'ceamx-ui)
 
 ;; Configure cursor appearance
 
@@ -279,7 +279,7 @@
 
 
 (package! spacious-padding
-  (spacious-padding-mode))
+  (add-hook 'ceamx-after-init-hook #'spacious-padding-mode))
 
 (after! spacious-padding
   (setopt spacious-padding-widths
