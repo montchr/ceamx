@@ -604,7 +604,7 @@ The ORDER can be used to deduce the feature context."
 
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 
-;; =init.el=: Load Features
+;; Load Features
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el
 ;; :END:
@@ -626,7 +626,7 @@ The ORDER can be used to deduce the feature context."
 (require 'init-news)
 (require 'init-eww)
 (require 'init-printing)
-(require 'init-fun)
+(require 'ceamx-init-fun)
 
 ;; Prefix: [C-c]
 
