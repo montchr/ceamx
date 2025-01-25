@@ -49,6 +49,9 @@
   :demand t
   :config
   (define-keymap :keymap (current-global-map)
+    "ESC ESC" #'ceamx/keyboard-quit-dwim
+    "C-g" #'ceamx/keyboard-quit-dwim
+
     "C-x k" #'ceamx-simple/kill-current-buffer ; orig: `kill-buffer'
     "C-x K" #'kill-buffer
 
@@ -61,17 +64,15 @@
     ;; TODO: currently `easy-kill'
     ;; "M-w" #'ceamx-simple/kill-ring-save
     "M-k" #'ceamx-simple/kill-line-backward
-    ;; TODO: currently `avy-goto-char-timer'
-    ;; "M-j" #'delete-indentation
     "C-S-d" #'ceamx-simple/duplicate-line-or-region
     ;; TODO: redundant with `easy-kill'
     "C-S-w" #'ceamx-simple/copy-line
     "C-S-y" #'ceamx-simple/yank-replace-line-or-region
     ;; FIXME: these have weird quirks esp. in folded org-mode buffers
-    ;; "C-v" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
-    ;; "<next>" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
-    ;; "M-v" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
-    ;; "<prior>" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
+    "C-v" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
+    "<next>" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
+    "M-v" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
+    "<prior>" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
     "C-RET" #'ceamx-simple/new-line-below
     "C-S-RET" #'ceamx-simple/new-line-above
 
@@ -86,7 +87,9 @@
   (define-keymap :keymap prog-mode-map
     "M-RET" #'ceamx-simple/continue-comment)
 
-  (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment))
+  (keymap-substitute (current-global-map)
+                     #'default-indent-new-line
+                     #'ceamx-simple/continue-comment))
 
 ;; Configure sane window-scrolling behavior
 
@@ -436,12 +439,72 @@ This operation will respect the following rules:
   :config
   (auth-source-pass-enable))
 
-;; Use Emacs for =pinentry=
+;; Configure GnuPG integration with ~epa~ & ~epg~
 
+
+;; (defcustom ceamx-user-primary-sub)
+
+(defvar ceamx-user-gpg-key "0x135EEDD0F71934F3")
+
+;; via <https://github.com/jwiegley/dot-emacs/blob/master/init.org#epa>
+(defun epa--key-widget-value-create (widget)
+  (let* ((key (widget-get widget :value))
+         (primary-sub-key (car (last (epg-key-sub-key-list key) 3)))
+         (primary-user-id (car (epg-key-user-id-list key))))
+    (insert (format "%c "
+                    (if (epg-sub-key-validity primary-sub-key)
+                        (car (rassq (epg-sub-key-validity primary-sub-key)
+                                    epg-key-validity-alist))
+                      ? ))
+            (epg-sub-key-id primary-sub-key)
+            " "
+            (if primary-user-id
+                (if (stringp (epg-user-id-string primary-user-id))
+                    (epg-user-id-string primary-user-id)
+                  (epg-decode-dn (epg-user-id-string primary-user-id)))
+              ""))))
+
+(use-feature! epa
+  :config
+  (define-keymap :keymap ceamx-file-prefix
+    "e" #'epa-encrypt-file
+    "d" #'epa-decrypt-file)
+
+  (setq-default epa-file-encrypt-to user-mail-address)
+  (setq-default epa-file-inhibit-auto-save t)
+
+  ;; Enable automatic cryption of *.gpg files.
+(epa-file-enable)
+
+  )
+
+(define-prefix-command 'ceamx-encryption-prefix 'ceamx-encryption-prefix-map)
+(keymap-global-set "C-c E" #'ceamx-encryption-prefix)
+
+(define-keymap :keymap ceamx-encryption-prefix-map
+  "d" (cons "decrypt..." (define-prefix-command 'ceamx-encryption-d-prefix))
+  "d d" #'epa-decrypt-file
+  "d r" #'epa-decrypt-region
+
+  "e" (cons "encrypt..." (define-prefix-command 'ceamx-encryption-e-prefix))
+  "e e" #'epa-encrypt-file
+  "e f" #'epa-encrypt-file
+  "e r" #'epa-encrypt-region
+
+  "k" (cons "keys..." (define-prefix-command 'ceamx-encryption-k-prefix))
+  "k k" #'epa-list-keys
+  "k K" #'epa-list-secret-keys
+  "k s" #'epa-search-keys)
+
+(after! dired
+  ;; Also see the ':' prefix!
+  (define-keymap :keymap dired-mode-map
+    "C-c e e" #'epa-dired-do-encrypt
+    "C-c e d" #'epa-dired-do-decrypt))
 
 (use-feature! epg
-  :defer 2
   :config
+  ;; Enable pinentry within Emacs itself.
   (setopt epg-pinentry-mode 'loopback))
 
 ;; Buttonize URLs and email addresses with ~goto-address~ [builtin]

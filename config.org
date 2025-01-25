@@ -2939,7 +2939,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 ;;; ceamx-init-modeline.el ends here
 #+end_src
 
-* Essentials :: =essentials=
+* Essentials
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-essentials.el
 :END:
@@ -3005,6 +3005,9 @@ NOTE: Incompatible with kitchen-sink modeline packages like
   :demand t
   :config
   (define-keymap :keymap (current-global-map)
+    "ESC ESC" #'ceamx/keyboard-quit-dwim
+    "C-g" #'ceamx/keyboard-quit-dwim
+
     "C-x k" #'ceamx-simple/kill-current-buffer ; orig: `kill-buffer'
     "C-x K" #'kill-buffer
 
@@ -3017,17 +3020,15 @@ NOTE: Incompatible with kitchen-sink modeline packages like
     ;; TODO: currently `easy-kill'
     ;; "M-w" #'ceamx-simple/kill-ring-save
     "M-k" #'ceamx-simple/kill-line-backward
-    ;; TODO: currently `avy-goto-char-timer'
-    ;; "M-j" #'delete-indentation
     "C-S-d" #'ceamx-simple/duplicate-line-or-region
     ;; TODO: redundant with `easy-kill'
     "C-S-w" #'ceamx-simple/copy-line
     "C-S-y" #'ceamx-simple/yank-replace-line-or-region
     ;; FIXME: these have weird quirks esp. in folded org-mode buffers
-    ;; "C-v" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
-    ;; "<next>" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
-    ;; "M-v" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
-    ;; "<prior>" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
+    "C-v" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
+    "<next>" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
+    "M-v" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
+    "<prior>" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
     "C-RET" #'ceamx-simple/new-line-below
     "C-S-RET" #'ceamx-simple/new-line-above
 
@@ -3042,7 +3043,9 @@ NOTE: Incompatible with kitchen-sink modeline packages like
   (define-keymap :keymap prog-mode-map
     "M-RET" #'ceamx-simple/continue-comment)
 
-  (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment))
+  (keymap-substitute (current-global-map)
+                     #'default-indent-new-line
+                     #'ceamx-simple/continue-comment))
 #+end_src
 
 ** Configure sane window-scrolling behavior
@@ -3467,35 +3470,73 @@ _h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (auth-source-pass-enable))
 #+end_src
 
-*** Use Emacs for =pinentry=
+** Configure GnuPG integration with ~epa~ & ~epg~
 
 #+begin_src emacs-lisp
-(use-feature! epg
-  :defer 2
+;; (defcustom ceamx-user-primary-sub)
+
+(defvar ceamx-user-gpg-key "0x135EEDD0F71934F3")
+
+;; via <https://github.com/jwiegley/dot-emacs/blob/master/init.org#epa>
+(defun epa--key-widget-value-create (widget)
+  (let* ((key (widget-get widget :value))
+         (primary-sub-key (car (last (epg-key-sub-key-list key) 3)))
+         (primary-user-id (car (epg-key-user-id-list key))))
+    (insert (format "%c "
+                    (if (epg-sub-key-validity primary-sub-key)
+                        (car (rassq (epg-sub-key-validity primary-sub-key)
+                                    epg-key-validity-alist))
+                      ? ))
+            (epg-sub-key-id primary-sub-key)
+            " "
+            (if primary-user-id
+                (if (stringp (epg-user-id-string primary-user-id))
+                    (epg-user-id-string primary-user-id)
+                  (epg-decode-dn (epg-user-id-string primary-user-id)))
+              ""))))
+
+(use-feature! epa
   :config
+  (define-keymap :keymap ceamx-file-prefix
+    "e" #'epa-encrypt-file
+    "d" #'epa-decrypt-file)
+
+  (setq-default epa-file-encrypt-to user-mail-address)
+  (setq-default epa-file-inhibit-auto-save t)
+
+  ;; Enable automatic cryption of *.gpg files.
+(epa-file-enable)
+
+  )
+
+(define-prefix-command 'ceamx-encryption-prefix 'ceamx-encryption-prefix-map)
+(keymap-global-set "C-c E" #'ceamx-encryption-prefix)
+
+(define-keymap :keymap ceamx-encryption-prefix-map
+  "d" (cons "decrypt..." (define-prefix-command 'ceamx-encryption-d-prefix))
+  "d d" #'epa-decrypt-file
+  "d r" #'epa-decrypt-region
+
+  "e" (cons "encrypt..." (define-prefix-command 'ceamx-encryption-e-prefix))
+  "e e" #'epa-encrypt-file
+  "e f" #'epa-encrypt-file
+  "e r" #'epa-encrypt-region
+
+  "k" (cons "keys..." (define-prefix-command 'ceamx-encryption-k-prefix))
+  "k k" #'epa-list-keys
+  "k K" #'epa-list-secret-keys
+  "k s" #'epa-search-keys)
+
+(after! dired
+  ;; Also see the ':' prefix!
+  (define-keymap :keymap dired-mode-map
+    "C-c e e" #'epa-dired-do-encrypt
+    "C-c e d" #'epa-dired-do-decrypt))
+
+(use-feature! epg
+  :config
+  ;; Enable pinentry within Emacs itself.
   (setopt epg-pinentry-mode 'loopback))
-#+end_src
-
-*** DISABLED Define helper function to lookup a password for a target host
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-- source :: <https://github.com/jwiegley/dot-emacs/blob/9d595c427136e2709dee33271db1a658493265bd/init.org#lookup-a-password-using-auth-source>
-
-#+begin_src emacs-lisp
-(eval-when-compile (require 'auth-source))
-(eval-when-compile (require 'auth-source-pass))
-
-(defun ceamx-lookup-password (host user port)
-  (let ((auth (auth-source-search :host host :user user :port port)))
-    (if auth
-        (let ((secretf (plist-get (car auth) :secret)))
-          (if secretf
-              (funcall secretf)
-            (error "Auth entry for %s@%s:%s has no secret!"
-                   user host port)))
-      (error "No auth entry found for %s@%s:%s" user host port))))
 #+end_src
 
 ** Buttonize URLs and email addresses with ~goto-address~ [builtin]
@@ -3907,7 +3948,7 @@ Related, but not technically part of ~repeat-mode~:
 ;;; ceamx-init-essentials.el ends here
 #+end_src
 
-* Search :: =search=
+* Search
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-search.el
 :END:
@@ -4084,7 +4125,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 ;;; ceamx-init-search.el ends here
 #+end_src
 
-* Dired, the Directory Editor :: =dired= :dired:
+* Dired, the Directory Editor :dired:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-dired.el
 :END:
@@ -4247,7 +4288,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 ;;; ceamx-init-dired.el ends here
 #+end_src
 
-* Completion :: =completion=
+* Completion :completion:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-completion.el
 :END:
@@ -4523,19 +4564,6 @@ Refine preview appearance and behavior:
    consult--source-recent-file consult--source-project-recent-file
    ;; :preview-key (kbd "M-.")
    :preview-key '(:debounce 0.4 any)))
-#+end_src
-
-** Preview files in =find-file= with ~consult~
-
-- source :: <https://github.com/minad/consult/wiki#previewing-files-in-find-file>
-
-#+begin_src emacs-lisp
-(use-feature! ceamx-completion
-  :demand t
-  :after consult
-  :commands (ceamx-completion/consult-find-file-with-preview)
-  :init
-  (setq read-file-name-function #'ceamx-completion/consult-find-file-with-preview))
 #+end_src
 
 ** Search pre-defined sets of Info pages with ~consult-info~
@@ -5122,7 +5150,7 @@ Define Embark actions for acting on tabs:
 ;;; ceamx-init-completion.el ends here
 #+end_src
 
-* Window & Buffer Management :: =window=
+* Window & Buffer Management :window:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-window.el
 :END:
@@ -5606,7 +5634,7 @@ Here are the customizations for Bufler:
 
 #+begin_src emacs-lisp
 (after! bufler
-  (setopt bufler-reverse t)
+;;  (setopt bufler-reverse t)
   (setopt bufler-initial-face-depth 1)
   (after! prism
     (setopt bufler-face-prefix "prism-level-")))
@@ -5619,95 +5647,95 @@ Here are the definitions for the Bufler grouping rules:
   ;; FIXME: void function nil
   (setopt
    bufler-groups
-   (with-demoted-errors (bufler-defgroups
-                          (group
-                           ;; Subgroup collecting all named workspaces.
-                           (auto-workspace))
+   (bufler-defgroups
+     (group
+      ;; Subgroup collecting all named workspaces.
+      (auto-workspace))
 
-                          (group (mode-match "Ement" (rx bos "ement-")))
-                          (group (group-or "Elfeed"
-                                           (mode-match "*Elfeed*" (rx bos "elfeed-"))
-                                           (name-match "elfeed config" (rx bos "elfeed." (or "el" "org")))))
+     (group (mode-match "Ement" (rx bos "ement-")))
+     (group (group-or "Elfeed"
+                      (mode-match "*Elfeed*" (rx bos "elfeed-"))
+                      (name-match "elfeed config" (rx bos "elfeed." (or "el" "org")))))
 
-                          ;;
-                          ;; Help / info / manuals
-                          (group
-                           (group-or "*Help/Info*"
-                                     (mode-match "*Help*" (rx bos "help-"))
-                                     (mode-match "*Info*" (rx bos "info-"))))
+     ;;
+     ;; Help / info / manuals
+     (group
+      (group-or "*Help/Info*"
+                (mode-match "*Help*" (rx bos "help-"))
+                (mode-match "*Info*" (rx bos "info-"))))
 
-                          ;;
-                          ;; Special buffers
-                          (group
-                           ;; Subgroup collecting all special buffers (i.e. ones that are
-                           ;; not file-backed), except `magit-status-mode' buffers (which
-                           ;; are allowed to fall through to other groups, so they end up
-                           ;; grouped with their project buffers).
-                           (group-not "*Special*"
-                                      (group-or "*Special*"
-                                                (mode-match "Magit" (rx bos "magit-status"))
-                                                (mode-match "Forge" (rx bos "forge-"))
-                                                (mode-match "Org" (rx bos "org-"))
-                                                (auto-file)
-                                                (mode-match "Dired" (rx bos "dired"))))
-                           (group
-                            ;; Subgroup collecting these "special special" buffers
-                            ;; separately for convenience.
-                            (name-match "**Special**"
-                                        (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace") "*")))
-                           (group
-                            ;; Subgroup collecting all other Magit buffers, grouped by
-                            ;; directory.
-                            (mode-match "*Magit* (non-status)"
-                                        (rx bos (or "magit" "forge") "-"))
-                            (auto-directory))
-                           (auto-mode))
+     ;;
+     ;; Special buffers
+     (group
+      ;; Subgroup collecting all special buffers (i.e. ones that are
+      ;; not file-backed), except `magit-status-mode' buffers (which
+      ;; are allowed to fall through to other groups, so they end up
+      ;; grouped with their project buffers).
+      (group-not "*Special*"
+                 (group-or "*Special*"
+                           (mode-match "Magit" (rx bos "magit-status"))
+                           (mode-match "Forge" (rx bos "forge-"))
+                           (mode-match "Org" (rx bos "org-"))
+                           (auto-file)
+                           (mode-match "Dired" (rx bos "dired"))))
+      (group
+       ;; Subgroup collecting these "special special" buffers
+       ;; separately for convenience.
+       (name-match "**Special**"
+                   (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace") "*")))
+      (group
+       ;; Subgroup collecting all other Magit buffers, grouped by
+       ;; directory.
+       (mode-match "*Magit* (non-status)"
+                   (rx bos (or "magit" "forge") "-"))
+       (auto-directory))
+      (auto-mode))
 
-                          ;;
-                          ;; Ceamx
-                          (group
-                           (dir user-emacs-directory)
-                           (auto-parent-project))
+     ;;
+     ;; Ceamx
+     (group
+      (dir user-emacs-directory)
+      (auto-parent-project))
 
-                          ;;
-                          ;; Jobwork
-                          (group
-                           ;; TODO: make ~/Projects/work a variable `ceamx-jobwork-dir'
-                           (dir (list (file-name-concat ceamx-projects-dir "work")
-                                      ;; TODO: make ~/Documents a variable `ceamx-documents-dir'
-                                      (file-name-concat (alist-get "DOCUMENTS" xdg-user-dirs) "work")))
-                           (dir '("~/Projects/work/applications") 1)
-                           (dir ceamx-note-work-dir)
-                           (group (auto-indirect))
-                           (auto-parent-project))
+     ;;
+     ;; Jobwork
+     (group
+      ;; TODO: make ~/Projects/work a variable `ceamx-jobwork-dir'
+      (dir (list (file-name-concat ceamx-projects-dir "work")
+                 ;; TODO: make ~/Documents a variable `ceamx-documents-dir'
+                 (file-name-concat (alist-get "DOCUMENTS" xdg-user-dirs) "work")))
+      (dir '("~/Projects/work/applications") 1)
+      (dir ceamx-note-work-dir)
+      (group (auto-indirect))
+      (auto-parent-project))
 
-                          ;;
-                          ;; Org and notes
-                          ;; TODO: group journal dir separately for isolation
-                          (group
-                           (dir ceamx-agenda-dir)
-                           (dir ceamx-note-default-dir)
-                           (dir ceamx-note-journal-dir)
-                           (group
-                            ;; Subgroup collecting indirect Org buffers, grouping them by
-                            ;; file.  This is very useful when used with
-                            ;; `org-tree-to-indirect-buffer'.
-                            (auto-indirect)
-                            (auto-file))
-                           ;; Group remaining buffers by whether they're file backed, then
-                           ;; by mode.
-                           (group-not "*special*" (auto-file))
-                           (auto-mode))
+     ;;
+     ;; Org and notes
+     ;; TODO: group journal dir separately for isolation
+     (group
+      (dir ceamx-agenda-dir)
+      (dir ceamx-note-default-dir)
+      (dir ceamx-note-journal-dir)
+      (group
+       ;; Subgroup collecting indirect Org buffers, grouping them by
+       ;; file.  This is very useful when used with
+       ;; `org-tree-to-indirect-buffer'.
+       (auto-indirect)
+       (auto-file))
+      ;; Group remaining buffers by whether they're file backed, then
+      ;; by mode.
+      (group-not "*special*" (auto-file))
+      (auto-mode))
 
-                          (group-or "Home"
-                                    (dir '("/etc/nixos" "~/.config")))
+     (group-or "Home"
+               (dir '("/etc/nixos" "~/.config")))
 
-                          (group
-                           (auto-parent-project)
-                           (auto-indirect))
+     (group
+      (auto-parent-project)
+      (auto-indirect))
 
-                          (auto-directory)
-                          (auto-mode)))))
+     (auto-directory)
+     (auto-mode))))
 #+end_src
 
 *** Switch buffers with scoped buffer lists
@@ -5790,7 +5818,7 @@ Here are the definitions for the Bufler grouping rules:
 ;;; ceamx-init-window.el ends here
 #+end_src
 
-* Version Control :: =vcs= :vcs:
+* Version Control :vcs:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-vcs.el
 :END:
@@ -6118,7 +6146,7 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 ;;; ceamx-init-vcs.el ends here
 #+end_src
 
-* Language Support :: =langs=
+* Language Support
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-langs.el
 :END:
@@ -6932,6 +6960,24 @@ Configuration for working with Lisps of all kinds.
 #+begin_src emacs-lisp :tangle no
 (dolist (sym '(add-function add-to-list advice-add plist-put))
   (put sym 'lisp-indent-function 2))
+#+end_src
+
+**** ~paredit~ :: the original parenthesizer
+
+#+begin_src emacs-lisp
+(package! paredit
+  (def-hook! ceamx-lisp-init-paredit-h ()
+    '(ceamx-lisp-init-hook)
+    "Enable `paredit-mode' and disable incompatible features."
+    (when (fboundp 'puni-mode)
+      (puni-mode -1))
+    (when (fboundp 'lispy-mode)
+      (lispy-mode -1))
+    (electric-indent-local-mode -1)
+    (paredit-mode 1)))
+
+(after! paredit
+  (keymap-set paredit-mode-map "RET" #'paredit-newline))
 #+end_src
 
 **** DISABLED ~lispy~ :: the structural expression editing experience
@@ -8055,7 +8101,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ;;; ceamx-init-langs.el ends here
 #+end_src
 
-* TODO Notetaking :: =notes= :notes:writing:
+* TODO Notetaking :notes:writing:
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle lisp/ceamx-init-notes.el
 :END:
@@ -8271,7 +8317,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ;;; ceamx-init-notes.el ends here
 #+end_src
 
-* Org-Mode :: =org=
+* Org-Mode :org:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-org.el
 :END:
@@ -8516,7 +8562,7 @@ Intended for use as a local hook function on
   ;; TODO: show markers for bold and italic, hide everything else
   (setopt org-hide-emphasis-markers t)
   (setopt org-link-descriptive t)
-  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
+;;  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
 
   ;; Bring attention when point is on `org-ellipsis'.
   ;; FIXME: not correct
@@ -8856,7 +8902,7 @@ I don't think this is working properly...
 ;;; ceamx-init-org.el ends here
 #+end_src
 
-* TODO Printing :: =printing=
+* TODO Printing
 
 #+begin_src emacs-lisp :tangle lisp/init-printing.el :comments no
 ;;; init-printing.el --- Support for printing documents  -*- lexical-binding: t; -*-
@@ -8900,7 +8946,7 @@ I don't think this is working properly...
 ;;; init-printing.el ends here
 #+end_src
 
-* TODO Newsreader :: =news= :news:
+* TODO Newsreader
 
 #+begin_src emacs-lisp :tangle lisp/init-news.el :comments no
 ;;; init-news.el --- News feed (RSS/Atom) subscription support  -*- lexical-binding: t; -*-
@@ -8959,7 +9005,7 @@ CLOSED: [2024-07-16 Tue 00:00]
 
 - State "DONE"       from "TODO"       [2024-07-16 Tue 00:00]
 
-* TODO Web Browsing :: =eww= :web:
+* TODO Web Browsing :web:
 
 #+begin_src emacs-lisp :tangle lisp/init-eww.el :comments no
 ;;; init-eww.el --- Surfing the Wild Web of Words  -*- lexical-binding: t; -*-
@@ -9229,7 +9275,7 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 
 *** [[https://gitlab.com/howardabrams/spacemacs.d/-/blob/51196e861da9a76a02f1159397ba85b936cdfe27/layers/ha-eww/funcs.el][layers/ha-eww/funcs.el · 51196e861da9a76a02f1159397ba85b936cdfe27 · Howard Abrams / spacemacs.d · GitLab]]
 
-* Tools :: =tools= :tools:
+* Tools
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-tools.el
 :END:
@@ -9490,7 +9536,7 @@ changing lines.
 ;;; ceamx-init-tools.el ends here
 #+end_src
 
-* TODO "Fun" :: =fun= :fun:
+* TODO "Fun"
 
 #+begin_src emacs-lisp :tangle lisp/init-fun.el :comments no
 ;;; init-fun.el --- Configure the fun                -*- lexical-binding: t; -*-
@@ -10285,8 +10331,6 @@ function to return non-nil.")
 
 ;;;; Functions
 
-;;;;; Public
-
 (defun ceamx-simple-buffer-which-mode (&optional buffer-or-name)
   "Return the major mode associated with a buffer.
 If BUFFER-OR-NAME is nil, return the current buffer's mode."
@@ -10302,8 +10346,6 @@ POS defaults to the current position."
     (if ceamx-simple-point-in-comment-functions
         (run-hook-with-args-until-success 'ceamx-point-in-comment-functions pos)
       (nth 4 (syntax-ppss pos)))))
-
-;;;;; Private
 
 (defun ceamx-simple--pos-url-on-line (char)
   "Return position of `ceamx-url-regexp' at CHAR."
@@ -10349,6 +10391,31 @@ POS defaults to the current position."
   (activate-mark))
 
 ;;; Commands
+
+;;;###autoload
+(defun ceamx/keyboard-quit-dwim ()
+  "Do-What-I-Mean behaviour for a general `keyboard-quit'.
+
+The generic `keyboard-quit' does not do the expected thing when
+the minibuffer is open.  Whereas we want it to close the
+minibuffer, even without explicitly focusing it.
+
+The DWIM behaviour of this command is as follows:
+
+- When the region is active, disable it.
+- When a minibuffer is open, but not focused, close the minibuffer.
+- When the Completions buffer is selected, close it.
+- In every other case use the regular `keyboard-quit'."
+  (interactive)
+  (cond
+   ((region-active-p)
+    (keyboard-quit))
+   ((derived-mode-p 'completion-list-mode)
+    (delete-completion-window))
+   ((> (minibuffer-depth) 0)
+    (abort-recursive-edit))
+   (t
+    (keyboard-quit))))
 
 ;;;###autoload
 (defun ceamx-simple/new-line-below (n)

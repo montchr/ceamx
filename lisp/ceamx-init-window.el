@@ -437,7 +437,7 @@ With optional argument FRAME, return the list of buffers of FRAME."
 
 
 (after! bufler
-  (setopt bufler-reverse t)
+;;  (setopt bufler-reverse t)
   (setopt bufler-initial-face-depth 1)
   (after! prism
     (setopt bufler-face-prefix "prism-level-")))
@@ -451,95 +451,95 @@ With optional argument FRAME, return the list of buffers of FRAME."
   ;; FIXME: void function nil
   (setopt
    bufler-groups
-   (with-demoted-errors (bufler-defgroups
-                          (group
-                           ;; Subgroup collecting all named workspaces.
-                           (auto-workspace))
+   (bufler-defgroups
+     (group
+      ;; Subgroup collecting all named workspaces.
+      (auto-workspace))
 
-                          (group (mode-match "Ement" (rx bos "ement-")))
-                          (group (group-or "Elfeed"
-                                           (mode-match "*Elfeed*" (rx bos "elfeed-"))
-                                           (name-match "elfeed config" (rx bos "elfeed." (or "el" "org")))))
+     (group (mode-match "Ement" (rx bos "ement-")))
+     (group (group-or "Elfeed"
+                      (mode-match "*Elfeed*" (rx bos "elfeed-"))
+                      (name-match "elfeed config" (rx bos "elfeed." (or "el" "org")))))
 
-                          ;;
-                          ;; Help / info / manuals
-                          (group
-                           (group-or "*Help/Info*"
-                                     (mode-match "*Help*" (rx bos "help-"))
-                                     (mode-match "*Info*" (rx bos "info-"))))
+     ;;
+     ;; Help / info / manuals
+     (group
+      (group-or "*Help/Info*"
+                (mode-match "*Help*" (rx bos "help-"))
+                (mode-match "*Info*" (rx bos "info-"))))
 
-                          ;;
-                          ;; Special buffers
-                          (group
-                           ;; Subgroup collecting all special buffers (i.e. ones that are
-                           ;; not file-backed), except `magit-status-mode' buffers (which
-                           ;; are allowed to fall through to other groups, so they end up
-                           ;; grouped with their project buffers).
-                           (group-not "*Special*"
-                                      (group-or "*Special*"
-                                                (mode-match "Magit" (rx bos "magit-status"))
-                                                (mode-match "Forge" (rx bos "forge-"))
-                                                (mode-match "Org" (rx bos "org-"))
-                                                (auto-file)
-                                                (mode-match "Dired" (rx bos "dired"))))
-                           (group
-                            ;; Subgroup collecting these "special special" buffers
-                            ;; separately for convenience.
-                            (name-match "**Special**"
-                                        (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace") "*")))
-                           (group
-                            ;; Subgroup collecting all other Magit buffers, grouped by
-                            ;; directory.
-                            (mode-match "*Magit* (non-status)"
-                                        (rx bos (or "magit" "forge") "-"))
-                            (auto-directory))
-                           (auto-mode))
+     ;;
+     ;; Special buffers
+     (group
+      ;; Subgroup collecting all special buffers (i.e. ones that are
+      ;; not file-backed), except `magit-status-mode' buffers (which
+      ;; are allowed to fall through to other groups, so they end up
+      ;; grouped with their project buffers).
+      (group-not "*Special*"
+                 (group-or "*Special*"
+                           (mode-match "Magit" (rx bos "magit-status"))
+                           (mode-match "Forge" (rx bos "forge-"))
+                           (mode-match "Org" (rx bos "org-"))
+                           (auto-file)
+                           (mode-match "Dired" (rx bos "dired"))))
+      (group
+       ;; Subgroup collecting these "special special" buffers
+       ;; separately for convenience.
+       (name-match "**Special**"
+                   (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace") "*")))
+      (group
+       ;; Subgroup collecting all other Magit buffers, grouped by
+       ;; directory.
+       (mode-match "*Magit* (non-status)"
+                   (rx bos (or "magit" "forge") "-"))
+       (auto-directory))
+      (auto-mode))
 
-                          ;;
-                          ;; Ceamx
-                          (group
-                           (dir user-emacs-directory)
-                           (auto-parent-project))
+     ;;
+     ;; Ceamx
+     (group
+      (dir user-emacs-directory)
+      (auto-parent-project))
 
-                          ;;
-                          ;; Jobwork
-                          (group
-                           ;; TODO: make ~/Projects/work a variable `ceamx-jobwork-dir'
-                           (dir (list (file-name-concat ceamx-projects-dir "work")
-                                      ;; TODO: make ~/Documents a variable `ceamx-documents-dir'
-                                      (file-name-concat (alist-get "DOCUMENTS" xdg-user-dirs) "work")))
-                           (dir '("~/Projects/work/applications") 1)
-                           (dir ceamx-note-work-dir)
-                           (group (auto-indirect))
-                           (auto-parent-project))
+     ;;
+     ;; Jobwork
+     (group
+      ;; TODO: make ~/Projects/work a variable `ceamx-jobwork-dir'
+      (dir (list (file-name-concat ceamx-projects-dir "work")
+                 ;; TODO: make ~/Documents a variable `ceamx-documents-dir'
+                 (file-name-concat (alist-get "DOCUMENTS" xdg-user-dirs) "work")))
+      (dir '("~/Projects/work/applications") 1)
+      (dir ceamx-note-work-dir)
+      (group (auto-indirect))
+      (auto-parent-project))
 
-                          ;;
-                          ;; Org and notes
-                          ;; TODO: group journal dir separately for isolation
-                          (group
-                           (dir ceamx-agenda-dir)
-                           (dir ceamx-note-default-dir)
-                           (dir ceamx-note-journal-dir)
-                           (group
-                            ;; Subgroup collecting indirect Org buffers, grouping them by
-                            ;; file.  This is very useful when used with
-                            ;; `org-tree-to-indirect-buffer'.
-                            (auto-indirect)
-                            (auto-file))
-                           ;; Group remaining buffers by whether they're file backed, then
-                           ;; by mode.
-                           (group-not "*special*" (auto-file))
-                           (auto-mode))
+     ;;
+     ;; Org and notes
+     ;; TODO: group journal dir separately for isolation
+     (group
+      (dir ceamx-agenda-dir)
+      (dir ceamx-note-default-dir)
+      (dir ceamx-note-journal-dir)
+      (group
+       ;; Subgroup collecting indirect Org buffers, grouping them by
+       ;; file.  This is very useful when used with
+       ;; `org-tree-to-indirect-buffer'.
+       (auto-indirect)
+       (auto-file))
+      ;; Group remaining buffers by whether they're file backed, then
+      ;; by mode.
+      (group-not "*special*" (auto-file))
+      (auto-mode))
 
-                          (group-or "Home"
-                                    (dir '("/etc/nixos" "~/.config")))
+     (group-or "Home"
+               (dir '("/etc/nixos" "~/.config")))
 
-                          (group
-                           (auto-parent-project)
-                           (auto-indirect))
+     (group
+      (auto-parent-project)
+      (auto-indirect))
 
-                          (auto-directory)
-                          (auto-mode)))))
+     (auto-directory)
+     (auto-mode))))
 
 ;; Switch buffers with scoped buffer lists
 

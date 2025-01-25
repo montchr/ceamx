@@ -646,6 +646,23 @@ non-nil, buffers will never be formatted upon save."
 (dolist (mode ceamx-lisp-modes-list)
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 
+;; ~paredit~ :: the original parenthesizer
+
+
+(package! paredit
+  (def-hook! ceamx-lisp-init-paredit-h ()
+    '(ceamx-lisp-init-hook)
+    "Enable `paredit-mode' and disable incompatible features."
+    (when (fboundp 'puni-mode)
+      (puni-mode -1))
+    (when (fboundp 'lispy-mode)
+      (lispy-mode -1))
+    (electric-indent-local-mode -1)
+    (paredit-mode 1)))
+
+(after! paredit
+  (keymap-set paredit-mode-map "RET" #'paredit-newline))
+
 ;; ~kbd-mode~ :: syntax support for =kmonad= and =kanata= configs
 
 ;; + Package :: [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]

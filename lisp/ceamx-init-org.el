@@ -229,7 +229,7 @@ Intended for use as a local hook function on
   ;; TODO: show markers for bold and italic, hide everything else
   (setopt org-hide-emphasis-markers t)
   (setopt org-link-descriptive t)
-  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
+;;  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
 
   ;; Bring attention when point is on `org-ellipsis'.
   ;; FIXME: not correct
