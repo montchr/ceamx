@@ -4818,27 +4818,24 @@ Action alist entries are:
 
 #+begin_src emacs-lisp
 (package! activities
-  (when (eq 'activities ceamx-window-workspace-provider)
-    (activities-mode 1)
-    (activities-tabs-mode 1)
+  (activities-mode 1)
+  (activities-tabs-mode 1)
 
-    ;; Synchronize with future `tab-bar-mode' state changes.
-    (add-hook 'tab-bar-mode-hook #'activities-tabs-mode)
+  ;; Synchronize with future `tab-bar-mode' state changes.
+  (add-hook 'tab-bar-mode-hook #'activities-tabs-mode)
 
-    (setopt edebug-inhibit-emacs-lisp-mode-bindings t)))
+  (setopt edebug-inhibit-emacs-lisp-mode-bindings t))
 
 (after! activities
-  (setopt activities-name-prefix "Ⓐ ")
+  (setopt activities-name-prefix "α ")
   ;; Don't interfere with the bookmark system.
   (setopt activities-bookmark-store nil)
   ;; Kill buffers upon invocation of `activities-suspend'.
   (setopt activities-kill-buffers t))
 #+end_src
 
-
 The keybindings conflict with ~edebug~, so they need to be defined later
-than usual.  Or at least that’s how things used to be… maybe the
-conflict is handled more cleanly since I last checked.
+than usual.  This is still the case as of [2025-01-25 Sat].
 
 #+begin_src emacs-lisp
 (defun ceamx-after-init-define-activities-keys-h ()
@@ -4865,95 +4862,17 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
 #+end_src
 
-**** ~beframe~ :: scope buffer lists to frame
-:PROPERTIES:
-:ID:       803b3fad-6c5b-4dbb-a819-2028cb6f0d34
-:END:
-
-#+begin_src emacs-lisp
-(package! beframe
-  ;; (setopt beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*"))
-
-  (when (eq 'beframe ceamx-window-workspace-provider)
-    (beframe-mode 1)))
-#+end_src
-
-***** Provide ~consult~ integration :consult:
-:PROPERTIES:
-:ID:       1a75dce4-5496-4edb-b4a4-b6f3e8193795
-:END:
-
-- source :: <https://protesilaos.com/emacs/beframe#h:1c2d3d64-aa7b-4585-a418-ccedbb548b38>
-
-#+begin_src emacs-lisp
-(defface +beframe-buffer
-  '((t :inherit font-lock-string-face))
-  "Face for `consult' framed buffers.")
-
-(defun +beframe-buffer-names-sorted (&optional frame)
-  "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
-With optional argument FRAME, return the list of buffers of FRAME."
-  (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
-
-(after! (beframe consult)
-  (declare-function consult--buffer-state "consult")
-
-  (defvar +beframe-consult-source
-    `(:name "Frame-specific buffers (current frame)"
-      :narrow ?F
-      :category buffer
-      :face +beframe-buffer
-      :history beframe-history
-      :items ,#'+beframe-buffer-names-sorted
-      :action ,#'switch-to-buffer
-      :state ,#'consult--buffer-state))
-
-  (add-to-list 'consult-buffer-sources '+beframe-consult-source))
-#+end_src
-
-***** Provide ~ibuffer~ integration :ibuffer:
-
-- source :: <https://protesilaos.com/emacs/beframe#h:ae6c4c6b-179a-4d35-86b5-8b63bf614697>
-
-#+begin_src emacs-lisp
-(defun +beframe-buffer-in-frame-p (buf frame)
-  "Return non-nil if BUF is in FRAME."
-  (memq buf (beframe-buffer-list (beframe-frame-object frame))))
-
-(defun +beframe-frame-name-list ()
-  "Return list with frame names."
-  (mapcar #'car (make-frame-names-alist)))
-
-(defun +beframe-generate-ibuffer-filter-groups ()
-  "Create a set of ibuffer filter groups based on the Frame of buffers."
-  (mapcar
-   (lambda (frame)
-     (list (format "%s" frame)
-           (list 'predicate '+beframe-buffer-in-frame-p '(current-buffer) frame)))
-   (+beframe-frame-name-list)))
-
-(after! (beframe ibuffer)
-  (setq ibuffer-saved-filter-groups
-        `(("Frames" ,@(+beframe-generate-ibuffer-filter-groups))))
-
-  (define-ibuffer-filter frame
-      "Limit current view to buffers in frames."
-    (:description "frame")
-    (memq buf (beframe-buffer-list))))
-#+end_src
-
 **** ~bufler~ :: group buffers with programmable rules
 :PROPERTIES:
 :ID:       82ed50ad-45b4-4a0c-9ae5-e978de65cdcd
 :END:
 
 #+begin_src emacs-lisp
-(package! (bufler :files (:defaults (:exclude "helm-bufler.el")))
-  (bufler-mode 1)
-  (bufler-workspace-mode 1)
+(package! bufler
+  (require 'bufler)
 
   (define-keymap :keymap (current-global-map)
-    "C-x b" #'bufler-switch-buffer
+    ;; "C-x b" #'bufler-switch-buffer
     "C-x B" #'bufler-workspace-focus-buffer
     "C-x C-b" #'bufler                  ; orig. `ibuffer'
     "C-x C-B" #'ibuffer
@@ -4975,7 +4894,9 @@ Here are the customizations for Bufler:
 
 #+begin_src emacs-lisp
 (after! bufler
-;;  (setopt bufler-reverse t)
+  (setopt bufler-reverse t)
+  (setopt bufler-workspace-mode-lighter "β ")
+  (setopt bufler-columns '("Name" "Size" "Mode" "VC" "Path"))
   (setopt bufler-initial-face-depth 1)
   (after! prism
     (setopt bufler-face-prefix "prism-level-")))
@@ -4985,98 +4906,100 @@ Here are the definitions for the Bufler grouping rules:
 
 #+begin_src emacs-lisp
 (after! bufler
-  ;; FIXME: void function nil
-  (setopt
-   bufler-groups
-   (bufler-defgroups
-     (group
-      ;; Subgroup collecting all named workspaces.
-      (auto-workspace))
+  ;; XXX: This absolutely MUST NOT use `setopt'!  Otherwise, the
+  ;; package will fail to load due to a hard-to-trace error saying
+  ;; something about nil being a void-function.  This probably has
+  ;; something to do with the `setopt' type-checking.
+  (setq bufler-groups
+        (bufler-defgroups
+          (group
+           ;; Subgroup collecting all named workspaces.
+           (auto-workspace))
 
-     (group (mode-match "Ement" (rx bos "ement-")))
-     (group (group-or "Elfeed"
-                      (mode-match "*Elfeed*" (rx bos "elfeed-"))
-                      (name-match "elfeed config" (rx bos "elfeed." (or "el" "org")))))
+          (group (mode-match "Ement" (rx bos "ement-")))
+          (group (group-or "Elfeed"
+                           (mode-match "*Elfeed*" (rx bos "elfeed-"))
+                           (name-match "elfeed config" (rx bos "elfeed." (or "el" "org")))))
 
-     ;;
-     ;; Help / info / manuals
-     (group
-      (group-or "*Help/Info*"
-                (mode-match "*Help*" (rx bos "help-"))
-                (mode-match "*Info*" (rx bos "info-"))))
+          ;;
+          ;; Help / info / manuals
+          (group
+           (group-or "*Help/Info*"
+                     (mode-match "*Help*" (rx bos "help-"))
+                     (mode-match "*Info*" (rx bos "info-"))))
 
-     ;;
-     ;; Special buffers
-     (group
-      ;; Subgroup collecting all special buffers (i.e. ones that are
-      ;; not file-backed), except `magit-status-mode' buffers (which
-      ;; are allowed to fall through to other groups, so they end up
-      ;; grouped with their project buffers).
-      (group-not "*Special*"
-                 (group-or "*Special*"
-                           (mode-match "Magit" (rx bos "magit-status"))
-                           (mode-match "Forge" (rx bos "forge-"))
-                           (mode-match "Org" (rx bos "org-"))
-                           (auto-file)
-                           (mode-match "Dired" (rx bos "dired"))))
-      (group
-       ;; Subgroup collecting these "special special" buffers
-       ;; separately for convenience.
-       (name-match "**Special**"
-                   (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace") "*")))
-      (group
-       ;; Subgroup collecting all other Magit buffers, grouped by
-       ;; directory.
-       (mode-match "*Magit* (non-status)"
-                   (rx bos (or "magit" "forge") "-"))
-       (auto-directory))
-      (auto-mode))
+          ;;
+          ;; Special buffers
+          (group
+           ;; Subgroup collecting all special buffers (i.e. ones that are
+           ;; not file-backed), except `magit-status-mode' buffers (which
+           ;; are allowed to fall through to other groups, so they end up
+           ;; grouped with their project buffers).
+           (group-not "*Special*"
+                      (group-or "*Special*"
+                                (mode-match "Magit" (rx bos "magit-status"))
+                                (mode-match "Forge" (rx bos "forge-"))
+                                (mode-match "Org" (rx bos "org-"))
+                                (auto-file)
+                                (mode-match "Dired" (rx bos "dired"))))
+           (group
+            ;; Subgroup collecting these "special special" buffers
+            ;; separately for convenience.
+            (name-match "**Special**"
+                        (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace") "*")))
+           (group
+            ;; Subgroup collecting all other Magit buffers, grouped by
+            ;; directory.
+            (mode-match "*Magit* (non-status)"
+                        (rx bos (or "magit" "forge") "-"))
+            (auto-directory))
+           (auto-mode))
 
-     ;;
-     ;; Ceamx
-     (group
-      (dir user-emacs-directory)
-      (auto-parent-project))
+          ;;
+          ;; Ceamx
+          (group
+           (dir user-emacs-directory)
+           (auto-parent-project))
 
-     ;;
-     ;; Jobwork
-     (group
-      ;; TODO: make ~/Projects/work a variable `ceamx-jobwork-dir'
-      (dir (list (file-name-concat ceamx-projects-dir "work")
-                 ;; TODO: make ~/Documents a variable `ceamx-documents-dir'
-                 (file-name-concat (alist-get "DOCUMENTS" xdg-user-dirs) "work")))
-      (dir '("~/Projects/work/applications") 1)
-      (dir ceamx-note-work-dir)
-      (group (auto-indirect))
-      (auto-parent-project))
+          ;;
+          ;; Jobwork
+          (group
+           ;; TODO: make ~/Projects/work a variable `ceamx-jobwork-dir'
+           (dir (list (file-name-concat ceamx-projects-dir "work")
+                      ;; TODO: make ~/Documents a variable `ceamx-documents-dir'
+                      (file-name-concat (alist-get "DOCUMENTS" xdg-user-dirs) "work")))
+           (dir '("~/Projects/work/applications") 1)
+           (dir ceamx-note-work-dir)
+           (group (auto-indirect))
+           (auto-parent-project))
 
-     ;;
-     ;; Org and notes
-     ;; TODO: group journal dir separately for isolation
-     (group
-      (dir ceamx-agenda-dir)
-      (dir ceamx-note-default-dir)
-      (dir ceamx-note-journal-dir)
-      (group
-       ;; Subgroup collecting indirect Org buffers, grouping them by
-       ;; file.  This is very useful when used with
-       ;; `org-tree-to-indirect-buffer'.
-       (auto-indirect)
-       (auto-file))
-      ;; Group remaining buffers by whether they're file backed, then
-      ;; by mode.
-      (group-not "*special*" (auto-file))
-      (auto-mode))
+          ;;
+          ;; Org and notes
+          ;; TODO: group journal dir separately for isolation
+          (group
+           (dir ceamx-agenda-dir)
+           (dir ceamx-note-default-dir)
+           (dir ceamx-note-journal-dir)
+           (group
+            ;; Subgroup collecting indirect Org buffers, grouping them by
+            ;; file.  This is very useful when used with
+            ;; `org-tree-to-indirect-buffer'.
+            (auto-indirect)
+            (auto-file))
+           ;; Group remaining buffers by whether they're file backed, then
+           ;; by mode.
+           (group-not "*special*" (auto-file))
+           (auto-mode))
 
-     (group-or "Home"
-               (dir '("/etc/nixos" "~/.config")))
+          (group-or "Home"
+                    (dir '("/etc/nixos" "~/.config")))
 
-     (group
-      (auto-parent-project)
-      (auto-indirect))
+          (group
+           (auto-parent-project)
+           (auto-indirect))
 
-     (auto-directory)
-     (auto-mode))))
+          (auto-directory)
+          (auto-mode))))
 #+end_src
 
 **** Switch buffers with scoped buffer lists
