@@ -559,20 +559,6 @@ writable or with a prefix argument, then read a file to visit."
 ;;;; Movement
 
 ;;;###autoload
-(defun ceamx-simple/multi-line-below ()
-  "Move half a screen below."
-  (interactive)
-  (forward-line (floor (window-height) 2))
-  (setq this-command 'scroll-up-command))
-
-;;;###autoload
-(defun ceamx-simple/multi-line-above ()
-  "Move half a screen above."
-  (interactive)
-  (forward-line (- (floor (window-height) 2)))
-  (setq this-command 'scroll-down-command))
-
-;;;###autoload
 (defun ceamx-simple/kill-line-backward ()
   "Kill from point to the beginning of the line."
   (interactive)

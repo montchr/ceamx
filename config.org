@@ -2397,11 +2397,6 @@ NOTE: Incompatible with kitchen-sink modeline packages like
     ;; TODO: redundant with `easy-kill'
     "C-S-w" #'ceamx-simple/copy-line
     "C-S-y" #'ceamx-simple/yank-replace-line-or-region
-    ;; FIXME: these have weird quirks esp. in folded org-mode buffers
-    "C-v" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
-    "<next>" #'ceamx-simple/multi-line-below ; orig: `scroll-up-command'
-    "M-v" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
-    "<prior>" #'ceamx-simple/multi-line-above ; orig: `scroll-down-command'
     "C-RET" #'ceamx-simple/new-line-below
     "C-S-RET" #'ceamx-simple/new-line-above
 
@@ -10757,20 +10752,6 @@ writable or with a prefix argument, then read a file to visit."
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
 ;;;; Movement
-
-;;;###autoload
-(defun ceamx-simple/multi-line-below ()
-  "Move half a screen below."
-  (interactive)
-  (forward-line (floor (window-height) 2))
-  (setq this-command 'scroll-up-command))
-
-;;;###autoload
-(defun ceamx-simple/multi-line-above ()
-  "Move half a screen above."
-  (interactive)
-  (forward-line (- (floor (window-height) 2)))
-  (setq this-command 'scroll-down-command))
 
 ;;;###autoload
 (defun ceamx-simple/kill-line-backward ()
