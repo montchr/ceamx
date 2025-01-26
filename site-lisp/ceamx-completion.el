@@ -89,6 +89,21 @@ Sourced from the Consult Wiki."
 
 ;;;; Commands
 
+;; via <https://github.com/pmiam/dotfiles/blob/9de60a036f19b4fabfa01eaae9e3faf2d6a5deeb/emacs/.config/emacs/init.el#L380-L391>
+;;;###autoload
+(defun ceamx/vertico-partial-insert ()
+  "Insert next word of current candidate in minibuffer."
+  (interactive)
+  (when (> vertico--total 0)
+    (let* ((vertico--index (max 0 vertico--index))
+           (current (minibuffer-contents))
+           (candidate (vertico--candidate)))
+      (insert (car (s-slice-at
+                    (rx bow)
+                    (substring candidate
+                               (+ (string-match current candidate)
+                                  (seq-length current)))))))))
+
 ;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
 ;;;###autoload
 (defun ceamx/emacs-info ()

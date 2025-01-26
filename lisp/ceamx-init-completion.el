@@ -173,7 +173,14 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     "DEL" #'vertico-directory-delete-char
     "M-DEL" #'vertico-directory-delete-word
     "M-q" #'vertico-quick-insert
+    "C-j" #'vertico-insert
     "C-q" #'vertico-quick-exit))
+
+(use-feature! ceamx-completion
+  :after vertico
+  :bind ( :map vertico-map
+          ("TAB" . ceamx/vertico-partial-insert)
+          ("C-j" . vertico-insert)))
 
 
 
