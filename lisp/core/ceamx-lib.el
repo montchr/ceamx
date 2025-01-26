@@ -69,7 +69,7 @@
 ;;;; Sources
 
 ;; <https://github.com/doomemacs/doomemacs/blob/03d692f129633e3bf0bd100d91b3ebf3f77db6d1/lisp/doom-lib.el>
-;; <https://github.com/ceamx-software/ceamx/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/ceamx.el>
+;; <https://github.com/radian-software/radian/blob/9a82b6e7395b3f1f143b91f8fe129adf4ef31dc7/emacs/radian.el>
 ;; <https://github.com/doomemacs/doomemacs/blob/986398504d09e585c7d1a8d73a6394024fe6f164/lisp/doom-keybinds.el#L93C1-L109C56>
 
 ;;; Code:
