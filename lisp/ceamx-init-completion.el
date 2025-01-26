@@ -405,40 +405,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   "wordpress"		"WordPress"
   "youtube"		"YouTube")
 
-;; ~hippie-expand~
-
-
-(after! hippie-exp
-  ;; (defer! 5
-  ;;   (require 'hippie-exp))
-
-  (setopt hippie-expand-verbose t
-          hippie-expand-dabbrev-skip-space t)
-
-  (setopt hippie-expand-try-functions-list
-          '(try-complete-file-name-partially
-            try-complete-file-name
-
-            ;; Remove `try-expand-all-abbrevs' to disable automatic
-            ;; abbrev expansion.
-            try-expand-all-abbrevs
-
-            try-expand-list
-
-            ;; TODO: enable for shell modes only?
-            ;; try-expand-line
-
-            try-expand-dabbrev          ; see: `dabbrev-expand'
-            try-expand-dabbrev-all-buffers
-            ;; try-expand-dabbrev-from-kill
-
-            ;; Redundant with `completion-at-point'... *except* in the literate
-            ;; config file, where elisp symbols won't normally be available.
-            ;; TODO: enable for config.org
-            ;; try-complete-lisp-symbol-partially ; before `try-complete-lisp-symbol'
-            ;; try-complete-lisp-symbol ; after `try-complete-lisp-symbol-partially'
-            )))
-
 ;; ~tempel~ :: simple template expansions
 
 ;; + Package :: <https://github.com/minad/tempel>
@@ -542,8 +508,6 @@ Capf, such that it will be tried first."
   (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand)
   (keymap-set yas-minor-mode-map "RET" yas-maybe-expand))
 
-(after! (yasnippet hippie-exp)
-  (add-hook 'hippie-expand-try-functions-list #'yas-hippie-try-expand -80))
 
 
 
