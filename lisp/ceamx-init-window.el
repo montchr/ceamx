@@ -36,7 +36,7 @@ The buffer will be created if it does not exist."
   ;; Don't muck with special buffers.
   (setopt uniquify-ignore-buffers-re "^\\*"))
 
-;; General buffer display settings :buffer:frame:display_buffer:
+;; General buffer display settings :frame:display_buffer:
 
 
 (setopt switch-to-buffer-in-dedicated-window 'pop)
@@ -158,15 +158,7 @@ The buffer will be created if it does not exist."
            (window-height . 0.2)
            (side . bottom))))
 
-;; ~breadcrumb~ :: header-line wayfinding
-
-;; - Package :: <https://github.com/joaotavora/breadcrumb>
-
-
-(package! breadcrumb
-  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
-
-;; ~popper~: Summon and dismiss "popup" windows :popups:package:
+;; =popper= :: Summon and dismiss "popup" windows :popup:
 
 ;; - Website :: <https://github.com/karthink/popper>
 
@@ -227,19 +219,36 @@ The buffer will be created if it does not exist."
     "`" #'popper-cycle
     "~" #'popper-cycle-backwards))
 
-;; Restore previous window configurations with ~winner-mode~ [builtin] :history:
+;; =lentic= :: Create decoupled views of the same content
+
+
+(package! lentic
+  (global-lentic-mode))
+
+(with-eval-after-load 'lentic
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+
+;; =breadcrumb= :: header-line wayfinding :headerline:
+
+;; - Package :: <https://github.com/joaotavora/breadcrumb>
+
+
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+
+;; Restore previous window configurations with the ~winner-mode~ feature :history:
 
 
 (add-hook 'ceamx-after-init-hook #'winner-mode)
 
-;; =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
+;; =golden-ratio= :: automatically resize windows according to Ancient Wisdom :package:
 
 
 (package! golden-ratio
   (setopt golden-ratio-auto-scale t)
   (setopt golden-ratio-max-width 100))
 
-;; =ace-window=: Interactively manage windows :package:
+;; =ace-window= :: interactively manage windows
 
 ;; <https://github.com/abo-abo/ace-window>
 
@@ -251,19 +260,70 @@ The buffer will be created if it does not exist."
   ;; 1 and 3 and frame B will have window 2.
   (setopt aw-scope 'frame))
 
-;; =transpose-frame=: Transpose and rotate a frame's windows :package:
+;; =transpose-frame= :: transpose a frame's windows
 
 
 (package! transpose-frame)
 
-;; =lentic=: Create decoupled views of the same content
+;; ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
 
 
-(package! lentic
-  (global-lentic-mode))
+(transient-define-prefix ceamx/window-dispatch ()
+  "Window management transient."
+  :transient-suffix 'transient--do-stay
+  [["Move"
+    ("h" "left" windmove-left)
+    ("j" "down" windmove-down)
+    ("k" "up" windmove-up )
+    ("l" "right" windmove-right)
+    ("w" "sel" ace-window)]
 
-(with-eval-after-load 'lentic
-  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+   ["Resize"
+    ("=" "bal" balance-windows)
+    ("+" "bal: area" balance-windows-area)
+    ("-" "fit: buffer" fit-window-to-buffer)]
+
+   ["Buffer"
+    ("b" "buf" consult-buffer)
+    ;; ("f" "ff: p" project-find-file)
+    ("f" "file" find-file )
+    ("F" "file" find-file-other-window)
+    ("g" "grep" consult-ripgrep)]
+
+   ["Swarp"
+    ("H" "left" ceamx/window-move-left)
+    ("J" "down" ceamx/window-move-down)
+    ("K" "up" ceamx/window-move-up)
+    ("L" "right" ceamx/window-move-right)
+    ""
+    ("s" "swap" ace-swap-window)
+    ("2" "spl: dn" split-window-below)
+    ("3" "spl: rt" split-window-right)
+    ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
+
+   ["Scroll"
+    ;; TODO: allow selecting a window (with infix?) to act upon
+    ;; NOTE: These are the correct scroll direction commands, which might
+    ;; appear to be reversed when comparing with labels.
+    ("." "left" scroll-right)
+    ("," "right" scroll-left)
+    ("SPC" "down" scroll-up)
+    ("DEL" "up" scroll-down)]
+
+   ["Lifecycle"
+    ("d" "del (this)" delete-window)
+    ("D" "del (select)" ace-delete-window)
+    ;; ("D" "del: o" delete-other-windows :transient nil)
+    ("u" "undo" winner-undo)
+    ("U" "redo" winner-redo)
+    ""
+    ("0" "del" delete-window)
+    ("1" "del other" delete-other-windows)
+    ""
+    ("S" "[ ] sides" window-toggle-side-windows)
+    ("`" "[ ] popups" popper-toggle)
+    ""
+    ("q" "quit" transient-quit-all)]])
 
 ;; Workspace Isolation :workspace:
 
@@ -474,66 +534,6 @@ Intended for use as a hook on `ceamx-after-init-hook'."
   :commands (ceamx/switch-to-buffer)
   :bind
   ("C-x b" . #'ceamx/switch-to-buffer))
-
-;; ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
-
-
-(transient-define-prefix ceamx/window-dispatch ()
-  "Window management transient."
-  :transient-suffix 'transient--do-stay
-  [["Move"
-    ("h" "left" windmove-left)
-    ("j" "down" windmove-down)
-    ("k" "up" windmove-up )
-    ("l" "right" windmove-right)
-    ("w" "sel" ace-window)]
-
-   ["Resize"
-    ("=" "bal" balance-windows)
-    ("+" "bal: area" balance-windows-area)
-    ("-" "fit: buffer" fit-window-to-buffer)]
-
-   ["Buffer"
-    ("b" "buf" consult-buffer)
-    ;; ("f" "ff: p" project-find-file)
-    ("f" "file" find-file )
-    ("F" "file" find-file-other-window)
-    ("g" "grep" consult-ripgrep)]
-
-   ["Swarp"
-    ("H" "left" ceamx/window-move-left)
-    ("J" "down" ceamx/window-move-down)
-    ("K" "up" ceamx/window-move-up)
-    ("L" "right" ceamx/window-move-right)
-    ""
-    ("s" "swap" ace-swap-window)
-    ("2" "spl: dn" split-window-below)
-    ("3" "spl: rt" split-window-right)
-    ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
-
-   ["Scroll"
-    ;; TODO: allow selecting a window (with infix?) to act upon
-    ;; NOTE: These are the correct scroll direction commands, which might
-    ;; appear to be reversed when comparing with labels.
-    ("." "left" scroll-right)
-    ("," "right" scroll-left)
-    ("SPC" "down" scroll-up)
-    ("DEL" "up" scroll-down)]
-
-   ["Lifecycle"
-    ("d" "del (this)" delete-window)
-    ("D" "del (select)" ace-delete-window)
-    ;; ("D" "del: o" delete-other-windows :transient nil)
-    ("u" "undo" winner-undo)
-    ("U" "redo" winner-redo)
-    ""
-    ("0" "del" delete-window)
-    ("1" "del other" delete-other-windows)
-    ""
-    ("S" "[ ] sides" window-toggle-side-windows)
-    ("`" "[ ] popups" popper-toggle)
-    ""
-    ("q" "quit" transient-quit-all)]])
 
 (provide 'ceamx-init-window)
 ;;; ceamx-init-window.el ends here

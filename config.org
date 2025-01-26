@@ -4491,7 +4491,8 @@ The buffer will be created if it does not exist."
   :type '(string))
 #+end_src
 
-*** Configure window behavior for help buffers
+*** Buffer display
+**** Configure window behavior for help buffers
 
 #+begin_src emacs-lisp
 ;; Focus newly-opened help windows.
@@ -4502,7 +4503,7 @@ The buffer will be created if it does not exist."
 (setopt Man-notify-method 'aggressive)
 #+end_src
 
-*** Disambiguate/uniquify buffer names
+**** Disambiguate/uniquify buffer names
 
 #+begin_src emacs-lisp
 (use-feature! emacs
@@ -4517,7 +4518,7 @@ The buffer will be created if it does not exist."
   (setopt uniquify-ignore-buffers-re "^\\*"))
 #+end_src
 
-*** General buffer display settings :buffer:frame:display_buffer:
+**** General buffer display settings :frame:display_buffer:
 
 #+begin_src emacs-lisp
 (setopt switch-to-buffer-in-dedicated-window 'pop)
@@ -4546,7 +4547,7 @@ The buffer will be created if it does not exist."
            display-buffer-in-previous-window)))
 #+end_src
 
-*** Declare rules for displaying buffers with ~display-buffer-alist~ :display_buffer:
+**** Declare rules for displaying buffers with ~display-buffer-alist~ :display_buffer:
 
 - Source :: <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 
@@ -4641,16 +4642,7 @@ Action alist entries are:
            (side . bottom))))
     #+end_src
 
-*** ~breadcrumb~ :: header-line wayfinding
-
-- Package :: <https://github.com/joaotavora/breadcrumb>
-
-#+begin_src emacs-lisp
-(package! breadcrumb
-  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
-#+end_src
-
-*** ~popper~: Summon and dismiss "popup" windows :popups:package:
+**** =popper= :: Summon and dismiss "popup" windows :popup:
 
 - Website :: <https://github.com/karthink/popper>
 
@@ -4703,7 +4695,7 @@ Action alist entries are:
   (popper-echo-mode))
 #+end_src
 
-**** Configure overrides in ~popper-repeat-map~
+***** Configure overrides in ~popper-repeat-map~
 
 #+begin_src emacs-lisp
 (after! popper
@@ -4713,7 +4705,7 @@ Action alist entries are:
     "~" #'popper-cycle-backwards))
 #+end_src
 
-**** DISABLED Configure popup display control rules manually
+***** DISABLED Configure popup display control rules manually
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -4730,13 +4722,33 @@ Action alist entries are:
                   (window-height . ,popper-window-height)))))
 #+end_src
 
-*** Restore previous window configurations with ~winner-mode~ [builtin] :history:
+**** =lentic= :: Create decoupled views of the same content
+
+#+begin_src emacs-lisp
+(package! lentic
+  (global-lentic-mode))
+
+(with-eval-after-load 'lentic
+  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+#+end_src
+
+*** =breadcrumb= :: header-line wayfinding :headerline:
+
+- Package :: <https://github.com/joaotavora/breadcrumb>
+
+#+begin_src emacs-lisp
+(package! breadcrumb
+  (add-hook 'ceamx-after-init-hook #'breadcrumb-mode))
+#+end_src
+
+*** Interactive window management
+**** Restore previous window configurations with the ~winner-mode~ feature :history:
 
 #+begin_src emacs-lisp
 (add-hook 'ceamx-after-init-hook #'winner-mode)
 #+end_src
 
-*** =golden-ratio=: Automatically resize windows according to Ancient Wisdom :package:
+**** =golden-ratio= :: automatically resize windows according to Ancient Wisdom :package:
 
 #+begin_src emacs-lisp
 (package! golden-ratio
@@ -4744,7 +4756,7 @@ Action alist entries are:
   (setopt golden-ratio-max-width 100))
 #+end_src
 
-*** =ace-window=: Interactively manage windows :package:
+**** =ace-window= :: interactively manage windows
 
 <https://github.com/abo-abo/ace-window>
 
@@ -4757,20 +4769,71 @@ Action alist entries are:
   (setopt aw-scope 'frame))
 #+end_src
 
-*** =transpose-frame=: Transpose and rotate a frame's windows :package:
+**** =transpose-frame= :: transpose a frame's windows
 
 #+begin_src emacs-lisp
 (package! transpose-frame)
 #+end_src
 
-*** =lentic=: Create decoupled views of the same content
+**** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
 
 #+begin_src emacs-lisp
-(package! lentic
-  (global-lentic-mode))
+(transient-define-prefix ceamx/window-dispatch ()
+  "Window management transient."
+  :transient-suffix 'transient--do-stay
+  [["Move"
+    ("h" "left" windmove-left)
+    ("j" "down" windmove-down)
+    ("k" "up" windmove-up )
+    ("l" "right" windmove-right)
+    ("w" "sel" ace-window)]
 
-(with-eval-after-load 'lentic
-  (add-to-list 'safe-local-variable-values '(lentic-init . lentic-orgel-org-init)))
+   ["Resize"
+    ("=" "bal" balance-windows)
+    ("+" "bal: area" balance-windows-area)
+    ("-" "fit: buffer" fit-window-to-buffer)]
+
+   ["Buffer"
+    ("b" "buf" consult-buffer)
+    ;; ("f" "ff: p" project-find-file)
+    ("f" "file" find-file )
+    ("F" "file" find-file-other-window)
+    ("g" "grep" consult-ripgrep)]
+
+   ["Swarp"
+    ("H" "left" ceamx/window-move-left)
+    ("J" "down" ceamx/window-move-down)
+    ("K" "up" ceamx/window-move-up)
+    ("L" "right" ceamx/window-move-right)
+    ""
+    ("s" "swap" ace-swap-window)
+    ("2" "spl: dn" split-window-below)
+    ("3" "spl: rt" split-window-right)
+    ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
+
+   ["Scroll"
+    ;; TODO: allow selecting a window (with infix?) to act upon
+    ;; NOTE: These are the correct scroll direction commands, which might
+    ;; appear to be reversed when comparing with labels.
+    ("." "left" scroll-right)
+    ("," "right" scroll-left)
+    ("SPC" "down" scroll-up)
+    ("DEL" "up" scroll-down)]
+
+   ["Lifecycle"
+    ("d" "del (this)" delete-window)
+    ("D" "del (select)" ace-delete-window)
+    ;; ("D" "del: o" delete-other-windows :transient nil)
+    ("u" "undo" winner-undo)
+    ("U" "redo" winner-redo)
+    ""
+    ("0" "del" delete-window)
+    ("1" "del other" delete-other-windows)
+    ""
+    ("S" "[ ] sides" window-toggle-side-windows)
+    ("`" "[ ] popups" popper-toggle)
+    ""
+    ("q" "quit" transient-quit-all)]])
 #+end_src
 
 *** Workspace Isolation :workspace:
@@ -4982,67 +5045,6 @@ Here are the definitions for the Bufler grouping rules:
   :commands (ceamx/switch-to-buffer)
   :bind
   ("C-x b" . #'ceamx/switch-to-buffer))
-#+end_src
-
-*** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
-
-#+begin_src emacs-lisp
-(transient-define-prefix ceamx/window-dispatch ()
-  "Window management transient."
-  :transient-suffix 'transient--do-stay
-  [["Move"
-    ("h" "left" windmove-left)
-    ("j" "down" windmove-down)
-    ("k" "up" windmove-up )
-    ("l" "right" windmove-right)
-    ("w" "sel" ace-window)]
-
-   ["Resize"
-    ("=" "bal" balance-windows)
-    ("+" "bal: area" balance-windows-area)
-    ("-" "fit: buffer" fit-window-to-buffer)]
-
-   ["Buffer"
-    ("b" "buf" consult-buffer)
-    ;; ("f" "ff: p" project-find-file)
-    ("f" "file" find-file )
-    ("F" "file" find-file-other-window)
-    ("g" "grep" consult-ripgrep)]
-
-   ["Swarp"
-    ("H" "left" ceamx/window-move-left)
-    ("J" "down" ceamx/window-move-down)
-    ("K" "up" ceamx/window-move-up)
-    ("L" "right" ceamx/window-move-right)
-    ""
-    ("s" "swap" ace-swap-window)
-    ("2" "spl: dn" split-window-below)
-    ("3" "spl: rt" split-window-right)
-    ("SPC" "swap-or-rotate" ceamx/swap-or-rotate-windows)]
-
-   ["Scroll"
-    ;; TODO: allow selecting a window (with infix?) to act upon
-    ;; NOTE: These are the correct scroll direction commands, which might
-    ;; appear to be reversed when comparing with labels.
-    ("." "left" scroll-right)
-    ("," "right" scroll-left)
-    ("SPC" "down" scroll-up)
-    ("DEL" "up" scroll-down)]
-
-   ["Lifecycle"
-    ("d" "del (this)" delete-window)
-    ("D" "del (select)" ace-delete-window)
-    ;; ("D" "del: o" delete-other-windows :transient nil)
-    ("u" "undo" winner-undo)
-    ("U" "redo" winner-redo)
-    ""
-    ("0" "del" delete-window)
-    ("1" "del other" delete-other-windows)
-    ""
-    ("S" "[ ] sides" window-toggle-side-windows)
-    ("`" "[ ] popups" popper-toggle)
-    ""
-    ("q" "quit" transient-quit-all)]])
 #+end_src
 
 *** Provide the ~ceamx-init-window~ feature
