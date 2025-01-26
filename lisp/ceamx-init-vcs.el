@@ -1,26 +1,4 @@
-;;; ceamx-init-vcs.el --- Version control support  -*- lexical-binding: t;  -*-
-
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-;;; Code:
+;; -*- lexical-binding: t;  -*-
 
 (require 'ceamx-paths)
 (require 'ceamx-lib)
@@ -77,7 +55,7 @@
   (setopt project-vc-extra-root-markers '(".project"))
   (setopt project-key-prompt-style t))
 
-;; ~diff-hl~: Display version control status indicators in margins
+;; =diff-hl= :: display version control status indicators in margins
 
 ;; - Website :: <https://github.com/dgutov/diff-hl>
 
@@ -105,14 +83,14 @@
   (after! dired
     (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
 
-;; ~git-modes~ :: major modes for Git-related files
+;; =git-modes= :: major modes for git-related files
 
 ;; - website :: <https://github.com/magit/git-modes>
 
 
 (package! git-modes)
 
-;; ~git-timemachine~: Interactively explore files' Git histories
+;; =git-timemachine= :: interactively explore files' git histories
 
 ;; <https://codeberg.org/pidu/git-timemachine>
 
@@ -160,7 +138,7 @@
                     (propertize sha-or-subject 'face 'git-timemachine-minibuffer-detail-face)
                     date-full date-relative)))))
 
-;; ~magit~ :: a Git porcelain inside Emacs
+;; =magit= :: the git experience
 
 
 (package! magit
@@ -222,7 +200,7 @@
     (require 'magit-todos)
     (magit-todos-mode 1)))
 
-;; ~magit-repos~
+;; =magit-repos=
 
 
 (setup magit-repos
@@ -234,7 +212,7 @@
             (,(file-name-concat ceamx-projects-dir "sources") . 1)
             (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
 
-;; DISABLED ~forge~ :: interact with online source code forges through Magit
+;; DISABLED =forge= :: interact with online forges through magit
 
 ;; *Warning*: /development versions of ~forge~ may expect a different ~magit~
 ;; version!/ Make sure to pin ~forge~ to a stable tag.  And then, make sure

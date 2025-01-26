@@ -5062,32 +5062,13 @@ Here are the definitions for the Bufler grouping rules:
 :header-args: :tangle lisp/ceamx-init-vcs.el
 :END:
 
-*** Define the =lisp/ceamx-init-vcs.el= file header
+*** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-vcs.el :comments no
-;;; ceamx-init-vcs.el --- Version control support  -*- lexical-binding: t;  -*-
-
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-;;; Code:
+;; -*- lexical-binding: t;  -*-
 
 (require 'ceamx-paths)
 (require 'ceamx-lib)
@@ -5149,7 +5130,7 @@ Here are the definitions for the Bufler grouping rules:
   (setopt project-key-prompt-style t))
 #+end_src
 
-*** ~diff-hl~: Display version control status indicators in margins
+*** =diff-hl= :: display version control status indicators in margins
 
 - Website :: <https://github.com/dgutov/diff-hl>
 
@@ -5178,7 +5159,7 @@ NOTE: Fringe indicators will conflict with Flycheck.
     (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
 #+end_src
 
-*** ~git-modes~ :: major modes for Git-related files
+*** =git-modes= :: major modes for git-related files
 
 - website :: <https://github.com/magit/git-modes>
 
@@ -5186,7 +5167,7 @@ NOTE: Fringe indicators will conflict with Flycheck.
 (package! git-modes)
 #+end_src
 
-*** ~git-timemachine~: Interactively explore files' Git histories
+*** =git-timemachine= :: interactively explore files' git histories
 
 <https://codeberg.org/pidu/git-timemachine>
 
@@ -5235,7 +5216,7 @@ NOTE: Fringe indicators will conflict with Flycheck.
                     date-full date-relative)))))
 #+end_src
 
-*** ~magit~ :: a Git porcelain inside Emacs
+*** =magit= :: the git experience
 
 #+begin_src emacs-lisp
 (package! magit
@@ -5305,7 +5286,7 @@ insight into long-running =post-receive= hooks (and similar).
 
 e.g. "M-4" should not expand this section -- it should only be expanded manually
 
-*** ~magit-repos~
+*** =magit-repos=
 
 #+begin_src emacs-lisp
 (setup magit-repos
@@ -5318,7 +5299,7 @@ e.g. "M-4" should not expand this section -- it should only be expanded manually
             (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
 #+end_src
 
-*** DISABLED ~forge~ :: interact with online source code forges through Magit
+*** DISABLED =forge= :: interact with online forges through magit
 
 *Warning*: /development versions of ~forge~ may expect a different ~magit~
 version!/ Make sure to pin ~forge~ to a stable tag.  And then, make sure
@@ -5347,7 +5328,7 @@ setting =forge.remote= /per repository/ (not globally).
 git config forge.remote 'github'
 #+end_src
 
-**** Set up GitHub token authentication :secrets:
+*** Set up GitHub token authentication :secrets:
 
 - Docs :: <https://magit.vc/manual/ghub.html#Creating-and-Storing-a-Token>
 - Docs :: <https://magit.vc/manual/forge.html#Token-Creation>
