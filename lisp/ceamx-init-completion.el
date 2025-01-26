@@ -546,6 +546,8 @@ A final newline would be inserted literally into the snippet expansion."
 
 
 (package! corfu
+  (defer! 5 (require 'corfu))
+
   (add-hook 'ceamx-after-init-hook #'global-corfu-mode))
 
 (after! corfu
@@ -553,11 +555,10 @@ A final newline would be inserted literally into the snippet expansion."
           corfu-cycle t
           ;; corfu-max-width 80
           corfu-min-width 20
-          corfu-scroll-margin 3)
+          corfu-scroll-margin 0)
   ;; cf. `orderless-component-separator'
   (setopt corfu-separator ?_)
   (setopt corfu-on-exact-match 'insert
-          ;; TODO: evaluate...
           corfu-preselect 'first
           corfu-quit-at-boundary 'separator
           corfu-quit-no-match t)
@@ -577,11 +578,16 @@ A final newline would be inserted literally into the snippet expansion."
   ;; <https://github.com/minad/corfu/discussions/457>
   (setopt text-mode-ispell-word-completion nil)
 
-  (keymap-set corfu-map "M-SPC" #'corfu-insert-separator)
+  (define-keymap :keymap corfu-map
+     "M-SPC" #'corfu-insert-separator
+     "M-a" #'corfu-reset
+     "RET" #'corfu-complete
+     "<tab>" #'corfu-next
+     "<backtab>" #'corfu-previous
+     "<escape>" #'corfu-reset)
 
-  ;; NOTE: Requires `tab-always-indent' to be set to `complete',
-  ;; otherwise TAB will *never* indent!
-  (keymap-set corfu-map "TAB" #'corfu-complete)
+  ;; (when (eq 'complete tab-always-indent)
+  ;;   (keymap-set corfu-map "TAB" #'corfu-complete))
 
   (corfu-popupinfo-mode 1)
   (corfu-echo-mode -1)
@@ -590,14 +596,6 @@ A final newline would be inserted literally into the snippet expansion."
   (after! savehist
     (corfu-history-mode 1)
     (add-to-list 'savehist-additional-variables 'corfu-history)))
-
-;; FIXME: `ceamx-completion-corfu-minibuffer-enable-p' not a function
-;; maybe?  type mismatch
-;; (use-feature! ceamx-completion
-;;   :after corfu
-;;   :functions (ceamx-completion-corfu-minibuffer-enable-p)
-;;   :init
-;;   (setopt global-corfu-minibuffer #'ceamx-completion-corfu-minibuffer-enable-p))
 
 ;; ~corfu-terminal~ :: Corfu terminal support
 
@@ -628,19 +626,13 @@ A final newline would be inserted literally into the snippet expansion."
     (setopt kind-icon-default-face 'corfu-default)
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter)))
 
-;; Reduce icon size slightly
-
-;; If you change this value, make sure to call ~kind-icon-reset-cache~ afterwards,
-;; otherwise the icon size will likely not be accurate.
-
-
 (after! kind-icon
-  (plist-put kind-icon-default-style :height 0.9))
+  ;; Reduce the icon size slightly.  If you change this value, make
+  ;; sure to call `kind-icon-reset-cache' afterwards, otherwise the
+  ;; icon size will likely not be accurate:
+  (plist-put kind-icon-default-style :height 0.9)
 
-;; Update icon apperance after enabling a theme
-
-
-(after! kind-icon
+  ;; Update icon appearance after enabling a theme.
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 
@@ -652,16 +644,17 @@ A final newline would be inserted literally into the snippet expansion."
     (nerd-icons-completion-mode)
     (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
 
-;; ~cape~ :: [C]ompletion-[A]t-[P]oint [E]xtensions
+;; ~cape~ :: [C]ompletion-[A]t-[P]oint [E]xtensions :capfs:
 
 
 (package! cape
   ;; Add to the global default value of
   ;; `completion-at-point-functions' which is used by
   ;; `completion-at-point'.  The order of the functions matters, the
-  ;; first function returning a result wins.  Note that the list of
-  ;; buffer-local completion functions takes precedence over the
-  ;; global list.
+  ;; first function returning a result wins.  We use `add-hook' due to
+  ;; its ability to specify priority values affecting order.  Note
+  ;; that the list of buffer-local completion functions takes
+  ;; precedence over the global list.
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
@@ -671,9 +664,21 @@ A final newline would be inserted literally into the snippet expansion."
     ;; NOTE: This may cause a significant performance hit.  Consider
     ;; enabling per-language-server.
     ;; <https://github.com/minad/corfu/wiki#continuously-update-the-candidates>
-    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)))
+    (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 
-;; Add command to export completion candidates to a writable buffer
+  (keymap-set ceamx-insert-prefix "E" #'cape-emoji)
+
+  ;; cf. `cape-prefix-map' for ideas
+  (define-keymap :keymap ceamx-completion-prefix-map
+    "p" #'completion-at-point
+
+    "a" #'cape-abbrev
+    "d" #'cape-dabbrev
+    "f" #'cape-file
+    "o" #'cape-elisp-symbol
+    "w" #'cape-dict))
+
+;; Add command to export completion candidates to a writable buffer :embark:
 
 
 (use-feature! ceamx-completion
@@ -682,7 +687,7 @@ A final newline would be inserted literally into the snippet expansion."
   :init
   (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
 
-;; ~embark~ :: [E]macs [M]ini-[B]uffer [A]ctions [R]ooted in [K]eymaps
+;; ~embark~ :: [E]macs [M]ini-[B]uffer [A]ctions [R]ooted in [K]eymaps :embark:
 
 ;; - Package :: <https://github.com/oantolin/embark>
 
