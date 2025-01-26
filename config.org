@@ -3861,9 +3861,13 @@ Fine-tune Vertico appearance per-command or per-category with
 
 #+begin_src emacs-lisp
 (package! marginalia
-  (keymap-set minibuffer-local-map "M-A" #'marginalia-cycle)
+  (keymap-set minibuffer-local-map "M-a" #'marginalia-cycle)
 
-  (marginalia-mode))
+  (marginalia-mode 1))
+
+(after! marginalia
+  (setopt marginalia-align 'right
+          marginalia-align-offset 0))
 #+end_src
 
 *** ~consult~ :: [CONSULT]ing ~completing-read~ :minibuffer:

@@ -212,9 +212,13 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (package! marginalia
-  (keymap-set minibuffer-local-map "M-A" #'marginalia-cycle)
+  (keymap-set minibuffer-local-map "M-a" #'marginalia-cycle)
 
-  (marginalia-mode))
+  (marginalia-mode 1))
+
+(after! marginalia
+  (setopt marginalia-align 'right
+          marginalia-align-offset 0))
 
 ;; ~consult~ :: [CONSULT]ing ~completing-read~ :minibuffer:
 
