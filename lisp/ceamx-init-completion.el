@@ -2,7 +2,7 @@
 
 (require 'ceamx-lib)
 
-;; Baseline completion settings
+;; Baseline minibuffer settings
 
 
 (use-feature! minibuffer
@@ -58,96 +58,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
                 (car args))
         (cdr args)))
 
-;; ~orderless~ :: completion-matching multiple regular expressions :search:
-
-;; + Package :: <https://github.com/oantolin/orderless>
-
-
-(package! orderless
-  (require 'orderless)
-
-  (setopt orderless-matching-styles
-          '(orderless-prefixes
-            orderless-regexp))
-
-  (setopt orderless-component-separator #'orderless-escapable-split-on-space)
-  ;; spaces & dash & slash & underscore
-  ;; (setopt orderless-component-separator " +\\|[-/_]")
-
-  ;; [SPC] should never trigger a completion.
-  (keymap-set minibuffer-local-completion-map "SPC" nil)
-  ;; [?] should not interfere with regexp symbols
-  (keymap-set minibuffer-local-completion-map "?" nil))
-
-;; ~+orderless-fast-dispatch~
-
-;; - source :: <https://github.com/minad/corfu/blob/main/README.org#auto-completion>
-
-
-(defun +orderless-fast-dispatch (word index total)
-  "Fast-dispatch `orderless' completion style for `corfu'."
-  (and (= index 0) (= total 1) (length< word 4)
-       (cons 'orderless-literal-prefix word)))
-
-(after! orderless
-  (orderless-define-completion-style +orderless-fast
-    "Fast completion style, intended for usage with `corfu'."
-    (orderless-style-dispatchers '(+orderless-fast-dispatch))
-    (orderless-matching-styles '(orderless-literal orderless-regexp))))
-
-;; ~+orderless-with-initialism~
-
-
-(after! orderless
-  (orderless-define-completion-style +orderless-with-initialism
-    (orderless-matching-styles '(orderless-initialism
-                                 orderless-literal
-                                 orderless-regexp))))
-
-;; Configure preferred completion styles
-
-
-;; Make `partial-completion' behave like `substring'.
-(setopt completion-pcm-leading-wildcard t)
-
-(after! orderless
-  ;; Reset per-category defaults to force the use of the standard
-  ;; `completion-styles'.  Customizations can be specified in
-  ;; `completion-category-overrides'.
-  (setq completion-category-defaults nil)
-  (setopt completion-styles '(orderless basic))
-  (setopt completion-category-overrides
-          '((file (styles partial-completion orderless))
-            (bookmark (styles basic substring))
-            (library (styles basic substring))
-            (imenu (styles orderless substring basic))
-            (kill-ring (styles emacs22 orderless))
-            ;; enable initialism by default for symbols
-            (command (styles +orderless-with-initialism))
-            (variable (styles +orderless-with-initialism))
-            (symbol (styles +orderless-with-initialism)))))
-
-(after! (consult orderless)
-  (add-to-list 'completion-category-overrides
-      '(consult-location (styles basic substring orderless))))
-
-(after! eglot
-  (add-to-list 'completion-category-overrides '(eglot (styles orderless)))
-  ;; FIXME: who provides `eglot-capf'?
-  (add-to-list 'completion-category-overrides '(eglot-capf (styles orderless))))
-
-(after! embark
-  (add-to-list 'completion-category-overrides
-      '(embark-keybinding (styles basic substring))))
-
-(after! (orderless consult)
-  (require 'ceamx-completion)
-
-  (setopt orderless-style-dispatchers
-          '(ceamx-completion-orderless-consult-dispatch
-            orderless-affix-dispatch)))
-
-;; ~vertico~ :: [VERT]ical [I]nteractive [CO]mpletion :minibuffer:
+;; ~vertico~ :: [vert]ical [i]nteractive [co]mpletion
 
 ;; + Package :: <https://github.com/minad/vertico>
 
@@ -206,7 +117,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (after! vertico-multiform
   (keymap-set vertico-multiform-map "C-l" #'vertico-multiform-vertical))
 
-;; ~marginalia~ :: minibuffer completion annotations :minibuffer:
+;; ~marginalia~ :: minibuffer completion annotations
 
 ;; + Package :: <https://github.com/minad/marginalia>
 
@@ -220,7 +131,15 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (setopt marginalia-align 'right
           marginalia-align-offset 0))
 
-;; ~consult~ :: [CONSULT]ing ~completing-read~ :minibuffer:
+;; ~nerd-icons-completion~ :: icons for minibuffer completions :icons:
+
+
+(package! nerd-icons-completion
+  (after! marginalia
+    (nerd-icons-completion-mode)
+    (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
+
+;; ~consult~ :: [consult]ing ~completing-read~
 
 ;; - website :: <https://github.com/minad/consult>
 ;; - ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
@@ -359,12 +278,101 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     "?" #'consult-narrow-help)
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'embark-prefix-help-command))
 
+;; ~orderless~ :: completion-matching multiple regular expressions :search:
+
+;; + Package :: <https://github.com/oantolin/orderless>
+
+
+(package! orderless
+  (require 'orderless)
+
+  (setopt orderless-matching-styles
+          '(orderless-prefixes
+            orderless-regexp))
+
+  (setopt orderless-component-separator #'orderless-escapable-split-on-space)
+  ;; spaces & dash & slash & underscore
+  ;; (setopt orderless-component-separator " +\\|[-/_]")
+
+  ;; [SPC] should never trigger a completion.
+  (keymap-set minibuffer-local-completion-map "SPC" nil)
+  ;; [?] should not interfere with regexp symbols
+  (keymap-set minibuffer-local-completion-map "?" nil))
+
+;; ~+orderless-fast-dispatch~
+
+;; - source :: <https://github.com/minad/corfu/blob/main/README.org#auto-completion>
+
+
+(defun +orderless-fast-dispatch (word index total)
+  "Fast-dispatch `orderless' completion style for `corfu'."
+  (and (= index 0) (= total 1) (length< word 4)
+       (cons 'orderless-literal-prefix word)))
+
+(after! orderless
+  (orderless-define-completion-style +orderless-fast
+    "Fast completion style, intended for usage with `corfu'."
+    (orderless-style-dispatchers '(+orderless-fast-dispatch))
+    (orderless-matching-styles '(orderless-literal orderless-regexp))))
+
+;; ~+orderless-with-initialism~
+
+
+(after! orderless
+  (orderless-define-completion-style +orderless-with-initialism
+    (orderless-matching-styles '(orderless-initialism
+                                 orderless-literal
+                                 orderless-regexp))))
+
+;; Configure preferred completion styles
+
+
+;; Make `partial-completion' behave like `substring'.
+(setopt completion-pcm-leading-wildcard t)
+
+(after! orderless
+  ;; Reset per-category defaults to force the use of the standard
+  ;; `completion-styles'.  Customizations can be specified in
+  ;; `completion-category-overrides'.
+  (setq completion-category-defaults nil)
+  (setopt completion-styles '(orderless basic))
+  (setopt completion-category-overrides
+          '((file (styles partial-completion orderless))
+            (bookmark (styles basic substring))
+            (library (styles basic substring))
+            (imenu (styles orderless substring basic))
+            (kill-ring (styles emacs22 orderless))
+            ;; enable initialism by default for symbols
+            (command (styles +orderless-with-initialism))
+            (variable (styles +orderless-with-initialism))
+            (symbol (styles +orderless-with-initialism)))))
+
+(after! (consult orderless)
+  (add-to-list 'completion-category-overrides
+      '(consult-location (styles basic substring orderless))))
+
+(after! eglot
+  (add-to-list 'completion-category-overrides '(eglot (styles orderless)))
+  ;; FIXME: who provides `eglot-capf'?
+  (add-to-list 'completion-category-overrides '(eglot-capf (styles orderless))))
+
+(after! embark
+  (add-to-list 'completion-category-overrides
+      '(embark-keybinding (styles basic substring))))
+
+(after! (orderless consult)
+  (require 'ceamx-completion)
+
+  (setopt orderless-style-dispatchers
+          '(ceamx-completion-orderless-consult-dispatch
+            orderless-affix-dispatch)))
+
 ;; Dynamic text expansion with ~dabbrev~
 
 
 (after! dabbrev
-  (setopt dabbrev-abbrev-char-regexp "\\sw\\|\\s_"
-          dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
+  ;; (setopt dabbrev-abbrev-char-regexp "\\sw\\|\\s_"
+  ;;         dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
   (setopt dabbrev-backward-only nil)
   (setopt dabbrev-case-distinction 'case-replace
           dabbrev-case-fold-search nil
@@ -372,15 +380,13 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (setopt dabbrev-check-other-buffers t)
   (setopt dabbrev-eliminate-newlines t)
   (setopt dabbrev-ignored-buffer-regexps '("\\` ")
-          dabbrev-ignored-buffer-modes '(archive-mode doc-view-mode image-mode
-                                                      pdf-view-mode tags-table-mode)))
+          dabbrev-ignored-buffer-modes '( archive-mode doc-view-mode image-mode
+                                          pdf-view-mode tags-table-mode)))
 
-;; Configure ~abbrev-mode~ settings
+;; Static text expansion with ~abbrev~
 
 
 (use-feature! abbrev
-  ;; NOTE: `message-mode' derives from `text-mode', so it does not
-  ;; need to be listed for coverage here.
   :hook ((text-mode prog-mode git-commit-mode) . abbrev-mode)
 
   :config
@@ -388,7 +394,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (setopt abbrev-suggest t)
 
   ;; Our abbrevs are defined in configuration, no need to save elsewhere
-  (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save)
+  ;; (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save)
 
   ;; Because the *scratch* buffer is produced before we load this, we
   ;; have to explicitly activate the mode there.
@@ -396,7 +402,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     (with-current-buffer scratch
       (abbrev-mode 1))))
 
-;; Define the custom ~abbrevs~
+
+
+;; Define the custom abbrevs:
 
 
 (abbrevs! text-mode-abbrev-table
@@ -405,51 +413,39 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   "wordpress"		"WordPress"
   "youtube"		"YouTube")
 
-;; ~tempel~ :: simple template expansions
+;; DISABLED Allow abbrevs with a prefix colon, semicolon, or underscore
 
-;; + Package :: <https://github.com/minad/tempel>
-;; + Package :: <https://github.com/Crandel/tempel-collection>
+;; Disabled to test interference with other completion-at-point behavior wired
+;; together through [[*Completion-At-Point Extensions (Cape)]].
 
-;; - info :: [[info:autotype#Skeleton Language][(autotype) Skeleton Language]]
-;; - Source :: [[https://github.com/minad/tempel/blob/main/README.org#template-syntax][tempel/README.org at main · minad/tempel · GitHub]]
+;; - Source :: <https://github.com/protesilaos/dotfiles/blob/8fc72724cd6debd12c8258bf64adf6822a0bc90c/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion.el#L215-L225>
+;; - Background :: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>
 
-;; All the Tempo syntax elements are fully supported.  The syntax
-;; elements are described in detail in the docstring of
-;; ~tempo-define-template~ in tempo.el.  We document the important ones
-;; here:
+;; Adapted from Prot's original version with the following changes:
 
-;; - “string” Inserts a string literal.
-;; - =p=  Inserts an unnamed placeholder field.
-;; - =n=  Inserts a newline.
-;; - =>= Indents with ~indent-according-to-mode~ .
-;; - =r=  Inserts the current region. If no region is active, quits the containing template when jumped to.
-;; - =r>= Acts like =r= , but indent region.
-;; - =n>=  Inserts a newline and indents.
-;; - =&=  Insert newline unless there is only whitespace between line start and point.
-;; - =%=  Insert newline unless there is only whitespace between point and line end.
-;; - =o= Like =%=  but leaves the point before newline.
-;; - =(s NAME)=  Inserts a named field.
-;; - =(p PROMPT <NAME> <NOINSERT>)= Insert an optionally named field with a prompt. The =PROMPT= is displayed directly in the buffer as default value. If =NOINSERT= is non-nil, no field is inserted. Then the minibuffer is used for prompting and the value is bound to =NAME= .
-;; - =(r PROMPT <NAME> <NOINSERT>)= Insert region or act like =(p ...)= .
-;; - =(r> PROMPT <NAME> <NOINSERT>)= Act like =(r ...)= , but indent region.
+;; - Converted the duplicated regexp string into an ~rx~ form via the ~xr~ utility.
+;; - Abstracted the regexp to a variable ~ceamx-abbrev-prefix-regexp~ for reuse
+;;   across =abbrev-table= contexts.
 
-;; Furthermore Tempel supports syntax extensions:
 
-;; - =(p FORM <NAME> <NOINSERT>)= Like =p= described above, but =FORM=  is evaluated.
-;; - =(FORM ...)=  Other Lisp forms are evaluated. Named fields are lexically bound.
-;; - =q=  Quits the containing template when jumped to.
+(defconst ceamx-abbrev-prefix-regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:_].*\\|.*\\)")
 
+(after! abbrev
+  (abbrev-table-put global-abbrev-table :regexp ceamx-abbrev-prefix-regexp)
+  (after! text-mode
+    (abbrev-table-put text-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp))
+  (after! org
+    (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
+
+;; Configuration
 
 
 (package! tempel
-  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
+  (define-keymap :keymap (current-global-map)
+    "C-c y" #'tempel-insert
 
-  ;; Require this prefix before triggering template name completion.
-  (setopt tempel-trigger-prefix "<")
-
-(define-keymap :keymap (current-global-map)
-  "M-+" #'tempel-complete
-  "M-*" #'tempel-insert)
+    "M-+" #'tempel-complete
+    "M-*" #'tempel-insert)
 
   ;; Setup completion at point for Tempel templates.
   (def-hook! +tempel-setup-capf-h ()
@@ -459,75 +455,26 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 `tempel-expand' only triggers on exact matches.  Alternatively
 use `tempel-complete' if you want to see all matches, but then
 you should also configure `tempel-trigger-prefix', such that
-Tempel does not trigger too often when you don't expect it.
-
-NOTE: We add `tempel-expand' *before* the main programming mode
-Capf, such that it will be tried first."
-    (setq-local completion-at-point-functions
-                (cons #'tempel-expand
-                      completion-at-point-functions))))
+Tempel does not trigger too often when you don't expect it."
+    (add-hook 'completion-at-point-functions #'tempel-expand -90 t)))
 
 (after! tempel
+  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
+
+  ;; Require this prefix before triggering template name completion.
+  (setopt tempel-trigger-prefix "<")
+
   (define-keymap :keymap tempel-map
-    "TAB" #'tempel-next
-    "S-TAB" #'tempel-previous))
+    "<tab>" #'tempel-next
+    "<backtab>" #'tempel-previous
+    "M-}" #'tempel-next
+    "M-{" #'tempel-previous))
 
 (use-feature! ceamx-completion
   :after tempel
   :functions (ceamx-completion--tempel-include)
   :init
   (add-to-list 'tempel-user-elements #'ceamx-completion--tempel-include))
-
-(package! tempel-collection
-  (setup tempel-collection
-    (:load-after tempel)))
-
-;; ~yasnippet~ :: robust template expansions
-
-;; - Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
-
-
-(package! yasnippet
-  (setopt yas-snippet-dirs
-          (list (file-name-concat ceamx-templates-dir "yasnippet")))
-
-  (defer! 3
-    (yas-global-mode 1)))
-
-(after! yasnippet
-  (defer! 2
-    (require 'hippie-exp))
-
-  (setopt yas-prompt-functions '(yas-completing-prompt
-                                 yas-no-prompt))
-
-  ;; Insanely helpful when =key= is sensible, but insanely annoying
-  ;; if not.  Unless there is an available snippet expansion, the
-  ;; key will still call ~self-insert-command~ as usual.  Note that
-  ;; `yas-maybe-expand' is indeed a variable, not a function.
-  (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand)
-  (keymap-set yas-minor-mode-map "RET" yas-maybe-expand))
-
-
-
-
-;; Disable automatic whitespace modifications in snippet files:
-
-;; <https://joaotavora.github.io/yasnippet/faq.html#org64f1b8c>
-
-;; #+begin_quote
-;; If there is a newline at the end of a snippet definition file, YASnippet will
-;; add a newline when expanding that snippet. When editing or saving a snippet
-;; file, please be careful not to accidentally add a terminal newline.
-;; #+end_quote
-
-
-(defun +yasnippet-snippet-mode-disable-final-newline-h ()
-  "Prevent appendage of a final newline in `snippet-mode' files.
-A final newline would be inserted literally into the snippet expansion."
-  (setq-local require-final-newline nil))
-
-(add-hook 'snippet-mode-hook #'+yasnippet-snippet-mode-disable-final-newline-h nil t)
 
 ;; ~spdx~ :: insertable SPDX license headers
 
@@ -536,7 +483,7 @@ A final newline would be inserted literally into the snippet expansion."
 
 (package! spdx)
 
-;; ~corfu~ :: [CO]mpletion in [R]egion [FU]nction
+;; ~corfu~ :: [co]mpletion in [r]egion [fu]nction
 ;; :PROPERTIES:
 ;; :ID:       d8073181-6d05-40d2-a954-0e6bb65449a2
 ;; :END:
@@ -636,15 +583,7 @@ A final newline would be inserted literally into the snippet expansion."
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 
-;; ~nerd-icons-completion~ :: icons for minibuffer completions :icons:minibuffer:
-
-
-(package! nerd-icons-completion
-  (after! marginalia
-    (nerd-icons-completion-mode)
-    (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
-
-;; ~cape~ :: [C]ompletion-[A]t-[P]oint [E]xtensions :capfs:
+;; ~cape~ :: [c]ompletion-[a]t-[p]oint [e]xtensions :capfs:
 
 
 (package! cape
@@ -655,10 +594,14 @@ A final newline would be inserted literally into the snippet expansion."
   ;; its ability to specify priority values affecting order.  Note
   ;; that the list of buffer-local completion functions takes
   ;; precedence over the global list.
+  (add-hook 'completion-at-point-functions #'cape-abbrev)
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
   (add-hook 'completion-at-point-functions #'cape-history)
+
+  (add-to-list 'completion-category-overrides
+               '((cape-dict (styles (basic)))))
 
   (after! eglot
     ;; NOTE: This may cause a significant performance hit.  Consider
@@ -678,16 +621,7 @@ A final newline would be inserted literally into the snippet expansion."
     "o" #'cape-elisp-symbol
     "w" #'cape-dict))
 
-;; Add command to export completion candidates to a writable buffer :embark:
-
-
-(use-feature! ceamx-completion
-  :after minibuffer
-  :commands (ceamx-completion/embark-export-write)
-  :init
-  (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
-
-;; ~embark~ :: [E]macs [M]ini-[B]uffer [A]ctions [R]ooted in [K]eymaps :embark:
+;; ~embark~ :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:
 
 ;; - Package :: <https://github.com/oantolin/embark>
 
@@ -761,6 +695,15 @@ A final newline would be inserted literally into the snippet expansion."
   (push #'embark--confirm
         (alist-get 'tab-bar-close-tab-by-name
                    embark-pre-action-hooks)))
+
+;; Add command to export completion candidates to a writable buffer :embark:
+
+
+(use-feature! ceamx-completion
+  :after minibuffer
+  :commands (ceamx-completion/embark-export-write)
+  :init
+  (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
 
 ;; Provide feature ~ceamx-init-completion~
 

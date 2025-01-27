@@ -1,7 +1,7 @@
-;; -*- lexical-binding: t;  -*-
+  ;; -*- lexical-binding: t;  -*-
 
-(require 'ceamx-lib)
-(require 'ceamx-ui)
+  (require 'ceamx-lib)
+  (require 'ceamx-ui)
 
 ;; Configure cursor appearance
 
