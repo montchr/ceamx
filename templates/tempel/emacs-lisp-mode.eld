@@ -2,24 +2,12 @@
 
 emacs-lisp-mode
 
-(kb "(keymap-set " (s map) " \"" (s key) "\" #'" (s cmd) ")" q)
-(kbg "(keymap-global-set \"" (s key) "\" #'" (s cmd) q ")" q)
-(kbs "(define-keymap :keymap " (p "(current-global-map)" map) n>
+(key "(keymap-set " (s map) " \"" (s key) "\" #'" (s cmd) ")" q)
+(keys "(define-keymap :keymap " (p "(current-global-map)" map) n>
         "\"" p "\" #'" p ")" q)
-(weal "(with-eval-after-load '" (s feature) n>
-         r ")")
+(keyg "(keymap-global-set \"" (s key) "\" #'" (s cmd) q ")" q)
 
-(pkg ";;" n
-     ";;; `" (s name) "' :: <" (s url) ">" n
-     ";;" n
-     n
-     "(use-package " name n>
-     ":config" n>
-     ")")
+(after "(after! " (s feature) n> r ")")
+
 (seto "(setopt " p " " p ")")
-(sset "(setq " (s name) " " (s val) ")")
-
-(lenticsrc &
- ";; #+BEGIN_SRC emacs-lisp" n
- r &
- ";; #+END_SRC")
+(setq "(setq " (s name) " " (s val) ")")
