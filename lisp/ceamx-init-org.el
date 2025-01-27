@@ -468,6 +468,9 @@ Intended for use as a local hook function on
 (package! org-sidebar)
 
 ;; ~org-bookmark-heading~ :: Support heading bookmarks :bookmarks:package:
+;; :PROPERTIES:
+;; :ID:       cd3ef5ab-e573-43e9-b1f7-81eb6dade0a9
+;; :END:
 
 
 (package! org-bookmark-heading
@@ -475,10 +478,7 @@ Intended for use as a local hook function on
     (require 'org-bookmark-heading)))
 
 (after! org-bookmark-heading
-  ;; FIXME: `org-bookmark-heading-make-ids' does not work well with
-  ;; `activities-mode'
-  ;; <https://github.com/alphapapa/activities.el/issues/134>
-  (setopt org-bookmark-heading-make-ids nil
+  (setopt org-bookmark-heading-make-ids t
           org-bookmark-heading-jump-indirect nil))
 
 ;; TODO ~org-remark~

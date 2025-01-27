@@ -143,6 +143,8 @@
 
 (package! magit
   (define-keymap :keymap (current-global-map)
+    "C-c g" #'magit-dispatch
+    "C-c G" #'magit-file-dispatch
     "C-x g" #'magit-status
     "C-x M-g" #'magit-dispatch))
 

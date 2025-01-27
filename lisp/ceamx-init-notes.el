@@ -15,18 +15,21 @@
 
 (after! consult-notes
   (setopt consult-notes-file-dir-sources
-          `(("Default" ?D ,ceamx-note-default-dir)
+          `(("Org" ?o ,ceamx-agenda-dir)
             ("Work" ?w ,ceamx-note-work-dir)
             ("Journal" ?j ,ceamx-note-journal-dir :hidden t)))
-  (setopt consult-notes-org-headings-files
-          (append (f-entries ceamx-note-default-dir (##f-ext-p % "org") t)))
 
-  (consult-notes-org-headings-mode)
+  (setopt consult-notes-org-headings-files
+          (dolist (dir (list ceamx-note-default-dir
+                             ceamx-note-work-dir))
+            (append (f-entries dir (##f-ext-p % "org") t))))
+
+  (consult-notes-org-headings-mode 1)
 
   (when (locate-library "denote")
     (setopt consult-notes-denote-files-function
-            (lambda () (denote-directory-files nil t t)))
-    (consult-notes-denote-mode)))
+            (##denote-directory-files nil t t))
+    (consult-notes-denote-mode 1)))
 
 ;; via <https://github.com/mclear-tools/consult-notes#embark-support>
 ;; (after! (consult-notes embark)

@@ -1,30 +1,7 @@
-;;; ceamx-init-tools.el --- Tools and utilities  -*- lexical-binding: t;  -*-
-
-;; Copyright (c) 2023-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-;;; Code:
-
-(require 'seq)
+;; -*- lexical-binding: t;  -*-
 
 (require 'ceamx-lib)
+(require 'seq)
 
 ;; Set up ~eshell~, the Emacs-Lisp shell
 
@@ -186,6 +163,18 @@
 (use-feature! i-ching
   :commands (i-ching/lookup
              i-ching/cast))
+
+;; Operate on buffers rectangularly with the ~rect~ feature
+;; :PROPERTIES:
+;; :ID:       8465808e-c79f-4e30-a88f-a9e64401ff95
+;; :END:
+;; :LOGBOOK:
+;; - Refiled on [2025-01-27 Mon 09:34]
+;; :END:
+
+
+(use-feature! ceamx-tools
+  :bind ( "C-x SPC" . #'ceamx/rectangle-dispatch/body))
 
 (provide 'ceamx-init-tools)
 ;;; ceamx-init-tools.el ends here

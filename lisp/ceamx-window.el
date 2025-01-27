@@ -9,20 +9,18 @@
 ;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
 ;;         Protesilaos Stavrou <public@protesilaos.com>
 
-;; This file is NOT part of GNU Emacs.
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
 
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
 ;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 ;;; Code:
@@ -32,6 +30,12 @@
 (require 'windmove)
 
 ;;;; Customization
+
+(defcustom ceamx-window-fallback-buffer-name "*scratch*"
+  "The name of the buffer to fall back to if no other buffers exist.
+The buffer will be created if it does not exist."
+  :group 'ceamx
+  :type '(string))
 
 (defcustom ceamx-window-workspace-provider 'activities
   "Workspace management implementation.
@@ -368,6 +372,10 @@ If an `activities-mode' activity is current, use
              (not (activities-current)))
          (call-interactively #'bufler-switch-buffer))
         (t (call-interactively #'activities-switch-buffer))))
+
+;;;; Menus
+
+
 
 (provide 'ceamx-window)
 ;;; ceamx-window.el ends here

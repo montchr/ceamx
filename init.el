@@ -73,9 +73,30 @@
   :type '(boolean))
 
 ;; Configure ~custom-file~ location
+;; :PROPERTIES:
+;; :ID:       59f6ed70-cdb4-45fd-8980-0d57d1aad12e
+;; :END:
 
 
 (setq custom-file (locate-user-emacs-file "custom.el"))
+
+;; Security improvements
+;; :PROPERTIES:
+;; :ID:       870f1c8f-5998-4960-9c0d-98121a73df16
+;; :END:
+
+
+;; Prevent Emacs from pinging domain names unexpectedly.
+(setq ffap-machine-p-known 'reject)
+
+(with-eval-after-load 'gnutls
+  (eval-when-compile
+    (require 'gnutls))
+
+  ;; Disallow insecure TLS connections.
+  (setq gnutls-verify-error t)
+  ;; This is an acceptably-modern security expectation.
+  (setq gnutls-min-prime-bits 3072))
 
 ;; Declare safe local variable directories and values relating to Emacs initialization
 
@@ -327,6 +348,9 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (elpaca (org :autoloads "org-loaddefs.el"))
 
 ;; Install the latest version of ~use-package~
+;; :PROPERTIES:
+;; :ID:       87854bdb-fb6f-4117-884e-81354c924c07
+;; :END:
 
 
 (elpaca use-package)
@@ -359,6 +383,20 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
   (setopt use-package-expand-minimally nil)
   (setopt use-package-verbose t)
   (setopt use-package-compute-statistics t))
+
+;; Improve ~use-package~ completion-at-point availability
+;; :PROPERTIES:
+;; :ID:       863979e9-5559-4abf-903e-307f528e6263
+;; :END:
+
+
+(def-advice! ceamx+use-package--bind-handle-sharp-quotes-a (args)
+  :filter-args #'use-package-normalize-binder
+  "Make `use-package' handle sharp-quoted functions correctly in `:bind'.
+Performs a recursive find-and-replace on sharp quotes in the arguments,
+because that's the simple solution and the performance overhead is
+unimportant since it happens during compilation anyway."
+  (ceamx--remove-sharp-quotes args))
 
 ;; ~blackout~: adjust mode-line lighters :modeline:
 
@@ -607,6 +645,7 @@ The ORDER can be used to deduce the feature context."
 ;; Load Features
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el
+;; :VISIBILITY: folded
 ;; :END:
 
 
@@ -629,6 +668,9 @@ The ORDER can be used to deduce the feature context."
 (require 'ceamx-init-fun)
 
 ;; Prefix: [C-c]
+;; :PROPERTIES:
+;; :ID:       d6797497-e46d-4743-abcd-36b3eea55a88
+;; :END:
 
 
 (define-keymap :keymap (current-global-map)
@@ -640,12 +682,8 @@ The ORDER can be used to deduce the feature context."
   "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
   "C-c E" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
   "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
-  "C-c g" #'magit-dispatch
-  "C-c G" #'magit-file-dispatch
-  "C-c h" #'consult-history
   "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
   ;; "C-c j"
-  "C-c k" #'consult-kmacro
   "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
   ;; "C-c m"
   "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
@@ -663,53 +701,13 @@ The ORDER can be used to deduce the feature context."
   ;; "C-c z"
   )
 
-;; Prefix: [C-x]
-
-
-(define-keymap :keymap (current-global-map)
-  "C-x n N" #'logos-narrow-dwim
-  "C-x o" #'ace-window
-  ;; "C-x o" #'ceamx/other-window
-  "C-x O" #'ace-window
-
-  "C-x =" #'balance-windows
-  "C-x +" #'balance-windows-area
-  "C-x ]" #'logos-forward-page-dwim
-  "C-x [" #'logos-backward-page-dwim
-  "C-x SPC" #'hydra-rectangle/body
-
-  "C-x C-b" #'ibuffer
-  "C-x C-n" #'next-buffer
-  "C-x C-p" #'previous-buffer
-  ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
-  ;; that `comment-line' is bound to [C-x C-;].
-  "C-x M-;" #'comment-line
-
-  "C-x M-r" #'rectangle-mark-mode
-
-  "C-x <up>" #'enlarge-window           ; also: C-x ^
-  "C-x <down>" #'shrink-window
-  "C-x <left>" #'shrink-window-horizontally
-  "C-x <right>" #'enlarge-window-horizontally)
-
-;; Modifier: [M-]
-
-
-(define-keymap :keymap (current-global-map)
-  "M-]" #'logos-forward-page-dwim
-  "M-[" #'logos-backward-page-dwim
-  "M-j" #'avy-goto-char-timer
-  "M-w" #'easy-kill)
-
-(after! (avy lispy)
-  ;; Prevent conflict with newly-added M-j binding.
-  (keymap-set lispy-mode-map "M-J" #'lispy-join))
-
 ;; [C-c i] :: Insert
+;; :PROPERTIES:
+;; :ID:       86b823a2-197c-45d4-88a2-fa1b27dc33b8
+;; :END:
 
 
 (define-keymap :keymap ceamx-insert-prefix
-  "d" #'ceamx-simple/insert-date
   ;; "h" #'i-ching-insert-hexagram
   "L" #'spdx-insert-spdx
   "s" #'yas-insert-snippet
@@ -782,6 +780,9 @@ The ORDER can be used to deduce the feature context."
   "z" #'logos-focus-mode)
 
 ;; Window
+;; :PROPERTIES:
+;; :ID:       93d96a59-5e99-4939-8691-14aaaf942adb
+;; :END:
 
 
 (define-keymap :keymap ceamx-window-prefix
@@ -805,7 +806,6 @@ The ORDER can be used to deduce the feature context."
   "l" #'windmove-right
   "L" #'ceamx/window-move-right
 
-  ;; "SPC" #'transpose-frame
   "=" #'balance-windows
   "<" #'flip-frame
   ">" #'flop-frame

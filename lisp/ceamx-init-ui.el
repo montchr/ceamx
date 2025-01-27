@@ -1,7 +1,7 @@
-  ;; -*- lexical-binding: t;  -*-
+;; -*- lexical-binding: t;  -*-
 
-  (require 'ceamx-lib)
-  (require 'ceamx-ui)
+(require 'ceamx-lib)
+(require 'ceamx-ui)
 
 ;; Configure cursor appearance
 
@@ -193,14 +193,26 @@
                   (ceamx-ui/load-light-theme))))))
 
 ;; ~avy~ :: can do anything
+;; :PROPERTIES:
+;; :ID:       05cb2761-07fc-476b-8b78-0d08e0a89469
+;; :END:
 
 ;; + Package :: <https://github.com/abo-abo/avy>
 ;; + Article :: <https://karthinks.com/software/avy-can-do-anything/>
 
 
 (package! avy
-  (defer! 3
-    (require 'avy)))
+  (defer! 2 (require 'avy))
+
+  (define-keymap :keymap (current-global-map)
+    "C-;" #'avy-goto-char-timer
+    ;; "C-'" is reserved for special commands e.g. `avy-org-goto-heading-timer'
+
+    "M-g w" #'avy-goto-word-1)
+
+  (after! org
+    (keymap-set org-mode-map "C-'" #'avy-org-goto-heading-timer)
+    (keymap-set org-mode-map "C-\"" #'avy-org-refile-as-child)))
 
 (after! avy
   (setopt avy-style 'at-full)
@@ -308,36 +320,48 @@
           olivetti-recall-visual-line-mode-entry-state t))
 
 ;; ~logos~ :: a simple focus mode with page breaks or outlines :present:
+;; :PROPERTIES:
+;; :ID:       9f620970-a54b-46bf-bbc4-ad3712646506
+;; :END:
 
 
 (package! logos
-  (after! logos
-    (setopt logos-outlines-are-pages t)
-    (setopt logos-outline-regexp-alist
-            `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
-              (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
-              (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
-              (conf-toml-mode . "^\\[")))
+  (define-keymap :keymap (current-global-map)
+    "C-x n N" #'logos-narrow-dwim
 
-    ;; These apply buffer-locally when `logos-focus-mode' is enabled.
-    (setq-default logos-hide-cursor t
-                  logos-hide-mode-line t
-                  logos-hide-header-line t
-                  logos-hide-buffer-boundaries t
-                  logos-hide-fringe t
-                  logos-variable-pitch nil
-                  logos-buffer-read-only nil
-                  logos-scroll-lock nil
-                  logos-olivetti t)
+    "C-x ]" #'logos-forward-page-dwim
+    "C-x [" #'logos-backward-page-dwim)
 
-    (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+    "M-]" #'logos-forward-page-dwim
+    "M-[" #'logos-backward-page-dwim)
 
-    (def-hook! ceamx-essentials-logos-recenter-top-h ()
-      '(logos-page-motion-hook)
-      "Place point at the top when changing pages in non-`prog-mode' modes."
-      (unless (derived-mode-p 'prog-mode)
-        ;; NOTE: '0' value will recenter at the absolute top.
-        (recenter 1)))))
+(after! logos
+  (setopt logos-outlines-are-pages t)
+  (setopt logos-outline-regexp-alist
+          `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
+            (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
+            (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
+            (conf-toml-mode . "^\\[")))
+
+  ;; These apply buffer-locally when `logos-focus-mode' is enabled.
+  (setq-default logos-hide-cursor t
+                logos-hide-mode-line t
+                logos-hide-header-line t
+                logos-hide-buffer-boundaries t
+                logos-hide-fringe t
+                logos-variable-pitch t
+                logos-buffer-read-only nil
+                logos-scroll-lock nil
+                logos-olivetti t)
+
+  (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+
+  (def-hook! ceamx-essentials-logos-recenter-top-h ()
+    '(logos-page-motion-hook)
+    "Place point at the top when changing pages in non-`prog-mode' modes."
+    (unless (derived-mode-p 'prog-mode)
+      ;; NOTE: '0' value will recenter at the absolute top.
+      (recenter 1))))
 
 ;; ~focus~ :: a lexical focus mode
 

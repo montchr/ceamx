@@ -3,14 +3,25 @@
 (require 'ceamx-simple)
 (require 'ceamx-window)
 
-;; Define the user option specifying a fallback buffer
+;; General customizations
+;; :PROPERTIES:
+;; :ID:       3edd2008-b6f1-4de2-b0fe-388775c61d93
+;; :END:
 
 
-(defcustom ceamx-fallback-buffer-name "*scratch*"
-  "The name of the buffer to fall back to if no other buffers exist.
-The buffer will be created if it does not exist."
-  :group 'ceamx
-  :type '(string))
+(define-keymap :keymap (current-global-map)
+  "C-x =" #'balance-windows
+  "C-x +" #'balance-windows-area
+  "C-x C-n" #'next-buffer
+  "C-x C-p" #'previous-buffer
+  ;; TODO: consider sub-mirroring window manager bindings
+  "C-x <up>" #'enlarge-window           ; also: C-x ^
+  "C-x <down>" #'shrink-window
+  "C-x <left>" #'shrink-window-horizontally
+  "C-x <right>" #'enlarge-window-horizontally)
+
+(use-feature! ceamx-window
+  :bind ("C-x o" . #'ceamx/other-window))
 
 ;; Configure window behavior for help buffers
 
@@ -249,21 +260,28 @@ The buffer will be created if it does not exist."
   (setopt golden-ratio-max-width 100))
 
 ;; =ace-window= :: interactively manage windows
+;; :PROPERTIES:
+;; :ID:       f582eb53-4eb6-4bfd-a67d-feb2facfd23e
+;; :END:
 
 ;; <https://github.com/abo-abo/ace-window>
 
 
 (package! ace-window
-  ;; Same frame only. While it'd be nice to use the default (global), I really
-  ;; dislike that it orders window numbers leads to jarring gaps in window
-  ;; numbers in the same frame. For example, frame A might have windows numbered
-  ;; 1 and 3 and frame B will have window 2.
-  (setopt aw-scope 'frame))
+  (define-keymap :keymap (current-global-map)
+    "C-x O" #'ace-window))
+
+(after! ace-window
+  (setopt aw-scope 'visible))
 
 ;; =transpose-frame= :: transpose a frame's windows
+;; :PROPERTIES:
+;; :ID:       76f64487-fbd0-4754-af9b-ceebf4f0916e
+;; :END:
 
 
-(package! transpose-frame)
+(package! transpose-frame
+  (keymap-global-set "C-x w SPC" #'transpose-frame))
 
 ;; ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
 

@@ -140,12 +140,19 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
 
 ;; ~consult~ :: [consult]ing ~completing-read~
+;; :PROPERTIES:
+;; :ID:       2eff5461-19e2-49a8-9c43-17b2dd6d76f7
+;; :END:
 
 ;; - website :: <https://github.com/minad/consult>
 ;; - ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
 
 
 (package! consult
+  (keymap-global-set "C-c B" #'consult-bookmark)
+  (keymap-global-set "C-c h" #'consult-history)
+  (keymap-global-set "C-c k" #'consult-kmacro)
+
   ;; Improve previews for `consult-register' and other register commands
   (setopt register-preview-delay 0.5)
   (setopt register-preview-function #'consult-register-format)

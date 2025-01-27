@@ -1,6 +1,9 @@
 ;; -*- lexical-binding: t; -*-
 
 ;; Baseline configurations
+;; :PROPERTIES:
+;; :ID:       9d89d38e-1fa6-41e5-b5a7-8c1c3422a34c
+;; :END:
 
 
 ;; Increase number of messages saved in log.
@@ -8,9 +11,6 @@
 
 ;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
 (setopt auto-mode-case-fold nil)
-
-;; Prevent Emacs from pinging domain names unexpectedly.
-(setopt ffap-machine-p-known 'reject)
 
 (define-keymap :keymap (current-global-map)
   "M-c" #'capitalize-dwim
@@ -43,11 +43,32 @@
   "r" #'rename-uniquely)
 
 ;; ~ceamx-simple~: Simple & common commands
+;; :PROPERTIES:
+;; :ID:       3fcbca20-29f3-4e91-ba76-6bad1199adc3
+;; :END:
 
 
 (use-feature! ceamx-simple
   :demand t
+
   :config
+  (define-keymap :keymap ceamx-file-prefix
+  ;; TODO
+  ;; "y" #'+yank-this-file-name
+
+  "c" '("copy..." . ceamx-simple/copy-current-file)
+  "d" '("delete" . ceamx-simple/delete-current-file)
+  "f" #'find-file
+  "F" #'find-file-other-window
+  "r" '("move..." . ceamx-simple/move-current-file)
+  "s" #'save-buffer
+  "U" #'ceamx-simple/sudo-find-file
+
+  "C-d" '("diff with..." . ceamx-simple/diff-with-file))
+
+  (define-keymap :keymap ceamx-insert-prefix
+    "d" #'ceamx-simple/insert-date)
+
   (define-keymap :keymap (current-global-map)
     "ESC ESC" #'ceamx/keyboard-quit-dwim
     "C-g" #'ceamx/keyboard-quit-dwim
@@ -87,6 +108,9 @@
                      #'ceamx-simple/continue-comment))
 
 ;; =crux= :: a [c]ollection of [r]idiculously [u]seful e[x]tensions
+;; :PROPERTIES:
+;; :ID:       5fe13339-e827-421a-a059-f0fea7bff481
+;; :END:
 
 
 (package! crux
@@ -95,7 +119,6 @@
     "C-^" #'crux-top-join-line
 
     "C-x 4 t" #'crux-transpose-windows
-    "C-x w SPC" #'crux-transpose-windows
 
     "C-S-d" #'crux-duplicate-current-line-or-region
     "C-S-RET" #'crux-smart-open-line-above
@@ -222,6 +245,17 @@ PROPS is as in `editorconfig-after-apply-functions'."
   :config
   (add-hook 'editorconfig-after-apply-functions #'+editorconfig-enforce-org-mode-tab-width-h))
 
+;; Movement / Regions / Basic Editing
+;; :PROPERTIES:
+;; :ID:       2c6a6df3-2b31-4638-bdcd-c9e63e367ea0
+;; :END:
+
+
+(define-keymap :keymap (current-global-map)
+  ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
+  ;; that `comment-line' is bound to [C-x C-;].
+  "C-x M-;" #'comment-line)
+
 ;; ~mwim~: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
 
 
@@ -240,6 +274,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (beginend-global-mode))
 
 ;; INPRG Provide a command to intelligently kill words backwardsly
+;; :PROPERTIES:
+;; :ID:       e1892d34-b345-468c-a5b7-9f0355f50451
+;; :END:
 
 ;; - State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
 ;;   Needs a fix for compatibility with ~subword-mode~.  See also [[*Don't consider camelCaseWORDs as separate words]]
@@ -280,29 +317,29 @@ This operation will respect the following rules:
         (delete-char -1)))))
 
 ;; ~easy-kill~ :: killing is easy when you're emacs :package:
+;; :PROPERTIES:
+;; :ID:       a3727c22-4373-47aa-ac61-e1355c5e048d
+;; :END:
 
 ;; + Package documentation :: <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
-;; #+begin_example
-;; w => word
-;; s => sexp
-;; l => list
-;; d => defun
-;; D => defun name
-;; f => file
-;; b => buffer name
-;;        ->"-": `default-directory'
-;;        ->"+": full path
-;;        ->"0": basename
-;; #+end_example
+;; + =w= :: word
+;; + =s= :: sexp
+;; + =l= :: list
+;; + =d= :: defun
+;; + =D= :: defun name
+;; + =f= :: file
+;; + =b= :: buffer name
+;;   + =-= :: ~default-directory~
+;;   + =+= :: absolute path
+;;   + =0= :: basename
 
 
 (use-package easy-kill
-  ;; :ensure t
-  :commands (easy-kill easy-mark)
-  :init
-  (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
-  (keymap-global-set "C-M-@" #'easy-mark) ; override `mark-sexp'
+  :ensure t
+  :bind
+  ("M-w" . #'easy-kill)   ; orig. `kill-ring-save'
+  ("C-M-@" . #'easy-mark) ; orig. `mark-sexp'
   )
 
 ;; Replace region when inserting text
@@ -398,6 +435,9 @@ This operation will respect the following rules:
     (_ (string-inflection-ruby-style-cycle))))
 
 ;; ~ialign~ :: Interactively ~align-regexp~ :package:
+;; :PROPERTIES:
+;; :ID:       7c7b2b24-f6e4-4af5-934f-0d66b65bba6c
+;; :END:
 
 ;; <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
 
@@ -780,6 +820,9 @@ This operation will respect the following rules:
   (undo-fu-session-global-mode))
 
 ;; ~vundo~: Visualize the Emacs undo tree
+;; :PROPERTIES:
+;; :ID:       8fd3c7aa-cf9d-47f9-91cf-715e6f5d0618
+;; :END:
 
 ;; - Source code :: <https://github.com/casouri/vundo>
 

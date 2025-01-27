@@ -842,9 +842,31 @@ ELP is useful for seeing which functions in a package are "hot":
 #+end_src
 
 *** Configure ~custom-file~ location
+:PROPERTIES:
+:ID:       59f6ed70-cdb4-45fd-8980-0d57d1aad12e
+:END:
 
 #+begin_src emacs-lisp
 (setq custom-file (locate-user-emacs-file "custom.el"))
+#+end_src
+
+*** Security improvements
+:PROPERTIES:
+:ID:       870f1c8f-5998-4960-9c0d-98121a73df16
+:END:
+
+#+begin_src emacs-lisp
+;; Prevent Emacs from pinging domain names unexpectedly.
+(setq ffap-machine-p-known 'reject)
+
+(with-eval-after-load 'gnutls
+  (eval-when-compile
+    (require 'gnutls))
+
+  ;; Disallow insecure TLS connections.
+  (setq gnutls-verify-error t)
+  ;; This is an acceptably-modern security expectation.
+  (setq gnutls-min-prime-bits 3072))
 #+end_src
 
 *** Declare safe local variable directories and values relating to Emacs initialization
@@ -1225,6 +1247,9 @@ Required by ~eglot~.
 #+end_src
 
 **** Install the latest version of ~use-package~
+:PROPERTIES:
+:ID:       87854bdb-fb6f-4117-884e-81354c924c07
+:END:
 
 #+begin_src emacs-lisp
 (elpaca use-package)
@@ -1260,6 +1285,21 @@ Reason:
   (setopt use-package-expand-minimally nil)
   (setopt use-package-verbose t)
   (setopt use-package-compute-statistics t))
+#+end_src
+
+**** Improve ~use-package~ completion-at-point availability
+:PROPERTIES:
+:ID:       863979e9-5559-4abf-903e-307f528e6263
+:END:
+
+#+begin_src emacs-lisp
+(def-advice! ceamx+use-package--bind-handle-sharp-quotes-a (args)
+  :filter-args #'use-package-normalize-binder
+  "Make `use-package' handle sharp-quoted functions correctly in `:bind'.
+Performs a recursive find-and-replace on sharp quotes in the arguments,
+because that's the simple solution and the performance overhead is
+unimportant since it happens during compilation anyway."
+  (ceamx--remove-sharp-quotes args))
 #+end_src
 
 **** ~blackout~: adjust mode-line lighters :modeline:
@@ -1808,14 +1848,26 @@ applying margin, padding, borders.
 #+end_src
 
 *** ~avy~ :: can do anything
+:PROPERTIES:
+:ID:       05cb2761-07fc-476b-8b78-0d08e0a89469
+:END:
 
 + Package :: <https://github.com/abo-abo/avy>
 + Article :: <https://karthinks.com/software/avy-can-do-anything/>
 
 #+begin_src emacs-lisp
 (package! avy
-  (defer! 3
-    (require 'avy)))
+  (defer! 2 (require 'avy))
+
+  (define-keymap :keymap (current-global-map)
+    "C-;" #'avy-goto-char-timer
+    ;; "C-'" is reserved for special commands e.g. `avy-org-goto-heading-timer'
+
+    "M-g w" #'avy-goto-word-1)
+
+  (after! org
+    (keymap-set org-mode-map "C-'" #'avy-org-goto-heading-timer)
+    (keymap-set org-mode-map "C-\"" #'avy-org-refile-as-child)))
 
 (after! avy
   (setopt avy-style 'at-full)
@@ -1931,36 +1983,48 @@ applying margin, padding, borders.
 #+end_src
 
 *** ~logos~ :: a simple focus mode with page breaks or outlines :present:
+:PROPERTIES:
+:ID:       9f620970-a54b-46bf-bbc4-ad3712646506
+:END:
 
 #+begin_src emacs-lisp
 (package! logos
-  (after! logos
-    (setopt logos-outlines-are-pages t)
-    (setopt logos-outline-regexp-alist
-            `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
-              (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
-              (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
-              (conf-toml-mode . "^\\[")))
+  (define-keymap :keymap (current-global-map)
+    "C-x n N" #'logos-narrow-dwim
 
-    ;; These apply buffer-locally when `logos-focus-mode' is enabled.
-    (setq-default logos-hide-cursor t
-                  logos-hide-mode-line t
-                  logos-hide-header-line t
-                  logos-hide-buffer-boundaries t
-                  logos-hide-fringe t
-                  logos-variable-pitch nil
-                  logos-buffer-read-only nil
-                  logos-scroll-lock nil
-                  logos-olivetti t)
+    "C-x ]" #'logos-forward-page-dwim
+    "C-x [" #'logos-backward-page-dwim)
 
-    (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+    "M-]" #'logos-forward-page-dwim
+    "M-[" #'logos-backward-page-dwim)
 
-    (def-hook! ceamx-essentials-logos-recenter-top-h ()
-      '(logos-page-motion-hook)
-      "Place point at the top when changing pages in non-`prog-mode' modes."
-      (unless (derived-mode-p 'prog-mode)
-        ;; NOTE: '0' value will recenter at the absolute top.
-        (recenter 1)))))
+(after! logos
+  (setopt logos-outlines-are-pages t)
+  (setopt logos-outline-regexp-alist
+          `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
+            (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
+            (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
+            (conf-toml-mode . "^\\[")))
+
+  ;; These apply buffer-locally when `logos-focus-mode' is enabled.
+  (setq-default logos-hide-cursor t
+                logos-hide-mode-line t
+                logos-hide-header-line t
+                logos-hide-buffer-boundaries t
+                logos-hide-fringe t
+                logos-variable-pitch t
+                logos-buffer-read-only nil
+                logos-scroll-lock nil
+                logos-olivetti t)
+
+  (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+
+  (def-hook! ceamx-essentials-logos-recenter-top-h ()
+    '(logos-page-motion-hook)
+    "Place point at the top when changing pages in non-`prog-mode' modes."
+    (unless (derived-mode-p 'prog-mode)
+      ;; NOTE: '0' value will recenter at the absolute top.
+      (recenter 1))))
 #+end_src
 
 *** ~focus~ :: a lexical focus mode
@@ -2334,6 +2398,9 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 #+end_src
 
 *** Baseline configurations
+:PROPERTIES:
+:ID:       9d89d38e-1fa6-41e5-b5a7-8c1c3422a34c
+:END:
 
 #+begin_src emacs-lisp
 ;; Increase number of messages saved in log.
@@ -2341,9 +2408,6 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 
 ;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
 (setopt auto-mode-case-fold nil)
-
-;; Prevent Emacs from pinging domain names unexpectedly.
-(setopt ffap-machine-p-known 'reject)
 
 (define-keymap :keymap (current-global-map)
   "M-c" #'capitalize-dwim
@@ -2379,11 +2443,32 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 #+end_src
 
 *** ~ceamx-simple~: Simple & common commands
+:PROPERTIES:
+:ID:       3fcbca20-29f3-4e91-ba76-6bad1199adc3
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! ceamx-simple
   :demand t
+
   :config
+  (define-keymap :keymap ceamx-file-prefix
+  ;; TODO
+  ;; "y" #'+yank-this-file-name
+
+  "c" '("copy..." . ceamx-simple/copy-current-file)
+  "d" '("delete" . ceamx-simple/delete-current-file)
+  "f" #'find-file
+  "F" #'find-file-other-window
+  "r" '("move..." . ceamx-simple/move-current-file)
+  "s" #'save-buffer
+  "U" #'ceamx-simple/sudo-find-file
+
+  "C-d" '("diff with..." . ceamx-simple/diff-with-file))
+
+  (define-keymap :keymap ceamx-insert-prefix
+    "d" #'ceamx-simple/insert-date)
+
   (define-keymap :keymap (current-global-map)
     "ESC ESC" #'ceamx/keyboard-quit-dwim
     "C-g" #'ceamx/keyboard-quit-dwim
@@ -2424,6 +2509,9 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 #+end_src
 
 *** =crux= :: a [c]ollection of [r]idiculously [u]seful e[x]tensions
+:PROPERTIES:
+:ID:       5fe13339-e827-421a-a059-f0fea7bff481
+:END:
 
 #+begin_src emacs-lisp
 (package! crux
@@ -2432,7 +2520,6 @@ NOTE: Incompatible with kitchen-sink modeline packages like
     "C-^" #'crux-top-join-line
 
     "C-x 4 t" #'crux-transpose-windows
-    "C-x w SPC" #'crux-transpose-windows
 
     "C-S-d" #'crux-duplicate-current-line-or-region
     "C-S-RET" #'crux-smart-open-line-above
@@ -2566,6 +2653,16 @@ PROPS is as in `editorconfig-after-apply-functions'."
 #+end_src
 
 *** Movement / Regions / Basic Editing
+:PROPERTIES:
+:ID:       2c6a6df3-2b31-4638-bdcd-c9e63e367ea0
+:END:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
+  ;; that `comment-line' is bound to [C-x C-;].
+  "C-x M-;" #'comment-line)
+#+end_src
 
 **** ~mwim~: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
 
@@ -2587,6 +2684,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
 #+end_src
 
 **** INPRG Provide a command to intelligently kill words backwardsly
+:PROPERTIES:
+:ID:       e1892d34-b345-468c-a5b7-9f0355f50451
+:END:
 
 - State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
   Needs a fix for compatibility with ~subword-mode~.  See also [[*Don't consider camelCaseWORDs as separate words]]
@@ -2627,29 +2727,29 @@ This operation will respect the following rules:
         (delete-char -1)))))
 #+end_src
 **** ~easy-kill~ :: killing is easy when you're emacs :package:
+:PROPERTIES:
+:ID:       a3727c22-4373-47aa-ac61-e1355c5e048d
+:END:
 
 + Package documentation :: <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
-#+begin_example
-w => word
-s => sexp
-l => list
-d => defun
-D => defun name
-f => file
-b => buffer name
-       ->"-": `default-directory'
-       ->"+": full path
-       ->"0": basename
-#+end_example
++ =w= :: word
++ =s= :: sexp
++ =l= :: list
++ =d= :: defun
++ =D= :: defun name
++ =f= :: file
++ =b= :: buffer name
+  + =-= :: ~default-directory~
+  + =+= :: absolute path
+  + =0= :: basename
 
 #+begin_src emacs-lisp
 (use-package easy-kill
-  ;; :ensure t
-  :commands (easy-kill easy-mark)
-  :init
-  (keymap-global-set "M-w" #'easy-kill)   ; override `kill-ring-save'
-  (keymap-global-set "C-M-@" #'easy-mark) ; override `mark-sexp'
+  :ensure t
+  :bind
+  ("M-w" . #'easy-kill)   ; orig. `kill-ring-save'
+  ("C-M-@" . #'easy-mark) ; orig. `mark-sexp'
   )
 #+end_src
 
@@ -2660,6 +2760,9 @@ b => buffer name
 #+end_src
 
 **** DISABLED ~expand-region~ :: Increase/decrease the selection area
+:PROPERTIES:
+:ID:       8f9fac61-4ade-4ec4-ad95-5b2da3c52011
+:END:
 
 #+begin_src emacs-lisp :tangle no
 (use-package expand-region
@@ -2764,6 +2867,9 @@ Needs better bindings.
 #+end_src
 
 **** ~ialign~ :: Interactively ~align-regexp~ :package:
+:PROPERTIES:
+:ID:       7c7b2b24-f6e4-4af5-934f-0d66b65bba6c
+:END:
 
 <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
 
@@ -2772,47 +2878,21 @@ Needs better bindings.
   (keymap-global-set "C-x l" #'ialign))
 #+end_src
 
-**** Operate on buffers rectangularly with the ~rect~ feature
+**** TODO ~lasgun~ :: =avy=-backed actionable multi-mark filter-select-act loops
+:PROPERTIES:
+:ID:       8fb3be75-c1b6-48bd-853a-3c18c905367d
+:END:
 
-<https://github.com/abo-abo/hydra/wiki/Rectangle-Operations#rectangle-2>
++ Package :: https://github.com/aatmunbaxi/lasgun.el
 
-#+begin_src emacs-lisp :tangle no
-(use-feature! rect
-  :config
-  ;; FIXME: no such file or directory hydra ?!! why did this change?
-  (require 'hydra)
++ [ ] [[https://github.com/aatmunbaxi/lasgun.el?tab=readme-ov-file#example-embark-action-menu][Embark action menu]]
++ [ ] After Avy
++ [ ] Customize
++ [ ] Where to put the [[https://github.com/aatmunbaxi/lasgun.el?tab=readme-ov-file#example-transient-configuration][Transient menu]]?
 
-  (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
-                                       :color pink
-                                       :hint nil
-                                       :post (deactivate-mark))
-    "
-  ^_k_^       _w_ copy      _o_pen       _N_umber-lines            |\\     -,,,--,,_
-_h_   _l_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..  \-;;,_
-  ^_j_^       _d_ kill      _c_lear      _r_eset-region-mark      |,4-  ) )_   .;.(  `'-'
-^^^^          _u_ndo        _g_ quit     ^ ^                     '---''(./..)-'(_\_)
-"
-    ("k" rectangle-previous-line)
-    ("j" rectangle-next-line)
-    ("h" rectangle-backward-char)
-    ("l" rectangle-forward-char)
-    ("d" kill-rectangle)                    ;; C-x r k
-    ("y" yank-rectangle)                    ;; C-x r y
-    ("w" copy-rectangle-as-kill)            ;; C-x r M-w
-    ("o" open-rectangle)                    ;; C-x r o
-    ("t" string-rectangle)                  ;; C-x r t
-    ("c" clear-rectangle)                   ;; C-x r c
-    ("e" rectangle-exchange-point-and-mark) ;; C-x C-x
-    ("N" rectangle-number-lines)            ;; C-x r N
-    ("r" (if (region-active-p)
-             (deactivate-mark)
-           (rectangle-mark-mode 1)))
-    ("u" undo nil)
-    ("g" nil))
-
-  (when (fboundp 'hydra-rectangle/body)
-    (keymap-global-set "C-x SPC" #'hydra-rectangle/body)
-    (keymap-global-set "C-x M-r" #'rectangle-mark-mode)))
+  #+begin_src emacs-lisp :tangle no
+(package! (lasgun :host github
+                  :repo "aatmunbaxi/lasgun.el"))
 #+end_src
 
 *** Line wrapping
@@ -3212,6 +3292,9 @@ enhancement to the builtin Emacs undo system as well.
 #+end_src
 
 **** ~vundo~: Visualize the Emacs undo tree
+:PROPERTIES:
+:ID:       8fd3c7aa-cf9d-47f9-91cf-715e6f5d0618
+:END:
 
 - Source code :: <https://github.com/casouri/vundo>
 
@@ -3845,12 +3928,19 @@ Fine-tune Vertico appearance per-command or per-category with
 #+end_src
 
 **** ~consult~ :: [consult]ing ~completing-read~
+:PROPERTIES:
+:ID:       2eff5461-19e2-49a8-9c43-17b2dd6d76f7
+:END:
 
 - website :: <https://github.com/minad/consult>
 - ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
 
 #+begin_src emacs-lisp
 (package! consult
+  (keymap-global-set "C-c B" #'consult-bookmark)
+  (keymap-global-set "C-c h" #'consult-history)
+  (keymap-global-set "C-c k" #'consult-kmacro)
+
   ;; Improve previews for `consult-register' and other register commands
   (setopt register-preview-delay 0.5)
   (setopt register-preview-function #'consult-register-format)
@@ -4554,6 +4644,7 @@ Define Embark actions for acting on tabs:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-window.el
 :VISIBILITY: folded
+:ID:       ab94f305-4394-4882-aa40-55251f8c7379
 :END:
 
 *** Requirements
@@ -4568,14 +4659,25 @@ Define Embark actions for acting on tabs:
 (require 'ceamx-window)
 #+end_src
 
-*** Define the user option specifying a fallback buffer
+*** General customizations
+:PROPERTIES:
+:ID:       3edd2008-b6f1-4de2-b0fe-388775c61d93
+:END:
 
 #+begin_src emacs-lisp
-(defcustom ceamx-fallback-buffer-name "*scratch*"
-  "The name of the buffer to fall back to if no other buffers exist.
-The buffer will be created if it does not exist."
-  :group 'ceamx
-  :type '(string))
+(define-keymap :keymap (current-global-map)
+  "C-x =" #'balance-windows
+  "C-x +" #'balance-windows-area
+  "C-x C-n" #'next-buffer
+  "C-x C-p" #'previous-buffer
+  ;; TODO: consider sub-mirroring window manager bindings
+  "C-x <up>" #'enlarge-window           ; also: C-x ^
+  "C-x <down>" #'shrink-window
+  "C-x <left>" #'shrink-window-horizontally
+  "C-x <right>" #'enlarge-window-horizontally)
+
+(use-feature! ceamx-window
+  :bind ("C-x o" . #'ceamx/other-window))
 #+end_src
 
 *** Buffer display
@@ -4844,22 +4946,29 @@ Action alist entries are:
 #+end_src
 
 **** =ace-window= :: interactively manage windows
+:PROPERTIES:
+:ID:       f582eb53-4eb6-4bfd-a67d-feb2facfd23e
+:END:
 
 <https://github.com/abo-abo/ace-window>
 
 #+begin_src emacs-lisp
 (package! ace-window
-  ;; Same frame only. While it'd be nice to use the default (global), I really
-  ;; dislike that it orders window numbers leads to jarring gaps in window
-  ;; numbers in the same frame. For example, frame A might have windows numbered
-  ;; 1 and 3 and frame B will have window 2.
-  (setopt aw-scope 'frame))
+  (define-keymap :keymap (current-global-map)
+    "C-x O" #'ace-window))
+
+(after! ace-window
+  (setopt aw-scope 'visible))
 #+end_src
 
 **** =transpose-frame= :: transpose a frame's windows
+:PROPERTIES:
+:ID:       76f64487-fbd0-4754-af9b-ceebf4f0916e
+:END:
 
 #+begin_src emacs-lisp
-(package! transpose-frame)
+(package! transpose-frame
+  (keymap-global-set "C-x w SPC" #'transpose-frame))
 #+end_src
 
 **** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
@@ -5309,6 +5418,8 @@ NOTE: Fringe indicators will conflict with Flycheck.
 #+begin_src emacs-lisp
 (package! magit
   (define-keymap :keymap (current-global-map)
+    "C-c g" #'magit-dispatch
+    "C-c G" #'magit-file-dispatch
     "C-x g" #'magit-status
     "C-x M-g" #'magit-dispatch))
 
@@ -7454,18 +7565,21 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 
 (after! consult-notes
   (setopt consult-notes-file-dir-sources
-          `(("Default" ?D ,ceamx-note-default-dir)
+          `(("Org" ?o ,ceamx-agenda-dir)
             ("Work" ?w ,ceamx-note-work-dir)
             ("Journal" ?j ,ceamx-note-journal-dir :hidden t)))
-  (setopt consult-notes-org-headings-files
-          (append (f-entries ceamx-note-default-dir (##f-ext-p % "org") t)))
 
-  (consult-notes-org-headings-mode)
+  (setopt consult-notes-org-headings-files
+          (dolist (dir (list ceamx-note-default-dir
+                             ceamx-note-work-dir))
+            (append (f-entries dir (##f-ext-p % "org") t))))
+
+  (consult-notes-org-headings-mode 1)
 
   (when (locate-library "denote")
     (setopt consult-notes-denote-files-function
-            (lambda () (denote-directory-files nil t t)))
-    (consult-notes-denote-mode)))
+            (##denote-directory-files nil t t))
+    (consult-notes-denote-mode 1)))
 #+end_src
 
 *** TODO Embark integration for ~consult-notes~ :embark:
@@ -7644,6 +7758,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-org.el
 :VISIBILITY: folded
+:ID:       9f19a792-41ba-4732-90bd-021e0ae609ab
 :END:
 
 *** Requirements
@@ -8176,6 +8291,9 @@ I don't think this is working properly...
 #+END_SRC
 
 *** ~org-bookmark-heading~ :: Support heading bookmarks :bookmarks:package:
+:PROPERTIES:
+:ID:       cd3ef5ab-e573-43e9-b1f7-81eb6dade0a9
+:END:
 
 #+begin_src emacs-lisp
 (package! org-bookmark-heading
@@ -8183,10 +8301,7 @@ I don't think this is working properly...
     (require 'org-bookmark-heading)))
 
 (after! org-bookmark-heading
-  ;; FIXME: `org-bookmark-heading-make-ids' does not work well with
-  ;; `activities-mode'
-  ;; <https://github.com/alphapapa/activities.el/issues/134>
-  (setopt org-bookmark-heading-make-ids nil
+  (setopt org-bookmark-heading-make-ids t
           org-bookmark-heading-jump-indirect nil))
 #+end_src
 
@@ -8229,6 +8344,7 @@ I don't think this is working properly...
 ** TODO Printing
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       22d5396b-cd38-47c0-b299-d7d560d052b7
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/init-printing.el :comments no
@@ -8614,39 +8730,17 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 :VISIBILITY: folded
 :END:
 
-*** The =lisp/ceamx-init-tools.el= file header
+*** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       709b1092-1de6-43f6-bbb9-3aa15b496f49
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-tools.el :comments no
-;;; ceamx-init-tools.el --- Tools and utilities  -*- lexical-binding: t;  -*-
-
-;; Copyright (c) 2023-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-
-;;; Commentary:
-;;; Code:
-
-(require 'seq)
+;; -*- lexical-binding: t;  -*-
 
 (require 'ceamx-lib)
+(require 'seq)
 #+end_src
 
 *** Set up ~eshell~, the Emacs-Lisp shell
@@ -8860,6 +8954,19 @@ changing lines.
   :commands (i-ching/lookup
              i-ching/cast))
 #+end_src
+*** Operate on buffers rectangularly with the ~rect~ feature
+:PROPERTIES:
+:ID:       8465808e-c79f-4e30-a88f-a9e64401ff95
+:END:
+:LOGBOOK:
+- Refiled on [2025-01-27 Mon 09:34]
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! ceamx-tools
+  :bind ( "C-x SPC" . #'ceamx/rectangle-dispatch/body))
+#+end_src
+
 *** Provide the ~ceamx-init-tools~ feature
 :PROPERTIES:
 :VISIBILITY: folded
@@ -8959,6 +9066,9 @@ Return the new `zone' timer."
 :END:
 
 ** Prefix: [C-c]
+:PROPERTIES:
+:ID:       d6797497-e46d-4743-abcd-36b3eea55a88
+:END:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
@@ -8970,12 +9080,8 @@ Return the new `zone' timer."
   "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
   "C-c E" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
   "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
-  "C-c g" #'magit-dispatch
-  "C-c G" #'magit-file-dispatch
-  "C-c h" #'consult-history
   "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
   ;; "C-c j"
-  "C-c k" #'consult-kmacro
   "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
   ;; "C-c m"
   "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
@@ -8995,73 +9101,13 @@ Return the new `zone' timer."
 
 #+end_src
 
-** Prefix: [C-x]
-
-#+begin_src emacs-lisp
-(define-keymap :keymap (current-global-map)
-  "C-x n N" #'logos-narrow-dwim
-  "C-x o" #'ace-window
-  ;; "C-x o" #'ceamx/other-window
-  "C-x O" #'ace-window
-
-  "C-x =" #'balance-windows
-  "C-x +" #'balance-windows-area
-  "C-x ]" #'logos-forward-page-dwim
-  "C-x [" #'logos-backward-page-dwim
-  "C-x SPC" #'hydra-rectangle/body
-
-  "C-x C-b" #'ibuffer
-  "C-x C-n" #'next-buffer
-  "C-x C-p" #'previous-buffer
-  ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
-  ;; that `comment-line' is bound to [C-x C-;].
-  "C-x M-;" #'comment-line
-
-  "C-x M-r" #'rectangle-mark-mode
-
-  "C-x <up>" #'enlarge-window           ; also: C-x ^
-  "C-x <down>" #'shrink-window
-  "C-x <left>" #'shrink-window-horizontally
-  "C-x <right>" #'enlarge-window-horizontally)
-#+end_src
-
-** Modifier: [M-]
-
-#+begin_src emacs-lisp
-(define-keymap :keymap (current-global-map)
-  "M-]" #'logos-forward-page-dwim
-  "M-[" #'logos-backward-page-dwim
-  "M-j" #'avy-goto-char-timer
-  "M-w" #'easy-kill)
-
-(after! (avy lispy)
-  ;; Prevent conflict with newly-added M-j binding.
-  (keymap-set lispy-mode-map "M-J" #'lispy-join))
-#+end_src
-
-** [C-c f] :: File
-
-#+begin_src emacs-lisp :tangle no
-(define-keymap :keymap ceamx-file-prefix
-  ;; TODO
-  ;; "y" #'+yank-this-file-name
-
-  "c" '("copy..." . ceamx-simple/copy-current-file)
-  "d" '("delete" . ceamx-simple/delete-current-file)
-  "f" #'find-file
-  "F" #'find-file-other-window
-  "r" '("move..." . ceamx-simple/move-current-file)
-  "s" #'save-buffer
-  "U" #'ceamx-simple/sudo-find-file
-
-  "C-d" '("diff with..." . ceamx-simple/diff-with-file))
-#+end_src
-
 ** [C-c i] :: Insert
+:PROPERTIES:
+:ID:       86b823a2-197c-45d4-88a2-fa1b27dc33b8
+:END:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-insert-prefix
-  "d" #'ceamx-simple/insert-date
   ;; "h" #'i-ching-insert-hexagram
   "L" #'spdx-insert-spdx
   "s" #'yas-insert-snippet
@@ -9139,6 +9185,9 @@ Return the new `zone' timer."
 #+end_src
 
 ** Window
+:PROPERTIES:
+:ID:       93d96a59-5e99-4939-8691-14aaaf942adb
+:END:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-window-prefix
@@ -9162,7 +9211,6 @@ Return the new `zone' timer."
   "l" #'windmove-right
   "L" #'ceamx/window-move-right
 
-  ;; "SPC" #'transpose-frame
   "=" #'balance-windows
   "<" #'flip-frame
   ">" #'flop-frame
@@ -9366,6 +9414,7 @@ Emacs version to prevent bytecode incompatibility.")
 ** The ~ceamx-lib~ library provides core helpers
 :PROPERTIES:
 :header-args: :tangle lisp/core/ceamx-lib.el
+:ID:       6668c6b2-4e82-4c9a-969e-bdacbd4b11f0
 :END:
 :LOGBOOK:
 - Refiled on [2025-01-25 Sat 15:44]
@@ -9377,7 +9426,7 @@ Emacs version to prevent bytecode incompatibility.")
 ;; Copyright (C) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2014-2023  Henrik Lissner
 ;; Copyright (C) 2006-2021  Steve Purcell
-;; Copyright (C) 2016–2022  Ceamx LLC and contributors
+;; Copyright (C) 2016–2024  Radian LLC and contributors
 ;; Copyright (C) 2018  Adam Porter
 ;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
 ;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
@@ -9489,7 +9538,7 @@ Emacs version to prevent bytecode incompatibility.")
 ;;;; Commands
 
 
-;;;; Functions (Public)
+;;;; Functions
 
 ;;;;; Environment Context
 
@@ -9642,7 +9691,7 @@ If FRAME is non-nil, inspect the current frame."
   (let ((inhibit-message t))
     (toggle-truncate-lines t)))
 
-;;;; Functions (Private)
+;;;;; Miscellaneous
 
 ;; via <https://github.com/radian-software/radian/blob/31b28372df6c24b82a53ba9c89140b4888c16f88/emacs/radian.el#L641C1-L654C38>
 (defun ceamx--remove-sharp-quotes (form)
@@ -10715,7 +10764,7 @@ writable or with a prefix argument, then read a file to visit."
 :ID:       ccc96dbd-97ed-45c1-b014-24178f80cd6b
 :END:
 
-#+begin_src emacs-lisp :tangle lisp/ceamx-window.el :comments no :noweb yes
+#+begin_src emacs-lisp :tangle lisp/ceamx-window.el :comments no
 ;;; ceamx-window.el --- Window management support library  -*- lexical-binding: t;  -*-
 
 ;; Copyright (C) 2022-2025  Chris Montgomery <chmont@protonmail.com>
@@ -10727,7 +10776,18 @@ writable or with a prefix argument, then read a file to visit."
 ;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
 ;;         Protesilaos Stavrou <public@protesilaos.com>
 
-<<file-license>>
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 ;;; Code:
@@ -10737,6 +10797,12 @@ writable or with a prefix argument, then read a file to visit."
 (require 'windmove)
 
 ;;;; Customization
+
+(defcustom ceamx-window-fallback-buffer-name "*scratch*"
+  "The name of the buffer to fall back to if no other buffers exist.
+The buffer will be created if it does not exist."
+  :group 'ceamx
+  :type '(string))
 
 (defcustom ceamx-window-workspace-provider 'activities
   "Workspace management implementation.
@@ -11073,6 +11139,10 @@ If an `activities-mode' activity is current, use
              (not (activities-current)))
          (call-interactively #'bufler-switch-buffer))
         (t (call-interactively #'activities-switch-buffer))))
+
+;;;; Menus
+
+
 
 (provide 'ceamx-window)
 ;;; ceamx-window.el ends here

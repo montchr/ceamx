@@ -3,7 +3,7 @@
 ;; Copyright (C) 2023-2024  Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2014-2023  Henrik Lissner
 ;; Copyright (C) 2006-2021  Steve Purcell
-;; Copyright (C) 2016–2022  Ceamx LLC and contributors
+;; Copyright (C) 2016–2024  Radian LLC and contributors
 ;; Copyright (C) 2018  Adam Porter
 ;; Copyright (C) 2013-2021  Bailey Ling <bling@live.ca>
 ;; Copyright (C) 2013-2023  7696122 <7696122@gmail.com>
@@ -115,7 +115,7 @@
 ;;;; Commands
 
 
-;;;; Functions (Public)
+;;;; Functions
 
 ;;;;; Environment Context
 
@@ -268,7 +268,7 @@ If FRAME is non-nil, inspect the current frame."
   (let ((inhibit-message t))
     (toggle-truncate-lines t)))
 
-;;;; Functions (Private)
+;;;;; Miscellaneous
 
 ;; via <https://github.com/radian-software/radian/blob/31b28372df6c24b82a53ba9c89140b4888c16f88/emacs/radian.el#L641C1-L654C38>
 (defun ceamx--remove-sharp-quotes (form)
