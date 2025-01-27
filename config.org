@@ -282,6 +282,9 @@ Example table:
 
 *** [[https://github.com/james-stoup/emacs-org-mode-tutorial][GitHub - james-stoup/emacs-org-mode-tutorial: A primer for users trying to make sense of Org Mode]]
 * Maintenance
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 ** Functions to clean and re-tangle Elisp files
 
@@ -376,11 +379,9 @@ mutation of a variable.
 (setq debug-on-error t)
 #+end_src
 
-* Agenda [1/1]
-** DONE Promising alternative to =org-roam= or =denote= <https://github.com/meedstrom/org-node>
-CLOSED: [2025-01-24 Fri 10:55]
-:LOGBOOK:
-- State "DONE"       from "TODO"       [2025-01-24 Fri 10:55]
+* Agenda [0/0]
+:PROPERTIES:
+:VISIBILITY: folded
 :END:
 * Target Files
 :PROPERTIES:
@@ -456,6 +457,9 @@ CLOSED: [2025-01-24 Fri 10:55]
 <<file-footer(feature="lib-prog")>>
 #+end_src
 * Bootstrap
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 ** =early-init.el=
 :PROPERTIES:
 :header-args: :tangle early-init.el :comments both
@@ -1578,6 +1582,7 @@ graphical frames.
 ** User Interface & Appearance :ui:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-ui.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -2226,6 +2231,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 ** Modeline :modeline:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-modeline.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -2315,6 +2321,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 ** Essentials
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-essentials.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -3326,9 +3333,10 @@ Related, but not technically part of ~repeat-mode~:
 ;;; ceamx-init-essentials.el ends here
 #+end_src
 
-** Search
+** Search :search:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-search.el
+:VISIBILITY: folded
 :END:
 
 Configuration for search-related utilities like ~isearch~ and
@@ -3519,6 +3527,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 ** Dired, the Directory Editor :dired:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-dired.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -3682,6 +3691,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 ** Completion :completion:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-completion.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -4543,6 +4553,7 @@ Define Embark actions for acting on tabs:
 ** Window & Buffer Management :window:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-window.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -5136,6 +5147,7 @@ Here are the definitions for the Bufler grouping rules:
 ** Version Control :vcs:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-vcs.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -5445,6 +5457,7 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 ** Language Support
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-langs.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -5904,8 +5917,6 @@ enchant-lsmod-2 -list-dicts
 (after! jinx
   (setopt jinx-languages "en"))
 #+end_src
-
-**
 
 *** Formatters
 **** [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT :package:
@@ -7414,6 +7425,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ** TODO Notetaking :notes:writing:
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle lisp/ceamx-init-notes.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -7631,6 +7643,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ** Org-Mode :org:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-org.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -8214,6 +8227,9 @@ I don't think this is working properly...
 #+end_src
 
 ** TODO Printing
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+begin_src emacs-lisp :tangle lisp/init-printing.el :comments no
 ;;; init-printing.el --- Support for printing documents  -*- lexical-binding: t; -*-
@@ -8258,6 +8274,9 @@ I don't think this is working properly...
 #+end_src
 
 ** TODO Newsreader
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+begin_src emacs-lisp :tangle lisp/init-news.el :comments no
 ;;; init-news.el --- News feed (RSS/Atom) subscription support  -*- lexical-binding: t; -*-
@@ -8317,6 +8336,9 @@ CLOSED: [2024-07-16 Tue 00:00]
 - State "DONE"       from "TODO"       [2024-07-16 Tue 00:00]
 
 ** TODO Web Browsing :web:
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+begin_src emacs-lisp :tangle lisp/init-eww.el :comments no
 ;;; init-eww.el --- Surfing the Wild Web of Words  -*- lexical-binding: t; -*-
@@ -8589,6 +8611,7 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 ** Tools
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-tools.el
+:VISIBILITY: folded
 :END:
 
 *** The =lisp/ceamx-init-tools.el= file header
@@ -8850,6 +8873,7 @@ changing lines.
 ** “Fun” :fun:
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle lisp/ceamx-init-fun.el
+:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -8905,6 +8929,7 @@ Return the new `zone' timer."
 * Load Features
 :PROPERTIES:
 :header-args: :tangle init.el
+:VISIBILITY: folded
 :END:
 
 #+begin_src emacs-lisp
@@ -8927,18 +8952,10 @@ Return the new `zone' timer."
 (require 'ceamx-init-fun)
 #+end_src
 
-* The Bucket of Uncertainty
-:PROPERTIES:
-:header-args: :tangle init.el
-:END:
-
-Stuff that doesn't fit anywhere else and easily hides amongst the mess of files.
-
-Or, perhaps more accurately: stuff that needs a better home.
-
 * Command Bindings
 :PROPERTIES:
 :header-args: :tangle init.el
+:VISIBILITY: folded
 :END:
 
 ** Prefix: [C-c]
@@ -9180,6 +9197,7 @@ Or, perhaps more accurately: stuff that needs a better home.
 * Finalize
 :PROPERTIES:
 :header-args: :tangle init.el
+:VISIBILITY: folded
 :END:
 
 ** Start the Emacs server process if not already running
@@ -11555,6 +11573,9 @@ keywords are supported:
 #+end_src
 
 * End
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 This is the section for file-local variables.  File-local variables must be on
 the last "page" of a document, beginning no more than 3000 characters from EOF.

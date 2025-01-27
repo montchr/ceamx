@@ -201,3 +201,18 @@ CLOSED: [2024-12-01 Sun 21:52]
 
 
 - State "CANCELLED"  from "TODO"       [2024-12-01 Sun 21:52]
+* 2025
+** 2025-01 January
+*** 2025-01-24 Friday
+**** DONE Promising alternative to =org-roam= or =denote= <https://github.com/meedstrom/org-node>
+CLOSED: [2025-01-24 Fri 10:55]
+:PROPERTIES:
+:ARCHIVE_TIME: 2025-01-26 Sun 23:05
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_OLPATH: Agenda
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2025-01-24 Fri 10:55]
+:END:
