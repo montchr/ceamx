@@ -86,6 +86,42 @@
                      #'default-indent-new-line
                      #'ceamx-simple/continue-comment))
 
+;; =crux= :: a [c]ollection of [r]idiculously [u]seful e[x]tensions
+
+
+(package! crux
+  (define-keymap :keymap (current-global-map)
+    "C-k" #'crux-smart-kill-line
+    "C-^" #'crux-top-join-line
+
+    "C-x 4 t" #'crux-transpose-windows
+    "C-x w SPC" #'crux-transpose-windows
+
+    "C-S-d" #'crux-duplicate-current-line-or-region
+    "C-S-RET" #'crux-smart-open-line-above
+    "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
+
+    "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
+
+    "S-RET" #'crux-smart-open-line)
+
+  (define-keymap :keymap ceamx-buffer-prefix
+    "f" #'crux-cleanup-buffer-or-region
+    "M-w" #'crux-kill-buffer-truename)
+
+  (define-prefix-command 'ceamx-region-prefix 'ceamx-region-prefix-map)
+
+  (keymap-global-set "C-c r" #'ceamx-region-prefix)
+
+  (define-keymap :keymap ceamx-region-prefix-map
+    "f" #'crux-cleanup-buffer-or-region
+    "TAB" #'crux-indent-rigidly-and-copy-to-clipboard)
+
+  (define-keymap :keymap ceamx-file-prefix
+    "c" #'crux-copy-file-preserve-attributes
+    "d" #'crux-delete-file-and-buffer
+    "r" #'crux-rename-file-and-buffer))
+
 ;; Configure sane window-scrolling behavior
 
 

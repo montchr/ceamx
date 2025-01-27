@@ -705,35 +705,6 @@ The ORDER can be used to deduce the feature context."
   ;; Prevent conflict with newly-added M-j binding.
   (keymap-set lispy-mode-map "M-J" #'lispy-join))
 
-;; [C-c b] :: Buffer
-
-
-(define-keymap :keymap ceamx-buffer-prefix
-  "b" #'consult-buffer
-  "k" #'ceamx-simple/kill-current-buffer)
-
-;; [C-c C] :: Capture
-
-
-
-
-;; [C-c f] :: File
-
-
-(define-keymap :keymap ceamx-file-prefix
-  ;; TODO
-  ;; "y" #'+yank-this-file-name
-
-  "c" '("copy..." . ceamx-simple/copy-current-file)
-  "d" '("delete" . ceamx-simple/delete-current-file)
-  "f" #'find-file
-  "F" #'find-file-other-window
-  "r" '("move..." . ceamx-simple/move-current-file)
-  "s" #'save-buffer
-  "U" #'ceamx-simple/sudo-find-file
-
-  "C-d" '("diff with..." . ceamx-simple/diff-with-file))
-
 ;; [C-c i] :: Insert
 
 
@@ -760,36 +731,12 @@ The ORDER can be used to deduce the feature context."
   "o" #'consult-eglot-symbols
   "r" #'eglot-rename)
 
-;; [C-c n] :: Note
-
-
-(define-keymap :keymap ceamx-note-prefix-map
-  "n" #'denote
-
-  "b" #'denote-backlinks
-  "c" #'denote-region                   ; "contents"
-  "C" #'denote-type
-  "f" (cons "[ FIND    ]" (define-prefix-command 'ceamx-note-f-prefix))
-  "i" #'denote-link                     ; "insert link"
-  "I" #'denote-add-links
-  ;; "j" (cons "[ JOURNAL ]" #'ceamx-journal-prefix)
-  "j" (cons "( journal )" #'denote-journal-extras-new-or-existing-entry)
-  "r" #'denote-rename-file
-  "R" #'denote-rename-file-using-front-matter
-  "s" #'denote-subdirectory
-  "t" #'denote-template
-  "z" #'denote-signature                ; "zettelkasten"
-
-  "f b" #'denote-find-backlink
-  "f l" #'denote-find-link)
-
 ;; [C-c o] :: Launch
 
 
 (define-keymap :keymap ceamx-launch-prefix
   "a" #'org-agenda
   "b" #'eww
-  "c" #'org-capture
   "f" #'elfeed
   "s" #'scratch-buffer
   "t" #'eat
@@ -858,7 +805,7 @@ The ORDER can be used to deduce the feature context."
   "l" #'windmove-right
   "L" #'ceamx/window-move-right
 
-  "SPC" #'transpose-frame
+  ;; "SPC" #'transpose-frame
   "=" #'balance-windows
   "<" #'flip-frame
   ">" #'flop-frame

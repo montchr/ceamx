@@ -55,28 +55,39 @@
 (package! denote
   (require 'denote)
 
-  ;;
-  ;; Integrations
-
-  (add-hook 'find-file-hook #'denote-fontify-links-mode)
-
+  (add-hook 'find-file-hook #'denote-fontify-links-mode-maybe)
   (after! dired
-    (add-hook 'dired-mode-hook #'denote-dired-mode)
-
-    (define-keymap :keymap dired-mode-map
-      "C-c C-d C-i" #'denote-link-dired-marked-notes
-      "C-c C-d C-r" #'denote-dired-rename-marked-files
-      "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
-      "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
-
+    (add-hook 'dired-mode-hook #'denote-dired-mode))
   (after! mouse
     (add-hook 'context-menu-functions #'denote-context-menu))
 
+  (define-keymap :keymap ceamx-capture-prefix-map
+    ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
+    "r" #'denote-region)
+
+  (define-keymap :keymap ceamx-note-prefix-map
+    "n" #'denote
+    "d" #'denote-sort-dired
+    "r" #'denote-rename-file
+    "R" #'denote-rename-file-using-front-matter)
+
+  (keymap-set ceamx-region-prefix-map "n" #'denote-region)
+
+  (after! dired
+    (define-keymap :keymap dired-mode-map
+      "C-c C-d C-i" #'denote-link-dired-marked-notes
+      "C-c C-d C-r" #'denote-dired-rename-files
+      "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
+      "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
   (after! org
-    (keymap-set org-mode-map "C-c n h" #'denote-org-extras-extract-org-subtree)))
+    (define-keymap :keymap org-mode-map
+      "C-c n h" #'denote-org-extras-extract-org-subtree
+      "C-c n l" #'denote-link
+      "C-c n L" #'denote-add-links
+      "C-c n b" #'denote-backlinks)))
 
 (after! denote
-  (setopt denote-directory ceamx-note-default-dir)
+  (setopt denote-directory ceamx-note-dir)
   (setopt denote-excluded-directories-regexp "\\.archive")
   (setopt denote-dired-directories
           (list denote-directory
@@ -92,12 +103,10 @@
             "correspondence"
             "language"
             "jobwork"
-            "journal"
-            "blog"))
+            "journal"))
   (setopt denote-prompts '(title keywords))
   (setopt denote-org-capture-specifiers "%l\n%i\n%?")
   (setopt denote-date-prompt-use-org-read-date t)
-  ;; also: `denote-link-backlinks-display-buffer-action'
   (setopt denote-backlinks-show-context t)
 
   ;; Auto-rename Denote buffers with `denote-rename-buffer-format'.
@@ -124,15 +133,16 @@
         :kill-buffer t
         :jump-to-captured t)))
 
-(use-feature! ceamx-note
-  :after denote
-  :commands (ceamx-note/denote/pick-silo-then-command)
-  :config
-  (setopt ceamx-note-silo-directories
+(after! denote
+  (require 'denote-silo-extras)
+
+  (setopt denote-silo-extras-directories
           (list ceamx-note-journal-dir
                 ceamx-note-work-dir)))
 
-
+(use-feature! ceamx-note
+  :after denote
+  :commands (ceamx-note/denote/pick-silo-then-command))
 
 (defun ceamx-note/create-or-visit-journal-entry ()
   "Invoke `denote-journal-extras-new-or-existing-entry' scoped to the
@@ -140,11 +150,6 @@
   (interactive)
   (let ((denote-directory ceamx-note-journal-dir))
     (call-interactively #'denote-journal-extras-new-or-existing-entry)))
-
-(after! denote
-  (define-keymap :keymap ceamx-capture-prefix-map
-    ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
-    "r" #'denote-region))
 
 (after! denote
   (require 'denote-journal-extras)

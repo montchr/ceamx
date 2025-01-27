@@ -2416,6 +2416,43 @@ NOTE: Incompatible with kitchen-sink modeline packages like
                      #'ceamx-simple/continue-comment))
 #+end_src
 
+*** =crux= :: a [c]ollection of [r]idiculously [u]seful e[x]tensions
+
+#+begin_src emacs-lisp
+(package! crux
+  (define-keymap :keymap (current-global-map)
+    "C-k" #'crux-smart-kill-line
+    "C-^" #'crux-top-join-line
+
+    "C-x 4 t" #'crux-transpose-windows
+    "C-x w SPC" #'crux-transpose-windows
+
+    "C-S-d" #'crux-duplicate-current-line-or-region
+    "C-S-RET" #'crux-smart-open-line-above
+    "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
+
+    "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
+
+    "S-RET" #'crux-smart-open-line)
+
+  (define-keymap :keymap ceamx-buffer-prefix
+    "f" #'crux-cleanup-buffer-or-region
+    "M-w" #'crux-kill-buffer-truename)
+
+  (define-prefix-command 'ceamx-region-prefix 'ceamx-region-prefix-map)
+
+  (keymap-global-set "C-c r" #'ceamx-region-prefix)
+
+  (define-keymap :keymap ceamx-region-prefix-map
+    "f" #'crux-cleanup-buffer-or-region
+    "TAB" #'crux-indent-rigidly-and-copy-to-clipboard)
+
+  (define-keymap :keymap ceamx-file-prefix
+    "c" #'crux-copy-file-preserve-attributes
+    "d" #'crux-delete-file-and-buffer
+    "r" #'crux-rename-file-and-buffer))
+#+end_src
+
 *** Configure sane window-scrolling behavior
 
 #+begin_src emacs-lisp
@@ -3390,7 +3427,20 @@ these utilities.
   (keymap-set occur-mode-map "t" #'toggle-truncate-lines))
 #+end_src
 
-*** ~substitute~: efficiently replace contextual targets
+*** =visual-replace= :: a nicer ~query-replace~ interface
+
++ Repo :: <https://github.com/szermatt/visual-replace>
+
+#+begin_src emacs-lisp
+(package! visual-replace
+  (keymap-global-set "M-%" #'visual-replace)
+  (keymap-set isearch-mode-map "M-%" #'visual-replace-from-isearch)
+  (define-keymap :keymap ceamx-replace-prefix
+    "r" #'visual-replace
+    "R" #'visual-replace-selected))
+#+end_src
+
+*** ~substitute~ :: efficiently replace contextual targets
 
 <https://protesilaos.com/emacs/substitute>
 
@@ -3399,8 +3449,8 @@ these utilities.
   (define-keymap :keymap ceamx-replace-prefix
     "b" #'substitute-target-in-buffer
     "d" #'substitute-target-in-defun
-    "r" #'substitute-target-above-point
-    "s" #'substitute-target-below-point)
+    "s" #'substitute-target-above-point
+    "S" #'substitute-target-below-point)
 
   (setopt substitute-hightlight t))
 
@@ -3409,7 +3459,7 @@ these utilities.
   (add-hook 'substitute-post-replace-functions #'substitute-report-operation))
 #+end_src
 
-*** ~wgrep~: writable grep buffers
+*** ~wgrep~ :: writable grep buffers
 
 + Package :: <https://github.com/mhayashi1120/Emacs-wgrep>
 
@@ -3430,7 +3480,7 @@ these utilities.
 
 *** TODO Use builtin ~grep-edit-mode~ instead of ~wgrep~ if available
 
-*** Configure ~re-builder~, the regular expression builder
+*** Configure =re-builder=, the regular expression builder
 
 <https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder>
 <https://francismurillo.github.io/2017-03-30-Exploring-Emacs-rx-Macro/>
@@ -3446,7 +3496,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
   (setopt reb-re-syntax 'string))
 #+end_src
 
-*** Configure ~xref~
+*** Configure =xref=
 
 #+begin_src emacs-lisp
 (defvar xref-ignored-files '()
@@ -3459,7 +3509,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
   (setopt xref-show-xrefs-function #'xref-show-definitions-buffer))
 #+end_src
 
-*** Provide ~ceamx-init-search~ feature
+*** Provide the ~ceamx-init-search~ feature
 
 #+begin_src emacs-lisp
 (provide 'ceamx-init-search)
@@ -4112,48 +4162,6 @@ Adapted from Prot's original version with the following changes:
 + Package :: <https://github.com/minad/tempel>
 + Package :: <https://github.com/Crandel/tempel-collection>
 
-
-***** Configuration
-
-  #+begin_src emacs-lisp
-(package! tempel
-  (define-keymap :keymap (current-global-map)
-    "C-c y" #'tempel-insert
-
-    "M-+" #'tempel-complete
-    "M-*" #'tempel-insert)
-
-  ;; Setup completion at point for Tempel templates.
-  (def-hook! +tempel-setup-capf-h ()
-    '(conf-mode-hook prog-mode-hook text-mode-hook)
-    "Add the Tempel Capf to `completion-at-point-functions'.
-
-`tempel-expand' only triggers on exact matches.  Alternatively
-use `tempel-complete' if you want to see all matches, but then
-you should also configure `tempel-trigger-prefix', such that
-Tempel does not trigger too often when you don't expect it."
-    (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
-
-(after! tempel
-  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
-
-  ;; Require this prefix before triggering template name completion.
-  ;;  (setopt tempel-trigger-prefix "<")
-  (setopt tempel-trigger-prefix nil)
-
-  (define-keymap :keymap tempel-map
-    "<tab>" #'tempel-next
-    "<backtab>" #'tempel-previous
-    "M-}" #'tempel-next
-    "M-{" #'tempel-previous))
-
-(use-feature! ceamx-completion
-  :after tempel
-  :functions (ceamx-completion--tempel-include)
-  :init
-  (add-to-list 'tempel-user-elements #'ceamx-completion--tempel-include))
-#+end_src
-
 ***** The Tempo skeleton language
 
 - info :: [[info:autotype#Skeleton Language][(autotype) Skeleton Language]]
@@ -4184,6 +4192,53 @@ Furthermore Tempel supports syntax extensions:
 - =(p FORM <NAME> <NOINSERT>)= Like =p= described above, but =FORM=  is evaluated.
 - =(FORM ...)=  Other Lisp forms are evaluated. Named fields are lexically bound.
 - =q=  Quits the containing template when jumped to.
+
+***** Custom syntax elements
+
+- =(i keyword)= :: Recursive snippet inclusion.  =keyword= is the keyword
+  for the snippet to insert.  See ~ceamx-completion--tempel-include~ for
+  definition.
+
+***** Configuration
+
+  #+begin_src emacs-lisp
+(package! tempel
+  (define-keymap :keymap (current-global-map)
+    "C-c y" #'tempel-insert
+
+    "M-+" #'tempel-complete
+    "M-*" #'tempel-insert)
+
+  ;; Setup completion at point for Tempel templates.
+  (def-hook! +tempel-setup-capf-h ()
+    '(conf-mode-hook prog-mode-hook text-mode-hook)
+    "Add the Tempel Capf to `completion-at-point-functions'.
+
+`tempel-expand' only triggers on exact matches.  Alternatively
+use `tempel-complete' if you want to see all matches, but then
+you should also configure `tempel-trigger-prefix', such that
+Tempel does not trigger too often when you don't expect it."
+    (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
+
+(after! tempel
+  (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
+
+  ;; Require this prefix before triggering template name completion.
+  ;;  (setopt tempel-trigger-prefix "<")
+  (setopt tempel-trigger-prefix nil)
+
+  (define-keymap :keymap tempel-map
+    ;; "<tab>" #'tempel-next
+    ;; "<backtab>" #'tempel-previous
+    "M-}" #'tempel-next
+    "M-{" #'tempel-previous))
+
+(use-feature! ceamx-completion
+  :after tempel
+  :functions (ceamx-completion--tempel-include)
+  :init
+  (add-to-list 'tempel-user-elements #'ceamx-completion--tempel-include))
+#+end_src
 
 ***** A warning about using Tempel with ~abbrev-mode~
 
@@ -4388,10 +4443,12 @@ See also ~popon~, the utility library powering the interface.
 
     "a" #'cape-abbrev
     "d" #'cape-dabbrev
+    "e" (cape-capf-interactive #'elisp-completion-at-point)
     "f" #'cape-file
     "o" #'cape-elisp-symbol
     "w" #'cape-dict))
 #+end_src
+
 *** ~embark~ :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:
 
 - Package :: <https://github.com/oantolin/embark>
@@ -7434,28 +7491,39 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 (package! denote
   (require 'denote)
 
-  ;;
-  ;; Integrations
-
-  (add-hook 'find-file-hook #'denote-fontify-links-mode)
-
+  (add-hook 'find-file-hook #'denote-fontify-links-mode-maybe)
   (after! dired
-    (add-hook 'dired-mode-hook #'denote-dired-mode)
-
-    (define-keymap :keymap dired-mode-map
-      "C-c C-d C-i" #'denote-link-dired-marked-notes
-      "C-c C-d C-r" #'denote-dired-rename-marked-files
-      "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
-      "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
-
+    (add-hook 'dired-mode-hook #'denote-dired-mode))
   (after! mouse
     (add-hook 'context-menu-functions #'denote-context-menu))
 
+  (define-keymap :keymap ceamx-capture-prefix-map
+    ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
+    "r" #'denote-region)
+
+  (define-keymap :keymap ceamx-note-prefix-map
+    "n" #'denote
+    "d" #'denote-sort-dired
+    "r" #'denote-rename-file
+    "R" #'denote-rename-file-using-front-matter)
+
+  (keymap-set ceamx-region-prefix-map "n" #'denote-region)
+
+  (after! dired
+    (define-keymap :keymap dired-mode-map
+      "C-c C-d C-i" #'denote-link-dired-marked-notes
+      "C-c C-d C-r" #'denote-dired-rename-files
+      "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
+      "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
   (after! org
-    (keymap-set org-mode-map "C-c n h" #'denote-org-extras-extract-org-subtree)))
+    (define-keymap :keymap org-mode-map
+      "C-c n h" #'denote-org-extras-extract-org-subtree
+      "C-c n l" #'denote-link
+      "C-c n L" #'denote-add-links
+      "C-c n b" #'denote-backlinks)))
 
 (after! denote
-  (setopt denote-directory ceamx-note-default-dir)
+  (setopt denote-directory ceamx-note-dir)
   (setopt denote-excluded-directories-regexp "\\.archive")
   (setopt denote-dired-directories
           (list denote-directory
@@ -7471,12 +7539,10 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
             "correspondence"
             "language"
             "jobwork"
-            "journal"
-            "blog"))
+            "journal"))
   (setopt denote-prompts '(title keywords))
   (setopt denote-org-capture-specifiers "%l\n%i\n%?")
   (setopt denote-date-prompt-use-org-read-date t)
-  ;; also: `denote-link-backlinks-display-buffer-action'
   (setopt denote-backlinks-show-context t)
 
   ;; Auto-rename Denote buffers with `denote-rename-buffer-format'.
@@ -7507,22 +7573,19 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 *** Define Denote silos for isolated note environments
 
 #+begin_src emacs-lisp
-(use-feature! ceamx-note
-  :after denote
-  :commands (ceamx-note/denote/pick-silo-then-command)
-  :config
-  (setopt ceamx-note-silo-directories
+(after! denote
+  (require 'denote-silo-extras)
+
+  (setopt denote-silo-extras-directories
           (list ceamx-note-journal-dir
                 ceamx-note-work-dir)))
+
+(use-feature! ceamx-note
+  :after denote
+  :commands (ceamx-note/denote/pick-silo-then-command))
 #+end_src
 
-**** Silo: Work
-
-#+begin_src emacs-lisp
-
-#+end_src
-
-**** Silo: Journalling
+*** Use Denote for journalling
 
 #+begin_src emacs-lisp
 (defun ceamx-note/create-or-visit-journal-entry ()
@@ -7531,11 +7594,6 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
   (interactive)
   (let ((denote-directory ceamx-note-journal-dir))
     (call-interactively #'denote-journal-extras-new-or-existing-entry)))
-
-(after! denote
-  (define-keymap :keymap ceamx-capture-prefix-map
-    ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
-    "r" #'denote-region))
 
 (after! denote
   (require 'denote-journal-extras)
@@ -8964,22 +9022,9 @@ Or, perhaps more accurately: stuff that needs a better home.
   (keymap-set lispy-mode-map "M-J" #'lispy-join))
 #+end_src
 
-** [C-c b] :: Buffer
-
-#+begin_src emacs-lisp
-(define-keymap :keymap ceamx-buffer-prefix
-  "b" #'consult-buffer
-  "k" #'ceamx-simple/kill-current-buffer)
-#+end_src
-** [C-c C] :: Capture
-
-#+begin_src emacs-lisp
-
-#+end_src
-
 ** [C-c f] :: File
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (define-keymap :keymap ceamx-file-prefix
   ;; TODO
   ;; "y" #'+yank-this-file-name
@@ -9023,37 +9068,12 @@ Or, perhaps more accurately: stuff that needs a better home.
   "r" #'eglot-rename)
 #+end_src
 
-** [C-c n] :: Note
-
-#+begin_src emacs-lisp
-(define-keymap :keymap ceamx-note-prefix-map
-  "n" #'denote
-
-  "b" #'denote-backlinks
-  "c" #'denote-region                   ; "contents"
-  "C" #'denote-type
-  "f" (cons "[ FIND    ]" (define-prefix-command 'ceamx-note-f-prefix))
-  "i" #'denote-link                     ; "insert link"
-  "I" #'denote-add-links
-  ;; "j" (cons "[ JOURNAL ]" #'ceamx-journal-prefix)
-  "j" (cons "( journal )" #'denote-journal-extras-new-or-existing-entry)
-  "r" #'denote-rename-file
-  "R" #'denote-rename-file-using-front-matter
-  "s" #'denote-subdirectory
-  "t" #'denote-template
-  "z" #'denote-signature                ; "zettelkasten"
-
-  "f b" #'denote-find-backlink
-  "f l" #'denote-find-link)
-#+end_src
-
 ** [C-c o] :: Launch
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-launch-prefix
   "a" #'org-agenda
   "b" #'eww
-  "c" #'org-capture
   "f" #'elfeed
   "s" #'scratch-buffer
   "t" #'eat
@@ -9125,7 +9145,7 @@ Or, perhaps more accurately: stuff that needs a better home.
   "l" #'windmove-right
   "L" #'ceamx/window-move-right
 
-  "SPC" #'transpose-frame
+  ;; "SPC" #'transpose-frame
   "=" #'balance-windows
   "<" #'flip-frame
   ">" #'flop-frame

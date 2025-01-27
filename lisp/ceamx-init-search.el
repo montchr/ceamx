@@ -76,7 +76,19 @@
 
   (keymap-set occur-mode-map "t" #'toggle-truncate-lines))
 
-;; ~substitute~: efficiently replace contextual targets
+;; =visual-replace= :: a nicer ~query-replace~ interface
+
+;; + Repo :: <https://github.com/szermatt/visual-replace>
+
+
+(package! visual-replace
+  (keymap-global-set "M-%" #'visual-replace)
+  (keymap-set isearch-mode-map "M-%" #'visual-replace-from-isearch)
+  (define-keymap :keymap ceamx-replace-prefix
+    "r" #'visual-replace
+    "R" #'visual-replace-selected))
+
+;; ~substitute~ :: efficiently replace contextual targets
 
 ;; <https://protesilaos.com/emacs/substitute>
 
@@ -85,8 +97,8 @@
   (define-keymap :keymap ceamx-replace-prefix
     "b" #'substitute-target-in-buffer
     "d" #'substitute-target-in-defun
-    "r" #'substitute-target-above-point
-    "s" #'substitute-target-below-point)
+    "s" #'substitute-target-above-point
+    "S" #'substitute-target-below-point)
 
   (setopt substitute-hightlight t))
 
@@ -94,7 +106,7 @@
   ;; Provide messages reporting on matches changed in the context.
   (add-hook 'substitute-post-replace-functions #'substitute-report-operation))
 
-;; ~wgrep~: writable grep buffers
+;; ~wgrep~ :: writable grep buffers
 
 ;; + Package :: <https://github.com/mhayashi1120/Emacs-wgrep>
 
@@ -112,7 +124,7 @@
   :config
   (setopt wgrep-auto-save-buffer t))
 
-;; Configure ~re-builder~, the regular expression builder
+;; Configure =re-builder=, the regular expression builder
 
 ;; <https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder>
 ;; <https://francismurillo.github.io/2017-03-30-Exploring-Emacs-rx-Macro/>
@@ -127,7 +139,7 @@
   ;; "read"   => default, avoid: backslash hell
   (setopt reb-re-syntax 'string))
 
-;; Configure ~xref~
+;; Configure =xref=
 
 
 (defvar xref-ignored-files '()
@@ -139,7 +151,7 @@
   (setopt xref-show-definitions-function #'xref-show-definitions-completing-read)
   (setopt xref-show-xrefs-function #'xref-show-definitions-buffer))
 
-;; Provide ~ceamx-init-search~ feature
+;; Provide the ~ceamx-init-search~ feature
 
 
 (provide 'ceamx-init-search)

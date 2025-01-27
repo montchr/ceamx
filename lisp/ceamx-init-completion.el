@@ -456,17 +456,18 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 use `tempel-complete' if you want to see all matches, but then
 you should also configure `tempel-trigger-prefix', such that
 Tempel does not trigger too often when you don't expect it."
-    (add-hook 'completion-at-point-functions #'tempel-expand -90 t)))
+    (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
 
 (after! tempel
   (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
 
   ;; Require this prefix before triggering template name completion.
-  (setopt tempel-trigger-prefix "<")
+  ;;  (setopt tempel-trigger-prefix "<")
+  (setopt tempel-trigger-prefix nil)
 
   (define-keymap :keymap tempel-map
-    "<tab>" #'tempel-next
-    "<backtab>" #'tempel-previous
+    ;; "<tab>" #'tempel-next
+    ;; "<backtab>" #'tempel-previous
     "M-}" #'tempel-next
     "M-{" #'tempel-previous))
 
@@ -617,6 +618,7 @@ Tempel does not trigger too often when you don't expect it."
 
     "a" #'cape-abbrev
     "d" #'cape-dabbrev
+    "e" (cape-capf-interactive #'elisp-completion-at-point)
     "f" #'cape-file
     "o" #'cape-elisp-symbol
     "w" #'cape-dict))
