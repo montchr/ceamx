@@ -186,6 +186,19 @@ CLOSED: [2024-07-16 Tue 00:17]
 - State "INPRG"      from "TODO"       [2024-07-14 Sun 21:41] \\
   See section on ~org-contrib~
 
+**** DONE Feature name ~init-feeds~ does not match the filename =init-news.el=
+CLOSED: [2024-07-16 Tue 00:00]
+:PROPERTIES:
+:ARCHIVE_TIME: 2025-01-27 Mon 20:35
+:ARCHIVE_FILE: ~/.config/emacs/config.org
+:ARCHIVE_CATEGORY: config
+:ARCHIVE_TODO: DONE
+:ARCHIVE_OLPATH: Features/Newsreader
+:END:
+
+
+- State "DONE"       from "TODO"       [2024-07-16 Tue 00:00]
+
 
 ** 2024-12 December
 *** 2024-12-01 Sunday

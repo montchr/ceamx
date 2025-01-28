@@ -646,6 +646,7 @@ The ORDER can be used to deduce the feature context."
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el
 ;; :VISIBILITY: folded
+;; :ID:       4e93b7dc-8c0c-44b5-903b-f86ea342fd61
 ;; :END:
 
 
@@ -660,11 +661,10 @@ The ORDER can be used to deduce the feature context."
 (require 'ceamx-init-langs)
 (require 'ceamx-init-notes)
 (require 'ceamx-init-org)
-(require 'lib-prog)
 (require 'ceamx-init-tools)
-(require 'init-news)
-(require 'init-eww)
-(require 'init-printing)
+(require 'ceamx-init-news)
+(require 'ceamx-init-eww)
+(require 'ceamx-init-printing)
 (require 'ceamx-init-fun)
 
 ;; Prefix: [C-c]
@@ -701,44 +701,14 @@ The ORDER can be used to deduce the feature context."
   ;; "C-c z"
   )
 
-;; [C-c i] :: Insert
+;; [C-c o] :: Launch
 ;; :PROPERTIES:
-;; :ID:       86b823a2-197c-45d4-88a2-fa1b27dc33b8
+;; :ID:       bb8d84ed-5854-4892-9b76-77e67063a71e
 ;; :END:
 
 
-(define-keymap :keymap ceamx-insert-prefix
-  ;; "h" #'i-ching-insert-hexagram
-  "L" #'spdx-insert-spdx
-  "s" #'yas-insert-snippet
-  "u" #'uuidgen
-
-  "U" (cons "uuid" (define-prefix-command 'ceamx-insert-uuid-prefix))
-  "U 1" #'uuidgen-1
-  "U 3" #'uuidgen-3
-  "U 4" #'uuidgen-4
-  "U 5" #'uuidgen-5)
-
-;; [C-c l] :: Code
-
-
-(define-keymap :keymap ceamx-code-prefix
-  "a" #'eglot-code-actions
-  "d" #'xref-find-definitions
-  "j" #'ceamx-prog-dumb-jump-dispatch/body
-  "o" #'consult-eglot-symbols
-  "r" #'eglot-rename)
-
-;; [C-c o] :: Launch
-
-
 (define-keymap :keymap ceamx-launch-prefix
-  "a" #'org-agenda
-  "b" #'eww
-  "f" #'elfeed
-  "s" #'scratch-buffer
-  "t" #'eat
-  "W" #'ceamx/eww-wiki)
+  "s" #'scratch-buffer)
 
 ;; [C-c q] :: Session
 

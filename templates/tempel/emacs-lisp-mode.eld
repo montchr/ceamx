@@ -11,3 +11,5 @@ emacs-lisp-mode
 
 (seto "(setopt " p " " p ")")
 (setq "(setq " (s name) " " (s val) ")")
+
+(autoload ";;;###autoload")

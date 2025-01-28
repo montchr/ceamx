@@ -485,11 +485,15 @@ Tempel does not trigger too often when you don't expect it."
   (add-to-list 'tempel-user-elements #'ceamx-completion--tempel-include))
 
 ;; ~spdx~ :: insertable SPDX license headers
+;; :PROPERTIES:
+;; :ID:       4f029a65-d064-4715-9947-e9d32b4bdf67
+;; :END:
 
 ;; - src :: <https://github.com/condy0919/spdx.el>
 
 
-(package! spdx)
+(package! spdx
+  (keymap-set ceamx-insert-prefix "L" #'spdx-insert-spdx))
 
 ;; ~corfu~ :: [co]mpletion in [r]egion [fu]nction
 ;; :PROPERTIES:

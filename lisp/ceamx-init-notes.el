@@ -11,13 +11,16 @@
   (dolist (dir (list ceamx-note-dir ceamx-note-journal-dir))
     (f-mkdir-full-path dir)))
 
-(package! consult-notes)
+(package! consult-notes
+  (keymap-set ceamx-note-prefix-map "s" #'consult-notes)
+  (keymap-global-set "M-s n" #'consult-notes))
 
 (after! consult-notes
-  (setopt consult-notes-file-dir-sources
-          `(("Org" ?o ,ceamx-agenda-dir)
-            ("Work" ?w ,ceamx-note-work-dir)
-            ("Journal" ?j ,ceamx-note-journal-dir :hidden t)))
+  ;; XXX: `setq' instead of `setopt' due to type error
+  (setq consult-notes-file-dir-sources
+        `(("Org" ?o ,ceamx-agenda-dir)
+          ("Work" ?w ,ceamx-note-work-dir)
+          ("Journal" ?j ,ceamx-note-journal-dir :hidden t)))
 
   (setopt consult-notes-org-headings-files
           (dolist (dir (list ceamx-note-default-dir

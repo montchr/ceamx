@@ -140,10 +140,15 @@
   (setopt reb-re-syntax 'string))
 
 ;; Configure =xref=
+;; :PROPERTIES:
+;; :ID:       184ea61e-d07b-4af9-bb49-bcd539b38268
+;; :END:
 
 
-(defvar xref-ignored-files '()
+(defvar xref-ignored-files nil
   "List of files to be ignored by `xref'.")
+
+(keymap-set ceamx-code-prefix "d" #'xref-find-definitions)
 
 (after! xref
   (setopt xref-file-name-display 'project-relative)

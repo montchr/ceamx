@@ -394,9 +394,17 @@ Intended for use as a local hook function on
                               "%i %a"))))))
 
 ;; Agenda
+;; :PROPERTIES:
+;; :ID:       ad92ea31-8411-4ba4-b179-cf66e34a016c
+;; :END:
 
 
-(after! org-agenda
+(use-feature! org-agenda
+  :bind
+  ( :map ceamx-launch-prefix
+    ("a" . #'org-agenda))
+
+  :config
   (setopt org-agenda-tags-column 0)
   (setopt org-agenda-block-separator ?─)
   (setopt org-agenda-time-grid
@@ -405,6 +413,12 @@ Intended for use as a local hook function on
             " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (setopt org-agenda-current-time-string
           "⭠ now ─────────────────────────────────────────────────"))
+
+;; TODO ~org-super-agenda~
+;; :PROPERTIES:
+;; :ID:       6438e6e9-5052-403d-8c23-a1ee8daf0ec2
+;; :END:
+
 
 (package! org-super-agenda)
 

@@ -106,7 +106,6 @@ Emacs version to prevent bytecode incompatibility.")
   "Directory for user-defined expandable templates.
 Templates, in this sense, refer to the primary focus of packages
 like \"tempo\", \"tempel\", and \"yasnippet\".")
-(defvar ceamx-eglot-storage-dir (file-name-as-directory (concat ceamx-var-dir "eglot")))
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
 (defconst ceamx-ledger-main-journal-file (file-name-concat ceamx-ledger-dir "main.journal"))
 

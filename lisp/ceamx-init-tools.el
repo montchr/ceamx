@@ -10,11 +10,16 @@
   (setopt eshell-scroll-to-bottom-on-input 'this))
 
 ;; ~eat~ :: [E]mulate [A] [T]erminal
+;; :PROPERTIES:
+;; :ID:       cafaa1b0-d633-4e7e-b470-6dbfd534c35f
+;; :END:
 
 ;; + Package :: <https://codeberg.org/akib/emacs-eat/>
 
 
 (package! eat
+  (keymap-set ceamx-launch-prefix "t" #'eat)
+
   (after! eshell
     (add-hook 'eshell-load-hook #'eat-eshell-mode)
     (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
@@ -78,9 +83,18 @@
     "K f" #'help-find-function))
 
 ;; ~uuidgen~: Generate and insert UUIDs
+;; :PROPERTIES:
+;; :ID:       48fbfb99-55c9-44db-a342-2c9fe847e85e
+;; :END:
 
 
-(package! uuidgen)
+(package! uuidgen
+  (define-keymap :keymap ceamx-insert-prefix
+    "U" (cons "uuid" (define-prefix-command 'ceamx-insert-uuid-prefix))
+    "U 1" #'uuidgen-1
+    "U 3" #'uuidgen-3
+    "U 4" #'uuidgen-4
+    "U 5" #'uuidgen-5))
 
 ;; Define important feature paths :paths:
 

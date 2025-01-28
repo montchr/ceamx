@@ -165,7 +165,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
   (after! (hydra)
     ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
-    (defhydra ceamx-prog-dumb-jump-dispatch (:color blue :columns 3)
+    (defhydra ceamx/dumb-jump-dispatch (:color blue :columns 3)
       "Jump (dumbly)"
       ("j" dumb-jump-go "Go")
       ("o" dumb-jump-go-other-window "Other window")
@@ -173,7 +173,10 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
       ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
       ("i" dumb-jump-go-prompt "Prompt")
       ("l" dumb-jump-quick-look "Quick look")
-      ("b" dumb-jump-back "Back"))))
+      ("b" dumb-jump-back "Back"))
+
+    (define-keymap :keymap ceamx-code-prefix
+      "j" #'ceamx/dumb-jump-dispatch/body)))
 
 ;; ~rainbow-mode~: Colorize color names and hexcodes in buffers :theme:
 
@@ -193,6 +196,9 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   :hook (prog-mode . hl-todo-mode))
 
 ;; ~devdocs~: Peruse local ~devdocs~ docsets
+;; :PROPERTIES:
+;; :ID:       9907125e-84b9-420f-8991-c24b33f84161
+;; :END:
 
 ;; - Source code :: <https://github.com/astoff/devdocs.el>
 
@@ -216,45 +222,6 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   ;; (devdocs-update-all)
 
   )
-
-
-
-;; WIP: Define some helper functions for installing docsets automatically:
-
-
-(defun +devdocs--doc-directory-exists-p (slug)
-  "Whether the directory for the doc SLUG exists."
-  (file-directory-p (expand-file-name slug devdocs-data-dir)))
-
-(defun +devdocs--doc-installed-p (slug)
-  "Whether the document named SLUG is installed.
-Installation can be defined as whether there exists a metadata
-file inside a directory named SLUG within `devdocs-data-dir'."
-  (defvar devdocs-data-dir)
-  (let ((file (expand-file-name (concat slug "/metadata") devdocs-data-dir)))
-    (file-exists-p file)))
-
-(defun +devdocs-maybe-install (doc)
-  "Install the `devdocs' documentation set for DOC if not already installed.
-DOC is as in `devdocs-install'."
-  (declare-function devdocs-install "devdocs")
-  (unless (+devdocs--doc-installed-p doc)
-    (devdocs-install doc)))
-
-(defun +devdocs-maybe-install-docs (docs)
-  "Install each `devdocs' documentation set in DOCS if not already installed.
-DOCS is a quoted list of `devdocs' documentation identifiers as
-accepted by `+devdocs-maybe-install'."
-  (dolist (doc docs)
-    (+devdocs-maybe-install doc)))
-
-;; FIXME: return t if exists, whatever if new, otherwise throw
-(defun ceamx/devdocs-maybe-install (doc)
-  "Install the `devdocs' documentation set for DOC if not already installed.
-DOC is as in `devdocs-install'."
-  ;; TODO: prompt for selecting from available docs (see `devdocs-install')
-  (interactive "s")
-  (+devdocs-maybe-install doc))
 
 ;; Display multiple composed messages inside ~eldoc~
 
@@ -647,6 +614,9 @@ non-nil, buffers will never be formatted upon save."
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 
 ;; ~paredit~ :: the original parenthesizer
+;; :PROPERTIES:
+;; :ID:       13b96f21-ebaf-4d49-8b89-78fc05a44c59
+;; :END:
 
 
 (package! paredit
@@ -661,7 +631,10 @@ non-nil, buffers will never be formatted upon save."
     (paredit-mode 1)))
 
 (after! paredit
-  (keymap-set paredit-mode-map "RET" #'paredit-newline))
+  (define-keymap :keymap paredit-mode-map
+    ;; Don't interfere with the default Emacs binding!  I use it a lot.
+    "M-s" nil
+    "RET" #'paredit-newline))
 
 ;; ~kbd-mode~ :: syntax support for =kmonad= and =kanata= configs
 
@@ -862,20 +835,28 @@ The original function fails in the presence of whitespace after a sexp."
 (package! keymap-utils)
 
 ;; Eglot
+;; :PROPERTIES:
+;; :ID:       8e477ec3-51fd-47ea-802d-e08484fa1add
+;; :END:
 
 
-(defvar ceamx-eglot-storage-dir (file-name-as-directory (concat ceamx-var-dir "eglot")))
+(after! eglot
+  (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions)
+  (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
 
-(setopt eglot-sync-connect 1)
-(setopt eglot-autoshutdown t)
-(setopt eglot-send-changes-idle-time 0.5)
+  (after! consult
+    (keymap-set eglot-mode-map "C-c l o" #'consult-eglot-symbols))
 
-;; Disable events buffer, which poses performance issues over time as the
-;; buffer grows in a longer-running Emacs instance.
-(setopt eglot-events-buffer-size 0)
+  (setopt eglot-sync-connect 1)
+  (setopt eglot-autoshutdown t)
+  (setopt eglot-send-changes-idle-time 0.5)
 
-;; Prevent frequent focus-stealing.
-(setopt eglot-auto-display-help-buffer nil)
+  ;; Disable events buffer, which poses performance issues over time as the
+  ;; buffer grows in a longer-running Emacs instance.
+  (setopt eglot-events-buffer-size 0)
+
+  ;; Prevent frequent focus-stealing.
+  (setopt eglot-auto-display-help-buffer nil))
 
 ;; Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
 
@@ -922,34 +903,6 @@ The original function fails in the presence of whitespace after a sexp."
                            (member key modes)
                          (eq key modes))))
       (funcall fn))))
-
-;; Define helper functions for specifying server configurations
-
-
-(defvar ceamx-eglot-server-configurations-alist '()
-  "Alist of language server initialization options as accepted in `eglot-server-programs'.")
-
-(defun ceamx-eglot-server-default-settings (name)
-  "Return the custom initialization options for the NAME language server."
-  (alist-get name ceamx-eglot-server-configurations-alist nil nil #'string=))
-
-(defun ceamx-eglot-server-contact (name &optional program &rest args)
-  "Return a contact specification for the language server NAME.
-NAME is a string of the \"<lang>-<program>\" format for naming
-language servers in Ceamx.  This format is based on the format
-commonly used by `lsp-mode'.
-
-PROGRAM and ARGS are as in `eglot-server-programs', which see.
-
-Unless PROGRAM is provided, the program name used in
-`eglot-server-programs' will be the value of NAME."
-  (let ((options (ceamx-eglot-server-default-settings name))
-        (program (or program (string-trim-left name "[[:alpha:]]+-"))))
-    ;; The use of `append' here is significant because it will filter out a nil
-    ;; value for `options'.
-    (append (ensure-list program)
-            args
-            (when options (list :initializationOptions options)))))
 
 ;; Declare some Eglot buffers as popup windows
 
@@ -1217,6 +1170,9 @@ usually wrongly fontified as a metadata block."
   (add-to-list 'apheleia-formatters '(alejandra "alejandra")))
 
 ;; Configure Nix language servers :lsp:
+;; :PROPERTIES:
+;; :ID:       d821e9ba-f4c9-4621-a5ed-60d834d469f2
+;; :END:
 
 
 ;; TODO: defcustom
@@ -1235,30 +1191,25 @@ usually wrongly fontified as a metadata block."
                                      (system-name)
                                      (user-login-name))))))
 
-(require 'lib-prog)
-
-(add-to-list 'ceamx-eglot-server-configurations-alist '("nix-nil" . nil))
-(add-to-list 'ceamx-eglot-server-configurations-alist
-             (cons "nix-nixd" ceamx-lsp-nix-nixd-default-config))
-
-(with-eval-after-load 'eglot
-  (defvar eglot-server-programs)
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+  :functions (ceamx-eglot-server-contact)
+  :config
+  (add-to-list 'ceamx-eglot-server-configurations-alist
+               '("nix-nil" . nil))
+  (add-to-list 'ceamx-eglot-server-configurations-alist
+               (cons "nix-nixd" ceamx-lsp-nix-nixd-default-config))
 
   (add-to-list 'eglot-server-programs
                (cons '(nix-mode nix-ts-mode)
                      (ceamx-eglot-server-contact ceamx-lsp-server-nix-lang))))
 
-;; Install ~devdocs~ Nix docset :docs:
-
-
-(require 'lib-prog)
-
-(def-hook! +devdocs-install-nix-docs ()
-  '(nix-mode-hook nix-ts-mode-hook)
-  "Install `devdocs' documents for the Nix language."
-  (+devdocs-maybe-install "nix"))
-
 ;; Keybindings :keybinds:
+;; :PROPERTIES:
+;; :ID:       108e009a-acd4-434a-9eb5-448ba94ebb77
+;; :END:
 
 
 (after! nix-mode

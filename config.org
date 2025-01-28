@@ -1,4 +1,7 @@
 # -*- eval: (load-file "./ceamx-dev-loader.el") -*-
+:PROPERTIES:
+:ID:       3101f339-2824-4a4c-baa2-7f83a2d3555d
+:END:
 #+title: Ceamx: An Emacs Configuration
 #+author: Chris Montgomery
 #+email: chmont@protonmail.com
@@ -435,27 +438,6 @@ mutation of a variable.
 <<file-footer(feature="lib-editor")>>
 #+end_src
 
-** =lisp/lib-prog.el=
-
-#+name: lib-prog-file
-#+begin_src emacs-lisp :tangle lisp/lib-prog.el :comments no :noweb yes
-<<file-prop-line(feature="lib-prog",desc="Assorted helper callables for programming modes")>>
-
-;; Copyright (c) 2024-2025 Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-prog>>
-
-<<file-footer(feature="lib-prog")>>
-#+end_src
 * Bootstrap
 :PROPERTIES:
 :VISIBILITY: folded
@@ -1619,6 +1601,9 @@ graphical frames.
 #+end_src
 
 * Features
+:PROPERTIES:
+:ID:       0b88377f-2539-49a1-917d-2d2eac806e37
+:END:
 ** User Interface & Appearance :ui:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-ui.el
@@ -3588,10 +3573,15 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+end_src
 
 *** Configure =xref=
+:PROPERTIES:
+:ID:       184ea61e-d07b-4af9-bb49-bcd539b38268
+:END:
 
 #+begin_src emacs-lisp
-(defvar xref-ignored-files '()
+(defvar xref-ignored-files nil
   "List of files to be ignored by `xref'.")
+
+(keymap-set ceamx-code-prefix "d" #'xref-find-definitions)
 
 (after! xref
   (setopt xref-file-name-display 'project-relative)
@@ -4358,13 +4348,14 @@ See the extensive discussion about the Tempel+Abbrev integration here:
 
 #+begin_src emacs-lisp :tangle no
 (package! yasnippet
-  (setopt yas-snippet-dirs
-          (list (file-name-concat ceamx-templates-dir "yasnippet")))
+  (keymap-set ceamx-insert-prefix "s" #'yas-insert-snippet)
 
   (defer! 3
     (yas-global-mode 1)))
 
 (after! yasnippet
+  (setopt yas-snippet-dirs
+          (list (file-name-concat ceamx-templates-dir "yasnippet")))
   (setopt yas-prompt-functions '(yas-completing-prompt
                                  yas-no-prompt))
 
@@ -4397,11 +4388,15 @@ A final newline would be inserted literally into the snippet expansion."
 #+end_src
 
 **** ~spdx~ :: insertable SPDX license headers
+:PROPERTIES:
+:ID:       4f029a65-d064-4715-9947-e9d32b4bdf67
+:END:
 
 - src :: <https://github.com/condy0919/spdx.el>
 
   #+begin_src emacs-lisp
-(package! spdx)
+(package! spdx
+  (keymap-set ceamx-insert-prefix "L" #'spdx-insert-spdx))
 #+end_src
 
 *** Completion-At-Point
@@ -5761,7 +5756,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 
   (after! (hydra)
     ;; via <https://github.com/jacktasia/dumb-jump?tab=readme-ov-file#hydra-for-effieciency>
-    (defhydra ceamx-prog-dumb-jump-dispatch (:color blue :columns 3)
+    (defhydra ceamx/dumb-jump-dispatch (:color blue :columns 3)
       "Jump (dumbly)"
       ("j" dumb-jump-go "Go")
       ("o" dumb-jump-go-other-window "Other window")
@@ -5769,7 +5764,10 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
       ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
       ("i" dumb-jump-go-prompt "Prompt")
       ("l" dumb-jump-quick-look "Quick look")
-      ("b" dumb-jump-back "Back"))))
+      ("b" dumb-jump-back "Back"))
+
+    (define-keymap :keymap ceamx-code-prefix
+      "j" #'ceamx/dumb-jump-dispatch/body)))
 #+end_src
 
 *** ~rainbow-mode~: Colorize color names and hexcodes in buffers :theme:
@@ -5847,6 +5845,9 @@ Not my cup of tee...
 #+end_src
 
 *** ~devdocs~: Peruse local ~devdocs~ docsets
+:PROPERTIES:
+:ID:       9907125e-84b9-420f-8991-c24b33f84161
+:END:
 
 - Source code :: <https://github.com/astoff/devdocs.el>
 
@@ -5870,44 +5871,6 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
   ;; (devdocs-update-all)
 
   )
-#+end_src
-
-WIP: Define some helper functions for installing docsets automatically:
-
-#+begin_src emacs-lisp :noweb-ref lib-prog
-(defun +devdocs--doc-directory-exists-p (slug)
-  "Whether the directory for the doc SLUG exists."
-  (file-directory-p (expand-file-name slug devdocs-data-dir)))
-
-(defun +devdocs--doc-installed-p (slug)
-  "Whether the document named SLUG is installed.
-Installation can be defined as whether there exists a metadata
-file inside a directory named SLUG within `devdocs-data-dir'."
-  (defvar devdocs-data-dir)
-  (let ((file (expand-file-name (concat slug "/metadata") devdocs-data-dir)))
-    (file-exists-p file)))
-
-(defun +devdocs-maybe-install (doc)
-  "Install the `devdocs' documentation set for DOC if not already installed.
-DOC is as in `devdocs-install'."
-  (declare-function devdocs-install "devdocs")
-  (unless (+devdocs--doc-installed-p doc)
-    (devdocs-install doc)))
-
-(defun +devdocs-maybe-install-docs (docs)
-  "Install each `devdocs' documentation set in DOCS if not already installed.
-DOCS is a quoted list of `devdocs' documentation identifiers as
-accepted by `+devdocs-maybe-install'."
-  (dolist (doc docs)
-    (+devdocs-maybe-install doc)))
-
-;; FIXME: return t if exists, whatever if new, otherwise throw
-(defun ceamx/devdocs-maybe-install (doc)
-  "Install the `devdocs' documentation set for DOC if not already installed.
-DOC is as in `devdocs-install'."
-  ;; TODO: prompt for selecting from available docs (see `devdocs-install')
-  (interactive "s")
-  (+devdocs-maybe-install doc))
 #+end_src
 
 *** Display multiple composed messages inside ~eldoc~
@@ -6395,6 +6358,9 @@ Configuration for working with Lisps of all kinds.
 #+end_src
 
 ***** ~paredit~ :: the original parenthesizer
+:PROPERTIES:
+:ID:       13b96f21-ebaf-4d49-8b89-78fc05a44c59
+:END:
 
 #+begin_src emacs-lisp
 (package! paredit
@@ -6409,7 +6375,10 @@ Configuration for working with Lisps of all kinds.
     (paredit-mode 1)))
 
 (after! paredit
-  (keymap-set paredit-mode-map "RET" #'paredit-newline))
+  (define-keymap :keymap paredit-mode-map
+    ;; Don't interfere with the default Emacs binding!  I use it a lot.
+    "M-s" nil
+    "RET" #'paredit-newline))
 #+end_src
 
 ***** DISABLED ~lispy~ :: the structural expression editing experience
@@ -6728,22 +6697,28 @@ development tool as needed.
 *** Language Server and Debugger Protocol Support :lsp:lang:
 
 **** Eglot
-
-#+begin_src emacs-lisp :noweb-ref config-feature-paths
-(defvar ceamx-eglot-storage-dir (file-name-as-directory (concat ceamx-var-dir "eglot")))
-#+end_src
+:PROPERTIES:
+:ID:       8e477ec3-51fd-47ea-802d-e08484fa1add
+:END:
 
 #+begin_src emacs-lisp
-(setopt eglot-sync-connect 1)
-(setopt eglot-autoshutdown t)
-(setopt eglot-send-changes-idle-time 0.5)
+(after! eglot
+  (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions)
+  (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
 
-;; Disable events buffer, which poses performance issues over time as the
-;; buffer grows in a longer-running Emacs instance.
-(setopt eglot-events-buffer-size 0)
+  (after! consult
+    (keymap-set eglot-mode-map "C-c l o" #'consult-eglot-symbols))
 
-;; Prevent frequent focus-stealing.
-(setopt eglot-auto-display-help-buffer nil)
+  (setopt eglot-sync-connect 1)
+  (setopt eglot-autoshutdown t)
+  (setopt eglot-send-changes-idle-time 0.5)
+
+  ;; Disable events buffer, which poses performance issues over time as the
+  ;; buffer grows in a longer-running Emacs instance.
+  (setopt eglot-events-buffer-size 0)
+
+  ;; Prevent frequent focus-stealing.
+  (setopt eglot-auto-display-help-buffer nil))
 #+end_src
 
 ***** Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
@@ -6791,37 +6766,6 @@ The timing here may be delicate...
                            (member key modes)
                          (eq key modes))))
       (funcall fn))))
-#+end_src
-
-***** Define helper functions for specifying server configurations
-
-#+begin_src emacs-lisp :noweb-ref lib-prog
-(defvar ceamx-eglot-server-configurations-alist '()
-  "Alist of language server initialization options as accepted in `eglot-server-programs'.")
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref lib-prog
-(defun ceamx-eglot-server-default-settings (name)
-  "Return the custom initialization options for the NAME language server."
-  (alist-get name ceamx-eglot-server-configurations-alist nil nil #'string=))
-
-(defun ceamx-eglot-server-contact (name &optional program &rest args)
-  "Return a contact specification for the language server NAME.
-NAME is a string of the \"<lang>-<program>\" format for naming
-language servers in Ceamx.  This format is based on the format
-commonly used by `lsp-mode'.
-
-PROGRAM and ARGS are as in `eglot-server-programs', which see.
-
-Unless PROGRAM is provided, the program name used in
-`eglot-server-programs' will be the value of NAME."
-  (let ((options (ceamx-eglot-server-default-settings name))
-        (program (or program (string-trim-left name "[[:alpha:]]+-"))))
-    ;; The use of `append' here is significant because it will filter out a nil
-    ;; value for `options'.
-    (append (ensure-list program)
-            args
-            (when options (list :initializationOptions options)))))
 #+end_src
 
 ***** Declare some Eglot buffers as popup windows
@@ -7194,6 +7138,9 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 #+end_src
 
 **** Configure Nix language servers :lsp:
+:PROPERTIES:
+:ID:       d821e9ba-f4c9-4621-a5ed-60d834d469f2
+:END:
 
 #+begin_src emacs-lisp
 ;; TODO: defcustom
@@ -7212,32 +7159,26 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
                                      (system-name)
                                      (user-login-name))))))
 
-(require 'lib-prog)
-
-(add-to-list 'ceamx-eglot-server-configurations-alist '("nix-nil" . nil))
-(add-to-list 'ceamx-eglot-server-configurations-alist
-             (cons "nix-nixd" ceamx-lsp-nix-nixd-default-config))
-
-(with-eval-after-load 'eglot
-  (defvar eglot-server-programs)
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+  :functions (ceamx-eglot-server-contact)
+  :config
+  (add-to-list 'ceamx-eglot-server-configurations-alist
+               '("nix-nil" . nil))
+  (add-to-list 'ceamx-eglot-server-configurations-alist
+               (cons "nix-nixd" ceamx-lsp-nix-nixd-default-config))
 
   (add-to-list 'eglot-server-programs
                (cons '(nix-mode nix-ts-mode)
                      (ceamx-eglot-server-contact ceamx-lsp-server-nix-lang))))
 #+end_src
 
-**** Install ~devdocs~ Nix docset :docs:
-
-#+begin_src emacs-lisp
-(require 'lib-prog)
-
-(def-hook! +devdocs-install-nix-docs ()
-  '(nix-mode-hook nix-ts-mode-hook)
-  "Install `devdocs' documents for the Nix language."
-  (+devdocs-maybe-install "nix"))
-#+end_src
-
 **** Keybindings :keybinds:
+:PROPERTIES:
+:ID:       108e009a-acd4-434a-9eb5-448ba94ebb77
+:END:
 
 #+begin_src emacs-lisp
 (after! nix-mode
@@ -7561,13 +7502,16 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 - website :: <https://github.com/mclear-tools/consult-notes>
 
 #+begin_src emacs-lisp
-(package! consult-notes)
+(package! consult-notes
+  (keymap-set ceamx-note-prefix-map "s" #'consult-notes)
+  (keymap-global-set "M-s n" #'consult-notes))
 
 (after! consult-notes
-  (setopt consult-notes-file-dir-sources
-          `(("Org" ?o ,ceamx-agenda-dir)
-            ("Work" ?w ,ceamx-note-work-dir)
-            ("Journal" ?j ,ceamx-note-journal-dir :hidden t)))
+  ;; XXX: `setq' instead of `setopt' due to type error
+  (setq consult-notes-file-dir-sources
+        `(("Org" ?o ,ceamx-agenda-dir)
+          ("Work" ?w ,ceamx-note-work-dir)
+          ("Journal" ?j ,ceamx-note-journal-dir :hidden t)))
 
   (setopt consult-notes-org-headings-files
           (dolist (dir (list ceamx-note-default-dir
@@ -8178,9 +8122,17 @@ Define the Org-Capture templates:
 #+end_src
 
 *** Agenda
+:PROPERTIES:
+:ID:       ad92ea31-8411-4ba4-b179-cf66e34a016c
+:END:
 
 #+BEGIN_SRC emacs-lisp
-(after! org-agenda
+(use-feature! org-agenda
+  :bind
+  ( :map ceamx-launch-prefix
+    ("a" . #'org-agenda))
+
+  :config
   (setopt org-agenda-tags-column 0)
   (setopt org-agenda-block-separator ?─)
   (setopt org-agenda-time-grid
@@ -8189,7 +8141,14 @@ Define the Org-Capture templates:
             " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (setopt org-agenda-current-time-string
           "⭠ now ─────────────────────────────────────────────────"))
+#+END_SRC
 
+**** TODO ~org-super-agenda~
+:PROPERTIES:
+:ID:       6438e6e9-5052-403d-8c23-a1ee8daf0ec2
+:END:
+
+#+BEGIN_SRC emacs-lisp
 (package! org-super-agenda)
 #+END_SRC
 
@@ -8345,34 +8304,13 @@ I don't think this is working properly...
 :PROPERTIES:
 :VISIBILITY: folded
 :ID:       22d5396b-cd38-47c0-b299-d7d560d052b7
+:header-args:emacs-lisp: :tangle lisp/ceamx-init-printing.el
 :END:
 
-#+begin_src emacs-lisp :tangle lisp/init-printing.el :comments no
-;;; init-printing.el --- Support for printing documents  -*- lexical-binding: t; -*-
+Printing is very broken right now and I haven’t tried in a while.
 
-;; Copyright (C) 2024  Chris Montgomery
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; FIXME: prints raw PDF data
-
-;;; Code:
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-printing.el :comments no
+;; -*- lexical-binding: t; -*-
 
 (require 'ceamx-lib)
 
@@ -8385,48 +8323,38 @@ I don't think this is working properly...
   ;; (setopt lpr-switches '())
   (pr-update-menus))
 
-(provide 'init-printing)
-;;; init-printing.el ends here
+(provide 'ceamx-init-printing)
+;;; ceamx-init-printing.el ends here
 #+end_src
 
 ** TODO Newsreader
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       c2cb4b34-da9c-42d7-b603-92ef6a0121f7
+:header-args:emacs-lisp: :tangle lisp/ceamx-init-news.el
 :END:
 
-#+begin_src emacs-lisp :tangle lisp/init-news.el :comments no
-;;; init-news.el --- News feed (RSS/Atom) subscription support  -*- lexical-binding: t; -*-
+*** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-news.el :comments no
+;;  -*- lexical-binding: t; -*-
 
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: news, local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; But do I really want to know what's happening outside of Emacs?
-
-;; FIXME: use <https://github.com/skeeto/elfeed>
 ;; FIXME: OPML instead of weird lists
 
-;;; Code:
-
 (defconst ceamx-reading-dir (concat ceamx-home-dir "Documents/reading/"))
+#+end_src
 
-(package! elfeed)
+*** ~elfeed~
+:PROPERTIES:
+:ID:       eb9bac6b-bcc1-4eba-a921-adaf4a93273b
+:END:
+
+#+begin_src emacs-lisp
+(package! elfeed
+  (keymap-set ceamx-launch-prefix "f" #'elfeed))
 
 (package! elfeed-org
   (require 'elfeed-org)
@@ -8437,58 +8365,58 @@ I don't think this is working properly...
   (setopt rmh-elfeed-org-files (list (locate-user-emacs-file "feeds.org")
                                      ;; (file-name-concat ceamx-reading-dir "000-feeds.org")
                                      )))
-
-
-
-(provide 'init-news)
-;;; init-news.el ends here
 #+end_src
 
-
-*** DONE Feature name ~init-feeds~ does not match the filename =init-news.el=
-CLOSED: [2024-07-16 Tue 00:00]
-
-
-- State "DONE"       from "TODO"       [2024-07-16 Tue 00:00]
-
-** TODO Web Browsing :web:
+*** Provide the ~ceamx-init-news~ feature
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
 
-#+begin_src emacs-lisp :tangle lisp/init-eww.el :comments no
-;;; init-eww.el --- Surfing the Wild Web of Words  -*- lexical-binding: t; -*-
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-news.el :comments no
+(provide 'ceamx-init-news)
+;;; ceamx-init-news.el ends here
+#+end_src
 
-;; TODO: headers
+** TODO Mail
+:PROPERTIES:
+:ID:       393bf925-aa13-4076-a3e9-dff923664711
+:END:
 
-;;; Commentary:
+** Web Browsing :web:
+:PROPERTIES:
+:VISIBILITY: folded
+:ID:       bbd80e03-694c-4f5b-ab31-336fd2afd963
+:header-args:emacs-lisp: :tangle lisp/ceamx-init-eww.el
+:END:
 
-;;; Code:
+*** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
-;;; Requirements
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-eww.el :comments no
+;; -*- lexical-binding: t; -*-
 
 (require 'ceamx-lib)
 (require 'lib-eww)
-
-(autoload 'eww "eww")
-
-;;; Configuration
 #+end_src
 
-
 *** Tell Emacs we want its Web Wowser to handle URL browsing by default
+:PROPERTIES:
+:ID:       e9e1a28b-8fee-4dfd-83ad-52421155f652
+:END:
 
 #+begin_src emacs-lisp
 (setopt browse-url-browser-function 'eww-browse-url)
 #+end_src
 
+*** TODO Use a different browser for some domains
+*** Configure EWW
+:PROPERTIES:
+:ID:       15ef1788-7ded-42e9-8109-019b4e6bb03b
+:END:
 
-**** TODO Use a different browser for some domains
-
-
-*** Configure EWW settings before loading
-
-#+begin_src emacs-lisp :tangle lisp/init-eww.el
+#+begin_src emacs-lisp
 (setopt shr-use-colors t)
 (setopt shr-folding-mode t)
 (setopt shr-bullet "• ")
@@ -8499,12 +8427,10 @@ CLOSED: [2024-07-16 Tue 00:00]
 ;; When providing a list of symbols, the symbols indicate what NOT to send.
 ;; TODO: Move this elsewhere, as it probably affects other HTTP requests.
 (setopt url-privacy-level '(email lastloc))
-#+end_src
 
+(keymap-set ceamx-launch-prefix "b" #'eww)
+(keymap-set ceamx-launch-prefix "W" #'ceamx/eww-wiki)
 
-*** EWW: Keybindings
-
-#+begin_src emacs-lisp :tangle lisp/init-eww.el
 (after! eww
   (define-keymap :keymap eww-mode-map
     "," '("scroll down" . scroll-up-command)
@@ -8513,216 +8439,23 @@ CLOSED: [2024-07-16 Tue 00:00]
 #+end_src
 
 *** Cleanup the rendering of some pages
+:PROPERTIES:
+:ID:       2fa70c64-7584-4a88-8a74-b3345bb3de3d
+:END:
 
-#+begin_src emacs-lisp :tangle lisp/init-eww.el
+#+begin_src emacs-lisp
 (add-hook 'eww-after-render-hook #'ceamx-eww-rerender)
 #+end_src
 
-*** File Footers
+*** Provide the ~ceamx-init-eww~ feature
+:PROPERTIES:
+:ID:       5632344a-8c09-47e7-960d-92fdf3bbd64b
+:END:
 
-#+begin_src emacs-lisp :tangle lisp/init-eww.el :comments no
-(provide 'init-eww)
-;;; init-eww.el ends here
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-eww.el :comments no
+(provide 'ceamx-init-eww)
+;;; ceamx-init-eww.el ends here
 #+end_src
-
-*** EWW: Library
-
-#+begin_src emacs-lisp :tangle lisp/lib-eww.el :comments no
-;;; lib-eww.el --- Helpers for Ceamx EWW  -*- lexical-binding: t; -*-
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-;; Copyright (C) 2018  Howard X. Abrams
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;;         Howard X. Abrams <howard.abrams@workday.com>
-;; Keywords: local
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;; Permission is hereby granted, free of charge, to any person obtaining
-;; a copy of this software and associated documentation files (the
-;; "Software"), to deal in the Software without restriction, including
-;; without limitation the rights to use, copy, modify, merge, publish,
-;; distribute, sublicense, and/or sell copies of the Software, and to
-;; permit persons to whom the Software is furnished to do so, subject to
-;; the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be
-;; included in all copies or substantial portions of the Software.
-
-;;; Commentary:
-
-;;; Sources:
-
-;; - <https://gitlab.com/howardabrams/spacemacs.d/-/blob/51196e861da9a76a02f1159397ba85b936cdfe27/layers/ha-eww/funcs.el>
-;; - <https://writequit.org/org/settings.html#sec-1-61>
-
-;;; Code:
-
-;;; Requirements
-
-(require 'cl-lib)
-(require 'url)
-
-;;; Variables
-
-(defun ceamx/eww-wiki (text)
-  "Search Wikipedia for TEXT."
-  (interactive (list (read-string "Wiki for: ")))
-  (eww (format "https://en.m.wikipedia.org/wiki/Special:Search?search=%s"
-               (url-encode-url text))))
-
-(defconst ceamx-eww-reddit-comment-header-regexp
-  (rx "level "
-      (one-or-more digit)
-      (zero-or-more anything)
-      line-end
-
-      (group (one-or-more anything))
-      line-end
-
-      (one-or-more digit)
-      " points"
-      (one-or-more anything)
-      line-end)
-  "Regular expression for matching Reddit comments.")
-
-(defconst ceamx-eww-github-repo-landing-readme-header-regexp
-  (rx line-start
-      "• "
-      (one-or-more anything) ; SVG icon for the readme
-      "README"
-      line-end)
-  "Regular expression matching the header for the README file content.")
-
-(defconst ceamx-eww-github-begin-file-content-regexp
-  (rx
-   (one-or-more digit)
-   " lines ("
-   (one-or-more digit)
-   " sloc) "
-   (one-or-more digit)
-   " ")
-  "Regular expression for matching the start of a repo file on GitHub.")
-
-;; TODO: support formats other than markdown too
-(defconst ceamx-eww-github-footer-text-regexp
-  (rx line-start
-      (one-or-more anything)            ; SVG of GitHub logo
-      " © "
-      (one-or-more digit)
-      " GitHub, Inc."
-      line-end)
-  "GitHub's copyright line is a good indication of the end of the content.
-Note that as of 2024-03-13, repo file views no longer have a footer.")
-
-;;; Functions
-
-(defun ceamx/eww-clean-reddit ()
-  "Remove a lot of the cruft in a rendered Reddit page."
-  (interactive)
-  (read-only-mode -1)
-
-  ;; 2 comments
-  ;; 79% Upvoted
-  ;; What are your thoughts? Log in or Sign uplog insign up
-  ;; Sort by
-
-  ;; level 1
-  ;; vale_fallacia
-  ;; 1 point · 12 hours ago
-
-  (flush-lines (rx line-start
-                   (zero-or-more whitespace)
-                   "Submit"))
-  (while (re-search-forward ceamx-eww-reddit-comment-header-regexp nil t)
-    (replace-match (concat "** " (match-string 1))))
-  (read-only-mode 1))
-
-(defun ceamx/eww-clean-github ()
-  "Jump to the beginning of the content on a GitHub repo page."
-  (interactive)
-  (when (re-search-forward ceamx-eww-github-footer-text-regexp nil t)
-    (read-only-mode -1)
-    ;; (previous-line 2) ; "interactive use only"
-    (forward-line -2)
-    (delete-region (point) (point-max))
-    (goto-char (point-min)))
-
-  (when (or (re-search-forward ceamx-eww-github-begin-file-content-regexp nil t)
-            (re-search-forward ceamx-eww-github-repo-landing-readme-header-regexp nil t))
-    (forward-line 2)
-    (recenter-top-bottom 0)))
-
-(defun ceamx/eww-clean-stackoverflow ()
-  "Jump to the start of interesting content on a Stack Overflow page."
-  (interactive)
-  (read-only-mode -1)
-
-  ;; (mapcar (lambda (regex) (flush-lines regex))
-  ;;         '("^up vote "
-  ;;           "^answered "
-  ;;           "^asked [A-Z]" "^edited [A-Z]"
-  ;;           "^add a comment "
-  ;;           "^share|"
-  ;;           "^active oldest"))
-  (mapc (lambda (regex) (flush-lines regex))
-        '("^up vote "
-          "^answered "
-          "^asked [A-Z]" "^edited [A-Z]"
-          "^add a comment "
-          "^share|"
-          "^active oldest"))
-
-  (goto-char 0)
-  (re-search-forward "Ask Question" nil t)
-  (backward-paragraph 2)
-  (forward-line)
-  (recenter-top-bottom 0)
-
-  (flush-lines "^Ask Question")
-  (read-only-mode 1))
-
-(defun ceamx-eww-rerender ()
-  "Invoke a rerenderer function based on the URL to be displayed."
-  (declare-function eww-current-url "eww")
-  (declare-function eww-readable "eww")
-
-  (let* ((url  (url-generic-parse-url (eww-current-url)))
-         (host (url-host url))
-         (path (car (url-path-and-query url)))
-         (bits (split-string host "\\."))
-         (site (cl-first (last bits 2))))
-    (cond
-     ((equal site "google")        (eww-readable))
-     ((equal site "reddit")        (ceamx/eww-clean-reddit))
-     ((equal site "github")        (ceamx/eww-clean-github))
-     ((equal site "stackoverflow") (ceamx/eww-clean-stackoverflow)))))
-
-;; FIXME: dependency i am not using -- replace function
-;; (defun ceamx/eww-copy-feed-url ()
-;;   "Take the EWW's current URL location and pass it to the `feed-discovery' function."
-;;   (interactive)
-;;   (feed-discovery-copy-feed-url (eww-current-url)))
-
-(provide 'lib-eww)
-;;; lib-eww.el ends here
-#+end_src
-
-*** EWW: Sources
-
-**** [[https://gitlab.com/howardabrams/spacemacs.d/-/blob/51196e861da9a76a02f1159397ba85b936cdfe27/layers/ha-eww/funcs.el][layers/ha-eww/funcs.el · 51196e861da9a76a02f1159397ba85b936cdfe27 · Howard Abrams / spacemacs.d · GitLab]]
 
 ** Tools
 :PROPERTIES:
@@ -8751,11 +8484,16 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 #+end_src
 
 *** ~eat~ :: [E]mulate [A] [T]erminal
+:PROPERTIES:
+:ID:       cafaa1b0-d633-4e7e-b470-6dbfd534c35f
+:END:
 
 + Package :: <https://codeberg.org/akib/emacs-eat/>
 
-#+begin_src emacs-lisp
+  #+begin_src emacs-lisp
 (package! eat
+  (keymap-set ceamx-launch-prefix "t" #'eat)
+
   (after! eshell
     (add-hook 'eshell-load-hook #'eat-eshell-mode)
     (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
@@ -8826,9 +8564,18 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 #+end_src
 
 *** ~uuidgen~: Generate and insert UUIDs
+:PROPERTIES:
+:ID:       48fbfb99-55c9-44db-a342-2c9fe847e85e
+:END:
 
 #+begin_src emacs-lisp
-(package! uuidgen)
+(package! uuidgen
+  (define-keymap :keymap ceamx-insert-prefix
+    "U" (cons "uuid" (define-prefix-command 'ceamx-insert-uuid-prefix))
+    "U 1" #'uuidgen-1
+    "U 3" #'uuidgen-3
+    "U 4" #'uuidgen-4
+    "U 5" #'uuidgen-5))
 #+end_src
 
 *** Augementated Intelligentry (AI)
@@ -8925,6 +8672,7 @@ available for legal distribution.
 **** DISABLED [[https://github.com/zzkt/i-ching][zzkt/i-ching]] (via MELPA)
 :PROPERTIES:
 :header-args: :tangle no
+:ID:       42bd3676-6f96-499c-8d38-570833d5c365
 :END:
 
 Does not support changing line commentaries!
@@ -9037,6 +8785,7 @@ Return the new `zone' timer."
 :PROPERTIES:
 :header-args: :tangle init.el
 :VISIBILITY: folded
+:ID:       4e93b7dc-8c0c-44b5-903b-f86ea342fd61
 :END:
 
 #+begin_src emacs-lisp
@@ -9051,11 +8800,10 @@ Return the new `zone' timer."
 (require 'ceamx-init-langs)
 (require 'ceamx-init-notes)
 (require 'ceamx-init-org)
-(require 'lib-prog)
 (require 'ceamx-init-tools)
-(require 'init-news)
-(require 'init-eww)
-(require 'init-printing)
+(require 'ceamx-init-news)
+(require 'ceamx-init-eww)
+(require 'ceamx-init-printing)
 (require 'ceamx-init-fun)
 #+end_src
 
@@ -9063,6 +8811,7 @@ Return the new `zone' timer."
 :PROPERTIES:
 :header-args: :tangle init.el
 :VISIBILITY: folded
+:ID:       d39ff068-1ed1-4bc6-bc7e-f5aa50bb8edd
 :END:
 
 ** Prefix: [C-c]
@@ -9101,46 +8850,14 @@ Return the new `zone' timer."
 
 #+end_src
 
-** [C-c i] :: Insert
+** [C-c o] :: Launch
 :PROPERTIES:
-:ID:       86b823a2-197c-45d4-88a2-fa1b27dc33b8
+:ID:       bb8d84ed-5854-4892-9b76-77e67063a71e
 :END:
 
 #+begin_src emacs-lisp
-(define-keymap :keymap ceamx-insert-prefix
-  ;; "h" #'i-ching-insert-hexagram
-  "L" #'spdx-insert-spdx
-  "s" #'yas-insert-snippet
-  "u" #'uuidgen
-
-  "U" (cons "uuid" (define-prefix-command 'ceamx-insert-uuid-prefix))
-  "U 1" #'uuidgen-1
-  "U 3" #'uuidgen-3
-  "U 4" #'uuidgen-4
-  "U 5" #'uuidgen-5)
-#+end_src
-
-** [C-c l] :: Code
-
-#+begin_src emacs-lisp
-(define-keymap :keymap ceamx-code-prefix
-  "a" #'eglot-code-actions
-  "d" #'xref-find-definitions
-  "j" #'ceamx-prog-dumb-jump-dispatch/body
-  "o" #'consult-eglot-symbols
-  "r" #'eglot-rename)
-#+end_src
-
-** [C-c o] :: Launch
-
-#+begin_src emacs-lisp
 (define-keymap :keymap ceamx-launch-prefix
-  "a" #'org-agenda
-  "b" #'eww
-  "f" #'elfeed
-  "s" #'scratch-buffer
-  "t" #'eat
-  "W" #'ceamx/eww-wiki)
+  "s" #'scratch-buffer)
 #+end_src
 
 ** [C-c q] :: Session
