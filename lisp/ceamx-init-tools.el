@@ -97,6 +97,9 @@
     "U 5" #'uuidgen-5))
 
 ;; Define important feature paths :paths:
+;; :PROPERTIES:
+;; :ID:       6af77ff1-5d06-41c8-bedf-f123ae532989
+;; :END:
 
 
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))

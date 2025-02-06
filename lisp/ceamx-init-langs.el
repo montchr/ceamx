@@ -1237,20 +1237,36 @@ usually wrongly fontified as a metadata block."
           '("_ide_helper_models.php"
             "_ide_helper.php"))
 
-;; [[https://github.com/emacs-php/php-mode][emacs-php/php-mode]] :package:
+;; ~php-ts-mode~ [builtin]
+;; :PROPERTIES:
+;; :ID:       892d02b2-d88a-4ee4-8b5b-addc613e1496
+;; :END:
+
+;; ~php-ts-mode~ is part of Emacs 30.
+
+;; Unfortunately, as of <2024-06-18 Tue 18:22>, I am missing the
+;; [[https://github.com/claytonrcarter/tree-sitter-phpdoc][=tree-sitter-phpdoc= grammar]], and it is not yet available in Nixpkgs.  I was
+;; able to run ~php-ts-mode-install-parsers~ as suggested in the error message, but
+;; the missing grammar should really be added to Nixpkgs and the current stateful
+;; installation might get confusing.
 
 
-(package! php-mode
-  ;; PHP is not a templating language and it never was.  `web-mode' does
-  ;; templates better.  Furthermore, as of <2024-06-18 Tue 22:37> `php-ts-mode'
-  ;; does not currently support embedded HTML syntax, so disabling this feature
-  ;; of `php-mode' adds consistency.
-  (setopt php-mode-template-compatibility nil))
+(when (and (fboundp 'php-ts-mode)
+           (treesit-language-available-p 'php))
+  (add-to-list 'major-mode-remap-alist '(php-mode . php-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(php-mode-maybe . php-ts-mode)))
 
 ;; Display line numbers in PHP buffers
+;; :PROPERTIES:
+;; :ID:       5be5d8be-1b82-4742-a0f2-cf716e521b9f
+;; :END:
 
 
-(add-hook 'php-mode-hook #'display-line-numbers-mode)
+(after! php-mode
+  (add-hook 'php-mode-hook #'display-line-numbers-mode))
+
+(after! php-ts-mode
+  (add-hook 'php-ts-mode-hook #'display-line-numbers-mode))
 
 ;; [[https://github.com/Fuco1/neon-mode][Fuco1/neon-mode]]: major-mode for NEON, the PHP-centric franken-YAML DSL :package:
 

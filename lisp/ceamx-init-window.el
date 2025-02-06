@@ -170,6 +170,9 @@
            (side . bottom))))
 
 ;; =popper= :: Summon and dismiss "popup" windows :popup:
+;; :PROPERTIES:
+;; :ID:       22ada524-f8e6-4f97-b745-5e00219c1be4
+;; :END:
 
 ;; - Website :: <https://github.com/karthink/popper>
 
@@ -189,15 +192,12 @@
            ceamx-simple-repl-buffer-names-list
            ceamx-simple-grep-modes-list
            '(+popper-current-buffer-popup-p)
-           '(Custom-mode
+           '(;; Custom-mode
              compilation-mode
+             epa-info-mode
              messages-buffer-mode)
            (list
             ceamx-simple-checkers-buffer-names-regexp)
-
-           ;; The "Home" tabspace, if enabled, will display the Messages buffer.
-           (unless (fboundp 'ceamx-workspace-open-tabspace-after-init-h)
-             '("\\*Messages\\*"))
 
            `(,(rx "Output*" eol)
              ,(rx "*" (or
@@ -207,6 +207,8 @@
                        "Completions"
                        "compilation"
                        "elpaca-diff"
+                       "Error"
+                       "Messages"
                        "Shell Command Output"
                        "vc"
                        "Warnings")

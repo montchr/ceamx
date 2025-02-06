@@ -152,6 +152,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (keymap-global-set "C-c B" #'consult-bookmark)
   (keymap-global-set "C-c h" #'consult-history)
   (keymap-global-set "C-c k" #'consult-kmacro)
+  (keymap-global-set "C-c q a t" #'consult-theme)
 
   ;; Improve previews for `consult-register' and other register commands
   (setopt register-preview-delay 0.5)
@@ -445,6 +446,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
 
 ;; Configuration
+;; :PROPERTIES:
+;; :ID:       0e76df71-649d-496a-b10c-86a3361c5c1e
+;; :END:
 
 
 (package! tempel
@@ -469,8 +473,7 @@ Tempel does not trigger too often when you don't expect it."
   (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
 
   ;; Require this prefix before triggering template name completion.
-  ;;  (setopt tempel-trigger-prefix "<")
-  (setopt tempel-trigger-prefix nil)
+  (setopt tempel-trigger-prefix "<")
 
   (define-keymap :keymap tempel-map
     ;; "<tab>" #'tempel-next

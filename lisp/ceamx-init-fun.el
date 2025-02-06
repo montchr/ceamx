@@ -11,7 +11,7 @@
     'ceamx-emacs-startup-hook
     "Zone out when idle.
 Return the new `zone' timer."
-    (zone-when-idle (* 60 5))))
+    (zone-when-idle (* 60 10))))
 
 ;; FIXME: broken: wrong type argument arrayp (for pgm arg)
 ;;        (where did this even come from? emacswiki?)

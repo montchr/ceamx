@@ -24,8 +24,7 @@
 
 ;;; Code:
 
-;;
-;;; Functions
+;;;; Functions
 
 (defun ceamx-format-version-subdir (parent)
   "Return a path-like string for a subdirectory of PARENT based on the current Emacs version."
@@ -34,8 +33,7 @@
     emacs-major-version
     emacs-minor-version))
 
-;;
-;;; Variables
+;;;; Base Variables
 
 (defconst ceamx-site-lisp-dir
   (concat user-emacs-directory "site-lisp/")
@@ -93,7 +91,11 @@ equivalent settings for third-party package managers.
 Packages will be stored in subdirectories based on the current
 Emacs version to prevent bytecode incompatibility.")
 
-;;; Feature-Specific Paths
+;;;; User Directories
+
+(defconst ceamx-reading-dir
+  (concat ceamx-home-dir "Documents/reading/")
+  "The user directory for reading materials.")
 
 (defconst ceamx-projects-dir
   (file-name-as-directory
@@ -101,13 +103,17 @@ Emacs version to prevent bytecode incompatibility.")
        (concat ceamx-home-dir "Developer")))
   "The root directory for projects.")
 
+;;;; Feature-Specific Paths
+
 (defconst ceamx-templates-dir
   (file-name-as-directory (file-name-concat user-emacs-directory "templates"))
   "Directory for user-defined expandable templates.
-Templates, in this sense, refer to the primary focus of packages
-like \"tempo\", \"tempel\", and \"yasnippet\".")
-(defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
-(defconst ceamx-ledger-main-journal-file (file-name-concat ceamx-ledger-dir "main.journal"))
+Templates, in this sense, refer to the primary focus of packages like
+`tempo', `tempel', and `yasnippet'.")
+
+(defconst ceamx-reading-feed-dir
+  (file-name-concat ceamx-reading-dir "feeds")
+  "The directory for news feeds.")
 
 (provide 'ceamx-paths)
 ;;; ceamx-paths.el ends here

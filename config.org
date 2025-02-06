@@ -1498,6 +1498,9 @@ expect the value you arrive at to be as high as 100 MiB.
 #+end_src
 
 *** ~envrc~: Direnv integration :package:
+:PROPERTIES:
+:ID:       4572e438-3d90-4ed3-88af-a7c2493a2e19
+:END:
 
 - src :: <https://github.com/purcell/envrc>
 - upstream :: <https://github.com/direnv/direnv>
@@ -1512,8 +1515,10 @@ buffer, as a buffer-local variable.
 
 #+begin_src emacs-lisp
 (package! envrc
-  (with-eval-after-load 'exec-path-from-shell
-    (envrc-global-mode)))
+  (after! exec-path-from-shell
+    (envrc-global-mode))
+  (after! popper
+    (add-to-list 'popper-reference-buffers "\\*envrc\\*")))
 #+end_src
 
 *** Elpaca-Wait № 3 :wait:
@@ -2067,6 +2072,9 @@ Enable the tab bar:
 #+end_src
 
 **** ~fontaine~ :: pre-configure font presets
+:PROPERTIES:
+:ID:       a007fa6e-ea76-4a29-86a2-7ff87885c0c1
+:END:
 
 <https://protesilaos.com/emacs/fontaine>
 
@@ -2116,8 +2124,7 @@ If there is no previous preset state to load, fall back to the
 
             (large
              :default-height ,(pcase (system-name)
-                               (_ 144))
-             :default-weight semilight)
+                               (_ 144)))
 
             (xlarge
              :default-height ,(pcase (system-name)
@@ -2130,13 +2137,13 @@ If there is no previous preset state to load, fall back to the
              :bold-weight extrabold)
 
             (t
-             :default-family "Iosevka Comfy"
+             :default-family "Aporetic Sans Mono"
              :default-weight regular
              :default-height ,(pcase (system-name)
                                ("tuuvok" 102)
                                (_ 105))
 
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight nil
              :fixed-pitch-height 1.0
 
@@ -2144,7 +2151,7 @@ If there is no previous preset state to load, fall back to the
              :fixed-pitch-serif-weight nil
              :fixed-pitch-serif-height 1.0
 
-             :variable-pitch-family "Iosevka Comfy Motion"
+             :variable-pitch-family "Aporetic Serif Mono"
              :variable-pitch-weight nil
              :variable-pitch-height 1.0
 
@@ -2230,10 +2237,19 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 
 *** Iconography & Symbolisms :icons:
 **** Provide common dependency: ~nerd-icons~ :package:
+:PROPERTIES:
+:ID:       0eb3c103-ba4b-40ee-9341-e5cab30e075f
+:END:
 
 #+begin_src emacs-lisp
 (package! nerd-icons
-  (require 'nerd-icons))
+  (require 'nerd-icons)
+
+  (keymap-set ceamx-insert-prefix "I" #'nerd-icons-insert)
+
+  (define-keymap :keymap (current-global-map)
+    "C-x 8 i" (cons "icons" (define-prefix-command 'ceamx-insert-icons-prefix 'ceamx-insert-icons-prefix-map))
+    "C-x 8 i i" #'nerd-icons-insert))
 
 (after! nerd-icons
   (setopt nerd-icons-font-family "Symbols Nerd Font Mono"))
@@ -3930,6 +3946,7 @@ Fine-tune Vertico appearance per-command or per-category with
   (keymap-global-set "C-c B" #'consult-bookmark)
   (keymap-global-set "C-c h" #'consult-history)
   (keymap-global-set "C-c k" #'consult-kmacro)
+  (keymap-global-set "C-c q a t" #'consult-theme)
 
   ;; Improve previews for `consult-register' and other register commands
   (setopt register-preview-delay 0.5)
@@ -4165,16 +4182,6 @@ Refine preview appearance and behavior:
 
 *** Template/snippet expansion
 
-**** Define the location of the custom template directory :paths:
-
-#+begin_src emacs-lisp :tangle no :noweb-ref config-feature-paths
-(defconst ceamx-templates-dir
-  (file-name-as-directory (file-name-concat user-emacs-directory "templates"))
-  "Directory for user-defined expandable templates.
-Templates, in this sense, refer to the primary focus of packages
-like \"tempo\", \"tempel\", and \"yasnippet\".")
-#+end_src
-
 **** Dynamic text expansion with ~dabbrev~
 
 #+begin_src emacs-lisp
@@ -4290,6 +4297,9 @@ Furthermore Tempel supports syntax extensions:
   definition.
 
 ***** Configuration
+:PROPERTIES:
+:ID:       0e76df71-649d-496a-b10c-86a3361c5c1e
+:END:
 
   #+begin_src emacs-lisp
 (package! tempel
@@ -4314,8 +4324,7 @@ Tempel does not trigger too often when you don't expect it."
   (setopt tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
 
   ;; Require this prefix before triggering template name completion.
-  ;;  (setopt tempel-trigger-prefix "<")
-  (setopt tempel-trigger-prefix nil)
+  (setopt tempel-trigger-prefix "<")
 
   (define-keymap :keymap tempel-map
     ;; "<tab>" #'tempel-next
@@ -4827,6 +4836,9 @@ Action alist entries are:
     #+end_src
 
 **** =popper= :: Summon and dismiss "popup" windows :popup:
+:PROPERTIES:
+:ID:       22ada524-f8e6-4f97-b745-5e00219c1be4
+:END:
 
 - Website :: <https://github.com/karthink/popper>
 
@@ -4846,15 +4858,12 @@ Action alist entries are:
            ceamx-simple-repl-buffer-names-list
            ceamx-simple-grep-modes-list
            '(+popper-current-buffer-popup-p)
-           '(Custom-mode
+           '(;; Custom-mode
              compilation-mode
+             epa-info-mode
              messages-buffer-mode)
            (list
             ceamx-simple-checkers-buffer-names-regexp)
-
-           ;; The "Home" tabspace, if enabled, will display the Messages buffer.
-           (unless (fboundp 'ceamx-workspace-open-tabspace-after-init-h)
-             '("\\*Messages\\*"))
 
            `(,(rx "Output*" eol)
              ,(rx "*" (or
@@ -4864,6 +4873,8 @@ Action alist entries are:
                        "Completions"
                        "compilation"
                        "elpaca-diff"
+                       "Error"
+                       "Messages"
                        "Shell Command Output"
                        "vc"
                        "Warnings")
@@ -7213,18 +7224,21 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 **** Install a PHP major-mode... but which one?
 
-***** [[https://github.com/emacs-php/php-mode][emacs-php/php-mode]] :package:
+***** DISABLED ~php-mode~ the package
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (package! php-mode
-  ;; PHP is not a templating language and it never was.  `web-mode' does
-  ;; templates better.  Furthermore, as of <2024-06-18 Tue 22:37> `php-ts-mode'
-  ;; does not currently support embedded HTML syntax, so disabling this feature
-  ;; of `php-mode' adds consistency.
+  ;; PHP is not a templating language.  `web-mode' does templates
+  ;; better.  Furthermore, as of <2024-06-18 Tue 22:37> `php-ts-mode'
+  ;; does not currently support embedded HTML syntax, so disabling
+  ;; this feature of `php-mode' adds consistency.
   (setopt php-mode-template-compatibility nil))
   #+end_src
 
-***** DISABLED ~php-ts-mode~ [builtin]
+***** ~php-ts-mode~ [builtin]
+:PROPERTIES:
+:ID:       892d02b2-d88a-4ee4-8b5b-addc613e1496
+:END:
 
 ~php-ts-mode~ is part of Emacs 30.
 
@@ -7234,7 +7248,7 @@ able to run ~php-ts-mode-install-parsers~ as suggested in the error message, but
 the missing grammar should really be added to Nixpkgs and the current stateful
 installation might get confusing.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (when (and (fboundp 'php-ts-mode)
            (treesit-language-available-p 'php))
   (add-to-list 'major-mode-remap-alist '(php-mode . php-ts-mode))
@@ -7242,9 +7256,16 @@ installation might get confusing.
 #+end_src
 
 **** Display line numbers in PHP buffers
+:PROPERTIES:
+:ID:       5be5d8be-1b82-4742-a0f2-cf716e521b9f
+:END:
 
 #+begin_src emacs-lisp
-(add-hook 'php-mode-hook #'display-line-numbers-mode)
+(after! php-mode
+  (add-hook 'php-mode-hook #'display-line-numbers-mode))
+
+(after! php-ts-mode
+  (add-hook 'php-ts-mode-hook #'display-line-numbers-mode))
 #+end_src
 
 **** [[https://github.com/Fuco1/neon-mode][Fuco1/neon-mode]]: major-mode for NEON, the PHP-centric franken-YAML DSL :package:
@@ -7474,7 +7495,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ;;; ceamx-init-langs.el ends here
 #+end_src
 
-** TODO Notetaking :notes:writing:
+** TODO Notetaking [0/1] :notes:writing:
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle lisp/ceamx-init-notes.el
 :VISIBILITY: folded
@@ -7507,16 +7528,18 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
   (keymap-global-set "M-s n" #'consult-notes))
 
 (after! consult-notes
-  ;; XXX: `setq' instead of `setopt' due to type error
-  (setq consult-notes-file-dir-sources
+  (setopt consult-notes-file-dir-sources
         `(("Org" ?o ,ceamx-agenda-dir)
           ("Work" ?w ,ceamx-note-work-dir)
-          ("Journal" ?j ,ceamx-note-journal-dir :hidden t)))
+;;          ("Journal" ?j ,ceamx-note-journal-dir :hidden t)
+          ))
 
-  (setopt consult-notes-org-headings-files
-          (dolist (dir (list ceamx-note-default-dir
-                             ceamx-note-work-dir))
-            (append (f-entries dir (##f-ext-p % "org") t))))
+  ;; (setopt consult-notes-org-headings-files
+  ;;         (dolist (dir (list ceamx-note-default-dir
+  ;;                            ceamx-note-work-dir))
+  ;;           (append (f-entries dir (##f-ext-p % "org") t))))
+
+  (setopt consult-notes-org-headings-files nil)
 
   (consult-notes-org-headings-mode 1)
 
@@ -7554,6 +7577,9 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 #+end_src
 
 *** Denote (denote.el)
+:PROPERTIES:
+:ID:       7b776331-4757-4a87-94e5-beddb632b3d7
+:END:
 
 - website :: <https://protesilaos.com/emacs/denote>
 
@@ -7593,7 +7619,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
       "C-c n b" #'denote-backlinks)))
 
 (after! denote
-  (setopt denote-directory ceamx-note-dir)
+  (setopt denote-directory ceamx-note-default-dir)
   (setopt denote-excluded-directories-regexp "\\.archive")
   (setopt denote-dired-directories
           (list denote-directory
@@ -8327,7 +8353,7 @@ Printing is very broken right now and I haven’t tried in a while.
 ;;; ceamx-init-printing.el ends here
 #+end_src
 
-** TODO Newsreader
+** TODO Newsreader [0/0]
 :PROPERTIES:
 :VISIBILITY: folded
 :ID:       c2cb4b34-da9c-42d7-b603-92ef6a0121f7
@@ -8337,14 +8363,13 @@ Printing is very broken right now and I haven’t tried in a while.
 *** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       f2baf249-16c1-408e-a07a-a6a1e7be7ece
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-news.el :comments no
 ;;  -*- lexical-binding: t; -*-
 
-;; FIXME: OPML instead of weird lists
-
-(defconst ceamx-reading-dir (concat ceamx-home-dir "Documents/reading/"))
+(require 'ceamx-paths)
 #+end_src
 
 *** ~elfeed~
@@ -8362,9 +8387,10 @@ Printing is very broken right now and I haven’t tried in a while.
   ;; When `elfeed' starts, `elfeed-org' will read the configuration.
   (elfeed-org)
 
-  (setopt rmh-elfeed-org-files (list (locate-user-emacs-file "feeds.org")
-                                     ;; (file-name-concat ceamx-reading-dir "000-feeds.org")
-                                     )))
+  (setopt rmh-elfeed-org-files
+          (list
+           (file-name-concat ceamx-reading-feed-dir "index.org")
+           (locate-user-emacs-file "feeds.org"))))
 #+end_src
 
 *** Provide the ~ceamx-init-news~ feature
@@ -8591,8 +8617,11 @@ M is not eager to board the train bound for Hype City.
 - Package :: <https://github.com/narendraj9/hledger-mode>
 
 **** Define important feature paths :paths:
+:PROPERTIES:
+:ID:       6af77ff1-5d06-41c8-bedf-f123ae532989
+:END:
 
-#+begin_src emacs-lisp :noweb-ref config-feature-paths
+#+begin_src emacs-lisp
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
 (defconst ceamx-ledger-main-journal-file (file-name-concat ceamx-ledger-dir "main.journal"))
 #+end_src
@@ -8743,6 +8772,9 @@ changing lines.
 #+end_src
 
 *** Zone out in ~zone~
+:PROPERTIES:
+:ID:       0ffe546e-0213-4686-8dd2-2c0f20770c85
+:END:
 
 + EmacsWiki :: <https://www.emacswiki.org/emacs/ZoneMode>
 
@@ -8756,7 +8788,7 @@ changing lines.
     'ceamx-emacs-startup-hook
     "Zone out when idle.
 Return the new `zone' timer."
-    (zone-when-idle (* 60 5))))
+    (zone-when-idle (* 60 10))))
 
 ;; FIXME: broken: wrong type argument arrayp (for pgm arg)
 ;;        (where did this even come from? emacswiki?)
@@ -9005,9 +9037,13 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 * Libraries
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       54ef2978-d30a-4a0c-b629-ff4965cb0b7b
 :END:
 
 ** The ~ceamx-paths~ library provides locational awareness
+:PROPERTIES:
+:ID:       cb1bb715-28e3-4a8e-aae0-0df96f7e3429
+:END:
 :LOGBOOK:
 - Refiled on [2025-01-25 Sat 15:44]
 :END:
@@ -9039,8 +9075,7 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 
 ;;; Code:
 
-;;
-;;; Functions
+;;;; Functions
 
 (defun ceamx-format-version-subdir (parent)
   "Return a path-like string for a subdirectory of PARENT based on the current Emacs version."
@@ -9049,8 +9084,7 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
     emacs-major-version
     emacs-minor-version))
 
-;;
-;;; Variables
+;;;; Base Variables
 
 (defconst ceamx-site-lisp-dir
   (concat user-emacs-directory "site-lisp/")
@@ -9108,7 +9142,11 @@ equivalent settings for third-party package managers.
 Packages will be stored in subdirectories based on the current
 Emacs version to prevent bytecode incompatibility.")
 
-;;; Feature-Specific Paths
+;;;; User Directories
+
+(defconst ceamx-reading-dir
+  (concat ceamx-home-dir "Documents/reading/")
+  "The user directory for reading materials.")
 
 (defconst ceamx-projects-dir
   (file-name-as-directory
@@ -9116,7 +9154,17 @@ Emacs version to prevent bytecode incompatibility.")
        (concat ceamx-home-dir "Developer")))
   "The root directory for projects.")
 
-<<config-feature-paths>>
+;;;; Feature-Specific Paths
+
+(defconst ceamx-templates-dir
+  (file-name-as-directory (file-name-concat user-emacs-directory "templates"))
+  "Directory for user-defined expandable templates.
+Templates, in this sense, refer to the primary focus of packages like
+`tempo', `tempel', and `yasnippet'.")
+
+(defconst ceamx-reading-feed-dir
+  (file-name-concat ceamx-reading-dir "feeds")
+  "The directory for news feeds.")
 
 (provide 'ceamx-paths)
 ;;; ceamx-paths.el ends here
@@ -11362,6 +11410,7 @@ keywords are supported:
 * End
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       e253d887-e769-4aa1-9588-5ea2d771bab4
 :END:
 
 This is the section for file-local variables.  File-local variables must be on

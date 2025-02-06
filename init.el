@@ -547,6 +547,9 @@ The ORDER can be used to deduce the feature context."
     (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
 
 ;; ~envrc~: Direnv integration :package:
+;; :PROPERTIES:
+;; :ID:       4572e438-3d90-4ed3-88af-a7c2493a2e19
+;; :END:
 
 ;; - src :: <https://github.com/purcell/envrc>
 ;; - upstream :: <https://github.com/direnv/direnv>
@@ -561,8 +564,10 @@ The ORDER can be used to deduce the feature context."
 
 
 (package! envrc
-  (with-eval-after-load 'exec-path-from-shell
-    (envrc-global-mode)))
+  (after! exec-path-from-shell
+    (envrc-global-mode))
+  (after! popper
+    (add-to-list 'popper-reference-buffers "\\*envrc\\*")))
 
 ;; Elpaca-Wait № 3 :wait:
 

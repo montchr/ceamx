@@ -1,7 +1,7 @@
-;; -*- lexical-binding: t;  -*-
+  ;; -*- lexical-binding: t;  -*-
 
-(require 'ceamx-lib)
-(require 'ceamx-ui)
+  (require 'ceamx-lib)
+  (require 'ceamx-ui)
 
 ;; Configure cursor appearance
 
@@ -412,6 +412,9 @@
 (setq-default text-scale-remap-header-line t)
 
 ;; ~fontaine~ :: pre-configure font presets
+;; :PROPERTIES:
+;; :ID:       a007fa6e-ea76-4a29-86a2-7ff87885c0c1
+;; :END:
 
 ;; <https://protesilaos.com/emacs/fontaine>
 
@@ -461,8 +464,7 @@ If there is no previous preset state to load, fall back to the
 
             (large
              :default-height ,(pcase (system-name)
-                               (_ 144))
-             :default-weight semilight)
+                               (_ 144)))
 
             (xlarge
              :default-height ,(pcase (system-name)
@@ -475,13 +477,13 @@ If there is no previous preset state to load, fall back to the
              :bold-weight extrabold)
 
             (t
-             :default-family "Iosevka Comfy"
+             :default-family "Aporetic Sans Mono"
              :default-weight regular
              :default-height ,(pcase (system-name)
                                ("tuuvok" 102)
                                (_ 105))
 
-             :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-family "Aporetic Sans Mono"
              :fixed-pitch-weight nil
              :fixed-pitch-height 1.0
 
@@ -489,7 +491,7 @@ If there is no previous preset state to load, fall back to the
              :fixed-pitch-serif-weight nil
              :fixed-pitch-serif-height 1.0
 
-             :variable-pitch-family "Iosevka Comfy Motion"
+             :variable-pitch-family "Aporetic Serif Mono"
              :variable-pitch-weight nil
              :variable-pitch-height 1.0
 
@@ -571,10 +573,19 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 ")))
 
 ;; Provide common dependency: ~nerd-icons~ :package:
+;; :PROPERTIES:
+;; :ID:       0eb3c103-ba4b-40ee-9341-e5cab30e075f
+;; :END:
 
 
 (package! nerd-icons
-  (require 'nerd-icons))
+  (require 'nerd-icons)
+
+  (keymap-set ceamx-insert-prefix "I" #'nerd-icons-insert)
+
+  (define-keymap :keymap (current-global-map)
+    "C-x 8 i" (cons "icons" (define-prefix-command 'ceamx-insert-icons-prefix 'ceamx-insert-icons-prefix-map))
+    "C-x 8 i i" #'nerd-icons-insert))
 
 (after! nerd-icons
   (setopt nerd-icons-font-family "Symbols Nerd Font Mono"))

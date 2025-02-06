@@ -16,16 +16,18 @@
   (keymap-global-set "M-s n" #'consult-notes))
 
 (after! consult-notes
-  ;; XXX: `setq' instead of `setopt' due to type error
-  (setq consult-notes-file-dir-sources
+  (setopt consult-notes-file-dir-sources
         `(("Org" ?o ,ceamx-agenda-dir)
           ("Work" ?w ,ceamx-note-work-dir)
-          ("Journal" ?j ,ceamx-note-journal-dir :hidden t)))
+;;          ("Journal" ?j ,ceamx-note-journal-dir :hidden t)
+          ))
 
-  (setopt consult-notes-org-headings-files
-          (dolist (dir (list ceamx-note-default-dir
-                             ceamx-note-work-dir))
-            (append (f-entries dir (##f-ext-p % "org") t))))
+  ;; (setopt consult-notes-org-headings-files
+  ;;         (dolist (dir (list ceamx-note-default-dir
+  ;;                            ceamx-note-work-dir))
+  ;;           (append (f-entries dir (##f-ext-p % "org") t))))
+
+  (setopt consult-notes-org-headings-files nil)
 
   (consult-notes-org-headings-mode 1)
 
@@ -93,7 +95,7 @@
       "C-c n b" #'denote-backlinks)))
 
 (after! denote
-  (setopt denote-directory ceamx-note-dir)
+  (setopt denote-directory ceamx-note-default-dir)
   (setopt denote-excluded-directories-regexp "\\.archive")
   (setopt denote-dired-directories
           (list denote-directory

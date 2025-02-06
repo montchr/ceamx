@@ -2,4 +2,4 @@
 
 fundamental-mode
 
-(cdomat user-full-name " <" user-mail-address ">")
+(mei user-full-name " <" user-mail-address ">")

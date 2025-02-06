@@ -1,26 +1,12 @@
+:PROPERTIES:
+:ID:       f742b9ef-9f33-4128-b06b-ed55153af9aa
+:END:
 #+TITLE: News Feed Manifest
 
-* Blogs :elfeed:
-
-** entry-title: \(linux\|nixos\|kde\|gnome\) :linux:
-
-** Art :art:
-
-** Software Development :dev:
-
-*** Web Development :web:
-
-**** PHP :php:
-
-**** WordPress :wp:
-
-***** entry-title: \(wordpress\|block.editor\)
-
-** Emacs :emacs:mustread:
-
-*** entry-title: \(emacs\|org-mode\)
-
 * Imported Feeds            :elfeed:
+:PROPERTIES:
+:ID:       d75ff302-e5b2-4ed7-a442-b57804007b5a
+:END:
 ** [[https://humantransit.org/feed][Human Transit]]
 ** [[https://news.ycombinator.com/rss][Hacker News]]
 ** [[https://feeds2.feedburner.com/thenextweb][The Next Web]]
