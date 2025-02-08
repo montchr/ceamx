@@ -106,7 +106,10 @@
   ;; Provide messages reporting on matches changed in the context.
   (add-hook 'substitute-post-replace-functions #'substitute-report-operation))
 
-;; ~wgrep~ :: writable grep buffers
+;; =wgrep= :: writable grep buffers
+;; :PROPERTIES:
+;; :ID:       db0ec455-df43-47da-9015-b22d48699027
+;; :END:
 
 ;; + Package :: <https://github.com/mhayashi1120/Emacs-wgrep>
 

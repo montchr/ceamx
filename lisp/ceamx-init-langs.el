@@ -888,6 +888,9 @@ The original function fails in the presence of whitespace after a sexp."
 (setopt eglot-booster-no-remote-boost t)
 
 ;; Run language servers automatically in supported major modes
+;; :PROPERTIES:
+;; :ID:       f67c3b4f-7328-4985-937d-cfec35f82994
+;; :END:
 
 ;; The timing here may be delicate...
 

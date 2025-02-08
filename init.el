@@ -111,7 +111,8 @@
         (list (file-name-concat ceamx-config-dir "emacs")
               (file-name-concat ceamx-config-dir "ceamx")))
 (setopt safe-local-variable-values
-        '((eval load-file "./ceamx-dev-loader.el")))
+        '((eval load-file "./ceamx-dev-loader.el")
+          (eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
 
 ;; Enable/disable some commands that are disabled/enabled by default
 
@@ -144,10 +145,12 @@
 ;; Add the =site-lisp= directory to ~load-path~
 
 
-(add-to-list 'load-path ceamx-site-lisp-dir)
-(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
+
 
 ;; =site-lisp/on=: Define additional Emacs event hooks
+;; :PROPERTIES:
+;; :ID:       7f77da4e-3109-4dca-80c1-38c838ee5d70
+;; :END:
 
 
 (require 'on)

@@ -1,7 +1,6 @@
 ;; -*- lexical-binding: t; -*-
 
 (require 'ceamx-lib)
-(require 'lib-eww)
 
 (setopt browse-url-browser-function 'eww-browse-url)
 
@@ -25,7 +24,11 @@
     "." '("scroll up" . scroll-down-command)
     "o" '("open link" . link-hint-open-link)))
 
-(add-hook 'eww-after-render-hook #'ceamx-eww-rerender)
+(use-feature! ceamx-eww
+  :after eww
+  :functions (ceamx-eww-rerender)
+  :init
+  (add-hook 'eww-after-render-hook #'ceamx-eww-rerender))
 
 (provide 'ceamx-init-eww)
 ;;; ceamx-init-eww.el ends here

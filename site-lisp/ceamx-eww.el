@@ -93,21 +93,22 @@ Note that as of 2024-03-13, repo file views no longer have a footer.")
 
 ;;;; Functions
 
+(autoload 'eww-current-url "eww")
+(autoload 'eww-readable "eww")
+
+;;;###autoload
 (defun ceamx-eww-rerender ()
   "Invoke a rerenderer function based on the URL to be displayed."
-  (declare-function eww-current-url "eww")
-  (declare-function eww-readable "eww")
-
-  (let* ((url  (url-generic-parse-url (eww-current-url)))
-         (host (url-host url))
-         (path (car (url-path-and-query url)))
-         (bits (split-string host "\\."))
-         (site (cl-first (last bits 2))))
+  (let* ( (url  (url-generic-parse-url (eww-current-url)))
+          (host (url-host url))
+          (path (car (url-path-and-query url)))
+          (bits (split-string host "\\."))
+          (site (cl-first (last bits 2))))
     (cond
-     ((equal site "google")        (eww-readable))
-     ((equal site "reddit")        (ceamx/eww-clean-reddit))
-     ((equal site "github")        (ceamx/eww-clean-github))
-     ((equal site "stackoverflow") (ceamx/eww-clean-stackoverflow)))))
+      ((equal site "google")        (eww-readable))
+      ((equal site "reddit")        (ceamx/eww-clean-reddit))
+      ((equal site "github")        (ceamx/eww-clean-github))
+      ((equal site "stackoverflow") (ceamx/eww-clean-stackoverflow)))))
 
 ;;;; Commands
 

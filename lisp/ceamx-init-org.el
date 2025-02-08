@@ -374,9 +374,10 @@ Intended for use as a local hook function on
   (setopt org-archive-save-context-info
           '(time file category todo itags olpath ltags)))
 
-;; Capture
-
-;; Define the Org-Capture templates:
+;; Define the Org-Capture templates :capture:
+;; :PROPERTIES:
+;; :ID:       904260e7-c81e-40e1-8208-a9a4d450d704
+;; :END:
 
 
 (after! (org-capture doct)

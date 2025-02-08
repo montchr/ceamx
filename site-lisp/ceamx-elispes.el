@@ -1,6 +1,6 @@
-;;; lib-elisp.el --- Helper utilities for Emacs Lisp development and language support  -*- lexical-binding: t; -*-
+;;; ceamx-elispes.el --- Ceamx helper utilities for Emacs Lisp development  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2024  Chris Montgomery
+;; Copyright (C) 2024-2025  Chris Montgomery
 ;; Copyright (C) 2018  Adam Porter
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
@@ -22,13 +22,13 @@
 
 ;;; Commentary:
 
-;;; Sources:
+;;;; Sources:
 
 ;; <https://github.com/alphapapa/emacs-package-dev-handbook/blob/4a78d753e965bc2cb87f72a72974a4514c4d18dd/README.org#emacs-lisp-macroreplace>
 
 ;;; Code:
 
-;;; Functions
+;;;; Functions
 
 ;; via <https://emacs.stackexchange.com/a/58078/40956>
 (defun ceamx-dev-list-mode-ancestors (mode)
@@ -124,5 +124,5 @@ keywords are supported:
     (setf (buffer-substring beg end) (pp-to-string expansion))
     (user-error "Unable to expand")))
 
-(provide 'lib-elisp)
-;;; lib-elisp.el ends here
+(provide 'ceamx-elispes)
+;;; ceamx-elispes.el ends here

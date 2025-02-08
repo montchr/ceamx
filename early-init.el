@@ -61,34 +61,46 @@
 ;; NOTE: Either use `gcmh' or make sure to reset this later.  Or else!
 (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
 
-;; Add directories to load path
+;; Directories and well-known-files
+;; :PROPERTIES:
+;; :ID:       c7734cbe-7b46-40d6-bab4-3003417ac852
+;; :END:
+
+;; Add the top-level directories to the load path:
 
 
-;; Configure load path
-(dolist (subdir '("autoloads" "lisp" "lisp/core" "lisp/lib"))
+(dolist (subdir '("autoloads" "lisp" "site-lisp"))
   (let ((dir (expand-file-name subdir user-emacs-directory)))
     (add-to-list 'load-path dir)))
 
-;; Load custom constants describing well-known paths
 
-;; See [[*=ceamx-paths= :: common path constants]]
+
+;; Load the essential core libraries:
 
 
 (require 'ceamx-paths)
+(require 'ceamx-lib)
 
-;; Store packages in the designated directory
+
+
+;; Add all =site-lisp= subdirectories to load-path:
+
+
+(prependq! load-path (ceamx-subdirs ceamx-site-lisp-dir))
+
+
+
+;; Store packages in the designated directory:
 
 
 (setq package-user-dir ceamx-packages-dir)
 
-;; Use preferred cache directories for native compilation
-
-
-(startup-redirect-eln-cache ceamx-eln-dir)
-(add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
-
 ;; Native compilation settings
 
+
+;; Use preferred cache directories for native compilation.
+(startup-redirect-eln-cache ceamx-eln-dir)
+(add-to-list 'native-comp-eln-load-path ceamx-eln-dir)
 
 (setq native-comp-async-report-warnings-errors 'silent)
 (setq native-compile-prune-cache t)
