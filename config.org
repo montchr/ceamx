@@ -8400,7 +8400,7 @@ Printing is very broken right now and I haven’t tried in a while.
 ;;; ceamx-init-printing.el ends here
 #+end_src
 
-** TODO Newsreader [0/0]
+** Newsreader
 :PROPERTIES:
 :VISIBILITY: folded
 :ID:       c2cb4b34-da9c-42d7-b603-92ef6a0121f7
@@ -8419,25 +8419,129 @@ Printing is very broken right now and I haven’t tried in a while.
 (require 'ceamx-paths)
 #+end_src
 
-*** ~elfeed~
+*** =elfeed= :: an improved feed reader
 :PROPERTIES:
 :ID:       eb9bac6b-bcc1-4eba-a921-adaf4a93273b
 :END:
 
+Filter prefixes:
+
++ =+= :: AND Tag
++ =-= :: NOT Tag
++ =@= :: Age or date range.  Accepts plain English separated by dashes.
+  Note that age filters improve performance of database lookups.
+  + Examples
+    + =@2-years-old= :: Filter items older than 2 years ago e.g. if 2025
+      now, then items from 2023 or later.
+    + =@2-weeks-ago= :: Filter items older than 2 weeks
+    + =@2025-01-01= :: Filter items older than date
+    + =@5-days-ago--1-day-ago= :: Filter items not in range, where range
+      is indicated by double-dashes
++ =!= :: Filter out items matching regular expression.
++ === :: Include only items whose feed title or URL match regular
+  expression.  Results will match =ANY= such component.
++ =~= :: Exclude items whose feed title or URL match regular expression
+  (reverse of === prefix).  Results will match =ANY= such component.
++ =#= :: Limit to number of items following prefix
++ All other components are treated as a regular expression for feed
+  title or URL.  Results will match =ALL= such components.
+
+Examples:
+
++ =@6-months-ago +unread= :: Only show unread entries from the past six
+  months.  This is the default filter.
++ =linu[xs] @1-year-old= :: Only show entries about Linux or some person
+  whose name is Linus from the past year.
++ =-unread +video +music #10= :: Only show 10 of the most recent and
+  previously-read entries tagged with =video= and =music=.
++ =+emacs =https://youtube.com= :: Only show entries from YouTube tagged as =emacs=
+
+The feed list is set up with =elfeed-org= and should live at
+=~/Documents/reading/feeds/index.org=.
+
 #+begin_src emacs-lisp
 (package! elfeed
-  (keymap-set ceamx-launch-prefix "f" #'elfeed))
+  (keymap-set ceamx-launch-prefix "f" #'elfeed)
 
+  (after! elfeed
+    (require 'ceamx-news)
+
+    (make-directory elfeed-db-directory t)
+
+    (setopt elfeed-search-filter "@1-week-ago +unread")
+    (setopt elfeed-show-entry-switch #'pop-to-buffer
+            elfeed-show-entry-delete #'ceamx-news/delete-pane))
+
+  (after! popper
+    (add-to-list 'popper-reference-buffers "^\\*elfeed-entry")))
+
+(package! elfeed-goodies
+  (after! elfeed
+    (require 'elfeed-goodies)
+    (elfeed-goodies/setup))
+  ;; (after! elfeed-goodies
+  ;;   )
+  )
+#+end_src
+
+*** =elfeed-org= :: organize =elfeed= subscriptions via Org-Mode
+:PROPERTIES:
+:ID:       5d6d2565-5591-40f9-bd2b-6d5493dae613
+:END:
+
+#+begin_src emacs-lisp
 (package! elfeed-org
-  (require 'elfeed-org)
+  ;; HACK: Must be set prior to feature load.
+  ;; <https://github.com/doomemacs/doomemacs/blob/2bc052425ca45a41532be0648ebd976d1bd2e6c1/modules/app/rss/config.el#L74-L75>
+  (setq rmh-elfeed-org-files
+        (list (file-name-concat ceamx-reading-feed-dir "index.org")))
 
-  ;; When `elfeed' starts, `elfeed-org' will read the configuration.
-  (elfeed-org)
+  (after! elfeed
+    (require 'elfeed-org)
+    (elfeed-org)))
+#+end_src
 
-  (setopt rmh-elfeed-org-files
-          (list
-           (file-name-concat ceamx-reading-feed-dir "index.org")
-           (locate-user-emacs-file "feeds.org"))))
+*** =elfeed-tube= :: enhance the =elfeed= video experience
+:PROPERTIES:
+:ID:       d8d28c05-a2b3-42a0-96cd-84400584b4eb
+:END:
+
+#+begin_src emacs-lisp
+(package! elfeed-tube
+  (after! elfeed
+    (require 'elfeed-tube)
+    (keymap-set elfeed-show-mode-map "F" #'elfeed-tube-fetch)
+    (keymap-set elfeed-show-mode-map "<remap> <save-buffer>" #'elfeed-tube-save)
+    (keymap-set elfeed-search-mode-map "F" #'elfeed-tube-fetch)
+    (keymap-set elfeed-search-mode-map "<remap> <save-buffer>" #'elfeed-tube-save))
+  (after! elfeed-tube
+    (setopt elfeed-tube-auto-save-p nil
+            elfeed-tube-auto-fetch-p t)
+    (elfeed-tube-setup)))
+
+(package! elfeed-tube-mpv
+  (after! elfeed
+    (keymap-set elfeed-show-mode-map "C-c C-f" #'elfeed-tube-mpv-follow-mode)
+    (keymap-set elfeed-show-mode-map "C-c C-w" #'elfeed-tube-mpv-where)))
+#+end_src
+
+*** =elfeed-score= :: provide Gnus-style scoring for =elfeed=
+:PROPERTIES:
+:ID:       f1a262e4-0274-4f5a-b8b5-f8952d7523ab
+:END:
+
+I wonder if there is a way to export NewsBlur scoring to this format…
+
+#+begin_src emacs-lisp
+(package! elfeed-score
+  (after! elfeed
+    (elfeed-score-enable))
+  (after! elfeed-score
+    ;; <https://www.unwoundstack.com/doc/elfeed-score/curr>
+    (setopt elfeed-score-serde-score-file
+            (file-name-concat ceamx-reading-feed-dir "elfeed-scores.eld")))
+  (after! (elfeed elfeed-score)
+    (keymap-set elfeed-search-mode-map "=" elfeed-score-map)))
 #+end_src
 
 *** Provide the ~ceamx-init-news~ feature
