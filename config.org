@@ -3551,23 +3551,20 @@ these utilities.
   (add-hook 'substitute-post-replace-functions #'substitute-report-operation))
 #+end_src
 
-*** ~wgrep~ :: writable grep buffers
+*** =wgrep= :: writable grep buffers
+:PROPERTIES:
+:ID:       db0ec455-df43-47da-9015-b22d48699027
+:END:
 
 + Package :: <https://github.com/mhayashi1120/Emacs-wgrep>
 
 #+begin_src emacs-lisp
-(use-package wgrep
-  ;; :ensure t
+(package! wgrep
+  (after! wgrep
+    (setopt wgrep-auto-save-buffer t))
 
-  :bind
-  ((nil . nil)
-   :map dired-mode-map
-   ("C-c C-e" . wgrep-change-to-wgrep-mode)
-   :map grep-mode-map
-   ("W" . wgrep-change-to-wgrep-mode))
-
-  :config
-  (setopt wgrep-auto-save-buffer t))
+  (after! grep-mode
+    (keymap-set grep-mode-map "W" #'wgrep-change-to-wgrep-mode)))
 #+end_src
 
 *** TODO Use builtin ~grep-edit-mode~ instead of ~wgrep~ if available
@@ -3695,6 +3692,9 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+end_src
 
 *** Writable Dired buffers with the ~wdired~ feature
+:PROPERTIES:
+:ID:       13d23c1b-2e7a-4562-a01a-4d922d8e7317
+:END:
 
 #+begin_src emacs-lisp
 (after! dired

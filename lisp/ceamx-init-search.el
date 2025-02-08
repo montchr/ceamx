@@ -111,18 +111,12 @@
 ;; + Package :: <https://github.com/mhayashi1120/Emacs-wgrep>
 
 
-(use-package wgrep
-  ;; :ensure t
+(package! wgrep
+  (after! wgrep
+    (setopt wgrep-auto-save-buffer t))
 
-  :bind
-  ((nil . nil)
-   :map dired-mode-map
-   ("C-c C-e" . wgrep-change-to-wgrep-mode)
-   :map grep-mode-map
-   ("W" . wgrep-change-to-wgrep-mode))
-
-  :config
-  (setopt wgrep-auto-save-buffer t))
+  (after! grep-mode
+    (keymap-set grep-mode-map "W" #'wgrep-change-to-wgrep-mode)))
 
 ;; Configure =re-builder=, the regular expression builder
 
