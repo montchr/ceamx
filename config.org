@@ -10,435 +10,16 @@
 #+property: header-args:shell+      :results replace
 #+property: header-args             :mkdirp yes :tangle no :exports code :noweb yes
 
-* Overview
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
 This is a user configuration for GNU Emacs.
 
 The target operating system is GNU/Linux, though the configuration
 will usually also work on macOS.
-
-** Styleguide
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-*** Boolean Variables vs. Predicate Functions
-:PROPERTIES:
-:CUSTOM_ID: boolean-variables-vs.-predicate-functions
-:END:
-The naming for booleans and predicates is different.
-
-**** Example
-:PROPERTIES:
-:CUSTOM_ID: example
-:END:
-#+begin_src elisp
-(defvar ceamx-foo-flag t)
-(defvar ceamx-is-foo-enabled t)
-(defun ceamx-foo-p ()
-  ;; sketchy logic (don't do this)
-  (or ceamx-foo-flag ceamx-is-foo-enabled))
-#+end_src
-
-**** Explanation
-:PROPERTIES:
-:CUSTOM_ID: explanation
-:END:
-From
-[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html][Coding
-Conventions (GNU Emacs Lisp Reference Manual)]]:
-
-#+begin_quote
-If the purpose of a function is to tell you whether a certain condition
-is true or false, give the function a name that ends in 'p' (which
-stands for "predicate".  If the name is one word, add just 'p'; if the
-name is multiple words, add '-p'.  Examples are =framep= and
-=frame-live-p=.  We recommend to avoid using this =-p= suffix in boolean
-variable names, unless the variable is bound to a predicate function;
-instead, use a =-flag= suffix or names like =is-foo=.
-
-#+end_quote
-
-**** Org-Mode: When to wrap inline text in ~tildes~ vs. =equals=
-
-[[info:(org) Emphasis and Monospace][info (org) Emphasis and Monospace]]
-
-[[https://emacs.stackexchange.com/a/21870][What's the relationship between ~foo~ and =foo= in org-mode? - Emacs Stack Exchange]]
-
-** Anatomy
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-*** Partials
-:PROPERTIES:
-:header-args: :results replace
-:END:
-
-**** CANCELLED ~file-header~ cannot accept passthrough noweb args?
-CLOSED: [2024-05-18 Sat 15:50]
-
-- State "CANCELLED"  from "TODO"       [2024-05-18 Sat 15:50] \\
-  There are many limitations to Noweb, and E expects to move away from the current approach.
-**** ~file-header~
-
-#+name: file-header-default-authors-table
-| Chris Montgomery | chmont@protonmail.com | 2024 |   | GPL-3.0-or-later |
-| Someone Else?    |                  |      |   |                  |
-
-#+name: file-header
-#+begin_src emacs-lisp :noweb yes :var feature="file-header-example" :var desc="" :var table=file-header-default-authors-table
-  <<file-prop-line(feature,desc)>>
-
-  ;; <<file-authors(table=table)>>
-  <<file-extra-meta>>
-
-  <<file-license>>
-
-  ;;; Commentary:
-  ;;; Code:
-#+end_src
-
-**** ~file-prop-line~
-
-- Note taken on [2024-03-27 Wed 01:47] \\
-  Added the ~extraprops~ =noweb= variable for additional propline values and file-local
-  variables.
-
-#+name: file-prop-line
-#+header: :var feature="" :var desc="" :var extraprops=""
-#+begin_src emacs-lisp :comments no
-(format ";;; %s.el --- %s  -*- lexical-binding: t; %s -*-" feature desc extraprops)
-#+end_src
-
-**** ~file-extra-meta~
-
-#+name: file-extra-meta
-#+begin_src emacs-lisp
-;; URL: https://codeberg.org/montchr/ceamx
-;; Version: 0.1.0
-#+end_src
-
-**** TODO ~file-footer~
-
-Emacs calls this the "file trailer" in ~generate-lisp-file-trailer~.
-
-- [ ] Adds significantly to tangle time
-
-#+name: file-footer
-#+begin_src emacs-lisp :var feature="" :comments no
-(format "(provide '%1$s)\n;;; %1$s.el ends here\n" feature)
-#+end_src
-
-**** ~file-authors~
-
-Example table:
-
-#+name: file-authors-example-table
-| Name           | Email               | Start Year | End Year | License          |
-|----------------+---------------------+------------+----------+------------------|
-| Gilles Deleuze | notrees@rhizome.net |       1925 |     1995 | GPL-3.0-or-later |
-| Félix Guattari | poop@dada.net       |            |          | WTFPL            |
-
-#+name: file-authors
-#+header: :var table=file-authors-example-table
-#+begin_src emacs-lisp
-(defun ceamx--authors-table-sanitize-year (year)
-  "TODO"
-  (pcase year
-    ((pred numberp)
-     (number-to-string year))
-    ((and (pred stringp)
-          (pred string-empty-p))
-     nil)
-    (_ year)))
-
-(defun ceamx--authors-table-sanitize-years (start end)
-  "TODO"
-  (let ((years (list start end)))
-    (seq-keep #'ceamx--authors-table-sanitize-year years)))
-
-(defun ceamx-authors-format-attribution (name email)
-""
-  (concat name (and (not (string-empty-p email))
-                    (format " <%s>" email))))
-
-(defun ceamx-authors-format-copyright-line (author years)
-  (format "Copyright (C) %s  %s" years author))
-
-(defun ceamx--authors-table-process-row (row)
-  "TODO"
-  (seq-let (name email start end license) row
-    (let* ((attribution (ceamx-authors-format-attribution name email))
-           (years (ceamx--authors-table-sanitize-years start end))
-           (year-range (string-join years "-")))
-      (list
-        :attribution attribution
-        :email email
-        :license license
-        :name name
-        :year-initial start
-        :year-latest end
-        :years year-range))))
-
-(defun ceamx-authors-from-table (table)
-  ""
-  (mapcar #'ceamx--authors-table-process-row table))
-
-(require 'subr-x)
-
-(defun ceamx-authors-format-author-lines (authors)
-  ""
-  (let* ((prefix "Author: "))
-                ;; FIXME: omit padding from first entry
-    (concat prefix
-
-            (mapconcat (lambda (author)
-                         (concat (make-string (length prefix) (string-to-char " "))
-                                 (plist-get author :attribution)))
-                       authors "\n"))))
-
-(let ((authors (ceamx-authors-from-table table)))
-  (format "%s\n\n%s"
-          (mapconcat (lambda (author)
-                       (ceamx-authors-format-copyright-line
-                        (plist-get author :attribution)
-                        (plist-get author :years)))
-                     authors "\n")
-          (ceamx-authors-format-author-lines authors)))
-#+end_src
-
-#+RESULTS: file-authors
-: Copyright (C) 1925-1995  Gilles Deleuze <notrees@rhizome.net>
-: Copyright (C)   Félix Guattari <poop@dada.net>
-
-*** License Headers
-**** GNU General Public License 3.0 or later (=GPL-3.0-or-later=)
-
-#+name: file-license
-#+begin_src emacs-lisp
-;; This file is NOT part of GNU Emacs.
-
-;; This file is free software: you can redistribute it and/or modify it
-;; under the terms of the GNU General Public License as published by the
-;; Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This file is distributed in the hope that it will be useful, but
-;; WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;; General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this file.  If not, see <http://www.gnu.org/licenses/>.
-#+end_src
-
-**** MIT License (=MIT=)
-
-#+name: file-license-mit
-#+begin_src emacs-lisp
-;; Permission is hereby granted, free of charge, to any person obtaining
-;; a copy of this software and associated documentation files (the
-;; "Software"), to deal in the Software without restriction, including
-;; without limitation the rights to use, copy, modify, merge, publish,
-;; distribute, sublicense, and/or sell copies of the Software, and to
-;; permit persons to whom the Software is furnished to do so, subject to
-;; the following conditions:
-;;
-;; The above copyright notice and this permission notice shall be
-;; included in all copies or substantial portions of the Software.
-#+end_src
-
-**** BSD 2-Clause License (=BSD-2-Clause=)
-
-#+name: file-license-bsd-2-clause
-#+begin_src emacs-lisp
-;; Redistribution and use in source and binary forms, with or without
-;; modification, are permitted provided that the following conditions are met:
-;;
-;; 1. Redistributions of source code must retain the above copyright notice, this
-;;    list of conditions and the following disclaimer.
-;; 2. Redistributions in binary form must reproduce the above copyright notice,
-;;    this list of conditions and the following disclaimer in the documentation
-;;    and/or other materials provided with the distribution.
-;;
-;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-;; WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-;; ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-;; (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-;; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-;; ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-;; (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#+end_src
-
-** Resources
-
-- [[info:elisp#Tips][(elisp) Tips]]
-- [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
-
-
-*** [[https://github.com/james-stoup/emacs-org-mode-tutorial][GitHub - james-stoup/emacs-org-mode-tutorial: A primer for users trying to make sense of Org Mode]]
-* Maintenance
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-** Functions to clean and re-tangle Elisp files
-
-#+begin_src emacs-lisp :noweb yes :results silent
-<<ceamx-tangle-src>>
-(ceamx/tangle-fresh)
-#+end_src
-
-#+name: ceamx-tangle-src
-#+begin_src emacs-lisp
-(require 'f)
-(require 'llama)
-
-(require 'ob-tangle)
-
-(defun ceamx-list-tangled-init-files ()
-  "List all tangled files in `user-emacs-directory'.
-Note that this is a crude approximation reflective of our
-expectations but not necessarily files that were truly tangled.
-
-The assumptions are as follows:
-
--- All Emacs Lisp files within the \"lisp\" subdirectory
--- early-init.el
--- init.el
-
-If there are any Emacs Lisp files within the \"lisp\"
-subdirectory that have not been created as a result of tangling,
-they will also be included in the result."
-  (let ((dir user-emacs-directory))
-    (append
-     (mapcar (##f-join dir %) '("early-init.el" "init.el"))
-     (f-files (f-join dir "lisp") (##f-ext-p % "el") t))))
-
-(defun ceamx/purge-tangled-init-files ()
-  "Delete all tangled init files according to `ceamx-list-tangled-init-files'."
-  (interactive)
-  (dolist (file (ceamx-list-tangled-init-files))
-    (f-delete file)))
-
-(defconst ceamx-literate-config-file (locate-user-emacs-file "config.org"))
-
-(defun ceamx/tangle-fresh (&optional src-file)
-  "Purge all existing tangled init files and re-tangle.
-When SRC-FILE is non-nil, it will be used as the source file to
-be tangled by `org-babel-tangle-file'.  Otherwise, if SRC-FILE is
-nil, the value of `ceamx-literate-config-file' will be the
-default source file."
-  (interactive)
-  (ceamx/purge-tangled-init-files)
-  (org-babel-tangle-file
-   (or src-file ceamx-literate-config-file)))
-#+end_src
-
-
-** Debugging
-
-- Source :: [[https://github.com/progfolio/.emacs.d/blob/master/init.org?plain=1][.emacs.d/init.org at master · progfolio/.emacs.d]]
-- Retrieved :: [2024-06-04 Tue 22:20]
-
-Running this form will launch the debugger after loading a package.
-
-This is useful for finding out when a dependency is requiring a package (perhaps
-earlier than you want).
-
-Use by tangling this block and launching Emacs with =emacs --debug-init=.
-
-#+begin_src emacs-lisp :var file="" :results silent :tangle no
-(unless (string-empty-p file)
-  (eval-after-load file
-    '(debug)))
-#+end_src
-
-Similarly, this variable will hit the debugger when a message matches its
-regexp.
-
-#+begin_src emacs-lisp :tangle no
-(setq debug-on-message "")
-#+end_src
-
-Adding a variable watcher can be a useful way to track down initialization and
-mutation of a variable.
-
-#+begin_src emacs-lisp :tangle no
-(add-variable-watcher 'org-capture-after-finalize-hook
-                      (lambda (symbol newval operation where)
-                        (debug)
-                        (message "%s set to %s" symbol newval)))
-#+end_src
-
-#+begin_src emacs-lisp :tangle no
-(setq debug-on-error t)
-#+end_src
 
 * Agenda [0/0]
 :PROPERTIES:
 :VISIBILITY: folded
 :ID:       812b1bf4-a323-427d-b3cd-44f916d6f437
 :END:
-* Target Files
-:PROPERTIES:
-:VISIBILITY: folded
-:END:
-
-** =lisp/lib-editor.el=
-
-#+name: lib-editor-file
-#+begin_src emacs-lisp  :tangle lisp/lib-editor.el :comments no :noweb yes
-<<file-prop-line(feature="lib-editor",desc="Editor support library")>>
-
-;; Copyright (C) 2023-2024  Chris Montgomery
-;; Copyright (C) 2016–2022  Radian LLC and contributors
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;;         Radon Rosborough <radon@intuitiveexplanations.com>
-;; Keywords: local
-
-
-<<file-license>>
-
-;; Permission is hereby granted, free of charge, to any person obtaining a copy
-;; of this software and associated documentation files (the "Software"), to deal
-;; in the Software without restriction, including without limitation the rights
-;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-;; copies of the Software, and to permit persons to whom the Software is
-;; furnished to do so, subject to the following conditions:
-
-;; The above copyright notice and this permission notice shall be included in
-;; all copies or substantial portions of the Software.
-
-;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-;; SOFTWARE.
-
-
-;;; Commentary:
-;;; Code:
-
-<<lib-editor>>
-
-<<file-footer(feature="lib-editor")>>
-#+end_src
-
 * Bootstrap
 :PROPERTIES:
 :VISIBILITY: folded
@@ -451,16 +32,25 @@ mutation of a variable.
 
 *** File Header
 
-#+begin_src emacs-lisp :tangle early-init.el :startup folded :noweb yes :comments no
+#+begin_src emacs-lisp :tangle early-init.el :startup folded :comments no
 ;;; early-init.el --- Early initialization file  -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
 
-<<file-license>>
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 ;;; Code:
@@ -781,14 +371,26 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 *** File header
 
-#+begin_src emacs-lisp :tangle init.el :noweb yes :comments no
+#+begin_src emacs-lisp :tangle init.el :comments no
 ;;; init.el --- Ceamx -*- lexical-binding: t; no-byte-compile: t; -*-
 
 ;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 
-<<file-license>>
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 
 ;;; Commentary:
 ;;; Code:
@@ -2440,6 +2042,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-essentials.el
 :VISIBILITY: folded
+:ID:       befd5701-44ee-4324-9a6c-63e39bd5e459
 :END:
 
 *** Requirements
@@ -2737,49 +2340,6 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (beginend-global-mode))
 #+end_src
 
-**** INPRG Provide a command to intelligently kill words backwardsly
-:PROPERTIES:
-:ID:       e1892d34-b345-468c-a5b7-9f0355f50451
-:END:
-
-- State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
-  Needs a fix for compatibility with ~subword-mode~.  See also [[*Don't consider camelCaseWORDs as separate words]]
-- src :: https://www.reddit.com/r/emacs/comments/bz9rxn/comment/er0bgll/
-- src :: https://github.com/yantar92/emacs-config/blob/master/config.org#smarter-backward-kill-word
-
-#+begin_src emacs-lisp :noweb-ref lib-editor
-(defun ceamx/backward-kill-word ()
-  "Kill the previous word, smartly.
-This operation will respect the following rules:
-
-1. If the cursor is at the beginning of line, delete the '\n'.
-2. If there is *only* whitespace, delete only to beginning of line.
-3. If there is *some* whitespace, delete whitespace and check 4-5.
-4. If there are other characters instead of words, delete one only char.
-5. If it's a word at point, delete it."
-  (interactive)
-  (if (bolp)
-      ;; 1
-      (delete-char -1)
-    (if (string-match-p "^[[:space:]]+$"
-                        (buffer-substring-no-properties
-                         (line-beginning-position) (point)))
-        ;; 2
-        (delete-horizontal-space)
-      (when (thing-at-point 'whitespace)
-        ;; 3
-        (delete-horizontal-space))
-
-      (if (thing-at-point 'word)
-          ;; 5
-          (let ((start (car (bounds-of-thing-at-point 'word)))
-                (end (point)))
-            (if (> end start)
-                (delete-region start end)
-              (delete-char -1)))
-        ;; 4
-        (delete-char -1)))))
-#+end_src
 **** ~easy-kill~ :: killing is easy when you're emacs :package:
 :PROPERTIES:
 :ID:       a3727c22-4373-47aa-ac61-e1355c5e048d
@@ -2813,19 +2373,6 @@ This operation will respect the following rules:
 (delete-selection-mode 1)
 #+end_src
 
-**** DISABLED ~expand-region~ :: Increase/decrease the selection area
-:PROPERTIES:
-:ID:       8f9fac61-4ade-4ec4-ad95-5b2da3c52011
-:END:
-
-#+begin_src emacs-lisp :tangle no
-(use-package expand-region
-  ;; :ensure t
-  :commands (er/expand-region)
-  :init
-  (keymap-global-set "C-=" #'er/expand-region))
-#+end_src
-
 **** ~expreg~ :: simple alternativate to ~expand-region~ using ~treesit~
 
 + Package :: <https://github.com/casouri/expreg>
@@ -2837,6 +2384,9 @@ This operation will respect the following rules:
 #+end_src
 
 **** ~drag-stuff~ :: drag stuff around in arbitrary directions :package:
+:PROPERTIES:
+:ID:       1febb9e9-ec19-4765-b6bb-21613e7667fb
+:END:
 
 <https://github.com/rejeep/drag-stuff.el>
 
@@ -2883,41 +2433,37 @@ See the Info node [[info:emacs#Matching]]
 (show-paren-mode 1)
 #+end_src
 
-**** Don't consider camelCaseWORDs as separate words
+**** Consider camelCaseWORDs as separate words
+:PROPERTIES:
+:ID:       b0593fa1-e228-4fcd-89f2-f7bbdf5f9d2c
+:END:
 
 While it can be useful in some contexts, I wish that ~subword-mode~ did not break
 ~ceamx/backward-kill-word~.  See also [[*Provide a command to intelligently kill
 words backwardsly]]
 
 #+begin_src emacs-lisp
-(global-subword-mode -1)
+(global-subword-mode 1)
 #+end_src
 
 **** TODO ~string-inflection~ :: commands to cycle through word casing
+:PROPERTIES:
+:ID:       bf713b67-b25a-41c7-87ba-f5c9a9f7852b
+:END:
 
 Needs better bindings.
 
 #+begin_src emacs-lisp
-(require 'lib-editor)
-
 (package! string-inflection)
 
-(defvar-keymap ceamx-string-repeat-map
-  :repeat t
+(use-feature! ceamx-editor
+  :after string-inflection
+  :commands (ceamx/cycle-string-inflection)
+  :init
+  (defvar-keymap ceamx-string-repeat-map
+    :repeat t
 
-  "c" #'ceamx/cycle-string-inflection)
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref lib-editor
-(defun ceamx/cycle-string-inflection ()
-  "Cycle through `string-inflection' styles appropriate to the major-mode."
-  (interactive)
-  (pcase major-mode
-    (`emacs-lisp-mode (string-inflection-all-cycle))
-    (`python-mode (string-inflection-python-style-cycle))
-    (`java-mode (string-inflection-java-style-cycle))
-    (`elixir-mode (string-inflection-elixir-style-cycle))
-    (_ (string-inflection-ruby-style-cycle))))
+    "c" #'ceamx/cycle-string-inflection))
 #+end_src
 
 **** ~ialign~ :: Interactively ~align-regexp~ :package:
@@ -3573,16 +3119,22 @@ these utilities.
 #+end_src
 
 *** =visual-replace= :: a nicer ~query-replace~ interface
+:PROPERTIES:
+:ID:       cfb820fa-0418-44a0-bea6-53037da05af5
+:END:
 
 + Repo :: <https://github.com/szermatt/visual-replace>
 
 #+begin_src emacs-lisp
 (package! visual-replace
-  (keymap-global-set "M-%" #'visual-replace)
-  (keymap-set isearch-mode-map "M-%" #'visual-replace-from-isearch)
+  (visual-replace-global-mode)
+
   (define-keymap :keymap ceamx-replace-prefix
-    "r" #'visual-replace
-    "R" #'visual-replace-selected))
+    "r" #'visual-replace-thing-at-point
+    "R" #'visual-replace-selected)
+
+  (after! isearch
+    (keymap-set isearch-mode-map "M-%" #'visual-replace-from-isearch)))
 #+end_src
 
 *** ~substitute~ :: efficiently replace contextual targets
@@ -6208,7 +5760,13 @@ This section handles the curse.
 #+end_src
 
 *** Structural editing & Tree-Sitter
+:PROPERTIES:
+:ID:       2fec391c-6023-41fd-a3b4-2dba5d91a55d
+:END:
 **** ~puni~ :: versatile structural editing
+:PROPERTIES:
+:ID:       ce9e9bd5-70bc-451c-b21c-fd29b2c38834
+:END:
 
 <https://github.com/AmaiKinono/puni>
 
@@ -6236,6 +5794,11 @@ Work in progress.
 This is still not quite usable as a Lispy replacement.  The goal is to
 use similar structureal editing keybindings across many major-modes.
 
+**** TODO Define a repeat-map for structural editing
+:PROPERTIES:
+:ID:       2507df8d-17be-4483-ab95-4b0762a90bf1
+:END:
+
 Note that this repeat-map should not be used in tandem with ~lispy-mode~
 because its bindings generally would need ~puni-mode~ to be active.
 
@@ -6245,7 +5808,7 @@ because its bindings generally would need ~puni-mode~ to be active.
 
 - [ ] Disable ~repeat-exit-timeout~ for this map only
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (after! puni
   (defvar-keymap ceamx-structural-editing-repeat-map
     :repeat t
@@ -6378,39 +5941,12 @@ Increase the amount of syntax-highlighted structures:
 
 Configuration for working with Lisps of all kinds.
 
-**** Target Files
-
-
-***** =lib-lisp.el=
-
-#+begin_src emacs-lisp  :tangle lisp/lib-lisp.el :comments no :noweb yes
-<<file-prop-line(feature="lib-lisp",desc="Lisp support functions")>>
-
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
-
-;; Author: Chris Montgomery <chmont@protonmail.com>
-;; URL: https://git.sr.ht/~montchr/ceamx
-;; Version: 0.1.0
-
-<<file-license>>
-
-;;; Commentary:
-;;; Code:
-
-<<lib-lisp>>
-
-<<file-footer(feature="lib-lisp")>>
-#+end_src
-
-**** Code
-
 #+begin_src emacs-lisp
 (require 'derived)
-
-(require 'lib-lisp)
+(require 'ceamx-lisp)
 #+end_src
 
-***** Configure behavior for all Lisp modes with ~ceamx-lisp-init-hook~
+**** Configure behavior for all Lisp modes with ~ceamx-lisp-init-hook~
 
 #+begin_src emacs-lisp
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
@@ -6420,14 +5956,14 @@ Configuration for working with Lisps of all kinds.
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 #+end_src
 
-***** Always indent Lisp code with two spaces
+**** Always indent Lisp code with two spaces
 
 #+begin_src emacs-lisp :tangle no
 (dolist (sym '(add-function add-to-list advice-add plist-put))
   (put sym 'lisp-indent-function 2))
 #+end_src
 
-***** ~paredit~ :: the original parenthesizer
+**** ~paredit~ :: the original parenthesizer
 :PROPERTIES:
 :ID:       13b96f21-ebaf-4d49-8b89-78fc05a44c59
 :END:
@@ -6451,7 +5987,7 @@ Configuration for working with Lisps of all kinds.
     "RET" #'paredit-newline))
 #+end_src
 
-***** DISABLED ~lispy~ :: the structural expression editing experience
+**** DISABLED ~lispy~ :: the structural expression editing experience
 
 - Website :: [[https://github.com/abo-abo/lispy][GitHub - abo-abo/lispy: Short and sweet LISP editing]]
 - API Reference :: [[https://oremacs.com/lispy/][lispy.el function reference]]
@@ -6494,7 +6030,7 @@ Configuration for working with Lisps of all kinds.
       (push "\\*lispy-message\\*" popper-reference-buffers)))
 #+end_src
 
-***** ~kbd-mode~ :: syntax support for =kmonad= and =kanata= configs
+**** ~kbd-mode~ :: syntax support for =kmonad= and =kanata= configs
 
 + Package :: [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
 
@@ -6512,64 +6048,10 @@ non-syntactic meaning to the reader.
     (add-to-list 'lispy-no-indent-modes #'kbd-mode)))
 #+end_src
 
-**** Library
-:PROPERTIES:
-:header-args: :noweb-ref lib-lisp
-:END:
-
-#+begin_src emacs-lisp
-;;;; Variables
-
-(defvar ceamx-lisp-modes-list '(emacs-lisp-mode
-                                ielm-mode
-                                lisp-mode
-                                inferior-lisp-mode
-                                lisp-interaction-mode)
-  "Supported Lisp modes.")
-
-(defvar +emacs-lisp-outline-regexp "[ \t]*;;;\\(;*\\**\\) [^ \t\n]"
-  "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
-This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
-
-(defvar ceamx-lisp-init-hook '()
-  "Hook to run in all supported Lisp modes.")
-
-;;;; Functions
-
-;;;;; Public
-
-(defun ceamx-lisp-init ()
-  "Enable features useful in any Lisp mode."
-  (when (and (fboundp 'lispy-mode))
-    (lispy-mode))
-
-  ;; `outli' overrides some `lispy' features.
-  ;; <https://github.com/jdtsmith/outli?tab=readme-ov-file#configuration>
-  (when (fboundp 'outli-mode)
-    (outli-mode))
-
-  (run-hooks 'ceamx-lisp-init-hook))
-
-(defun ceamx-enable-check-parens-on-save ()
-  "Run `check-parens' when the current buffer is saved."
-  (add-hook 'after-save-hook #'check-parens nil t))
-
-(defun +emacs-lisp--in-package-buffer-p ()
-  (let* ((file-path (buffer-file-name (buffer-base-buffer)))
-         (file-base (if file-path (file-name-base file-path))))
-    (and (derived-mode-p 'emacs-lisp-mode)
-         (or (null file-base)
-             (locate-file file-base (custom-theme--load-path) '(".elc" ".el"))))))
-
-(defun ceamx/indent-last-sexp ()
-  "Apply indentation to sexp before point."
-  (interactive)
-  (save-excursion
-    (backward-list)
-    (indent-sexp)))
-#+end_src
-
 *** Emacs Lisp
+:PROPERTIES:
+:ID:       badaa802-a7e4-4492-bddb-6315952771c6
+:END:
 
 **** General Elisp support customizations
 
@@ -9204,6 +8686,163 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 (when ceamx-load-custom-file
   (load custom-file t))
 #+end_src
+* Maintenance
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+** Functions to clean and re-tangle Elisp files
+
+#+begin_src emacs-lisp :noweb yes :results silent
+<<ceamx-tangle-src>>
+(ceamx/tangle-fresh)
+#+end_src
+
+#+name: ceamx-tangle-src
+#+begin_src emacs-lisp
+(require 'f)
+(require 'llama)
+
+(require 'ob-tangle)
+
+(defun ceamx-list-tangled-init-files ()
+  "List all tangled files in `user-emacs-directory'.
+Note that this is a crude approximation reflective of our
+expectations but not necessarily files that were truly tangled.
+
+The assumptions are as follows:
+
+-- All Emacs Lisp files within the \"lisp\" subdirectory
+-- early-init.el
+-- init.el
+
+If there are any Emacs Lisp files within the \"lisp\"
+subdirectory that have not been created as a result of tangling,
+they will also be included in the result."
+  (let ((dir user-emacs-directory))
+    (append
+     (mapcar (##f-join dir %) '("early-init.el" "init.el"))
+     (f-files (f-join dir "lisp") (##f-ext-p % "el") t))))
+
+(defun ceamx/purge-tangled-init-files ()
+  "Delete all tangled init files according to `ceamx-list-tangled-init-files'."
+  (interactive)
+  (dolist (file (ceamx-list-tangled-init-files))
+    (f-delete file)))
+
+(defconst ceamx-literate-config-file (locate-user-emacs-file "config.org"))
+
+(defun ceamx/tangle-fresh (&optional src-file)
+  "Purge all existing tangled init files and re-tangle.
+When SRC-FILE is non-nil, it will be used as the source file to
+be tangled by `org-babel-tangle-file'.  Otherwise, if SRC-FILE is
+nil, the value of `ceamx-literate-config-file' will be the
+default source file."
+  (interactive)
+  (ceamx/purge-tangled-init-files)
+  (org-babel-tangle-file
+   (or src-file ceamx-literate-config-file)))
+#+end_src
+
+
+** Debugging
+
+- Source :: [[https://github.com/progfolio/.emacs.d/blob/master/init.org?plain=1][.emacs.d/init.org at master · progfolio/.emacs.d]]
+- Retrieved :: [2024-06-04 Tue 22:20]
+
+Running this form will launch the debugger after loading a package.
+
+This is useful for finding out when a dependency is requiring a package (perhaps
+earlier than you want).
+
+Use by tangling this block and launching Emacs with =emacs --debug-init=.
+
+#+begin_src emacs-lisp :var file="" :results silent :tangle no
+(unless (string-empty-p file)
+  (eval-after-load file
+    '(debug)))
+#+end_src
+
+Similarly, this variable will hit the debugger when a message matches its
+regexp.
+
+#+begin_src emacs-lisp :tangle no
+(setq debug-on-message "")
+#+end_src
+
+Adding a variable watcher can be a useful way to track down initialization and
+mutation of a variable.
+
+#+begin_src emacs-lisp :tangle no
+(add-variable-watcher 'org-capture-after-finalize-hook
+                      (lambda (symbol newval operation where)
+                        (debug)
+                        (message "%s set to %s" symbol newval)))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+(setq debug-on-error t)
+#+end_src
+
+* Resources
+:PROPERTIES:
+:ID:       a097628e-0198-47b4-afbe-0b8cfc9ba6d7
+:END:
+
+- [[info:elisp#Tips][(elisp) Tips]]
+- [[info:elisp#Minor Mode Conventions][(elisp) Minor Mode Conventions]]
+
+
+** [[https://github.com/james-stoup/emacs-org-mode-tutorial][GitHub - james-stoup/emacs-org-mode-tutorial: A primer for users trying to make sense of Org Mode]]
+* Styleguide
+:PROPERTIES:
+:VISIBILITY: folded
+:ID:       53c7af29-f9bc-4e07-be6c-ccf2db415170
+:END:
+
+** Boolean Variables vs. Predicate Functions
+:PROPERTIES:
+:CUSTOM_ID: boolean-variables-vs.-predicate-functions
+:END:
+The naming for booleans and predicates is different.
+
+*** Example
+:PROPERTIES:
+:CUSTOM_ID: example
+:END:
+#+begin_src elisp
+(defvar ceamx-foo-flag t)
+(defvar ceamx-is-foo-enabled t)
+(defun ceamx-foo-p ()
+  ;; sketchy logic (don't do this)
+  (or ceamx-foo-flag ceamx-is-foo-enabled))
+#+end_src
+
+*** Explanation
+:PROPERTIES:
+:CUSTOM_ID: explanation
+:END:
+From
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html][Coding
+Conventions (GNU Emacs Lisp Reference Manual)]]:
+
+#+begin_quote
+If the purpose of a function is to tell you whether a certain condition
+is true or false, give the function a name that ends in 'p' (which
+stands for "predicate".  If the name is one word, add just 'p'; if the
+name is multiple words, add '-p'.  Examples are =framep= and
+=frame-live-p=.  We recommend to avoid using this =-p= suffix in boolean
+variable names, unless the variable is bound to a predicate function;
+instead, use a =-flag= suffix or names like =is-foo=.
+
+#+end_quote
+
+*** Org-Mode: When to wrap inline text in ~tildes~ vs. =equals=
+
+[[info:(org) Emphasis and Monospace][info (org) Emphasis and Monospace]]
+
+[[https://emacs.stackexchange.com/a/21870][What's the relationship between ~foo~ and =foo= in org-mode? - Emacs Stack Exchange]]
+
 * End
 :PROPERTIES:
 :VISIBILITY: folded

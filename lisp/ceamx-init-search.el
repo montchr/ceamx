@@ -77,16 +77,22 @@
   (keymap-set occur-mode-map "t" #'toggle-truncate-lines))
 
 ;; =visual-replace= :: a nicer ~query-replace~ interface
+;; :PROPERTIES:
+;; :ID:       cfb820fa-0418-44a0-bea6-53037da05af5
+;; :END:
 
 ;; + Repo :: <https://github.com/szermatt/visual-replace>
 
 
 (package! visual-replace
-  (keymap-global-set "M-%" #'visual-replace)
-  (keymap-set isearch-mode-map "M-%" #'visual-replace-from-isearch)
+  (visual-replace-global-mode)
+
   (define-keymap :keymap ceamx-replace-prefix
-    "r" #'visual-replace
-    "R" #'visual-replace-selected))
+    "r" #'visual-replace-thing-at-point
+    "R" #'visual-replace-selected)
+
+  (after! isearch
+    (keymap-set isearch-mode-map "M-%" #'visual-replace-from-isearch)))
 
 ;; ~substitute~ :: efficiently replace contextual targets
 

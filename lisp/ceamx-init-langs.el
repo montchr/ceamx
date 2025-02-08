@@ -448,6 +448,9 @@ non-nil, buffers will never be formatted upon save."
       (funcall func))))
 
 ;; ~puni~ :: versatile structural editing
+;; :PROPERTIES:
+;; :ID:       ce9e9bd5-70bc-451c-b21c-fd29b2c38834
+;; :END:
 
 ;; <https://github.com/AmaiKinono/puni>
 
@@ -468,63 +471,6 @@ non-nil, buffers will never be formatted upon save."
 
     "M-(" #'puni-syntactic-forward-punct
     "M-)" #'puni-syntactic-backward-punct))
-
-
-
-;; Work in progress.
-
-;; This is still not quite usable as a Lispy replacement.  The goal is to
-;; use similar structureal editing keybindings across many major-modes.
-
-;; Note that this repeat-map should not be used in tandem with ~lispy-mode~
-;; because its bindings generally would need ~puni-mode~ to be active.
-
-;; - <https://karthinks.com/software/a-consistent-structural-editing-interface/>
-;; - <https://github.com/suliveevil/emacs.d?tab=readme-ov-file#repeat-repeat-mode>
-;; - <https://github.com/karthink/.emacs.d/blob/master/init.el#L3209-L3241>
-
-;; - [ ] Disable ~repeat-exit-timeout~ for this map only
-
-
-(after! puni
-  (defvar-keymap ceamx-structural-editing-repeat-map
-    :repeat t
-
-    "d" #'puni-forward-delete-char
-    ;; "DEL" #'puni-backward-delete-char
-    ;; "D" #'puni-forward-kill-word
-    ;; "M-DEL" #'puni-backward-kill-word
-    ;; "C-k" #'puni-kill-line
-    ;; "M-k" #'puni-backward-kill-line
-    "k" #'kill-sexp
-
-    "f" #'puni-forward-sexp
-    "b" #'puni-backward-sexp
-    "[" #'puni-backward-sexp-or-up-list
-    "]" #'puni-forward-sexp-or-up-list
-    "a" #'puni-beginning-of-sexp
-    "e" #'puni-end-of-sexp
-    "u" #'puni-up-list
-    "M-[" #'puni-syntactic-forward-punct
-    "M-]" #'puni-syntactic-backward-punct
-
-    "\\" #'indent-region
-    "/" #'undo
-
-    ">" #'puni-slurp-forward
-    "<" #'puni-slurp-backward
-    "}" #'puni-barf-forward
-    "{" #'puni-barf-backward
-    "R" #'puni-raise
-    "t" #'puni-transpose
-    "C" #'puni-convolute
-    ;; FIXME: avoid meow dependency -- no puni equivalent
-    ;; "J" #'meow-join-sexp
-    "S" #'puni-split))
-
-;; FIXME: wrong type argument symbolp
-;; (map-keymap (lambda (_ cmd)
-;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
 
 ;; ~treesit-auto~ :: automatically use available ~treesit~ modes
 
@@ -597,12 +543,13 @@ non-nil, buffers will never be formatted upon save."
   :config
   (auto-insert-mode 1))
 
-;; Code
+;; General LISPs
+
+;; Configuration for working with Lisps of all kinds.
 
 
 (require 'derived)
-
-(require 'lib-lisp)
+(require 'ceamx-lisp)
 
 ;; Configure behavior for all Lisp modes with ~ceamx-lisp-init-hook~
 

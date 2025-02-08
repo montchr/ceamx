@@ -273,49 +273,6 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (blackout 'beginend-global-mode)
   (beginend-global-mode))
 
-;; INPRG Provide a command to intelligently kill words backwardsly
-;; :PROPERTIES:
-;; :ID:       e1892d34-b345-468c-a5b7-9f0355f50451
-;; :END:
-
-;; - State "INPRG"      from "TODO"       [2024-07-13 Sat 22:02] \\
-;;   Needs a fix for compatibility with ~subword-mode~.  See also [[*Don't consider camelCaseWORDs as separate words]]
-;; - src :: https://www.reddit.com/r/emacs/comments/bz9rxn/comment/er0bgll/
-;; - src :: https://github.com/yantar92/emacs-config/blob/master/config.org#smarter-backward-kill-word
-
-
-(defun ceamx/backward-kill-word ()
-  "Kill the previous word, smartly.
-This operation will respect the following rules:
-
-1. If the cursor is at the beginning of line, delete the '\n'.
-2. If there is *only* whitespace, delete only to beginning of line.
-3. If there is *some* whitespace, delete whitespace and check 4-5.
-4. If there are other characters instead of words, delete one only char.
-5. If it's a word at point, delete it."
-  (interactive)
-  (if (bolp)
-      ;; 1
-      (delete-char -1)
-    (if (string-match-p "^[[:space:]]+$"
-                        (buffer-substring-no-properties
-                         (line-beginning-position) (point)))
-        ;; 2
-        (delete-horizontal-space)
-      (when (thing-at-point 'whitespace)
-        ;; 3
-        (delete-horizontal-space))
-
-      (if (thing-at-point 'word)
-          ;; 5
-          (let ((start (car (bounds-of-thing-at-point 'word)))
-                (end (point)))
-            (if (> end start)
-                (delete-region start end)
-              (delete-char -1)))
-        ;; 4
-        (delete-char -1)))))
-
 ;; ~easy-kill~ :: killing is easy when you're emacs :package:
 ;; :PROPERTIES:
 ;; :ID:       a3727c22-4373-47aa-ac61-e1355c5e048d
@@ -357,6 +314,9 @@ This operation will respect the following rules:
   (keymap-global-set "C-=" #'expreg-contract))
 
 ;; ~drag-stuff~ :: drag stuff around in arbitrary directions :package:
+;; :PROPERTIES:
+;; :ID:       1febb9e9-ec19-4765-b6bb-21613e7667fb
+;; :END:
 
 ;; <https://github.com/rejeep/drag-stuff.el>
 
@@ -401,38 +361,36 @@ This operation will respect the following rules:
 (electric-pair-mode 1)
 (show-paren-mode 1)
 
-;; Don't consider camelCaseWORDs as separate words
+;; Consider camelCaseWORDs as separate words
+;; :PROPERTIES:
+;; :ID:       b0593fa1-e228-4fcd-89f2-f7bbdf5f9d2c
+;; :END:
 
 ;; While it can be useful in some contexts, I wish that ~subword-mode~ did not break
 ;; ~ceamx/backward-kill-word~.  See also [[*Provide a command to intelligently kill
 ;; words backwardsly]]
 
 
-(global-subword-mode -1)
+(global-subword-mode 1)
 
 ;; TODO ~string-inflection~ :: commands to cycle through word casing
+;; :PROPERTIES:
+;; :ID:       bf713b67-b25a-41c7-87ba-f5c9a9f7852b
+;; :END:
 
 ;; Needs better bindings.
 
 
-(require 'lib-editor)
-
 (package! string-inflection)
 
-(defvar-keymap ceamx-string-repeat-map
-  :repeat t
+(use-feature! ceamx-editor
+  :after string-inflection
+  :commands (ceamx/cycle-string-inflection)
+  :init
+  (defvar-keymap ceamx-string-repeat-map
+    :repeat t
 
-  "c" #'ceamx/cycle-string-inflection)
-
-(defun ceamx/cycle-string-inflection ()
-  "Cycle through `string-inflection' styles appropriate to the major-mode."
-  (interactive)
-  (pcase major-mode
-    (`emacs-lisp-mode (string-inflection-all-cycle))
-    (`python-mode (string-inflection-python-style-cycle))
-    (`java-mode (string-inflection-java-style-cycle))
-    (`elixir-mode (string-inflection-elixir-style-cycle))
-    (_ (string-inflection-ruby-style-cycle))))
+    "c" #'ceamx/cycle-string-inflection))
 
 ;; ~ialign~ :: Interactively ~align-regexp~ :package:
 ;; :PROPERTIES:
