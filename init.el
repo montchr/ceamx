@@ -838,9 +838,3 @@ The ORDER can be used to deduce the feature context."
 
 (when ceamx-load-custom-file
   (load custom-file t))
-
-;; Re-enable theme
-
-
-;; FIXME: wrong num args
-;; (ceamx-ui-re-enable-theme-in-frame)

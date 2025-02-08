@@ -117,15 +117,30 @@
 (setq inhibit-x-resources t)
 
 ;; FIXME these should be renamed or moved as their namespace indicates
+;; :PROPERTIES:
+;; :ID:       1c6484de-65ca-4533-a6bb-baa9e01f5f0a
+;; :END:
 ;; they would normally live in the ~ceamx-ui~ feature.
 
 
 (defconst ceamx-ui-gsettings-ui-namespace "org.gnome.desktop.interface")
 
+(defvar ceamx-ui-tiling-window-manager-regexp "sway"
+  "Regular expression matching supported tiling window managers.")
+
+(defmacro with-desktop-session! (&rest body)
+  "Expand BODY if desktop session is not a tiling window manager.
+See `ceamx-ui-tiling-window-manager-regexp' for the definition of
+supported tiling window managers."
+  (declare (indent 0))
+  `(when-let* ((session (getenv "DESKTOP_SESSION"))
+               (not (string-match-p session ceamx-ui-tiling-window-manager-regexp)))
+     ,@body))
+
 (defun ceamx-ui-gsettings-theme ()
   "Get the currently-active GNOME/GTK color scheme."
   (shell-command-to-string (format "gsettings get %s color-scheme"
-                         ceamx-ui-gsettings-ui-namespace)))
+                                   ceamx-ui-gsettings-ui-namespace)))
 
 (defun ceamx-ui-gsettings-dark-theme-p ()
   "Whether GNOME/GTK are using a theme with a dark color scheme."
@@ -135,15 +150,18 @@
   "Predicate whether a desktop environment is displaying a dark appearance."
   (or (ceamx-ui-gsettings-dark-theme-p)))
 
-(defun ceamx-ui-re-enable-theme-in-frame (_frame)
+(defun ceamx-ui-re-enable-frame-theme (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
 Add this to `after-make-frame-functions' so that new frames do
 not retain the generic background set by the function
-`ceamx-prevent-initial-light-flash'."
+`ceamx-init-prevent-initial-light-flash'."
   (when-let* ((theme (car custom-enabled-themes)))
     (enable-theme theme)))
 
 ;; Appearance: basic frame settings
+;; :PROPERTIES:
+;; :ID:       5cb09a22-f6b2-418d-bf82-24ff743b1cf9
+;; :END:
 
 
 (setq frame-resize-pixelwise t
@@ -170,7 +188,24 @@ not retain the generic background set by the function
 ;; to function normally...  maybe needs to happen later in init?
 (tooltip-mode -1)
 
+;; Appearance: default frame parameters
+;; :PROPERTIES:
+;; :ID:       712b6440-d9e3-48ac-ab2a-9211ed351602
+;; :END:
+
+
+(with-desktop-session!
+  (mapc
+   (lambda (var)
+     (add-to-list var '(width . (text-pixels . 800)))
+     (add-to-list var '(height . (text-pixels . 900)))
+     (add-to-list var '(scroll-bar-width . 10))     )
+   '(default-frame-alist initial-frame-alist)))
+
 ;; Appearance: avoid flash of light in a dark environment
+;; :PROPERTIES:
+;; :ID:       dd8efe90-3f35-48c6-ba11-056060ec47cd
+;; :END:
 
 ;; - source :: <https://protesilaos.com/emacs/dotemacs#h:7d3a283e-1595-4692-8124-e0d683cb15b2>
 
@@ -179,14 +214,16 @@ not retain the generic background set by the function
 (defun ceamx-init-prevent-initial-light-flash ()
   "Avoid the bright flash of light during startup in dark environments."
   (when (ceamx-ui-desktop-dark-theme-p)
-    (set-face-attribute 'default nil :background "#000000" :foreground "#ffffff")
-    (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
-    ;; FIXME: errors wrong num args
-    ;;    (add-hook 'ceamx-after-init-hook #'ceamx-ui-re-enable-theme-in-frame)
-    ;; (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-theme-in-frame)
-    ))
+    (set-face-attribute 'default nil
+                        :background "#000000"
+                        :foreground "#ffffff")
+    (set-face-attribute 'mode-line nil
+                        :background "#000000"
+                        :foreground "#ffffff"
+                        :box 'unspecified)
+    (add-hook 'after-make-frame-functions #'ceamx-ui-re-enable-frame-theme)))
 
-;; (ceamx-init-prevent-initial-light-flash)
+(ceamx-init-prevent-initial-light-flash)
 
 ;; Rename the default/initial frame
 

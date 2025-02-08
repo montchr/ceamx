@@ -1,7 +1,7 @@
-  ;; -*- lexical-binding: t;  -*-
+;; -*- lexical-binding: t;  -*-
 
-  (require 'ceamx-lib)
-  (require 'ceamx-ui)
+(require 'ceamx-lib)
+(require 'ceamx-ui)
 
 ;; Configure cursor appearance
 
@@ -265,6 +265,9 @@
 (setopt highlight-nonselected-windows nil)
 
 ;; Hide frame decorations
+;; :PROPERTIES:
+;; :ID:       c532e9e7-8729-4442-8bd7-2c50717a9dc7
+;; :END:
 
 
 (unless (ceamx-host-macos-p)
