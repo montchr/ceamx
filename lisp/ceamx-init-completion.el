@@ -333,6 +333,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
                                  orderless-regexp))))
 
 ;; Configure preferred completion styles
+;; :PROPERTIES:
+;; :ID:       1c08e88d-5386-4929-bac7-9e679dfbc6e6
+;; :END:
 
 
 ;; Make `partial-completion' behave like `substring'.
@@ -599,6 +602,9 @@ Tempel does not trigger too often when you don't expect it."
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 
 ;; ~cape~ :: [c]ompletion-[a]t-[p]oint [e]xtensions :capfs:
+;; :PROPERTIES:
+;; :ID:       e7028330-f02c-4862-ac3a-054f70fb9e92
+;; :END:
 
 
 (package! cape

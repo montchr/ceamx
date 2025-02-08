@@ -64,6 +64,9 @@
   (setopt dired-subtree-use-backgrounds nil))
 
 ;; Writable Dired buffers with the ~wdired~ feature
+;; :PROPERTIES:
+;; :ID:       13d23c1b-2e7a-4562-a01a-4d922d8e7317
+;; :END:
 
 
 (after! dired

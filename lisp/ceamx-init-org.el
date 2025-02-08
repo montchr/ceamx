@@ -503,6 +503,9 @@ Intended for use as a local hook function on
   )
 
 ;; =ox-gfm= :: org-export to GitHub Flavored Markdown (GFM) :package:
+;; :PROPERTIES:
+;; :ID:       e6aaf439-cfd5-4ed7-8d54-23aaec181b6f
+;; :END:
 
 
 (package! ox-gfm

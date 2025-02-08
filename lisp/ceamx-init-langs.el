@@ -859,6 +859,9 @@ The original function fails in the presence of whitespace after a sexp."
   (setopt eglot-auto-display-help-buffer nil))
 
 ;; Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
+;; :PROPERTIES:
+;; :ID:       1e70440b-7daa-491e-bdef-d761d8fb186d
+;; :END:
 
 ;; - Website :: <https://github.com/jdtsmith/eglot-booster>
 ;; - Website :: <https://github.com/blahgeek/emacs-lsp-booster>

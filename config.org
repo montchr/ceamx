@@ -890,6 +890,9 @@ ELP is useful for seeing which functions in a package are "hot":
 #+end_src
 
 *** Declare safe local variable directories and values relating to Emacs initialization
+:PROPERTIES:
+:ID:       dfe910c3-8b2f-4702-b380-ae8d669b981e
+:END:
 
 #+begin_src emacs-lisp
 (setopt safe-local-variable-directories
@@ -6780,6 +6783,9 @@ development tool as needed.
 #+end_src
 
 ***** Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
+:PROPERTIES:
+:ID:       1e70440b-7daa-491e-bdef-d761d8fb186d
+:END:
 
 - Website :: <https://github.com/jdtsmith/eglot-booster>
 - Website :: <https://github.com/blahgeek/emacs-lsp-booster>
@@ -6806,6 +6812,9 @@ elsp
 #+end_src
 
 ***** Run language servers automatically in supported major modes
+:PROPERTIES:
+:ID:       f67c3b4f-7328-4985-937d-cfec35f82994
+:END:
 
 The timing here may be delicate...
 
@@ -8347,6 +8356,9 @@ I don't think this is working properly...
 
 *** Exporters
 **** =ox-gfm= :: org-export to GitHub Flavored Markdown (GFM) :package:
+:PROPERTIES:
+:ID:       e6aaf439-cfd5-4ed7-8d54-23aaec181b6f
+:END:
 
 #+begin_src emacs-lisp
 (package! ox-gfm
@@ -11416,6 +11428,9 @@ Intended as advice for `epa-file-write-region' (which see)."
 #+end_src
 
 ** TODO The =lisp/lib-elisp.el= library
+:PROPERTIES:
+:ID:       cf49072f-3dbd-4d43-90bc-d968b7e3e695
+:END:
 :LOGBOOK:
 - Refiled on [2025-01-18 Sat 00:05]
 :END:

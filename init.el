@@ -99,6 +99,9 @@
   (setq gnutls-min-prime-bits 3072))
 
 ;; Declare safe local variable directories and values relating to Emacs initialization
+;; :PROPERTIES:
+;; :ID:       dfe910c3-8b2f-4702-b380-ae8d669b981e
+;; :END:
 
 
 (setopt safe-local-variable-directories
