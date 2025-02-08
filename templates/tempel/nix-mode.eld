@@ -1,22 +1,19 @@
 nix-mode nix-ts-mode
 
-;; FIXME: indentation (in both modes)
-
-(attrset & p " = {" n> p " = " q ";" n "};" %)
-(imports & "imports = [" n> r n "];" %)
-(lines "''" n> r> n> "''")
+(lines "''" n> r> n> "'';")
 (mkopt "mkOption {" n> "type = with types; " p ";" n> "default = " p ";" n> "description = ''" n> p n "'';" n "};")
 (mkoptenable "enable = lib.mkEnableOption \"" p "\"; " %)
 
-(inhr "inherit (" p ") " p ";")
-(ihostp "inherit (pkgs.stdenv.hostPlatform) " p ";" q)
+(inherit "inherit (" p ") " p ";")
+(istdenv "inherit (pkgs.stdenv.hostPlatform) " p ";" q)
 
-(letin "let" n> r> q n "in ")
-(comm "/*" n> > r> " :: " p " -> " p n> > "*/")
+(let "let" n> r> q n "in ")
+(doc "/**" n> > r> " :: " p " -> " p n> > "*/")
 
-(modargs "{ " (r "config, lib, pkgs") ", ... }:" o)
+(mod (i modargs) n "{" n> q n "}")
+(modargs "{ config, lib, pkgs, ... }:" o)
 
-(modbasic (i modargs) n "{" n> q n "}")
+(fpackage "flake.perSystem.packages." q)
 
 (persys & "\
   perSystem =
