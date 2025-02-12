@@ -122,25 +122,6 @@
                                         rewrite-front-matter))
   (denote-rename-buffer-mode 1))
 
-(after! (denote org-capture)
-  ;; (appendopt! org-capture-templates
-  ;;     (doct '(("New note" :keys "n"
-  ;;              :type plain
-  ;;              :file denote-last-path
-  ;;              :template denote-org-capture
-  ;;              :no-save t
-  ;;              :immediate-finish nil
-  ;;              :kill-buffer t
-  ;;              :jump-to-captured t))))
-  (add-to-list 'org-capture-templates
-      '("n" "New note" plain
-        (file denote-last-path)
-        #'denote-org-capture
-        :no-save t
-        :immediate-finish nil
-        :kill-buffer t
-        :jump-to-captured t)))
-
 (after! denote
   (require 'denote-silo-extras)
 
@@ -163,13 +144,7 @@
   (require 'denote-journal-extras)
 
   (setopt denote-journal-extras-directory ceamx-note-journal-dir)
-  (setopt denote-journal-extras-keyword '("journal"))
-
-  (after! org-capture
-    ;; (appendopt! org-capture-templates
-    ;;             (doct "Journal" :keys "j"
-    ;;                   :file denote-journal-extras-))
-    ))
+  (setopt denote-journal-extras-keyword '("journal")))
 
 (package! consult-denote
   (define-keymap :keymap ceamx-note-prefix-map

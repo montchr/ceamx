@@ -13,3 +13,6 @@ emacs-lisp-mode
 (keyg "(keymap-global-set \"" (s key) "\" #'" (s cmd) q ")" q)
 (seto "(setopt " p " " p ")")
 (setq "(setq " (s name) " " (s val) ")")
+
+(header & ";;; " (s feature) ".el --- " p " --- -*- lexical-binding: t; -*-\n\n")
+(footer & "(provide '" (s feature) ")\n;;; " feature ".el ends here")

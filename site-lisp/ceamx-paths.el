@@ -91,7 +91,7 @@ equivalent settings for third-party package managers.
 Packages will be stored in subdirectories based on the current
 Emacs version to prevent bytecode incompatibility.")
 
-;;;; User Directories
+;;;; User Paths
 
 (defconst ceamx-reading-dir
   (concat ceamx-home-dir "Documents/reading/")
@@ -102,6 +102,10 @@ Emacs version to prevent bytecode incompatibility.")
    (or (getenv "XDG_PROJECTS_DIR")
        (concat ceamx-home-dir "Developer")))
   "The root directory for projects.")
+
+(defconst ceamx-literate-config-file
+  (file-name-concat user-emacs-directory "config.org")
+  "The path to the Ceamx literate configuration file.")
 
 ;;;; Feature-Specific Paths
 

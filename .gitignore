@@ -10,4 +10,3 @@ result
 # specified manually when calling `treesit-install-language-grammar'
 # interactively)
 /tree-sitter/
-/custom.el

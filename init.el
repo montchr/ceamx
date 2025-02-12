@@ -66,7 +66,7 @@
 ;; The user option to determine whether to load ~custom-file~
 
 
-(defcustom ceamx-load-custom-file nil
+(defcustom ceamx-load-custom-file t
   "Whether to load the user `custom-file' (custom.el)."
   :group 'ceamx
   :type '(boolean))
@@ -676,6 +676,7 @@ The ORDER can be used to deduce the feature context."
 (require 'ceamx-init-eww)
 (require 'ceamx-init-printing)
 (require 'ceamx-init-fun)
+(require 'ceamx-init-flows)
 
 ;; Prefix: [C-c]
 ;; :PROPERTIES:

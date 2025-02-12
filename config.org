@@ -463,7 +463,7 @@ ELP is useful for seeing which functions in a package are "hot":
 **** The user option to determine whether to load ~custom-file~
 
 #+begin_src emacs-lisp
-(defcustom ceamx-load-custom-file nil
+(defcustom ceamx-load-custom-file t
   "Whether to load the user `custom-file' (custom.el)."
   :group 'ceamx
   :type '(boolean))
@@ -7192,25 +7192,6 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
   (setopt denote-rename-confirmations '(modify-file-name
                                         rewrite-front-matter))
   (denote-rename-buffer-mode 1))
-
-(after! (denote org-capture)
-  ;; (appendopt! org-capture-templates
-  ;;     (doct '(("New note" :keys "n"
-  ;;              :type plain
-  ;;              :file denote-last-path
-  ;;              :template denote-org-capture
-  ;;              :no-save t
-  ;;              :immediate-finish nil
-  ;;              :kill-buffer t
-  ;;              :jump-to-captured t))))
-  (add-to-list 'org-capture-templates
-      '("n" "New note" plain
-        (file denote-last-path)
-        #'denote-org-capture
-        :no-save t
-        :immediate-finish nil
-        :kill-buffer t
-        :jump-to-captured t)))
 #+end_src
 
 *** Define Denote silos for isolated note environments
@@ -7229,6 +7210,9 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 #+end_src
 
 *** Use Denote for journalling
+:PROPERTIES:
+:ID:       f3ca818f-38d5-4c8c-a8d4-d02d9250319d
+:END:
 
 #+begin_src emacs-lisp
 (defun ceamx-note/create-or-visit-journal-entry ()
@@ -7242,13 +7226,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
   (require 'denote-journal-extras)
 
   (setopt denote-journal-extras-directory ceamx-note-journal-dir)
-  (setopt denote-journal-extras-keyword '("journal"))
-
-  (after! org-capture
-    ;; (appendopt! org-capture-templates
-    ;;             (doct "Journal" :keys "j"
-    ;;                   :file denote-journal-extras-))
-    ))
+  (setopt denote-journal-extras-keyword '("journal")))
 #+end_src
 
 *** ~consult-denote~ :: enchance Denote with Consult features
@@ -7488,6 +7466,9 @@ Intended for use as a local hook function on
 #+END_SRC
 
 *** Appearance
+:PROPERTIES:
+:ID:       98afad65-f479-4b70-96ea-7da504ea11b8
+:END:
 
 + Package :: <https://github.com/minad/org-modern>
 + Package :: <https://github.com/awth13/org-appear>
@@ -7562,14 +7543,15 @@ Intended for use as a local hook function on
 #+end_src
 
 *** ~doct~ :: a template engine for ~org-capture~
+:PROPERTIES:
+:ID:       e4505731-723d-4e2b-b21b-3925bc7b73d4
+:END:
 
 - Source code :: <https://github.com/progfolio/doct>
 
 #+BEGIN_SRC emacs-lisp
-(use-package doct
-  ;; :ensure t
-  :demand t
-  :functions (doct))
+(package! doct
+  (require 'doct))
 #+END_SRC
 
 *** ~org-ql~ :: a query-builder for ~org-mode~ elements
@@ -7646,6 +7628,9 @@ Intended for use as a local hook function on
 #+end_src
 
 *** Customize the ~org-navigation-repeat-map~ :keybinds:
+:PROPERTIES:
+:ID:       54dac9eb-ec7c-4e08-be8c-200068787fa7
+:END:
 
 I find myself accidentally exiting out of this repeat map immediately
 because I instinctively want to continue pressing the final key in the
@@ -7674,27 +7659,6 @@ seem to have an effect.
 #+end_src
 
 *** TODO Refiling: Append not prepend when working on Ceamx config
-*** Define the Org-Capture templates :capture:
-:PROPERTIES:
-:ID:       904260e7-c81e-40e1-8208-a9a4d450d704
-:END:
-
-#+begin_src emacs-lisp
-(after! (org-capture doct)
-  (setopt org-capture-templates
-          (doct `(("Inbox"
-                   :keys "t"
-                   ;; TODO: make sure this icon spec is up to date with 2024
-                   :icon ("checklist" :set "octicon" :color "green")
-                   ;; TODO: should this be evaled/expanded?
-                   :file ceamx-default-capture-file
-                   :prepend t
-                   :headline "Inbox"
-                   :type entry
-                   :template ("* TODO %?"
-                              "%i %a"))))))
-#+end_src
-
 *** Agenda
 :PROPERTIES:
 :ID:       ad92ea31-8411-4ba4-b179-cf66e34a016c
@@ -7717,10 +7681,12 @@ seem to have an effect.
           "⭠ now ─────────────────────────────────────────────────"))
 #+END_SRC
 
-**** TODO ~org-super-agenda~
+*** =org-super-agenda= :: enchanted groupings for Org-Agenda
 :PROPERTIES:
 :ID:       6438e6e9-5052-403d-8c23-a1ee8daf0ec2
 :END:
+
+The agenda groups are declared in [[id:815ead58-41ac-406b-b1fe-4d6c4c838617][Thee Something-Doing Flow → Org-Agenda groups]]
 
 #+BEGIN_SRC emacs-lisp
 (package! org-super-agenda)
@@ -7766,6 +7732,9 @@ seem to have an effect.
 #+end_src
 
 *** TODO Provide commands to archive DONE tasks
+:PROPERTIES:
+:ID:       2b459993-8258-4128-adc7-c5025def759c
+:END:
 
 | Author | Sacha Chua                                                                                 |
 | URL    | <https://pages.sachachua.com/.emacs.d/Sacha.html#quick-way-to-archive-all-done-from-inbox> |
@@ -7809,6 +7778,9 @@ I don't think this is working properly...
 #+END_SRC
 
 *** ~org-web-tools~ :: view, capture, and archive webpages in org-mode :package:network:web:
+:PROPERTIES:
+:ID:       17850df6-1729-4b2b-8fc5-62f4b377c2a7
+:END:
 
 #+BEGIN_SRC emacs-lisp
 (package! org-web-tools
@@ -7838,12 +7810,10 @@ I don't think this is working properly...
           org-bookmark-heading-jump-indirect nil))
 #+end_src
 
-*** TODO ~org-remark~
+*** =org-remark= :: annotate documents with Org-Mode
 
 #+begin_src emacs-lisp
-(use-package org-remark
-  ;; :ensure t
-  )
+(package! org-remark)
 #+end_src
 
 *** Exporters
@@ -7862,11 +7832,14 @@ I don't think this is working properly...
 #+end_src
 
 *** ~auto-tangle-mode~ :: a minor-mode to automatically tangle Org files
+:PROPERTIES:
+:ID:       b4f86eda-af4d-405c-bbe1-395fd6f14ddf
+:END:
 
 #+BEGIN_SRC emacs-lisp
-(use-package auto-tangle-mode
-  :ensure (auto-tangle-mode :host github :repo "progfolio/auto-tangle-mode.el")
-  :commands (auto-tangle-mode))
+(package! (auto-tangle-mode
+           :host github
+           :repo "progfolio/auto-tangle-mode.el"))
 #+END_SRC
 
 *** TODO Org-Mode: electric-pair for equals-sign and tilde
@@ -8472,6 +8445,153 @@ Return the new `zone' timer."
 ;;; ceamx-init-fun.el ends here
 #+end_src
 
+* Flows
+:PROPERTIES:
+:ID:       2fe0f61e-e7f4-4d5a-9343-691d3782b19d
+:header-args:emacs-lisp: :tangle lisp/ceamx-init-flows.el
+:END:
+
+** Requirements
+:PROPERTIES:
+:ID:       3056ce3e-7db7-4d73-86f6-a2cd55916cfc
+:END:
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
+#+end_src
+
+** ~elpaca-wait~
+:PROPERTIES:
+:ID:       962663f8-fe8f-4b78-88f6-a4817fdff001
+:END:
+
+#+begin_src emacs-lisp
+(elpaca-wait)
+#+end_src
+
+** Thee Something-Doing Flows
+:PROPERTIES:
+:ID:       c6cbf999-36db-4d7f-b59d-63bb8da97215
+:END:
+
+*** Goals
+:PROPERTIES:
+:ID:       386d8261-6536-4938-a096-5cf3f215332b
+:END:
+
+Something-Doing is a body.
+
+**** What are the composite flows of Something-Doing?
+:PROPERTIES:
+:ID:       0298d32f-2c00-47fc-9b8d-5e97cd5224a6
+:END:
+
+***** Chrismont: start workday with a statement of status and intent
+:PROPERTIES:
+:ID:       48166bdf-404a-49c4-8b30-76c7e68ef0f8
+:END:
+
+- What are you working on?
+- Are you facing any impediments?
+- Do you need anything from anyone?
+
+
+**** Which flows connect to other flows?
+:PROPERTIES:
+:ID:       aaa47347-0aa9-42b3-8df0-41d3bc4a2676
+:END:
+
+
+
+*** Org-Capture templates
+:PROPERTIES:
+:ID:       d7334fe7-a7a2-423e-8e3b-fca7c45af07e
+:END:
+
+#+begin_src emacs-lisp
+(require 'org-capture)
+(require 'doct)
+
+(setopt doct-default-entry-type 'entry)
+(setopt doct-warnings t)
+
+(setopt org-capture-templates
+        (doct
+         '(("Inbox item" :keys "c"
+            :file ceamx-default-capture-file
+            :headline "Inbox"
+            :template ("* TODO %?"
+                       "%i %a")
+            :icon ("checklist" :set "octicon" :color "green"))
+
+           ("Note" :keys "n"
+            :file denote-last-path
+            :type plain
+            :template denote-org-capture
+            :no-save t
+            :immediate-finish nil
+            :kill-buffer t
+            :jump-to-captured t)
+
+           ("Journal entry" :keys "j"
+            :file denote-journal-extras-path-to-new-or-existing-entry
+            :template ("* %U %?"
+                       "%i %a")
+            :kill-buffer t
+            :empty-lines 1)
+
+           ;; ("Emacs" :keys "e"
+           ;;  :file ceamx-literate-config-file
+           ;;  :template "* TODO "
+           ;;  )
+           )))
+#+end_src
+
+*** Org-Agenda groups
+:PROPERTIES:
+:ID:       815ead58-41ac-406b-b1fe-4d6c4c838617
+:BACKLINKS: [[id:6438e6e9-5052-403d-8c23-a1ee8daf0ec2][=org-super-agenda= :: enchanted groupings for Org-Agenda]]
+:END:
+
+Define agenda groups for display with the =org-super-agenda= extension:
+
+#+begin_src emacs-lisp
+(after! org-super-agenda
+  ;; XXX: `setq' to avoid type error with `setopt'
+  (setq org-super-agenda-groups
+        '((:name "Today"
+                 :time-grid t
+                 :todo "TODAY")
+
+          (:name "Important"
+                 :tag "financial"
+                 :priority "A")
+
+          (:order-multi
+           (2 (:name "Personal"
+                     :habit t
+                     :tag ("personal" "home"))
+              (:name "Shopping"
+                     :tag "shopping"
+                     :tag "buy")))
+
+          (:todo "WAITING" :order 8)
+          (:todo ("SOMEDAY" "TO-READ" "TO-LISTEN" "TO-WATCH")
+                 :order 9)
+          (:priority<= "B" :order 1))))
+#+end_src
+
+** Provide the =ceamx-init-flows= feature
+:PROPERTIES:
+:ID:       4fb152c5-078d-4851-b518-55f85bbd6d22
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-flows.el :comments no
+(provide 'ceamx-init-flows)
+;;; ceamx-init-flows.el ends here
+#+end_src
+
 * Load Features
 :PROPERTIES:
 :header-args: :tangle init.el
@@ -8496,6 +8616,7 @@ Return the new `zone' timer."
 (require 'ceamx-init-eww)
 (require 'ceamx-init-printing)
 (require 'ceamx-init-fun)
+(require 'ceamx-init-flows)
 #+end_src
 
 * Command Bindings
@@ -8689,6 +8810,7 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 * Maintenance
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       2511f122-e694-4055-8177-e77b87952e7c
 :END:
 
 ** Functions to clean and re-tangle Elisp files
@@ -8794,6 +8916,9 @@ mutation of a variable.
 
 
 ** [[https://github.com/james-stoup/emacs-org-mode-tutorial][GitHub - james-stoup/emacs-org-mode-tutorial: A primer for users trying to make sense of Org Mode]]
+:PROPERTIES:
+:ID:       912620fa-b1ea-4a80-9958-3814ffbde545
+:END:
 * Styleguide
 :PROPERTIES:
 :VISIBILITY: folded

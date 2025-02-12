@@ -199,6 +199,9 @@ Intended for use as a local hook function on
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
 
 ;; Appearance
+;; :PROPERTIES:
+;; :ID:       98afad65-f479-4b70-96ea-7da504ea11b8
+;; :END:
 
 ;; + Package :: <https://github.com/minad/org-modern>
 ;; + Package :: <https://github.com/awth13/org-appear>
@@ -270,14 +273,15 @@ Intended for use as a local hook function on
     (add-hook hook #'pulsar-reveal-entry)))
 
 ;; ~doct~ :: a template engine for ~org-capture~
+;; :PROPERTIES:
+;; :ID:       e4505731-723d-4e2b-b21b-3925bc7b73d4
+;; :END:
 
 ;; - Source code :: <https://github.com/progfolio/doct>
 
 
-(use-package doct
-  ;; :ensure t
-  :demand t
-  :functions (doct))
+(package! doct
+  (require 'doct))
 
 ;; ~org-ql~ :: a query-builder for ~org-mode~ elements
 
@@ -349,6 +353,9 @@ Intended for use as a local hook function on
       '(org-refile-targets (nil :maxlevel . 6))))
 
 ;; Customize the ~org-navigation-repeat-map~ :keybinds:
+;; :PROPERTIES:
+;; :ID:       54dac9eb-ec7c-4e08-be8c-200068787fa7
+;; :END:
 
 ;; I find myself accidentally exiting out of this repeat map immediately
 ;; because I instinctively want to continue pressing the final key in the
@@ -374,26 +381,6 @@ Intended for use as a local hook function on
   (setopt org-archive-save-context-info
           '(time file category todo itags olpath ltags)))
 
-;; Define the Org-Capture templates :capture:
-;; :PROPERTIES:
-;; :ID:       904260e7-c81e-40e1-8208-a9a4d450d704
-;; :END:
-
-
-(after! (org-capture doct)
-  (setopt org-capture-templates
-          (doct `(("Inbox"
-                   :keys "t"
-                   ;; TODO: make sure this icon spec is up to date with 2024
-                   :icon ("checklist" :set "octicon" :color "green")
-                   ;; TODO: should this be evaled/expanded?
-                   :file ceamx-default-capture-file
-                   :prepend t
-                   :headline "Inbox"
-                   :type entry
-                   :template ("* TODO %?"
-                              "%i %a"))))))
-
 ;; Agenda
 ;; :PROPERTIES:
 ;; :ID:       ad92ea31-8411-4ba4-b179-cf66e34a016c
@@ -415,10 +402,12 @@ Intended for use as a local hook function on
   (setopt org-agenda-current-time-string
           "⭠ now ─────────────────────────────────────────────────"))
 
-;; TODO ~org-super-agenda~
+;; =org-super-agenda= :: enchanted groupings for Org-Agenda
 ;; :PROPERTIES:
 ;; :ID:       6438e6e9-5052-403d-8c23-a1ee8daf0ec2
 ;; :END:
+
+;; The agenda groups are declared in [[id:815ead58-41ac-406b-b1fe-4d6c4c838617][Thee Something-Doing Flow → Org-Agenda groups]]
 
 
 (package! org-super-agenda)
@@ -470,6 +459,9 @@ Intended for use as a local hook function on
   (add-hook 'dired-mode-hook #'org-download-enable))
 
 ;; ~org-web-tools~ :: view, capture, and archive webpages in org-mode :package:network:web:
+;; :PROPERTIES:
+;; :ID:       17850df6-1729-4b2b-8fc5-62f4b377c2a7
+;; :END:
 
 
 (package! org-web-tools
@@ -496,12 +488,10 @@ Intended for use as a local hook function on
   (setopt org-bookmark-heading-make-ids t
           org-bookmark-heading-jump-indirect nil))
 
-;; TODO ~org-remark~
+;; =org-remark= :: annotate documents with Org-Mode
 
 
-(use-package org-remark
-  ;; :ensure t
-  )
+(package! org-remark)
 
 ;; =ox-gfm= :: org-export to GitHub Flavored Markdown (GFM) :package:
 ;; :PROPERTIES:
@@ -517,11 +507,14 @@ Intended for use as a local hook function on
       '(eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
 
 ;; ~auto-tangle-mode~ :: a minor-mode to automatically tangle Org files
+;; :PROPERTIES:
+;; :ID:       b4f86eda-af4d-405c-bbe1-395fd6f14ddf
+;; :END:
 
 
-(use-package auto-tangle-mode
-  :ensure (auto-tangle-mode :host github :repo "progfolio/auto-tangle-mode.el")
-  :commands (auto-tangle-mode))
+(package! (auto-tangle-mode
+           :host github
+           :repo "progfolio/auto-tangle-mode.el"))
 
 (provide 'ceamx-init-org)
 ;;; ceamx-init-org.el ends here
