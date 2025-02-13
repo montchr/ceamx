@@ -11,7 +11,7 @@
 (setopt org-capture-templates
         (doct
          '(("Inbox item" :keys "c"
-            :file ceamx-default-capture-file
+            :file ceamx-default-todo-file
             :headline "Inbox"
             :template ("* TODO %?"
                        "%i %a")

@@ -6,6 +6,9 @@
 (require 'ceamx-note)
 
 ;; Set up essential files & directories :paths:
+;; :PROPERTIES:
+;; :ID:       784a1877-2d7e-4c1b-9988-b35bd4ea825a
+;; :END:
 
 ;; These must be set before loading Org-Mode or any of its sub-features
 ;; are used.
@@ -30,17 +33,17 @@
   :type 'directory
   :group 'ceamx)
 
-(defconst ceamx-default-agenda-files
+(defcustom ceamx-default-agenda-files
   (file-expand-wildcards (file-name-concat ceamx-agenda-dir "*.org"))
-  "List of absolute paths of all files that should be included in the agenda.")
+  "List of absolute paths of all files to include in the agenda."
+  :type '(file)
+  :group 'ceamx)
 
-(defconst ceamx-default-todo-file
+(defcustom ceamx-default-todo-file
   (expand-file-name "todo.org" ceamx-agenda-dir)
-  "Absolute path to default file for active G2D.")
-
-(defconst ceamx-default-capture-file
-  (expand-file-name "inbox.org" ceamx-agenda-dir)
-  "Absolute path to default inbox file for new G2D waiting to be processed.")
+  "Absolute path to default Something-Doing file."
+  :type 'file
+  :group 'ceamx)
 
 
 
@@ -49,9 +52,9 @@
 ;; reason, use the ~ceamx-agenda-dir~.
 
 
-(defvar org-directory ceamx-agenda-dir)
-
-(f-mkdir-full-path org-directory)
+(progn
+  (defvar org-directory ceamx-agenda-dir)
+  (make-directory org-directory t))
 
 (setopt org-agenda-files ceamx-default-agenda-files)
 
@@ -342,7 +345,7 @@ Intended for use as a local hook function on
   (setopt org-refile-allow-creating-parent-nodes 'confirm)
   (setopt org-refile-use-cache nil)
 
-  (setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 2))
+  (setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 1))
                                ;; (org-agenda-files . (:maxlevel . 1))
                                (nil . (:maxlevel . ,ceamx-org-outline-search-max-level))))
 

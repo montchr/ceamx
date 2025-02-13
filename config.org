@@ -1083,12 +1083,16 @@ expect the value you arrive at to be as high as 100 MiB.
 #+end_quote
 
 *** Install utility libraries
+:PROPERTIES:
+:ID:       d04ef910-34e0-4961-aeb6-c2741af41455
+:END:
 
 #+begin_src emacs-lisp
-;; <https://github.com/tarsius/llama>
 (package! llama
   (require 'llama))
+
 (package! f)
+
 (package! transient
   (require 'transient)
   (after! transient
@@ -2202,6 +2206,43 @@ NOTE: Incompatible with kitchen-sink modeline packages like
     "c" #'crux-copy-file-preserve-attributes
     "d" #'crux-delete-file-and-buffer
     "r" #'crux-rename-file-and-buffer))
+#+end_src
+
+*** =tmr= :: set timers using a convenient notation
+:PROPERTIES:
+:ID:       67caf305-67ce-42b5-9ff3-98b0f9ac6b06
+:END:
+
++ Website :: <https://protesilaos.com/emacs/tmr>
+
+#+begin_src emacs-lisp
+(package! tmr
+  (require 'tmr)
+
+  (keymap-global-set "C-c T" #'tmr-prefix-map)
+
+  (setopt tmr-notification-urgency 'normal)
+  (setopt tmr-description-list 'tmr-description-history)
+
+  (defvar-keymap ceamx+embark-tmr-action-map
+    :doc "Action map for TMRs, which can be utilized by Embark."
+    "k" #'tmr-remove
+    "r" #'tmr-remove
+    "R" #'tmr-remove-finished
+    "c" #'tmr-clone
+    "a" #'tmr-toggle-acknowledge
+    "e" #'tmr-edit-description
+    "s" #'tmr-reschedule)
+
+  (defvar embark-keymap-alist)
+  (defvar embark-post-action-hooks)
+
+  (after! embark
+    (add-to-list 'embark-keymap-alist '(tmr-timer . ceamx+embark-tmr-action-map))
+    (cl-loop
+     for cmd the key-bindings of ceamx+embark-tmr-action-map
+     if (commandp cmd) do
+     (add-to-list 'embark-post-action-hooks (list cmd 'embark--restart)))))
 #+end_src
 
 *** Configure sane window-scrolling behavior
@@ -7271,6 +7312,9 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 #+end_src
 
 *** Set up essential files & directories :paths:
+:PROPERTIES:
+:ID:       784a1877-2d7e-4c1b-9988-b35bd4ea825a
+:END:
 
 These must be set before loading Org-Mode or any of its sub-features
 are used.
@@ -7295,17 +7339,17 @@ to take control of these paths.
   :type 'directory
   :group 'ceamx)
 
-(defconst ceamx-default-agenda-files
+(defcustom ceamx-default-agenda-files
   (file-expand-wildcards (file-name-concat ceamx-agenda-dir "*.org"))
-  "List of absolute paths of all files that should be included in the agenda.")
+  "List of absolute paths of all files to include in the agenda."
+  :type '(file)
+  :group 'ceamx)
 
-(defconst ceamx-default-todo-file
+(defcustom ceamx-default-todo-file
   (expand-file-name "todo.org" ceamx-agenda-dir)
-  "Absolute path to default file for active G2D.")
-
-(defconst ceamx-default-capture-file
-  (expand-file-name "inbox.org" ceamx-agenda-dir)
-  "Absolute path to default inbox file for new G2D waiting to be processed.")
+  "Absolute path to default Something-Doing file."
+  :type 'file
+  :group 'ceamx)
 #+end_src
 
 The value of ~org-directory~ will be used as a default destination for
@@ -7313,9 +7357,9 @@ new notes, especially as they relate to tasks and agendas.  For that
 reason, use the ~ceamx-agenda-dir~.
 
 #+BEGIN_SRC emacs-lisp
-(defvar org-directory ceamx-agenda-dir)
-
-(f-mkdir-full-path org-directory)
+(progn
+  (defvar org-directory ceamx-agenda-dir)
+  (make-directory org-directory t))
 
 (setopt org-agenda-files ceamx-default-agenda-files)
 #+END_SRC
@@ -7616,7 +7660,7 @@ Intended for use as a local hook function on
   (setopt org-refile-allow-creating-parent-nodes 'confirm)
   (setopt org-refile-use-cache nil)
 
-  (setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 2))
+  (setopt org-refile-targets `((,ceamx-default-todo-file . (:level . 1))
                                ;; (org-agenda-files . (:maxlevel . 1))
                                (nil . (:maxlevel . ,ceamx-org-outline-search-max-level))))
 
@@ -7747,7 +7791,7 @@ I don't think this is working properly...
 (defun ceamx/org-clean-up-inbox ()
   "Archive all DONE tasks and sort the remainder by TODO order."
   (interactive)
-  (with-current-buffer (find-file ceamx-default-capture-file)
+  (with-current-buffer (find-file ceamx-default-todo-file)
     (ceamx/org-archive-done-tasks 'file)
     (goto-char (point-min))
     (if (org-at-heading-p) (save-excursion (insert "\n")))
@@ -7764,7 +7808,8 @@ I don't think this is working properly...
    (lambda ()
      (org-archive-subtree)
      (setq org-map-continue-from (outline-previous-heading)))
-   "TODO=\"DONE\"|TODO=\"CANCELLED\"" (or scope (if (org-before-first-heading-p) 'file 'tree))))
+   "TODO=\"DONE\"|TODO=\"CANCELLED\""
+   (or scope (if (org-before-first-heading-p) 'file 'tree))))
 #+end_src
 
 *** ~org-download~ :: support dragging-and-dropping images into Org buffers :media:network:package:
@@ -8493,8 +8538,79 @@ Something-Doing is a body.
 
 - What are you working on?
 - Are you facing any impediments?
-- Do you need anything from anyone?
+- Can anyone help out?
 
+***** Cea: process inbox
+:PROPERTIES:
+:ID:       2df1da53-c491-4de6-98f5-abdb625c0ec6
+:END:
+
+- Set deadline, scheduled, tags before refile
+- Target main todo file
+
+***** Cea: weekly review
+:PROPERTIES:
+:ID:       c406ec7f-b589-49f2-8eb6-67a1af1dd29f
+:END:
+
+- Archive done tasks
+- Set goals for week
+  - What constitutes an achievable goal?
+  - How many?
+
+***** Cea: quick capture dialog
+:PROPERTIES:
+:ID:       75c83d17-0e6a-42dc-830b-ee1608a380f4
+:END:
+
+***** Cea: integrate with input from other devices
+:PROPERTIES:
+:ID:       16fdda1f-74b0-46d4-8fe7-d30b5da3c145
+:END:
+
+- Android: Orgzly Revived
+
+***** Chrismont: meeting notes associated with calendar events
+:PROPERTIES:
+:ID:       b323f1fb-48e2-40c1-9c81-a3b0286eb8fc
+:END:
+
++ Connect to Outlook calendar
++ Connect to Proton calendar
+
+***** Cea: Bullet Journal flow
+:PROPERTIES:
+:ID:       b7f9cee6-eaea-4477-8d5b-f2be88a7dcac
+:END:
+
+This is a framework I know works alright for me.  It is lightweight
+and encourages daily interaction and maintenance for the sake of awareness.
+
+- types
+  - todo items
+  - events
+  - notes
+- requires daily refiling of incomplete tasks, scheduled events, scheduled tasks
+- could be something like a daily inbox
+
+***** Chrismont: record a work log to show thoughts
+:PROPERTIES:
+:ID:       44456f4a-4798-42c4-9bdc-fa32e1af55dc
+:END:
+
+- Resurface as external communications as needed
+- Quick-as-possible capture into daily log
+- Could leverage Denote journal functionality
+- Clock-in/out with visible timer in modeline
+
+***** Cea: record random thoughts as notes
+
+***** Cea: write secret journal entries without fear
+
+*****
+:PROPERTIES:
+:ID:       193b1aa9-0697-4b81-87fc-3ac9fc2f876b
+:END:
 
 **** Which flows connect to other flows?
 :PROPERTIES:
@@ -8518,7 +8634,7 @@ Something-Doing is a body.
 (setopt org-capture-templates
         (doct
          '(("Inbox item" :keys "c"
-            :file ceamx-default-capture-file
+            :file ceamx-default-todo-file
             :headline "Inbox"
             :template ("* TODO %?"
                        "%i %a")

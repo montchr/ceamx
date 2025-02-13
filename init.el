@@ -495,12 +495,16 @@ The ORDER can be used to deduce the feature context."
   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
 
 ;; Install utility libraries
+;; :PROPERTIES:
+;; :ID:       d04ef910-34e0-4961-aeb6-c2741af41455
+;; :END:
 
 
-;; <https://github.com/tarsius/llama>
 (package! llama
   (require 'llama))
+
 (package! f)
+
 (package! transient
   (require 'transient)
   (after! transient
