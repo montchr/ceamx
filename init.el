@@ -129,6 +129,9 @@
   (put cmd 'disabled t))
 
 ;; Display the scratch buffer as initial buffer
+;; :PROPERTIES:
+;; :ID:       8faa0cb3-1b4d-4218-a2c3-0016aba1d95b
+;; :END:
 
 
 (setq initial-buffer-choice nil
@@ -656,6 +659,42 @@ The ORDER can be used to deduce the feature context."
 
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 
+;; =init.el=: Leader Prefix Keybindings
+;; :PROPERTIES:
+;; :header-args: :tangle init.el
+;; :ID:       cd713eda-629c-460c-921e-d99ce8f6742f
+;; :END:
+
+
+(define-keymap :keymap (current-global-map)
+  "C-c a" nil ; reserved for agenda
+  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
+  "C-c c" nil ; reserved for capture
+  "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
+  ;; "C-c d"
+  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
+  "C-c E" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
+  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
+  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
+  ;; "C-c j"
+  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
+  "C-c l f" (cons "formatting..." (define-prefix-command 'ceamx-code-f-prefix))
+  ;; "C-c m"
+  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
+  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c p" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
+  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
+  ;; "C-c r"
+  ;; "C-c s" (cons "[ ]")
+  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
+  ;; "C-c u"
+  ;; "C-c v"
+  "C-c w" (cons "[ WORKSPACE ]" #'ceamx-window-prefix)
+  ;; "C-c x"
+  ;; "C-c y"
+  ;; "C-c z"
+  )
+
 ;; Load Features
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el
@@ -681,40 +720,6 @@ The ORDER can be used to deduce the feature context."
 (require 'ceamx-init-printing)
 (require 'ceamx-init-fun)
 (require 'ceamx-init-flows)
-
-;; Prefix: [C-c]
-;; :PROPERTIES:
-;; :ID:       d6797497-e46d-4743-abcd-36b3eea55a88
-;; :END:
-
-
-(define-keymap :keymap (current-global-map)
-  "C-c a" #'org-agenda
-  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
-  "C-c c" #'org-capture
-  "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
-  ;; "C-c d"
-  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
-  "C-c E" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
-  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
-  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
-  ;; "C-c j"
-  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
-  ;; "C-c m"
-  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
-  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
-  "C-c p" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
-  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
-  ;; "C-c r"
-  ;; "C-c s" (cons "[ ]")
-  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
-  ;; "C-c u"
-  ;; "C-c v"
-  "C-c w" (cons "[ WORKSPACE ]" #'ceamx-window-prefix)
-  ;; "C-c x"
-  ;; "C-c y"
-  ;; "C-c z"
-  )
 
 ;; [C-c o] :: Launch
 ;; :PROPERTIES:

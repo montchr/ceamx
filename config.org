@@ -1261,6 +1261,43 @@ graphical frames.
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 #+end_src
 
+** =init.el=: Leader Prefix Keybindings
+:PROPERTIES:
+:header-args: :tangle init.el
+:ID:       cd713eda-629c-460c-921e-d99ce8f6742f
+:END:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-c a" nil ; reserved for agenda
+  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
+  "C-c c" nil ; reserved for capture
+  "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
+  ;; "C-c d"
+  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
+  "C-c E" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
+  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
+  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
+  ;; "C-c j"
+  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
+  "C-c l f" (cons "formatting..." (define-prefix-command 'ceamx-code-f-prefix))
+  ;; "C-c m"
+  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
+  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c p" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
+  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
+  ;; "C-c r"
+  ;; "C-c s" (cons "[ ]")
+  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
+  ;; "C-c u"
+  ;; "C-c v"
+  "C-c w" (cons "[ WORKSPACE ]" #'ceamx-window-prefix)
+  ;; "C-c x"
+  ;; "C-c y"
+  ;; "C-c z"
+  )
+#+end_src
+
 * Features
 :PROPERTIES:
 :ID:       0b88377f-2539-49a1-917d-2d2eac806e37
@@ -8741,42 +8778,6 @@ Define agenda groups for display with the =org-super-agenda= extension:
 :VISIBILITY: folded
 :ID:       d39ff068-1ed1-4bc6-bc7e-f5aa50bb8edd
 :END:
-
-** Prefix: [C-c]
-:PROPERTIES:
-:ID:       d6797497-e46d-4743-abcd-36b3eea55a88
-:END:
-
-#+begin_src emacs-lisp
-(define-keymap :keymap (current-global-map)
-  "C-c a" #'org-agenda
-  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
-  "C-c c" #'org-capture
-  "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
-  ;; "C-c d"
-  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
-  "C-c E" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
-  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
-  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
-  ;; "C-c j"
-  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
-  ;; "C-c m"
-  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
-  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
-  "C-c p" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
-  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
-  ;; "C-c r"
-  ;; "C-c s" (cons "[ ]")
-  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
-  ;; "C-c u"
-  ;; "C-c v"
-  "C-c w" (cons "[ WORKSPACE ]" #'ceamx-window-prefix)
-  ;; "C-c x"
-  ;; "C-c y"
-  ;; "C-c z"
-  )
-
-#+end_src
 
 ** [C-c o] :: Launch
 :PROPERTIES:
