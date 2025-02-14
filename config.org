@@ -8484,9 +8484,9 @@ changing lines.
 
 
 #+begin_src emacs-lisp
-(use-feature! i-ching
-  :commands (i-ching/lookup
-             i-ching/cast))
+(use-feature! yijing
+  :commands (yijing/lookup
+             yijing/cast))
 #+end_src
 *** Operate on buffers rectangularly with the ~rect~ feature
 :PROPERTIES:

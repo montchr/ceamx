@@ -1,4 +1,4 @@
-;;; i-ching.el --- Cast an i-ching, and come up with a hexagram.
+;;; yijing.el --- Yijing (I Ching) consultation toolkit
 
 ;; Copyright (C) 2024 Chris Montgomery <chmont@protonmail.com>
 ;; Copyright (C) 2008 Jonathan Arkell <jonnay@jonnay.net>
@@ -27,6 +27,10 @@
 
 ;; <https://www.emacswiki.org/emacs/i-ching.el>
 
+;; This package was originally named `i-ching'.  It has been renamed
+;; to `yijing' to distinguish it from the original and from the
+;; alternative package on MELPA.
+
 ;; NOTE: The original package's copyright line implied the usage of a
 ;; "(by)(nc)(sa)" license.  I assume the author means the CC-BY-NC-SA
 ;; license, though there is also no license version provided.  That
@@ -48,6 +52,7 @@
 
 ;;;; Changelog:
 
+;; v0.4.0 - Rename from `i-ching' to `yijing'
 ;; v0.3.0 - Cleanup code
 ;; v0.2 - Hexagram lookup
 ;;       - Added Translated Judgment and commentary
@@ -63,52 +68,52 @@
 
 ;;;; Variables
 
-(defconst i-ching-version "0.4.0")
+(defconst yijing-version "0.5.0")
 
 ;;;; Customization
 
-(defgroup i-ching '()
+(defgroup yijing '()
   "Package providing methods for I Ching hexagram generation and interpretation.")
 
-(defcustom i-ching-randomize-method 'i-ching-standard-randomizer
-  "Method of randomization for i-ching.
+(defcustom yijing-randomize-method 'yijing-standard-randomizer
+  "Method of randomization for yijing.
 
 The possible values (for the default installation) are:
-`i-ching-standard-randomizer' - use the built-in Emacs random functions
-`i-ching-random-org-randomizer' - use output from random.org webservice
+`yijing-standard-randomizer' - use the built-in Emacs random functions
+`yijing-random-org-randomizer' - use output from random.org webservice
 
 In the future, the following methods will be available:
-`i-ching-fuckup-randomizer' - use a illuminatus style randomizer.
+`yijing-fuckup-randomizer' - use a illuminatus style randomizer.
 
-You can also write your own method, see `i-ching-standard-randomizer'
+You can also write your own method, see `yijing-standard-randomizer'
 for an example."
   :type 'function
-  :group 'i-ching)
+  :group 'yijing)
 
-(defcustom i-ching-casting-method 'i-ching-coin-caster
-  "Method of casting the i-ching.
+(defcustom yijing-casting-method 'yijing-coin-caster
+  "Method of casting the yijing.
 
-Traditionally, i-ching was cast with yarrow stalks, or coins.  by
+Traditionally, yijing was cast with yarrow stalks, or coins.  by
 customizing this method, you can choose how the hexigrams are generated.
 
 Currently the possible values are:
-`i-ching-coin-caster' - Cast the i-ching, with virtual coins.
+`yijing-coin-caster' - Cast the yijing, with virtual coins.
 
 In the future, these ones will be written:
-`i-ching-yarrow-caster' - Cast the i-ching with virtual yarrow stalks.
+`yijing-yarrow-caster' - Cast the yijing with virtual yarrow stalks.
 
-`i-ching-buffer-caster' - Cast the i-ching with the contents of the
+`yijing-buffer-caster' - Cast the yijing with the contents of the
     current buffer.
-`i-ching-chinese-date-caster' - Cast using the chinese calendar.
-`i-ching-western-date-caster' - Cast using the Gregorian calendar.
+`yijing-chinese-date-caster' - Cast using the chinese calendar.
+`yijing-western-date-caster' - Cast using the Gregorian calendar.
 
-You can also write your own methods.  See `i-ching-cast-hexagram' for
-help on writing your own caster.  Also see `i-ching-coin-caster' as an
+You can also write your own methods.  See `yijing-cast-hexagram' for
+help on writing your own caster.  Also see `yijing-coin-caster' as an
 example."
   :type 'function
-  :group 'i-ching)
+  :group 'yijing)
 
-(defcustom i-ching-bigram-interpretation
+(defcustom yijing-bigram-interpretation
   '(("::" "Old Yin,    Changing, Winter, Thymine")
      ("|:" "Young Yin,  Static,   Spring, Cytosine")
 	   ("||" "Old Yang,   Changing, Summer, Adenine")
@@ -116,7 +121,7 @@ example."
   "Interpretation of the bigrams.")
 
 ;;* custom trigram
-(defcustom i-ching-trigram-interpretation
+(defcustom yijing-trigram-interpretation
   '((":::" . "坤 The Receptive, Field,    Pure Yin,          SW, 地 Earth,    Devoted,           Receptive")
 	   ("::|" . "艮 Keeping Still, Bound,    Articulated Limit, NE, 山 Mountain, Resting,           Completion")
 	   (":|:" . "坎 The Abysmal,   Gorge,    Axial Rotation,    N,  水 Water,    Dangerous,         In-motion")
@@ -128,10 +133,10 @@ example."
   "Interpretation of the Trigrams.
 An alist in the format of: (trigram interpretation)."
   :type '(alist :key-type string :value-type string)
-  :group 'i-ching)
+  :group 'yijing)
 
 ;; TODO: mapping from ascii to unicode
-;; (defcustom i-ching-bigram-interpretation
+;; (defcustom yijing-bigram-interpretation
 ;;   '(("⚋⚋" "Old Yin			::	Changing	:	Winter	:	Thymine")
 ;;      ("⚊⚋" "Young Yin	::	Static		:	Spring	:	Cytosine")
 ;;      ("⚊⚊" "Old Yang		::	Changing	: Summer		:	Adenine")
@@ -139,7 +144,7 @@ An alist in the format of: (trigram interpretation)."
 ;;   "Interpretation of the bigrams.")
 
 ;; TODO: mapping from ascii to unicode
-;; (defcustom i-ching-trigram-interpretation
+;; (defcustom yijing-trigram-interpretation
 ;;   '(("☷" . "坤 The Receptive,  Field,    Pure Yin,          SW, 地 Earth,    Devoted,           Receptive")
 ;;      ("☶" . "艮 Keeping Still, Bound,    Articulated Limit, NE, 山 Mountain, Resting,           Completion")
 ;;      ("☵" . "坎 The Abysmal,   Gorge,    Axial Rotation,    N,  水 Water,    Dangerous,         In-motion")
@@ -152,9 +157,9 @@ An alist in the format of: (trigram interpretation)."
 
 ;; An alist in the format of: (trigram interpretation)."
 ;;   :type '(alist :key-type string :value-type string)
-;;   :group 'i-ching)
+;;   :group 'yijing)
 
-(defcustom i-ching-hexagram-interpretation
+(defcustom yijing-hexagram-interpretation
   '(("||||||" . "01. Force                 (乾)   The Creative    Possessing Creative Power & Skill ")
      ("::::::" . "02. Field                 (坤)   The Receptive   Needing Knowledge & Skill ; Do not force matters and go with the flow ,  ; ;")
      ("|:::|:" . "03. Sprouting             (屯)   Difficulty at the Beginning     Sprouting ")
@@ -223,9 +228,9 @@ An alist in the format of: (trigram interpretation)."
 
 So far this is just a direct copy of the content from wikipedia."
   :type '(alist :key-type string :value-type string)
-  :group 'i-ching)
+  :group 'yijing)
 
-(defcustom i-ching-hexagram-translation
+(defcustom yijing-hexagram-translation
   '(("||||||" "THE CREATIVE works sublime success,\nFurthering through perseverance."
       "The movement of heaven is full of power. \nThus the superior man makes himself strong and \nuntiring."
       "Nine at the beginning means:\nHidden dragon. Do not act."
@@ -738,9 +743,9 @@ So far this is just a direct copy of the content from wikipedia."
        "Nine in the fourth place means:\nPerseverance brings good fortune.\nRemorse disappears.\nShock, thus to discipline the Devil's Country.\nFor three years, great realms are rewarded."
        "° Six in the fifth place means:\nPerseverance brings good fortune.\nNo remorse.\nThe light of the superior man is true.\nGood fortune."
        "Nine at the top means:\nThere is drinking of wine\nIn genuine confidence. No blame.\nBut if one wets his head,\nHe loses it, in truth."))
-  "Text of the i-ching (translated).
+  "Text of the yijing (translated).
 
-This is the full text of the representative chapter in the i-ching.
+This is the full text of the representative chapter in the yijing.
 
 the format is:
   (hex judgment image 1st-line 2nd-line 3rd-line 4th-line 5th-line 6th-line)
@@ -749,91 +754,91 @@ judgement is the text of the judgement
 image is the commentary of Confucius
 nth-line is the commentary on changing lines."
   :type '(alist :key-type 'string :value-type (list 'string 'string 'string 'string 'string 'string 'string 'string))
-  :group 'i-ching)
+  :group 'yijing)
 
 ;;;; Faces
 
-(defface i-ching-title-face
+(defface yijing-title-face
   '((default
       (:weight bold :overline "black"
         :box (:line-width 4 :color "black" :style nil)
         :foreground "white" :background "black"))
      (nil nil))
   "Face for title bars"
-  :group 'i-ching)
+  :group 'yijing)
 
-(defface i-ching-subtitle-face
+(defface yijing-subtitle-face
   '((default
       (:weight bold)
       :underline "black"))
   "Face for sub-titles"
-  :group 'i-ching)
+  :group 'yijing)
 
 ;;;; Functions
 
 ;;;; Commands
 
 ;;;###autoload
-(defun i-ching/lookup ()
-  "Look up an i-ching hexagram."
+(defun yijing/lookup ()
+  "Look up an yijing hexagram."
   (interactive)
-  (let ((i-ching-casting-method 'i-ching-lookup-caster))
-    (i-ching/cast)))
+  (let ((yijing-casting-method 'yijing-lookup-caster))
+    (yijing/cast)))
 
 ;;;###autoload
-(defun i-ching/cast ()
-  "Cast an i-ching, and put the result into an i-ching buffer."
+(defun yijing/cast ()
+  "Cast an yijing, and put the result into an yijing buffer."
   (interactive)
-  (pop-to-buffer (get-buffer-create "*i-ching*"))
+  (pop-to-buffer (get-buffer-create "*yijing*"))
   (read-only-mode -1)
   (erase-buffer)
-  (let* ((hexagram (i-ching-cast-hexagram))
+  (let* ((hexagram (yijing-cast-hexagram))
           (changing (> (apply 'max hexagram) 1))
-          (change (i-ching-change-hexagram hexagram))
-          (catalyst (i-ching-catalyst-hexagram hexagram)))
-    (i-ching-title "Main Hexagram")
-    (insert (i-ching-full-hexagram-interpretation hexagram))
+          (change (yijing-change-hexagram hexagram))
+          (catalyst (yijing-catalyst-hexagram hexagram)))
+    (yijing-title "Main Hexagram")
+    (insert (yijing-full-hexagram-interpretation hexagram))
     (insert "\n")
     (if changing
       (progn
-        (insert (i-ching-changing-translation hexagram catalyst))
+        (insert (yijing-changing-translation hexagram catalyst))
         (insert "\n\n")
-        (i-ching-title "Changing Hexagram")
-        (insert (i-ching-full-hexagram-interpretation change))
+        (yijing-title "Changing Hexagram")
+        (insert (yijing-full-hexagram-interpretation change))
         (insert "\n")
-        (i-ching-title "Catalyzing Hexagram")
-        (insert (i-ching-full-hexagram-interpretation catalyst)))
+        (yijing-title "Catalyzing Hexagram")
+        (insert (yijing-full-hexagram-interpretation catalyst)))
       "Static Hexagram.")
     (insert "\n")
-    (i-ching-title "Correctness Hexagram")
-    (insert (i-ching-hexagram-string (i-ching-correctness-hexagram hexagram)))
+    (yijing-title "Correctness Hexagram")
+    (insert (yijing-hexagram-string (yijing-correctness-hexagram hexagram)))
     (insert "\n\n")
-    (i-ching-title "Correspondence Trigram")
-    (insert (format "%s" (apply 'i-ching-trigram (i-ching-correspond-trigram hexagram)))))
+    (yijing-title "Correspondence Trigram")
+    (insert (format "%s" (apply 'yijing-trigram (yijing-correspond-trigram hexagram)))))
   (goto-char (point-min))
   (read-only-mode 1))
 
 ;;;; Functions
 
-(defun i-ching-title (title)
+(defun yijing-title (title)
   "Return a nice TITLE string."
   (insert (propertize (concat title "\n")
-            'face "i-ching-title-face")))
+            'face "yijing-title-face")))
 
-(defun i-ching-full-hexagram-interpretation (hex)
+(defun yijing-full-hexagram-interpretation (hex)
   "Output a full interpretation of HEX.
 
 The full interpretation is the interpretation of a hex, plus its components."
-  (concat (i-ching-hexagram-string hex)
+  (concat (yijing-hexagram-string hex)
     "\n"
-    (i-ching-hexagram-components hex)
+    (yijing-hexagram-components hex)
     "\n"
-    (i-ching-hexagram-translation hex)))
+    (yijing-hexagram-translation hex)))
 
-(defun i-ching-changing-translation (hex catalyst)
+(defun yijing-changing-translation (hex catalyst)
   "Show translations for changing line in HEX, with catalyst hexagram CATALYST."
-  (let ((changing-trans (cdr (cdr (cdr (assoc (i-ching-number-to-ascii hex)
-                                              i-ching-hexagram-translation))))))
+  (let ((changing-trans (cdr (cdr (cdr (assoc (yijing-number-to-ascii hex)
+                                              yijing-hexagram-translation))))))
     (cl-loop for line in catalyst
              for num from 0
              append
@@ -843,18 +848,18 @@ The full interpretation is the interpretation of a hex, plus its components."
              into out
              finally return (apply 'concat out))))
 
-(defun i-ching-hexagram-translation (hexagram)
+(defun yijing-hexagram-translation (hexagram)
   "Return the full translation of a HEXAGRAM as a string."
-  (let ((trans (assoc (i-ching-number-to-ascii hexagram) i-ching-hexagram-translation)))
+  (let ((trans (assoc (yijing-number-to-ascii hexagram) yijing-hexagram-translation)))
     (format "Judgment:\n%s\n\nImage:\n%s\n\n" (nth 1 trans) (nth 2 trans))))
 
-(defun i-ching-hexagram-string (hexagram)
+(defun yijing-hexagram-string (hexagram)
   "Return a nicely formatted string from HEXAGRAM."
   (format "%s - %s"
-    (car (apply 'i-ching-hexagram hexagram))
-    (cdr (apply 'i-ching-hexagram hexagram))))
+    (car (apply 'yijing-hexagram hexagram))
+    (cdr (apply 'yijing-hexagram hexagram))))
 
-(defun i-ching-number-to-ascii (hex)
+(defun yijing-number-to-ascii (hex)
   "Display a given HEX graphically."
   (cl-loop for line in hex
     append
@@ -865,7 +870,7 @@ The full interpretation is the interpretation of a hex, plus its components."
       (3 '("|"))) into out
     finally return (apply 'concat out)))
 
-(defun i-ching-ascii-to-number (hex)
+(defun yijing-ascii-to-number (hex)
   "Grab the numeric values from a hexagram from ascii.
 
 HEX is a string representation of a hexagram, consisting of:
@@ -886,97 +891,97 @@ O = 9 (3 internally)"
 
 ;; FIXME: original author left this here...
 ;; (when nil
-;;   (i-ching-ascii-to-number "||:O|::|:X:|")
+;;   (yijing-ascii-to-number "||:O|::|:X:|")
 ;;   (append "abc" nil))
 
-(defun i-ching-hexagram-components (hex)
+(defun yijing-hexagram-components (hex)
   "Return a textual representaiton of the breakdown of hexagram HEX."
   (format (concat (propertize "Trigrams:\n"
-                    'face "i-ching-subtitle-face")
+                    'face "yijing-subtitle-face")
             " %s\n %s\n\n"
             (propertize "Bigrams:\n"
-              'face "i-ching-subtitle-face")
+              'face "yijing-subtitle-face")
             " %s\n %s\n %s\n")
-    (i-ching-trigram (fourth hex) (fifth hex) (sixth hex))
-    (i-ching-trigram (first hex) (second hex) (third hex))
-    (i-ching-bigram (sixth hex)  (fifth hex))
-    (i-ching-bigram (fourth hex) (third hex))
-    (i-ching-bigram (second hex) (first hex))))
+    (yijing-trigram (fourth hex) (fifth hex) (sixth hex))
+    (yijing-trigram (first hex) (second hex) (third hex))
+    (yijing-bigram (sixth hex)  (fifth hex))
+    (yijing-bigram (fourth hex) (third hex))
+    (yijing-bigram (second hex) (first hex))))
 
 ;; FIXME: original author left this here...
 ;; (when nil
-;;   (i-ching-hexagram-components (list 1 2 1 0 3 1)))
+;;   (yijing-hexagram-components (list 1 2 1 0 3 1)))
 
 ;;;;; Unigrams
 
-(defun i-ching-not (a)
+(defun yijing-not (a)
   "Perform a not operation on unigram A."
-  (i-ching-numerize
-    (let ((a (i-ching-normalize a))
-           (b (i-ching-normalize b)))
+  (yijing-numerize
+    (let ((a (yijing-normalize a))
+           (b (yijing-normalize b)))
       (or (and a (not b)) (and (not a) b)))))
 
-(defun i-ching-xor (a b)
+(defun yijing-xor (a b)
   "Perform a xor operation on unigrams A and B."
-  (i-ching-numerize
-    (let ((a (i-ching-normalize a))
-           (b (i-ching-normalize b)))
+  (yijing-numerize
+    (let ((a (yijing-normalize a))
+           (b (yijing-normalize b)))
       (or (and a (not b)) (and (not a) b)))))
 
-(defun i-ching-or (a b)
+(defun yijing-or (a b)
   "Perform an or operation on unigrams A and B."
-  (i-ching-numerize
-    (let ((a (i-ching-normalize a))
-           (b (i-ching-normalize b)))
+  (yijing-numerize
+    (let ((a (yijing-normalize a))
+           (b (yijing-normalize b)))
       (or a b))))
 
-(defun i-ching-and (a b)
+(defun yijing-and (a b)
   "Perform an and operation on hexagrams A and B."
-  (i-ching-numerize
-    (let ((a (i-ching-normalize a))
-           (b (i-ching-normalize b)))
+  (yijing-numerize
+    (let ((a (yijing-normalize a))
+           (b (yijing-normalize b)))
       (and a b))))
 
-(defun i-ching-normalize (a)
+(defun yijing-normalize (a)
   "Normalize unigram A to a boolean value.
 
 Note that this operation will destroy any changing data."
   (= 1 (% a 2)))
 
-(defun i-ching-numerize (a)
+(defun yijing-numerize (a)
   "Turn a boolean value A into a number."
   (if a 1 0))
 
 ;;;;; Bigrams
 
-(defun i-ching-bigram (a b)
+(defun yijing-bigram (a b)
   "Take two lines (A B) and return a bigram."
-  (assoc (i-ching-number-to-ascii (list a b))
-    i-ching-bigram-interpretation))
+  (assoc (yijing-number-to-ascii (list a b))
+    yijing-bigram-interpretation))
 
 ;;;;; Trigrams
 
-(defun i-ching-trigram (a b c)
+(defun yijing-trigram (a b c)
   "Take three lines (A B C) and return a trigram."
-  (assoc (i-ching-number-to-ascii (list a b c))
-    i-ching-trigram-interpretation))
+  (assoc (yijing-number-to-ascii (list a b c))
+    yijing-trigram-interpretation))
 
-(defun i-ching-hexagram (a b c d e f)
+(defun yijing-hexagram (a b c d e f)
   "Take 6 lines (A B C D E F) and return a hexagram."
-  (assoc (i-ching-number-to-ascii (list a b c d e f))
-    i-ching-hexagram-interpretation))
+  (assoc (yijing-number-to-ascii (list a b c d e f))
+    yijing-hexagram-interpretation))
 
 ;; FIXME: orig. author testing
 ;; (when nil
-;;   (i-ching-number-to-ascii (list 1 2 0 1 3 2))
-;;   (i-ching-hexagram 0 1 0 1 1 0)
-;;   (i-ching-trigram 1 1 1))
+;;   (yijing-number-to-ascii (list 1 2 0 1 3 2))
+;;   (yijing-hexagram 0 1 0 1 1 0)
+;;   (yijing-trigram 1 1 1))
 
-(defun i-ching-cast-hexagram ()
+(defun yijing-cast-hexagram ()
   "Casts a hexagram, and return a list.
 
-This will cast the hexigram using the values of `i-ching-casting-method' and
-`i-ching-randomize-method'.
+This will cast the hexigram using the values of `yijing-casting-method' and
+`yijing-randomize-method'.
 
 The list returned will contain 6 elements (one for each line).  Each element
 of the list will be a number:
@@ -987,9 +992,9 @@ of the list will be a number:
 3:  ----O----   Dynamic (old) Yang.
 
 Note that this is subject to change!"
-  (apply i-ching-casting-method nil))
+  (apply yijing-casting-method nil))
 
-(defun i-ching-change-hexagram (hex)
+(defun yijing-change-hexagram (hex)
   "Take hexigram HEX and perform the changing line transformation."
   (mapcar (lambda (x)
             (cl-case x
@@ -999,24 +1004,24 @@ Note that this is subject to change!"
               (3 0)))
     hex))
 
-(defun i-ching-catalyst-hexagram (hex)
+(defun yijing-catalyst-hexagram (hex)
   "Build a catalyst hexagram from HEX.
 
 The catalyst hexagram is a hexagram that when applied as a xor to the primary
 hexagram, would emit the changing hexagram.
 
-This is not traditional to the i-ching."
+This is not traditional to the yijing."
   (mapcar (lambda (x)
             (if (> x 1) 1 0)) hex))
 
 ;; FIXME: tests
 ;; (when nil
-;;   (i-ching-change-hexagram (list 0 1 2 3 0 1 2 3))
-;;   (i-ching-catalyst-hexagram (list 0 1 2 3 3 2 1))
-;;   (i-ching-catalyst-hexagram (list 3 0 1 3 1 2))
-;;   (i-ching-change-hexagram (list 1 1 3 1 0 0 2 0)))
+;;   (yijing-change-hexagram (list 0 1 2 3 0 1 2 3))
+;;   (yijing-catalyst-hexagram (list 0 1 2 3 3 2 1))
+;;   (yijing-catalyst-hexagram (list 3 0 1 3 1 2))
+;;   (yijing-change-hexagram (list 1 1 3 1 0 0 2 0)))
 
-(defun i-ching-correspond-trigram (hex)
+(defun yijing-correspond-trigram (hex)
   "Given hexagram HEX, return a trigram representing the correspondence.
 
 A hexagram is considered fully corresponding if the top trigram
@@ -1026,76 +1031,76 @@ returned.  (a yang line for every line-set in correspondence).
 For instance, the hexagrams :|:|:| is considered fully correspondent.
 But the hexagram :|::|: is not.
 
-I do not think this is traditional in the i-ching."
-  (list (i-ching-xor (first hex) (fourth hex))
-    (i-ching-xor (second hex) (fifth hex))
-    (i-ching-xor (third hex)  (sixth hex))))
+I do not think this is traditional in the yijing."
+  (list (yijing-xor (first hex) (fourth hex))
+    (yijing-xor (second hex) (fifth hex))
+    (yijing-xor (third hex)  (sixth hex))))
 
 ;; FIXME: tests
 ;; (when nil
-;;   (i-ching-correspond-trigram (list 0 1 0 3 2 1))
-;;   (i-ching-correspond-trigram (list 1 0 1 1 0 1))
-;;   (i-ching-correspond-trigram (list 1 2 0 3 2 1)))
+;;   (yijing-correspond-trigram (list 0 1 0 3 2 1))
+;;   (yijing-correspond-trigram (list 1 0 1 1 0 1))
+;;   (yijing-correspond-trigram (list 1 2 0 3 2 1)))
 
-(defun i-ching-correctness-hexagram (hex)
+(defun yijing-correctness-hexagram (hex)
   "Given a hexagram HEX, return a hexagram showing its correctness.
 Correctness is when a hexagram has yang lines in yang positions
 and yin lines in yin positions.  hexagram 63 |:|:|: is considered
 to be fully correct.
 
-I do not think this is traditional in the i-ching."
-  (list (i-ching-xor 0 (first hex))
-    (i-ching-xor 1 (second hex))
-    (i-ching-xor 0 (third hex))
-    (i-ching-xor 1 (fourth hex))
-    (i-ching-xor 0 (fifth hex))
-    (i-ching-xor 1 (sixth hex))))
+I do not think this is traditional in the yijing."
+  (list (yijing-xor 0 (first hex))
+    (yijing-xor 1 (second hex))
+    (yijing-xor 0 (third hex))
+    (yijing-xor 1 (fourth hex))
+    (yijing-xor 0 (fifth hex))
+    (yijing-xor 1 (sixth hex))))
 
 ;; FIXME: tests
 ;; (when nil
-;;   (i-ching-correctness-hexagram (list 0 1 0 1 0 1))
-;;   (i-ching-correctness-hexagram (list 1 0 1 0 1 0))
-;;   (i-ching-correctness-hexagram (list 1 1 1 1 1 1))
-;;   (i-ching-correctness-hexagram (list 0 0 0 0 0 0))
-;;   (i-ching-correctness-hexagram (list 0 1 2 3 3 2)))
+;;   (yijing-correctness-hexagram (list 0 1 0 1 0 1))
+;;   (yijing-correctness-hexagram (list 1 0 1 0 1 0))
+;;   (yijing-correctness-hexagram (list 1 1 1 1 1 1))
+;;   (yijing-correctness-hexagram (list 0 0 0 0 0 0))
+;;   (yijing-correctness-hexagram (list 0 1 2 3 3 2)))
 
-(defun i-ching-lookup-caster ()
-  "Do a look up on an i-ching hexagram.
+(defun yijing-lookup-caster ()
+  "Do a look up on an yijing hexagram.
 Technically this is a casting."
-  (i-ching-ascii-to-number (completing-read "Hexagram (: = yin, | = yang, X = changing yin, O = changing yang): "
-                             (mapcar 'car i-ching-hexagram-interpretation))))
+  (yijing-ascii-to-number (completing-read "Hexagram (: = yin, | = yang, X = changing yin, O = changing yang): "
+                             (mapcar 'car yijing-hexagram-interpretation))))
 
-(defun i-ching-coin-caster ()
-  "Cast the i-ching using the flipping-three-coins method."
-  (list (i-ching-coin-helper)
-    (i-ching-coin-helper)
-    (i-ching-coin-helper)
-    (i-ching-coin-helper)
-    (i-ching-coin-helper)
-    (i-ching-coin-helper)))
+(defun yijing-coin-caster ()
+  "Cast the yijing using the flipping-three-coins method."
+  (list (yijing-coin-helper)
+    (yijing-coin-helper)
+    (yijing-coin-helper)
+    (yijing-coin-helper)
+    (yijing-coin-helper)
+    (yijing-coin-helper)))
 
-(defun i-ching-coin-helper ()
-  "Helper function for `i-ching-coin-caster'."
-  (cl-case (+ (apply i-ching-randomize-method (list 2 3))
-          (apply i-ching-randomize-method (list 2 3))
-          (apply i-ching-randomize-method (list 2 3)))
+(defun yijing-coin-helper ()
+  "Helper function for `yijing-coin-caster'."
+  (cl-case (+ (apply yijing-randomize-method (list 2 3))
+          (apply yijing-randomize-method (list 2 3))
+          (apply yijing-randomize-method (list 2 3)))
     (6 2)
     (7 1)
     (8 0)
     (9 3)))
 
-(defun i-ching-buffer-caster ()
-  "Spit out an i-ching hexagram based on the md5 hash on the current buffer.
+(defun yijing-buffer-caster ()
+  "Spit out an yijing hexagram based on the md5 hash on the current buffer.
 
 Note that the md5 hash is in the form of:
 33483acc0fd3602a086fb7eeeedf4d95
 
 ::::|: - 08. Grouping (比 bǐ)   Holding Together    Union
 |:::|: - 03. Sprouting (屯 chún)    Difficulty at the Beginning     Sprouting"
-  (md5 (get-buffer "i-ching.el")))
+  (md5 (get-buffer "yijing.el")))
 
-(defun i-ching-bead-caster ()
-  "Cast the i-ching by selecting from a virtual string of beads.
+(defun yijing-bead-caster ()
+  "Cast the yijing by selecting from a virtual string of beads.
 
 This is done by selecting a position inside of a string of digits, that
 contains every hexagram.  This apparently was done as a set of beads,
@@ -1114,7 +1119,7 @@ when you reach the last hexagrams you 'wrap around' the code...
  0)0000010010001010100001101001100101101100011101011100111101(11111
 "
 
-  (let ((casting-pos (apply i-ching-randomize-method 0 63))
+  (let ((casting-pos (apply yijing-randomize-method 0 63))
          (casting-string
            (ring-convert-sequence-to-ring
              (list 0 0 0 0 0 0 1 0
@@ -1132,8 +1137,8 @@ when you reach the last hexagrams you 'wrap around' the code...
       (ring-plus1 (+ 4 casting-pos) casting-string)
       (ring-plus1 (+ 5 casting-pos) casting-string))))
 
-(defun i-ching-western-date-caster ()
-  "Cast the i-ching according to todays date.
+(defun yijing-western-date-caster ()
+  "Cast the yijing according to todays date.
 
 This is based strictly from the western date, as explained here:
 http://www.netowne.com/eastern/iching/
@@ -1186,26 +1191,26 @@ loosely based on the plum-blossem method."
 
 ;; FIXME: tests
 ;; (when nil
-;;   (let ((i-ching-casting-method 'i-ching-western-date-caster))
-;;     (i-ching/cast))
+;;   (let ((yijing-casting-method 'yijing-western-date-caster))
+;;     (yijing/cast))
 ;;   )
 
 ;;;;; Randomization
 
-(defun i-ching-standard-randomizer (min max)
+(defun yijing-standard-randomizer (min max)
   "A standard randomization function.  Return a number between MIN and MAX."
   (+ min (random (- (+ 1 max) min))))
 
-(defvar i-ching-random-org-cache nil
-  "A cache of random numbers retrieved from `i-ching-random-org-randomizer'.")
+(defvar yijing-random-org-cache nil
+  "A cache of random numbers retrieved from `yijing-random-org-randomizer'.")
 
-(defun i-ching-random-org-randomizer (min max)
+(defun yijing-random-org-randomizer (min max)
   "Pull a random number from http://www.random.org/clients/http/ .
 
 Returns a nubmer between MIN and MAX.
 
-Uses a cache (`i-ching-random-org-cache') so repeated requests are not made."
-  (when (null i-ching-random-org-cache)
+Uses a cache (`yijing-random-org-cache') so repeated requests are not made."
+  (when (null yijing-random-org-cache)
     (save-excursion
       (let ((random-buffer (url-retrieve-synchronously "http://www.random.org/integers/?num=100&min=1&max=999999&col=1&base=10&format=plain&rnd=new")))
         (set-buffer random-buffer)
@@ -1214,26 +1219,26 @@ Uses a cache (`i-ching-random-org-cache') so repeated requests are not made."
         (when (> (string-to-number (buffer-substring (point) (search-forward " ")))
                 399)
           (kill-buffer random-buffer)
-          (error "Cannot cast i-ching,  HTTP error from random.org"))
+          (error "Cannot cast yijing,  HTTP error from random.org"))
         (search-forward "\n\n")
         (let ((result (read (concat "(" (buffer-substring (point) (point-max)) ")"))))
           (kill-buffer random-buffer)
           (when (null result)
             (error "Cannot read random numbers from random.org"))
-          (setq i-ching-random-org-cache result)))))
-  (let ((rand-val (car i-ching-random-org-cache)))
-    (setq i-ching-random-org-cache (cdr i-ching-random-org-cache))
+          (setq yijing-random-org-cache result)))))
+  (let ((rand-val (car yijing-random-org-cache)))
+    (setq yijing-random-org-cache (cdr yijing-random-org-cache))
     (+ min (% rand-val
              (- (+ 1 max) min)))))
 
 ;; FIXME: tests
 ;; (when nil
-;;   (i-ching-random-org-randomizer 1 4)
-;;   (i-ching-random-org-randomizer 2 3))
+;;   (yijing-random-org-randomizer 1 4)
+;;   (yijing-random-org-randomizer 2 3))
 
 ;; TODO:
-(defun i-ching-fuckup-randomizer (min max)
-  "Perform an i-ching randomization function, using a process similar to FUCKUP.
+(defun yijing-fuckup-randomizer (min max)
+  "Perform an yijing randomization function, using a process similar to FUCKUP.
 
 This function should use a similar version of randomization as the computer
 FUCKUP, as described by Robert Anton Wilson and Robert Shaes Illuminatus
@@ -1255,5 +1260,5 @@ From /The Illuminatus! Trilogy Wiki/:
     astrological, astronomical, and technological data.")
 
 
-(provide 'i-ching)
-;;; i-ching.el ends here
+(provide 'yijing)
+;;; yijing.el ends here
