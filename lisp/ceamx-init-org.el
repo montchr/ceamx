@@ -286,7 +286,10 @@ Intended for use as a local hook function on
 (package! doct
   (require 'doct))
 
-;; ~org-ql~ :: a query-builder for ~org-mode~ elements
+;; =org-ql= :: a query-builder for ~org-mode~ elements
+;; :PROPERTIES:
+;; :ID:       763286d7-b5f7-4a56-b3f6-56c677a917b9
+;; :END:
 
 ;; - Source code :: <https://github.com/alphapapa/org-ql>
 
@@ -295,17 +298,23 @@ Intended for use as a local hook function on
   ;; :ensure t
   )
 
-;; ~org-node~ :: a lightweight roam-like
+;; =org-node= :: a lightweight intertwingler
+;; :PROPERTIES:
+;; :ID:       beb57c33-d2e4-491f-8792-a9327a097a72
+;; :END:
 
 ;; + Package :: <https://github.com/meedstrom/org-node>
 
 
 (package! org-node
-  (keymap-set global-map "M-s M-f" #'org-node-find)
-  (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link))
+  (keymap-global-set "M-s M-f" #'org-node-find)
+  (keymap-global-set "C-c i n" #'org-node-insert-link)
+  (after! org-mode
+    (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link)))
 
 (after! org-node
   (setopt org-node-extra-id-dirs (list ceamx-agenda-dir))
+
   (add-to-list 'org-node-extra-id-dirs-exclude ceamx-note-journal-dir)
 
   (org-node-backlink-mode)
@@ -391,9 +400,9 @@ Intended for use as a local hook function on
 
 
 (use-feature! org-agenda
-  :bind
-  ( :map ceamx-launch-prefix
-    ("a" . #'org-agenda))
+  :bind ( ("C-c a" . #'org-agenda)
+          :map ceamx-launch-prefix
+          ("a" . #'org-agenda))
 
   :config
   (setopt org-agenda-tags-column 0)

@@ -139,12 +139,15 @@
                     date-full date-relative)))))
 
 ;; =magit= :: the git experience
+;; :PROPERTIES:
+;; :ID:       5a436e2b-7c80-4055-acdc-b2ef8e640f83
+;; :END:
 
 
 (package! magit
   (define-keymap :keymap (current-global-map)
-    "C-c g" #'magit-dispatch
-    "C-c G" #'magit-file-dispatch
+    "C-c g" #'magit-file-dispatch
+    "C-c G" #'magit-dispatch
     "C-x g" #'magit-status
     "C-x M-g" #'magit-dispatch))
 

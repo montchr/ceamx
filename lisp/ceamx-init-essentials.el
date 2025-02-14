@@ -145,6 +145,42 @@
     "d" #'crux-delete-file-and-buffer
     "r" #'crux-rename-file-and-buffer))
 
+;; =tmr= :: set timers using a convenient notation
+;; :PROPERTIES:
+;; :ID:       67caf305-67ce-42b5-9ff3-98b0f9ac6b06
+;; :END:
+
+;; + Website :: <https://protesilaos.com/emacs/tmr>
+
+
+(package! tmr
+  (require 'tmr)
+
+  (keymap-global-set "C-c T" #'tmr-prefix-map)
+
+  (setopt tmr-notification-urgency 'normal)
+  (setopt tmr-description-list 'tmr-description-history)
+
+  (defvar-keymap ceamx+embark-tmr-action-map
+    :doc "Action map for TMRs, which can be utilized by Embark."
+    "k" #'tmr-remove
+    "r" #'tmr-remove
+    "R" #'tmr-remove-finished
+    "c" #'tmr-clone
+    "a" #'tmr-toggle-acknowledge
+    "e" #'tmr-edit-description
+    "s" #'tmr-reschedule)
+
+  (defvar embark-keymap-alist)
+  (defvar embark-post-action-hooks)
+
+  (after! embark
+    (add-to-list 'embark-keymap-alist '(tmr-timer . ceamx+embark-tmr-action-map))
+    (cl-loop
+     for cmd the key-bindings of ceamx+embark-tmr-action-map
+     if (commandp cmd) do
+     (add-to-list 'embark-post-action-hooks (list cmd 'embark--restart)))))
+
 ;; Configure sane window-scrolling behavior
 
 
@@ -221,18 +257,16 @@
             space-after-tab
             space-before-tab)))
 
-;; ~editorconfig~ :: enforce EditorConfig settings
+;; =editorconfig= :: enforce EditorConfig settings
+;; :PROPERTIES:
+;; :ID:       d0133690-e4a8-40a7-abcf-12816589d4b7
+;; :END:
 
 ;; - Website :: <https://editorconfig.org>
 
 
-(use-package editorconfig
-  ;; :ensure t
-  :hook (ceamx-emacs-startup . editorconfig-mode)
-
-  :preface
-  ;; via <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
-  (defun +editorconfig-enforce-org-mode-tab-width-h (props)
+;; via <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
+(defun +editorconfig-enforce-org-mode-tab-width-h (props)
   "Prevent `editorconfig' from changing `tab-width' in `org-mode'.
 A \"tab-width\" of any value other than 8 is an error state in
 org-mode, so it must not be changed.
@@ -242,8 +276,15 @@ PROPS is as in `editorconfig-after-apply-functions'."
              (derived-mode-p 'org-mode))
     (setq tab-width 8)))
 
-  :config
-  (add-hook 'editorconfig-after-apply-functions #'+editorconfig-enforce-org-mode-tab-width-h))
+(package! editorconfig
+  (add-hook 'ceamx-emacs-startup-hook #'editorconfig-mode)
+
+  ;; TODO: needs prefix to be defined early!
+  ;;  (keymap-global-set "C-c l f e" #'editorconfig-format-buffer)
+
+  (after! editorconfig
+    (add-hook 'editorconfig-after-apply-functions
+              #'+editorconfig-enforce-org-mode-tab-width-h)))
 
 ;; Movement / Regions / Basic Editing
 ;; :PROPERTIES:
