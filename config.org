@@ -2372,18 +2372,16 @@ NOTE: Incompatible with kitchen-sink modeline packages like
             space-before-tab)))
 #+end_src
 
-*** ~editorconfig~ :: enforce EditorConfig settings
+*** =editorconfig= :: enforce EditorConfig settings
+:PROPERTIES:
+:ID:       d0133690-e4a8-40a7-abcf-12816589d4b7
+:END:
 
 - Website :: <https://editorconfig.org>
 
 #+begin_src emacs-lisp
-(use-package editorconfig
-  ;; :ensure t
-  :hook (ceamx-emacs-startup . editorconfig-mode)
-
-  :preface
-  ;; via <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
-  (defun +editorconfig-enforce-org-mode-tab-width-h (props)
+;; via <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
+(defun +editorconfig-enforce-org-mode-tab-width-h (props)
   "Prevent `editorconfig' from changing `tab-width' in `org-mode'.
 A \"tab-width\" of any value other than 8 is an error state in
 org-mode, so it must not be changed.
@@ -2393,8 +2391,16 @@ PROPS is as in `editorconfig-after-apply-functions'."
              (derived-mode-p 'org-mode))
     (setq tab-width 8)))
 
-  :config
-  (add-hook 'editorconfig-after-apply-functions #'+editorconfig-enforce-org-mode-tab-width-h))
+(package! editorconfig
+  (add-hook 'ceamx-emacs-startup-hook #'editorconfig-mode)
+
+  ;; TODO: needs prefix to be defined early!
+  ;;  (keymap-global-set "C-c l f e" #'editorconfig-format-buffer)
+
+  (after! editorconfig
+    (add-hook 'editorconfig-after-apply-functions
+              #'+editorconfig-enforce-org-mode-tab-width-h)))
+
 #+end_src
 
 *** Movement / Regions / Basic Editing
