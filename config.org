@@ -531,6 +531,9 @@ ELP is useful for seeing which functions in a package are "hot":
 #+end_src
 
 *** Display the scratch buffer as initial buffer
+:PROPERTIES:
+:ID:       8faa0cb3-1b4d-4218-a2c3-0016aba1d95b
+:END:
 
 #+begin_src emacs-lisp
 (setq initial-buffer-choice nil
@@ -571,6 +574,9 @@ Packages are installed with Elpaca.
 Previously, I have used =package.el= or Nixpkgs to manage packages.  See the
 [[*Alternatives]] subheading for details
 ***** Elpaca
+:PROPERTIES:
+:ID:       af51c154-98f0-487d-ba00-90db3d1d032f
+:END:
 
 #+begin_src emacs-lisp
 (defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
@@ -889,7 +895,7 @@ Required by ~eglot~.
 (elpaca use-package)
 #+end_src
 
-**** ~elpaca-use-package~: integrate ~elpaca~ and ~use-package~
+**** =elpaca-use-package=: integrate ~elpaca~ and ~use-package~
 
 #+begin_src emacs-lisp
 (elpaca elpaca-use-package
@@ -936,7 +942,7 @@ unimportant since it happens during compilation anyway."
   (ceamx--remove-sharp-quotes args))
 #+end_src
 
-**** ~blackout~: adjust mode-line lighters :modeline:
+**** =blackout=: adjust mode-line lighters :modeline:
 
 - Use-Package keyword :: =:blackout=
 
@@ -1013,7 +1019,7 @@ Add the =:load-after= contextual macro:
     :documentation "Load the current feature after FEATURES.")
 #+end_src
 
-*** ~gcmh~: manage running garbage collection on idle :package:perf:
+*** =gcmh=: manage running garbage collection on idle :package:perf:
 
 - Website :: <https://akrl.sdf.org/>
 - Code :: <https://gitlab.com/koral/gcmh>
@@ -1102,6 +1108,7 @@ expect the value you arrive at to be as high as 100 MiB.
 ** =init.el=: Environment
 :PROPERTIES:
 :header-args: :tangle init.el
+:ID:       451ef1a7-544c-45de-95d0-ca09abee5d23
 :END:
 
 *** Disable unnecessary OS-specific command-line options :macos:
@@ -1114,7 +1121,7 @@ expect the value you arrive at to be as high as 100 MiB.
   (setq command-line-x-option-alist nil))
 #+end_src
 
-*** ~exec-path-from-shell~: Inherit environment variables from variable environments :package:
+*** =exec-path-from-shell=: Inherit environment variables from variable environments :package:
 
 #+begin_src emacs-lisp
 (package! exec-path-from-shell
@@ -1124,7 +1131,7 @@ expect the value you arrive at to be as high as 100 MiB.
   (exec-path-from-shell-initialize))
 #+end_src
 
-*** ~inheritenv~: Make temporary buffers inherit buffer-local environment variables :package:
+*** =inheritenv=: Make temporary buffers inherit buffer-local environment variables :package:
 
 - website :: <https://github.com/purcell/inheritenv>
 
@@ -1134,7 +1141,7 @@ expect the value you arrive at to be as high as 100 MiB.
     (require 'inheritenv)))
 #+end_src
 
-*** ~with-editor~: Ensure shell/term modes use session as =$EDITOR= :package:
+*** =with-editor=: Ensure shell/term modes use session as =$EDITOR= :package:
 
 #+begin_src emacs-lisp
 (package! with-editor
@@ -1153,7 +1160,7 @@ expect the value you arrive at to be as high as 100 MiB.
     (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
 #+end_src
 
-*** ~envrc~: Direnv integration :package:
+*** =envrc= :: Direnv integration :package:
 :PROPERTIES:
 :ID:       4572e438-3d90-4ed3-88af-a7c2493a2e19
 :END:
@@ -1261,7 +1268,7 @@ graphical frames.
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 #+end_src
 
-** =init.el=: Leader Prefix Keybindings
+** =init.el= :: Leader Prefix Keybindings
 :PROPERTIES:
 :header-args: :tangle init.el
 :ID:       cd713eda-629c-460c-921e-d99ce8f6742f
@@ -1428,7 +1435,7 @@ applying margin, padding, borders.
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
 #+end_src
 
-**** ~standard-themes~ :: themes like the default but more consistent
+**** =standard-themes= :: themes like the default but more consistent
 
 #+begin_src emacs-lisp
 (when (display-graphic-p)
@@ -1453,7 +1460,7 @@ applying margin, padding, borders.
             standard-light-tinted)))
 #+end_src
 
-**** ~modus-themes~ :: accessible theme conforming to WCAG AAA
+**** =modus-themes= :: accessible theme conforming to WCAG AAA
 
 - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -1478,7 +1485,7 @@ applying margin, padding, borders.
             (t . (variable-pitch semibold 1.0)))))
 #+end_src
 
-**** ~ef-themes~ :: colorful yet legible themes
+**** =ef-themes= :: colorful yet legible themes
 
 - Website :: <https://protesilaos.com/emacs/ef-themes>
 
@@ -1511,7 +1518,7 @@ applying margin, padding, borders.
 (setopt calendar-longitude -75.133)
 #+end_src
 
-**** ~circadian~ :: theme phasing based on sunrise/sunset time
+**** =circadian= :: theme phasing based on sunrise/sunset time
 
 #+begin_src emacs-lisp
 (package! circadian
@@ -1530,7 +1537,7 @@ applying margin, padding, borders.
                   (ceamx-ui/load-light-theme))))))
 #+end_src
 
-*** ~avy~ :: can do anything
+*** =avy= :: can do anything
 :PROPERTIES:
 :ID:       05cb2761-07fc-476b-8b78-0d08e0a89469
 :END:
@@ -1574,14 +1581,14 @@ applying margin, padding, borders.
   (setopt hl-line-sticky-flag nil))
 #+end_src
 
-*** ~lin~ :: improve line-highlighting for major-modes orientated around line selection
+*** =lin= :: improve line-highlighting for major-modes orientated around line selection
 
 #+begin_src emacs-lisp
 (package! lin
   (add-hook 'ceamx-after-init-hook #'lin-global-mode))
 #+end_src
 
-*** ~pulsar~ :: pulse current line after function invocations
+*** =pulsar= :: pulse current line after function invocations
 
 #+begin_src emacs-lisp
 (package! pulsar
@@ -1634,7 +1641,7 @@ applying margin, padding, borders.
   (keymap-global-unset "C-z" t))
 #+end_src
 
-*** ~spacious-padding~ :: a comfortable layout density
+*** =spacious-padding= :: a comfortable layout density
 
 #+begin_src emacs-lisp
 (package! spacious-padding
@@ -1654,7 +1661,7 @@ applying margin, padding, borders.
   (setopt spacious-padding-subtle-mode-line t))
 #+end_src
 
-*** ~olivetti~ :: "distraction-free" editing
+*** =olivetti= :: "distraction-free" editing
 
 - Package :: <https://github.com/rnkn/olivetti>
 
@@ -1668,7 +1675,7 @@ applying margin, padding, borders.
           olivetti-recall-visual-line-mode-entry-state t))
 #+end_src
 
-*** ~logos~ :: a simple focus mode with page breaks or outlines :present:
+*** =logos= :: a simple focus mode with page breaks or outlines :present:
 :PROPERTIES:
 :ID:       9f620970-a54b-46bf-bbc4-ad3712646506
 :END:
@@ -1713,7 +1720,7 @@ applying margin, padding, borders.
       (recenter 1))))
 #+end_src
 
-*** ~focus~ :: a lexical focus mode
+*** =focus= :: a lexical focus mode
 
 + Package :: <https://github.com/larstvei/Focus>
 
@@ -1726,7 +1733,7 @@ Focusing by sentence, paragraph, or code block.
     "Z" #'focus-mode))
 #+end_src
 
-*** ~moc~ :: "Master of Ceremonies" presentation utilities :present:
+*** =moc= :: "Master of Ceremonies" presentation utilities :present:
 
 + Package :: <https://github.com/positron-solutions/moc/>
 
@@ -1767,7 +1774,7 @@ Enable the tab bar:
 (setq-default text-scale-remap-header-line t)
 #+end_src
 
-**** ~fontaine~ :: pre-configure font presets
+**** =fontaine= :: pre-configure font presets
 :PROPERTIES:
 :ID:       a007fa6e-ea76-4a29-86a2-7ff87885c0c1
 :END:
@@ -1882,6 +1889,9 @@ If there is no previous preset state to load, fall back to the
 #+end_src
 
 **** ~ligature.el~ :: improved ligature support
+:PROPERTIES:
+:ID:       faf642cc-811e-4b58-bbaa-51e9e11b1dff
+:END:
 
 + Package :: <https://github.com/mickeynp/ligature.el>
 
@@ -1908,7 +1918,7 @@ A better implementation of ligature support than the builtin
      "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++")))
 #+end_src
 
-**** ~show-font~ :: a tool to preview fonts
+**** =show-font= :: a tool to preview fonts
 
 + Package :: <https://protesilaos.com/emacs/show-font>
 
@@ -1957,7 +1967,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 (package! svg-lib)
 #+end_src
 
-**** ~page-break-lines~ :: improve appearance of form feed characters :package:
+**** =page-break-lines= :: improve appearance of form feed characters :package:
 
 - docs :: <https://github.com/purcell/page-break-lines/blob/master/README.md>
 
@@ -2043,14 +2053,14 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
                   ceamx-modeline-misc-info)))
 #+end_src
 
-*** ~minions~ :: minimize many mode-line minor-modes
+*** =minions= :: minimize many mode-line minor-modes
 
 #+begin_src emacs-lisp
 (package! minions
   (add-hook 'ceamx-after-init-hook #'minions-mode))
 #+end_src
 
-*** ~keycast~ :: show current command and its binding :present:
+*** =keycast= :: show current command and its binding :present:
 
 - Website :: <https://github.com/tarsius/keycast>
 
@@ -2140,7 +2150,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 
 #+end_src
 
-*** ~ceamx-simple~: Simple & common commands
+*** =ceamx-simple=: Simple & common commands
 :PROPERTIES:
 :ID:       3fcbca20-29f3-4e91-ba76-6bad1199adc3
 :END:
@@ -2399,7 +2409,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   "C-x M-;" #'comment-line)
 #+end_src
 
-**** ~mwim~: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
+**** =mwim=: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
 
 #+begin_src emacs-lisp
 (package! mwim
@@ -2408,7 +2418,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-e" #'mwim-end))
 #+end_src
 
-**** ~beginend~ :: rebind context-sensitive =(beginning,end)-of-buffer=
+**** =beginend= :: rebind context-sensitive =(beginning,end)-of-buffer=
 
 + Package :: https://github.com/DamienCassou/beginend
 
@@ -2418,7 +2428,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (beginend-global-mode))
 #+end_src
 
-**** ~easy-kill~ :: killing is easy when you're emacs :package:
+**** =easy-kill= :: killing is easy when you're emacs :package:
 :PROPERTIES:
 :ID:       a3727c22-4373-47aa-ac61-e1355c5e048d
 :END:
@@ -2451,7 +2461,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (delete-selection-mode 1)
 #+end_src
 
-**** ~expreg~ :: simple alternativate to ~expand-region~ using ~treesit~
+**** =expreg= :: simple alternativate to ~expand-region~ using ~treesit~
 
 + Package :: <https://github.com/casouri/expreg>
 
@@ -2461,7 +2471,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-=" #'expreg-contract))
 #+end_src
 
-**** ~drag-stuff~ :: drag stuff around in arbitrary directions :package:
+**** =drag-stuff= :: drag stuff around in arbitrary directions :package:
 :PROPERTIES:
 :ID:       1febb9e9-ec19-4765-b6bb-21613e7667fb
 :END:
@@ -2544,7 +2554,7 @@ Needs better bindings.
     "c" #'ceamx/cycle-string-inflection))
 #+end_src
 
-**** ~ialign~ :: Interactively ~align-regexp~ :package:
+**** =ialign= :: Interactively ~align-regexp~ :package:
 :PROPERTIES:
 :ID:       7c7b2b24-f6e4-4af5-934f-0d66b65bba6c
 :END:
@@ -2689,7 +2699,7 @@ Needs better bindings.
   :hook (prog-mode . goto-address-prog-mode))
 #+end_src
 
-*** ~link-hint~: Activate links in buffer with ~avy~
+*** =link-hint=: Activate links in buffer with ~avy~
 
 <https://github.com/noctuid/link-hint.el>
 
@@ -2787,7 +2797,7 @@ Needs better bindings.
   "C-h" nil)
 #+end_src
 
-**** ~casual-suite~: transient-dispatch menus for complex modes
+**** =casual-suite=: transient-dispatch menus for complex modes
 
 #+begin_src emacs-lisp
 (package! casual-suite
@@ -2834,7 +2844,7 @@ Needs better bindings.
     (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)))
 #+end_src
 
-**** ~Info-mode~ enchantments
+**** =Info-mode= enchantments
 
 #+begin_src emacs-lisp
 (use-feature! info
@@ -2842,7 +2852,7 @@ Needs better bindings.
          (Info-mode . scroll-lock-mode)))
 #+end_src
 
-**** ~helpful~: Provide improved alternatives to the builtin "describe" utilities
+**** =helpful=: Provide improved alternatives to the builtin "describe" utilities
 
 - Source code :: <https://github.com/Wilfred/helpful>
 
@@ -2938,7 +2948,7 @@ via <https://codeberg.org/ideasman42/emacs-undo-fu#undo-limits>
 (setopt undo-outer-limit 1006632960) ; 960mb.
 #+end_src
 
-**** ~undo-fu~: Support optional linear undo/redo
+**** =undo-fu=: Support optional linear undo/redo
 
 - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu>
 
@@ -2948,7 +2958,7 @@ via <https://codeberg.org/ideasman42/emacs-undo-fu#undo-limits>
   (keymap-global-set "C-S-z" #'undo-fu-only-redo))
 #+end_src
 
-**** ~undo-fu-session~: Record undo/redo steps across Emacs sessions
+**** =undo-fu-session=: Record undo/redo steps across Emacs sessions
 
 - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
 
@@ -2969,7 +2979,7 @@ enhancement to the builtin Emacs undo system as well.
   (undo-fu-session-global-mode))
 #+end_src
 
-**** ~vundo~: Visualize the Emacs undo tree
+**** =vundo=: Visualize the Emacs undo tree
 :PROPERTIES:
 :ID:       8fd3c7aa-cf9d-47f9-91cf-715e6f5d0618
 :END:
@@ -2990,7 +3000,7 @@ enhancement to the builtin Emacs undo system as well.
 #+end_src
 
 *** Bookmarks
-**** ~dogears~: Return to previously-visited buffer positions
+**** =dogears=: Return to previously-visited buffer positions
 
 - Source code :: <https://github.com/alphapapa/dogears.el>
 
@@ -3030,7 +3040,7 @@ enhancement to the builtin Emacs undo system as well.
     (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
 #+end_src
 
-*** ~which-key~
+*** =which-key=
 
 #+begin_src emacs-lisp
 (use-feature! which-key
@@ -3215,7 +3225,7 @@ these utilities.
     (keymap-set isearch-mode-map "M-%" #'visual-replace-from-isearch)))
 #+end_src
 
-*** ~substitute~ :: efficiently replace contextual targets
+*** =substitute= :: efficiently replace contextual targets
 
 <https://protesilaos.com/emacs/substitute>
 
@@ -3359,7 +3369,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
     "C-RET" #'dired-do-open))
 #+end_src
 
-*** ~dired-subtree~ :: insert subdirs arboreally
+*** =dired-subtree= :: insert subdirs arboreally
 
 #+begin_src emacs-lisp
 (package! dired-subtree
@@ -3404,7 +3414,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
           image-dired-thumbs-per-row 4))
 #+end_src
 
-*** ~trashed~ :: interact with operating system trash diredly
+*** =trashed= :: interact with operating system trash diredly
 
 #+begin_src emacs-lisp
 (package! trashed)
@@ -3415,7 +3425,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
   (setopt trashed-date-format "%Y-%m-%d %H:%M:%S"))
 #+end_src
 
-*** ~diredfl~ :: additional syntax highlighting in dired buffers
+*** =diredfl= :: additional syntax highlighting in dired buffers
 
 + Package :: <https://github.com/purcell/diredfl>
 
@@ -3426,14 +3436,14 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
     (set-face-attribute 'diredfl-dir-name nil :bold t)))
 #+end_src
 
-*** ~nerd-icons-dired~ :: icons for list items :icons:
+*** =nerd-icons-dired= :: icons for list items :icons:
 
 #+begin_src emacs-lisp
 (package! nerd-icons-dired
   (add-hook 'dired-mode-hook #'nerd-icons-dired-mode))
 #+end_src
 
-*** ~dired-preview~ :: a file previewer
+*** =dired-preview= :: a file previewer
 
 + Website :: <https://protesilaos.com/emacs/dired-preview>
 
@@ -3533,7 +3543,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
         (cdr args)))
 #+end_src
 
-**** ~vertico~ :: [vert]ical [i]nteractive [co]mpletion
+**** =vertico= :: [vert]ical [i]nteractive [co]mpletion
 
 + Package :: <https://github.com/minad/vertico>
 
@@ -3592,7 +3602,7 @@ Fine-tune Vertico appearance per-command or per-category with
   (keymap-set vertico-multiform-map "C-l" #'vertico-multiform-vertical))
 #+end_src
 
-**** ~marginalia~ :: minibuffer completion annotations
+**** =marginalia= :: minibuffer completion annotations
 
 + Package :: <https://github.com/minad/marginalia>
 
@@ -3607,7 +3617,7 @@ Fine-tune Vertico appearance per-command or per-category with
           marginalia-align-offset 0))
 #+end_src
 
-**** ~nerd-icons-completion~ :: icons for minibuffer completions :icons:
+**** =nerd-icons-completion= :: icons for minibuffer completions :icons:
 
 #+begin_src emacs-lisp
 (package! nerd-icons-completion
@@ -3616,7 +3626,7 @@ Fine-tune Vertico appearance per-command or per-category with
     (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
 #+end_src
 
-**** ~consult~ :: [consult]ing ~completing-read~
+**** =consult= :: [consult]ing ~completing-read~
 :PROPERTIES:
 :ID:       2eff5461-19e2-49a8-9c43-17b2dd6d76f7
 :END:
@@ -3767,7 +3777,7 @@ Refine preview appearance and behavior:
 
 *** Completion styles
 
-**** ~orderless~ :: completion-matching multiple regular expressions :search:
+**** =orderless= :: completion-matching multiple regular expressions :search:
 
 + Package :: <https://github.com/oantolin/orderless>
 
@@ -3940,7 +3950,7 @@ Adapted from Prot's original version with the following changes:
     (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
 #+end_src
 
-**** ~tempel~ :: simple template expansions
+**** =tempel= :: simple template expansions
 
 + Package :: <https://github.com/minad/tempel>
 + Package :: <https://github.com/Crandel/tempel-collection>
@@ -4082,7 +4092,7 @@ A final newline would be inserted literally into the snippet expansion."
 (add-hook 'snippet-mode-hook #'+yasnippet-snippet-mode-disable-final-newline-h nil t)
 #+end_src
 
-**** ~spdx~ :: insertable SPDX license headers
+**** =spdx= :: insertable SPDX license headers
 :PROPERTIES:
 :ID:       4f029a65-d064-4715-9947-e9d32b4bdf67
 :END:
@@ -4096,7 +4106,7 @@ A final newline would be inserted literally into the snippet expansion."
 
 *** Completion-At-Point
 
-**** ~corfu~ :: [co]mpletion in [r]egion [fu]nction
+**** =corfu= :: [co]mpletion in [r]egion [fu]nction
 :PROPERTIES:
 :ID:       d8073181-6d05-40d2-a954-0e6bb65449a2
 :END:
@@ -4158,7 +4168,7 @@ A final newline would be inserted literally into the snippet expansion."
     (add-to-list 'savehist-additional-variables 'corfu-history)))
 #+end_src
 
-**** ~corfu-terminal~ :: Corfu terminal support
+**** =corfu-terminal= :: Corfu terminal support
 
 + Package :: <https://codeberg.org/akib/emacs-corfu-terminal>
 
@@ -4173,7 +4183,7 @@ See also ~popon~, the utility library powering the interface.
       (corfu-terminal-mode 1))))
 #+end_src
 
-**** ~kind-icon~ :: icons for ~completion-at-point~ candidates :icons:
+**** =kind-icon= :: icons for ~completion-at-point~ candidates :icons:
 
 + Package :: <https://github.com/jdtsmith/kind-icon>
 
@@ -4199,7 +4209,7 @@ See also ~popon~, the utility library powering the interface.
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 #+end_src
 
-**** ~cape~ :: [c]ompletion-[a]t-[p]oint [e]xtensions :capfs:
+**** =cape= :: [c]ompletion-[a]t-[p]oint [e]xtensions :capfs:
 :PROPERTIES:
 :ID:       e7028330-f02c-4862-ac3a-054f70fb9e92
 :END:
@@ -4242,7 +4252,7 @@ See also ~popon~, the utility library powering the interface.
     "w" #'cape-dict))
 #+end_src
 
-*** ~embark~ :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:
+*** =embark= :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:
 
 - Package :: <https://github.com/oantolin/embark>
 
@@ -4736,7 +4746,7 @@ Action alist entries are:
   (setopt ceamx-window-workspace-provider 'activities))
 #+end_src
 
-**** ~activites~ :: organize window+buffer by activity :tabs:
+**** =activites= :: organize window+buffer by activity :tabs:
 :PROPERTIES:
 :ID:       91310539-1562-4d0c-9648-0f3aa56cc2f0
 :END:
@@ -4789,7 +4799,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
 #+end_src
 
-**** ~bufler~ :: group buffers with programmable rules
+**** =bufler= :: group buffers with programmable rules
 :PROPERTIES:
 :ID:       82ed50ad-45b4-4a0c-9ae5-e978de65cdcd
 :END:
@@ -5281,7 +5291,7 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 
 *** Writing modes
 
-**** ~typo~ :: typographical correctneß
+**** =typo= :: typographical correctneß
 
 + Package :: <https://github.com/jorgenschaefer/typoel>
 
@@ -5342,7 +5352,7 @@ Remember that ~org-mode~ is derived from ~outline-mode~.
   (setopt outline-minor-mode-use-buttons nil))
 #+end_src
 
-**** ~outli~ :: mode-agnostic comment-based outlines
+**** =outli= :: mode-agnostic comment-based outlines
 
 - Package :: <https://github.com/jdtsmith/outli>
 
@@ -5436,7 +5446,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 ;; "))
 #+end_src
 
-*** ~smart-newline~: a newline command for programming modes
+*** =smart-newline= :: a newline command for programming modes
 
 #+begin_src emacs-lisp
 (use-package smart-newline
@@ -5444,7 +5454,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
   :hook (prog-mode . smart-newline-mode))
 #+end_src
 
-*** ~dumb-jump~: multi-lang do-what-i-mean jump-to-definition
+*** =dumb-jump= :: multi-lang do-what-i-mean jump-to-definition
 
 - Package :: <https://github.com/jacktasia/dumb-jump>
 
@@ -5470,7 +5480,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
       "j" #'ceamx/dumb-jump-dispatch/body)))
 #+end_src
 
-*** ~rainbow-mode~: Colorize color names and hexcodes in buffers :theme:
+*** =rainbow-mode= :: Colorize color names and hexcodes in buffers :theme:
 
 <https://elpa.gnu.org/packages/rainbow-mode.html>
 
@@ -5533,7 +5543,7 @@ Not my cup of tee...
                       yellow-faint)))))
 #+end_src
 
-*** ~hl-todo~: Highlight "TODO" and other codetags in comments and strings
+*** =hl-todo= :: Highlight "TODO" and other codetags in comments and strings
 
 - website :: <https://github.com/tarsius/hl-todo>
 - reference :: <https://peps.python.org/pep-0350/#specification>
@@ -5544,7 +5554,7 @@ Not my cup of tee...
   :hook (prog-mode . hl-todo-mode))
 #+end_src
 
-*** ~devdocs~: Peruse local ~devdocs~ docsets
+*** =devdocs= :: Peruse local ~devdocs~ docsets
 :PROPERTIES:
 :ID:       9907125e-84b9-420f-8991-c24b33f84161
 :END:
@@ -5624,7 +5634,7 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
                           sh-shellcheck))))
 #+end_src
 
-*** ~jinx~ :: the enchanted spell checker :nixpkgs:
+*** =jinx= :: the enchanted spell checker :nixpkgs:
 
 - Docs :: <https://github.com/minad/jinx/wiki>
 
@@ -5693,6 +5703,9 @@ enchant-lsmod-2 -list-dicts
 #+end_src
 
 *** Formatters
+:PROPERTIES:
+:ID:       16856ced-d5a2-4b4a-9506-67d7c19b43f0
+:END:
 **** [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT :package:
 
 #+begin_src emacs-lisp
@@ -5841,7 +5854,7 @@ This section handles the curse.
 :PROPERTIES:
 :ID:       2fec391c-6023-41fd-a3b4-2dba5d91a55d
 :END:
-**** ~puni~ :: versatile structural editing
+**** =puni= :: versatile structural editing
 :PROPERTIES:
 :ID:       ce9e9bd5-70bc-451c-b21c-fd29b2c38834
 :END:
@@ -5928,7 +5941,7 @@ because its bindings generally would need ~puni-mode~ to be active.
 ;;               (put cmd 'repeat-exit-timeout nil)) structural-editing-map)
 #+end_src
 
-**** ~treesit-auto~ :: automatically use available ~treesit~ modes
+**** =treesit-auto= :: automatically use available ~treesit~ modes
 
 + Package :: <https://github.com/renzmann/treesit-auto>
 
@@ -6041,7 +6054,7 @@ Configuration for working with Lisps of all kinds.
   (put sym 'lisp-indent-function 2))
 #+end_src
 
-**** ~paredit~ :: the original parenthesizer
+**** =paredit= :: the original parenthesizer
 :PROPERTIES:
 :ID:       13b96f21-ebaf-4d49-8b89-78fc05a44c59
 :END:
@@ -6108,7 +6121,7 @@ Configuration for working with Lisps of all kinds.
       (push "\\*lispy-message\\*" popper-reference-buffers)))
 #+end_src
 
-**** ~kbd-mode~ :: syntax support for =kmonad= and =kanata= configs
+**** =kbd-mode= :: syntax support for =kmonad= and =kanata= configs
 
 + Package :: [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
 
@@ -6198,7 +6211,7 @@ non-syntactic meaning to the reader.
   (keymap-set ielm-map "C-:" #'quit-window))
 #+end_src
 
-**** ~eros~ :: [E]valuation [R]esult [O]verlay[S]
+**** =eros= :: [E]valuation [R]esult [O]verlay[S]
 
 + Website :: <https://github.com/xiongtx/eros>
 
@@ -6223,7 +6236,7 @@ non-syntactic meaning to the reader.
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
 #+end_src
 
-**** ~suggest~ :: meet the elisp function of your dreams
+**** =suggest= :: meet the elisp function of your dreams
 
 + Package :: <https://github.com/Wilfred/suggest.el>
 
@@ -6234,7 +6247,7 @@ non-syntactic meaning to the reader.
   (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
 #+end_src
 
-**** ~macrostep~ :: interactive macro-explorer
+**** =macrostep= :: interactive macro-explorer
 
 + Package :: <https://github.com/emacsorphanage/macrostep>
 
@@ -6258,7 +6271,7 @@ The original function fails in the presence of whitespace after a sexp."
   (keymap-set emacs-lisp-mode-map "C-c x" #'ceamx/macrostep-expand))
 #+end_src
 
-**** ~xr~ :: convert string regexps to ~rx~ forms
+**** =xr= :: convert string regexps to ~rx~ forms
 
 + Package :: <https://github.com/mattiase/xr>
 
@@ -6266,7 +6279,7 @@ The original function fails in the presence of whitespace after a sexp."
 (package! xr)
 #+end_src
 
-**** ~elmacro~: Display keyboard macros or latest interactive commands as Elisp
+**** =elmacro=: Display keyboard macros or latest interactive commands as Elisp
 
 + Package :: <https://github.com/Silex/elmacro>
 
@@ -6293,7 +6306,7 @@ development tool as needed.
   (setopt elmacro-processor-concatenate-inserts t))
 #+end_src
 
-**** ~elisp-demos~ :: display elisp usage examples inside help buffers
+**** =elisp-demos= :: display elisp usage examples inside help buffers
 
 - Package :: <https://github.com/xuchunyang/elisp-demos>
 
@@ -6309,7 +6322,7 @@ development tool as needed.
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
-**** ~morlock~ :: more font-lock keywords for some eldritch expressions
+**** =morlock= :: more font-lock keywords for some eldritch expressions
 
 + Package :: <https://github.com/tarsius/morlock>
 
@@ -6318,7 +6331,7 @@ development tool as needed.
   (add-hook 'ceamx-after-init-hook #'morlock-mode))
 #+end_src
 
-**** ~keymap-utils~ :: dev library for working with keymaps
+**** =keymap-utils= :: dev library for working with keymaps
 
 #+begin_src emacs-lisp
 (package! keymap-utils)
@@ -6534,7 +6547,7 @@ Install the =yaml-language-server= from Nixpkgs first.
     "t" #'csv-transpose))
 #+end_src
 
-*** ~jq-mode~ :: major mode for editing =jq= queries
+*** =jq-mode= :: major mode for editing =jq= queries
 
 + Package :: <https://github.com/ljos/jq-mode>
 
@@ -6860,7 +6873,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (setopt php-mode-template-compatibility nil))
   #+end_src
 
-***** ~php-ts-mode~ [builtin]
+***** =php-ts-mode= [builtin]
 :PROPERTIES:
 :ID:       892d02b2-d88a-4ee4-8b5b-addc613e1496
 :END:
@@ -7082,7 +7095,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
   (add-hook 'bash-ts-mode-hook #'flymake-mode))
 #+end_src
 
-*** ~apache-mode~: Language support for Apache Web Server configuration files
+*** =apache-mode= :: Language support for Apache Web Server configuration files
 
 #+begin_src emacs-lisp
 (use-package apache-mode
@@ -7090,7 +7103,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
   )
 #+end_src
 
-*** ~just-mode~: Language support for the Just task runner configuration files
+*** =just-mode= :: Language support for the Just task runner configuration files
 
 #+begin_src emacs-lisp
 (use-package just-mode
@@ -7098,14 +7111,14 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
   )
 #+end_src
 
-*** ~vimrc-mode~: Language support for =vimrc= syntax
+*** =vimrc-mode= :: Language support for =vimrc= syntax
 
 #+begin_src emacs-lisp
 (package! vimrc-mode
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
 #+end_src
 
-*** ~dotenv-mode~: Language support for Dotenv environment configuration files :package:major_mode:
+*** =dotenv-mode= :: Language support for Dotenv environment configuration files :package:major_mode:
 
 - src :: <https://github.com/preetpalS/emacs-dotenv-mode>
 
@@ -7307,7 +7320,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
   (setopt denote-journal-extras-keyword '("journal")))
 #+end_src
 
-*** ~consult-denote~ :: enchance Denote with Consult features
+*** =consult-denote= :: enchance Denote with Consult features
 
 + Website :: <https://protesilaos.com/emacs/consult-denote>
 
@@ -7623,7 +7636,7 @@ Intended for use as a local hook function on
     (add-hook hook #'pulsar-reveal-entry)))
 #+end_src
 
-*** ~doct~ :: a template engine for ~org-capture~
+*** =doct= :: a template engine for ~org-capture~
 :PROPERTIES:
 :ID:       e4505731-723d-4e2b-b21b-3925bc7b73d4
 :END:
@@ -7635,7 +7648,10 @@ Intended for use as a local hook function on
   (require 'doct))
 #+END_SRC
 
-*** ~org-ql~ :: a query-builder for ~org-mode~ elements
+*** =org-ql= :: a query-builder for ~org-mode~ elements
+:PROPERTIES:
+:ID:       763286d7-b5f7-4a56-b3f6-56c677a917b9
+:END:
 
 - Source code :: <https://github.com/alphapapa/org-ql>
 
@@ -7849,7 +7865,7 @@ I don't think this is working properly...
    (or scope (if (org-before-first-heading-p) 'file 'tree))))
 #+end_src
 
-*** ~org-download~ :: support dragging-and-dropping images into Org buffers :media:network:package:
+*** =org-download= :: support dragging-and-dropping images into Org buffers :media:network:package:
 
 <https://github.com/abo-abo/org-download>
 
@@ -7859,7 +7875,7 @@ I don't think this is working properly...
   (add-hook 'dired-mode-hook #'org-download-enable))
 #+END_SRC
 
-*** ~org-web-tools~ :: view, capture, and archive webpages in org-mode :package:network:web:
+*** =org-web-tools= :: view, capture, and archive webpages in org-mode :package:network:web:
 :PROPERTIES:
 :ID:       17850df6-1729-4b2b-8fc5-62f4b377c2a7
 :END:
@@ -7869,7 +7885,7 @@ I don't think this is working properly...
   (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
 #+END_SRC
 
-*** ~org-sidebar~ :: provide a sidebar for Org buffers :package:
+*** =org-sidebar= :: provide a sidebar for Org buffers :package:
 
 <https://github.com/alphapapa/org-sidebar>
 
@@ -7877,7 +7893,7 @@ I don't think this is working properly...
 (package! org-sidebar)
 #+END_SRC
 
-*** ~org-bookmark-heading~ :: Support heading bookmarks :bookmarks:package:
+*** =org-bookmark-heading= :: Support heading bookmarks :bookmarks:package:
 :PROPERTIES:
 :ID:       cd3ef5ab-e573-43e9-b1f7-81eb6dade0a9
 :END:
@@ -7913,7 +7929,7 @@ I don't think this is working properly...
       '(eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
 #+end_src
 
-*** ~auto-tangle-mode~ :: a minor-mode to automatically tangle Org files
+*** =auto-tangle-mode= :: a minor-mode to automatically tangle Org files
 :PROPERTIES:
 :ID:       b4f86eda-af4d-405c-bbe1-395fd6f14ddf
 :END:
@@ -8201,6 +8217,7 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-tools.el
 :VISIBILITY: folded
+:ID:       4b709806-6aa9-4191-a7c7-db7fe79c2ed3
 :END:
 
 *** Requirements
@@ -8223,7 +8240,7 @@ I wonder if there is a way to export NewsBlur scoring to this format…
   (setopt eshell-scroll-to-bottom-on-input 'this))
 #+end_src
 
-*** ~eat~ :: [E]mulate [A] [T]erminal
+*** =eat= :: [E]mulate [A] [T]erminal
 :PROPERTIES:
 :ID:       cafaa1b0-d633-4e7e-b470-6dbfd534c35f
 :END:
@@ -8251,7 +8268,7 @@ I wonder if there is a way to export NewsBlur scoring to this format…
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 #+end_src
 
-*** ~verb~ :: organize and send http requests
+*** =verb= :: organize and send http requests
 
 + Package :: https://github.com/federicotdn/verb
 
@@ -8280,13 +8297,13 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 #+end_src
 
-*** ~mugur~: a configurator for QMK keyboards
+*** =mugur=: a configurator for QMK keyboards
 
 #+begin_src emacs-lisp
 (package! mugur)
 #+end_src
 
-*** ~free-keys~: Show free keybindings for modkeys or prefixes
+*** =free-keys=: Show free keybindings for modkeys or prefixes
 
 + Package :: <https://github.com/Fuco1/free-keys>
 
@@ -8294,7 +8311,7 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 (package! free-keys)
 #+end_src
 
-*** ~help-find~ :: introspect keybindings
+*** =help-find= :: introspect keybindings
 
 #+begin_src emacs-lisp
 (package! help-find
@@ -8303,7 +8320,7 @@ I wonder if there is a way to export NewsBlur scoring to this format…
     "K f" #'help-find-function))
 #+end_src
 
-*** ~uuidgen~: Generate and insert UUIDs
+*** =uuidgen=: Generate and insert UUIDs
 :PROPERTIES:
 :ID:       48fbfb99-55c9-44db-a342-2c9fe847e85e
 :END:
@@ -8391,7 +8408,7 @@ some separate binaries.
 
 *** TODO <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
 *** TODO =saveplace-pdf-view=
-*** ~ready-player~ :: multimedia file previews :nixpkgs:
+*** =ready-player= :: multimedia file previews :nixpkgs:
 
 + Package :: <https://github.com/xenodium/ready-player>
 + Dependencies :: =ffmpeg= =ffmpegthumbnailer= =mpv=
@@ -8430,7 +8447,10 @@ Does not support changing line commentaries!
   (keymap-set ceamx-insert-prefix "h" #'i-ching-insert-hexagram))
 #+end_src
 
-**** emacswiki:i-ching.el
+**** yijing.el
+:PROPERTIES:
+:ID:       c5573349-c13f-4702-8cf3-8f7cdb49add4
+:END:
 
 + src :: https://www.emacswiki.org/emacs/i-ching.el
 
@@ -8542,7 +8562,7 @@ Return the new `zone' timer."
 ;; -*- lexical-binding: t; -*-
 #+end_src
 
-** ~elpaca-wait~
+** =elpaca-wait=
 :PROPERTIES:
 :ID:       962663f8-fe8f-4b78-88f6-a4817fdff001
 :END:
