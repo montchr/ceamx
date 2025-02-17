@@ -30,24 +30,6 @@
 
 ;;;; Variables
 
-;; TODO: add standard-themes
-(defvar ceamx-ui-dark-themes-list
-  (remove 'nil (append (when (locate-library "modus-themes")
-                         (seq-filter
-                          (##string-prefix-p "modus-vivendi" (symbol-name %))
-                          modus-themes-items))
-                       (when (locate-library "ef-themes")
-                         ef-themes-dark-themes))))
-
-;; TODO: add standard-themes
-(defvar ceamx-ui-light-themes-list
-  (remove 'nil (append (when (locate-library "modus-themes")
-                         (seq-filter
-                          (##string-prefix-p "modus-operandi" (symbol-name %))
-                          modus-themes-items))
-                       (when (locate-library "ef-themes")
-                         ef-themes-light-themes))))
-
 ;;;; Customization
 
 (defgroup ceamx-ui ()
@@ -125,14 +107,42 @@
 
 ;;;; Functions
 
+(defun ceamx-ui--filter-symbols-by-prefix (prefix symbols)
+  "Filter a list of SYMBOLS whose name begins with PREFIX."
+  (seq-filter (##string-prefix-p prefix (symbol-name %)) symbols))
+
+(defun ceamx-ui-dark-themes-list ()
+  "Return a list of known dark themes."
+  (append
+    (when (locate-library "modus-themes")
+      (ceamx-ui--filter-symbols-by-prefix
+        "modus-vivendi" modus-themes-items))
+    (when (locate-library "ef-themes")
+      ef-themes-dark-themes)
+    (when (locate-library "standard-themes")
+      (ceamx-ui--filter-symbols-by-prefix
+        "standard-light" standard-themes-items))))
+
+(defun ceamx-ui-light-themes-list ()
+  "Return a list of known light themes."
+  (append
+    (when (locate-library "modus-themes")
+      (ceamx-ui--filter-symbols-by-prefix
+        "modus-operandi" modus-themes-items))
+    (when (locate-library "ef-themes")
+      ef-themes-light-themes)
+    (when (locate-library "standard-themes")
+      (ceamx-ui--filter-symbols-by-prefix
+        "standard-dark" standard-themes-items))))
+
 (defun ceamx-ui-theme-dark ()
   "Dark theme to toggle.
 The theme specified in the customizable variable `ceamx-ui-theme-dark'
 will take priority over themes inferred based on `ceamx-ui-theme-family'
 and `ceamx-ui-preferred-dark-themes'."
   (or ceamx-ui-theme-dark
-      (alist-get ceamx-ui-theme-family ceamx-ui-preferred-dark-themes)
-      'modus-vivendi))
+    (alist-get ceamx-ui-theme-family ceamx-ui-preferred-dark-themes)
+    'modus-vivendi))
 
 (defun ceamx-ui-theme-light ()
   "Light theme to toggle.
@@ -154,12 +164,6 @@ and `ceamx-ui-preferred-light-themes'."
             (alist-get nil ceamx-ui-preferred-dark-themes))
         (or (alist-get theme-family ceamx-ui-preferred-light-themes)
             (alist-get nil ceamx-ui-preferred-dark-themes))))
-
-(defun ceamx-ui-load-theme (theme)
-  "Load THEME after resetting any previously-loaded themes.
-  See also `modus-themes-load-theme'."
-  (mapc #'disable-theme (remq theme custom-enabled-themes))
-  (load-theme theme :no-confirm))
 
 ;;;; Commands
 
@@ -191,41 +195,55 @@ and `ceamx-ui-preferred-light-themes'."
   (interactive)
   (ceamx-ui/gsettings-set-theme "light"))
 
-  ;;;###autoload
+;;;###autoload
+(defun ceamx-ui/load-theme (theme)
+  "Load THEME exclusively, disabling all other themes.
+
+Based on the approach to exclusive theme loading used by
+`consult-theme', which see."
+  (interactive)
+  (unless (eq theme (car custom-enabled-themes))
+    (mapc #'disable-theme custom-enabled-themes)
+    (when theme
+      (if (custom-theme-p theme)
+          (enable-theme theme)
+        (load-theme theme :no-confirm)))))
+
+;;;###autoload
 (defun ceamx-ui/load-dark-theme ()
   "Load the preferred dark theme."
   (interactive)
-  (load-theme (ceamx-ui-theme-dark) :no-confirm))
+  (ceamx-ui/load-theme (ceamx-ui-theme-dark)))
 
   ;;;###autoload
 (defun ceamx-ui/load-light-theme ()
   "Load the preferred light theme."
   (interactive)
-  (load-theme (ceamx-ui-theme-light) :no-confirm))
+  (ceamx-ui/load-theme (ceamx-ui-theme-light)))
 
-  ;;;###autoload
+(defun ceamx-ui/load-random-theme (polarity)
+  (interactive)
+  (let* ((themes (pcase polarity
+                   ('light (ceamx-ui-light-themes-list))
+                   ('dark (ceamx-ui-dark-themes-list))
+                   (_ (append
+                        (ceamx-ui-light-themes-list)
+                        (ceamx-ui-dark-themes-list)))))
+          (theme (seq-random-elt themes)))
+    (ceamx-ui/load-theme theme)
+    (message "Ceamx loaded random %S theme ‘%S’" polarity theme)))
+
+;;;###autoload
 (defun ceamx-ui/load-random-dark-theme ()
   "Load a random dark theme."
   (interactive)
-  (pcase ceamx-ui-theme-circadian-interval
-    ('buffet
-     (+theme-buffet--load-random-from-periods
-      ceamx-ui-theme-buffet-dark-periods))
-    (_
-     (let ((theme (seq-random-elt ceamx-ui-dark-themes-list)))
-       (load-theme theme :no-confirm)))))
+  (ceamx-ui/load-random-theme 'dark))
 
   ;;;###autoload
 (defun ceamx-ui/load-random-light-theme ()
   "Load a random light theme."
   (interactive)
-  (pcase ceamx-ui-theme-circadian-interval
-    ('buffet
-     (+theme-buffet--load-random-from-periods
-      ceamx-ui-theme-buffet-light-periods))
-    (_
-     (let ((theme (seq-random-elt ceamx-ui-light-themes-list)))
-       (load-theme theme :no-confirm)))))
+  (ceamx-ui/load-random-theme 'light))
 
   ;;;###autoload
 (defun ceamx-ui/light ()
