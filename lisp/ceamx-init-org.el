@@ -275,7 +275,7 @@ Intended for use as a local hook function on
     (add-hook hook #'pulsar-recenter-center)
     (add-hook hook #'pulsar-reveal-entry)))
 
-;; ~doct~ :: a template engine for ~org-capture~
+;; =doct= :: a template engine for ~org-capture~
 ;; :PROPERTIES:
 ;; :ID:       e4505731-723d-4e2b-b21b-3925bc7b73d4
 ;; :END:
@@ -320,7 +320,7 @@ Intended for use as a local hook function on
   (org-node-backlink-mode)
   (org-node-cache-mode))
 
-;; ~org-contrib~ :: a library of unmaintained community packages
+;; =org-contrib= :: a library of unmaintained community packages
 
 ;; - Website :: <https://orgmode.org/worg/org-contrib/>
 
@@ -461,7 +461,7 @@ Intended for use as a local hook function on
         (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
       (apply orig-fun args))))
 
-;; ~org-download~ :: support dragging-and-dropping images into Org buffers :media:network:package:
+;; =org-download= :: support dragging-and-dropping images into Org buffers :media:network:package:
 
 ;; <https://github.com/abo-abo/org-download>
 
@@ -470,7 +470,7 @@ Intended for use as a local hook function on
   (require 'org-download)
   (add-hook 'dired-mode-hook #'org-download-enable))
 
-;; ~org-web-tools~ :: view, capture, and archive webpages in org-mode :package:network:web:
+;; =org-web-tools= :: view, capture, and archive webpages in org-mode :package:network:web:
 ;; :PROPERTIES:
 ;; :ID:       17850df6-1729-4b2b-8fc5-62f4b377c2a7
 ;; :END:
@@ -479,14 +479,14 @@ Intended for use as a local hook function on
 (package! org-web-tools
   (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
 
-;; ~org-sidebar~ :: provide a sidebar for Org buffers :package:
+;; =org-sidebar= :: provide a sidebar for Org buffers :package:
 
 ;; <https://github.com/alphapapa/org-sidebar>
 
 
 (package! org-sidebar)
 
-;; ~org-bookmark-heading~ :: Support heading bookmarks :bookmarks:package:
+;; =org-bookmark-heading= :: Support heading bookmarks :bookmarks:package:
 ;; :PROPERTIES:
 ;; :ID:       cd3ef5ab-e573-43e9-b1f7-81eb6dade0a9
 ;; :END:
@@ -518,7 +518,7 @@ Intended for use as a local hook function on
   (add-to-list 'safe-local-variable-values
       '(eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
 
-;; ~auto-tangle-mode~ :: a minor-mode to automatically tangle Org files
+;; =auto-tangle-mode= :: a minor-mode to automatically tangle Org files
 ;; :PROPERTIES:
 ;; :ID:       b4f86eda-af4d-405c-bbe1-395fd6f14ddf
 ;; :END:

@@ -353,7 +353,7 @@
   :config
   (setopt ceamx-window-workspace-provider 'activities))
 
-;; ~activites~ :: organize window+buffer by activity :tabs:
+;; =activites= :: organize window+buffer by activity :tabs:
 ;; :PROPERTIES:
 ;; :ID:       91310539-1562-4d0c-9648-0f3aa56cc2f0
 ;; :END:
@@ -406,7 +406,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 (add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
 
-;; ~bufler~ :: group buffers with programmable rules
+;; =bufler= :: group buffers with programmable rules
 ;; :PROPERTIES:
 ;; :ID:       82ed50ad-45b4-4a0c-9ae5-e978de65cdcd
 ;; :END:

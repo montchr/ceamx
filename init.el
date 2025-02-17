@@ -158,6 +158,9 @@
 (require 'on)
 
 ;; Elpaca
+;; :PROPERTIES:
+;; :ID:       af51c154-98f0-487d-ba00-90db3d1d032f
+;; :END:
 
 
 (defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
@@ -363,7 +366,7 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 
 (elpaca use-package)
 
-;; ~elpaca-use-package~: integrate ~elpaca~ and ~use-package~
+;; =elpaca-use-package=: integrate ~elpaca~ and ~use-package~
 
 
 (elpaca elpaca-use-package
@@ -406,7 +409,7 @@ because that's the simple solution and the performance overhead is
 unimportant since it happens during compilation anyway."
   (ceamx--remove-sharp-quotes args))
 
-;; ~blackout~: adjust mode-line lighters :modeline:
+;; =blackout=: adjust mode-line lighters :modeline:
 
 ;; - Use-Package keyword :: =:blackout=
 
@@ -484,7 +487,7 @@ The ORDER can be used to deduce the feature context."
         body))
     :documentation "Load the current feature after FEATURES.")
 
-;; ~gcmh~: manage running garbage collection on idle :package:perf:
+;; =gcmh=: manage running garbage collection on idle :package:perf:
 
 ;; - Website :: <https://akrl.sdf.org/>
 ;; - Code :: <https://gitlab.com/koral/gcmh>
@@ -522,7 +525,7 @@ The ORDER can be used to deduce the feature context."
 (unless (ceamx-host-gnu-linux-p)
   (setq command-line-x-option-alist nil))
 
-;; ~exec-path-from-shell~: Inherit environment variables from variable environments :package:
+;; =exec-path-from-shell=: Inherit environment variables from variable environments :package:
 
 
 (package! exec-path-from-shell
@@ -531,7 +534,7 @@ The ORDER can be used to deduce the feature context."
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
-;; ~inheritenv~: Make temporary buffers inherit buffer-local environment variables :package:
+;; =inheritenv=: Make temporary buffers inherit buffer-local environment variables :package:
 
 ;; - website :: <https://github.com/purcell/inheritenv>
 
@@ -540,7 +543,7 @@ The ORDER can be used to deduce the feature context."
   (with-eval-after-load 'exec-path-from-shell
     (require 'inheritenv)))
 
-;; ~with-editor~: Ensure shell/term modes use session as =$EDITOR= :package:
+;; =with-editor=: Ensure shell/term modes use session as =$EDITOR= :package:
 
 
 (package! with-editor
@@ -558,7 +561,7 @@ The ORDER can be used to deduce the feature context."
   (with-eval-after-load 'eat
     (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
 
-;; ~envrc~: Direnv integration :package:
+;; =envrc= :: Direnv integration :package:
 ;; :PROPERTIES:
 ;; :ID:       4572e438-3d90-4ed3-88af-a7c2493a2e19
 ;; :END:
@@ -659,7 +662,7 @@ The ORDER can be used to deduce the feature context."
 
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 
-;; =init.el=: Leader Prefix Keybindings
+;; =init.el= :: Leader Prefix Keybindings
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el
 ;; :ID:       cd713eda-629c-460c-921e-d99ce8f6742f
@@ -731,6 +734,9 @@ The ORDER can be used to deduce the feature context."
   "s" #'scratch-buffer)
 
 ;; [C-c q] :: Session
+;; :PROPERTIES:
+;; :ID:       89f0be09-aa04-40cd-9365-f41a5fbf37c6
+;; :END:
 
 
 (define-keymap :keymap ceamx-session-prefix

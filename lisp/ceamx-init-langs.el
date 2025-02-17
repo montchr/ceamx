@@ -4,7 +4,7 @@
 
 (require 'ceamx-lib)
 
-;; ~typo~ :: typographical correctneß
+;; =typo= :: typographical correctneß
 
 ;; + Package :: <https://github.com/jorgenschaefer/typoel>
 
@@ -55,7 +55,7 @@ execution order."
   (setopt outline-minor-mode-cycle t)
   (setopt outline-minor-mode-use-buttons nil))
 
-;; ~outli~ :: mode-agnostic comment-based outlines
+;; =outli= :: mode-agnostic comment-based outlines
 
 ;; - Package :: <https://github.com/jdtsmith/outli>
 
@@ -146,14 +146,14 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 ;;                       _W_: widen
 ;; "))
 
-;; ~smart-newline~: a newline command for programming modes
+;; =smart-newline= :: a newline command for programming modes
 
 
 (use-package smart-newline
   ;; :ensure t
   :hook (prog-mode . smart-newline-mode))
 
-;; ~dumb-jump~: multi-lang do-what-i-mean jump-to-definition
+;; =dumb-jump= :: multi-lang do-what-i-mean jump-to-definition
 
 ;; - Package :: <https://github.com/jacktasia/dumb-jump>
 
@@ -178,14 +178,14 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
     (define-keymap :keymap ceamx-code-prefix
       "j" #'ceamx/dumb-jump-dispatch/body)))
 
-;; ~rainbow-mode~: Colorize color names and hexcodes in buffers :theme:
+;; =rainbow-mode= :: Colorize color names and hexcodes in buffers :theme:
 
 ;; <https://elpa.gnu.org/packages/rainbow-mode.html>
 
 
 (package! rainbow-mode)
 
-;; ~hl-todo~: Highlight "TODO" and other codetags in comments and strings
+;; =hl-todo= :: Highlight "TODO" and other codetags in comments and strings
 
 ;; - website :: <https://github.com/tarsius/hl-todo>
 ;; - reference :: <https://peps.python.org/pep-0350/#specification>
@@ -195,7 +195,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   ;;:ensure t
   :hook (prog-mode . hl-todo-mode))
 
-;; ~devdocs~: Peruse local ~devdocs~ docsets
+;; =devdocs= :: Peruse local ~devdocs~ docsets
 ;; :PROPERTIES:
 ;; :ID:       9907125e-84b9-420f-8991-c24b33f84161
 ;; :END:
@@ -447,7 +447,7 @@ non-nil, buffers will never be formatted upon save."
     (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
       (funcall func))))
 
-;; ~puni~ :: versatile structural editing
+;; =puni= :: versatile structural editing
 ;; :PROPERTIES:
 ;; :ID:       ce9e9bd5-70bc-451c-b21c-fd29b2c38834
 ;; :END:
@@ -472,7 +472,7 @@ non-nil, buffers will never be formatted upon save."
     "M-(" #'puni-syntactic-forward-punct
     "M-)" #'puni-syntactic-backward-punct))
 
-;; ~treesit-auto~ :: automatically use available ~treesit~ modes
+;; =treesit-auto= :: automatically use available ~treesit~ modes
 
 ;; + Package :: <https://github.com/renzmann/treesit-auto>
 
@@ -560,7 +560,7 @@ non-nil, buffers will never be formatted upon save."
 (dolist (mode ceamx-lisp-modes-list)
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 
-;; ~paredit~ :: the original parenthesizer
+;; =paredit= :: the original parenthesizer
 ;; :PROPERTIES:
 ;; :ID:       13b96f21-ebaf-4d49-8b89-78fc05a44c59
 ;; :END:
@@ -583,7 +583,7 @@ non-nil, buffers will never be formatted upon save."
     "M-s" nil
     "RET" #'paredit-newline))
 
-;; ~kbd-mode~ :: syntax support for =kmonad= and =kanata= configs
+;; =kbd-mode= :: syntax support for =kmonad= and =kanata= configs
 
 ;; + Package :: [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
 
@@ -663,7 +663,7 @@ non-nil, buffers will never be formatted upon save."
   (defvar ielm-map)
   (keymap-set ielm-map "C-:" #'quit-window))
 
-;; ~eros~ :: [E]valuation [R]esult [O]verlay[S]
+;; =eros= :: [E]valuation [R]esult [O]verlay[S]
 
 ;; + Website :: <https://github.com/xiongtx/eros>
 
@@ -687,7 +687,7 @@ non-nil, buffers will never be formatted upon save."
       ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
 
-;; ~suggest~ :: meet the elisp function of your dreams
+;; =suggest= :: meet the elisp function of your dreams
 
 ;; + Package :: <https://github.com/Wilfred/suggest.el>
 
@@ -697,7 +697,7 @@ non-nil, buffers will never be formatted upon save."
   :init
   (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
 
-;; ~macrostep~ :: interactive macro-explorer
+;; =macrostep= :: interactive macro-explorer
 
 ;; + Package :: <https://github.com/emacsorphanage/macrostep>
 
@@ -720,14 +720,14 @@ The original function fails in the presence of whitespace after a sexp."
   :init
   (keymap-set emacs-lisp-mode-map "C-c x" #'ceamx/macrostep-expand))
 
-;; ~xr~ :: convert string regexps to ~rx~ forms
+;; =xr= :: convert string regexps to ~rx~ forms
 
 ;; + Package :: <https://github.com/mattiase/xr>
 
 
 (package! xr)
 
-;; ~elmacro~: Display keyboard macros or latest interactive commands as Elisp
+;; =elmacro=: Display keyboard macros or latest interactive commands as Elisp
 
 ;; + Package :: <https://github.com/Silex/elmacro>
 
@@ -753,7 +753,7 @@ The original function fails in the presence of whitespace after a sexp."
   ;; FIXME: maybe causes errors?
   (setopt elmacro-processor-concatenate-inserts t))
 
-;; ~elisp-demos~ :: display elisp usage examples inside help buffers
+;; =elisp-demos= :: display elisp usage examples inside help buffers
 
 ;; - Package :: <https://github.com/xuchunyang/elisp-demos>
 
@@ -768,7 +768,7 @@ The original function fails in the presence of whitespace after a sexp."
 
   (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 
-;; ~morlock~ :: more font-lock keywords for some eldritch expressions
+;; =morlock= :: more font-lock keywords for some eldritch expressions
 
 ;; + Package :: <https://github.com/tarsius/morlock>
 
@@ -776,7 +776,7 @@ The original function fails in the presence of whitespace after a sexp."
 (package! morlock
   (add-hook 'ceamx-after-init-hook #'morlock-mode))
 
-;; ~keymap-utils~ :: dev library for working with keymaps
+;; =keymap-utils= :: dev library for working with keymaps
 
 
 (package! keymap-utils)
@@ -946,7 +946,7 @@ The original function fails in the presence of whitespace after a sexp."
     "k" #'csv-kill-fields
     "t" #'csv-transpose))
 
-;; ~jq-mode~ :: major mode for editing =jq= queries
+;; =jq-mode= :: major mode for editing =jq= queries
 
 ;; + Package :: <https://github.com/ljos/jq-mode>
 
@@ -1190,7 +1190,7 @@ usually wrongly fontified as a metadata block."
           '("_ide_helper_models.php"
             "_ide_helper.php"))
 
-;; ~php-ts-mode~ [builtin]
+;; =php-ts-mode= [builtin]
 ;; :PROPERTIES:
 ;; :ID:       892d02b2-d88a-4ee4-8b5b-addc613e1496
 ;; :END:
@@ -1364,27 +1364,27 @@ usually wrongly fontified as a metadata block."
   (add-hook 'sh-mode-hook #'flymake-mode)
   (add-hook 'bash-ts-mode-hook #'flymake-mode))
 
-;; ~apache-mode~: Language support for Apache Web Server configuration files
+;; =apache-mode= :: Language support for Apache Web Server configuration files
 
 
 (use-package apache-mode
   ;; :ensure t
   )
 
-;; ~just-mode~: Language support for the Just task runner configuration files
+;; =just-mode= :: Language support for the Just task runner configuration files
 
 
 (use-package just-mode
   ;;:ensure t
   )
 
-;; ~vimrc-mode~: Language support for =vimrc= syntax
+;; =vimrc-mode= :: Language support for =vimrc= syntax
 
 
 (package! vimrc-mode
   (add-to-list 'auto-mode-alist '("\\.(idea)?vim\\(rc\\)?\\'" . vimrc-mode)))
 
-;; ~dotenv-mode~: Language support for Dotenv environment configuration files :package:major_mode:
+;; =dotenv-mode= :: Language support for Dotenv environment configuration files :package:major_mode:
 
 ;; - src :: <https://github.com/preetpalS/emacs-dotenv-mode>
 

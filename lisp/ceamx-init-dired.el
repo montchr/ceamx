@@ -49,7 +49,7 @@
     "C-+" #'dired-create-empty-file
     "C-RET" #'dired-do-open))
 
-;; ~dired-subtree~ :: insert subdirs arboreally
+;; =dired-subtree= :: insert subdirs arboreally
 
 
 (package! dired-subtree
@@ -92,7 +92,7 @@
   (setopt image-dired-thumb-relief 2
           image-dired-thumbs-per-row 4))
 
-;; ~trashed~ :: interact with operating system trash diredly
+;; =trashed= :: interact with operating system trash diredly
 
 
 (package! trashed)
@@ -102,7 +102,7 @@
   (setopt trashed-sort-key '("Date deleted" . t))
   (setopt trashed-date-format "%Y-%m-%d %H:%M:%S"))
 
-;; ~diredfl~ :: additional syntax highlighting in dired buffers
+;; =diredfl= :: additional syntax highlighting in dired buffers
 
 ;; + Package :: <https://github.com/purcell/diredfl>
 
@@ -112,13 +112,13 @@
   (after! diredfl
     (set-face-attribute 'diredfl-dir-name nil :bold t)))
 
-;; ~nerd-icons-dired~ :: icons for list items :icons:
+;; =nerd-icons-dired= :: icons for list items :icons:
 
 
 (package! nerd-icons-dired
   (add-hook 'dired-mode-hook #'nerd-icons-dired-mode))
 
-;; ~dired-preview~ :: a file previewer
+;; =dired-preview= :: a file previewer
 
 ;; + Website :: <https://protesilaos.com/emacs/dired-preview>
 

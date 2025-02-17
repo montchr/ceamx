@@ -58,7 +58,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
                 (car args))
         (cdr args)))
 
-;; ~vertico~ :: [vert]ical [i]nteractive [co]mpletion
+;; =vertico= :: [vert]ical [i]nteractive [co]mpletion
 
 ;; + Package :: <https://github.com/minad/vertico>
 
@@ -117,7 +117,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (after! vertico-multiform
   (keymap-set vertico-multiform-map "C-l" #'vertico-multiform-vertical))
 
-;; ~marginalia~ :: minibuffer completion annotations
+;; =marginalia= :: minibuffer completion annotations
 
 ;; + Package :: <https://github.com/minad/marginalia>
 
@@ -131,7 +131,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (setopt marginalia-align 'right
           marginalia-align-offset 0))
 
-;; ~nerd-icons-completion~ :: icons for minibuffer completions :icons:
+;; =nerd-icons-completion= :: icons for minibuffer completions :icons:
 
 
 (package! nerd-icons-completion
@@ -139,7 +139,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     (nerd-icons-completion-mode)
     (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
 
-;; ~consult~ :: [consult]ing ~completing-read~
+;; =consult= :: [consult]ing ~completing-read~
 ;; :PROPERTIES:
 ;; :ID:       2eff5461-19e2-49a8-9c43-17b2dd6d76f7
 ;; :END:
@@ -286,7 +286,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     "?" #'consult-narrow-help)
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'embark-prefix-help-command))
 
-;; ~orderless~ :: completion-matching multiple regular expressions :search:
+;; =orderless= :: completion-matching multiple regular expressions :search:
 
 ;; + Package :: <https://github.com/oantolin/orderless>
 
@@ -490,7 +490,7 @@ Tempel does not trigger too often when you don't expect it."
   :init
   (add-to-list 'tempel-user-elements #'ceamx-completion--tempel-include))
 
-;; ~spdx~ :: insertable SPDX license headers
+;; =spdx= :: insertable SPDX license headers
 ;; :PROPERTIES:
 ;; :ID:       4f029a65-d064-4715-9947-e9d32b4bdf67
 ;; :END:
@@ -501,7 +501,7 @@ Tempel does not trigger too often when you don't expect it."
 (package! spdx
   (keymap-set ceamx-insert-prefix "L" #'spdx-insert-spdx))
 
-;; ~corfu~ :: [co]mpletion in [r]egion [fu]nction
+;; =corfu= :: [co]mpletion in [r]egion [fu]nction
 ;; :PROPERTIES:
 ;; :ID:       d8073181-6d05-40d2-a954-0e6bb65449a2
 ;; :END:
@@ -562,7 +562,7 @@ Tempel does not trigger too often when you don't expect it."
     (corfu-history-mode 1)
     (add-to-list 'savehist-additional-variables 'corfu-history)))
 
-;; ~corfu-terminal~ :: Corfu terminal support
+;; =corfu-terminal= :: Corfu terminal support
 
 ;; + Package :: <https://codeberg.org/akib/emacs-corfu-terminal>
 
@@ -576,7 +576,7 @@ Tempel does not trigger too often when you don't expect it."
     (unless (display-graphic-p)
       (corfu-terminal-mode 1))))
 
-;; ~kind-icon~ :: icons for ~completion-at-point~ candidates :icons:
+;; =kind-icon= :: icons for ~completion-at-point~ candidates :icons:
 
 ;; + Package :: <https://github.com/jdtsmith/kind-icon>
 
@@ -601,7 +601,7 @@ Tempel does not trigger too often when you don't expect it."
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
   (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
 
-;; ~cape~ :: [c]ompletion-[a]t-[p]oint [e]xtensions :capfs:
+;; =cape= :: [c]ompletion-[a]t-[p]oint [e]xtensions :capfs:
 ;; :PROPERTIES:
 ;; :ID:       e7028330-f02c-4862-ac3a-054f70fb9e92
 ;; :END:
@@ -643,7 +643,7 @@ Tempel does not trigger too often when you don't expect it."
     "o" #'cape-elisp-symbol
     "w" #'cape-dict))
 
-;; ~embark~ :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:
+;; =embark= :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:
 
 ;; - Package :: <https://github.com/oantolin/embark>
 

@@ -94,7 +94,7 @@
   (after! isearch
     (keymap-set isearch-mode-map "M-%" #'visual-replace-from-isearch)))
 
-;; ~substitute~ :: efficiently replace contextual targets
+;; =substitute= :: efficiently replace contextual targets
 
 ;; <https://protesilaos.com/emacs/substitute>
 

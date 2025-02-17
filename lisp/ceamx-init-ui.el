@@ -96,7 +96,7 @@
 
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
 
-;; ~standard-themes~ :: themes like the default but more consistent
+;; =standard-themes= :: themes like the default but more consistent
 
 
 (when (display-graphic-p)
@@ -120,7 +120,7 @@
             standard-light
             standard-light-tinted)))
 
-;; ~modus-themes~ :: accessible theme conforming to WCAG AAA
+;; =modus-themes= :: accessible theme conforming to WCAG AAA
 
 ;; - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -144,7 +144,7 @@
             (agenda-date . (variable-pitch regular 1.3))
             (t . (variable-pitch semibold 1.0)))))
 
-;; ~ef-themes~ :: colorful yet legible themes
+;; =ef-themes= :: colorful yet legible themes
 
 ;; - Website :: <https://protesilaos.com/emacs/ef-themes>
 
@@ -174,7 +174,7 @@
 (setopt calendar-latitude 39.968)
 (setopt calendar-longitude -75.133)
 
-;; ~circadian~ :: theme phasing based on sunrise/sunset time
+;; =circadian= :: theme phasing based on sunrise/sunset time
 
 
 (package! circadian
@@ -192,7 +192,7 @@
                     (ceamx-ui/load-dark-theme)
                   (ceamx-ui/load-light-theme))))))
 
-;; ~avy~ :: can do anything
+;; =avy= :: can do anything
 ;; :PROPERTIES:
 ;; :ID:       05cb2761-07fc-476b-8b78-0d08e0a89469
 ;; :END:
@@ -234,13 +234,13 @@
   ;; Disable line highlight in unfocused windows.
   (setopt hl-line-sticky-flag nil))
 
-;; ~lin~ :: improve line-highlighting for major-modes orientated around line selection
+;; =lin= :: improve line-highlighting for major-modes orientated around line selection
 
 
 (package! lin
   (add-hook 'ceamx-after-init-hook #'lin-global-mode))
 
-;; ~pulsar~ :: pulse current line after function invocations
+;; =pulsar= :: pulse current line after function invocations
 
 
 (package! pulsar
@@ -290,7 +290,7 @@
   ;; Stop C-z from minimizing windows.
   (keymap-global-unset "C-z" t))
 
-;; ~spacious-padding~ :: a comfortable layout density
+;; =spacious-padding= :: a comfortable layout density
 
 
 (package! spacious-padding
@@ -309,7 +309,7 @@
 
   (setopt spacious-padding-subtle-mode-line t))
 
-;; ~olivetti~ :: "distraction-free" editing
+;; =olivetti= :: "distraction-free" editing
 
 ;; - Package :: <https://github.com/rnkn/olivetti>
 
@@ -322,7 +322,7 @@
           olivetti-minimum-body-width 80
           olivetti-recall-visual-line-mode-entry-state t))
 
-;; ~logos~ :: a simple focus mode with page breaks or outlines :present:
+;; =logos= :: a simple focus mode with page breaks or outlines :present:
 ;; :PROPERTIES:
 ;; :ID:       9f620970-a54b-46bf-bbc4-ad3712646506
 ;; :END:
@@ -366,7 +366,7 @@
       ;; NOTE: '0' value will recenter at the absolute top.
       (recenter 1))))
 
-;; ~focus~ :: a lexical focus mode
+;; =focus= :: a lexical focus mode
 
 ;; + Package :: <https://github.com/larstvei/Focus>
 
@@ -378,7 +378,7 @@
   (define-keymap :keymap ceamx-toggle-prefix
     "Z" #'focus-mode))
 
-;; ~moc~ :: "Master of Ceremonies" presentation utilities :present:
+;; =moc= :: "Master of Ceremonies" presentation utilities :present:
 
 ;; + Package :: <https://github.com/positron-solutions/moc/>
 
@@ -414,7 +414,7 @@
 
 (setq-default text-scale-remap-header-line t)
 
-;; ~fontaine~ :: pre-configure font presets
+;; =fontaine= :: pre-configure font presets
 ;; :PROPERTIES:
 ;; :ID:       a007fa6e-ea76-4a29-86a2-7ff87885c0c1
 ;; :END:
@@ -528,6 +528,9 @@ If there is no previous preset state to load, fall back to the
              :line-spacing nil))))
 
 ;; ~ligature.el~ :: improved ligature support
+;; :PROPERTIES:
+;; :ID:       faf642cc-811e-4b58-bbaa-51e9e11b1dff
+;; :END:
 
 ;; + Package :: <https://github.com/mickeynp/ligature.el>
 
@@ -553,7 +556,7 @@ If there is no previous preset state to load, fall back to the
      "::" ":::" "==" "!=" "===" "!==" ":=" ":-" ":+" "<*" "<*>"
      "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++")))
 
-;; ~show-font~ :: a tool to preview fonts
+;; =show-font= :: a tool to preview fonts
 
 ;; + Package :: <https://protesilaos.com/emacs/show-font>
 
@@ -598,7 +601,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 
 (package! svg-lib)
 
-;; ~page-break-lines~ :: improve appearance of form feed characters :package:
+;; =page-break-lines= :: improve appearance of form feed characters :package:
 
 ;; - docs :: <https://github.com/purcell/page-break-lines/blob/master/README.md>
 

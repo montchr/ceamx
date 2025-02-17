@@ -42,7 +42,7 @@
   "l" #'visual-line-mode
   "r" #'rename-uniquely)
 
-;; ~ceamx-simple~: Simple & common commands
+;; =ceamx-simple=: Simple & common commands
 ;; :PROPERTIES:
 ;; :ID:       3fcbca20-29f3-4e91-ba76-6bad1199adc3
 ;; :END:
@@ -297,7 +297,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   ;; that `comment-line' is bound to [C-x C-;].
   "C-x M-;" #'comment-line)
 
-;; ~mwim~: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
+;; =mwim=: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
 
 
 (package! mwim
@@ -305,7 +305,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-a" #'mwim-beginning)
   (keymap-global-set "C-e" #'mwim-end))
 
-;; ~beginend~ :: rebind context-sensitive =(beginning,end)-of-buffer=
+;; =beginend= :: rebind context-sensitive =(beginning,end)-of-buffer=
 
 ;; + Package :: https://github.com/DamienCassou/beginend
 
@@ -314,7 +314,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (blackout 'beginend-global-mode)
   (beginend-global-mode))
 
-;; ~easy-kill~ :: killing is easy when you're emacs :package:
+;; =easy-kill= :: killing is easy when you're emacs :package:
 ;; :PROPERTIES:
 ;; :ID:       a3727c22-4373-47aa-ac61-e1355c5e048d
 ;; :END:
@@ -345,7 +345,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (delete-selection-mode 1)
 
-;; ~expreg~ :: simple alternativate to ~expand-region~ using ~treesit~
+;; =expreg= :: simple alternativate to ~expand-region~ using ~treesit~
 
 ;; + Package :: <https://github.com/casouri/expreg>
 
@@ -354,7 +354,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-+" #'expreg-expand)
   (keymap-global-set "C-=" #'expreg-contract))
 
-;; ~drag-stuff~ :: drag stuff around in arbitrary directions :package:
+;; =drag-stuff= :: drag stuff around in arbitrary directions :package:
 ;; :PROPERTIES:
 ;; :ID:       1febb9e9-ec19-4765-b6bb-21613e7667fb
 ;; :END:
@@ -433,7 +433,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
     "c" #'ceamx/cycle-string-inflection))
 
-;; ~ialign~ :: Interactively ~align-regexp~ :package:
+;; =ialign= :: Interactively ~align-regexp~ :package:
 ;; :PROPERTIES:
 ;; :ID:       7c7b2b24-f6e4-4af5-934f-0d66b65bba6c
 ;; :END:
@@ -556,7 +556,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (use-feature! goto-addr
   :hook (prog-mode . goto-address-prog-mode))
 
-;; ~link-hint~: Activate links in buffer with ~avy~
+;; =link-hint=: Activate links in buffer with ~avy~
 
 ;; <https://github.com/noctuid/link-hint.el>
 
@@ -647,7 +647,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   ;; Allow `which-key' pagination in `help-map'.
   "C-h" nil)
 
-;; ~casual-suite~: transient-dispatch menus for complex modes
+;; =casual-suite=: transient-dispatch menus for complex modes
 
 
 (package! casual-suite
@@ -693,14 +693,14 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (after! org-agenda
     (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)))
 
-;; ~Info-mode~ enchantments
+;; =Info-mode= enchantments
 
 
 (use-feature! info
   :hook ((Info-mode . hl-line-mode)
          (Info-mode . scroll-lock-mode)))
 
-;; ~helpful~: Provide improved alternatives to the builtin "describe" utilities
+;; =helpful=: Provide improved alternatives to the builtin "describe" utilities
 
 ;; - Source code :: <https://github.com/Wilfred/helpful>
 
@@ -789,7 +789,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (setopt undo-strong-limit 100663296) ; 96mb.
 (setopt undo-outer-limit 1006632960) ; 960mb.
 
-;; ~undo-fu~: Support optional linear undo/redo
+;; =undo-fu=: Support optional linear undo/redo
 
 ;; - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu>
 
@@ -798,7 +798,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-z" #'undo-fu-only-undo)
   (keymap-global-set "C-S-z" #'undo-fu-only-redo))
 
-;; ~undo-fu-session~: Record undo/redo steps across Emacs sessions
+;; =undo-fu-session=: Record undo/redo steps across Emacs sessions
 
 ;; - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
 
@@ -818,7 +818,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
   (undo-fu-session-global-mode))
 
-;; ~vundo~: Visualize the Emacs undo tree
+;; =vundo=: Visualize the Emacs undo tree
 ;; :PROPERTIES:
 ;; :ID:       8fd3c7aa-cf9d-47f9-91cf-715e6f5d0618
 ;; :END:
@@ -837,7 +837,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   :config
   (setopt vundo-glyph-alist vundo-unicode-symbols))
 
-;; ~which-key~
+;; =which-key=
 
 
 (use-feature! which-key

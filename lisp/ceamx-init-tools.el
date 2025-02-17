@@ -9,7 +9,7 @@
 (after! eshell
   (setopt eshell-scroll-to-bottom-on-input 'this))
 
-;; ~eat~ :: [E]mulate [A] [T]erminal
+;; =eat= :: [E]mulate [A] [T]erminal
 ;; :PROPERTIES:
 ;; :ID:       cafaa1b0-d633-4e7e-b470-6dbfd534c35f
 ;; :END:
@@ -35,7 +35,7 @@
 
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 
-;; ~verb~ :: organize and send http requests
+;; =verb= :: organize and send http requests
 
 ;; + Package :: https://github.com/federicotdn/verb
 
@@ -62,19 +62,19 @@
 
 (package! (unpackaged :host github :repo "alphapapa/unpackaged.el"))
 
-;; ~mugur~: a configurator for QMK keyboards
+;; =mugur=: a configurator for QMK keyboards
 
 
 (package! mugur)
 
-;; ~free-keys~: Show free keybindings for modkeys or prefixes
+;; =free-keys=: Show free keybindings for modkeys or prefixes
 
 ;; + Package :: <https://github.com/Fuco1/free-keys>
 
 
 (package! free-keys)
 
-;; ~help-find~ :: introspect keybindings
+;; =help-find= :: introspect keybindings
 
 
 (package! help-find
@@ -82,7 +82,7 @@
     "K b" #'help-find-keybinding
     "K f" #'help-find-function))
 
-;; ~uuidgen~: Generate and insert UUIDs
+;; =uuidgen=: Generate and insert UUIDs
 ;; :PROPERTIES:
 ;; :ID:       48fbfb99-55c9-44db-a342-2c9fe847e85e
 ;; :END:
@@ -150,7 +150,7 @@
     (require pkg))
   (pdf-tools-install))
 
-;; ~ready-player~ :: multimedia file previews :nixpkgs:
+;; =ready-player= :: multimedia file previews :nixpkgs:
 
 ;; + Package :: <https://github.com/xenodium/ready-player>
 ;; + Dependencies :: =ffmpeg= =ffmpegthumbnailer= =mpv=
@@ -166,7 +166,10 @@
           ready-player-repeat nil
           ready-player-shuffle nil))
 
-;; emacswiki:i-ching.el
+;; yijing.el
+;; :PROPERTIES:
+;; :ID:       c5573349-c13f-4702-8cf3-8f7cdb49add4
+;; :END:
 
 ;; + src :: https://www.emacswiki.org/emacs/i-ching.el
 
@@ -177,9 +180,9 @@
 
 
 
-(use-feature! i-ching
-  :commands (i-ching/lookup
-             i-ching/cast))
+(use-feature! yijing
+  :commands (yijing/lookup
+             yijing/cast))
 
 ;; Operate on buffers rectangularly with the ~rect~ feature
 ;; :PROPERTIES:
