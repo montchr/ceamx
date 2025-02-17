@@ -1087,12 +1087,19 @@ usually wrongly fontified as a metadata block."
   (add-hook 'nix-mode-hook #'eglot-ensure))
 
 ;; Install and configure ~nix-ts-mode~ :package:
+;; :PROPERTIES:
+;; :ID:       9936dd8a-40e7-46d7-a8a8-0d0e58dbea47
+;; :END:
 
 ;; <https://github.com/remi-gelinas/nix-ts-mode>
 
 
 (package! nix-ts-mode
   (add-hook 'nix-ts-mode-hook #'eglot-ensure))
+
+(after! (nerd-icons nix-ts-mode)
+  ;; XXX: contribute fix upstream
+  (add-to-list 'nerd-icons-mode-icon-alist '(nix-ts-mode  nerd-icons-mdicon "nf-md-nix" :face nerd-icons-blue)))
 
 ;; Set the official formatter (=nixfmt=) as the default formatter :formatting:
 

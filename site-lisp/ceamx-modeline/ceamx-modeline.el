@@ -224,66 +224,59 @@ package).")
     (((class color) (min-colors 88) (background dark))
      :background "#a0a0a0" :foreground "black")
     (t :inverse-video t))
-  "Face for modeline indicatovrs with a background."
+  "Face for modeline indicators with a background."
   :group 'ceamx-modeline-faces)
 
 
+;;;; Macros
+
+(defmacro def-modeline-construct! (name body &optional docstring &rest plist)
+  "Define a modeline segment variable."
+  (unless (stringp docstring)
+    (push docstring plist)
+    (setq docstring nil))
+  `(progn
+     (defconst ,name ,body ,docstring)
+     ,@(unless (plist-get plist :global)
+         `((make-variable-buffer-local ',name)))
+     (put ',name 'risky-local-variable t)))
+
 ;;;; Indicators
 
-(defvar-local ceamx-modeline-kbd-macro
-    '(:eval
-      (when (and (mode-line-window-selected-p) defining-kbd-macro)
-        (propertize " KMacro " 'face 'ceamx-modeline-indicator-blue-bg)))
+(def-modeline-construct! ceamx-modeline-kbd-macro
+  '(:eval
+     (when (and (mode-line-window-selected-p) defining-kbd-macro)
+       (propertize " KMacro " 'face 'ceamx-modeline-indicator-blue-bg)))
   "Mode line construct displaying `mode-line-defining-kbd-macro'.
 Specific to the current window's mode line.")
 
-(defvar-local ceamx-modeline-narrow
-    '(:eval
-      (when (and (mode-line-window-selected-p)
-                 (buffer-narrowed-p)
-                 (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
-        (propertize " Narrow " 'face 'ceamx-modeline-indicator-cyan-bg)))
+(def-modeline-construct! ceamx-modeline-narrow
+  '(:eval
+     (when (and (mode-line-window-selected-p)
+             (buffer-narrowed-p)
+             (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
+       (propertize " Narrow " 'face 'ceamx-modeline-indicator-cyan-bg)))
   "Mode line construct to report the narrowed state of the current buffer.")
 
 ;; TODO 2023-07-05: What else is there beside remote files?  If
 ;; nothing, this must be renamed accordingly.
-(defvar-local ceamx-modeline-remote-status
-    '(:eval
-      (when-let* ((host (file-remote-p default-directory 'host)))
-        (propertize (format " @%s " host)
-          'face 'ceamx-modeline-indicator-red-bg
-          'mouse-face 'mode-line-highlight)))
+(def-modeline-construct! ceamx-modeline-remote-status
+  '(:eval
+     (when-let* ((host (file-remote-p default-directory 'host)))
+       (propertize (format " @%s " host)
+         'face 'ceamx-modeline-indicator-red-bg
+         'mouse-face 'mode-line-highlight)))
   "Mode line construct for showing remote host name, if applicable.")
 
-(defvar-local ceamx-modeline-window-dedicated-status
-    '(:eval
-      (when (window-dedicated-p)
-        (propertize " = "
-                    'face 'ceamx-modeline-indicator-gray-bg
-                    'mouse-face 'mode-line-highlight)))
+(def-modeline-construct! ceamx-modeline-window-dedicated-status
+  '(:eval
+     (when (window-dedicated-p)
+       (propertize " = "
+         'face 'ceamx-modeline-indicator-gray-bg
+         'mouse-face 'mode-line-highlight)))
   "Mode line construct for dedicated window indicator.")
 
 ;;;;;; Buffer identification
-
-(defvar-local ceamx-modeline-major-mode
-    (list
-     (propertize "%[" 'face 'ceamx-modeline-indicator-red)
-     '(:eval
-       (concat
-        (ceamx-modeline-major-mode-indicator)
-        " "
-        (propertize
-         (ceamx-modeline-string-abbreviate-but-last
-          (ceamx-modeline-major-mode-name)
-          2)
-         'mouse-face 'mode-line-highlight
-         'help-echo (ceamx-modeline-major-mode-help-echo))))
-     (propertize "%]" 'face 'ceamx-modeline-indicator-red))
-  "Mode line construct for displaying major modes.")
-
-(defvar-local ceamx-modeline-process
-    (list '("" mode-line-process))
-  "Mode line construct for the running process indicator.")
 
 (defun ceamx-modeline-buffer-identification-face ()
   "Return appropriate face or face list for `ceamx-modeline-buffer-identification'."
@@ -321,7 +314,7 @@ See `ceamx-modeline-string-cut-middle'."
         (format "No underlying file.\nDirectory is: %s" default-directory))
     'face 'font-lock-doc-face)))
 
-(defvar-local ceamx-modeline-buffer-identification
+(def-modeline-construct! ceamx-modeline-buffer-identification
     '(:eval
       (propertize (ceamx-modeline-buffer-name)
                   'face (ceamx-modeline-buffer-identification-face)
@@ -333,20 +326,32 @@ face.  Let other buffers have no face.")
 
 ;;;;;; Buffer position
 
-(defun ceamx-modeline-buffer-position ()
-  "Return the mode line indicator for position in the current buffer."
-  )
+(def-modeline-construct! ceamx-modeline-position
+  '("[%l:%C:%p]"))
 
 ;;;;;; Major mode
 
+(defun ceamx-modeline--major-mode-nerd-icon-p (mode)
+  "Whether the major mode MODE has a corresponding Nerd Font icon.
+
+This function is based on the logic used to determine icon in
+`nerd-icons-icon-for-mode', which see."
+  (let ((icon (or (assoc mode nerd-icons-mode-icon-alist)
+                (assoc (get mode 'derived-mode-parent) nerd-icons-mode-icon-alist))))
+    (if icon t nil)))
+
+;; TODO: use nerd-icons
 (defun ceamx-modeline-major-mode-indicator ()
   "Return appropriate propertized mode line indicator for the major mode."
-  (let ((indicator (cond
-                     ((derived-mode-p 'text-mode) "§")
-                     ((derived-mode-p 'prog-mode) "λ")
-                     ((derived-mode-p 'comint-mode) ">_")
-                     (t "◦"))))
-    (propertize indicator 'face 'shadow)))
+  (cond
+    ((derived-mode-p 'dired-mode) "🗀")
+    ((derived-mode-p 'emacs-lisp-mode) "λ")
+    ((ceamx-modeline--major-mode-nerd-icon-p major-mode)
+      (nerd-icons-icon-for-mode major-mode))
+    ((derived-mode-p 'text-mode) "§")
+    ((derived-mode-p 'prog-mode) "λ")
+    ((derived-mode-p 'comint-mode) ">_")
+    (t "○")))
 
 (defun ceamx-modeline-major-mode-name ()
   "Return capitalized `major-mode' without the -mode suffix."
@@ -358,8 +363,8 @@ face.  Let other buffers have no face.")
       (format "Symbol: `%s'.  Derived from: `%s'" major-mode parent)
     (format "Symbol: `%s'." major-mode)))
 
-(defvar-local ceamx-modeline-major-mode
-    (list
+(def-modeline-construct! ceamx-modeline-major-mode
+  (list
      (propertize "%[" 'face 'ceamx-modeline-indicator-red)
      '(:eval
        (concat
@@ -373,10 +378,6 @@ face.  Let other buffers have no face.")
          'help-echo (ceamx-modeline-major-mode-help-echo))))
      (propertize "%]" 'face 'ceamx-modeline-indicator-red))
   "Mode line construct for displaying major modes.")
-
-(defvar-local ceamx-modeline-process
-    (list '("" mode-line-process))
-  "Mode line construct for the running process indicator.")
 
 ;;;;;; Version control
 
@@ -439,7 +440,7 @@ than `split-width-threshold'."
   "Return VC state face for FILE with BACKEND."
   (ceamx-modeline--vc-get-face (vc-state file backend)))
 
-(defvar-local ceamx-modeline-vc-branch
+(def-modeline-construct! ceamx-modeline-vc-branch
     '(:eval
       (when-let* (((mode-line-window-selected-p))
                   (file (buffer-file-name))
@@ -459,7 +460,7 @@ than `split-width-threshold'."
   (setq mode-line-misc-info
     (delete '(eglot--managed-mode (" [" eglot--mode-line-format "] ")) mode-line-misc-info)))
 
-(defvar-local ceamx-modeline-eglot
+(def-modeline-construct! ceamx-modeline-eglot
     `(:eval
       (when (and (featurep 'eglot) (mode-line-window-selected-p))
         '(eglot--managed-mode eglot--mode-line-format)))
@@ -468,20 +469,28 @@ Specific to the current window's mode line.")
 
 ;;;;;; Miscellaneous
 
-(defvar-local ceamx-modeline-notmuch-indicator
-    '(notmuch-indicator-mode
-      (" "
+(def-modeline-construct! ceamx-modeline-process
+    (list '("" mode-line-process))
+  "Mode line construct for the running process indicator.")
+
+(def-modeline-construct! ceamx-modeline-notmuch-indicator
+  '(notmuch-indicator-mode
+     (" "
        (:eval (when (mode-line-window-selected-p)
                 notmuch-indicator--counters))))
   "The equivalent of `notmuch-indicator-mode-line-construct'.
 Display the indicator only on the focused window's mode line.")
 
-(defvar-local ceamx-modeline-misc-info
+(def-modeline-construct! ceamx-modeline-misc-info
     '(:eval
       (when (mode-line-window-selected-p)
         mode-line-misc-info))
   "Mode line construct displaying `mode-line-misc-info'.
 Specific to the current window's mode line.")
+
+(def-modeline-construct! ceamx-modeline-scrollbar
+  '(:eval (mlscroll-mode-line))
+  "Mode line construct displaying a scrollbar.")
 
 ;;;; Functions
 
@@ -575,30 +584,6 @@ This is a more general and less stringent variant of
 
 
 
-;;;; Macros
-
-(defmacro def-modeline-var! (name body &optional docstring &rest plist)
-  "Define a modeline segment variable."
-  (unless (stringp docstring)
-    (push docstring plist)
-    (setq docstring nil)))
-
-;;;; Risky local variables
-
-(dolist (construct '(ceamx-modeline-kbd-macro
-                      ceamx-modeline-narrow
-                      ceamx-modeline-remote-status
-                      ceamx-modeline-window-dedicated-status
-                      ceamx-modeline-buffer-identification
-                      ceamx-modeline-major-mode
-                      ceamx-modeline-process
-                      ceamx-modeline-vc-branch
-                      ;; ceamx-modeline-flymake
-                      ceamx-modeline-eglot
-                      ;; ceamx-modeline-align-right
-                      ;; ceamx-modeline-notmuch-indicator
-                      ceamx-modeline-misc-info))
-  (put construct 'risky-local-variable t))
 
 ;;;; Mode
 
