@@ -247,13 +247,13 @@ Specific to the current window's mode line.")
 
 ;; TODO 2023-07-05: What else is there beside remote files?  If
 ;; nothing, this must be renamed accordingly.
-(defvar-local ceamx-modeline-buffer-status
+(defvar-local ceamx-modeline-remote-status
     '(:eval
-      (when (file-remote-p default-directory)
-        (propertize " @ "
-                    'face 'ceamx-modeline-indicator-red-bg
-                    'mouse-face 'mode-line-highlight)))
-  "Mode line construct for showing remote file name.")
+      (when-let* ((host (file-remote-p default-directory 'host)))
+        (propertize (format " @%s " host)
+          'face 'ceamx-modeline-indicator-red-bg
+          'mouse-face 'mode-line-highlight)))
+  "Mode line construct for showing remote host name, if applicable.")
 
 (defvar-local ceamx-modeline-window-dedicated-status
     '(:eval
@@ -331,15 +331,21 @@ See `ceamx-modeline-string-cut-middle'."
 Propertize the current buffer with the `mode-line-buffer-id'
 face.  Let other buffers have no face.")
 
+;;;;;; Buffer position
+
+(defun ceamx-modeline-buffer-position ()
+  "Return the mode line indicator for position in the current buffer."
+  )
+
 ;;;;;; Major mode
 
 (defun ceamx-modeline-major-mode-indicator ()
   "Return appropriate propertized mode line indicator for the major mode."
   (let ((indicator (cond
-                    ((derived-mode-p 'text-mode) "§")
-                    ((derived-mode-p 'prog-mode) "λ")
-                    ((derived-mode-p 'comint-mode) ">_")
-                    (t "◦"))))
+                     ((derived-mode-p 'text-mode) "§")
+                     ((derived-mode-p 'prog-mode) "λ")
+                     ((derived-mode-p 'comint-mode) ">_")
+                     (t "◦"))))
     (propertize indicator 'face 'shadow)))
 
 (defun ceamx-modeline-major-mode-name ()
@@ -568,23 +574,30 @@ This is a more general and less stringent variant of
        (not (one-window-p :no-minibuffer))))
 
 
+
+;;;; Macros
+
+(defmacro def-modeline-var! (name body &optional docstring &rest plist)
+  "Define a modeline segment variable."
+  (unless (stringp docstring)
+    (push docstring plist)
+    (setq docstring nil)))
+
 ;;;; Risky local variables
 
-;; NOTE 2023-04-28: The `risky-local-variable' is critical, as those
-;; variables will not work without it.
 (dolist (construct '(ceamx-modeline-kbd-macro
-                     ceamx-modeline-narrow
-                     ceamx-modeline-buffer-status
-                     ceamx-modeline-window-dedicated-status
-                     ceamx-modeline-buffer-identification
-                     ceamx-modeline-major-mode
-                     ceamx-modeline-process
-                     ceamx-modeline-vc-branch
-                     ;; ceamx-modeline-flymake
-                     ceamx-modeline-eglot
-                     ;; ceamx-modeline-align-right
-                     ;; ceamx-modeline-notmuch-indicator
-                     ceamx-modeline-misc-info))
+                      ceamx-modeline-narrow
+                      ceamx-modeline-remote-status
+                      ceamx-modeline-window-dedicated-status
+                      ceamx-modeline-buffer-identification
+                      ceamx-modeline-major-mode
+                      ceamx-modeline-process
+                      ceamx-modeline-vc-branch
+                      ;; ceamx-modeline-flymake
+                      ceamx-modeline-eglot
+                      ;; ceamx-modeline-align-right
+                      ;; ceamx-modeline-notmuch-indicator
+                      ceamx-modeline-misc-info))
   (put construct 'risky-local-variable t))
 
 ;;;; Mode

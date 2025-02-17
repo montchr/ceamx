@@ -3,6 +3,9 @@
 (require 'ceamx-lib)
 
 ;; Set up the ~ceamx-modeline~
+;; :PROPERTIES:
+;; :ID:       e8fa729f-3a84-4b3b-88eb-450406dde0a5
+;; :END:
 
 
 (line-number-mode 1)
@@ -19,14 +22,17 @@
                 '("%e"
                   ceamx-modeline-kbd-macro
                   ceamx-modeline-narrow
-                  ceamx-modeline-buffer-status
+                  ceamx-modeline-remote-status
                   ceamx-modeline-window-dedicated-status
                   "  "
                   ceamx-modeline-buffer-identification
                   "  "
+                  mode-line-position
+                  "  "
                   ceamx-modeline-major-mode
                   ceamx-modeline-process
                   "  "
+                  (project-mode-line project-mode-line-format)
                   ceamx-modeline-vc-branch
                   "  "
                   ceamx-modeline-eglot
@@ -34,17 +40,18 @@
                   ;; ceamx-modeline-flymake
                   "  "
                   mode-line-format-right-align ; Emacs 30
+                  mode-line-modes
                   ;; ceamx-modeline-notmuch-indicator
                   "  "
                   ceamx-modeline-misc-info)))
 
-;; ~minions~ :: minimize many mode-line minor-modes
+;; =minions= :: minimize many mode-line minor-modes
 
 
 (package! minions
   (add-hook 'ceamx-after-init-hook #'minions-mode))
 
-;; ~keycast~ :: show current command and its binding :present:
+;; =keycast= :: show current command and its binding :present:
 
 ;; - Website :: <https://github.com/tarsius/keycast>
 

@@ -2003,6 +2003,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-modeline.el
 :VISIBILITY: folded
+:ID:       7e592f24-8ad1-4432-862a-5873a7bb18dd
 :END:
 
 *** Requirements
@@ -2017,6 +2018,9 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 #+end_src
 
 *** Set up the ~ceamx-modeline~
+:PROPERTIES:
+:ID:       e8fa729f-3a84-4b3b-88eb-450406dde0a5
+:END:
 
 #+begin_src emacs-lisp
 (line-number-mode 1)
@@ -2033,14 +2037,17 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
                 '("%e"
                   ceamx-modeline-kbd-macro
                   ceamx-modeline-narrow
-                  ceamx-modeline-buffer-status
+                  ceamx-modeline-remote-status
                   ceamx-modeline-window-dedicated-status
                   "  "
                   ceamx-modeline-buffer-identification
                   "  "
+                  mode-line-position
+                  "  "
                   ceamx-modeline-major-mode
                   ceamx-modeline-process
                   "  "
+                  (project-mode-line project-mode-line-format)
                   ceamx-modeline-vc-branch
                   "  "
                   ceamx-modeline-eglot
@@ -2048,6 +2055,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
                   ;; ceamx-modeline-flymake
                   "  "
                   mode-line-format-right-align ; Emacs 30
+                  mode-line-modes
                   ;; ceamx-modeline-notmuch-indicator
                   "  "
                   ceamx-modeline-misc-info)))
@@ -3114,6 +3122,7 @@ Related, but not technically part of ~repeat-mode~:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-search.el
 :VISIBILITY: folded
+:ID:       11946c45-0ed9-4f75-bbad-72ee57f1311b
 :END:
 
 Configuration for search-related utilities like ~isearch~ and
@@ -8834,6 +8843,9 @@ Define agenda groups for display with the =org-super-agenda= extension:
 #+end_src
 
 ** [C-c q] :: Session
+:PROPERTIES:
+:ID:       89f0be09-aa04-40cd-9365-f41a5fbf37c6
+:END:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-session-prefix
