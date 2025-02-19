@@ -5218,6 +5218,9 @@ NOTE: Fringe indicators will conflict with Flycheck.
   (setopt magit-display-buffer-function
           #'magit-display-buffer-fullframe-status-v1)
 
+  (when (locate-library "nerd-icons")
+    (setopt magit-format-file-function #'magit-format-file-nerd-icons))
+
   (define-keymap :keymap magit-status-mode-map
     "_" #'magit-revert
     ;; "V" nil
