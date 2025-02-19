@@ -6617,6 +6617,15 @@ The timing here may be delicate...
 :ID:       137d1e04-d0dc-4512-a450-fbafeef65804
 :END:
 
+**** JSON/JSONC
+:PROPERTIES:
+:ID:       62d6b3c0-60ca-4bf3-9613-e09f403d7eac
+:END:
+
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.jsonc\\'" . json-ts-mode))
+#+end_src
+
 **** TOML
 ***** Register =taplo= formatter
 
