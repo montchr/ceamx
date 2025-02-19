@@ -1313,6 +1313,7 @@ graphical frames.
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-ui.el
 :VISIBILITY: folded
+:ID:       565cc0f1-4f0a-4435-8efc-9f6ee3df4e10
 :END:
 
 *** Requirements
@@ -1413,7 +1414,29 @@ applying margin, padding, borders.
 (package! symbol-overlay)
 #+end_src
 
+**** =sideline= :: show information on the side
+:PROPERTIES:
+:ID:       556ce67a-0d8b-4ef3-8f01-d34e65faeed6
+:END:
+
+#+begin_src emacs-lisp
+(package! sideline
+  (require 'sideline)
+
+  (setopt sideline-backends-left-skip-current-line t
+          sideline-backends-right-skip-current-line t)
+  (setopt sideline-order-left 'down
+          sideline-order-right 'up)
+  (setopt sideline-format-left "%s   "
+          sideline-format-right "   %s")
+  (setopt sideline-priority 100)
+  (setopt sideline-display-backend-name t))
+#+end_src
+
 *** Theme :theme:
+:PROPERTIES:
+:ID:       34b88767-203e-4538-8832-2310328e8aa5
+:END:
 
 **** Consider all themes "safe"
 
@@ -1422,6 +1445,9 @@ applying margin, padding, borders.
 #+end_src
 
 **** Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
+:PROPERTIES:
+:ID:       ed7bff96-74c6-4476-bf4d-7909b077b839
+:END:
 
 - Source :: <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
 
@@ -1436,6 +1462,9 @@ applying margin, padding, borders.
 #+end_src
 
 **** =standard-themes= :: themes like the default but more consistent
+:PROPERTIES:
+:ID:       09f2005b-1d4d-4d92-9f36-2327ca55757d
+:END:
 
 #+begin_src emacs-lisp
 (when (display-graphic-p)
@@ -1461,6 +1490,9 @@ applying margin, padding, borders.
 #+end_src
 
 **** =modus-themes= :: accessible theme conforming to WCAG AAA
+:PROPERTIES:
+:ID:       3700042e-1b73-416f-aaa1-2cbd9f2101f0
+:END:
 
 - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -1486,6 +1518,9 @@ applying margin, padding, borders.
 #+end_src
 
 **** =ef-themes= :: colorful yet legible themes
+:PROPERTIES:
+:ID:       3f512af0-7bad-4447-a14d-08a5371e14c5
+:END:
 
 - Website :: <https://protesilaos.com/emacs/ef-themes>
 
@@ -1519,6 +1554,9 @@ applying margin, padding, borders.
 #+end_src
 
 **** =circadian= :: theme phasing based on sunrise/sunset time
+:PROPERTIES:
+:ID:       badbc4d6-c784-4936-bd84-e1312a67273c
+:END:
 
 #+begin_src emacs-lisp
 (package! circadian
@@ -1942,6 +1980,9 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 #+end_src
 
 *** Iconography & Symbolisms :icons:
+:PROPERTIES:
+:ID:       8732b348-e123-4f0b-b499-49b81bf750d9
+:END:
 **** Provide common dependency: ~nerd-icons~ :package:
 :PROPERTIES:
 :ID:       0eb3c103-ba4b-40ee-9341-e5cab30e075f
@@ -5601,6 +5642,14 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
   )
 #+end_src
 
+*** =sideline-emoji= :: Display emoji-at-point info in =sideline=
+
+#+begin_src emacs-lisp
+(package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
+  (after! sideline
+    (appendq! sideline-backends-left '((sideline-emoji . up)))))
+#+end_src
+
 *** Display multiple composed messages inside ~eldoc~
 
 #+begin_src emacs-lisp
@@ -5621,9 +5670,19 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
     (setopt flymake-fringe-indicator-position 'right-fringe)
     (setopt flymake-no-changes-timeout 1.0)
     (setopt flymake-wrap-around t)))
+
+(package! sideline-flymake
+  (after! flymake
+    (add-hook 'flymake-mode-hook #'sideline-mode))
+
+  (setopt sideline-flymake-show-checker-name t)
+  (setopt sideline-flymake-max-lines 1))
 #+end_src
 
 *** ~Linting files with the ~flycheck~ package :lint:
+:PROPERTIES:
+:ID:       1409960a-0d06-440c-a2d6-d238354079d7
+:END:
 
 #+begin_src emacs-lisp
 (package! flycheck
@@ -5634,6 +5693,17 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
 
   (after! (consult flycheck)
     (require 'consult-flycheck)))
+
+(package! sideline-flycheck
+  (after! flycheck
+    (add-hook 'flycheck-mode-hook #'sideline-mode)
+    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
+
+  (after! sideline
+    (appendq! sideline-backends-left '(sideline-flycheck)))
+
+  (setopt sideline-flycheck-show-checker-name t)
+  (setopt sideline-flycheck-max-lines 1))
 
 (after! flycheck
   (setopt flycheck-emacs-lisp-load-path 'inherit)
@@ -6229,15 +6299,28 @@ non-syntactic meaning to the reader.
   (keymap-set ielm-map "C-:" #'quit-window))
 #+end_src
 
+**** =sideline-load-cost= :: Show library weight in sideline
+:PROPERTIES:
+:ID:       67dabafe-cf92-4142-bbfa-ac10008f1eb6
+:END:
+
+#+begin_src emacs-lisp
+(package! (sideline-load-cost :host github :repo "emacs-sideline/sideline-load-cost")
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-load-cost))))
+#+end_src
+
 **** =eros= :: [E]valuation [R]esult [O]verlay[S]
+:PROPERTIES:
+:ID:       a59594e9-edbc-4446-9f2f-6f00b34c8034
+:END:
 
 + Website :: <https://github.com/xiongtx/eros>
 
 #+begin_src emacs-lisp
-(use-package eros
-  :commands (eros-mode eros-eval-last-sexp)
-  :init
+(package! eros
   (add-hook 'emacs-lisp-mode-hook #'eros-mode)
+
   (keymap-set emacs-lisp-mode-map "<remap> <eval-last-sexp>" #'eros-eval-last-sexp)
 
   (use-feature! lispy
@@ -6252,6 +6335,11 @@ non-syntactic meaning to the reader.
       ;;
       ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
+
+(package! (sideline-eros :host github :repo "emacs-sideline/sideline-eros")
+  (after! (sideline eros)
+    (add-hook 'sideline-mode-hook #'sideline-eros-setup)
+    (appendq! sideline-backends-right '(sideline-eros))))
 #+end_src
 
 **** =suggest= :: meet the elisp function of your dreams
@@ -6441,6 +6529,16 @@ The timing here may be delicate...
 (after! (eglot popper)
   (defvar popper-reference-buffers)
   (add-to-list 'popper-reference-buffers "^\\*eglot-help"))
+#+end_src
+
+***** =sideline-eglot= :: Display Eglot messages in sideline
+
+#+begin_src emacs-lisp
+(package! (sideline-eglot :host github :repo "emacs-sideline/sideline-eglot")
+  (after! eglot
+    (add-hook 'eglot-managed-mode-hook #'sideline-mode))
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-eglot))))
 #+end_src
 
 ***** Configure ~flycheck-eglot~ integration
