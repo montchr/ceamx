@@ -5403,9 +5403,14 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 #+end_src
 
 *** Programming modes
+:PROPERTIES:
+:ID:       c7874765-8cf8-4cf4-abb5-97c220769a65
+:END:
 
 #+begin_src emacs-lisp
 (after! prog-mode
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+
   (define-keymap :keymap prog-mode-map
     ;; Move forward out of one sexp level
     "C-M-d" #'up-list))
