@@ -32,6 +32,16 @@
 
 ;;;; Functions
 
+(defun ceamx-tools-pdf-annot-cleanup-windows-h ()
+  "Kill leftover PDF annotation buffers with the document."
+  (when (buffer-live-p pdf-annot-list-document-buffer)
+    (pdf-info-close pdf-annot-list-document-buffer))
+  (when (buffer-live-p pdf-annot-list-buffer)
+    (kill-buffer pdf-annot-list-buffer))
+  (let ((contents-buffer (get-buffer "*Contents*")))
+    (when (and contents-buffer (buffer-live-p contents-buffer))
+      (kill-buffer contents-buffer))))
+
 ;;;; Commands
 
 ;;;; Menus

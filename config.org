@@ -8661,20 +8661,65 @@ some separate binaries.
 #+begin_src emacs-lisp
 (require 'ceamx-lib)
 
-(defvar pdf-tools-handle-upgrades nil)
-
-(after! pdf-tools
+(use-feature! pdf-tools
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :magic ("%PDF" . pdf-view-mode)
+  :config
   (dolist
-      (pkg
-       '(pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
-         pdf-links pdf-misc pdf-occur pdf-outline pdf-sync
-         pdf-util pdf-view pdf-virtual))
+      (pkg '( pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
+              pdf-links pdf-misc pdf-occur pdf-outline pdf-sync
+              pdf-util pdf-view pdf-virtual))
     (require pkg))
+
+  (def-advice! +pdf-suppress-large-file-prompts-a
+      (fn size op-type filename &optional offer-raw)
+    :around #'abort-if-file-too-large
+    "Silence warnings about PDF filesizes."
+    (unless (string-match-p "\\.pdf\\'" filename)
+      (funcall fn size op-type filename offer-raw)))
+
+  (setopt pdf-tools-handle-upgrades nil)
+  ;; Resolve the path to required binaries
+  ;; FIXME: this should be handled by nixpkgs?
+  ;; https://discourse.nixos.org/t/with-an-overlay-can-i-put-the-binary-in-my-path/43759/13
+  (setopt pdf-info-epdfinfo-program
+          (car (file-expand-wildcards
+                (concat "/etc/profiles/per-user/" (getenv "USER")
+                        "/share/emacs/site-lisp/elpa/pdf-tools-*/epdfinfo"))))
+  ;; HiDPI support
+  (setopt pdf-view-use-scaling t
+          pdf-view-use-imagemagick nil)
+
+  (setq-default pdf-view-display-size 'fit-page)
+
+  (keymap-set pdf-view-mode-map "q" #'kill-current-buffer)
+
   (pdf-tools-install))
+
+(after! popper
+    (pushnew! popper-reference-buffers
+              "^\\*Outline*"
+              "^\\*Edit Annotation "
+              "\\(?:^\\*Contents\\|'s annots\\*$\\)"))
+
+(after! (pdf-view pdf-annot)
+  (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
+  (add-hook 'pdf-view-mode-hook
+            (##add-hook 'kill-buffer-hook #'ceamx-tools-pdf-annot-cleanup-windows-h nil t)))
+
+(package! saveplace-pdf-view
+  (after! pdf-view
+    (require 'saveplace-pdf-view)))
 #+end_src
 
-*** TODO <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
-*** TODO =saveplace-pdf-view=
+*** DONE <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
+CLOSED: [2025-02-22 Sat 19:36]
+:PROPERTIES:
+:ID:       a2d18493-6148-4168-aa19-99d490f5a7e2
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2025-02-22 Sat 19:36]
+:END:
 *** =ready-player= :: multimedia file previews :nixpkgs:
 
 + Package :: <https://github.com/xenodium/ready-player>
