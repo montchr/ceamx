@@ -1286,7 +1286,8 @@ graphical frames.
   "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
   ;; "C-c j"
   "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
-  "C-c l f" (cons "formatting..." (define-prefix-command 'ceamx-code-f-prefix))
+  "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
+  "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
   ;; "C-c m"
   "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
   "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
@@ -6114,7 +6115,10 @@ Increase the amount of syntax-highlighted structures:
 (setopt treesit-font-lock-level 4)
 #+end_src
 
-**** TODO ~treesit-fold~ :: code folding with ~treesit~
+**** =treesit-fold= :: Code folding with ~treesit~
+:PROPERTIES:
+:ID:       f1699289-6ead-46f8-be44-fad5dd1d7906
+:END:
 
 + Package :: <https://github.com/emacs-tree-sitter/treesit-fold>
 
@@ -6122,8 +6126,21 @@ Increase the amount of syntax-highlighted structures:
 
   #+begin_src emacs-lisp
 (package! treesit-fold
+  (setopt treesit-fold-line-count-show t)
+  (setopt treesit-fold-summary-show t)
+
   (global-treesit-fold-mode 1)
-  (global-treesit-fold-indicators-mode 1))
+  (global-treesit-fold-indicators-mode -1))
+
+(after! treesit-fold
+  (define-keymap :keymap treesit-fold-mode-map
+    "C-c l f f" #'treesit-fold-toggle
+
+    "C-c l f c" #'treesit-fold-close
+    "C-c l f C" #'treesit-fold-close-all
+    "C-c l f o" #'treesit-fold-open
+    "C-c l f O" #'treesit-fold-open-all
+    "C-c l f r" #'treesit-fold-open-recursively))
 #+end_src
 
 **** TODO ~combobulate~
