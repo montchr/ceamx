@@ -5131,7 +5131,7 @@ NOTE: Fringe indicators will conflict with Flycheck.
   ;; Display indicators in margins instead of fringes.  This will work
   ;; in terminal sessions and also avoid the fringe conflict with
   ;; other indicators like Flycheck errors.
-  (add-hook 'ceamx-after-init-hook #'diff-hl-margin-mode)
+  ;; (add-hook 'ceamx-after-init-hook #'diff-hl-margin-mode)
 
   ;; Support mouse click on indicator to show hunk.
   (when (display-graphic-p)
