@@ -2358,6 +2358,16 @@ NOTE: Incompatible with kitchen-sink modeline packages like
      (add-to-list 'embark-post-action-hooks (list cmd 'embark--restart)))))
 #+end_src
 
+*** =persistent-scratch= :: Preserve the scratch buffer across sessions
+:PROPERTIES:
+:ID:       a85e81df-a194-4ecf-b1ca-5d95279cb45f
+:END:
+
+#+begin_src emacs-lisp
+(package! persistent-scratch
+  (persistent-scratch-setup-default))
+#+end_src
+
 *** Configure sane window-scrolling behavior
 
 #+begin_src emacs-lisp
