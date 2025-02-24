@@ -6148,18 +6148,19 @@ Increase the amount of syntax-highlighted structures:
     "C-c l f r" #'treesit-fold-open-recursively))
 #+end_src
 
-**** TODO ~combobulate~
+**** =combobulate= :: A consistent structural navigation interface
 :PROPERTIES:
-:header-args:emacs-lisp: :tangle no
+:ID:       9dd78f17-2f20-4d69-8dfa-06aa0989ba19
 :END:
 :LOGBOOK:
 - Refiled on [2025-01-26 Sun 16:39]
 :END:
 
 #+begin_src emacs-lisp
-(use-package combobulate
-  :ensure t
-  :hook (((html-ts-mode js-ts-mode go-ts-mode python-ts-mode) . combobulate-mode)))
+(package! (combobulate :host github :repo "mickeynp/combobulate")
+  (add-hook 'prog-mode-hook #'combobulate-mode)
+
+  (setopt combobulate-key-prefix "C-c l o"))
 #+end_src
 
 *** Apply ~autoinsert~ skeletons to new files
