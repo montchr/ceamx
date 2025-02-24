@@ -5260,6 +5260,11 @@ not available, it will be installed imperatively.
     "C-x M-g" #'magit-dispatch))
 
 (after! magit
+  ;; Save work-in-progress refs before some potentially-risky actions
+  ;; where data loss is a possibility.  Note that this may cause a
+  ;; performance hit.
+  (setopt magit-wip-mode t)
+
   (setopt magit-diff-refine-hunk t)
   ;; Avoid side-effects (e.g. formatting-on-save)
   (setopt magit-save-repository-buffers nil)
