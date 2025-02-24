@@ -327,7 +327,7 @@ face.  Let other buffers have no face.")
 ;;;;;; Buffer position
 
 (def-modeline-construct! ceamx-modeline-position
-  '("[%l:%C:%p]"))
+  '("〘%l:%C|%p〙"))
 
 ;;;;;; Major mode
 
@@ -378,6 +378,37 @@ This function is based on the logic used to determine icon in
          'help-echo (ceamx-modeline-major-mode-help-echo))))
      (propertize "%]" 'face 'ceamx-modeline-indicator-red))
   "Mode line construct for displaying major modes.")
+
+;;;;;; Minor modes
+
+(defun ceamx-modeline-format-on-save-p ()
+  "Whether format-on-save is enabled for the current buffer."
+  (or
+    apheleia-mode
+    ;; polyglot formatters
+    biome-format-on-save-mode
+    prettier-on-save-mode
+    treefmt-on-save-mode
+    ;; language-specific formatters
+    alejandra-format-on-save-mode
+    nixfmt-format-on-save-mode
+    phpcbf-fmt-on-save-mode
+    php-cs-fixer-fmt-on-save-mode
+    php-ecs-fmt-on-save-mode
+    toml-taplo-fmt-on-save-mode))
+
+(defun ceamx-modeline-format-on-save-indicator ()
+  "Mode-line indicator for auto-formatted buffers."
+  (if (ceamx-modeline-format-on-save-p)
+    (nerd-icons-pomicon "nf-pom-clean_code")
+    ""))
+
+(def-modeline-construct! ceamx-modeline-format-on-save
+  '(:eval (ceamx-modeline-format-on-save-indicator))
+  "Mode line construct for buffers to be formatted-on-save.")
+
+;; (def-modeline-construct! ceamx-modeline-minor-modes
+;;   '(()))
 
 ;;;;;; Version control
 

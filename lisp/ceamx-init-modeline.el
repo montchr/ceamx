@@ -2,6 +2,25 @@
 
 (require 'ceamx-lib)
 
+;; =mlscroll= :: scrollbar for the modeline
+
+
+(package! mlscroll
+  (mlscroll-mode 1))
+
+;; =minions= :: minimize many mode-line minor-modes
+;; :PROPERTIES:
+;; :ID:       af187c9b-e6b2-47dc-a1b0-848a38455d74
+;; :END:
+
+
+(package! minions
+  (minions-mode 1)
+  (setopt minions-prominent-modes
+          '(auto-tangle-mode
+            jinx-mode
+            which-key-mode)))
+
 ;; Set up the ~ceamx-modeline~
 ;; :PROPERTIES:
 ;; :ID:       e8fa729f-3a84-4b3b-88eb-450406dde0a5
@@ -24,32 +43,30 @@
                   ceamx-modeline-narrow
                   ceamx-modeline-remote-status
                   ceamx-modeline-window-dedicated-status
-                  "  "
+                  " "
                   ceamx-modeline-buffer-identification
-                  "  "
-                  mode-line-position
-                  "  "
+                  " "
                   ceamx-modeline-major-mode
+                  " "
+                  ceamx-modeline-position
                   ceamx-modeline-process
-                  "  "
+                  " "
                   (project-mode-line project-mode-line-format)
                   ceamx-modeline-vc-branch
-                  "  "
+                  " "
                   ceamx-modeline-eglot
-                  "  "
+                  " "
                   ;; ceamx-modeline-flymake
-                  "  "
+                  " "
                   mode-line-format-right-align ; Emacs 30
                   mode-line-modes
+                  " "
+                  ceamx-modeline-format-on-save
                   ;; ceamx-modeline-notmuch-indicator
-                  "  "
-                  ceamx-modeline-misc-info)))
-
-;; =minions= :: minimize many mode-line minor-modes
-
-
-(package! minions
-  (add-hook 'ceamx-after-init-hook #'minions-mode))
+                  " "
+                  ceamx-modeline-misc-info
+                  ;;ceamx-modeline-scrollbar
+                  )))
 
 ;; =keycast= :: show current command and its binding :present:
 
