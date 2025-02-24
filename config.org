@@ -3032,6 +3032,9 @@ via <https://codeberg.org/ideasman42/emacs-undo-fu#undo-limits>
 #+end_src
 
 **** =undo-fu=: Support optional linear undo/redo
+:PROPERTIES:
+:ID:       06ac0daa-058d-4124-9fa4-7b891aa8715f
+:END:
 
 - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu>
 
@@ -3982,6 +3985,9 @@ Refine preview appearance and behavior:
 #+end_src
 
 **** Static text expansion with ~abbrev~
+:PROPERTIES:
+:ID:       0076b762-4975-4973-8326-f413860fa3c4
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! abbrev
@@ -5091,6 +5097,9 @@ Here are the definitions for the Bufler grouping rules:
 #+end_src
 
 *** Set up version control integration with ~vc-mode~
+:PROPERTIES:
+:ID:       4e3a33c2-f9ac-4947-bbe2-837b91d5cb19
+:END:
 
 #+begin_src emacs-lisp
 ;; Version control support is essential as soon as possible.
@@ -5119,6 +5128,9 @@ Here are the definitions for the Bufler grouping rules:
 #+end_src
 
 *** =diff-hl= :: display version control status indicators in margins
+:PROPERTIES:
+:ID:       6a8b57d7-091a-44a6-bcf1-564f45d9bc7e
+:END:
 
 - Website :: <https://github.com/dgutov/diff-hl>
 
@@ -5147,7 +5159,7 @@ NOTE: Fringe indicators will conflict with Flycheck.
     (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
 #+end_src
 
-*** =git-modes= :: major modes for git-related files
+*** =git-modes= :: Major-modes for git-related files
 
 - website :: <https://github.com/magit/git-modes>
 
@@ -5155,7 +5167,7 @@ NOTE: Fringe indicators will conflict with Flycheck.
 (package! git-modes)
 #+end_src
 
-*** =git-timemachine= :: interactively explore files' git histories
+*** =git-timemachine= :: Interactively explore files' git histories
 
 <https://codeberg.org/pidu/git-timemachine>
 
@@ -5213,8 +5225,8 @@ NOTE: Fringe indicators will conflict with Flycheck.
 (package! magit
   (define-keymap :keymap (current-global-map)
     "C-c g" #'magit-file-dispatch
-    "C-c G" #'magit-dispatch
     "C-x g" #'magit-status
+    "C-c G" #'magit-dispatch
     "C-x M-g" #'magit-dispatch))
 
 (after! magit
@@ -5247,6 +5259,9 @@ NOTE: Fringe indicators will conflict with Flycheck.
 #+end_src
 
 **** Keep ~magit-section~ sections at the top of the window
+:PROPERTIES:
+:ID:       19010ecb-b1e0-4168-a554-2cad3e410bfe
+:END:
 
 - Reference :: <https://emacs.stackexchange.com/questions/3380/how-to-scroll-up-when-expanding-a-section-in-magit-status#comment4819_3383>
 
@@ -5267,7 +5282,10 @@ insight into long-running =post-receive= hooks (and similar).
   (setopt magit-process-popup-time 3))
 #+end_src
 
-**** =alphapapa/magit-todo= :: display codetag comment reminders in ~magit-status~
+*** =magit-todo= :: Display codetag comment reminders in ~magit-status~
+:PROPERTIES:
+:ID:       567769b0-8153-4f97-9c85-6f0b1e401f3f
+:END:
 
 - Docs :: <https://github.com/alphapapa/magit-todos/blob/master/README.org>
 
@@ -5278,11 +5296,14 @@ insight into long-running =post-receive= hooks (and similar).
     (magit-todos-mode 1)))
 #+end_src
 
-***** TODO Customize appearance to always keep folded, to reduce noise
+**** TODO Customize appearance to always keep folded, to reduce noise
 
 e.g. "M-4" should not expand this section -- it should only be expanded manually
 
 *** =magit-repos=
+:PROPERTIES:
+:ID:       2c0ff466-ba79-4208-8210-af6ac2ffaa06
+:END:
 
 #+begin_src emacs-lisp
 (setup magit-repos
@@ -5296,6 +5317,9 @@ e.g. "M-4" should not expand this section -- it should only be expanded manually
 #+end_src
 
 *** DISABLED =forge= :: interact with online forges through magit
+:PROPERTIES:
+:ID:       c77a863e-56bd-437f-aeb8-303b0183c9fa
+:END:
 
 *Warning*: /development versions of ~forge~ may expect a different ~magit~
 version!/ Make sure to pin ~forge~ to a stable tag.  And then, make sure
@@ -7033,6 +7057,9 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 #+end_src
 
 **** Ignore PHP-specific directories and files
+:PROPERTIES:
+:ID:       772ead4f-6d76-479c-8267-78d61b457c78
+:END:
 
 #+begin_src emacs-lisp
 (appendq! xref-ignored-files
@@ -8651,6 +8678,9 @@ M is not eager to board the train bound for Hype City.
 #+end_src
 
 *** PDF-Tools
+:PROPERTIES:
+:ID:       9d793672-7e26-4e2d-9aeb-8aaa85d14128
+:END:
 
 - website :: <https://github.com/vedang/pdf-tools>
 - ref :: <https://github.com/jwiegley/dot-emacs/blob/master/init.org>
