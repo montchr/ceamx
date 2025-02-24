@@ -547,12 +547,6 @@ ELP is useful for seeing which functions in a package are "hot":
                'face 'help-key-binding)))
 #+end_src
 
-*** Add the =site-lisp= directory to ~load-path~
-
-#+begin_src emacs-lisp
-
-#+end_src
-
 *** =site-lisp/on=: Define additional Emacs event hooks
 :PROPERTIES:
 :ID:       7f77da4e-3109-4dca-80c1-38c838ee5d70
@@ -1102,6 +1096,12 @@ expect the value you arrive at to be as high as 100 MiB.
   (require 'transient)
   (after! transient
     (keymap-set transient-map "<escape>" #'transient-quit-one)))
+#+end_src
+
+*** Install the =persist= package from =site-lisp/= because of ELPA server issues
+
+#+begin_src emacs-lisp
+(use-feature! persist)
 #+end_src
 
 ** =init.el=: Environment
