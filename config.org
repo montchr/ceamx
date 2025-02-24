@@ -1096,9 +1096,8 @@ expect the value you arrive at to be as high as 100 MiB.
 #+begin_src emacs-lisp
 (package! llama
   (require 'llama))
-
 (package! f)
-
+(package! request)
 (package! transient
   (require 'transient)
   (after! transient
