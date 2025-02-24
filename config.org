@@ -7567,6 +7567,20 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
   (consult-denote-mode 1))
 #+end_src
 
+*** =denote-explorer= :: Expore Thee Exomind
+:PROPERTIES:
+:ID:       92e7bc54-4bb2-4b1e-83cb-a06e073df556
+:END:
+
+#+begin_src emacs-lisp
+(package! denote-explore
+  (require 'denote-explore)
+
+  (setopt denote-explore-network-directory
+          (file-name-as-directory (concat ceamx-note-dir "graphs")))
+  (setopt denote-explore-network-filename "denote-network"))
+#+end_src
+
 *** Provide the ~ceamx-init-notes~ feature
 
 #+begin_src emacs-lisp
