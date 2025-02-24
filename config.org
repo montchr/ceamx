@@ -5732,7 +5732,7 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
     (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
 
   (after! sideline
-    (appendq! sideline-backends-left '(sideline-flycheck)))
+    (appendq! sideline-backends-right '(sideline-flycheck)))
 
   (setopt sideline-flycheck-show-checker-name t)
   (setopt sideline-flycheck-max-lines 1))
