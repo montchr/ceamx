@@ -6580,7 +6580,44 @@ The timing here may be delicate...
   (add-to-list 'popper-reference-buffers "^\\*eglot-help"))
 #+end_src
 
+***** Enable JSON schema validation via the SchemaStore catalog
+:PROPERTIES:
+:ID:       aa0c0d8b-a74e-4064-b749-519e16af0999
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+  :functions (ceamx-eglot-server-contact)
+  :config
+  (defvar ceamx-eglot-json-schema-catalog-file
+    (expand-file-name "data/json-schema/catalog.json" user-emacs-directory)
+    "Path to file containing the full SchemaStore catalog.
+
+The canonical source for the file can be found at the following location:
+
+    <https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/master/src/api/json/catalog.json>")
+
+  (let* ((json-object-type 'plist)
+         (json-array-type 'vector)
+         (json-key-type 'keyword)
+         (json-schemas (plist-get (json-read-file ceamx-eglot-json-schema-catalog-file) :schemas)))
+    (setq-default eglot-workspace-configuration
+                  (append
+                   `(;; https://github.com/microsoft/vscode/blob/main/extensions/json-language-features/server/README.md
+                     :json
+                     ( :validate (:enable t)
+                       :schemas ,json-schemas)
+                     :yaml (:schemas ,json-schemas))
+                   eglot-workspace-configuration))))
+#+end_src
+
 ***** =sideline-eglot= :: Display Eglot messages in sideline
+:PROPERTIES:
+:ID:       4c60a33a-0759-4bb5-9e8c-05270f5e85d6
+:END:
 
 #+begin_src emacs-lisp
 (package! (sideline-eglot :host github :repo "emacs-sideline/sideline-eglot")
