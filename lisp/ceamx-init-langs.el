@@ -223,6 +223,13 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
   )
 
+;; =sideline-emoji= :: Display emoji-at-point info in =sideline=
+
+
+(package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
+  (after! sideline
+    (appendq! sideline-backends-left '((sideline-emoji . up)))))
+
 ;; Display multiple composed messages inside ~eldoc~
 
 
@@ -243,7 +250,17 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
     (setopt flymake-no-changes-timeout 1.0)
     (setopt flymake-wrap-around t)))
 
+(package! sideline-flymake
+  (after! flymake
+    (add-hook 'flymake-mode-hook #'sideline-mode))
+
+  (setopt sideline-flymake-show-checker-name t)
+  (setopt sideline-flymake-max-lines 1))
+
 ;; ~Linting files with the ~flycheck~ package :lint:
+;; :PROPERTIES:
+;; :ID:       1409960a-0d06-440c-a2d6-d238354079d7
+;; :END:
 
 
 (package! flycheck
@@ -254,6 +271,17 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
   (after! (consult flycheck)
     (require 'consult-flycheck)))
+
+(package! sideline-flycheck
+  (after! flycheck
+    (add-hook 'flycheck-mode-hook #'sideline-mode)
+    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
+
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-flycheck)))
+
+  (setopt sideline-flycheck-show-checker-name t)
+  (setopt sideline-flycheck-max-lines 1))
 
 (after! flycheck
   (setopt flycheck-emacs-lisp-load-path 'inherit)
@@ -525,7 +553,10 @@ non-nil, buffers will never be formatted upon save."
 
 (setopt treesit-font-lock-level 4)
 
-;; TODO ~treesit-fold~ :: code folding with ~treesit~
+;; =treesit-fold= :: Code folding with ~treesit~
+;; :PROPERTIES:
+;; :ID:       f1699289-6ead-46f8-be44-fad5dd1d7906
+;; :END:
 
 ;; + Package :: <https://github.com/emacs-tree-sitter/treesit-fold>
 
@@ -533,8 +564,35 @@ non-nil, buffers will never be formatted upon save."
 
 
 (package! treesit-fold
+  (setopt treesit-fold-line-count-show t)
+  (setopt treesit-fold-summary-show t)
+
   (global-treesit-fold-mode 1)
-  (global-treesit-fold-indicators-mode 1))
+  (global-treesit-fold-indicators-mode -1))
+
+(after! treesit-fold
+  (define-keymap :keymap treesit-fold-mode-map
+    "C-c l f f" #'treesit-fold-toggle
+
+    "C-c l f c" #'treesit-fold-close
+    "C-c l f C" #'treesit-fold-close-all
+    "C-c l f o" #'treesit-fold-open
+    "C-c l f O" #'treesit-fold-open-all
+    "C-c l f r" #'treesit-fold-open-recursively))
+
+;; =combobulate= :: A consistent structural navigation interface
+;; :PROPERTIES:
+;; :ID:       9dd78f17-2f20-4d69-8dfa-06aa0989ba19
+;; :END:
+;; :LOGBOOK:
+;; - Refiled on [2025-01-26 Sun 16:39]
+;; :END:
+
+
+(package! (combobulate :host github :repo "mickeynp/combobulate")
+  (add-hook 'prog-mode-hook #'combobulate-mode)
+
+  (setopt combobulate-key-prefix "C-c l o"))
 
 ;; Apply ~autoinsert~ skeletons to new files
 
@@ -663,15 +721,27 @@ non-nil, buffers will never be formatted upon save."
   (defvar ielm-map)
   (keymap-set ielm-map "C-:" #'quit-window))
 
+;; =sideline-load-cost= :: Show library weight in sideline
+;; :PROPERTIES:
+;; :ID:       67dabafe-cf92-4142-bbfa-ac10008f1eb6
+;; :END:
+
+
+(package! (sideline-load-cost :host github :repo "emacs-sideline/sideline-load-cost")
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-load-cost))))
+
 ;; =eros= :: [E]valuation [R]esult [O]verlay[S]
+;; :PROPERTIES:
+;; :ID:       a59594e9-edbc-4446-9f2f-6f00b34c8034
+;; :END:
 
 ;; + Website :: <https://github.com/xiongtx/eros>
 
 
-(use-package eros
-  :commands (eros-mode eros-eval-last-sexp)
-  :init
+(package! eros
   (add-hook 'emacs-lisp-mode-hook #'eros-mode)
+
   (keymap-set emacs-lisp-mode-map "<remap> <eval-last-sexp>" #'eros-eval-last-sexp)
 
   (use-feature! lispy
@@ -686,6 +756,11 @@ non-nil, buffers will never be formatted upon save."
       ;;
       ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
+
+(package! (sideline-eros :host github :repo "emacs-sideline/sideline-eros")
+  (after! (sideline eros)
+    (add-hook 'sideline-mode-hook #'sideline-eros-setup)
+    (appendq! sideline-backends-right '(sideline-eros))))
 
 ;; =suggest= :: meet the elisp function of your dreams
 
@@ -864,6 +939,51 @@ The original function fails in the presence of whitespace after a sexp."
   (defvar popper-reference-buffers)
   (add-to-list 'popper-reference-buffers "^\\*eglot-help"))
 
+;; Enable JSON schema validation via the SchemaStore catalog
+;; :PROPERTIES:
+;; :ID:       aa0c0d8b-a74e-4064-b749-519e16af0999
+;; :END:
+
+
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+  :functions (ceamx-eglot-server-contact)
+  :config
+  (defvar ceamx-eglot-json-schema-catalog-file
+    (expand-file-name "data/json-schema/catalog.json" user-emacs-directory)
+    "Path to file containing the full SchemaStore catalog.
+
+The canonical source for the file can be found at the following location:
+
+    <https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/master/src/api/json/catalog.json>")
+
+  (let* ((json-object-type 'plist)
+         (json-array-type 'vector)
+         (json-key-type 'keyword)
+         (json-schemas (plist-get (json-read-file ceamx-eglot-json-schema-catalog-file) :schemas)))
+    (setq-default eglot-workspace-configuration
+                  (append
+                   `(;; https://github.com/microsoft/vscode/blob/main/extensions/json-language-features/server/README.md
+                     :json
+                     ( :validate (:enable t)
+                       :schemas ,json-schemas)
+                     :yaml (:schemas ,json-schemas))
+                   eglot-workspace-configuration))))
+
+;; =sideline-eglot= :: Display Eglot messages in sideline
+;; :PROPERTIES:
+;; :ID:       4c60a33a-0759-4bb5-9e8c-05270f5e85d6
+;; :END:
+
+
+(package! (sideline-eglot :host github :repo "emacs-sideline/sideline-eglot")
+  (after! eglot
+    (add-hook 'eglot-managed-mode-hook #'sideline-mode))
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-eglot))))
+
 ;; Configure ~flycheck-eglot~ integration
 
 
@@ -893,6 +1013,14 @@ The original function fails in the presence of whitespace after a sexp."
     (keymap-global-set "C-c l o" #'consult-lsp-symbols)
     ;; Override the default binding for `xref-find-apropos'.
     (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
+
+;; JSON/JSONC
+;; :PROPERTIES:
+;; :ID:       62d6b3c0-60ca-4bf3-9613-e09f403d7eac
+;; :END:
+
+
+(add-to-list 'auto-mode-alist '("\\.jsonc\\'" . json-ts-mode))
 
 ;; Register =taplo= formatter
 
@@ -957,47 +1085,6 @@ The original function fails in the presence of whitespace after a sexp."
     (keymap-set js-json-mode-map "C-c o r" #'jq-interactively))
   (after! json-ts-mode
     (keymap-set json-ts-mode-map "C-c o r" #'jq-interactively)))
-
-;; Web-Mode
-
-
-(package! web-mode
-  ;; TODO: refactor
-  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-
-  (setopt web-mode-engines-alist
-          '(("php" . "\\.phtml\\'")
-            ("blade" . "\\.blade\\.")))
-
-  ;; Defer to `electric-pair-mode' or similar.
-  (setopt web-mode-enable-auto-pairing nil)
-
-  (setopt web-mode-enable-css-colorization t
-          web-mode-enable-block-face t
-          web-mode-enable-part-face t
-          web-mode-enable-current-element-highlight t))
-
-;;; emmet-mode
-
-;; - website :: <https://github.com/smihica/emmet-mode>
-;; - reference ::
-;; - <https://github.com/smihica/emmet-mode/blob/master/README.md#usage>
-
-;; NOTE: This package is unmaintained!
-
-(package! emmet-mode
-  (setopt emmet-move-cursor-between-quotes t)
-
-  (add-hook 'css-mode-hook #'emmet-mode)
-  (after! web-mode
-    (add-hook 'web-mode-hook #'emmet-mode)))
 
 ;; JavaScript
 
@@ -1191,6 +1278,9 @@ usually wrongly fontified as a metadata block."
   "Pattern matching files with PHP syntax.")
 
 ;; Ignore PHP-specific directories and files
+;; :PROPERTIES:
+;; :ID:       772ead4f-6d76-479c-8267-78d61b457c78
+;; :END:
 
 
 (appendq! xref-ignored-files
@@ -1397,6 +1487,48 @@ usually wrongly fontified as a metadata block."
 
 
 (package! dotenv-mode)
+
+(package! web-mode
+  ;; Ensure these associations with `web-mode' take priority over
+  ;; existing associations.  These should be added after other
+  ;; packages add their own values to the list.
+  (dolist (match '("\\.html?\\'"
+                   "\\.blade\\.php\\'"
+                   "\\.tpl\\.php\\'"
+                   "\\.phtml\\'"
+                   "\\.[agj]sp\\'"
+                   "\\.as[cp]x\\'"
+                   "\\.erb\\'"
+                   "\\.mustache\\'"
+                   "\\.djhtml\\'"))
+    (cl-pushnew (cons match 'web-mode) auto-mode-alist))
+
+  (setopt web-mode-engines-alist
+          '(("php" . "\\.phtml\\'")
+            ("blade" . "\\.blade\\.")))
+
+  ;; Defer to `electric-pair-mode' or similar.
+  (setopt web-mode-enable-auto-pairing nil)
+
+  (setopt web-mode-enable-css-colorization t
+          web-mode-enable-block-face t
+          web-mode-enable-part-face t
+          web-mode-enable-current-element-highlight t))
+
+;;; emmet-mode
+
+;; - website :: <https://github.com/smihica/emmet-mode>
+;; - reference ::
+;; - <https://github.com/smihica/emmet-mode/blob/master/README.md#usage>
+
+;; NOTE: This package is unmaintained!
+
+(package! emmet-mode
+  (setopt emmet-move-cursor-between-quotes t)
+
+  (add-hook 'css-mode-hook #'emmet-mode)
+  (after! web-mode
+    (add-hook 'web-mode-hook #'emmet-mode)))
 
 (provide 'ceamx-init-langs)
 ;;; ceamx-init-langs.el ends here

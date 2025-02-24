@@ -8558,6 +8558,7 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-tools.el :comments no
 ;; -*- lexical-binding: t;  -*-
 
+(require 'ceamx-paths)
 (require 'ceamx-lib)
 (require 'seq)
 #+end_src

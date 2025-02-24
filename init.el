@@ -508,9 +508,8 @@ The ORDER can be used to deduce the feature context."
 
 (package! llama
   (require 'llama))
-
 (package! f)
-
+(package! request)
 (package! transient
   (require 'transient)
   (after! transient
@@ -681,7 +680,8 @@ The ORDER can be used to deduce the feature context."
   "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
   ;; "C-c j"
   "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
-  "C-c l f" (cons "formatting..." (define-prefix-command 'ceamx-code-f-prefix))
+  "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
+  "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
   ;; "C-c m"
   "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
   "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)

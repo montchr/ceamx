@@ -97,10 +97,15 @@ Emacs version to prevent bytecode incompatibility.")
   (concat ceamx-home-dir "Documents/reading/")
   "The user directory for reading materials.")
 
+(defconst ceamx-biblio-dir
+  (file-name-as-directory
+    (concat ceamx-home-dir "Documents/notes/biblio/"))
+  "The user directory for bibliographies.")
+
 (defconst ceamx-projects-dir
   (file-name-as-directory
-   (or (getenv "XDG_PROJECTS_DIR")
-       (concat ceamx-home-dir "Developer")))
+    (or (getenv "XDG_PROJECTS_DIR")
+      (concat ceamx-home-dir "Developer")))
   "The root directory for projects.")
 
 (defconst ceamx-literate-config-file

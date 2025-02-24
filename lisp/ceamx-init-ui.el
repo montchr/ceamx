@@ -78,12 +78,33 @@
 
 (package! symbol-overlay)
 
+;; =sideline= :: show information on the side
+;; :PROPERTIES:
+;; :ID:       556ce67a-0d8b-4ef3-8f01-d34e65faeed6
+;; :END:
+
+
+(package! sideline
+  (require 'sideline)
+
+  (setopt sideline-backends-left-skip-current-line t
+          sideline-backends-right-skip-current-line t)
+  (setopt sideline-order-left 'down
+          sideline-order-right 'up)
+  (setopt sideline-format-left "%s   "
+          sideline-format-right "   %s")
+  (setopt sideline-priority 100)
+  (setopt sideline-display-backend-name t))
+
 ;; Consider all themes "safe"
 
 
 (setopt custom-safe-themes t)
 
 ;; Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
+;; :PROPERTIES:
+;; :ID:       ed7bff96-74c6-4476-bf4d-7909b077b839
+;; :END:
 
 ;; - Source :: <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
 
@@ -97,6 +118,9 @@
 (advice-add 'enable-theme :after #'ceamx-after-enable-theme)
 
 ;; =standard-themes= :: themes like the default but more consistent
+;; :PROPERTIES:
+;; :ID:       09f2005b-1d4d-4d92-9f36-2327ca55757d
+;; :END:
 
 
 (when (display-graphic-p)
@@ -121,6 +145,9 @@
             standard-light-tinted)))
 
 ;; =modus-themes= :: accessible theme conforming to WCAG AAA
+;; :PROPERTIES:
+;; :ID:       3700042e-1b73-416f-aaa1-2cbd9f2101f0
+;; :END:
 
 ;; - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -145,6 +172,9 @@
             (t . (variable-pitch semibold 1.0)))))
 
 ;; =ef-themes= :: colorful yet legible themes
+;; :PROPERTIES:
+;; :ID:       3f512af0-7bad-4447-a14d-08a5371e14c5
+;; :END:
 
 ;; - Website :: <https://protesilaos.com/emacs/ef-themes>
 
@@ -175,6 +205,9 @@
 (setopt calendar-longitude -75.133)
 
 ;; =circadian= :: theme phasing based on sunrise/sunset time
+;; :PROPERTIES:
+;; :ID:       badbc4d6-c784-4936-bd84-e1312a67273c
+;; :END:
 
 
 (package! circadian

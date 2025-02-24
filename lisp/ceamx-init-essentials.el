@@ -181,6 +181,15 @@
      if (commandp cmd) do
      (add-to-list 'embark-post-action-hooks (list cmd 'embark--restart)))))
 
+;; =persistent-scratch= :: Preserve the scratch buffer across sessions
+;; :PROPERTIES:
+;; :ID:       a85e81df-a194-4ecf-b1ca-5d95279cb45f
+;; :END:
+
+
+(package! persistent-scratch
+  (persistent-scratch-setup-default))
+
 ;; Configure sane window-scrolling behavior
 
 
@@ -790,6 +799,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (setopt undo-outer-limit 1006632960) ; 960mb.
 
 ;; =undo-fu=: Support optional linear undo/redo
+;; :PROPERTIES:
+;; :ID:       06ac0daa-058d-4124-9fa4-7b891aa8715f
+;; :END:
 
 ;; - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu>
 

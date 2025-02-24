@@ -3,12 +3,14 @@
 (require 'ceamx-lib)
 
 ;; Baseline minibuffer settings
+;; :PROPERTIES:
+;; :ID:       2c5efde3-41fb-4154-bbc9-3921ad9a318b
+;; :END:
 
 
 (use-feature! minibuffer
-  :hook ((minibuffer-setup . cursor-intangible-mode)
-         (ceamx-after-init . minibuffer-electric-default-mode))
-
+  :hook ((ceamx-after-init . (minibuffer-depth-indicate-mode
+                              minibuffer-electric-default-mode)))
   :config
 
   (setopt echo-keystrokes 0.25)
@@ -31,11 +33,7 @@
   ;;         read-file-name-completion-ignore-case t)
   ;; (setq-default case-fold-search t)
 
-  (setopt minibuffer-default-prompt-format " [%s]")
-
-  )
-
-(add-hook 'ceamx-after-init-hook #'minibuffer-depth-indicate-mode)
+  (setopt minibuffer-default-prompt-format " [%s]"))
 
 (after! mb-depth
   (setopt enable-recursive-minibuffers t)
@@ -43,22 +41,26 @@
   (setopt read-minibuffer-restore-windows nil))
 
 ;; Add an indicator to the ~completing-read-multiple~ prompt
+;; :PROPERTIES:
+;; :ID:       6d74806b-359a-45e8-9090-b5b88640c900
+;; :END:
 
 
-(defvar crm-separator)
-
-(def-advice! ceamx-completion-crm-indicator-a (args)
-  :filter-args #'completing-read-multiple
-  "Add prompt indicator to `completing-read-multiple' for candidates ARGS.
+;; Supported out of the box in Emacs 31 with `crm-prompt'.
+(when (< emacs-major-version 31)
+  (def-advice! ceamx-completion-crm-indicator-a (args)
+    :filter-args #'completing-read-multiple
+    "Add prompt indicator to `completing-read-multiple' for candidates ARGS.
 We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
-  (cons (format "[CRM%s] %s"
-                (replace-regexp-in-string
-                 "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                 crm-separator)
-                (car args))
-        (cdr args)))
+    (cons (format "[CRM%s] %s"
+                  (string-replace "[ \t]*" "" crm-separator)
+                  (car args))
+          (cdr args))))
 
 ;; =vertico= :: [vert]ical [i]nteractive [co]mpletion
+;; :PROPERTIES:
+;; :ID:       4d5b4204-7e8e-4b11-87d1-5da6618f99ec
+;; :END:
 
 ;; + Package :: <https://github.com/minad/vertico>
 
@@ -395,6 +397,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
                                           pdf-view-mode tags-table-mode)))
 
 ;; Static text expansion with ~abbrev~
+;; :PROPERTIES:
+;; :ID:       0076b762-4975-4973-8326-f413860fa3c4
+;; :END:
 
 
 (use-feature! abbrev

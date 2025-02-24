@@ -153,5 +153,12 @@
 
   (consult-denote-mode 1))
 
+(package! denote-explore
+  (require 'denote-explore)
+
+  (setopt denote-explore-network-directory
+          (file-name-as-directory (concat ceamx-note-dir "graphs")))
+  (setopt denote-explore-network-filename "denote-network"))
+
 (provide 'ceamx-init-notes)
 ;;; ceamx-init-notes.el ends here

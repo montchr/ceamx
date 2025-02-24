@@ -1,5 +1,6 @@
 ;; -*- lexical-binding: t;  -*-
 
+(require 'ceamx-paths)
 (require 'ceamx-lib)
 (require 'seq)
 
@@ -129,6 +130,9 @@
   (setopt flycheck-hledger-strict t))
 
 ;; PDF-Tools
+;; :PROPERTIES:
+;; :ID:       9d793672-7e26-4e2d-9aeb-8aaa85d14128
+;; :END:
 
 ;; - website :: <https://github.com/vedang/pdf-tools>
 ;; - ref :: <https://github.com/jwiegley/dot-emacs/blob/master/init.org>
@@ -139,16 +143,55 @@
 
 (require 'ceamx-lib)
 
-(defvar pdf-tools-handle-upgrades nil)
-
-(after! pdf-tools
+(use-feature! pdf-tools
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :magic ("%PDF" . pdf-view-mode)
+  :config
   (dolist
-      (pkg
-       '(pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
-         pdf-links pdf-misc pdf-occur pdf-outline pdf-sync
-         pdf-util pdf-view pdf-virtual))
+      (pkg '( pdf-annot pdf-cache pdf-dev pdf-history pdf-info pdf-isearch
+              pdf-links pdf-misc pdf-occur pdf-outline pdf-sync
+              pdf-util pdf-view pdf-virtual))
     (require pkg))
+
+  (def-advice! +pdf-suppress-large-file-prompts-a
+      (fn size op-type filename &optional offer-raw)
+    :around #'abort-if-file-too-large
+    "Silence warnings about PDF filesizes."
+    (unless (string-match-p "\\.pdf\\'" filename)
+      (funcall fn size op-type filename offer-raw)))
+
+  (setopt pdf-tools-handle-upgrades nil)
+  ;; Resolve the path to required binaries
+  ;; FIXME: this should be handled by nixpkgs?
+  ;; https://discourse.nixos.org/t/with-an-overlay-can-i-put-the-binary-in-my-path/43759/13
+  (setopt pdf-info-epdfinfo-program
+          (car (file-expand-wildcards
+                (concat "/etc/profiles/per-user/" (getenv "USER")
+                        "/share/emacs/site-lisp/elpa/pdf-tools-*/epdfinfo"))))
+  ;; HiDPI support
+  (setopt pdf-view-use-scaling t
+          pdf-view-use-imagemagick nil)
+
+  (setq-default pdf-view-display-size 'fit-page)
+
+  (keymap-set pdf-view-mode-map "q" #'kill-current-buffer)
+
   (pdf-tools-install))
+
+(after! popper
+    (pushnew! popper-reference-buffers
+              "^\\*Outline*"
+              "^\\*Edit Annotation "
+              "\\(?:^\\*Contents\\|'s annots\\*$\\)"))
+
+(after! (pdf-view pdf-annot)
+  (add-hook 'pdf-annot-list-mode-hook #'hide-mode-line-mode)
+  (add-hook 'pdf-view-mode-hook
+            (##add-hook 'kill-buffer-hook #'ceamx-tools-pdf-annot-cleanup-windows-h nil t)))
+
+(package! saveplace-pdf-view
+  (after! pdf-view
+    (require 'saveplace-pdf-view)))
 
 ;; =ready-player= :: multimedia file previews :nixpkgs:
 

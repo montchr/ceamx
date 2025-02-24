@@ -386,6 +386,18 @@ Intended for use as a local hook function on
     "C-p" #'org-previous-visible-heading
     "C-u" #'org-up-heading))
 
+;; Set up Org-Capture
+;; :PROPERTIES:
+;; :ID:       c9f35626-6cec-46eb-a140-50be234d55da
+;; :END:
+
+;; The basic ~org-capture-templates~ are defined in the [[id:d7334fe7-a7a2-423e-8e3b-fca7c45af07e][Org-Capture
+;; templates]] section.  Some feature-related capture templates (e.g. for
+;; ~org-capture-ref~) are defined in their feature’s respective section.
+
+
+(keymap-global-set "C-c c" #'org-capture)
+
 ;; Archiving
 
 
