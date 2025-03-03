@@ -131,13 +131,18 @@ such alists."
   "Whether the buffer BUF should be considered a popup.
 This is intended for use as a predicate in `popper-reference-buffers'."
   (with-current-buffer buf
-    (and (derived-mode-p 'fundamental-mode)
-         (not (bound-and-true-p scratch-buffer))
-         ;; Less than `max-lines' but not empty.
-         (let ((lines (count-lines (point-min) (point-max)))
+    (let ((window (get-buffer-window buf)))
+      (and (derived-mode-p 'fundamental-mode)
+        ;; Ignore the scratch buffer
+        (not (bound-and-true-p scratch-buffer))
+        ;; Ignore `dired-preview' window.
+        (when (featurep 'dired-preview)
+          (not (dired-preview--window-parameter-p window)))
+        ;; Less than `max-lines' but not empty.
+        (let ((lines (count-lines (point-min) (point-max)))
                (max-lines 10))
-           (and (not (zerop lines))
-                (< lines max-lines))))))
+          (and (not (zerop lines))
+            (< lines max-lines)))))))
 
 (defun +popper-close-focused (&rest _)
   "Close any focused `popper' popup.

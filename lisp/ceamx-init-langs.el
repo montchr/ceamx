@@ -5,6 +5,9 @@
 (require 'ceamx-lib)
 
 ;; =typo= :: typographical correctneß
+;; :PROPERTIES:
+;; :ID:       07671fe0-00af-406f-9244-2e1eb7a6f46e
+;; :END:
 
 ;; + Package :: <https://github.com/jorgenschaefer/typoel>
 
@@ -12,20 +15,34 @@
 ;; *After*:	The “quick” brown — ffiox.
 
 
+(require 'ceamx-lang)
+
 (package! typo
   ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
   (typo-global-mode 1)
 
-  ;; Cycle through typographical variants of commonly-mistyped
-  ;; characters like quotation marks and dashes.
-  (add-hook 'text-mode-hook #'typo-mode)
+  (setopt ceamx-lang-typo-mode-excluded-modes '(git-commit-mode))
+
+  (def-hook! ceamx-lang-typo-mode-maybe-enable-h ()
+    'text-mode-hook
+    "Conditionally enable `typo-mode'.
+`typo-mode' will not be enabled when the current major-mode is one of
+the major-modes listed in the `ceamx-lang-typo-mode-excluded-modes' user
+setting."
+    (unless (memq mode-name ceamx-lang-typo-mode-excluded-modes)
+      (typo-mode 1)))
 
   (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
 
 ;; Programming modes
+;; :PROPERTIES:
+;; :ID:       c7874765-8cf8-4cf4-abb5-97c220769a65
+;; :END:
 
 
 (after! prog-mode
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+
   (define-keymap :keymap prog-mode-map
     ;; Move forward out of one sexp level
     "C-M-d" #'up-list))
@@ -44,6 +61,9 @@ execution order."
     (highlight-function-calls-mode 1)))
 
 ;; General customizations for ~outline-mode~ and ~outline-minor-mode~
+;; :PROPERTIES:
+;; :ID:       e4910a42-68bf-4549-8384-18fd9dcfd9e4
+;; :END:
 
 ;; Remember that ~org-mode~ is derived from ~outline-mode~.
 
@@ -501,6 +521,9 @@ non-nil, buffers will never be formatted upon save."
     "M-)" #'puni-syntactic-backward-punct))
 
 ;; =treesit-auto= :: automatically use available ~treesit~ modes
+;; :PROPERTIES:
+;; :ID:       10383b28-1e9c-435c-9fe1-ebfba527690d
+;; :END:
 
 ;; + Package :: <https://github.com/renzmann/treesit-auto>
 
@@ -1487,6 +1510,19 @@ usually wrongly fontified as a metadata block."
 
 
 (package! dotenv-mode)
+
+;; =yuck-mode= :: Language support for =yuck= configuration files for ElKowar’s Wacky Widgets
+;; :PROPERTIES:
+;; :ID:       b3d679d4-d658-424f-bbb3-2b56548835c0
+;; :END:
+
+(package! yuck-mode)
+
+;; =web-mode=
+;; :PROPERTIES:
+;; :ID:       19c081bf-6b29-4fbf-bffb-4e519b94fe45
+;; :END:
+
 
 (package! web-mode
   ;; Ensure these associations with `web-mode' take priority over

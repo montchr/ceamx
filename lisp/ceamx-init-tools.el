@@ -209,6 +209,85 @@
           ready-player-repeat nil
           ready-player-shuffle nil))
 
+;; =linkmarks= :: Keep link bookmarks in Org-Mode
+;; :PROPERTIES:
+;; :ID:       db54377f-9e4f-4708-a4ce-539e7441423e
+;; :END:
+
+
+(package! (linkmarks :host github :repo "dustinlacewell/linkmarks")
+  (setopt linkmarks-file (expand-file-name "bookmarks.org" ceamx-biblio-dir)))
+
+;; =org-capture-ref= :: Extract metadata from websites for capture
+;; :PROPERTIES:
+;; :ID:       45bc1e57-c0cf-4896-a32f-eb8ade2257c8
+;; :END:
+
+
+;; XXX: Dependency of `org-capture-ref' without recipe.
+(package! (persid :host github :repo "rougier/persid"))
+
+(package! (org-capture-ref :host github :repo "yantar92/org-capture-ref")
+  (require 'org-capture-ref)
+
+  (setopt org-capture-templates
+          (doct-add-to
+           org-capture-templates
+           `( :group "Weblink"
+              :type entry
+              :file ,(expand-file-name "links.org" ceamx-biblio-dir)
+              :hook ,(##org-capture-ref-process-capture)
+              :link-type ,(##org-capture-ref-get-bibtex-field :type)
+              :org-entry ,(##org-capture-ref-get-org-entry)
+              :template ("* TODO %?%{space}%{org-entry}"
+                         ""
+                         "+ type :: %{link-type}")
+              :children (("Interactive" :keys "L"
+                          :clock-in t
+                          :clock-resume t
+                          :space " ")
+                         ("Silent" :keys "l"
+                          :space ""
+                          :immediate-finish t))))))
+
+;; Bibliographies
+;; :PROPERTIES:
+;; :ID:       6ffdedb4-5a6a-47bf-98ca-40e3147f7d03
+;; :END:
+
+
+(package! parsebib)
+(package! citeproc)
+
+;; `citar'
+
+(package! citar
+  (setopt citar-bibliography (list (expand-file-name "master.bib" ceamx-biblio-dir)))
+  (setopt org-cite-insert-processor 'citar
+          org-cite-follow-processor 'citar
+          org-cite-activate-processor 'citar))
+
+(when (locate-library "embark")
+  (package! citar-embark
+    (after! (citar embark)
+      (citar-embark-mode))))
+
+(when (locate-library "denote")
+  (package! citar-denote))
+
+;; `org-cite'
+
+;; (after! oc
+;;   (require 'oc-biblatex)
+
+;;   (setopt org-cite-global-bibliography citar-bibliography)
+;;   (setopt org-cite-export-processors '((latex biblatex) (t csl))))
+
+;; oc-csl requires citeproc, which requires the top-level org, so
+;; loading oc-csl after oc interferes with incremental loading of Org.
+(after! org
+  (require 'oc-csl))
+
 ;; yijing.el
 ;; :PROPERTIES:
 ;; :ID:       c5573349-c13f-4702-8cf3-8f7cdb49add4

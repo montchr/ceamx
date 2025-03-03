@@ -144,11 +144,6 @@
                (substitute-command-keys "\\<lisp-interaction-mode-map>\\[eval-print-last-sexp]")
                'face 'help-key-binding)))
 
-;; Add the =site-lisp= directory to ~load-path~
-
-
-
-
 ;; =site-lisp/on=: Define additional Emacs event hooks
 ;; :PROPERTIES:
 ;; :ID:       7f77da4e-3109-4dca-80c1-38c838ee5d70
@@ -166,7 +161,7 @@
 (defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
 
 ;; Avoid aggressive GitHub API rate limiting.
-(defvar elpaca-queue-limit 10)
+(defvar elpaca-queue-limit 30)
 
 
 
@@ -178,8 +173,8 @@
 
 ;; TODO: this should probably take effect for *any* Nix-built Emacs
 ;; package, not just on NixOS
-(when (ceamx-host-nixos-p)
-  (setq elpaca-core-date (list (ceamx-emacs-nix-build-date))))
+;; (when (ceamx-host-nixos-p)
+;;   (setq elpaca-core-date (list (ceamx-emacs-nix-build-date))))
 
 
 
@@ -190,7 +185,7 @@
 ;; definition for ~elpaca-directory~ removed.
 
 
-(defvar elpaca-installer-version 0.9)
+(defvar elpaca-installer-version 0.10)
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
@@ -204,7 +199,7 @@
   (add-to-list 'load-path (if (file-exists-p build) build repo))
   (unless (file-exists-p repo)
     (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
+    (when (<= emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
         (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
                   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
@@ -282,81 +277,14 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 (elpaca no-littering
   (require 'no-littering))
 
-;; Install the latest version of ~seq~ builtin library, carefully
-
-;; ~magit~ requires a more recent version of ~seq~ than the version included in
-;; Emacs 29.
-
-;; Requires special care because unloading it can make other libraries freak out.
-;; <https://github.com/progfolio/elpaca/issues/216#issuecomment-1868444883>
-
-
-(defun +elpaca-unload-seq (e)
-  "Unload the builtin version of `seq' and continue the `elpaca' build E."
-  (and (featurep 'seq) (unload-feature 'seq t))
-  (elpaca--continue-build e))
-
-(defun +elpaca-seq-build-steps ()
-  "Update the `elpaca' build-steps to activate the latest version of the builtin `seq' package."
-  (append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
-                       elpaca--pre-built-steps
-                     elpaca-build-steps))
-          (list '+elpaca-unload-seq 'elpaca--activate-package)))
-
-(elpaca `(seq :build ,(+elpaca-seq-build-steps)))
-
-;; Install the latest version of the builtin ~jsonrpc~ library
-
-;; Required by (and originally extracted from) ~eglot~.
-
-
-(elpaca jsonrpc
-  (require 'jsonrpc))
-
-;; Install the latest version of the ~eldoc~ builtin library, carefully
-
-;; Required by ~eglot~.
-
-;; ~eldoc~ requires a delicate workaround to avoid catastrophy
-;; <https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
-
-
-
-(unless after-init-time
-  (unload-feature 'eldoc t)
-  (setq custom-delayed-init-variables '())
-  (defvar global-eldoc-mode nil))
-
-(elpaca eldoc
-  (require 'eldoc)
-  (global-eldoc-mode))
-
-;; Install the latest version of the builtin ~eglot~ package
-
-
-(unless after-init-time
-  (when (featurep 'eglot)
-    (unload-feature 'eglot)))
-
-(elpaca eglot)
-
-;; Install the latest version of the builtin ~flymake~ package
-
-
-(unless after-init-time
-  (when (featurep 'flymake)
-    (unload-feature 'flymake)))
-
-(elpaca flymake)
-
 ;; Install the latest version of Org-Mode
 
 
-(unless after-init-time
-  (when (featurep 'org)
-    (unload-feature 'org)))
+;; (unless after-init-time
+;;   (when (featurep 'org)
+;;     (unload-feature 'org)))
 
-(elpaca (org :autoloads "org-loaddefs.el"))
+;; (elpaca (org :autoloads "org-loaddefs.el"))
 
 ;; Install the latest version of ~use-package~
 ;; :PROPERTIES:
@@ -514,6 +442,12 @@ The ORDER can be used to deduce the feature context."
   (require 'transient)
   (after! transient
     (keymap-set transient-map "<escape>" #'transient-quit-one)))
+
+;; Install the =persist= package from =emacsmirror= because of GNU ELPA server issues
+
+
+;; (package! (persist :host github :repo "emacsmirror/persist")
+;;   (require 'persist))
 
 ;; Disable unnecessary OS-specific command-line options :macos:
 

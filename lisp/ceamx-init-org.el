@@ -378,13 +378,13 @@ Intended for use as a local hook function on
 ;; seem to have an effect.
 
 
-(after! org
-  (define-keymap :keymap org-navigation-repeat-map
-    "C-b" #'org-backward-heading-same-level
-    "C-f" #'org-forward-heading-same-level
-    "C-n" #'org-next-visible-heading
-    "C-p" #'org-previous-visible-heading
-    "C-u" #'org-up-heading))
+;; (after! org
+;;   (define-keymap :keymap org-navigation-repeat-map
+;;     "C-b" #'org-backward-heading-same-level
+;;     "C-f" #'org-forward-heading-same-level
+;;     "C-n" #'org-next-visible-heading
+;;     "C-p" #'org-previous-visible-heading
+;;     "C-u" #'org-up-heading))
 
 ;; Set up Org-Capture
 ;; :PROPERTIES:

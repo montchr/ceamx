@@ -48,6 +48,9 @@
   (setopt uniquify-ignore-buffers-re "^\\*"))
 
 ;; General buffer display settings :frame:display_buffer:
+;; :PROPERTIES:
+;; :ID:       20041467-dbd4-484f-9034-41ffca2b15a9
+;; :END:
 
 
 (setopt switch-to-buffer-in-dedicated-window 'pop)
@@ -224,6 +227,9 @@
   (popper-echo-mode))
 
 ;; Configure overrides in ~popper-repeat-map~
+;; :PROPERTIES:
+;; :ID:       df697f37-7a4d-4206-80a2-1814bae3db2b
+;; :END:
 
 
 (after! popper
@@ -233,6 +239,9 @@
     "~" #'popper-cycle-backwards))
 
 ;; =lentic= :: Create decoupled views of the same content
+;; :PROPERTIES:
+;; :ID:       c6b0beb5-5c7b-4125-b6db-7cf25629a06a
+;; :END:
 
 
 (package! lentic
@@ -353,12 +362,14 @@
   :config
   (setopt ceamx-window-workspace-provider 'activities))
 
-;; =activites= :: organize window+buffer by activity :tabs:
+;; =activities= :: organize window+buffer by activity :tabs:
 ;; :PROPERTIES:
 ;; :ID:       91310539-1562-4d0c-9648-0f3aa56cc2f0
 ;; :END:
 
 ;; - Website :: <https://github.com/alphapapa/activities.el>
+
+;; Disabled because =persist= dependency is unavailable, likely due to GNU ELPA fuckery.
 
 
 (package! activities

@@ -149,6 +149,8 @@
 ;; :ID:       034124e8-0166-499f-b0f2-6c298e475d63
 ;; :END:
 
+;; + Package :: <https://github.com/danilshvalov/git-commit-ts-mode/>
+
 ;; This mode requires the =tree-sitter-gitcommit= Tree-Sitter language
 ;; grammar installed.  As of [2025-02-23 Sun], it is not currently
 ;; available in Nixpkgs.  For that reason, if the =gitcommit= grammar is

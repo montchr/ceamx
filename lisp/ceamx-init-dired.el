@@ -119,23 +119,27 @@
   (add-hook 'dired-mode-hook #'nerd-icons-dired-mode))
 
 ;; =dired-preview= :: a file previewer
+;; :PROPERTIES:
+;; :ID:       c0bd86a6-af1e-4a13-b4ff-ac46649951f9
+;; :END:
 
 ;; + Website :: <https://protesilaos.com/emacs/dired-preview>
 
 
 (package! dired-preview
-  (defer! 3
+  (defer! 2
     (dired-preview-global-mode))
+  (after! dired
+    (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode))
   (after! dired-preview
-    (setopt dired-preview-delay 0.7)
+    (setopt dired-preview-delay 0.1)
     (setopt dired-preview-max-size (expt 2 20))
     (setopt dired-preview-ignored-extensions-regexp
-            (concat "\\."
-                    "\\(mkv\\|webm\\|mp4\\|mp3\\|ogg\\|m4a"
-                    "\\|gz\\|zst\\|tar\\|xz\\|rar\\|zip"
-                    "\\|iso\\|epub\\|pdf\\)"))
-
-    (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode)))
+             (concat
+              "\\."
+              "\\(gz\\|" "zst\\|" "tar\\|" "xz\\|"
+              "rar\\|" "zip\\|" "iso\\|" "epub"
+              "\\)"))))
 
 (provide 'ceamx-init-dired)
 ;;; ceamx-init-dired.el ends here

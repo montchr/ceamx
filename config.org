@@ -576,7 +576,7 @@ Previously, I have used =package.el= or Nixpkgs to manage packages.  See the
 (defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
 
 ;; Avoid aggressive GitHub API rate limiting.
-(defvar elpaca-queue-limit 10)
+(defvar elpaca-queue-limit 30)
 #+end_src
 
 Elpaca needs to know about the Nix build date of the current version
@@ -587,8 +587,8 @@ of Emacs to set ~elpaca-core-date~ correctly.  [[https://github.com/progfolio/el
 
 ;; TODO: this should probably take effect for *any* Nix-built Emacs
 ;; package, not just on NixOS
-(when (ceamx-host-nixos-p)
-  (setq elpaca-core-date (list (ceamx-emacs-nix-build-date))))
+;; (when (ceamx-host-nixos-p)
+;;   (setq elpaca-core-date (list (ceamx-emacs-nix-build-date))))
 #+end_src
 
 The installation code only needs to be changed when the Elpaca warns
@@ -598,7 +598,7 @@ This should be copied verbatim from the Elpaca documentation, with the
 definition for ~elpaca-directory~ removed.
 
 #+begin_src emacs-lisp
-(defvar elpaca-installer-version 0.9)
+(defvar elpaca-installer-version 0.10)
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
@@ -612,7 +612,7 @@ definition for ~elpaca-directory~ removed.
   (add-to-list 'load-path (if (file-exists-p build) build repo))
   (unless (file-exists-p repo)
     (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
+    (when (<= emacs-major-version 28) (require 'subr-x))
     (condition-case-unless-debug err
         (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
                   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
@@ -798,86 +798,14 @@ file is reloaded and ~elpaca-process-queues~ runs in
 ~eglot~ and ~org~ as missing dependencies.
 #+end_verse
 
-***** Install the latest version of ~seq~ builtin library, carefully
-
-~magit~ requires a more recent version of ~seq~ than the version included in
-Emacs 29.
-
-Requires special care because unloading it can make other libraries freak out.
-<https://github.com/progfolio/elpaca/issues/216#issuecomment-1868444883>
-
-#+begin_src emacs-lisp
-(defun +elpaca-unload-seq (e)
-  "Unload the builtin version of `seq' and continue the `elpaca' build E."
-  (and (featurep 'seq) (unload-feature 'seq t))
-  (elpaca--continue-build e))
-
-(defun +elpaca-seq-build-steps ()
-  "Update the `elpaca' build-steps to activate the latest version of the builtin `seq' package."
-  (append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
-                       elpaca--pre-built-steps
-                     elpaca-build-steps))
-          (list '+elpaca-unload-seq 'elpaca--activate-package)))
-
-(elpaca `(seq :build ,(+elpaca-seq-build-steps)))
-#+end_src
-
-***** Install the latest version of the builtin ~jsonrpc~ library
-
-Required by (and originally extracted from) ~eglot~.
-
-#+begin_src emacs-lisp
-(elpaca jsonrpc
-  (require 'jsonrpc))
-#+end_src
-
-***** Install the latest version of the ~eldoc~ builtin library, carefully
-
-Required by ~eglot~.
-
-~eldoc~ requires a delicate workaround to avoid catastrophy
-<https://github.com/progfolio/elpaca/issues/236#issuecomment-1879838229>
-
-
-#+begin_src emacs-lisp
-(unless after-init-time
-  (unload-feature 'eldoc t)
-  (setq custom-delayed-init-variables '())
-  (defvar global-eldoc-mode nil))
-
-(elpaca eldoc
-  (require 'eldoc)
-  (global-eldoc-mode))
-#+end_src
-
-***** Install the latest version of the builtin ~eglot~ package
-
-#+begin_src emacs-lisp
-(unless after-init-time
-  (when (featurep 'eglot)
-    (unload-feature 'eglot)))
-
-(elpaca eglot)
-#+end_src
-
-***** Install the latest version of the builtin ~flymake~ package
-
-#+begin_src emacs-lisp
-(unless after-init-time
-  (when (featurep 'flymake)
-    (unload-feature 'flymake)))
-
-(elpaca flymake)
-#+end_src
-
 ***** Install the latest version of Org-Mode
 
 #+begin_src emacs-lisp
-(unless after-init-time
-  (when (featurep 'org)
-    (unload-feature 'org)))
+;; (unless after-init-time
+;;   (when (featurep 'org)
+;;     (unload-feature 'org)))
 
-(elpaca (org :autoloads "org-loaddefs.el"))
+;; (elpaca (org :autoloads "org-loaddefs.el"))
 #+end_src
 
 **** Install the latest version of ~use-package~
@@ -1098,10 +1026,11 @@ expect the value you arrive at to be as high as 100 MiB.
     (keymap-set transient-map "<escape>" #'transient-quit-one)))
 #+end_src
 
-*** Install the =persist= package from =site-lisp/= because of ELPA server issues
+*** Install the =persist= package from =emacsmirror= because of GNU ELPA server issues
 
 #+begin_src emacs-lisp
-(use-feature! persist)
+;; (package! (persist :host github :repo "emacsmirror/persist")
+;;   (require 'persist))
 #+end_src
 
 ** =init.el=: Environment
@@ -3531,23 +3460,27 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+end_src
 
 *** =dired-preview= :: a file previewer
+:PROPERTIES:
+:ID:       c0bd86a6-af1e-4a13-b4ff-ac46649951f9
+:END:
 
 + Website :: <https://protesilaos.com/emacs/dired-preview>
 
 #+begin_src emacs-lisp
 (package! dired-preview
-  (defer! 3
+  (defer! 2
     (dired-preview-global-mode))
+  (after! dired
+    (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode))
   (after! dired-preview
-    (setopt dired-preview-delay 0.7)
+    (setopt dired-preview-delay 0.1)
     (setopt dired-preview-max-size (expt 2 20))
     (setopt dired-preview-ignored-extensions-regexp
-            (concat "\\."
-                    "\\(mkv\\|webm\\|mp4\\|mp3\\|ogg\\|m4a"
-                    "\\|gz\\|zst\\|tar\\|xz\\|rar\\|zip"
-                    "\\|iso\\|epub\\|pdf\\)"))
-
-    (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode)))
+             (concat
+              "\\."
+              "\\(gz\\|" "zst\\|" "tar\\|" "xz\\|"
+              "rar\\|" "zip\\|" "iso\\|" "epub"
+              "\\)"))))
 #+end_src
 
 *** Provide the ~ceamx-init-dired~ feature
@@ -4503,6 +4436,9 @@ Define Embark actions for acting on tabs:
 #+end_src
 
 **** General buffer display settings :frame:display_buffer:
+:PROPERTIES:
+:ID:       20041467-dbd4-484f-9034-41ffca2b15a9
+:END:
 
 #+begin_src emacs-lisp
 (setopt switch-to-buffer-in-dedicated-window 'pop)
@@ -4682,6 +4618,9 @@ Action alist entries are:
 #+end_src
 
 ***** Configure overrides in ~popper-repeat-map~
+:PROPERTIES:
+:ID:       df697f37-7a4d-4206-80a2-1814bae3db2b
+:END:
 
 #+begin_src emacs-lisp
 (after! popper
@@ -4694,6 +4633,7 @@ Action alist entries are:
 ***** DISABLED Configure popup display control rules manually
 :PROPERTIES:
 :header-args: :tangle no
+:ID:       5ac1d56c-78f9-48c6-8a07-bff1a3608a7d
 :END:
 
 <https://github.com/karthink/popper/blob/master/README.org#popup-placement-controlled-using-display-buffer-alist-or-shackleel>
@@ -4709,6 +4649,9 @@ Action alist entries are:
 #+end_src
 
 **** =lentic= :: Create decoupled views of the same content
+:PROPERTIES:
+:ID:       c6b0beb5-5c7b-4125-b6db-7cf25629a06a
+:END:
 
 #+begin_src emacs-lisp
 (package! lentic
@@ -4838,12 +4781,14 @@ Action alist entries are:
   (setopt ceamx-window-workspace-provider 'activities))
 #+end_src
 
-**** =activites= :: organize window+buffer by activity :tabs:
+**** =activities= :: organize window+buffer by activity :tabs:
 :PROPERTIES:
 :ID:       91310539-1562-4d0c-9648-0f3aa56cc2f0
 :END:
 
 - Website :: <https://github.com/alphapapa/activities.el>
+
+Disabled because =persist= dependency is unavailable, likely due to GNU ELPA fuckery.
 
 #+begin_src emacs-lisp
 (package! activities
@@ -5443,6 +5388,9 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 *** Writing modes
 
 **** =typo= :: typographical correctneß
+:PROPERTIES:
+:ID:       07671fe0-00af-406f-9244-2e1eb7a6f46e
+:END:
 
 + Package :: <https://github.com/jorgenschaefer/typoel>
 
@@ -5450,13 +5398,22 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 *After*:	The “quick” brown — ffiox.
 
 #+begin_src emacs-lisp
+(require 'ceamx-lang)
+
 (package! typo
   ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
   (typo-global-mode 1)
 
-  ;; Cycle through typographical variants of commonly-mistyped
-  ;; characters like quotation marks and dashes.
-  (add-hook 'text-mode-hook #'typo-mode)
+  (setopt ceamx-lang-typo-mode-excluded-modes '(git-commit-mode))
+
+  (def-hook! ceamx-lang-typo-mode-maybe-enable-h ()
+    'text-mode-hook
+    "Conditionally enable `typo-mode'.
+`typo-mode' will not be enabled when the current major-mode is one of
+the major-modes listed in the `ceamx-lang-typo-mode-excluded-modes' user
+setting."
+    (unless (memq mode-name ceamx-lang-typo-mode-excluded-modes)
+      (typo-mode 1)))
 
   (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
 #+end_src
@@ -5496,6 +5453,9 @@ execution order."
 :END:
 
 **** General customizations for ~outline-mode~ and ~outline-minor-mode~
+:PROPERTIES:
+:ID:       e4910a42-68bf-4549-8384-18fd9dcfd9e4
+:END:
 
 Remember that ~org-mode~ is derived from ~outline-mode~.
 
@@ -6127,6 +6087,9 @@ because its bindings generally would need ~puni-mode~ to be active.
 #+end_src
 
 **** =treesit-auto= :: automatically use available ~treesit~ modes
+:PROPERTIES:
+:ID:       10383b28-1e9c-435c-9fe1-ebfba527690d
+:END:
 
 + Package :: <https://github.com/renzmann/treesit-auto>
 
@@ -7368,6 +7331,14 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 (package! dotenv-mode)
 #+end_src
 
+*** =yuck-mode= :: Language support for =yuck= configuration files for ElKowar’s Wacky Widgets
+:PROPERTIES:
+:ID:       b3d679d4-d658-424f-bbb3-2b56548835c0
+:END:
+#+begin_src emacs-lisp
+(package! yuck-mode)
+#+end_src
+
 *** =web-mode=
 :PROPERTIES:
 :ID:       19c081bf-6b29-4fbf-bffb-4e519b94fe45
@@ -7484,6 +7455,9 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 #+end_src
 
 *** TODO Embark integration for ~consult-notes~ :embark:
+:PROPERTIES:
+:ID:       ea52110b-de23-4a76-9d0c-81abb7edf5a3
+:END:
 #+begin_src emacs-lisp
 ;; via <https://github.com/mclear-tools/consult-notes#embark-support>
 ;; (after! (consult-notes embark)
@@ -8054,13 +8028,13 @@ for this behavior, but neither ~repeat-keep-prefix~ or ~repeat-check-key~
 seem to have an effect.
 
 #+begin_src emacs-lisp
-(after! org
-  (define-keymap :keymap org-navigation-repeat-map
-    "C-b" #'org-backward-heading-same-level
-    "C-f" #'org-forward-heading-same-level
-    "C-n" #'org-next-visible-heading
-    "C-p" #'org-previous-visible-heading
-    "C-u" #'org-up-heading))
+;; (after! org
+;;   (define-keymap :keymap org-navigation-repeat-map
+;;     "C-b" #'org-backward-heading-same-level
+;;     "C-f" #'org-forward-heading-same-level
+;;     "C-n" #'org-next-visible-heading
+;;     "C-p" #'org-previous-visible-heading
+;;     "C-u" #'org-up-heading))
 #+end_src
 
 *** Set up Org-Capture
@@ -8802,6 +8776,88 @@ This should be installed via Nixpkgs due to external dependencies.
           ready-player-repeat nil
           ready-player-shuffle nil))
 #+end_src
+*** =linkmarks= :: Keep link bookmarks in Org-Mode
+:PROPERTIES:
+:ID:       db54377f-9e4f-4708-a4ce-539e7441423e
+:END:
+
+#+begin_src emacs-lisp
+(package! (linkmarks :host github :repo "dustinlacewell/linkmarks")
+  (setopt linkmarks-file (expand-file-name "bookmarks.org" ceamx-biblio-dir)))
+#+end_src
+
+*** =org-capture-ref= :: Extract metadata from websites for capture
+:PROPERTIES:
+:ID:       45bc1e57-c0cf-4896-a32f-eb8ade2257c8
+:END:
+
+#+begin_src emacs-lisp
+;; XXX: Dependency of `org-capture-ref' without recipe.
+(package! (persid :host github :repo "rougier/persid"))
+
+(package! (org-capture-ref :host github :repo "yantar92/org-capture-ref")
+  (require 'org-capture-ref)
+
+  (setopt org-capture-templates
+          (doct-add-to
+           org-capture-templates
+           `( :group "Weblink"
+              :type entry
+              :file ,(expand-file-name "links.org" ceamx-biblio-dir)
+              :hook ,(##org-capture-ref-process-capture)
+              :link-type ,(##org-capture-ref-get-bibtex-field :type)
+              :org-entry ,(##org-capture-ref-get-org-entry)
+              :template ("* TODO %?%{space}%{org-entry}"
+                         ""
+                         "+ type :: %{link-type}")
+              :children (("Interactive" :keys "L"
+                          :clock-in t
+                          :clock-resume t
+                          :space " ")
+                         ("Silent" :keys "l"
+                          :space ""
+                          :immediate-finish t))))))
+#+end_src
+
+*** Bibliographies
+:PROPERTIES:
+:ID:       6ffdedb4-5a6a-47bf-98ca-40e3147f7d03
+:END:
+
+#+begin_src emacs-lisp
+(package! parsebib)
+(package! citeproc)
+
+;; `citar'
+
+(package! citar
+  (setopt citar-bibliography (list (expand-file-name "master.bib" ceamx-biblio-dir)))
+  (setopt org-cite-insert-processor 'citar
+          org-cite-follow-processor 'citar
+          org-cite-activate-processor 'citar))
+
+(when (locate-library "embark")
+  (package! citar-embark
+    (after! (citar embark)
+      (citar-embark-mode))))
+
+(when (locate-library "denote")
+  (package! citar-denote))
+
+;; `org-cite'
+
+;; (after! oc
+;;   (require 'oc-biblatex)
+
+;;   (setopt org-cite-global-bibliography citar-bibliography)
+;;   (setopt org-cite-export-processors '((latex biblatex) (t csl))))
+
+;; oc-csl requires citeproc, which requires the top-level org, so
+;; loading oc-csl after oc interferes with incremental loading of Org.
+(after! org
+  (require 'oc-csl))
+#+end_src
+
 *** Yijing aka I Ching
 
 Unfortunately, due to copyright restrictions, there are no modern translations
