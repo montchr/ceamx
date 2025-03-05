@@ -1206,6 +1206,7 @@ graphical frames.
 (define-keymap :keymap (current-global-map)
   "C-c a" nil ; reserved for agenda
   "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
+  "C-c B" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
   "C-c c" nil ; reserved for capture
   "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
@@ -3054,6 +3055,22 @@ enhancement to the builtin Emacs undo system as well.
   (defer-until! (fboundp 'ceamx/dogears-dispatch)
     (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
 #+end_src
+**** =bookmark-in-project= :: Functions to limit bookmark queries to current project
+:PROPERTIES:
+:ID:       ad886f04-b66b-453b-91c6-b1f9502e4af2
+:END:
+
+#+begin_src emacs-lisp
+(package! (bookmark-in-project
+           :host codeberg
+           :repo "ideasman42/emacs-bookmark-in-project")
+
+  (define-keymap :keymap ceamx-bookmark-prefix-map
+    "b" #'bookmark-in-project-jump
+    "n" #'bookmark-in-project-jump-next
+    "p" #'bookmark-in-project-jump-previous
+    "*" #'bookmark-in-project-toggle))
+#+end_src
 
 *** =which-key=
 
@@ -3658,7 +3675,7 @@ Fine-tune Vertico appearance per-command or per-category with
 
 #+begin_src emacs-lisp
 (package! consult
-  (keymap-global-set "C-c B" #'consult-bookmark)
+  (keymap-global-set "C-c B B" #'consult-bookmark)
   (keymap-global-set "C-c h" #'consult-history)
   (keymap-global-set "C-c k" #'consult-kmacro)
   (keymap-global-set "C-c q a t" #'consult-theme)
