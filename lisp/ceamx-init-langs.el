@@ -595,13 +595,13 @@ non-nil, buffers will never be formatted upon save."
 
 (after! treesit-fold
   (define-keymap :keymap treesit-fold-mode-map
-    "C-c l f f" #'treesit-fold-toggle
+    "C-c L f f" #'treesit-fold-toggle
 
-    "C-c l f c" #'treesit-fold-close
-    "C-c l f C" #'treesit-fold-close-all
-    "C-c l f o" #'treesit-fold-open
-    "C-c l f O" #'treesit-fold-open-all
-    "C-c l f r" #'treesit-fold-open-recursively))
+    "C-c L f c" #'treesit-fold-close
+    "C-c L f C" #'treesit-fold-close-all
+    "C-c L f o" #'treesit-fold-open
+    "C-c L f O" #'treesit-fold-open-all
+    "C-c L f r" #'treesit-fold-open-recursively))
 
 ;; =combobulate= :: A consistent structural navigation interface
 ;; :PROPERTIES:
@@ -615,7 +615,7 @@ non-nil, buffers will never be formatted upon save."
 (package! (combobulate :host github :repo "mickeynp/combobulate")
   (add-hook 'prog-mode-hook #'combobulate-mode)
 
-  (setopt combobulate-key-prefix "C-c l o"))
+  (setopt combobulate-key-prefix "C-c L o"))
 
 ;; Apply ~autoinsert~ skeletons to new files
 
@@ -633,6 +633,9 @@ non-nil, buffers will never be formatted upon save."
 (require 'ceamx-lisp)
 
 ;; Configure behavior for all Lisp modes with ~ceamx-lisp-init-hook~
+;; :PROPERTIES:
+;; :ID:       6070743a-a471-43f6-9f99-6f117b81ce95
+;; :END:
 
 
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
@@ -796,6 +799,9 @@ non-nil, buffers will never be formatted upon save."
   (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
 
 ;; =macrostep= :: interactive macro-explorer
+;; :PROPERTIES:
+;; :ID:       66579505-69d5-4c9c-bacb-12b27ffb958a
+;; :END:
 
 ;; + Package :: <https://github.com/emacsorphanage/macrostep>
 
@@ -886,11 +892,11 @@ The original function fails in the presence of whitespace after a sexp."
 
 
 (after! eglot
-  (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions)
-  (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
+  (keymap-set eglot-mode-map "C-c L a" #'eglot-code-actions)
+  (keymap-set eglot-mode-map "C-c L r" #'eglot-rename)
 
   (after! consult
-    (keymap-set eglot-mode-map "C-c l o" #'consult-eglot-symbols))
+    (keymap-set eglot-mode-map "C-c L o" #'consult-eglot-symbols))
 
   (setopt eglot-sync-connect 1)
   (setopt eglot-autoshutdown t)
@@ -1022,18 +1028,21 @@ The canonical source for the file can be found at the following location:
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
 
 ;; Keybindings
+;; :PROPERTIES:
+;; :ID:       580d70ee-0c49-4ddf-9f38-3d6f516fb09f
+;; :END:
 
 
-(keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
-(keymap-global-set "C-c l r" '("rename..." . eglot-rename))
-(keymap-global-set "C-c l o" #'consult-eglot-symbols)
+(keymap-global-set "C-c L a" '("action.." . eglot-code-actions))
+(keymap-global-set "C-c L r" '("rename..." . eglot-rename))
+(keymap-global-set "C-c L o" #'consult-eglot-symbols)
 
 (after! eglot
   ;; Override the default binding for `xref-find-apropos'.
   (keymap-set eglot-mode-map "C-M-." #'consult-eglot-symbols))
 
 (after! lsp-mode
-    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
+    (keymap-global-set "C-c L o" #'consult-lsp-symbols)
     ;; Override the default binding for `xref-find-apropos'.
     (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 
@@ -1105,9 +1114,9 @@ The canonical source for the file can be found at the following location:
 (package! jq-mode
   (add-to-list 'auto-mode-alist '("\\.jq$" . jq-mode))
   (after! json
-    (keymap-set js-json-mode-map "C-c o r" #'jq-interactively))
+    (keymap-set js-json-mode-map "C-c O r" #'jq-interactively))
   (after! json-ts-mode
-    (keymap-set json-ts-mode-map "C-c o r" #'jq-interactively)))
+    (keymap-set json-ts-mode-map "C-c O r" #'jq-interactively)))
 
 ;; JavaScript
 
@@ -1173,8 +1182,8 @@ The canonical source for the file can be found at the following location:
   (declare-function markdown-insert-blockquote "markdown-mode")
 
   (define-keymap :keymap markdown-mode-map
-    "C-c i l" #'markdown-insert-link
-    "C-c i q" #'markdown-insert-blockquote)
+    "C-c I l" #'markdown-insert-link
+    "C-c I q" #'markdown-insert-blockquote)
 
   ;; <https://github.com/jrblevin/markdown-mode/issues/328#issuecomment-405361296>
   ;; <https://github.com/radian-software/radian/blob/b2fac3a615186f77de0bdc7e4f06e9aa46c222bb/emacs/radian.el#L3199-L3206>.
@@ -1286,7 +1295,7 @@ usually wrongly fontified as a metadata block."
   (keymap-set nix-mode-map "C-:" #'nix-repl))
 
 (after! (nix-mode tempel)
-  (tempel-key "C-c i t a" modargs nix-mode-map))
+  (tempel-key "C-c I t a" modargs nix-mode-map))
 
 (after! nix-ts-mode
   (keymap-set nix-ts-mode-map "C-:" #'nix-repl))

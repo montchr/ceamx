@@ -82,7 +82,7 @@
 
 
 (after! dired
-  (keymap-set dired-mode-map "C-c t i" #'image-dired))
+  (keymap-set dired-mode-map "C-c T i" #'image-dired))
 
 (after! image-dired
   (keymap-set image-dired-thumbnail-mode-map "RET" #'image-dired-thumbnail-display-external)
@@ -130,7 +130,7 @@
   (defer! 2
     (dired-preview-global-mode))
   (after! dired
-    (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode))
+    (keymap-set dired-mode-map "C-c T p" #'dired-preview-mode))
   (after! dired-preview
     (setopt dired-preview-delay 0.1)
     (setopt dired-preview-max-size (expt 2 20))

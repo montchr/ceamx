@@ -22,19 +22,28 @@
 
 ;;;; Variables
 
-(defvar ceamx-lisp-modes-list '(emacs-lisp-mode
-                                ielm-mode
-                                lisp-mode
-                                inferior-lisp-mode
-                                lisp-interaction-mode)
-  "Supported Lisp modes.")
-
 (defvar +emacs-lisp-outline-regexp "[ \t]*;;;\\(;*\\**\\) [^ \t\n]"
   "Regexp to use for `outline-regexp' in `emacs-lisp-mode'.
 This marks a foldable marker for `outline-minor-mode' in elisp buffers.")
 
 (defvar ceamx-lisp-init-hook '()
   "Hook to run in all supported Lisp modes.")
+
+;;;; Customization
+
+(defgroup ceamx-lisp nil
+  "Group for `ceamx-lisp' customization."
+  :group 'ceamx)
+
+(defcustom ceamx-lisp-modes-list
+  '( emacs-lisp-mode
+     ielm-mode
+     lisp-mode
+     inferior-lisp-mode
+     lisp-interaction-mode
+     yuck-mode)
+  "Lisp modes supported by `ceamx-lisp'."
+  :group 'ceamx-lisp)
 
 ;;;; Functions
 

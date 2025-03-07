@@ -132,14 +132,6 @@
     "f" #'crux-cleanup-buffer-or-region
     "M-w" #'crux-kill-buffer-truename)
 
-  (define-prefix-command 'ceamx-region-prefix 'ceamx-region-prefix-map)
-
-  (keymap-global-set "C-c r" #'ceamx-region-prefix)
-
-  (define-keymap :keymap ceamx-region-prefix-map
-    "f" #'crux-cleanup-buffer-or-region
-    "TAB" #'crux-indent-rigidly-and-copy-to-clipboard)
-
   (define-keymap :keymap ceamx-file-prefix
     "c" #'crux-copy-file-preserve-attributes
     "d" #'crux-delete-file-and-buffer
@@ -289,7 +281,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (add-hook 'ceamx-emacs-startup-hook #'editorconfig-mode)
 
   ;; TODO: needs prefix to be defined early!
-  ;;  (keymap-global-set "C-c l f e" #'editorconfig-format-buffer)
+  ;;  (keymap-global-set "C-c L f e" #'editorconfig-format-buffer)
 
   (after! editorconfig
     (add-hook 'editorconfig-after-apply-functions
@@ -453,6 +445,37 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (package! ialign
   (keymap-global-set "C-x l" #'ialign))
 
+;; Modal editing
+;; :PROPERTIES:
+;; :ID:       1293c641-aecb-43ab-b001-366e7e0543c8
+;; :END:
+
+
+(package! (bray :host codeberg :repo "ideasman42/emacs-bray")
+  (require 'bray)
+  (require 'ceamx-modaled)
+
+  )
+
+(use-feature! ceamx-modaled
+  :demand t
+  :after (bray)
+  :hook ((ceamx-after-init . ceamx-modaled-mode))
+  :defines ( ceamx-modaled-state-normal-map
+             ceamx-modaled-state-insert-map)
+  :config
+  (setopt bray-state-default 'normal)
+  (setopt bray-state-definitions
+          '(( :id normal
+              :cursor-type hollow
+              :lighter "Ⓝ"
+              :keymaps ((t . ceamx-modaled-state-normal-map)))
+            ( :id insert
+              :cursor-type bar
+              :lighter "Ⓘ"
+              :keymaps ((t . ceamx-modaled-state-insert-map))
+              :is-input t))))
+
 ;; Line wrapping
 
 
@@ -519,6 +542,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (auth-source-pass-enable))
 
 ;; Configure GnuPG integration with ~epa~ & ~epg~
+;; :PROPERTIES:
+;; :ID:       99415168-3785-4d17-bea0-2c71f0422de1
+;; :END:
 
 
 (use-feature! epa
@@ -551,8 +577,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
   :config
   ;; Also see the ':' prefix!
   (define-keymap :keymap dired-mode-map
-    "C-c e e" #'epa-dired-do-encrypt
-    "C-c e d" #'epa-dired-do-decrypt))
+    "C-c K e" #'epa-dired-do-encrypt
+    "C-c K d" #'epa-dired-do-decrypt))
 
 (use-feature! epg
   :config
@@ -848,6 +874,22 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
   :config
   (setopt vundo-glyph-alist vundo-unicode-symbols))
+
+;; =bookmark-in-project= :: Functions to limit bookmark queries to current project
+;; :PROPERTIES:
+;; :ID:       ad886f04-b66b-453b-91c6-b1f9502e4af2
+;; :END:
+
+
+(package! (bookmark-in-project
+           :host codeberg
+           :repo "ideasman42/emacs-bookmark-in-project")
+
+  (define-keymap :keymap ceamx-bookmark-prefix-map
+    "b" #'bookmark-in-project-jump
+    "n" #'bookmark-in-project-jump-next
+    "p" #'bookmark-in-project-jump-previous
+    "*" #'bookmark-in-project-toggle))
 
 ;; =which-key=
 

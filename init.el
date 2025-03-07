@@ -603,33 +603,33 @@ The ORDER can be used to deduce the feature context."
 
 
 (define-keymap :keymap (current-global-map)
-  "C-c a" nil ; reserved for agenda
-  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
-  "C-c c" nil ; reserved for capture
+  ;; "C-c A"
+  "C-c B" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
   "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
-  ;; "C-c d"
-  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
-  "C-c E" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
-  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
-  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
-  ;; "C-c j"
-  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
-  "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
-  "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
-  ;; "C-c m"
-  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
-  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
-  "C-c p" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
-  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
-  ;; "C-c r"
-  ;; "C-c s" (cons "[ ]")
-  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
-  ;; "C-c u"
-  ;; "C-c v"
-  "C-c w" (cons "[ WORKSPACE ]" #'ceamx-window-prefix)
-  ;; "C-c x"
-  ;; "C-c y"
-  ;; "C-c z"
+  ;; "C-c D"
+  "C-c E" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
+  "C-c F" (cons "[ FILE      ]" #'ceamx-file-prefix)
+  ;; "C-c H"
+  "C-c I" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
+  ;; "C-c J"
+  "C-c K" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
+  "C-c L" (cons "[ CODE      ]" #'ceamx-code-prefix)
+  "C-c L f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
+  "C-c L F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
+  "C-c M" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
+  "C-c N" (cons "[ NOTES     ]" #'ceamx-note-prefix)
+  "C-c O" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c P" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
+  "C-c Q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
+  ;; "C-c R"
+  ;; "C-c S"
+  "C-c T" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
+  ;; "C-c U"
+  ;; "C-c V"
+  "C-c W" (cons "[ WEB       ]" #'ceamx-web-prefix)
+  ;; "C-c X"
+  ;; "C-c Y"
+  "C-c Z" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix)
   )
 
 ;; Load Features
@@ -658,7 +658,7 @@ The ORDER can be used to deduce the feature context."
 (require 'ceamx-init-fun)
 (require 'ceamx-init-flows)
 
-;; [C-c o] :: Launch
+;; [C-c O] :: Launch
 ;; :PROPERTIES:
 ;; :ID:       bb8d84ed-5854-4892-9b76-77e67063a71e
 ;; :END:
@@ -667,7 +667,7 @@ The ORDER can be used to deduce the feature context."
 (define-keymap :keymap ceamx-launch-prefix
   "s" #'scratch-buffer)
 
-;; [C-c q] :: Session
+;; [C-c Q] :: Session
 ;; :PROPERTIES:
 ;; :ID:       89f0be09-aa04-40cd-9365-f41a5fbf37c6
 ;; :END:
@@ -695,7 +695,7 @@ The ORDER can be used to deduce the feature context."
 ;;     "a d" #'ceamx-ui/dark
 ;;     "a l" #'ceamx-ui/light))
 
-;; [C-c t] :: Toggle
+;; [C-c T] :: Toggle
 
 
 (define-keymap :keymap ceamx-toggle-prefix

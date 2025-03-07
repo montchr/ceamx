@@ -23,6 +23,7 @@ will usually also work on macOS.
 * Bootstrap
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       2a09d289-4dcd-413c-b142-f6a8d974a8ee
 :END:
 ** =early-init.el=
 :PROPERTIES:
@@ -1204,34 +1205,33 @@ graphical frames.
 
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
-  "C-c a" nil ; reserved for agenda
-  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
-  "C-c B" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
-  "C-c c" nil ; reserved for capture
+  ;; "C-c A"
+  "C-c B" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
   "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
-  ;; "C-c d"
-  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
-  "C-c E" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
-  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
-  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
-  ;; "C-c j"
-  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
-  "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
-  "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
-  ;; "C-c m"
-  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
-  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
-  "C-c p" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
-  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
-  ;; "C-c r"
-  ;; "C-c s" (cons "[ ]")
-  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
-  ;; "C-c u"
-  ;; "C-c v"
-  "C-c w" (cons "[ WORKSPACE ]" #'ceamx-window-prefix)
-  ;; "C-c x"
-  ;; "C-c y"
-  ;; "C-c z"
+  ;; "C-c D"
+  "C-c E" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
+  "C-c F" (cons "[ FILE      ]" #'ceamx-file-prefix)
+  ;; "C-c H"
+  "C-c I" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
+  ;; "C-c J"
+  "C-c K" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
+  "C-c L" (cons "[ CODE      ]" #'ceamx-code-prefix)
+  "C-c L f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
+  "C-c L F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
+  "C-c M" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
+  "C-c N" (cons "[ NOTES     ]" #'ceamx-note-prefix)
+  "C-c O" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c P" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
+  "C-c Q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
+  ;; "C-c R"
+  ;; "C-c S"
+  "C-c T" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
+  ;; "C-c U"
+  ;; "C-c V"
+  "C-c W" (cons "[ WEB       ]" #'ceamx-web-prefix)
+  ;; "C-c X"
+  ;; "C-c Y"
+  "C-c Z" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix)
   )
 #+end_src
 
@@ -1428,10 +1428,12 @@ applying margin, padding, borders.
 
 #+begin_src emacs-lisp
 (package! modus-themes
-  (require 'modus-themes)
+  (require 'modus-themes))
 
+;; FIXME: does not take effect until eval after activating theme...
+(after! modus-themes
   (ceamx-ui-define-preferred-themes
-   'modus 'modus-vivendi-tinted 'modus-operandi)
+   'modus 'modus-vivendi 'modus-operandi)
 
   (setopt modus-themes-italic-constructs t
           modus-themes-bold-constructs t
@@ -1440,11 +1442,19 @@ applying margin, padding, borders.
   (setopt modus-themes-to-toggle
           (ceamx-ui-theme-family-preferred-themes 'modus))
   (setopt modus-themes-disable-other-themes nil)
+  (setopt modus-themes-custom-auto-reload t)
   (setopt modus-themes-headings
-          '((1 . (variable-pitch bold 1.1))
+          '((1 . (variable-pitch bold 1.4))
+            (2 . (variable-pitch semibold 1.2))
+            (3 . (variable-pitch semibold 1.0))
             (agenda-structure . (variable-pitch light 2.2))
             (agenda-date . (variable-pitch regular 1.3))
-            (t . (variable-pitch semibold 1.0)))))
+            (t . (variable-pitch medium 1.0))))
+  (setopt modus-themes-prompts '(italic bold))
+  (setopt modus-themes-completions
+          '((matches . (extrabold))
+            (selection . (semibold italic text-also))))
+  (setopt modus-themes-org-blocks 'tinted-background))
 #+end_src
 
 **** =ef-themes= :: colorful yet legible themes
@@ -1467,11 +1477,14 @@ applying margin, padding, borders.
 #+end_src
 
 **** Configure the preferred themes
+:PROPERTIES:
+:ID:       a21cb155-3353-4e2c-9593-1680b43f4575
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! ceamx-ui
   :config
-  (setopt ceamx-ui-theme-family 'ef))
+  (setopt ceamx-ui-theme-family 'modus))
 #+end_src
 
 **** Set approximate stomping coordinates for hyper-astronomic relativity calculations
@@ -1695,7 +1708,7 @@ applying margin, padding, borders.
 Focusing by sentence, paragraph, or code block.
 
 #+begin_src emacs-lisp
-;; TODO: keybindings to C-c t z as prefix
+;; TODO: keybindings to C-c T z as prefix
 (package! focus
   (define-keymap :keymap ceamx-toggle-prefix
     "Z" #'focus-mode))
@@ -2238,14 +2251,6 @@ NOTE: Incompatible with kitchen-sink modeline packages like
     "f" #'crux-cleanup-buffer-or-region
     "M-w" #'crux-kill-buffer-truename)
 
-  (define-prefix-command 'ceamx-region-prefix 'ceamx-region-prefix-map)
-
-  (keymap-global-set "C-c r" #'ceamx-region-prefix)
-
-  (define-keymap :keymap ceamx-region-prefix-map
-    "f" #'crux-cleanup-buffer-or-region
-    "TAB" #'crux-indent-rigidly-and-copy-to-clipboard)
-
   (define-keymap :keymap ceamx-file-prefix
     "c" #'crux-copy-file-preserve-attributes
     "d" #'crux-delete-file-and-buffer
@@ -2402,7 +2407,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (add-hook 'ceamx-emacs-startup-hook #'editorconfig-mode)
 
   ;; TODO: needs prefix to be defined early!
-  ;;  (keymap-global-set "C-c l f e" #'editorconfig-format-buffer)
+  ;;  (keymap-global-set "C-c L f e" #'editorconfig-format-buffer)
 
   (after! editorconfig
     (add-hook 'editorconfig-after-apply-functions
@@ -2596,6 +2601,38 @@ Needs better bindings.
                   :repo "aatmunbaxi/lasgun.el"))
 #+end_src
 
+*** Modal editing
+:PROPERTIES:
+:ID:       1293c641-aecb-43ab-b001-366e7e0543c8
+:END:
+
+#+begin_src emacs-lisp
+(package! (bray :host codeberg :repo "ideasman42/emacs-bray")
+  (require 'bray)
+  (require 'ceamx-modaled)
+
+  )
+
+(use-feature! ceamx-modaled
+  :demand t
+  :after (bray)
+  :hook ((ceamx-after-init . ceamx-modaled-mode))
+  :defines ( ceamx-modaled-state-normal-map
+             ceamx-modaled-state-insert-map)
+  :config
+  (setopt bray-state-default 'normal)
+  (setopt bray-state-definitions
+          '(( :id normal
+              :cursor-type hollow
+              :lighter "Ⓝ"
+              :keymaps ((t . ceamx-modaled-state-normal-map)))
+            ( :id insert
+              :cursor-type bar
+              :lighter "Ⓘ"
+              :keymaps ((t . ceamx-modaled-state-insert-map))
+              :is-input t))))
+#+end_src
+
 *** Line wrapping
 
 #+begin_src emacs-lisp
@@ -2664,6 +2701,9 @@ Needs better bindings.
 #+end_src
 
 *** Configure GnuPG integration with ~epa~ & ~epg~
+:PROPERTIES:
+:ID:       99415168-3785-4d17-bea0-2c71f0422de1
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! epa
@@ -2696,8 +2736,8 @@ Needs better bindings.
   :config
   ;; Also see the ':' prefix!
   (define-keymap :keymap dired-mode-map
-    "C-c e e" #'epa-dired-do-encrypt
-    "C-c e d" #'epa-dired-do-decrypt))
+    "C-c K e" #'epa-dired-do-encrypt
+    "C-c K d" #'epa-dired-do-decrypt))
 
 (use-feature! epg
   :config
@@ -3436,7 +3476,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 #+begin_src emacs-lisp
 (after! dired
-  (keymap-set dired-mode-map "C-c t i" #'image-dired))
+  (keymap-set dired-mode-map "C-c T i" #'image-dired))
 
 (after! image-dired
   (keymap-set image-dired-thumbnail-mode-map "RET" #'image-dired-thumbnail-display-external)
@@ -3488,7 +3528,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
   (defer! 2
     (dired-preview-global-mode))
   (after! dired
-    (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode))
+    (keymap-set dired-mode-map "C-c T p" #'dired-preview-mode))
   (after! dired-preview
     (setopt dired-preview-delay 0.1)
     (setopt dired-preview-max-size (expt 2 20))
@@ -3678,7 +3718,7 @@ Fine-tune Vertico appearance per-command or per-category with
   (keymap-global-set "C-c B B" #'consult-bookmark)
   (keymap-global-set "C-c h" #'consult-history)
   (keymap-global-set "C-c k" #'consult-kmacro)
-  (keymap-global-set "C-c q a t" #'consult-theme)
+  (keymap-global-set "C-c Q a t" #'consult-theme)
 
   ;; Improve previews for `consult-register' and other register commands
   (setopt register-preview-delay 0.5)
@@ -4042,7 +4082,7 @@ Furthermore Tempel supports syntax extensions:
   #+begin_src emacs-lisp
 (package! tempel
   (define-keymap :keymap (current-global-map)
-    "C-c y" #'tempel-insert
+    "C-c Y" #'tempel-insert
 
     "M-+" #'tempel-complete
     "M-*" #'tempel-insert)
@@ -4147,6 +4187,9 @@ A final newline would be inserted literally into the snippet expansion."
 #+end_src
 
 *** Completion-At-Point
+:PROPERTIES:
+:ID:       1d934121-bd5e-4e30-a0e4-06e0dceb8cb4
+:END:
 
 **** =corfu= :: [co]mpletion in [r]egion [fu]nction
 :PROPERTIES:
@@ -4378,12 +4421,23 @@ Define Embark actions for acting on tabs:
   :init
   (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
 #+end_src
+
+*** Keybindings
+:PROPERTIES:
+:ID:       e5538115-fecd-4e47-bd55-d9e0fb112313
+:END:
+
+#+begin_src emacs-lisp
+(keymap-global-set "C-c p" #'completion-at-point)
+#+end_src
+
 *** Provide feature ~ceamx-init-completion~
 
 #+begin_src emacs-lisp
 (provide 'ceamx-init-completion)
 ;;; ceamx-init-completion.el ends here
 #+end_src
+
 
 ** Window & Buffer Management :window:
 :PROPERTIES:
@@ -4688,6 +4742,9 @@ Action alist entries are:
 #+end_src
 
 *** Interactive window management
+:PROPERTIES:
+:ID:       7065d3dc-0cf6-4271-ba08-6622f26e22d6
+:END:
 **** Restore previous window configurations with the ~winner-mode~ feature :history:
 
 #+begin_src emacs-lisp
@@ -4729,6 +4786,9 @@ Action alist entries are:
 #+end_src
 
 **** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
+:PROPERTIES:
+:ID:       5d1605bb-1c26-41cc-a1f7-317354ff113b
+:END:
 
 #+begin_src emacs-lisp
 (transient-define-prefix ceamx/window-dispatch ()
@@ -6178,13 +6238,13 @@ Increase the amount of syntax-highlighted structures:
 
 (after! treesit-fold
   (define-keymap :keymap treesit-fold-mode-map
-    "C-c l f f" #'treesit-fold-toggle
+    "C-c L f f" #'treesit-fold-toggle
 
-    "C-c l f c" #'treesit-fold-close
-    "C-c l f C" #'treesit-fold-close-all
-    "C-c l f o" #'treesit-fold-open
-    "C-c l f O" #'treesit-fold-open-all
-    "C-c l f r" #'treesit-fold-open-recursively))
+    "C-c L f c" #'treesit-fold-close
+    "C-c L f C" #'treesit-fold-close-all
+    "C-c L f o" #'treesit-fold-open
+    "C-c L f O" #'treesit-fold-open-all
+    "C-c L f r" #'treesit-fold-open-recursively))
 #+end_src
 
 **** =combobulate= :: A consistent structural navigation interface
@@ -6199,7 +6259,7 @@ Increase the amount of syntax-highlighted structures:
 (package! (combobulate :host github :repo "mickeynp/combobulate")
   (add-hook 'prog-mode-hook #'combobulate-mode)
 
-  (setopt combobulate-key-prefix "C-c l o"))
+  (setopt combobulate-key-prefix "C-c L o"))
 #+end_src
 
 *** Apply ~autoinsert~ skeletons to new files
@@ -6220,6 +6280,9 @@ Configuration for working with Lisps of all kinds.
 #+end_src
 
 **** Configure behavior for all Lisp modes with ~ceamx-lisp-init-hook~
+:PROPERTIES:
+:ID:       6070743a-a471-43f6-9f99-6f117b81ce95
+:END:
 
 #+begin_src emacs-lisp
 (add-hook 'ceamx-lisp-init-hook #'ceamx-enable-check-parens-on-save)
@@ -6448,6 +6511,9 @@ non-syntactic meaning to the reader.
 #+end_src
 
 **** =macrostep= :: interactive macro-explorer
+:PROPERTIES:
+:ID:       66579505-69d5-4c9c-bacb-12b27ffb958a
+:END:
 
 + Package :: <https://github.com/emacsorphanage/macrostep>
 
@@ -6546,11 +6612,11 @@ development tool as needed.
 
 #+begin_src emacs-lisp
 (after! eglot
-  (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions)
-  (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
+  (keymap-set eglot-mode-map "C-c L a" #'eglot-code-actions)
+  (keymap-set eglot-mode-map "C-c L r" #'eglot-rename)
 
   (after! consult
-    (keymap-set eglot-mode-map "C-c l o" #'consult-eglot-symbols))
+    (keymap-set eglot-mode-map "C-c L o" #'consult-eglot-symbols))
 
   (setopt eglot-sync-connect 1)
   (setopt eglot-autoshutdown t)
@@ -6689,18 +6755,21 @@ The canonical source for the file can be found at the following location:
 #+end_src
 
 ***** Keybindings
+:PROPERTIES:
+:ID:       580d70ee-0c49-4ddf-9f38-3d6f516fb09f
+:END:
 
 #+begin_src emacs-lisp
-(keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
-(keymap-global-set "C-c l r" '("rename..." . eglot-rename))
-(keymap-global-set "C-c l o" #'consult-eglot-symbols)
+(keymap-global-set "C-c L a" '("action.." . eglot-code-actions))
+(keymap-global-set "C-c L r" '("rename..." . eglot-rename))
+(keymap-global-set "C-c L o" #'consult-eglot-symbols)
 
 (after! eglot
   ;; Override the default binding for `xref-find-apropos'.
   (keymap-set eglot-mode-map "C-M-." #'consult-eglot-symbols))
 
 (after! lsp-mode
-    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
+    (keymap-global-set "C-c L o" #'consult-lsp-symbols)
     ;; Override the default binding for `xref-find-apropos'.
     (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 #+end_src
@@ -6811,9 +6880,9 @@ Install the =yaml-language-server= from Nixpkgs first.
 (package! jq-mode
   (add-to-list 'auto-mode-alist '("\\.jq$" . jq-mode))
   (after! json
-    (keymap-set js-json-mode-map "C-c o r" #'jq-interactively))
+    (keymap-set js-json-mode-map "C-c O r" #'jq-interactively))
   (after! json-ts-mode
-    (keymap-set json-ts-mode-map "C-c o r" #'jq-interactively)))
+    (keymap-set json-ts-mode-map "C-c O r" #'jq-interactively)))
 #+end_src
 
 *** JavaScript
@@ -6885,8 +6954,8 @@ Install the =yaml-language-server= from Nixpkgs first.
   (declare-function markdown-insert-blockquote "markdown-mode")
 
   (define-keymap :keymap markdown-mode-map
-    "C-c i l" #'markdown-insert-link
-    "C-c i q" #'markdown-insert-blockquote)
+    "C-c I l" #'markdown-insert-link
+    "C-c I q" #'markdown-insert-blockquote)
 
   ;; <https://github.com/jrblevin/markdown-mode/issues/328#issuecomment-405361296>
   ;; <https://github.com/radian-software/radian/blob/b2fac3a615186f77de0bdc7e4f06e9aa46c222bb/emacs/radian.el#L3199-L3206>.
@@ -7053,7 +7122,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (keymap-set nix-mode-map "C-:" #'nix-repl))
 
 (after! (nix-mode tempel)
-  (tempel-key "C-c i t a" modargs nix-mode-map))
+  (tempel-key "C-c I t a" modargs nix-mode-map))
 
 (after! nix-ts-mode
   (keymap-set nix-ts-mode-map "C-:" #'nix-repl))
@@ -7421,6 +7490,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle lisp/ceamx-init-notes.el
 :VISIBILITY: folded
+:ID:       2fd5a541-44ce-4752-884f-fc3b188d43be
 :END:
 
 *** Requirements
@@ -7522,6 +7592,8 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
     ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
     "r" #'denote-region)
 
+  (keymap-global-set "C-c n" #'denote)
+
   (define-keymap :keymap ceamx-note-prefix-map
     "n" #'denote
     "d" #'denote-sort-dired
@@ -7538,10 +7610,10 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
       "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
   (after! org
     (define-keymap :keymap org-mode-map
-      "C-c n h" #'denote-org-extras-extract-org-subtree
-      "C-c n l" #'denote-link
-      "C-c n L" #'denote-add-links
-      "C-c n b" #'denote-backlinks)))
+      "C-c N h" #'denote-org-extras-extract-org-subtree
+      "C-c N l" #'denote-link
+      "C-c N L" #'denote-add-links
+      "C-c N b" #'denote-backlinks)))
 
 (after! denote
   (setopt denote-directory ceamx-note-default-dir)
@@ -7873,9 +7945,9 @@ Intended for use as a local hook function on
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
   (after! org
-    (keymap-set org-mode-map "C-c t p" #'org-modern-mode))
+    (keymap-set org-mode-map "C-c T p" #'org-modern-mode))
   (after! org-agenda
-    (keymap-set org-agenda-mode-map "C-c t p" #'org-modern-mode)))
+    (keymap-set org-agenda-mode-map "C-c T p" #'org-modern-mode)))
 
 (package! org-appear
   (add-hook 'org-mode-hook #'org-appear-mode))
@@ -7972,7 +8044,7 @@ Intended for use as a local hook function on
 #+begin_src emacs-lisp
 (package! org-node
   (keymap-global-set "M-s M-f" #'org-node-find)
-  (keymap-global-set "C-c i n" #'org-node-insert-link)
+  (keymap-global-set "C-c I n" #'org-node-insert-link)
   (after! org-mode
     (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link)))
 
@@ -8195,14 +8267,14 @@ I don't think this is working properly...
   (add-hook 'dired-mode-hook #'org-download-enable))
 #+END_SRC
 
-*** =org-web-tools= :: view, capture, and archive webpages in org-mode :package:network:web:
+*** =org-web-tools= :: view, capture, and archive webpages in org-mode :package:network:web:ATTACH:
 :PROPERTIES:
 :ID:       17850df6-1729-4b2b-8fc5-62f4b377c2a7
 :END:
 
 #+BEGIN_SRC emacs-lisp
 (package! org-web-tools
-  (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
+  (keymap-set org-mode-map "C-c I l" #'org-web-tools-insert-link-for-url))
 #+END_SRC
 
 *** =org-sidebar= :: provide a sidebar for Org buffers :package:
@@ -8235,6 +8307,9 @@ I don't think this is working properly...
 #+end_src
 
 *** Exporters
+:PROPERTIES:
+:ID:       6edbf7a1-4ce2-4c76-bc45-50072d7390aa
+:END:
 **** =ox-gfm= :: org-export to GitHub Flavored Markdown (GFM) :package:
 :PROPERTIES:
 :ID:       e6aaf439-cfd5-4ed7-8d54-23aaec181b6f
@@ -8605,11 +8680,14 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 #+end_src
 
 *** [[https://github.com/hniksic/emacs-htmlize][hniksic/emacs-htmlize]]: Convert buffer text and decorations to HTML
+:PROPERTIES:
+:ID:       92559e4f-9d4a-4613-82bf-c2373cb5e5da
+:END:
 
 #+begin_src emacs-lisp
 (package! htmlize
   ;; FIXME: conflicts with `beframe'
-  ;; (keymap-global-set "C-c b h" #'htmlize-buffer)
+  ;; (keymap-global-set "C-c B h" #'htmlize-buffer)
   )
 #+end_src
 *** [[https://github.com/alphapapa/unpackaged.el][alphapapa/unpackaged.el]]: a library of useful yet "unsubstantial" Emacs Lisp code
@@ -8793,6 +8871,15 @@ This should be installed via Nixpkgs due to external dependencies.
           ready-player-repeat nil
           ready-player-shuffle nil))
 #+end_src
+*** =mpdel= :: MPD client for Emacs
+:PROPERTIES:
+:ID:       4009635b-4bf9-4b7e-afd8-e829d8ab45a6
+:END:
+
+#+begin_src emacs-lisp
+(package! mpdel)
+#+end_src
+
 *** =linkmarks= :: Keep link bookmarks in Org-Mode
 :PROPERTIES:
 :ID:       db54377f-9e4f-4708-a4ce-539e7441423e
@@ -9206,6 +9293,34 @@ Define agenda groups for display with the =org-super-agenda= extension:
           (:priority<= "B" :order 1))))
 #+end_src
 
+** Thee Media Flows
+:PROPERTIES:
+:ID:       821b9078-fb8a-4c8a-a315-31239cd36a0d
+:END:
+
+*** Goals
+
+**** TODO Provide a bookmarking flow as a replacement for browser-specific or platform-specific bookmark managers
+:PROPERTIES:
+:ID:       ed52b507-eedc-491c-895b-d400450fd7ef
+:END:
+
+
+*** Webpage archiving
+:PROPERTIES:
+:ID:       8a46fa61-d401-440b-a0ce-5ef0d76cdb95
+:END:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-web-prefix-map
+  "i" #'org-web-tools-insert-link-for-url
+  "O" #'org-web-tools-read-url-as-org)
+
+(after! org-mode
+  (keymap-set org-mode-map "C-c W a" #'org-web-tools-archive-attach)
+  (keymap-set org-mode-map "C-c W c" #'org-web-tools-convert-links-to-page-entries))
+#+end_src
+
 ** Provide the =ceamx-init-flows= feature
 :PROPERTIES:
 :ID:       4fb152c5-078d-4851-b518-55f85bbd6d22
@@ -9251,7 +9366,7 @@ Define agenda groups for display with the =org-super-agenda= extension:
 :ID:       d39ff068-1ed1-4bc6-bc7e-f5aa50bb8edd
 :END:
 
-** [C-c o] :: Launch
+** [C-c O] :: Launch
 :PROPERTIES:
 :ID:       bb8d84ed-5854-4892-9b76-77e67063a71e
 :END:
@@ -9261,7 +9376,7 @@ Define agenda groups for display with the =org-super-agenda= extension:
   "s" #'scratch-buffer)
 #+end_src
 
-** [C-c q] :: Session
+** [C-c Q] :: Session
 :PROPERTIES:
 :ID:       89f0be09-aa04-40cd-9365-f41a5fbf37c6
 :END:
@@ -9290,7 +9405,7 @@ Define agenda groups for display with the =org-super-agenda= extension:
 ;;     "a l" #'ceamx-ui/light))
 #+end_src
 
-** [C-c t] :: Toggle
+** [C-c T] :: Toggle
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-toggle-prefix

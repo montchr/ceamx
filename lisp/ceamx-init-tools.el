@@ -51,11 +51,14 @@
     ))
 
 ;; [[https://github.com/hniksic/emacs-htmlize][hniksic/emacs-htmlize]]: Convert buffer text and decorations to HTML
+;; :PROPERTIES:
+;; :ID:       92559e4f-9d4a-4613-82bf-c2373cb5e5da
+;; :END:
 
 
 (package! htmlize
   ;; FIXME: conflicts with `beframe'
-  ;; (keymap-global-set "C-c b h" #'htmlize-buffer)
+  ;; (keymap-global-set "C-c B h" #'htmlize-buffer)
   )
 
 ;; [[https://github.com/alphapapa/unpackaged.el][alphapapa/unpackaged.el]]: a library of useful yet "unsubstantial" Emacs Lisp code
@@ -208,6 +211,14 @@
   (setopt ready-player-autoplay nil
           ready-player-repeat nil
           ready-player-shuffle nil))
+
+;; =mpdel= :: MPD client for Emacs
+;; :PROPERTIES:
+;; :ID:       4009635b-4bf9-4b7e-afd8-e829d8ab45a6
+;; :END:
+
+
+(package! mpdel)
 
 ;; =linkmarks= :: Keep link bookmarks in Org-Mode
 ;; :PROPERTIES:

@@ -151,10 +151,10 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (package! consult
-  (keymap-global-set "C-c B" #'consult-bookmark)
+  (keymap-global-set "C-c B B" #'consult-bookmark)
   (keymap-global-set "C-c h" #'consult-history)
   (keymap-global-set "C-c k" #'consult-kmacro)
-  (keymap-global-set "C-c q a t" #'consult-theme)
+  (keymap-global-set "C-c Q a t" #'consult-theme)
 
   ;; Improve previews for `consult-register' and other register commands
   (setopt register-preview-delay 0.5)
@@ -461,7 +461,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 (package! tempel
   (define-keymap :keymap (current-global-map)
-    "C-c y" #'tempel-insert
+    "C-c Y" #'tempel-insert
 
     "M-+" #'tempel-complete
     "M-*" #'tempel-insert)
@@ -731,6 +731,14 @@ Tempel does not trigger too often when you don't expect it."
   :commands (ceamx-completion/embark-export-write)
   :init
   (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
+
+;; Keybindings
+;; :PROPERTIES:
+;; :ID:       e5538115-fecd-4e47-bd55-d9e0fb112313
+;; :END:
+
+
+(keymap-global-set "C-c p" #'completion-at-point)
 
 ;; Provide feature ~ceamx-init-completion~
 

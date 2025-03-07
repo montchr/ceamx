@@ -295,6 +295,9 @@
   (keymap-global-set "C-x w SPC" #'transpose-frame))
 
 ;; ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
+;; :PROPERTIES:
+;; :ID:       5d1605bb-1c26-41cc-a1f7-317354ff113b
+;; :END:
 
 
 (transient-define-prefix ceamx/window-dispatch ()

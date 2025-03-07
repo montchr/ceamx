@@ -73,6 +73,8 @@
     ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
     "r" #'denote-region)
 
+  (keymap-global-set "C-c n" #'denote)
+
   (define-keymap :keymap ceamx-note-prefix-map
     "n" #'denote
     "d" #'denote-sort-dired
@@ -89,10 +91,10 @@
       "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
   (after! org
     (define-keymap :keymap org-mode-map
-      "C-c n h" #'denote-org-extras-extract-org-subtree
-      "C-c n l" #'denote-link
-      "C-c n L" #'denote-add-links
-      "C-c n b" #'denote-backlinks)))
+      "C-c N h" #'denote-org-extras-extract-org-subtree
+      "C-c N l" #'denote-link
+      "C-c N L" #'denote-add-links
+      "C-c N b" #'denote-backlinks)))
 
 (after! denote
   (setopt denote-directory ceamx-note-default-dir)

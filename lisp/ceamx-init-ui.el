@@ -1,7 +1,7 @@
-;; -*- lexical-binding: t;  -*-
+  ;; -*- lexical-binding: t;  -*-
 
-(require 'ceamx-lib)
-(require 'ceamx-ui)
+  (require 'ceamx-lib)
+  (require 'ceamx-ui)
 
 ;; Configure cursor appearance
 
@@ -153,10 +153,12 @@
 
 
 (package! modus-themes
-  (require 'modus-themes)
+  (require 'modus-themes))
 
+;; FIXME: does not take effect until eval after activating theme...
+(after! modus-themes
   (ceamx-ui-define-preferred-themes
-   'modus 'modus-vivendi-tinted 'modus-operandi)
+   'modus 'modus-vivendi 'modus-operandi)
 
   (setopt modus-themes-italic-constructs t
           modus-themes-bold-constructs t
@@ -165,11 +167,19 @@
   (setopt modus-themes-to-toggle
           (ceamx-ui-theme-family-preferred-themes 'modus))
   (setopt modus-themes-disable-other-themes nil)
+  (setopt modus-themes-custom-auto-reload t)
   (setopt modus-themes-headings
-          '((1 . (variable-pitch bold 1.1))
+          '((1 . (variable-pitch bold 1.4))
+            (2 . (variable-pitch semibold 1.2))
+            (3 . (variable-pitch semibold 1.0))
             (agenda-structure . (variable-pitch light 2.2))
             (agenda-date . (variable-pitch regular 1.3))
-            (t . (variable-pitch semibold 1.0)))))
+            (t . (variable-pitch medium 1.0))))
+  (setopt modus-themes-prompts '(italic bold))
+  (setopt modus-themes-completions
+          '((matches . (extrabold))
+            (selection . (semibold italic text-also))))
+  (setopt modus-themes-org-blocks 'tinted-background))
 
 ;; =ef-themes= :: colorful yet legible themes
 ;; :PROPERTIES:
@@ -190,11 +200,14 @@
           ef-themes-variable-pitch-ui t))
 
 ;; Configure the preferred themes
+;; :PROPERTIES:
+;; :ID:       a21cb155-3353-4e2c-9593-1680b43f4575
+;; :END:
 
 
 (use-feature! ceamx-ui
   :config
-  (setopt ceamx-ui-theme-family 'ef))
+  (setopt ceamx-ui-theme-family 'modus))
 
 ;; Set approximate stomping coordinates for hyper-astronomic relativity calculations
 
@@ -406,7 +419,7 @@
 ;; Focusing by sentence, paragraph, or code block.
 
 
-;; TODO: keybindings to C-c t z as prefix
+;; TODO: keybindings to C-c T z as prefix
 (package! focus
   (define-keymap :keymap ceamx-toggle-prefix
     "Z" #'focus-mode))

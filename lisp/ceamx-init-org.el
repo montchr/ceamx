@@ -214,9 +214,9 @@ Intended for use as a local hook function on
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
   (after! org
-    (keymap-set org-mode-map "C-c t p" #'org-modern-mode))
+    (keymap-set org-mode-map "C-c T p" #'org-modern-mode))
   (after! org-agenda
-    (keymap-set org-agenda-mode-map "C-c t p" #'org-modern-mode)))
+    (keymap-set org-agenda-mode-map "C-c T p" #'org-modern-mode)))
 
 (package! org-appear
   (add-hook 'org-mode-hook #'org-appear-mode))
@@ -308,7 +308,7 @@ Intended for use as a local hook function on
 
 (package! org-node
   (keymap-global-set "M-s M-f" #'org-node-find)
-  (keymap-global-set "C-c i n" #'org-node-insert-link)
+  (keymap-global-set "C-c I n" #'org-node-insert-link)
   (after! org-mode
     (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link)))
 
@@ -482,14 +482,14 @@ Intended for use as a local hook function on
   (require 'org-download)
   (add-hook 'dired-mode-hook #'org-download-enable))
 
-;; =org-web-tools= :: view, capture, and archive webpages in org-mode :package:network:web:
+;; =org-web-tools= :: view, capture, and archive webpages in org-mode :package:network:web:ATTACH:
 ;; :PROPERTIES:
 ;; :ID:       17850df6-1729-4b2b-8fc5-62f4b377c2a7
 ;; :END:
 
 
 (package! org-web-tools
-  (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
+  (keymap-set org-mode-map "C-c I l" #'org-web-tools-insert-link-for-url))
 
 ;; =org-sidebar= :: provide a sidebar for Org buffers :package:
 
