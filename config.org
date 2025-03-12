@@ -5506,8 +5506,10 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 `typo-mode' will not be enabled when the current major-mode is one of
 the major-modes listed in the `ceamx-lang-typo-mode-excluded-modes' user
 setting."
-    (unless (memq mode-name ceamx-lang-typo-mode-excluded-modes)
-      (typo-mode 1)))
+    (let ((excluded-modes (append '(yaml-mode yaml-ts-mode)
+                                  ceamx-lang-typo-mode-excluded-modes)))
+      (unless (memq mode-name excluded-modes)
+        (typo-mode 1))))
 
   (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
 #+end_src
