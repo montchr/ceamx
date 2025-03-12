@@ -2347,6 +2347,9 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 #+end_src
 
 *** Normalize whitespace and indentation handling
+:PROPERTIES:
+:ID:       79ef85d9-c7b3-4860-a516-95145c4825b1
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! emacs
@@ -3113,6 +3116,9 @@ enhancement to the builtin Emacs undo system as well.
 #+end_src
 
 *** =which-key=
+:PROPERTIES:
+:ID:       0eb1dafe-55fb-4658-ac9b-53597da45bb3
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! which-key
@@ -3857,6 +3863,9 @@ Refine preview appearance and behavior:
 *** Completion styles
 
 **** =orderless= :: completion-matching multiple regular expressions :search:
+:PROPERTIES:
+:ID:       d30dd746-1706-4c46-901d-47a247455fca
+:END:
 
 + Package :: <https://github.com/oantolin/orderless>
 
@@ -3899,6 +3908,9 @@ Refine preview appearance and behavior:
 #+end_src
 
 ***** ~+orderless-with-initialism~
+:PROPERTIES:
+:ID:       f2d291ff-f65d-431d-8714-0cc747c872f6
+:END:
 
 #+begin_src emacs-lisp
 (after! orderless
@@ -5447,6 +5459,7 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-langs.el
 :VISIBILITY: folded
+:ID:       dbd3ccb6-74ac-486c-9e3e-8cd08b8521d9
 :END:
 
 *** Requirements
@@ -5463,6 +5476,10 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 #+end_src
 
 *** Writing modes
+:PROPERTIES:
+:ID:       161602c2-ed40-41c1-8366-a59de107083e
+:END:
+
 
 **** =typo= :: typographical correctneß
 :PROPERTIES:
@@ -6324,6 +6341,9 @@ Configuration for working with Lisps of all kinds.
 #+end_src
 
 **** DISABLED ~lispy~ :: the structural expression editing experience
+:PROPERTIES:
+:ID:       1e677fb5-4a90-4ba8-b968-91a10ee69caa
+:END:
 
 - Website :: [[https://github.com/abo-abo/lispy][GitHub - abo-abo/lispy: Short and sweet LISP editing]]
 - API Reference :: [[https://oremacs.com/lispy/][lispy.el function reference]]
