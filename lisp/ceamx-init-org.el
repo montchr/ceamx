@@ -213,6 +213,12 @@ Intended for use as a local hook function on
 (package! org-modern
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+  (setopt org-modern-table nil
+          org-modern-keyword nil
+          org-modern-timestamp nil
+          org-modern-checkbox nil
+          org-modern-internal-target nil
+          org-modern-radio-target nil)
   (after! org
     (keymap-set org-mode-map "C-c T p" #'org-modern-mode))
   (after! org-agenda

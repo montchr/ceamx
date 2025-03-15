@@ -289,6 +289,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'embark-prefix-help-command))
 
 ;; =orderless= :: completion-matching multiple regular expressions :search:
+;; :PROPERTIES:
+;; :ID:       d30dd746-1706-4c46-901d-47a247455fca
+;; :END:
 
 ;; + Package :: <https://github.com/oantolin/orderless>
 
@@ -326,6 +329,9 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     (orderless-matching-styles '(orderless-literal orderless-regexp))))
 
 ;; ~+orderless-with-initialism~
+;; :PROPERTIES:
+;; :ID:       f2d291ff-f65d-431d-8714-0cc747c872f6
+;; :END:
 
 
 (after! orderless
@@ -582,6 +588,9 @@ Tempel does not trigger too often when you don't expect it."
       (corfu-terminal-mode 1))))
 
 ;; =kind-icon= :: icons for ~completion-at-point~ candidates :icons:
+;; :PROPERTIES:
+;; :ID:       7153b3e8-34f4-47c1-a1e7-6de207be7d29
+;; :END:
 
 ;; + Package :: <https://github.com/jdtsmith/kind-icon>
 
@@ -604,7 +613,7 @@ Tempel does not trigger too often when you don't expect it."
 
   ;; Update icon appearance after enabling a theme.
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-  (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
+  (add-hook 'enable-theme-functions (lambda (_) (kind-icon-reset-cache))))
 
 ;; =cape= :: [c]ompletion-[a]t-[p]oint [e]xtensions :capfs:
 ;; :PROPERTIES:

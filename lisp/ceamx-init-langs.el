@@ -4,6 +4,11 @@
 
 (require 'ceamx-lib)
 
+;; General =text-mode= customizations
+
+
+
+
 ;; =typo= :: typographical correctneß
 ;; :PROPERTIES:
 ;; :ID:       07671fe0-00af-406f-9244-2e1eb7a6f46e
@@ -29,8 +34,10 @@
 `typo-mode' will not be enabled when the current major-mode is one of
 the major-modes listed in the `ceamx-lang-typo-mode-excluded-modes' user
 setting."
-    (unless (memq mode-name ceamx-lang-typo-mode-excluded-modes)
-      (typo-mode 1)))
+    (let ((excluded-modes (append '(yaml-mode yaml-ts-mode)
+                                  ceamx-lang-typo-mode-excluded-modes)))
+      (unless (memq mode-name excluded-modes)
+        (typo-mode 1))))
 
   (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
 
@@ -1008,8 +1015,9 @@ The canonical source for the file can be found at the following location:
 
 
 (package! (sideline-eglot :host github :repo "emacs-sideline/sideline-eglot")
-  (after! eglot
-    (add-hook 'eglot-managed-mode-hook #'sideline-mode))
+  ;; Disabled because it's pretty annoying.
+  ;; (after! eglot
+  ;;   (add-hook 'eglot-managed-mode-hook #'sideline-mode))
   (after! sideline
     (appendq! sideline-backends-right '(sideline-eglot))))
 

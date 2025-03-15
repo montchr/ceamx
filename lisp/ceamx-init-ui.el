@@ -101,33 +101,15 @@
 
 (setopt custom-safe-themes t)
 
-;; Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
-;; :PROPERTIES:
-;; :ID:       ed7bff96-74c6-4476-bf4d-7909b077b839
-;; :END:
-
-;; - Source :: <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-
-
-(defvar ceamx-after-enable-theme-hook nil)
-
-(defun ceamx-after-enable-theme (&rest _args)
-  "Hook to run after enabling theme."
-  (run-hooks 'ceamx-after-enable-theme-hook))
-
-(advice-add 'enable-theme :after #'ceamx-after-enable-theme)
-
 ;; =standard-themes= :: themes like the default but more consistent
 ;; :PROPERTIES:
 ;; :ID:       09f2005b-1d4d-4d92-9f36-2327ca55757d
 ;; :END:
 
 
-(when (display-graphic-p)
-  (package! standard-themes
-    (require 'standard-themes)))
+(package! standard-themes
+  (require 'standard-themes)
 
-(after! standard-themes
   (ceamx-ui-define-preferred-themes
    'standard 'standard-dark 'standard-light)
 
@@ -153,10 +135,8 @@
 
 
 (package! modus-themes
-  (require 'modus-themes))
+  (require 'modus-themes)
 
-;; FIXME: does not take effect until eval after activating theme...
-(after! modus-themes
   (ceamx-ui-define-preferred-themes
    'modus 'modus-vivendi 'modus-operandi)
 
@@ -473,105 +453,101 @@
 
 (package! fontaine
   (when (display-graphic-p)
-    (def-hook! ceamx-init-theme-activate-fontaine-h ()
-      'ceamx-after-init-hook
-      "Activate `fontaine-mode' with the last-saved preset.
-If there is no previous preset state to load, fall back to the
-\"regular\" preset."
-      (fontaine-mode)
-      (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
+    (require 'fontaine)
 
-(after! fontaine
-  (setopt fontaine-latest-state-file
+    (setq fontaine-latest-state-file
           (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
 
-  ;; For some reason I do not yet understand, according to some
-  ;; hearsay, font sizes best scale in multiples of 3-point
-  ;; increments.
-  (setopt fontaine-presets
-          `((tiny
-             :bold-weight medium
-             :default-height ,(pcase (system-name)
-                               (_ 78))
-             :default-weight ,(pcase (system-name)
-                               (_ 'semilight)))
+    ;; For some reason I do not yet understand, according to some
+    ;; hearsay, font sizes best scale in multiples of 3-point
+    ;; increments.
+    (setq fontaine-presets
+            `((tiny
+               :bold-weight medium
+               :default-height ,(pcase (system-name)
+                                  (_ 78))
+               :default-weight ,(pcase (system-name)
+                                  (_ 'semilight)))
 
-            (small
-             :bold-weight semibold
-             :default-height ,(pcase (system-name)
-                               (_ 90))
-             :default-weight ,(pcase (system-name)
-                               (_ 'regular)))
+              (small
+               :bold-weight semibold
+               :default-height ,(pcase (system-name)
+                                  (_ 90))
+               :default-weight ,(pcase (system-name)
+                                  (_ 'regular)))
 
-            (regular
-             :bold-weight semibold)
+              (regular
+               :bold-weight semibold)
 
-            (medium
-             :default-height ,(pcase (system-name)
-                               ("boschic" 124)
-                               (_ 120)))
+              (medium
+               :default-height ,(pcase (system-name)
+                                  ("boschic" 124)
+                                  (_ 120)))
 
-            (large
-             :default-height ,(pcase (system-name)
-                               (_ 144)))
+              (large
+               :default-height ,(pcase (system-name)
+                                  (_ 144)))
 
-            (xlarge
-             :default-height ,(pcase (system-name)
-                               (_ 156)))
+              (xlarge
+               :default-height ,(pcase (system-name)
+                                  (_ 156)))
 
-            (big-mclarge-huge
-             :default-weight semilight
-             :default-height ,(pcase (system-name)
-                               (_ 180))
-             :bold-weight extrabold)
+              (big-mclarge-huge
+               :default-weight semilight
+               :default-height ,(pcase (system-name)
+                                  (_ 180))
+               :bold-weight extrabold)
 
-            (t
-             :default-family "Aporetic Sans Mono"
-             :default-weight regular
-             :default-height ,(pcase (system-name)
-                               ("tuuvok" 102)
-                               (_ 105))
+              (t
+               :default-family "Aporetic Sans Mono"
+               :default-weight regular
+               :default-height ,(pcase (system-name)
+                                  ("tuuvok" 102)
+                                  (_ 105))
 
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight nil
-             :fixed-pitch-height 1.0
+               :fixed-pitch-family "Aporetic Sans Mono"
+               :fixed-pitch-weight nil
+               :fixed-pitch-height 1.0
 
-             :fixed-pitch-serif-family nil
-             :fixed-pitch-serif-weight nil
-             :fixed-pitch-serif-height 1.0
+               :fixed-pitch-serif-family nil
+               :fixed-pitch-serif-weight nil
+               :fixed-pitch-serif-height 1.0
 
-             :variable-pitch-family "Aporetic Serif Mono"
-             :variable-pitch-weight nil
-             :variable-pitch-height 1.0
+               :variable-pitch-family "Aporetic Serif"
+               :variable-pitch-weight nil
+               :variable-pitch-height 1.0
 
-             :mode-line-active-family nil
-             :mode-line-active-weight nil
-             :mode-line-active-height 0.9
+               :mode-line-active-family nil
+               :mode-line-active-weight nil
+               :mode-line-active-height 0.9
 
-             :mode-line-inactive-family nil
-             :mode-line-inactive-weight nil
-             :mode-line-inactive-height 0.9
+               :mode-line-inactive-family nil
+               :mode-line-inactive-weight nil
+               :mode-line-inactive-height 0.9
 
-             :header-line-family nil
-             :header-line-weight nil
-             :header-line-height 0.9
+               :header-line-family nil
+               :header-line-weight nil
+               :header-line-height 0.9
 
-             :line-number-family nil
-             :line-number-weight nil
-             :line-number-height 0.9
+               :line-number-family nil
+               :line-number-weight nil
+               :line-number-height 0.9
 
-             :tab-bar-family nil
-             :tab-bar-weight nil
-             :tab-bar-height 1.0
+               :tab-bar-family nil
+               :tab-bar-weight nil
+               :tab-bar-height 1.0
 
-             :bold-family nil
-             :bold-weight bold
+               :bold-family nil
+               :bold-weight bold
 
-             :italic-family nil
-             :italic-weight nil
-             :italic-slant italic
+               :italic-family nil
+               :italic-weight nil
+               :italic-slant italic
 
-             :line-spacing nil))))
+               :line-spacing nil)))
+
+    (fontaine-mode 1)
+    (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))))
 
 ;; ~ligature.el~ :: improved ligature support
 ;; :PROPERTIES:

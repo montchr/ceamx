@@ -197,17 +197,11 @@ and `ceamx-ui-preferred-light-themes'."
 
 ;;;###autoload
 (defun ceamx-ui/load-theme (theme)
-  "Load THEME exclusively, disabling all other themes.
-
-Based on the approach to exclusive theme loading used by
-`consult-theme', which see."
+  "Load THEME exclusively, disabling all other themes."
   (interactive)
   (unless (eq theme (car custom-enabled-themes))
-    (mapc #'disable-theme custom-enabled-themes)
-    (when theme
-      (if (custom-theme-p theme)
-          (enable-theme theme)
-        (load-theme theme :no-confirm)))))
+    (mapc #'disable-theme custom-enabled-themes))
+  (load-theme theme :no-confirm))
 
 ;;;###autoload
 (defun ceamx-ui/load-dark-theme ()

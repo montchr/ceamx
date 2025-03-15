@@ -141,5 +141,15 @@
               "rar\\|" "zip\\|" "iso\\|" "epub"
               "\\)"))))
 
+;; =dired-rsync= :: async =rsync= from dired
+;; :PROPERTIES:
+;; :ID:       bf4b08ad-7113-436a-aada-8a0911ec9d97
+;; :END:
+
+
+(package! dired-rsync
+  (after! dired
+    (keymap-set dired-mode-map "C-c C-r" #'dired-rsync)))
+
 (provide 'ceamx-init-dired)
 ;;; ceamx-init-dired.el ends here

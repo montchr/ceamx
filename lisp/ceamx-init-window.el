@@ -9,6 +9,9 @@
 ;; :END:
 
 
+(setopt split-width-threshold 120
+        split-height-threshold nil)
+
 (define-keymap :keymap (current-global-map)
   "C-x =" #'balance-windows
   "C-x +" #'balance-windows-area

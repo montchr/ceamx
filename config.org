@@ -1374,34 +1374,15 @@ applying margin, padding, borders.
 (setopt custom-safe-themes t)
 #+end_src
 
-**** Add a custom hook ~ceamx-after-enable-theme-hook~ to run after enabling a theme
-:PROPERTIES:
-:ID:       ed7bff96-74c6-4476-bf4d-7909b077b839
-:END:
-
-- Source :: <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-
-#+begin_src emacs-lisp
-(defvar ceamx-after-enable-theme-hook nil)
-
-(defun ceamx-after-enable-theme (&rest _args)
-  "Hook to run after enabling theme."
-  (run-hooks 'ceamx-after-enable-theme-hook))
-
-(advice-add 'enable-theme :after #'ceamx-after-enable-theme)
-#+end_src
-
 **** =standard-themes= :: themes like the default but more consistent
 :PROPERTIES:
 :ID:       09f2005b-1d4d-4d92-9f36-2327ca55757d
 :END:
 
 #+begin_src emacs-lisp
-(when (display-graphic-p)
-  (package! standard-themes
-    (require 'standard-themes)))
+(package! standard-themes
+  (require 'standard-themes)
 
-(after! standard-themes
   (ceamx-ui-define-preferred-themes
    'standard 'standard-dark 'standard-light)
 
@@ -1428,10 +1409,8 @@ applying margin, padding, borders.
 
 #+begin_src emacs-lisp
 (package! modus-themes
-  (require 'modus-themes))
+  (require 'modus-themes)
 
-;; FIXME: does not take effect until eval after activating theme...
-(after! modus-themes
   (ceamx-ui-define-preferred-themes
    'modus 'modus-vivendi 'modus-operandi)
 
@@ -1747,6 +1726,9 @@ Enable the tab bar:
 #+end_src
 
 *** Typography :font:
+:PROPERTIES:
+:ID:       969b4aad-0463-4bc7-802f-c0d6ef91c25c
+:END:
 **** Text rendering and scaling
 
 #+begin_src emacs-lisp
@@ -1768,105 +1750,101 @@ TIP: You can test out alterations quickly with, for example:
 #+begin_src emacs-lisp
 (package! fontaine
   (when (display-graphic-p)
-    (def-hook! ceamx-init-theme-activate-fontaine-h ()
-      'ceamx-after-init-hook
-      "Activate `fontaine-mode' with the last-saved preset.
-If there is no previous preset state to load, fall back to the
-\"regular\" preset."
-      (fontaine-mode)
-      (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular)))))
+    (require 'fontaine)
 
-(after! fontaine
-  (setopt fontaine-latest-state-file
+    (setq fontaine-latest-state-file
           (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
 
-  ;; For some reason I do not yet understand, according to some
-  ;; hearsay, font sizes best scale in multiples of 3-point
-  ;; increments.
-  (setopt fontaine-presets
-          `((tiny
-             :bold-weight medium
-             :default-height ,(pcase (system-name)
-                               (_ 78))
-             :default-weight ,(pcase (system-name)
-                               (_ 'semilight)))
+    ;; For some reason I do not yet understand, according to some
+    ;; hearsay, font sizes best scale in multiples of 3-point
+    ;; increments.
+    (setq fontaine-presets
+            `((tiny
+               :bold-weight medium
+               :default-height ,(pcase (system-name)
+                                  (_ 78))
+               :default-weight ,(pcase (system-name)
+                                  (_ 'semilight)))
 
-            (small
-             :bold-weight semibold
-             :default-height ,(pcase (system-name)
-                               (_ 90))
-             :default-weight ,(pcase (system-name)
-                               (_ 'regular)))
+              (small
+               :bold-weight semibold
+               :default-height ,(pcase (system-name)
+                                  (_ 90))
+               :default-weight ,(pcase (system-name)
+                                  (_ 'regular)))
 
-            (regular
-             :bold-weight semibold)
+              (regular
+               :bold-weight semibold)
 
-            (medium
-             :default-height ,(pcase (system-name)
-                               ("boschic" 124)
-                               (_ 120)))
+              (medium
+               :default-height ,(pcase (system-name)
+                                  ("boschic" 124)
+                                  (_ 120)))
 
-            (large
-             :default-height ,(pcase (system-name)
-                               (_ 144)))
+              (large
+               :default-height ,(pcase (system-name)
+                                  (_ 144)))
 
-            (xlarge
-             :default-height ,(pcase (system-name)
-                               (_ 156)))
+              (xlarge
+               :default-height ,(pcase (system-name)
+                                  (_ 156)))
 
-            (big-mclarge-huge
-             :default-weight semilight
-             :default-height ,(pcase (system-name)
-                               (_ 180))
-             :bold-weight extrabold)
+              (big-mclarge-huge
+               :default-weight semilight
+               :default-height ,(pcase (system-name)
+                                  (_ 180))
+               :bold-weight extrabold)
 
-            (t
-             :default-family "Aporetic Sans Mono"
-             :default-weight regular
-             :default-height ,(pcase (system-name)
-                               ("tuuvok" 102)
-                               (_ 105))
+              (t
+               :default-family "Aporetic Sans Mono"
+               :default-weight regular
+               :default-height ,(pcase (system-name)
+                                  ("tuuvok" 102)
+                                  (_ 105))
 
-             :fixed-pitch-family "Aporetic Sans Mono"
-             :fixed-pitch-weight nil
-             :fixed-pitch-height 1.0
+               :fixed-pitch-family "Aporetic Sans Mono"
+               :fixed-pitch-weight nil
+               :fixed-pitch-height 1.0
 
-             :fixed-pitch-serif-family nil
-             :fixed-pitch-serif-weight nil
-             :fixed-pitch-serif-height 1.0
+               :fixed-pitch-serif-family nil
+               :fixed-pitch-serif-weight nil
+               :fixed-pitch-serif-height 1.0
 
-             :variable-pitch-family "Aporetic Serif Mono"
-             :variable-pitch-weight nil
-             :variable-pitch-height 1.0
+               :variable-pitch-family "Aporetic Serif"
+               :variable-pitch-weight nil
+               :variable-pitch-height 1.0
 
-             :mode-line-active-family nil
-             :mode-line-active-weight nil
-             :mode-line-active-height 0.9
+               :mode-line-active-family nil
+               :mode-line-active-weight nil
+               :mode-line-active-height 0.9
 
-             :mode-line-inactive-family nil
-             :mode-line-inactive-weight nil
-             :mode-line-inactive-height 0.9
+               :mode-line-inactive-family nil
+               :mode-line-inactive-weight nil
+               :mode-line-inactive-height 0.9
 
-             :header-line-family nil
-             :header-line-weight nil
-             :header-line-height 0.9
+               :header-line-family nil
+               :header-line-weight nil
+               :header-line-height 0.9
 
-             :line-number-family nil
-             :line-number-weight nil
-             :line-number-height 0.9
+               :line-number-family nil
+               :line-number-weight nil
+               :line-number-height 0.9
 
-             :tab-bar-family nil
-             :tab-bar-weight nil
-             :tab-bar-height 1.0
+               :tab-bar-family nil
+               :tab-bar-weight nil
+               :tab-bar-height 1.0
 
-             :bold-family nil
-             :bold-weight bold
+               :bold-family nil
+               :bold-weight bold
 
-             :italic-family nil
-             :italic-weight nil
-             :italic-slant italic
+               :italic-family nil
+               :italic-weight nil
+               :italic-slant italic
 
-             :line-spacing nil))))
+               :line-spacing nil)))
+
+    (fontaine-mode 1)
+    (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))))
 #+end_src
 
 **** ~ligature.el~ :: improved ligature support
@@ -2428,6 +2406,15 @@ PROPS is as in `editorconfig-after-apply-functions'."
   ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
   ;; that `comment-line' is bound to [C-x C-;].
   "C-x M-;" #'comment-line)
+#+end_src
+
+**** Integrate with system clipboard
+:PROPERTIES:
+:ID:       7ceb88fc-04e5-47af-a978-c2110076d374
+:END:
+
+#+begin_src emacs-lisp
+(setopt save-interprogram-paste-before-kill t)
 #+end_src
 
 **** =mwim=: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
@@ -3127,13 +3114,11 @@ enhancement to the builtin Emacs undo system as well.
   :config
   (setopt which-key-compute-remaps t)
   (setopt which-key-idle-delay 1.0)
-  (setopt which-key-sort-order 'which-key-prefix-then-key-order
-          which-key-sort-uppercase-first nil)
-
-  ;; The default (0) is difficult to read.
-  (setopt which-key-add-column-padding 2)
-
-  ;; FIXME: no effect? what does this actually do?
+  (setopt
+   which-key-sort-order 'which-key-description-order
+   ;; which-key-sort-order 'which-key-prefix-then-key-order
+   which-key-sort-uppercase-first nil)
+  (setopt which-key-add-column-padding 0)
   (setopt which-key-show-remaining-keys t))
 #+end_src
 
@@ -3544,6 +3529,17 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
               "\\(gz\\|" "zst\\|" "tar\\|" "xz\\|"
               "rar\\|" "zip\\|" "iso\\|" "epub"
               "\\)"))))
+#+end_src
+
+*** =dired-rsync= :: async =rsync= from dired
+:PROPERTIES:
+:ID:       bf4b08ad-7113-436a-aada-8a0911ec9d97
+:END:
+
+#+begin_src emacs-lisp
+(package! dired-rsync
+  (after! dired
+    (keymap-set dired-mode-map "C-c C-r" #'dired-rsync)))
 #+end_src
 
 *** Provide the ~ceamx-init-dired~ feature
@@ -4281,6 +4277,9 @@ See also ~popon~, the utility library powering the interface.
 #+end_src
 
 **** =kind-icon= :: icons for ~completion-at-point~ candidates :icons:
+:PROPERTIES:
+:ID:       7153b3e8-34f4-47c1-a1e7-6de207be7d29
+:END:
 
 + Package :: <https://github.com/jdtsmith/kind-icon>
 
@@ -4303,7 +4302,7 @@ See also ~popon~, the utility library powering the interface.
 
   ;; Update icon appearance after enabling a theme.
   ;; <https://github.com/jdtsmith/kind-icon/issues/34#issuecomment-1668560185>
-  (add-hook 'ceamx-after-enable-theme-hook #'kind-icon-reset-cache))
+  (add-hook 'enable-theme-functions (lambda (_) (kind-icon-reset-cache))))
 #+end_src
 
 **** =cape= :: [c]ompletion-[a]t-[p]oint [e]xtensions :capfs:
@@ -4476,6 +4475,9 @@ Define Embark actions for acting on tabs:
 :END:
 
 #+begin_src emacs-lisp
+(setopt split-width-threshold 120
+        split-height-threshold nil)
+
 (define-keymap :keymap (current-global-map)
   "C-x =" #'balance-windows
   "C-x +" #'balance-windows-area
@@ -5480,6 +5482,11 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 :ID:       161602c2-ed40-41c1-8366-a59de107083e
 :END:
 
+**** General =text-mode= customizations
+
+#+begin_src emacs-lisp
+
+#+end_src
 
 **** =typo= :: typographical correctneß
 :PROPERTIES:
@@ -6754,8 +6761,9 @@ The canonical source for the file can be found at the following location:
 
 #+begin_src emacs-lisp
 (package! (sideline-eglot :host github :repo "emacs-sideline/sideline-eglot")
-  (after! eglot
-    (add-hook 'eglot-managed-mode-hook #'sideline-mode))
+  ;; Disabled because it's pretty annoying.
+  ;; (after! eglot
+  ;;   (add-hook 'eglot-managed-mode-hook #'sideline-mode))
   (after! sideline
     (appendq! sideline-backends-right '(sideline-eglot))))
 #+end_src
@@ -7622,8 +7630,6 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
     "r" #'denote-rename-file
     "R" #'denote-rename-file-using-front-matter)
 
-  (keymap-set ceamx-region-prefix-map "n" #'denote-region)
-
   (after! dired
     (define-keymap :keymap dired-mode-map
       "C-c C-d C-i" #'denote-link-dired-marked-notes
@@ -7966,6 +7972,12 @@ Intended for use as a local hook function on
 (package! org-modern
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+  (setopt org-modern-table nil
+          org-modern-keyword nil
+          org-modern-timestamp nil
+          org-modern-checkbox nil
+          org-modern-internal-target nil
+          org-modern-radio-target nil)
   (after! org
     (keymap-set org-mode-map "C-c T p" #'org-modern-mode))
   (after! org-agenda
@@ -8878,6 +8890,9 @@ CLOSED: [2025-02-22 Sat 19:36]
 - State "DONE"       from "TODO"       [2025-02-22 Sat 19:36]
 :END:
 *** =ready-player= :: multimedia file previews :nixpkgs:
+:PROPERTIES:
+:ID:       96e9c541-fc8f-42cf-9f22-b726dc37f7cb
+:END:
 
 + Package :: <https://github.com/xenodium/ready-player>
 + Dependencies :: =ffmpeg= =ffmpegthumbnailer= =mpv=
@@ -8893,6 +8908,17 @@ This should be installed via Nixpkgs due to external dependencies.
           ready-player-repeat nil
           ready-player-shuffle nil))
 #+end_src
+
+Provide integration with =dired-preview=:
+
+#+begin_src emacs-lisp
+(use-feature! ceamx-tools
+  :after (dired-preview)
+  :commands (ceamx/ready-player-dired-preview-play-toggle)
+  :config
+  (keymap-set dired-preview-mode-map "C-c C-p" #'ceamx/ready-player-dired-preview-play-toggle))
+#+end_src
+
 *** =mpdel= :: MPD client for Emacs
 :PROPERTIES:
 :ID:       4009635b-4bf9-4b7e-afd8-e829d8ab45a6

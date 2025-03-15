@@ -81,8 +81,6 @@
     "r" #'denote-rename-file
     "R" #'denote-rename-file-using-front-matter)
 
-  (keymap-set ceamx-region-prefix-map "n" #'denote-region)
-
   (after! dired
     (define-keymap :keymap dired-mode-map
       "C-c C-d C-i" #'denote-link-dired-marked-notes

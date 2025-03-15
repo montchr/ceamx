@@ -197,6 +197,9 @@
     (require 'saveplace-pdf-view)))
 
 ;; =ready-player= :: multimedia file previews :nixpkgs:
+;; :PROPERTIES:
+;; :ID:       96e9c541-fc8f-42cf-9f22-b726dc37f7cb
+;; :END:
 
 ;; + Package :: <https://github.com/xenodium/ready-player>
 ;; + Dependencies :: =ffmpeg= =ffmpegthumbnailer= =mpv=
@@ -211,6 +214,17 @@
   (setopt ready-player-autoplay nil
           ready-player-repeat nil
           ready-player-shuffle nil))
+
+
+
+;; Provide integration with =dired-preview=:
+
+
+(use-feature! ceamx-tools
+  :after (dired-preview)
+  :commands (ceamx/ready-player-dired-preview-play-toggle)
+  :config
+  (keymap-set dired-preview-mode-map "C-c C-p" #'ceamx/ready-player-dired-preview-play-toggle))
 
 ;; =mpdel= :: MPD client for Emacs
 ;; :PROPERTIES:

@@ -223,6 +223,9 @@
   (setopt auto-revert-interval 2))
 
 ;; Normalize whitespace and indentation handling
+;; :PROPERTIES:
+;; :ID:       79ef85d9-c7b3-4860-a516-95145c4825b1
+;; :END:
 
 
 (use-feature! emacs
@@ -297,6 +300,14 @@ PROPS is as in `editorconfig-after-apply-functions'."
   ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
   ;; that `comment-line' is bound to [C-x C-;].
   "C-x M-;" #'comment-line)
+
+;; Integrate with system clipboard
+;; :PROPERTIES:
+;; :ID:       7ceb88fc-04e5-47af-a978-c2110076d374
+;; :END:
+
+
+(setopt save-interprogram-paste-before-kill t)
 
 ;; =mwim=: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
 
@@ -892,6 +903,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
     "*" #'bookmark-in-project-toggle))
 
 ;; =which-key=
+;; :PROPERTIES:
+;; :ID:       0eb1dafe-55fb-4658-ac9b-53597da45bb3
+;; :END:
 
 
 (use-feature! which-key
@@ -900,13 +914,11 @@ PROPS is as in `editorconfig-after-apply-functions'."
   :config
   (setopt which-key-compute-remaps t)
   (setopt which-key-idle-delay 1.0)
-  (setopt which-key-sort-order 'which-key-prefix-then-key-order
-          which-key-sort-uppercase-first nil)
-
-  ;; The default (0) is difficult to read.
-  (setopt which-key-add-column-padding 2)
-
-  ;; FIXME: no effect? what does this actually do?
+  (setopt
+   which-key-sort-order 'which-key-description-order
+   ;; which-key-sort-order 'which-key-prefix-then-key-order
+   which-key-sort-uppercase-first nil)
+  (setopt which-key-add-column-padding 0)
   (setopt which-key-show-remaining-keys t))
 
 ;; macOS: Remap modifier keys for the Apple keyboard layout
