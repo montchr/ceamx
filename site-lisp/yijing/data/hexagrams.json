@@ -3,704 +3,1086 @@
     "number": 1,
     "name": {
       "chinese": "乾",
-      "pinyin": "Qián"
+      "pinyin": "Qián",
+      "english": [
+        "The Creative",
+        "Force"
+      ]
     },
     "trigrams": [
       1,
       1
-    ]
+    ],
+    "unicode": "䷀",
+    "binary": "111111"
   },
   {
     "number": 2,
     "name": {
       "chinese": "坤",
-      "pinyin": "kūn"
+      "pinyin": "kūn",
+      "english": [
+        "The Receptive",
+        "Field"
+      ]
     },
     "trigrams": [
       8,
       8
-    ]
+    ],
+    "unicode": "䷁",
+    "binary": "000000"
   },
   {
     "number": 3,
     "name": {
       "chinese": "屯",
-      "pinyin": "zhūn"
+      "pinyin": "zhūn",
+      "english": [
+        "Difficulty at the Beginning",
+        "Sprouting"
+      ]
     },
     "trigrams": [
       4,
       6
-    ]
+    ],
+    "unicode": "䷂",
+    "binary": "010001"
   },
   {
     "number": 4,
     "name": {
       "chinese": "蒙",
-      "pinyin": "méng"
+      "pinyin": "méng",
+      "english": [
+        "Youthful Folly",
+        "Enveloping"
+      ]
     },
     "trigrams": [
       6,
       7
-    ]
+    ],
+    "unicode": "䷃",
+    "binary": "100010"
   },
   {
     "number": 5,
     "name": {
       "chinese": "需",
-      "pinyin": "xū"
+      "pinyin": "xū",
+      "english": [
+        "Waiting",
+        "Attending"
+      ]
     },
     "trigrams": [
       1,
       6
-    ]
+    ],
+    "unicode": "䷄",
+    "binary": "010111"
   },
   {
     "number": 6,
     "name": {
       "chinese": "訟",
-      "pinyin": "sòng"
+      "pinyin": "sòng",
+      "english": [
+        "Conflict",
+        "Arguing"
+      ]
     },
     "trigrams": [
       6,
       1
-    ]
+    ],
+    "unicode": "䷅",
+    "binary": "111010"
   },
   {
     "number": 7,
     "name": {
       "chinese": "師",
-      "pinyin": "shī"
+      "pinyin": "shī",
+      "english": [
+        "The Army",
+        "Leading"
+      ]
     },
     "trigrams": [
       6,
       8
-    ]
+    ],
+    "unicode": "䷆",
+    "binary": "000010"
   },
   {
     "number": 8,
     "name": {
       "chinese": "比",
-      "pinyin": "bǐ"
+      "pinyin": "bǐ",
+      "english": [
+        "Holding Together [Union]",
+        "Grouping"
+      ]
     },
     "trigrams": [
       8,
       6
-    ]
+    ],
+    "unicode": "䷇",
+    "binary": "010000"
   },
   {
     "number": 9,
     "name": {
       "chinese": "小畜",
-      "pinyin": "xiǎo chù"
+      "pinyin": "xiǎo chù",
+      "english": [
+        "The Taming Power of the Small",
+        "Small Accumulating"
+      ]
     },
     "trigrams": [
       1,
       5
-    ]
+    ],
+    "unicode": "䷈",
+    "binary": "110111"
   },
   {
     "number": 10,
     "name": {
       "chinese": "履",
-      "pinyin": "lǚ"
+      "pinyin": "lǚ",
+      "english": [
+        "Conduct",
+        "Treading"
+      ]
     },
     "trigrams": [
       2,
       1
-    ]
+    ],
+    "unicode": "䷉",
+    "binary": "111011"
   },
   {
     "number": 11,
     "name": {
       "chinese": "泰",
-      "pinyin": "tài"
+      "pinyin": "tài",
+      "english": [
+        "Peace",
+        "Pervading"
+      ]
     },
     "trigrams": [
       1,
       8
-    ]
+    ],
+    "unicode": "䷊",
+    "binary": "000111"
   },
   {
     "number": 12,
     "name": {
       "chinese": "否",
-      "pinyin": "pǐ"
+      "pinyin": "pǐ",
+      "english": [
+        "Standstill (Stagnation)",
+        "Obstruction"
+      ]
     },
     "trigrams": [
       8,
       1
-    ]
+    ],
+    "unicode": "䷋",
+    "binary": "111000"
   },
   {
     "number": 13,
     "name": {
       "chinese": "同人",
-      "pinyin": "tóng rén"
+      "pinyin": "tóng rén",
+      "english": [
+        "Fellowship with Men",
+        "Concording People"
+      ]
     },
     "trigrams": [
       3,
       1
-    ]
+    ],
+    "unicode": "䷌",
+    "binary": "111101"
   },
   {
     "number": 14,
     "name": {
       "chinese": "大有",
-      "pinyin": "dà yǒu"
+      "pinyin": "dà yǒu",
+      "english": [
+        "Possession in Great Measure",
+        "Great Possessing"
+      ]
     },
     "trigrams": [
       1,
       3
-    ]
+    ],
+    "unicode": "䷍",
+    "binary": "101111"
   },
   {
     "number": 15,
     "name": {
       "chinese": "謙",
-      "pinyin": "qiān"
+      "pinyin": "qiān",
+      "english": [
+        "Modesty",
+        "Humbling"
+      ]
     },
     "trigrams": [
       7,
       8
-    ]
+    ],
+    "unicode": "䷎",
+    "binary": "000100"
   },
   {
     "number": 16,
     "name": {
       "chinese": "豫",
-      "pinyin": "yù"
+      "pinyin": "yù",
+      "english": [
+        "Enthusiasm",
+        "Providing-For"
+      ]
     },
     "trigrams": [
       8,
       4
-    ]
+    ],
+    "unicode": "䷏",
+    "binary": "001000"
   },
   {
     "number": 17,
     "name": {
       "chinese": "隨",
-      "pinyin": "suí"
+      "pinyin": "suí",
+      "english": [
+        "Following"
+      ]
     },
     "trigrams": [
       4,
       2
-    ]
+    ],
+    "unicode": "䷐",
+    "binary": "011001"
   },
   {
     "number": 18,
     "name": {
       "chinese": "蠱",
-      "pinyin": "gŭ"
+      "pinyin": "gŭ",
+      "english": [
+        "Work on What Has Been Spoiled [Decay]",
+        "Correcting"
+      ]
     },
     "trigrams": [
       5,
       7
-    ]
+    ],
+    "unicode": "䷑",
+    "binary": "100110"
   },
   {
     "number": 19,
     "name": {
       "chinese": "臨",
-      "pinyin": "lín"
+      "pinyin": "lín",
+      "english": [
+        "Approach",
+        "Nearing"
+      ]
     },
     "trigrams": [
       2,
       8
-    ]
+    ],
+    "unicode": "䷒",
+    "binary": "000011"
   },
   {
     "number": 20,
     "name": {
       "chinese": "觀",
-      "pinyin": "guān"
+      "pinyin": "guān",
+      "english": [
+        "Contemplation (View)",
+        "Viewing"
+      ]
     },
     "trigrams": [
       8,
       5
-    ]
+    ],
+    "unicode": "䷓",
+    "binary": "110000"
   },
   {
     "number": 21,
     "name": {
       "chinese": "噬嗑",
-      "pinyin": "shì kè"
+      "pinyin": "shì kè",
+      "english": [
+        "Biting Through",
+        "Gnawing Bite"
+      ]
     },
     "trigrams": [
       4,
       3
-    ]
+    ],
+    "unicode": "䷔",
+    "binary": "101001"
   },
   {
     "number": 22,
     "name": {
       "chinese": "賁",
-      "pinyin": "bì"
+      "pinyin": "bì",
+      "english": [
+        "Grace",
+        "Adorning"
+      ]
     },
     "trigrams": [
       3,
       7
-    ]
+    ],
+    "unicode": "䷕",
+    "binary": "100101"
   },
   {
     "number": 23,
     "name": {
       "chinese": "剝",
-      "pinyin": "bō"
+      "pinyin": "bō",
+      "english": [
+        "Splitting Apart",
+        "Stripping"
+      ]
     },
     "trigrams": [
       8,
       7
-    ]
+    ],
+    "unicode": "䷖",
+    "binary": "100000"
   },
   {
     "number": 24,
     "name": {
       "chinese": "復",
-      "pinyin": "fù"
+      "pinyin": "fù",
+      "english": [
+        "Return (The Turning Point)",
+        "Returning"
+      ]
     },
     "trigrams": [
       4,
       8
-    ]
+    ],
+    "unicode": "䷗",
+    "binary": "000001"
   },
   {
     "number": 25,
     "name": {
       "chinese": "無妄",
-      "pinyin": "wú wàng"
+      "pinyin": "wú wàng",
+      "english": [
+        "Innocence (The Unexpected)",
+        "Without Embroiling"
+      ]
     },
     "trigrams": [
       4,
       1
-    ]
+    ],
+    "unicode": "䷘",
+    "binary": "111001"
   },
   {
     "number": 26,
     "name": {
       "chinese": "大畜",
-      "pinyin": "dà chù"
+      "pinyin": "dà chù",
+      "english": [
+        "The Taming Power of the Great",
+        "Great Accumulating"
+      ]
     },
     "trigrams": [
       1,
       7
-    ]
+    ],
+    "unicode": "䷙",
+    "binary": "100111"
   },
   {
     "number": 27,
     "name": {
       "chinese": "頤",
-      "pinyin": "yí"
+      "pinyin": "yí",
+      "english": [
+        "The Corners of the Mouth (Providing Nourishment)",
+        "Swallowing"
+      ]
     },
     "trigrams": [
       4,
       7
-    ]
+    ],
+    "unicode": "䷚",
+    "binary": "100001"
   },
   {
     "number": 28,
     "name": {
       "chinese": "大過",
-      "pinyin": "dà guò"
+      "pinyin": "dà guò",
+      "english": [
+        "Preponderance of the Great",
+        "Great Exceeding"
+      ]
     },
     "trigrams": [
       5,
       2
-    ]
+    ],
+    "unicode": "䷛",
+    "binary": "011110"
   },
   {
     "number": 29,
     "name": {
       "chinese": "坎",
-      "pinyin": "kǎn"
+      "pinyin": "kǎn",
+      "english": [
+        "The Abysmal (Water)",
+        "Gorge"
+      ]
     },
     "trigrams": [
       6,
       6
-    ]
+    ],
+    "unicode": "䷜",
+    "binary": "010010"
   },
   {
     "number": 30,
     "name": {
       "chinese": "離",
-      "pinyin": "lí"
+      "pinyin": "lí",
+      "english": [
+        "The Clinging, Fire",
+        "Radiance"
+      ]
     },
     "trigrams": [
       3,
       3
-    ]
+    ],
+    "unicode": "䷝",
+    "binary": "101101"
   },
   {
     "number": 31,
     "name": {
       "chinese": "咸",
-      "pinyin": "xián"
+      "pinyin": "xián",
+      "english": [
+        "Influence (Wooing)",
+        "Conjoining"
+      ]
     },
     "trigrams": [
       7,
       2
-    ]
+    ],
+    "unicode": "䷞",
+    "binary": "011100"
   },
   {
     "number": 32,
     "name": {
       "chinese": "恆",
-      "pinyin": "héng"
+      "pinyin": "héng",
+      "english": [
+        "Duration",
+        "Persevering"
+      ]
     },
     "trigrams": [
       5,
       4
-    ]
+    ],
+    "unicode": "䷟",
+    "binary": "001110"
   },
   {
     "number": 33,
     "name": {
       "chinese": "遯",
-      "pinyin": "dùn"
+      "pinyin": "dùn",
+      "english": [
+        "Retreat",
+        "Retiring"
+      ]
     },
     "trigrams": [
       7,
       1
-    ]
+    ],
+    "unicode": "䷠",
+    "binary": "111100"
   },
   {
     "number": 34,
     "name": {
       "chinese": "大壯",
-      "pinyin": "dà zhuàng"
+      "pinyin": "dà zhuàng",
+      "english": [
+        "The Power of the Great",
+        "Great Invigorating"
+      ]
     },
     "trigrams": [
       1,
       4
-    ]
+    ],
+    "unicode": "䷡",
+    "binary": "001111"
   },
   {
     "number": 35,
     "name": {
       "chinese": "晉",
-      "pinyin": "jìn"
+      "pinyin": "jìn",
+      "english": [
+        "Progress",
+        "Prospering"
+      ]
     },
     "trigrams": [
       8,
       3
-    ]
+    ],
+    "unicode": "䷢",
+    "binary": "101000"
   },
   {
     "number": 36,
     "name": {
       "chinese": "明夷",
-      "pinyin": "míng yí"
+      "pinyin": "míng yí",
+      "english": [
+        "Darkening of the Light"
+      ]
     },
     "trigrams": [
       3,
       8
-    ]
+    ],
+    "unicode": "䷣",
+    "binary": "000101"
   },
   {
     "number": 37,
     "name": {
       "chinese": "家人",
-      "pinyin": "jiā rén"
+      "pinyin": "jiā rén",
+      "english": [
+        "The Family [The Clan]",
+        "Dwelling People"
+      ]
     },
     "trigrams": [
       3,
       5
-    ]
+    ],
+    "unicode": "䷤",
+    "binary": "110101"
   },
   {
     "number": 38,
     "name": {
       "chinese": "睽",
-      "pinyin": "kuí"
+      "pinyin": "kuí",
+      "english": [
+        "Opposition",
+        "Polarizing"
+      ]
     },
     "trigrams": [
       2,
       3
-    ]
+    ],
+    "unicode": "䷥",
+    "binary": "101011"
   },
   {
     "number": 39,
     "name": {
       "chinese": "蹇",
-      "pinyin": "jiǎn"
+      "pinyin": "jiǎn",
+      "english": [
+        "Obstruction",
+        "Limping"
+      ]
     },
     "trigrams": [
       7,
       6
-    ]
+    ],
+    "unicode": "䷦",
+    "binary": "010100"
   },
   {
     "number": 40,
     "name": {
       "chinese": "解",
-      "pinyin": "xiè"
+      "pinyin": "xiè",
+      "english": [
+        "Deliverance",
+        "Taking-Apart"
+      ]
     },
     "trigrams": [
       6,
       4
-    ]
+    ],
+    "unicode": "䷧",
+    "binary": "001010"
   },
   {
     "number": 41,
     "name": {
       "chinese": "損",
-      "pinyin": "sǔn"
+      "pinyin": "sǔn",
+      "english": [
+        "Decrease",
+        "Diminishing"
+      ]
     },
     "trigrams": [
       2,
       7
-    ]
+    ],
+    "unicode": "䷨",
+    "binary": "100011"
   },
   {
     "number": 42,
     "name": {
       "chinese": "益",
-      "pinyin": "yì"
+      "pinyin": "yì",
+      "english": [
+        "Increase",
+        "Augmenting"
+      ]
     },
     "trigrams": [
       4,
       5
-    ]
+    ],
+    "unicode": "䷩",
+    "binary": "110001"
   },
   {
     "number": 43,
     "name": {
       "chinese": "夬",
-      "pinyin": "guài"
+      "pinyin": "guài",
+      "english": [
+        "Break-through (Resoluteness)",
+        "Displacement"
+      ]
     },
     "trigrams": [
       1,
       2
-    ]
+    ],
+    "unicode": "䷪",
+    "binary": "011111"
   },
   {
     "number": 44,
     "name": {
       "chinese": "姤",
-      "pinyin": "gòu"
+      "pinyin": "gòu",
+      "english": [
+        "Coming to Meet",
+        "Coupling"
+      ]
     },
     "trigrams": [
       5,
       1
-    ]
+    ],
+    "unicode": "䷫",
+    "binary": "111110"
   },
   {
     "number": 45,
     "name": {
       "chinese": "萃",
-      "pinyin": "cuì"
+      "pinyin": "cuì",
+      "english": [
+        "Gathering Together [Massing]",
+        "Clustering"
+      ]
     },
     "trigrams": [
       8,
       2
-    ]
+    ],
+    "unicode": "䷬",
+    "binary": "011000"
   },
   {
     "number": 46,
     "name": {
       "chinese": "升",
-      "pinyin": "shēng"
+      "pinyin": "shēng",
+      "english": [
+        "Pushing Upward",
+        "Ascending"
+      ]
     },
     "trigrams": [
       5,
       8
-    ]
+    ],
+    "unicode": "䷭",
+    "binary": "000110"
   },
   {
     "number": 47,
     "name": {
       "chinese": "困",
-      "pinyin": "kùn"
+      "pinyin": "kùn",
+      "english": [
+        "Oppression (Exhaustion)",
+        "Confining"
+      ]
     },
     "trigrams": [
       6,
       2
-    ]
+    ],
+    "unicode": "䷮",
+    "binary": "011010"
   },
   {
     "number": 48,
     "name": {
       "chinese": "井",
-      "pinyin": "jǐng"
+      "pinyin": "jǐng",
+      "english": [
+        "The Well",
+        "Welling"
+      ]
     },
     "trigrams": [
       5,
       6
-    ]
+    ],
+    "unicode": "䷯",
+    "binary": "010110"
   },
   {
     "number": 49,
     "name": {
       "chinese": "革",
-      "pinyin": "gé"
+      "pinyin": "gé",
+      "english": [
+        "Revolution (Molting)",
+        "Skinning"
+      ]
     },
     "trigrams": [
       3,
       2
-    ]
+    ],
+    "unicode": "䷰",
+    "binary": "011101"
   },
   {
     "number": 50,
     "name": {
       "chinese": "鼎",
-      "pinyin": "dǐng"
+      "pinyin": "dǐng",
+      "english": [
+        "The Caldron",
+        "Holding"
+      ]
     },
     "trigrams": [
       5,
       3
-    ]
+    ],
+    "unicode": "䷱",
+    "binary": "101110"
   },
   {
     "number": 51,
     "name": {
       "chinese": "震",
-      "pinyin": "zhèn"
+      "pinyin": "zhèn",
+      "english": [
+        "The Arousing (Shock, Thunder)",
+        "Shake"
+      ]
     },
     "trigrams": [
       4,
       4
-    ]
+    ],
+    "unicode": "䷲",
+    "binary": "001001"
   },
   {
     "number": 52,
     "name": {
       "chinese": "艮",
-      "pinyin": "gèn"
+      "pinyin": "gèn",
+      "english": [
+        "Keeping Still, Mountain",
+        "Bound"
+      ]
     },
     "trigrams": [
       7,
       7
-    ]
+    ],
+    "unicode": "䷳",
+    "binary": "100100"
   },
   {
     "number": 53,
     "name": {
       "chinese": "漸",
-      "pinyin": "jiàn"
+      "pinyin": "jiàn",
+      "english": [
+        "Development (Gradual Progress)",
+        "Infiltrating"
+      ]
     },
     "trigrams": [
       7,
       5
-    ]
+    ],
+    "unicode": "䷴",
+    "binary": "110100"
   },
   {
     "number": 54,
     "name": {
       "chinese": "歸妹",
-      "pinyin": "guī mèi"
+      "pinyin": "guī mèi",
+      "english": [
+        "The Marrying Maiden",
+        "Converting the Maiden"
+      ]
     },
     "trigrams": [
       2,
       4
-    ]
+    ],
+    "unicode": "䷵",
+    "binary": "001011"
   },
   {
     "number": 55,
     "name": {
       "chinese": "豐",
-      "pinyin": "fēng"
+      "pinyin": "fēng",
+      "english": [
+        "Abundance [Fullness]",
+        "Abouding"
+      ]
     },
     "trigrams": [
       3,
       4
-    ]
+    ],
+    "unicode": "䷶",
+    "binary": "001101"
   },
   {
     "number": 56,
     "name": {
       "chinese": "旅",
-      "pinyin": "lǚ"
+      "pinyin": "lǚ",
+      "english": [
+        "The Wanderer",
+        "Sojourning"
+      ]
     },
     "trigrams": [
       7,
       3
-    ]
+    ],
+    "unicode": "䷷",
+    "binary": "101100"
   },
   {
     "number": 57,
     "name": {
       "chinese": "巽",
-      "pinyin": "xùn"
+      "pinyin": "xùn",
+      "english": [
+        "The Gentle (The Penetrating, Wind)",
+        "Ground"
+      ]
     },
     "trigrams": [
       5,
       5
-    ]
+    ],
+    "unicode": "䷸",
+    "binary": "110110"
   },
   {
     "number": 58,
     "name": {
       "chinese": "兌",
-      "pinyin": "duì"
+      "pinyin": "duì",
+      "english": [
+        "The Joyous, Lake",
+        "Open"
+      ]
     },
     "trigrams": [
       2,
       2
-    ]
+    ],
+    "unicode": "䷹",
+    "binary": "011011"
   },
   {
     "number": 59,
     "name": {
       "chinese": "渙",
-      "pinyin": "huàn"
+      "pinyin": "huàn",
+      "english": [
+        "Dispersion [Dissolution]",
+        "Dispersing"
+      ]
     },
     "trigrams": [
       6,
       5
-    ]
+    ],
+    "unicode": "䷺",
+    "binary": "110010"
   },
   {
     "number": 60,
     "name": {
       "chinese": "節",
-      "pinyin": "jié"
+      "pinyin": "jié",
+      "english": [
+        "Limitation",
+        "Articulating"
+      ]
     },
     "trigrams": [
       2,
       6
-    ]
+    ],
+    "unicode": "䷻",
+    "binary": "010011"
   },
   {
     "number": 61,
     "name": {
       "chinese": "中孚",
-      "pinyin": "zhōng fú"
+      "pinyin": "zhōng fú",
+      "english": [
+        "Inner Truth",
+        "Center Returing"
+      ]
     },
     "trigrams": [
       2,
       5
-    ]
+    ],
+    "unicode": "䷼",
+    "binary": "110011"
   },
   {
     "number": 62,
     "name": {
       "chinese": "小過",
-      "pinyin": "xiǎo guò"
+      "pinyin": "xiǎo guò",
+      "english": [
+        "Preponderance of the Small",
+        "Small Exceeding"
+      ]
     },
     "trigrams": [
       7,
       4
-    ]
+    ],
+    "unicode": "䷽",
+    "binary": "001100"
   },
   {
     "number": 63,
     "name": {
       "chinese": "既濟",
-      "pinyin": "jì jì"
+      "pinyin": "jì jì",
+      "english": [
+        "After Completion",
+        "Already Fording"
+      ]
     },
     "trigrams": [
       3,
       6
-    ]
+    ],
+    "unicode": "䷾",
+    "binary": "010101"
   },
   {
     "number": 64,
     "name": {
       "chinese": "未濟",
-      "pinyin": "wèi jì"
+      "pinyin": "wèi jì",
+      "english": [
+        "Before Completion",
+        "Not Yet Fording"
+      ]
     },
     "trigrams": [
       6,
       3
-    ]
+    ],
+    "unicode": "䷿",
+    "binary": "101010"
   }
 ]
