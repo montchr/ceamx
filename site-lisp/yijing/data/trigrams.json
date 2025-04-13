@@ -1,0 +1,208 @@
+[
+  {
+    "number": 1,
+    "ascii": "|||",
+    "unicode": "☰",
+    "binary": "111",
+    "name": {
+      "chinese": "乾",
+      "pinyin": "qián",
+      "english": ["The Creative", "(natural) force"]
+    },
+    "image": {
+      "chinese": "天",
+      "english": ["heaven", "sky"]
+    },
+    "attributes": ["expansive energy", "strong", "persisting"],
+    "correspondences": {
+      "body": "head",
+      "direction": "northwest",
+      "family": "father",
+      "agent": "metal",
+      "season": "autumn",
+      "state": ["creative"],
+      "animal": ["horse"]
+    }
+  },
+  {
+    "number": 2,
+    "ascii": "||:",
+    "unicode": "☱",
+    "binary": "110",
+    "name": {
+      "chinese": "兌",
+      "pinyin": "duì",
+      "english": ["The Joyous", "open (reflection)"]
+    },
+    "image": {
+      "chinese": "澤",
+      "english": ["lake", "marsh"]
+    },
+    "attributes": [
+      "joy",
+      "satisfaction",
+      "stagnation",
+      "tranquility",
+      "pleasure"
+    ],
+    "correspondences": {
+      "agent": "metal",
+      "direction": "west",
+      "family": "third daughter",
+      "body": "mouth",
+      "season": "autumn",
+      "state": ["tranquil", "devotion"],
+      "animal": ["sheep", "goat"]
+    }
+  },
+  {
+    "number": 3,
+    "ascii": "|:|",
+    "unicode": "☲",
+    "binary": "101",
+    "name": {
+      "chinese": "離",
+      "pinyin": "lí",
+      "english": ["The Clinging"]
+    },
+    "image": {
+      "chinese": "火",
+      "english": ["fire", "glow"]
+    },
+    "attributes": ["radiance", "pulsing motion"],
+    "correspondences": {
+      "agent": "fire",
+      "direction": "south",
+      "family": "second daughter",
+      "body": "eye",
+      "season": "summer",
+      "state": ["clinging", "clarity", "adaptable"],
+      "animal": ["pheasant"]
+    }
+  },
+  {
+    "number": 4,
+    "ascii": "|::",
+    "unicode": "☳",
+    "binary": "100",
+    "name": {
+      "chinese": "震",
+      "pinyin": "zhèn",
+      "english": ["The Arousing", "shake"]
+    },
+    "image": {
+      "chinese": "雷",
+      "english": ["thunder"]
+    },
+    "attributes": ["excitation", "revolution", "division", "inciting movement"],
+    "correspondences": {
+      "agent": "wood",
+      "direction": "east",
+      "family": "first son",
+      "body": "foot",
+      "season": "spring",
+      "state": ["initiative"],
+      "animal": ["dragon"]
+    }
+  },
+  {
+    "number": 5,
+    "ascii": ":||",
+    "unicode": "☴",
+    "binary": "011",
+    "name": {
+      "chinese": "巽",
+      "pinyin": "xùn",
+      "english": ["The Gentle", "ground"]
+    },
+    "image": {
+      "chinese": "風",
+      "english": ["wind", "air"]
+    },
+    "attributes": ["gentle penetration", "flexibility"],
+    "correspondences": {
+      "agent": "wood",
+      "direction": "southeast",
+      "family": "first daughter",
+      "body": "thigh",
+      "season": "spring",
+      "state": ["gentle entrance"],
+      "animal": ["fowl"]
+    }
+  },
+  {
+    "number": 6,
+    "ascii": ":|:",
+    "unicode": "☵",
+    "binary": "010",
+    "name": {
+      "chinese": "坎",
+      "pinyin": "kǎn",
+      "english": ["The Abyssal", "gorge"]
+    },
+    "image": {
+      "chinese": "水",
+      "english": ["water"]
+    },
+    "attributes": ["danger", "rapids"],
+    "correspondences": {
+      "agent": "water",
+      "direction": "north",
+      "family": "second son",
+      "body": "ear",
+      "season": "winter",
+      "state": ["in-motion"],
+      "animal": ["pig"]
+    }
+  },
+  {
+    "number": 7,
+    "ascii": "::|",
+    "unicode": "☶",
+    "binary": "001",
+    "name": {
+      "chinese": "艮",
+      "pinyin": "gèn",
+      "english": ["Keeping Still", "bound"]
+    },
+    "image": {
+      "chinese": "山",
+      "english": ["mountain"]
+    },
+    "attributes": ["resting", "standstill", "immobile"],
+    "correspondences": {
+      "agent": "earth",
+      "direction": "northeast",
+      "family": "third son",
+      "body": "hand",
+      "season": "winter",
+      "state": ["completion"],
+      "animal": ["dog"]
+    }
+  },
+  {
+    "number": 8,
+    "ascii": ":::",
+    "unicode": "☷",
+    "binary": "000",
+    "name": {
+      "chinese": "坤",
+      "pinyin": "kūn",
+      "english": ["The Receptive", "field"]
+    },
+    "image": {
+      "chinese": "地",
+      "english": ["ground", "earth"]
+    },
+    "attributes": ["devoted", "yielding"],
+    "correspondences": {
+      "agent": "earth",
+      "direction": "southwest",
+      "family": "mother",
+      "body": "belly",
+      "seeason": "summer",
+      "state": "receptive",
+      "animal": ["cow"]
+    }
+  }
+]

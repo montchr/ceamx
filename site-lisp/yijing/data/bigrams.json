@@ -1,0 +1,62 @@
+[
+  {
+    "ascii": "::",
+    "unicode": "⚋⚋",
+    "name": {
+      "chinese": "太陰",
+      "pinyin": "tàiyīn",
+      "english": "Old Yin"
+    },
+    "changing": true,
+    "correspondences": {
+      "season": "winter",
+      "solar_term": "Winter Solstice",
+      "nucleobase": "thymine"
+    }
+  },
+  {
+    "ascii": "|:",
+    "unicode": "⚊⚋",
+    "name": {
+      "chinese": "少陰",
+      "pinyin": "shǎoyīn",
+      "english": "Young Yin"
+    },
+    "changing": false,
+    "correspondences": {
+      "season": "spring",
+      "solar_term": "Autumn Equinox",
+      "nucleobase": "cytosine"
+    }
+  },
+  {
+    "ascii": "||",
+    "unicode": "⚊⚊",
+    "name": {
+      "chinese": "太陽",
+      "pinyin": "tàiyáng",
+      "english": "Old Yang"
+    },
+    "changing": true,
+    "correspondences": {
+      "season": "summer",
+      "solar_term": "Summer Solstice",
+      "nucleobase": "adenine"
+    }
+  },
+  {
+    "ascii": ":|",
+    "unicode": "⚋⚊",
+    "name": {
+      "chinese": "少陽",
+      "pinyin": "shǎoyáng",
+      "english": "Young Yang"
+    },
+    "changing": false,
+    "correspondences": {
+      "season": "autumn",
+      "solar_term": "Spring Equinox",
+      "nucleobase": "guanine"
+    }
+  }
+]

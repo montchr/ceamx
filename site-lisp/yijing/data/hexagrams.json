@@ -1,0 +1,706 @@
+[
+  {
+    "number": 1,
+    "name": {
+      "chinese": "乾",
+      "pinyin": "Qián"
+    },
+    "trigrams": [
+      1,
+      1
+    ]
+  },
+  {
+    "number": 2,
+    "name": {
+      "chinese": "坤",
+      "pinyin": "kūn"
+    },
+    "trigrams": [
+      8,
+      8
+    ]
+  },
+  {
+    "number": 3,
+    "name": {
+      "chinese": "屯",
+      "pinyin": "zhūn"
+    },
+    "trigrams": [
+      4,
+      6
+    ]
+  },
+  {
+    "number": 4,
+    "name": {
+      "chinese": "蒙",
+      "pinyin": "méng"
+    },
+    "trigrams": [
+      6,
+      7
+    ]
+  },
+  {
+    "number": 5,
+    "name": {
+      "chinese": "需",
+      "pinyin": "xū"
+    },
+    "trigrams": [
+      1,
+      6
+    ]
+  },
+  {
+    "number": 6,
+    "name": {
+      "chinese": "訟",
+      "pinyin": "sòng"
+    },
+    "trigrams": [
+      6,
+      1
+    ]
+  },
+  {
+    "number": 7,
+    "name": {
+      "chinese": "師",
+      "pinyin": "shī"
+    },
+    "trigrams": [
+      6,
+      8
+    ]
+  },
+  {
+    "number": 8,
+    "name": {
+      "chinese": "比",
+      "pinyin": "bǐ"
+    },
+    "trigrams": [
+      8,
+      6
+    ]
+  },
+  {
+    "number": 9,
+    "name": {
+      "chinese": "小畜",
+      "pinyin": "xiǎo chù"
+    },
+    "trigrams": [
+      1,
+      5
+    ]
+  },
+  {
+    "number": 10,
+    "name": {
+      "chinese": "履",
+      "pinyin": "lǚ"
+    },
+    "trigrams": [
+      2,
+      1
+    ]
+  },
+  {
+    "number": 11,
+    "name": {
+      "chinese": "泰",
+      "pinyin": "tài"
+    },
+    "trigrams": [
+      1,
+      8
+    ]
+  },
+  {
+    "number": 12,
+    "name": {
+      "chinese": "否",
+      "pinyin": "pǐ"
+    },
+    "trigrams": [
+      8,
+      1
+    ]
+  },
+  {
+    "number": 13,
+    "name": {
+      "chinese": "同人",
+      "pinyin": "tóng rén"
+    },
+    "trigrams": [
+      3,
+      1
+    ]
+  },
+  {
+    "number": 14,
+    "name": {
+      "chinese": "大有",
+      "pinyin": "dà yǒu"
+    },
+    "trigrams": [
+      1,
+      3
+    ]
+  },
+  {
+    "number": 15,
+    "name": {
+      "chinese": "謙",
+      "pinyin": "qiān"
+    },
+    "trigrams": [
+      7,
+      8
+    ]
+  },
+  {
+    "number": 16,
+    "name": {
+      "chinese": "豫",
+      "pinyin": "yù"
+    },
+    "trigrams": [
+      8,
+      4
+    ]
+  },
+  {
+    "number": 17,
+    "name": {
+      "chinese": "隨",
+      "pinyin": "suí"
+    },
+    "trigrams": [
+      4,
+      2
+    ]
+  },
+  {
+    "number": 18,
+    "name": {
+      "chinese": "蠱",
+      "pinyin": "gŭ"
+    },
+    "trigrams": [
+      5,
+      7
+    ]
+  },
+  {
+    "number": 19,
+    "name": {
+      "chinese": "臨",
+      "pinyin": "lín"
+    },
+    "trigrams": [
+      2,
+      8
+    ]
+  },
+  {
+    "number": 20,
+    "name": {
+      "chinese": "觀",
+      "pinyin": "guān"
+    },
+    "trigrams": [
+      8,
+      5
+    ]
+  },
+  {
+    "number": 21,
+    "name": {
+      "chinese": "噬嗑",
+      "pinyin": "shì kè"
+    },
+    "trigrams": [
+      4,
+      3
+    ]
+  },
+  {
+    "number": 22,
+    "name": {
+      "chinese": "賁",
+      "pinyin": "bì"
+    },
+    "trigrams": [
+      3,
+      7
+    ]
+  },
+  {
+    "number": 23,
+    "name": {
+      "chinese": "剝",
+      "pinyin": "bō"
+    },
+    "trigrams": [
+      8,
+      7
+    ]
+  },
+  {
+    "number": 24,
+    "name": {
+      "chinese": "復",
+      "pinyin": "fù"
+    },
+    "trigrams": [
+      4,
+      8
+    ]
+  },
+  {
+    "number": 25,
+    "name": {
+      "chinese": "無妄",
+      "pinyin": "wú wàng"
+    },
+    "trigrams": [
+      4,
+      1
+    ]
+  },
+  {
+    "number": 26,
+    "name": {
+      "chinese": "大畜",
+      "pinyin": "dà chù"
+    },
+    "trigrams": [
+      1,
+      7
+    ]
+  },
+  {
+    "number": 27,
+    "name": {
+      "chinese": "頤",
+      "pinyin": "yí"
+    },
+    "trigrams": [
+      4,
+      7
+    ]
+  },
+  {
+    "number": 28,
+    "name": {
+      "chinese": "大過",
+      "pinyin": "dà guò"
+    },
+    "trigrams": [
+      5,
+      2
+    ]
+  },
+  {
+    "number": 29,
+    "name": {
+      "chinese": "坎",
+      "pinyin": "kǎn"
+    },
+    "trigrams": [
+      6,
+      6
+    ]
+  },
+  {
+    "number": 30,
+    "name": {
+      "chinese": "離",
+      "pinyin": "lí"
+    },
+    "trigrams": [
+      3,
+      3
+    ]
+  },
+  {
+    "number": 31,
+    "name": {
+      "chinese": "咸",
+      "pinyin": "xián"
+    },
+    "trigrams": [
+      7,
+      2
+    ]
+  },
+  {
+    "number": 32,
+    "name": {
+      "chinese": "恆",
+      "pinyin": "héng"
+    },
+    "trigrams": [
+      5,
+      4
+    ]
+  },
+  {
+    "number": 33,
+    "name": {
+      "chinese": "遯",
+      "pinyin": "dùn"
+    },
+    "trigrams": [
+      7,
+      1
+    ]
+  },
+  {
+    "number": 34,
+    "name": {
+      "chinese": "大壯",
+      "pinyin": "dà zhuàng"
+    },
+    "trigrams": [
+      1,
+      4
+    ]
+  },
+  {
+    "number": 35,
+    "name": {
+      "chinese": "晉",
+      "pinyin": "jìn"
+    },
+    "trigrams": [
+      8,
+      3
+    ]
+  },
+  {
+    "number": 36,
+    "name": {
+      "chinese": "明夷",
+      "pinyin": "míng yí"
+    },
+    "trigrams": [
+      3,
+      8
+    ]
+  },
+  {
+    "number": 37,
+    "name": {
+      "chinese": "家人",
+      "pinyin": "jiā rén"
+    },
+    "trigrams": [
+      3,
+      5
+    ]
+  },
+  {
+    "number": 38,
+    "name": {
+      "chinese": "睽",
+      "pinyin": "kuí"
+    },
+    "trigrams": [
+      2,
+      3
+    ]
+  },
+  {
+    "number": 39,
+    "name": {
+      "chinese": "蹇",
+      "pinyin": "jiǎn"
+    },
+    "trigrams": [
+      7,
+      6
+    ]
+  },
+  {
+    "number": 40,
+    "name": {
+      "chinese": "解",
+      "pinyin": "xiè"
+    },
+    "trigrams": [
+      6,
+      4
+    ]
+  },
+  {
+    "number": 41,
+    "name": {
+      "chinese": "損",
+      "pinyin": "sǔn"
+    },
+    "trigrams": [
+      2,
+      7
+    ]
+  },
+  {
+    "number": 42,
+    "name": {
+      "chinese": "益",
+      "pinyin": "yì"
+    },
+    "trigrams": [
+      4,
+      5
+    ]
+  },
+  {
+    "number": 43,
+    "name": {
+      "chinese": "夬",
+      "pinyin": "guài"
+    },
+    "trigrams": [
+      1,
+      2
+    ]
+  },
+  {
+    "number": 44,
+    "name": {
+      "chinese": "姤",
+      "pinyin": "gòu"
+    },
+    "trigrams": [
+      5,
+      1
+    ]
+  },
+  {
+    "number": 45,
+    "name": {
+      "chinese": "萃",
+      "pinyin": "cuì"
+    },
+    "trigrams": [
+      8,
+      2
+    ]
+  },
+  {
+    "number": 46,
+    "name": {
+      "chinese": "升",
+      "pinyin": "shēng"
+    },
+    "trigrams": [
+      5,
+      8
+    ]
+  },
+  {
+    "number": 47,
+    "name": {
+      "chinese": "困",
+      "pinyin": "kùn"
+    },
+    "trigrams": [
+      6,
+      2
+    ]
+  },
+  {
+    "number": 48,
+    "name": {
+      "chinese": "井",
+      "pinyin": "jǐng"
+    },
+    "trigrams": [
+      5,
+      6
+    ]
+  },
+  {
+    "number": 49,
+    "name": {
+      "chinese": "革",
+      "pinyin": "gé"
+    },
+    "trigrams": [
+      3,
+      2
+    ]
+  },
+  {
+    "number": 50,
+    "name": {
+      "chinese": "鼎",
+      "pinyin": "dǐng"
+    },
+    "trigrams": [
+      5,
+      3
+    ]
+  },
+  {
+    "number": 51,
+    "name": {
+      "chinese": "震",
+      "pinyin": "zhèn"
+    },
+    "trigrams": [
+      4,
+      4
+    ]
+  },
+  {
+    "number": 52,
+    "name": {
+      "chinese": "艮",
+      "pinyin": "gèn"
+    },
+    "trigrams": [
+      7,
+      7
+    ]
+  },
+  {
+    "number": 53,
+    "name": {
+      "chinese": "漸",
+      "pinyin": "jiàn"
+    },
+    "trigrams": [
+      7,
+      5
+    ]
+  },
+  {
+    "number": 54,
+    "name": {
+      "chinese": "歸妹",
+      "pinyin": "guī mèi"
+    },
+    "trigrams": [
+      2,
+      4
+    ]
+  },
+  {
+    "number": 55,
+    "name": {
+      "chinese": "豐",
+      "pinyin": "fēng"
+    },
+    "trigrams": [
+      3,
+      4
+    ]
+  },
+  {
+    "number": 56,
+    "name": {
+      "chinese": "旅",
+      "pinyin": "lǚ"
+    },
+    "trigrams": [
+      7,
+      3
+    ]
+  },
+  {
+    "number": 57,
+    "name": {
+      "chinese": "巽",
+      "pinyin": "xùn"
+    },
+    "trigrams": [
+      5,
+      5
+    ]
+  },
+  {
+    "number": 58,
+    "name": {
+      "chinese": "兌",
+      "pinyin": "duì"
+    },
+    "trigrams": [
+      2,
+      2
+    ]
+  },
+  {
+    "number": 59,
+    "name": {
+      "chinese": "渙",
+      "pinyin": "huàn"
+    },
+    "trigrams": [
+      6,
+      5
+    ]
+  },
+  {
+    "number": 60,
+    "name": {
+      "chinese": "節",
+      "pinyin": "jié"
+    },
+    "trigrams": [
+      2,
+      6
+    ]
+  },
+  {
+    "number": 61,
+    "name": {
+      "chinese": "中孚",
+      "pinyin": "zhōng fú"
+    },
+    "trigrams": [
+      2,
+      5
+    ]
+  },
+  {
+    "number": 62,
+    "name": {
+      "chinese": "小過",
+      "pinyin": "xiǎo guò"
+    },
+    "trigrams": [
+      7,
+      4
+    ]
+  },
+  {
+    "number": 63,
+    "name": {
+      "chinese": "既濟",
+      "pinyin": "jì jì"
+    },
+    "trigrams": [
+      3,
+      6
+    ]
+  },
+  {
+    "number": 64,
+    "name": {
+      "chinese": "未濟",
+      "pinyin": "wèi jì"
+    },
+    "trigrams": [
+      6,
+      3
+    ]
+  }
+]
