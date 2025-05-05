@@ -122,29 +122,26 @@
                                         rewrite-front-matter))
   (denote-rename-buffer-mode 1))
 
-(after! denote
-  (require 'denote-silo-extras)
+(package! (denote-silo :host github :repo "protesilaos/denote-silo"))
 
-  (setopt denote-silo-extras-directories
-          (list ceamx-note-journal-dir
+(after! denote
+  (require 'denote-silo)
+
+  (setopt denote-silo-directories
+          (list denote-directory
+                ceamx-note-journal-dir
                 ceamx-note-work-dir)))
 
-(use-feature! ceamx-note
-  :after denote
-  :commands (ceamx-note/denote/pick-silo-then-command))
-
-(defun ceamx-note/create-or-visit-journal-entry ()
-  "Invoke `denote-journal-extras-new-or-existing-entry' scoped to the
- Journal silo."
-  (interactive)
-  (let ((denote-directory ceamx-note-journal-dir))
-    (call-interactively #'denote-journal-extras-new-or-existing-entry)))
+(package! (denote-journal :host github :repo "protesilaos/denote-journal"))
 
 (after! denote
-  (require 'denote-journal-extras)
+  (require 'denote-journal)
 
-  (setopt denote-journal-extras-directory ceamx-note-journal-dir)
-  (setopt denote-journal-extras-keyword '("journal")))
+  (setopt denote-journal-directory ceamx-note-journal-dir)
+  (setopt denote-journal-keyword '("journal")))
+
+(use-feature! ceamx-note
+  :commands (ceamx-note/create-or-visit-journal-entry))
 
 (package! consult-denote
   (define-keymap :keymap ceamx-note-prefix-map

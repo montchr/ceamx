@@ -27,7 +27,7 @@
             :jump-to-captured t)
 
            ("Journal entry" :keys "j"
-            :file denote-journal-extras-path-to-new-or-existing-entry
+            :file denote-journal-path-to-new-or-existing-entry
             :template ("* %U %?"
                        "%i %a")
             :kill-buffer t

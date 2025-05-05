@@ -27,6 +27,7 @@
 (autoload 'denote-subdirectory "denote")
 (autoload 'denote-template "denote")
 (autoload 'denote-type "denote")
+(autoload 'denote-journal-new-or-existing-entry "denote-journal")
 
 ;;;; Customization
 
@@ -83,17 +84,14 @@ functions that Denote provides."
 
 ;;;; Functions
 
-(defun ceamx-note/denote/pick-silo-then-command (silo command)
-  "Select SILO and run Denote COMMAND within.
-SILO is a filesystem directory listed in `ceamx-note-silo-directories'.
-COMMAND is a command listed in `ceamx-note-denote-silo-commands'."
-  (interactive
-   (list (completing-read "Select a silo: " ceamx-note-silo-directories nil t)
-         (intern (completing-read
-                  "Run command in silo: "
-                  ceamx-note-denote-silo-commands nil t))))
-  (let ((denote-directory silo))
-    (call-interactively command)))
+;;;; Commands
+
+(defun ceamx-note/create-or-visit-journal-entry ()
+  "Invoke `denote-journal-new-or-existing-entry' scoped to the
+Ceamx Journal silo."
+  (interactive)
+  (let ((denote-directory ceamx-note-journal-dir))
+    (call-interactively #'denote-journal-new-or-existing-entry)))
 
 ;;; Footer
 

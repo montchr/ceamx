@@ -599,7 +599,7 @@ This should be copied verbatim from the Elpaca documentation, with the
 definition for ~elpaca-directory~ removed.
 
 #+begin_src emacs-lisp
-(defvar elpaca-installer-version 0.10)
+(defvar elpaca-installer-version 0.11)
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
 (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
@@ -633,7 +633,7 @@ definition for ~elpaca-directory~ removed.
   (unless (require 'elpaca-autoloads nil t)
     (require 'elpaca)
     (elpaca-generate-autoloads "elpaca" repo)
-    (load "./elpaca-autoloads")))
+    (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
 #+end_src
@@ -5387,26 +5387,21 @@ e.g. "M-4" should not expand this section -- it should only be expanded manually
             (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
 #+end_src
 
-*** DISABLED =forge= :: interact with online forges through magit
+*** =forge= :: interact with online forges through magit
 :PROPERTIES:
 :ID:       c77a863e-56bd-437f-aeb8-303b0183c9fa
 :END:
 
 *Warning*: /development versions of ~forge~ may expect a different ~magit~
-version!/ Make sure to pin ~forge~ to a stable tag.  And then, make sure
-~magit~ is pinned to a stable tag.  And then, make sure every other
-Magit dependency is pinned...
+version!/
 
 #+begin_src emacs-lisp
-;; (package! (forge :tag "v0.4.6"))
+(package! (forge))
 
-;; (after! magit
-;;   (require 'forge)
+(after! magit
+  (require 'forge)
 
-;;   ;; FIXME: not yet released
-;;   ;; (keymap-set vc-prefix-map "o" #'forge-browse-commit)
-
-;;   )
+  (keymap-set vc-prefix-map "o" #'forge-browse-commit))
 #+end_src
 
 Forge will prefer, in order, =upstream= and then =origin=.  I use that convention
@@ -6902,6 +6897,15 @@ Install the =yaml-language-server= from Nixpkgs first.
     "t" #'csv-transpose))
 #+end_src
 
+**** KDL
+:PROPERTIES:
+:ID:       dd16c6e6-fade-4246-b5ac-e5a05148d1b0
+:END:
+
+#+begin_src emacs-lisp
+(package! (kdl-ts-mode :host github :repo "merrickluo/kdl-ts-mode"))
+#+end_src
+
 *** =jq-mode= :: major mode for editing =jq= queries
 
 + Package :: <https://github.com/ljos/jq-mode>
@@ -7673,18 +7677,20 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 #+end_src
 
 *** Define Denote silos for isolated note environments
+:PROPERTIES:
+:ID:       bbaef329-f43a-4f1a-bd20-99475fe95ace
+:END:
 
 #+begin_src emacs-lisp
+(package! (denote-silo :host github :repo "protesilaos/denote-silo"))
+
 (after! denote
-  (require 'denote-silo-extras)
+  (require 'denote-silo)
 
-  (setopt denote-silo-extras-directories
-          (list ceamx-note-journal-dir
+  (setopt denote-silo-directories
+          (list denote-directory
+                ceamx-note-journal-dir
                 ceamx-note-work-dir)))
-
-(use-feature! ceamx-note
-  :after denote
-  :commands (ceamx-note/denote/pick-silo-then-command))
 #+end_src
 
 *** Use Denote for journalling
@@ -7693,18 +7699,16 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 :END:
 
 #+begin_src emacs-lisp
-(defun ceamx-note/create-or-visit-journal-entry ()
-  "Invoke `denote-journal-extras-new-or-existing-entry' scoped to the
- Journal silo."
-  (interactive)
-  (let ((denote-directory ceamx-note-journal-dir))
-    (call-interactively #'denote-journal-extras-new-or-existing-entry)))
+(package! (denote-journal :host github :repo "protesilaos/denote-journal"))
 
 (after! denote
-  (require 'denote-journal-extras)
+  (require 'denote-journal)
 
-  (setopt denote-journal-extras-directory ceamx-note-journal-dir)
-  (setopt denote-journal-extras-keyword '("journal")))
+  (setopt denote-journal-directory ceamx-note-journal-dir)
+  (setopt denote-journal-keyword '("journal")))
+
+(use-feature! ceamx-note
+  :commands (ceamx-note/create-or-visit-journal-entry))
 #+end_src
 
 *** =consult-denote= :: enchance Denote with Consult features
@@ -9083,6 +9087,7 @@ changing lines.
 *** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       71b73979-f3a8-4215-b31d-322c07cff333
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-fun.el :comments no
@@ -9098,7 +9103,7 @@ changing lines.
 
 + EmacsWiki :: <https://www.emacswiki.org/emacs/ZoneMode>
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-feature! zone
   :defer 30
   :autoload (zone-when-idle)
@@ -9121,6 +9126,15 @@ Return the new `zone' timer."
 ;;         (mapcar 'symbol-name zone-programs))))
 ;;   (let ((zone-programs (list (intern pgm))))
 ;;     (zone)))
+#+end_src
+
+*** Install some games
+:PROPERTIES:
+:ID:       bb5c51be-5ceb-426d-bd7d-695b6576b15c
+:END:
+
+#+begin_src emacs-lisp
+;; TODO
 #+end_src
 
 *** Provide the ~ceamx-init-fun~ feature
@@ -9294,7 +9308,7 @@ and encourages daily interaction and maintenance for the sake of awareness.
             :jump-to-captured t)
 
            ("Journal entry" :keys "j"
-            :file denote-journal-extras-path-to-new-or-existing-entry
+            :file denote-journal-path-to-new-or-existing-entry
             :template ("* %U %?"
                        "%i %a")
             :kill-buffer t

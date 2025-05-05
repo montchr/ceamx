@@ -269,26 +269,21 @@
             (,(file-name-concat ceamx-projects-dir "sources") . 1)
             (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
 
-;; DISABLED =forge= :: interact with online forges through magit
+;; =forge= :: interact with online forges through magit
 ;; :PROPERTIES:
 ;; :ID:       c77a863e-56bd-437f-aeb8-303b0183c9fa
 ;; :END:
 
 ;; *Warning*: /development versions of ~forge~ may expect a different ~magit~
-;; version!/ Make sure to pin ~forge~ to a stable tag.  And then, make sure
-;; ~magit~ is pinned to a stable tag.  And then, make sure every other
-;; Magit dependency is pinned...
+;; version!/
 
 
-;; (package! (forge :tag "v0.4.6"))
+(package! (forge))
 
-;; (after! magit
-;;   (require 'forge)
+(after! magit
+  (require 'forge)
 
-;;   ;; FIXME: not yet released
-;;   ;; (keymap-set vc-prefix-map "o" #'forge-browse-commit)
-
-;;   )
+  (keymap-set vc-prefix-map "o" #'forge-browse-commit))
 
 (provide 'ceamx-init-vcs)
 ;;; ceamx-init-vcs.el ends here

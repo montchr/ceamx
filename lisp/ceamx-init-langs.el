@@ -1114,6 +1114,14 @@ The canonical source for the file can be found at the following location:
     "k" #'csv-kill-fields
     "t" #'csv-transpose))
 
+;; KDL
+;; :PROPERTIES:
+;; :ID:       dd16c6e6-fade-4246-b5ac-e5a05148d1b0
+;; :END:
+
+
+(package! (kdl-ts-mode :host github :repo "merrickluo/kdl-ts-mode"))
+
 ;; =jq-mode= :: major mode for editing =jq= queries
 
 ;; + Package :: <https://github.com/ljos/jq-mode>
