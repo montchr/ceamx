@@ -1745,7 +1745,11 @@ Enable the tab bar:
 <https://protesilaos.com/emacs/fontaine>
 
 TIP: You can test out alterations quickly with, for example:
-     (internal-set-lisp-face-attribute 'default :weight 'semilight)
+
+#+begin_src emacs-lisp :tangle no
+(internal-set-lisp-face-attribute 'default :weight 'semilight)
+#+end_src
+
 
 #+begin_src emacs-lisp
 (package! fontaine
