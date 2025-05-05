@@ -26,22 +26,22 @@
 
 ;;; Code:
 
-(defconst yijing-version "0.1.0")
-(defconst yijing-base-directory (file-name-directory load-file-name))
-
 (require 'cl-lib)
 (require 'seq)
 (require 'map)
 
 (require 'llama)
 
+(defconst yijing-version "0.1.0")
+(defconst yijing-base-directory (file-name-directory load-file-name))
+
+(defgroup yijing '()
+  "Tools for working with the Yijing / I Ching / Book of Changes.")
+
 ;;;; Variables
 
 
 ;;;; Customization
-
-(defgroup yijing '()
-  "Package providing tools for working with the Yijing / I Ching / Book of Changes.")
 
 (defcustom yijing-data-directory
   (file-name-as-directory (concat yijing-base-directory "data"))
@@ -154,18 +154,48 @@ Note that this operation will destroy any changing-line data."
   "TODO"
   (yijing--parse-json-file yijing-hexagrams-json-file))
 
+(defun yijing--find-by (data key value)
+  (seq-find (## equal value (map-elt % key)) data))
 
-(defun yijing-trigram-info (number)
+(defun yijing-hexagram-from-ascii (lines)
+  ""
+  ())
+
+(defun yijing-trigram-info (number &optional keys)
   "TODO"
-  (seq-find (##= number (map-elt % "number"))
-    (yijing-trigrams)))
+  (yijing--find-by (yijing-trigrams)
+    "number" number))
 
 (defun yijing-hexagram-info (number)
   "TODO"
   (seq-find (##= number (map-elt % "number"))
     (yijing-hexagrams)))
 
-(defun yijing-hexagram )
+;; (defun yijing-hexagram )
+
+;;;;; Randomization
+
+(defun yijing-random-between (min max)
+  "Return a random number between MIN and MAX."
+  (+ min (random (- (+ 1 max) min))))
+
+(defun yijing-coin-toss ()
+  ""
+  (yijing-random-between 2 3))
+
+(defun yijing-unigram-from-coins ()
+  ""
+  (seq-reduce
+    (## + (yijing-coin-toss) %1 _%2)
+    (number-sequence 1 3)
+    0))
+
+(defun yijing-hexagram-from-coins ()
+  ""
+  (seq-reduce
+    (## push (yijing-unigram-from-coins) %1 _%2)
+    (number-sequence 1 6)
+    nil))
 
 (provide 'yijing)
 ;;; yijing.el ends here

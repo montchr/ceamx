@@ -1083,8 +1083,8 @@ Technically this is a casting."
 (defun yijing-coin-helper ()
   "Helper function for `yijing-coin-caster'."
   (cl-case (+ (apply yijing-randomize-method (list 2 3))
-          (apply yijing-randomize-method (list 2 3))
-          (apply yijing-randomize-method (list 2 3)))
+             (apply yijing-randomize-method (list 2 3))
+             (apply yijing-randomize-method (list 2 3)))
     (6 2)
     (7 1)
     (8 0)
