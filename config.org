@@ -7812,13 +7812,23 @@ The value of ~org-directory~ will be used as a default destination for
 new notes, especially as they relate to tasks and agendas.  For that
 reason, use the ~ceamx-agenda-dir~.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (progn
   (defvar org-directory ceamx-agenda-dir)
   (make-directory org-directory t))
+#+end_src
 
+Let’s immediately override ~ceamx-default-agenda-files~ for some reason:
+
+#+begin_src emacs-lisp
+(setopt ceamx-default-agenda-files
+        (list (file-name-concat ceamx-agenda-dir "todo.org")
+              (file-name-concat ceamx-agenda-dir "work.org")))
+#+end_src
+
+#+begin_src emacs-lisp
 (setopt org-agenda-files ceamx-default-agenda-files)
-#+END_SRC
+#+end_src
 
 *** Baseline Org-Mode customizations
 :PROPERTIES:
