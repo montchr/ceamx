@@ -1800,13 +1800,15 @@ TIP: You can test out alterations quickly with, for example:
                :bold-weight extrabold)
 
               (t
-               :default-family "Aporetic Sans Mono"
+               ;; :default-family "Aporetic Sans Mono"
+               :default-family "Berkeley Mono"
                :default-weight regular
                :default-height ,(pcase (system-name)
                                   ("tuuvok" 102)
                                   (_ 105))
 
-               :fixed-pitch-family "Aporetic Sans Mono"
+               ;; :fixed-pitch-family "Aporetic Sans Mono"
+               :fixed-pitch-family nil
                :fixed-pitch-weight nil
                :fixed-pitch-height 1.0
 
@@ -1814,7 +1816,8 @@ TIP: You can test out alterations quickly with, for example:
                :fixed-pitch-serif-weight nil
                :fixed-pitch-serif-height 1.0
 
-               :variable-pitch-family "Aporetic Serif"
+               ;; :variable-pitch-family "Aporetic Serif"
+               :variable-pitch-family nil
                :variable-pitch-weight nil
                :variable-pitch-height 1.0
 
