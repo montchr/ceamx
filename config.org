@@ -7805,7 +7805,7 @@ to take control of these paths.
 (defcustom ceamx-default-agenda-files
   (file-expand-wildcards (file-name-concat ceamx-agenda-dir "*.org"))
   "List of absolute paths of all files to include in the agenda."
-  :type '(file)
+  :type '(repeat file)
   :group 'ceamx)
 
 (defcustom ceamx-default-todo-file
