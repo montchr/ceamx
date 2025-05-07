@@ -440,17 +440,6 @@
 
 (setq-default text-scale-remap-header-line t)
 
-;; =fontaine= :: pre-configure font presets
-;; :PROPERTIES:
-;; :ID:       a007fa6e-ea76-4a29-86a2-7ff87885c0c1
-;; :END:
-
-;; <https://protesilaos.com/emacs/fontaine>
-
-;; TIP: You can test out alterations quickly with, for example:
-;;      (internal-set-lisp-face-attribute 'default :weight 'semilight)
-
-
 (package! fontaine
   (when (display-graphic-p)
     (require 'fontaine)
@@ -500,12 +489,16 @@
 
               (t
                :default-family "Aporetic Sans Mono"
+               ;; :default-family "Berkeley Mono"
                :default-weight regular
                :default-height ,(pcase (system-name)
-                                  ("tuuvok" 102)
-                                  (_ 105))
+                                  ;; ("tuuvok" 102)
+                                  ;; (_ 105)
+                                  (_ 100))
 
-               :fixed-pitch-family "Aporetic Sans Mono"
+               ;; :fixed-pitch-family "Aporetic Sans Mono"
+               ;; :fixed-pitch-family "Berkeley Mono"
+               :fixed-pitch-family nil
                :fixed-pitch-weight nil
                :fixed-pitch-height 1.0
 
@@ -514,28 +507,29 @@
                :fixed-pitch-serif-height 1.0
 
                :variable-pitch-family "Aporetic Serif"
+               ;; :variable-pitch-family nil
                :variable-pitch-weight nil
                :variable-pitch-height 1.0
 
                :mode-line-active-family nil
                :mode-line-active-weight nil
-               :mode-line-active-height 0.9
+               :mode-line-active-height 0.8
 
                :mode-line-inactive-family nil
                :mode-line-inactive-weight nil
-               :mode-line-inactive-height 0.9
+               :mode-line-inactive-height 0.8
 
                :header-line-family nil
                :header-line-weight nil
-               :header-line-height 0.9
+               :header-line-height 0.8
 
                :line-number-family nil
                :line-number-weight nil
-               :line-number-height 0.9
+               :line-number-height 0.8
 
                :tab-bar-family nil
                :tab-bar-weight nil
-               :tab-bar-height 1.0
+               :tab-bar-height 0.8
 
                :bold-family nil
                :bold-weight bold
@@ -546,8 +540,9 @@
 
                :line-spacing nil)))
 
-    (fontaine-mode 1)
-    (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))))
+    (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+
+    (fontaine-mode 1)))
 
 ;; ~ligature.el~ :: improved ligature support
 ;; :PROPERTIES:
