@@ -7894,12 +7894,6 @@ Let’s immediately override ~ceamx-default-agenda-files~ for some reason:
   (keymap-set org-mode-map "C-M-S-<return>" #'org-insert-todo-subheading)
 
   ;;
-  ;; Tags
-
-  (setopt org-auto-align-tags nil
-          org-tags-column 0)
-
-  ;;
   ;; Folding
 
   (setopt org-cycle-emulate-tab t)
