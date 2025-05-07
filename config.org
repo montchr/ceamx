@@ -4000,7 +4000,7 @@ Refine preview appearance and behavior:
 
 #+begin_src emacs-lisp
 (use-feature! abbrev
-  :hook ((text-mode prog-mode git-commit-mode) . abbrev-mode)
+  :hook ((text-mode prog-mode) . abbrev-mode)
 
   :config
   (setopt only-global-abbrevs nil)
