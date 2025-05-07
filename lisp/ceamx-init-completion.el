@@ -84,6 +84,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (define-keymap :keymap vertico-map
     "RET" #'vertico-directory-enter
     "DEL" #'vertico-directory-delete-char
+    ;; TODO: prevent adding deletion to kill-ring
     "M-DEL" #'vertico-directory-delete-word
     "M-q" #'vertico-quick-insert
     "C-j" #'vertico-insert
@@ -92,7 +93,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (use-feature! ceamx-completion
   :after vertico
   :bind ( :map vertico-map
-          ("TAB" . ceamx/vertico-partial-insert)
+          ;; ("TAB" . ceamx/vertico-partial-insert)
           ("C-j" . vertico-insert)))
 
 
@@ -409,7 +410,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (use-feature! abbrev
-  :hook ((text-mode prog-mode git-commit-mode) . abbrev-mode)
+  :hook ((text-mode prog-mode) . abbrev-mode)
 
   :config
   (setopt only-global-abbrevs nil)

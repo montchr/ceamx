@@ -36,7 +36,7 @@
 (defcustom ceamx-default-agenda-files
   (file-expand-wildcards (file-name-concat ceamx-agenda-dir "*.org"))
   "List of absolute paths of all files to include in the agenda."
-  :type '(file)
+  :type '(repeat file)
   :group 'ceamx)
 
 (defcustom ceamx-default-todo-file
@@ -55,6 +55,15 @@
 (progn
   (defvar org-directory ceamx-agenda-dir)
   (make-directory org-directory t))
+
+
+
+;; Let’s immediately override ~ceamx-default-agenda-files~ to keep down the noise:
+
+
+(setopt ceamx-default-agenda-files
+        (list (file-name-concat ceamx-agenda-dir "todo.org")
+              (file-name-concat ceamx-agenda-dir "work.org")))
 
 (setopt org-agenda-files ceamx-default-agenda-files)
 
@@ -105,12 +114,6 @@
           org-insert-heading-respect-content nil)
   (keymap-set org-mode-map "C-M-<return>" #'org-insert-subheading)
   (keymap-set org-mode-map "C-M-S-<return>" #'org-insert-todo-subheading)
-
-  ;;
-  ;; Tags
-
-  (setopt org-auto-align-tags nil
-          org-tags-column 0)
 
   ;;
   ;; Folding
@@ -213,19 +216,36 @@ Intended for use as a local hook function on
 (package! org-modern
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+
   (setopt org-modern-table nil
           org-modern-keyword nil
           org-modern-timestamp nil
           org-modern-checkbox nil
           org-modern-internal-target nil
           org-modern-radio-target nil)
+  ;; (setopt org-modern-star 'replace)
+  (setopt org-modern-star 'fold)
+  (setopt org-modern-list
+          '((?- . "⁃")
+            (?* . "•")
+            (?+ . "◦")))
+
   (after! org
     (keymap-set org-mode-map "C-c T p" #'org-modern-mode))
   (after! org-agenda
     (keymap-set org-agenda-mode-map "C-c T p" #'org-modern-mode)))
 
 (package! org-appear
-  (add-hook 'org-mode-hook #'org-appear-mode))
+  (add-hook 'org-mode-hook #'org-appear-mode)
+
+  (setopt org-appear-autoemphasis t
+          org-appear-autolinks t
+          org-appear-autosubmarkers t
+          org-appear-autoentities t
+          org-appear-autokeywords t
+          org-appear-inside-latex t)
+  (setopt org-appear-delay 0.25)
+  (setopt org-appear-trigger 'always))
 
 (after! org
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
@@ -235,8 +255,7 @@ Intended for use as a local hook function on
           org-agenda-tags-column 0)
   (setopt org-pretty-entities t
           org-pretty-entities-include-sub-superscripts nil)
-  (setopt org-indent-indentation-per-level 2
-          org-startup-indented nil)
+  (setopt org-indent-indentation-per-level 2)
   (setopt org-src-fontify-natively t)
   ;; TODO: show markers for bold and italic, hide everything else
   (setopt org-hide-emphasis-markers t)
@@ -247,29 +266,21 @@ Intended for use as a local hook function on
   ;; FIXME: not correct
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
-(after! org-modern
-  (setopt org-modern-star 'replace))
+;; Method № 1: Org-Indent-Mode
+;; :PROPERTIES:
+;; :ID:       cab6066c-6fbb-4361-8ed4-09f840b1ab76
+;; :END:
 
-(after! org-appear
-  (setopt org-appear-autoemphasis t
-          org-appear-autolinks t
-          org-appear-autosubmarkers t
-          org-appear-autoentities t
-          org-appear-autokeywords t
-          org-appear-inside-latex t)
-  (setopt org-appear-delay 0.25)
-  (setopt org-appear-trigger 'always))
-
-;; Appearance: Create the effect of visual indentation
-
-;; ~org-modern~ is incompatible with Org indentation.  But we can pretend.
+;; ~org-modern-indent~ provides support for using ~org-modern-mode~ in
+;; combination with ~org-indent-mode~.
 
 
-(after! org-modern
-  ;; Emulate "indentation" by replacing leading stars with whitespace.
-  ;; One space will replace one star.  Additional spaces will appear
-  ;; as whitespace, creating the effect of visual indentation.
-  (setopt org-modern-hide-stars (string-pad " " org-indent-indentation-per-level)))
+(package! (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
+  (setopt org-startup-indented t)
+  ;; Adds extra indentation.
+  (setopt org-modern-hide-stars nil)
+
+  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
 ;; Appearance: Display visual feedback after actions
 

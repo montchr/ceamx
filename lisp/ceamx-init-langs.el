@@ -1123,6 +1123,9 @@ The canonical source for the file can be found at the following location:
 (package! (kdl-ts-mode :host github :repo "merrickluo/kdl-ts-mode"))
 
 ;; =jq-mode= :: major mode for editing =jq= queries
+;; :PROPERTIES:
+;; :ID:       14cef8c8-c0c9-4110-839b-4eb7c5e3da96
+;; :END:
 
 ;; + Package :: <https://github.com/ljos/jq-mode>
 
@@ -1517,11 +1520,13 @@ usually wrongly fontified as a metadata block."
   )
 
 ;; =just-mode= :: Language support for the Just task runner configuration files
+;; :PROPERTIES:
+;; :ID:       f57bb40b-4efc-4f77-8bef-bad0d8c2c1ba
+;; :END:
 
 
-(use-package just-mode
-  ;;:ensure t
-  )
+(package! just-mode)
+(package! just-ts-mode)
 
 ;; =vimrc-mode= :: Language support for =vimrc= syntax
 
