@@ -7833,7 +7833,7 @@ reason, use the ~ceamx-agenda-dir~.
   (make-directory org-directory t))
 #+end_src
 
-Let’s immediately override ~ceamx-default-agenda-files~ for some reason:
+Let’s immediately override ~ceamx-default-agenda-files~ to keep down the noise:
 
 #+begin_src emacs-lisp
 (setopt ceamx-default-agenda-files
@@ -7996,19 +7996,36 @@ Intended for use as a local hook function on
 (package! org-modern
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+
   (setopt org-modern-table nil
           org-modern-keyword nil
           org-modern-timestamp nil
           org-modern-checkbox nil
           org-modern-internal-target nil
           org-modern-radio-target nil)
+  ;; (setopt org-modern-star 'replace)
+  (setopt org-modern-star 'fold)
+  (setopt org-modern-list
+          '((?- . "⁃")
+            (?* . "•")
+            (?+ . "◦")))
+
   (after! org
     (keymap-set org-mode-map "C-c T p" #'org-modern-mode))
   (after! org-agenda
     (keymap-set org-agenda-mode-map "C-c T p" #'org-modern-mode)))
 
 (package! org-appear
-  (add-hook 'org-mode-hook #'org-appear-mode))
+  (add-hook 'org-mode-hook #'org-appear-mode)
+
+  (setopt org-appear-autoemphasis t
+          org-appear-autolinks t
+          org-appear-autosubmarkers t
+          org-appear-autoentities t
+          org-appear-autokeywords t
+          org-appear-inside-latex t)
+  (setopt org-appear-delay 0.25)
+  (setopt org-appear-trigger 'always))
 
 (after! org
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
@@ -8018,8 +8035,7 @@ Intended for use as a local hook function on
           org-agenda-tags-column 0)
   (setopt org-pretty-entities t
           org-pretty-entities-include-sub-superscripts nil)
-  (setopt org-indent-indentation-per-level 2
-          org-startup-indented nil)
+  (setopt org-indent-indentation-per-level 2)
   (setopt org-src-fontify-natively t)
   ;; TODO: show markers for bold and italic, hide everything else
   (setopt org-hide-emphasis-markers t)
@@ -8029,24 +8045,39 @@ Intended for use as a local hook function on
   ;; Bring attention when point is on `org-ellipsis'.
   ;; FIXME: not correct
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
-
-(after! org-modern
-  (setopt org-modern-star 'replace))
-
-(after! org-appear
-  (setopt org-appear-autoemphasis t
-          org-appear-autolinks t
-          org-appear-autosubmarkers t
-          org-appear-autoentities t
-          org-appear-autokeywords t
-          org-appear-inside-latex t)
-  (setopt org-appear-delay 0.25)
-  (setopt org-appear-trigger 'always))
 #+end_src
 
-*** Appearance: Create the effect of visual indentation
+*** Appearance: Indentation
+:PROPERTIES:
+:ID:       15b18268-d8b3-4e36-9359-9b2c481698ba
+:END:
 
-~org-modern~ is incompatible with Org indentation.  But we can pretend.
+**** Method № 1: Org-Indent-Mode
+:PROPERTIES:
+:ID:       cab6066c-6fbb-4361-8ed4-09f840b1ab76
+:END:
+
+~org-modern-indent~ provides support for using ~org-modern-mode~ in
+combination with ~org-indent-mode~.
+
+#+begin_src emacs-lisp
+(package! (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
+  (setopt org-startup-indented t)
+  ;; Adds extra indentation.
+  (setopt org-modern-hide-stars nil)
+
+  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
+#+end_src
+
+**** DISABLED Method № 2: Pseudo-indentation with star-level whitespace
+:PROPERTIES:
+:ID:       42fb93b5-61da-4788-afc6-157ea42c84b2
+:header-args:emacs-lisp: :tangle no
+:END:
+
+Alternatively, without using ~org-indent-mode~, we can provide the
+effect of pseudo-indentatation by replacing leading stars with
+whitespace:
 
 #+begin_src emacs-lisp
 (after! org-modern
