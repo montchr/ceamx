@@ -6918,6 +6918,9 @@ Install the =yaml-language-server= from Nixpkgs first.
 #+end_src
 
 *** =jq-mode= :: major mode for editing =jq= queries
+:PROPERTIES:
+:ID:       14cef8c8-c0c9-4110-839b-4eb7c5e3da96
+:END:
 
 + Package :: <https://github.com/ljos/jq-mode>
 
@@ -7440,11 +7443,13 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 #+end_src
 
 *** =just-mode= :: Language support for the Just task runner configuration files
+:PROPERTIES:
+:ID:       f57bb40b-4efc-4f77-8bef-bad0d8c2c1ba
+:END:
 
 #+begin_src emacs-lisp
-(use-package just-mode
-  ;;:ensure t
-  )
+(package! just-mode)
+(package! just-ts-mode)
 #+end_src
 
 *** =vimrc-mode= :: Language support for =vimrc= syntax
