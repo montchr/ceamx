@@ -7026,6 +7026,11 @@ Install the =yaml-language-server= from Nixpkgs first.
 #+begin_src emacs-lisp
 (package! jq-mode
   (add-to-list 'auto-mode-alist '("\\.jq$" . jq-mode))
+
+  ;; HACK: Prevent duplicate paren insertion.
+  ;;       <https://github.com/ljos/jq-mode/issues/44>
+  (add-hook 'jq-mode-hook (##electric-pair-local-mode -1))
+
   (after! json
     (keymap-set js-json-mode-map "C-c O r" #'jq-interactively))
   (after! json-ts-mode
