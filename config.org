@@ -9327,6 +9327,15 @@ Return the new `zone' timer."
 ;; TODO
 #+end_src
 
+*** Tabletop Gaming Tools
+:PROPERTIES:
+:ID:       5ca7ecac-a050-4033-8830-ceebbe1bba01
+:END:
+
+#+begin_src emacs-lisp
+(package! (dnd5e-api :host github :repo "VivianWilde/emacs-dnd5e-api"))
+#+end_src
+
 *** Provide the ~ceamx-init-fun~ feature
 :PROPERTIES:
 :VISIBILITY: folded
