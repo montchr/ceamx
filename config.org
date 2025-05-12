@@ -167,6 +167,20 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
 #+end_src
 
+**** LSP-Mode: Use plists for deserialization
+:PROPERTIES:
+:ID:       8e2a4752-6dad-4893-9c92-921fc845f438
+:END:
+
+- Reference :: https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
+
+Note that =LSP_USE_PLISTS= will also need to be added to
+~exec-path-from-shell-variables~.
+
+#+begin_src emacs-lisp
+(setenv "LSP_USE_PLISTS" "true")
+#+end_src
+
 *** Directories and well-known-files
 :PROPERTIES:
 :ID:       c7734cbe-7b46-40d6-bab4-3003417ac852
@@ -1051,11 +1065,21 @@ expect the value you arrive at to be as high as 100 MiB.
 #+end_src
 
 *** =exec-path-from-shell=: Inherit environment variables from variable environments :package:
+:PROPERTIES:
+:ID:       9e6bd5ec-eef5-4219-9e26-75a910fd845b
+:END:
 
 #+begin_src emacs-lisp
 (package! exec-path-from-shell
   (require 'exec-path-from-shell)
-  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH" "LSP_USE_PLISTS"))
+  (dolist (var '("SSH_AUTH_SOCK"
+                 "SSH_AGENT_PID"
+                 "GPG_AGENT_INFO"
+                 "LANG"
+                 "LC_CTYPE"
+                 "NIX_SSL_CERT_FILE"
+                 "NIX_PATH"
+                 "LSP_USE_PLISTS"))
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 #+end_src
@@ -6801,6 +6825,90 @@ The timing here may be delicate...
     (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 #+end_src
 
+**** DISABLED LSP-Mode
+:PROPERTIES:
+:ID:       9abb96ca-edef-4405-8eed-186ff0590410
+:header-args:emacs-lisp: :tangle no
+:END:
+
+#+begin_src emacs-lisp
+(package! lsp-mode
+  (setq lsp-keymap-prefix "C-c L")
+
+  (setopt lsp-enable-folding nil
+          lsp-enable-text-document-color nil)
+  (setopt lsp-enable-on-type-formatting nil)
+  (setopt lsp-headerline-breadcrumb-enable nil)
+
+  (setopt lsp-diagnostics-provider :flymake)
+
+  (setopt lsp-completion-provider :none)
+  (add-hook 'lsp-mode-hook #'lsp-completion-mode))
+
+(package! lsp-ui
+  (setopt lsp-ui-peek-enable t)
+  (setopt lsp-ui-doc-max-height 8
+          lsp-ui-doc-max-width 72
+          lsp-ui-doc-delay 0.75
+          ;; Don't disappear on mouseover.
+          lsp-ui-doc-show-with-mouse nil
+          lsp-ui-doc-position 'at-point)
+  (setopt lsp-ui-sideline-ignore-duplicate t
+          lsp-ui-sideline-show-hover nil)
+
+  (after! lsp-ui
+    (setopt lsp-ui-sideline-actions-icon lsp-ui-sideline-actions-icon-default)))
+
+(package! consult-lsp
+  (after! lsp-mode
+    (keymap-set lsp-mode-map "<remap> <xref-find-apropos>" #'consult-lsp-symbols)))
+#+end_src
+
+***** Use =emacs-lsp-booster= for performance improvements :perf:
+:PROPERTIES:
+:ID:       d3f0d9ac-2a4f-4ea7-b2de-761b332cf9e8
+:END:
+
+- Website :: <https://github.com/blahgeek/emacs-lsp-booster>
+
+Requires =emacs-lsp-booster= to be installed into the environment.
+Available by that name in Nixpkgs.
+
+#+begin_src emacs-lisp
+(defun +lsp-booster--json-parse-a (old-fn &rest args)
+  "Try to parse bytecode instead of json."
+  (or
+   (when (equal (following-char) ?#)
+     (let ((bytecode (read (current-buffer))))
+       (when (byte-code-function-p bytecode)
+         (funcall bytecode))))
+   (apply old-fn args)))
+
+(advice-add (if (progn (require 'json)
+                       (fboundp 'json-parse-buffer))
+                'json-parse-buffer
+              'json-read)
+            :around
+            #'+lsp-booster--json-parse-a)
+
+(defun +lsp-booster--final-command-a (old-fn cmd &optional test?)
+  "Prepend emacs-lsp-booster command to lsp CMD."
+  (let ((orig-result (funcall old-fn cmd test?)))
+    (if (and (not test?)                             ;; for check lsp-server-present?
+             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+             lsp-use-plists
+             (not (functionp 'json-rpc-connection))  ;; native json-rpc
+             (executable-find "emacs-lsp-booster"))
+        (progn
+          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+            (setcar orig-result command-from-exec-path))
+          (message "Using emacs-lsp-booster for %s!" orig-result)
+          (cons "emacs-lsp-booster" orig-result))
+      orig-result)))
+
+(advice-add 'lsp-resolve-final-command :around #'+lsp-booster--final-command-a)
+#+end_src
+
 *** TODO Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
 :PROPERTIES:
 :header-args: :tangle no
@@ -7053,6 +7161,9 @@ Returns process exit code."
 
 *** Nix
 **** Install and configure ~nix-mode~ :package:
+:PROPERTIES:
+:ID:       a2d69933-74a4-458f-bcc2-3d2246215c96
+:END:
 
 <https://github.com/NixOS/nix-mode>
 
@@ -7060,7 +7171,9 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 #+begin_src emacs-lisp
 (package! nix-mode
-  (add-hook 'nix-mode-hook #'eglot-ensure))
+  (if (locate-library "lsp-mode")
+      (add-hook 'nix-mode-hook #'lsp-deferred)
+    (add-hook 'nix-mode-hook #'eglot-ensure)))
 #+end_src
 
 **** Install and configure ~nix-ts-mode~ :package:
@@ -7072,7 +7185,9 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 #+begin_src emacs-lisp
 (package! nix-ts-mode
-  (add-hook 'nix-ts-mode-hook #'eglot-ensure))
+  (if (locate-library "lsp-mode")
+      (add-hook 'nix-ts-mode-hook #'lsp-deferred)
+    (add-hook 'nix-ts-mode-hook #'eglot-ensure)))
 
 (after! (nerd-icons nix-ts-mode)
   ;; XXX: contribute fix upstream
@@ -7143,6 +7258,11 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
      :options ( :nixos (:expr ,ceamx-lsp-nixd-nixos-options-expr)
                 :home-manager (:expr ,ceamx-lsp-nixd-home-manager-options-expr))))
 
+(after! lsp-mode
+  (setopt lsp-disabled-clients '(nix-nil))
+  (setopt lsp-nix-nixd-nixpkgs-expr ceamx-lsp-nixd-nixpkgs-expr
+          lsp-nix-nixd-nixos-options-expr ceamx-lsp-nixd-nixos-options-expr
+          lsp-nix-nixd-home-manager-options-expr ceamx-lsp-nixd-home-manager-options-expr))
 
 (use-feature! ceamx-eglot
   :demand t

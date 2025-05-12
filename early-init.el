@@ -57,6 +57,19 @@
 ;; NOTE: Either use `gcmh' or make sure to reset this later.  Or else!
 (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
 
+;; LSP-Mode: Use plists for deserialization
+;; :PROPERTIES:
+;; :ID:       8e2a4752-6dad-4893-9c92-921fc845f438
+;; :END:
+
+;; - Reference :: https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
+
+;; Note that =LSP_USE_PLISTS= will also need to be added to
+;; ~exec-path-from-shell-variables~.
+
+
+(setenv "LSP_USE_PLISTS" "true")
+
 ;; Directories and well-known-files
 ;; :PROPERTIES:
 ;; :ID:       c7734cbe-7b46-40d6-bab4-3003417ac852
