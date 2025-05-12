@@ -4172,11 +4172,17 @@ See the extensive discussion about the Tempel+Abbrev integration here:
 
 [[https://github.com/minad/tempel/issues/112][Potential considerations for using Tempel with abbrevs · Issue #112 · minad/tempel · GitHub]]
 
-**** DISABLED ~yasnippet~ :: robust template expansions
+**** =yasnippet= :: robust template expansions :lsp:
+:PROPERTIES:
+:ID:       970ef52b-4c37-4d9c-a338-789757976be8
+:END:
 
 - Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
 
-#+begin_src emacs-lisp :tangle no
+Yasnippet is /required/ for some types of Eglot/LSP-Mode completions –
+notably, JSON Schema completions.
+
+#+begin_src emacs-lisp
 (package! yasnippet
   (keymap-set ceamx-insert-prefix "s" #'yas-insert-snippet)
 
@@ -4187,34 +4193,45 @@ See the extensive discussion about the Tempel+Abbrev integration here:
   (setopt yas-snippet-dirs
           (list (file-name-concat ceamx-templates-dir "yasnippet")))
   (setopt yas-prompt-functions '(yas-completing-prompt
-                                 yas-no-prompt))
-
-  ;; Insanely helpful when =key= is sensible, but insanely annoying
-  ;; if not.  Unless there is an available snippet expansion, the
-  ;; key will still call ~self-insert-command~ as usual.  Note that
-  ;; `yas-maybe-expand' is indeed a variable, not a function.
-  ;; (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand)
-  ;; (keymap-set yas-minor-mode-map "RET" yas-maybe-expand)
-  )
+                                 yas-no-prompt)))
 #+end_src
 
-Disable automatic whitespace modifications in snippet files:
+***** Disable automatic whitespace modifications in snippet files
+:PROPERTIES:
+:ID:       19cbd524-49c6-4120-bae9-49c64af6e056
+:END:
 
 <https://joaotavora.github.io/yasnippet/faq.html#org64f1b8c>
 
 #+begin_quote
-If there is a newline at the end of a snippet definition file, YASnippet will
-add a newline when expanding that snippet. When editing or saving a snippet
-file, please be careful not to accidentally add a terminal newline.
+If there is a newline at the end of a snippet definition file,
+YASnippet will add a newline when expanding that snippet. When editing
+or saving a snippet file, please be careful not to accidentally add a
+terminal newline.
 #+end_quote
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (defun +yasnippet-snippet-mode-disable-final-newline-h ()
   "Prevent appendage of a final newline in `snippet-mode' files.
 A final newline would be inserted literally into the snippet expansion."
   (setq-local require-final-newline nil))
 
 (add-hook 'snippet-mode-hook #'+yasnippet-snippet-mode-disable-final-newline-h nil t)
+#+end_src
+
+***** DISABLED Automatically expand snippets
+:PROPERTIES:
+:ID:       150f6006-bb9d-4b3f-bc63-9fac6f5ed6c3
+:END:
+
+#+begin_src emacs-lisp :tangle no
+;; Insanely helpful when =key= is sensible, but insanely annoying
+;; if not.  Unless there is an available snippet expansion, the
+;; key will still call ~self-insert-command~ as usual.  Note that
+;; `yas-maybe-expand' is indeed a variable, not a function.
+
+;; (keymap-set yas-minor-mode-map "SPC" yas-maybe-expand)
+;; (keymap-set yas-minor-mode-map "RET" yas-maybe-expand)
 #+end_src
 
 **** =spdx= :: insertable SPDX license headers
