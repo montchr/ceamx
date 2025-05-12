@@ -21,17 +21,42 @@
 ;;; Commentary:
 ;;; Code:
 
+(defgroup ceamx-eglot nil
+  "Customizations for the `ceamx-eglot' feature."
+  :group 'ceamx)
+
 ;;;; Variables
 
 (defvar ceamx-eglot-server-configurations-alist '()
   "Alist of language server initialization options as accepted in `eglot-server-programs'.")
 
+;;;; Customization
+
+(defcustom ceamx-eglot-json-schema-catalog-file
+    (expand-file-name "data/json-schema/catalog.json" user-emacs-directory)
+    "Path to file containing the full SchemaStore catalog.
+The canonical source for the file can be found at the following location:
+
+    <https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/master/src/api/json/catalog.json>"
+  :type '(file)
+  :group 'ceamx-eglot)
+
 ;;;; Functions
 
+;;;###autoload
+(defun ceamx-eglot-json-schema-catalog ()
+  "Return the JSON representation of `ceamx-eglot-json-schema-catalog-file'."
+  (let* ((json-object-type 'plist)
+          (json-array-type 'vector)
+          (json-key-type 'keyword))
+    (json-read-file ceamx-eglot-json-schema-catalog-file)))
+
+;;;###autoload
 (defun ceamx-eglot-server-default-settings (name)
   "Return the custom initialization options for the NAME language server."
   (alist-get name ceamx-eglot-server-configurations-alist nil nil #'string=))
 
+;;;###autoload
 (defun ceamx-eglot-server-contact (name &optional program &rest args)
   "Return a contact specification for the language server NAME.
 NAME is a string of the \"<lang>-<program>\" format for naming

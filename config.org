@@ -6639,7 +6639,6 @@ development tool as needed.
 #+end_src
 
 *** Language Server and Debugger Protocol Support :lsp:lang:
-
 **** Eglot
 :PROPERTIES:
 :ID:       8e477ec3-51fd-47ea-802d-e08484fa1add
@@ -6673,13 +6672,11 @@ development tool as needed.
 - Website :: <https://github.com/jdtsmith/eglot-booster>
 - Website :: <https://github.com/blahgeek/emacs-lsp-booster>
 
-Requires =emacs-lsp-booster= to be installed into the environment.  Available by that name in Nixpkgs.
+Requires =emacs-lsp-booster= to be installed into the environment.
+Available by that name in Nixpkgs.
 
 #+begin_src emacs-lisp
-(use-package eglot-booster
-  :ensure (:host github :repo "jdtsmith/eglot-booster")
-  :commands (eglot-booster-mode)
-  :init
+(package! (eglot-booster :host github :repo "jdtsmith/eglot-booster")
   (after! eglot
     (eglot-booster-mode)))
 #+end_src
@@ -6736,28 +6733,22 @@ The timing here may be delicate...
   :demand t
   :after eglot
   :defines (ceamx-eglot-server-configurations-alist)
-  :functions (ceamx-eglot-server-contact)
   :config
-  (defvar ceamx-eglot-json-schema-catalog-file
-    (expand-file-name "data/json-schema/catalog.json" user-emacs-directory)
-    "Path to file containing the full SchemaStore catalog.
-
-The canonical source for the file can be found at the following location:
-
-    <https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/master/src/api/json/catalog.json>")
-
-  (let* ((json-object-type 'plist)
-         (json-array-type 'vector)
-         (json-key-type 'keyword)
-         (json-schemas (plist-get (json-read-file ceamx-eglot-json-schema-catalog-file) :schemas)))
-    (setq-default eglot-workspace-configuration
-                  (append
-                   `(;; https://github.com/microsoft/vscode/blob/main/extensions/json-language-features/server/README.md
-                     :json
-                     ( :validate (:enable t)
-                       :schemas ,json-schemas)
-                     :yaml (:schemas ,json-schemas))
-                   eglot-workspace-configuration))))
+  (let ((schemata (ceamx-eglot-json-schema-catalog)))
+    (setq-default
+     eglot-workspace-configuration
+     (map-insert eglot-workspace-configuration
+                 :json ; <https://github.com/microsoft/vscode/blob/main/extensions/json-language-features/server/README.md>
+                 `( :validate (:enable t)
+                    :schemas ,schemata
+                    :resultLimit 10000
+                    :initializationOptions ( :handledSchemaProtocols ["file" "https"]))))
+    (setq-default
+     eglot-workspace-configuration
+     (map-insert eglot-workspace-configuration
+                 :yaml ; <https://github.com/redhat-developer/yaml-language-server/blob/main/README.md>
+                 `( :validate (:enable t)
+                    :schemas ,schemata)))))
 #+end_src
 
 ***** =sideline-eglot= :: Display Eglot messages in sideline
@@ -7131,30 +7122,36 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 ;; TODO: defcustom
 (defvar ceamx-lsp-server-nix-lang "nix-nixd")
 
-(defvar ceamx-lsp-nix-nixd-default-config
-  `(:nixpkgs (:expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")
-    :formatting (:command ["nixfmt"])
-    :options (:nixos (:expr ,(format "import (builtins.getFlake \"%s\").%s.\"%s\".options"
-                              "/etc/nixos"
-                              "nixosConfigurations"
-                              (system-name)))
-              :home-manager (:expr ,(format "import (builtins.getFlake \"%s\").%s.%s.config.home-manager.users.%s"
-                                     "/etc/nixos"
-                                     "nixosConfigurations"
-                                     (system-name)
-                                     (user-login-name))))))
+(defvar ceamx-lsp-nixd-nixpkgs-expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")
+
+(defvar ceamx-lsp-nixd-nixos-options-expr
+  (format "import (builtins.getFlake \"%s\").%s.\"%s\".options"
+          "/etc/nixos"
+          "nixosConfigurations"
+          (system-name)))
+
+(defvar ceamx-lsp-nixd-home-manager-options-expr
+  (format "import (builtins.getFlake \"%s\").%s.%s.config.home-manager.users.%s"
+          "/etc/nixos"
+          "nixosConfigurations"
+          (system-name)
+          (user-login-name)))
+
+(defvar ceamx-lsp-nixd-default-config
+  `( :nixpkgs (:expr ,ceamx-lsp-nixd-nixpkgs-expr)
+     :formatting (:command ["nixfmt"])
+     :options ( :nixos (:expr ,ceamx-lsp-nixd-nixos-options-expr)
+                :home-manager (:expr ,ceamx-lsp-nixd-home-manager-options-expr))))
+
 
 (use-feature! ceamx-eglot
   :demand t
   :after eglot
   :defines (ceamx-eglot-server-configurations-alist)
-  :functions (ceamx-eglot-server-contact)
   :config
+  (add-to-list 'ceamx-eglot-server-configurations-alist '("nix-nil" . nil))
   (add-to-list 'ceamx-eglot-server-configurations-alist
-               '("nix-nil" . nil))
-  (add-to-list 'ceamx-eglot-server-configurations-alist
-               (cons "nix-nixd" ceamx-lsp-nix-nixd-default-config))
-
+               (cons "nix-nixd" ceamx-lsp-nixd-default-config))
   (add-to-list 'eglot-server-programs
                (cons '(nix-mode nix-ts-mode)
                      (ceamx-eglot-server-contact ceamx-lsp-server-nix-lang))))
