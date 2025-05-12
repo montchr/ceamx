@@ -924,13 +924,11 @@ The original function fails in the presence of whitespace after a sexp."
 ;; - Website :: <https://github.com/jdtsmith/eglot-booster>
 ;; - Website :: <https://github.com/blahgeek/emacs-lsp-booster>
 
-;; Requires =emacs-lsp-booster= to be installed into the environment.  Available by that name in Nixpkgs.
+;; Requires =emacs-lsp-booster= to be installed into the environment.
+;; Available by that name in Nixpkgs.
 
 
-(use-package eglot-booster
-  :ensure (:host github :repo "jdtsmith/eglot-booster")
-  :commands (eglot-booster-mode)
-  :init
+(package! (eglot-booster :host github :repo "jdtsmith/eglot-booster")
   (after! eglot
     (eglot-booster-mode)))
 
@@ -985,28 +983,22 @@ The original function fails in the presence of whitespace after a sexp."
   :demand t
   :after eglot
   :defines (ceamx-eglot-server-configurations-alist)
-  :functions (ceamx-eglot-server-contact)
   :config
-  (defvar ceamx-eglot-json-schema-catalog-file
-    (expand-file-name "data/json-schema/catalog.json" user-emacs-directory)
-    "Path to file containing the full SchemaStore catalog.
-
-The canonical source for the file can be found at the following location:
-
-    <https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/master/src/api/json/catalog.json>")
-
-  (let* ((json-object-type 'plist)
-         (json-array-type 'vector)
-         (json-key-type 'keyword)
-         (json-schemas (plist-get (json-read-file ceamx-eglot-json-schema-catalog-file) :schemas)))
-    (setq-default eglot-workspace-configuration
-                  (append
-                   `(;; https://github.com/microsoft/vscode/blob/main/extensions/json-language-features/server/README.md
-                     :json
-                     ( :validate (:enable t)
-                       :schemas ,json-schemas)
-                     :yaml (:schemas ,json-schemas))
-                   eglot-workspace-configuration))))
+  (let ((schemata (ceamx-eglot-json-schema-catalog)))
+    (setq-default
+     eglot-workspace-configuration
+     (map-insert eglot-workspace-configuration
+                 :json ; <https://github.com/microsoft/vscode/blob/main/extensions/json-language-features/server/README.md>
+                 `( :validate (:enable t)
+                    :schemas ,schemata
+                    :resultLimit 10000
+                    :initializationOptions ( :handledSchemaProtocols ["file" "https"]))))
+    (setq-default
+     eglot-workspace-configuration
+     (map-insert eglot-workspace-configuration
+                 :yaml ; <https://github.com/redhat-developer/yaml-language-server/blob/main/README.md>
+                 `( :validate (:enable t)
+                    :schemas ,schemata)))))
 
 ;; =sideline-eglot= :: Display Eglot messages in sideline
 ;; :PROPERTIES:
@@ -1132,6 +1124,11 @@ The canonical source for the file can be found at the following location:
 
 (package! jq-mode
   (add-to-list 'auto-mode-alist '("\\.jq$" . jq-mode))
+
+  ;; HACK: Prevent duplicate paren insertion.
+  ;;       <https://github.com/ljos/jq-mode/issues/44>
+  (add-hook 'jq-mode-hook (##electric-pair-local-mode -1))
+
   (after! json
     (keymap-set js-json-mode-map "C-c O r" #'jq-interactively))
   (after! json-ts-mode
@@ -1215,6 +1212,9 @@ usually wrongly fontified as a metadata block."
     (ignore (goto-char (point-max)))))
 
 ;; Install and configure ~nix-mode~ :package:
+;; :PROPERTIES:
+;; :ID:       a2d69933-74a4-458f-bcc2-3d2246215c96
+;; :END:
 
 ;; <https://github.com/NixOS/nix-mode>
 
@@ -1222,7 +1222,9 @@ usually wrongly fontified as a metadata block."
 
 
 (package! nix-mode
-  (add-hook 'nix-mode-hook #'eglot-ensure))
+  (if (locate-library "lsp-mode")
+      (add-hook 'nix-mode-hook #'lsp-deferred)
+    (add-hook 'nix-mode-hook #'eglot-ensure)))
 
 ;; Install and configure ~nix-ts-mode~ :package:
 ;; :PROPERTIES:
@@ -1233,7 +1235,9 @@ usually wrongly fontified as a metadata block."
 
 
 (package! nix-ts-mode
-  (add-hook 'nix-ts-mode-hook #'eglot-ensure))
+  (if (locate-library "lsp-mode")
+      (add-hook 'nix-ts-mode-hook #'lsp-deferred)
+    (add-hook 'nix-ts-mode-hook #'eglot-ensure)))
 
 (after! (nerd-icons nix-ts-mode)
   ;; XXX: contribute fix upstream
@@ -1276,30 +1280,41 @@ usually wrongly fontified as a metadata block."
 ;; TODO: defcustom
 (defvar ceamx-lsp-server-nix-lang "nix-nixd")
 
-(defvar ceamx-lsp-nix-nixd-default-config
-  `(:nixpkgs (:expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")
-    :formatting (:command ["nixfmt"])
-    :options (:nixos (:expr ,(format "import (builtins.getFlake \"%s\").%s.\"%s\".options"
-                              "/etc/nixos"
-                              "nixosConfigurations"
-                              (system-name)))
-              :home-manager (:expr ,(format "import (builtins.getFlake \"%s\").%s.%s.config.home-manager.users.%s"
-                                     "/etc/nixos"
-                                     "nixosConfigurations"
-                                     (system-name)
-                                     (user-login-name))))))
+(defvar ceamx-lsp-nixd-nixpkgs-expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")
+
+(defvar ceamx-lsp-nixd-nixos-options-expr
+  (format "import (builtins.getFlake \"%s\").%s.\"%s\".options"
+          "/etc/nixos"
+          "nixosConfigurations"
+          (system-name)))
+
+(defvar ceamx-lsp-nixd-home-manager-options-expr
+  (format "import (builtins.getFlake \"%s\").%s.%s.config.home-manager.users.%s"
+          "/etc/nixos"
+          "nixosConfigurations"
+          (system-name)
+          (user-login-name)))
+
+(defvar ceamx-lsp-nixd-default-config
+  `( :nixpkgs (:expr ,ceamx-lsp-nixd-nixpkgs-expr)
+     :formatting (:command ["nixfmt"])
+     :options ( :nixos (:expr ,ceamx-lsp-nixd-nixos-options-expr)
+                :home-manager (:expr ,ceamx-lsp-nixd-home-manager-options-expr))))
+
+(after! lsp-mode
+  (setopt lsp-disabled-clients '(nix-nil))
+  (setopt lsp-nix-nixd-nixpkgs-expr ceamx-lsp-nixd-nixpkgs-expr
+          lsp-nix-nixd-nixos-options-expr ceamx-lsp-nixd-nixos-options-expr
+          lsp-nix-nixd-home-manager-options-expr ceamx-lsp-nixd-home-manager-options-expr))
 
 (use-feature! ceamx-eglot
   :demand t
   :after eglot
   :defines (ceamx-eglot-server-configurations-alist)
-  :functions (ceamx-eglot-server-contact)
   :config
+  (add-to-list 'ceamx-eglot-server-configurations-alist '("nix-nil" . nil))
   (add-to-list 'ceamx-eglot-server-configurations-alist
-               '("nix-nil" . nil))
-  (add-to-list 'ceamx-eglot-server-configurations-alist
-               (cons "nix-nixd" ceamx-lsp-nix-nixd-default-config))
-
+               (cons "nix-nixd" ceamx-lsp-nixd-default-config))
   (add-to-list 'eglot-server-programs
                (cons '(nix-mode nix-ts-mode)
                      (ceamx-eglot-server-contact ceamx-lsp-server-nix-lang))))
@@ -1492,6 +1507,9 @@ usually wrongly fontified as a metadata block."
   (add-to-list 'auto-mode-alist '("\\.twig\\'" . web-mode)))
 
 ;; Shell scripts
+;; :PROPERTIES:
+;; :ID:       225723f3-2849-4e04-a6fb-71623868c18e
+;; :END:
 
 ;; Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ;; ~flymake~ will handle it just fine.

@@ -492,7 +492,7 @@
                ;; :default-family "Berkeley Mono"
                :default-weight regular
                :default-height ,(pcase (system-name)
-                                  ;; ("tuuvok" 102)
+                                  ("tuuvok" 102)
                                   ;; (_ 105)
                                   (_ 100))
 
@@ -574,6 +574,9 @@
      "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++")))
 
 ;; =show-font= :: a tool to preview fonts
+;; :PROPERTIES:
+;; :ID:       c4d25594-f275-443b-980b-78d9619ee42c
+;; :END:
 
 ;; + Package :: <https://protesilaos.com/emacs/show-font>
 

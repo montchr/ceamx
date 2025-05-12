@@ -459,11 +459,21 @@ The ORDER can be used to deduce the feature context."
   (setq command-line-x-option-alist nil))
 
 ;; =exec-path-from-shell=: Inherit environment variables from variable environments :package:
+;; :PROPERTIES:
+;; :ID:       9e6bd5ec-eef5-4219-9e26-75a910fd845b
+;; :END:
 
 
 (package! exec-path-from-shell
   (require 'exec-path-from-shell)
-  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH" "LSP_USE_PLISTS"))
+  (dolist (var '("SSH_AUTH_SOCK"
+                 "SSH_AGENT_PID"
+                 "GPG_AGENT_INFO"
+                 "LANG"
+                 "LC_CTYPE"
+                 "NIX_SSL_CERT_FILE"
+                 "NIX_PATH"
+                 "LSP_USE_PLISTS"))
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 

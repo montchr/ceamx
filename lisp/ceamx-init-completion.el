@@ -502,6 +502,47 @@ Tempel does not trigger too often when you don't expect it."
   :init
   (add-to-list 'tempel-user-elements #'ceamx-completion--tempel-include))
 
+;; =yasnippet= :: robust template expansions
+;; :PROPERTIES:
+;; :ID:       970ef52b-4c37-4d9c-a338-789757976be8
+;; :END:
+
+;; - Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
+
+
+(package! yasnippet
+  (keymap-set ceamx-insert-prefix "s" #'yas-insert-snippet)
+
+  (defer! 3
+    (yas-global-mode 1)))
+
+(after! yasnippet
+  (setopt yas-snippet-dirs
+          (list (file-name-concat ceamx-templates-dir "yasnippet")))
+  (setopt yas-prompt-functions '(yas-completing-prompt
+                                 yas-no-prompt)))
+
+
+
+;; Disable automatic whitespace modifications in snippet files:
+
+;; <https://joaotavora.github.io/yasnippet/faq.html#org64f1b8c>
+
+;; #+begin_quote
+;; If there is a newline at the end of a snippet definition file,
+;; YASnippet will add a newline when expanding that snippet. When editing
+;; or saving a snippet file, please be careful not to accidentally add a
+;; terminal newline.
+;; #+end_quote
+
+
+(defun +yasnippet-snippet-mode-disable-final-newline-h ()
+  "Prevent appendage of a final newline in `snippet-mode' files.
+A final newline would be inserted literally into the snippet expansion."
+  (setq-local require-final-newline nil))
+
+(add-hook 'snippet-mode-hook #'+yasnippet-snippet-mode-disable-final-newline-h nil t)
+
 ;; =spdx= :: insertable SPDX license headers
 ;; :PROPERTIES:
 ;; :ID:       4f029a65-d064-4715-9947-e9d32b4bdf67
