@@ -1828,7 +1828,7 @@ TIP: You can test out alterations quickly with, for example:
                ;; :default-family "Berkeley Mono"
                :default-weight regular
                :default-height ,(pcase (system-name)
-                                  ;; ("tuuvok" 102)
+                                  ("tuuvok" 102)
                                   ;; (_ 105)
                                   (_ 100))
 
