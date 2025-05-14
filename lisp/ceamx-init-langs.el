@@ -1507,9 +1507,6 @@ usually wrongly fontified as a metadata block."
   (add-to-list 'auto-mode-alist '("\\.twig\\'" . web-mode)))
 
 ;; Shell scripts
-;; :PROPERTIES:
-;; :ID:       225723f3-2849-4e04-a6fb-71623868c18e
-;; :END:
 
 ;; Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ;; ~flymake~ will handle it just fine.

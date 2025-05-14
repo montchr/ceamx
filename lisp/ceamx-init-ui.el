@@ -1,7 +1,7 @@
-;; -*- lexical-binding: t;  -*-
+  ;; -*- lexical-binding: t;  -*-
 
-(require 'ceamx-lib)
-(require 'ceamx-ui)
+  (require 'ceamx-lib)
+  (require 'ceamx-ui)
 
 ;; Configure cursor appearance
 
@@ -574,9 +574,6 @@
      "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++")))
 
 ;; =show-font= :: a tool to preview fonts
-;; :PROPERTIES:
-;; :ID:       c4d25594-f275-443b-980b-78d9619ee42c
-;; :END:
 
 ;; + Package :: <https://protesilaos.com/emacs/show-font>
 

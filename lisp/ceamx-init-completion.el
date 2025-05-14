@@ -502,12 +502,15 @@ Tempel does not trigger too often when you don't expect it."
   :init
   (add-to-list 'tempel-user-elements #'ceamx-completion--tempel-include))
 
-;; =yasnippet= :: robust template expansions
+;; =yasnippet= :: robust template expansions :lsp:
 ;; :PROPERTIES:
 ;; :ID:       970ef52b-4c37-4d9c-a338-789757976be8
 ;; :END:
 
 ;; - Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
+
+;; Yasnippet is /required/ for some types of Eglot/LSP-Mode completions –
+;; notably, JSON Schema completions.
 
 
 (package! yasnippet
@@ -522,9 +525,10 @@ Tempel does not trigger too often when you don't expect it."
   (setopt yas-prompt-functions '(yas-completing-prompt
                                  yas-no-prompt)))
 
-
-
-;; Disable automatic whitespace modifications in snippet files:
+;; Disable automatic whitespace modifications in snippet files
+;; :PROPERTIES:
+;; :ID:       19cbd524-49c6-4120-bae9-49c64af6e056
+;; :END:
 
 ;; <https://joaotavora.github.io/yasnippet/faq.html#org64f1b8c>
 
@@ -581,7 +585,7 @@ A final newline would be inserted literally into the snippet expansion."
           corfu-quit-at-boundary 'separator
           corfu-quit-no-match t)
   (setopt corfu-echo-delay '(0.3 . 0.3))
-  (setopt corfu-popupinfo-delay '(1.25 . 0.5))
+  (setopt corfu-popupinfo-delay '(0.75 . 0.5))
   (setopt corfu-auto t
           ;; corfu-auto-delay 0.3
           corfu-auto-delay 1.3
