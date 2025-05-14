@@ -1543,6 +1543,26 @@ usually wrongly fontified as a metadata block."
 (package! just-mode)
 (package! just-ts-mode)
 
+;; Register LSP support for the =just-lsp= language server :lsp:
+;; :PROPERTIES:
+;; :ID:       c6566d19-f6d1-4556-b020-894dc0379ef8
+;; :END:
+
+;; - Website :: https://github.com/terror/just-lsp
+
+;; Requires that the =just-lsp= package is available in the environment.
+
+
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+  :config
+  (add-to-list 'ceamx-eglot-server-configurations-alist '("just-just-lsp" . nil))
+  (add-to-list 'eglot-server-programs
+               (cons '(just-mode just-ts-mode)
+                     (ceamx-eglot-server-contact "just-just-lsp"))))
+
 ;; =vimrc-mode= :: Language support for =vimrc= syntax
 
 
