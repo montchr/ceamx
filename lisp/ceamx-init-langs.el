@@ -24,7 +24,8 @@
 
 (package! typo
   ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
-  (typo-global-mode 1)
+  ;; FIXME: there must be another way
+  ;; (typo-global-mode 1)
 
   (setopt ceamx-lang-typo-mode-excluded-modes '(git-commit-mode))
 
@@ -241,7 +242,10 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
         ("D" . devdocs-lookup))
 
   :init
+  (setopt devdocs-window-select t)
+
   (after! popper
+    ;; FIXME: no effect -- maybe the package is overriding?
     (add-to-list 'popper-reference-buffers "\\*devdocs\\*"))
 
   :config
@@ -365,17 +369,13 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 ;; | he_IL                | (hspell) |
 
 
-(autoload 'global-jinx-mode "jinx")
-(autoload 'jinx-correct "jinx")
-(autoload 'jinx-languages "jinx")
-
-(add-hook 'ceamx-emacs-startup-hook #'global-jinx-mode)
-
-(keymap-global-set "M-$" #'jinx-correct)
-(keymap-global-set "C-M-$" #'jinx-languages)
-
-(after! jinx
-  (setopt jinx-languages "en"))
+(use-feature! jinx
+  :hook ((text-mode . global-jinx-mode))
+  :bind
+  (("M-$" . jinx-correct)
+   ("C-M-$" . jinx-languages))
+  :custom
+  (jinx-languages "en"))
 
 ;; [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT :package:
 
@@ -432,8 +432,8 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   ;; (apheleia-global-mode 1)
   )
 
-(after! (apheleia)
-  (blackout 'apheleia-mode " Aph"))
+(after! (apheleia minions)
+  (add-to-list 'minions-prominent-modes #'apheleia-mode))
 
 ;; Use the Biome formatter for supported major modes :lang:
 
@@ -698,9 +698,7 @@ non-nil, buffers will never be formatted upon save."
 (defun ceamx-emacs-lisp-init ()
   "Sensible defaults for `emacs-lisp-mode'."
   (ceamx-lisp-init)
-  (eldoc-mode 1)
-  ;; TODO: do we really want this for `ielm' and other derived modes as well?
-  (blackout "EL"))
+  (eldoc-mode 1))
 
 (add-hook 'emacs-lisp-mode-hook #'ceamx-emacs-lisp-init)
 (add-hook 'ielm-mode-hook #'ceamx-emacs-lisp-init)

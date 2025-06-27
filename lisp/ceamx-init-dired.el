@@ -3,13 +3,15 @@
 (require 'ceamx-lib)
 
 ;; General Dired customizations
+;; :PROPERTIES:
+;; :ID:       0ae6d933-8bd5-4d90-b4dd-16aa9e467a59
+;; :END:
 
 
 (setopt delete-by-moving-to-trash t)
 (setopt mouse-drag-and-drop-region-cross-program t)
 
 (after! dired
-  (add-hook 'dired-mode-hook #'dired-hide-details-mode)
   (add-hook 'dired-mode-hook #'hl-line-mode)
 
   ;; cf. `dired-omit-files', `dired-omit-lines', `dired-omit-extensions'

@@ -167,7 +167,6 @@
     (treesit-install-language-grammar 'gitcommit))
 
   (when (treesit-language-available-p 'gitcommit)
-    (pushnew! auto-mode-alist "\\COMMIT_EDITMSG\\'")
     (after! git-commit
       (setopt git-commit-major-mode #'git-commit-ts-mode))
     (after! git-commit-ts-mode

@@ -879,17 +879,10 @@ unimportant since it happens during compilation anyway."
   (ceamx--remove-sharp-quotes args))
 #+end_src
 
-**** =blackout=: adjust mode-line lighters :modeline:
-
-- Use-Package keyword :: =:blackout=
-
-#+begin_src emacs-lisp
-(use-package blackout
-  :ensure (:wait t)
-  :demand t)
-#+end_src
-
 **** Install and configure =setup.el=
+:PROPERTIES:
+:ID:       d3695516-a695-489d-8a4f-374e54e59e31
+:END:
 
 #+begin_src emacs-lisp
 (elpaca setup
@@ -966,7 +959,6 @@ When idle, GC will be triggered with a low threshold.
 
 #+begin_src emacs-lisp
 (package! gcmh
-  (blackout 'gcmh-mode)
   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
 #+end_src
 
@@ -1039,6 +1031,7 @@ expect the value you arrive at to be as high as 100 MiB.
   (require 'transient)
   (after! transient
     (keymap-set transient-map "<escape>" #'transient-quit-one)))
+(package! (org-mem :host github :repo "meedstrom/org-mem"))
 #+end_src
 
 *** Install the =persist= package from =emacsmirror= because of GNU ELPA server issues
@@ -2020,20 +2013,6 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
   (mlscroll-mode 1))
 #+end_src
 
-*** =minions= :: minimize many mode-line minor-modes
-:PROPERTIES:
-:ID:       af187c9b-e6b2-47dc-a1b0-848a38455d74
-:END:
-
-#+begin_src emacs-lisp
-(package! minions
-  (minions-mode 1)
-  (setopt minions-prominent-modes
-          '(auto-tangle-mode
-            jinx-mode
-            which-key-mode)))
-#+end_src
-
 *** Set up the ~ceamx-modeline~
 :PROPERTIES:
 :ID:       e8fa729f-3a84-4b3b-88eb-450406dde0a5
@@ -2082,7 +2061,24 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
                   )))
 #+end_src
 
+*** =minions= :: minimize many mode-line minor-modes
+:PROPERTIES:
+:ID:       af187c9b-e6b2-47dc-a1b0-848a38455d74
+:END:
+
+#+begin_src emacs-lisp
+(package! minions
+  (add-hook 'ceamx-after-init-hook #'minions-mode)
+  ;; NOTE: This must happen after activating `ceamx-modeline-mode'
+  ;; because it needs to override the existing modeline format.
+  (after! ceamx-modeline
+    (add-hook 'ceamx-modeline-mode-hook #'minions-mode)))
+#+end_src
+
 *** =keycast= :: show current command and its binding :present:
+:PROPERTIES:
+:ID:       a205c8de-e065-4d67-9d81-a02c127ef068
+:END:
 
 - Website :: <https://github.com/tarsius/keycast>
 
@@ -2461,12 +2457,14 @@ PROPS is as in `editorconfig-after-apply-functions'."
 #+end_src
 
 **** =beginend= :: rebind context-sensitive =(beginning,end)-of-buffer=
+:PROPERTIES:
+:ID:       7529f1a7-461c-4731-a7b8-05f6ce2104fa
+:END:
 
 + Package :: https://github.com/DamienCassou/beginend
 
   #+begin_src emacs-lisp
 (package! beginend
-  (blackout 'beginend-global-mode)
   (beginend-global-mode))
 #+end_src
 
@@ -3241,8 +3239,6 @@ these utilities.
 
 #+begin_src emacs-lisp
 (after! isearch
-  (blackout 'isearch)
-
   ;;
   ;; Settings
 
@@ -3419,14 +3415,15 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+end_src
 
 *** General Dired customizations
+:PROPERTIES:
+:ID:       0ae6d933-8bd5-4d90-b4dd-16aa9e467a59
+:END:
 
 #+begin_src emacs-lisp
-
 (setopt delete-by-moving-to-trash t)
 (setopt mouse-drag-and-drop-region-cross-program t)
 
 (after! dired
-  (add-hook 'dired-mode-hook #'dired-hide-details-mode)
   (add-hook 'dired-mode-hook #'hl-line-mode)
 
   ;; cf. `dired-omit-files', `dired-omit-lines', `dired-omit-extensions'
@@ -5327,7 +5324,6 @@ not available, it will be installed imperatively.
     (treesit-install-language-grammar 'gitcommit))
 
   (when (treesit-language-available-p 'gitcommit)
-    (pushnew! auto-mode-alist "\\COMMIT_EDITMSG\\'")
     (after! git-commit
       (setopt git-commit-major-mode #'git-commit-ts-mode))
     (after! git-commit-ts-mode
@@ -5550,7 +5546,8 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 
 (package! typo
   ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
-  (typo-global-mode 1)
+  ;; FIXME: there must be another way
+  ;; (typo-global-mode 1)
 
   (setopt ceamx-lang-typo-mode-excluded-modes '(git-commit-mode))
 
@@ -5839,7 +5836,10 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
         ("D" . devdocs-lookup))
 
   :init
+  (setopt devdocs-window-select t)
+
   (after! popper
+    ;; FIXME: no effect -- maybe the package is overriding?
     (add-to-list 'popper-reference-buffers "\\*devdocs\\*"))
 
   :config
@@ -5930,6 +5930,9 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
 #+end_src
 
 *** =jinx= :: the enchanted spell checker :nixpkgs:
+:PROPERTIES:
+:ID:       bc2d4f9c-9e71-4b95-9f9b-8680639bbffe
+:END:
 
 - Docs :: <https://github.com/minad/jinx/wiki>
 
@@ -5984,17 +5987,13 @@ enchant-lsmod-2 -list-dicts
 | he_IL                | (hspell) |
 
 #+begin_src emacs-lisp
-(autoload 'global-jinx-mode "jinx")
-(autoload 'jinx-correct "jinx")
-(autoload 'jinx-languages "jinx")
-
-(add-hook 'ceamx-emacs-startup-hook #'global-jinx-mode)
-
-(keymap-global-set "M-$" #'jinx-correct)
-(keymap-global-set "C-M-$" #'jinx-languages)
-
-(after! jinx
-  (setopt jinx-languages "en"))
+(use-feature! jinx
+  :hook ((text-mode . global-jinx-mode))
+  :bind
+  (("M-$" . jinx-correct)
+   ("C-M-$" . jinx-languages))
+  :custom
+  (jinx-languages "en"))
 #+end_src
 
 *** Formatters
@@ -6064,8 +6063,8 @@ formatting (or other arbitrary modifications):
   ;; (apheleia-global-mode 1)
   )
 
-(after! (apheleia)
-  (blackout 'apheleia-mode " Aph"))
+(after! (apheleia minions)
+  (add-to-list 'minions-prominent-modes #'apheleia-mode))
 #+end_src
 
 **** Use the Biome formatter for supported major modes :lang:
@@ -6471,9 +6470,7 @@ non-syntactic meaning to the reader.
 (defun ceamx-emacs-lisp-init ()
   "Sensible defaults for `emacs-lisp-mode'."
   (ceamx-lisp-init)
-  (eldoc-mode 1)
-  ;; TODO: do we really want this for `ielm' and other derived modes as well?
-  (blackout "EL"))
+  (eldoc-mode 1))
 
 (add-hook 'emacs-lisp-mode-hook #'ceamx-emacs-lisp-init)
 (add-hook 'ielm-mode-hook #'ceamx-emacs-lisp-init)
@@ -8579,9 +8576,9 @@ I don't think this is working properly...
 :END:
 
 #+BEGIN_SRC emacs-lisp
-(package! (auto-tangle-mode
-           :host github
-           :repo "progfolio/auto-tangle-mode.el"))
+(package! (auto-tangle-mode :host github :repo "progfolio/auto-tangle-mode.el")
+  (after! minions
+    (add-to-list 'minions-prominent-modes #'auto-tangle-mode)))
 #+END_SRC
 
 *** TODO Org-Mode: electric-pair for equals-sign and tilde

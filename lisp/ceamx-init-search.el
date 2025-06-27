@@ -15,8 +15,6 @@
 
 
 (after! isearch
-  (blackout 'isearch)
-
   ;;
   ;; Settings
 

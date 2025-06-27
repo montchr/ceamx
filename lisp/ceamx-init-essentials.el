@@ -318,12 +318,14 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (keymap-global-set "C-e" #'mwim-end))
 
 ;; =beginend= :: rebind context-sensitive =(beginning,end)-of-buffer=
+;; :PROPERTIES:
+;; :ID:       7529f1a7-461c-4731-a7b8-05f6ce2104fa
+;; :END:
 
 ;; + Package :: https://github.com/DamienCassou/beginend
 
 
 (package! beginend
-  (blackout 'beginend-global-mode)
   (beginend-global-mode))
 
 ;; =easy-kill= :: killing is easy when you're emacs :package:

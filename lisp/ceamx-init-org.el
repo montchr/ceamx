@@ -553,9 +553,9 @@ Intended for use as a local hook function on
 ;; :END:
 
 
-(package! (auto-tangle-mode
-           :host github
-           :repo "progfolio/auto-tangle-mode.el"))
+(package! (auto-tangle-mode :host github :repo "progfolio/auto-tangle-mode.el")
+  (after! minions
+    (add-to-list 'minions-prominent-modes #'auto-tangle-mode)))
 
 (provide 'ceamx-init-org)
 ;;; ceamx-init-org.el ends here

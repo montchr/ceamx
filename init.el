@@ -337,16 +337,10 @@ because that's the simple solution and the performance overhead is
 unimportant since it happens during compilation anyway."
   (ceamx--remove-sharp-quotes args))
 
-;; =blackout=: adjust mode-line lighters :modeline:
-
-;; - Use-Package keyword :: =:blackout=
-
-
-(use-package blackout
-  :ensure (:wait t)
-  :demand t)
-
 ;; Install and configure =setup.el=
+;; :PROPERTIES:
+;; :ID:       d3695516-a695-489d-8a4f-374e54e59e31
+;; :END:
 
 
 (elpaca setup
@@ -425,7 +419,6 @@ The ORDER can be used to deduce the feature context."
 
 
 (package! gcmh
-  (blackout 'gcmh-mode)
   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
 
 ;; Install utility libraries
@@ -442,6 +435,7 @@ The ORDER can be used to deduce the feature context."
   (require 'transient)
   (after! transient
     (keymap-set transient-map "<escape>" #'transient-quit-one)))
+(package! (org-mem :host github :repo "meedstrom/org-mem"))
 
 ;; Install the =persist= package from =emacsmirror= because of GNU ELPA server issues
 

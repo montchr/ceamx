@@ -8,19 +8,6 @@
 (package! mlscroll
   (mlscroll-mode 1))
 
-;; =minions= :: minimize many mode-line minor-modes
-;; :PROPERTIES:
-;; :ID:       af187c9b-e6b2-47dc-a1b0-848a38455d74
-;; :END:
-
-
-(package! minions
-  (minions-mode 1)
-  (setopt minions-prominent-modes
-          '(auto-tangle-mode
-            jinx-mode
-            which-key-mode)))
-
 ;; Set up the ~ceamx-modeline~
 ;; :PROPERTIES:
 ;; :ID:       e8fa729f-3a84-4b3b-88eb-450406dde0a5
@@ -68,7 +55,23 @@
                   ;;ceamx-modeline-scrollbar
                   )))
 
+;; =minions= :: minimize many mode-line minor-modes
+;; :PROPERTIES:
+;; :ID:       af187c9b-e6b2-47dc-a1b0-848a38455d74
+;; :END:
+
+
+(package! minions
+  (add-hook 'ceamx-after-init-hook #'minions-mode)
+  ;; NOTE: This must happen after activating `ceamx-modeline-mode'
+  ;; because it needs to override the existing modeline format.
+  (after! ceamx-modeline
+    (add-hook 'ceamx-modeline-mode-hook #'minions-mode)))
+
 ;; =keycast= :: show current command and its binding :present:
+;; :PROPERTIES:
+;; :ID:       a205c8de-e065-4d67-9d81-a02c127ef068
+;; :END:
 
 ;; - Website :: <https://github.com/tarsius/keycast>
 
