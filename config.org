@@ -1472,6 +1472,21 @@ applying margin, padding, borders.
           ef-themes-variable-pitch-ui t))
 #+end_src
 
+**** =doric-themes= :: Prot’s minimalist themes
+:PROPERTIES:
+:ID:       d39feac9-ef27-41b0-94f9-92ed49b24055
+:END:
+
+#+begin_src emacs-lisp
+(package! doric-themes
+  (require 'doric-themes)
+
+  (ceamx-ui-define-preferred-themes 'doric 'doric-dark 'doric-light)
+
+  (setopt doric-themes-to-toggle (ceamx-ui-theme-family-preferred-themes 'doric))
+  (setopt doric-themes-to-rotate doric-themes-collection))
+#+end_src
+
 **** Configure the preferred themes
 :PROPERTIES:
 :ID:       a21cb155-3353-4e2c-9593-1680b43f4575

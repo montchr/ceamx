@@ -101,7 +101,7 @@
 
 (setopt custom-safe-themes t)
 
-;; =standard-themes= :: themes like the default but more consistent
+;; =standard-themes= :: Prot's themes like the default but more consistent
 ;; :PROPERTIES:
 ;; :ID:       09f2005b-1d4d-4d92-9f36-2327ca55757d
 ;; :END:
@@ -126,7 +126,7 @@
             standard-light
             standard-light-tinted)))
 
-;; =modus-themes= :: accessible theme conforming to WCAG AAA
+;; =modus-themes= :: Prot’s accessible themes conforming to WCAG AAA
 ;; :PROPERTIES:
 ;; :ID:       3700042e-1b73-416f-aaa1-2cbd9f2101f0
 ;; :END:
@@ -161,7 +161,7 @@
             (selection . (semibold italic text-also))))
   (setopt modus-themes-org-blocks 'tinted-background))
 
-;; =ef-themes= :: colorful yet legible themes
+;; =ef-themes= :: Prot’s colorful yet legible themes
 ;; :PROPERTIES:
 ;; :ID:       3f512af0-7bad-4447-a14d-08a5371e14c5
 ;; :END:
@@ -178,6 +178,20 @@
   (setopt ef-themes-to-toggle (ceamx-ui-theme-family-preferred-themes 'ef))
   (setopt ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui t))
+
+;; =doric-themes= :: Prot’s minimalist themes
+;; :PROPERTIES:
+;; :ID:       d39feac9-ef27-41b0-94f9-92ed49b24055
+;; :END:
+
+
+(package! doric-themes
+  (require 'doric-themes)
+
+  (ceamx-ui-define-preferred-themes 'doric 'doric-dark 'doric-light)
+
+  (setopt doric-themes-to-toggle (ceamx-ui-theme-family-preferred-themes 'doric))
+  (setopt doric-themes-to-rotate doric-themes-collection))
 
 ;; Configure the preferred themes
 ;; :PROPERTIES:

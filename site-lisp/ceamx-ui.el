@@ -38,18 +38,20 @@
 
 (defcustom ceamx-ui-theme-family 'modus
   "Set of themes to load.
-  Valid values are the symbols `ef', `modus', and `standard', which
-  reference the `ef-themes', `modus-themes', and `standard-themes',
-  respectively.
+
+  Valid values are the symbols `doric', `ef', `modus', and `standard',
+  which reference the `doric-themes', `ef-themes', `modus-themes', and
+  `standard-themes', respectively.
 
   A nil value does not load any of the above (use Emacs without a
   theme)."
   :group 'ceamx-ui
   :type '(choice :tag "Set of themes to load" :value modus
-                 (const :tag "The `ef-themes' module" ef)
-                 (const :tag "The `modus-themes' module" modus)
-                 (const :tag "The `standard-themes' module" standard)
-                 (const :tag "Do not load a theme module" nil)))
+           (const :tag "The `doric-themes' module" doric)
+           (const :tag "The `ef-themes' module" ef)
+           (const :tag "The `modus-themes' module" modus)
+           (const :tag "The `standard-themes' module" standard)
+           (const :tag "Do not load a theme module" nil)))
 
 (defcustom ceamx-ui-preferred-dark-themes nil
   "Alist of preferred dark themes per supported `ceamx-ui-theme-family'.
@@ -117,6 +119,8 @@
     (when (locate-library "modus-themes")
       (ceamx-ui--filter-symbols-by-prefix
         "modus-vivendi" modus-themes-items))
+    (when (locate-library "doric-themes")
+      doric-themes-dark-themes)
     (when (locate-library "ef-themes")
       ef-themes-dark-themes)
     (when (locate-library "standard-themes")
@@ -129,6 +133,8 @@
     (when (locate-library "modus-themes")
       (ceamx-ui--filter-symbols-by-prefix
         "modus-operandi" modus-themes-items))
+    (when (locate-library "doric-themes")
+      doric-themes-light-themes)
     (when (locate-library "ef-themes")
       ef-themes-light-themes)
     (when (locate-library "standard-themes")
