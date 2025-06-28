@@ -12,7 +12,7 @@
 
 This is a user configuration for GNU Emacs.
 
-The target operating system is GNU/Linux, though the configuration
+The target operating system is Linux, though the configuration
 will usually also work on macOS.
 
 * Agenda [0/0]
@@ -1391,7 +1391,7 @@ applying margin, padding, borders.
 (setopt custom-safe-themes t)
 #+end_src
 
-**** =standard-themes= :: themes like the default but more consistent
+**** =standard-themes= :: Prot's themes like the default but more consistent
 :PROPERTIES:
 :ID:       09f2005b-1d4d-4d92-9f36-2327ca55757d
 :END:
@@ -1417,7 +1417,7 @@ applying margin, padding, borders.
             standard-light-tinted)))
 #+end_src
 
-**** =modus-themes= :: accessible theme conforming to WCAG AAA
+**** =modus-themes= :: Prot’s accessible themes conforming to WCAG AAA
 :PROPERTIES:
 :ID:       3700042e-1b73-416f-aaa1-2cbd9f2101f0
 :END:
@@ -1453,7 +1453,7 @@ applying margin, padding, borders.
   (setopt modus-themes-org-blocks 'tinted-background))
 #+end_src
 
-**** =ef-themes= :: colorful yet legible themes
+**** =ef-themes= :: Prot’s colorful yet legible themes
 :PROPERTIES:
 :ID:       3f512af0-7bad-4447-a14d-08a5371e14c5
 :END:
@@ -2002,7 +2002,6 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 (provide 'ceamx-init-ui)
 ;;; ceamx-init-ui.el ends here
 #+end_src
-
 ** Modeline :modeline:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-modeline.el
