@@ -5559,7 +5559,7 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 #+begin_src emacs-lisp
 (require 'ceamx-lang)
 
-(package! typo
+(package! (typo :host github :repo "jorgenschaefer/typoel")
   ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
   ;; FIXME: there must be another way
   ;; (typo-global-mode 1)

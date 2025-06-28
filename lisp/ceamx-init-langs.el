@@ -22,7 +22,7 @@
 
 (require 'ceamx-lang)
 
-(package! typo
+(package! (typo :host github :repo "jorgenschaefer/typoel")
   ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
   ;; FIXME: there must be another way
   ;; (typo-global-mode 1)
@@ -38,6 +38,7 @@ setting."
     (let ((excluded-modes (append '(yaml-mode yaml-ts-mode)
                                   ceamx-lang-typo-mode-excluded-modes)))
       (unless (memq mode-name excluded-modes)
+        (require 'typo)
         (typo-mode 1))))
 
   (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
