@@ -1533,6 +1533,19 @@ usually wrongly fontified as a metadata block."
   ;; :ensure t
   )
 
+;; =fish-mode= :: Language support for Fish shell script files
+;; :PROPERTIES:
+;; :ID:       8e2caaa1-6b85-49db-a6df-c0e554ec885e
+;; :END:
+
+;; + requires-os-package :: =fish-lsp=
+
+
+(package! fish-mode
+  (setopt fish-indent-offset 2)
+  (after! eglot
+    (add-to-list 'eglot-server-programs '(fish-mode . ("fish-lsp" "start")))))
+
 ;; =just-mode= :: Language support for the Just task runner configuration files
 ;; :PROPERTIES:
 ;; :ID:       f57bb40b-4efc-4f77-8bef-bad0d8c2c1ba
