@@ -148,7 +148,8 @@
 (package! tmr
   (require 'tmr)
 
-  (keymap-global-set "C-c T" #'tmr-prefix-map)
+  ;; FIXME: conflicts with `ceamx-toggle-prefix'
+  ;; (keymap-global-set "C-c T" #'tmr-prefix-map)
 
   (setopt tmr-notification-urgency 'normal)
   (setopt tmr-description-list 'tmr-description-history)
