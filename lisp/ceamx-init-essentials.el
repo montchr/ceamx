@@ -376,9 +376,10 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 ;; <https://github.com/rejeep/drag-stuff.el>
 
-;; This package appears to be abandoned since 2017.  As of <2024-12-27>,
+;; This package appears to be abandoned since 2017.  As of <2025-06-28>,
 ;; it still works relatively well, but has some issues:
 
+;; + Does not work in some Tree-Sitter modes (e.g. JavaScript/TypeScript/JSON)
 ;; + Possible subtle conflicts with ~org-metaup~ and ~org-metadown~?
 ;; + Numerous warnings about deprecated functions <https://github.com/rejeep/drag-stuff.el/issues/36>
 
@@ -600,6 +601,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setopt epg-pinentry-mode 'loopback))
 
 ;; Buttonize URLs and email addresses with ~goto-address~ [builtin]
+;; :PROPERTIES:
+;; :ID:       2923efc3-131c-4cdc-b788-68bfe3cbf256
+;; :END:
 
 
 (use-feature! goto-addr

@@ -796,6 +796,9 @@ A final newline would be inserted literally into the snippet expansion."
 (keymap-global-set "C-c p" #'completion-at-point)
 
 ;; Provide feature ~ceamx-init-completion~
+;; :PROPERTIES:
+;; :ID:       f58a3ca1-4cbd-4220-9d65-ad102ed548c9
+;; :END:
 
 
 (provide 'ceamx-init-completion)

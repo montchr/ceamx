@@ -3,6 +3,7 @@
 (require 'treesit)
 
 (require 'ceamx-lib)
+(require 'ceamx-editor)
 
 ;; General =text-mode= customizations
 
@@ -38,7 +39,6 @@ setting."
     (let ((excluded-modes (append '(yaml-mode yaml-ts-mode)
                                   ceamx-lang-typo-mode-excluded-modes)))
       (unless (memq mode-name excluded-modes)
-        (require 'typo)
         (typo-mode 1))))
 
   (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
@@ -175,14 +175,17 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 ;;                       _W_: widen
 ;; "))
 
-;; =smart-newline= :: a newline command for programming modes
+;; =smart-newline= :: A self-aware newline command for programming modes :package:
+;; :PROPERTIES:
+;; :ID:       c4518207-51a4-4bf2-9aaa-0c029ab59113
+;; :END:
 
 
 (use-package smart-newline
   ;; :ensure t
   :hook (prog-mode . smart-newline-mode))
 
-;; =dumb-jump= :: multi-lang do-what-i-mean jump-to-definition
+;; =dumb-jump= :: Multi-lang do-what-i-mean jump-to-definition :package:
 
 ;; - Package :: <https://github.com/jacktasia/dumb-jump>
 
@@ -214,7 +217,10 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
 (package! rainbow-mode)
 
-;; =hl-todo= :: Highlight "TODO" and other codetags in comments and strings
+;; =hl-todo= :: Highlight "TODO" and other codetags in comments and strings :package:
+;; :PROPERTIES:
+;; :ID:       fc0d70a5-e486-42ff-8e35-e4fc07069c15
+;; :END:
 
 ;; - website :: <https://github.com/tarsius/hl-todo>
 ;; - reference :: <https://peps.python.org/pep-0350/#specification>
@@ -224,7 +230,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   ;;:ensure t
   :hook (prog-mode . hl-todo-mode))
 
-;; =devdocs= :: Peruse local ~devdocs~ docsets
+;; =devdocs= :: Peruse <devdocs.io> docsets locally :help:
 ;; :PROPERTIES:
 ;; :ID:       9907125e-84b9-420f-8991-c24b33f84161
 ;; :END:
@@ -255,81 +261,20 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
   )
 
-;; =sideline-emoji= :: Display emoji-at-point info in =sideline=
+;; =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:
 
 
 (package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
   (after! sideline
     (appendq! sideline-backends-left '((sideline-emoji . up)))))
 
-;; Display multiple composed messages inside ~eldoc~
-
-
-(setopt eldoc-documentation-function #'eldoc-documentation-compose)
-
-;; Linting files with the builtin ~flymake~ feature
-
-
-(setup flymake
-  (:hook-into ceamx-after-init-hook)
-  ;; Mirror the [C-c !] Flycheck prefix.
-  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
-         "C-c ! n" #'flymake-goto-next-error
-         "C-c ! p" #'flymake-goto-previous-error
-         "C-c ! c" #'flymake-show-buffer-diagnostics)
-  (:when-loaded
-    (setopt flymake-fringe-indicator-position 'right-fringe)
-    (setopt flymake-no-changes-timeout 1.0)
-    (setopt flymake-wrap-around t)))
-
-(package! sideline-flymake
-  (after! flymake
-    (add-hook 'flymake-mode-hook #'sideline-mode))
-
-  (setopt sideline-flymake-show-checker-name t)
-  (setopt sideline-flymake-max-lines 1))
-
-;; ~Linting files with the ~flycheck~ package :lint:
+;; Display multiple composed messages inside ~eldoc~ :help:
 ;; :PROPERTIES:
-;; :ID:       1409960a-0d06-440c-a2d6-d238354079d7
+;; :ID:       75c14cf4-c33e-4348-963b-bf08dcf6a21c
 ;; :END:
 
 
-(package! flycheck
-  (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
-
-(package! consult-flycheck
-  (keymap-global-set "M-g f" #'consult-flycheck)
-
-  (after! (consult flycheck)
-    (require 'consult-flycheck)))
-
-(package! sideline-flycheck
-  (after! flycheck
-    (add-hook 'flycheck-mode-hook #'sideline-mode)
-    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
-
-  (after! sideline
-    (appendq! sideline-backends-right '(sideline-flycheck)))
-
-  (setopt sideline-flycheck-show-checker-name t)
-  (setopt sideline-flycheck-max-lines 1))
-
-(after! flycheck
-  (setopt flycheck-emacs-lisp-load-path 'inherit)
-  (setopt flycheck-idle-change-delay 3.0
-          flycheck-display-errors-delay 1.5)
-  (setopt flycheck-check-syntax-automatically
-          '(save idle-change mode-enabled))
-  (setopt flycheck-buffer-switch-check-intermediate-buffers nil)
-
-  ;; Disable Flycheck for modes supported by Flymake
-  (setq-default flycheck-disabled-checkers
-                (append (default-value 'flycheck-disabled-checkers)
-                        '(emacs-lisp
-                          emacs-lisp-checkdoc
-                          emacs-lisp-package
-                          sh-shellcheck))))
+(setopt eldoc-documentation-function #'eldoc-documentation-compose)
 
 
 
@@ -378,24 +323,38 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   :custom
   (jinx-languages "en"))
 
-;; [[https://github.com/purcell/emacs-reformatter][purcell/emacs-reformatter]]: KISS DIY FMT :package:
+;; =emacs-reformatter= :: a simple formatter factory :package:
+;; :PROPERTIES:
+;; :ID:       db715ea8-bdf8-437a-b966-df1e97aff384
+;; :END:
 
 
 (package! reformatter
   (require 'reformatter))
 
+;; =apheleia= :: an opinionated auto-formatter :package:
+;; :PROPERTIES:
+;; :ID:       e4e1c7ed-dd8e-444b-bad8-ef3c8e0bc3a2
+;; :END:
+
+;; In case you run into issues with ~web-mode~ not updating syntax highlighting after
+;; formatting (or other arbitrary modifications):
+;; <https://github.com/doomemacs/doomemacs/blob/35dc13632b3177b9efedad212f2180f69e756853/modules/editor/format/config.el#L74-L83>
+
+
+(package! apheleia)
+
+(after! (apheleia minions)
+  (add-to-list 'minions-prominent-modes #'apheleia-mode))
+
 ;; =biome=
-
-;; - Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
-
-;; This should, possibly more ideally, be run as an LSP client, but AFAIK one does
-;; not yet exist for Eglot (only LSP-Mode).
+;; :PROPERTIES:
+;; :ID:       02ca8665-d6da-4923-8038-0527664c9994
+;; :END:
 
 
-(after! reformatter
-  (reformatter-define biome-format
-    :program "biome"
-    :args (list "format" "--stdin-file-path" (buffer-file-name))))
+
+
 
 ;; =prettier=
 
@@ -422,45 +381,26 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 (after! popper
   (push "\\*treefmt-errors\\*" popper-reference-buffers))
 
-;; [[https://github.com/radian-software/apheleia][radian-software/apheleia]]: opinionated code reformatting :package:
+;; TODO Use Biome in supported major modes :lang:
+;; :PROPERTIES:
+;; :ID:       5db5cd89-e9e9-45b2-a25b-ca43f0ca7bf6
+;; :END:
 
-;; In case you run into issues with ~web-mode~ not updating syntax highlighting after
-;; formatting (or other arbitrary modifications):
-;; <https://github.com/doomemacs/doomemacs/blob/35dc13632b3177b9efedad212f2180f69e756853/modules/editor/format/config.el#L74-L83>
-
-
-(package! apheleia
-  ;; (apheleia-global-mode 1)
-  )
-
-(after! (apheleia minions)
-  (add-to-list 'minions-prominent-modes #'apheleia-mode))
-
-;; Use the Biome formatter for supported major modes :lang:
-
+;; - Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
 ;; - Reference :: <https://biomejs.dev/internals/language-support/>
 
-;; As of <2024-05-24 Fri>
 
-
-;; As of <2024-05-24 Fri>
-;; <https://biomejs.dev/internals/language-support/>
-(defconst ceamx-editor-format-biome-modes-list
-  '(javascript-mode js-mode js-ts-mode js3-mode
-    typescript-mode typescript-ts-mode
-    js-jsx-mode tsx-ts-mode
-    json-mode json-ts-mode)
-  "List of major-mode symbols for the languages supported by the Biome formatter.")
+(after! reformatter
+  )
 
 (after! reformatter
   (require 'derived)
-  (dolist (hook (mapcar #'derived-mode-hook-name ceamx-editor-format-biome-modes-list))
+  (dolist (hook (mapcar #'derived-mode-hook-name ceamx-editor-biome-supported-modes-list))
     (add-hook hook #'biome-format-on-save-mode)))
 
 (after! apheleia
   (add-to-list 'apheleia-formatters '(biome "biome" "format" "--stdin-file-path" filepath))
-
-  (dolist (mode ceamx-editor-format-biome-modes-list)
+  (dolist (mode ceamx-editor-biome-supported-modes-list)
     (add-to-list 'apheleia-mode-alist '(mode . biome))))
 
 ;; Define user option to disable format-on-save for some modes
@@ -502,6 +442,79 @@ non-nil, buffers will never be formatted upon save."
     "Inhibit reformatting-on-save when providing a prefix argument to \\[save-buffer]."
     (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
       (funcall func))))
+
+;; ~Linting files with the ~flycheck~ package :lint:
+;; :PROPERTIES:
+;; :ID:       1409960a-0d06-440c-a2d6-d238354079d7
+;; :END:
+;; :LOGBOOK:
+;; - Refiled on [2025-07-11 Fri 12:13]
+;; :END:
+
+
+(package! flycheck
+  (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
+
+(package! consult-flycheck
+  (keymap-global-set "M-g f" #'consult-flycheck)
+
+  (after! (consult flycheck)
+    (require 'consult-flycheck)))
+
+(package! sideline-flycheck
+  (after! flycheck
+    (add-hook 'flycheck-mode-hook #'sideline-mode)
+    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
+
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-flycheck)))
+
+  (setopt sideline-flycheck-show-checker-name t)
+  (setopt sideline-flycheck-max-lines 1))
+
+(after! flycheck
+  (setopt flycheck-emacs-lisp-load-path 'inherit)
+  (setopt flycheck-idle-change-delay 3.0
+          flycheck-display-errors-delay 1.5)
+  (setopt flycheck-check-syntax-automatically
+          '(save idle-change mode-enabled))
+  (setopt flycheck-buffer-switch-check-intermediate-buffers nil)
+
+  ;; Disable Flycheck for modes supported by Flymake
+  (setq-default flycheck-disabled-checkers
+                (append (default-value 'flycheck-disabled-checkers)
+                        '(emacs-lisp
+                          emacs-lisp-checkdoc
+                          emacs-lisp-package
+                          sh-shellcheck))))
+
+;; Linting files with the builtin ~flymake~ feature
+;; :PROPERTIES:
+;; :ID:       1aeefb28-94d9-4561-ad49-71ff8d4cdf0e
+;; :END:
+;; :LOGBOOK:
+;; - Refiled on [2025-07-11 Fri 12:13]
+;; :END:
+
+
+(setup flymake
+  (:hook-into ceamx-after-init-hook)
+  ;; Mirror the [C-c !] Flycheck prefix.
+  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
+         "C-c ! n" #'flymake-goto-next-error
+         "C-c ! p" #'flymake-goto-previous-error
+         "C-c ! c" #'flymake-show-buffer-diagnostics)
+  (:when-loaded
+    (setopt flymake-fringe-indicator-position 'right-fringe)
+    (setopt flymake-no-changes-timeout 1.0)
+    (setopt flymake-wrap-around t)))
+
+(package! sideline-flymake
+  (after! flymake
+    (add-hook 'flymake-mode-hook #'sideline-mode))
+
+  (setopt sideline-flymake-show-checker-name t)
+  (setopt sideline-flymake-max-lines 1))
 
 ;; =puni= :: versatile structural editing
 ;; :PROPERTIES:
@@ -1506,6 +1519,9 @@ usually wrongly fontified as a metadata block."
   (add-to-list 'auto-mode-alist '("\\.twig\\'" . web-mode)))
 
 ;; Shell scripts
+;; :PROPERTIES:
+;; :ID:       2b9569ee-d623-4246-a3c3-af59abd75e1f
+;; :END:
 
 ;; Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ;; ~flymake~ will handle it just fine.

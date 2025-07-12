@@ -1,7 +1,7 @@
-  ;; -*- lexical-binding: t;  -*-
+;; -*- lexical-binding: t;  -*-
 
-  (require 'ceamx-lib)
-  (require 'ceamx-ui)
+(require 'ceamx-lib)
+(require 'ceamx-ui)
 
 ;; Configure cursor appearance
 
@@ -338,14 +338,14 @@
 
 (after! spacious-padding
   (setopt spacious-padding-widths
-          '( :internal-border-width 20
+          '( :internal-border-width 10
              :header-line-width 4
              :mode-line-width 6
              :tab-width 4
-             :right-divider-width 20
-             :scroll-bar-width 8
-             :left-fringe-width 12
-             :right-fringe-width 12))
+             :right-divider-width 10
+             :scroll-bar-width 4
+             :left-fringe-width 6
+             :right-fringe-width 6))
 
   (setopt spacious-padding-subtle-mode-line t))
 

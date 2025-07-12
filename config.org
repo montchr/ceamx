@@ -2533,9 +2533,10 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 <https://github.com/rejeep/drag-stuff.el>
 
-This package appears to be abandoned since 2017.  As of <2024-12-27>,
+This package appears to be abandoned since 2017.  As of <2025-06-28>,
 it still works relatively well, but has some issues:
 
++ Does not work in some Tree-Sitter modes (e.g. JavaScript/TypeScript/JSON)
 + Possible subtle conflicts with ~org-metaup~ and ~org-metadown~?
 + Numerous warnings about deprecated functions <https://github.com/rejeep/drag-stuff.el/issues/36>
 
@@ -2783,6 +2784,9 @@ Needs better bindings.
 #+end_src
 
 *** Buttonize URLs and email addresses with ~goto-address~ [builtin]
+:PROPERTIES:
+:ID:       2923efc3-131c-4cdc-b788-68bfe3cbf256
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! goto-addr
@@ -4507,6 +4511,9 @@ Define Embark actions for acting on tabs:
 #+end_src
 
 *** Provide feature ~ceamx-init-completion~
+:PROPERTIES:
+:ID:       f58a3ca1-4cbd-4220-9d65-ad102ed548c9
+:END:
 
 #+begin_src emacs-lisp
 (provide 'ceamx-init-completion)
@@ -5525,6 +5532,7 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 *** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       27ea7adc-c9b8-43b4-a857-f1e802b7fe59
 :END:
 
 #+begin_src emacs-lisp :comments no
@@ -5725,7 +5733,10 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 ;; "))
 #+end_src
 
-*** =smart-newline= :: a newline command for programming modes
+*** =smart-newline= :: A self-aware newline command for programming modes :package:
+:PROPERTIES:
+:ID:       c4518207-51a4-4bf2-9aaa-0c029ab59113
+:END:
 
 #+begin_src emacs-lisp
 (use-package smart-newline
@@ -5733,7 +5744,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
   :hook (prog-mode . smart-newline-mode))
 #+end_src
 
-*** =dumb-jump= :: multi-lang do-what-i-mean jump-to-definition
+*** =dumb-jump= :: Multi-lang do-what-i-mean jump-to-definition :package:
 
 - Package :: <https://github.com/jacktasia/dumb-jump>
 
@@ -5767,7 +5778,10 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 (package! rainbow-mode)
 #+end_src
 
-*** DISABLED ~prism~: disperse structural forms into depth-based color strata
+*** DISABLED =prism= :: Disperse structural forms into depth-based color strata :package:
+:PROPERTIES:
+:ID:       ec248745-19a9-4e3d-9c58-c0df60ee5514
+:END:
 
 Not my cup of tee...
 
@@ -5822,7 +5836,10 @@ Not my cup of tee...
                       yellow-faint)))))
 #+end_src
 
-*** =hl-todo= :: Highlight "TODO" and other codetags in comments and strings
+*** =hl-todo= :: Highlight "TODO" and other codetags in comments and strings :package:
+:PROPERTIES:
+:ID:       fc0d70a5-e486-42ff-8e35-e4fc07069c15
+:END:
 
 - website :: <https://github.com/tarsius/hl-todo>
 - reference :: <https://peps.python.org/pep-0350/#specification>
@@ -5833,7 +5850,7 @@ Not my cup of tee...
   :hook (prog-mode . hl-todo-mode))
 #+end_src
 
-*** =devdocs= :: Peruse local ~devdocs~ docsets
+*** =devdocs= :: Peruse <devdocs.io> docsets locally :help:
 :PROPERTIES:
 :ID:       9907125e-84b9-420f-8991-c24b33f84161
 :END:
@@ -5865,7 +5882,7 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
   )
 #+end_src
 
-*** =sideline-emoji= :: Display emoji-at-point info in =sideline=
+*** =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:
 
 #+begin_src emacs-lisp
 (package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
