@@ -1,6 +1,6 @@
 ;;; ceamx-editor.el --- Ceamx editor support library  -*- lexical-binding: t;  -*-
 
-;; Copyright (C) 2023-2024  Chris Montgomery
+;; Copyright (C) 2023-2025  Chris Montgomery
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;; Keywords: local
@@ -20,6 +20,35 @@
 
 ;;; Commentary:
 ;;; Code:
+
+(defgroup ceamx-editor nil
+  "Ceamx editor support"
+  :group 'ceamx)
+
+;;;; Customization
+
+(defcustom ceamx-editor-biome-supported-modes-list
+  '( css-base-mode js-base-mode typescript-ts-base-mode
+     json-mode json-ts-mode)
+  "List of major modes for the languages supported by the Biome formatter.
+Refer to <https://biomejs.dev/internals/language-support/> for Biome's
+currently-supported languages.
+
+The default value for this setting was updated from the Biome
+documentation as of <2025-07-11 Fri>."
+  :type '(repeat symbol)
+  :group 'ceamx-editor)
+
+;;;; Functions
+
+;;;###autoload
+(defun ceamx-editor-biome-supported-modes-hooks ()
+  "List of mode hooks for the modes in `ceamx-editor-biome-supported-modes-list'."
+  (mapcar (lambda (mode)
+            (intern (concat (symbol-name mode))))
+    ceamx-editor-biome-supported-modes-list))
+
+;;;; Commands
 
 ;;;###autoload
 (defun ceamx/cycle-string-inflection ()
