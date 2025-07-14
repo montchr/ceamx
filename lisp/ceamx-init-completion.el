@@ -514,7 +514,7 @@ Tempel does not trigger too often when you don't expect it."
 
 
 (package! yasnippet
-  (keymap-set ceamx-insert-prefix "s" #'yas-insert-snippet)
+  (keymap-set ceamx-insert-prefix-map "s" #'yas-insert-snippet)
 
   (defer! 3
     (yas-global-mode 1)))
@@ -556,7 +556,7 @@ A final newline would be inserted literally into the snippet expansion."
 
 
 (package! spdx
-  (keymap-set ceamx-insert-prefix "L" #'spdx-insert-spdx))
+  (keymap-set ceamx-insert-prefix-map "L" #'spdx-insert-spdx))
 
 ;; =corfu= :: [co]mpletion in [r]egion [fu]nction
 ;; :PROPERTIES:
@@ -690,7 +690,7 @@ A final newline would be inserted literally into the snippet expansion."
     ;; <https://github.com/minad/corfu/wiki#continuously-update-the-candidates>
     (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 
-  (keymap-set ceamx-insert-prefix "E" #'cape-emoji)
+  (keymap-set ceamx-insert-prefix-map "E" #'cape-emoji)
 
   ;; cf. `cape-prefix-map' for ideas
   (define-keymap :keymap ceamx-completion-prefix-map
@@ -704,6 +704,9 @@ A final newline would be inserted literally into the snippet expansion."
     "w" #'cape-dict))
 
 ;; =embark= :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:
+;; :PROPERTIES:
+;; :ID:       111a0c90-a300-4fa8-a954-6d5e97fcea89
+;; :END:
 
 ;; - Package :: <https://github.com/oantolin/embark>
 
@@ -711,7 +714,7 @@ A final newline would be inserted literally into the snippet expansion."
 (package! embark
   ;; Embark is a heavy package.  Load in the background to avoid
   ;; delays upon invoking autoloaded commands.
-  (defer! 1
+  (defer! 3
     (require 'embark))
 
   ;; NOTE: This key might be bound to emoji input in GNOME Desktop.
@@ -777,6 +780,17 @@ A final newline would be inserted literally into the snippet expansion."
   (push #'embark--confirm
         (alist-get 'tab-bar-close-tab-by-name
                    embark-pre-action-hooks)))
+
+;; Keybinding help with Embark’s ~embark-prefix-help-command~
+;; :PROPERTIES:
+;; :ID:       4ddaa528-5c3b-494a-9aa0-95e32a93fb8f
+;; :END:
+
+
+(after! embark
+  (setopt prefix-help-command #'embark-prefix-help-command)
+  (after! vertico
+    (add-to-list 'vertico-multiform-categories '(embark-keybinding grid))))
 
 ;; Add command to export completion candidates to a writable buffer :embark:
 

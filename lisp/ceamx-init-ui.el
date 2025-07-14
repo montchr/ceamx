@@ -148,13 +148,7 @@
           (ceamx-ui-theme-family-preferred-themes 'modus))
   (setopt modus-themes-disable-other-themes nil)
   (setopt modus-themes-custom-auto-reload t)
-  (setopt modus-themes-headings
-          '((1 . (variable-pitch bold 1.4))
-            (2 . (variable-pitch semibold 1.2))
-            (3 . (variable-pitch semibold 1.0))
-            (agenda-structure . (variable-pitch light 2.2))
-            (agenda-date . (variable-pitch regular 1.3))
-            (t . (variable-pitch medium 1.0))))
+  (setopt modus-themes-headings nil)
   (setopt modus-themes-prompts '(italic bold))
   (setopt modus-themes-completions
           '((matches . (extrabold))
@@ -618,7 +612,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 (package! nerd-icons
   (require 'nerd-icons)
 
-  (keymap-set ceamx-insert-prefix "I" #'nerd-icons-insert)
+  (keymap-set ceamx-insert-prefix-map "I" '("icon" . nerd-icons-insert))
 
   (define-keymap :keymap (current-global-map)
     "C-x 8 i" (cons "icons" (define-prefix-command 'ceamx-insert-icons-prefix 'ceamx-insert-icons-prefix-map))

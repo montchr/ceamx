@@ -347,16 +347,10 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 (after! (apheleia minions)
   (add-to-list 'minions-prominent-modes #'apheleia-mode))
 
-;; =biome=
-;; :PROPERTIES:
-;; :ID:       02ca8665-d6da-4923-8038-0527664c9994
-;; :END:
-
-
-
-
-
 ;; =prettier=
+;; :PROPERTIES:
+;; :ID:       5a8a7b6e-09cc-4f48-b6a6-3a9a12a41018
+;; :END:
 
 ;; - Source :: <https://github.com/akirak/flake-templates/blob/629b04932dc71e3e0213d66a0aa8a08cd0b64922/README.md#emacs>
 
@@ -381,25 +375,38 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 (after! popper
   (push "\\*treefmt-errors\\*" popper-reference-buffers))
 
-;; TODO Use Biome in supported major modes :lang:
+;; INPRG Use Biome in supported major modes :lang:
 ;; :PROPERTIES:
 ;; :ID:       5db5cd89-e9e9-45b2-a25b-ca43f0ca7bf6
+;; :END:
+;; :LOGBOOK:
+;; - State "INPRG"      from "TODO"       [2025-07-12 Sat 16:59]
 ;; :END:
 
 ;; - Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
 ;; - Reference :: <https://biomejs.dev/internals/language-support/>
 
 
-(after! reformatter
-  )
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+  :config
+  ;; FIXME: only start server if "biome.json" file in tree
+  (add-to-list 'eglot-server-programs
+               (list ceamx-editor-biome-supported-modes-list "biome" "lsp-proxy")))
 
 (after! reformatter
-  (require 'derived)
-  (dolist (hook (mapcar #'derived-mode-hook-name ceamx-editor-biome-supported-modes-list))
+  (reformatter-define biome-format
+    :program "biome"
+    :args (list "format" "--stdin-file-path" (buffer-file-name)))
+
+  (dolist (hook (ceamx-editor-biome-supported-modes-hooks))
     (add-hook hook #'biome-format-on-save-mode)))
 
 (after! apheleia
   (add-to-list 'apheleia-formatters '(biome "biome" "format" "--stdin-file-path" filepath))
+
   (dolist (mode ceamx-editor-biome-supported-modes-list)
     (add-to-list 'apheleia-mode-alist '(mode . biome))))
 

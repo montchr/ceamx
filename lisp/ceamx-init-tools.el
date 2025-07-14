@@ -93,7 +93,7 @@
 
 
 (package! uuidgen
-  (define-keymap :keymap ceamx-insert-prefix
+  (define-keymap :keymap ceamx-insert-prefix-map
     "U" (cons "uuid" (define-prefix-command 'ceamx-insert-uuid-prefix))
     "U 1" #'uuidgen-1
     "U 3" #'uuidgen-3

@@ -66,7 +66,7 @@
 
   "C-d" '("diff with..." . ceamx-simple/diff-with-file))
 
-  (define-keymap :keymap ceamx-insert-prefix
+  (define-keymap :keymap ceamx-insert-prefix-map
     "d" #'ceamx-simple/insert-date)
 
   (define-keymap :keymap (current-global-map)
@@ -468,14 +468,12 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (package! (bray :host codeberg :repo "ideasman42/emacs-bray")
   (require 'bray)
-  (require 'ceamx-modaled)
-
-  )
+  (require 'ceamx-modaled))
 
 (use-feature! ceamx-modaled
   :demand t
   :after (bray)
-  :hook ((ceamx-after-init . ceamx-modaled-mode))
+  ;; :hook ((ceamx-after-init . ceamx-modaled-mode))
   :defines ( ceamx-modaled-state-normal-map
              ceamx-modaled-state-insert-map)
   :config
@@ -492,17 +490,21 @@ PROPS is as in `editorconfig-after-apply-functions'."
               :is-input t))))
 
 ;; Line wrapping
+;; :PROPERTIES:
+;; :ID:       a8a12924-308f-45c9-8e4d-47fac614bdae
+;; :END:
 
 
 (use-feature! emacs
   :hook (((prog-mode text-mode) . auto-fill-mode))
 
   :config
-  (setq-default fill-column 70)
+  (setq-default fill-column 80)
   ;; Disable line soft-wrapping by default.
   (setq-default truncate-lines t)
 
-  (setopt comment-auto-fill-only-comments t))
+  ;; (setopt comment-auto-fill-only-comments t)
+  )
 
 (use-package unfill
   ;; :ensure t
@@ -637,6 +639,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
             kept-old-versions 5)))
 
 ;; Configure finding of files
+;; :PROPERTIES:
+;; :ID:       d7168d7e-0419-4d6c-b29e-002c826be6c3
+;; :END:
 
 
 (use-feature! emacs
@@ -656,7 +661,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
              (progn (make-directory parent-directory 'parents)
                     t))))))
 
-;; Auto-save file-visiting buffers
+;; Auto-save file-visiting buffers :buffer:
 
 
 (use-feature! emacs
@@ -676,14 +681,14 @@ PROPS is as in `editorconfig-after-apply-functions'."
   ;; Save file-visiting buffers according to the configured timers.
   (auto-save-visited-mode))
 
-;; Interactive buffer management with ~ibuffer~
+;; Interactive buffer management with ~ibuffer~ :buffers:
 
 
 (use-feature! ibuffer
   :config
   (setopt ibuffer-movement-cycle t))
 
-;; Rebind some default ~help-map~ keybindings
+;; Rebind some default ~help-map~ keybindings :keybinds:
 
 
 (define-keymap :keymap help-map
@@ -777,6 +782,30 @@ PROPS is as in `editorconfig-after-apply-functions'."
     "K K" #'helpful-key
     "o" #'helpful-symbol
     "v" #'helpful-variable))
+
+;; DISABLED Keybinding help via =which-key=
+;; :PROPERTIES:
+;; :ID:       0eb1dafe-55fb-4658-ac9b-53597da45bb3
+;; :END:
+;; :LOGBOOK:
+;; - Refiled on [2025-07-13 Sun 20:07]
+;; :END:
+
+;; Currently using ~embark-prefix-help-command~ instead.
+
+
+(use-feature! which-key
+  ;; :hook (ceamx-after-init . which-key-mode)
+
+  :config
+  (setopt which-key-compute-remaps t)
+  (setopt which-key-idle-delay 1.0)
+  (setopt
+   which-key-sort-order 'which-key-description-order
+   ;; which-key-sort-order 'which-key-prefix-then-key-order
+   which-key-sort-uppercase-first nil)
+  (setopt which-key-add-column-padding 0)
+  (setopt which-key-show-remaining-keys t))
 
 ;; Record some variables' values with ~savehist~
 
@@ -909,26 +938,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
     "p" #'bookmark-in-project-jump-previous
     "*" #'bookmark-in-project-toggle))
 
-;; =which-key=
-;; :PROPERTIES:
-;; :ID:       0eb1dafe-55fb-4658-ac9b-53597da45bb3
-;; :END:
-
-
-(use-feature! which-key
-  :hook (ceamx-after-init . which-key-mode)
-
-  :config
-  (setopt which-key-compute-remaps t)
-  (setopt which-key-idle-delay 1.0)
-  (setopt
-   which-key-sort-order 'which-key-description-order
-   ;; which-key-sort-order 'which-key-prefix-then-key-order
-   which-key-sort-uppercase-first nil)
-  (setopt which-key-add-column-padding 0)
-  (setopt which-key-show-remaining-keys t))
-
-;; macOS: Remap modifier keys for the Apple keyboard layout
+;; macOS: Remap modifier keys for the Apple keyboard layout :keybinds:
 
 
 (when (and (ceamx-host-macos-p) (display-graphic-p))
@@ -947,7 +957,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
     "s-x" #'kill-region
     "s-q" #'save-buffers-kill-emacs))
 
-;; Enable and configure ~repeat-mode~
+;; Enable and configure ~repeat-mode~ :keybinds:
 
 
 (add-hook 'ceamx-after-init-hook #'repeat-mode)
