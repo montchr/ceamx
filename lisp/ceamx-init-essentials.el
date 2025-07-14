@@ -223,7 +223,7 @@
 
   (setopt auto-revert-interval 2))
 
-;; Normalize whitespace and indentation handling
+;; Normalize whitespace/spacing/indentation handling
 ;; :PROPERTIES:
 ;; :ID:       79ef85d9-c7b3-4860-a516-95145c4825b1
 ;; :END:
@@ -237,6 +237,7 @@
                 tab-width 8)
 
   (setopt backward-delete-char-untabify-method 'hungry)
+  (setopt cycle-spacing-actions '(delete-all-space just-one-space restore))
   (setopt mode-require-final-newline 'visit-save)
   (setopt sentence-end-double-space t)
 
