@@ -114,6 +114,9 @@
           (eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
 
 ;; Enable/disable some commands that are disabled/enabled by default
+;; :PROPERTIES:
+;; :ID:       b1ce92a4-139c-4054-9fa4-982d47c720d3
+;; :END:
 
 
 ;; Enable these commands
@@ -121,11 +124,16 @@
                list-timers
                narrow-to-page
                narrow-to-region
-               upcase-region))
+               upcase-region
+               scroll-left
+               scroll-right))
   (put cmd 'disabled nil))
 
 ;; Disable these commands
-(dolist (cmd '(diary iconify-frame overwrite-mode))
+(dolist (cmd '( diary
+                iconify-frame
+                overwrite-mode
+                suspend-frame))
   (put cmd 'disabled t))
 
 ;; Display the scratch buffer as initial buffer
