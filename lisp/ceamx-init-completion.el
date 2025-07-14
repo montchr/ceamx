@@ -357,7 +357,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (setq completion-category-defaults nil)
   (setopt completion-styles '(orderless basic))
   (setopt completion-category-overrides
-          '((file (styles partial-completion orderless))
+          '((file (styles basic partial-completion))
             (bookmark (styles basic substring))
             (library (styles basic substring))
             (imenu (styles orderless substring basic))
