@@ -820,7 +820,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
                      regexp-search-ring
                      search-ring))
     (cl-pushnew save savehist-additional-variables))
-  (setopt history-length 100
+  (setopt history-length 333
           history-delete-duplicates t)
   (setopt savehist-autosave-interval 60))
 
