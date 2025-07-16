@@ -7084,8 +7084,23 @@ Available by that name in Nixpkgs.
 (add-to-list 'auto-mode-alist '("\\.jsonc\\'" . json-ts-mode))
 #+end_src
 
-**** TOML
-***** Register =taplo= formatter
+**** TOML :requires_external:
+:PROPERTIES:
+:ID:       04f99d67-a7a9-4a46-9095-9afec907cc4a
+:END:
+
++ Requires-External :: =taplo=
+
+  While Emacs includes builtin TOML language support via
+  ~conf-toml-mode~ and =toml-ts-mode=, Eglot does not provide a builtin
+  configuration for the standard TOML language server (=taplo=).  We
+  also want to use =taplo= formatter capabilities, as TOML formatting is
+  not supported by Biome or Prettier.
+
+***** Register =taplo= formatting utilities :formatting:
+:PROPERTIES:
+:ID:       777ee791-be1a-43b7-86d5-18dca405b75f
+:END:
 
 #+begin_src emacs-lisp
 (after! reformatter
@@ -7100,13 +7115,27 @@ Available by that name in Nixpkgs.
   (add-hook 'toml-ts-mode-hook #'toml-taplo-fmt-on-save-mode))
 #+end_src
 
-***** LSP-Mode: Use the correct cache base directory
+***** Use the =taplo= language server :eglot:lsp:
+:PROPERTIES:
+:ID:       1fbf97bf-e6f8-499d-a8c1-b08236cfb44c
+:END:
 
 #+begin_src emacs-lisp
-(when (featurep 'lsp-toml)
-  (setopt lsp-toml-cache-path (file-name-as-directory
-                               (concat ceamx-lsp-mode-cache-dir "server/toml"))))
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+
+  :config
+  (add-to-list 'ceamx-eglot-server-configurations-alist
+               '("toml-taplo" . nil))
+  (add-to-list 'eglot-server-programs
+               (cons '(conf-toml-mode toml-ts-mode)
+                     (ceamx-eglot-server-contact
+                      "toml-taplo"
+                      "taplo" "lsp" "stdio"))))
 #+end_src
+
 
 **** YAML
 

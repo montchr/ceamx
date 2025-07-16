@@ -66,8 +66,12 @@ commonly used by `lsp-mode'.
 PROGRAM and ARGS are as in `eglot-server-programs', which see.
 
 Unless PROGRAM is provided, the program name used in
-`eglot-server-programs' will be the value of NAME."
+`eglot-server-programs' will be the value of NAME with the \"<LANG>-\"
+prefix removed.  For example, given the NAME \"toml-taplo\", where LANG
+is \"toml\" and PROGRAM is \"taplo\", \"taplo\" is the name of the
+command in `eglot-server-programs'."
   (let ((options (ceamx-eglot-server-default-settings name))
+         ;; Remove the language identifier prefix.
          (program (or program (string-trim-left name "[[:alpha:]]+-"))))
     ;; The use of `append' here is significant because it will filter out a nil
     ;; value for `options'.
