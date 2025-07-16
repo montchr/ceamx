@@ -1074,6 +1074,9 @@ The original function fails in the presence of whitespace after a sexp."
 (add-to-list 'auto-mode-alist '("\\.jsonc\\'" . json-ts-mode))
 
 ;; Register =taplo= formatter
+;; :PROPERTIES:
+;; :ID:       777ee791-be1a-43b7-86d5-18dca405b75f
+;; :END:
 
 
 (after! reformatter
@@ -1087,7 +1090,10 @@ The original function fails in the presence of whitespace after a sexp."
   (add-hook 'conf-toml-mode-hook #'toml-taplo-fmt-on-save-mode)
   (add-hook 'toml-ts-mode-hook #'toml-taplo-fmt-on-save-mode))
 
-;; LSP-Mode: Use the correct cache base directory
+;; Use the =taplo= language server :eglot:lsp:
+;; :PROPERTIES:
+;; :ID:       1fbf97bf-e6f8-499d-a8c1-b08236cfb44c
+;; :END:
 
 
 (when (featurep 'lsp-toml)
