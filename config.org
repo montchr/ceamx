@@ -2199,6 +2199,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like
   ;; "y" #'+yank-this-file-name
 
   "c" '("copy..." . ceamx-simple/copy-current-file)
+  ;; FIXME: don’t prevent deletion (or allow override with prefix)
   "d" '("delete" . ceamx-simple/delete-current-file)
   "f" #'find-file
   "F" #'find-file-other-window
@@ -2330,6 +2331,9 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 #+end_src
 
 *** Configure sane window-scrolling behavior
+:PROPERTIES:
+:ID:       c6408cc7-1382-4433-bde2-947e4dc2c062
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! window
@@ -3008,6 +3012,9 @@ Currently using ~embark-prefix-help-command~ instead.
 
 *** History & Undo :history:
 **** Record some variables' values with ~savehist~
+:PROPERTIES:
+:ID:       fb765b69-118b-4ef7-8902-f09215137f5c
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! savehist

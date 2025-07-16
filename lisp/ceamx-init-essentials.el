@@ -57,6 +57,7 @@
   ;; "y" #'+yank-this-file-name
 
   "c" '("copy..." . ceamx-simple/copy-current-file)
+  ;; FIXME: don’t prevent deletion (or allow override with prefix)
   "d" '("delete" . ceamx-simple/delete-current-file)
   "f" #'find-file
   "F" #'find-file-other-window
@@ -184,6 +185,9 @@
   (persistent-scratch-setup-default))
 
 ;; Configure sane window-scrolling behavior
+;; :PROPERTIES:
+;; :ID:       c6408cc7-1382-4433-bde2-947e4dc2c062
+;; :END:
 
 
 (use-feature! window
@@ -809,6 +813,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setopt which-key-show-remaining-keys t))
 
 ;; Record some variables' values with ~savehist~
+;; :PROPERTIES:
+;; :ID:       fb765b69-118b-4ef7-8902-f09215137f5c
+;; :END:
 
 
 (use-feature! savehist
