@@ -494,25 +494,62 @@ PROPS is as in `editorconfig-after-apply-functions'."
               :keymaps ((t . ceamx-modaled-state-insert-map))
               :is-input t))))
 
-;; Line wrapping
+;; Configure line wrapping aka “fill”
 ;; :PROPERTIES:
 ;; :ID:       a8a12924-308f-45c9-8e4d-47fac614bdae
 ;; :END:
 
+;; By default, automatically hard-wrap text in ~prog-mode~ and ~text-mode~:
+
 
 (use-feature! emacs
-  :hook (((prog-mode text-mode) . auto-fill-mode))
+  :hook (((prog-mode text-mode) . auto-fill-mode)))
 
+
+
+;; The original ~fill-column~ value of "70" behaves more-ideally than the
+;; expected "80".  While 80 may be some sort of standard for code, 70
+;; works better for prose.  70 helps avoid the end of lines getting
+;; visually cut off by giving some space for the frame's interface
+;; elements (e.g. spacing, line numbers, gutter indicators, etc.).
+
+;; That said, unfortunately, this value applies to /all/ text, not
+;; just prose.  While ~comment-auto-fill-only-comments~ exists, it
+;; does not really work so well in prose-orientated text documents,
+;; as even these may define a comment syntax (e.g. =text/markdown=
+;; and the not-yet-standard =text/org=).
+
+;; TODO: Disregard the ~comment-auto-fill-only-comments~ setting for
+;; ~text-mode~
+
+
+(use-feature! emacs
   :config
-  (setq-default fill-column 80)
-  ;; Disable line soft-wrapping by default.
-  (setq-default truncate-lines t)
+  (setq-default fill-column 70))
 
-  ;; (setopt comment-auto-fill-only-comments t)
-  )
+
+
+;; I am not interest in soft wrapping, as it tends to lead to confusion
+;; about the actual contents of files.  Instead, let the window visually
+;; truncate the line of text.
+
+;; Also, related, see ~auto-hscroll-mode~, which can help expose the
+;; truncated portion of a line automatically.
+
+
+(use-feature! emacs
+  :config
+  (setq-default truncate-lines t))
+
+;; =unfill= :: Reverse/toggle filling/hard-wrapping text :package:keybinds:
+;; :PROPERTIES:
+;; :ID:       6590d8b1-eea1-4467-8379-89ee33c0841d
+;; :END:
+
+;; + Package :: <https://github.com/purcell/unfill>
+
 
 (use-package unfill
-  ;; :ensure t
   :bind ("M-q" . unfill-toggle))
 
 ;; Configure secrets lookup with ~auth-source~ and =password-store=
