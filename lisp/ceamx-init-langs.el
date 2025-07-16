@@ -1073,7 +1073,7 @@ The original function fails in the presence of whitespace after a sexp."
 
 (add-to-list 'auto-mode-alist '("\\.jsonc\\'" . json-ts-mode))
 
-;; Register =taplo= formatter
+;; Register =taplo= formatting utilities :formatting:
 ;; :PROPERTIES:
 ;; :ID:       777ee791-be1a-43b7-86d5-18dca405b75f
 ;; :END:
@@ -1096,9 +1096,19 @@ The original function fails in the presence of whitespace after a sexp."
 ;; :END:
 
 
-(when (featurep 'lsp-toml)
-  (setopt lsp-toml-cache-path (file-name-as-directory
-                               (concat ceamx-lsp-mode-cache-dir "server/toml"))))
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+
+  :config
+  (add-to-list 'ceamx-eglot-server-configurations-alist
+               '("toml-taplo" . nil))
+  (add-to-list 'eglot-server-programs
+               (cons '(conf-toml-mode toml-ts-mode)
+                     (ceamx-eglot-server-contact
+                      "toml-taplo"
+                      "taplo" "lsp" "stdio"))))
 
 ;; Install the =yaml-mode= package
 
