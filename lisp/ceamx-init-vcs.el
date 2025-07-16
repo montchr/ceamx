@@ -4,6 +4,9 @@
 (require 'ceamx-lib)
 
 ;; Set up ~ediff~
+;; :PROPERTIES:
+;; :ID:       81a5a03d-6bb7-401f-a9cb-54ff581b0f3d
+;; :END:
 
 
 (setup ediff
@@ -88,6 +91,18 @@
 
   (after! dired
     (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
+
+;; =difftastic= :: Integration with =difftastic=
+;; :PROPERTIES:
+;; :ID:       362df672-d6c5-41e4-990e-c8d7ef519a62
+;; :END:
+
+;; - Package :: https://github.com/pkryger/difftastic.el
+
+
+(package! difftastic
+  ;; Automatically configure keybindings
+  (difftastic-bindings-mode))
 
 ;; =git-modes= :: Major-modes for git-related files
 
