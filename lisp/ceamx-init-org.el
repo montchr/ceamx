@@ -100,6 +100,7 @@
   ;;
   ;; Editing
 
+  (setopt org-return-follows-link t)
   (setopt org-special-ctrl-a/e t
           org-special-ctrl-k t
           org-special-ctrl-o t
