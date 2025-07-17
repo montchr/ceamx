@@ -1274,6 +1274,7 @@ graphical frames.
 *** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
+:ID:       a85e7ca0-fc49-4ad5-a32c-eeb12142cb85
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-ui.el :comments no
@@ -8197,18 +8198,6 @@ Let’s immediately override ~ceamx-default-agenda-files~ to keep down the noise
   (setopt org-link-keep-stored-after-insertion nil)
   (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
   (setopt org-clone-delete-id t)
-  (setopt org-id-search-archives nil)
-  ;; Ensure IDs for bookmarked headings within `ceamx-note-dir'.
-  ;; FIXME: This is nice, but ~dogears~ (or something else that uses
-  ;; bookmarks for locations) makes just about /every/ heading a bookmark.
-  ;; (setopt org-bookmark-heading-make-ids
-  ;;         (lambda ()
-  ;;           (when-let* ((buffer-file-name
-  ;;                        (or (buffer-file-name)
-  ;;                            (when (buffer-base-buffer)
-  ;;                              (buffer-file-name (buffer-base-buffer))))))
-  ;;             (file-in-directory-p buffer-file-name ceamx-note-dir))))
-  (setopt org-bookmark-heading-make-ids nil)
 
   ;;
   ;; Editing
@@ -8710,22 +8699,10 @@ I don't think this is working properly...
 (package! org-sidebar)
 #+END_SRC
 
-*** =org-bookmark-heading= :: Support heading bookmarks :bookmarks:package:
-:PROPERTIES:
-:ID:       cd3ef5ab-e573-43e9-b1f7-81eb6dade0a9
-:END:
-
-#+begin_src emacs-lisp
-(package! org-bookmark-heading
-  (after! org
-    (require 'org-bookmark-heading)))
-
-(after! org-bookmark-heading
-  (setopt org-bookmark-heading-make-ids t
-          org-bookmark-heading-jump-indirect nil))
-#+end_src
-
 *** =org-remark= :: annotate documents with Org-Mode
+:PROPERTIES:
+:ID:       dd60176d-3c01-49ad-b381-062cdfeaaf66
+:END:
 
 #+begin_src emacs-lisp
 (package! org-remark)
@@ -10071,7 +10048,7 @@ mutation of a variable.
 (setq debug-on-error t)
 #+end_src
 
-* Resources
+* Notes & Resources
 :PROPERTIES:
 :ID:       a097628e-0198-47b4-afbe-0b8cfc9ba6d7
 :END:
@@ -10084,6 +10061,72 @@ mutation of a variable.
 :PROPERTIES:
 :ID:       912620fa-b1ea-4a80-9958-3814ffbde545
 :END:
+
+** Packages to avoid
+
+*** =org-bookmark-heading=
+:PROPERTIES:
+:ID:       b38a5630-a00e-458f-9d8c-0725fd4fe3e9
+:END:
+
+This package is perfectly fine on its own, but in combination with the
+=activities.el= package (also from alphapapa), =org-bookmark-heading= will
+automatically insert =ID= properties on headings when =activites.el= is
+saving the state of the current activity AND when
+~org-bookmark-heading-make-ids~ is non-nil.
+
+Integrates well with =activites.el= and its use of Emacs bookmarks for
+saving activity state, but at the cost of automatically adding ID
+properties to all visited nodes.  This essentially makes =org-node=
+discover a lot of unwanted noise instead of highlighting only the most
+important nodes.  For the purpose of searching for headings in
+Org-Mode files with =org-node=, consider foregoing the heading-specific
+state bookmarks in =activities.el= and instead managing ID properties
+manually.
+
+This effect is very annoying to me, especially when the active file is
+under version control.  Which is /extremely/ annoying in a literate
+Emacs configuration.
+
+I mentioned this in the =activities.el= project [[https://github.com/alphapapa/activities.el/discussions/135][a few months ago]].  It is
+certainly not a /bug/ but rater a natural result of this combination
+of packages and settings.
+
+=@alphapapa= responded:
+
+#+begin_quote
+Well, if you set the IDs to be generated as needed, that's what will
+happen when a heading gets bookmarked; and Activities works by using
+bookmarks to save and restore locations.
+
+Frankly, I'd suggest just "getting used to it." I don't mean that to
+be rude, but it's how I've come to deal with this sort of thing. If a
+heading has a properties drawer, or if it doesn't...so what? To me,
+it's a small price to pay for the functionality. And you can,
+e.g. adjust the faces to make the drawers less noticeable or
+smaller. I think there's even a package that hides properties drawers
+altogether.
+
+Other than that, a technical solution would be to:
+
+1. Have Activities set a global flag variable when it's in the process
+   of saving activities.
+2. Give =org-bookmark-heading-make-ids= a predicate option, so users
+   could set it to a custom predicate function.
+3. Configure that predicate in your config to check the value of the
+   Activities flag.
+
+If you're interested in contributing patches to that effect, I
+wouldn't object; I probably won't work on implementing them myself
+anytime soon.
+
+Thanks.
+
+-----
+Original Reference: [[https://github.com/alphapapa/activities.el/discussions/135][org-bookmark-heading-make-ids: excessive automatic id generation · alphapapa/activities.el · Discussion #135]]
+(Retrieved at [2025-07-17 Thu 14:49])
+#+end_quote
+
 * Styleguide
 :PROPERTIES:
 :VISIBILITY: folded
