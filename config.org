@@ -20,11 +20,13 @@ will usually also work on macOS.
 :VISIBILITY: folded
 :ID:       812b1bf4-a323-427d-b3cd-44f916d6f437
 :END:
+
 * Bootstrap
 :PROPERTIES:
 :VISIBILITY: folded
 :ID:       2a09d289-4dcd-413c-b142-f6a8d974a8ee
 :END:
+
 ** =early-init.el=
 :PROPERTIES:
 :header-args: :tangle early-init.el :comments both
@@ -32,6 +34,9 @@ will usually also work on macOS.
 :END:
 
 *** File Header
+:PROPERTIES:
+:ID:       71b6cbdc-058e-45f0-88d7-0dade64b295b
+:END:
 
 #+begin_src emacs-lisp :tangle early-init.el :startup folded :comments no
 ;;; early-init.el --- Early initialization file  -*- lexical-binding: t; no-byte-compile: t; -*-
@@ -85,6 +90,7 @@ When non-nil, there is no need to invoke ~package-initialize~.
 #+end_src
 
 *** Performance
+
 **** Minimize garbage collection during startup
 
 [[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii comments on An easy trick I found to improve Emacs start-up time]]:
@@ -590,6 +596,7 @@ Packages are installed with Elpaca.
 
 Previously, I have used =package.el= or Nixpkgs to manage packages.  See the
 [[*Alternatives]] subheading for details
+
 ***** Elpaca
 :PROPERTIES:
 :ID:       af51c154-98f0-487d-ba00-90db3d1d032f
@@ -661,6 +668,7 @@ definition for ~elpaca-directory~ removed.
 #+end_src
 
 ***** Alternatives
+
 ****** Nixpkgs
 
 I actually think this is the easiest approach, with the least amount of fiddling
@@ -1096,6 +1104,9 @@ expect the value you arrive at to be as high as 100 MiB.
 #+end_src
 
 *** =with-editor=: Ensure shell/term modes use session as =$EDITOR= :package:
+:PROPERTIES:
+:ID:       a0759984-15e9-4ccb-b5e7-ac7cfa6073e6
+:END:
 
 #+begin_src emacs-lisp
 (package! with-editor
@@ -1182,6 +1193,9 @@ buffer, as a buffer-local variable.
 #+end_src
 
 *** Mouse support
+:PROPERTIES:
+:ID:       d8b4dda2-794a-4498-8db8-e2f4873dc0fd
+:END:
 
 #+begin_src emacs-lisp
 (setopt mouse-yank-at-point t)
@@ -1264,6 +1278,7 @@ graphical frames.
 :PROPERTIES:
 :ID:       0b88377f-2539-49a1-917d-2d2eac806e37
 :END:
+
 ** User Interface & Appearance :ui:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-ui.el
@@ -1741,6 +1756,7 @@ Focusing by sentence, paragraph, or code block.
 #+begin_src emacs-lisp
 (undelete-frame-mode 1)
 #+end_src
+
 *** Customize menu bar appearance :menubar:
 
 Disable the menu bar by default:
@@ -1764,6 +1780,7 @@ Enable the tab bar:
 :PROPERTIES:
 :ID:       969b4aad-0463-4bc7-802f-c0d6ef91c25c
 :END:
+
 **** Text rendering and scaling
 
 #+begin_src emacs-lisp
@@ -1949,6 +1966,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 :PROPERTIES:
 :ID:       8732b348-e123-4f0b-b499-49b81bf750d9
 :END:
+
 **** Provide common dependency: ~nerd-icons~ :package:
 :PROPERTIES:
 :ID:       0eb3c103-ba4b-40ee-9341-e5cab30e075f
@@ -2005,6 +2023,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 (provide 'ceamx-init-ui)
 ;;; ceamx-init-ui.el ends here
 #+end_src
+
 ** Modeline :modeline:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-modeline.el
@@ -2922,6 +2941,7 @@ truncated portion of a line automatically.
 #+end_src
 
 *** Help :help:
+
 **** Rebind some default ~help-map~ keybindings :keybinds:
 
 #+begin_src emacs-lisp
@@ -3048,6 +3068,7 @@ Currently using ~embark-prefix-help-command~ instead.
 #+end_src
 
 *** History & Undo :history:
+
 **** Record some variables' values with ~savehist~
 :PROPERTIES:
 :ID:       fb765b69-118b-4ef7-8902-f09215137f5c
@@ -3177,6 +3198,7 @@ enhancement to the builtin Emacs undo system as well.
 :PROPERTIES:
 :ID:       aec39cdd-984a-4789-9a0c-53964b330d31
 :END:
+
 **** =dogears=: Return to previously-visited buffer positions
 
 - Source code :: <https://github.com/alphapapa/dogears.el>
@@ -3216,6 +3238,7 @@ enhancement to the builtin Emacs undo system as well.
   (defer-until! (fboundp 'ceamx/dogears-dispatch)
     (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
 #+end_src
+
 **** =bookmark-in-project= :: Functions to limit bookmark queries to current project
 :PROPERTIES:
 :ID:       ad886f04-b66b-453b-91c6-b1f9502e4af2
@@ -3573,6 +3596,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
   (setopt wdired-create-parent-directories t)
   (setopt wdired-allow-to-change-permissions t))
 #+end_src
+
 *** Preview images in Dired with the ~image-dired~ feature
 
 #+begin_src emacs-lisp
@@ -3674,6 +3698,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+end_src
 
 *** Minibuffer :minibuffer:
+
 **** Baseline minibuffer settings
 :PROPERTIES:
 :ID:       2c5efde3-41fb-4154-bbc9-3921ad9a318b
@@ -3995,6 +4020,7 @@ Refine preview appearance and behavior:
 #+end_src
 
 **** Define custom completion styles
+
 ***** ~+orderless-fast-dispatch~
 
 - source :: <https://github.com/minad/corfu/blob/main/README.org#auto-completion>
@@ -4640,6 +4666,7 @@ Define Embark actions for acting on tabs:
 #+end_src
 
 *** Buffer display
+
 **** Configure window behavior for help buffers
 
 #+begin_src emacs-lisp
@@ -4905,6 +4932,7 @@ Action alist entries are:
 :PROPERTIES:
 :ID:       7065d3dc-0cf6-4271-ba08-6622f26e22d6
 :END:
+
 **** Restore previous window configurations with the ~winner-mode~ feature :history:
 
 #+begin_src emacs-lisp
@@ -6061,6 +6089,7 @@ enchant-lsmod-2 -list-dicts
 :PROPERTIES:
 :ID:       16856ced-d5a2-4b4a-9506-67d7c19b43f0
 :END:
+
 **** =emacs-reformatter= :: a simple formatter factory :package:
 :PROPERTIES:
 :ID:       db715ea8-bdf8-437a-b966-df1e97aff384
@@ -6091,6 +6120,7 @@ formatting (or other arbitrary modifications):
 :PROPERTIES:
 :ID:       d439a510-ff02-4dad-9d2f-e078251edd98
 :END:
+
 **** =prettier=
 :PROPERTIES:
 :ID:       5a8a7b6e-09cc-4f48-b6a6-3a9a12a41018
@@ -6281,6 +6311,7 @@ This section handles the curse.
 :PROPERTIES:
 :ID:       2fec391c-6023-41fd-a3b4-2dba5d91a55d
 :END:
+
 **** =puni= :: versatile structural editing
 :PROPERTIES:
 :ID:       ce9e9bd5-70bc-451c-b21c-fd29b2c38834
@@ -6810,6 +6841,7 @@ development tool as needed.
 #+end_src
 
 *** Language Server and Debugger Protocol Support :lsp:lang:
+
 **** Eglot
 :PROPERTIES:
 :ID:       8e477ec3-51fd-47ea-802d-e08484fa1add
@@ -7059,6 +7091,7 @@ Available by that name in Nixpkgs.
 *** TODO Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
 :PROPERTIES:
 :header-args: :tangle no
+:ID:       bf1c021a-4b65-4a6b-98d0-3beea5f7f151
 :END:
 
 - website :: <https://github.com/emacs-lsp/dap-mode>
@@ -7071,12 +7104,7 @@ Available by that name in Nixpkgs.
   (dap-auto-configure-mode))
 #+end_src
 
-*** Data Formats (JSON, TOML, YAML, XML, CSV...)
-:PROPERTIES:
-:ID:       137d1e04-d0dc-4512-a450-fbafeef65804
-:END:
-
-**** JSON/JSONC
+*** JSON/JSONC
 :PROPERTIES:
 :ID:       62d6b3c0-60ca-4bf3-9613-e09f403d7eac
 :END:
@@ -7085,7 +7113,7 @@ Available by that name in Nixpkgs.
 (add-to-list 'auto-mode-alist '("\\.jsonc\\'" . json-ts-mode))
 #+end_src
 
-**** TOML :requires_external:
+*** TOML :requires_external:
 :PROPERTIES:
 :ID:       04f99d67-a7a9-4a46-9095-9afec907cc4a
 :END:
@@ -7098,7 +7126,7 @@ Available by that name in Nixpkgs.
   also want to use =taplo= formatter capabilities, as TOML formatting is
   not supported by Biome or Prettier.
 
-***** Register =taplo= formatting utilities :formatting:
+**** Register =taplo= formatting utilities :formatting:
 :PROPERTIES:
 :ID:       777ee791-be1a-43b7-86d5-18dca405b75f
 :END:
@@ -7116,7 +7144,7 @@ Available by that name in Nixpkgs.
   (add-hook 'toml-ts-mode-hook #'toml-taplo-fmt-on-save-mode))
 #+end_src
 
-***** Use the =taplo= language server :eglot:lsp:
+**** Use the =taplo= language server :eglot:lsp:
 :PROPERTIES:
 :ID:       1fbf97bf-e6f8-499d-a8c1-b08236cfb44c
 :END:
@@ -7138,24 +7166,24 @@ Available by that name in Nixpkgs.
 #+end_src
 
 
-**** YAML
+*** YAML
 
-***** Install the =yaml-mode= package
+**** Install the =yaml-mode= package
 
 #+begin_src emacs-lisp
 (package! yaml-mode)
 #+end_src
 
-***** TODO Start the LSP server
+**** TODO Start the LSP server
 
 - Note taken on [2024-12-26 Thu 21:21] \\
   Needs eglot
 
 Install the =yaml-language-server= from Nixpkgs first.
 
-***** TODO Add support for YAML Schema validation
+**** TODO Add support for YAML Schema validation
 
-**** XML [builtin]
+*** XML [builtin]
 
 #+begin_src emacs-lisp
 (use-feature! nxml-mode
@@ -7168,7 +7196,7 @@ Install the =yaml-language-server= from Nixpkgs first.
   (setq nxml-auto-insert-xml-declaration-flag t))
 #+end_src
 
-**** CSV + TSV
+*** CSV + TSV
 
 #+begin_src emacs-lisp
 (package! csv-mode)
@@ -7183,7 +7211,7 @@ Install the =yaml-language-server= from Nixpkgs first.
     "t" #'csv-transpose))
 #+end_src
 
-**** KDL
+*** KDL
 :PROPERTIES:
 :ID:       dd16c6e6-fade-4246-b5ac-e5a05148d1b0
 :END:
@@ -7341,6 +7369,7 @@ Returns process exit code."
 #+end_src
 
 *** Nix
+
 **** Install and configure ~nix-mode~ :package:
 :PROPERTIES:
 :ID:       a2d69933-74a4-458f-bcc2-3d2246215c96
@@ -7589,6 +7618,7 @@ Requires:
 #+end_src
 
 **** Configure formatters :formatting:
+
 ***** =ecs=
 
 #+begin_src emacs-lisp
@@ -7673,6 +7703,7 @@ Requires:
 #+end_src
 
 **** TODO Change buffer behavior based on ~ceamx-php-wordpress-spaghetti-template-p~ return value
+
 **** Register Twig (=*.twig=) and Blade (=*.blade.php=) templates to open in ~web-mode~
 
 #+begin_src emacs-lisp
@@ -8191,6 +8222,7 @@ Let’s immediately override ~ceamx-default-agenda-files~ to keep down the noise
   (setopt org-blank-before-new-entry '((heading . auto)
                                        (plain-list-item . nil)))
 
+
   ;;
   ;; Links & IDs
 
@@ -8220,6 +8252,9 @@ Let’s immediately override ~ceamx-default-agenda-files~ to keep down the noise
 
   ;;
   ;; Folding
+
+  ;; This could have strange consequences...
+  (setopt org-cycle-separator-lines 1)
 
   (setopt org-cycle-emulate-tab t)
   (setopt org-startup-folded 'content)
@@ -8322,14 +8357,16 @@ Intended for use as a local hook function on
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 
-  (setopt org-modern-table nil
-          org-modern-keyword nil
-          org-modern-timestamp nil
-          org-modern-checkbox nil
+  (setopt org-modern-checkbox nil
           org-modern-internal-target nil
-          org-modern-radio-target nil)
-  ;; (setopt org-modern-star 'replace)
-  (setopt org-modern-star 'fold)
+          org-modern-keyword nil
+          org-modern-priority t
+          org-modern-radio-target nil
+          org-modern-star nil
+          org-modern-tag t
+          org-modern-timestamp nil
+          org-modern-todo t
+          org-modern-table nil)
   (setopt org-modern-list
           '((?- . "⁃")
             (?* . "•")
@@ -8349,7 +8386,7 @@ Intended for use as a local hook function on
           org-appear-autoentities t
           org-appear-autokeywords t
           org-appear-inside-latex t)
-  (setopt org-appear-delay 0.25)
+  (setopt org-appear-delay 0.5)
   (setopt org-appear-trigger 'always))
 
 (after! org
@@ -8377,7 +8414,7 @@ Intended for use as a local hook function on
 :ID:       15b18268-d8b3-4e36-9359-9b2c481698ba
 :END:
 
-**** Method № 1: Org-Indent-Mode
+**** DISABLED Method № 1: Org-Indent-Mode
 :PROPERTIES:
 :ID:       cab6066c-6fbb-4361-8ed4-09f840b1ab76
 :END:
@@ -8385,7 +8422,7 @@ Intended for use as a local hook function on
 ~org-modern-indent~ provides support for using ~org-modern-mode~ in
 combination with ~org-indent-mode~.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (package! (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
   (setopt org-startup-indented t)
   ;; Adds extra indentation.
@@ -8562,6 +8599,7 @@ templates]] section.  Some feature-related capture templates (e.g. for
 #+end_src
 
 *** TODO Refiling: Append not prepend when working on Ceamx config
+
 *** Agenda
 :PROPERTIES:
 :ID:       ad92ea31-8411-4ba4-b179-cf66e34a016c
@@ -8712,6 +8750,7 @@ I don't think this is working properly...
 :PROPERTIES:
 :ID:       6edbf7a1-4ce2-4c76-bc45-50072d7390aa
 :END:
+
 **** =ox-gfm= :: org-export to GitHub Flavored Markdown (GFM) :package:
 :PROPERTIES:
 :ID:       e6aaf439-cfd5-4ed7-8d54-23aaec181b6f
@@ -8738,6 +8777,7 @@ I don't think this is working properly...
 #+END_SRC
 
 *** TODO Org-Mode: electric-pair for equals-sign and tilde
+
 *** Footer: Provide the =ceamx-init-org= feature
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-org.el :comments no
@@ -8960,6 +9000,7 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 #+end_src
 
 *** TODO Use a different browser for some domains
+
 *** Configure EWW
 :PROPERTIES:
 :ID:       15ef1788-7ded-42e9-8109-019b4e6bb03b
@@ -9092,6 +9133,7 @@ I wonder if there is a way to export NewsBlur scoring to this format…
   ;; (keymap-global-set "C-c B h" #'htmlize-buffer)
   )
 #+end_src
+
 *** [[https://github.com/alphapapa/unpackaged.el][alphapapa/unpackaged.el]]: a library of useful yet "unsubstantial" Emacs Lisp code
 
 #+begin_src emacs-lisp
@@ -9257,6 +9299,7 @@ CLOSED: [2025-02-22 Sat 19:36]
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2025-02-22 Sat 19:36]
 :END:
+
 *** =ready-player= :: multimedia file previews :nixpkgs:
 :PROPERTIES:
 :ID:       96e9c541-fc8f-42cf-9f22-b726dc37f7cb
@@ -9419,6 +9462,7 @@ changing lines.
   :commands (yijing/lookup
              yijing/cast))
 #+end_src
+
 *** Operate on buffers rectangularly with the ~rect~ feature
 :PROPERTIES:
 :ID:       8465808e-c79f-4e30-a88f-a9e64401ff95
@@ -9949,6 +9993,7 @@ Otherwise, =yabai= will not "see" the Emacs GUI window.
 (when ceamx-load-custom-file
   (load custom-file t))
 #+end_src
+
 * Maintenance
 :PROPERTIES:
 :VISIBILITY: folded

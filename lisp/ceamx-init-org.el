@@ -77,6 +77,7 @@
   (setopt org-blank-before-new-entry '((heading . auto)
                                        (plain-list-item . nil)))
 
+
   ;;
   ;; Links & IDs
 
@@ -106,6 +107,9 @@
 
   ;;
   ;; Folding
+
+  ;; This could have strange consequences...
+  (setopt org-cycle-separator-lines 1)
 
   (setopt org-cycle-emulate-tab t)
   (setopt org-startup-folded 'content)
@@ -206,14 +210,16 @@ Intended for use as a local hook function on
   (add-hook 'org-mode-hook #'org-modern-mode)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 
-  (setopt org-modern-table nil
-          org-modern-keyword nil
-          org-modern-timestamp nil
-          org-modern-checkbox nil
+  (setopt org-modern-checkbox nil
           org-modern-internal-target nil
-          org-modern-radio-target nil)
-  ;; (setopt org-modern-star 'replace)
-  (setopt org-modern-star 'fold)
+          org-modern-keyword nil
+          org-modern-priority t
+          org-modern-radio-target nil
+          org-modern-star nil
+          org-modern-tag t
+          org-modern-timestamp nil
+          org-modern-todo t
+          org-modern-table nil)
   (setopt org-modern-list
           '((?- . "⁃")
             (?* . "•")
@@ -233,7 +239,7 @@ Intended for use as a local hook function on
           org-appear-autoentities t
           org-appear-autokeywords t
           org-appear-inside-latex t)
-  (setopt org-appear-delay 0.25)
+  (setopt org-appear-delay 0.5)
   (setopt org-appear-trigger 'always))
 
 (after! org
@@ -254,22 +260,6 @@ Intended for use as a local hook function on
   ;; Bring attention when point is on `org-ellipsis'.
   ;; FIXME: not correct
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
-
-;; Method № 1: Org-Indent-Mode
-;; :PROPERTIES:
-;; :ID:       cab6066c-6fbb-4361-8ed4-09f840b1ab76
-;; :END:
-
-;; ~org-modern-indent~ provides support for using ~org-modern-mode~ in
-;; combination with ~org-indent-mode~.
-
-
-(package! (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
-  (setopt org-startup-indented t)
-  ;; Adds extra indentation.
-  (setopt org-modern-hide-stars nil)
-
-  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
 ;; Appearance: Display visual feedback after actions
 
