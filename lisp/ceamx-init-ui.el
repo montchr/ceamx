@@ -353,8 +353,15 @@
 
 (after! olivetti
   (setopt olivetti-body-width 0.7
-          olivetti-minimum-body-width 80
-          olivetti-recall-visual-line-mode-entry-state t))
+          olivetti-minimum-body-width 40
+          olivetti-recall-visual-line-mode-entry-state t)
+  (setopt olivetti-style 'fancy)
+
+  (def-hook! +olivetti-mode-on--disable-conflicting-features-h ()
+    '(olivetti-mode-on-hook)
+    "Disable features that conflict with `olivetti-mode' appearance."
+    (when (bound-and-true-p diff-hl-mode)
+      (diff-hl-mode -1))))
 
 ;; =logos= :: a simple focus mode with page breaks or outlines :present:
 ;; :PROPERTIES:
