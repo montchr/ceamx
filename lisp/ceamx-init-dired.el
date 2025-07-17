@@ -129,8 +129,6 @@
 
 
 (package! dired-preview
-  (defer! 2
-    (dired-preview-global-mode))
   (after! dired
     (keymap-set dired-mode-map "C-c T p" #'dired-preview-mode))
   (after! dired-preview

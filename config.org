@@ -3657,8 +3657,6 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 #+begin_src emacs-lisp
 (package! dired-preview
-  (defer! 2
-    (dired-preview-global-mode))
   (after! dired
     (keymap-set dired-mode-map "C-c T p" #'dired-preview-mode))
   (after! dired-preview
@@ -3671,6 +3669,8 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
               "rar\\|" "zip\\|" "iso\\|" "epub"
               "\\)"))))
 #+end_src
+
+*** TODO Only show =dired-preview= window on demand
 
 *** =dired-rsync= :: async =rsync= from dired
 :PROPERTIES:
