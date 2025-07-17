@@ -489,6 +489,9 @@ The ORDER can be used to deduce the feature context."
     (require 'inheritenv)))
 
 ;; =with-editor=: Ensure shell/term modes use session as =$EDITOR= :package:
+;; :PROPERTIES:
+;; :ID:       a0759984-15e9-4ccb-b5e7-ac7cfa6073e6
+;; :END:
 
 
 (package! with-editor
@@ -568,6 +571,9 @@ The ORDER can be used to deduce the feature context."
 ;; (setq bidi-inhibit-bpa t)
 
 ;; Mouse support
+;; :PROPERTIES:
+;; :ID:       d8b4dda2-794a-4498-8db8-e2f4873dc0fd
+;; :END:
 
 
 (setopt mouse-yank-at-point t)
