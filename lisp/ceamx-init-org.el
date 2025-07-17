@@ -84,18 +84,6 @@
   (setopt org-link-keep-stored-after-insertion nil)
   (setopt org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
   (setopt org-clone-delete-id t)
-  (setopt org-id-search-archives nil)
-  ;; Ensure IDs for bookmarked headings within `ceamx-note-dir'.
-  ;; FIXME: This is nice, but ~dogears~ (or something else that uses
-  ;; bookmarks for locations) makes just about /every/ heading a bookmark.
-  ;; (setopt org-bookmark-heading-make-ids
-  ;;         (lambda ()
-  ;;           (when-let* ((buffer-file-name
-  ;;                        (or (buffer-file-name)
-  ;;                            (when (buffer-base-buffer)
-  ;;                              (buffer-file-name (buffer-base-buffer))))))
-  ;;             (file-in-directory-p buffer-file-name ceamx-note-dir))))
-  (setopt org-bookmark-heading-make-ids nil)
 
   ;;
   ;; Editing
@@ -516,21 +504,10 @@ Intended for use as a local hook function on
 
 (package! org-sidebar)
 
-;; =org-bookmark-heading= :: Support heading bookmarks :bookmarks:package:
-;; :PROPERTIES:
-;; :ID:       cd3ef5ab-e573-43e9-b1f7-81eb6dade0a9
-;; :END:
-
-
-(package! org-bookmark-heading
-  (after! org
-    (require 'org-bookmark-heading)))
-
-(after! org-bookmark-heading
-  (setopt org-bookmark-heading-make-ids t
-          org-bookmark-heading-jump-indirect nil))
-
 ;; =org-remark= :: annotate documents with Org-Mode
+;; :PROPERTIES:
+;; :ID:       dd60176d-3c01-49ad-b381-062cdfeaaf66
+;; :END:
 
 
 (package! org-remark)
