@@ -1277,10 +1277,10 @@ graphical frames.
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-ui.el :comments no
-  ;; -*- lexical-binding: t;  -*-
+;; -*- lexical-binding: t;  -*-
 
-  (require 'ceamx-lib)
-  (require 'ceamx-ui)
+(require 'ceamx-lib)
+(require 'ceamx-ui)
 #+end_src
 
 *** Configure cursor appearance
