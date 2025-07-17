@@ -108,9 +108,6 @@
   ;;
   ;; Folding
 
-  ;; This could have strange consequences...
-  (setopt org-cycle-separator-lines 1)
-
   (setopt org-cycle-emulate-tab t)
   (setopt org-startup-folded 'content)
   (setopt org-fold-catch-invisible-edits 'show-and-error)
