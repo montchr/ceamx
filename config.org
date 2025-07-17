@@ -8418,21 +8418,28 @@ Intended for use as a local hook function on
 :ID:       15b18268-d8b3-4e36-9359-9b2c481698ba
 :END:
 
-**** DISABLED Method № 1: Org-Indent-Mode
+**** Method № 1: Org-Indent-Mode
 :PROPERTIES:
 :ID:       cab6066c-6fbb-4361-8ed4-09f840b1ab76
 :END:
 
+Enable =org-indent-mode= by default:
+
+#+begin_src emacs-lisp
+(after! org
+  (setopt org-startup-indented t))
+#+end_src
+
 ~org-modern-indent~ provides support for using ~org-modern-mode~ in
 combination with ~org-indent-mode~.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (package! (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
-  (setopt org-startup-indented t)
-  ;; Adds extra indentation.
-  (setopt org-modern-hide-stars nil)
+  (after! org-modern
+    ;; Adds extra indentation.
+    (setopt org-modern-hide-stars nil)
 
-  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
+    (add-hook 'org-mode-hook #'org-modern-indent-mode 90)))
 #+end_src
 
 **** DISABLED Method № 2: Pseudo-indentation with star-level whitespace

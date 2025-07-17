@@ -258,6 +258,30 @@ Intended for use as a local hook function on
   ;; FIXME: not correct
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
+;; Method № 1: Org-Indent-Mode
+;; :PROPERTIES:
+;; :ID:       cab6066c-6fbb-4361-8ed4-09f840b1ab76
+;; :END:
+
+;; Enable =org-indent-mode= by default:
+
+
+(after! org
+  (setopt org-startup-indented t))
+
+
+
+;; ~org-modern-indent~ provides support for using ~org-modern-mode~ in
+;; combination with ~org-indent-mode~.
+
+
+(package! (org-modern-indent :host github :repo "jdtsmith/org-modern-indent")
+  (after! org-modern
+    ;; Adds extra indentation.
+    (setopt org-modern-hide-stars nil)
+
+    (add-hook 'org-mode-hook #'org-modern-indent-mode 90)))
+
 ;; Appearance: Display visual feedback after actions
 
 ;; - Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
