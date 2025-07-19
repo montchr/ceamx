@@ -35,10 +35,11 @@
     "Conditionally enable `typo-mode'.
 `typo-mode' will not be enabled when the current major-mode is one of
 the major-modes listed in the `ceamx-lang-typo-mode-excluded-modes' user
-setting."
-    (let ((excluded-modes (append '(yaml-mode yaml-ts-mode)
+setting or the `ceamx-text-mode-derived-prog-modes-list' constant, which
+see."
+    (let ((excluded-modes (append ceamx-text-mode-derived-prog-modes-list
                                   ceamx-lang-typo-mode-excluded-modes)))
-      (unless (memq mode-name excluded-modes)
+      (unless (derived-mode-p excluded-modes)
         (typo-mode 1))))
 
   (keymap-set ceamx-toggle-prefix "t" #'typo-mode))

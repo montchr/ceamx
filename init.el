@@ -656,8 +656,8 @@ The ORDER can be used to deduce the feature context."
 ;; :END:
 
 
-(defvar ceamx-text-mode-derived-prog-modes-list
-  '(mhtml-mode nxml-mode toml-ts-mode yaml-mode)
+(defconst ceamx-text-mode-derived-prog-modes-list
+  '(nxml-mode sgml-mode toml-ts-mode yaml-mode)
   "Programming modes who are sadly derived from `text-mode'.")
 
 ;; Load Features
