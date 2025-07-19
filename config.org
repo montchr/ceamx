@@ -3409,25 +3409,6 @@ these utilities.
   (keymap-set occur-mode-map "t" #'toggle-truncate-lines))
 #+end_src
 
-*** =visual-replace= :: a nicer ~query-replace~ interface
-:PROPERTIES:
-:ID:       cfb820fa-0418-44a0-bea6-53037da05af5
-:END:
-
-+ Repo :: <https://github.com/szermatt/visual-replace>
-
-#+begin_src emacs-lisp
-(package! visual-replace
-  (visual-replace-global-mode)
-
-  (define-keymap :keymap ceamx-replace-prefix
-    "r" #'visual-replace-thing-at-point
-    "R" #'visual-replace-selected)
-
-  (after! isearch
-    (keymap-set isearch-mode-map "M-%" #'visual-replace-from-isearch)))
-#+end_src
-
 *** =substitute= :: efficiently replace contextual targets
 
 <https://protesilaos.com/emacs/substitute>
@@ -10182,6 +10163,27 @@ Thanks.
 Original Reference: [[https://github.com/alphapapa/activities.el/discussions/135][org-bookmark-heading-make-ids: excessive automatic id generation · alphapapa/activities.el · Discussion #135]]
 (Retrieved at [2025-07-17 Thu 14:49])
 #+end_quote
+
+*** =visual-replace=
+
+It’s neat I guess, but it generally does not work the way I would
+like, and does not provide a comprehensive method for configuration of
+default behavior.  Much depends on repeatedly invoking keybindings
+under =M-%=, with no ability to invoke ~embark-prefix-help-command~
+inside. This gets pretty tiresome.
+
+I generally prefer the behavior and keybindings of ~query-replace~.
+When I really do want something simpler, the =substitute= package suits
+my workflow better.
+
+In comparison to =visual-replace=, =substitute= exposes separate commands
+for performing replacements across specific scopes
+(e.g. ~substitute-target-in-buffer~, ~substitute-target-below-point~,
+etc.), while =visual-replace= expects the user to repeatedly invoke
+~visual-replace-toggle-scope~, which only works inside an active
+=visual-replace= minibuffer.  So if I wanted to use something other than
+the default scope, I would have to type =M-% M-% SPC M-% SPC= and I’m
+just not going to do that.
 
 * Styleguide
 :PROPERTIES:

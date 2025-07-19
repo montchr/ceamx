@@ -74,7 +74,7 @@
 
   (keymap-set occur-mode-map "t" #'toggle-truncate-lines))
 
-;; =visual-replace= :: a nicer ~query-replace~ interface
+;; =visual-replace= :: an enchanted ~query-replace~ interface
 ;; :PROPERTIES:
 ;; :ID:       cfb820fa-0418-44a0-bea6-53037da05af5
 ;; :END:
