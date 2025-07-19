@@ -610,6 +610,15 @@ abcdefghijklmnopqrstuvwxyz
 x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 ")))
 
+;; Enable ~variable-pitch-mode~ in writing modes :writing:
+
+
+(def-hook! ceamx-writing-modes-variable-pitch-h ()
+  '(text-mode-hook)
+  "Display text in variable-pitch fonts in writing modes."
+  (unless (derived-mode-p ceamx-text-mode-derived-prog-modes-list)
+    (variable-pitch-mode 1)))
+
 ;; Provide common dependency: ~nerd-icons~ :package:
 ;; :PROPERTIES:
 ;; :ID:       0eb3c103-ba4b-40ee-9341-e5cab30e075f
@@ -642,6 +651,8 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
   (add-hook 'ceamx-after-init-hook #'global-page-break-lines-mode))
 
 ;; Image handling
+
+;; + Manual :: [[info:emacs#Image Mode][(emacs) Image Mode]]
 
 
 (use-feature! image-mode

@@ -650,6 +650,16 @@ The ORDER can be used to deduce the feature context."
   "C-c Z" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix)
   )
 
+;; =init.el= :: Miscellaneous Variables
+;; :PROPERTIES:
+;; :header-args: :tangle init.el
+;; :END:
+
+
+(defvar ceamx-text-mode-derived-prog-modes-list
+  '(mhtml-mode nxml-mode toml-ts-mode yaml-mode)
+  "Programming modes who are sadly derived from `text-mode'.")
+
 ;; Load Features
 ;; :PROPERTIES:
 ;; :header-args: :tangle init.el
