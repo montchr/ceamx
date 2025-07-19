@@ -641,5 +641,16 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 (package! page-break-lines
   (add-hook 'ceamx-after-init-hook #'global-page-break-lines-mode))
 
+;; Image handling
+
+
+(use-feature! image-mode
+  :config
+  ;; By default, image looping inside `image-mode' must be triggered
+  ;; manually by moving point over the image and pressing <RET>
+  ;; to invoke `image-toggle-animation'.
+  ;; See Info node `(emacs) Image Mode'.
+  (setopt image-animate-loop t))
+
 (provide 'ceamx-init-ui)
 ;;; ceamx-init-ui.el ends here
