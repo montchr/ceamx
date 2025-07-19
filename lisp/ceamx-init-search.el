@@ -74,24 +74,6 @@
 
   (keymap-set occur-mode-map "t" #'toggle-truncate-lines))
 
-;; =visual-replace= :: an enchanted ~query-replace~ interface
-;; :PROPERTIES:
-;; :ID:       cfb820fa-0418-44a0-bea6-53037da05af5
-;; :END:
-
-;; + Repo :: <https://github.com/szermatt/visual-replace>
-
-
-(package! visual-replace
-  (visual-replace-global-mode)
-
-  (define-keymap :keymap ceamx-replace-prefix
-    "r" #'visual-replace-thing-at-point
-    "R" #'visual-replace-selected)
-
-  (after! isearch
-    (keymap-set isearch-mode-map "M-%" #'visual-replace-from-isearch)))
-
 ;; =substitute= :: efficiently replace contextual targets
 
 ;; <https://protesilaos.com/emacs/substitute>

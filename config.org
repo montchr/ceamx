@@ -2021,6 +2021,20 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
   (add-hook 'text-mode-hook #'svg-tag-mode))
 #+end_src
 
+*** Image handling
+
++ Manual :: [[info:emacs#Image Mode][(emacs) Image Mode]]
+
+#+begin_src emacs-lisp
+(use-feature! image-mode
+  :config
+  ;; By default, image looping inside `image-mode' must be triggered
+  ;; manually by moving point over the image and pressing <RET>
+  ;; to invoke `image-toggle-animation'.
+  ;; See Info node `(emacs) Image Mode'.
+  (setopt image-animate-loop t))
+#+end_src
+
 *** Provide the ~ceamx-init-ui~ feature
 :PROPERTIES:
 :VISIBILITY: folded
@@ -8329,13 +8343,34 @@ Intended for use as a local hook function on
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
 #+END_SRC
 
-*** Appearance
+*** Appearance: Typography & Fontification :ui:font:
+
+#+begin_src emacs-lisp
+(after! org
+  (add-hook 'org-mode-hook #'prettify-symbols-mode)
+
+  (setopt org-auto-align-tags nil
+          org-tags-column 0
+          org-agenda-tags-column 0)
+  (setopt org-pretty-entities t
+          org-pretty-entities-include-sub-superscripts nil)
+  (setopt org-src-fontify-natively t)
+  ;; TODO: show markers for bold and italic, hide everything else
+  (setopt org-hide-emphasis-markers t)
+  (setopt org-link-descriptive t)
+  ;;  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
+
+  ;; Bring attention when point is on `org-ellipsis'.
+  ;; FIXME: not correct
+  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
+#+end_src
+
+*** =org-modern= :ui:
 :PROPERTIES:
 :ID:       98afad65-f479-4b70-96ea-7da504ea11b8
 :END:
 
 + Package :: <https://github.com/minad/org-modern>
-+ Package :: <https://github.com/awth13/org-appear>
 
 #+begin_src emacs-lisp
 (package! org-modern
@@ -8361,9 +8396,20 @@ Intended for use as a local hook function on
     (keymap-set org-mode-map "C-c T p" #'org-modern-mode))
   (after! org-agenda
     (keymap-set org-agenda-mode-map "C-c T p" #'org-modern-mode)))
+#+end_src
 
+*** =org-appear= :: display the underlying markup of stylized elements on focus :ui:
+
++ Package :: <https://github.com/awth13/org-appear>
+
+#+DOWNLOADED: https://github.com/awth13/org-appear/raw/master/demo.gif @ 2025-07-19 17:43:03
+[[file:Features/2025-07-19_17-43-03_demo.gif]]
+
+
+#+begin_src emacs-lisp
 (package! org-appear
-  (add-hook 'org-mode-hook #'org-appear-mode)
+  (after! org
+    (add-hook 'org-mode-hook #'org-appear-mode))
 
   (setopt org-appear-autoemphasis t
           org-appear-autolinks t
@@ -8371,33 +8417,19 @@ Intended for use as a local hook function on
           org-appear-autoentities t
           org-appear-autokeywords t
           org-appear-inside-latex t)
-  (setopt org-appear-delay 0.5)
+  (setopt org-appear-delay 1.0)
   (setopt org-appear-trigger 'always))
-
-(after! org
-  (add-hook 'org-mode-hook #'prettify-symbols-mode)
-
-  (setopt org-auto-align-tags nil
-          org-tags-column 0
-          org-agenda-tags-column 0)
-  (setopt org-pretty-entities t
-          org-pretty-entities-include-sub-superscripts nil)
-  (setopt org-indent-indentation-per-level 2)
-  (setopt org-src-fontify-natively t)
-  ;; TODO: show markers for bold and italic, hide everything else
-  (setopt org-hide-emphasis-markers t)
-  (setopt org-link-descriptive t)
-;;  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
-
-  ;; Bring attention when point is on `org-ellipsis'.
-  ;; FIXME: not correct
-  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 #+end_src
 
-*** Appearance: Indentation
+*** Appearance: Indentation :ui:
 :PROPERTIES:
 :ID:       15b18268-d8b3-4e36-9359-9b2c481698ba
 :END:
+
+#+begin_src emacs-lisp
+(after! org
+  (setopt org-indent-indentation-per-level 2))
+#+end_src
 
 **** Method № 1: Org-Indent-Mode
 :PROPERTIES:
@@ -8441,7 +8473,7 @@ whitespace:
   (setopt org-modern-hide-stars (string-pad " " org-indent-indentation-per-level)))
 #+end_src
 
-*** Appearance: Display visual feedback after actions
+*** Appearance: Display visual feedback after actions :ui:
 
 - Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
 

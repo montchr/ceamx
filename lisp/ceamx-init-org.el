@@ -194,13 +194,12 @@ Intended for use as a local hook function on
   "Add a local hook to control `tab-width' on `after-change-major-mode-hook'."
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
 
-;; Appearance
+;; =org-modern= :ui:
 ;; :PROPERTIES:
 ;; :ID:       98afad65-f479-4b70-96ea-7da504ea11b8
 ;; :END:
 
 ;; + Package :: <https://github.com/minad/org-modern>
-;; + Package :: <https://github.com/awth13/org-appear>
 
 
 (package! org-modern
@@ -227,8 +226,19 @@ Intended for use as a local hook function on
   (after! org-agenda
     (keymap-set org-agenda-mode-map "C-c T p" #'org-modern-mode)))
 
+;; =org-appear= :: display the underlying markup of stylized elements on focus :ui:
+
+;; + Package :: <https://github.com/awth13/org-appear>
+
+
+;; #+DOWNLOADED: https://github.com/awth13/org-appear/raw/master/demo.gif @ 2025-07-19 17:43:03
+;; [[file:Features/2025-07-19_17-43-03_demo.gif]]
+
+
+
 (package! org-appear
-  (add-hook 'org-mode-hook #'org-appear-mode)
+  (after! org
+    (add-hook 'org-mode-hook #'org-appear-mode))
 
   (setopt org-appear-autoemphasis t
           org-appear-autolinks t
@@ -239,6 +249,9 @@ Intended for use as a local hook function on
   (setopt org-appear-delay 0.5)
   (setopt org-appear-trigger 'always))
 
+;; Appearance: Typography & Fontification :ui:
+
+
 (after! org
   (add-hook 'org-mode-hook #'prettify-symbols-mode)
 
@@ -247,16 +260,24 @@ Intended for use as a local hook function on
           org-agenda-tags-column 0)
   (setopt org-pretty-entities t
           org-pretty-entities-include-sub-superscripts nil)
-  (setopt org-indent-indentation-per-level 2)
   (setopt org-src-fontify-natively t)
   ;; TODO: show markers for bold and italic, hide everything else
   (setopt org-hide-emphasis-markers t)
   (setopt org-link-descriptive t)
-;;  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
+  ;;  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
 
   ;; Bring attention when point is on `org-ellipsis'.
   ;; FIXME: not correct
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
+
+;; Appearance: Indentation
+;; :PROPERTIES:
+;; :ID:       15b18268-d8b3-4e36-9359-9b2c481698ba
+;; :END:
+
+
+(after! org
+  (setopt org-indent-indentation-per-level 2))
 
 ;; Method № 1: Org-Indent-Mode
 ;; :PROPERTIES:
