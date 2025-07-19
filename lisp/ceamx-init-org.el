@@ -194,6 +194,27 @@ Intended for use as a local hook function on
   "Add a local hook to control `tab-width' on `after-change-major-mode-hook'."
   (add-hook 'after-change-major-mode-hook #'+org-mode--local-set-tab-width-h 0 t))
 
+;; Appearance: Typography & Fontification :ui:font:
+
+
+(after! org
+  (add-hook 'org-mode-hook #'prettify-symbols-mode)
+
+  (setopt org-auto-align-tags nil
+          org-tags-column 0
+          org-agenda-tags-column 0)
+  (setopt org-pretty-entities t
+          org-pretty-entities-include-sub-superscripts nil)
+  (setopt org-src-fontify-natively t)
+  ;; TODO: show markers for bold and italic, hide everything else
+  (setopt org-hide-emphasis-markers t)
+  (setopt org-link-descriptive t)
+  ;;  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
+
+  ;; Bring attention when point is on `org-ellipsis'.
+  ;; FIXME: not correct
+  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
+
 ;; =org-modern= :ui:
 ;; :PROPERTIES:
 ;; :ID:       98afad65-f479-4b70-96ea-7da504ea11b8
@@ -230,7 +251,6 @@ Intended for use as a local hook function on
 
 ;; + Package :: <https://github.com/awth13/org-appear>
 
-
 ;; #+DOWNLOADED: https://github.com/awth13/org-appear/raw/master/demo.gif @ 2025-07-19 17:43:03
 ;; [[file:Features/2025-07-19_17-43-03_demo.gif]]
 
@@ -246,31 +266,10 @@ Intended for use as a local hook function on
           org-appear-autoentities t
           org-appear-autokeywords t
           org-appear-inside-latex t)
-  (setopt org-appear-delay 0.5)
+  (setopt org-appear-delay 1.0)
   (setopt org-appear-trigger 'always))
 
-;; Appearance: Typography & Fontification :ui:
-
-
-(after! org
-  (add-hook 'org-mode-hook #'prettify-symbols-mode)
-
-  (setopt org-auto-align-tags nil
-          org-tags-column 0
-          org-agenda-tags-column 0)
-  (setopt org-pretty-entities t
-          org-pretty-entities-include-sub-superscripts nil)
-  (setopt org-src-fontify-natively t)
-  ;; TODO: show markers for bold and italic, hide everything else
-  (setopt org-hide-emphasis-markers t)
-  (setopt org-link-descriptive t)
-  ;;  (setopt org-ellipsis " ⇢")            ; prefix is nbsp
-
-  ;; Bring attention when point is on `org-ellipsis'.
-  ;; FIXME: not correct
-  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
-
-;; Appearance: Indentation
+;; Appearance: Indentation :ui:
 ;; :PROPERTIES:
 ;; :ID:       15b18268-d8b3-4e36-9359-9b2c481698ba
 ;; :END:
@@ -303,7 +302,7 @@ Intended for use as a local hook function on
 
     (add-hook 'org-mode-hook #'org-modern-indent-mode 90)))
 
-;; Appearance: Display visual feedback after actions
+;; Appearance: Display visual feedback after actions :ui:
 
 ;; - Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
 
