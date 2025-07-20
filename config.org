@@ -1244,34 +1244,39 @@ graphical frames.
 
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
-  ;; "C-c A"
-  "C-c B" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
-  "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
-  ;; "C-c D"
-  "C-c E" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
-  "C-c F" (cons "[ FILE      ]" #'ceamx-file-prefix)
-  ;; "C-c H"
-  "C-c I" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
-  ;; "C-c J"
+  "C-c a" #'org-agenda
+  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
+  "C-c c" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
+  ;; "C-c d"
+  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
+  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
+  "C-c g" #'magit-file-dispatch
+  "C-c h" #'consult-history
+  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
+  ;; "C-c j"
+  "C-c k" #'consult-kmacro
+  ;; TODO: disambiguate?
   "C-c K" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
-  "C-c L" (cons "[ CODE      ]" #'ceamx-code-prefix)
-  "C-c L f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
-  "C-c L F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
-  "C-c M" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
-  "C-c N" (cons "[ NOTES     ]" #'ceamx-note-prefix)
-  "C-c O" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
+  ;; TODO: disambiguate f/F
+  "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
+  "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
+  "C-c m" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
+  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
+  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c p" #'completion-at-point
   "C-c P" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
-  "C-c Q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
-  ;; "C-c R"
-  ;; "C-c S"
-  "C-c T" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
-  ;; "C-c U"
-  ;; "C-c V"
-  "C-c W" (cons "[ WEB       ]" #'ceamx-web-prefix)
-  ;; "C-c X"
-  ;; "C-c Y"
-  "C-c Z" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix)
-  )
+  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
+  ;; "C-c r"
+  ;; "C-c s"
+  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
+  ;; "C-c u"
+  ;; "C-c v"
+  "C-c w" (cons "[ WEB       ]" #'ceamx-web-prefix)
+  ;; FIXME: something else... (btw this is originally set somewhere else...)
+  "C-c x" #'ceamx/macrostep-expand
+  ;; "C-c y"
+  "C-c z" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix))
 #+end_src
 
 ** =init.el= :: Miscellaneous Variables
@@ -2502,7 +2507,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (add-hook 'ceamx-emacs-startup-hook #'editorconfig-mode)
 
   ;; TODO: needs prefix to be defined early!
-  ;;  (keymap-global-set "C-c L f e" #'editorconfig-format-buffer)
+  ;;  (keymap-global-set "C-c l f e" #'editorconfig-format-buffer)
 
   (after! editorconfig
     (add-hook 'editorconfig-after-apply-functions
@@ -2881,8 +2886,8 @@ truncated portion of a line automatically.
   :config
   ;; Also see the ':' prefix!
   (define-keymap :keymap dired-mode-map
-    "C-c K e" #'epa-dired-do-encrypt
-    "C-c K d" #'epa-dired-do-decrypt))
+    "C-c k e" #'epa-dired-do-encrypt
+    "C-c k d" #'epa-dired-do-decrypt))
 
 (use-feature! epg
   :config
@@ -3624,7 +3629,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 #+begin_src emacs-lisp
 (after! dired
-  (keymap-set dired-mode-map "C-c T i" #'image-dired))
+  (keymap-set dired-mode-map "C-c t i" #'image-dired))
 
 (after! image-dired
   (keymap-set image-dired-thumbnail-mode-map "RET" #'image-dired-thumbnail-display-external)
@@ -3674,7 +3679,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 #+begin_src emacs-lisp
 (package! dired-preview
   (after! dired
-    (keymap-set dired-mode-map "C-c T p" #'dired-preview-mode))
+    (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode))
   (after! dired-preview
     (setopt dired-preview-delay 0.1)
     (setopt dired-preview-max-size (expt 2 20))
@@ -3876,10 +3881,10 @@ Fine-tune Vertico appearance per-command or per-category with
 
 #+begin_src emacs-lisp
 (package! consult
-  (keymap-global-set "C-c B B" #'consult-bookmark)
+  (keymap-global-set "C-c b b" #'consult-bookmark)
   (keymap-global-set "C-c h" #'consult-history)
   (keymap-global-set "C-c k" #'consult-kmacro)
-  (keymap-global-set "C-c Q a t" #'consult-theme)
+  (keymap-global-set "C-c q a t" #'consult-theme)
 
   ;; Improve previews for `consult-register' and other register commands
   (setopt register-preview-delay 0.5)
@@ -4250,7 +4255,7 @@ Furthermore Tempel supports syntax extensions:
   #+begin_src emacs-lisp
 (package! tempel
   (define-keymap :keymap (current-global-map)
-    "C-c Y" #'tempel-insert
+    "C-c y" #'tempel-insert
 
     "M-+" #'tempel-complete
     "M-*" #'tempel-insert)
@@ -6498,13 +6503,13 @@ Increase the amount of syntax-highlighted structures:
 
 (after! treesit-fold
   (define-keymap :keymap treesit-fold-mode-map
-    "C-c L f f" #'treesit-fold-toggle
+    "C-c l f f" #'treesit-fold-toggle
 
-    "C-c L f c" #'treesit-fold-close
-    "C-c L f C" #'treesit-fold-close-all
-    "C-c L f o" #'treesit-fold-open
-    "C-c L f O" #'treesit-fold-open-all
-    "C-c L f r" #'treesit-fold-open-recursively))
+    "C-c f f c" #'treesit-fold-close
+    "C-c f f C" #'treesit-fold-close-all
+    "C-c f f o" #'treesit-fold-open
+    "C-c f f O" #'treesit-fold-open-all
+    "C-c f f r" #'treesit-fold-open-recursively))
 #+end_src
 
 **** =combobulate= :: A consistent structural navigation interface
@@ -6519,7 +6524,7 @@ Increase the amount of syntax-highlighted structures:
 (package! (combobulate :host github :repo "mickeynp/combobulate")
   (add-hook 'prog-mode-hook #'combobulate-mode)
 
-  (setopt combobulate-key-prefix "C-c L o"))
+  (setopt combobulate-key-prefix "C-c l o"))
 #+end_src
 
 *** Apply ~autoinsert~ skeletons to new files
@@ -6768,7 +6773,7 @@ non-syntactic meaning to the reader.
 (use-package suggest
   :commands (suggest)
   :init
-  (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
+  (keymap-set emacs-lisp-mode-map "C-c s" #'suggest))
 #+end_src
 
 **** =macrostep= :: interactive macro-explorer
@@ -6873,11 +6878,11 @@ development tool as needed.
 
 #+begin_src emacs-lisp
 (after! eglot
-  (keymap-set eglot-mode-map "C-c L a" #'eglot-code-actions)
-  (keymap-set eglot-mode-map "C-c L r" #'eglot-rename)
+  (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions)
+  (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
 
   (after! consult
-    (keymap-set eglot-mode-map "C-c L o" #'consult-eglot-symbols))
+    (keymap-set eglot-mode-map "C-c l o" #'consult-eglot-symbols))
 
   (setopt eglot-sync-connect 1)
   (setopt eglot-autoshutdown t)
@@ -7014,16 +7019,16 @@ The timing here may be delicate...
 :END:
 
 #+begin_src emacs-lisp
-(keymap-global-set "C-c L a" '("action.." . eglot-code-actions))
-(keymap-global-set "C-c L r" '("rename..." . eglot-rename))
-(keymap-global-set "C-c L o" #'consult-eglot-symbols)
+(keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
+(keymap-global-set "C-c l r" '("rename..." . eglot-rename))
+(keymap-global-set "C-c l o" #'consult-eglot-symbols)
 
 (after! eglot
   ;; Override the default binding for `xref-find-apropos'.
   (keymap-set eglot-mode-map "C-M-." #'consult-eglot-symbols))
 
 (after! lsp-mode
-    (keymap-global-set "C-c L o" #'consult-lsp-symbols)
+    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
     ;; Override the default binding for `xref-find-apropos'.
     (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 #+end_src
@@ -7260,9 +7265,9 @@ Install the =yaml-language-server= from Nixpkgs first.
   (add-hook 'jq-mode-hook (##electric-pair-local-mode -1))
 
   (after! json
-    (keymap-set js-json-mode-map "C-c O r" #'jq-interactively))
+    (keymap-set js-json-mode-map "C-c o r" #'jq-interactively))
   (after! json-ts-mode
-    (keymap-set json-ts-mode-map "C-c O r" #'jq-interactively)))
+    (keymap-set json-ts-mode-map "C-c o r" #'jq-interactively)))
 #+end_src
 
 *** JavaScript
@@ -7334,8 +7339,8 @@ Install the =yaml-language-server= from Nixpkgs first.
   (declare-function markdown-insert-blockquote "markdown-mode")
 
   (define-keymap :keymap markdown-mode-map
-    "C-c I l" #'markdown-insert-link
-    "C-c I q" #'markdown-insert-blockquote)
+    "C-c i l" #'markdown-insert-link
+    "C-c i q" #'markdown-insert-blockquote)
 
   ;; <https://github.com/jrblevin/markdown-mode/issues/328#issuecomment-405361296>
   ;; <https://github.com/radian-software/radian/blob/b2fac3a615186f77de0bdc7e4f06e9aa46c222bb/emacs/radian.el#L3199-L3206>.
@@ -7521,7 +7526,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (keymap-set nix-mode-map "C-:" #'nix-repl))
 
 (after! (nix-mode tempel)
-  (tempel-key "C-c I t a" modargs nix-mode-map))
+  (tempel-key "C-c i t a" modargs nix-mode-map))
 
 (after! nix-ts-mode
   (keymap-set nix-ts-mode-map "C-:" #'nix-repl))
@@ -8049,10 +8054,10 @@ Requires that the =just-lsp= package is available in the environment.
       "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
   (after! org
     (define-keymap :keymap org-mode-map
-      "C-c N h" #'denote-org-extras-extract-org-subtree
-      "C-c N l" #'denote-link
-      "C-c N L" #'denote-add-links
-      "C-c N b" #'denote-backlinks)))
+      "C-c n h" #'denote-org-extras-extract-org-subtree
+      "C-c n l" #'denote-link
+      "C-c n L" #'denote-add-links
+      "C-c n b" #'denote-backlinks)))
 
 (after! denote
   (setopt denote-directory ceamx-note-default-dir)
@@ -8415,9 +8420,9 @@ Intended for use as a local hook function on
             (?+ . "◦")))
 
   (after! org
-    (keymap-set org-mode-map "C-c T p" #'org-modern-mode))
+    (keymap-set org-mode-map "C-c t p" #'org-modern-mode))
   (after! org-agenda
-    (keymap-set org-agenda-mode-map "C-c T p" #'org-modern-mode)))
+    (keymap-set org-agenda-mode-map "C-c t p" #'org-modern-mode)))
 #+end_src
 
 *** =org-appear= :: display the underlying markup of stylized elements on focus :ui:
@@ -8541,7 +8546,7 @@ whitespace:
 #+begin_src emacs-lisp
 (package! org-node
   (keymap-global-set "M-s M-f" #'org-node-find)
-  (keymap-global-set "C-c I n" #'org-node-insert-link)
+  (keymap-global-set "C-c i n" #'org-node-insert-link)
   (after! org-mode
     (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link)))
 
@@ -8631,10 +8636,6 @@ seem to have an effect.
 The basic ~org-capture-templates~ are defined in the [[id:d7334fe7-a7a2-423e-8e3b-fca7c45af07e][Org-Capture
 templates]] section.  Some feature-related capture templates (e.g. for
 ~org-capture-ref~) are defined in their feature’s respective section.
-
-#+begin_src emacs-lisp
-(keymap-global-set "C-c c" #'org-capture)
-#+end_src
 
 *** Archiving
 
@@ -8772,7 +8773,7 @@ I don't think this is working properly...
 
 #+BEGIN_SRC emacs-lisp
 (package! org-web-tools
-  (keymap-set org-mode-map "C-c I l" #'org-web-tools-insert-link-for-url))
+  (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
 #+END_SRC
 
 *** =org-sidebar= :: provide a sidebar for Org buffers :package:
@@ -9176,7 +9177,7 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 #+begin_src emacs-lisp
 (package! htmlize
   ;; FIXME: conflicts with `beframe'
-  ;; (keymap-global-set "C-c B h" #'htmlize-buffer)
+  ;; (keymap-global-set "C-c b h" #'htmlize-buffer)
   )
 #+end_src
 
@@ -9842,8 +9843,8 @@ Define agenda groups for display with the =org-super-agenda= extension:
   "O" #'org-web-tools-read-url-as-org)
 
 (after! org-mode
-  (keymap-set org-mode-map "C-c W a" #'org-web-tools-archive-attach)
-  (keymap-set org-mode-map "C-c W c" #'org-web-tools-convert-links-to-page-entries))
+  (keymap-set org-mode-map "C-c w a" #'org-web-tools-archive-attach)
+  (keymap-set org-mode-map "C-c w c" #'org-web-tools-convert-links-to-page-entries))
 #+end_src
 
 ** Provide the =ceamx-init-flows= feature

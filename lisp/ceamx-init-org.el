@@ -243,9 +243,9 @@ Intended for use as a local hook function on
             (?+ . "◦")))
 
   (after! org
-    (keymap-set org-mode-map "C-c T p" #'org-modern-mode))
+    (keymap-set org-mode-map "C-c t p" #'org-modern-mode))
   (after! org-agenda
-    (keymap-set org-agenda-mode-map "C-c T p" #'org-modern-mode)))
+    (keymap-set org-agenda-mode-map "C-c t p" #'org-modern-mode)))
 
 ;; =org-appear= :: display the underlying markup of stylized elements on focus :ui:
 
@@ -345,7 +345,7 @@ Intended for use as a local hook function on
 
 (package! org-node
   (keymap-global-set "M-s M-f" #'org-node-find)
-  (keymap-global-set "C-c I n" #'org-node-insert-link)
+  (keymap-global-set "C-c i n" #'org-node-insert-link)
   (after! org-mode
     (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link)))
 
@@ -422,18 +422,6 @@ Intended for use as a local hook function on
 ;;     "C-n" #'org-next-visible-heading
 ;;     "C-p" #'org-previous-visible-heading
 ;;     "C-u" #'org-up-heading))
-
-;; Set up Org-Capture
-;; :PROPERTIES:
-;; :ID:       c9f35626-6cec-46eb-a140-50be234d55da
-;; :END:
-
-;; The basic ~org-capture-templates~ are defined in the [[id:d7334fe7-a7a2-423e-8e3b-fca7c45af07e][Org-Capture
-;; templates]] section.  Some feature-related capture templates (e.g. for
-;; ~org-capture-ref~) are defined in their feature’s respective section.
-
-
-(keymap-global-set "C-c c" #'org-capture)
 
 ;; Archiving
 
@@ -526,7 +514,7 @@ Intended for use as a local hook function on
 
 
 (package! org-web-tools
-  (keymap-set org-mode-map "C-c I l" #'org-web-tools-insert-link-for-url))
+  (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
 
 ;; =org-sidebar= :: provide a sidebar for Org buffers :package:
 

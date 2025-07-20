@@ -152,10 +152,10 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (package! consult
-  (keymap-global-set "C-c B B" #'consult-bookmark)
+  (keymap-global-set "C-c b b" #'consult-bookmark)
   (keymap-global-set "C-c h" #'consult-history)
   (keymap-global-set "C-c k" #'consult-kmacro)
-  (keymap-global-set "C-c Q a t" #'consult-theme)
+  (keymap-global-set "C-c q a t" #'consult-theme)
 
   ;; Improve previews for `consult-register' and other register commands
   (setopt register-preview-delay 0.5)
@@ -468,7 +468,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 (package! tempel
   (define-keymap :keymap (current-global-map)
-    "C-c Y" #'tempel-insert
+    "C-c y" #'tempel-insert
 
     "M-+" #'tempel-complete
     "M-*" #'tempel-insert)

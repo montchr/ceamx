@@ -290,7 +290,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (add-hook 'ceamx-emacs-startup-hook #'editorconfig-mode)
 
   ;; TODO: needs prefix to be defined early!
-  ;;  (keymap-global-set "C-c L f e" #'editorconfig-format-buffer)
+  ;;  (keymap-global-set "C-c l f e" #'editorconfig-format-buffer)
 
   (after! editorconfig
     (add-hook 'editorconfig-after-apply-functions
@@ -636,8 +636,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
   :config
   ;; Also see the ':' prefix!
   (define-keymap :keymap dired-mode-map
-    "C-c K e" #'epa-dired-do-encrypt
-    "C-c K d" #'epa-dired-do-decrypt))
+    "C-c k e" #'epa-dired-do-encrypt
+    "C-c k d" #'epa-dired-do-decrypt))
 
 (use-feature! epg
   :config

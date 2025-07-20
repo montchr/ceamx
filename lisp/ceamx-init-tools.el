@@ -58,7 +58,7 @@
 
 (package! htmlize
   ;; FIXME: conflicts with `beframe'
-  ;; (keymap-global-set "C-c B h" #'htmlize-buffer)
+  ;; (keymap-global-set "C-c b h" #'htmlize-buffer)
   )
 
 ;; [[https://github.com/alphapapa/unpackaged.el][alphapapa/unpackaged.el]]: a library of useful yet "unsubstantial" Emacs Lisp code
