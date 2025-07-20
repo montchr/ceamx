@@ -621,34 +621,39 @@ The ORDER can be used to deduce the feature context."
 
 
 (define-keymap :keymap (current-global-map)
-  ;; "C-c A"
-  "C-c B" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
-  "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
-  ;; "C-c D"
-  "C-c E" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
-  "C-c F" (cons "[ FILE      ]" #'ceamx-file-prefix)
-  ;; "C-c H"
-  "C-c I" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
-  ;; "C-c J"
+  "C-c a" #'org-agenda
+  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
+  "C-c c" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
+  ;; "C-c d"
+  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
+  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
+  "C-c g" #'magit-file-dispatch
+  "C-c h" #'consult-history
+  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
+  ;; "C-c j"
+  "C-c k" #'consult-kmacro
+  ;; TODO: disambiguate?
   "C-c K" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
-  "C-c L" (cons "[ CODE      ]" #'ceamx-code-prefix)
-  "C-c L f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
-  "C-c L F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
-  "C-c M" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
-  "C-c N" (cons "[ NOTES     ]" #'ceamx-note-prefix)
-  "C-c O" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
+  ;; TODO: disambiguate f/F
+  "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
+  "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
+  "C-c m" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
+  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
+  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c p" #'completion-at-point
   "C-c P" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
-  "C-c Q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
-  ;; "C-c R"
-  ;; "C-c S"
-  "C-c T" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
-  ;; "C-c U"
-  ;; "C-c V"
-  "C-c W" (cons "[ WEB       ]" #'ceamx-web-prefix)
-  ;; "C-c X"
-  ;; "C-c Y"
-  "C-c Z" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix)
-  )
+  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
+  ;; "C-c r"
+  ;; "C-c s"
+  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
+  ;; "C-c u"
+  ;; "C-c v"
+  "C-c w" (cons "[ WEB       ]" #'ceamx-web-prefix)
+  ;; FIXME: something else... (btw this is originally set somewhere else...)
+  "C-c x" #'ceamx/macrostep-expand
+  ;; "C-c y"
+  "C-c z" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix))
 
 ;; =init.el= :: Miscellaneous Variables
 ;; :PROPERTIES:

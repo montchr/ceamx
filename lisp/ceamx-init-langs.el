@@ -624,13 +624,13 @@ non-nil, buffers will never be formatted upon save."
 
 (after! treesit-fold
   (define-keymap :keymap treesit-fold-mode-map
-    "C-c L f f" #'treesit-fold-toggle
+    "C-c l f f" #'treesit-fold-toggle
 
-    "C-c L f c" #'treesit-fold-close
-    "C-c L f C" #'treesit-fold-close-all
-    "C-c L f o" #'treesit-fold-open
-    "C-c L f O" #'treesit-fold-open-all
-    "C-c L f r" #'treesit-fold-open-recursively))
+    "C-c f f c" #'treesit-fold-close
+    "C-c f f C" #'treesit-fold-close-all
+    "C-c f f o" #'treesit-fold-open
+    "C-c f f O" #'treesit-fold-open-all
+    "C-c f f r" #'treesit-fold-open-recursively))
 
 ;; =combobulate= :: A consistent structural navigation interface
 ;; :PROPERTIES:
@@ -644,7 +644,7 @@ non-nil, buffers will never be formatted upon save."
 (package! (combobulate :host github :repo "mickeynp/combobulate")
   (add-hook 'prog-mode-hook #'combobulate-mode)
 
-  (setopt combobulate-key-prefix "C-c L o"))
+  (setopt combobulate-key-prefix "C-c l o"))
 
 ;; Apply ~autoinsert~ skeletons to new files
 
@@ -823,7 +823,7 @@ non-nil, buffers will never be formatted upon save."
 (use-package suggest
   :commands (suggest)
   :init
-  (keymap-set emacs-lisp-mode-map "C-c S" #'suggest))
+  (keymap-set emacs-lisp-mode-map "C-c s" #'suggest))
 
 ;; =macrostep= :: interactive macro-explorer
 ;; :PROPERTIES:
@@ -919,11 +919,11 @@ The original function fails in the presence of whitespace after a sexp."
 
 
 (after! eglot
-  (keymap-set eglot-mode-map "C-c L a" #'eglot-code-actions)
-  (keymap-set eglot-mode-map "C-c L r" #'eglot-rename)
+  (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions)
+  (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
 
   (after! consult
-    (keymap-set eglot-mode-map "C-c L o" #'consult-eglot-symbols))
+    (keymap-set eglot-mode-map "C-c l o" #'consult-eglot-symbols))
 
   (setopt eglot-sync-connect 1)
   (setopt eglot-autoshutdown t)
@@ -1053,16 +1053,16 @@ The original function fails in the presence of whitespace after a sexp."
 ;; :END:
 
 
-(keymap-global-set "C-c L a" '("action.." . eglot-code-actions))
-(keymap-global-set "C-c L r" '("rename..." . eglot-rename))
-(keymap-global-set "C-c L o" #'consult-eglot-symbols)
+(keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
+(keymap-global-set "C-c l r" '("rename..." . eglot-rename))
+(keymap-global-set "C-c l o" #'consult-eglot-symbols)
 
 (after! eglot
   ;; Override the default binding for `xref-find-apropos'.
   (keymap-set eglot-mode-map "C-M-." #'consult-eglot-symbols))
 
 (after! lsp-mode
-    (keymap-global-set "C-c L o" #'consult-lsp-symbols)
+    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
     ;; Override the default binding for `xref-find-apropos'.
     (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 
@@ -1166,9 +1166,9 @@ The original function fails in the presence of whitespace after a sexp."
   (add-hook 'jq-mode-hook (##electric-pair-local-mode -1))
 
   (after! json
-    (keymap-set js-json-mode-map "C-c O r" #'jq-interactively))
+    (keymap-set js-json-mode-map "C-c o r" #'jq-interactively))
   (after! json-ts-mode
-    (keymap-set json-ts-mode-map "C-c O r" #'jq-interactively)))
+    (keymap-set json-ts-mode-map "C-c o r" #'jq-interactively)))
 
 ;; JavaScript
 
@@ -1234,8 +1234,8 @@ The original function fails in the presence of whitespace after a sexp."
   (declare-function markdown-insert-blockquote "markdown-mode")
 
   (define-keymap :keymap markdown-mode-map
-    "C-c I l" #'markdown-insert-link
-    "C-c I q" #'markdown-insert-blockquote)
+    "C-c i l" #'markdown-insert-link
+    "C-c i q" #'markdown-insert-blockquote)
 
   ;; <https://github.com/jrblevin/markdown-mode/issues/328#issuecomment-405361296>
   ;; <https://github.com/radian-software/radian/blob/b2fac3a615186f77de0bdc7e4f06e9aa46c222bb/emacs/radian.el#L3199-L3206>.
@@ -1365,7 +1365,7 @@ usually wrongly fontified as a metadata block."
   (keymap-set nix-mode-map "C-:" #'nix-repl))
 
 (after! (nix-mode tempel)
-  (tempel-key "C-c I t a" modargs nix-mode-map))
+  (tempel-key "C-c i t a" modargs nix-mode-map))
 
 (after! nix-ts-mode
   (keymap-set nix-ts-mode-map "C-:" #'nix-repl))

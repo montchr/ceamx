@@ -68,8 +68,8 @@
   "O" #'org-web-tools-read-url-as-org)
 
 (after! org-mode
-  (keymap-set org-mode-map "C-c W a" #'org-web-tools-archive-attach)
-  (keymap-set org-mode-map "C-c W c" #'org-web-tools-convert-links-to-page-entries))
+  (keymap-set org-mode-map "C-c w a" #'org-web-tools-archive-attach)
+  (keymap-set org-mode-map "C-c w c" #'org-web-tools-convert-links-to-page-entries))
 
 (provide 'ceamx-init-flows)
 ;;; ceamx-init-flows.el ends here
