@@ -6106,7 +6106,7 @@ enchant-lsmod-2 -list-dicts
 
 #+begin_src emacs-lisp
 (use-feature! jinx
-  :hook ((text-mode . global-jinx-mode))
+  :hook ((text-mode . jinx-mode))
   :bind
   (("M-$" . jinx-correct)
    ("C-M-$" . jinx-languages))
