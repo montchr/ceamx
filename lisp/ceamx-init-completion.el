@@ -114,6 +114,17 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 (after! vertico-multiform
   (keymap-set vertico-multiform-map "C-l" #'vertico-multiform-vertical))
 
+
+
+;; Provide a way to change the sort order inside an active Vertico
+;; session:
+
+
+(use-feature! ceamx-completion
+  :bind ( :map vertico-map
+          ("M-l" . ceamx/vertico-session-sort-normal)
+          ("M-L" . ceamx/vertico-session-sort-alpha)))
+
 ;; =marginalia= :: minibuffer completion annotations
 
 ;; + Package :: <https://github.com/minad/marginalia>

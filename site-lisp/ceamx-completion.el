@@ -104,6 +104,21 @@ Sourced from the Consult Wiki."
                                (+ (string-match current candidate)
                                   (seq-length current)))))))))
 
+;; via <https://github.com/minad/vertico/wiki#toggle-sorting-functions>
+;;;###autoload
+(defun ceamx/vertico-session-sort-alpha ()
+  (interactive)
+  (set (make-local-variable 'vertico-sort-function) #'vertico-sort-alpha)
+  (setq vertico--input t)
+  (vertico--update))
+
+;;;###autoload
+(defun ceamx/vertico-session-sort-normal ()
+  (interactive)
+  (set (make-local-variable 'vertico-sort-function) #'vertico-sort-history-length-alpha)
+  (setq vertico--input t)
+  (vertico--update))
+
 ;; via <https://github.com/minad/consult?tab=readme-ov-file#help>
 ;;;###autoload
 (defun ceamx/emacs-info ()
