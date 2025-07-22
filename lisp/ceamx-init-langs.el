@@ -317,7 +317,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
 
 (use-feature! jinx
-  :hook ((text-mode . global-jinx-mode))
+  :hook ((text-mode . jinx-mode))
   :bind
   (("M-$" . jinx-correct)
    ("C-M-$" . jinx-languages))
