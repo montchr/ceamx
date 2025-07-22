@@ -3733,7 +3733,7 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! minibuffer
+(use-feature! emacs
   :hook ((ceamx-after-init . (minibuffer-depth-indicate-mode
                               minibuffer-electric-default-mode)))
   :config
@@ -3741,15 +3741,16 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
   (setopt echo-keystrokes 0.25)
   (setopt savehist-save-minibuffer-history t)
 
-  ;; Always resize mini-windows to fit their contents.
-  (setopt resize-mini-windows t)
+  ;; Allow opening the minibuffer from inside the minibuffer.
+  (setopt enable-recursive-minibuffers t)
+  ;; Expand mini-windows to fit their contents if necessary.
+  (setopt resize-mini-windows 'grow-only)
   ;; Hide commands in M-x which do not apply to the current mode.
   (setopt read-extended-command-predicate #'command-completion-default-include-p)
-
-  (setopt minibuffer-prompt-properties
-          '(read-only t
-            cursor-intangible t         ; see `cursor-intangible-mode'
-            face minibuffer-prompt))
+  ;; Hide the cursor in the minibuffer prompt.
+  (setopt minibuffer-prompt-properties '( read-only t
+                                          cursor-intangible t
+                                          face minibuffer-prompt))
 
   ;; TODO: isn't this handled somewhere else?  case-insensitive until
   ;; proven otherwise?
@@ -3759,11 +3760,6 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
   ;; (setq-default case-fold-search t)
 
   (setopt minibuffer-default-prompt-format " [%s]"))
-
-(after! mb-depth
-  (setopt enable-recursive-minibuffers t)
-  ;; TODO: evaluate...
-  (setopt read-minibuffer-restore-windows nil))
 #+end_src
 
 **** Add an indicator to the ~completing-read-multiple~ prompt
