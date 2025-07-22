@@ -539,7 +539,7 @@
                :header-line-height 0.8
 
                :line-number-family nil
-               :line-number-weight nil
+               :line-number-weight light
                :line-number-height 0.8
 
                :tab-bar-family nil
