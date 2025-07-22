@@ -320,7 +320,9 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   :hook ((text-mode . jinx-mode))
   :bind
   (("M-$" . jinx-correct)
-   ("C-M-$" . jinx-languages))
+   ("C-M-$" . jinx-languages)
+   :map ceamx-toggle-prefix
+   ("s" . jinx-mode))
   :custom
   (jinx-languages "en"))
 

@@ -6109,7 +6109,9 @@ enchant-lsmod-2 -list-dicts
   :hook ((text-mode . jinx-mode))
   :bind
   (("M-$" . jinx-correct)
-   ("C-M-$" . jinx-languages))
+   ("C-M-$" . jinx-languages)
+   :map ceamx-toggle-prefix
+   ("s" . jinx-mode))
   :custom
   (jinx-languages "en"))
 #+end_src
