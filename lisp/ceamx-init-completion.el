@@ -27,12 +27,10 @@
                                           cursor-intangible t
                                           face minibuffer-prompt))
 
-  ;; TODO: isn't this handled somewhere else?  case-insensitive until
-  ;; proven otherwise?
-  ;; (setopt completion-ignore-case t
-  ;;         read-buffer-completion-ignore-case t
-  ;;         read-file-name-completion-ignore-case t)
-  ;; (setq-default case-fold-search t)
+  (setopt completion-ignore-case t
+          read-buffer-completion-ignore-case t
+          read-file-name-completion-ignore-case t)
+  (setq-default case-fold-search t)
 
   (setopt minibuffer-default-prompt-format " [%s]"))
 
