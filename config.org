@@ -4215,6 +4215,9 @@ Adapted from Prot's original version with the following changes:
 + Package :: <https://github.com/Crandel/tempel-collection>
 
 ***** The Tempo skeleton language
+:PROPERTIES:
+:ID:       130f3af4-9a65-4e42-82e2-b218fbd5499a
+:END:
 
 - info :: [[info:autotype#Skeleton Language][(autotype) Skeleton Language]]
 - Source :: [[https://github.com/minad/tempel/blob/main/README.org#template-syntax][tempel/README.org at main · minad/tempel · GitHub]]
@@ -4224,26 +4227,26 @@ elements are described in detail in the docstring of
 ~tempo-define-template~ in tempo.el.  We document the important ones
 here:
 
-- “string” Inserts a string literal.
-- =p=  Inserts an unnamed placeholder field.
-- =n=  Inserts a newline.
-- =>= Indents with ~indent-according-to-mode~ .
-- =r=  Inserts the current region. If no region is active, quits the containing template when jumped to.
-- =r>= Acts like =r= , but indent region.
-- =n>=  Inserts a newline and indents.
-- =&=  Insert newline unless there is only whitespace between line start and point.
-- =%=  Insert newline unless there is only whitespace between point and line end.
-- =o= Like =%=  but leaves the point before newline.
-- =(s NAME)=  Inserts a named field.
-- =(p PROMPT <NAME> <NOINSERT>)= Insert an optionally named field with a prompt. The =PROMPT= is displayed directly in the buffer as default value. If =NOINSERT= is non-nil, no field is inserted. Then the minibuffer is used for prompting and the value is bound to =NAME= .
-- =(r PROMPT <NAME> <NOINSERT>)= Insert region or act like =(p ...)= .
-- =(r> PROMPT <NAME> <NOINSERT>)= Act like =(r ...)= , but indent region.
+- “string” :: Inserts a string literal.
+- =p=  :: Inserts an unnamed placeholder field.
+- =n=  :: Inserts a newline.
+- =>= :: Indents with ~indent-according-to-mode~ .
+- =r=  :: Inserts the current region. If no region is active, quits the containing template when jumped to.
+- =r>= :: Acts like =r= , but indent region.
+- =n>=  :: Inserts a newline and indents.
+- =&=  :: Insert newline unless there is only whitespace between line start and point.
+- =%=  :: Insert newline unless there is only whitespace between point and line end.
+- =o= :: Like =%=  but leaves the point before newline.
+- =(s NAME)=  :: Inserts a named field.
+- =(p PROMPT <NAME> <NOINSERT>)= :: Insert an optionally named field with a prompt. The =PROMPT= is displayed directly in the buffer as default value. If =NOINSERT= is non-nil, no field is inserted. Then the minibuffer is used for prompting and the value is bound to =NAME= .
+- =(r PROMPT <NAME> <NOINSERT>)= :: Insert region or act like =(p ...)= .
+- =(r> PROMPT <NAME> <NOINSERT>)= :: Act like =(r ...)= , but indent region.
 
 Furthermore Tempel supports syntax extensions:
 
-- =(p FORM <NAME> <NOINSERT>)= Like =p= described above, but =FORM=  is evaluated.
-- =(FORM ...)=  Other Lisp forms are evaluated. Named fields are lexically bound.
-- =q=  Quits the containing template when jumped to.
+- =(p FORM <NAME> <NOINSERT>)= :: Like =p= described above, but =FORM=  is evaluated.
+- =(FORM ...)=  :: Other Lisp forms are evaluated. Named fields are lexically bound.
+- =q=  :: Quits the containing template when jumped to.
 
 ***** Custom syntax elements
 
