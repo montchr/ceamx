@@ -262,13 +262,6 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
   )
 
-;; =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:ui:
-
-
-(package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
-  (after! sideline
-    (appendq! sideline-backends-left '((sideline-emoji . up)))))
-
 ;; Display multiple composed messages inside ~eldoc~ :help:
 ;; :PROPERTIES:
 ;; :ID:       75c14cf4-c33e-4348-963b-bf08dcf6a21c
@@ -453,19 +446,6 @@ non-nil, buffers will never be formatted upon save."
     (setopt flymake-no-changes-timeout 1.0)
     (setopt flymake-wrap-around t)))
 
-;; =sideline-flymake= :: Display =flymake= diagnostics with =sideline= :overlays:ui:sideline:flymake:
-;; :LOGBOOK:
-;; - Refiled on [2025-07-23 Wed 12:34]
-;; :END:
-
-
-(package! sideline-flymake
-  (after! flymake
-    (add-hook 'flymake-mode-hook #'sideline-mode))
-
-  (setopt sideline-flymake-show-checker-name t)
-  (setopt sideline-flymake-max-lines 1))
-
 ;; =flycheck= :: The /other/ file diagnostics provider :package:
 ;; :LOGBOOK:
 ;; - Refiled on [2025-07-23 Wed 12:34]
@@ -496,23 +476,6 @@ non-nil, buffers will never be formatted upon save."
                           emacs-lisp-checkdoc
                           emacs-lisp-package
                           sh-shellcheck))))
-
-;; =sideline-flycheck= :: display =flycheck= diagnostics with =sideline= :overlays:sideline:ui:
-;; :LOGBOOK:
-;; - Refiled on [2025-07-23 Wed 12:34]
-;; :END:
-
-
-(package! sideline-flycheck
-  (after! flycheck
-    (add-hook 'flycheck-mode-hook #'sideline-mode)
-    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
-
-  (after! sideline
-    (appendq! sideline-backends-right '(sideline-flycheck)))
-
-  (setopt sideline-flycheck-show-checker-name t)
-  (setopt sideline-flycheck-max-lines 1))
 
 ;; =puni= :: versatile structural editing
 ;; :PROPERTIES:
@@ -763,16 +726,6 @@ non-nil, buffers will never be formatted upon save."
 (with-eval-after-load 'ielm
   (defvar ielm-map)
   (keymap-set ielm-map "C-:" #'quit-window))
-
-;; =sideline-load-cost= :: Show library weight in sideline
-;; :PROPERTIES:
-;; :ID:       67dabafe-cf92-4142-bbfa-ac10008f1eb6
-;; :END:
-
-
-(package! (sideline-load-cost :host github :repo "emacs-sideline/sideline-load-cost")
-  (after! sideline
-    (appendq! sideline-backends-right '(sideline-load-cost))))
 
 ;; =eros= :: [E]valuation [R]esult [O]verlay[S]
 ;; :PROPERTIES:

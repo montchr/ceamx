@@ -1401,24 +1401,7 @@ applying margin, padding, borders.
 (package! symbol-overlay)
 #+end_src
 
-**** =sideline= :: show information on the side
-:PROPERTIES:
-:ID:       556ce67a-0d8b-4ef3-8f01-d34e65faeed6
-:END:
-
-#+begin_src emacs-lisp
-(package! sideline
-  (require 'sideline)
-
-  (setopt sideline-backends-left-skip-current-line t
-          sideline-backends-right-skip-current-line t)
-  (setopt sideline-order-left 'down
-          sideline-order-right 'up)
-  (setopt sideline-format-left "%s   "
-          sideline-format-right "   %s")
-  (setopt sideline-priority 100)
-  (setopt sideline-display-backend-name t))
-#+end_src
+**** =flyover= :: another inline overlay approaches
 
 *** Theme :theme:
 :PROPERTIES:
@@ -1562,6 +1545,151 @@ applying margin, padding, borders.
                     (ceamx-ui/load-dark-theme)
                   (ceamx-ui/load-light-theme))))))
 #+end_src
+
+*** Display buffer diagnostics with overlays :checkers:lsp:
+
+There’s two packages that I’m currently comparing.
+
+I’ve been using =sideline=, which is fine, but a bit ugly.  I think it
+has originally something to do with =lsp-ui= (which I don’t use)?
+
+=flyover= is another approach, and it looks very nice.
+
+It is /easier/ (?) to define the UI integrations with the various other
+features all in one place, but it maybe doesn’t make much sense if,
+for example, we were no longer using the =eros= package…
+
+**** DISABLED Approach № 1: =sideline= :package:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+#+begin_src emacs-lisp
+(package! sideline
+  (require 'sideline)
+
+  (setopt sideline-backends-left-skip-current-line t
+          sideline-backends-right-skip-current-line t)
+  (setopt sideline-order-left 'down
+          sideline-order-right 'up)
+  (setopt sideline-format-left "%s   "
+          sideline-format-right "   %s")
+  (setopt sideline-priority 100)
+  (setopt sideline-display-backend-name t))
+#+end_src
+
+
+***** =sideline-flymake= :: Display =flymake= diagnostics with =sideline= :overlays:ui:sideline:flymake:
+:LOGBOOK:
+- Refiled on [2025-07-23 Wed 12:34]
+- Refiled on [2025-07-23 Wed 12:55]
+:END:
+
+#+begin_src emacs-lisp
+(package! sideline-flymake
+  (after! flymake
+    (add-hook 'flymake-mode-hook #'sideline-mode))
+
+  (setopt sideline-flymake-show-checker-name t)
+  (setopt sideline-flymake-max-lines 1))
+#+end_src
+
+***** =sideline-flycheck= :: Display =flycheck= diagnostics with =sideline= :overlays:sideline:ui:
+:LOGBOOK:
+- Refiled on [2025-07-23 Wed 12:34]
+- Refiled on [2025-07-23 Wed 12:55]
+:END:
+
+#+begin_src emacs-lisp
+(package! sideline-flycheck
+  (after! flycheck
+    (add-hook 'flycheck-mode-hook #'sideline-mode)
+    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
+
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-flycheck)))
+
+  (setopt sideline-flycheck-show-checker-name t)
+  (setopt sideline-flycheck-max-lines 1))
+#+end_src
+
+***** =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:ui:
+:LOGBOOK:
+- Refiled on [2025-07-23 Wed 13:09]
+:END:
+
+#+begin_src emacs-lisp
+(package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
+  (after! sideline
+    (appendq! sideline-backends-left '((sideline-emoji . up)))))
+#+end_src
+
+***** =sideline-load-cost= :: Show library weight in sideline
+:PROPERTIES:
+:ID:       67dabafe-cf92-4142-bbfa-ac10008f1eb6
+:END:
+:LOGBOOK:
+- Refiled on [2025-07-23 Wed 13:09]
+:END:
+
+#+begin_src emacs-lisp
+(package! (sideline-load-cost :host github :repo "emacs-sideline/sideline-load-cost")
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-load-cost))))
+#+end_src
+
+***** =sideline-eros= :: Show =eros= output in =sideline= :help:
+
+#+begin_src emacs-lisp
+(package! (sideline-eros :host github :repo "emacs-sideline/sideline-eros")
+  (after! (sideline eros)
+    (add-hook 'sideline-mode-hook #'sideline-eros-setup)
+    (appendq! sideline-backends-right '(sideline-eros))))
+#+end_src
+
+***** =sideline-eglot= :: Display Eglot messages in sideline
+:PROPERTIES:
+:ID:       4c60a33a-0759-4bb5-9e8c-05270f5e85d6
+:END:
+:LOGBOOK:
+- Refiled on [2025-07-23 Wed 13:13]
+:END:
+
+#+begin_src emacs-lisp
+(package! (sideline-eglot :host github :repo "emacs-sideline/sideline-eglot")
+  ;; Disabled because it's pretty annoying.
+  ;; (after! eglot
+  ;;   (add-hook 'eglot-managed-mode-hook #'sideline-mode))
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-eglot))))
+#+end_src
+
+**** Approach № 2: =flyover= :package:
+
+- Package :: <https://github.com/konrad1977/flyover/>
+
+#+begin_src emacs-lisp
+(package! flyover
+  (after! flymake
+    (add-hook 'flymake-mode-hook #'flyover-mode))
+  (after! flycheck
+    (add-hook 'flycheck-mode-hook #'flyover-mode))
+
+  (setopt flyover-levels '(error warning info))
+
+  (setopt flyover-debounce-interval 0.2)
+  (setopt flyover-hide-checker-name nil
+          flyover-wrap-messages t
+          flyover-max-line-length 100)
+  (setopt flyover-show-at-eol nil
+          flyover-hide-when-cursor-is-on-same-line flyover-show-at-eol
+          flyover-line-position-offset 1)
+  (setopt flyover-use-theme-colors t
+          flyover-text-tint 'lighter)
+  (setopt flyover-show-virtual-line t)
+  )
+#+end_src
+
 
 *** =avy= :: can do anything
 :PROPERTIES:
@@ -4656,7 +4784,6 @@ Define Embark actions for acting on tabs:
 ;;; ceamx-init-completion.el ends here
 #+end_src
 
-
 ** Window & Buffer Management :window:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-window.el
@@ -6037,14 +6164,6 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
   )
 #+end_src
 
-*** =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:ui:
-
-#+begin_src emacs-lisp
-(package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
-  (after! sideline
-    (appendq! sideline-backends-left '((sideline-emoji . up)))))
-#+end_src
-
 *** Display multiple composed messages inside ~eldoc~ :help:
 :PROPERTIES:
 :ID:       75c14cf4-c33e-4348-963b-bf08dcf6a21c
@@ -6268,20 +6387,6 @@ This section handles the curse.
     (setopt flymake-wrap-around t)))
 #+end_src
 
-**** =sideline-flymake= :: Display =flymake= diagnostics with =sideline= :overlays:ui:sideline:flymake:
-:LOGBOOK:
-- Refiled on [2025-07-23 Wed 12:34]
-:END:
-
-#+begin_src emacs-lisp
-(package! sideline-flymake
-  (after! flymake
-    (add-hook 'flymake-mode-hook #'sideline-mode))
-
-  (setopt sideline-flymake-show-checker-name t)
-  (setopt sideline-flymake-max-lines 1))
-#+end_src
-
 **** =flycheck= :: The /other/ file diagnostics provider :package:
 :LOGBOOK:
 - Refiled on [2025-07-23 Wed 12:34]
@@ -6312,24 +6417,6 @@ This section handles the curse.
                           emacs-lisp-checkdoc
                           emacs-lisp-package
                           sh-shellcheck))))
-#+end_src
-
-**** =sideline-flycheck= :: display =flycheck= diagnostics with =sideline= :overlays:sideline:ui:
-:LOGBOOK:
-- Refiled on [2025-07-23 Wed 12:34]
-:END:
-
-#+begin_src emacs-lisp
-(package! sideline-flycheck
-  (after! flycheck
-    (add-hook 'flycheck-mode-hook #'sideline-mode)
-    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
-
-  (after! sideline
-    (appendq! sideline-backends-right '(sideline-flycheck)))
-
-  (setopt sideline-flycheck-show-checker-name t)
-  (setopt sideline-flycheck-max-lines 1))
 #+end_src
 
 *** Structural editing & Tree-Sitter
@@ -6718,17 +6805,6 @@ non-syntactic meaning to the reader.
   (keymap-set ielm-map "C-:" #'quit-window))
 #+end_src
 
-**** =sideline-load-cost= :: Show library weight in sideline
-:PROPERTIES:
-:ID:       67dabafe-cf92-4142-bbfa-ac10008f1eb6
-:END:
-
-#+begin_src emacs-lisp
-(package! (sideline-load-cost :host github :repo "emacs-sideline/sideline-load-cost")
-  (after! sideline
-    (appendq! sideline-backends-right '(sideline-load-cost))))
-#+end_src
-
 **** =eros= :: [E]valuation [R]esult [O]verlay[S]
 :PROPERTIES:
 :ID:       a59594e9-edbc-4446-9f2f-6f00b34c8034
@@ -6754,11 +6830,6 @@ non-syntactic meaning to the reader.
       ;;
       ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
-
-(package! (sideline-eros :host github :repo "emacs-sideline/sideline-eros")
-  (after! (sideline eros)
-    (add-hook 'sideline-mode-hook #'sideline-eros-setup)
-    (appendq! sideline-backends-right '(sideline-eros))))
 #+end_src
 
 **** =suggest= :: meet the elisp function of your dreams
@@ -6977,20 +7048,6 @@ The timing here may be delicate...
                  :yaml ; <https://github.com/redhat-developer/yaml-language-server/blob/main/README.md>
                  `( :validate (:enable t)
                     :schemas ,schemata)))))
-#+end_src
-
-***** =sideline-eglot= :: Display Eglot messages in sideline
-:PROPERTIES:
-:ID:       4c60a33a-0759-4bb5-9e8c-05270f5e85d6
-:END:
-
-#+begin_src emacs-lisp
-(package! (sideline-eglot :host github :repo "emacs-sideline/sideline-eglot")
-  ;; Disabled because it's pretty annoying.
-  ;; (after! eglot
-  ;;   (add-hook 'eglot-managed-mode-hook #'sideline-mode))
-  (after! sideline
-    (appendq! sideline-backends-right '(sideline-eglot))))
 #+end_src
 
 ***** Configure ~flycheck-eglot~ integration
