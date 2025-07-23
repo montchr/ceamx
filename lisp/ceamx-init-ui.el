@@ -78,24 +78,6 @@
 
 (package! symbol-overlay)
 
-;; =sideline= :: show information on the side
-;; :PROPERTIES:
-;; :ID:       556ce67a-0d8b-4ef3-8f01-d34e65faeed6
-;; :END:
-
-
-(package! sideline
-  (require 'sideline)
-
-  (setopt sideline-backends-left-skip-current-line t
-          sideline-backends-right-skip-current-line t)
-  (setopt sideline-order-left 'down
-          sideline-order-right 'up)
-  (setopt sideline-format-left "%s   "
-          sideline-format-right "   %s")
-  (setopt sideline-priority 100)
-  (setopt sideline-display-backend-name t))
-
 ;; Consider all themes "safe"
 
 
@@ -225,6 +207,31 @@
                 (if (ceamx-ui-desktop-dark-theme-p)
                     (ceamx-ui/load-dark-theme)
                   (ceamx-ui/load-light-theme))))))
+
+;; Approach № 2: =flyover= :package:
+
+;; - Package :: <https://github.com/konrad1977/flyover/>
+
+
+(package! flyover
+  (after! flymake
+    (add-hook 'flymake-mode-hook #'flyover-mode))
+  (after! flycheck
+    (add-hook 'flycheck-mode-hook #'flyover-mode))
+
+  (setopt flyover-levels '(error warning info))
+
+  (setopt flyover-debounce-interval 0.2)
+  (setopt flyover-hide-checker-name nil
+          flyover-wrap-messages t
+          flyover-max-line-length 100)
+  (setopt flyover-show-at-eol nil
+          flyover-hide-when-cursor-is-on-same-line flyover-show-at-eol
+          flyover-line-position-offset 1)
+  (setopt flyover-use-theme-colors t
+          flyover-text-tint 'lighter)
+  (setopt flyover-show-virtual-line t)
+  )
 
 ;; =avy= :: can do anything
 ;; :PROPERTIES:
