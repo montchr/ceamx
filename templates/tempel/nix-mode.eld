@@ -15,6 +15,9 @@ nix-mode nix-ts-mode
 
 (fpackage "flake.perSystem.packages." q)
 
+(fmod & "flake.modules." (s type) "." (s name) " = " (p "
+  { pkgs, ... }:
+") > "{" n> r n> "};" n)
 (persys & "\
   perSystem =
     { " (p "inputs', ") (p "pkgs")", ... }:
