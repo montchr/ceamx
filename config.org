@@ -8674,27 +8674,20 @@ whitespace:
       '(org-refile-targets (nil :maxlevel . 6))))
 #+end_src
 
-*** Customize the ~org-navigation-repeat-map~ :keybinds:
-:PROPERTIES:
-:ID:       54dac9eb-ec7c-4e08-be8c-200068787fa7
-:END:
-
-I find myself accidentally exiting out of this repeat map immediately
-because I instinctively want to continue pressing the final key in the
-original command that triggered the repeat map.  For example, if I
-press [C-c C-n] for ~org-next-visible-heading~, I want to continue
-pressing [C-n] to repeat the command.  I thought there was a setting
-for this behavior, but neither ~repeat-keep-prefix~ or ~repeat-check-key~
-seem to have an effect.
+*** Define the ~ceamx-org-repeat-map~ repeat map :keybinds:repeat:
 
 #+begin_src emacs-lisp
-;; (after! org
-;;   (define-keymap :keymap org-navigation-repeat-map
-;;     "C-b" #'org-backward-heading-same-level
-;;     "C-f" #'org-forward-heading-same-level
-;;     "C-n" #'org-next-visible-heading
-;;     "C-p" #'org-previous-visible-heading
-;;     "C-u" #'org-up-heading))
+(after! org
+  (defvar-keymap ceamx-org-repeat-map
+    :name "Tree"
+    :repeat t
+    "C-b" #'org-backward-heading-same-level
+    "C-f" #'org-forward-heading-same-level
+    "C-n" #'org-next-visible-heading
+    "C-p" #'org-previous-visible-heading
+    "C-u" #'org-up-heading
+    "C-<" #'org-promote-subtree
+    "C->" #'org-demote-subtree))
 #+end_src
 
 *** Set up Org-Capture
