@@ -262,7 +262,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
   )
 
-;; =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:
+;; =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:ui:
 
 
 (package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
@@ -378,26 +378,8 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 (after! popper
   (push "\\*treefmt-errors\\*" popper-reference-buffers))
 
-;; INPRG Use Biome in supported major modes :lang:
-;; :PROPERTIES:
-;; :ID:       5db5cd89-e9e9-45b2-a25b-ca43f0ca7bf6
-;; :END:
-;; :LOGBOOK:
-;; - State "INPRG"      from "TODO"       [2025-07-12 Sat 16:59]
-;; :END:
+;; Use Biome as formatter in supported major modes :lang:formatting:checkers:
 
-;; - Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
-;; - Reference :: <https://biomejs.dev/internals/language-support/>
-
-
-(use-feature! ceamx-eglot
-  :demand t
-  :after eglot
-  :defines (ceamx-eglot-server-configurations-alist)
-  :config
-  ;; FIXME: only start server if "biome.json" file in tree
-  (add-to-list 'eglot-server-programs
-               (list ceamx-editor-biome-supported-modes-list "biome" "lsp-proxy")))
 
 (after! reformatter
   (reformatter-define biome-format
@@ -413,7 +395,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   (dolist (mode ceamx-editor-biome-supported-modes-list)
     (add-to-list 'apheleia-mode-alist '(mode . biome))))
 
-;; Define user option to disable format-on-save for some modes
+;; Define user option to disable format-on-save for some modes :formatting:
 
 
 (defcustom ceamx-format-on-save-disabled-modes
@@ -425,7 +407,7 @@ non-nil, buffers will never be formatted upon save."
   :group 'ceamx
   :type '(choice boolean (repeat symbol)))
 
-;; Inhibit automatic formatting in some contexts
+;; Inhibit automatic formatting in some contexts :formatting:
 
 ;; Unlike ~reformatter~, ~apheleia~ will /always/ run if it can.  A blessing and a curse.
 ;; This section handles the curse.
@@ -441,7 +423,7 @@ non-nil, buffers will never be formatted upon save."
 (after! (apheleia)
   (add-to-list 'apheleia-inhibit-functions #'ceamx-editor-format-maybe-inhibit-h))
 
-;; Inhibit on-save formatting with prefix argument
+;; Inhibit on-save formatting with prefix argument :formatting:
 
 ;; - Source :: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
 
@@ -453,12 +435,40 @@ non-nil, buffers will never be formatted upon save."
     (let ((apheleia-mode (and apheleia-mode (member arg '(nil 1)))))
       (funcall func))))
 
-;; ~Linting files with the ~flycheck~ package :lint:
-;; :PROPERTIES:
-;; :ID:       1409960a-0d06-440c-a2d6-d238354079d7
-;; :END:
+;; Linting files with the builtin ~flymake~ feature :flymake:
 ;; :LOGBOOK:
-;; - Refiled on [2025-07-11 Fri 12:13]
+;; - Refiled on [2025-07-23 Wed 12:34]
+;; :END:
+
+
+(setup flymake
+  (:hook-into ceamx-after-init-hook)
+  ;; Mirror the [C-c !] Flycheck prefix.
+  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
+         "C-c ! n" #'flymake-goto-next-error
+         "C-c ! p" #'flymake-goto-previous-error
+         "C-c ! c" #'flymake-show-buffer-diagnostics)
+  (:when-loaded
+    (setopt flymake-fringe-indicator-position 'right-fringe)
+    (setopt flymake-no-changes-timeout 1.0)
+    (setopt flymake-wrap-around t)))
+
+;; =sideline-flymake= :: Display =flymake= diagnostics with =sideline= :overlays:ui:sideline:flymake:
+;; :LOGBOOK:
+;; - Refiled on [2025-07-23 Wed 12:34]
+;; :END:
+
+
+(package! sideline-flymake
+  (after! flymake
+    (add-hook 'flymake-mode-hook #'sideline-mode))
+
+  (setopt sideline-flymake-show-checker-name t)
+  (setopt sideline-flymake-max-lines 1))
+
+;; =flycheck= :: The /other/ file diagnostics provider :package:
+;; :LOGBOOK:
+;; - Refiled on [2025-07-23 Wed 12:34]
 ;; :END:
 
 
@@ -470,17 +480,6 @@ non-nil, buffers will never be formatted upon save."
 
   (after! (consult flycheck)
     (require 'consult-flycheck)))
-
-(package! sideline-flycheck
-  (after! flycheck
-    (add-hook 'flycheck-mode-hook #'sideline-mode)
-    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
-
-  (after! sideline
-    (appendq! sideline-backends-right '(sideline-flycheck)))
-
-  (setopt sideline-flycheck-show-checker-name t)
-  (setopt sideline-flycheck-max-lines 1))
 
 (after! flycheck
   (setopt flycheck-emacs-lisp-load-path 'inherit)
@@ -498,33 +497,22 @@ non-nil, buffers will never be formatted upon save."
                           emacs-lisp-package
                           sh-shellcheck))))
 
-;; Linting files with the builtin ~flymake~ feature
-;; :PROPERTIES:
-;; :ID:       1aeefb28-94d9-4561-ad49-71ff8d4cdf0e
-;; :END:
+;; =sideline-flycheck= :: display =flycheck= diagnostics with =sideline= :overlays:sideline:ui:
 ;; :LOGBOOK:
-;; - Refiled on [2025-07-11 Fri 12:13]
+;; - Refiled on [2025-07-23 Wed 12:34]
 ;; :END:
 
 
-(setup flymake
-  (:hook-into ceamx-after-init-hook)
-  ;; Mirror the [C-c !] Flycheck prefix.
-  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
-         "C-c ! n" #'flymake-goto-next-error
-         "C-c ! p" #'flymake-goto-previous-error
-         "C-c ! c" #'flymake-show-buffer-diagnostics)
-  (:when-loaded
-    (setopt flymake-fringe-indicator-position 'right-fringe)
-    (setopt flymake-no-changes-timeout 1.0)
-    (setopt flymake-wrap-around t)))
+(package! sideline-flycheck
+  (after! flycheck
+    (add-hook 'flycheck-mode-hook #'sideline-mode)
+    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
 
-(package! sideline-flymake
-  (after! flymake
-    (add-hook 'flymake-mode-hook #'sideline-mode))
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-flycheck)))
 
-  (setopt sideline-flymake-show-checker-name t)
-  (setopt sideline-flymake-max-lines 1))
+  (setopt sideline-flycheck-show-checker-name t)
+  (setopt sideline-flycheck-max-lines 1))
 
 ;; =puni= :: versatile structural editing
 ;; :PROPERTIES:
@@ -1067,6 +1055,21 @@ The original function fails in the presence of whitespace after a sexp."
     (keymap-global-set "C-c l o" #'consult-lsp-symbols)
     ;; Override the default binding for `xref-find-apropos'.
     (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
+
+;; Use Biome language server in supported modes :biome:checkers:formatting:lsp:
+
+;; - Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
+;; - Reference :: <https://biomejs.dev/internals/language-support/>
+
+
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+  :config
+  ;; FIXME: only start server if "biome.json" file in tree
+  (add-to-list 'eglot-server-programs
+               (list ceamx-editor-biome-supported-modes-list "biome" "lsp-proxy")))
 
 ;; JSON/JSONC
 ;; :PROPERTIES:

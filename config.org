@@ -6034,7 +6034,7 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
   )
 #+end_src
 
-*** =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:
+*** =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:ui:
 
 #+begin_src emacs-lisp
 (package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
@@ -6120,11 +6120,7 @@ enchant-lsmod-2 -list-dicts
   (jinx-languages "en"))
 #+end_src
 
-*** Linters & Formatters
-:PROPERTIES:
-:ID:       16856ced-d5a2-4b4a-9506-67d7c19b43f0
-:END:
-
+*** Formatters :formatting:
 **** =emacs-reformatter= :: a simple formatter factory :package:
 :PROPERTIES:
 :ID:       db715ea8-bdf8-437a-b966-df1e97aff384
@@ -6186,27 +6182,9 @@ formatting (or other arbitrary modifications):
   (push "\\*treefmt-errors\\*" popper-reference-buffers))
 #+end_src
 
-**** INPRG Use Biome in supported major modes :lang:
-:PROPERTIES:
-:ID:       5db5cd89-e9e9-45b2-a25b-ca43f0ca7bf6
-:END:
-:LOGBOOK:
-- State "INPRG"      from "TODO"       [2025-07-12 Sat 16:59]
-:END:
-
-- Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
-- Reference :: <https://biomejs.dev/internals/language-support/>
+**** Use Biome as formatter in supported major modes :lang:formatting:checkers:
 
 #+begin_src emacs-lisp
-(use-feature! ceamx-eglot
-  :demand t
-  :after eglot
-  :defines (ceamx-eglot-server-configurations-alist)
-  :config
-  ;; FIXME: only start server if "biome.json" file in tree
-  (add-to-list 'eglot-server-programs
-               (list ceamx-editor-biome-supported-modes-list "biome" "lsp-proxy")))
-
 (after! reformatter
   (reformatter-define biome-format
     :program "biome"
@@ -6222,7 +6200,7 @@ formatting (or other arbitrary modifications):
     (add-to-list 'apheleia-mode-alist '(mode . biome))))
 #+end_src
 
-**** Define user option to disable format-on-save for some modes
+**** Define user option to disable format-on-save for some modes :formatting:
 
 #+begin_src emacs-lisp
 (defcustom ceamx-format-on-save-disabled-modes
@@ -6235,7 +6213,7 @@ non-nil, buffers will never be formatted upon save."
   :type '(choice boolean (repeat symbol)))
 #+end_src
 
-**** Inhibit automatic formatting in some contexts
+**** Inhibit automatic formatting in some contexts :formatting:
 
 Unlike ~reformatter~, ~apheleia~ will /always/ run if it can.  A blessing and a curse.
 This section handles the curse.
@@ -6254,7 +6232,7 @@ This section handles the curse.
   (add-to-list 'apheleia-inhibit-functions #'ceamx-editor-format-maybe-inhibit-h))
 #+end_src
 
-**** Inhibit on-save formatting with prefix argument
+**** Inhibit on-save formatting with prefix argument :formatting:
 
 - Source :: <https://github.com/radian-software/radian/blob/20c0c9d929a57836754559b470ba4c3c20f4212a/emacs/radian.el#L2266-L2270>
 
@@ -6267,12 +6245,43 @@ This section handles the curse.
       (funcall func))))
 #+end_src
 
-**** ~Linting files with the ~flycheck~ package :lint:
-:PROPERTIES:
-:ID:       1409960a-0d06-440c-a2d6-d238354079d7
-:END:
+*** Linters/Checkers/Diagnostics :checkers:
+**** Linting files with the builtin ~flymake~ feature :flymake:
 :LOGBOOK:
-- Refiled on [2025-07-11 Fri 12:13]
+- Refiled on [2025-07-23 Wed 12:34]
+:END:
+
+#+begin_src emacs-lisp
+(setup flymake
+  (:hook-into ceamx-after-init-hook)
+  ;; Mirror the [C-c !] Flycheck prefix.
+  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
+         "C-c ! n" #'flymake-goto-next-error
+         "C-c ! p" #'flymake-goto-previous-error
+         "C-c ! c" #'flymake-show-buffer-diagnostics)
+  (:when-loaded
+    (setopt flymake-fringe-indicator-position 'right-fringe)
+    (setopt flymake-no-changes-timeout 1.0)
+    (setopt flymake-wrap-around t)))
+#+end_src
+
+**** =sideline-flymake= :: Display =flymake= diagnostics with =sideline= :overlays:ui:sideline:flymake:
+:LOGBOOK:
+- Refiled on [2025-07-23 Wed 12:34]
+:END:
+
+#+begin_src emacs-lisp
+(package! sideline-flymake
+  (after! flymake
+    (add-hook 'flymake-mode-hook #'sideline-mode))
+
+  (setopt sideline-flymake-show-checker-name t)
+  (setopt sideline-flymake-max-lines 1))
+#+end_src
+
+**** =flycheck= :: The /other/ file diagnostics provider :package:
+:LOGBOOK:
+- Refiled on [2025-07-23 Wed 12:34]
 :END:
 
 #+begin_src emacs-lisp
@@ -6284,17 +6293,6 @@ This section handles the curse.
 
   (after! (consult flycheck)
     (require 'consult-flycheck)))
-
-(package! sideline-flycheck
-  (after! flycheck
-    (add-hook 'flycheck-mode-hook #'sideline-mode)
-    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
-
-  (after! sideline
-    (appendq! sideline-backends-right '(sideline-flycheck)))
-
-  (setopt sideline-flycheck-show-checker-name t)
-  (setopt sideline-flycheck-max-lines 1))
 
 (after! flycheck
   (setopt flycheck-emacs-lisp-load-path 'inherit)
@@ -6313,33 +6311,22 @@ This section handles the curse.
                           sh-shellcheck))))
 #+end_src
 
-**** Linting files with the builtin ~flymake~ feature
-:PROPERTIES:
-:ID:       1aeefb28-94d9-4561-ad49-71ff8d4cdf0e
-:END:
+**** =sideline-flycheck= :: display =flycheck= diagnostics with =sideline= :overlays:sideline:ui:
 :LOGBOOK:
-- Refiled on [2025-07-11 Fri 12:13]
+- Refiled on [2025-07-23 Wed 12:34]
 :END:
 
 #+begin_src emacs-lisp
-(setup flymake
-  (:hook-into ceamx-after-init-hook)
-  ;; Mirror the [C-c !] Flycheck prefix.
-  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
-         "C-c ! n" #'flymake-goto-next-error
-         "C-c ! p" #'flymake-goto-previous-error
-         "C-c ! c" #'flymake-show-buffer-diagnostics)
-  (:when-loaded
-    (setopt flymake-fringe-indicator-position 'right-fringe)
-    (setopt flymake-no-changes-timeout 1.0)
-    (setopt flymake-wrap-around t)))
+(package! sideline-flycheck
+  (after! flycheck
+    (add-hook 'flycheck-mode-hook #'sideline-mode)
+    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
 
-(package! sideline-flymake
-  (after! flymake
-    (add-hook 'flymake-mode-hook #'sideline-mode))
+  (after! sideline
+    (appendq! sideline-backends-right '(sideline-flycheck)))
 
-  (setopt sideline-flymake-show-checker-name t)
-  (setopt sideline-flymake-max-lines 1))
+  (setopt sideline-flycheck-show-checker-name t)
+  (setopt sideline-flycheck-max-lines 1))
 #+end_src
 
 *** Structural editing & Tree-Sitter
@@ -7121,6 +7108,22 @@ Available by that name in Nixpkgs.
       orig-result)))
 
 (advice-add 'lsp-resolve-final-command :around #'+lsp-booster--final-command-a)
+#+end_src
+
+*** Use Biome language server in supported modes :biome:checkers:formatting:lsp:
+
+- Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
+- Reference :: <https://biomejs.dev/internals/language-support/>
+
+#+begin_src emacs-lisp
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+  :config
+  ;; FIXME: only start server if "biome.json" file in tree
+  (add-to-list 'eglot-server-programs
+               (list ceamx-editor-biome-supported-modes-list "biome" "lsp-proxy")))
 #+end_src
 
 *** TODO Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
