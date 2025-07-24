@@ -51,7 +51,7 @@ see."
 
 
 (after! prog-mode
-  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+  ;; (add-hook 'prog-mode-hook #'display-line-numbers-mode)
 
   (define-keymap :keymap prog-mode-map
     ;; Move forward out of one sexp level
