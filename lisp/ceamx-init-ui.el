@@ -177,7 +177,7 @@
 
 (use-feature! ceamx-ui
   :config
-  (setopt ceamx-ui-theme-family 'doric))
+  (setopt ceamx-ui-theme-family 'modus))
 
 ;; Set approximate stomping coordinates for hyper-astronomic relativity calculations
 
