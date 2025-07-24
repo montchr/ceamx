@@ -109,8 +109,12 @@
   ;; Folding
 
   (setopt org-cycle-emulate-tab t)
-  (setopt org-startup-folded 'content)
   (setopt org-fold-catch-invisible-edits 'show-and-error)
+  ;; <https://github.com/jcfk/savefold.el#usage>
+  (setopt org-startup-folded
+          (if (bound-and-true-p savefold-mode)
+              'showeverything
+            'content))
 
   ;;
   ;; Priority

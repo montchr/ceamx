@@ -670,5 +670,21 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
   ;; See Info node `(emacs) Image Mode'.
   (setopt image-animate-loop t))
 
+;; =savefold= :: Persist overlay-based folding state
+
+;; + Package :: <https://github.com/jcfk/savefold.el/>
+
+
+(package! savefold
+  (setopt savefold-backends '(hideshow outline))
+  (after! org
+    (add-to-list 'savefold-backends 'org))
+  (after! treesit-fold
+    (add-to-list 'savefold-backends 'treesit-fold))
+
+  (setopt savefold-directory (expand-file-name "savefold" ceamx-var-dir))
+
+  (savefold-mode 1))
+
 (provide 'ceamx-init-ui)
 ;;; ceamx-init-ui.el ends here

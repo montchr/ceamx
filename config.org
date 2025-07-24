@@ -1,7 +1,4 @@
 # -*- eval: (load-file "./ceamx-dev-loader.el") -*-
-:PROPERTIES:
-:ID:       3101f339-2824-4a4c-baa2-7f83a2d3555d
-:END:
 #+title: Ceamx: An Emacs Configuration
 #+author: Chris Montgomery
 #+email: chmont@protonmail.com
@@ -2187,6 +2184,23 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
   ;; to invoke `image-toggle-animation'.
   ;; See Info node `(emacs) Image Mode'.
   (setopt image-animate-loop t))
+#+end_src
+
+*** =savefold= :: Persist overlay-based folding state
+
++ Package :: <https://github.com/jcfk/savefold.el/>
+
+#+begin_src emacs-lisp
+(package! savefold
+  (setopt savefold-backends '(hideshow outline))
+  (after! org
+    (add-to-list 'savefold-backends 'org))
+  (after! treesit-fold
+    (add-to-list 'savefold-backends 'treesit-fold))
+
+  (setopt savefold-directory (expand-file-name "savefold" ceamx-var-dir))
+
+  (savefold-mode 1))
 #+end_src
 
 *** Provide the ~ceamx-init-ui~ feature
@@ -6569,7 +6583,7 @@ Increase the amount of syntax-highlighted structures:
 (setopt treesit-font-lock-level 4)
 #+end_src
 
-**** =treesit-fold= :: Code folding with ~treesit~
+**** =treesit-fold= :: Code folding with ~treesit~ :folding:
 :PROPERTIES:
 :ID:       f1699289-6ead-46f8-be44-fad5dd1d7906
 :END:
@@ -8354,8 +8368,12 @@ Let’s immediately override ~ceamx-default-agenda-files~ to keep down the noise
   ;; Folding
 
   (setopt org-cycle-emulate-tab t)
-  (setopt org-startup-folded 'content)
   (setopt org-fold-catch-invisible-edits 'show-and-error)
+  ;; <https://github.com/jcfk/savefold.el#usage>
+  (setopt org-startup-folded
+          (if (bound-and-true-p savefold-mode)
+              'showeverything
+            'content))
 
   ;;
   ;; Priority
