@@ -558,7 +558,7 @@ non-nil, buffers will never be formatted upon save."
 
 (setopt treesit-font-lock-level 4)
 
-;; =treesit-fold= :: Code folding with ~treesit~
+;; =treesit-fold= :: Code folding with ~treesit~ :folding:
 ;; :PROPERTIES:
 ;; :ID:       f1699289-6ead-46f8-be44-fad5dd1d7906
 ;; :END:
