@@ -8515,7 +8515,7 @@ Intended for use as a local hook function on
           org-appear-autoentities t
           org-appear-autokeywords t
           org-appear-inside-latex t)
-  (setopt org-appear-delay 1.0)
+  (setopt org-appear-delay 0.4)
   (setopt org-appear-trigger 'always))
 #+end_src
 
