@@ -7288,6 +7288,22 @@ Available by that name in Nixpkgs.
 (package! yaml-mode)
 #+end_src
 
+**** =yaml-pro= :: Because YAML is a terrible
+
++ Usage :: https://github.com/zkry/yaml-pro#usage
+
+#+begin_src emacs-lisp
+(package! yaml-pro
+  (after! yaml-mode
+    ;; Why you would use this mode when `treesit' is available is
+    ;; currently a mystery to me, but anything can happen (I have seen
+    ;; `php-ts-mode' break before)...
+    (when (treesit-ready-p 'yaml)
+      (add-hook 'yaml-mode-hook #'yaml-pro-ts-mode 100)))
+  (after! yaml-ts-mode
+    (add-hook 'yaml-ts-mode-hook #'yaml-pro-ts-mode 100)))
+#+end_src
+
 **** TODO Start the LSP server
 
 - Note taken on [2024-12-26 Thu 21:21] \\

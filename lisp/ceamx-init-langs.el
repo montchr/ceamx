@@ -1056,6 +1056,20 @@ The original function fails in the presence of whitespace after a sexp."
 
 (package! yaml-mode)
 
+;; =yaml-pro= :: Because YAML is a terrible
+
+;; + Usage :: https://github.com/zkry/yaml-pro#usage
+
+
+(package! yaml-pro
+  (after! yaml-mode
+    ;; Why you would use this mode when `treesit' is available is
+    ;; currently a mystery to me, but anything can happen...
+    (when (treesit-ready-p 'yaml)
+      (add-hook 'yaml-mode-hook #'yaml-pro-ts-mode 100)))
+  (after! yaml-ts-mode
+    (add-hook 'yaml-ts-mode-hook #'yaml-pro-ts-mode 100)))
+
 ;; XML [builtin]
 
 
