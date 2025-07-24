@@ -133,6 +133,7 @@
     (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode))
   (after! dired-preview
     (setopt dired-preview-delay 0.3)
+    (setopt dired-preview-trigger-on-start nil)
     (setopt dired-preview-max-size (expt 2 20))
     (setopt dired-preview-ignored-extensions-regexp
              (concat
