@@ -753,11 +753,6 @@ non-nil, buffers will never be formatted upon save."
       ;; (setopt lispy-eval-display-style nil)
       (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp))))
 
-(package! (sideline-eros :host github :repo "emacs-sideline/sideline-eros")
-  (after! (sideline eros)
-    (add-hook 'sideline-mode-hook #'sideline-eros-setup)
-    (appendq! sideline-backends-right '(sideline-eros))))
-
 ;; =suggest= :: meet the elisp function of your dreams
 
 ;; + Package :: <https://github.com/Wilfred/suggest.el>
@@ -962,19 +957,6 @@ The original function fails in the presence of whitespace after a sexp."
                  :yaml ; <https://github.com/redhat-developer/yaml-language-server/blob/main/README.md>
                  `( :validate (:enable t)
                     :schemas ,schemata)))))
-
-;; =sideline-eglot= :: Display Eglot messages in sideline
-;; :PROPERTIES:
-;; :ID:       4c60a33a-0759-4bb5-9e8c-05270f5e85d6
-;; :END:
-
-
-(package! (sideline-eglot :host github :repo "emacs-sideline/sideline-eglot")
-  ;; Disabled because it's pretty annoying.
-  ;; (after! eglot
-  ;;   (add-hook 'eglot-managed-mode-hook #'sideline-mode))
-  (after! sideline
-    (appendq! sideline-backends-right '(sideline-eglot))))
 
 ;; Configure ~flycheck-eglot~ integration
 

@@ -121,6 +121,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (use-feature! ceamx-completion
+  :after vertico
   :bind ( :map vertico-map
           ("M-l" . ceamx/vertico-session-sort-normal)
           ("M-L" . ceamx/vertico-session-sort-alpha)))
