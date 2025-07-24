@@ -1512,7 +1512,7 @@ applying margin, padding, borders.
 #+begin_src emacs-lisp
 (use-feature! ceamx-ui
   :config
-  (setopt ceamx-ui-theme-family 'modus))
+  (setopt ceamx-ui-theme-family 'doric))
 #+end_src
 
 **** Set approximate stomping coordinates for hyper-astronomic relativity calculations
