@@ -343,5 +343,12 @@
 (use-feature! ceamx-tools
   :bind ( "C-x SPC" . #'ceamx/rectangle-dispatch/body))
 
+;; =ceamx-typer= :: Use Emacs anywhere (kinda) :nixpkgs:
+
+;; + Requires-Executable :: =wtype=
+
+
+(use-feature! ceamx-typer :demand t)
+
 (provide 'ceamx-init-tools)
 ;;; ceamx-init-tools.el ends here
