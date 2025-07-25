@@ -61,6 +61,28 @@
   (setopt project-vc-extra-root-markers '(".project"))
   (setopt project-key-prompt-style t))
 
+;; =vc-jj= :: Support for the Jujutsu version control system :package:
+
+;; + Package :: https://codeberg.org/emacs-jj-vc/vc-jj.el
+
+;; Note that this requires Jujutsu to be configurated for compatibility
+;; with Git diff formatting style.  This can be done globally in
+;; =$XDG_CONFIG_HOME/jj/config.toml= or in the repository-specific
+;; configuration with =jj config edit --repo=.  Here is an example of the
+;; TOML configuration required:
+
+;; #+begin_example toml
+;; [ui]
+;; conflict-marker-style = "git"
+;; diff-formatter = ":git"
+;; #+end_example
+
+;; Now here is the package setup:
+
+
+(package! vc-jj
+  (require 'vc-jj))
+
 ;; =diff-hl= :: display version control status indicators in margins
 ;; :PROPERTIES:
 ;; :ID:       6a8b57d7-091a-44a6-bcf1-564f45d9bc7e
