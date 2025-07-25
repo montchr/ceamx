@@ -9621,6 +9621,14 @@ changing lines.
   :bind ( "C-x SPC" . #'ceamx/rectangle-dispatch/body))
 #+end_src
 
+*** =ceamx-typer= :: Use Emacs anywhere (kinda) :nixpkgs:
+
++ Requires-Executable :: =wtype=
+
+#+begin_src emacs-lisp
+(use-feature! ceamx-typer :demand t)
+#+end_src
+
 *** Provide the ~ceamx-init-tools~ feature
 :PROPERTIES:
 :VISIBILITY: folded
