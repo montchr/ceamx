@@ -467,9 +467,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
 
 ;; Configuration
-;; :PROPERTIES:
-;; :ID:       0e76df71-649d-496a-b10c-86a3361c5c1e
-;; :END:
 
 
 (package! tempel
@@ -480,6 +477,12 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     "M-*" #'tempel-insert)
 
   ;; Setup completion at point for Tempel templates.
+  ;;
+  ;; FIXME: prevent automatically completing `tempel-trigger-prefix'
+  ;; when no other completion candidates are available.  This can
+  ;; occur when: 1. invoking `completion-at-point' directly via M-x;
+  ;; 2. via a custom keybinding for `completion-at-point'; 3. when
+  ;; typing the literal "<" character and `corfu-auto' is non-nil
   (def-hook! +tempel-setup-capf-h ()
     '(conf-mode-hook prog-mode-hook text-mode-hook)
     "Add the Tempel Capf to `completion-at-point-functions'.
