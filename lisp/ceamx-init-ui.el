@@ -123,7 +123,7 @@
    'modus 'modus-vivendi 'modus-operandi)
 
   (setopt modus-themes-italic-constructs t
-          modus-themes-bold-constructs t
+          modus-themes-bold-constructs nil
           modus-themes-mixed-fonts t
           modus-themes-variable-pitch-ui t)
   (setopt modus-themes-to-toggle
@@ -462,6 +462,11 @@
 
 (setq-default text-scale-remap-header-line t)
 
+;; =fontaine= :: pre-configure font presets
+
+;; + Website :: <https://protesilaos.com/emacs/fontaine>
+
+
 (package! fontaine
   (when (display-graphic-p)
     (require 'fontaine)
@@ -474,21 +479,23 @@
     ;; increments.
     (setq fontaine-presets
             `((tiny
-               :bold-weight medium
+               ;; :bold-weight medium
                :default-height ,(pcase (system-name)
                                   (_ 78))
-               :default-weight ,(pcase (system-name)
-                                  (_ 'semilight)))
+               ;; :default-weight ,(pcase (system-name)
+               ;;                    (_ 'semilight))
+               )
 
               (small
-               :bold-weight semibold
+               ;; :bold-weight semibold
                :default-height ,(pcase (system-name)
                                   (_ 90))
                :default-weight ,(pcase (system-name)
                                   (_ 'regular)))
 
               (regular
-               :bold-weight semibold)
+               ;; :bold-weight semibold
+               )
 
               (medium
                :default-height ,(pcase (system-name)
@@ -504,19 +511,24 @@
                                   (_ 156)))
 
               (big-mclarge-huge
-               :default-weight semilight
+               ;; :default-weight semilight
                :default-height ,(pcase (system-name)
                                   (_ 180))
-               :bold-weight extrabold)
+               ;; :bold-weight extrabold
+               )
 
               (t
-               :default-family "Aporetic Sans Mono"
+               ;; :default-family "Aporetic Sans Mono"
                ;; :default-family "Berkeley Mono"
+               ;; :default-family "Pragmasevka"
+               ;; :default-family "Iosevka"
+               :default-family "Iosvmata"
                :default-weight regular
-               :default-height ,(pcase (system-name)
-                                  ("tuuvok" 102)
-                                  ;; (_ 105)
-                                  (_ 100))
+               :default-height 100
+               ;; :default-height ,(pcase (system-name)
+               ;;                    ("tuuvok" 102)
+               ;;                    ;; (_ 105)
+               ;;                    (_ 100))
 
                ;; :fixed-pitch-family "Aporetic Sans Mono"
                ;; :fixed-pitch-family "Berkeley Mono"
@@ -530,8 +542,8 @@
 
                :variable-pitch-family "Aporetic Serif"
                ;; :variable-pitch-family nil
-               :variable-pitch-weight nil
-               :variable-pitch-height 1.0
+               ;; :variable-pitch-weight nil
+               ;; :variable-pitch-height 1.0
 
                :mode-line-active-family nil
                :mode-line-active-weight nil
@@ -553,14 +565,18 @@
                :tab-bar-weight nil
                :tab-bar-height 0.8
 
-               :bold-family nil
-               :bold-weight bold
+               ;; :bold-family "Pragmasevka Bold"
+               ;; :bold-family nil
+               ;; :bold-weight nil
+               ;; :bold-weight bold
 
-               :italic-family nil
-               :italic-weight nil
-               :italic-slant italic
+               ;; :italic-family "Pragmasevka Italic"
+               ;; :italic-family nil
+               ;; :italic-weight nil
+               ;; :italic-slant nil
+               ;; :italic-slant italic
 
-               :line-spacing nil)))
+               :line-spacing 0.15)))
 
     (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
 
