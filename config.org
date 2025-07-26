@@ -1750,6 +1750,20 @@ for example, we were no longer using the =eros= package…
     (add-hook 'next-error-hook #'fn)))
 #+end_src
 
+Set up some pulse triggers.  Find some ideas:  [[https://github.com/howardabrams/hamacs/blob/main/ha-display.org#find-the-bloody-cursor][hamacs/ha-display.org at main · howardabrams/hamacs · GitHub]]
+
+#+begin_src emacs-lisp
+(setup (:package pulsar)
+  (:when-loaded
+    (:option (prepend* pulsar-pulse-functions)
+             '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
+                bookmark-jump other-window delete-window delete-other-windows
+                forward-page backward-page scroll-up-command scroll-down-command
+                tab-new tab-close tab-next outline-backward-same-level
+                outline-forward-same-level outline-next-visible-heading
+                outline-previous-visible-heading outline-up-heading))))
+#+end_src
+
 *** Window highlighting
 
 #+begin_src emacs-lisp
@@ -2458,29 +2472,29 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 :END:
 
 #+begin_src emacs-lisp
-(package! crux
-  (define-keymap :keymap (current-global-map)
-    "C-k" #'crux-smart-kill-line
-    "C-^" #'crux-top-join-line
+(setup (:package crux)
+  (:global "C-k" #'crux-smart-kill-line
+           "C-^" #'crux-top-join-line
 
-    "C-x 4 t" #'crux-transpose-windows
+           "C-x 4 t" #'crux-transpose-windows
 
-    "C-S-d" #'crux-duplicate-current-line-or-region
-    "C-S-RET" #'crux-smart-open-line-above
-    "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
+           "C-S-d" #'crux-duplicate-current-line-or-region
+           "C-S-RET" #'crux-smart-open-line-above
+           "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
 
-    "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
+           "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
 
-    "S-RET" #'crux-smart-open-line)
-
-  (define-keymap :keymap ceamx-buffer-prefix
-    "f" #'crux-cleanup-buffer-or-region
-    "M-w" #'crux-kill-buffer-truename)
-
-  (define-keymap :keymap ceamx-file-prefix
-    "c" #'crux-copy-file-preserve-attributes
-    "d" #'crux-delete-file-and-buffer
-    "r" #'crux-rename-file-and-buffer))
+           "S-RET" #'crux-smart-open-line)
+  (:with-map ceamx-buffer-prefix
+    (:bind "f" #'crux-cleanup-buffer-or-region
+           "M-w" #'crux-kill-buffer-truename))
+  (:with-map ceamx-file-prefix
+    (:bind "c" #'crux-copy-file-preserve-attributes
+           "d" #'crux-delete-file-and-buffer
+           "r" #'crux-rename-file-and-buffer))
+  (:with-feature pulsar
+    (:when-loaded
+      (:option (prepend pulsar-pulse-functions) #'crux-other-window-or-switch-buffer))))
 #+end_src
 
 *** =tmr= :: set timers using a convenient notation
@@ -5114,7 +5128,11 @@ Action alist entries are:
 **** Restore previous window configurations with the ~winner-mode~ feature :history:
 
 #+begin_src emacs-lisp
-(add-hook 'ceamx-after-init-hook #'winner-mode)
+(setup winner
+  (:hook-into ceamx-after-init-hook)
+  (:with-feature pulsar
+    (:when-loaded
+      (:option (prepend* pulsar-pulse-functions) '(winner-redo winner-undo)))))
 #+end_src
 
 **** =golden-ratio= :: automatically resize windows according to Ancient Wisdom :package:
@@ -5126,19 +5144,21 @@ Action alist entries are:
 #+end_src
 
 **** =ace-window= :: interactively manage windows
-:PROPERTIES:
-:ID:       f582eb53-4eb6-4bfd-a67d-feb2facfd23e
-:END:
 
-<https://github.com/abo-abo/ace-window>
++ Package :: <https://github.com/abo-abo/ace-window>
 
 #+begin_src emacs-lisp
-(package! ace-window
-  (define-keymap :keymap (current-global-map)
-    "C-x O" #'ace-window))
-
-(after! ace-window
-  (setopt aw-scope 'visible))
+(setup (:package ace-window)
+  (:option aw-scope 'visible)
+  (:with-function #'ace-window
+    (:bind-to "C-x w w"))
+  (:when-loaded
+    (:with-feature pulsar
+      (:when-loaded
+        (:option (prepend* pulsar-pulse-functions)
+                 '( aw-copy-window aw-delete-window aw-move-window
+                    aw-split-window-fair aw-split-window-horz
+                    aw-split-window-vert aw-swap-window))))))
 #+end_src
 
 **** =transpose-frame= :: transpose a frame's windows
@@ -5426,6 +5446,20 @@ Here are the definitions for the Bufler grouping rules:
   :commands (ceamx/switch-to-buffer)
   :bind
   ("C-x b" . #'ceamx/switch-to-buffer))
+#+end_src
+
+*** Pulse on window actions with =pulsar= :ui:pulsar:
+
+#+begin_src emacs-lisp
+(setup ceamx-window
+  (:with-feature pulsar
+    (:when-loaded
+      (:option (prepend* pulsar-pulse-functions)
+  	       '(ceamx/buffer-create
+  	         ceamx/other-window
+  	         ceamx/split-window
+  	         ceamx/swap-or-rotate-windows
+  	         ceamx-window-swap-or-split)))))
 #+end_src
 
 *** Provide the ~ceamx-init-window~ feature
@@ -8642,15 +8676,22 @@ whitespace:
   (setopt org-modern-hide-stars (string-pad " " org-indent-indentation-per-level)))
 #+end_src
 
-*** Appearance: Display visual feedback after actions :ui:
+*** Appearance: Display visual pulse feedback after actions :ui:pulsar:
 
 - Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
 
 #+begin_src emacs-lisp
-(after! (org pulsar)
-  (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
-    (add-hook hook #'pulsar-recenter-center)
-    (add-hook hook #'pulsar-reveal-entry)))
+(setup org
+  (:with-feature pulsar
+    (:with-hook (list org-agenda-after-show-hook org-follow-link-hook)
+      (:hook #'pulsar-recenter-center)
+      (:hook #'pulsar-reveal-entry))
+    (:when-loaded
+      (:option (prepend* pulsar-pulse-functions)
+  	       '( org-backward-heading-same-level
+  		  org-forward-heading-same-level
+  		  org-next-visible-heading
+  		  org-previous-visible-heading)))))
 #+end_src
 
 *** =doct= :: a template engine for ~org-capture~

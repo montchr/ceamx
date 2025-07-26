@@ -264,7 +264,11 @@
 ;; Restore previous window configurations with the ~winner-mode~ feature :history:
 
 
-(add-hook 'ceamx-after-init-hook #'winner-mode)
+(setup winner
+  (:hook-into ceamx-after-init-hook)
+  (:with-feature pulsar
+    (:when-loaded
+      (:option (prepend* pulsar-pulse-functions) '(winner-redo winner-undo)))))
 
 ;; =golden-ratio= :: automatically resize windows according to Ancient Wisdom :package:
 
@@ -274,19 +278,21 @@
   (setopt golden-ratio-max-width 100))
 
 ;; =ace-window= :: interactively manage windows
-;; :PROPERTIES:
-;; :ID:       f582eb53-4eb6-4bfd-a67d-feb2facfd23e
-;; :END:
 
-;; <https://github.com/abo-abo/ace-window>
+;; + Package :: <https://github.com/abo-abo/ace-window>
 
 
-(package! ace-window
-  (define-keymap :keymap (current-global-map)
-    "C-x O" #'ace-window))
-
-(after! ace-window
-  (setopt aw-scope 'visible))
+(setup (:package ace-window)
+  (:option aw-scope 'visible)
+  (:with-function #'ace-window
+    (:bind-to "C-x w w"))
+  (:when-loaded
+    (:with-feature pulsar
+      (:when-loaded
+        (:option (prepend* pulsar-pulse-functions)
+                 '( aw-copy-window aw-delete-window aw-move-window
+                    aw-split-window-fair aw-split-window-horz
+                    aw-split-window-vert aw-swap-window))))))
 
 ;; =transpose-frame= :: transpose a frame's windows
 ;; :PROPERTIES:
@@ -571,6 +577,19 @@ Intended for use as a hook on `ceamx-after-init-hook'."
   :commands (ceamx/switch-to-buffer)
   :bind
   ("C-x b" . #'ceamx/switch-to-buffer))
+
+;; Pulse on window actions with =pulsar= :ui:pulsar:
+
+
+(setup ceamx-window
+  (:with-feature pulsar
+    (:when-loaded
+      (:option (prepend* pulsar-pulse-functions)
+  	       '(ceamx/buffer-create
+  	         ceamx/other-window
+  	         ceamx/split-window
+  	         ceamx/swap-or-rotate-windows
+  	         ceamx-window-swap-or-split)))))
 
 (provide 'ceamx-init-window)
 ;;; ceamx-init-window.el ends here

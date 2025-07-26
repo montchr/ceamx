@@ -300,6 +300,21 @@
                 pulsar-reveal-entry))
     (add-hook 'next-error-hook #'fn)))
 
+
+
+;; Set up some pulse triggers.  Find some ideas:  [[https://github.com/howardabrams/hamacs/blob/main/ha-display.org#find-the-bloody-cursor][hamacs/ha-display.org at main · howardabrams/hamacs · GitHub]]
+
+
+(setup (:package pulsar)
+  (:when-loaded
+    (:option (prepend* pulsar-pulse-functions)
+             '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
+                bookmark-jump other-window delete-window delete-other-windows
+                forward-page backward-page scroll-up-command scroll-down-command
+                tab-new tab-close tab-next outline-backward-same-level
+                outline-forward-same-level outline-next-visible-heading
+                outline-previous-visible-heading outline-up-heading))))
+
 ;; Window highlighting
 
 

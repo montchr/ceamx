@@ -250,6 +250,8 @@ this window there."
     (window-swap-states this-window that-window)
     (select-window that-window)))
 
+(defalias 'ceamx-window-swap-or-split #'ceamx--window-swap-or-split)
+
 (defun ceamx/window-move-left ()
   "Swap or move selected window to the left."
   (interactive)

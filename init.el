@@ -357,34 +357,34 @@ unimportant since it happens during compilation anyway."
 ;; Add Elpaca support to =setup.el=:
 
 
-(defun ceamx+setup--wrap-to-install-elpaca-package (body _name)
-  "Wrap BODY in an `elpaca' block when `:package' is provided."
-  (if (assq 'package setup-attributes)
-      `(elpaca ,(cdr (assq 'package setup-attributes))
-         ,@(macroexp-unprogn body))
-    body))
+  (defun ceamx+setup--wrap-to-install-elpaca-package (body _name)
+    "Wrap BODY in an `elpaca' block when `:package' is provided."
+    (if (assq 'package setup-attributes)
+        `(elpaca ,(cdr (assq 'package setup-attributes))
+           ,@(macroexp-unprogn body))
+      body))
 
-(add-to-list 'setup-modifier-list #'ceamx+setup--wrap-to-install-elpaca-package)
+  (add-to-list 'setup-modifier-list #'ceamx+setup--wrap-to-install-elpaca-package)
 
-(setup-define :package
-  (lambda (order &rest recipe)
-    (push (cond
-           ((eq order t) `(package . ,(setup-get 'feature)))
-           ((eq order nil) `(package . nil))
-           (`(package . (,order ,@recipe))))
-          setup-attributes)
-    ;; If the macro returned non-nil, it would try to insert the
-    ;; modified list returned by `push'.  As this value usually cannot
-    ;; be evaluated, it is better to return nil (which the byte compiler
-    ;; will optimize away).
-    nil)
-  :documentation "Install ORDER with the `elpaca' package manager.
-The ORDER can be used to deduce the feature context.  RECIPE may be
-specified according to the `elpaca' documentation, if needed.
+  (setup-define :package
+    (lambda (order &rest recipe)
+      (push (cond
+             ((eq order t) `(package . ,(setup-get 'feature)))
+             ((eq order nil) `(package . nil))
+             (`(package . (,order ,@recipe))))
+            setup-attributes)
+      ;; If the macro returned non-nil, it would try to insert the
+      ;; modified list returned by `push'.  As this value usually cannot
+      ;; be evaluated, it is better to return nil (which the byte compiler
+      ;; will optimize away).
+      nil)
+    :documentation "Install ORDER with the `elpaca' package manager.
+  The ORDER can be used to deduce the feature context.  RECIPE may be
+  specified according to the `elpaca' documentation, if needed.
 
-This overrides the default `:package' keyword, as the builtin package
-manager is not supported in combination with `elpaca'."
-  :shorthand #'cadr)
+  This overrides the default `:package' keyword, as the builtin package
+  manager is not supported in combination with `elpaca'."
+    :shorthand #'cadr)
 
 
 

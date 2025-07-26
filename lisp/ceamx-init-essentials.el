@@ -114,29 +114,29 @@
 ;; :END:
 
 
-(package! crux
-  (define-keymap :keymap (current-global-map)
-    "C-k" #'crux-smart-kill-line
-    "C-^" #'crux-top-join-line
+(setup (:package crux)
+  (:global "C-k" #'crux-smart-kill-line
+           "C-^" #'crux-top-join-line
 
-    "C-x 4 t" #'crux-transpose-windows
+           "C-x 4 t" #'crux-transpose-windows
 
-    "C-S-d" #'crux-duplicate-current-line-or-region
-    "C-S-RET" #'crux-smart-open-line-above
-    "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
+           "C-S-d" #'crux-duplicate-current-line-or-region
+           "C-S-RET" #'crux-smart-open-line-above
+           "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
 
-    "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
+           "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
 
-    "S-RET" #'crux-smart-open-line)
-
-  (define-keymap :keymap ceamx-buffer-prefix
-    "f" #'crux-cleanup-buffer-or-region
-    "M-w" #'crux-kill-buffer-truename)
-
-  (define-keymap :keymap ceamx-file-prefix
-    "c" #'crux-copy-file-preserve-attributes
-    "d" #'crux-delete-file-and-buffer
-    "r" #'crux-rename-file-and-buffer))
+           "S-RET" #'crux-smart-open-line)
+  (:with-map ceamx-buffer-prefix
+    (:bind "f" #'crux-cleanup-buffer-or-region
+           "M-w" #'crux-kill-buffer-truename))
+  (:with-map ceamx-file-prefix
+    (:bind "c" #'crux-copy-file-preserve-attributes
+           "d" #'crux-delete-file-and-buffer
+           "r" #'crux-rename-file-and-buffer))
+  (:with-feature pulsar
+    (:when-loaded
+      (:option (prepend pulsar-pulse-functions) #'crux-other-window-or-switch-buffer))))
 
 ;; =tmr= :: set timers using a convenient notation
 ;; :PROPERTIES:
