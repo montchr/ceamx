@@ -494,7 +494,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
               :keymaps ((t . ceamx-modaled-state-insert-map))
               :is-input t))))
 
-;; Configure line wrapping aka “fill”
+;; Configure line wrapping aka “fill” and ~auto-fill-mode~
 
 ;; By default, automatically hard-wrap text in ~prog-mode~ and ~text-mode~:
 
@@ -514,7 +514,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (use-feature! emacs
   :config
-  (setq-default fill-column 70))
+  (setq-default fill-column 72))
 
 
 
