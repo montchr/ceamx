@@ -495,9 +495,6 @@ PROPS is as in `editorconfig-after-apply-functions'."
               :is-input t))))
 
 ;; Configure line wrapping aka “fill”
-;; :PROPERTIES:
-;; :ID:       a8a12924-308f-45c9-8e4d-47fac614bdae
-;; :END:
 
 ;; By default, automatically hard-wrap text in ~prog-mode~ and ~text-mode~:
 
@@ -511,21 +508,30 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;; expected "80".  While 80 may be some sort of standard for code, 70
 ;; works better for prose.  70 helps avoid the end of lines getting
 ;; visually cut off by giving some space for the frame's interface
-;; elements (e.g. spacing, line numbers, gutter indicators, etc.).
-
-;; That said, unfortunately, this value applies to /all/ text, not
-;; just prose.  While ~comment-auto-fill-only-comments~ exists, it
-;; does not really work so well in prose-orientated text documents,
-;; as even these may define a comment syntax (e.g. =text/markdown=
-;; and the not-yet-standard =text/org=).
-
-;; TODO: Disregard the ~comment-auto-fill-only-comments~ setting for
-;; ~text-mode~
+;; elements (e.g. spacing, line numbers, gutter indicators, etc.).  72
+;; feels like a good compromise?
 
 
 (use-feature! emacs
   :config
   (setq-default fill-column 70))
+
+
+
+;; That said, unfortunately, this value applies to /all/ text, not just
+;; prose.  While ~comment-auto-fill-only-comments~ exists, it does not really
+;; work so well in prose-orientated text documents, as even these may
+;; define a comment syntax (e.g. =text/markdown= and the not-yet-standard
+;; =text/org=).  For that reason, I enable it locally on ~prog-mode-hook~.
+
+
+(def-hook! ceamx-prog-mode-auto-fill-comments-only-h ()
+  '(prog-mode-hook)
+  "Enable `comment-auto-fill-only-comments' setting in `prog-mode'.
+Common text modes including `markdown-mode' and `org-mode' also
+  define their own comment syntax, resulting in no auto-fill anywhere
+  except comments, which is not what `text-mode' is about."
+  (setq-local comment-auto-fill-only-comments t))
 
 
 
