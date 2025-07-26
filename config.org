@@ -732,6 +732,14 @@ find myself still prone to indecision in this field.
 
 On that note, I have since switched back to Elpaca.
 
+******* Saturday, July 26, 2025 :: Forgetting what pain felt like
+
+Even though I joked earlier about forgetting the feeling of pain, the
+prospect does not bother me now.  Maybe the pain will be worth it this
+time!  Something must have changed!
+
+Let’s try =package.el= again.  How much worse could 2025 become?
+
 **** Run the custom init and startup hooks on ~elpaca-after-init-hook~
 
 #+begin_src emacs-lisp
@@ -893,43 +901,42 @@ unimportant since it happens during compilation anyway."
 #+end_src
 
 **** Install and configure =setup.el=
-:PROPERTIES:
-:ID:       d3695516-a695-489d-8a4f-374e54e59e31
-:END:
 
 #+begin_src emacs-lisp
 (elpaca setup
   (require 'setup))
-
 (elpaca-wait)
 #+end_src
 
 Add Elpaca support to =setup.el=:
 
 #+begin_src emacs-lisp
-(defun +setup-wrap-to-install-elpaca-package (body _name)
-  "Wrap BODY in an `elpaca' block when `:ensure' is provided."
-  (if (assq 'ensure setup-attributes)
-      `(elpaca ,(cdr (assq 'ensure setup-attributes))
+(defun ceamx+setup--wrap-to-install-elpaca-package (body _name)
+  "Wrap BODY in an `elpaca' block when `:package' is provided.
+Elpaca support for the `:package' keyword is incompatible with the
+builtin package manager (`package') backend."
+  (if (assq 'package setup-attributes)
+      `(elpaca ,(cdr (assq 'package setup-attributes))
          ,@(macroexp-unprogn body))
     body))
 
-(add-to-list 'setup-modifier-list #'+setup-wrap-to-install-elpaca-package)
+(add-to-list 'setup-modifier-list #'ceamx+setup--wrap-to-install-elpaca-package)
 
-(setup-define :ensure
+(setup-define :package
   (lambda (order &rest recipe)
     (push (cond
-           ((eq order t) `(ensure . ,(setup-get 'feature)))
-           ((eq order nil) `(ensure . nil))
-           (`(ensure . (,order ,@recipe))))
+           ((eq order t) `(package . ,(setup-get 'feature)))
+           ((eq order nil) `(package . nil))
+           (`(package . (,order ,@recipe))))
           setup-attributes)
     ;; If the macro returned non-nil, it would try to insert the
     ;; modified list returned by `push'.  As this value usually cannot
-    ;; be evaluated, it is better to return nil (which the byte
-    ;; compiler will optimize away).
+    ;; be evaluated, it is better to return nil (which the byte compiler
+    ;; will optimize away).
     nil)
   :documentation "Install ORDER with the `elpaca' package manager.
-The ORDER can be used to deduce the feature context."
+The ORDER can be used to deduce the feature context.  RECIPE may be
+specified according to the `elpaca' documentation, if needed."
   :shorthand #'cadr)
 #+end_src
 
@@ -5454,28 +5461,30 @@ Here are the definitions for the Bufler grouping rules:
 
 #+begin_src emacs-lisp
 (setup ediff
-  (:autoload #'ediff-buffers
-             #'ediff-files
-             #'ediff-buffers3
-             #'ediff-files3)
-  (setopt ediff-keep-variants nil
-          ediff-make-buffers-readonly-at-startup nil
-          ediff-merge-revisions-with-ancestor t
-          ediff-show-clashes-only t
-          ;; Keep the ~ediff~ control panel in the same frame.
-          ediff-window-setup-function #'ediff-setup-windows-plain))
+  (:with-function ( #'ediff-buffers
+                    #'ediff-files
+                    #'ediff-buffers3
+                    #'ediff-files3)
+    (:autoload-this))
+  (:option ediff-keep-variants nil
+           ediff-make-buffers-readonly-at-startup nil
+           ediff-merge-revisions-with-ancestor t
+           ediff-show-clashes-only t
+           ;; Keep the ~ediff~ control panel in the same frame.
+           ediff-window-setup-function #'ediff-setup-windows-plain))
 #+end_src
 
 *** Set up ~diff-mode~
 
 #+begin_src emacs-lisp
 (setup diff-mode
-  (setopt diff-default-read-only t)
-  (setopt diff-advance-after-apply-hunk t)
-  (setopt diff-update-on-the-fly t)
-  (setopt diff-refine 'font-lock)
-  (setopt diff-font-lock-prettify t
-          diff-font-lock-syntax 'hunk-also))
+  (:option diff-default-read-only t
+           diff-advance-after-apply-hunk t
+           diff-update-on-the-fly t
+
+           diff-refine 'font-lock
+           diff-font-lock-prettify t
+           diff-font-lock-syntax 'hunk-also))
 #+end_src
 
 *** Set up version control integration with ~vc-mode~
@@ -5505,8 +5514,8 @@ Here are the definitions for the Bufler grouping rules:
   (:global "C-x p ." #'project-dired
            "C-x p RET" #'project-dired
            "C-x p DEL" #'project-forget-project)
-  (setopt project-vc-extra-root-markers '(".project"))
-  (setopt project-key-prompt-style t))
+  (:option project-vc-extra-root-markers '(".project")
+           project-key-prompt-style t))
 #+end_src
 
 *** =vc-jj= :: Support for the Jujutsu version control system :package:
@@ -5761,13 +5770,13 @@ e.g. "M-4" should not expand this section -- it should only be expanded manually
 
 #+begin_src emacs-lisp
 (setup magit-repos
-  ;; FIXME: Make sure feature is available
-  ;;  (:load-after magit)
-  (:autoload #'magit-list-repositories)
-  (setopt magit-repository-directories
-          `((,(file-name-concat ceamx-projects-dir "work") . 2)
-            (,(file-name-concat ceamx-projects-dir "sources") . 1)
-            (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
+  (:load-after magit)
+  (:with-function #'magit-list-repositories
+    (:autoload-this))
+  (:option magit-repository-directories
+           `((,(file-name-concat ceamx-projects-dir "work") . 2)
+             (,(file-name-concat ceamx-projects-dir "sources") . 1)
+             (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
 #+end_src
 
 *** =forge= :: interact with online forges through magit
@@ -6413,10 +6422,9 @@ This section handles the curse.
          "C-c ! n" #'flymake-goto-next-error
          "C-c ! p" #'flymake-goto-previous-error
          "C-c ! c" #'flymake-show-buffer-diagnostics)
-  (:when-loaded
-    (setopt flymake-fringe-indicator-position 'right-fringe)
-    (setopt flymake-no-changes-timeout 1.0)
-    (setopt flymake-wrap-around t)))
+  (:option flymake-fringe-indicator-position 'right-fringe
+           flymake-no-changes-timeout 1.0
+            flymake-wrap-around t))
 #+end_src
 
 **** =flycheck= :: The /other/ file diagnostics provider :package:

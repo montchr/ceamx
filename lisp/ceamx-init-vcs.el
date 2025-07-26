@@ -10,27 +10,29 @@
 
 
 (setup ediff
-  (:autoload #'ediff-buffers
-             #'ediff-files
-             #'ediff-buffers3
-             #'ediff-files3)
-  (setopt ediff-keep-variants nil
-          ediff-make-buffers-readonly-at-startup nil
-          ediff-merge-revisions-with-ancestor t
-          ediff-show-clashes-only t
-          ;; Keep the ~ediff~ control panel in the same frame.
-          ediff-window-setup-function #'ediff-setup-windows-plain))
+  (:with-function ( #'ediff-buffers
+                    #'ediff-files
+                    #'ediff-buffers3
+                    #'ediff-files3)
+    (:autoload-this))
+  (:option ediff-keep-variants nil
+           ediff-make-buffers-readonly-at-startup nil
+           ediff-merge-revisions-with-ancestor t
+           ediff-show-clashes-only t
+           ;; Keep the ~ediff~ control panel in the same frame.
+           ediff-window-setup-function #'ediff-setup-windows-plain))
 
 ;; Set up ~diff-mode~
 
 
 (setup diff-mode
-  (setopt diff-default-read-only t)
-  (setopt diff-advance-after-apply-hunk t)
-  (setopt diff-update-on-the-fly t)
-  (setopt diff-refine 'font-lock)
-  (setopt diff-font-lock-prettify t
-          diff-font-lock-syntax 'hunk-also))
+  (:option diff-default-read-only t
+           diff-advance-after-apply-hunk t
+           diff-update-on-the-fly t
+
+           diff-refine 'font-lock
+           diff-font-lock-prettify t
+           diff-font-lock-syntax 'hunk-also))
 
 ;; Set up version control integration with ~vc-mode~
 ;; :PROPERTIES:
@@ -58,8 +60,8 @@
   (:global "C-x p ." #'project-dired
            "C-x p RET" #'project-dired
            "C-x p DEL" #'project-forget-project)
-  (setopt project-vc-extra-root-markers '(".project"))
-  (setopt project-key-prompt-style t))
+  (:option project-vc-extra-root-markers '(".project")
+           project-key-prompt-style t))
 
 ;; =vc-jj= :: Support for the Jujutsu version control system :package:
 
@@ -297,13 +299,13 @@
 
 
 (setup magit-repos
-  ;; FIXME: Make sure feature is available
-  ;;  (:load-after magit)
-  (:autoload #'magit-list-repositories)
-  (setopt magit-repository-directories
-          `((,(file-name-concat ceamx-projects-dir "work") . 2)
-            (,(file-name-concat ceamx-projects-dir "sources") . 1)
-            (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
+  (:load-after magit)
+  (:with-function #'magit-list-repositories
+    (:autoload-this))
+  (:option magit-repository-directories
+           `((,(file-name-concat ceamx-projects-dir "work") . 2)
+             (,(file-name-concat ceamx-projects-dir "sources") . 1)
+             (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
 
 ;; =forge= :: interact with online forges through magit
 ;; :PROPERTIES:

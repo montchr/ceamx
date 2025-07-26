@@ -346,14 +346,10 @@ unimportant since it happens during compilation anyway."
   (ceamx--remove-sharp-quotes args))
 
 ;; Install and configure =setup.el=
-;; :PROPERTIES:
-;; :ID:       d3695516-a695-489d-8a4f-374e54e59e31
-;; :END:
 
 
 (elpaca setup
   (require 'setup))
-
 (elpaca-wait)
 
 
@@ -361,29 +357,32 @@ unimportant since it happens during compilation anyway."
 ;; Add Elpaca support to =setup.el=:
 
 
-(defun +setup-wrap-to-install-elpaca-package (body _name)
-  "Wrap BODY in an `elpaca' block when `:ensure' is provided."
-  (if (assq 'ensure setup-attributes)
-      `(elpaca ,(cdr (assq 'ensure setup-attributes))
+(defun ceamx+setup--wrap-to-install-elpaca-package (body _name)
+  "Wrap BODY in an `elpaca' block when `:package' is provided.
+Elpaca support for the `:package' keyword is incompatible with the
+builtin package manager (`package') backend."
+  (if (assq 'package setup-attributes)
+      `(elpaca ,(cdr (assq 'package setup-attributes))
          ,@(macroexp-unprogn body))
     body))
 
-(add-to-list 'setup-modifier-list #'+setup-wrap-to-install-elpaca-package)
+(add-to-list 'setup-modifier-list #'ceamx+setup--wrap-to-install-elpaca-package)
 
-(setup-define :ensure
+(setup-define :package
   (lambda (order &rest recipe)
     (push (cond
-           ((eq order t) `(ensure . ,(setup-get 'feature)))
-           ((eq order nil) `(ensure . nil))
-           (`(ensure . (,order ,@recipe))))
+           ((eq order t) `(package . ,(setup-get 'feature)))
+           ((eq order nil) `(package . nil))
+           (`(package . (,order ,@recipe))))
           setup-attributes)
     ;; If the macro returned non-nil, it would try to insert the
     ;; modified list returned by `push'.  As this value usually cannot
-    ;; be evaluated, it is better to return nil (which the byte
-    ;; compiler will optimize away).
+    ;; be evaluated, it is better to return nil (which the byte compiler
+    ;; will optimize away).
     nil)
   :documentation "Install ORDER with the `elpaca' package manager.
-The ORDER can be used to deduce the feature context."
+The ORDER can be used to deduce the feature context.  RECIPE may be
+specified according to the `elpaca' documentation, if needed."
   :shorthand #'cadr)
 
 

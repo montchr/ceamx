@@ -441,10 +441,9 @@ non-nil, buffers will never be formatted upon save."
          "C-c ! n" #'flymake-goto-next-error
          "C-c ! p" #'flymake-goto-previous-error
          "C-c ! c" #'flymake-show-buffer-diagnostics)
-  (:when-loaded
-    (setopt flymake-fringe-indicator-position 'right-fringe)
-    (setopt flymake-no-changes-timeout 1.0)
-    (setopt flymake-wrap-around t)))
+  (:option flymake-fringe-indicator-position 'right-fringe
+           flymake-no-changes-timeout 1.0
+            flymake-wrap-around t))
 
 ;; =flycheck= :: The /other/ file diagnostics provider :package:
 ;; :LOGBOOK:
