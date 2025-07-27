@@ -9156,14 +9156,12 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 ** Web Browsing :web:
 :PROPERTIES:
 :VISIBILITY: folded
-:ID:       bbd80e03-694c-4f5b-ab31-336fd2afd963
 :header-args:emacs-lisp: :tangle lisp/ceamx-init-eww.el
 :END:
 
 *** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
-:ID:       c5bfe32a-b89a-492a-bc83-e61f6cb6a23d
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-eww.el :comments no
@@ -9173,60 +9171,66 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 #+end_src
 
 *** Tell Emacs we want its Web Wowser to handle URL browsing by default
-:PROPERTIES:
-:ID:       e9e1a28b-8fee-4dfd-83ad-52421155f652
-:END:
+
+Watch out for loading =browse-url= too early, as it can drastically affect
+Emacs init time.
 
 #+begin_src emacs-lisp
-(setopt browse-url-browser-function 'eww-browse-url)
+(setup browse-url
+  (:when-loaded
+    (:with-feature eww
+      (setopt browse-url-browser-function #'eww-browse-url))))
+#+end_src
+
+*** Configure the =shr= “Simple HTML Renderer” feature
+
+While this feature is predominantly used for rendering documents in =eww=,
+it is often used in other features (TODO: which features?).
+
+#+begin_src emacs-lisp
+(setup shr
+  (:when-loaded
+    (setopt shr-use-colors t)
+    (setopt shr-folding-mode t)
+    (setopt shr-bullet "• ")))
 #+end_src
 
 *** TODO Use a different browser for some domains
-
 *** Configure EWW
-:PROPERTIES:
-:ID:       15ef1788-7ded-42e9-8109-019b4e6bb03b
-:END:
 
 #+begin_src emacs-lisp
-(setopt shr-use-colors t)
-(setopt shr-folding-mode t)
-(setopt shr-bullet "• ")
+(setup eww
+  (:also-load ceamx-eww)
+  (:bind "," '("scroll down" . scroll-up-command)
+         "." '("scroll up" . scroll-down-command)
+         "o" '("open link" . link-hint-open-link))
+  (:with-map ceamx-launch-prefix
+    (:bind "b" #'eww))
+  (:with-feature ceamx-eww
+    (:with-map ceamx-launch-prefix
+      (:bind "W" #'ceamx/eww-wiki)))
+  ;; Avoid loading this feature until needed.
+  (:when-loaded
+    (setopt eww-search-prefix "https://duckduckgo.com/html?q=")))
 
-(setopt eww-search-prefix "https://duckduckgo.com/html?q=")
-
-;; HTTP headers may contain user information, which we can limit as needed.
-;; When providing a list of symbols, the symbols indicate what NOT to send.
-;; TODO: Move this elsewhere, as it probably affects other HTTP requests.
-(setopt url-privacy-level '(email lastloc))
-
-(keymap-set ceamx-launch-prefix "b" #'eww)
-(keymap-set ceamx-launch-prefix "W" #'ceamx/eww-wiki)
-
-(after! eww
-  (define-keymap :keymap eww-mode-map
-    "," '("scroll down" . scroll-up-command)
-    "." '("scroll up" . scroll-down-command)
-    "o" '("open link" . link-hint-open-link)))
+(setup url
+  ;; HTTP headers may contain user information, which we can limit as needed.
+  ;; When providing a list of symbols, the symbols indicate what NOT to send.
+  ;; TODO: Move this elsewhere, as it probably affects other HTTP requests.
+  (setopt url-privacy-level '(email lastloc)))
 #+end_src
 
 *** Cleanup the rendering of some pages
-:PROPERTIES:
-:ID:       2fa70c64-7584-4a88-8a74-b3345bb3de3d
-:END:
 
 #+begin_src emacs-lisp
-(use-feature! ceamx-eww
-  :after eww
-  :functions (ceamx-eww-rerender)
-  :init
-  (add-hook 'eww-after-render-hook #'ceamx-eww-rerender))
+(setup eww
+  (:when-loaded
+    (:with-feature ceamx-eww
+      (:with-function #'ceamx-eww-rerender
+        (:hook-into eww-after-render-hook)))))
 #+end_src
 
 *** Provide the ~ceamx-init-eww~ feature
-:PROPERTIES:
-:ID:       5632344a-8c09-47e7-960d-92fdf3bbd64b
-:END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-eww.el :comments no
 (provide 'ceamx-init-eww)
