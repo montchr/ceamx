@@ -388,24 +388,6 @@ The ORDER can be used to deduce the feature context."
 
 
 
-;; Add the =:autoload= contextual macro:
-
-
-;; <https://www.emacswiki.org/emacs/SetupEl#h5o-7>
-(setup-define :autoload
-  (lambda (func)
-    (let ((fn (if (memq (car-safe func) '(quote function))
-                  (cadr func)
-                func)))
-      `(unless (fboundp (quote ,fn))
-         (autoload (function ,fn) ,(symbol-name (setup-get 'feature)) nil t))))
-  :documentation "Autoload COMMAND if not already bound."
-  :debug '(form)
-  :repeatable t
-  :signature '(FUNC ...))
-
-
-
 ;; Add the =:load-after= contextual macro:
 
 
