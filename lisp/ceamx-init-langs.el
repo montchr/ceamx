@@ -648,23 +648,24 @@ non-nil, buffers will never be formatted upon save."
     "M-s" nil
     "RET" #'paredit-newline))
 
-;; =kbd-mode= :: syntax support for =kmonad= and =kanata= configs
+;; =kanata-kbd-mode= :: syntax support for =kmonad= configs
 
-;; + Package :: [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
-
-
-(package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
+;; + Package :: [[https://github.com/chmouel/kanata-kbd-mode/][GitHub - chmouel/kanata-kbd-mode: Major mode for editing Kanata .kbd configuration files in Emacs.]]
 
 
+(setup (:package kanata-kbd-mode :host github :repo "chmouel/kanata-kbd-mode")
+  (:file-match "\\.kbd\\'")
 
-;; Unfortunately, we need to inhibit formatters because whitespace is used to convey
-;; non-syntactic meaning to the reader.
-
-
-(after! kbd-mode
-  (add-to-list 'ceamx-format-on-save-disabled-modes #'kbd-mode)
-  (after! lispy
-    (add-to-list 'lispy-no-indent-modes #'kbd-mode)))
+  ;; Unfortunately, we need to inhibit format-on-save for these files
+  ;; because whitespace is used to convey non-syntactic meaning.
+  ;;
+  ;; NOTE: `ceamx-format-on-save-disabled-modes' is currently defined in
+  ;; the same file as this configuration.  If it ever moves to a
+  ;; different file, this reference will need to be updated.
+  (:option (prepend ceamx-format-on-save-disabled-modes) #'kanata-kbd-mode)
+  (:with-feature lispy
+    (:when-loaded
+      (:option (prepend lispy-no-indent-modes) #'kanata-kbd-mode))))
 
 ;; General Elisp support customizations
 

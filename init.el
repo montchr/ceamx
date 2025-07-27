@@ -358,9 +358,7 @@ unimportant since it happens during compilation anyway."
 
 
 (defun ceamx+setup--wrap-to-install-elpaca-package (body _name)
-  "Wrap BODY in an `elpaca' block when `:package' is provided.
-Elpaca support for the `:package' keyword is incompatible with the
-builtin package manager (`package') backend."
+  "Wrap BODY in an `elpaca' block when `:package' is provided."
   (if (assq 'package setup-attributes)
       `(elpaca ,(cdr (assq 'package setup-attributes))
          ,@(macroexp-unprogn body))
@@ -382,7 +380,10 @@ builtin package manager (`package') backend."
     nil)
   :documentation "Install ORDER with the `elpaca' package manager.
 The ORDER can be used to deduce the feature context.  RECIPE may be
-specified according to the `elpaca' documentation, if needed."
+specified according to the `elpaca' documentation, if needed.
+
+This overrides the default `:package' keyword, as the builtin package
+manager is not supported in combination with `elpaca'."
   :shorthand #'cadr)
 
 

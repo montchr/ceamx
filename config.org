@@ -911,33 +911,34 @@ unimportant since it happens during compilation anyway."
 Add Elpaca support to =setup.el=:
 
 #+begin_src emacs-lisp
-(defun ceamx+setup--wrap-to-install-elpaca-package (body _name)
-  "Wrap BODY in an `elpaca' block when `:package' is provided.
-Elpaca support for the `:package' keyword is incompatible with the
-builtin package manager (`package') backend."
-  (if (assq 'package setup-attributes)
-      `(elpaca ,(cdr (assq 'package setup-attributes))
-         ,@(macroexp-unprogn body))
-    body))
+  (defun ceamx+setup--wrap-to-install-elpaca-package (body _name)
+    "Wrap BODY in an `elpaca' block when `:package' is provided."
+    (if (assq 'package setup-attributes)
+        `(elpaca ,(cdr (assq 'package setup-attributes))
+           ,@(macroexp-unprogn body))
+      body))
 
-(add-to-list 'setup-modifier-list #'ceamx+setup--wrap-to-install-elpaca-package)
+  (add-to-list 'setup-modifier-list #'ceamx+setup--wrap-to-install-elpaca-package)
 
-(setup-define :package
-  (lambda (order &rest recipe)
-    (push (cond
-           ((eq order t) `(package . ,(setup-get 'feature)))
-           ((eq order nil) `(package . nil))
-           (`(package . (,order ,@recipe))))
-          setup-attributes)
-    ;; If the macro returned non-nil, it would try to insert the
-    ;; modified list returned by `push'.  As this value usually cannot
-    ;; be evaluated, it is better to return nil (which the byte compiler
-    ;; will optimize away).
-    nil)
-  :documentation "Install ORDER with the `elpaca' package manager.
-The ORDER can be used to deduce the feature context.  RECIPE may be
-specified according to the `elpaca' documentation, if needed."
-  :shorthand #'cadr)
+  (setup-define :package
+    (lambda (order &rest recipe)
+      (push (cond
+             ((eq order t) `(package . ,(setup-get 'feature)))
+             ((eq order nil) `(package . nil))
+             (`(package . (,order ,@recipe))))
+            setup-attributes)
+      ;; If the macro returned non-nil, it would try to insert the
+      ;; modified list returned by `push'.  As this value usually cannot
+      ;; be evaluated, it is better to return nil (which the byte compiler
+      ;; will optimize away).
+      nil)
+    :documentation "Install ORDER with the `elpaca' package manager.
+  The ORDER can be used to deduce the feature context.  RECIPE may be
+  specified according to the `elpaca' documentation, if needed.
+
+  This overrides the default `:package' keyword, as the builtin package
+  manager is not supported in combination with `elpaca'."
+    :shorthand #'cadr)
 #+end_src
 
 Add the =:load-after= contextual macro:
@@ -6757,22 +6758,24 @@ Configuration for working with Lisps of all kinds.
       (push "\\*lispy-message\\*" popper-reference-buffers)))
 #+end_src
 
-**** =kbd-mode= :: syntax support for =kmonad= and =kanata= configs
+**** =kanata-kbd-mode= :: syntax support for =kmonad= configs
 
-+ Package :: [[https://github.com/kmonad/kbd-mode][GitHub - kmonad/kbd-mode: Emacs mode for syntax highlighting kmonad's .kbd files.]]
-
-#+begin_src emacs-lisp
-(package! (kbd-mode :host github :repo "kmonad/kbd-mode"))
-#+end_src
-
-Unfortunately, we need to inhibit formatters because whitespace is used to convey
-non-syntactic meaning to the reader.
++ Package :: [[https://github.com/chmouel/kanata-kbd-mode/][GitHub - chmouel/kanata-kbd-mode: Major mode for editing Kanata .kbd configuration files in Emacs.]]
 
 #+begin_src emacs-lisp
-(after! kbd-mode
-  (add-to-list 'ceamx-format-on-save-disabled-modes #'kbd-mode)
-  (after! lispy
-    (add-to-list 'lispy-no-indent-modes #'kbd-mode)))
+(setup (:package kanata-kbd-mode :host github :repo "chmouel/kanata-kbd-mode")
+  (:file-match "\\.kbd\\'")
+
+  ;; Unfortunately, we need to inhibit format-on-save for these files
+  ;; because whitespace is used to convey non-syntactic meaning.
+  ;;
+  ;; NOTE: `ceamx-format-on-save-disabled-modes' is currently defined in
+  ;; the same file as this configuration.  If it ever moves to a
+  ;; different file, this reference will need to be updated.
+  (:option (prepend ceamx-format-on-save-disabled-modes) #'kanata-kbd-mode)
+  (:with-feature lispy
+    (:when-loaded
+      (:option (prepend lispy-no-indent-modes) #'kanata-kbd-mode))))
 #+end_src
 
 *** Emacs Lisp
