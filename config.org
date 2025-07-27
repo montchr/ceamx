@@ -5452,9 +5452,18 @@ Here are the definitions for the Bufler grouping rules:
   (setopt project-key-prompt-style t))
 #+end_src
 
-*** =vc-jj= :: Support for the Jujutsu version control system :package:
+*** DISABLED =vc-jj= :: Support for the Jujutsu version control system :package:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 
 + Package :: https://codeberg.org/emacs-jj-vc/vc-jj.el
++ Bug :: <https://codeberg.org/emacs-jj-vc/vc-jj.el/issues/82>
+
+Disabled because it completely breaks ~dired-do-rename~.  I’ve opened a
+bug report on the project’s issue tracker:
+
+<https://codeberg.org/emacs-jj-vc/vc-jj.el/issues/82>
 
 Note that this requires Jujutsu to be configurated for compatibility
 with Git diff formatting style.  This can be done globally in
