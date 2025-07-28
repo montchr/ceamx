@@ -348,22 +348,20 @@
 
 ;; =spacious-padding= :: a comfortable layout density
 
+;; + Website :: <https://protesilaos.com/emacs/spacious-padding>
 
-(package! spacious-padding
-  (add-hook 'ceamx-after-init-hook #'spacious-padding-mode))
 
-(after! spacious-padding
-  (setopt spacious-padding-widths
-          '( :internal-border-width 10
-             :header-line-width 4
-             :mode-line-width 6
-             :tab-width 4
-             :right-divider-width 10
-             :scroll-bar-width 4
-             :left-fringe-width 6
-             :right-fringe-width 6))
-
-  (setopt spacious-padding-subtle-mode-line t))
+(setup (:package spacious-padding)
+  (:hook ceamx-after-init-hook)
+  (setopt spacious-padding-widths '( :internal-border-width 5
+                                      :header-line-width 2
+                                      :mode-line-width 3
+                                      :tab-width 2
+                                      :right-divider-width 10
+                                      :scroll-bar-width 4
+                                      :left-fringe-width 3
+                                      :right-fringe-width 3))
+  (:option spacious-padding-subtle-frame-lines nil))
 
 ;; =olivetti= :: "distraction-free" editing
 

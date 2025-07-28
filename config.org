@@ -1799,22 +1799,48 @@ Set up some pulse triggers.  Find some ideas:  [[https://github.com/howardabrams
 
 *** =spacious-padding= :: a comfortable layout density
 
++ Website :: <https://protesilaos.com/emacs/spacious-padding>
+
 #+begin_src emacs-lisp
-(package! spacious-padding
-  (add-hook 'ceamx-after-init-hook #'spacious-padding-mode))
+(setup (:package spacious-padding)
+  (:hook ceamx-after-init-hook)
+  (setopt spacious-padding-widths '( :internal-border-width 5
+                                      :header-line-width 2
+                                      :mode-line-width 3
+                                      :tab-width 2
+                                      :right-divider-width 10
+                                      :scroll-bar-width 4
+                                      :left-fringe-width 3
+                                      :right-fringe-width 3))
+  (:option spacious-padding-subtle-frame-lines nil))
+#+end_src
 
-(after! spacious-padding
-  (setopt spacious-padding-widths
-          '( :internal-border-width 10
-             :header-line-width 4
-             :mode-line-width 6
-             :tab-width 4
-             :right-divider-width 10
-             :scroll-bar-width 4
-             :left-fringe-width 6
-             :right-fringe-width 6))
+*** DISABLED Configure default frame parameters manually
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 
-  (setopt spacious-padding-subtle-mode-line t))
+#+begin_src emacs-lisp
+(progn
+  (modify-all-frames-parameters
+   '((internal-border-width . 10)
+     (child-frame-border-width . 5)
+
+     (vertical-scroll-bars . nil)
+     (horizontal-scroll-bars . nil)
+     (scroll-bar-width . nil)
+     (scroll-bar-height . nil)
+
+     (left-fringe . 8)
+     (right-fringe . 8)
+     (right-divider-width . 10)
+     (bottom-divider-width . 5)))
+  (dolist (face '(window-divider
+                  window-divider-first-pixel
+                  window-divider-last-pixel))
+    (face-spec-reset-face face)
+    (set-face-foreground face (face-attribute 'default :background)))
+  (set-face-background 'fringe (face-attribute 'default :background)))
 #+end_src
 
 *** =olivetti= :: "distraction-free" editing
