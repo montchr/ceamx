@@ -1506,27 +1506,21 @@ usually wrongly fontified as a metadata block."
 ;; ~flymake~ will handle it just fine.
 
 
-(use-feature! emacs
-  :config
-  ;; Make files executable if their first line has a shebang.
-  (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p))
-
-(after! eglot
-  (add-to-list 'eglot-server-programs
-      '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))))
-
-(after! sh-script
-  (add-hook 'sh-mode-hook #'eglot-ensure)
-  (add-hook 'bash-ts-mode-hook #'eglot-ensure)
-  (add-hook 'sh-mode-hook #'flymake-mode)
-  (add-hook 'bash-ts-mode-hook #'flymake-mode))
+(setup nil
+  (:with-function #'executable-make-buffer-file-executable-if-script-p
+    (:hook-into after-save-hook))
+  (:with-feature eglot
+    (:option (prepend eglot-server-programs)
+             '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
+    (:with-function #'eglot-ensure
+      (:hook-into sh-mode-hook bash-ts-mode-hook)))
+  (:with-feature flymake
+    (:hook sh-mode-hook bash-ts-mode-hook)))
 
 ;; =apache-mode= :: Language support for Apache Web Server configuration files
 
 
-(use-package apache-mode
-  ;; :ensure t
-  )
+(setup (:package apache-mode))
 
 ;; =fish-mode= :: Language support for Fish shell script files
 ;; :PROPERTIES:

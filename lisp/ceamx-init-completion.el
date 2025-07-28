@@ -8,14 +8,15 @@
 ;; :END:
 
 
-(use-feature! emacs
-  :hook ((ceamx-after-init . (minibuffer-depth-indicate-mode
-                              minibuffer-electric-default-mode)))
-  :config
-
+(setup minibuffer
+  (:with-function (minibuffer-depth-indicate-mode
+                   minibuffer-electric-default-mode)
+    (:hook-into ceamx-after-init-hook))
+  (:with-feature savehist
+    (:option savehist-save-minibuffer-history t))
+  (setq-default case-fold-search t)
   (setopt echo-keystrokes 0.25)
   (setopt savehist-save-minibuffer-history t)
-
   ;; Allow opening the minibuffer from inside the minibuffer.
   (setopt enable-recursive-minibuffers t)
   ;; Expand mini-windows to fit their contents if necessary.
@@ -26,12 +27,9 @@
   (setopt minibuffer-prompt-properties '( read-only t
                                           cursor-intangible t
                                           face minibuffer-prompt))
-
   (setopt completion-ignore-case t
           read-buffer-completion-ignore-case t
           read-file-name-completion-ignore-case t)
-  (setq-default case-fold-search t)
-
   (setopt minibuffer-default-prompt-format " [%s]"))
 
 ;; Add an indicator to the ~completing-read-multiple~ prompt

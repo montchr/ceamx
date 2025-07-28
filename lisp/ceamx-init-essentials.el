@@ -233,29 +233,27 @@
 ;; :END:
 
 
-(use-feature! emacs
-  :hook ((before-save . delete-trailing-whitespace))
-
-  :config
+(setup nil
+  (:with-function #'delete-trailing-whitespace
+    (:hook-into before-save-hook))
   (setq-default indent-tabs-mode nil
                 tab-width 8)
 
   (setopt backward-delete-char-untabify-method 'hungry)
   (setopt cycle-spacing-actions '(delete-all-space just-one-space restore))
   (setopt mode-require-final-newline 'visit-save)
-  (setopt sentence-end-double-space t)
+  (setopt sentence-end-double-space t))
 
-  (electric-indent-mode 1))
+(setup electric
+  (:with-mode electric-indent-mode
+    (:hook-into ceamx-after-init-hook)))
 
 ;; Visualize notable and unusual whitespace
 
 
-(use-feature! emacs
-  :hook ((prog-mode . whitespace-mode))
-
-  :config
+(setup whitespace
+  (:hook-into prog-mode-hook)
   (setq-default indicate-empty-lines nil)
-
   (setopt whitespace-style
           '(face
             tabs
@@ -499,8 +497,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;; By default, automatically hard-wrap text in ~prog-mode~ and ~text-mode~:
 
 
-(use-feature! emacs
-  :hook (((prog-mode text-mode) . auto-fill-mode)))
+(setup simple
+  (:with-mode auto-fill-mode
+    (:hook-into prog-mode-hook text-mode-hook)))
 
 
 
@@ -512,8 +511,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;; feels like a good compromise?
 
 
-(use-feature! emacs
-  :config
+(setup buffer
   (setq-default fill-column 72))
 
 
@@ -543,8 +541,7 @@ Common text modes including `markdown-mode' and `org-mode' also
 ;; truncated portion of a line automatically.
 
 
-(use-feature! emacs
-  :config
+(setup buffer
   (setq-default truncate-lines t))
 
 ;; =unfill= :: Reverse/toggle filling/hard-wrapping text :package:keybinds:
@@ -672,14 +669,14 @@ Common text modes including `markdown-mode' and `org-mode' also
 ;; Manage backup files and prevent file-lock clutter
 
 
-(use-feature! emacs
-  :config
-  (setopt create-lockfiles nil
-          ;; TODO: enable under some conditions e.g. not a project,
-          ;; tramp remote file
-          make-backup-files nil
-          delete-by-moving-to-trash t)
+(setup filelock
+  (setopt create-lockfiles nil))
 
+(setup fileio
+  (setopt delete-by-moving-to-trash t))
+
+(setup files
+  (setopt make-backup-files nil)
   (when make-backup-files
     (setopt version-control t
             delete-old-versions t
@@ -692,28 +689,27 @@ Common text modes including `markdown-mode' and `org-mode' also
 ;; :END:
 
 
-(use-feature! emacs
-  :config
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
+(defun ceamx-find-file-create-paths-h ()
+  "Automatically create missing directories when creating new files."
+  (unless (file-remote-p buffer-file-name)
+    (let ((parent-directory (file-name-directory buffer-file-name)))
+      (and (not (file-directory-p parent-directory))
+           (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                             parent-directory))
+           (progn (make-directory parent-directory 'parents)
+                  t)))))
+
+(setup files
   (setopt find-file-suppress-same-file-warnings t
           find-file-visit-truename t)
-
-  ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
-  (def-hook! ceamx-find-file-create-paths-h ()
-    'find-file-not-found-functions
-    "Automatically create missing directories when creating new files."
-    (unless (file-remote-p buffer-file-name)
-      (let ((parent-directory (file-name-directory buffer-file-name)))
-        (and (not (file-directory-p parent-directory))
-             (y-or-n-p (format "Directory `%s' does not exist! Create it?"
-                               parent-directory))
-             (progn (make-directory parent-directory 'parents)
-                    t))))))
+  (:with-function #'ceamx-find-file-create-paths-h
+    (:hook-into find-file-not-found-functions)))
 
 ;; Auto-save file-visiting buffers :buffer:
 
 
-(use-feature! emacs
-  :config
+(setup nil
   (setopt
    ;; Prevent creation of the list of all auto-saved files.
    auto-save-list-file-prefix nil
@@ -725,7 +721,6 @@ Common text modes including `markdown-mode' and `org-mode' also
    auto-save-timeout 30
    ;; Don't create auto-save "~" files.
    auto-save-default nil)
-
   ;; Save file-visiting buffers according to the configured timers.
   (auto-save-visited-mode))
 

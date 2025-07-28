@@ -2622,30 +2622,28 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :hook ((before-save . delete-trailing-whitespace))
-
-  :config
+(setup nil
+  (:with-function #'delete-trailing-whitespace
+    (:hook-into before-save-hook))
   (setq-default indent-tabs-mode nil
                 tab-width 8)
 
   (setopt backward-delete-char-untabify-method 'hungry)
   (setopt cycle-spacing-actions '(delete-all-space just-one-space restore))
   (setopt mode-require-final-newline 'visit-save)
-  (setopt sentence-end-double-space t)
+  (setopt sentence-end-double-space t))
 
-  (electric-indent-mode 1))
+(setup electric
+  (:with-mode electric-indent-mode
+    (:hook-into ceamx-after-init-hook)))
 #+end_src
 
 *** Visualize notable and unusual whitespace
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :hook ((prog-mode . whitespace-mode))
-
-  :config
+(setup whitespace
+  (:hook-into prog-mode-hook)
   (setq-default indicate-empty-lines nil)
-
   (setopt whitespace-style
           '(face
             tabs
@@ -2922,8 +2920,9 @@ Needs better bindings.
 By default, automatically hard-wrap text in ~prog-mode~ and ~text-mode~:
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :hook (((prog-mode text-mode) . auto-fill-mode)))
+(setup simple
+  (:with-mode auto-fill-mode
+    (:hook-into prog-mode-hook text-mode-hook)))
 #+end_src
 
 The original ~fill-column~ value of "70" behaves more-ideally than the
@@ -2934,8 +2933,7 @@ elements (e.g. spacing, line numbers, gutter indicators, etc.).  72
 feels like a good compromise?
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
+(setup buffer
   (setq-default fill-column 72))
 #+end_src
 
@@ -2963,8 +2961,7 @@ Also, related, see ~auto-hscroll-mode~, which can help expose the
 truncated portion of a line automatically.
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
+(setup buffer
   (setq-default truncate-lines t))
 #+end_src
 
@@ -3098,14 +3095,14 @@ truncated portion of a line automatically.
 *** Manage backup files and prevent file-lock clutter
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
-  (setopt create-lockfiles nil
-          ;; TODO: enable under some conditions e.g. not a project,
-          ;; tramp remote file
-          make-backup-files nil
-          delete-by-moving-to-trash t)
+(setup filelock
+  (setopt create-lockfiles nil))
 
+(setup fileio
+  (setopt delete-by-moving-to-trash t))
+
+(setup files
+  (setopt make-backup-files nil)
   (when make-backup-files
     (setopt version-control t
             delete-old-versions t
@@ -3119,29 +3116,28 @@ truncated portion of a line automatically.
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
+;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
+(defun ceamx-find-file-create-paths-h ()
+  "Automatically create missing directories when creating new files."
+  (unless (file-remote-p buffer-file-name)
+    (let ((parent-directory (file-name-directory buffer-file-name)))
+      (and (not (file-directory-p parent-directory))
+           (y-or-n-p (format "Directory `%s' does not exist! Create it?"
+                             parent-directory))
+           (progn (make-directory parent-directory 'parents)
+                  t)))))
+
+(setup files
   (setopt find-file-suppress-same-file-warnings t
           find-file-visit-truename t)
-
-  ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
-  (def-hook! ceamx-find-file-create-paths-h ()
-    'find-file-not-found-functions
-    "Automatically create missing directories when creating new files."
-    (unless (file-remote-p buffer-file-name)
-      (let ((parent-directory (file-name-directory buffer-file-name)))
-        (and (not (file-directory-p parent-directory))
-             (y-or-n-p (format "Directory `%s' does not exist! Create it?"
-                               parent-directory))
-             (progn (make-directory parent-directory 'parents)
-                    t))))))
+  (:with-function #'ceamx-find-file-create-paths-h
+    (:hook-into find-file-not-found-functions)))
 #+end_src
 
 *** Auto-save file-visiting buffers :buffer:
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
+(setup nil
   (setopt
    ;; Prevent creation of the list of all auto-saved files.
    auto-save-list-file-prefix nil
@@ -3153,7 +3149,6 @@ truncated portion of a line automatically.
    auto-save-timeout 30
    ;; Don't create auto-save "~" files.
    auto-save-default nil)
-
   ;; Save file-visiting buffers according to the configured timers.
   (auto-save-visited-mode))
 #+end_src
@@ -3556,8 +3551,7 @@ these utilities.
 *** Baseline search configuration
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
+(setup nil
   (setopt find-library-include-other-files nil)
 
   (keymap-set search-map "r" '("replace..." . ceamx-replace-prefix)))
@@ -3913,14 +3907,15 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :hook ((ceamx-after-init . (minibuffer-depth-indicate-mode
-                              minibuffer-electric-default-mode)))
-  :config
-
+(setup minibuffer
+  (:with-function (minibuffer-depth-indicate-mode
+                   minibuffer-electric-default-mode)
+    (:hook-into ceamx-after-init-hook))
+  (:with-feature savehist
+    (:option savehist-save-minibuffer-history t))
+  (setq-default case-fold-search t)
   (setopt echo-keystrokes 0.25)
   (setopt savehist-save-minibuffer-history t)
-
   ;; Allow opening the minibuffer from inside the minibuffer.
   (setopt enable-recursive-minibuffers t)
   ;; Expand mini-windows to fit their contents if necessary.
@@ -3931,12 +3926,9 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
   (setopt minibuffer-prompt-properties '( read-only t
                                           cursor-intangible t
                                           face minibuffer-prompt))
-
   (setopt completion-ignore-case t
           read-buffer-completion-ignore-case t
           read-file-name-completion-ignore-case t)
-  (setq-default case-fold-search t)
-
   (setopt minibuffer-default-prompt-format " [%s]"))
 #+end_src
 
@@ -4899,14 +4891,11 @@ Define Embark actions for acting on tabs:
 **** Disambiguate/uniquify buffer names
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
+(setup uniqify
   (setopt uniquify-buffer-name-style 'forward)
   (setopt uniquify-separator "/")
-
   ;; Rename after killing uniquified buffer.
   (setopt uniquify-after-kill-buffer-p t)
-
   ;; Don't muck with special buffers.
   (setopt uniquify-ignore-buffers-re "^\\*"))
 #+end_src
@@ -7977,28 +7966,22 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ~flymake~ will handle it just fine.
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
-  ;; Make files executable if their first line has a shebang.
-  (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p))
-
-(after! eglot
-  (add-to-list 'eglot-server-programs
-      '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))))
-
-(after! sh-script
-  (add-hook 'sh-mode-hook #'eglot-ensure)
-  (add-hook 'bash-ts-mode-hook #'eglot-ensure)
-  (add-hook 'sh-mode-hook #'flymake-mode)
-  (add-hook 'bash-ts-mode-hook #'flymake-mode))
+(setup nil
+  (:with-function #'executable-make-buffer-file-executable-if-script-p
+    (:hook-into after-save-hook))
+  (:with-feature eglot
+    (:option (prepend eglot-server-programs)
+             '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
+    (:with-function #'eglot-ensure
+      (:hook-into sh-mode-hook bash-ts-mode-hook)))
+  (:with-feature flymake
+    (:hook sh-mode-hook bash-ts-mode-hook)))
 #+end_src
 
 *** =apache-mode= :: Language support for Apache Web Server configuration files
 
 #+begin_src emacs-lisp
-(use-package apache-mode
-  ;; :ensure t
-  )
+(setup (:package apache-mode))
 #+end_src
 
 *** =fish-mode= :: Language support for Fish shell script files
@@ -9734,7 +9717,8 @@ changing lines.
 + Requires-Executable :: =wtype=
 
 #+begin_src emacs-lisp
-(use-feature! ceamx-typer :demand t)
+(setup ceamx-typer
+  (:require))
 #+end_src
 
 *** Provide the ~ceamx-init-tools~ feature

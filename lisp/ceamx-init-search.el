@@ -5,8 +5,7 @@
 ;; Baseline search configuration
 
 
-(use-feature! emacs
-  :config
+(setup nil
   (setopt find-library-include-other-files nil)
 
   (keymap-set search-map "r" '("replace..." . ceamx-replace-prefix)))
