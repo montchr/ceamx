@@ -291,9 +291,18 @@
 (after! pulsar
   (setopt pulsar-pulse t
           pulsar-delay 0.055
-          pulsar-iterations 10)
-  (setopt pulsar-face 'pulsar-magenta
-          pulsar-highlight-face 'pulsar-cyan)
+          pulsar-iterations 20)
+  (setopt pulsar-face 'pulsar-generic
+          pulsar-highlight-face 'pulsar-face)
+
+  (dolist (fn '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
+                 bookmark-jump other-window delete-window delete-other-windows
+                 forward-page backward-page scroll-up-command scroll-down-command
+                 tab-new tab-close tab-next outline-backward-same-level
+                 outline-forward-same-level outline-next-heading outline-next-visible-heading
+                 outline-previous-heading outline-previous-visible-heading
+                 outline-up-heading))
+    (cl-pushnew fn pulsar-pulse-functions))
 
   (dolist (fn '(pulsar-pulse-line-red
                 pulsar-recenter-top

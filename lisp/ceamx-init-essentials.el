@@ -136,7 +136,10 @@
   (define-keymap :keymap ceamx-file-prefix
     "c" #'crux-copy-file-preserve-attributes
     "d" #'crux-delete-file-and-buffer
-    "r" #'crux-rename-file-and-buffer))
+    "r" #'crux-rename-file-and-buffer)
+
+  (after! pulsar
+    (cl-pushnew #'crux-other-window-or-switch-buffer pulsar-pulse-functions)))
 
 ;; =tmr= :: set timers using a convenient notation
 ;; :PROPERTIES:
