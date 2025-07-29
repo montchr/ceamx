@@ -6066,18 +6066,11 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 (package! rainbow-mode)
 #+end_src
 
-*** DISABLED =prism= :: Disperse structural forms into depth-based color strata :package:
-:PROPERTIES:
-:ID:       ec248745-19a9-4e3d-9c58-c0df60ee5514
-:END:
+*** =prism= :: Disperse structural forms into depth-based color strata :package:
 
-Not my cup of tee...
-
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (use-package prism
-  ;; :ensure t
-  :hook (((lisp-mode emacs-lisp-mode) . prism-mode)
-         ((python-mode yaml-mode) . prism-whitespace-mode))
+  :hook (((python-mode yaml-mode yaml-ts-mode) . prism-whitespace-mode))
   :config
   (setopt prism-num-faces 16)
   ;; TODO: handle `ef-themes'
@@ -6136,6 +6129,18 @@ Not my cup of tee...
 (use-package hl-todo
   ;;:ensure t
   :hook (prog-mode . hl-todo-mode))
+#+end_src
+
+*** =indent-bars= :: Display indentation guide-bars
+
+#+begin_src emacs-lisp
+(package! indent-bars
+  (dolist (mode '(python-base-mode yaml-mode yaml-ts-mode))
+    (add-hook mode #'indent-bars-mode))
+
+  (setopt indent-bars-no-descend-lists t)
+  (setopt indent-bars-treesit-support t
+          indent-bars-treesit-ignore-blank-lines-types '("module")))
 #+end_src
 
 *** =devdocs= :: Peruse <devdocs.io> docsets locally :help:

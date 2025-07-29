@@ -218,6 +218,56 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
 (package! rainbow-mode)
 
+;; =prism= :: Disperse structural forms into depth-based color strata :package:
+
+
+(use-package prism
+  :hook (((python-mode yaml-mode yaml-ts-mode) . prism-whitespace-mode))
+  :config
+  (setopt prism-num-faces 16)
+  ;; TODO: handle `ef-themes'
+  (after! modus-themes
+    (prism-set-colors
+      :desaturations '(0)               ; do not change
+      :lightens '(0)                    ; do not change
+
+      ;; 4-color:
+      ;; :colors (modus-themes-with-colors
+      ;;           (list blue
+      ;;                 magenta
+      ;;                 magenta-cooler
+      ;;                 green-warmer))
+
+      ;; 8-color:
+      ;; :colors (modus-themes-with-colors
+      ;;           (list blue
+      ;;                 magenta
+      ;;                 magenta-cooler
+      ;;                 cyan-cooler
+      ;;                 fg-main
+      ;;                 blue-warmer
+      ;;                 red-cooler
+      ;;                 cyan))
+
+      ;; 16-color:
+      :colors (modus-themes-with-colors
+                (list fg-main
+                      magenta
+                      cyan-cooler
+                      magenta-cooler
+                      blue
+                      magenta-warmer
+                      cyan-warmer
+                      red-cooler
+                      green
+                      fg-main
+                      cyan
+                      yellow
+                      blue-warmer
+                      red-warmer
+                      green-cooler
+                      yellow-faint)))))
+
 ;; =hl-todo= :: Highlight "TODO" and other codetags in comments and strings :package:
 ;; :PROPERTIES:
 ;; :ID:       fc0d70a5-e486-42ff-8e35-e4fc07069c15
@@ -230,6 +280,17 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 (use-package hl-todo
   ;;:ensure t
   :hook (prog-mode . hl-todo-mode))
+
+;; =indent-bars= :: Display indentation guide-bars
+
+
+(package! indent-bars
+  (dolist (mode '(python-base-mode yaml-mode yaml-ts-mode))
+    (add-hook mode #'indent-bars-mode))
+
+  (setopt indent-bars-no-descend-lists t)
+  (setopt indent-bars-treesit-support t
+          indent-bars-treesit-ignore-blank-lines-types '("module")))
 
 ;; =devdocs= :: Peruse <devdocs.io> docsets locally :help:
 ;; :PROPERTIES:
