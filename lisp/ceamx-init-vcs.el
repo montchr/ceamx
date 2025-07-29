@@ -9,13 +9,14 @@
 ;; :END:
 
 
-(setup ediff
-  (:with-function ( #'ediff-buffers
-                    #'ediff-files
-                    #'ediff-buffers3
-                    #'ediff-files3)
-    (:autoload-this))
-  (:option ediff-keep-variants nil
+(progn
+  ;; TODO: why?
+  ;; (:with-function ( #'ediff-buffers
+  ;;                   #'ediff-files
+  ;;                   #'ediff-buffers3
+  ;;                   #'ediff-files3)
+  ;;   (:autoload-this))
+  (setopt ediff-keep-variants nil
            ediff-make-buffers-readonly-at-startup nil
            ediff-merge-revisions-with-ancestor t
            ediff-show-clashes-only t
@@ -25,14 +26,14 @@
 ;; Set up ~diff-mode~
 
 
-(setup diff-mode
-  (:option diff-default-read-only t
-           diff-advance-after-apply-hunk t
-           diff-update-on-the-fly t
+(progn
+  (setopt diff-default-read-only t
+          diff-advance-after-apply-hunk t
+          diff-update-on-the-fly t
 
-           diff-refine 'font-lock
-           diff-font-lock-prettify t
-           diff-font-lock-syntax 'hunk-also))
+          diff-refine 'font-lock
+          diff-font-lock-prettify t
+          diff-font-lock-syntax 'hunk-also))
 
 ;; Set up version control integration with ~vc-mode~
 ;; :PROPERTIES:
@@ -56,12 +57,13 @@
 ;; Set up project management with =project.el=
 
 
-(setup project
-  (:global "C-x p ." #'project-dired
-           "C-x p RET" #'project-dired
-           "C-x p DEL" #'project-forget-project)
-  (:option project-vc-extra-root-markers '(".project")
-           project-key-prompt-style t))
+(progn
+  (define-keymap :keymap (current-global-map)
+    "C-x p ." #'project-dired
+    "C-x p RET" #'project-dired
+    "C-x p DEL" #'project-forget-project)
+  (setopt project-vc-extra-root-markers '(".project")
+          project-key-prompt-style t))
 
 ;; =diff-hl= :: display version control status indicators in margins
 ;; :PROPERTIES:
@@ -276,11 +278,12 @@
 ;; :END:
 
 
-(setup magit-repos
-  (:load-after magit)
-  (:with-function #'magit-list-repositories
-    (:autoload-this))
-  (:option magit-repository-directories
+(after! magit
+  (require 'magit-repos)
+  ;; TODO: why?
+  ;; (:with-function #'magit-list-repositories
+  ;;   (:autoload-this))
+  (setopt magit-repository-directories
            `((,(file-name-concat ceamx-projects-dir "work") . 2)
              (,(file-name-concat ceamx-projects-dir "sources") . 1)
              (,(file-name-concat ceamx-projects-dir "contrib") . 2))))

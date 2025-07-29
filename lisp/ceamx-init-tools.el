@@ -348,8 +348,8 @@
 ;; + Requires-Executable :: =wtype=
 
 
-(setup ceamx-typer
-  (:require))
+(progn
+  (require 'ceamx-typer))
 
 (provide 'ceamx-init-tools)
 ;;; ceamx-init-tools.el ends here

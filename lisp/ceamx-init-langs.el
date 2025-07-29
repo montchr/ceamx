@@ -434,16 +434,17 @@ non-nil, buffers will never be formatted upon save."
 ;; :END:
 
 
-(setup flymake
-  (:hook-into ceamx-after-init-hook)
+(progn
+  (add-hook 'ceamx-after-init-hook #'flymake-mode)
   ;; Mirror the [C-c !] Flycheck prefix.
-  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
-         "C-c ! n" #'flymake-goto-next-error
-         "C-c ! p" #'flymake-goto-previous-error
-         "C-c ! c" #'flymake-show-buffer-diagnostics)
-  (:option flymake-fringe-indicator-position 'right-fringe
-           flymake-no-changes-timeout 1.0
-            flymake-wrap-around t))
+  (define-keymap :keymap (current-global-map)
+    "C-c ! l" #'flymake-show-buffer-diagnostics
+    "C-c ! n" #'flymake-goto-next-error
+    "C-c ! p" #'flymake-goto-previous-error
+    "C-c ! c" #'flymake-show-buffer-diagnostics)
+  (setopt flymake-fringe-indicator-position 'right-fringe
+          flymake-no-changes-timeout 1.0
+          flymake-wrap-around t))
 
 ;; =flycheck= :: The /other/ file diagnostics provider :package:
 ;; :LOGBOOK:
@@ -653,8 +654,8 @@ non-nil, buffers will never be formatted upon save."
 ;; + Package :: [[https://github.com/chmouel/kanata-kbd-mode/][GitHub - chmouel/kanata-kbd-mode: Major mode for editing Kanata .kbd configuration files in Emacs.]]
 
 
-(setup (:package kanata-kbd-mode :host github :repo "chmouel/kanata-kbd-mode")
-  (:file-match "\\.kbd\\'")
+(package! (kanata-kbd-mode :host github :repo "chmouel/kanata-kbd-mode")
+  (cl-pushnew '("\\.kbd\\'" . kanata-kbd-mode) auto-mode-alist)
 
   ;; Unfortunately, we need to inhibit format-on-save for these files
   ;; because whitespace is used to convey non-syntactic meaning.
@@ -662,10 +663,9 @@ non-nil, buffers will never be formatted upon save."
   ;; NOTE: `ceamx-format-on-save-disabled-modes' is currently defined in
   ;; the same file as this configuration.  If it ever moves to a
   ;; different file, this reference will need to be updated.
-  (:option (prepend ceamx-format-on-save-disabled-modes) #'kanata-kbd-mode)
-  (:with-feature lispy
-    (:when-loaded
-      (:option (prepend lispy-no-indent-modes) #'kanata-kbd-mode))))
+  (cl-pushnew #'kanata-kbd-mode ceamx-format-on-save-disabled-modes)
+  (after! lispy
+    (setopt (prepend lispy-no-indent-modes) #'kanata-kbd-mode)))
 
 ;; General Elisp support customizations
 
@@ -912,8 +912,6 @@ The original function fails in the presence of whitespace after a sexp."
 (add-hook 'prog-mode-hook #'eglot-ensure)
 
 (after! eglot
-  (defvar eglot-server-programs)
-
   (def-advice! +eglot--ensure-available-mode (fn)
     :around #'eglot-ensure
     "Run `eglot-ensure' in supported modes."
@@ -1506,21 +1504,23 @@ usually wrongly fontified as a metadata block."
 ;; ~flymake~ will handle it just fine.
 
 
-(setup nil
-  (:with-function #'executable-make-buffer-file-executable-if-script-p
-    (:hook-into after-save-hook))
-  (:with-feature eglot
-    (:option (prepend eglot-server-programs)
-             '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
-    (:with-function #'eglot-ensure
-      (:hook-into sh-mode-hook bash-ts-mode-hook)))
-  (:with-feature flymake
-    (:hook sh-mode-hook bash-ts-mode-hook)))
+(progn
+  (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
+
+  (dolist (hook '(sh-mode-hook bash-ts-mode-hook))
+    (after! eglot
+      (add-hook hook #'eglot-ensure))
+    (after! flymake
+      (add-hook hook #'flymake-mode)))
+
+  (after! eglot
+    (cl-pushnew '((sh-mode bash-ts-mode) . ("bash-language-server" "start")) eglot-server-programs
+            )))
 
 ;; =apache-mode= :: Language support for Apache Web Server configuration files
 
 
-(setup (:package apache-mode))
+(package! apache-mode)
 
 ;; =fish-mode= :: Language support for Fish shell script files
 ;; :PROPERTIES:
@@ -1554,7 +1554,7 @@ usually wrongly fontified as a metadata block."
 ;; Requires that the =just-lsp= package is available in the environment.
 
 
-(use-feature! ceamx-eglot
+(use-feature! eglot
   :demand t
   :after eglot
   :defines (ceamx-eglot-server-configurations-alist)

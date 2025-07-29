@@ -114,29 +114,30 @@
 ;; :END:
 
 
-(setup (:package crux)
-  (:global "C-k" #'crux-smart-kill-line
-           "C-^" #'crux-top-join-line
+(package! crux
+  (define-keymap :keymap (current-global-map)
+    "C-k" #'crux-smart-kill-line
+    "C-^" #'crux-top-join-line
 
-           "C-x 4 t" #'crux-transpose-windows
+    "C-x 4 t" #'crux-transpose-windows
 
-           "C-S-d" #'crux-duplicate-current-line-or-region
-           "C-S-RET" #'crux-smart-open-line-above
-           "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
+    "C-S-d" #'crux-duplicate-current-line-or-region
+    "C-S-RET" #'crux-smart-open-line-above
+    "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
 
-           "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
+    "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
 
-           "S-RET" #'crux-smart-open-line)
-  (:with-map ceamx-buffer-prefix
-    (:bind "f" #'crux-cleanup-buffer-or-region
-           "M-w" #'crux-kill-buffer-truename))
-  (:with-map ceamx-file-prefix
-    (:bind "c" #'crux-copy-file-preserve-attributes
-           "d" #'crux-delete-file-and-buffer
-           "r" #'crux-rename-file-and-buffer))
-  (:with-feature pulsar
-    (:when-loaded
-      (:option (prepend pulsar-pulse-functions) #'crux-other-window-or-switch-buffer))))
+    "S-RET" #'crux-smart-open-line)
+  (define-keymap :keymap ceamx-buffer-prefix
+    "f" #'crux-cleanup-buffer-or-region
+    "M-w" #'crux-kill-buffer-truename)
+  (define-keymap :keymap ceamx-file-prefix
+    "c" #'crux-copy-file-preserve-attributes
+    "d" #'crux-delete-file-and-buffer
+    "r" #'crux-rename-file-and-buffer)
+
+  (after! pulsar
+    (cl-pushnew crux-other-window-or-switch-buffer pulsar-pulse-functions)))
 
 ;; =tmr= :: set timers using a convenient notation
 ;; :PROPERTIES:
@@ -233,9 +234,10 @@
 ;; :END:
 
 
-(setup nil
-  (:with-function #'delete-trailing-whitespace
-    (:hook-into before-save-hook))
+(progn
+  (add-hook 'ceamx-after-init-hook #'electric-indent-mode)
+  (add-hook 'before-save-hook #'delete-trailing-whitespace)
+
   (setq-default indent-tabs-mode nil
                 tab-width 8)
 
@@ -244,15 +246,12 @@
   (setopt mode-require-final-newline 'visit-save)
   (setopt sentence-end-double-space t))
 
-(setup electric
-  (:with-mode electric-indent-mode
-    (:hook-into ceamx-after-init-hook)))
-
 ;; Visualize notable and unusual whitespace
 
 
-(setup whitespace
-  (:hook-into prog-mode-hook)
+(progn
+  (add-hook 'prog-mode-hook #'whitespace-mode)
+
   (setq-default indicate-empty-lines nil)
   (setopt whitespace-style
           '(face
@@ -497,9 +496,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;; By default, automatically hard-wrap text in ~prog-mode~ and ~text-mode~:
 
 
-(setup simple
-  (:with-mode auto-fill-mode
-    (:hook-into prog-mode-hook text-mode-hook)))
+(progn
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook #'auto-fill-mode)))
 
 
 
@@ -511,7 +510,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;; feels like a good compromise?
 
 
-(setup buffer
+(progn
   (setq-default fill-column 72))
 
 
@@ -541,7 +540,7 @@ Common text modes including `markdown-mode' and `org-mode' also
 ;; truncated portion of a line automatically.
 
 
-(setup buffer
+(progn
   (setq-default truncate-lines t))
 
 ;; =unfill= :: Reverse/toggle filling/hard-wrapping text :package:keybinds:
@@ -669,13 +668,9 @@ Common text modes including `markdown-mode' and `org-mode' also
 ;; Manage backup files and prevent file-lock clutter
 
 
-(setup filelock
-  (setopt create-lockfiles nil))
-
-(setup fileio
-  (setopt delete-by-moving-to-trash t))
-
-(setup files
+(progn
+  (setopt create-lockfiles nil)
+  (setopt delete-by-moving-to-trash t)
   (setopt make-backup-files nil)
   (when make-backup-files
     (setopt version-control t
@@ -690,7 +685,7 @@ Common text modes including `markdown-mode' and `org-mode' also
 
 
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
-(defun ceamx-find-file-create-paths-h ()
+(defun ceamx--find-file-create-paths ()
   "Automatically create missing directories when creating new files."
   (unless (file-remote-p buffer-file-name)
     (let ((parent-directory (file-name-directory buffer-file-name)))
@@ -700,16 +695,15 @@ Common text modes including `markdown-mode' and `org-mode' also
            (progn (make-directory parent-directory 'parents)
                   t)))))
 
-(setup files
+(progn
   (setopt find-file-suppress-same-file-warnings t
           find-file-visit-truename t)
-  (:with-function #'ceamx-find-file-create-paths-h
-    (:hook-into find-file-not-found-functions)))
+  (cl-pushnew #'ceamx--find-file-create-paths find-file-not-found-functions))
 
 ;; Auto-save file-visiting buffers :buffer:
 
 
-(setup nil
+(progn
   (setopt
    ;; Prevent creation of the list of all auto-saved files.
    auto-save-list-file-prefix nil
@@ -721,6 +715,7 @@ Common text modes including `markdown-mode' and `org-mode' also
    auto-save-timeout 30
    ;; Don't create auto-save "~" files.
    auto-save-default nil)
+
   ;; Save file-visiting buffers according to the configured timers.
   (auto-save-visited-mode))
 

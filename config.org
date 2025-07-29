@@ -900,58 +900,6 @@ unimportant since it happens during compilation anyway."
   (ceamx--remove-sharp-quotes args))
 #+end_src
 
-**** Install and configure =setup.el=
-
-#+begin_src emacs-lisp
-(elpaca setup
-  (require 'setup))
-(elpaca-wait)
-#+end_src
-
-Add Elpaca support to =setup.el=:
-
-#+begin_src emacs-lisp
-  (defun ceamx+setup--wrap-to-install-elpaca-package (body _name)
-    "Wrap BODY in an `elpaca' block when `:package' is provided."
-    (if (assq 'package setup-attributes)
-        `(elpaca ,(cdr (assq 'package setup-attributes))
-           ,@(macroexp-unprogn body))
-      body))
-
-  (add-to-list 'setup-modifier-list #'ceamx+setup--wrap-to-install-elpaca-package)
-
-  (setup-define :package
-    (lambda (order &rest recipe)
-      (push (cond
-             ((eq order t) `(package . ,(setup-get 'feature)))
-             ((eq order nil) `(package . nil))
-             (`(package . (,order ,@recipe))))
-            setup-attributes)
-      ;; If the macro returned non-nil, it would try to insert the
-      ;; modified list returned by `push'.  As this value usually cannot
-      ;; be evaluated, it is better to return nil (which the byte compiler
-      ;; will optimize away).
-      nil)
-    :documentation "Install ORDER with the `elpaca' package manager.
-  The ORDER can be used to deduce the feature context.  RECIPE may be
-  specified according to the `elpaca' documentation, if needed.
-
-  This overrides the default `:package' keyword, as the builtin package
-  manager is not supported in combination with `elpaca'."
-    :shorthand #'cadr)
-#+end_src
-
-Add the =:load-after= contextual macro:
-
-#+begin_src emacs-lisp
-(setup-define :load-after
-    (lambda (&rest features)
-      (let ((body `(require ',(setup-get 'feature))))
-        (dolist (feature (nreverse features))
-          (setq body `(with-eval-after-load ',feature ,body)))
-        body))
-    :documentation "Load the current feature after FEATURES.")
-#+end_src
 
 *** =gcmh=: manage running garbage collection on idle :package:perf:
 
@@ -1735,33 +1683,27 @@ for example, we were no longer using the =eros= package…
 #+begin_src emacs-lisp
 (package! pulsar
   (add-hook 'ceamx-after-init-hook #'pulsar-global-mode)
-  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line))
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
 
-(after! pulsar
   (setopt pulsar-pulse t
           pulsar-delay 0.055
           pulsar-iterations 10)
   (setopt pulsar-face 'pulsar-magenta
           pulsar-highlight-face 'pulsar-cyan)
 
-  (dolist (fn '(pulsar-pulse-line-red
-                pulsar-recenter-top
-                pulsar-reveal-entry))
-    (add-hook 'next-error-hook #'fn)))
-#+end_src
-
-Set up some pulse triggers.  Find some ideas:  [[https://github.com/howardabrams/hamacs/blob/main/ha-display.org#find-the-bloody-cursor][hamacs/ha-display.org at main · howardabrams/hamacs · GitHub]]
-
-#+begin_src emacs-lisp
-(setup (:package pulsar)
-  (:when-loaded
-    (:option (prepend* pulsar-pulse-functions)
-             '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
+  (with-eval-after-load 'pulsar
+    (dolist (func '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
                 bookmark-jump other-window delete-window delete-other-windows
                 forward-page backward-page scroll-up-command scroll-down-command
                 tab-new tab-close tab-next outline-backward-same-level
                 outline-forward-same-level outline-next-visible-heading
-                outline-previous-visible-heading outline-up-heading))))
+                outline-previous-visible-heading outline-up-heading))
+      (cl-pushnew func pulsar-pulse-functions)))
+
+  (dolist (fn '(pulsar-pulse-line-red
+                pulsar-recenter-top
+                pulsar-reveal-entry))
+    (add-hook 'next-error-hook fn)))
 #+end_src
 
 *** Window highlighting
@@ -1802,17 +1744,18 @@ Set up some pulse triggers.  Find some ideas:  [[https://github.com/howardabrams
 + Website :: <https://protesilaos.com/emacs/spacious-padding>
 
 #+begin_src emacs-lisp
-(setup (:package spacious-padding)
-  (:hook ceamx-after-init-hook)
+(package! spacious-padding
+  (spacious-padding-mode 1)
+
   (setopt spacious-padding-widths '( :internal-border-width 5
-                                      :header-line-width 2
-                                      :mode-line-width 3
-                                      :tab-width 2
-                                      :right-divider-width 10
-                                      :scroll-bar-width 4
-                                      :left-fringe-width 3
-                                      :right-fringe-width 3))
-  (:option spacious-padding-subtle-frame-lines nil))
+                                     :header-line-width 2
+                                     :mode-line-width 3
+                                     :tab-width 2
+                                     :right-divider-width 10
+                                     :scroll-bar-width 4
+                                     :left-fringe-width 3
+                                     :right-fringe-width 3))
+  (setopt spacious-padding-subtle-frame-lines nil))
 #+end_src
 
 *** DISABLED Configure default frame parameters manually
@@ -2498,29 +2441,30 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 :END:
 
 #+begin_src emacs-lisp
-(setup (:package crux)
-  (:global "C-k" #'crux-smart-kill-line
-           "C-^" #'crux-top-join-line
+(package! crux
+  (define-keymap :keymap (current-global-map)
+    "C-k" #'crux-smart-kill-line
+    "C-^" #'crux-top-join-line
 
-           "C-x 4 t" #'crux-transpose-windows
+    "C-x 4 t" #'crux-transpose-windows
 
-           "C-S-d" #'crux-duplicate-current-line-or-region
-           "C-S-RET" #'crux-smart-open-line-above
-           "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
+    "C-S-d" #'crux-duplicate-current-line-or-region
+    "C-S-RET" #'crux-smart-open-line-above
+    "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
 
-           "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
+    "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
 
-           "S-RET" #'crux-smart-open-line)
-  (:with-map ceamx-buffer-prefix
-    (:bind "f" #'crux-cleanup-buffer-or-region
-           "M-w" #'crux-kill-buffer-truename))
-  (:with-map ceamx-file-prefix
-    (:bind "c" #'crux-copy-file-preserve-attributes
-           "d" #'crux-delete-file-and-buffer
-           "r" #'crux-rename-file-and-buffer))
-  (:with-feature pulsar
-    (:when-loaded
-      (:option (prepend pulsar-pulse-functions) #'crux-other-window-or-switch-buffer))))
+    "S-RET" #'crux-smart-open-line)
+  (define-keymap :keymap ceamx-buffer-prefix
+    "f" #'crux-cleanup-buffer-or-region
+    "M-w" #'crux-kill-buffer-truename)
+  (define-keymap :keymap ceamx-file-prefix
+    "c" #'crux-copy-file-preserve-attributes
+    "d" #'crux-delete-file-and-buffer
+    "r" #'crux-rename-file-and-buffer)
+
+  (after! pulsar
+    (cl-pushnew crux-other-window-or-switch-buffer pulsar-pulse-functions)))
 #+end_src
 
 *** =tmr= :: set timers using a convenient notation
@@ -2622,9 +2566,10 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 :END:
 
 #+begin_src emacs-lisp
-(setup nil
-  (:with-function #'delete-trailing-whitespace
-    (:hook-into before-save-hook))
+(progn
+  (add-hook 'ceamx-after-init-hook #'electric-indent-mode)
+  (add-hook 'before-save-hook #'delete-trailing-whitespace)
+
   (setq-default indent-tabs-mode nil
                 tab-width 8)
 
@@ -2632,17 +2577,14 @@ NOTE: Incompatible with kitchen-sink modeline packages like
   (setopt cycle-spacing-actions '(delete-all-space just-one-space restore))
   (setopt mode-require-final-newline 'visit-save)
   (setopt sentence-end-double-space t))
-
-(setup electric
-  (:with-mode electric-indent-mode
-    (:hook-into ceamx-after-init-hook)))
 #+end_src
 
 *** Visualize notable and unusual whitespace
 
 #+begin_src emacs-lisp
-(setup whitespace
-  (:hook-into prog-mode-hook)
+(progn
+  (add-hook 'prog-mode-hook #'whitespace-mode)
+
   (setq-default indicate-empty-lines nil)
   (setopt whitespace-style
           '(face
@@ -2920,9 +2862,9 @@ Needs better bindings.
 By default, automatically hard-wrap text in ~prog-mode~ and ~text-mode~:
 
 #+begin_src emacs-lisp
-(setup simple
-  (:with-mode auto-fill-mode
-    (:hook-into prog-mode-hook text-mode-hook)))
+(progn
+  (dolist (hook '(prog-mode-hook text-mode-hook))
+    (add-hook hook #'auto-fill-mode)))
 #+end_src
 
 The original ~fill-column~ value of "70" behaves more-ideally than the
@@ -2933,7 +2875,7 @@ elements (e.g. spacing, line numbers, gutter indicators, etc.).  72
 feels like a good compromise?
 
 #+begin_src emacs-lisp
-(setup buffer
+(progn
   (setq-default fill-column 72))
 #+end_src
 
@@ -2961,7 +2903,7 @@ Also, related, see ~auto-hscroll-mode~, which can help expose the
 truncated portion of a line automatically.
 
 #+begin_src emacs-lisp
-(setup buffer
+(progn
   (setq-default truncate-lines t))
 #+end_src
 
@@ -3095,13 +3037,9 @@ truncated portion of a line automatically.
 *** Manage backup files and prevent file-lock clutter
 
 #+begin_src emacs-lisp
-(setup filelock
-  (setopt create-lockfiles nil))
-
-(setup fileio
-  (setopt delete-by-moving-to-trash t))
-
-(setup files
+(progn
+  (setopt create-lockfiles nil)
+  (setopt delete-by-moving-to-trash t)
   (setopt make-backup-files nil)
   (when make-backup-files
     (setopt version-control t
@@ -3117,7 +3055,7 @@ truncated portion of a line automatically.
 
 #+begin_src emacs-lisp
 ;; via <https://github.com/doomemacs/doomemacs/blob/e96624926d724aff98e862221422cd7124a99c19/lisp/doom-editor.el#L78-L89>
-(defun ceamx-find-file-create-paths-h ()
+(defun ceamx--find-file-create-paths ()
   "Automatically create missing directories when creating new files."
   (unless (file-remote-p buffer-file-name)
     (let ((parent-directory (file-name-directory buffer-file-name)))
@@ -3127,17 +3065,16 @@ truncated portion of a line automatically.
            (progn (make-directory parent-directory 'parents)
                   t)))))
 
-(setup files
+(progn
   (setopt find-file-suppress-same-file-warnings t
           find-file-visit-truename t)
-  (:with-function #'ceamx-find-file-create-paths-h
-    (:hook-into find-file-not-found-functions)))
+  (cl-pushnew #'ceamx--find-file-create-paths find-file-not-found-functions))
 #+end_src
 
 *** Auto-save file-visiting buffers :buffer:
 
 #+begin_src emacs-lisp
-(setup nil
+(progn
   (setopt
    ;; Prevent creation of the list of all auto-saved files.
    auto-save-list-file-prefix nil
@@ -3149,6 +3086,7 @@ truncated portion of a line automatically.
    auto-save-timeout 30
    ;; Don't create auto-save "~" files.
    auto-save-default nil)
+
   ;; Save file-visiting buffers according to the configured timers.
   (auto-save-visited-mode))
 #+end_src
@@ -3551,7 +3489,7 @@ these utilities.
 *** Baseline search configuration
 
 #+begin_src emacs-lisp
-(setup nil
+(progn
   (setopt find-library-include-other-files nil)
 
   (keymap-set search-map "r" '("replace..." . ceamx-replace-prefix)))
@@ -3907,12 +3845,11 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 :END:
 
 #+begin_src emacs-lisp
-(setup minibuffer
-  (:with-function (minibuffer-depth-indicate-mode
-                   minibuffer-electric-default-mode)
-    (:hook-into ceamx-after-init-hook))
-  (:with-feature savehist
-    (:option savehist-save-minibuffer-history t))
+(progn
+  (dolist (mode '(minibuffer-depth-indicate-mode
+                   minibuffer-electric-default-mode))
+    (add-hook 'ceamx-after-init-hook mode))
+  (setopt savehist-save-minibuffer-history t)
   (setq-default case-fold-search t)
   (setopt echo-keystrokes 0.25)
   (setopt savehist-save-minibuffer-history t)
@@ -4891,7 +4828,7 @@ Define Embark actions for acting on tabs:
 **** Disambiguate/uniquify buffer names
 
 #+begin_src emacs-lisp
-(setup uniqify
+(progn
   (setopt uniquify-buffer-name-style 'forward)
   (setopt uniquify-separator "/")
   ;; Rename after killing uniquified buffer.
@@ -5143,11 +5080,10 @@ Action alist entries are:
 **** Restore previous window configurations with the ~winner-mode~ feature :history:
 
 #+begin_src emacs-lisp
-(setup winner
-  (:hook-into ceamx-after-init-hook)
-  (:with-feature pulsar
-    (:when-loaded
-      (:option (prepend* pulsar-pulse-functions) '(winner-redo winner-undo)))))
+(progn
+  (add-hook 'ceamx-after-init-hook #'winner-mode)
+  (after! pulsar
+    (pushnew! pulsar-pulse-functions winner-redo winner-undo)))
 #+end_src
 
 **** =golden-ratio= :: automatically resize windows according to Ancient Wisdom :package:
@@ -5163,17 +5099,16 @@ Action alist entries are:
 + Package :: <https://github.com/abo-abo/ace-window>
 
 #+begin_src emacs-lisp
-(setup (:package ace-window)
-  (:option aw-scope 'visible)
-  (:with-function #'ace-window
-    (:bind-to "C-x w w"))
-  (:when-loaded
-    (:with-feature pulsar
-      (:when-loaded
-        (:option (prepend* pulsar-pulse-functions)
-                 '( aw-copy-window aw-delete-window aw-move-window
-                    aw-split-window-fair aw-split-window-horz
-                    aw-split-window-vert aw-swap-window))))))
+(package! ace-window
+  (keymap-global-set "C-x w w" #'ace-window)
+
+  (setopt aw-scope 'visible)
+
+  (after! (ace-window pulsar)
+    (pushnew! pulsar-pulse-functions
+              aw-copy-window aw-delete-window aw-move-window
+              aw-split-window-fair aw-split-window-horz
+              aw-split-window-vert aw-swap-window)))
 #+end_src
 
 **** =transpose-frame= :: transpose a frame's windows
@@ -5466,15 +5401,15 @@ Here are the definitions for the Bufler grouping rules:
 *** Pulse on window actions with =pulsar= :ui:pulsar:
 
 #+begin_src emacs-lisp
-(setup ceamx-window
-  (:with-feature pulsar
-    (:when-loaded
-      (:option (prepend* pulsar-pulse-functions)
-  	       '(ceamx/buffer-create
-  	         ceamx/other-window
-  	         ceamx/split-window
-  	         ceamx/swap-or-rotate-windows
-  	         ceamx-window-swap-or-split)))))
+(progn
+  (require 'ceamx-window)
+  (after! pulsar
+    (pushnew! pulsar-pulse-functions
+              ceamx/buffer-create
+              ceamx/other-window
+              ceamx/split-window
+              ceamx/swap-or-rotate-windows
+              ceamx-window-swap-or-split)))
 #+end_src
 
 *** Provide the ~ceamx-init-window~ feature
@@ -5511,13 +5446,14 @@ Here are the definitions for the Bufler grouping rules:
 :END:
 
 #+begin_src emacs-lisp
-(setup ediff
-  (:with-function ( #'ediff-buffers
-                    #'ediff-files
-                    #'ediff-buffers3
-                    #'ediff-files3)
-    (:autoload-this))
-  (:option ediff-keep-variants nil
+(progn
+  ;; TODO: why?
+  ;; (:with-function ( #'ediff-buffers
+  ;;                   #'ediff-files
+  ;;                   #'ediff-buffers3
+  ;;                   #'ediff-files3)
+  ;;   (:autoload-this))
+  (setopt ediff-keep-variants nil
            ediff-make-buffers-readonly-at-startup nil
            ediff-merge-revisions-with-ancestor t
            ediff-show-clashes-only t
@@ -5528,14 +5464,14 @@ Here are the definitions for the Bufler grouping rules:
 *** Set up ~diff-mode~
 
 #+begin_src emacs-lisp
-(setup diff-mode
-  (:option diff-default-read-only t
-           diff-advance-after-apply-hunk t
-           diff-update-on-the-fly t
+(progn
+  (setopt diff-default-read-only t
+          diff-advance-after-apply-hunk t
+          diff-update-on-the-fly t
 
-           diff-refine 'font-lock
-           diff-font-lock-prettify t
-           diff-font-lock-syntax 'hunk-also))
+          diff-refine 'font-lock
+          diff-font-lock-prettify t
+          diff-font-lock-syntax 'hunk-also))
 #+end_src
 
 *** Set up version control integration with ~vc-mode~
@@ -5561,12 +5497,13 @@ Here are the definitions for the Bufler grouping rules:
 *** Set up project management with =project.el=
 
 #+begin_src emacs-lisp
-(setup project
-  (:global "C-x p ." #'project-dired
-           "C-x p RET" #'project-dired
-           "C-x p DEL" #'project-forget-project)
-  (:option project-vc-extra-root-markers '(".project")
-           project-key-prompt-style t))
+(progn
+  (define-keymap :keymap (current-global-map)
+    "C-x p ." #'project-dired
+    "C-x p RET" #'project-dired
+    "C-x p DEL" #'project-forget-project)
+  (setopt project-vc-extra-root-markers '(".project")
+          project-key-prompt-style t))
 #+end_src
 
 *** DISABLED =vc-jj= :: Support for the Jujutsu version control system :package:
@@ -5829,11 +5766,12 @@ e.g. "M-4" should not expand this section -- it should only be expanded manually
 :END:
 
 #+begin_src emacs-lisp
-(setup magit-repos
-  (:load-after magit)
-  (:with-function #'magit-list-repositories
-    (:autoload-this))
-  (:option magit-repository-directories
+(after! magit
+  (require 'magit-repos)
+  ;; TODO: why?
+  ;; (:with-function #'magit-list-repositories
+  ;;   (:autoload-this))
+  (setopt magit-repository-directories
            `((,(file-name-concat ceamx-projects-dir "work") . 2)
              (,(file-name-concat ceamx-projects-dir "sources") . 1)
              (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
@@ -6475,16 +6413,17 @@ This section handles the curse.
 :END:
 
 #+begin_src emacs-lisp
-(setup flymake
-  (:hook-into ceamx-after-init-hook)
+(progn
+  (add-hook 'ceamx-after-init-hook #'flymake-mode)
   ;; Mirror the [C-c !] Flycheck prefix.
-  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
-         "C-c ! n" #'flymake-goto-next-error
-         "C-c ! p" #'flymake-goto-previous-error
-         "C-c ! c" #'flymake-show-buffer-diagnostics)
-  (:option flymake-fringe-indicator-position 'right-fringe
-           flymake-no-changes-timeout 1.0
-            flymake-wrap-around t))
+  (define-keymap :keymap (current-global-map)
+    "C-c ! l" #'flymake-show-buffer-diagnostics
+    "C-c ! n" #'flymake-goto-next-error
+    "C-c ! p" #'flymake-goto-previous-error
+    "C-c ! c" #'flymake-show-buffer-diagnostics)
+  (setopt flymake-fringe-indicator-position 'right-fringe
+          flymake-no-changes-timeout 1.0
+          flymake-wrap-around t))
 #+end_src
 
 **** =flycheck= :: The /other/ file diagnostics provider :package:
@@ -6822,8 +6761,8 @@ Configuration for working with Lisps of all kinds.
 + Package :: [[https://github.com/chmouel/kanata-kbd-mode/][GitHub - chmouel/kanata-kbd-mode: Major mode for editing Kanata .kbd configuration files in Emacs.]]
 
 #+begin_src emacs-lisp
-(setup (:package kanata-kbd-mode :host github :repo "chmouel/kanata-kbd-mode")
-  (:file-match "\\.kbd\\'")
+(package! (kanata-kbd-mode :host github :repo "chmouel/kanata-kbd-mode")
+  (cl-pushnew '("\\.kbd\\'" . kanata-kbd-mode) auto-mode-alist)
 
   ;; Unfortunately, we need to inhibit format-on-save for these files
   ;; because whitespace is used to convey non-syntactic meaning.
@@ -6831,10 +6770,9 @@ Configuration for working with Lisps of all kinds.
   ;; NOTE: `ceamx-format-on-save-disabled-modes' is currently defined in
   ;; the same file as this configuration.  If it ever moves to a
   ;; different file, this reference will need to be updated.
-  (:option (prepend ceamx-format-on-save-disabled-modes) #'kanata-kbd-mode)
-  (:with-feature lispy
-    (:when-loaded
-      (:option (prepend lispy-no-indent-modes) #'kanata-kbd-mode))))
+  (cl-pushnew #'kanata-kbd-mode ceamx-format-on-save-disabled-modes)
+  (after! lispy
+    (setopt (prepend lispy-no-indent-modes) #'kanata-kbd-mode)))
 #+end_src
 
 *** Emacs Lisp
@@ -7103,8 +7041,6 @@ The timing here may be delicate...
 (add-hook 'prog-mode-hook #'eglot-ensure)
 
 (after! eglot
-  (defvar eglot-server-programs)
-
   (def-advice! +eglot--ensure-available-mode (fn)
     :around #'eglot-ensure
     "Run `eglot-ensure' in supported modes."
@@ -7966,22 +7902,24 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ~flymake~ will handle it just fine.
 
 #+begin_src emacs-lisp
-(setup nil
-  (:with-function #'executable-make-buffer-file-executable-if-script-p
-    (:hook-into after-save-hook))
-  (:with-feature eglot
-    (:option (prepend eglot-server-programs)
-             '((sh-mode bash-ts-mode) . ("bash-language-server" "start")))
-    (:with-function #'eglot-ensure
-      (:hook-into sh-mode-hook bash-ts-mode-hook)))
-  (:with-feature flymake
-    (:hook sh-mode-hook bash-ts-mode-hook)))
+(progn
+  (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
+
+  (dolist (hook '(sh-mode-hook bash-ts-mode-hook))
+    (after! eglot
+      (add-hook hook #'eglot-ensure))
+    (after! flymake
+      (add-hook hook #'flymake-mode)))
+
+  (after! eglot
+    (cl-pushnew '((sh-mode bash-ts-mode) . ("bash-language-server" "start")) eglot-server-programs
+            )))
 #+end_src
 
 *** =apache-mode= :: Language support for Apache Web Server configuration files
 
 #+begin_src emacs-lisp
-(setup (:package apache-mode))
+(package! apache-mode)
 #+end_src
 
 *** =fish-mode= :: Language support for Fish shell script files
@@ -8018,7 +7956,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 Requires that the =just-lsp= package is available in the environment.
 
 #+begin_src emacs-lisp
-(use-feature! ceamx-eglot
+(use-feature! eglot
   :demand t
   :after eglot
   :defines (ceamx-eglot-server-configurations-alist)
@@ -8690,17 +8628,16 @@ whitespace:
 - Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
 
 #+begin_src emacs-lisp
-(setup org
-  (:with-feature pulsar
-    (:with-hook (list org-agenda-after-show-hook org-follow-link-hook)
-      (:hook #'pulsar-recenter-center)
-      (:hook #'pulsar-reveal-entry))
-    (:when-loaded
-      (:option (prepend* pulsar-pulse-functions)
-  	       '( org-backward-heading-same-level
-  		  org-forward-heading-same-level
-  		  org-next-visible-heading
-  		  org-previous-visible-heading)))))
+(progn
+  (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
+    (add-hook hook #'pulsar-recenter-center)
+    (add-hook hook #'pulsar-reveal-entry))
+  (after! pulsar
+    (pushnew! pulsar-pulse-functions
+              org-backward-heading-same-level
+              org-forward-heading-same-level
+              org-next-visible-heading
+              org-previous-visible-heading)))
 #+end_src
 
 *** =doct= :: a template engine for ~org-capture~
@@ -9226,10 +9163,8 @@ Watch out for loading =browse-url= too early, as it can drastically affect
 Emacs init time.
 
 #+begin_src emacs-lisp
-(setup browse-url
-  (:when-loaded
-    (:with-feature eww
-      (setopt browse-url-browser-function #'eww-browse-url))))
+(after! browse-url
+  (setopt browse-url-browser-function #'eww-browse-url))
 #+end_src
 
 *** Configure the =shr= “Simple HTML Renderer” feature
@@ -9238,32 +9173,29 @@ While this feature is predominantly used for rendering documents in =eww=,
 it is often used in other features (TODO: which features?).
 
 #+begin_src emacs-lisp
-(setup shr
-  (:when-loaded
-    (setopt shr-use-colors t)
-    (setopt shr-folding-mode t)
-    (setopt shr-bullet "• ")))
+(after! shr
+  (setopt shr-use-colors t)
+  (setopt shr-folding-mode t)
+  (setopt shr-bullet "• "))
 #+end_src
 
 *** TODO Use a different browser for some domains
 *** Configure EWW
 
 #+begin_src emacs-lisp
-(setup eww
-  (:also-load ceamx-eww)
-  (:bind "," '("scroll down" . scroll-up-command)
-         "." '("scroll up" . scroll-down-command)
-         "o" '("open link" . link-hint-open-link))
-  (:with-map ceamx-launch-prefix
-    (:bind "b" #'eww))
-  (:with-feature ceamx-eww
-    (:with-map ceamx-launch-prefix
-      (:bind "W" #'ceamx/eww-wiki)))
-  ;; Avoid loading this feature until needed.
-  (:when-loaded
-    (setopt eww-search-prefix "https://duckduckgo.com/html?q=")))
+(progn
+  (after! eww
+    (require 'ceamx-eww)
+    (define-keymap :keymap eww-mode-map
+      "," '("scroll down" . scroll-up-command)
+      "." '("scroll up" . scroll-down-command)
+      "o" '("open link" . link-hint-open-link))
+    (setopt eww-search-prefix "https://duckduckgo.com/html?q="))
 
-(setup url
+  (define-keymap :keymap ceamx-launch-prefix
+    "b" #'eww
+    "W" #'ceamx/eww-wiki)
+
   ;; HTTP headers may contain user information, which we can limit as needed.
   ;; When providing a list of symbols, the symbols indicate what NOT to send.
   ;; TODO: Move this elsewhere, as it probably affects other HTTP requests.
@@ -9273,11 +9205,9 @@ it is often used in other features (TODO: which features?).
 *** Cleanup the rendering of some pages
 
 #+begin_src emacs-lisp
-(setup eww
-  (:when-loaded
-    (:with-feature ceamx-eww
-      (:with-function #'ceamx-eww-rerender
-        (:hook-into eww-after-render-hook)))))
+(after! eww
+  (require 'ceamx-eww)
+  (add-hook 'eww-after-render-hook #'ceamx-eww-rerender))
 #+end_src
 
 *** Provide the ~ceamx-init-eww~ feature
@@ -9717,8 +9647,8 @@ changing lines.
 + Requires-Executable :: =wtype=
 
 #+begin_src emacs-lisp
-(setup ceamx-typer
-  (:require))
+(progn
+  (require 'ceamx-typer))
 #+end_src
 
 *** Provide the ~ceamx-init-tools~ feature

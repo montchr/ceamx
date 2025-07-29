@@ -8,12 +8,11 @@
 ;; :END:
 
 
-(setup minibuffer
-  (:with-function (minibuffer-depth-indicate-mode
-                   minibuffer-electric-default-mode)
-    (:hook-into ceamx-after-init-hook))
-  (:with-feature savehist
-    (:option savehist-save-minibuffer-history t))
+(progn
+  (dolist (mode '(minibuffer-depth-indicate-mode
+                   minibuffer-electric-default-mode))
+    (add-hook 'ceamx-after-init-hook mode))
+  (setopt savehist-save-minibuffer-history t)
   (setq-default case-fold-search t)
   (setopt echo-keystrokes 0.25)
   (setopt savehist-save-minibuffer-history t)

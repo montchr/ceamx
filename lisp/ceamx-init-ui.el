@@ -286,34 +286,27 @@
 
 (package! pulsar
   (add-hook 'ceamx-after-init-hook #'pulsar-global-mode)
-  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line))
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
 
-(after! pulsar
   (setopt pulsar-pulse t
           pulsar-delay 0.055
           pulsar-iterations 10)
   (setopt pulsar-face 'pulsar-magenta
           pulsar-highlight-face 'pulsar-cyan)
 
-  (dolist (fn '(pulsar-pulse-line-red
-                pulsar-recenter-top
-                pulsar-reveal-entry))
-    (add-hook 'next-error-hook #'fn)))
-
-
-
-;; Set up some pulse triggers.  Find some ideas:  [[https://github.com/howardabrams/hamacs/blob/main/ha-display.org#find-the-bloody-cursor][hamacs/ha-display.org at main · howardabrams/hamacs · GitHub]]
-
-
-(setup (:package pulsar)
-  (:when-loaded
-    (:option (prepend* pulsar-pulse-functions)
-             '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
+  (with-eval-after-load 'pulsar
+    (dolist (func '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
                 bookmark-jump other-window delete-window delete-other-windows
                 forward-page backward-page scroll-up-command scroll-down-command
                 tab-new tab-close tab-next outline-backward-same-level
                 outline-forward-same-level outline-next-visible-heading
-                outline-previous-visible-heading outline-up-heading))))
+                outline-previous-visible-heading outline-up-heading))
+      (cl-pushnew func pulsar-pulse-functions)))
+
+  (dolist (fn '(pulsar-pulse-line-red
+                pulsar-recenter-top
+                pulsar-reveal-entry))
+    (add-hook 'next-error-hook fn)))
 
 ;; Window highlighting
 
@@ -351,17 +344,18 @@
 ;; + Website :: <https://protesilaos.com/emacs/spacious-padding>
 
 
-(setup (:package spacious-padding)
-  (:hook ceamx-after-init-hook)
+(package! spacious-padding
+  (spacious-padding-mode 1)
+
   (setopt spacious-padding-widths '( :internal-border-width 5
-                                      :header-line-width 2
-                                      :mode-line-width 3
-                                      :tab-width 2
-                                      :right-divider-width 10
-                                      :scroll-bar-width 4
-                                      :left-fringe-width 3
-                                      :right-fringe-width 3))
-  (:option spacious-padding-subtle-frame-lines nil))
+                                     :header-line-width 2
+                                     :mode-line-width 3
+                                     :tab-width 2
+                                     :right-divider-width 10
+                                     :scroll-bar-width 4
+                                     :left-fringe-width 3
+                                     :right-fringe-width 3))
+  (setopt spacious-padding-subtle-frame-lines nil))
 
 ;; =olivetti= :: "distraction-free" editing
 

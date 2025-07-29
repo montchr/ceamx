@@ -311,17 +311,16 @@ Intended for use as a local hook function on
 ;; - Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
 
 
-(setup org
-  (:with-feature pulsar
-    (:with-hook (list org-agenda-after-show-hook org-follow-link-hook)
-      (:hook #'pulsar-recenter-center)
-      (:hook #'pulsar-reveal-entry))
-    (:when-loaded
-      (:option (prepend* pulsar-pulse-functions)
-  	       '( org-backward-heading-same-level
-  		  org-forward-heading-same-level
-  		  org-next-visible-heading
-  		  org-previous-visible-heading)))))
+(progn
+  (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
+    (add-hook hook #'pulsar-recenter-center)
+    (add-hook hook #'pulsar-reveal-entry))
+  (after! pulsar
+    (pushnew! pulsar-pulse-functions
+              org-backward-heading-same-level
+              org-forward-heading-same-level
+              org-next-visible-heading
+              org-previous-visible-heading)))
 
 ;; =doct= :: a template engine for ~org-capture~
 ;; :PROPERTIES:

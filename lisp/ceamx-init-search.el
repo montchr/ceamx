@@ -5,7 +5,7 @@
 ;; Baseline search configuration
 
 
-(setup nil
+(progn
   (setopt find-library-include-other-files nil)
 
   (keymap-set search-map "r" '("replace..." . ceamx-replace-prefix)))
