@@ -339,16 +339,16 @@
 
 (after! spacious-padding
   (setopt spacious-padding-widths
-          '( :internal-border-width 10
-             :header-line-width 4
-             :mode-line-width 6
+          '( :internal-border-width 6
+             :header-line-width 2
+             :mode-line-width 4
              :tab-width 4
-             :right-divider-width 10
+             :right-divider-width 6
              :scroll-bar-width 4
-             :left-fringe-width 6
-             :right-fringe-width 6))
+             :left-fringe-width 4
+             :right-fringe-width 4))
 
-  (setopt spacious-padding-subtle-mode-line t))
+  (setopt spacious-padding-subtle-frame-lines nil))
 
 ;; =olivetti= :: "distraction-free" editing
 
