@@ -434,14 +434,17 @@ non-nil, buffers will never be formatted upon save."
 ;; :END:
 
 
-(setup flymake
-  (:hook-into ceamx-after-init-hook)
+(progn
+  (add-hook 'ceamx-after-init-hook #'flymake-mode)
+
   ;; Mirror the [C-c !] Flycheck prefix.
-  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
-         "C-c ! n" #'flymake-goto-next-error
-         "C-c ! p" #'flymake-goto-previous-error
-         "C-c ! c" #'flymake-show-buffer-diagnostics)
-  (:when-loaded
+  (define-keymap :keymap (current-global-map)
+    "C-c ! l" #'flymake-show-buffer-diagnostics
+    "C-c ! n" #'flymake-goto-next-error
+    "C-c ! p" #'flymake-goto-previous-error
+    "C-c ! c" #'flymake-show-buffer-diagnostics)
+
+  (after! flymake
     (setopt flymake-fringe-indicator-position 'right-fringe)
     (setopt flymake-no-changes-timeout 1.0)
     (setopt flymake-wrap-around t)))

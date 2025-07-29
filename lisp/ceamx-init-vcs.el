@@ -9,28 +9,22 @@
 ;; :END:
 
 
-(setup ediff
-  (:autoload #'ediff-buffers
-             #'ediff-files
-             #'ediff-buffers3
-             #'ediff-files3)
-  (setopt ediff-keep-variants nil
-          ediff-make-buffers-readonly-at-startup nil
-          ediff-merge-revisions-with-ancestor t
-          ediff-show-clashes-only t
-          ;; Keep the ~ediff~ control panel in the same frame.
-          ediff-window-setup-function #'ediff-setup-windows-plain))
+(setopt ediff-keep-variants nil
+        ediff-make-buffers-readonly-at-startup nil
+        ediff-merge-revisions-with-ancestor t
+        ediff-show-clashes-only t
+        ;; Keep the ~ediff~ control panel in the same frame.
+        ediff-window-setup-function #'ediff-setup-windows-plain)
 
 ;; Set up ~diff-mode~
 
 
-(setup diff-mode
-  (setopt diff-default-read-only t)
-  (setopt diff-advance-after-apply-hunk t)
-  (setopt diff-update-on-the-fly t)
-  (setopt diff-refine 'font-lock)
-  (setopt diff-font-lock-prettify t
-          diff-font-lock-syntax 'hunk-also))
+(setopt diff-default-read-only t)
+(setopt diff-advance-after-apply-hunk t)
+(setopt diff-update-on-the-fly t)
+(setopt diff-refine 'font-lock)
+(setopt diff-font-lock-prettify t
+        diff-font-lock-syntax 'hunk-also)
 
 ;; Set up version control integration with ~vc-mode~
 ;; :PROPERTIES:
@@ -54,10 +48,11 @@
 ;; Set up project management with =project.el=
 
 
-(setup project
-  (:global "C-x p ." #'project-dired
-           "C-x p RET" #'project-dired
-           "C-x p DEL" #'project-forget-project)
+(progn
+  (define-keymap :keymap (current-global-map)
+    "C-x p ." #'project-dired
+    "C-x p RET" #'project-dired
+    "C-x p DEL" #'project-forget-project)
   (setopt project-vc-extra-root-markers '(".project"))
   (setopt project-key-prompt-style t))
 
@@ -296,10 +291,8 @@
 ;; :END:
 
 
-(setup magit-repos
-  ;; FIXME: Make sure feature is available
-  ;;  (:load-after magit)
-  (:autoload #'magit-list-repositories)
+(after! magit
+  (require 'magit-repos)
   (setopt magit-repository-directories
           `((,(file-name-concat ceamx-projects-dir "work") . 2)
             (,(file-name-concat ceamx-projects-dir "sources") . 1)

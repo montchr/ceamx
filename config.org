@@ -892,76 +892,6 @@ unimportant since it happens during compilation anyway."
   (ceamx--remove-sharp-quotes args))
 #+end_src
 
-**** Install and configure =setup.el=
-:PROPERTIES:
-:ID:       d3695516-a695-489d-8a4f-374e54e59e31
-:END:
-
-#+begin_src emacs-lisp
-(elpaca setup
-  (require 'setup))
-
-(elpaca-wait)
-#+end_src
-
-Add Elpaca support to =setup.el=:
-
-#+begin_src emacs-lisp
-(defun +setup-wrap-to-install-elpaca-package (body _name)
-  "Wrap BODY in an `elpaca' block when `:ensure' is provided."
-  (if (assq 'ensure setup-attributes)
-      `(elpaca ,(cdr (assq 'ensure setup-attributes))
-         ,@(macroexp-unprogn body))
-    body))
-
-(add-to-list 'setup-modifier-list #'+setup-wrap-to-install-elpaca-package)
-
-(setup-define :ensure
-  (lambda (order &rest recipe)
-    (push (cond
-           ((eq order t) `(ensure . ,(setup-get 'feature)))
-           ((eq order nil) `(ensure . nil))
-           (`(ensure . (,order ,@recipe))))
-          setup-attributes)
-    ;; If the macro returned non-nil, it would try to insert the
-    ;; modified list returned by `push'.  As this value usually cannot
-    ;; be evaluated, it is better to return nil (which the byte
-    ;; compiler will optimize away).
-    nil)
-  :documentation "Install ORDER with the `elpaca' package manager.
-The ORDER can be used to deduce the feature context."
-  :shorthand #'cadr)
-#+end_src
-
-Add the =:autoload= contextual macro:
-
-#+begin_src emacs-lisp
-;; <https://www.emacswiki.org/emacs/SetupEl#h5o-7>
-(setup-define :autoload
-  (lambda (func)
-    (let ((fn (if (memq (car-safe func) '(quote function))
-                  (cadr func)
-                func)))
-      `(unless (fboundp (quote ,fn))
-         (autoload (function ,fn) ,(symbol-name (setup-get 'feature)) nil t))))
-  :documentation "Autoload COMMAND if not already bound."
-  :debug '(form)
-  :repeatable t
-  :signature '(FUNC ...))
-#+end_src
-
-Add the =:load-after= contextual macro:
-
-#+begin_src emacs-lisp
-(setup-define :load-after
-    (lambda (&rest features)
-      (let ((body `(require ',(setup-get 'feature))))
-        (dolist (feature (nreverse features))
-          (setq body `(with-eval-after-load ',feature ,body)))
-        body))
-    :documentation "Load the current feature after FEATURES.")
-#+end_src
-
 *** =gcmh=: manage running garbage collection on idle :package:perf:
 
 - Website :: <https://akrl.sdf.org/>
@@ -5470,29 +5400,23 @@ Here are the definitions for the Bufler grouping rules:
 :END:
 
 #+begin_src emacs-lisp
-(setup ediff
-  (:autoload #'ediff-buffers
-             #'ediff-files
-             #'ediff-buffers3
-             #'ediff-files3)
-  (setopt ediff-keep-variants nil
-          ediff-make-buffers-readonly-at-startup nil
-          ediff-merge-revisions-with-ancestor t
-          ediff-show-clashes-only t
-          ;; Keep the ~ediff~ control panel in the same frame.
-          ediff-window-setup-function #'ediff-setup-windows-plain))
+(setopt ediff-keep-variants nil
+        ediff-make-buffers-readonly-at-startup nil
+        ediff-merge-revisions-with-ancestor t
+        ediff-show-clashes-only t
+        ;; Keep the ~ediff~ control panel in the same frame.
+        ediff-window-setup-function #'ediff-setup-windows-plain)
 #+end_src
 
 *** Set up ~diff-mode~
 
 #+begin_src emacs-lisp
-(setup diff-mode
-  (setopt diff-default-read-only t)
-  (setopt diff-advance-after-apply-hunk t)
-  (setopt diff-update-on-the-fly t)
-  (setopt diff-refine 'font-lock)
-  (setopt diff-font-lock-prettify t
-          diff-font-lock-syntax 'hunk-also))
+(setopt diff-default-read-only t)
+(setopt diff-advance-after-apply-hunk t)
+(setopt diff-update-on-the-fly t)
+(setopt diff-refine 'font-lock)
+(setopt diff-font-lock-prettify t
+        diff-font-lock-syntax 'hunk-also)
 #+end_src
 
 *** Set up version control integration with ~vc-mode~
@@ -5518,10 +5442,11 @@ Here are the definitions for the Bufler grouping rules:
 *** Set up project management with =project.el=
 
 #+begin_src emacs-lisp
-(setup project
-  (:global "C-x p ." #'project-dired
-           "C-x p RET" #'project-dired
-           "C-x p DEL" #'project-forget-project)
+(progn
+  (define-keymap :keymap (current-global-map)
+    "C-x p ." #'project-dired
+    "C-x p RET" #'project-dired
+    "C-x p DEL" #'project-forget-project)
   (setopt project-vc-extra-root-markers '(".project"))
   (setopt project-key-prompt-style t))
 #+end_src
@@ -5777,10 +5702,8 @@ e.g. "M-4" should not expand this section -- it should only be expanded manually
 :END:
 
 #+begin_src emacs-lisp
-(setup magit-repos
-  ;; FIXME: Make sure feature is available
-  ;;  (:load-after magit)
-  (:autoload #'magit-list-repositories)
+(after! magit
+  (require 'magit-repos)
   (setopt magit-repository-directories
           `((,(file-name-concat ceamx-projects-dir "work") . 2)
             (,(file-name-concat ceamx-projects-dir "sources") . 1)
@@ -6423,14 +6346,17 @@ This section handles the curse.
 :END:
 
 #+begin_src emacs-lisp
-(setup flymake
-  (:hook-into ceamx-after-init-hook)
+(progn
+  (add-hook 'ceamx-after-init-hook #'flymake-mode)
+
   ;; Mirror the [C-c !] Flycheck prefix.
-  (:bind "C-c ! l" #'flymake-show-buffer-diagnostics
-         "C-c ! n" #'flymake-goto-next-error
-         "C-c ! p" #'flymake-goto-previous-error
-         "C-c ! c" #'flymake-show-buffer-diagnostics)
-  (:when-loaded
+  (define-keymap :keymap (current-global-map)
+    "C-c ! l" #'flymake-show-buffer-diagnostics
+    "C-c ! n" #'flymake-goto-next-error
+    "C-c ! p" #'flymake-goto-previous-error
+    "C-c ! c" #'flymake-show-buffer-diagnostics)
+
+  (after! flymake
     (setopt flymake-fringe-indicator-position 'right-fringe)
     (setopt flymake-no-changes-timeout 1.0)
     (setopt flymake-wrap-around t)))
