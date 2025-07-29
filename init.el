@@ -619,6 +619,24 @@ unimportant since it happens during compilation anyway."
 (require 'ceamx-init-fun)
 (require 'ceamx-init-flows)
 
+;; =ceamx-focus= :: A custom focus mode to enable/disable other modes
+;; :LOGBOOK:
+;; - Refiled on [2025-07-31 Thu 20:54]
+;; :END:
+
+;; This could potentially be abstracted to a generalized mode-toggling mode
+;; factory.  Yep.  Or not.
+
+;; This is loaded late because it depends on all the other stuff being
+;; loaded.  There’s probably a safer way to write it.
+
+
+(use-feature! ceamx-focus
+  :bind
+  ( :map ceamx-toggle-prefix
+    ;; "y" because not quite "zzzzzzzz" because z already bound
+    ("y" . ceamx-focus-mode)))
+
 ;; [C-c O] :: Launch
 ;; :PROPERTIES:
 ;; :ID:       bb8d84ed-5854-4892-9b76-77e67063a71e

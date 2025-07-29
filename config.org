@@ -9984,6 +9984,25 @@ Define agenda groups for display with the =org-super-agenda= extension:
 (require 'ceamx-init-flows)
 #+end_src
 
+** =ceamx-focus= :: A custom focus mode to enable/disable other modes
+:LOGBOOK:
+- Refiled on [2025-07-31 Thu 20:54]
+:END:
+
+This could potentially be abstracted to a generalized mode-toggling mode
+factory.  Yep.  Or not.
+
+This is loaded late because it depends on all the other stuff being
+loaded.  There’s probably a safer way to write it.
+
+#+begin_src emacs-lisp
+(use-feature! ceamx-focus
+  :bind
+  ( :map ceamx-toggle-prefix
+    ;; "y" because not quite "zzzzzzzz" because z already bound
+    ("y" . ceamx-focus-mode)))
+#+end_src
+
 * Command Bindings
 :PROPERTIES:
 :header-args: :tangle init.el
