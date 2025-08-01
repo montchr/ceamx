@@ -51,12 +51,6 @@
 ;; TODO: will a `init-file-debug' check work here?
 (setq garbage-collection-messages t)
 
-;; Prevent garbage-collection during init
-
-
-;; NOTE: Either use `gcmh' or make sure to reset this later.  Or else!
-(setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
-
 ;; LSP-Mode: Use plists for deserialization
 
 ;; - Reference :: https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
@@ -66,6 +60,20 @@
 
 
 (setenv "LSP_USE_PLISTS" "true")
+
+;; Configure garbage collection :perf:
+
+;; - Website :: <https://akrl.sdf.org/>
+;; - Code :: <https://gitlab.com/koral/gcmh>
+
+;; During normal use, the GC threshold will be set to a high value.
+;; When idle, GC will be triggered with a low threshold.
+
+
+;; (package! gcmh
+;;   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
+
+(setq gc-cons-threshold 100000000) ; 100MiB
 
 ;; Directories and well-known-files
 ;; :PROPERTIES:

@@ -345,18 +345,6 @@ because that's the simple solution and the performance overhead is
 unimportant since it happens during compilation anyway."
   (ceamx--remove-sharp-quotes args))
 
-;; =gcmh=: manage running garbage collection on idle :package:perf:
-
-;; - Website :: <https://akrl.sdf.org/>
-;; - Code :: <https://gitlab.com/koral/gcmh>
-
-;; During normal use, the GC threshold will be set to a high value.
-;; When idle, GC will be triggered with a low threshold.
-
-
-(package! gcmh
-  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
-
 ;; Install utility libraries
 ;; :PROPERTIES:
 ;; :ID:       d04ef910-34e0-4961-aeb6-c2741af41455

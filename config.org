@@ -112,13 +112,6 @@ See also:
 (setq garbage-collection-messages t)
 #+end_src
 
-**** Prevent garbage-collection during init
-
-#+begin_src emacs-lisp
-;; NOTE: Either use `gcmh' or make sure to reset this later.  Or else!
-(setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
-#+end_src
-
 **** DISABLED Simplify filename pattern-matching during init
 
 - Note taken on [2024-11-19 Tue 20:52] \\
@@ -180,6 +173,83 @@ Note that =LSP_USE_PLISTS= will also need to be added to
 #+begin_src emacs-lisp
 (setenv "LSP_USE_PLISTS" "true")
 #+end_src
+
+**** Configure garbage collection :perf:
+
+- Website :: <https://akrl.sdf.org/>
+- Code :: <https://gitlab.com/koral/gcmh>
+
+During normal use, the GC threshold will be set to a high value.
+When idle, GC will be triggered with a low threshold.
+
+#+begin_src emacs-lisp
+;; (package! gcmh
+;;   (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
+
+(setq gc-cons-threshold 100000000) ; 100MiB
+#+end_src
+
+***** Background and Rationale
+
+While browsing many other user configs, I have noticed several slightly
+different approaches to managing garbage collection, especially with the
+intent of reducing startup time.
+
+One approach is to offload this configuration to ~gcmh~, safely hiding the
+details away.  =gcmh= is written by Andrea Corallo, one of the Emacs
+co-maintainers, also known for introducing =gccemacs=.
+
+As a direct response to a Reddit thread sharing =gcmh=, Eli Zaretskii recommends
+caution in this field.  Corallo also weighs in.  Basically, Zaretskii recommends
+not overthinking things:
+
+[[https://old.reddit.com/r/emacs/comments/bg85qm/garbage_collector_magic_hack/eln27qh/][eli-zaretskii
+comments on Garbage Collector Magic Hack]]:
+
+#+begin_quote
+My problem with the advice to make the GC threshold at such high values
+begins the moment you start publishing your personal tweaks as general
+advice to others. IMO, this requires at least a lot of caveats, because
+your advice is likely to be followed by people whose workflows and
+system configurations are very different. Simply put, you might get
+others in trouble by promoting your personal hacks as "magic".
+#+end_quote
+
+From what I gather, =gcmh= has evolved a bit, so the previous criticism
+no longer applies.
+
+And, again, with more detail about fiddling carelessly with
+=gc-cons-threshold=:
+
+[[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii
+comments on An easy trick I found to improve Emacs start-up time]]
+
+#+begin_quote
+The GC threshold setting after init is too high, IMNSHO, and its value
+seems arbitrary.
+
+If the OP thinks that Emacs will GC as soon as it allocates 100 MiB,
+then that's a grave mistake. What really happens is the first time Emacs
+/considers doing GC/, if at that time more than 100 MiB have been
+allocated for Lisp objects, Emacs will GC. And since neither Lisp
+programs nor the user have /any/ control on how soon Emacs will decide
+to check whether GC is needed, the actual amount of memory by the time
+Emacs checks could be many times the value of the threshold.
+
+My advice is to spend some time measuring the effect of increased GC
+threshold on operations that you care about and that take a long enough
+time to annoy, and use the lowest threshold value which produces a
+tangible improvement. Start with the default value, then enlarge it by a
+factor of 2 until you see only insignificant speedups. I would not
+expect the value you arrive at to be as high as 100 MiB.
+#+end_quote
+
+As of <2025-08-01 Fri>, I have found that =gcmh= and =lsp-mode= do not work
+well together *at all*.  And yet a static value for ~gc-cons-threshold~ @
+100MiB seems to do the job.
+
+So, here is the configuration, after all that:
+
 
 *** Directories and well-known-files
 :PROPERTIES:
@@ -888,74 +958,6 @@ because that's the simple solution and the performance overhead is
 unimportant since it happens during compilation anyway."
   (ceamx--remove-sharp-quotes args))
 #+end_src
-
-*** =gcmh=: manage running garbage collection on idle :package:perf:
-
-- Website :: <https://akrl.sdf.org/>
-- Code :: <https://gitlab.com/koral/gcmh>
-
-During normal use, the GC threshold will be set to a high value.
-When idle, GC will be triggered with a low threshold.
-
-#+begin_src emacs-lisp
-(package! gcmh
-  (add-hook 'ceamx-emacs-startup-hook #'gcmh-mode))
-#+end_src
-
-**** Background and Rationale
-
-While browsing many other user configs, I have noticed several slightly
-different approaches to managing garbage collection, especially with the
-intent of reducing startup time.
-
-One approach is to offload this configuration to ~gcmh~, safely hiding the
-details away.  =gcmh= is written by Andrea Corallo, one of the Emacs
-co-maintainers, also known for introducing =gccemacs=.
-
-As a direct response to a Reddit thread sharing =gcmh=, Eli Zaretskii recommends
-caution in this field.  Corallo also weighs in.  Basically, Zaretskii recommends
-not overthinking things:
-
-[[https://old.reddit.com/r/emacs/comments/bg85qm/garbage_collector_magic_hack/eln27qh/][eli-zaretskii
-comments on Garbage Collector Magic Hack]]:
-
-#+begin_quote
-My problem with the advice to make the GC threshold at such high values
-begins the moment you start publishing your personal tweaks as general
-advice to others. IMO, this requires at least a lot of caveats, because
-your advice is likely to be followed by people whose workflows and
-system configurations are very different. Simply put, you might get
-others in trouble by promoting your personal hacks as "magic".
-#+end_quote
-
-From what I gather, =gcmh= has evolved a bit, so the previous criticism
-no longer applies.
-
-And, again, with more detail about fiddling carelessly with
-=gc-cons-threshold=:
-
-[[https://old.reddit.com/r/emacs/comments/yzb77m/an_easy_trick_i_found_to_improve_emacs_startup/iwz1vek/][eli-zaretskii
-comments on An easy trick I found to improve Emacs start-up time]]
-
-#+begin_quote
-The GC threshold setting after init is too high, IMNSHO, and its value
-seems arbitrary.
-
-If the OP thinks that Emacs will GC as soon as it allocates 100 MiB,
-then that's a grave mistake. What really happens is the first time Emacs
-/considers doing GC/, if at that time more than 100 MiB have been
-allocated for Lisp objects, Emacs will GC. And since neither Lisp
-programs nor the user have /any/ control on how soon Emacs will decide
-to check whether GC is needed, the actual amount of memory by the time
-Emacs checks could be many times the value of the threshold.
-
-My advice is to spend some time measuring the effect of increased GC
-threshold on operations that you care about and that take a long enough
-time to annoy, and use the lowest threshold value which produces a
-tangible improvement. Start with the default value, then enlarge it by a
-factor of 2 until you see only insignificant speedups. I would not
-expect the value you arrive at to be as high as 100 MiB.
-#+end_quote
 
 *** Install utility libraries
 :PROPERTIES:
