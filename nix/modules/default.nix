@@ -3,7 +3,7 @@
   imports = [ inputs.flake-parts.flakeModules.modules ];
 
   flake.modules.homeManager.ceamx = moduleWithSystem (
-    _perSystem@{ config, ... }:
+    _perSystem@{ inputs', config, ... }:
     home@{ lib, ... }:
     {
       imports = [ ./ceamx/default.nix ];
@@ -11,6 +11,7 @@
       config = lib.mkIf home.config.programs.emacs.ceamx.enable {
         home.packages = [
           config.packages.aspell-with-dicts
+          inputs'.nix-nil-lsp.packages.nil
         ];
 
         # Not the greatest workaround, but...

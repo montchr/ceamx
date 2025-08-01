@@ -1,5 +1,4 @@
 {
-  inputs,
   config,
   pkgs,
   lib,
@@ -29,7 +28,6 @@ in
       let
         languageServerPkgs =
           [
-            inputs.nix-nil-lsp.packages.nil
             pkgs.bash-language-server
             pkgs.editorconfig-core-c
             pkgs.taplo-lsp # toml language server
