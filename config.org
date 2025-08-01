@@ -7590,47 +7590,15 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 :END:
 
 #+begin_src emacs-lisp
-;; TODO: defcustom
-(defvar ceamx-lsp-server-nix-lang "nix-nixd")
-
-(defvar ceamx-lsp-nixd-nixpkgs-expr "import (builtins.getFlake \"/etc/nix/inputs/nixpkgs\") { } ")
-
-(defvar ceamx-lsp-nixd-nixos-options-expr
-  (format "import (builtins.getFlake \"%s\").%s.\"%s\".options"
-          "/etc/nixos"
-          "nixosConfigurations"
-          (system-name)))
-
-(defvar ceamx-lsp-nixd-home-manager-options-expr
-  (format "import (builtins.getFlake \"%s\").%s.%s.config.home-manager.users.%s"
-          "/etc/nixos"
-          "nixosConfigurations"
-          (system-name)
-          (user-login-name)))
-
-(defvar ceamx-lsp-nixd-default-config
-  `( :nixpkgs (:expr ,ceamx-lsp-nixd-nixpkgs-expr)
-     :formatting (:command ["nixfmt"])
-     :options ( :nixos (:expr ,ceamx-lsp-nixd-nixos-options-expr)
-                :home-manager (:expr ,ceamx-lsp-nixd-home-manager-options-expr))))
-
 (after! lsp-mode
-  (setopt lsp-disabled-clients '(nix-nil))
-  (setopt lsp-nix-nixd-nixpkgs-expr ceamx-lsp-nixd-nixpkgs-expr
-          lsp-nix-nixd-nixos-options-expr ceamx-lsp-nixd-nixos-options-expr
-          lsp-nix-nixd-home-manager-options-expr ceamx-lsp-nixd-home-manager-options-expr))
+  (setopt lsp-disabled-clients '(nix-nixd)))
 
 (use-feature! ceamx-eglot
   :demand t
   :after eglot
   :defines (ceamx-eglot-server-configurations-alist)
   :config
-  (add-to-list 'ceamx-eglot-server-configurations-alist '("nix-nil" . nil))
-  (add-to-list 'ceamx-eglot-server-configurations-alist
-               (cons "nix-nixd" ceamx-lsp-nixd-default-config))
-  (add-to-list 'eglot-server-programs
-               (cons '(nix-mode nix-ts-mode)
-                     (ceamx-eglot-server-contact ceamx-lsp-server-nix-lang))))
+  (add-to-list 'ceamx-eglot-server-configurations-alist '("nix-nil" . nil)))
 #+end_src
 
 **** Keybindings :keybinds:
