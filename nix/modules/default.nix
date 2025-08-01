@@ -2,14 +2,16 @@
 {
   imports = [ inputs.flake-parts.flakeModules.modules ];
 
-  flake.modules.home.ceamx = moduleWithSystem (
+  flake.modules.homeManager.ceamx = moduleWithSystem (
     _perSystem@{ config, ... }:
     home@{ lib, ... }:
     {
       imports = [ ./ceamx/default.nix ];
 
       config = lib.mkIf home.config.programs.emacs.ceamx.enable {
-        home.packages = [ config.packages.aspell-with-dicts ];
+        home.packages = [
+          config.packages.aspell-with-dicts
+        ];
 
         # Not the greatest workaround, but...
         # <https://github.com/minad/jinx/discussions/173#discussioncomment-9416580>
