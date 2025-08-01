@@ -2,6 +2,7 @@
   description = "ceamx: an emacs config";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs.flake-parts.url = "github:hercules-ci/flake-parts";
   inputs.apparat.url = "sourcehut:~montchr/apparat";
   inputs.devshell.url = "github:numtide/devshell";
   inputs.nix-nil-lsp.url = "github:oxalica/nil";
