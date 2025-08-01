@@ -914,146 +914,89 @@ The original function fails in the presence of whitespace after a sexp."
 
 (package! keymap-utils)
 
-;; Eglot
-;; :PROPERTIES:
-;; :ID:       8e477ec3-51fd-47ea-802d-e08484fa1add
-;; :END:
+;; =lsp-mode= :: The core LSP-Mode package :package:
 
 
-(after! eglot
-  (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions)
-  (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
+(package! lsp-mode
+  (setq lsp-keymap-prefix "C-c L")
 
-  (after! consult
-    (keymap-set eglot-mode-map "C-c l o" #'consult-eglot-symbols))
+  (setopt lsp-enable-folding nil
+          lsp-enable-text-document-color nil)
+  (setopt lsp-enable-on-type-formatting nil)
+  ;; This is provided by `breadcrumb-mode'.
+  (setopt lsp-headerline-breadcrumb-enable nil)
 
-  (setopt eglot-sync-connect 1)
-  (setopt eglot-autoshutdown t)
-  (setopt eglot-send-changes-idle-time 0.5)
+  (setopt lsp-diagnostics-provider :flymake)
 
-  ;; Disable events buffer, which poses performance issues over time as the
-  ;; buffer grows in a longer-running Emacs instance.
-  (setopt eglot-events-buffer-size 0)
+  ;; This means use Emacs' builtin completion system, which means
+  ;; compatibility with any modern completion UI (including Corfu).
+  (setopt lsp-completion-provider :none)
+  (add-hook 'lsp-mode-hook #'lsp-completion-mode))
 
-  ;; Prevent frequent focus-stealing.
-  (setopt eglot-auto-display-help-buffer nil))
+;; =lsp-ui= :: The fanciful and bloated UI for LSP-Mode :package:ui:
 
-;; Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
-;; :PROPERTIES:
-;; :ID:       1e70440b-7daa-491e-bdef-d761d8fb186d
-;; :END:
 
-;; - Website :: <https://github.com/jdtsmith/eglot-booster>
-;; - Website :: <https://github.com/blahgeek/emacs-lsp-booster>
+(package! lsp-ui
+  (setopt lsp-ui-peek-enable t)
+  (setopt lsp-ui-doc-max-height 8
+          lsp-ui-doc-max-width 72
+          lsp-ui-doc-delay 0.75
+          ;; Don't disappear on mouseover.
+          lsp-ui-doc-show-with-mouse nil
+          lsp-ui-doc-position 'at-point)
+  (setopt lsp-ui-sideline-ignore-duplicate t
+          lsp-ui-sideline-show-hover nil)
+
+  (after! lsp-ui
+    (setopt lsp-ui-sideline-actions-icon lsp-ui-sideline-actions-icon-default)))
+
+;; =consult-lsp= :: Provide =lsp-mode= symbols as a Consult datasource :package:consult:
+
+
+(package! consult-lsp
+  (after! lsp-mode
+    (keymap-set lsp-mode-map "<remap> <xref-find-apropos>" #'consult-lsp-symbols)))
+
+;; Use =emacs-lsp-booster= for performance improvements :perf:nixpkgs:
+
+;; + Nixpkgs :: =emacs-lsp-booster=
+;; + Website :: <https://github.com/blahgeek/emacs-lsp-booster>
 
 ;; Requires =emacs-lsp-booster= to be installed into the environment.
-;; Available by that name in Nixpkgs.
 
 
-(package! (eglot-booster :host github :repo "jdtsmith/eglot-booster")
-  (after! eglot
-    (eglot-booster-mode)))
+(defun +lsp-booster--json-parse-a (old-fn &rest args)
+  "Try to parse bytecode instead of json."
+  (or
+   (when (equal (following-char) ?#)
+     (let ((bytecode (read (current-buffer))))
+       (when (byte-code-function-p bytecode)
+         (funcall bytecode))))
+   (apply old-fn args)))
 
+(advice-add (if (progn (require 'json)
+                       (fboundp 'json-parse-buffer))
+                'json-parse-buffer
+              'json-read)
+            :around
+            #'+lsp-booster--json-parse-a)
 
+(defun +lsp-booster--final-command-a (old-fn cmd &optional test?)
+  "Prepend emacs-lsp-booster command to lsp CMD."
+  (let ((orig-result (funcall old-fn cmd test?)))
+    (if (and (not test?)                             ;; for check lsp-server-present?
+             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+             lsp-use-plists
+             (not (functionp 'json-rpc-connection))  ;; native json-rpc
+             (executable-find "emacs-lsp-booster"))
+        (progn
+          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+            (setcar orig-result command-from-exec-path))
+          (message "Using emacs-lsp-booster for %s!" orig-result)
+          (cons "emacs-lsp-booster" orig-result))
+      orig-result)))
 
-;; Though I have not tried it, I am thinking that using =lsp-booster= over TRAMP is
-;; not worth the trouble of ensuring that the executable is available on every
-;; remote server.  At least not as a default behavior.  Consider enabling this
-;; per-project or server as desired.
-
-;; elsp
-
-(setopt eglot-booster-no-remote-boost t)
-
-;; Run language servers automatically in supported major modes
-;; :PROPERTIES:
-;; :ID:       f67c3b4f-7328-4985-937d-cfec35f82994
-;; :END:
-
-;; The timing here may be delicate...
-
-
-(add-hook 'prog-mode-hook #'eglot-ensure)
-
-(after! eglot
-  (defvar eglot-server-programs)
-
-  (def-advice! +eglot--ensure-available-mode (fn)
-    :around #'eglot-ensure
-    "Run `eglot-ensure' in supported modes."
-    (when (alist-get major-mode eglot-server-programs nil nil
-                     (lambda (modes key)
-                       (if (listp modes)
-                           (member key modes)
-                         (eq key modes))))
-      (funcall fn))))
-
-;; Declare some Eglot buffers as popup windows
-
-
-(after! (eglot popper)
-  (defvar popper-reference-buffers)
-  (add-to-list 'popper-reference-buffers "^\\*eglot-help"))
-
-;; Enable JSON schema validation via the SchemaStore catalog
-;; :PROPERTIES:
-;; :ID:       aa0c0d8b-a74e-4064-b749-519e16af0999
-;; :END:
-
-
-(use-feature! ceamx-eglot
-  :demand t
-  :after eglot
-  :defines (ceamx-eglot-server-configurations-alist)
-  :config
-  (let ((schemata (ceamx-eglot-json-schema-catalog)))
-    (setq-default
-     eglot-workspace-configuration
-     (map-insert eglot-workspace-configuration
-                 :json ; <https://github.com/microsoft/vscode/blob/main/extensions/json-language-features/server/README.md>
-                 `( :validate (:enable t)
-                    :schemas ,schemata
-                    :resultLimit 10000
-                    :initializationOptions ( :handledSchemaProtocols ["file" "https"]))))
-    (setq-default
-     eglot-workspace-configuration
-     (map-insert eglot-workspace-configuration
-                 :yaml ; <https://github.com/redhat-developer/yaml-language-server/blob/main/README.md>
-                 `( :validate (:enable t)
-                    :schemas ,schemata)))))
-
-;; Configure ~flycheck-eglot~ integration
-
-
-(package! flycheck-eglot
-  (add-hook 'eglot-managed-mode-hook #'flycheck-eglot-mode))
-
-;; Add workspace symbols as Consult datasource with ~consult-eglot~
-
-;; <https://github.com/mohkale/consult-eglot>
-
-
-(package! consult-eglot
-  (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
-
-;; Keybindings
-;; :PROPERTIES:
-;; :ID:       580d70ee-0c49-4ddf-9f38-3d6f516fb09f
-;; :END:
-
-
-(keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
-(keymap-global-set "C-c l r" '("rename..." . eglot-rename))
-(keymap-global-set "C-c l o" #'consult-eglot-symbols)
-
-(after! eglot
-  ;; Override the default binding for `xref-find-apropos'.
-  (keymap-set eglot-mode-map "C-M-." #'consult-eglot-symbols))
-
-(after! lsp-mode
-    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
-    ;; Override the default binding for `xref-find-apropos'.
-    (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
+(advice-add 'lsp-resolve-final-command :around #'+lsp-booster--final-command-a)
 
 ;; Use Biome language server in supported modes :biome:checkers:formatting:lsp:
 

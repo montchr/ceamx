@@ -171,9 +171,6 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 #+end_src
 
 **** LSP-Mode: Use plists for deserialization
-:PROPERTIES:
-:ID:       8e2a4752-6dad-4893-9c92-921fc845f438
-:END:
 
 - Reference :: https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
 
@@ -6952,9 +6949,21 @@ development tool as needed.
 
 *** Language Server and Debugger Protocol Support :lsp:lang:
 
-**** Eglot
+I very much prefer Eglot to LSP-Mode when it comes to integration with
+Emacs (it is builtin, after all), performance, and user interface.
+
+However, Eglot has one fatal flaw: it does not currently support
+multiple language servers.  That’s a huge drawback, especially since
+Biome provides diagnostics through its LSP.  The result is that it is
+currently impossible to have both a primary language server and a
+diagnostic language server running at the same time in a buffer.
+
+There might be some progress towards this in the near future, but for
+now, I am going to try out LSP-Mode… again…
+
+**** DISABLED =eglot= :: Eglot :eglot:
 :PROPERTIES:
-:ID:       8e477ec3-51fd-47ea-802d-e08484fa1add
+:header-args: :tangle no
 :END:
 
 #+begin_src emacs-lisp
@@ -6977,7 +6986,7 @@ development tool as needed.
   (setopt eglot-auto-display-help-buffer nil))
 #+end_src
 
-***** Use =emacs-lsp-booster= via ~eglot-booster~ :perf:
+***** =eglot-booster= :: Handler for =emacs-lsp-booster= :perf:
 :PROPERTIES:
 :ID:       1e70440b-7daa-491e-bdef-d761d8fb186d
 :END:
@@ -6999,15 +7008,11 @@ not worth the trouble of ensuring that the executable is available on every
 remote server.  At least not as a default behavior.  Consider enabling this
 per-project or server as desired.
 
-elsp
 #+begin_src emacs-lisp
 (setopt eglot-booster-no-remote-boost t)
 #+end_src
 
 ***** Run language servers automatically in supported major modes
-:PROPERTIES:
-:ID:       f67c3b4f-7328-4985-937d-cfec35f82994
-:END:
 
 The timing here may be delicate...
 
@@ -7028,7 +7033,7 @@ The timing here may be delicate...
       (funcall fn))))
 #+end_src
 
-***** Declare some Eglot buffers as popup windows
+***** Declare some Eglot buffers as popup windows :popups:
 
 #+begin_src emacs-lisp
 (after! (eglot popper)
@@ -7036,7 +7041,7 @@ The timing here may be delicate...
   (add-to-list 'popper-reference-buffers "^\\*eglot-help"))
 #+end_src
 
-***** Enable JSON schema validation via the SchemaStore catalog
+***** Enable JSON schema validation via the SchemaStore catalog :json:
 :PROPERTIES:
 :ID:       aa0c0d8b-a74e-4064-b749-519e16af0999
 :END:
@@ -7064,14 +7069,14 @@ The timing here may be delicate...
                     :schemas ,schemata)))))
 #+end_src
 
-***** Configure ~flycheck-eglot~ integration
+***** =flycheck-eglot= :: Eglot-Flycheck integration :flycheck:
 
 #+begin_src emacs-lisp
 (package! flycheck-eglot
   (add-hook 'eglot-managed-mode-hook #'flycheck-eglot-mode))
 #+end_src
 
-***** Add workspace symbols as Consult datasource with ~consult-eglot~
+***** =consult-eglot= :: Add Eglot workspace symbols as Consult datasource :consult:
 
 <https://github.com/mohkale/consult-eglot>
 
@@ -7080,7 +7085,7 @@ The timing here may be delicate...
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
 #+end_src
 
-***** Keybindings
+***** Keybindings :keybinds:
 :PROPERTIES:
 :ID:       580d70ee-0c49-4ddf-9f38-3d6f516fb09f
 :END:
@@ -7100,11 +7105,10 @@ The timing here may be delicate...
     (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 #+end_src
 
-**** DISABLED LSP-Mode
-:PROPERTIES:
-:ID:       9abb96ca-edef-4405-8eed-186ff0590410
-:header-args:emacs-lisp: :tangle no
-:END:
+
+**** =lsp-mode= :: LSP-Mode :lsp:
+
+***** =lsp-mode= :: The core LSP-Mode package :package:
 
 #+begin_src emacs-lisp
 (package! lsp-mode
@@ -7113,13 +7117,20 @@ The timing here may be delicate...
   (setopt lsp-enable-folding nil
           lsp-enable-text-document-color nil)
   (setopt lsp-enable-on-type-formatting nil)
+  ;; This is provided by `breadcrumb-mode'.
   (setopt lsp-headerline-breadcrumb-enable nil)
 
   (setopt lsp-diagnostics-provider :flymake)
 
+  ;; This means use Emacs' builtin completion system, which means
+  ;; compatibility with any modern completion UI (including Corfu).
   (setopt lsp-completion-provider :none)
   (add-hook 'lsp-mode-hook #'lsp-completion-mode))
+#+end_src
 
+***** =lsp-ui= :: The fanciful and bloated UI for LSP-Mode :package:ui:
+
+#+begin_src emacs-lisp
 (package! lsp-ui
   (setopt lsp-ui-peek-enable t)
   (setopt lsp-ui-doc-max-height 8
@@ -7133,21 +7144,22 @@ The timing here may be delicate...
 
   (after! lsp-ui
     (setopt lsp-ui-sideline-actions-icon lsp-ui-sideline-actions-icon-default)))
+#+end_src
 
+***** =consult-lsp= :: Provide =lsp-mode= symbols as a Consult datasource :package:consult:
+
+#+begin_src emacs-lisp
 (package! consult-lsp
   (after! lsp-mode
     (keymap-set lsp-mode-map "<remap> <xref-find-apropos>" #'consult-lsp-symbols)))
 #+end_src
 
-***** Use =emacs-lsp-booster= for performance improvements :perf:
-:PROPERTIES:
-:ID:       d3f0d9ac-2a4f-4ea7-b2de-761b332cf9e8
-:END:
+***** Use =emacs-lsp-booster= for performance improvements :perf:nixpkgs:
 
-- Website :: <https://github.com/blahgeek/emacs-lsp-booster>
++ Nixpkgs :: =emacs-lsp-booster=
++ Website :: <https://github.com/blahgeek/emacs-lsp-booster>
 
 Requires =emacs-lsp-booster= to be installed into the environment.
-Available by that name in Nixpkgs.
 
 #+begin_src emacs-lisp
 (defun +lsp-booster--json-parse-a (old-fn &rest args)
@@ -7183,6 +7195,7 @@ Available by that name in Nixpkgs.
 
 (advice-add 'lsp-resolve-final-command :around #'+lsp-booster--final-command-a)
 #+end_src
+
 
 *** Use Biome language server in supported modes :biome:checkers:formatting:lsp:
 

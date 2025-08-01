@@ -58,9 +58,6 @@
 (setq gc-cons-threshold (* 128 1024 1024)) ; 128MiB
 
 ;; LSP-Mode: Use plists for deserialization
-;; :PROPERTIES:
-;; :ID:       8e2a4752-6dad-4893-9c92-921fc845f438
-;; :END:
 
 ;; - Reference :: https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
 
