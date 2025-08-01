@@ -8,7 +8,7 @@
   inputs.nix-nil-lsp.url = "github:oxalica/nil";
 
   outputs =
-    inputs@{ flake-parts, ... }:
+    inputs@{ flake-parts, nixpkgs, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         inputs.flake-parts.flakeModules.modules
@@ -25,8 +25,12 @@
         "aarch64-darwin"
       ];
       perSystem =
-        { pkgs, ... }:
+        { system, pkgs, ... }:
         {
+          _module.args.pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
           formatter = pkgs.nixfmt-rfc-style;
         };
     };

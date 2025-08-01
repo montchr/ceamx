@@ -9,7 +9,6 @@
             ds: with ds; [
               en
               en-computers
-              en-science
             ]
           )
         );
