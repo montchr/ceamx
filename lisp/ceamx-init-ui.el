@@ -530,10 +530,10 @@
                ;; :default-family "Aporetic Sans Mono"
                ;; :default-family "Berkeley Mono"
                ;; :default-family "Pragmasevka"
-               ;; :default-family "Iosevka"
-               :default-family "Iosvmata"
+               :default-family "Iosevka"
+               ;; :default-family "Iosvmata"
                :default-weight regular
-               :default-height 100
+               :default-height 102
                ;; :default-height ,(pcase (system-name)
                ;;                    ("tuuvok" 102)
                ;;                    ;; (_ 105)
@@ -552,7 +552,7 @@
                :variable-pitch-family "Aporetic Serif"
                ;; :variable-pitch-family nil
                ;; :variable-pitch-weight nil
-               ;; :variable-pitch-height 1.0
+               :variable-pitch-height 1.0
 
                :mode-line-active-family nil
                :mode-line-active-weight nil
@@ -585,7 +585,7 @@
                ;; :italic-slant nil
                ;; :italic-slant italic
 
-               :line-spacing 0.15)))
+               :line-spacing 0.05)))
 
     (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
 

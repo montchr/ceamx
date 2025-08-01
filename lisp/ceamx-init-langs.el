@@ -957,47 +957,6 @@ The original function fails in the presence of whitespace after a sexp."
   (after! lsp-mode
     (keymap-set lsp-mode-map "<remap> <xref-find-apropos>" #'consult-lsp-symbols)))
 
-;; Use =emacs-lsp-booster= for performance improvements :perf:nixpkgs:
-
-;; + Nixpkgs :: =emacs-lsp-booster=
-;; + Website :: <https://github.com/blahgeek/emacs-lsp-booster>
-
-;; Requires =emacs-lsp-booster= to be installed into the environment.
-
-
-(defun +lsp-booster--json-parse-a (old-fn &rest args)
-  "Try to parse bytecode instead of json."
-  (or
-   (when (equal (following-char) ?#)
-     (let ((bytecode (read (current-buffer))))
-       (when (byte-code-function-p bytecode)
-         (funcall bytecode))))
-   (apply old-fn args)))
-
-(advice-add (if (progn (require 'json)
-                       (fboundp 'json-parse-buffer))
-                'json-parse-buffer
-              'json-read)
-            :around
-            #'+lsp-booster--json-parse-a)
-
-(defun +lsp-booster--final-command-a (old-fn cmd &optional test?)
-  "Prepend emacs-lsp-booster command to lsp CMD."
-  (let ((orig-result (funcall old-fn cmd test?)))
-    (if (and (not test?)                             ;; for check lsp-server-present?
-             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
-             lsp-use-plists
-             (not (functionp 'json-rpc-connection))  ;; native json-rpc
-             (executable-find "emacs-lsp-booster"))
-        (progn
-          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
-            (setcar orig-result command-from-exec-path))
-          (message "Using emacs-lsp-booster for %s!" orig-result)
-          (cons "emacs-lsp-booster" orig-result))
-      orig-result)))
-
-(advice-add 'lsp-resolve-final-command :around #'+lsp-booster--final-command-a)
-
 ;; Use Biome language server in supported modes :biome:checkers:formatting:lsp:
 
 ;; - Docs :: <https://biomejs.dev/guides/integrate-in-editor/>

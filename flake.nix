@@ -4,11 +4,20 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   inputs.apparat.url = "sourcehut:~montchr/apparat";
   inputs.devshell.url = "github:numtide/devshell";
+  inputs.nix-nil-lsp.url = "github:oxalica/nil";
 
   outputs =
-    inputs@{ flake-parts, apparat, ... }:
+    inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ inputs.devshell.flakeModule ];
+      imports = [
+        inputs.flake-parts.flakeModules.modules
+        inputs.devshell.flakeModule
+
+        ./nix/devshells
+        ./nix/lib
+        ./nix/modules
+        ./nix/packages
+      ];
       systems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -17,37 +26,8 @@
       perSystem =
         { pkgs, ... }:
         {
-          formatter.default = pkgs.nixfmt-rfc-style;
-          devshells.default =
-            let
-              cats = apparat.lib.devshell.categorised [
-                "formatters"
-                "tools"
-              ];
-              formatter = cats.formatters.pkg;
-              tool = cats.tools.pkg;
-            in
-            {
-              devshell.name = "Ceamx";
-              commands = [
-                # TODO: remove this temporary stuff for mail testing
-                (tool pkgs.pizauth)
-                (tool pkgs.msmtp)
-                (tool pkgs.isync)
-
-                (tool pkgs.just)
-                (formatter pkgs.nixfmt-rfc-style)
-              ];
-              env = [
-                {
-                  name = "NIXFMT_MAX_WIDTH";
-                  value = 80;
-                }
-              ];
-              devshell.packages = [ pkgs.fd ];
-            };
+          formatter = pkgs.nixfmt-rfc-style;
         };
-      flake = { };
     };
 
   # NOTE: Retained for provisioning purposes, but normally unnecessary.
