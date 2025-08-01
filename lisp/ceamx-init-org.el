@@ -306,15 +306,23 @@ Intended for use as a local hook function on
 
     (add-hook 'org-mode-hook #'org-modern-indent-mode 90)))
 
-;; Appearance: Display visual feedback after actions :ui:
+;; Appearance: Display visual feedback pulse after actions  :ui:
 
 ;; - Source :: <https://github.com/protesilaos/dotfiles/blob/4d4e82fc63dd74971a7bf7895e4e0e24c3d446da/emacs/.emacs.d/prot-emacs-modules/prot-emacs-org.el#L112-L115>
 
 
 (after! (org pulsar)
-  (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
+  (dolist (hook '( org-agenda-after-show-hook
+                   org-follow-link-hook
+                   org-cycle
+                   org-shifttab))
     (add-hook hook #'pulsar-recenter-center)
-    (add-hook hook #'pulsar-reveal-entry)))
+    (add-hook hook #'pulsar-reveal-entry))
+
+  (dolist (fn '( org-cycle
+                   org-shifttab
+                 ))
+    (cl-pushnew fn pulsar-pulse-functions)))
 
 ;; =doct= :: a template engine for ~org-capture~
 ;; :PROPERTIES:

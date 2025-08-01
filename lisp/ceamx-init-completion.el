@@ -590,7 +590,7 @@ A final newline would be inserted literally into the snippet expansion."
   ;; cf. `orderless-component-separator'
   (setopt corfu-separator ?_)
   (setopt corfu-on-exact-match 'insert
-          corfu-preselect 'first
+                    corfu-preselect 'first
           corfu-quit-at-boundary 'separator
           corfu-quit-no-match t)
   (setopt corfu-preview-current t)
