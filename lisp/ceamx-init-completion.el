@@ -593,11 +593,12 @@ A final newline would be inserted literally into the snippet expansion."
           corfu-preselect 'first
           corfu-quit-at-boundary 'separator
           corfu-quit-no-match t)
+  (setopt corfu-preview-current t)
   (setopt corfu-echo-delay '(0.3 . 0.3))
   (setopt corfu-popupinfo-delay '(0.75 . 0.5))
   (setopt corfu-auto t
-          ;; corfu-auto-delay 0.3
-          corfu-auto-delay 1.3
+          corfu-auto-delay 0.3
+          ;; corfu-auto-delay 1.3
           corfu-auto-prefix 3)
 
   ;; Setting this here again for good measure, just in case it is

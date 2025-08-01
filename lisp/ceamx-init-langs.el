@@ -1231,7 +1231,12 @@ usually wrongly fontified as a metadata block."
     (add-hook 'nix-ts-mode-hook #'eglot-ensure)))
 
 (after! lsp-mode
-  (setopt lsp-disabled-clients '(nix-nixd)))
+  (setopt lsp-disabled-clients '(nix-nixd))
+  (setopt lsp-nix-nil-formatter nil
+          lsp-nix-nil-max-mem 10000
+          lsp-nix-nil-auto-eval-inputs t
+          lsp-nix-nil-ignored-diagnostics nil
+          lsp-nix-nil-exclude-files-diagnostic nil))
 
 (use-feature! ceamx-eglot
   :demand t

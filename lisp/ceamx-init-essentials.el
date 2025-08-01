@@ -12,6 +12,8 @@
 ;; "A second, case-insensitive pass over `auto-mode-alist' is time wasted."
 (setopt auto-mode-case-fold nil)
 
+(setopt kill-whole-line t)
+
 (define-keymap :keymap (current-global-map)
   "M-c" #'capitalize-dwim
   "M-f" #'forward-word
@@ -20,7 +22,7 @@
   "M-o" #'delete-blank-lines
   "M-Q" #'repunctuate-sentences
   "M-u" #'upcase-dwim
-  "M-z" #'zap-up-to-char              ; orig: `zap-to-char'
+  "M-z" #'zap-up-to-char                ; orig: `zap-to-char'
   "M-=" #'count-words
   "M-SPC" #'cycle-spacing
 
