@@ -918,7 +918,7 @@ The original function fails in the presence of whitespace after a sexp."
 
 
 (package! lsp-mode
-  (setq lsp-keymap-prefix "C-c L")
+  (setq lsp-keymap-prefix "C-c l l")
 
   (setopt lsp-enable-folding nil
           lsp-enable-text-document-color nil)
@@ -1094,16 +1094,17 @@ The original function fails in the presence of whitespace after a sexp."
 ;; JavaScript
 
 
-;; TODO: try <https://github.com/llemaitre19/jtsx> but it's not in melpa or nixpkgs yet
+;; TODO: try <https://github.com/llemaitre19/jtsx>
 
 (defun ceamx-init-javascript-modes ()
   (setopt js-indent-level 2)
 
-  (after! lsp-mode
+  (when (locate-library "lsp-mode")
     (lsp-deferred)
     (lsp-lens-mode)
+    ;; FIXME: defer to biome cli or use its lsp server?
     (dolist (hook '(lsp-format-buffer
-                     lsp-organize-imports))
+                    lsp-organize-imports))
       (add-hook 'before-save-hook hook nil t))))
 
 ;; TODO: must happen before `treesit-auto' so it can override
@@ -1169,32 +1170,20 @@ usually wrongly fontified as a metadata block."
     (ignore (goto-char (point-max)))))
 
 ;; Install and configure ~nix-mode~ :package:
-;; :PROPERTIES:
-;; :ID:       a2d69933-74a4-458f-bcc2-3d2246215c96
-;; :END:
 
 ;; <https://github.com/NixOS/nix-mode>
 
 ;; NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 
-(package! nix-mode
-  (if (locate-library "lsp-mode")
-      (add-hook 'nix-mode-hook #'lsp-deferred)
-    (add-hook 'nix-mode-hook #'eglot-ensure)))
+(package! nix-mode)
 
 ;; Install and configure ~nix-ts-mode~ :package:
-;; :PROPERTIES:
-;; :ID:       9936dd8a-40e7-46d7-a8a8-0d0e58dbea47
-;; :END:
 
 ;; <https://github.com/remi-gelinas/nix-ts-mode>
 
 
-(package! nix-ts-mode
-  (if (locate-library "lsp-mode")
-      (add-hook 'nix-ts-mode-hook #'lsp-deferred)
-    (add-hook 'nix-ts-mode-hook #'eglot-ensure)))
+(package! nix-ts-mode)
 
 (after! (nerd-icons nix-ts-mode)
   ;; XXX: contribute fix upstream
@@ -1229,10 +1218,17 @@ usually wrongly fontified as a metadata block."
   (add-to-list 'apheleia-formatters '(alejandra "alejandra")))
 
 ;; Configure Nix language servers :lsp:
-;; :PROPERTIES:
-;; :ID:       d821e9ba-f4c9-4621-a5ed-60d834d469f2
-;; :END:
 
+
+(after! nix-mode
+  (if (locate-library "lsp-mode")
+      (add-hook 'nix-mode-hook #'lsp-deferred)
+    (add-hook 'nix-mode-hook #'eglot-ensure)))
+
+(after! nix-ts-mode
+  (if (locate-library "lsp-mode")
+      (add-hook 'nix-ts-mode-hook #'lsp-deferred)
+    (add-hook 'nix-ts-mode-hook #'eglot-ensure)))
 
 (after! lsp-mode
   (setopt lsp-disabled-clients '(nix-nixd)))

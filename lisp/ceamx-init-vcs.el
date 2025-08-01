@@ -56,6 +56,16 @@
   (setopt project-vc-extra-root-markers '(".project"))
   (setopt project-key-prompt-style t))
 
+;; Rudimentary jujutsu (=jj=) VCS support
+
+;; The =vc-jj= package currently has some issues (see the entry on that
+;; package below).  In lieu of full-fledged support, let’s try to make the
+;; =jj= experience in Emacs somewhat more bearable.
+
+
+(after! lsp-mode
+  (cl-pushnew "[/\\\\]\\.jj\\'" lsp-file-watch-ignored-directories))
+
 ;; =diff-hl= :: display version control status indicators in margins
 ;; :PROPERTIES:
 ;; :ID:       6a8b57d7-091a-44a6-bcf1-564f45d9bc7e

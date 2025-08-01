@@ -51,7 +51,7 @@
 ;; TODO: will a `init-file-debug' check work here?
 (setq garbage-collection-messages t)
 
-;; LSP-Mode: Use plists for deserialization
+;; LSP-Mode: Use plists for deserialization :perf:lsp_mode:
 
 ;; - Reference :: https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
 
@@ -60,6 +60,17 @@
 
 
 (setenv "LSP_USE_PLISTS" "true")
+
+;; Increase ~read-process-output-max~ for improved LSP response handling :perf:lsp:
+
+;; + Reference :: <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
+
+;; Language server JSON responses may be in the multi-megabyte range.  The
+;; default value of 64KB is not enough.
+
+
+;; Default value is 65536 (64KB)
+(setq read-process-output-max (* 1024 1024)) ; 1MB
 
 ;; Configure garbage collection :perf:
 

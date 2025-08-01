@@ -163,7 +163,7 @@ Intended for use as a callback on `ceamx-after-init-hook'."
 (add-hook 'ceamx-after-init-hook #'ceamx-restore-file-name-handler-alist-h)
 #+end_src
 
-**** LSP-Mode: Use plists for deserialization
+**** LSP-Mode: Use plists for deserialization :perf:lsp_mode:
 
 - Reference :: https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
 
@@ -172,6 +172,18 @@ Note that =LSP_USE_PLISTS= will also need to be added to
 
 #+begin_src emacs-lisp
 (setenv "LSP_USE_PLISTS" "true")
+#+end_src
+
+**** Increase ~read-process-output-max~ for improved LSP response handling :perf:lsp:
+
++ Reference :: <https://emacs-lsp.github.io/lsp-mode/page/performance/#increase-the-amount-of-data-which-emacs-reads-from-the-process>
+
+Language server JSON responses may be in the multi-megabyte range.  The
+default value of 64KB is not enough.
+
+#+begin_src emacs-lisp
+;; Default value is 65536 (64KB)
+(setq read-process-output-max (* 1024 1024)) ; 1MB
 #+end_src
 
 **** Configure garbage collection :perf:
@@ -5475,6 +5487,17 @@ Here are the definitions for the Bufler grouping rules:
   (setopt project-key-prompt-style t))
 #+end_src
 
+*** Rudimentary jujutsu (=jj=) VCS support
+
+The =vc-jj= package currently has some issues (see the entry on that
+package below).  In lieu of full-fledged support, let’s try to make the
+=jj= experience in Emacs somewhat more bearable.
+
+#+begin_src emacs-lisp
+(after! lsp-mode
+  (cl-pushnew "[/\\\\]\\.jj\\'" lsp-file-watch-ignored-directories))
+#+end_src
+
 *** DISABLED =vc-jj= :: Support for the Jujutsu version control system :package:
 :PROPERTIES:
 :header-args: :tangle no
@@ -7114,7 +7137,7 @@ The timing here may be delicate...
 
 #+begin_src emacs-lisp
 (package! lsp-mode
-  (setq lsp-keymap-prefix "C-c L")
+  (setq lsp-keymap-prefix "C-c l l")
 
   (setopt lsp-enable-folding nil
           lsp-enable-text-document-color nil)
@@ -7390,16 +7413,17 @@ Install the =yaml-language-server= from Nixpkgs first.
 *** JavaScript
 
 #+begin_src emacs-lisp
-;; TODO: try <https://github.com/llemaitre19/jtsx> but it's not in melpa or nixpkgs yet
+;; TODO: try <https://github.com/llemaitre19/jtsx>
 
 (defun ceamx-init-javascript-modes ()
   (setopt js-indent-level 2)
 
-  (after! lsp-mode
+  (when (locate-library "lsp-mode")
     (lsp-deferred)
     (lsp-lens-mode)
+    ;; FIXME: defer to biome cli or use its lsp server?
     (dolist (hook '(lsp-format-buffer
-                     lsp-organize-imports))
+                    lsp-organize-imports))
       (add-hook 'before-save-hook hook nil t))))
 
 ;; TODO: must happen before `treesit-auto' so it can override
@@ -7517,33 +7541,21 @@ Returns process exit code."
 *** Nix
 
 **** Install and configure ~nix-mode~ :package:
-:PROPERTIES:
-:ID:       a2d69933-74a4-458f-bcc2-3d2246215c96
-:END:
 
 <https://github.com/NixOS/nix-mode>
 
 NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 #+begin_src emacs-lisp
-(package! nix-mode
-  (if (locate-library "lsp-mode")
-      (add-hook 'nix-mode-hook #'lsp-deferred)
-    (add-hook 'nix-mode-hook #'eglot-ensure)))
+(package! nix-mode)
 #+end_src
 
 **** Install and configure ~nix-ts-mode~ :package:
-:PROPERTIES:
-:ID:       9936dd8a-40e7-46d7-a8a8-0d0e58dbea47
-:END:
 
 <https://github.com/remi-gelinas/nix-ts-mode>
 
 #+begin_src emacs-lisp
-(package! nix-ts-mode
-  (if (locate-library "lsp-mode")
-      (add-hook 'nix-ts-mode-hook #'lsp-deferred)
-    (add-hook 'nix-ts-mode-hook #'eglot-ensure)))
+(package! nix-ts-mode)
 
 (after! (nerd-icons nix-ts-mode)
   ;; XXX: contribute fix upstream
@@ -7585,13 +7597,25 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 #+end_src
 
 **** Configure Nix language servers :lsp:
-:PROPERTIES:
-:ID:       d821e9ba-f4c9-4621-a5ed-60d834d469f2
-:END:
 
 #+begin_src emacs-lisp
+(after! nix-mode
+  (if (locate-library "lsp-mode")
+      (add-hook 'nix-mode-hook #'lsp-deferred)
+    (add-hook 'nix-mode-hook #'eglot-ensure)))
+
+(after! nix-ts-mode
+  (if (locate-library "lsp-mode")
+      (add-hook 'nix-ts-mode-hook #'lsp-deferred)
+    (add-hook 'nix-ts-mode-hook #'eglot-ensure)))
+
 (after! lsp-mode
-  (setopt lsp-disabled-clients '(nix-nixd)))
+  (setopt lsp-disabled-clients '(nix-nixd))
+  (setopt lsp-nix-nil-formatter nil
+          lsp-nix-nil-max-mem 10000
+          lsp-nix-nil-auto-eval-inputs t
+          lsp-nix-nil-ignored-diagnostics nil
+          lsp-nix-nil-exclude-files-diagnostic nil))
 
 (use-feature! ceamx-eglot
   :demand t
