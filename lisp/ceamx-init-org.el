@@ -6,9 +6,6 @@
 (require 'ceamx-note)
 
 ;; Set up essential files & directories :paths:
-;; :PROPERTIES:
-;; :ID:       784a1877-2d7e-4c1b-9988-b35bd4ea825a
-;; :END:
 
 ;; These must be set before loading Org-Mode or any of its sub-features
 ;; are used.
@@ -76,9 +73,6 @@
 (package! (org :autoloads "org-loaddefs.el"))
 
 ;; Baseline Org-Mode customizations
-;; :PROPERTIES:
-;; :ID:       8b25886e-a1cd-44de-9a78-6a79720ea5d2
-;; :END:
 
 
 (after! org
@@ -419,20 +413,25 @@ Intended for use as a local hook function on
   (add-to-list 'safe-local-variable-values
       '(org-refile-targets (nil :maxlevel . 6))))
 
-;; Define the ~ceamx-org-repeat-map~ repeat map :keybinds:repeat:
+;; Customize the ~org-navigation-repeat-map~ repeat map :keybinds:repeat:
 
 
 (after! org
-  (defvar-keymap ceamx-org-repeat-map
-    :name "Tree"
-    :repeat t
-    "C-b" #'org-backward-heading-same-level
-    "C-f" #'org-forward-heading-same-level
-    "C-n" #'org-next-visible-heading
-    "C-p" #'org-previous-visible-heading
-    "C-u" #'org-up-heading
-    "C-<" #'org-promote-subtree
-    "C->" #'org-demote-subtree))
+  (define-keymap :keymap org-navigation-repeat-map
+    ;;"C-b" #'org-backward-heading-same-level
+    "b" '("⇐ back" . org-backward-heading-same-level)
+    ;; "C-f" #'org-forward-heading-same-level
+    "f" '("forward ⇒" . org-forward-heading-same-level)
+    ;; "C-n" #'org-next-visible-heading
+    "n" '("next visible ⇥" . org-next-visible-heading)
+    ;; "C-p" #'org-previous-visible-heading
+    "p" '("⇤ prev visible" . org-previous-visible-heading)
+    ;; "C-u" #'org-up-heading
+    "u" '("⇑ up" . org-up-heading)
+    ;; "C-<" #'org-promote-subtree
+    "<" '("⮲ promote" . org-promote-subtree)
+    ;; "C->" #'org-demote-subtree
+    ">" '("⮱ demote" . org-demote-subtree)))
 
 ;; Archiving
 
