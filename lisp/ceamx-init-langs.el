@@ -496,8 +496,6 @@ non-nil, buffers will never be formatted upon save."
 
 
 (progn
-  (add-hook 'ceamx-after-init-hook #'flymake-mode)
-
   ;; Mirror the [C-c !] Flycheck prefix.
   (define-keymap :keymap (current-global-map)
     "C-c ! l" #'flymake-show-buffer-diagnostics

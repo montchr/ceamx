@@ -222,12 +222,13 @@
 ;; Auto-revert buffers
 
 
-(use-feature! autorevert
-  :hook (ceamx-after-init . global-auto-revert-mode)
-  :config
-  ;; Ensure the non-file-visiting buffers are also auto-reverted as needed.  For
-  ;; example, this will cause Dired to refresh a file list when the directory
-  ;; contents have changed.
+(progn
+  (global-auto-revert-mode 1)
+
+  ;; Ensure the non-file-visiting buffers are also auto-reverted as
+  ;; needed.  For example, this will cause Dired to refresh a file list
+  ;; when the directory contents have changed (but see also
+  ;; `dired-auto-revert-buffer').
   (setopt global-auto-revert-non-file-buffers t)
 
   (setopt auto-revert-interval 2))
@@ -1016,13 +1017,12 @@ Common text modes including `markdown-mode' and `org-mode' also
 ;; Enable and configure ~repeat-mode~ :keybinds:
 
 
-(progn
-  (add-hook 'ceamx-after-init-hook #'repeat-mode)
+(repeat-mode 1)
 
-  (setopt repeat-exit-timeout 10)
-  (setopt repeat-on-final-keystroke t)
-  (setopt repeat-keep-prefix t)
-  (setopt repeat-exit-key "<return>"))
+(setopt repeat-exit-timeout 10)
+(setopt repeat-on-final-keystroke t)
+(setopt repeat-keep-prefix t)
+(setopt repeat-exit-key "<return>")
 
 
 
