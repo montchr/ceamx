@@ -4478,13 +4478,17 @@ See the extensive discussion about the Tempel+Abbrev integration here:
 [[https://github.com/minad/tempel/issues/112][Potential considerations for using Tempel with abbrevs · Issue #112 · minad/tempel · GitHub]]
 
 **** =yasnippet= :: robust template expansions :lsp:
-:PROPERTIES:
-:ID:       970ef52b-4c37-4d9c-a338-789757976be8
-:END:
 
 - Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
+- Website :: <https://joaotavora.github.io/yasnippet/>
 
-Yasnippet is /required/ for some types of Eglot/LSP-Mode completions –
+- Easy to convert from TextMate snippet syntax, making its largely
+  interoperable with a wider ecosystem.
+- Supports nested placeholders, which in my opinion is an essential
+  feature for a snippet syntax.  While Tempel also can support this, the
+  feature must be custom, and the example provided in its documentation
+  does not handle multiple levels of nesting well.
+- Yasnippet is /required/ for some types of LSP completions –
 notably, JSON Schema completions.
 
 #+begin_src emacs-lisp
@@ -4501,10 +4505,101 @@ notably, JSON Schema completions.
                                  yas-no-prompt)))
 #+end_src
 
+***** Documentation: YASnippet Syntax Reference :doc:
+
+Source: <https://joaotavora.github.io/yasnippet/snippet-development.html>
+
+****** File header keys
+
++ =key= :: snippet abbrev to trigger expansion with ~yas-expand~
+
++ =name= :: one-line description of the snippet.  This will be displayed
+  in the menu.  This description should aim to clarify the distinction
+  between this snippet and other snippets.
+
++ =condition= :: inline Emacs Lisp code defining a condition for
+  expansion.  When the result of this expression is non-nil, the snippet
+  will be expanded when triggered.  Otherwise, the snippet will not be
+  expanded, even if triggered.  See also ~yas-buffer-local-condition~.
+
++ =type= :: =[snippet | command]= ; When =type= is set to “command”, the
+  snippet body will be interpreted as Emacs Lisp code to be evaluated
+  when the snippet is triggered.  For this use case, consider using
+  Tempel instead, as its Tempo syntax is better suited to inline Emacs
+  Lisp code.
+
++ =contributor= :: snippet author.
+
++ =group= :: snippet menu grouping.  This will group the snippet into a
+  submenu in the menu-bar menu.  =group= only affects menu construction.
+  Instead of using =group=, prefer saving snippets in subdirectories,
+  along with a =.yas-make-groups= special file.
+
++ =expand-env= :: inline Emacs Lisp code in the form of a ~let~ varlist
+  assigning values to variables
+  (e.g. =((foo 'bar) (baz 'fnord))=).  This can be used to override
+  variable values within the scope of the snippet during its expansion.
+  The YAS documentation provides some more use cases for this feature.
+
++ =binding= :: define a keybinding directly.  But please, no, just don’t.
+
+****** Template syntax
+
+<https://joaotavora.github.io/yasnippet/snippet-development.html#org9801aa7>
+
++ Tab stop fields (=$N=) :: Simple stops along the way, navigable
+  with <TAB> and <S-TAB>.  The special =$0= tab stop is the “exit point”
+  of the snippet where you will end up after all the other fields.
+  + Example: =<div$1>$0</div>=
+
++ Placeholder fields (=${N:default value}=) :: Like tab stops, but with a
+  default value.
+
+  + Placeholder fields can be nested:
+
+    #+begin_example snippet
+<div${1: id="${2:some_id}"}>$0</div>
+#+end_example
+
++ Mirrors :: Tab stops with placeholders are referred to as “fields”.
+  Fields can have mirrors elsewhere in the snippet.
+  + Example: ~<div id="${1:app}" class="js-$1-root"></div>~ will become
+    (assuming the default value): ~<div id="app"
+    class="js-app-root"></div>~
+
++ Mirrors with transformations :: Mirrors can also transform their
+  source text with inline Emacs Lisp code surrounded by =$()= inside the
+  field.
+  + Example: ~const ${1:BIGNAME} = "${1:$(downcase yas-text)}"~ becomes
+    ~const BIGNAME = "bigname"~
+  + This can be used to create nice borders around strings matching
+    their length dynamically.  See the manual’s documentation on
+    reStructuredText headers.
+
++ Fields with transformations :: Just like mirrors, but the
+  transformation acts on the initial placeholder value, not a mirror.
+
++ Backquote (=`=) expressions :: Emacs Lisp code may be embedded inside a template inside two backquote
+  characters (think Markdown inline code or shell script
+  command eval).
+  + ~yas-selected-text~ is a special variable that is often used inside
+    backquotes to insert the contents of the region.  This is equivalent
+    to Tempel’s =r= placeholder.
+  + *Backquote expressions should not modify the buffer directly.*
+    Instead, they should return some value.
+
++ Selecting field values from a list
+
+  + Example:
+
+    #+begin_example snippet
+<div align="${2:$$(yas-choose-value '("right" "center" "left"))}">
+  $0
+</div>
+#+end_example
+
+
 ***** Disable automatic whitespace modifications in snippet files
-:PROPERTIES:
-:ID:       19cbd524-49c6-4120-bae9-49c64af6e056
-:END:
 
 <https://joaotavora.github.io/yasnippet/faq.html#org64f1b8c>
 
@@ -4522,6 +4617,15 @@ A final newline would be inserted literally into the snippet expansion."
   (setq-local require-final-newline nil))
 
 (add-hook 'snippet-mode-hook #'+yasnippet-snippet-mode-disable-final-newline-h nil t)
+#+end_src
+
+***** Customize the template for newly-created snippets with ~yas-new-snippet-default~
+
+#+begin_src emacs-lisp
+(after! yasnippet
+  (setopt
+   yas-new-snippet-default
+   "# -*- mode: snippet -*-\n# name: $1\n# key: ${2:${1:$(yas--key-from-desc yas-text)}}\n# uuid: `(uuidgen-4)`\n# contributor: astratagem <chmont@protonmail.com>\n# --\n$0`(yas-escape-text yas-selected-text)`"))
 #+end_src
 
 ***** DISABLED Automatically expand snippets

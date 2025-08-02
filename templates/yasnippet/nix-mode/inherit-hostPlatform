@@ -2,4 +2,4 @@
 # uuid: a0097b0d-34a2-4dc6-96e5-7c760a356ae1
 # key: iplat
 # --
-inherit (pkgs.stdenv.${1:host}Platform) $2;$0
+inherit (pkgs.stdenv.hostPlatform) $2;$0

@@ -1,5 +1,5 @@
 # name: fetchFrom forge
-# key: fetchf
+# key: fetchfrom
 # uuid: fb9b637f-c05a-44d0-9496-0ffa99e81402
 # --
 fetchFrom${1:$$(yas-choose-value '("GitHub" "Gitea" "Sourcehut" "GitLab"))} {

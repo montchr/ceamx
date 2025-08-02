@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: subsection comment
+# key: comsub
+# uuid: 3a5ace2d-47f5-4834-9c5c-2339eacb4882
+# contributor: astratagem <chmont@protonmail.com>
+# --
+/* $1
+   ======================================================================== */
+
+$0

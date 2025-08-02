@@ -1,21 +1,22 @@
 # name: package github
 # --
-{ lib
-, stdenv
-, fetchFromGitHub
-, $1
-, $2
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  $1,
+  $2,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "$3";
   version = "$4";
 
   src = fetchFromGitHub {
     owner = "$5";
-    repo = ${6:pname};
-    rev = "${7:v\$\{version\}}";
-    sha256 = "${8:\$\{lib.fakeSha256\}}";
+    repo = ${6:finalAttrs.pname};
+    rev = "${7:v\$\{finalAttrs.version\}}";
+    sha256 = "${8}";
   };
 
   nativeBuildInputs = [ ${1:$(replace-regexp-in-string "  *" " "(subst-char-in-string ?, ? yas-text))} ];
@@ -26,9 +27,6 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     homepage = "https://${9:github.com/$5/$3}";
     description = "$10";
-    longDescription = ''
-      $11
-    '';
     license = licenses.${12:$$
   (yas-choose-value '(
     "agpl3"
@@ -55,7 +53,7 @@ stdenv.mkDerivation rec {
     "ofl"
     "unfree"
   ))};
-    maintainers = with maintainers; [ $12 ];
+    maintainers = with maintainers; [ ${12:montchr} ];
     platforms = platforms.${13:$$
   (yas-choose-value '(
     "all"
@@ -77,4 +75,4 @@ stdenv.mkDerivation rec {
     "x86"
   ))};
   };
-}
+})

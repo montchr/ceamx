@@ -1,0 +1,30 @@
+# -*- mode: snippet -*-
+# name: nixdoc
+# key: /**
+# uuid: d16ab388-d114-4187-aff0-da8a081e5eb8
+# contributor: astratagem <chmont@protonmail.com>
+# --
+/**
+  $1
+${2:
+${3: # Example
+
+ ```nix
+ ${4:FUNC} $5
+ =>
+ $6
+ ```
+
+}${7: # Type
+
+ ```
+ $4 :: $8
+ ```
+
+}${9: # Arguments
+
+ $10
+ : $11
+
+ $12}
+} */

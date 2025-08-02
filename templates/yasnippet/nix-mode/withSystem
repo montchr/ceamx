@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: withSystem
+# key: withSystem
+# uuid: ca8b2849-ca23-45c4-949c-1e8907caae80
+# contributor: astratagem <chmont@protonmail.com>
+# --
+withSystem $1 (ctx@{config, inputs', pkgs, ...}: {
+  $0
+})

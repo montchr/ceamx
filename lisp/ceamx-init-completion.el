@@ -512,11 +512,9 @@ Tempel does not trigger too often when you don't expect it."
   (add-to-list 'tempel-user-elements #'ceamx-completion--tempel-include))
 
 ;; =yasnippet= :: robust template expansions :lsp:
-;; :PROPERTIES:
-;; :ID:       970ef52b-4c37-4d9c-a338-789757976be8
-;; :END:
 
 ;; - Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
+;; - Website :: <https://joaotavora.github.io/yasnippet/>
 
 ;; Yasnippet is /required/ for some types of Eglot/LSP-Mode completions –
 ;; notably, JSON Schema completions.
@@ -535,9 +533,6 @@ Tempel does not trigger too often when you don't expect it."
                                  yas-no-prompt)))
 
 ;; Disable automatic whitespace modifications in snippet files
-;; :PROPERTIES:
-;; :ID:       19cbd524-49c6-4120-bae9-49c64af6e056
-;; :END:
 
 ;; <https://joaotavora.github.io/yasnippet/faq.html#org64f1b8c>
 
@@ -555,6 +550,14 @@ A final newline would be inserted literally into the snippet expansion."
   (setq-local require-final-newline nil))
 
 (add-hook 'snippet-mode-hook #'+yasnippet-snippet-mode-disable-final-newline-h nil t)
+
+;; Customize the template for newly-created snippets with ~yas-new-snippet-default~
+
+
+(after! yasnippet
+  (setopt
+   yas-new-snippet-default
+   "# -*- mode: snippet -*-\n# name: $1\n# key: ${2:${1:$(yas--key-from-desc yas-text)}}\n# uuid: `(uuidgen-4)`\n# contributor: astratagem <chmont@protonmail.com>\n# --\n$0`(yas-escape-text yas-selected-text)`"))
 
 ;; =spdx= :: insertable SPDX license headers
 ;; :PROPERTIES:

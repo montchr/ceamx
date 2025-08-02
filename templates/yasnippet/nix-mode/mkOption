@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: mkOption
+# key: mkopt
+# --
+lib.mkOption {
+  type = with lib.types; $1;
+  ${2:default = $3;
+  }description = $4;
+}

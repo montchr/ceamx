@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: mkEnableOption
+# key: mkEnableOption
+# uuid: ce41ab69-2187-4aa5-a510-8cc5a80fcb08
+# contributor: astratagem <chmont@protonmail.com>
+# --
+lib.mkEnableOption "$1";

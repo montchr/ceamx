@@ -2,4 +2,4 @@
 
 fundamental-mode
 
-(mei user-full-name " <" user-mail-address ">")
+(meid user-full-name " <" user-mail-address ">")

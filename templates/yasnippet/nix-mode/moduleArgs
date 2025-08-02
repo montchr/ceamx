@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: moduleArgs
+# key: {...
+# uuid: beb4f002-3c99-4ed4-a5e7-7e14c40c54c0
+# contributor: astratagem <chmont@protonmail.com>
+# --
+{ ${1:config, }${2:lib, }${3:pkgs, }... }:

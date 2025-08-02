@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: lines
+# key: lines
+# --
+''
+  $0
+'';
