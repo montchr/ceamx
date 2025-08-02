@@ -658,6 +658,53 @@ A final newline would be inserted literally into the snippet expansion."
     (unless (display-graphic-p)
       (corfu-terminal-mode 1))))
 
+;; =mct= :: Minibuffer Confines Transcended
+
+
+(package! mct
+  (setopt mct-live-completion t
+          mct-live-update-delay 0.6)
+  (setopt mct-minimum-input 3)
+  (setopt mct-completion-window-size (cons #'mct-frame-height-third 1))
+  (setopt mct-completing-read-multiple-indicator t)
+  (setopt mct-hide-completion-mode-line t)
+
+  ;; `file-name-shadow-mode' must be enabled for this option to have an
+  ;; effect.  It should be enabled by default.
+  (setopt mct-remove-shadowed-file-names t)
+
+  ;; This is for commands or completion categories that should always
+  ;; pop up the completions' buffer.  It circumvents the default method
+  ;; of waiting for some user input (see `mct-minimum-input') before
+  ;; displaying and updating the completions' buffer.
+  (setopt mct-completion-passlist
+          '(;; Some commands
+            select-frame-by-name
+            Info-goto-node
+            Info-index
+            Info-menu
+            vc-retrieve-tag
+            ;; Some completion categories
+            consult-buffer
+            consult-location
+            embark-keybinding
+            imenu
+            file
+            project-file
+            buffer
+            kill-ring))
+
+  ;; The blocklist follows the same principle as the passlist, except it
+  ;; disables live completions altogether.
+  (setopt mct-completion-blocklist nil)
+
+  ;; This is the default value but I am keeping it here for visibility.
+  (setopt mct-sort-by-command-or-category
+        '((file . mct-sort-by-directory-then-by-file)
+          ((magit-checkout vc-retrieve-tag) . mct-sort-by-alpha-then-by-length)
+          ((kill-ring imenu consult-location Info-goto-node Info-index Info-menu) . nil) ; no sorting
+          (t . mct-sort-by-history))))
+
 ;; =kind-icon= :: icons for ~completion-at-point~ candidates :icons:
 ;; :PROPERTIES:
 ;; :ID:       7153b3e8-34f4-47c1-a1e7-6de207be7d29
