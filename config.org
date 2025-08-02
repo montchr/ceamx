@@ -7440,6 +7440,23 @@ Install the =yaml-language-server= from Nixpkgs first.
   (add-hook 'typescript-ts-base-mode #'ceamx-init-javascript-modes))
 #+end_src
 
+*** Rust
+
+#+begin_src emacs-lisp
+(package! rust-mode)
+
+(package! rustic
+
+  (setopt rustic-format-trigger nil
+          rustic-babel-format-src-block nil)
+  (setopt rustic-cargo-use-last-stored-arguments t))
+
+(after! (rust-mode rustic)
+  (pushnew! auto-mode-alist
+            '("\\.rs\\'" . rust-mode)
+            '("\\.rs\\'" . rustic-mode)))
+#+end_src
+
 *** Lua
 
 #+begin_src emacs-lisp

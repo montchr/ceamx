@@ -1117,6 +1117,22 @@ The original function fails in the presence of whitespace after a sexp."
   :init
   (add-hook 'typescript-ts-base-mode #'ceamx-init-javascript-modes))
 
+;; Rust
+
+
+(package! rust-mode)
+
+(package! rustic
+
+  (setopt rustic-format-trigger nil
+          rustic-babel-format-src-block nil)
+  (setopt rustic-cargo-use-last-stored-arguments t))
+
+(after! (rust-mode rustic)
+  (pushnew! auto-mode-alist
+            '("\\.rs\\'" . rust-mode)
+            '("\\.rs\\'" . rustic-mode)))
+
 ;; Lua
 
 
