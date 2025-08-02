@@ -67,6 +67,14 @@
 
 (setopt org-agenda-files ceamx-default-agenda-files)
 
+;; Install the Org-Mode package instead of using the builtin version :package:
+
+;; But watch out, you might want to pin to some stable version!  As long as
+;; you keep it updated.
+
+
+(package! (org :autoloads "org-loaddefs.el"))
+
 ;; Baseline Org-Mode customizations
 ;; :PROPERTIES:
 ;; :ID:       8b25886e-a1cd-44de-9a78-6a79720ea5d2
