@@ -518,7 +518,13 @@ Tempel does not trigger too often when you don't expect it."
 
 ;; - Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
 
-;; Yasnippet is /required/ for some types of Eglot/LSP-Mode completions –
+;; - Easy to convert from TextMate snippet syntax, making its largely
+;;   interoperable with a wider ecosystem.
+;; - Supports nested placeholders, which in my opinion is an essential
+;;   feature for a snippet syntax.  While Tempel also can support this, the
+;;   feature must be custom, and the example provided in its documentation
+;;   does not handle multiple levels of nesting well.
+;; - Yasnippet is /required/ for some types of LSP completions –
 ;; notably, JSON Schema completions.
 
 
@@ -590,16 +596,24 @@ A final newline would be inserted literally into the snippet expansion."
   ;; cf. `orderless-component-separator'
   (setopt corfu-separator ?_)
   (setopt corfu-on-exact-match 'insert
-                    corfu-preselect 'first
+          corfu-preselect 'prompt
           corfu-quit-at-boundary 'separator
           corfu-quit-no-match t)
   (setopt corfu-preview-current t)
   (setopt corfu-echo-delay '(0.3 . 0.3))
   (setopt corfu-popupinfo-delay '(0.75 . 0.5))
   (setopt corfu-auto t
-          corfu-auto-delay 0.3
+          corfu-auto-delay 1.0
           ;; corfu-auto-delay 1.3
-          corfu-auto-prefix 3)
+          corfu-auto-prefix 4)
+
+  ;; Disable Corfu in the minibuffer when another completion UI is
+  ;; active or when entering secrets.
+  (setopt global-corfu-minibuffer
+      (lambda ()
+        (not (or (bound-and-true-p mct--active)
+                 (bound-and-true-p vertico--input)
+                 (eq (current-local-map) read-passwd-map)))))
 
   ;; Setting this here again for good measure, just in case it is
   ;; changed elsewhere.
@@ -617,6 +631,7 @@ A final newline would be inserted literally into the snippet expansion."
      "<tab>" #'corfu-next
      "<backtab>" #'corfu-previous
      "<escape>" #'corfu-reset)
+
 
   ;; (when (eq 'complete tab-always-indent)
   ;;   (keymap-set corfu-map "TAB" #'corfu-complete))
