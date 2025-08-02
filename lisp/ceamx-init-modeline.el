@@ -79,7 +79,7 @@
 ;; =doom-modeline= and =telephone-line=.
 
 
-(after! keycast
+(package! keycast
   (dolist (input '(self-insert-command org-self-insert-command))
     (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
 
