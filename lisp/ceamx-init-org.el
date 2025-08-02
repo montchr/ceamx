@@ -74,10 +74,6 @@
 
 
 (after! org
-  (setopt org-blank-before-new-entry '((heading . auto)
-                                       (plain-list-item . nil)))
-
-
   ;;
   ;; Links & IDs
 
@@ -96,6 +92,8 @@
           org-ctrl-k-protect-subtree t)
   (setopt org-reverse-note-order nil)
   (setopt org-list-use-circular-motion t)
+  (setopt org-blank-before-new-entry
+          '((heading . auto) (plain-list-item . auto)))
 
   (setopt org-M-RET-may-split-line '((default . nil))
           ;; Invoke `org-insert-heading-respect-content' directly with
