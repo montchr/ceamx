@@ -69,9 +69,6 @@
     (add-hook 'ceamx-modeline-mode-hook #'minions-mode)))
 
 ;; =keycast= :: show current command and its binding :present:
-;; :PROPERTIES:
-;; :ID:       a205c8de-e065-4d67-9d81-a02c127ef068
-;; :END:
 
 ;; - Website :: <https://github.com/tarsius/keycast>
 

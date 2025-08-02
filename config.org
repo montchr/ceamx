@@ -2301,9 +2301,6 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 #+end_src
 
 *** =keycast= :: show current command and its binding :present:
-:PROPERTIES:
-:ID:       a205c8de-e065-4d67-9d81-a02c127ef068
-:END:
 
 - Website :: <https://github.com/tarsius/keycast>
 
@@ -9839,12 +9836,19 @@ Return the new `zone' timer."
 #+end_src
 
 *** Install some games
-:PROPERTIES:
-:ID:       bb5c51be-5ceb-426d-bd7d-695b6576b15c
-:END:
 
 #+begin_src emacs-lisp
-;; TODO
+(package! wordel
+  (after! wordel
+    ;; `puni-mode' binds keys that conflict with `wordel'.  There's also
+    ;; no need for it in a game.
+    (add-hook 'wordel-mode-hook #'puni-disable-puni-mode)
+
+    (define-keymap :keymap wordel-mode-map
+      "C-a" #'wordel-first-column
+      "C-b" #'wordel-prev-column
+      "C-e" #'wordel-last-column
+      "C-f" #'wordel-next-column)))
 #+end_src
 
 *** Tabletop Gaming Tools
