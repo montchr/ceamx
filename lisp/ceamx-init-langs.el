@@ -918,48 +918,136 @@ The original function fails in the presence of whitespace after a sexp."
 
 (package! keymap-utils)
 
-;; =lsp-mode= :: The core LSP-Mode package :package:
+;; =eglot= :: Eglot :eglot:
 
 
-(package! lsp-mode
-  (setq lsp-keymap-prefix "C-c l l")
+(after! eglot
+  (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions)
+  (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
 
-  (setopt lsp-enable-folding nil
-          lsp-enable-text-document-color nil)
-  (setopt lsp-enable-on-type-formatting nil)
-  ;; This is provided by `breadcrumb-mode'.
-  (setopt lsp-headerline-breadcrumb-enable nil)
+  (after! consult
+    (keymap-set eglot-mode-map "C-c l o" #'consult-eglot-symbols))
 
-  (setopt lsp-diagnostics-provider :flymake)
+  (setopt eglot-sync-connect 1)
+  (setopt eglot-autoshutdown t)
+  (setopt eglot-send-changes-idle-time 0.5)
 
-  ;; This means use Emacs' builtin completion system, which means
-  ;; compatibility with any modern completion UI (including Corfu).
-  (setopt lsp-completion-provider :none)
-  (add-hook 'lsp-mode-hook #'lsp-completion-mode))
+  ;; Disable events buffer, which poses performance issues over time as the
+  ;; buffer grows in a longer-running Emacs instance.
+  (setopt eglot-events-buffer-size 0)
 
-;; =lsp-ui= :: The fanciful and bloated UI for LSP-Mode :package:ui:
+  ;; Prevent frequent focus-stealing.
+  (setopt eglot-auto-display-help-buffer nil))
 
+;; =eglot-booster= :: Handler for =emacs-lsp-booster= :perf:
 
-(package! lsp-ui
-  (setopt lsp-ui-peek-enable t)
-  (setopt lsp-ui-doc-max-height 8
-          lsp-ui-doc-max-width 72
-          lsp-ui-doc-delay 0.75
-          ;; Don't disappear on mouseover.
-          lsp-ui-doc-show-with-mouse nil
-          lsp-ui-doc-position 'at-point)
-  (setopt lsp-ui-sideline-ignore-duplicate t
-          lsp-ui-sideline-show-hover nil)
+;; - Website :: <https://github.com/jdtsmith/eglot-booster>
+;; - Website :: <https://github.com/blahgeek/emacs-lsp-booster>
 
-  (after! lsp-ui
-    (setopt lsp-ui-sideline-actions-icon lsp-ui-sideline-actions-icon-default)))
-
-;; =consult-lsp= :: Provide =lsp-mode= symbols as a Consult datasource :package:consult:
+;; Requires =emacs-lsp-booster= to be installed into the environment.
+;; Available by that name in Nixpkgs.
 
 
-(package! consult-lsp
-  (after! lsp-mode
-    (keymap-set lsp-mode-map "<remap> <xref-find-apropos>" #'consult-lsp-symbols)))
+(package! (eglot-booster :host github :repo "jdtsmith/eglot-booster")
+  (after! eglot
+    (eglot-booster-mode)))
+
+
+
+;; Though I have not tried it, I am thinking that using =lsp-booster= over TRAMP is
+;; not worth the trouble of ensuring that the executable is available on every
+;; remote server.  At least not as a default behavior.  Consider enabling this
+;; per-project or server as desired.
+
+
+(setopt eglot-booster-no-remote-boost t)
+
+;; Run language servers automatically in supported major modes
+
+;; The timing here may be delicate...
+
+
+(add-hook 'prog-mode-hook #'eglot-ensure)
+
+(after! eglot
+  (defvar eglot-server-programs)
+
+  (def-advice! +eglot--ensure-available-mode (fn)
+    :around #'eglot-ensure
+    "Run `eglot-ensure' in supported modes."
+    (when (alist-get major-mode eglot-server-programs nil nil
+                     (lambda (modes key)
+                       (if (listp modes)
+                           (member key modes)
+                         (eq key modes))))
+      (funcall fn))))
+
+;; Declare some Eglot buffers as popup windows :popups:
+
+
+(after! (eglot popper)
+  (defvar popper-reference-buffers)
+  (add-to-list 'popper-reference-buffers "^\\*eglot-help"))
+
+;; Enable JSON schema validation via the SchemaStore catalog :json:
+;; :PROPERTIES:
+;; :ID:       aa0c0d8b-a74e-4064-b749-519e16af0999
+;; :END:
+
+
+(use-feature! ceamx-eglot
+  :demand t
+  :after eglot
+  :defines (ceamx-eglot-server-configurations-alist)
+  :config
+  (let ((schemata (ceamx-eglot-json-schema-catalog)))
+    (setq-default
+     eglot-workspace-configuration
+     (map-insert eglot-workspace-configuration
+                 :json ; <https://github.com/microsoft/vscode/blob/main/extensions/json-language-features/server/README.md>
+                 `( :validate (:enable t)
+                    :schemas ,schemata
+                    :resultLimit 10000
+                    :initializationOptions ( :handledSchemaProtocols ["file" "https"]))))
+    (setq-default
+     eglot-workspace-configuration
+     (map-insert eglot-workspace-configuration
+                 :yaml ; <https://github.com/redhat-developer/yaml-language-server/blob/main/README.md>
+                 `( :validate (:enable t)
+                    :schemas ,schemata)))))
+
+;; =flycheck-eglot= :: Eglot-Flycheck integration :flycheck:
+
+
+(package! flycheck-eglot
+  (add-hook 'eglot-managed-mode-hook #'flycheck-eglot-mode))
+
+;; =consult-eglot= :: Add Eglot workspace symbols as Consult datasource :consult:
+
+;; <https://github.com/mohkale/consult-eglot>
+
+
+(package! consult-eglot
+  (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
+
+;; Keybindings :keybinds:
+;; :PROPERTIES:
+;; :ID:       580d70ee-0c49-4ddf-9f38-3d6f516fb09f
+;; :END:
+
+
+(keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
+(keymap-global-set "C-c l r" '("rename..." . eglot-rename))
+(keymap-global-set "C-c l o" #'consult-eglot-symbols)
+
+(after! eglot
+  ;; Override the default binding for `xref-find-apropos'.
+  (keymap-set eglot-mode-map "C-M-." #'consult-eglot-symbols))
+
+(after! lsp-mode
+    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
+    ;; Override the default binding for `xref-find-apropos'.
+    (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 
 ;; Use Biome language server in supported modes :biome:checkers:formatting:lsp:
 
@@ -1103,7 +1191,7 @@ The original function fails in the presence of whitespace after a sexp."
 (defun ceamx-init-javascript-modes ()
   (setopt js-indent-level 2)
 
-  (when (locate-library "lsp-mode")
+  (when (fboundp 'lsp-mode)
     (lsp-deferred)
     (lsp-lens-mode)
     ;; FIXME: defer to biome cli or use its lsp server?
@@ -1241,12 +1329,12 @@ usually wrongly fontified as a metadata block."
 
 
 (after! nix-mode
-  (if (locate-library "lsp-mode")
+  (if (fboundp 'lsp-mode)
       (add-hook 'nix-mode-hook #'lsp-deferred)
     (add-hook 'nix-mode-hook #'eglot-ensure)))
 
 (after! nix-ts-mode
-  (if (locate-library "lsp-mode")
+  (if (fboundp 'lsp-mode)
       (add-hook 'nix-ts-mode-hook #'lsp-deferred)
     (add-hook 'nix-ts-mode-hook #'eglot-ensure)))
 

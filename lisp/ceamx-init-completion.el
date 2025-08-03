@@ -516,7 +516,13 @@ Tempel does not trigger too often when you don't expect it."
 ;; - Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
 ;; - Website :: <https://joaotavora.github.io/yasnippet/>
 
-;; Yasnippet is /required/ for some types of Eglot/LSP-Mode completions –
+;; - Easy to convert from TextMate snippet syntax, making its largely
+;;   interoperable with a wider ecosystem.
+;; - Supports nested placeholders, which in my opinion is an essential
+;;   feature for a snippet syntax.  While Tempel also can support this, the
+;;   feature must be custom, and the example provided in its documentation
+;;   does not handle multiple levels of nesting well.
+;; - Yasnippet is /required/ for some types of LSP completions –
 ;; notably, JSON Schema completions.
 
 

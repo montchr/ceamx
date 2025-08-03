@@ -7193,10 +7193,7 @@ diagnostic language server running at the same time in a buffer.
 There might be some progress towards this in the near future, but for
 now, I am going to try out LSP-Mode… again…
 
-**** DISABLED =eglot= :: Eglot :eglot:
-:PROPERTIES:
-:header-args: :tangle no
-:END:
+**** =eglot= :: Eglot :eglot:
 
 #+begin_src emacs-lisp
 (after! eglot
@@ -7219,9 +7216,6 @@ now, I am going to try out LSP-Mode… again…
 #+end_src
 
 ***** =eglot-booster= :: Handler for =emacs-lsp-booster= :perf:
-:PROPERTIES:
-:ID:       1e70440b-7daa-491e-bdef-d761d8fb186d
-:END:
 
 - Website :: <https://github.com/jdtsmith/eglot-booster>
 - Website :: <https://github.com/blahgeek/emacs-lsp-booster>
@@ -7338,7 +7332,10 @@ The timing here may be delicate...
 #+end_src
 
 
-**** =lsp-mode= :: LSP-Mode :lsp:
+**** DISABLED =lsp-mode= :: LSP-Mode :lsp:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 
 ***** =lsp-mode= :: The core LSP-Mode package :package:
 
@@ -7625,7 +7622,7 @@ Install the =yaml-language-server= from Nixpkgs first.
 (defun ceamx-init-javascript-modes ()
   (setopt js-indent-level 2)
 
-  (when (locate-library "lsp-mode")
+  (when (fboundp 'lsp-mode)
     (lsp-deferred)
     (lsp-lens-mode)
     ;; FIXME: defer to biome cli or use its lsp server?
@@ -7824,12 +7821,12 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 
 #+begin_src emacs-lisp
 (after! nix-mode
-  (if (locate-library "lsp-mode")
+  (if (fboundp 'lsp-mode)
       (add-hook 'nix-mode-hook #'lsp-deferred)
     (add-hook 'nix-mode-hook #'eglot-ensure)))
 
 (after! nix-ts-mode
-  (if (locate-library "lsp-mode")
+  (if (fboundp 'lsp-mode)
       (add-hook 'nix-ts-mode-hook #'lsp-deferred)
     (add-hook 'nix-ts-mode-hook #'eglot-ensure)))
 
