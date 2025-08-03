@@ -1016,9 +1016,9 @@ Common text modes including `markdown-mode' and `org-mode' also
 ;; Enable and configure ~repeat-mode~ :keybinds:
 
 
-(add-hook 'ceamx-after-init-hook #'repeat-mode)
+(progn
+  (add-hook 'ceamx-after-init-hook #'repeat-mode)
 
-(after! repeat
   (setopt repeat-exit-timeout 10)
   (setopt repeat-on-final-keystroke t)
   (setopt repeat-keep-prefix t)
