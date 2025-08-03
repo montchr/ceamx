@@ -533,10 +533,14 @@ Tempel does not trigger too often when you don't expect it."
     (yas-global-mode 1)))
 
 (after! yasnippet
-  (setopt yas-snippet-dirs
-          (list (file-name-concat ceamx-templates-dir "yasnippet")))
+  (setopt yas-snippet-dirs (list (file-name-concat ceamx-templates-dir "yasnippet")))
   (setopt yas-prompt-functions '(yas-completing-prompt
-                                 yas-no-prompt)))
+                                 yas-no-prompt))
+
+  (def-hook! ceamx-snippets+yasnippet--snippet-mode-dependencies ()
+    'snippet-mode-hook
+    "Load dependent features in `snippet-mode'."
+    (require 'uuidgen)))
 
 ;; Disable automatic whitespace modifications in snippet files
 
