@@ -6065,21 +6065,9 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
 (require 'ceamx-editor)
 #+end_src
 
-*** Writing modes
-:PROPERTIES:
-:ID:       161602c2-ed40-41c1-8366-a59de107083e
-:END:
+*** Writing
 
-**** General =text-mode= customizations
-
-#+begin_src emacs-lisp
-
-#+end_src
-
-**** =typo= :: typographical correctneß
-:PROPERTIES:
-:ID:       07671fe0-00af-406f-9244-2e1eb7a6f46e
-:END:
+**** =typo= :: cycle typographical correctneß :package:
 
 + Package :: <https://github.com/jorgenschaefer/typoel>
 
@@ -6108,6 +6096,26 @@ see."
 
   (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
 #+end_src
+
+**** =cycle-at-point= :: Promptless text cycling at point :package:
+
+#+begin_src emacs-lisp
+;; TODO: bind to a key
+(package! cycle-at-point)
+#+end_src
+
+**** =shift-number= :: Increase/decrease the number at point :package:
+
++ Package :: <https://codeberg.org/ideasman42/emacs-shift-number>
+
+Provides commands ~shift-number-up~ and ~shift-number-down~ to increment or
+decrement the number at point, respectively.
+
+#+begin_src emacs-lisp
+;; TODO: bind to key, and add to embark actions
+(package! shift-number)
+#+end_src
+
 
 *** Programming modes
 :PROPERTIES:

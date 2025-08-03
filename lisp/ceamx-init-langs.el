@@ -5,15 +5,7 @@
 (require 'ceamx-lib)
 (require 'ceamx-editor)
 
-;; General =text-mode= customizations
-
-
-
-
-;; =typo= :: typographical correctneß
-;; :PROPERTIES:
-;; :ID:       07671fe0-00af-406f-9244-2e1eb7a6f46e
-;; :END:
+;; =typo= :: cycle typographical correctneß :package:
 
 ;; + Package :: <https://github.com/jorgenschaefer/typoel>
 
@@ -41,6 +33,23 @@ see."
         (typo-mode 1))))
 
   (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
+
+;; =cycle-at-point= :: Promptless text cycling at point :package:
+
+
+;; TODO: bind to a key
+(package! cycle-at-point)
+
+;; =shift-number= :: Increase/decrease the number at point :package:
+
+;; + Package :: <https://codeberg.org/ideasman42/emacs-shift-number>
+
+;; Provides commands ~shift-number-up~ and ~shift-number-down~ to increment or
+;; decrement the number at point, respectively.
+
+
+;; TODO: bind to key, and add to embark actions
+(package! shift-number)
 
 ;; Programming modes
 ;; :PROPERTIES:
