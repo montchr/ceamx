@@ -3882,6 +3882,9 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 :END:
 
 *** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 #+begin_src emacs-lisp :comments no
 ;; -*- lexical-binding: t -*-
@@ -3889,45 +3892,80 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 (require 'ceamx-lib)
 #+end_src
 
-*** Minibuffer :minibuffer:
-
-**** Baseline minibuffer settings
-:PROPERTIES:
-:ID:       2c5efde3-41fb-4154-bbc9-3921ad9a318b
-:END:
+*** Baseline minibuffer settings
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :hook ((ceamx-after-init . (minibuffer-depth-indicate-mode
-                              minibuffer-electric-default-mode)))
-  :config
+  (progn
+    (minibuffer-depth-indicate-mode 1)
+    (minibuffer-electric-default-mode 1)
+    (file-name-shadow-mode 1)
 
-  (setopt echo-keystrokes 0.25)
-  (setopt savehist-save-minibuffer-history t)
+    (setq! echo-keystrokes 0.25)
+    (setq! read-answer-short t)
+    (setq! savehist-save-minibuffer-history t)
 
-  ;; Allow opening the minibuffer from inside the minibuffer.
-  (setopt enable-recursive-minibuffers t)
-  ;; Expand mini-windows to fit their contents if necessary.
-  (setopt resize-mini-windows 'grow-only)
-  ;; Hide commands in M-x which do not apply to the current mode.
-  (setopt read-extended-command-predicate #'command-completion-default-include-p)
-  ;; Hide the cursor in the minibuffer prompt.
-  (setopt minibuffer-prompt-properties '( read-only t
-                                          cursor-intangible t
-                                          face minibuffer-prompt))
+    ;; Allow opening the minibuffer from inside the minibuffer.
+    (setq! enable-recursive-minibuffers t)
 
-  (setopt completion-ignore-case t
-          read-buffer-completion-ignore-case t
-          read-file-name-completion-ignore-case t)
-  (setq-default case-fold-search t)
+    ;; Expand mini-windows to fit their contents if necessary.
+    (setq! resize-mini-windows 'grow-only)
 
-  (setopt minibuffer-default-prompt-format " [%s]"))
+    ;; Hide commands in M-x which do not apply to the current mode.
+    (setq! read-extended-command-predicate #'command-completion-default-include-p)
+
+    ;; Hide the cursor in the minibuffer prompt.
+    (setq! minibuffer-prompt-properties '( read-only t
+                                           cursor-intangible t
+                                           face minibuffer-prompt))
+
+    (setq! completion-ignore-case t
+           read-buffer-completion-ignore-case t
+           read-file-name-completion-ignore-case t)
+    (setq-default case-fold-search t)
+
+    ;; No need to restore windows upon exiting the minibuffer.
+    (setq! read-minibuffer-restore-windows nil)
+
+    (setq! minibuffer-default-prompt-format " [%s]")
+
+    ;; Emacs 31+: Make `partial-completion' behave like `substring'.
+    (setq! completion-pcm-leading-wildcard t))
 #+end_src
 
-**** Add an indicator to the ~completing-read-multiple~ prompt
-:PROPERTIES:
-:ID:       6d74806b-359a-45e8-9090-b5b88640c900
-:END:
+Disable /category-specific/ defaults (~completion-category-defaults~) to
+standardize on the use of ~completion-styles~.  The aim is simplification
+– ~completion-styles~ effectively acts like a set of defaults anyway, so
+it's better to avoid an /additional/ level of defaults in
+~completion-category-defaults~.  Per-category customization overrides
+should be specified in ~completion-category-overrides~.
+
+#+begin_src emacs-lisp
+(setq! completion-category-defaults nil
+       completion-styles '(basic substring initials flex))
+#+end_src
+
+*** Improve the usability of the generic minibuffer UI :ui:
+
+This only applies whenever something like =vertico= or =mct= is not in use.
+
+#+begin_src emacs-lisp
+(setq! completion-auto-deselect nil)
+(setq! completion-auto-select 'second-tab)
+(setq! completion-show-help nil
+       completion-auto-help 'always
+       completion-show-inline-help nil)
+(setq! completions-detailed t)
+(setq! completions-format 'one-column)
+(setq! completions-header-format "")
+(setq! completions-highlight-face 'completions-highlight)
+(setq! completions-max-height 8)
+(setq! completions-sort 'historical)
+
+(setq! minibuffer-completion-auto-choose t)
+(setq! minibuffer-visible-completions nil)
+#+end_src
+
+*** Add an indicator to the ~completing-read-multiple~ prompt
 
 #+begin_src emacs-lisp
 ;; Supported out of the box in Emacs 31 with `crm-prompt'.
@@ -3942,10 +3980,123 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
           (cdr args))))
 #+end_src
 
-**** =vertico= :: [vert]ical [i]nteractive [co]mpletion
+*** =orderless= :: completion-matching multiple regular expressions
+
++ Package :: <https://github.com/oantolin/orderless>
+
+Using style dispatchers works like this:
+
++ =!= :: modifies the component with =orderless-not=. Both =!bad= and =bad!=
+  will match strings that do /not/ contain the pattern =bad= .
+
++ =&= :: modifies the component with =orderless-annotation= . The pattern
+  will match against the candidate’s annotation (cheesy mnemonic:
+  andnotation!).
+
++ =,= :: uses =orderless-initialism= .
+
++ ~=~ :: uses =orderless-literal= .
+
++ =^= :: uses =orderless-literal-prefix= .
+
++ =~= :: uses =orderless-flex= .
+
++ =%= :: makes the string match ignoring diacritics and similar
+  inflections on characters (it uses the function =char-fold-to-regexp= to
+  do this).
+
+Style dispatchers are customized with the user option
+~orderless-affix-dispatch-alist~, but that’s probably unnecessary.
+
+#+begin_src emacs-lisp
+(package! orderless
+  (require 'orderless)
+
+  (setq! orderless-style-dispatchers '(orderless-affix-dispatch))
+  (setq! orderless-matching-styles '(orderless-literal
+                                     orderless-regexp
+                                     orderless-flex))
+
+  (setq! orderless-component-separator #'orderless-escapable-split-on-space))
+#+end_src
+
+*** Define custom =orderless= completion styles
+
+**** ~+orderless-fast-dispatch~
+
+- source :: <https://github.com/minad/corfu/blob/main/README.org#auto-completion>
+
+#+begin_src emacs-lisp
+(defun +orderless-fast-dispatch (word index total)
+  "Fast-dispatch `orderless' completion style for `corfu'."
+  (and (= index 0) (= total 1) (length< word 4)
+       (cons 'orderless-literal-prefix word)))
+#+end_src
+
+#+begin_src emacs-lisp
+(after! orderless
+  (orderless-define-completion-style +orderless-fast
+    "Fast completion style, intended for usage with `corfu'."
+    (orderless-style-dispatchers '(+orderless-fast-dispatch))
+    (orderless-matching-styles '(orderless-literal orderless-regexp))))
+#+end_src
+
+**** ~+orderless-with-initialism~
 :PROPERTIES:
-:ID:       4d5b4204-7e8e-4b11-87d1-5da6618f99ec
+:ID:       f2d291ff-f65d-431d-8714-0cc747c872f6
 :END:
+
+#+begin_src emacs-lisp
+(after! orderless
+  (orderless-define-completion-style +orderless-with-initialism
+    (orderless-matching-styles '(orderless-initialism
+                                 orderless-literal
+                                 orderless-regexp))))
+#+end_src
+
+*** Configure preferred completion styles
+
+#+begin_src emacs-lisp
+(after! orderless
+  (require 'ceamx-completion)
+
+  ;; Use `orderless' as the final completion style fallback option.
+  (setq! completion-styles (append completion-styles '(orderless)))
+
+  (setq! completion-category-overrides
+         '((file . (styles . (basic partial-completion)))
+           (bookmark . (styles . (basic substring)))
+           (library . (styles . (basic substring)))
+           (imenu . (styles . (orderless substring basic)))
+           ;; FIXME: i am not a fan of emacs22, i think
+           (kill-ring . (styles . (emacs22 orderless)))
+
+           ;; Enable initialism by default for symbols.
+           (command . (styles . (+orderless-with-initialism)))
+           (variable . (styles . (+orderless-with-initialism)))
+           (symbol . (styles . (+orderless-with-initialism)))))
+
+  (after! consult
+    (map-put completion-category-overrides 'consult-location
+             '(styles . (basic substring orderless)))
+    (cl-pushnew #'ceamx-completion-orderless-consult-dispatch
+                orderless-style-dispatchers))
+
+  (after! eglot
+    (map-put completion-category-overrides 'eglot
+             '(styles . (emacs22 substring orderless)))
+    ;; FIXME: who provides `eglot-capf'?
+    ;; (add-to-list 'completion-category-overrides '(eglot-capf (styles orderless)))
+    ))
+
+(after! embark
+  (map-put completion-category-overrides 'embark-keybinding
+           '(styles . (basic substring))))
+
+
+#+end_src
+
+*** =vertico= :: [vert]ical [i]nteractive [co]mpletion :package:vertico:
 
 + Package :: <https://github.com/minad/vertico>
 
@@ -4016,7 +4167,7 @@ session:
           ("M-L" . ceamx/vertico-session-sort-alpha)))
 #+end_src
 
-**** =marginalia= :: minibuffer completion annotations
+*** =marginalia= :: minibuffer completion annotations :package:
 
 + Package :: <https://github.com/minad/marginalia>
 
@@ -4031,7 +4182,7 @@ session:
           marginalia-align-offset 0))
 #+end_src
 
-**** =nerd-icons-completion= :: icons for minibuffer completions :icons:
+*** =nerd-icons-completion= :: icons for minibuffer completions :icons:package:
 
 #+begin_src emacs-lisp
 (package! nerd-icons-completion
@@ -4040,10 +4191,7 @@ session:
     (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
 #+end_src
 
-**** =consult= :: [consult]ing ~completing-read~
-:PROPERTIES:
-:ID:       2eff5461-19e2-49a8-9c43-17b2dd6d76f7
-:END:
+*** =consult= :: [consult]ing ~completing-read~ :consult:package:
 
 - website :: <https://github.com/minad/consult>
 - ref :: <https://www.gnu.org/software/emacs/manual/html_node/elisp/Minibuffer-Completion.html>
@@ -4096,7 +4244,7 @@ Refine preview appearance and behavior:
    :preview-key '(:debounce 0.4 any)))
 #+end_src
 
-**** Search pre-defined sets of Info pages with ~consult-info~
+*** Search pre-defined sets of Info pages with ~consult-info~ :consult:
 
 #+begin_src emacs-lisp
 (define-prefix-command 'ceamx-info-prefix 'ceamx-info-prefix-map)
@@ -4117,7 +4265,7 @@ Refine preview appearance and behavior:
     "i o" #'ceamx/org-info))
 #+end_src
 
-***** Define keybindings for ~consult~ and its extensions :keybinds:
+*** Define keybindings for ~consult~ and its extensions :keybinds:consult:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
@@ -4189,117 +4337,7 @@ Refine preview appearance and behavior:
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'embark-prefix-help-command))
 #+end_src
 
-*** Completion styles
-
-**** =orderless= :: completion-matching multiple regular expressions :search:
-:PROPERTIES:
-:ID:       d30dd746-1706-4c46-901d-47a247455fca
-:END:
-
-+ Package :: <https://github.com/oantolin/orderless>
-
-#+begin_src emacs-lisp
-(package! orderless
-  (require 'orderless)
-
-  (setopt orderless-matching-styles
-          '(orderless-prefixes
-            orderless-regexp))
-
-  (setopt orderless-component-separator #'orderless-escapable-split-on-space)
-  ;; spaces & dash & slash & underscore
-  ;; (setopt orderless-component-separator " +\\|[-/_]")
-
-  ;; [SPC] should never trigger a completion.
-  (keymap-set minibuffer-local-completion-map "SPC" nil)
-  ;; [?] should not interfere with regexp symbols
-  (keymap-set minibuffer-local-completion-map "?" nil))
-#+end_src
-
-**** Define custom completion styles
-
-***** ~+orderless-fast-dispatch~
-
-- source :: <https://github.com/minad/corfu/blob/main/README.org#auto-completion>
-
-#+begin_src emacs-lisp
-(defun +orderless-fast-dispatch (word index total)
-  "Fast-dispatch `orderless' completion style for `corfu'."
-  (and (= index 0) (= total 1) (length< word 4)
-       (cons 'orderless-literal-prefix word)))
-#+end_src
-
-#+begin_src emacs-lisp
-(after! orderless
-  (orderless-define-completion-style +orderless-fast
-    "Fast completion style, intended for usage with `corfu'."
-    (orderless-style-dispatchers '(+orderless-fast-dispatch))
-    (orderless-matching-styles '(orderless-literal orderless-regexp))))
-#+end_src
-
-***** ~+orderless-with-initialism~
-:PROPERTIES:
-:ID:       f2d291ff-f65d-431d-8714-0cc747c872f6
-:END:
-
-#+begin_src emacs-lisp
-(after! orderless
-  (orderless-define-completion-style +orderless-with-initialism
-    (orderless-matching-styles '(orderless-initialism
-                                 orderless-literal
-                                 orderless-regexp))))
-#+end_src
-
-**** Configure preferred completion styles
-:PROPERTIES:
-:ID:       1c08e88d-5386-4929-bac7-9e679dfbc6e6
-:END:
-
-#+begin_src emacs-lisp
-;; Make `partial-completion' behave like `substring'.
-(setopt completion-pcm-leading-wildcard t)
-
-(after! orderless
-  ;; Reset per-category defaults to force the use of the standard
-  ;; `completion-styles'.  Customizations can be specified in
-  ;; `completion-category-overrides'.
-  (setq completion-category-defaults nil)
-  (setopt completion-styles '(orderless basic))
-  (setopt completion-category-overrides
-          '((file (styles basic partial-completion))
-            (bookmark (styles basic substring))
-            (library (styles basic substring))
-            (imenu (styles orderless substring basic))
-            (kill-ring (styles emacs22 orderless))
-            ;; enable initialism by default for symbols
-            (command (styles +orderless-with-initialism))
-            (variable (styles +orderless-with-initialism))
-            (symbol (styles +orderless-with-initialism)))))
-
-(after! (consult orderless)
-  (add-to-list 'completion-category-overrides
-      '(consult-location (styles basic substring orderless))))
-
-(after! eglot
-  (add-to-list 'completion-category-overrides '(eglot (styles orderless)))
-  ;; FIXME: who provides `eglot-capf'?
-  (add-to-list 'completion-category-overrides '(eglot-capf (styles orderless))))
-
-(after! embark
-  (add-to-list 'completion-category-overrides
-      '(embark-keybinding (styles basic substring))))
-
-(after! (orderless consult)
-  (require 'ceamx-completion)
-
-  (setopt orderless-style-dispatchers
-          '(ceamx-completion-orderless-consult-dispatch
-            orderless-affix-dispatch)))
-#+end_src
-
-*** Template/snippet expansion
-
-**** Dynamic text expansion with ~dabbrev~
+*** Dynamic text expansion with ~dabbrev~ :snippets:
 
 #+begin_src emacs-lisp
 (after! dabbrev
@@ -4316,10 +4354,7 @@ Refine preview appearance and behavior:
                                           pdf-view-mode tags-table-mode)))
 #+end_src
 
-**** Static text expansion with ~abbrev~
-:PROPERTIES:
-:ID:       0076b762-4975-4973-8326-f413860fa3c4
-:END:
+*** Static text expansion with ~abbrev~ :snippets:
 
 #+begin_src emacs-lisp
 (use-feature! abbrev
@@ -4349,7 +4384,7 @@ Define the custom abbrevs:
   "youtube"		"YouTube")
 #+end_src
 
-***** DISABLED Allow abbrevs with a prefix colon, semicolon, or underscore
+*** DISABLED Allow abbrevs with a prefix colon, semicolon, or underscore :snippets:
 
 Disabled to test interference with other completion-at-point behavior wired
 together through [[*Completion-At-Point Extensions (Cape)]].
@@ -4374,12 +4409,12 @@ Adapted from Prot's original version with the following changes:
     (abbrev-table-put org-mode-abbrev-table :regexp ceamx-abbrev-prefix-regexp)))
 #+end_src
 
-**** =tempel= :: simple template expansions
+*** =tempel= :: simple template expansions :snippets:package:
 
 + Package :: <https://github.com/minad/tempel>
 + Package :: <https://github.com/Crandel/tempel-collection>
 
-***** The Tempo skeleton language
+**** The Tempo skeleton language
 :PROPERTIES:
 :ID:       130f3af4-9a65-4e42-82e2-b218fbd5499a
 :END:
@@ -4413,13 +4448,13 @@ Furthermore Tempel supports syntax extensions:
 - =(FORM ...)=  :: Other Lisp forms are evaluated. Named fields are lexically bound.
 - =q=  :: Quits the containing template when jumped to.
 
-***** Custom syntax elements
+**** Custom syntax elements
 
 - =(i keyword)= :: Recursive snippet inclusion.  =keyword= is the keyword
   for the snippet to insert.  See ~ceamx-completion--tempel-include~ for
   definition.
 
-***** Configuration
+**** Configuration
 
   #+begin_src emacs-lisp
 (package! tempel
@@ -4465,7 +4500,7 @@ Tempel does not trigger too often when you don't expect it."
   (add-to-list 'tempel-user-elements #'ceamx-completion--tempel-include))
 #+end_src
 
-***** A warning about using Tempel with ~abbrev-mode~
+**** A warning about using Tempel with ~abbrev-mode~
 
 Avoid using the ~global-tempel-abbrev-mode~ integration, which makes
 Emacs unusable when ~abbrev-mode~ is enabled.  Cea are better off
@@ -4477,7 +4512,7 @@ See the extensive discussion about the Tempel+Abbrev integration here:
 
 [[https://github.com/minad/tempel/issues/112][Potential considerations for using Tempel with abbrevs · Issue #112 · minad/tempel · GitHub]]
 
-**** =yasnippet= :: robust template expansions :lsp:
+*** =yasnippet= :: robust template expansions :lsp:snippets:package:
 
 - Documentation :: <https://github.com/joaotavora/yasnippet/blob/master/README.mdown>
 - Website :: <https://joaotavora.github.io/yasnippet/>
@@ -4509,11 +4544,11 @@ notably, JSON Schema completions.
     (require 'uuidgen)))
 #+end_src
 
-***** Documentation: YASnippet Syntax Reference :doc:
+**** Documentation: YASnippet Syntax Reference :doc:
 
 Source: <https://joaotavora.github.io/yasnippet/snippet-development.html>
 
-****** File header keys
+***** File header keys
 
 + =key= :: snippet abbrev to trigger expansion with ~yas-expand~
 
@@ -4547,7 +4582,7 @@ Source: <https://joaotavora.github.io/yasnippet/snippet-development.html>
 
 + =binding= :: define a keybinding directly.  But please, no, just don’t.
 
-****** Template syntax
+***** Template syntax
 
 <https://joaotavora.github.io/yasnippet/snippet-development.html#org9801aa7>
 
@@ -4603,7 +4638,7 @@ Source: <https://joaotavora.github.io/yasnippet/snippet-development.html>
 #+end_example
 
 
-***** Disable automatic whitespace modifications in snippet files
+**** Disable automatic whitespace modifications in snippet files
 
 <https://joaotavora.github.io/yasnippet/faq.html#org64f1b8c>
 
@@ -4623,7 +4658,7 @@ A final newline would be inserted literally into the snippet expansion."
 (add-hook 'snippet-mode-hook #'+yasnippet-snippet-mode-disable-final-newline-h nil t)
 #+end_src
 
-***** Customize the template for newly-created snippets with ~yas-new-snippet-default~
+**** Customize the template for newly-created snippets with ~yas-new-snippet-default~
 
 #+begin_src emacs-lisp
 (after! yasnippet
@@ -4632,7 +4667,7 @@ A final newline would be inserted literally into the snippet expansion."
    "# -*- mode: snippet -*-\n# name: $1\n# key: ${2:${1:$(yas--key-from-desc yas-text)}}\n# uuid: `(uuidgen-4)`\n# contributor: astratagem <chmont@protonmail.com>\n# --\n$0`(yas-escape-text yas-selected-text)`"))
 #+end_src
 
-***** DISABLED Automatically expand snippets
+**** DISABLED Automatically expand snippets
 :PROPERTIES:
 :ID:       150f6006-bb9d-4b3f-bc63-9fac6f5ed6c3
 :END:
@@ -4647,7 +4682,7 @@ A final newline would be inserted literally into the snippet expansion."
 ;; (keymap-set yas-minor-mode-map "RET" yas-maybe-expand)
 #+end_src
 
-**** =spdx= :: insertable SPDX license headers
+*** =spdx= :: insertable SPDX license headers :package:snippets:
 :PROPERTIES:
 :ID:       4f029a65-d064-4715-9947-e9d32b4bdf67
 :END:
@@ -4659,11 +4694,7 @@ A final newline would be inserted literally into the snippet expansion."
   (keymap-set ceamx-insert-prefix-map "L" #'spdx-insert-spdx))
 #+end_src
 
-*** Completion-At-Point
-
-**** Genera
-
-**** =corfu= :: [co]mpletion in [r]egion [fu]nction
+*** =corfu= :: [co]mpletion in [r]egion [fu]nction :package:
 :PROPERTIES:
 :ID:       d8073181-6d05-40d2-a954-0e6bb65449a2
 :END:
@@ -4735,7 +4766,7 @@ A final newline would be inserted literally into the snippet expansion."
     (add-to-list 'savehist-additional-variables 'corfu-history)))
 #+end_src
 
-**** =corfu-terminal= :: Corfu terminal support
+*** =corfu-terminal= :: Corfu terminal support :package:
 
 + Package :: <https://codeberg.org/akib/emacs-corfu-terminal>
 
@@ -4750,55 +4781,7 @@ See also ~popon~, the utility library powering the interface.
       (corfu-terminal-mode 1))))
 #+end_src
 
-**** =mct= :: Minibuffer Confines Transcended
-
-#+begin_src emacs-lisp
-(package! mct
-  (setopt mct-live-completion t
-          mct-live-update-delay 0.6)
-  (setopt mct-minimum-input 3)
-  (setopt mct-completion-window-size (cons #'mct-frame-height-third 1))
-  (setopt mct-completing-read-multiple-indicator t)
-  (setopt mct-hide-completion-mode-line t)
-
-  ;; `file-name-shadow-mode' must be enabled for this option to have an
-  ;; effect.  It should be enabled by default.
-  (setopt mct-remove-shadowed-file-names t)
-
-  ;; This is for commands or completion categories that should always
-  ;; pop up the completions' buffer.  It circumvents the default method
-  ;; of waiting for some user input (see `mct-minimum-input') before
-  ;; displaying and updating the completions' buffer.
-  (setopt mct-completion-passlist
-          '(;; Some commands
-            select-frame-by-name
-            Info-goto-node
-            Info-index
-            Info-menu
-            vc-retrieve-tag
-            ;; Some completion categories
-            consult-buffer
-            consult-location
-            embark-keybinding
-            imenu
-            file
-            project-file
-            buffer
-            kill-ring))
-
-  ;; The blocklist follows the same principle as the passlist, except it
-  ;; disables live completions altogether.
-  (setopt mct-completion-blocklist nil)
-
-  ;; This is the default value but I am keeping it here for visibility.
-  (setopt mct-sort-by-command-or-category
-        '((file . mct-sort-by-directory-then-by-file)
-          ((magit-checkout vc-retrieve-tag) . mct-sort-by-alpha-then-by-length)
-          ((kill-ring imenu consult-location Info-goto-node Info-index Info-menu) . nil) ; no sorting
-          (t . mct-sort-by-history))))
-#+end_src
-
-**** =kind-icon= :: icons for ~completion-at-point~ candidates :icons:
+*** =kind-icon= :: icons for ~completion-at-point~ candidates :icons:package:
 :PROPERTIES:
 :ID:       7153b3e8-34f4-47c1-a1e7-6de207be7d29
 :END:
@@ -4827,7 +4810,7 @@ See also ~popon~, the utility library powering the interface.
   (add-hook 'enable-theme-functions (lambda (_) (kind-icon-reset-cache))))
 #+end_src
 
-**** =cape= :: [c]ompletion-[a]t-[p]oint [e]xtensions :capfs:
+*** =cape= :: [c]ompletion-[a]t-[p]oint [e]xtensions :capfs:package:
 :PROPERTIES:
 :ID:       e7028330-f02c-4862-ac3a-054f70fb9e92
 :END:
@@ -4870,7 +4853,7 @@ See also ~popon~, the utility library powering the interface.
     "w" #'cape-dict))
 #+end_src
 
-*** =embark= :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:
+*** =embark= :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:package:
 :PROPERTIES:
 :ID:       111a0c90-a300-4fa8-a954-6d5e97fcea89
 :END:
@@ -4948,7 +4931,7 @@ Define Embark actions for acting on tabs:
                    embark-pre-action-hooks)))
 #+end_src
 
-*** Keybinding help with Embark’s ~embark-prefix-help-command~
+*** Keybinding help with Embark’s ~embark-prefix-help-command~ :embark:keybinds:help:
 :PROPERTIES:
 :ID:       4ddaa528-5c3b-494a-9aa0-95e32a93fb8f
 :END:
@@ -4970,7 +4953,7 @@ Define Embark actions for acting on tabs:
   (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
 #+end_src
 
-*** Keybindings
+*** Keybindings :keybinds:
 :PROPERTIES:
 :ID:       e5538115-fecd-4e47-bd55-d9e0fb112313
 :END:

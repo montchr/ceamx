@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: home packages
+# key: hmpkgs
+# uuid: 65d4323d-f8b7-42aa-86db-e8b6bb183957
+# contributor: astratagem <chmont@protonmail.com>
+# --
+home.packages = [
+  ${1:pkgs.$2}$0
+];
