@@ -657,12 +657,10 @@ Common text modes including `markdown-mode' and `org-mode' also
   (setopt epg-pinentry-mode 'loopback))
 
 ;; Buttonize URLs and email addresses with ~goto-address~ [builtin]
-;; :PROPERTIES:
-;; :ID:       2923efc3-131c-4cdc-b788-68bfe3cbf256
-;; :END:
 
 
 (use-feature! goto-addr
+  :demand t
   :hook (prog-mode . goto-address-prog-mode))
 
 ;; =link-hint=: Activate links in buffer with ~avy~
@@ -738,7 +736,7 @@ Common text modes including `markdown-mode' and `org-mode' also
 ;; Interactive buffer management with ~ibuffer~ :buffers:
 
 
-(use-feature! ibuffer
+(use-feature! emacs
   :config
   (setopt ibuffer-movement-cycle t))
 
@@ -868,6 +866,7 @@ Common text modes including `markdown-mode' and `org-mode' also
 
 
 (use-feature! savehist
+  :demand t
   :init
   (savehist-mode)
 
@@ -884,6 +883,7 @@ Common text modes including `markdown-mode' and `org-mode' also
 
 
 (use-feature! saveplace
+  :demand t
   :init
   (save-place-mode))
 
@@ -891,6 +891,7 @@ Common text modes including `markdown-mode' and `org-mode' also
 
 
 (use-feature! recentf
+  :demand t
   :init
   (recentf-mode)
 

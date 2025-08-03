@@ -6,6 +6,7 @@
 (require 'ceamx-note)
 
 (use-feature! ceamx-note
+  :demand t
   :config
   ;; Ensure essential directories exist to prevent errors.
   (dolist (dir (list ceamx-note-dir ceamx-note-journal-dir))

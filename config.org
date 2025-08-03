@@ -3059,12 +3059,10 @@ truncated portion of a line automatically.
 #+end_src
 
 *** Buttonize URLs and email addresses with ~goto-address~ [builtin]
-:PROPERTIES:
-:ID:       2923efc3-131c-4cdc-b788-68bfe3cbf256
-:END:
 
 #+begin_src emacs-lisp
 (use-feature! goto-addr
+  :demand t
   :hook (prog-mode . goto-address-prog-mode))
 #+end_src
 
@@ -3145,7 +3143,7 @@ truncated portion of a line automatically.
 *** Interactive buffer management with ~ibuffer~ :buffers:
 
 #+begin_src emacs-lisp
-(use-feature! ibuffer
+(use-feature! emacs
   :config
   (setopt ibuffer-movement-cycle t))
 #+end_src
@@ -3286,6 +3284,7 @@ Currently using ~embark-prefix-help-command~ instead.
 
 #+begin_src emacs-lisp
 (use-feature! savehist
+  :demand t
   :init
   (savehist-mode)
 
@@ -3303,6 +3302,7 @@ Currently using ~embark-prefix-help-command~ instead.
 
 #+begin_src emacs-lisp
 (use-feature! saveplace
+  :demand t
   :init
   (save-place-mode))
 #+end_src
@@ -3311,6 +3311,7 @@ Currently using ~embark-prefix-help-command~ instead.
 
 #+begin_src emacs-lisp
 (use-feature! recentf
+  :demand t
   :init
   (recentf-mode)
 
@@ -8194,6 +8195,7 @@ Requires that the =just-lsp= package is available in the environment.
 (require 'ceamx-note)
 
 (use-feature! ceamx-note
+  :demand t
   :config
   ;; Ensure essential directories exist to prevent errors.
   (dolist (dir (list ceamx-note-dir ceamx-note-journal-dir))
