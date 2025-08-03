@@ -291,6 +291,18 @@ Unlike `ignore', produce no side effects."
   (declare (indent defun))
   nil)
 
+(defmacro setq! (&rest settings)
+  "A more sensible `setopt' for setting customizable variables.
+
+This can be used as a drop-in replacement for `setq' and *should* be
+used instead of `setopt'.  Unlike `setq', this triggers custom setters
+on variables.  Unlike `setopt', this won't needlessly pull in
+dependencies."
+  (macroexp-progn
+   (cl-loop for (var val) on settings by 'cddr
+            collect `(funcall (or (get ',var 'custom-set) #'set-default-toplevel-value)
+                              ',var ,val))))
+
 ;; via <https://github.com/doomemacs/doomemacs/blob/bbadabda511027e515f02ccd7b70291ed03d8945/lisp/doom-lib.el#L628C1-L673C1>
 (defmacro after! (package &rest body)
   "Evaluate BODY after PACKAGE have loaded.
@@ -321,20 +333,20 @@ Since the contents of these blocks will never by byte-compiled, avoid putting
 things you want byte-compiled in them! Like function/macro definitions."
   (declare (indent defun) (debug t))
   (if (symbolp package)
-      (list (if (or (not (bound-and-true-p byte-compile-current-file))
-                    (require package nil 'noerror))
-                #'progn
-              #'with-no-warnings)
-            `(with-eval-after-load ',package ,@body))
+    (list (if (or (not (bound-and-true-p byte-compile-current-file))
+                (require package nil 'noerror))
+              #'progn
+            #'with-no-warnings)
+      `(with-eval-after-load ',package ,@body))
     (let ((p (car package)))
       (cond ((memq p '(:or :any))
-             (macroexp-progn
-              (cl-loop for next in (cdr package)
-                       collect `(after! ,next ,@body))))
-            ((memq p '(:and :all))
-             (dolist (next (reverse (cdr package)) (car body))
-               (setq body `((after! ,next ,@body)))))
-            (`(after! (:and ,@package) ,@body))))))
+              (macroexp-progn
+                (cl-loop for next in (cdr package)
+                  collect `(after! ,next ,@body))))
+        ((memq p '(:and :all))
+          (dolist (next (reverse (cdr package)) (car body))
+            (setq body `((after! ,next ,@body)))))
+        (`(after! (:and ,@package) ,@body))))))
 
 ;; via <https://github.com/bling/dotemacs/blob/97c72c8425c5fb40ca328d1a711822ce0a0cfa26/core/core-boot.el#L83C1-L88C25>
 (defmacro defer! (secs &rest body)
