@@ -4,4 +4,6 @@
 # uuid: beb4f002-3c99-4ed4-a5e7-7e14c40c54c0
 # contributor: astratagem <chmont@protonmail.com>
 # --
-{ ${1:config, }${2:lib, }${3:pkgs, }... }:
+${1:args}{ ${2:config, }${3:lib, }${4:pkgs, }${5:${6:inputs', }${7:packages, }}... }:${8: {
+  $0
+}}
