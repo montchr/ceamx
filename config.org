@@ -793,6 +793,22 @@ using this command."
 #+end_src
 
 
+***** Bind some commonly-used Elpaca commands :keybinds:
+
+#+begin_src emacs-lisp
+(keymap-set ceamx-session-prefix "p" (cons "packages..." (define-prefix-command 'ceamx-session-p-prefix)))
+
+(define-keymap :keymap ceamx-session-p-prefix
+  "f" #'elpaca-fetch-all
+  "F" #'elpaca-fetch
+  "i" #'elpaca-info
+  "m" #'elpaca-merge-all
+  "p" #'elpaca-pull
+  "r" #'+elpaca-reload-package
+  "t" #'elpaca-try
+  "u" #'elpaca-update)
+#+end_src
+
 ***** Alternatives
 
 ****** Nixpkgs
@@ -860,6 +876,7 @@ versions of Emacs, but until then, I would only be a reluctant user and
 find myself still prone to indecision in this field.
 
 On that note, I have since switched back to Elpaca.
+
 
 **** Run the custom init and startup hooks on ~elpaca-after-init-hook~
 
@@ -10186,10 +10203,6 @@ loaded.  There’s probably a safer way to write it.
   "a f" #'fontaine-set-preset
   "a l" #'ceamx-ui/light
   "a o" #'olivetti-mode
-
-  "p f" #'elpaca-fetch-all
-  "p m" #'elpaca-merge-all
-  "p t" #'elpaca-try
 
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs

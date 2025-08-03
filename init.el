@@ -279,6 +279,21 @@ using this command."
       (when package-features
         (message "Reloaded: %s" (mapconcat #'symbol-name package-features " "))))))
 
+;; Bind some commonly-used Elpaca commands :keybinds:
+
+
+(keymap-set ceamx-session-prefix "p" (cons "packages..." (define-prefix-command 'ceamx-session-p-prefix)))
+
+(define-keymap :keymap ceamx-session-p-prefix
+  "f" #'elpaca-fetch-all
+  "F" #'elpaca-fetch
+  "i" #'elpaca-info
+  "m" #'elpaca-merge-all
+  "p" #'elpaca-pull
+  "r" #'+elpaca-reload-package
+  "t" #'elpaca-try
+  "u" #'elpaca-update)
+
 ;; Run the custom init and startup hooks on ~elpaca-after-init-hook~
 
 
@@ -694,10 +709,6 @@ unimportant since it happens during compilation anyway."
   "a f" #'fontaine-set-preset
   "a l" #'ceamx-ui/light
   "a o" #'olivetti-mode
-
-  "p f" #'elpaca-fetch-all
-  "p m" #'elpaca-merge-all
-  "p t" #'elpaca-try
 
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs
