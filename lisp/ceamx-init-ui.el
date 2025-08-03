@@ -133,8 +133,8 @@
   (setopt modus-themes-headings nil)
   (setopt modus-themes-prompts '(italic bold))
   (setopt modus-themes-completions
-          '((matches . (extrabold))
-            (selection . (semibold italic text-also))))
+          '((matches . (extrabold underline))
+            (selection . (semibold italic))))
   (setopt modus-themes-org-blocks 'tinted-background))
 
 ;; =ef-themes= :: Prot’s colorful yet legible themes

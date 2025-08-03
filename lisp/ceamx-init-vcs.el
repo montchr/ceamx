@@ -193,9 +193,6 @@
       (setopt git-commit-ts-max-message-size 72))))
 
 ;; =magit= :: the git experience
-;; :PROPERTIES:
-;; :ID:       5a436e2b-7c80-4055-acdc-b2ef8e640f83
-;; :END:
 
 
 (package! magit
@@ -239,9 +236,6 @@
     '("-a" "Autostash" "--autostash")))
 
 ;; Keep ~magit-section~ sections at the top of the window
-;; :PROPERTIES:
-;; :ID:       19010ecb-b1e0-4168-a554-2cad3e410bfe
-;; :END:
 
 ;; - Reference :: <https://emacs.stackexchange.com/questions/3380/how-to-scroll-up-when-expanding-a-section-in-magit-status#comment4819_3383>
 
@@ -259,6 +253,13 @@
 
 (after! magit
   (setopt magit-process-popup-time 3))
+
+;; Configure the Git commit message mode
+
+
+(dolist (mode '(git-commit-mode git-commit-ts-mode))
+  (after! mode
+    (cl-pushnew mode ceamx-lang-typo-mode-excluded-modes)))
 
 ;; =magit-todo= :: Display codetag comment reminders in ~magit-status~
 ;; :PROPERTIES:

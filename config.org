@@ -688,6 +688,7 @@ of Emacs to set ~elpaca-core-date~ correctly.  [[https://github.com/progfolio/el
 #+begin_src emacs-lisp
 (require 'ceamx-lib)
 
+;; FIXME: only works for emacs-git
 ;; TODO: this should probably take effect for *any* Nix-built Emacs
 ;; package, not just on NixOS
 ;; (when (ceamx-host-nixos-p)
@@ -1452,8 +1453,8 @@ applying margin, padding, borders.
   (setopt modus-themes-headings nil)
   (setopt modus-themes-prompts '(italic bold))
   (setopt modus-themes-completions
-          '((matches . (extrabold))
-            (selection . (semibold italic text-also))))
+          '((matches . (extrabold underline))
+            (selection . (semibold italic))))
   (setopt modus-themes-org-blocks 'tinted-background))
 #+end_src
 
@@ -2311,12 +2312,7 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 =doom-modeline= and =telephone-line=.
 
 #+begin_src emacs-lisp
-(package! keycast
-  (dolist (input '(self-insert-command org-self-insert-command))
-    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
-
-  (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
-    (add-to-list 'keycast-substitute-alist `(,event nil))))
+(package! keycast)
 #+end_src
 
 *** Provide the ~ceamx-init-modeline~ feature
@@ -5769,9 +5765,6 @@ not available, it will be installed imperatively.
 #+end_src
 
 *** =magit= :: the git experience
-:PROPERTIES:
-:ID:       5a436e2b-7c80-4055-acdc-b2ef8e640f83
-:END:
 
 #+begin_src emacs-lisp
 (package! magit
@@ -5816,9 +5809,6 @@ not available, it will be installed imperatively.
 #+end_src
 
 **** Keep ~magit-section~ sections at the top of the window
-:PROPERTIES:
-:ID:       19010ecb-b1e0-4168-a554-2cad3e410bfe
-:END:
 
 - Reference :: <https://emacs.stackexchange.com/questions/3380/how-to-scroll-up-when-expanding-a-section-in-magit-status#comment4819_3383>
 
@@ -5837,6 +5827,14 @@ insight into long-running =post-receive= hooks (and similar).
 #+begin_src emacs-lisp
 (after! magit
   (setopt magit-process-popup-time 3))
+#+end_src
+
+**** Configure the Git commit message mode
+
+#+begin_src emacs-lisp
+(dolist (mode '(git-commit-mode git-commit-ts-mode))
+  (after! mode
+    (cl-pushnew mode ceamx-lang-typo-mode-excluded-modes)))
 #+end_src
 
 *** =magit-todo= :: Display codetag comment reminders in ~magit-status~
@@ -5986,8 +5984,6 @@ does that by using "USERNAME /^PACKAGE/ " as the "login".
   ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
   ;; FIXME: there must be another way
   ;; (typo-global-mode 1)
-
-  (setopt ceamx-lang-typo-mode-excluded-modes '(git-commit-mode))
 
   (def-hook! ceamx-lang-typo-mode-maybe-enable-h ()
     'text-mode-hook

@@ -28,8 +28,6 @@
   ;; FIXME: there must be another way
   ;; (typo-global-mode 1)
 
-  (setopt ceamx-lang-typo-mode-excluded-modes '(git-commit-mode))
-
   (def-hook! ceamx-lang-typo-mode-maybe-enable-h ()
     'text-mode-hook
     "Conditionally enable `typo-mode'.

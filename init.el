@@ -176,6 +176,7 @@
 
 (require 'ceamx-lib)
 
+;; FIXME: only works for emacs-git
 ;; TODO: this should probably take effect for *any* Nix-built Emacs
 ;; package, not just on NixOS
 ;; (when (ceamx-host-nixos-p)

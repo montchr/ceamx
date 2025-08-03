@@ -79,12 +79,7 @@
 ;; =doom-modeline= and =telephone-line=.
 
 
-(package! keycast
-  (dolist (input '(self-insert-command org-self-insert-command))
-    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
-
-  (dolist (event '(mouse-event-p mouse-movement-p mwheel-scroll))
-    (add-to-list 'keycast-substitute-alist `(,event nil))))
+(package! keycast)
 
 (provide 'ceamx-init-modeline)
 ;;; ceamx-init-modeline.el ends here
