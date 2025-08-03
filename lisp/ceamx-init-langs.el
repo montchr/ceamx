@@ -686,28 +686,36 @@ non-nil, buffers will never be formatted upon save."
 (dolist (mode ceamx-lisp-modes-list)
   (add-hook (derived-mode-hook-name mode) #'ceamx-lisp-init))
 
-;; =paredit= :: the original parenthesizer
-;; :PROPERTIES:
-;; :ID:       13b96f21-ebaf-4d49-8b89-78fc05a44c59
-;; :END:
+;; ~lispy~ :: the structural expression editing experience
+
+;; - Website :: [[https://github.com/abo-abo/lispy][GitHub - abo-abo/lispy: Short and sweet LISP editing]]
+;; - API Reference :: [[https://oremacs.com/lispy/][lispy.el function reference]]
 
 
-(package! paredit
-  (def-hook! ceamx-lisp-init-paredit-h ()
-    '(ceamx-lisp-init-hook)
-    "Enable `paredit-mode' and disable incompatible features."
-    (when (fboundp 'puni-mode)
-      (puni-mode -1))
-    (when (fboundp 'lispy-mode)
-      (lispy-mode -1))
-    (electric-indent-local-mode -1)
-    (paredit-mode 1)))
+(package! lispy
+  (add-hook 'ceamx-lisp-init-hook #'lispy-mode))
 
-(after! paredit
-  (define-keymap :keymap paredit-mode-map
-    ;; Don't interfere with the default Emacs binding!  I use it a lot.
-    "M-s" nil
-    "RET" #'paredit-newline))
+(after! lispy
+    (setopt lispy-completion-method 'default)
+    (setopt lispy-eval-display-style 'message)
+    (setopt lispy-move-after-commenting t)
+
+    (define-keymap :keymap lispy-mode-map
+      "M-j" nil                         ; shadows custom binding
+      "M-o" nil                         ; shadows custom binding
+      ;; via <https://github.com/abo-abo/lispy/pull/619>
+      "`" #'self-insert-command)
+
+    (after! outli
+      ;; `outli-mode' overrides `lispy-mode' outline functionality, so
+      ;; it must be activated afterwards.
+      (add-hook 'ceamx-lisp-init-hook #'outli-mode))
+
+    (after! macrostep
+      (push 'macrostep lispy-compat))
+
+    (after! popper
+      (push "\\*lispy-message\\*" popper-reference-buffers)))
 
 ;; =kbd-mode= :: syntax support for =kmonad= and =kanata= configs
 

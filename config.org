@@ -6800,9 +6800,9 @@ Configuration for working with Lisps of all kinds.
   (put sym 'lisp-indent-function 2))
 #+end_src
 
-**** =paredit= :: the original parenthesizer
+**** DISABLED =paredit= :: the original parenthesizer
 :PROPERTIES:
-:ID:       13b96f21-ebaf-4d49-8b89-78fc05a44c59
+:header-args: :tangle no
 :END:
 
 #+begin_src emacs-lisp
@@ -6824,43 +6824,29 @@ Configuration for working with Lisps of all kinds.
     "RET" #'paredit-newline))
 #+end_src
 
-**** DISABLED ~lispy~ :: the structural expression editing experience
-:PROPERTIES:
-:ID:       1e677fb5-4a90-4ba8-b968-91a10ee69caa
-:END:
+**** ~lispy~ :: the structural expression editing experience
 
 - Website :: [[https://github.com/abo-abo/lispy][GitHub - abo-abo/lispy: Short and sweet LISP editing]]
 - API Reference :: [[https://oremacs.com/lispy/][lispy.el function reference]]
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (package! lispy
   (add-hook 'ceamx-lisp-init-hook #'lispy-mode))
 
 (after! lispy
-    ;; Prevent `lispy' from inserting escaped quotes when already inside a string,
-    ;; in favor of just moving past the closing quote as I would expect.
-    ;;
-    ;; FIXME: This actually results in creating the quote pair *after* the
-    ;; closing quote. "for example:"" "
-;;    (setopt lispy-close-quotes-at-end-p t)
-
     (setopt lispy-completion-method 'default)
-
     (setopt lispy-eval-display-style 'message)
-
-    ;; I have mixed feelings about this one because it can be jarring and easily
-    ;; lead to mass-commenting expressions. Default is non-nil.
     (setopt lispy-move-after-commenting t)
 
     (define-keymap :keymap lispy-mode-map
       "M-j" nil                         ; shadows custom binding
-
+      "M-o" nil                         ; shadows custom binding
       ;; via <https://github.com/abo-abo/lispy/pull/619>
       "`" #'self-insert-command)
 
     (after! outli
-      ;; `outli-mode' overrides `lispy-mode' outline functionality, so it must
-      ;; be activated afterwards.
+      ;; `outli-mode' overrides `lispy-mode' outline functionality, so
+      ;; it must be activated afterwards.
       (add-hook 'ceamx-lisp-init-hook #'outli-mode))
 
     (after! macrostep
