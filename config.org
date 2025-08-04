@@ -1957,6 +1957,51 @@ Enable the tab bar:
 **** =fontaine= :: pre-configure font presets
 
 + Website :: <https://protesilaos.com/emacs/fontaine>
++ Reference :: <https://spencermortensen.com/articles/typographic-scale/>
+
+#+begin_src emacs-lisp
+(defvar ceamx-ui-font-scaled-root-offset 0.01)
+(defvar ceamx-ui-font-scaled-leading-divisor 48)
+
+(defvar ceamx-ui-font-classic-scale-ratio-alist
+  '((tiny . 0.76)
+    (small . 0.87)
+    (regular . 1.0) ; constant value
+    ;; (regular . 1.02) ; constant value
+    (medium . 1.15)
+    (large . 1.32)
+    (xlarge . 1.52)
+    (huge . 1.74)
+    (big-mclarge-huge . 2.0)))
+
+;; (defvar ceamx-ui-font-classic-scale-alist
+;;   '((tiny . 76)
+;;     (small . 87)
+;;     (regular . 100) ; constant value
+;;     (medium . 115)
+;;     (large . 132)
+;;     (xlarge . 152)
+;;     (huge . 174)
+;;     (big-mclarge-huge . 200)))
+
+(defun ceamx-ui-font-scaled-size (size)
+  "Return the integer value for named font size SIZE."
+  (round (* (ceamx-ui-font-scaled-size-float size) 100)))
+
+(defun ceamx-ui-font-scaled-root ()
+  (+ (alist-get 'regular ceamx-ui-font-classic-scale-ratio-alist)
+     ceamx-ui-font-scaled-root-offset))
+
+(defun ceamx-ui-font-scaled-size-float (size)
+  "Return the float value for named font size SIZE."
+  (* (alist-get size ceamx-ui-font-classic-scale-ratio-alist)
+     (ceamx-ui-font-scaled-root)))
+
+
+(defun ceamx-ui-font-scaled-leading (size)
+  "Return the float value for the appropriate leading for named SIZE."
+  (* (/ (ceamx-ui-font-scaled-size size) ceamx-ui-font-scaled-leading-divisor) 0.01))
+#+end_src
 
 #+begin_src emacs-lisp
 (package! fontaine
@@ -1966,109 +2011,96 @@ Enable the tab bar:
     (setq fontaine-latest-state-file
           (expand-file-name "fontaine-latest-state.eld" ceamx-var-dir))
 
+    (setq! ceamx-ui-font-scaled-root-offset
+      (pcase (system-name)
+        ("tuuvok" 0)
+        (_ 0)))
+
     ;; For some reason I do not yet understand, according to some
     ;; hearsay, font sizes best scale in multiples of 3-point
     ;; increments.
     (setq fontaine-presets
-            `((tiny
-               ;; :bold-weight medium
-               :default-height ,(pcase (system-name)
-                                  (_ 78))
-               ;; :default-weight ,(pcase (system-name)
-               ;;                    (_ 'semilight))
-               )
+          `((tiny
+             :bold-weight medium
+             :default-height ,(ceamx-ui-font-scaled-size 'tiny))
+            (small
+             :bold-weight bold
+             :default-height ,(ceamx-ui-font-scaled-size 'small))
+            (regular)
+            (medium
+             :default-height ,(ceamx-ui-font-scaled-size 'medium))
+            (large
+             :default-height ,(ceamx-ui-font-scaled-size 'large))
+            (xlarge
+             :default-height ,(ceamx-ui-font-scaled-size 'xlarge))
+            (huge
+             :default-height ,(ceamx-ui-font-scaled-size 'huge))
+            (big-mclarge-huge
+             :default-weight semilight
+             :default-height ,(ceamx-ui-font-scaled-size 'big-mclarge-huge)
+             :bold-weight extrabold)
+            (t
+             ;; :default-family "Aporetic Sans Mono"
+             ;; :default-family "Berkeley Mono"
+             ;; :default-family "Pragmasevka"
+             :default-family "Iosevka"
+             ;; :default-family "Iosvmata"
 
-              (small
-               ;; :bold-weight semibold
-               :default-height ,(pcase (system-name)
-                                  (_ 90))
-               :default-weight ,(pcase (system-name)
-                                  (_ 'regular)))
+             :default-weight regular
 
-              (regular
-               ;; :bold-weight semibold
-               )
+             :default-height 100
+             ;; :default-height ,(pcase (system-name)
+             ;;                    ("tuuvok" 102)
+             ;;                    ;; (_ 105)
+             ;;                    (_ 100))
 
-              (medium
-               :default-height ,(pcase (system-name)
-                                  ("boschic" 124)
-                                  (_ 120)))
+             :line-spacing ,(ceamx-ui-font-scaled-leading 'regular)
 
-              (large
-               :default-height ,(pcase (system-name)
-                                  (_ 144)))
+             ;; :fixed-pitch-family "Aporetic Sans Mono"
+             ;; :fixed-pitch-family "Berkeley Mono"
+             :fixed-pitch-family nil
+             :fixed-pitch-weight nil
+             :fixed-pitch-height 1.0
 
-              (xlarge
-               :default-height ,(pcase (system-name)
-                                  (_ 156)))
+             :fixed-pitch-serif-family nil
+             :fixed-pitch-serif-weight nil
+             :fixed-pitch-serif-height 1.0
 
-              (big-mclarge-huge
-               ;; :default-weight semilight
-               :default-height ,(pcase (system-name)
-                                  (_ 180))
-               ;; :bold-weight extrabold
-               )
+             :variable-pitch-family "Aporetic Serif"
+             ;; :variable-pitch-family nil
+             ;; :variable-pitch-weight nil
+             :variable-pitch-height ,(ceamx-ui-font-scaled-size-float 'medium)
 
-              (t
-               ;; :default-family "Aporetic Sans Mono"
-               ;; :default-family "Berkeley Mono"
-               ;; :default-family "Pragmasevka"
-               :default-family "Iosevka"
-               ;; :default-family "Iosvmata"
-               :default-weight regular
-               :default-height 102
-               ;; :default-height ,(pcase (system-name)
-               ;;                    ("tuuvok" 102)
-               ;;                    ;; (_ 105)
-               ;;                    (_ 100))
+             ;; :bold-family "Pragmasevka Bold"
+             ;; :bold-family nil
+             ;; :bold-weight nil
+             ;; :bold-weight bold
 
-               ;; :fixed-pitch-family "Aporetic Sans Mono"
-               ;; :fixed-pitch-family "Berkeley Mono"
-               :fixed-pitch-family nil
-               :fixed-pitch-weight nil
-               :fixed-pitch-height 1.0
+             ;; :italic-family "Pragmasevka Italic"
+             ;; :italic-family nil
+             ;; :italic-weight nil
+             ;; :italic-slant nil
+             ;; :italic-slant italic
 
-               :fixed-pitch-serif-family nil
-               :fixed-pitch-serif-weight nil
-               :fixed-pitch-serif-height 1.0
+             :mode-line-active-family nil
+             :mode-line-active-weight nil
+             :mode-line-active-height ,(ceamx-ui-font-scaled-size-float 'small)
 
-               :variable-pitch-family "Aporetic Serif"
-               ;; :variable-pitch-family nil
-               ;; :variable-pitch-weight nil
-               :variable-pitch-height 1.0
+             :mode-line-inactive-family nil
+             :mode-line-inactive-weight nil
+             :mode-line-inactive-height ,(ceamx-ui-font-scaled-size-float 'small)
 
-               :mode-line-active-family nil
-               :mode-line-active-weight nil
-               :mode-line-active-height 0.8
+             :header-line-family nil
+             :header-line-weight nil
+             :header-line-height ,(ceamx-ui-font-scaled-size-float 'small)
 
-               :mode-line-inactive-family nil
-               :mode-line-inactive-weight nil
-               :mode-line-inactive-height 0.8
+             :line-number-family nil
+             :line-number-weight light
+             :line-number-height ,(ceamx-ui-font-scaled-size-float 'tiny)
 
-               :header-line-family nil
-               :header-line-weight nil
-               :header-line-height 0.8
-
-               :line-number-family nil
-               :line-number-weight light
-               :line-number-height 0.8
-
-               :tab-bar-family nil
-               :tab-bar-weight nil
-               :tab-bar-height 0.8
-
-               ;; :bold-family "Pragmasevka Bold"
-               ;; :bold-family nil
-               ;; :bold-weight nil
-               ;; :bold-weight bold
-
-               ;; :italic-family "Pragmasevka Italic"
-               ;; :italic-family nil
-               ;; :italic-weight nil
-               ;; :italic-slant nil
-               ;; :italic-slant italic
-
-               :line-spacing 0.05)))
+             :tab-bar-family nil
+             :tab-bar-weight nil
+             :tab-bar-height ,(ceamx-ui-font-scaled-size-float 'small))))
 
     (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
 
