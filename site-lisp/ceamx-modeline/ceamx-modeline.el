@@ -55,7 +55,7 @@
   "Faces for the Ceamx modeline."
   :group 'ceamx-modeline)
 
-(defcustom ceamx-modeline-string-truncate-length 9
+(defcustom ceamx-modeline-string-truncate-length 10
   "String length after which truncation should be done in small windows."
   :type 'natnum)
 
@@ -414,44 +414,10 @@ This function is based on the logic used to determine icon in
 
 (declare-function vc-git--symbolic-ref "vc-git" (file))
 
-(defun ceamx-modeline--vc-branch-name (file backend)
-  "Return capitalized VC branch name for FILE with BACKEND."
-  (when-let* ((rev (vc-working-revision file backend))
-              (branch (or (vc-git--symbolic-ref file)
-                          (substring rev 0 7))))
-    (capitalize branch)))
-
 (defvar-keymap ceamx-modeline-vc-map
   :doc "Keymap to display on VC indicator."
   "<mode-line> <down-mouse-1>" #'vc-diff
   "<mode-line> <down-mouse-3>" #'vc-root-diff)
-
-(defun ceamx-modeline--vc-help-echo (file)
-  "Return `help-echo' message for FILE tracked by VC."
-  (format "Revision: %s\nmouse-1: `vc-diff'\nmouse-3: `vc-root-diff'"
-          (vc-working-revision file)))
-
-(defun ceamx-modeline--vc-text (file branch &optional face)
-  "Prepare text for Git controlled FILE, given BRANCH.
-With optional FACE, use it to propertize the BRANCH."
-  (concat
-   (propertize (char-to-string #xE0A0) 'face 'shadow)
-   " "
-   (propertize branch
-               'face face
-               'mouse-face 'mode-line-highlight
-               'help-echo (ceamx-modeline--vc-help-echo file)
-               'local-map ceamx-modeline-vc-map)
-   ;; " "
-   ;; (ceamx-modeline-diffstat file)
-   ))
-
-(defun ceamx-modeline--vc-details (file branch &optional face)
-  "Return Git BRANCH details for FILE, truncating it if necessary.
-The string is truncated if the width of the window is smaller
-than `split-width-threshold'."
-  (ceamx-modeline-string-cut-end
-   (ceamx-modeline--vc-text file branch face)))
 
 (defvar ceamx-modeline--vc-faces
   '((added . vc-locally-added-state)
@@ -471,15 +437,49 @@ than `split-width-threshold'."
   "Return VC state face for FILE with BACKEND."
   (ceamx-modeline--vc-get-face (vc-state file backend)))
 
+(defun ceamx-modeline--vc-ref-name (file backend)
+  "Return capitalized VC ref name for FILE with BACKEND."
+  (when-let* ((rev (vc-working-revision file backend))
+              (branch (or (vc-git--symbolic-ref file)
+                          (substring rev 0 8))))
+    (capitalize branch)))
+
+(defun ceamx-modeline--vc-help-echo (file backend)
+  "Return `help-echo' message for FILE tracked by version control BACKEND."
+  (format "Revision: %s\nmouse-1: `vc-diff'\nmouse-3: `vc-root-diff'"
+          (vc-working-revision file backend)))
+
+(defun ceamx-modeline--vc-text (file backend ref &optional face)
+  "Prepare text for FILE registered with BACKEND, given REF.
+With optional FACE, use it to propertize the REF."
+  (concat
+   (propertize (char-to-string #xE0A0) 'face 'shadow)
+   " "
+   (propertize ref
+               'face face
+               'mouse-face 'mode-line-highlight
+               'help-echo (ceamx-modeline--vc-help-echo file backend)
+               'local-map ceamx-modeline-vc-map)
+   ;; " "
+   ;; (ceamx-modeline-diffstat file)
+   ))
+
+(defun ceamx-modeline--vc-details (file backend ref &optional face)
+  "Return version control REF details for FILE, truncating it if necessary.
+The string is truncated if the width of the window is smaller
+than `split-width-threshold'."
+  (ceamx-modeline-string-cut-end
+   (ceamx-modeline--vc-text file backend ref face)))
+
 (def-modeline-construct! ceamx-modeline-vc-branch
     '(:eval
       (when-let* (((mode-line-window-selected-p))
                   (file (buffer-file-name))
                   (backend (vc-backend file))
                   ;; ((vc-git-registered file))
-                  (branch (ceamx-modeline--vc-branch-name file backend))
+                  (branch (ceamx-modeline--vc-ref-name file backend))
                   (face (ceamx-modeline--vc-face file backend)))
-        (ceamx-modeline--vc-details file branch face)))
+        (ceamx-modeline--vc-details file backend branch face)))
   "Mode line construct to return propertized VC branch.")
 
 ;;;;;; TODO Flymake & Flycheck

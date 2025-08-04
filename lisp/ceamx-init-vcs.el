@@ -4,46 +4,127 @@
 (require 'ceamx-lib)
 
 ;; Set up ~ediff~
-;; :PROPERTIES:
-;; :ID:       81a5a03d-6bb7-401f-a9cb-54ff581b0f3d
-;; :END:
 
 
-(setopt ediff-keep-variants nil
-        ediff-make-buffers-readonly-at-startup nil
-        ediff-merge-revisions-with-ancestor t
-        ediff-show-clashes-only t
-        ;; Keep the ~ediff~ control panel in the same frame.
-        ediff-window-setup-function #'ediff-setup-windows-plain)
+(progn
+  (setq! ediff-keep-variants nil
+         ediff-make-buffers-readonly-at-startup nil
+         ediff-merge-revisions-with-ancestor t
+         ediff-show-clashes-only t
+         ;; Keep the ~ediff~ control panel in the same frame.
+         ediff-window-setup-function #'ediff-setup-windows-plain))
 
 ;; Set up ~diff-mode~
 
 
-(setopt diff-default-read-only t)
-(setopt diff-advance-after-apply-hunk t)
-(setopt diff-update-on-the-fly t)
-(setopt diff-refine 'font-lock)
-(setopt diff-font-lock-prettify t
-        diff-font-lock-syntax 'hunk-also)
+(progn
+  (setq! diff-default-read-only t)
+  (setq! diff-advance-after-apply-hunk t)
+  (setq! diff-update-on-the-fly t)
+  (setq! diff-refine 'font-lock)
+  (setq! diff-font-lock-prettify t
+         diff-font-lock-syntax 'hunk-also))
 
-;; Set up version control integration with ~vc-mode~
-;; :PROPERTIES:
-;; :ID:       4e3a33c2-f9ac-4947-bbe2-837b91d5cb19
-;; :END:
+;; Set up version control integration with ~vc~
 
 
-;; Version control support is essential as soon as possible.
-(require 'vc)
+(progn
+  ;; Version control support is essential as soon as possible.
+  (require 'vc)
 
-(setopt vc-follow-symlinks t)
-(setopt vc-handled-backends '(Git))
+  (setq! vc-follow-symlinks t)
+  (setq! vc-handled-backends '(Git))
 
-;; NOTE: According to the documentation for ~diff-hl~, the diff
-;; algorithm cannot be determined based on the user's global git
-;; config =diff.algorithm= setting.  The website source they linked to
-;; has disappeared with no archived page available.  So I have not
-;; verified this for certain.
-(setopt vc-git-diff-switches '("--histogram"))
+  (define-keymap :keymap (current-global-map)
+    "C-x v B" #'vc-annotate
+    "C-x v d" #'vc-diff                 ; orig. `vc-dir'
+    "C-x v e" #'vc-ediff
+    "C-x v G" #'vc-log-search
+    "C-x v ." #'vc-dir-root
+    "C-x v RET" #'vc-dir-root))
+
+
+
+;; Customize the =vc-dir= feature:
+
+
+(progn
+  (setq! vc-dir-save-some-buffers-on-revert t) ; Emacs 31+
+
+  (after! vc-dir
+    (define-keymap :keymap vc-dir-mode-map
+      "d" #'vc-diff
+      "o" #'vc-dir-find-file-other-window
+      "O" #'vc-log-outgoing)))
+
+
+
+;; Customize Git-specific features:
+
+
+(progn
+  (setq! vc-git-diff-switches
+         '("--patch-with-stat"
+           ;; NOTE: According to the documentation for ~diff-hl~, the
+           ;; diff algorithm cannot be determined based on the user's
+           ;; global git config =diff.algorithm= setting.  The website
+           ;; source they linked to has disappeared with no archived
+           ;; page available.  So I have not verified this for certain.
+           "--histogram"))
+  (setq! vc-git-log-switches '("--stat"))
+  (setq! vc-git-print-log-follow t)
+  (setq! vc-git-revision-complete-only-branches t)
+
+  ;; <https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html>
+  (setq! vc-git-log-edit-summary-target-len 50
+         vc-git-log-edit-summary-max-len 72)
+
+  (after! vc-git
+    (define-keymap :keymap vc-git-stash-shared-map
+      "A" #'vc-git-stash-apply-at-point
+      "P" #'vc-git-stash-pop-at-point
+      "z" #'vc-git-stash
+      "Z" #'vc-git-stash-snapshot)))
+
+
+
+;; Customize the behavior of =vc-annotate=:
+
+
+(progn
+  (setq! vc-annotate-display-mode 'scale)
+
+  (after! vc-annotate
+    (define-keymap :keymap vc-annotate-mode-map
+      "RET" #'vc-annotate-find-revision-at-line
+      "C-c C-c" #'vc-annotate-goto-line
+      "M-q" #'vc-annotate-toggle-annotation-visibility)))
+
+
+
+;; Customize the behavior of =log-edit=:
+
+
+(progn
+  (setq! log-edit-confirm 'changed)
+  (setq! log-edit-keep-buffer nil)
+  (setq! log-edit-require-final-newline t)
+  (setq! log-edit-setup-add-author t)
+
+  (after! log-edit
+    (define-keymap :keymap log-edit-mode-map
+      "M-r" nil                    ; prefer `consult-history'
+      "M-s" nil)))
+
+(after! log-view
+  (define-keymap :keymap log-view-mode-map
+    "<return>" #'log-view-find-revision
+    "<tab>" #'log-view-toggle-entry-display
+    "f" #'vc-log-incoming
+    "F" #'vc-update
+    "o" #'vc-log-outgoing
+    "P" #'vc-push
+    "s" #'vc-log-search))
 
 ;; Set up project management with =project.el=
 
@@ -53,23 +134,47 @@
     "C-x p ." #'project-dired
     "C-x p RET" #'project-dired
     "C-x p DEL" #'project-forget-project)
-  (setopt project-vc-extra-root-markers '(".project"))
-  (setopt project-key-prompt-style t))
+  (setq! project-vc-extra-root-markers '(".project"))
+  (setq! project-key-prompt-style t))
 
 ;; Rudimentary jujutsu (=jj=) VCS support
 
-;; The =vc-jj= package currently has some issues (see the entry on that
-;; package below).  In lieu of full-fledged support, let’s try to make the
-;; =jj= experience in Emacs somewhat more bearable.
+
+(progn
+  (cl-pushnew ".jj" project-vc-extra-root-markers)
+
+  (after! lsp-mode
+    (cl-pushnew "[/\\\\]\\.jj\\'" lsp-file-watch-ignored-directories)))
+
+;; =vc-jj= :: Support for the Jujutsu version control system :package:
+
+;; + Package :: https://codeberg.org/emacs-jj-vc/vc-jj.el
+;; + Bug :: <https://codeberg.org/emacs-jj-vc/vc-jj.el/issues/82>
+
+;; Currently it seems to break ~dired-do-rename~.  I’ve opened a
+;; bug report on the project’s issue tracker:
+
+;; <https://codeberg.org/emacs-jj-vc/vc-jj.el/issues/82>
+
+;; Note that this package requires Jujutsu to be configurated for
+;; compatibility with Git diff formatting style.  This can be done globally
+;; in =$XDG_CONFIG_HOME/jj/config.toml= or in the repository-specific
+;; configuration with =jj config edit --repo=.  Here is an example of the
+;; TOML configuration required:
+
+;; #+begin_example toml
+;; [ui]
+;; conflict-marker-style = "git"
+;; diff-formatter = ":git"
+;; #+end_example
+
+;; Now here is the package setup:
 
 
-(after! lsp-mode
-  (cl-pushnew "[/\\\\]\\.jj\\'" lsp-file-watch-ignored-directories))
+(package! vc-jj
+  (require 'vc-jj))
 
 ;; =diff-hl= :: display version control status indicators in margins
-;; :PROPERTIES:
-;; :ID:       6a8b57d7-091a-44a6-bcf1-564f45d9bc7e
-;; :END:
 
 ;; - Website :: <https://github.com/dgutov/diff-hl>
 
@@ -77,16 +182,15 @@
 
 
 (package! diff-hl
-  (add-hook 'ceamx-after-init-hook #'global-diff-hl-mode)
+  (global-diff-hl-mode 1)
 
-  ;; Display indicators in margins instead of fringes.  This will work
-  ;; in terminal sessions and also avoid the fringe conflict with
-  ;; other indicators like Flycheck errors.
-  ;; (add-hook 'ceamx-after-init-hook #'diff-hl-margin-mode)
-
-  ;; Support mouse click on indicator to show hunk.
-  (when (display-graphic-p)
-    (add-hook 'ceamx-after-init-hook #'diff-hl-show-hunk-mouse-mode))
+  (if (display-graphic-p)
+      (progn
+        (diff-hl-show-hunk-mouse-mode 1))
+    ;; Display indicators in margins instead of fringes.  This will work
+    ;; in terminal sessions and also avoid the fringe conflict with
+    ;; other indicators like Flycheck errors.
+    (diff-hl-margin-mode 1))
 
   ;; Committing changes using a package other than `vc' requires integration.
   ;; <https://github.com/dgutov/diff-hl#integration>
@@ -98,9 +202,6 @@
     (add-hook 'dired-mode-hook #'diff-hl-dired-mode)))
 
 ;; =difftastic= :: Integration with =difftastic=
-;; :PROPERTIES:
-;; :ID:       362df672-d6c5-41e4-990e-c8d7ef519a62
-;; :END:
 
 ;; - Package :: https://github.com/pkryger/difftastic.el
 
@@ -165,9 +266,6 @@
                     date-full date-relative)))))
 
 ;; =git-commit-ts-mode= :: A major-mode for editing Git commit messages
-;; :PROPERTIES:
-;; :ID:       034124e8-0166-499f-b0f2-6c298e475d63
-;; :END:
 
 ;; + Package :: <https://github.com/danilshvalov/git-commit-ts-mode/>
 
@@ -206,20 +304,20 @@
   ;; Save work-in-progress refs before some potentially-risky actions
   ;; where data loss is a possibility.  Note that this may cause a
   ;; performance hit.
-  (setopt magit-wip-mode t)
+  (setq! magit-wip-mode t)
 
-  (setopt magit-diff-refine-hunk t)
+  (setq! magit-diff-refine-hunk t)
   ;; Avoid side-effects (e.g. formatting-on-save)
-  (setopt magit-save-repository-buffers nil)
-  (setopt magit-process-finish-apply-ansi-colors t)
+  (setq! magit-save-repository-buffers nil)
+  (setq! magit-process-finish-apply-ansi-colors t)
 
-  (setopt magit-bury-buffer-function #'magit-restore-window-configuration)
+  (setq! magit-bury-buffer-function #'magit-restore-window-configuration)
   ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
-  (setopt magit-display-buffer-function
+  (setq! magit-display-buffer-function
           #'magit-display-buffer-fullframe-status-v1)
 
-  (when (locate-library "nerd-icons")
-    (setopt magit-format-file-function #'magit-format-file-nerd-icons))
+  (when (fboundp #'nerd-icons-insert)
+    (setq! magit-format-file-function #'magit-format-file-nerd-icons))
 
   (define-keymap :keymap magit-status-mode-map
     "_" #'magit-revert
@@ -235,9 +333,12 @@
   (transient-append-suffix 'magit-pull "-r"
     '("-a" "Autostash" "--autostash")))
 
-;; Keep ~magit-section~ sections at the top of the window
+;; FIXME Keep ~magit-section~ sections at the top of the window
 
 ;; - Reference :: <https://emacs.stackexchange.com/questions/3380/how-to-scroll-up-when-expanding-a-section-in-magit-status#comment4819_3383>
+
+;; This is not actually working?  Or at least, the behavior that bugs me
+;; (which is…?) is still present.
 
 
 (after! magit
@@ -251,8 +352,7 @@
 ;; insight into long-running =post-receive= hooks (and similar).
 
 
-(after! magit
-  (setopt magit-process-popup-time 3))
+(setq! magit-process-popup-time 3)
 
 ;; Configure the Git commit message mode
 
@@ -262,9 +362,6 @@
     (cl-pushnew mode ceamx-lang-typo-mode-excluded-modes)))
 
 ;; =magit-todo= :: Display codetag comment reminders in ~magit-status~
-;; :PROPERTIES:
-;; :ID:       567769b0-8153-4f97-9c85-6f0b1e401f3f
-;; :END:
 
 ;; - Docs :: <https://github.com/alphapapa/magit-todos/blob/master/README.org>
 
@@ -275,28 +372,22 @@
     (magit-todos-mode 1)))
 
 ;; =magit-repos=
-;; :PROPERTIES:
-;; :ID:       2c0ff466-ba79-4208-8210-af6ac2ffaa06
-;; :END:
 
 
 (after! magit
   (require 'magit-repos)
-  (setopt magit-repository-directories
+  (setq! magit-repository-directories
           `((,(file-name-concat ceamx-projects-dir "work") . 2)
             (,(file-name-concat ceamx-projects-dir "sources") . 1)
             (,(file-name-concat ceamx-projects-dir "contrib") . 2))))
 
 ;; =forge= :: interact with online forges through magit
-;; :PROPERTIES:
-;; :ID:       c77a863e-56bd-437f-aeb8-303b0183c9fa
-;; :END:
 
 ;; *Warning*: /development versions of ~forge~ may expect a different ~magit~
 ;; version!/
 
 
-(package! (forge))
+(package! forge)
 
 (after! magit
   (require 'forge)
