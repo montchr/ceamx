@@ -1165,12 +1165,14 @@ The original function fails in the presence of whitespace after a sexp."
     "t" #'csv-transpose))
 
 ;; KDL
-;; :PROPERTIES:
-;; :ID:       dd16c6e6-fade-4246-b5ac-e5a05148d1b0
-;; :END:
 
 
-(package! (kdl-ts-mode :host github :repo "merrickluo/kdl-ts-mode"))
+(package! (kdl-ts-mode :host github :repo "merrickluo/kdl-ts-mode")
+  ;; TODO: I'm not sure why this wasn't done automatically -- it's in the
+  ;; `kdl-ts-mode' file.  But I guess the file isn't loaded, so there's
+  ;; no way for Emacs to know.  How is this normally done without
+  ;; requiring user intervention?
+  (add-to-list 'auto-mode-alist '("\\.kdl\\'" . kdl-ts-mode)))
 
 ;; =jq-mode= :: major mode for editing =jq= queries
 ;; :PROPERTIES:
