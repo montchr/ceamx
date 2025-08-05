@@ -6,4 +6,4 @@
 # --
 perSystem = { ${1:config, }${2:inputs', }${3:pkgs, } ... }: {
   $0
-}
+};
