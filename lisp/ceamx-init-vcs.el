@@ -106,6 +106,10 @@
 
 
 (progn
+  ;; FIXME: figure out why this does not always get loaded and why
+  ;; `log-edit-mode' is sometimes unavailable
+  (require 'log-edit)
+
   (setq! log-edit-confirm 'changed)
   (setq! log-edit-keep-buffer nil)
   (setq! log-edit-require-final-newline t)
