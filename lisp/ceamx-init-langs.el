@@ -1591,9 +1591,14 @@ usually wrongly fontified as a metadata block."
 
 
 (package! fish-mode
-  (setopt fish-indent-offset 2)
+  ;; 4 spaces is standard according to examples in Fish shell
+  ;; documentation.  It's also generally an informal standard for shell
+  ;; scripts (unless you're writing shell scripts in YAML).
+  (setq! fish-indent-offset 4)
+
   (after! eglot
-    (add-to-list 'eglot-server-programs '(fish-mode . ("fish-lsp" "start")))))
+    ;; FIXME: displays a pointless confirmation prompt on start
+    (cl-pushnew '(fish-mode . ("fish-lsp" "start")) eglot-server-programs)))
 
 ;; =just-mode= :: Language support for the Just task runner configuration files
 ;; :PROPERTIES:

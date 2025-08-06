@@ -8224,17 +8224,22 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 #+end_src
 
 *** =fish-mode= :: Language support for Fish shell script files
-:PROPERTIES:
-:ID:       8e2caaa1-6b85-49db-a6df-c0e554ec885e
-:END:
 
-+ requires-os-package :: =fish-lsp=
++ Pkgs :: =fish-lsp=
 
 #+begin_src emacs-lisp
 (package! fish-mode
-  (setopt fish-indent-offset 2)
+  ;; 4 spaces is standard according to examples in Fish shell
+  ;; documentation.  It's also generally an informal standard for shell
+  ;; scripts (unless you're writing shell scripts in YAML).
+  (setq! fish-indent-offset 4)
+
   (after! eglot
-    (add-to-list 'eglot-server-programs '(fish-mode . ("fish-lsp" "start")))))
+    ;; FIXME: displays a pointless confirmation prompt on start.  the
+    ;; cli does not appear to provide a way to disable this.  maybe
+    ;; should check the upstream issue tracker.  no other language
+    ;; server that i have used does this.
+    (cl-pushnew '(fish-mode . ("fish-lsp" "start")) eglot-server-programs)))
 #+end_src
 
 *** =just-mode= :: Language support for the Just task runner configuration files
