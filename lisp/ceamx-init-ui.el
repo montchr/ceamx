@@ -123,12 +123,12 @@
    'modus 'modus-vivendi 'modus-operandi)
 
   (setopt modus-themes-italic-constructs t
-          modus-themes-bold-constructs nil
+          modus-themes-bold-constructs t
           modus-themes-mixed-fonts t
           modus-themes-variable-pitch-ui t)
   (setopt modus-themes-to-toggle
           (ceamx-ui-theme-family-preferred-themes 'modus))
-  (setopt modus-themes-disable-other-themes nil)
+  (setopt modus-themes-disable-other-themes t)
   (setopt modus-themes-custom-auto-reload t)
   (setopt modus-themes-headings nil)
   (setopt modus-themes-prompts '(italic bold))
@@ -255,6 +255,9 @@
 ;; of the cumulative overlays in one place (here), and defining the
 ;; settings for each in their respective contexts (e.g. =sideline-eglot= gets
 ;; customised in the section for Eglot, etc.).
+;; It is /easier/ (?) to define the UI integrations with the various other
+;; features all in one place, but it maybe doesn’t make much sense if,
+;; for example, we were no longer using the =eros= package…
 
 
 (package! sideline
