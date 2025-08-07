@@ -2882,6 +2882,12 @@ Needs better bindings.
                   :repo "aatmunbaxi/lasgun.el"))
 #+end_src
 
+**** TODO =cycle-quotes= :: Cycle quote characters surrounding string at point :package:cycling:
+
+#+begin_src emacs-lisp
+(package! cycle-quotes)
+#+end_src
+
 *** Modal editing
 :PROPERTIES:
 :ID:       1293c641-aecb-43ab-b001-366e7e0543c8

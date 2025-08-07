@@ -224,24 +224,6 @@
 ;; out, the =sideline-backend-*= user options accept a form allowing for
 ;; conditionals:
 
-;; #+begin_example elisp
-;; (setq! sideline-backends-right `((,(when (featurep 'lsp-mode)
-;;                                      #'sideline-lsp . up))))
-;; #+end_example
-
-;; Note, however, that I’ve slightly modified the example in the readme,
-;; which appears to have been incorrect at the time of writing this.  I’m
-;; also not sure whether a ~featurep~ check is the right move with
-;; asynchronous package installation.  Regardless, it might be worth
-;; considering refactoring to follow this pattern of defining the appearance
-;; of the cumulative overlays in one place (here), and defining the
-;; settings for each in their respective contexts (e.g. =sideline-eglot= gets
-;; customised in the section for Eglot, etc.).
-;; It seemed easiest to define the UI integrations with the various other
-;; features all in one place, but it doesn’t make much sense.  As it turns
-;; out, the =sideline-backend-*= user options accept a form allowing for
-;; conditionals:
-
 ;; #+begin_example elisp :tangle no
 ;; (setq! sideline-backends-right `((,(when (featurep 'lsp-mode)
 ;;                                      #'sideline-lsp . up))))
@@ -255,9 +237,6 @@
 ;; of the cumulative overlays in one place (here), and defining the
 ;; settings for each in their respective contexts (e.g. =sideline-eglot= gets
 ;; customised in the section for Eglot, etc.).
-;; It is /easier/ (?) to define the UI integrations with the various other
-;; features all in one place, but it maybe doesn’t make much sense if,
-;; for example, we were no longer using the =eros= package…
 
 
 (package! sideline

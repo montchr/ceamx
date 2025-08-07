@@ -471,6 +471,11 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (package! ialign
   (keymap-global-set "C-x l" #'ialign))
 
+;; TODO =cycle-quotes= :: Cycle quote characters surrounding string at point :package:cycling:
+
+
+(package! cycle-quotes)
+
 ;; Modal editing
 ;; :PROPERTIES:
 ;; :ID:       1293c641-aecb-43ab-b001-366e7e0543c8
