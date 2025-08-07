@@ -441,7 +441,18 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (global-subword-mode 1)
 
-;; TODO ~string-inflection~ :: commands to cycle through word casing
+;; =ialign= :: Interactively ~align-regexp~ :package:
+;; :PROPERTIES:
+;; :ID:       7c7b2b24-f6e4-4af5-934f-0d66b65bba6c
+;; :END:
+
+;; <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
+
+
+(package! ialign
+  (keymap-global-set "C-x l" #'ialign))
+
+;; TODO =string-inflection= :: Cycle through character casing :package:cycling:
 ;; :PROPERTIES:
 ;; :ID:       bf713b67-b25a-41c7-87ba-f5c9a9f7852b
 ;; :END:
@@ -460,16 +471,60 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
     "c" #'ceamx/cycle-string-inflection))
 
-;; =ialign= :: Interactively ~align-regexp~ :package:
-;; :PROPERTIES:
-;; :ID:       7c7b2b24-f6e4-4af5-934f-0d66b65bba6c
+;; =typo= :: Cycle typographical characters :package:cycling:
+;; :LOGBOOK:
+;; - Refiled on [2025-08-08 Fri 09:45]
 ;; :END:
 
-;; <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
+;; + Package :: <https://github.com/jorgenschaefer/typoel>
+
+;; *Before*:	The "quick" brown --- ffiox.
+;; *After*:	The “quick” brown — ffiox.
 
 
-(package! ialign
-  (keymap-global-set "C-x l" #'ialign))
+(require 'ceamx-lang)
+
+(package! (typo :host github :repo "jorgenschaefer/typoel")
+  ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
+  ;; FIXME: there must be another way
+  ;; (typo-global-mode 1)
+
+  (def-hook! ceamx-lang-typo-mode-maybe-enable-h ()
+    'text-mode-hook
+    "Conditionally enable `typo-mode'.
+`typo-mode' will not be enabled when the current major-mode is one of
+the major-modes listed in the `ceamx-lang-typo-mode-excluded-modes' user
+setting or the `ceamx-text-mode-derived-prog-modes-list' constant, which
+see."
+    (let ((excluded-modes (append ceamx-text-mode-derived-prog-modes-list
+                                  ceamx-lang-typo-mode-excluded-modes)))
+      (unless (derived-mode-p excluded-modes)
+        (typo-mode 1))))
+
+  (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
+
+;; TODO =cycle-at-point= :: Promptless text cycling at point :package:cycling:
+;; :LOGBOOK:
+;; - Refiled on [2025-08-08 Fri 09:45]
+;; :END:
+
+
+;; TODO: bind to a key
+(package! cycle-at-point)
+
+;; TODO =shift-number= :: Increase/decrease the number at point :package:cycling:
+;; :LOGBOOK:
+;; - Refiled on [2025-08-08 Fri 09:45]
+;; :END:
+
+;; + Package :: <https://codeberg.org/ideasman42/emacs-shift-number>
+
+;; Provides commands ~shift-number-up~ and ~shift-number-down~ to increment or
+;; decrement the number at point, respectively.
+
+
+;; TODO: bind to key, and add to embark actions
+(package! shift-number)
 
 ;; TODO =cycle-quotes= :: Cycle quote characters surrounding string at point :package:cycling:
 

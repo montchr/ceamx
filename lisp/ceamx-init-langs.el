@@ -5,52 +5,6 @@
 (require 'ceamx-lib)
 (require 'ceamx-editor)
 
-;; =typo= :: cycle typographical correctneß :package:
-
-;; + Package :: <https://github.com/jorgenschaefer/typoel>
-
-;; *Before*:	The "quick" brown --- ffiox.
-;; *After*:	The “quick” brown — ffiox.
-
-
-(require 'ceamx-lang)
-
-(package! (typo :host github :repo "jorgenschaefer/typoel")
-  ;; Provides [C-c 8] prefix for Unicode entry to complement [C-x 8].
-  ;; FIXME: there must be another way
-  ;; (typo-global-mode 1)
-
-  (def-hook! ceamx-lang-typo-mode-maybe-enable-h ()
-    'text-mode-hook
-    "Conditionally enable `typo-mode'.
-`typo-mode' will not be enabled when the current major-mode is one of
-the major-modes listed in the `ceamx-lang-typo-mode-excluded-modes' user
-setting or the `ceamx-text-mode-derived-prog-modes-list' constant, which
-see."
-    (let ((excluded-modes (append ceamx-text-mode-derived-prog-modes-list
-                                  ceamx-lang-typo-mode-excluded-modes)))
-      (unless (derived-mode-p excluded-modes)
-        (typo-mode 1))))
-
-  (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
-
-;; =cycle-at-point= :: Promptless text cycling at point :package:
-
-
-;; TODO: bind to a key
-(package! cycle-at-point)
-
-;; =shift-number= :: Increase/decrease the number at point :package:
-
-;; + Package :: <https://codeberg.org/ideasman42/emacs-shift-number>
-
-;; Provides commands ~shift-number-up~ and ~shift-number-down~ to increment or
-;; decrement the number at point, respectively.
-
-
-;; TODO: bind to key, and add to embark actions
-(package! shift-number)
-
 ;; Programming modes
 ;; :PROPERTIES:
 ;; :ID:       c7874765-8cf8-4cf4-abb5-97c220769a65
