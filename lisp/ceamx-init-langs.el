@@ -1583,11 +1583,8 @@ usually wrongly fontified as a metadata block."
   )
 
 ;; =fish-mode= :: Language support for Fish shell script files
-;; :PROPERTIES:
-;; :ID:       8e2caaa1-6b85-49db-a6df-c0e554ec885e
-;; :END:
 
-;; + requires-os-package :: =fish-lsp=
+;; + Pkgs :: =fish-lsp=
 
 
 (package! fish-mode
@@ -1597,7 +1594,10 @@ usually wrongly fontified as a metadata block."
   (setq! fish-indent-offset 4)
 
   (after! eglot
-    ;; FIXME: displays a pointless confirmation prompt on start
+    ;; FIXME: displays a pointless confirmation prompt on start.  the
+    ;; cli does not appear to provide a way to disable this.  maybe
+    ;; should check the upstream issue tracker.  no other language
+    ;; server that i have used does this.
     (cl-pushnew '(fish-mode . ("fish-lsp" "start")) eglot-server-programs)))
 
 ;; =just-mode= :: Language support for the Just task runner configuration files

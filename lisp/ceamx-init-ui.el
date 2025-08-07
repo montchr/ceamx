@@ -208,30 +208,139 @@
                     (ceamx-ui/load-dark-theme)
                   (ceamx-ui/load-light-theme))))))
 
-;; Approach № 2: =flyover= :package:
+;; =sideline= :: Display buffer diagnostics with overlays :checkers:lsp:package:
 
-;; - Package :: <https://github.com/konrad1977/flyover/>
+;; There’s two packages that I’m currently comparing.
+
+;; I’ve been using =sideline=, which is fine, but a bit ugly.  Unrelated: it was
+;; extracted and modified from the =sideline= part of =lsp-ui=.
+
+;; =flyover= is another approach, and it looks very nice.  But it has
+;; absolutely terrible performance (it lags behind changes, with overlays
+;; getting stuck for minutes at a time).
+
+;; It seemed easiest to define the UI integrations with the various other
+;; features all in one place, but it doesn’t make much sense.  As it turns
+;; out, the =sideline-backend-*= user options accept a form allowing for
+;; conditionals:
+
+;; #+begin_example elisp
+;; (setq! sideline-backends-right `((,(when (featurep 'lsp-mode)
+;;                                      #'sideline-lsp . up))))
+;; #+end_example
+
+;; Note, however, that I’ve slightly modified the example in the readme,
+;; which appears to have been incorrect at the time of writing this.  I’m
+;; also not sure whether a ~featurep~ check is the right move with
+;; asynchronous package installation.  Regardless, it might be worth
+;; considering refactoring to follow this pattern of defining the appearance
+;; of the cumulative overlays in one place (here), and defining the
+;; settings for each in their respective contexts (e.g. =sideline-eglot= gets
+;; customised in the section for Eglot, etc.).
+;; It seemed easiest to define the UI integrations with the various other
+;; features all in one place, but it doesn’t make much sense.  As it turns
+;; out, the =sideline-backend-*= user options accept a form allowing for
+;; conditionals:
+
+;; #+begin_example elisp :tangle no
+;; (setq! sideline-backends-right `((,(when (featurep 'lsp-mode)
+;;                                      #'sideline-lsp . up))))
+;; #+end_example
+
+;; Note, however, that I’ve slightly modified the example in the readme,
+;; which appears to have been incorrect at the time of writing this.  I’m
+;; also not sure whether a ~featurep~ check is the right move with
+;; asynchronous package installation.  Regardless, it might be worth
+;; considering refactoring to follow this pattern of defining the appearance
+;; of the cumulative overlays in one place (here), and defining the
+;; settings for each in their respective contexts (e.g. =sideline-eglot= gets
+;; customised in the section for Eglot, etc.).
 
 
-(package! flyover
+(package! sideline
+  (require 'sideline)
+
+  (setq! sideline-backends-left-skip-current-line t
+         sideline-backends-right-skip-current-line t)
+  (setq! sideline-order-left 'down
+         sideline-order-right 'up)
+  (setq! sideline-format-left "%s   "
+         sideline-format-right "   %s")
+  (setq! sideline-priority 100)
+  (setq! sideline-display-backend-name t))
+
+;; =sideline-flymake= :: Display =flymake= diagnostics with =sideline= :overlays:ui:sideline:flymake:
+;; :LOGBOOK:
+;; - Refiled on [2025-07-23 Wed 12:34]
+;; - Refiled on [2025-07-23 Wed 12:55]
+;; :END:
+
+
+(package! sideline-flymake
   (after! flymake
-    (add-hook 'flymake-mode-hook #'flyover-mode))
+    (add-hook 'flymake-mode-hook #'sideline-mode))
+
+  (setq! sideline-flymake-show-checker-name t)
+  (setq! sideline-flymake-max-lines 1))
+
+;; =sideline-flycheck= :: Display =flycheck= diagnostics with =sideline= :overlays:sideline:ui:
+;; :LOGBOOK:
+;; - Refiled on [2025-07-23 Wed 12:34]
+;; - Refiled on [2025-07-23 Wed 12:55]
+;; :END:
+
+
+(package! sideline-flycheck
   (after! flycheck
-    (add-hook 'flycheck-mode-hook #'flyover-mode))
+    (add-hook 'flycheck-mode-hook #'sideline-mode)
+    (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
 
-  (setopt flyover-levels '(error warning info))
+  (after! sideline
+    (cl-pushnew '(sideline-flycheck . down) sideline-backends-right))
 
-  (setopt flyover-debounce-interval 0.2)
-  (setopt flyover-hide-checker-name nil
-          flyover-wrap-messages t
-          flyover-max-line-length 100)
-  (setopt flyover-show-at-eol nil
-          flyover-hide-when-cursor-is-on-same-line flyover-show-at-eol
-          flyover-line-position-offset 1)
-  (setopt flyover-use-theme-colors t
-          flyover-text-tint 'lighter)
-  (setopt flyover-show-virtual-line t)
-  )
+  (setq! sideline-flycheck-show-checker-name t)
+  (setq! sideline-flycheck-max-lines 1))
+
+;; =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:ui:
+;; :LOGBOOK:
+;; - Refiled on [2025-07-23 Wed 13:09]
+;; :END:
+
+
+(package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
+  (after! sideline
+    (cl-pushnew '(sideline-emoji . up) sideline-backends-left)))
+
+;; =sideline-load-cost= :: Show library weight in sideline
+;; :LOGBOOK:
+;; - Refiled on [2025-07-23 Wed 13:09]
+;; :END:
+
+
+(package! (sideline-load-cost :host github :repo "emacs-sideline/sideline-load-cost")
+  (after! sideline
+    (cl-pushnew #'sideline-load-cost sideline-backends-right)))
+
+;; =sideline-eros= :: Show =eros= output in =sideline= :help:
+
+
+(package! (sideline-eros :host github :repo "emacs-sideline/sideline-eros")
+  (after! eros
+    (add-hook 'sideline-mode-hook #'sideline-eros-setup)
+    (cl-pushnew #'sideline-eros sideline-backends-right)))
+
+;; =sideline-eglot= :: Display Eglot messages in sideline
+;; :LOGBOOK:
+;; - Refiled on [2025-07-23 Wed 13:13]
+;; :END:
+
+
+(package! (sideline-eglot :host github :repo "emacs-sideline/sideline-eglot")
+  ;; Disabled because it's pretty annoying.
+  ;; (after! eglot
+  ;;   (add-hook 'eglot-managed-mode-hook #'sideline-mode))
+  (after! sideline
+    (cl-pushnew #'sideline-eglot sideline-backends-right)))
 
 ;; =avy= :: can do anything
 ;; :PROPERTIES:

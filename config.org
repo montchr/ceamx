@@ -1551,36 +1551,48 @@ applying margin, padding, borders.
                   (ceamx-ui/load-light-theme))))))
 #+end_src
 
-*** Display buffer diagnostics with overlays :checkers:lsp:
+*** =sideline= :: Display buffer diagnostics with overlays :checkers:lsp:package:
 
 There’s two packages that I’m currently comparing.
 
-I’ve been using =sideline=, which is fine, but a bit ugly.  I think it
-has originally something to do with =lsp-ui= (which I don’t use)?
+I’ve been using =sideline=, which is fine, but a bit ugly.  Unrelated: it was
+extracted and modified from the =sideline= part of =lsp-ui=.
 
-=flyover= is another approach, and it looks very nice.
+=flyover= is another approach, and it looks very nice.  But it has
+absolutely terrible performance (it lags behind changes, with overlays
+getting stuck for minutes at a time).
 
-It is /easier/ (?) to define the UI integrations with the various other
-features all in one place, but it maybe doesn’t make much sense if,
-for example, we were no longer using the =eros= package…
+It seemed easiest to define the UI integrations with the various other
+features all in one place, but it doesn’t make much sense.  As it turns
+out, the =sideline-backend-*= user options accept a form allowing for
+conditionals:
 
-**** DISABLED Approach № 1: =sideline= :package:
-:PROPERTIES:
-:header-args: :tangle no
-:END:
+#+begin_example elisp :tangle no
+(setq! sideline-backends-right `((,(when (featurep 'lsp-mode)
+                                     #'sideline-lsp . up))))
+#+end_example
+
+Note, however, that I’ve slightly modified the example in the readme,
+which appears to have been incorrect at the time of writing this.  I’m
+also not sure whether a ~featurep~ check is the right move with
+asynchronous package installation.  Regardless, it might be worth
+considering refactoring to follow this pattern of defining the appearance
+of the cumulative overlays in one place (here), and defining the
+settings for each in their respective contexts (e.g. =sideline-eglot= gets
+customised in the section for Eglot, etc.).
 
 #+begin_src emacs-lisp
 (package! sideline
   (require 'sideline)
 
-  (setopt sideline-backends-left-skip-current-line t
-          sideline-backends-right-skip-current-line t)
-  (setopt sideline-order-left 'down
-          sideline-order-right 'up)
-  (setopt sideline-format-left "%s   "
-          sideline-format-right "   %s")
-  (setopt sideline-priority 100)
-  (setopt sideline-display-backend-name t))
+  (setq! sideline-backends-left-skip-current-line t
+         sideline-backends-right-skip-current-line t)
+  (setq! sideline-order-left 'down
+         sideline-order-right 'up)
+  (setq! sideline-format-left "%s   "
+         sideline-format-right "   %s")
+  (setq! sideline-priority 100)
+  (setq! sideline-display-backend-name t))
 #+end_src
 
 
@@ -1595,8 +1607,8 @@ for example, we were no longer using the =eros= package…
   (after! flymake
     (add-hook 'flymake-mode-hook #'sideline-mode))
 
-  (setopt sideline-flymake-show-checker-name t)
-  (setopt sideline-flymake-max-lines 1))
+  (setq! sideline-flymake-show-checker-name t)
+  (setq! sideline-flymake-max-lines 1))
 #+end_src
 
 ***** =sideline-flycheck= :: Display =flycheck= diagnostics with =sideline= :overlays:sideline:ui:
@@ -1612,10 +1624,10 @@ for example, we were no longer using the =eros= package…
     (add-hook 'flycheck-mode-hook #'sideline-flycheck-setup))
 
   (after! sideline
-    (appendq! sideline-backends-right '(sideline-flycheck)))
+    (cl-pushnew '(sideline-flycheck . down) sideline-backends-right))
 
-  (setopt sideline-flycheck-show-checker-name t)
-  (setopt sideline-flycheck-max-lines 1))
+  (setq! sideline-flycheck-show-checker-name t)
+  (setq! sideline-flycheck-max-lines 1))
 #+end_src
 
 ***** =sideline-emoji= :: Display emoji-at-point info in =sideline= :overlays:ui:
@@ -1626,13 +1638,10 @@ for example, we were no longer using the =eros= package…
 #+begin_src emacs-lisp
 (package! (sideline-emoji :host github :repo "emacs-sideline/sideline-emoji")
   (after! sideline
-    (appendq! sideline-backends-left '((sideline-emoji . up)))))
+    (cl-pushnew '(sideline-emoji . up) sideline-backends-left)))
 #+end_src
 
 ***** =sideline-load-cost= :: Show library weight in sideline
-:PROPERTIES:
-:ID:       67dabafe-cf92-4142-bbfa-ac10008f1eb6
-:END:
 :LOGBOOK:
 - Refiled on [2025-07-23 Wed 13:09]
 :END:
@@ -1640,22 +1649,19 @@ for example, we were no longer using the =eros= package…
 #+begin_src emacs-lisp
 (package! (sideline-load-cost :host github :repo "emacs-sideline/sideline-load-cost")
   (after! sideline
-    (appendq! sideline-backends-right '(sideline-load-cost))))
+    (cl-pushnew #'sideline-load-cost sideline-backends-right)))
 #+end_src
 
 ***** =sideline-eros= :: Show =eros= output in =sideline= :help:
 
 #+begin_src emacs-lisp
 (package! (sideline-eros :host github :repo "emacs-sideline/sideline-eros")
-  (after! (sideline eros)
+  (after! eros
     (add-hook 'sideline-mode-hook #'sideline-eros-setup)
-    (appendq! sideline-backends-right '(sideline-eros))))
+    (cl-pushnew #'sideline-eros sideline-backends-right)))
 #+end_src
 
 ***** =sideline-eglot= :: Display Eglot messages in sideline
-:PROPERTIES:
-:ID:       4c60a33a-0759-4bb5-9e8c-05270f5e85d6
-:END:
 :LOGBOOK:
 - Refiled on [2025-07-23 Wed 13:13]
 :END:
@@ -1666,35 +1672,8 @@ for example, we were no longer using the =eros= package…
   ;; (after! eglot
   ;;   (add-hook 'eglot-managed-mode-hook #'sideline-mode))
   (after! sideline
-    (appendq! sideline-backends-right '(sideline-eglot))))
+    (cl-pushnew #'sideline-eglot sideline-backends-right)))
 #+end_src
-
-**** Approach № 2: =flyover= :package:
-
-- Package :: <https://github.com/konrad1977/flyover/>
-
-#+begin_src emacs-lisp
-(package! flyover
-  (after! flymake
-    (add-hook 'flymake-mode-hook #'flyover-mode))
-  (after! flycheck
-    (add-hook 'flycheck-mode-hook #'flyover-mode))
-
-  (setopt flyover-levels '(error warning info))
-
-  (setopt flyover-debounce-interval 0.2)
-  (setopt flyover-hide-checker-name nil
-          flyover-wrap-messages t
-          flyover-max-line-length 100)
-  (setopt flyover-show-at-eol nil
-          flyover-hide-when-cursor-is-on-same-line flyover-show-at-eol
-          flyover-line-position-offset 1)
-  (setopt flyover-use-theme-colors t
-          flyover-text-tint 'lighter)
-  (setopt flyover-show-virtual-line t)
-  )
-#+end_src
-
 
 *** =avy= :: can do anything
 :PROPERTIES:
