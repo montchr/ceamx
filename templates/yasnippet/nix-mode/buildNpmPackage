@@ -1,0 +1,31 @@
+# -*- mode: snippet -*-
+# name: buildNpmPackage
+# key: buildNpmPackage
+# uuid: 1c7d6b02-1873-4abe-8ef6-464d1ac651cb
+# contributor: astratagem <chmont@protonmail.com>
+# --
+{
+  lib,
+  buildNpmPackage,
+  fetchFromGitHub,
+}:
+buildNpmPackage (finalAttrs: {
+  pname = "$1";
+  version = "$2";
+
+  src = fetchFromGitHub {
+    owner = "$3";
+    repo = "${4:$1}";
+    tag = "${5:v\${finalAttrs.version}}";
+    hash = "";
+  };
+
+  npmDepsHash = "";
+
+  meta = {
+    description = "$6";
+    homepage = "$7";
+    license = lib.licenses.$8;
+    maintainers = with lib.maintainers; [ montchr ];
+  };
+})
