@@ -100,6 +100,40 @@
     "U 4" #'uuidgen-4
     "U 5" #'uuidgen-5))
 
+;; Augementated Intelligentry (AI) :ai:
+
+;; Providing integrations with LLMs and other simulation machines.
+
+;; Cea prefers Anthropic to OpenAI.
+
+
+;; Model identifiers can be found here (there's probably an easier way):
+;; <https://console.anthropic.com/workbench/6c76c61f-14a2-4c35-9979-a86f848453e9>
+
+(defconst ceamx-ai-claude-opus-current-model "claude-opus-4-1-20250805"
+  "String identifier for the current version of the Claude Opus LLM model.
+This should be updated when a new version is available.")
+
+(defconst ceamx-ai-claude-sonnet-current-model "claude-sonnet-4-20250514"
+  "String identifier for the current version of the Claude Sonnet LLM model.
+This should be updated when a new version is available.")
+
+;; =efrit= :: A native Emacs Lisp coding agent :package:secrets:
+
+;; Currently, Efrit wants to use authinfo for my username, password, *and*
+;; API key.  I am not sure why it needs this info, or how I can make it use
+;; the password-store backend.  Maybe I’ve configurated something
+;; incorrectly (it’s been a while since I’ve used authinfo in some
+;; automated way).
+
+;; I opened a ticket asking for help:
+
+;; [[https://github.com/steveyegge/efrit/issues/6][is there a way to provide api key using the password-store backend without login credentials? · Issue #6 · steveyegge/efrit]]
+
+
+(package! (efrit :host github :repo "steveyegge/efrit")
+  (setq! efrit-model ceamx-ai-claude-opus-current-model))
+
 ;; Define important feature paths :paths:
 ;; :PROPERTIES:
 ;; :ID:       6af77ff1-5d06-41c8-bedf-f123ae532989

@@ -9455,9 +9455,6 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 #+end_src
 
 ** TODO Mail
-:PROPERTIES:
-:ID:       393bf925-aa13-4076-a3e9-dff923664711
-:END:
 
 ** Web Browsing :web:
 :PROPERTIES:
@@ -9666,11 +9663,42 @@ I wonder if there is a way to export NewsBlur scoring to this format…
     "U 5" #'uuidgen-5))
 #+end_src
 
-*** Augementated Intelligentry (AI)
+*** Augementated Intelligentry (AI) :ai:
 
 Providing integrations with LLMs and other simulation machines.
 
-M is not eager to board the train bound for Hype City.
+Cea prefers Anthropic to OpenAI.
+
+#+begin_src emacs-lisp
+;; Model identifiers can be found here (there's probably an easier way):
+;; <https://console.anthropic.com/workbench/6c76c61f-14a2-4c35-9979-a86f848453e9>
+
+(defconst ceamx-ai-claude-opus-current-model "claude-opus-4-1-20250805"
+  "String identifier for the current version of the Claude Opus LLM model.
+This should be updated when a new version is available.")
+
+(defconst ceamx-ai-claude-sonnet-current-model "claude-sonnet-4-20250514"
+  "String identifier for the current version of the Claude Sonnet LLM model.
+This should be updated when a new version is available.")
+#+end_src
+
+**** =efrit= :: A native Emacs Lisp coding agent :package:secrets:
+
+Currently, Efrit wants to use authinfo for my username, password, *and*
+API key.  I am not sure why it needs this info, or how I can make it use
+the password-store backend.  Maybe I’ve configurated something
+incorrectly (it’s been a while since I’ve used authinfo in some
+automated way).
+
+I opened a ticket asking for help:
+
+[[https://github.com/steveyegge/efrit/issues/6][is there a way to provide api key using the password-store backend without login credentials? · Issue #6 · steveyegge/efrit]]
+
+#+begin_src emacs-lisp
+(package! (efrit :host github :repo "steveyegge/efrit")
+  (setq! efrit-model ceamx-ai-claude-opus-current-model))
+#+end_src
+
 
 *** Personal Finance with =hledger=
 
