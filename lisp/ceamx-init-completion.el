@@ -5,41 +5,41 @@
 ;; Baseline minibuffer settings
 
 
-  (progn
-    (minibuffer-depth-indicate-mode 1)
-    (minibuffer-electric-default-mode 1)
-    (file-name-shadow-mode 1)
+(progn
+  (minibuffer-depth-indicate-mode 1)
+  (minibuffer-electric-default-mode 1)
+  (file-name-shadow-mode 1)
 
-    (setq! echo-keystrokes 0.25)
-    (setq! read-answer-short t)
-    (setq! savehist-save-minibuffer-history t)
+  (setq! echo-keystrokes 0.25)
+  (setq! read-answer-short t)
+  (setq! savehist-save-minibuffer-history t)
 
-    ;; Allow opening the minibuffer from inside the minibuffer.
-    (setq! enable-recursive-minibuffers t)
+  ;; Allow opening the minibuffer from inside the minibuffer.
+  (setq! enable-recursive-minibuffers t)
 
-    ;; Expand mini-windows to fit their contents if necessary.
-    (setq! resize-mini-windows 'grow-only)
+  ;; Expand mini-windows to fit their contents if necessary.
+  (setq! resize-mini-windows 'grow-only)
 
-    ;; Hide commands in M-x which do not apply to the current mode.
-    (setq! read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Hide commands in M-x which do not apply to the current mode.
+  (setq! read-extended-command-predicate #'command-completion-default-include-p)
 
-    ;; Hide the cursor in the minibuffer prompt.
-    (setq! minibuffer-prompt-properties '( read-only t
-                                           cursor-intangible t
-                                           face minibuffer-prompt))
+  ;; Hide the cursor in the minibuffer prompt.
+  (setq! minibuffer-prompt-properties '( read-only t
+                                         cursor-intangible t
+                                         face minibuffer-prompt))
 
-    (setq! completion-ignore-case t
-           read-buffer-completion-ignore-case t
-           read-file-name-completion-ignore-case t)
-    (setq-default case-fold-search t)
+  (setq! completion-ignore-case t
+         read-buffer-completion-ignore-case t
+         read-file-name-completion-ignore-case t)
+  (setq-default case-fold-search t)
 
-    ;; No need to restore windows upon exiting the minibuffer.
-    (setq! read-minibuffer-restore-windows nil)
+  ;; No need to restore windows upon exiting the minibuffer.
+  (setq! read-minibuffer-restore-windows nil)
 
-    (setq! minibuffer-default-prompt-format " [%s]")
+  (setq! minibuffer-default-prompt-format " [%s]")
 
-    ;; Emacs 31+: Make `partial-completion' behave like `substring'.
-    (setq! completion-pcm-leading-wildcard t))
+  ;; Emacs 31+: Make `partial-completion' behave like `substring'.
+  (setq! completion-pcm-leading-wildcard t))
 
 
 
@@ -51,8 +51,8 @@
 ;; should be specified in ~completion-category-overrides~.
 
 
-(setq! completion-category-defaults nil
-       completion-styles '(basic substring initials flex))
+(setq! completion-category-defaults nil)
+(setq! completion-styles '(basic substring))
 
 ;; Improve the usability of the generic minibuffer UI :ui:
 
@@ -121,10 +121,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (require 'orderless)
 
   (setq! orderless-style-dispatchers '(orderless-affix-dispatch))
-  (setq! orderless-matching-styles '(orderless-literal
-                                     orderless-regexp
-                                     orderless-flex))
-
   (setq! orderless-component-separator #'orderless-escapable-split-on-space))
 
 ;; ~+orderless-fast-dispatch~
@@ -144,9 +140,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     (orderless-matching-styles '(orderless-literal orderless-regexp))))
 
 ;; ~+orderless-with-initialism~
-;; :PROPERTIES:
-;; :ID:       f2d291ff-f65d-431d-8714-0cc747c872f6
-;; :END:
 
 
 (after! orderless
@@ -162,33 +155,41 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
   (require 'ceamx-completion)
 
   ;; Use `orderless' as the final completion style fallback option.
-  (setq! completion-styles (append completion-styles '(orderless)))
+  ;; (setq! completion-styles (append completion-styles '(orderless)))
+
+  ;; Use `orderless' as the first-tried completion style.
+  (setq! completion-styles (append '(orderless) completion-styles))
 
   (setq! completion-category-overrides
-         '((file . (styles . (basic partial-completion)))
+         '((file . (styles . (partial-completion)))
            (bookmark . (styles . (basic substring)))
            (library . (styles . (basic substring)))
            (imenu . (styles . (orderless substring basic)))
-           ;; FIXME: i am not a fan of emacs22, i think
-           (kill-ring . (styles . (emacs22 orderless)))
+           (kill-ring . (styles . (orderless)))
 
            ;; Enable initialism by default for symbols.
-           (command . (styles . (+orderless-with-initialism)))
-           (variable . (styles . (+orderless-with-initialism)))
-           (symbol . (styles . (+orderless-with-initialism)))))
+           ;; (command . (styles . (+orderless-with-initialism)))
+           ;; (variable . (styles . (+orderless-with-initialism)))
+           ;; (symbol . (styles . (+orderless-with-initialism)))
+           ))
 
   (after! consult
-    (map-put completion-category-overrides 'consult-location
-             '(styles . (basic substring orderless)))
+    (map-put completion-category-overrides
+             'consult-location '(styles . (basic substring orderless)))
     (cl-pushnew #'ceamx-completion-orderless-consult-dispatch
                 orderless-style-dispatchers))
 
   (after! eglot
-    (map-put completion-category-overrides 'eglot
-             '(styles . (emacs22 substring orderless)))
-    ;; FIXME: who provides `eglot-capf'?
-    ;; (add-to-list 'completion-category-overrides '(eglot-capf (styles orderless)))
-    ))
+    (map-put completion-category-overrides 'eglot '(styles . (orderless)))
+    (map-put completion-category-overrides 'eglot-capf '(styles . (orderless))))
+
+  (after! lsp-mode
+    (setq! lsp-completion-provider :none)
+    (def-hook! ceamx-lsp--setup-completion ()
+      '(lsp-completion-mode-hook)
+      "Configure `lsp-mode' completions to use `orderless'."
+      (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+            '(orderless)))))
 
 (after! embark
   (map-put completion-category-overrides 'embark-keybinding
@@ -617,9 +618,6 @@ A final newline would be inserted literally into the snippet expansion."
   (keymap-set ceamx-insert-prefix-map "L" #'spdx-insert-spdx))
 
 ;; =corfu= :: [co]mpletion in [r]egion [fu]nction :package:
-;; :PROPERTIES:
-;; :ID:       d8073181-6d05-40d2-a954-0e6bb65449a2
-;; :END:
 
 ;; + Package :: <https://github.com/minad/corfu>
 ;; + Reference :: <https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html>
@@ -633,11 +631,11 @@ A final newline would be inserted literally into the snippet expansion."
 (after! corfu
   (setopt corfu-count 12
           corfu-cycle t
-          ;; corfu-max-width 80
+          corfu-max-width 40
           corfu-min-width 20
           corfu-scroll-margin 0)
   ;; cf. `orderless-component-separator'
-  (setopt corfu-separator ?_)
+  (setopt corfu-separator ?\s)
   (setopt corfu-on-exact-match 'insert
           corfu-preselect 'prompt
           corfu-quit-at-boundary 'separator
@@ -646,9 +644,9 @@ A final newline would be inserted literally into the snippet expansion."
   (setopt corfu-echo-delay '(0.3 . 0.3))
   (setopt corfu-popupinfo-delay '(0.75 . 0.5))
   (setopt corfu-auto t
-          corfu-auto-delay 1.0
+          corfu-auto-delay 0.7
           ;; corfu-auto-delay 1.3
-          corfu-auto-prefix 4)
+          corfu-auto-prefix 3)
 
   ;; Disable Corfu in the minibuffer when another completion UI is
   ;; active or when entering secrets.
@@ -667,17 +665,31 @@ A final newline would be inserted literally into the snippet expansion."
   ;; <https://github.com/minad/corfu/discussions/457>
   (setopt text-mode-ispell-word-completion nil)
 
+  (defun ceamx-completion/+corfu-separate-insert ()
+    "Handle a separator that also acts as insertion trigger on second tap.
+With prefix argument, quit completion and insert a space."
+    (interactive)
+    (if current-prefix-arg
+        (progn
+          (corfu-quit)
+          (insert " "))
+      (if (and (= (char-before) corfu-separator)
+               (or
+                (not (char-after))
+                (= (char-after) ?\s)
+                (= (char-after) ?\n)))
+          (progn
+            (corfu-insert)
+            (insert " "))
+        (corfu-insert-separator))))
+
   (define-keymap :keymap corfu-map
-     "M-SPC" #'corfu-insert-separator
-     "M-a" #'corfu-reset
-     "RET" #'corfu-complete
-     "<tab>" #'corfu-next
-     "<backtab>" #'corfu-previous
-     "<escape>" #'corfu-reset)
-
-
-  ;; (when (eq 'complete tab-always-indent)
-  ;;   (keymap-set corfu-map "TAB" #'corfu-complete))
+    "M-a" #'corfu-reset
+    "RET" #'corfu-complete
+    "SPC" #'ceamx-completion/+corfu-separate-insert
+    "<tab>" #'corfu-next
+    "<backtab>" #'corfu-previous
+    "<escape>" #'corfu-reset)
 
   (corfu-popupinfo-mode 1)
   (corfu-echo-mode -1)
