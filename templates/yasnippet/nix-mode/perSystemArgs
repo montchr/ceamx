@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: perSystem args
+# key: perSystemArgs
+# uuid: c8a1d341-0dbe-40ee-a148-41fa4337405d
+# contributor: astratagem <chmont@protonmail.com>
+# --
+${1:perSystem@}{ ${2:pkgs, }${3:packages, }${4:inputs', }... }: $0

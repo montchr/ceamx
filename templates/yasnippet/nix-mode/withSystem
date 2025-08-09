@@ -4,6 +4,6 @@
 # uuid: ca8b2849-ca23-45c4-949c-1e8907caae80
 # contributor: astratagem <chmont@protonmail.com>
 # --
-withSystem $1 (ctx@{config, inputs', pkgs, ...}: {
-  $0
-})
+withSystem ${1:pkgs.stdenv.hostPlatform.system} (${2:perSystem@}{packages, inputs', ${3:pkgs, }...}: ${4:\{
+
+\}}${5:`yas-selected-text`})

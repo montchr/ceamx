@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: mkMerge
+# key: mkMerge
+# uuid: 844b4e33-8acf-45ef-9c3e-32b8ef7f1db7
+# contributor: astratagem <chmont@protonmail.com>
+# --
+lib.mkMerge [
+  $0`yas-selected-text`
+]

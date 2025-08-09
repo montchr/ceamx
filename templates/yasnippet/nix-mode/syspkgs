@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: environment.systemPackages
+# key: syspkgs
+# uuid: 609fc02f-b1a2-45ba-b670-9e2fc9cf3452
+# contributor: astratagem <chmont@protonmail.com>
+# --
+environment.systemPackages = ${1:with pkgs; }[
+  $0
+];

@@ -1,0 +1,6 @@
+# key: dotfield
+# name: dotfield module
+# --
+dotfield.modules.$1.${2:$$(yas-choose-value '("nixos" "home"))} = ${3:\{ ${4:config, }${5:pkgs, } ... \}:} {
+  $0`yas-selected-text`
+};

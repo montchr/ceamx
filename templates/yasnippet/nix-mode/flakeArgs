@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: flake-parts args
+# key: flakeArgs
+# uuid: 224e8253-37f1-4d4e-8c57-cf7e8a466c29
+# contributor: astratagem <chmont@protonmail.com>
+# --
+{ ${1:lib, }${2:self, }${3:inputs, }${4:withSystem, }... }:
+$0`yas-selected-text`
