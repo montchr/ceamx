@@ -8,8 +8,8 @@
 ;; :END:
 
 
-(setopt delete-by-moving-to-trash t)
-(setopt mouse-drag-and-drop-region-cross-program t)
+(setq! delete-by-moving-to-trash t)
+(setq! mouse-drag-and-drop-region-cross-program t)
 
 (after! dired
   (add-hook 'dired-mode-hook #'hl-line-mode)
@@ -23,26 +23,26 @@
   ;; -h => human-readable file sizes
   ;; -l => long listing, required by dired
   ;; -v => sort files by version number, not lexicographic
-  (setopt dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso")
+  (setq! dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso")
 
-  (setopt dired-auto-revert-buffer #'dired-directory-changed-p)
-  (setopt dired-do-revert-buffer (##not (file-remote-p %)))
+  (setq! dired-auto-revert-buffer #'dired-directory-changed-p)
+  (setq! dired-do-revert-buffer (##not (file-remote-p %)))
 
   ;; When there are multiple Dired panes open, automatically use the
   ;; other pane as target for some actions (e.g. copying, moving).
-  (setopt dired-dwim-target t)
-  (setopt dired-kill-when-opening-new-dired-buffer t)
-  (setopt dired-vc-rename-file t)
-  (setopt dired-clean-confirm-killing-deleted-buffers nil)
-  (setopt dired-clean-up-buffers-too t)
-  (setopt dired-create-destination-dirs 'ask
+  (setq! dired-dwim-target t)
+  (setq! dired-kill-when-opening-new-dired-buffer t)
+  (setq! dired-vc-rename-file t)
+  (setq! dired-clean-confirm-killing-deleted-buffers nil)
+  (setq! dired-clean-up-buffers-too t)
+  (setq! dired-create-destination-dirs 'ask
           dired-create-destination-dirs-on-trailing-dirsep t
           dired-recursive-deletes 'always
           dired-recursive-copies 'always
           dired-backup-overwrite 'always)
-  (setopt dired-free-space nil)
-  (setopt dired-make-directory-clickable t)
-  (setopt dired-mouse-drag-files t)
+  (setq! dired-free-space nil)
+  (setq! dired-make-directory-clickable t)
+  (setq! dired-mouse-drag-files t)
 
   ;;
   ;; Keybindings
@@ -132,10 +132,10 @@
   (after! dired
     (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode))
   (after! dired-preview
-    (setopt dired-preview-delay 0.3)
-    (setopt dired-preview-trigger-on-start nil)
-    (setopt dired-preview-max-size (expt 2 20))
-    (setopt dired-preview-ignored-extensions-regexp
+    (setq! dired-preview-delay 0.3)
+    (setq! dired-preview-trigger-on-start t)
+    (setq! dired-preview-max-size (expt 2 20))
+    (setq! dired-preview-ignored-extensions-regexp
              (concat
               "\\."
               "\\(gz\\|" "zst\\|" "tar\\|" "xz\\|"
