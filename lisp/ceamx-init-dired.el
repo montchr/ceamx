@@ -120,17 +120,14 @@
 (package! nerd-icons-dired
   (add-hook 'dired-mode-hook #'nerd-icons-dired-mode))
 
-;; =dired-preview= :: a file previewer
-;; :PROPERTIES:
-;; :ID:       c0bd86a6-af1e-4a13-b4ff-ac46649951f9
-;; :END:
+;; =dired-preview= :: a file previewer :package:
 
 ;; + Website :: <https://protesilaos.com/emacs/dired-preview>
 
 
 (package! dired-preview
   (after! dired
-    (keymap-set dired-mode-map "C-c t p" #'dired-preview-mode))
+    (keymap-set dired-mode-map "C-c t p" #'dired-preview-global-mode))
   (after! dired-preview
     (setq! dired-preview-delay 0.3)
     (setq! dired-preview-trigger-on-start t)
