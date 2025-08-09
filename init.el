@@ -631,7 +631,7 @@ unimportant since it happens during compilation anyway."
   "C-c w" (cons "[ WEB       ]" #'ceamx-web-prefix)
   ;; FIXME: something else... (btw this is originally set somewhere else...)
   "C-c x" #'ceamx/macrostep-expand
-  ;; "C-c y"
+  "C-c y" (cons "[ SNIPPET   ]" #'ceamx-snippet-prefix)
   "C-c z" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix))
 
 ;; =init.el= :: Miscellaneous Variables

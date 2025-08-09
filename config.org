@@ -1280,7 +1280,7 @@ graphical frames.
   "C-c w" (cons "[ WEB       ]" #'ceamx-web-prefix)
   ;; FIXME: something else... (btw this is originally set somewhere else...)
   "C-c x" #'ceamx/macrostep-expand
-  ;; "C-c y"
+  "C-c y" (cons "[ SNIPPET   ]" #'ceamx-snippet-prefix)
   "C-c z" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix))
 #+end_src
 
@@ -4531,8 +4531,6 @@ Furthermore Tempel supports syntax extensions:
   #+begin_src emacs-lisp
 (package! tempel
   (define-keymap :keymap (current-global-map)
-    "C-c y" #'tempel-insert
-
     "M-+" #'tempel-complete
     "M-*" #'tempel-insert)
 
@@ -5036,13 +5034,16 @@ Define Embark actions for acting on tabs:
   (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
 #+end_src
 
-*** Keybindings :keybinds:
-:PROPERTIES:
-:ID:       e5538115-fecd-4e47-bd55-d9e0fb112313
-:END:
+*** Keybindings :keybinds:snippets:
 
 #+begin_src emacs-lisp
 (keymap-global-set "C-c p" #'completion-at-point)
+
+(define-keymap :keymap ceamx-snippet-prefix
+  "n" #'yas-new-snippet
+  "v" #'yas-visit-snippet-file
+  "y" #'yas-insert-snippet
+  "Y" #'tempel-insert)
 #+end_src
 
 *** Provide feature ~ceamx-init-completion~

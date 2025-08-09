@@ -508,8 +508,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 (package! tempel
   (define-keymap :keymap (current-global-map)
-    "C-c y" #'tempel-insert
-
     "M-+" #'tempel-complete
     "M-*" #'tempel-insert)
 
@@ -881,13 +879,16 @@ With prefix argument, quit completion and insert a space."
   :init
   (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
 
-;; Keybindings :keybinds:
-;; :PROPERTIES:
-;; :ID:       e5538115-fecd-4e47-bd55-d9e0fb112313
-;; :END:
+;; Keybindings :keybinds:snippets:
 
 
 (keymap-global-set "C-c p" #'completion-at-point)
+
+(define-keymap :keymap ceamx-snippet-prefix
+  "n" #'yas-new-snippet
+  "v" #'yas-visit-snippet-file
+  "y" #'yas-insert-snippet
+  "Y" #'tempel-insert)
 
 ;; Provide feature ~ceamx-init-completion~
 ;; :PROPERTIES:
