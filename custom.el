@@ -4,7 +4,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(safe-local-variable-values
-    '((apheleia-formatter . alejandra) (apheleia-formatter . nixfmt)
+    '((electric-indent-mode) (org-confirm-babel-evaluate) (typo-mode)
+       (apheleia-formatter . alejandra) (apheleia-formatter . nixfmt)
        (org-refile-targets (nil :maxlevel . 6))
        (eval load-file "./ceamx-dev-loader.el")
        (eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t))))
