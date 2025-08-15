@@ -2,7 +2,7 @@
 {
   imports = [ inputs.flake-parts.flakeModules.modules ];
 
-  flake.modules.homeManager.ceamx = moduleWithSystem (
+  flake.modules.home.ceamx = moduleWithSystem (
     _perSystem@{ inputs', config, ... }:
     home@{ lib, ... }:
     {
