@@ -55,19 +55,18 @@
 
   :config
   (define-keymap :keymap ceamx-file-prefix
-  ;; TODO
-  ;; "y" #'+yank-this-file-name
+    ;; TODO
+    ;; "y" #'+yank-this-file-name
 
-  "c" '("copy..." . ceamx-simple/copy-current-file)
-  ;; FIXME: don’t prevent deletion (or allow override with prefix)
-  "d" '("delete" . ceamx-simple/delete-current-file)
-  "f" #'find-file
-  "F" #'find-file-other-window
-  "r" '("move..." . ceamx-simple/move-current-file)
-  "s" #'save-buffer
-  "U" #'ceamx-simple/sudo-find-file
+    "c" '("copy..." . ceamx-simple/copy-current-file)
+    "d" '("delete" . ceamx-simple/delete-current-file)
+    "f" #'find-file
+    "F" #'find-file-other-window
+    "r" '("move..." . ceamx-simple/move-current-file)
+    "s" #'save-buffer
+    "U" #'ceamx-simple/sudo-find-file
 
-  "C-d" '("diff with..." . ceamx-simple/diff-with-file))
+    "C-d" '("diff with..." . ceamx-simple/diff-with-file))
 
   (define-keymap :keymap ceamx-insert-prefix-map
     "d" #'ceamx-simple/insert-date)
@@ -111,9 +110,6 @@
                      #'ceamx-simple/continue-comment))
 
 ;; =crux= :: a [c]ollection of [r]idiculously [u]seful e[x]tensions
-;; :PROPERTIES:
-;; :ID:       5fe13339-e827-421a-a059-f0fea7bff481
-;; :END:
 
 
 (package! crux
@@ -137,7 +133,6 @@
 
   (define-keymap :keymap ceamx-file-prefix
     "c" #'crux-copy-file-preserve-attributes
-    "d" #'crux-delete-file-and-buffer
     "r" #'crux-rename-file-and-buffer)
 
   (after! pulsar
