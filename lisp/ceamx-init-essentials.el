@@ -2,7 +2,6 @@
 
 ;; Baseline configurations
 ;; :PROPERTIES:
-;; :ID:       9d89d38e-1fa6-41e5-b5a7-8c1c3422a34c
 ;; :END:
 
 
@@ -14,134 +13,20 @@
 
 (setopt kill-whole-line t)
 
-(define-keymap :keymap (current-global-map)
-  "M-c" #'capitalize-dwim
-  "M-f" #'forward-word
-  "M-F" #'forward-symbol
-  "M-l" #'downcase-dwim
-  "M-o" #'delete-blank-lines
-  "M-Q" #'repunctuate-sentences
-  "M-u" #'upcase-dwim
-  "M-z" #'zap-up-to-char                ; orig: `zap-to-char'
-  "M-=" #'count-words
-  "M-SPC" #'cycle-spacing
-
-  "C-h F" #'apropos-function
-  "C-h L" #'apropos-library
-  "C-h U" #'apropos-user-option
-  "C-h V" #'apropos-variable
-
-  ;; TODO: move to window config
-  "C-x O" #'next-multiframe-window
-
-  ;; Minimizing frames is the job of the window manager.
-  "C-x C-z" nil)
-
-;; Keymap for buffers
-;; TODO: copy some of these to `ceamx-toggle-prefix'
-(define-keymap :keymap ctl-x-x-map
-  "f" #'follow-mode
-  "l" #'visual-line-mode
-  "r" #'rename-uniquely)
-
 ;; =ceamx-simple=: Simple & common commands
-;; :PROPERTIES:
-;; :ID:       3fcbca20-29f3-4e91-ba76-6bad1199adc3
-;; :END:
 
 
 (use-feature! ceamx-simple
-  :demand t
-
-  :config
-  (define-keymap :keymap ceamx-file-prefix
-    ;; TODO
-    ;; "y" #'+yank-this-file-name
-
-    "c" '("copy..." . ceamx-simple/copy-current-file)
-    "d" '("delete" . ceamx-simple/delete-current-file)
-    "f" #'find-file
-    "F" #'find-file-other-window
-    "r" '("move..." . ceamx-simple/move-current-file)
-    "s" #'save-buffer
-    "U" #'ceamx-simple/sudo-find-file
-
-    "C-d" '("diff with..." . ceamx-simple/diff-with-file))
-
-  (define-keymap :keymap ceamx-insert-prefix-map
-    "d" #'ceamx-simple/insert-date)
-
-  (define-keymap :keymap (current-global-map)
-    "ESC ESC" #'ceamx/keyboard-quit-dwim
-    "C-g" #'ceamx/keyboard-quit-dwim
-
-    "C-x k" #'ceamx-simple/kill-current-buffer ; orig: `kill-buffer'
-    "C-x K" #'kill-buffer
-
-    ;; FIXME: move defun to `ceamx-simple'
-    "M-DEL" #'ceamx/backward-kill-word
-
-    "C-M-SPC" #'ceamx-simple/mark-sexp
-
-    ;; Commands for lines
-    ;; TODO: currently `easy-kill'
-    ;; "M-w" #'ceamx-simple/kill-ring-save
-    "M-k" #'ceamx-simple/kill-line-backward
-    "C-S-d" #'ceamx-simple/duplicate-line-or-region
-    ;; TODO: redundant with `easy-kill'
-    "C-S-w" #'ceamx-simple/copy-line
-    "C-S-y" #'ceamx-simple/yank-replace-line-or-region
-    "C-RET" #'ceamx-simple/new-line-below
-    "C-S-RET" #'ceamx-simple/new-line-above
-
-    ;; Commands for text insertion or manipulation
-    "C-<" #'ceamx-simple/escape-url-dwim
-    "M-Z" #'ceamx-simple/zap-to-char-backward
-
-    ;; Commands for buffers
-    "M-s b" #'ceamx-simple/buffers-major-mode
-    "M-s v" #'ceamx-simple/buffers-vc-root)
-
-  (define-keymap :keymap prog-mode-map
-    "M-RET" #'ceamx-simple/continue-comment)
-
-  (keymap-substitute (current-global-map)
-                     #'default-indent-new-line
-                     #'ceamx-simple/continue-comment))
+  :demand t)
 
 ;; =crux= :: a [c]ollection of [r]idiculously [u]seful e[x]tensions
 
 
 (package! crux
-  (define-keymap :keymap (current-global-map)
-    "C-k" #'crux-smart-kill-line
-    "C-^" #'crux-top-join-line
-
-    "C-x 4 t" #'crux-transpose-windows
-
-    "C-S-d" #'crux-duplicate-current-line-or-region
-    "C-S-RET" #'crux-smart-open-line-above
-    "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
-
-    "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
-
-    "S-RET" #'crux-smart-open-line)
-
-  (define-keymap :keymap ceamx-buffer-prefix
-    "f" #'crux-cleanup-buffer-or-region
-    "M-w" #'crux-kill-buffer-truename)
-
-  (define-keymap :keymap ceamx-file-prefix
-    "c" #'crux-copy-file-preserve-attributes
-    "r" #'crux-rename-file-and-buffer)
-
   (after! pulsar
     (cl-pushnew #'crux-other-window-or-switch-buffer pulsar-pulse-functions)))
 
 ;; =tmr= :: set timers using a convenient notation
-;; :PROPERTIES:
-;; :ID:       67caf305-67ce-42b5-9ff3-98b0f9ac6b06
-;; :END:
 
 ;; + Website :: <https://protesilaos.com/emacs/tmr>
 
@@ -175,44 +60,25 @@
      if (commandp cmd) do
      (add-to-list 'embark-post-action-hooks (list cmd 'embark--restart)))))
 
-;; =persistent-scratch= :: Preserve the scratch buffer across sessions
-;; :PROPERTIES:
-;; :ID:       a85e81df-a194-4ecf-b1ca-5d95279cb45f
-;; :END:
-
-
-(package! persistent-scratch
-  (persistent-scratch-setup-default))
-
 ;; Configure sane window-scrolling behavior
-;; :PROPERTIES:
-;; :ID:       c6408cc7-1382-4433-bde2-947e4dc2c062
-;; :END:
 
 
-(use-feature! window
-  :bind
-  ("C-x <" . scroll-right)
-  ("C-x >" . scroll-left)
-  ("<wheel-left>" . scroll-left)
-  ("<wheel-right>" . scroll-right)
+;; Available cycle positions for `recenter-top-bottom'.
+(setq! recenter-positions '(top middle bottom))
+;; (setq! recenter-positions '(middle top bottom))
+                                        ; default
 
-  :config
-  ;; Available cycle positions for `recenter-top-bottom'.
-  ;; (setopt recenter-positions '(top middle bottom))
-  (setopt recenter-positions '(middle top bottom)) ; default
+;; Horizontally-scroll only the current line when point column moves
+;; beyond window boundaries.
+(setq! auto-hscroll-mode 'current-line)
 
-  ;; Horizontally-scroll only the current line when point column moves
-  ;; beyond window boundaries.
-  (setopt auto-hscroll-mode 'current-line)
+(setq! scroll-error-top-bottom t
+       ;; Prevent unwanted horizontal scrolling upon navigation.
+       scroll-preserve-screen-position t
+       scroll-conservatively 10000)
 
-  (setopt scroll-error-top-bottom t
-          ;; Prevent unwanted horizontal scrolling upon navigation.
-          scroll-preserve-screen-position t
-          scroll-conservatively 10000)
-
-  ;; Add a margin when scrolling vertically (or don't).
-  (setq-default scroll-margin 1))
+;; Add a margin when scrolling vertically (or don't).
+(setq-default scroll-margin 1)
 
 ;; Auto-revert buffers
 
@@ -269,9 +135,6 @@
             space-before-tab)))
 
 ;; =editorconfig= :: enforce EditorConfig settings
-;; :PROPERTIES:
-;; :ID:       d0133690-e4a8-40a7-abcf-12816589d4b7
-;; :END:
 
 ;; - Website :: <https://editorconfig.org>
 
@@ -297,21 +160,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
     (add-hook 'editorconfig-after-apply-functions
               #'+editorconfig-enforce-org-mode-tab-width-h)))
 
-;; Movement / Regions / Basic Editing
-;; :PROPERTIES:
-;; :ID:       2c6a6df3-2b31-4638-bdcd-c9e63e367ea0
-;; :END:
-
-
-(define-keymap :keymap (current-global-map)
-  ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
-  ;; that `comment-line' is bound to [C-x C-;].
-  "C-x M-;" #'comment-line)
-
 ;; Integrate with system clipboard
-;; :PROPERTIES:
-;; :ID:       7ceb88fc-04e5-47af-a978-c2110076d374
-;; :END:
 
 
 (setopt save-interprogram-paste-before-kill t)
@@ -319,15 +168,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;; =mwim=: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
 
 
-(package! mwim
-  ;; FIXME: overrides `org-mode' bindings!
-  (keymap-global-set "C-a" #'mwim-beginning)
-  (keymap-global-set "C-e" #'mwim-end))
+(package! mwim)
 
 ;; =beginend= :: rebind context-sensitive =(beginning,end)-of-buffer=
-;; :PROPERTIES:
-;; :ID:       7529f1a7-461c-4731-a7b8-05f6ce2104fa
-;; :END:
 
 ;; + Package :: https://github.com/DamienCassou/beginend
 
@@ -336,9 +179,6 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (beginend-global-mode))
 
 ;; =easy-kill= :: killing is easy when you're emacs :package:
-;; :PROPERTIES:
-;; :ID:       a3727c22-4373-47aa-ac61-e1355c5e048d
-;; :END:
 
 ;; + Package documentation :: <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
@@ -355,30 +195,24 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 
 (use-package easy-kill
-  :ensure t
-  :bind
-  ("M-w" . #'easy-kill)   ; orig. `kill-ring-save'
-  ("C-M-@" . #'easy-mark) ; orig. `mark-sexp'
-  )
+  :ensure t)
 
 ;; Replace region when inserting text
 
 
 (delete-selection-mode 1)
 
-;; =expreg= :: simple alternativate to ~expand-region~ using ~treesit~
+;; =expreg= :: simple alternativate to ~expand-region~ using ~treesit~ :package:
 
 ;; + Package :: <https://github.com/casouri/expreg>
 
+;; I’ve become a big fan of this package recently, even though it’s just
+;; been sitting here for a while.
 
-(package! expreg
-  (keymap-global-set "C-+" #'expreg-expand)
-  (keymap-global-set "C-=" #'expreg-contract))
+
+(package! expreg)
 
 ;; =drag-stuff= :: drag stuff around in arbitrary directions :package:
-;; :PROPERTIES:
-;; :ID:       1febb9e9-ec19-4765-b6bb-21613e7667fb
-;; :END:
 
 ;; <https://github.com/rejeep/drag-stuff.el>
 
@@ -398,17 +232,11 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 
 (use-package drag-stuff
-  ;; :ensure t
-  :bind
-  (([M-up] . drag-stuff-up)
-   ([M-right] . drag-stuff-right)
-   ([M-down] . drag-stuff-down)
-   ([M-left] . drag-stuff-left)))
+  :demand t)
 
 ;; Visualize and electrify matching character pairs :pairs:
 
 ;; See the Info node [[info:emacs#Matching]]
-
 
 
 (setopt blink-matching-paren t)
@@ -426,7 +254,6 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 ;; Consider camelCaseWORDs as separate words
 ;; :PROPERTIES:
-;; :ID:       b0593fa1-e228-4fcd-89f2-f7bbdf5f9d2c
 ;; :END:
 
 ;; While it can be useful in some contexts, I wish that ~subword-mode~ did not break
@@ -437,20 +264,13 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (global-subword-mode 1)
 
 ;; =ialign= :: Interactively ~align-regexp~ :package:
-;; :PROPERTIES:
-;; :ID:       7c7b2b24-f6e4-4af5-934f-0d66b65bba6c
-;; :END:
 
 ;; <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
 
 
-(package! ialign
-  (keymap-global-set "C-x l" #'ialign))
+(package! ialign)
 
 ;; TODO =string-inflection= :: Cycle through character casing :package:cycling:
-;; :PROPERTIES:
-;; :ID:       bf713b67-b25a-41c7-87ba-f5c9a9f7852b
-;; :END:
 
 ;; Needs better bindings.
 
@@ -458,13 +278,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (package! string-inflection)
 
 (use-feature! ceamx-editor
-  :after string-inflection
-  :commands (ceamx/cycle-string-inflection)
-  :init
-  (defvar-keymap ceamx-string-repeat-map
-    :repeat t
-
-    "c" #'ceamx/cycle-string-inflection))
+  :demand t
+  :after string-inflection)
 
 ;; =typo= :: Cycle typographical characters :package:cycling:
 ;; :LOGBOOK:
@@ -494,20 +309,17 @@ see."
     (let ((excluded-modes (append ceamx-text-mode-derived-prog-modes-list
                                   ceamx-lang-typo-mode-excluded-modes)))
       (unless (derived-mode-p excluded-modes)
-        (typo-mode 1))))
+        (typo-mode 1)))))
 
-  (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
-
-;; TODO =cycle-at-point= :: Promptless text cycling at point :package:cycling:
+;; =cycle-at-point= :: Promptless text cycling at point :package:cycling:
 ;; :LOGBOOK:
 ;; - Refiled on [2025-08-08 Fri 09:45]
 ;; :END:
 
 
-;; TODO: bind to a key
 (package! cycle-at-point)
 
-;; TODO =shift-number= :: Increase/decrease the number at point :package:cycling:
+;; =shift-number= :: Increase/decrease the number at point :package:cycling:
 ;; :LOGBOOK:
 ;; - Refiled on [2025-08-08 Fri 09:45]
 ;; :END:
@@ -518,7 +330,7 @@ see."
 ;; decrement the number at point, respectively.
 
 
-;; TODO: bind to key, and add to embark actions
+;; TODO: add to embark actions
 (package! shift-number)
 
 ;; TODO =cycle-quotes= :: Cycle quote characters surrounding string at point :package:cycling:
@@ -527,9 +339,6 @@ see."
 (package! cycle-quotes)
 
 ;; Modal editing
-;; :PROPERTIES:
-;; :ID:       1293c641-aecb-43ab-b001-366e7e0543c8
-;; :END:
 
 
 (package! (bray :host codeberg :repo "ideasman42/emacs-bray")
@@ -609,15 +418,12 @@ Common text modes including `markdown-mode' and `org-mode' also
   (setq-default truncate-lines t))
 
 ;; =unfill= :: Reverse/toggle filling/hard-wrapping text :package:keybinds:
-;; :PROPERTIES:
-;; :ID:       6590d8b1-eea1-4467-8379-89ee33c0841d
-;; :END:
 
 ;; + Package :: <https://github.com/purcell/unfill>
 
 
 (use-package unfill
-  :bind ("M-q" . unfill-toggle))
+  :demand t)
 
 ;; Configure secrets lookup with ~auth-source~ and =password-store=
 
@@ -668,28 +474,12 @@ Common text modes including `markdown-mode' and `org-mode' also
   (auth-source-pass-enable))
 
 ;; Configure GnuPG integration with ~epa~ & ~epg~
-;; :PROPERTIES:
-;; :ID:       99415168-3785-4d17-bea0-2c71f0422de1
-;; :END:
 
 
 (use-feature! epa
   :demand t
   :config
   (require 'ceamx-cryption)
-
-  (define-keymap :keymap ceamx-file-prefix
-    "e" #'epa-encrypt-file
-    "d" #'epa-decrypt-file)
-
-  (define-keymap :keymap ceamx-cryption-prefix-map
-    "d" (cons "decrypt..." (define-prefix-command 'ceamx-cryption-d-prefix))
-    "d d" #'epa-decrypt-file
-    "d r" #'epa-decrypt-region
-    "e" (cons "encrypt..." (define-prefix-command 'ceamx-cryption-e-prefix))
-    "e e" #'epa-encrypt-file
-    "e r" #'epa-encrypt-region
-    "k" #'epa-list-keys)
 
   ;; HACK: No need to set a recipient every single time!
   (setq-default epa-file-encrypt-to (ceamx-cryption+epa-default-recipient))
@@ -723,10 +513,7 @@ Common text modes including `markdown-mode' and `org-mode' also
 ;; <https://github.com/noctuid/link-hint.el>
 
 
-(package! link-hint
-  (define-keymap :keymap (current-global-map)
-    "M-g u" #'link-hint-open-link
-    "M-g U" #'link-hint-copy-link))
+(package! link-hint)
 
 ;; Manage backup files and prevent file-lock clutter
 
@@ -795,23 +582,6 @@ Common text modes including `markdown-mode' and `org-mode' also
   :config
   (setopt ibuffer-movement-cycle t))
 
-;; Rebind some default ~help-map~ keybindings :keybinds:
-
-
-(define-keymap :keymap help-map
-  "K" (cons "[ KEYBINDINGS ]" #'ceamx-help-keybindings-prefix)
-  "l" #'find-library
-  ;; I prefer the default `man' over `consult-man'.  The latter does
-  ;; not really work well since it does not show unfiltered candidates
-  ;; by default, and two-character-named programs are too short to
-  ;; trigger the query.
-  "m" #'man                             ; orig: `describe-mode'
-  "M" #'describe-mode
-  "t" #'describe-text-properties
-
-  ;; Allow `which-key' pagination in `help-map'.
-  "C-h" nil)
-
 ;; =casual-suite=: transient-dispatch menus for complex modes
 
 
@@ -878,46 +648,9 @@ Common text modes including `markdown-mode' and `org-mode' also
 
 (package! helpful
   (defer! 1
-    (require 'helpful))
-
-  (define-keymap :keymap help-map
-    "c" #'helpful-callable
-    "C" #'helpful-command
-    "f" #'helpful-function              ; orig: `describe-face'
-    "F" #'describe-face
-    "h" #'helpful-at-point
-    "K K" #'helpful-key
-    "o" #'helpful-symbol
-    "v" #'helpful-variable))
-
-;; DISABLED Keybinding help via =which-key=
-;; :PROPERTIES:
-;; :ID:       0eb1dafe-55fb-4658-ac9b-53597da45bb3
-;; :END:
-;; :LOGBOOK:
-;; - Refiled on [2025-07-13 Sun 20:07]
-;; :END:
-
-;; Currently using ~embark-prefix-help-command~ instead.
-
-
-(use-feature! which-key
-  ;; :hook (ceamx-after-init . which-key-mode)
-
-  :config
-  (setopt which-key-compute-remaps t)
-  (setopt which-key-idle-delay 1.0)
-  (setopt
-   which-key-sort-order 'which-key-description-order
-   ;; which-key-sort-order 'which-key-prefix-then-key-order
-   which-key-sort-uppercase-first nil)
-  (setopt which-key-add-column-padding 0)
-  (setopt which-key-show-remaining-keys t))
+    (require 'helpful)))
 
 ;; Record some variables' values with ~savehist~
-;; :PROPERTIES:
-;; :ID:       fb765b69-118b-4ef7-8902-f09215137f5c
-;; :END:
 
 
 (use-feature! savehist
@@ -984,18 +717,6 @@ Common text modes including `markdown-mode' and `org-mode' also
 (setopt undo-strong-limit 100663296) ; 96mb.
 (setopt undo-outer-limit 1006632960) ; 960mb.
 
-;; =undo-fu=: Support optional linear undo/redo
-;; :PROPERTIES:
-;; :ID:       06ac0daa-058d-4124-9fa4-7b891aa8715f
-;; :END:
-
-;; - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu>
-
-
-(package! undo-fu
-  (keymap-global-set "C-z" #'undo-fu-only-undo)
-  (keymap-global-set "C-S-z" #'undo-fu-only-redo))
-
 ;; =undo-fu-session=: Record undo/redo steps across Emacs sessions
 
 ;; - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
@@ -1008,7 +729,7 @@ Common text modes including `markdown-mode' and `org-mode' also
   (expand-file-name "undo-fu-session" ceamx-var-dir))
 
 (package! undo-fu-session
-  (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+  (setopt undo-fu-session-incompatible-files '("/git-rebase-todo\\'"))
   (setopt undo-fu-session-ignore-temp-files t)
   (setopt undo-fu-session-ignore-encrypted-files t)
 
@@ -1017,39 +738,24 @@ Common text modes including `markdown-mode' and `org-mode' also
   (undo-fu-session-global-mode))
 
 ;; =vundo=: Visualize the Emacs undo tree
-;; :PROPERTIES:
-;; :ID:       8fd3c7aa-cf9d-47f9-91cf-715e6f5d0618
-;; :END:
 
 ;; - Source code :: <https://github.com/casouri/vundo>
 
 
 (use-package vundo
-  ;; :ensure t
   :defer t
   :defines vundo-unicode-symbols
-
-  :bind
-  ("C-x u" . vundo)
-
   :config
-  (setopt vundo-glyph-alist vundo-unicode-symbols))
+  (setq! vundo-glyph-alist vundo-unicode-symbols))
 
 ;; =bookmark-in-project= :: Functions to limit bookmark queries to current project
 ;; :PROPERTIES:
-;; :ID:       ad886f04-b66b-453b-91c6-b1f9502e4af2
 ;; :END:
 
 
 (package! (bookmark-in-project
            :host codeberg
-           :repo "ideasman42/emacs-bookmark-in-project")
-
-  (define-keymap :keymap ceamx-bookmark-prefix-map
-    "b" #'bookmark-in-project-jump
-    "n" #'bookmark-in-project-jump-next
-    "p" #'bookmark-in-project-jump-previous
-    "*" #'bookmark-in-project-toggle))
+           :repo "ideasman42/emacs-bookmark-in-project"))
 
 ;; macOS: Remap modifier keys for the Apple keyboard layout :keybinds:
 

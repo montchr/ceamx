@@ -296,31 +296,26 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (package! consult
-  (keymap-global-set "C-c b b" #'consult-bookmark)
-  (keymap-global-set "C-c h" #'consult-history)
-  (keymap-global-set "C-c k" #'consult-kmacro)
-  (keymap-global-set "C-c q a t" #'consult-theme)
-
   ;; Improve previews for `consult-register' and other register commands
-  (setopt register-preview-delay 0.5)
-  (setopt register-preview-function #'consult-register-format)
+  (setq! register-preview-delay 0.5)
+  (setq! register-preview-function #'consult-register-format)
   (advice-add #'register-preview :override #'consult-register-window)
 
   ;; Display xref locations with previews
-  (setopt xref-show-definitions-function #'consult-xref)
-  (setopt xref-show-xrefs-function #'consult-xref))
+  (setq! xref-show-definitions-function #'consult-xref)
+  (setq! xref-show-xrefs-function #'consult-xref)
+
+  (setq! consult-narrow-key "<")       ; alternative: "C-+"
+  (setq! consult-line-numbers-widen t)
+  (setq! consult-async-min-input 3
+          consult-async-input-debounce 0.5
+          consult-async-input-throttle 0.8))
 
 (after! consult
   (require 'consult-imenu)
 
-  (setopt consult-narrow-key "<")       ; alternative: "C-+"
-  (setopt consult-line-numbers-widen t)
-  (setopt consult-async-min-input 3
-          consult-async-input-debounce 0.5
-          consult-async-input-throttle 0.8)
-
   (after! pulsar
-    (setq consult-after-jump-hook nil)
+    (setq! consult-after-jump-hook nil)
     (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
       (add-hook 'consult-after-jump-hook fn))))
 
@@ -345,76 +340,18 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 ;; Search pre-defined sets of Info pages with ~consult-info~ :consult:
 
 
-(define-prefix-command 'ceamx-info-prefix 'ceamx-info-prefix-map)
-
-(keymap-global-set "C-h i" (cons "[info]" #'ceamx-info-prefix))
-
 (use-feature! ceamx-completion
   :after consult
   :commands (ceamx/consult-info-dwim
              ceamx/completion-info
              ceamx/emacs-info
-             ceamx/org-info)
-  :init
-  (define-keymap :keymap help-map
-    "i i" #'ceamx/consult-info-dwim
-    "i c" #'ceamx/completion-info
-    "i e" #'ceamx/emacs-info
-    "i o" #'ceamx/org-info))
+             ceamx/org-info))
 
 ;; Define keybindings for ~consult~ and its extensions :keybinds:consult:
 
 
 (define-keymap :keymap (current-global-map)
-  "C-c M-x" #'consult-mode-command
-
-  "<remap> <Info-search>" #'consult-info
-
-  "C-x M-:" #'consult-complex-command ; orig. `repeat-complex-command'
-
-  ;; "C-x b" #'consult-buffer              ; orig. `switch-to-buffer'
-
-  "C-x 4 b" #'consult-buffer-other-window ; orig. `switch-to-buffer-other-window'
-  "C-x 5 b" #'consult-buffer-other-frame ; orig. `switch-to-buffer-other-frame'
-  "C-x t b" #'consult-buffer-other-tab ; orig. `switch-to-buffer-other-tab'
-  "C-x r b" #'consult-bookmark         ; orig. `bookmark-jump'
-  "C-x p b" #'consult-project-buffer ; orig. `project-switch-to-buffer'
-
-  ;; [C-h] bindings (`help-map')
-  "C-h I" #'consult-info               ; orig. `describe-input-method'
-
-  ;; Custom M-# bindings for fast register access
-  "M-#"    #'consult-register-load
-  "M-'"    #'consult-register-store ; orig. `abbrev-prefix-mark' (unrelated)
-  "C-M-#"  #'consult-register
-
-  ;; TODO: reconcile with current binding for `forward-symbol'
-  ;; "M-F" #'consult-focus-lines
-  "M-K" #'consult-keep-lines
-  "M-y" #'consult-yank-pop              ; orig. `yank-pop'
-
-  ;; M-g bindings (`goto-map')
-  "M-g e"  #'consult-compile-error
-  "M-g f"  #'consult-flymake            ; or: `consult-flycheck'
-  "M-g g"  #'consult-goto-line          ; orig. `goto-line'
-  "M-g M-g" #'consult-goto-line         ; orig. `goto-line'
-  "M-g o"  #'consult-outline            ; or: `consult-org-heading'
-  "M-g m"  #'consult-mark
-  "M-g k"  #'consult-global-mark
-  "M-g i"  #'consult-imenu
-  "M-g I"  #'consult-imenu-multi
-
-  ;; M-s bindings (`search-map')
-  "M-s d"  #'consult-fd                 ; or `consult-find'
-  "M-s c"  #'consult-locate
-  "M-s e"  #'consult-isearch-history
-  "M-s g"  #'consult-ripgrep
-  "M-s G"  #'consult-git-grep
-  "M-s k"  #'consult-keep-lines
-  "M-s l"  #'consult-line
-  "M-s L"  #'consult-line-multi
-  "M-s u"  #'consult-focus-lines
-  "M-s M-s" #'consult-outline)
+  "<remap> <Info-search>" #'consult-info)
 
 (after! isearch
   (define-keymap :keymap isearch-mode-map
@@ -423,9 +360,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
     "M-s l" #'consult-line              ; needed by `consult-line' to detect `isearch'
     "M-s L" #'consult-line-multi        ; needed by `consult-line' to detect `isearch'
     ))
-
-(keymap-set minibuffer-local-map "M-s" #'consult-history) ; orig. `next-matching-history-element'
-(keymap-set minibuffer-local-map "M-r" #'consult-history) ; orig. `previous-matching-history-element'
 
 (after! consult
   ;; Make narrowing help available in the minibuffer.
@@ -507,10 +441,6 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (package! tempel
-  (define-keymap :keymap (current-global-map)
-    "M-+" #'tempel-complete
-    "M-*" #'tempel-insert)
-
   ;; Setup completion at point for Tempel templates.
   ;;
   ;; FIXME: prevent automatically completing `tempel-trigger-prefix'
@@ -526,6 +456,7 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 use `tempel-complete' if you want to see all matches, but then
 you should also configure `tempel-trigger-prefix', such that
 Tempel does not trigger too often when you don't expect it."
+    ;; FIXME: misuse of `add-hook'!  this only works by coincidence
     (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
 
 (after! tempel
@@ -562,8 +493,6 @@ Tempel does not trigger too often when you don't expect it."
 
 
 (package! yasnippet
-  (keymap-set ceamx-insert-prefix-map "s" #'yas-insert-snippet)
-
   (defer! 3
     (yas-global-mode 1)))
 
@@ -605,15 +534,11 @@ A final newline would be inserted literally into the snippet expansion."
    "# -*- mode: snippet -*-\n# name: $1\n# key: ${2:${1:$(yas--key-from-desc yas-text)}}\n# uuid: `(uuidgen-4)`\n# contributor: astratagem <chmont@protonmail.com>\n# --\n$0`(yas-escape-text yas-selected-text)`"))
 
 ;; =spdx= :: insertable SPDX license headers :package:snippets:
-;; :PROPERTIES:
-;; :ID:       4f029a65-d064-4715-9947-e9d32b4bdf67
-;; :END:
 
 ;; - src :: <https://github.com/condy0919/spdx.el>
 
 
-(package! spdx
-  (keymap-set ceamx-insert-prefix-map "L" #'spdx-insert-spdx))
+(package! spdx)
 
 ;; =corfu= :: [co]mpletion in [r]egion [fu]nction :package:
 
@@ -768,23 +693,9 @@ With prefix argument, quit completion and insert a space."
     ;; <https://github.com/minad/corfu/wiki#continuously-update-the-candidates>
     (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 
-  (keymap-set ceamx-insert-prefix-map "E" #'cape-emoji)
-
-  ;; cf. `cape-prefix-map' for ideas
-  (define-keymap :keymap ceamx-completion-prefix-map
-    "p" #'completion-at-point
-
-    "a" #'cape-abbrev
-    "d" #'cape-dabbrev
-    "e" (cape-capf-interactive #'elisp-completion-at-point)
-    "f" #'cape-file
-    "o" #'cape-elisp-symbol
-    "w" #'cape-dict))
+  (keymap-set ceamx-insert-prefix-map "E" #'cape-emoji))
 
 ;; =embark= :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:package:
-;; :PROPERTIES:
-;; :ID:       111a0c90-a300-4fa8-a954-6d5e97fcea89
-;; :END:
 
 ;; - Package :: <https://github.com/oantolin/embark>
 
@@ -794,20 +705,6 @@ With prefix argument, quit completion and insert a space."
   ;; delays upon invoking autoloaded commands.
   (defer! 3
     (require 'embark))
-
-  ;; NOTE: This key might be bound to emoji input in GNOME Desktop.
-  ;; However, I have not encountered a conflict on GNOME, so I must be
-  ;; doing something conveniently correct in my GNOME configurations.
-  ;; FWIW, I have enabled the Emacs-style keybindings there.
-  (keymap-global-set "C-." #'embark-act)
-
-  ;; The result of calling `embark-dwim' on a symbol still ends up
-  ;; calling `xref-find-definitions' as the default do-what-i-mean
-  ;; action.
-  (keymap-global-set "M-." #'embark-dwim) ; orig. `xref-find-definitions'
-
-  (keymap-global-set "C-h b" #'embark-bindings) ; orig: `describe-bindings'
-  (keymap-global-set "C-h B" #'describe-bindings)
 
   (unless (bound-and-true-p which-key-mode)
     (setopt prefix-help-command #'embark-prefix-help-command)))
@@ -879,21 +776,7 @@ With prefix argument, quit completion and insert a space."
   :init
   (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
 
-;; Keybindings :keybinds:snippets:
-
-
-(keymap-global-set "C-c p" #'completion-at-point)
-
-(define-keymap :keymap ceamx-snippet-prefix
-  "n" #'yas-new-snippet
-  "v" #'yas-visit-snippet-file
-  "y" #'yas-insert-snippet
-  "Y" #'tempel-insert)
-
 ;; Provide feature ~ceamx-init-completion~
-;; :PROPERTIES:
-;; :ID:       f58a3ca1-4cbd-4220-9d65-ad102ed548c9
-;; :END:
 
 
 (provide 'ceamx-init-completion)

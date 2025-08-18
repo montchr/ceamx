@@ -126,18 +126,15 @@
 
 
 (package! dired-preview
-  (after! dired
-    (keymap-set dired-mode-map "C-c t p" #'dired-preview-global-mode))
-  (after! dired-preview
-    (setq! dired-preview-delay 0.3)
-    (setq! dired-preview-trigger-on-start t)
-    (setq! dired-preview-max-size (expt 2 20))
-    (setq! dired-preview-ignored-extensions-regexp
-             (concat
-              "\\."
-              "\\(gz\\|" "zst\\|" "tar\\|" "xz\\|"
-              "rar\\|" "zip\\|" "iso\\|" "epub"
-              "\\)"))))
+  (setq! dired-preview-delay 0.3)
+  (setq! dired-preview-trigger-on-start t)
+  (setq! dired-preview-max-size (expt 2 20))
+  (setq! dired-preview-ignored-extensions-regexp
+         (concat
+          "\\."
+          "\\(gz\\|" "zst\\|" "tar\\|" "xz\\|"
+          "rar\\|" "zip\\|" "iso\\|" "epub"
+          "\\)")))
 
 ;; =dired-rsync= :: async =rsync= from dired
 ;; :PROPERTIES:

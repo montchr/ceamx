@@ -33,29 +33,7 @@
   (require 'vc)
 
   (setq! vc-follow-symlinks t)
-  (setq! vc-handled-backends '(Git))
-
-  (define-keymap :keymap (current-global-map)
-    "C-x v B" #'vc-annotate
-    "C-x v d" #'vc-diff                 ; orig. `vc-dir'
-    "C-x v e" #'vc-ediff
-    "C-x v G" #'vc-log-search
-    "C-x v ." #'vc-dir-root
-    "C-x v RET" #'vc-dir-root))
-
-
-
-;; Customize the =vc-dir= feature:
-
-
-(progn
-  (setq! vc-dir-save-some-buffers-on-revert t) ; Emacs 31+
-
-  (after! vc-dir
-    (define-keymap :keymap vc-dir-mode-map
-      "d" #'vc-diff
-      "o" #'vc-dir-find-file-other-window
-      "O" #'vc-log-outgoing)))
+  (setq! vc-handled-backends '(Git)))
 
 
 
@@ -134,10 +112,6 @@
 
 
 (progn
-  (define-keymap :keymap (current-global-map)
-    "C-x p ." #'project-dired
-    "C-x p RET" #'project-dired
-    "C-x p DEL" #'project-forget-project)
   (setq! project-vc-extra-root-markers '(".project"))
   (setq! project-key-prompt-style t))
 
@@ -226,8 +200,7 @@
 ;; <https://codeberg.org/pidu/git-timemachine>
 
 
-(package! git-timemachine
-  (keymap-global-set "C-x v t" #'git-timemachine))
+(package! git-timemachine)
 
 (after! git-timemachine
   ;; XXX: broken, see `ceamx/git-timemachine-dispatch'
@@ -298,13 +271,6 @@
 
 
 (package! magit
-  (define-keymap :keymap (current-global-map)
-    "C-c g" #'magit-file-dispatch
-    "C-x g" #'magit-status
-    "C-c G" #'magit-dispatch
-    "C-x M-g" #'magit-dispatch))
-
-(after! magit
   ;; Save work-in-progress refs before some potentially-risky actions
   ;; where data loss is a possibility.  Note that this may cause a
   ;; performance hit.
@@ -318,11 +284,12 @@
   (setq! magit-bury-buffer-function #'magit-restore-window-configuration)
   ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
   (setq! magit-display-buffer-function
-          #'magit-display-buffer-fullframe-status-v1)
+         #'magit-display-buffer-fullframe-status-v1)
 
   (when (fboundp #'nerd-icons-insert)
-    (setq! magit-format-file-function #'magit-format-file-nerd-icons))
+    (setq! magit-format-file-function #'magit-format-file-nerd-icons)))
 
+(after! magit
   (define-keymap :keymap magit-status-mode-map
     "_" #'magit-revert
     ;; "V" nil
@@ -394,9 +361,7 @@
 (package! forge)
 
 (after! magit
-  (require 'forge)
-
-  (keymap-set vc-prefix-map "o" #'forge-browse-commit))
+  (require 'forge))
 
 (provide 'ceamx-init-vcs)
 ;;; ceamx-init-vcs.el ends here

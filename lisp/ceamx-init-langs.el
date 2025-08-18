@@ -11,13 +11,6 @@
 ;; :END:
 
 
-(after! prog-mode
-  ;; (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-
-  (define-keymap :keymap prog-mode-map
-    ;; Move forward out of one sexp level
-    "C-M-d" #'up-list))
-
 (def-hook! ceamx-init-lang-prog-mode-h ()
   '(prog-mode-hook)
   "Enable load-order-dependent features and defaults for all `prog-mode'-derived major modes.
@@ -75,72 +68,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
     "C-c M-h" #'outline-promote
     "C-c M-l" #'outline-demote))
 
-;; TODO Expand the existing repeat map for outline navigation
-
-;; I think this needs to be /contracted/ a bit.  Some of these aren't even real commands.
-
-
-(after! (repeat outline)
-  (define-keymap :keymap outline-navigation-repeat-map
-    "C-x" #'foldout-exit-fold
-    "x" #'foldout-exit-fold
-    "C-z" #'foldout-zoom-subtree
-    "z" #'foldout-zoom-subtree
-    "C-a" #'outline-show-all
-    "a" #'outline-show-all
-    "C-c" #'outline-hide-entry
-    "c" #'outline-hide-entry
-    "C-d" #'outline-hide-subtree
-    "C-e" #'outline-show-entry
-    "e" #'outline-show-entry
-    "TAB" #'outline-show-children
-    "C-k" #'outline-show-branches
-    "k" #'outline-show-branches
-    "C-l" #'outline-hide-leaves
-    "l" #'outline-hide-leaves
-    "RET" #'outline-insert-heading
-    "C-o" #'outline-hide-other
-    "o" #'outline-hide-other
-    "C-q" #'outline-hide-sublevels
-    "q" #'outline-hide-sublevels
-    "C-s" #'outline-show-subtree
-    "s" #'outline-show-subtree
-    "C-t" #'outline-hide-body
-    "t" #'outline-hide-body
-    "@" #'outline-mark-subtree)
-
-  (ceamx-repeatify-keymap 'outline-navigation-repeat-map))
-
-;; TODO A transient menu for outline navigation
-
-
-;; (after! (transient outline)
-;;   (transient-define-prefix ceamx/outline-dispatch ()
-;;     "Outline navigation transient menu."
-;;     [["Navigate"
-;;       ("u" "up" outline-up-heading)
-;;       ("n" "next" outline-next-visible-heading)
-;;       ("p" "prev" outline-previous-visible-heading)
-;;       ("f" "forward" outline-forward-same-level)
-;;       ("b" "backward" outline-backward-same-level)]]))
-
-;; (after! (hydra outline)
-;;   (defhydra ceamx/outline-hydra ( :color red)
-;;     "
-;; ^Navigate^            ^Subtree^        ^Metadata^
-;; ^--------^----------  ^-------^-----  ^---------^--
-;; _n_ext visible        _I_: drag up    _t_odo-state
-;; _p_revious visible    _J_: promote    _d_eadline
-;; _f_orward same level  _K_: drag down  _s_chedule
-;; _b_ack same level     _L_: demote
-;; _u_p level            _N_: narrow     _xp_: set property
-;;                       _W_: widen
-;; "))
-
 ;; =smart-newline= :: A self-aware newline command for programming modes :package:
-;; :PROPERTIES:
-;; :ID:       c4518207-51a4-4bf2-9aaa-0c029ab59113
-;; :END:
 
 
 (use-package smart-newline
@@ -155,6 +83,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 (package! dumb-jump
   ;; Add to end of `xref-backend-functions' as a dumb fallback when
   ;; there are no smart options.
+  ;; FIXME: misuse of `add-hook'
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 100)
 
   (after! (hydra)
@@ -167,10 +96,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
       ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
       ("i" dumb-jump-go-prompt "Prompt")
       ("l" dumb-jump-quick-look "Quick look")
-      ("b" dumb-jump-back "Back"))
-
-    (define-keymap :keymap ceamx-code-prefix
-      "j" #'ceamx/dumb-jump-dispatch/body)))
+      ("b" dumb-jump-back "Back"))))
 
 ;; =rainbow-mode= :: Colorize color names and hexcodes in buffers :theme:
 
@@ -230,16 +156,12 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
                       yellow-faint)))))
 
 ;; =hl-todo= :: Highlight "TODO" and other codetags in comments and strings :package:
-;; :PROPERTIES:
-;; :ID:       fc0d70a5-e486-42ff-8e35-e4fc07069c15
-;; :END:
 
 ;; - website :: <https://github.com/tarsius/hl-todo>
 ;; - reference :: <https://peps.python.org/pep-0350/#specification>
 
 
 (use-package hl-todo
-  ;;:ensure t
   :hook (prog-mode . hl-todo-mode))
 
 ;; =indent-bars= :: Display indentation guide-bars
@@ -254,9 +176,6 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
           indent-bars-treesit-ignore-blank-lines-types '("module")))
 
 ;; =devdocs= :: Peruse <devdocs.io> docsets locally :help:
-;; :PROPERTIES:
-;; :ID:       9907125e-84b9-420f-8991-c24b33f84161
-;; :END:
 
 ;; - Source code :: <https://github.com/astoff/devdocs.el>
 
@@ -264,16 +183,10 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
 
 (use-package devdocs
-  ;; :ensure t
   :defer t
 
-  :bind
-  (:map help-map
-        ("D" . devdocs-lookup))
-
   :init
-  (setopt devdocs-window-select t)
-
+  (setq! devdocs-window-select t)
   (after! popper
     ;; FIXME: no effect -- maybe the package is overriding?
     (add-to-list 'popper-reference-buffers "\\*devdocs\\*"))
@@ -285,9 +198,6 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
   )
 
 ;; Display multiple composed messages inside ~eldoc~ :help:
-;; :PROPERTIES:
-;; :ID:       75c14cf4-c33e-4348-963b-bf08dcf6a21c
-;; :END:
 
 
 (setopt eldoc-documentation-function #'eldoc-documentation-compose)
@@ -343,7 +253,6 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
 ;; =emacs-reformatter= :: a simple formatter factory :package:
 ;; :PROPERTIES:
-;; :ID:       db715ea8-bdf8-437a-b966-df1e97aff384
 ;; :END:
 
 
@@ -352,7 +261,6 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
 
 ;; =apheleia= :: an opinionated auto-formatter :package:
 ;; :PROPERTIES:
-;; :ID:       e4e1c7ed-dd8e-444b-bad8-ef3c8e0bc3a2
 ;; :END:
 
 ;; In case you run into issues with ~web-mode~ not updating syntax highlighting after
@@ -456,18 +364,10 @@ non-nil, buffers will never be formatted upon save."
 ;; :END:
 
 
-(progn
-  ;; Mirror the [C-c !] Flycheck prefix.
-  (define-keymap :keymap (current-global-map)
-    "C-c ! l" #'flymake-show-buffer-diagnostics
-    "C-c ! n" #'flymake-goto-next-error
-    "C-c ! p" #'flymake-goto-previous-error
-    "C-c ! c" #'flymake-show-buffer-diagnostics)
-
-  (after! flymake
-    (setopt flymake-fringe-indicator-position 'right-fringe)
-    (setopt flymake-no-changes-timeout 1.0)
-    (setopt flymake-wrap-around t)))
+(after! flymake
+  (setq! flymake-fringe-indicator-position 'right-fringe)
+  (setq! flymake-no-changes-timeout 1.0)
+  (setq! flymake-wrap-around t))
 
 ;; =flycheck= :: The /other/ file diagnostics provider :package:
 ;; :LOGBOOK:
@@ -479,8 +379,6 @@ non-nil, buffers will never be formatted upon save."
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
 
 (package! consult-flycheck
-  (keymap-global-set "M-g f" #'consult-flycheck)
-
   (after! (consult flycheck)
     (require 'consult-flycheck)))
 
@@ -501,9 +399,6 @@ non-nil, buffers will never be formatted upon save."
                           sh-shellcheck))))
 
 ;; =puni= :: versatile structural editing
-;; :PROPERTIES:
-;; :ID:       ce9e9bd5-70bc-451c-b21c-fd29b2c38834
-;; :END:
 
 ;; <https://github.com/AmaiKinono/puni>
 
@@ -513,22 +408,7 @@ non-nil, buffers will never be formatted upon save."
   (add-hook 'prog-mode-hook #'puni-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
 
-(after! puni
-  (define-keymap :keymap puni-mode-map
-    "C-M-f" #'puni-forward-sexp
-    "C-M-b" #'puni-backward-sexp
-    "C-M-a" #'puni-beginning-of-sexp
-    "C-M-e" #'puni-end-of-sexp
-    "C-M-[" #'puni-backward-sexp-or-up-list
-    "C-M-]" #'puni-forward-sexp-or-up-list
-
-    "M-(" #'puni-syntactic-forward-punct
-    "M-)" #'puni-syntactic-backward-punct))
-
 ;; =treesit-auto= :: automatically use available ~treesit~ modes
-;; :PROPERTIES:
-;; :ID:       10383b28-1e9c-435c-9fe1-ebfba527690d
-;; :END:
 
 ;; + Package :: <https://github.com/renzmann/treesit-auto>
 
@@ -582,9 +462,6 @@ non-nil, buffers will never be formatted upon save."
 (setopt treesit-font-lock-level 4)
 
 ;; =treesit-fold= :: Code folding with ~treesit~ :folding:
-;; :PROPERTIES:
-;; :ID:       f1699289-6ead-46f8-be44-fad5dd1d7906
-;; :END:
 
 ;; + Package :: <https://github.com/emacs-tree-sitter/treesit-fold>
 
@@ -598,20 +475,7 @@ non-nil, buffers will never be formatted upon save."
   (global-treesit-fold-mode 1)
   (global-treesit-fold-indicators-mode -1))
 
-(after! treesit-fold
-  (define-keymap :keymap treesit-fold-mode-map
-    "C-c l f f" #'treesit-fold-toggle
-
-    "C-c f f c" #'treesit-fold-close
-    "C-c f f C" #'treesit-fold-close-all
-    "C-c f f o" #'treesit-fold-open
-    "C-c f f O" #'treesit-fold-open-all
-    "C-c f f r" #'treesit-fold-open-recursively))
-
 ;; =combobulate= :: A consistent structural navigation interface
-;; :PROPERTIES:
-;; :ID:       9dd78f17-2f20-4d69-8dfa-06aa0989ba19
-;; :END:
 ;; :LOGBOOK:
 ;; - Refiled on [2025-01-26 Sun 16:39]
 ;; :END:
@@ -885,12 +749,6 @@ The original function fails in the presence of whitespace after a sexp."
 
 
 (after! eglot
-  (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions)
-  (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
-
-  (after! consult
-    (keymap-set eglot-mode-map "C-c l o" #'consult-eglot-symbols))
-
   (setopt eglot-sync-connect 1)
   (setopt eglot-autoshutdown t)
   (setopt eglot-send-changes-idle-time 0.5)
@@ -993,25 +851,6 @@ The original function fails in the presence of whitespace after a sexp."
 (package! consult-eglot
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
 
-;; Keybindings :keybinds:
-;; :PROPERTIES:
-;; :ID:       580d70ee-0c49-4ddf-9f38-3d6f516fb09f
-;; :END:
-
-
-(keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
-(keymap-global-set "C-c l r" '("rename..." . eglot-rename))
-(keymap-global-set "C-c l o" #'consult-eglot-symbols)
-
-(after! eglot
-  ;; Override the default binding for `xref-find-apropos'.
-  (keymap-set eglot-mode-map "C-M-." #'consult-eglot-symbols))
-
-(after! lsp-mode
-    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
-    ;; Override the default binding for `xref-find-apropos'.
-    (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
-
 ;; Use Biome language server in supported modes :biome:checkers:formatting:lsp:
 
 ;; - Docs :: <https://biomejs.dev/guides/integrate-in-editor/>
@@ -1028,17 +867,11 @@ The original function fails in the presence of whitespace after a sexp."
                (list ceamx-editor-biome-supported-modes-list "biome" "lsp-proxy")))
 
 ;; JSON/JSONC
-;; :PROPERTIES:
-;; :ID:       62d6b3c0-60ca-4bf3-9613-e09f403d7eac
-;; :END:
 
 
 (add-to-list 'auto-mode-alist '("\\.jsonc\\'" . json-ts-mode))
 
 ;; Register =taplo= formatting utilities :formatting:
-;; :PROPERTIES:
-;; :ID:       777ee791-be1a-43b7-86d5-18dca405b75f
-;; :END:
 
 
 (after! reformatter
@@ -1053,9 +886,6 @@ The original function fails in the presence of whitespace after a sexp."
   (add-hook 'toml-ts-mode-hook #'toml-taplo-fmt-on-save-mode))
 
 ;; Use the =taplo= language server :eglot:lsp:
-;; :PROPERTIES:
-;; :ID:       1fbf97bf-e6f8-499d-a8c1-b08236cfb44c
-;; :END:
 
 
 (use-feature! ceamx-eglot
@@ -1109,15 +939,6 @@ The original function fails in the presence of whitespace after a sexp."
 
 (package! csv-mode)
 
-(after! csv-mode
-  (define-keymap :keymap csv-mode-map
-    "a" #'csv-align-fields
-    "u" #'csv-unalign-fields
-    "s" #'csv-sort-fields
-    "S" #'csv-sort-numeric-fields
-    "k" #'csv-kill-fields
-    "t" #'csv-transpose))
-
 ;; KDL
 
 
@@ -1144,9 +965,9 @@ The original function fails in the presence of whitespace after a sexp."
   (add-hook 'jq-mode-hook (##electric-pair-local-mode -1))
 
   (after! json
-    (keymap-set js-json-mode-map "C-c o r" #'jq-interactively))
+    (keymap-set js-json-mode-map "C-:" #'jq-interactively))
   (after! json-ts-mode
-    (keymap-set json-ts-mode-map "C-c o r" #'jq-interactively)))
+    (keymap-set json-ts-mode-map "C-:" #'jq-interactively)))
 
 ;; JavaScript
 
@@ -1180,15 +1001,13 @@ The original function fails in the presence of whitespace after a sexp."
 (package! rust-mode)
 
 (package! rustic
-
-  (setopt rustic-format-trigger nil
+  (setq! rustic-format-trigger nil
           rustic-babel-format-src-block nil)
-  (setopt rustic-cargo-use-last-stored-arguments t))
+  (setq! rustic-cargo-use-last-stored-arguments t))
 
-(after! (rust-mode rustic)
-  (pushnew! auto-mode-alist
-            '("\\.rs\\'" . rust-mode)
-            '("\\.rs\\'" . rustic-mode)))
+;; (after! (rust-mode rustic)
+;;   (map-put 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+;;   (map-put 'auto-mode-alist '("\\.rs\\'" . rustic-mode)))
 
 ;; Lua
 
@@ -1343,9 +1162,6 @@ usually wrongly fontified as a metadata block."
   "Pattern matching files with PHP syntax.")
 
 ;; Ignore PHP-specific directories and files
-;; :PROPERTIES:
-;; :ID:       772ead4f-6d76-479c-8267-78d61b457c78
-;; :END:
 
 
 (appendq! xref-ignored-files
@@ -1353,9 +1169,6 @@ usually wrongly fontified as a metadata block."
             "_ide_helper.php"))
 
 ;; =php-ts-mode= [builtin]
-;; :PROPERTIES:
-;; :ID:       892d02b2-d88a-4ee4-8b5b-addc613e1496
-;; :END:
 
 ;; ~php-ts-mode~ is part of Emacs 30.
 
@@ -1372,9 +1185,6 @@ usually wrongly fontified as a metadata block."
   (add-to-list 'major-mode-remap-alist '(php-mode-maybe . php-ts-mode)))
 
 ;; Display line numbers in PHP buffers
-;; :PROPERTIES:
-;; :ID:       5be5d8be-1b82-4742-a0f2-cf716e521b9f
-;; :END:
 
 
 (after! php-mode
@@ -1506,9 +1316,6 @@ usually wrongly fontified as a metadata block."
   (add-to-list 'auto-mode-alist '("\\.twig\\'" . web-mode)))
 
 ;; Shell scripts
-;; :PROPERTIES:
-;; :ID:       2b9569ee-d623-4246-a3c3-af59abd75e1f
-;; :END:
 
 ;; Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ;; ~flymake~ will handle it just fine.
@@ -1532,9 +1339,7 @@ usually wrongly fontified as a metadata block."
 ;; =apache-mode= :: Language support for Apache Web Server configuration files
 
 
-(use-package apache-mode
-  ;; :ensure t
-  )
+(package! apache-mode)
 
 ;; =fish-mode= :: Language support for Fish shell script files
 
@@ -1555,9 +1360,6 @@ usually wrongly fontified as a metadata block."
     (cl-pushnew '(fish-mode . ("fish-lsp" "start")) eglot-server-programs)))
 
 ;; =just-mode= :: Language support for the Just task runner configuration files
-;; :PROPERTIES:
-;; :ID:       f57bb40b-4efc-4f77-8bef-bad0d8c2c1ba
-;; :END:
 
 
 (package! just-ts-mode)
@@ -1599,9 +1401,7 @@ usually wrongly fontified as a metadata block."
 (package! dotenv-mode)
 
 ;; =yuck-mode= :: Language support for =yuck= configuration files for ElKowar’s Wacky Widgets
-;; :PROPERTIES:
-;; :ID:       b3d679d4-d658-424f-bbb3-2b56548835c0
-;; :END:
+
 
 (package! yuck-mode)
 

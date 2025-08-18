@@ -21,7 +21,6 @@ will usually also work on macOS.
 * Bootstrap
 :PROPERTIES:
 :VISIBILITY: folded
-:ID:       2a09d289-4dcd-413c-b142-f6a8d974a8ee
 :END:
 
 ** =early-init.el=
@@ -500,6 +499,7 @@ Intended for use as a callback on the `ceamx-after-init-hook'."
 
 (require 'ceamx-paths)
 (require 'ceamx-lib)
+(require 'ceamx-keymaps)
 #+end_src
 
 *** Configure default identity
@@ -636,9 +636,6 @@ ELP is useful for seeing which functions in a package are "hot":
 #+end_src
 
 *** Display the scratch buffer as initial buffer
-:PROPERTIES:
-:ID:       8faa0cb3-1b4d-4218-a2c3-0016aba1d95b
-:END:
 
 #+begin_src emacs-lisp
 (setq initial-buffer-choice nil
@@ -653,9 +650,6 @@ ELP is useful for seeing which functions in a package are "hot":
 #+end_src
 
 *** =site-lisp/on=: Define additional Emacs event hooks
-:PROPERTIES:
-:ID:       7f77da4e-3109-4dca-80c1-38c838ee5d70
-:END:
 
 #+begin_src emacs-lisp
 (require 'on)
@@ -792,22 +786,6 @@ using this command."
         (message "Reloaded: %s" (mapconcat #'symbol-name package-features " "))))))
 #+end_src
 
-
-***** Bind some commonly-used Elpaca commands :keybinds:
-
-#+begin_src emacs-lisp
-(keymap-set ceamx-session-prefix "p" (cons "packages..." (define-prefix-command 'ceamx-session-p-prefix)))
-
-(define-keymap :keymap ceamx-session-p-prefix
-  "f" #'elpaca-fetch-all
-  "F" #'elpaca-fetch
-  "i" #'elpaca-info
-  "m" #'elpaca-merge-all
-  "p" #'elpaca-pull
-  "r" #'+elpaca-reload-package
-  "t" #'elpaca-try
-  "u" #'elpaca-update)
-#+end_src
 
 ***** Alternatives
 
@@ -983,9 +961,6 @@ file is reloaded and ~elpaca-process-queues~ runs in
 #+end_src
 
 ***** Install the latest version of ~use-package~
-:PROPERTIES:
-:ID:       87854bdb-fb6f-4117-884e-81354c924c07
-:END:
 
 #+begin_src emacs-lisp
 (elpaca use-package)
@@ -1024,9 +999,6 @@ Reason:
 #+end_src
 
 **** Improve ~use-package~ completion-at-point availability
-:PROPERTIES:
-:ID:       863979e9-5559-4abf-903e-307f528e6263
-:END:
 
 #+begin_src emacs-lisp
 (def-advice! ceamx+use-package--bind-handle-sharp-quotes-a (args)
@@ -1039,9 +1011,6 @@ unimportant since it happens during compilation anyway."
 #+end_src
 
 *** Install utility libraries
-:PROPERTIES:
-:ID:       d04ef910-34e0-4961-aeb6-c2741af41455
-:END:
 
 #+begin_src emacs-lisp
 (package! llama
@@ -1067,7 +1036,6 @@ unimportant since it happens during compilation anyway."
 ** =init.el=: Environment
 :PROPERTIES:
 :header-args: :tangle init.el
-:ID:       451ef1a7-544c-45de-95d0-ca09abee5d23
 :END:
 
 *** Disable unnecessary OS-specific command-line options :macos:
@@ -1081,9 +1049,6 @@ unimportant since it happens during compilation anyway."
 #+end_src
 
 *** =exec-path-from-shell=: Inherit environment variables from variable environments :package:
-:PROPERTIES:
-:ID:       9e6bd5ec-eef5-4219-9e26-75a910fd845b
-:END:
 
 #+begin_src emacs-lisp
 (package! exec-path-from-shell
@@ -1111,9 +1076,6 @@ unimportant since it happens during compilation anyway."
 #+end_src
 
 *** =with-editor=: Ensure shell/term modes use session as =$EDITOR= :package:
-:PROPERTIES:
-:ID:       a0759984-15e9-4ccb-b5e7-ac7cfa6073e6
-:END:
 
 #+begin_src emacs-lisp
 (package! with-editor
@@ -1133,9 +1095,6 @@ unimportant since it happens during compilation anyway."
 #+end_src
 
 *** =envrc= :: Direnv integration :package:
-:PROPERTIES:
-:ID:       4572e438-3d90-4ed3-88af-a7c2493a2e19
-:END:
 
 - src :: <https://github.com/purcell/envrc>
 - upstream :: <https://github.com/direnv/direnv>
@@ -1200,9 +1159,6 @@ buffer, as a buffer-local variable.
 #+end_src
 
 *** Mouse support
-:PROPERTIES:
-:ID:       d8b4dda2-794a-4498-8db8-e2f4873dc0fd
-:END:
 
 #+begin_src emacs-lisp
 (setopt mouse-yank-at-point t)
@@ -1243,49 +1199,6 @@ graphical frames.
 (require 'site-config (file-name-concat user-emacs-directory "site-config") t)
 #+end_src
 
-** =init.el= :: Leader Prefix Keybindings
-:PROPERTIES:
-:header-args: :tangle init.el
-:ID:       cd713eda-629c-460c-921e-d99ce8f6742f
-:END:
-
-#+begin_src emacs-lisp
-(define-keymap :keymap (current-global-map)
-  "C-c a" #'org-agenda
-  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
-  "C-c c" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
-  ;; "C-c d"
-  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
-  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
-  "C-c g" #'magit-file-dispatch
-  "C-c h" #'consult-history
-  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
-  ;; "C-c j"
-  "C-c k" #'consult-kmacro
-  ;; TODO: disambiguate?
-  "C-c K" (cons "[ CRYPTION  ]" #'ceamx-cryption-prefix)
-  "C-c l" (cons "[ CODE      ]" #'ceamx-code-prefix)
-  ;; TODO: disambiguate f/F
-  "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
-  "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
-  "C-c m" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
-  "C-c n" (cons "[ NOTES     ]" #'ceamx-note-prefix)
-  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
-  "C-c p" #'completion-at-point
-  "C-c P" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
-  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
-  ;; "C-c r"
-  ;; "C-c s"
-  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
-  ;; "C-c u"
-  ;; "C-c v"
-  "C-c w" (cons "[ WEB       ]" #'ceamx-web-prefix)
-  ;; FIXME: something else... (btw this is originally set somewhere else...)
-  "C-c x" #'ceamx/macrostep-expand
-  "C-c y" (cons "[ SNIPPET   ]" #'ceamx-snippet-prefix)
-  "C-c z" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix))
-#+end_src
-
 ** =init.el= :: Miscellaneous Variables
 :PROPERTIES:
 :header-args: :tangle init.el
@@ -1298,9 +1211,6 @@ graphical frames.
 #+end_src
 
 * Features
-:PROPERTIES:
-:ID:       0b88377f-2539-49a1-917d-2d2eac806e37
-:END:
 
 ** User Interface & Appearance :ui:
 :PROPERTIES:
@@ -1312,7 +1222,6 @@ graphical frames.
 *** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
-:ID:       a85e7ca0-fc49-4ad5-a32c-eeb12142cb85
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-ui.el :comments no
@@ -1422,9 +1331,6 @@ applying margin, padding, borders.
 #+end_src
 
 **** =standard-themes= :: Prot's themes like the default but more consistent
-:PROPERTIES:
-:ID:       09f2005b-1d4d-4d92-9f36-2327ca55757d
-:END:
 
 #+begin_src emacs-lisp
 (package! standard-themes
@@ -1448,9 +1354,6 @@ applying margin, padding, borders.
 #+end_src
 
 **** =modus-themes= :: Prot’s accessible themes conforming to WCAG AAA
-:PROPERTIES:
-:ID:       3700042e-1b73-416f-aaa1-2cbd9f2101f0
-:END:
 
 - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -1478,9 +1381,6 @@ applying margin, padding, borders.
 #+end_src
 
 **** =ef-themes= :: Prot’s colorful yet legible themes
-:PROPERTIES:
-:ID:       3f512af0-7bad-4447-a14d-08a5371e14c5
-:END:
 
 - Website :: <https://protesilaos.com/emacs/ef-themes>
 
@@ -1497,9 +1397,6 @@ applying margin, padding, borders.
 #+end_src
 
 **** =doric-themes= :: Prot’s minimalist themes
-:PROPERTIES:
-:ID:       d39feac9-ef27-41b0-94f9-92ed49b24055
-:END:
 
 #+begin_src emacs-lisp
 (package! doric-themes
@@ -1512,9 +1409,6 @@ applying margin, padding, borders.
 #+end_src
 
 **** Configure the preferred themes
-:PROPERTIES:
-:ID:       a21cb155-3353-4e2c-9593-1680b43f4575
-:END:
 
 #+begin_src emacs-lisp
 (use-feature! ceamx-ui
@@ -1532,9 +1426,6 @@ applying margin, padding, borders.
 #+end_src
 
 **** =circadian= :: theme phasing based on sunrise/sunset time
-:PROPERTIES:
-:ID:       badbc4d6-c784-4936-bd84-e1312a67273c
-:END:
 
 #+begin_src emacs-lisp
 (package! circadian
@@ -1678,9 +1569,6 @@ customised in the section for Eglot, etc.).
 #+end_src
 
 *** =avy= :: can do anything
-:PROPERTIES:
-:ID:       05cb2761-07fc-476b-8b78-0d08e0a89469
-:END:
 
 + Package :: <https://github.com/abo-abo/avy>
 + Article :: <https://karthinks.com/software/avy-can-do-anything/>
@@ -1689,26 +1577,15 @@ customised in the section for Eglot, etc.).
 (package! avy
   (defer! 2 (require 'avy))
 
-  (define-keymap :keymap (current-global-map)
-    "C-;" #'avy-goto-char-timer
-    ;; "C-'" is reserved for special commands e.g. `avy-org-goto-heading-timer'
-
-    "M-g w" #'avy-goto-word-1)
-
-  (after! org
-    (keymap-set org-mode-map "C-'" #'avy-org-goto-heading-timer)
-    (keymap-set org-mode-map "C-\"" #'avy-org-refile-as-child)))
-
-(after! avy
-  (setopt avy-style 'at-full)
-  (setopt avy-all-windows t)
-  (setopt avy-case-fold-search t)
+  (setq! avy-style 'at-full)
+  (setq! avy-all-windows t)
+  (setq! avy-case-fold-search t)
 
   ;; Prevent conflicts with themes.
-  (setopt avy-background nil)
+  (setq! avy-background nil)
 
   ;; Anything lower feels unusable.
-  (setopt avy-timeout-seconds 0.25))
+  (setq! avy-timeout-seconds 0.25))
 #+end_src
 
 *** Highlight current line in programming modes
@@ -1733,15 +1610,15 @@ customised in the section for Eglot, etc.).
 #+begin_src emacs-lisp
 (package! pulsar
   (add-hook 'ceamx-after-init-hook #'pulsar-global-mode)
-  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line))
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
 
-(after! pulsar
-  (setopt pulsar-pulse t
+  (setq! pulsar-pulse t
           pulsar-delay 0.055
           pulsar-iterations 20)
-  (setopt pulsar-face 'pulsar-generic
-          pulsar-highlight-face 'pulsar-face)
+  (setq! pulsar-face 'pulsar-generic
+         pulsar-highlight-face 'pulsar-face))
 
+(after! pulsar
   (dolist (fn '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
                  bookmark-jump other-window delete-window delete-other-windows
                  forward-page backward-page scroll-up-command scroll-down-command
@@ -1760,13 +1637,10 @@ customised in the section for Eglot, etc.).
 *** Window highlighting
 
 #+begin_src emacs-lisp
-(setopt highlight-nonselected-windows nil)
+(setq! highlight-nonselected-windows nil)
 #+end_src
 
 *** Hide frame decorations
-:PROPERTIES:
-:ID:       c532e9e7-8729-4442-8bd7-2c50717a9dc7
-:END:
 
 #+begin_src emacs-lisp
 (unless (ceamx-host-macos-p)
@@ -1784,10 +1658,7 @@ customised in the section for Eglot, etc.).
     "TODO: Provide source for this approach (Doom?), and why it does what it does."
     (when-let (frame (or frame (selected-frame)))
       (when (display-graphic-p frame)
-        (set-frame-parameter frame 'menu-bar-lines 1))))
-
-  ;; Stop C-z from minimizing windows.
-  (keymap-global-unset "C-z" t))
+        (set-frame-parameter frame 'menu-bar-lines 1)))))
 #+end_src
 
 *** =spacious-padding= :: a comfortable layout density
@@ -1816,14 +1687,12 @@ customised in the section for Eglot, etc.).
 
 #+begin_src emacs-lisp
 (package! olivetti
-  (keymap-set ctl-x-x-map "o" #'olivetti-mode))
-
-(after! olivetti
-  (setopt olivetti-body-width 0.7
+  (setq! olivetti-body-width 0.7
           olivetti-minimum-body-width 40
           olivetti-recall-visual-line-mode-entry-state t)
-  (setopt olivetti-style 'fancy)
+  (setq! olivetti-style 'fancy))
 
+(after! olivetti
   (def-hook! +olivetti-mode-on--disable-conflicting-features-h ()
     '(olivetti-mode-on-hook)
     "Disable features that conflict with `olivetti-mode' appearance."
@@ -1832,29 +1701,17 @@ customised in the section for Eglot, etc.).
 #+end_src
 
 *** =logos= :: a simple focus mode with page breaks or outlines :present:
-:PROPERTIES:
-:ID:       9f620970-a54b-46bf-bbc4-ad3712646506
-:END:
 
 #+begin_src emacs-lisp
 (package! logos
-  (define-keymap :keymap (current-global-map)
-    "C-x n N" #'logos-narrow-dwim
-
-    "C-x ]" #'logos-forward-page-dwim
-    "C-x [" #'logos-backward-page-dwim)
-
-    "M-]" #'logos-forward-page-dwim
-    "M-[" #'logos-backward-page-dwim)
-
-(after! logos
-  (setopt logos-outlines-are-pages t)
-  (setopt logos-outline-regexp-alist
+  (setq! logos-outlines-are-pages t)
+  (setq! logos-outline-regexp-alist
           `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
             (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
             (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
-            (conf-toml-mode . "^\\[")))
+            (conf-toml-mode . "^\\["))))
 
+(after! logos
   ;; These apply buffer-locally when `logos-focus-mode' is enabled.
   (setq-default logos-hide-cursor t
                 logos-hide-mode-line t
@@ -1883,10 +1740,7 @@ customised in the section for Eglot, etc.).
 Focusing by sentence, paragraph, or code block.
 
 #+begin_src emacs-lisp
-;; TODO: keybindings to C-c T z as prefix
-(package! focus
-  (define-keymap :keymap ceamx-toggle-prefix
-    "Z" #'focus-mode))
+(package! focus)
 #+end_src
 
 *** =moc= :: "Master of Ceremonies" presentation utilities :present:
@@ -1923,9 +1777,6 @@ Enable the tab bar:
 #+end_src
 
 *** Typography :font:
-:PROPERTIES:
-:ID:       969b4aad-0463-4bc7-802f-c0d6ef91c25c
-:END:
 
 **** Text rendering and scaling
 
@@ -2089,9 +1940,6 @@ Enable the tab bar:
 #+end_src
 
 **** ~ligature.el~ :: improved ligature support
-:PROPERTIES:
-:ID:       faf642cc-811e-4b58-bbaa-51e9e11b1dff
-:END:
 
 + Package :: <https://github.com/mickeynp/ligature.el>
 
@@ -2165,14 +2013,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 (package! nerd-icons
   (require 'nerd-icons)
 
-  (keymap-set ceamx-insert-prefix-map "I" '("icon" . nerd-icons-insert))
-
-  (define-keymap :keymap (current-global-map)
-    "C-x 8 i" (cons "icons" (define-prefix-command 'ceamx-insert-icons-prefix 'ceamx-insert-icons-prefix-map))
-    "C-x 8 i i" #'nerd-icons-insert))
-
-(after! nerd-icons
-  (setopt nerd-icons-font-family "Symbols Nerd Font Mono"))
+  (setq! nerd-icons-font-family "Symbols Nerd Font Mono"))
 #+end_src
 
 **** Provide common dependency: ~svg-lib~ :package:
@@ -2221,6 +2062,9 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 
 + Package :: <https://github.com/jcfk/savefold.el/>
 
+This is a really nice package.  Works so seamlessly, I forget it’s even
+there.  But it is, and it’s an improvement over the default behavior.
+
 #+begin_src emacs-lisp
 (package! savefold
   (setopt savefold-backends '(hideshow outline))
@@ -2248,7 +2092,6 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-modeline.el
 :VISIBILITY: folded
-:ID:       7e592f24-8ad1-4432-862a-5873a7bb18dd
 :END:
 
 *** Requirements
@@ -2271,7 +2114,6 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 
 *** Set up the ~ceamx-modeline~
 :PROPERTIES:
-:ID:       e8fa729f-3a84-4b3b-88eb-450406dde0a5
 :END:
 
 #+begin_src emacs-lisp
@@ -2282,8 +2124,6 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 
 (use-feature! ceamx-modeline
   :hook (ceamx-after-init . ceamx-modeline-mode)
-  :init
-  (keymap-set ceamx-toggle-prefix "m" #'ceamx-modeline-mode)
   :config
   (setq-default mode-line-format
                 '("%e"
@@ -2318,9 +2158,6 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 #+end_src
 
 *** =minions= :: minimize many mode-line minor-modes
-:PROPERTIES:
-:ID:       af187c9b-e6b2-47dc-a1b0-848a38455d74
-:END:
 
 #+begin_src emacs-lisp
 (package! minions
@@ -2359,7 +2196,6 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-essentials.el
 :VISIBILITY: folded
-:ID:       befd5701-44ee-4324-9a6c-63e39bd5e459
 :END:
 
 *** Requirements
@@ -2373,7 +2209,6 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 
 *** Baseline configurations
 :PROPERTIES:
-:ID:       9d89d38e-1fa6-41e5-b5a7-8c1c3422a34c
 :END:
 
 #+begin_src emacs-lisp
@@ -2384,140 +2219,24 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 (setopt auto-mode-case-fold nil)
 
 (setopt kill-whole-line t)
-
-(define-keymap :keymap (current-global-map)
-  "M-c" #'capitalize-dwim
-  "M-f" #'forward-word
-  "M-F" #'forward-symbol
-  "M-l" #'downcase-dwim
-  "M-o" #'delete-blank-lines
-  "M-Q" #'repunctuate-sentences
-  "M-u" #'upcase-dwim
-  "M-z" #'zap-up-to-char                ; orig: `zap-to-char'
-  "M-=" #'count-words
-  "M-SPC" #'cycle-spacing
-
-  "C-h F" #'apropos-function
-  "C-h L" #'apropos-library
-  "C-h U" #'apropos-user-option
-  "C-h V" #'apropos-variable
-
-  ;; TODO: move to window config
-  "C-x O" #'next-multiframe-window
-
-  ;; Minimizing frames is the job of the window manager.
-  "C-x C-z" nil)
-
-;; Keymap for buffers
-;; TODO: copy some of these to `ceamx-toggle-prefix'
-(define-keymap :keymap ctl-x-x-map
-  "f" #'follow-mode
-  "l" #'visual-line-mode
-  "r" #'rename-uniquely)
-
-
 #+end_src
 
 *** =ceamx-simple=: Simple & common commands
-:PROPERTIES:
-:ID:       3fcbca20-29f3-4e91-ba76-6bad1199adc3
-:END:
 
 #+begin_src emacs-lisp
 (use-feature! ceamx-simple
-  :demand t
-
-  :config
-  (define-keymap :keymap ceamx-file-prefix
-    ;; TODO
-    ;; "y" #'+yank-this-file-name
-
-    "c" '("copy..." . ceamx-simple/copy-current-file)
-    "d" '("delete" . ceamx-simple/delete-current-file)
-    "f" #'find-file
-    "F" #'find-file-other-window
-    "r" '("move..." . ceamx-simple/move-current-file)
-    "s" #'save-buffer
-    "U" #'ceamx-simple/sudo-find-file
-
-    "C-d" '("diff with..." . ceamx-simple/diff-with-file))
-
-  (define-keymap :keymap ceamx-insert-prefix-map
-    "d" #'ceamx-simple/insert-date)
-
-  (define-keymap :keymap (current-global-map)
-    "ESC ESC" #'ceamx/keyboard-quit-dwim
-    "C-g" #'ceamx/keyboard-quit-dwim
-
-    "C-x k" #'ceamx-simple/kill-current-buffer ; orig: `kill-buffer'
-    "C-x K" #'kill-buffer
-
-    ;; FIXME: move defun to `ceamx-simple'
-    "M-DEL" #'ceamx/backward-kill-word
-
-    "C-M-SPC" #'ceamx-simple/mark-sexp
-
-    ;; Commands for lines
-    ;; TODO: currently `easy-kill'
-    ;; "M-w" #'ceamx-simple/kill-ring-save
-    "M-k" #'ceamx-simple/kill-line-backward
-    "C-S-d" #'ceamx-simple/duplicate-line-or-region
-    ;; TODO: redundant with `easy-kill'
-    "C-S-w" #'ceamx-simple/copy-line
-    "C-S-y" #'ceamx-simple/yank-replace-line-or-region
-    "C-RET" #'ceamx-simple/new-line-below
-    "C-S-RET" #'ceamx-simple/new-line-above
-
-    ;; Commands for text insertion or manipulation
-    "C-<" #'ceamx-simple/escape-url-dwim
-    "M-Z" #'ceamx-simple/zap-to-char-backward
-
-    ;; Commands for buffers
-    "M-s b" #'ceamx-simple/buffers-major-mode
-    "M-s v" #'ceamx-simple/buffers-vc-root)
-
-  (define-keymap :keymap prog-mode-map
-    "M-RET" #'ceamx-simple/continue-comment)
-
-  (keymap-substitute (current-global-map)
-                     #'default-indent-new-line
-                     #'ceamx-simple/continue-comment))
+  :demand t)
 #+end_src
 
 *** =crux= :: a [c]ollection of [r]idiculously [u]seful e[x]tensions
 
 #+begin_src emacs-lisp
 (package! crux
-  (define-keymap :keymap (current-global-map)
-    "C-k" #'crux-smart-kill-line
-    "C-^" #'crux-top-join-line
-
-    "C-x 4 t" #'crux-transpose-windows
-
-    "C-S-d" #'crux-duplicate-current-line-or-region
-    "C-S-RET" #'crux-smart-open-line-above
-    "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
-
-    "M-o" #'crux-other-window-or-switch-buffer ; orig. `delete-blank-lines'
-
-    "S-RET" #'crux-smart-open-line)
-
-  (define-keymap :keymap ceamx-buffer-prefix
-    "f" #'crux-cleanup-buffer-or-region
-    "M-w" #'crux-kill-buffer-truename)
-
-  (define-keymap :keymap ceamx-file-prefix
-    "c" #'crux-copy-file-preserve-attributes
-    "r" #'crux-rename-file-and-buffer)
-
   (after! pulsar
     (cl-pushnew #'crux-other-window-or-switch-buffer pulsar-pulse-functions)))
 #+end_src
 
 *** =tmr= :: set timers using a convenient notation
-:PROPERTIES:
-:ID:       67caf305-67ce-42b5-9ff3-98b0f9ac6b06
-:END:
 
 + Website :: <https://protesilaos.com/emacs/tmr>
 
@@ -2552,45 +2271,25 @@ NOTE: Incompatible with kitchen-sink modeline packages like
      (add-to-list 'embark-post-action-hooks (list cmd 'embark--restart)))))
 #+end_src
 
-*** =persistent-scratch= :: Preserve the scratch buffer across sessions
-:PROPERTIES:
-:ID:       a85e81df-a194-4ecf-b1ca-5d95279cb45f
-:END:
-
-#+begin_src emacs-lisp
-(package! persistent-scratch
-  (persistent-scratch-setup-default))
-#+end_src
-
 *** Configure sane window-scrolling behavior
-:PROPERTIES:
-:ID:       c6408cc7-1382-4433-bde2-947e4dc2c062
-:END:
 
 #+begin_src emacs-lisp
-(use-feature! window
-  :bind
-  ("C-x <" . scroll-right)
-  ("C-x >" . scroll-left)
-  ("<wheel-left>" . scroll-left)
-  ("<wheel-right>" . scroll-right)
+;; Available cycle positions for `recenter-top-bottom'.
+(setq! recenter-positions '(top middle bottom))
+;; (setq! recenter-positions '(middle top bottom))
+                                        ; default
 
-  :config
-  ;; Available cycle positions for `recenter-top-bottom'.
-  ;; (setopt recenter-positions '(top middle bottom))
-  (setopt recenter-positions '(middle top bottom)) ; default
+;; Horizontally-scroll only the current line when point column moves
+;; beyond window boundaries.
+(setq! auto-hscroll-mode 'current-line)
 
-  ;; Horizontally-scroll only the current line when point column moves
-  ;; beyond window boundaries.
-  (setopt auto-hscroll-mode 'current-line)
+(setq! scroll-error-top-bottom t
+       ;; Prevent unwanted horizontal scrolling upon navigation.
+       scroll-preserve-screen-position t
+       scroll-conservatively 10000)
 
-  (setopt scroll-error-top-bottom t
-          ;; Prevent unwanted horizontal scrolling upon navigation.
-          scroll-preserve-screen-position t
-          scroll-conservatively 10000)
-
-  ;; Add a margin when scrolling vertically (or don't).
-  (setq-default scroll-margin 1))
+;; Add a margin when scrolling vertically (or don't).
+(setq-default scroll-margin 1)
 #+end_src
 
 *** Auto-revert buffers
@@ -2651,9 +2350,6 @@ NOTE: Incompatible with kitchen-sink modeline packages like
 #+end_src
 
 *** =editorconfig= :: enforce EditorConfig settings
-:PROPERTIES:
-:ID:       d0133690-e4a8-40a7-abcf-12816589d4b7
-:END:
 
 - Website :: <https://editorconfig.org>
 
@@ -2682,21 +2378,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
 #+end_src
 
 *** Movement / Regions / Basic Editing
-:PROPERTIES:
-:ID:       2c6a6df3-2b31-4638-bdcd-c9e63e367ea0
-:END:
-
-#+begin_src emacs-lisp
-(define-keymap :keymap (current-global-map)
-  ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
-  ;; that `comment-line' is bound to [C-x C-;].
-  "C-x M-;" #'comment-line)
-#+end_src
 
 **** Integrate with system clipboard
-:PROPERTIES:
-:ID:       7ceb88fc-04e5-47af-a978-c2110076d374
-:END:
 
 #+begin_src emacs-lisp
 (setopt save-interprogram-paste-before-kill t)
@@ -2705,28 +2388,19 @@ PROPS is as in `editorconfig-after-apply-functions'."
 **** =mwim=: Replace ~beginning-of-line~ and ~end-of-line~ with DWIM alternatives
 
 #+begin_src emacs-lisp
-(package! mwim
-  ;; FIXME: overrides `org-mode' bindings!
-  (keymap-global-set "C-a" #'mwim-beginning)
-  (keymap-global-set "C-e" #'mwim-end))
+(package! mwim)
 #+end_src
 
 **** =beginend= :: rebind context-sensitive =(beginning,end)-of-buffer=
-:PROPERTIES:
-:ID:       7529f1a7-461c-4731-a7b8-05f6ce2104fa
-:END:
 
 + Package :: https://github.com/DamienCassou/beginend
 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (package! beginend
   (beginend-global-mode))
 #+end_src
 
 **** =easy-kill= :: killing is easy when you're emacs :package:
-:PROPERTIES:
-:ID:       a3727c22-4373-47aa-ac61-e1355c5e048d
-:END:
 
 + Package documentation :: <https://github.com/leoliu/easy-kill/blob/master/README.rst>
 
@@ -2743,11 +2417,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 #+begin_src emacs-lisp
 (use-package easy-kill
-  :ensure t
-  :bind
-  ("M-w" . #'easy-kill)   ; orig. `kill-ring-save'
-  ("C-M-@" . #'easy-mark) ; orig. `mark-sexp'
-  )
+  :ensure t)
 #+end_src
 
 **** Replace region when inserting text
@@ -2756,20 +2426,18 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (delete-selection-mode 1)
 #+end_src
 
-**** =expreg= :: simple alternativate to ~expand-region~ using ~treesit~
+**** =expreg= :: simple alternativate to ~expand-region~ using ~treesit~ :package:
 
 + Package :: <https://github.com/casouri/expreg>
 
+I’ve become a big fan of this package recently, even though it’s just
+been sitting here for a while.
+
 #+begin_src emacs-lisp
-(package! expreg
-  (keymap-global-set "C-+" #'expreg-expand)
-  (keymap-global-set "C-=" #'expreg-contract))
+(package! expreg)
 #+end_src
 
 **** =drag-stuff= :: drag stuff around in arbitrary directions :package:
-:PROPERTIES:
-:ID:       1febb9e9-ec19-4765-b6bb-21613e7667fb
-:END:
 
 <https://github.com/rejeep/drag-stuff.el>
 
@@ -2789,18 +2457,12 @@ column regardless of its original position.
 
 #+begin_src emacs-lisp
 (use-package drag-stuff
-  ;; :ensure t
-  :bind
-  (([M-up] . drag-stuff-up)
-   ([M-right] . drag-stuff-right)
-   ([M-down] . drag-stuff-down)
-   ([M-left] . drag-stuff-left)))
+  :demand t)
 #+end_src
 
 **** Visualize and electrify matching character pairs :pairs:
 
 See the Info node [[info:emacs#Matching]]
-
 
 #+begin_src emacs-lisp
 (setopt blink-matching-paren t)
@@ -2819,7 +2481,6 @@ See the Info node [[info:emacs#Matching]]
 
 **** Consider camelCaseWORDs as separate words
 :PROPERTIES:
-:ID:       b0593fa1-e228-4fcd-89f2-f7bbdf5f9d2c
 :END:
 
 While it can be useful in some contexts, I wish that ~subword-mode~ did not break
@@ -2848,21 +2509,14 @@ words backwardsly]]
 #+end_src
 
 **** =ialign= :: Interactively ~align-regexp~ :package:
-:PROPERTIES:
-:ID:       7c7b2b24-f6e4-4af5-934f-0d66b65bba6c
-:END:
 
 <https://github.com/mkcms/interactive-align/blob/master/README.org#usage>
 
 #+begin_src emacs-lisp
-(package! ialign
-  (keymap-global-set "C-x l" #'ialign))
+(package! ialign)
 #+end_src
 
 **** TODO =string-inflection= :: Cycle through character casing :package:cycling:
-:PROPERTIES:
-:ID:       bf713b67-b25a-41c7-87ba-f5c9a9f7852b
-:END:
 
 Needs better bindings.
 
@@ -2870,13 +2524,8 @@ Needs better bindings.
 (package! string-inflection)
 
 (use-feature! ceamx-editor
-  :after string-inflection
-  :commands (ceamx/cycle-string-inflection)
-  :init
-  (defvar-keymap ceamx-string-repeat-map
-    :repeat t
-
-    "c" #'ceamx/cycle-string-inflection))
+  :demand t
+  :after string-inflection)
 #+end_src
 
 **** =typo= :: Cycle typographical characters :package:cycling:
@@ -2907,22 +2556,19 @@ see."
     (let ((excluded-modes (append ceamx-text-mode-derived-prog-modes-list
                                   ceamx-lang-typo-mode-excluded-modes)))
       (unless (derived-mode-p excluded-modes)
-        (typo-mode 1))))
-
-  (keymap-set ceamx-toggle-prefix "t" #'typo-mode))
+        (typo-mode 1)))))
 #+end_src
 
-**** TODO =cycle-at-point= :: Promptless text cycling at point :package:cycling:
+**** =cycle-at-point= :: Promptless text cycling at point :package:cycling:
 :LOGBOOK:
 - Refiled on [2025-08-08 Fri 09:45]
 :END:
 
 #+begin_src emacs-lisp
-;; TODO: bind to a key
 (package! cycle-at-point)
 #+end_src
 
-**** TODO =shift-number= :: Increase/decrease the number at point :package:cycling:
+**** =shift-number= :: Increase/decrease the number at point :package:cycling:
 :LOGBOOK:
 - Refiled on [2025-08-08 Fri 09:45]
 :END:
@@ -2933,7 +2579,7 @@ Provides commands ~shift-number-up~ and ~shift-number-down~ to increment or
 decrement the number at point, respectively.
 
 #+begin_src emacs-lisp
-;; TODO: bind to key, and add to embark actions
+;; TODO: add to embark actions
 (package! shift-number)
 #+end_src
 
@@ -2944,9 +2590,6 @@ decrement the number at point, respectively.
 #+end_src
 
 *** Modal editing
-:PROPERTIES:
-:ID:       1293c641-aecb-43ab-b001-366e7e0543c8
-:END:
 
 #+begin_src emacs-lisp
 (package! (bray :host codeberg :repo "ideasman42/emacs-bray")
@@ -3025,15 +2668,12 @@ truncated portion of a line automatically.
 #+end_src
 
 *** =unfill= :: Reverse/toggle filling/hard-wrapping text :package:keybinds:
-:PROPERTIES:
-:ID:       6590d8b1-eea1-4467-8379-89ee33c0841d
-:END:
 
 + Package :: <https://github.com/purcell/unfill>
 
 #+begin_src emacs-lisp
 (use-package unfill
-  :bind ("M-q" . unfill-toggle))
+  :demand t)
 #+end_src
 
 *** Configure secrets lookup with ~auth-source~ and =password-store=
@@ -3086,28 +2726,12 @@ truncated portion of a line automatically.
 #+end_src
 
 *** Configure GnuPG integration with ~epa~ & ~epg~
-:PROPERTIES:
-:ID:       99415168-3785-4d17-bea0-2c71f0422de1
-:END:
 
 #+begin_src emacs-lisp
 (use-feature! epa
   :demand t
   :config
   (require 'ceamx-cryption)
-
-  (define-keymap :keymap ceamx-file-prefix
-    "e" #'epa-encrypt-file
-    "d" #'epa-decrypt-file)
-
-  (define-keymap :keymap ceamx-cryption-prefix-map
-    "d" (cons "decrypt..." (define-prefix-command 'ceamx-cryption-d-prefix))
-    "d d" #'epa-decrypt-file
-    "d r" #'epa-decrypt-region
-    "e" (cons "encrypt..." (define-prefix-command 'ceamx-cryption-e-prefix))
-    "e e" #'epa-encrypt-file
-    "e r" #'epa-encrypt-region
-    "k" #'epa-list-keys)
 
   ;; HACK: No need to set a recipient every single time!
   (setq-default epa-file-encrypt-to (ceamx-cryption+epa-default-recipient))
@@ -3143,10 +2767,7 @@ truncated portion of a line automatically.
 <https://github.com/noctuid/link-hint.el>
 
 #+begin_src emacs-lisp
-(package! link-hint
-  (define-keymap :keymap (current-global-map)
-    "M-g u" #'link-hint-open-link
-    "M-g U" #'link-hint-copy-link))
+(package! link-hint)
 #+end_src
 
 *** Manage backup files and prevent file-lock clutter
@@ -3222,24 +2843,6 @@ truncated portion of a line automatically.
 
 *** Help :help:
 
-**** Rebind some default ~help-map~ keybindings :keybinds:
-
-#+begin_src emacs-lisp
-(define-keymap :keymap help-map
-  "K" (cons "[ KEYBINDINGS ]" #'ceamx-help-keybindings-prefix)
-  "l" #'find-library
-  ;; I prefer the default `man' over `consult-man'.  The latter does
-  ;; not really work well since it does not show unfiltered candidates
-  ;; by default, and two-character-named programs are too short to
-  ;; trigger the query.
-  "m" #'man                             ; orig: `describe-mode'
-  "M" #'describe-mode
-  "t" #'describe-text-properties
-
-  ;; Allow `which-key' pagination in `help-map'.
-  "C-h" nil)
-#+end_src
-
 **** =casual-suite=: transient-dispatch menus for complex modes
 
 #+begin_src emacs-lisp
@@ -3308,51 +2911,12 @@ defined in Emacs C source code:
 #+begin_src emacs-lisp
 (package! helpful
   (defer! 1
-    (require 'helpful))
-
-  (define-keymap :keymap help-map
-    "c" #'helpful-callable
-    "C" #'helpful-command
-    "f" #'helpful-function              ; orig: `describe-face'
-    "F" #'describe-face
-    "h" #'helpful-at-point
-    "K K" #'helpful-key
-    "o" #'helpful-symbol
-    "v" #'helpful-variable))
-
-#+end_src
-
-**** DISABLED Keybinding help via =which-key=
-:PROPERTIES:
-:ID:       0eb1dafe-55fb-4658-ac9b-53597da45bb3
-:END:
-:LOGBOOK:
-- Refiled on [2025-07-13 Sun 20:07]
-:END:
-
-Currently using ~embark-prefix-help-command~ instead.
-
-#+begin_src emacs-lisp
-(use-feature! which-key
-  ;; :hook (ceamx-after-init . which-key-mode)
-
-  :config
-  (setopt which-key-compute-remaps t)
-  (setopt which-key-idle-delay 1.0)
-  (setopt
-   which-key-sort-order 'which-key-description-order
-   ;; which-key-sort-order 'which-key-prefix-then-key-order
-   which-key-sort-uppercase-first nil)
-  (setopt which-key-add-column-padding 0)
-  (setopt which-key-show-remaining-keys t))
+    (require 'helpful)))
 #+end_src
 
 *** History & Undo :history:
 
 **** Record some variables' values with ~savehist~
-:PROPERTIES:
-:ID:       fb765b69-118b-4ef7-8902-f09215137f5c
-:END:
 
 #+begin_src emacs-lisp
 (use-feature! savehist
@@ -3423,19 +2987,6 @@ via <https://codeberg.org/ideasman42/emacs-undo-fu#undo-limits>
 (setopt undo-outer-limit 1006632960) ; 960mb.
 #+end_src
 
-**** =undo-fu=: Support optional linear undo/redo
-:PROPERTIES:
-:ID:       06ac0daa-058d-4124-9fa4-7b891aa8715f
-:END:
-
-- Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu>
-
-#+begin_src emacs-lisp
-(package! undo-fu
-  (keymap-global-set "C-z" #'undo-fu-only-undo)
-  (keymap-global-set "C-S-z" #'undo-fu-only-redo))
-#+end_src
-
 **** =undo-fu-session=: Record undo/redo steps across Emacs sessions
 
 - Source code :: <https://codeberg.org/ideasman42/emacs-undo-fu-session>
@@ -3448,7 +2999,7 @@ enhancement to the builtin Emacs undo system as well.
   (expand-file-name "undo-fu-session" ceamx-var-dir))
 
 (package! undo-fu-session
-  (setopt undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+  (setopt undo-fu-session-incompatible-files '("/git-rebase-todo\\'"))
   (setopt undo-fu-session-ignore-temp-files t)
   (setopt undo-fu-session-ignore-encrypted-files t)
 
@@ -3458,29 +3009,18 @@ enhancement to the builtin Emacs undo system as well.
 #+end_src
 
 **** =vundo=: Visualize the Emacs undo tree
-:PROPERTIES:
-:ID:       8fd3c7aa-cf9d-47f9-91cf-715e6f5d0618
-:END:
 
 - Source code :: <https://github.com/casouri/vundo>
 
 #+begin_src emacs-lisp
 (use-package vundo
-  ;; :ensure t
   :defer t
   :defines vundo-unicode-symbols
-
-  :bind
-  ("C-x u" . vundo)
-
   :config
-  (setopt vundo-glyph-alist vundo-unicode-symbols))
+  (setq! vundo-glyph-alist vundo-unicode-symbols))
 #+end_src
 
 *** Bookmarks :bookmarks:
-:PROPERTIES:
-:ID:       aec39cdd-984a-4789-9a0c-53964b330d31
-:END:
 
 **** =dogears=: Return to previously-visited buffer positions
 
@@ -3488,16 +3028,10 @@ enhancement to the builtin Emacs undo system as well.
 
 #+begin_src emacs-lisp :tangle no
 (package! dogears
-  (add-hook 'on-first-buffer-hook #'dogears-mode)
+  (defer! 2
+    (require 'transient))
 
-  ;; Also see `ceamx/dogears-dispatch'.
-  (define-keymap :keymap (current-global-map)
-    ;; TODO: find a new binding maybe
-    ;; "M-g d" #'dogears-go
-    "M-g M-b" #'dogears-back
-    "M-g M-f" #'dogears-forward
-    "M-g M-d" #'dogears-list
-    "M-g M-D" #'dogears-sidebar)
+  (add-hook 'on-first-buffer-hook #'dogears-mode)
 
   ;; Persist `dogears-list' between Emacs sessions.
   ;; via <https://github.com/alphapapa/dogears.el/issues/4>
@@ -3516,27 +3050,17 @@ enhancement to the builtin Emacs undo system as well.
      ["Find"
       ("d" "go..." dogears-go)
       ("l" "list" dogears-list)
-      ("S" "sidebar" dogears-sidebar)]])
-
-  (defer-until! (fboundp 'ceamx/dogears-dispatch)
-    (keymap-global-set "M-g d" #'ceamx/dogears-dispatch)))
+      ("S" "sidebar" dogears-sidebar)]]))
 #+end_src
 
 **** =bookmark-in-project= :: Functions to limit bookmark queries to current project
 :PROPERTIES:
-:ID:       ad886f04-b66b-453b-91c6-b1f9502e4af2
 :END:
 
 #+begin_src emacs-lisp
 (package! (bookmark-in-project
            :host codeberg
-           :repo "ideasman42/emacs-bookmark-in-project")
-
-  (define-keymap :keymap ceamx-bookmark-prefix-map
-    "b" #'bookmark-in-project-jump
-    "n" #'bookmark-in-project-jump-next
-    "p" #'bookmark-in-project-jump-previous
-    "*" #'bookmark-in-project-toggle))
+           :repo "ideasman42/emacs-bookmark-in-project"))
 #+end_src
 
 *** macOS: Remap modifier keys for the Apple keyboard layout :keybinds:
@@ -3612,11 +3136,7 @@ these utilities.
 *** Baseline search configuration
 
 #+begin_src emacs-lisp
-(use-feature! emacs
-  :config
-  (setopt find-library-include-other-files nil)
-
-  (keymap-set search-map "r" '("replace..." . ceamx-replace-prefix)))
+(setq! find-library-include-other-files nil)
 #+end_src
 
 *** Configure interactive searching with ~isearch~
@@ -3653,9 +3173,6 @@ these utilities.
     "s" #'isearch-repeat-forward
     "r" #'isearch-repeat-backward)
 
-  (define-keymap :keymap (current-global-map)
-    "M-s M-o" #'multi-occur)
-
   (define-keymap :keymap isearch-mode-map
     "M-<" #'isearch-beginning-of-buffer
     "M->" #'isearch-end-of-buffer
@@ -3690,13 +3207,7 @@ these utilities.
 
 #+begin_src emacs-lisp
 (package! substitute
-  (define-keymap :keymap ceamx-replace-prefix
-    "b" #'substitute-target-in-buffer
-    "d" #'substitute-target-in-defun
-    "s" #'substitute-target-above-point
-    "S" #'substitute-target-below-point)
-
-  (setopt substitute-hightlight t))
+  (setq! substitute-hightlight t))
 
 (after! substitute
   ;; Provide messages reporting on matches changed in the context.
@@ -3705,7 +3216,6 @@ these utilities.
 
 *** =wgrep= :: writable grep buffers
 :PROPERTIES:
-:ID:       db0ec455-df43-47da-9015-b22d48699027
 :END:
 
 + Package :: <https://github.com/mhayashi1120/Emacs-wgrep>
@@ -3910,21 +3420,16 @@ Unfortunately, ~re-builder~ itself is poorly-documented.
 
 #+begin_src emacs-lisp
 (package! dired-preview
-  (after! dired
-    (keymap-set dired-mode-map "C-c t p" #'dired-preview-global-mode))
-  (after! dired-preview
-    (setq! dired-preview-delay 0.3)
-    (setq! dired-preview-trigger-on-start t)
-    (setq! dired-preview-max-size (expt 2 20))
-    (setq! dired-preview-ignored-extensions-regexp
-             (concat
-              "\\."
-              "\\(gz\\|" "zst\\|" "tar\\|" "xz\\|"
-              "rar\\|" "zip\\|" "iso\\|" "epub"
-              "\\)"))))
+  (setq! dired-preview-delay 0.3)
+  (setq! dired-preview-trigger-on-start t)
+  (setq! dired-preview-max-size (expt 2 20))
+  (setq! dired-preview-ignored-extensions-regexp
+         (concat
+          "\\."
+          "\\(gz\\|" "zst\\|" "tar\\|" "xz\\|"
+          "rar\\|" "zip\\|" "iso\\|" "epub"
+          "\\)")))
 #+end_src
-
-*** TODO Only show =dired-preview= window on demand
 
 *** =dired-rsync= :: async =rsync= from dired
 :PROPERTIES:
@@ -4267,31 +3772,26 @@ session:
 
 #+begin_src emacs-lisp
 (package! consult
-  (keymap-global-set "C-c b b" #'consult-bookmark)
-  (keymap-global-set "C-c h" #'consult-history)
-  (keymap-global-set "C-c k" #'consult-kmacro)
-  (keymap-global-set "C-c q a t" #'consult-theme)
-
   ;; Improve previews for `consult-register' and other register commands
-  (setopt register-preview-delay 0.5)
-  (setopt register-preview-function #'consult-register-format)
+  (setq! register-preview-delay 0.5)
+  (setq! register-preview-function #'consult-register-format)
   (advice-add #'register-preview :override #'consult-register-window)
 
   ;; Display xref locations with previews
-  (setopt xref-show-definitions-function #'consult-xref)
-  (setopt xref-show-xrefs-function #'consult-xref))
+  (setq! xref-show-definitions-function #'consult-xref)
+  (setq! xref-show-xrefs-function #'consult-xref)
+
+  (setq! consult-narrow-key "<")       ; alternative: "C-+"
+  (setq! consult-line-numbers-widen t)
+  (setq! consult-async-min-input 3
+          consult-async-input-debounce 0.5
+          consult-async-input-throttle 0.8))
 
 (after! consult
   (require 'consult-imenu)
 
-  (setopt consult-narrow-key "<")       ; alternative: "C-+"
-  (setopt consult-line-numbers-widen t)
-  (setopt consult-async-min-input 3
-          consult-async-input-debounce 0.5
-          consult-async-input-throttle 0.8)
-
   (after! pulsar
-    (setq consult-after-jump-hook nil)
+    (setq! consult-after-jump-hook nil)
     (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
       (add-hook 'consult-after-jump-hook fn))))
 #+end_src
@@ -4316,77 +3816,19 @@ Refine preview appearance and behavior:
 *** Search pre-defined sets of Info pages with ~consult-info~ :consult:
 
 #+begin_src emacs-lisp
-(define-prefix-command 'ceamx-info-prefix 'ceamx-info-prefix-map)
-
-(keymap-global-set "C-h i" (cons "[info]" #'ceamx-info-prefix))
-
 (use-feature! ceamx-completion
   :after consult
   :commands (ceamx/consult-info-dwim
              ceamx/completion-info
              ceamx/emacs-info
-             ceamx/org-info)
-  :init
-  (define-keymap :keymap help-map
-    "i i" #'ceamx/consult-info-dwim
-    "i c" #'ceamx/completion-info
-    "i e" #'ceamx/emacs-info
-    "i o" #'ceamx/org-info))
+             ceamx/org-info))
 #+end_src
 
 *** Define keybindings for ~consult~ and its extensions :keybinds:consult:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
-  "C-c M-x" #'consult-mode-command
-
-  "<remap> <Info-search>" #'consult-info
-
-  "C-x M-:" #'consult-complex-command ; orig. `repeat-complex-command'
-
-  ;; "C-x b" #'consult-buffer              ; orig. `switch-to-buffer'
-
-  "C-x 4 b" #'consult-buffer-other-window ; orig. `switch-to-buffer-other-window'
-  "C-x 5 b" #'consult-buffer-other-frame ; orig. `switch-to-buffer-other-frame'
-  "C-x t b" #'consult-buffer-other-tab ; orig. `switch-to-buffer-other-tab'
-  "C-x r b" #'consult-bookmark         ; orig. `bookmark-jump'
-  "C-x p b" #'consult-project-buffer ; orig. `project-switch-to-buffer'
-
-  ;; [C-h] bindings (`help-map')
-  "C-h I" #'consult-info               ; orig. `describe-input-method'
-
-  ;; Custom M-# bindings for fast register access
-  "M-#"    #'consult-register-load
-  "M-'"    #'consult-register-store ; orig. `abbrev-prefix-mark' (unrelated)
-  "C-M-#"  #'consult-register
-
-  ;; TODO: reconcile with current binding for `forward-symbol'
-  ;; "M-F" #'consult-focus-lines
-  "M-K" #'consult-keep-lines
-  "M-y" #'consult-yank-pop              ; orig. `yank-pop'
-
-  ;; M-g bindings (`goto-map')
-  "M-g e"  #'consult-compile-error
-  "M-g f"  #'consult-flymake            ; or: `consult-flycheck'
-  "M-g g"  #'consult-goto-line          ; orig. `goto-line'
-  "M-g M-g" #'consult-goto-line         ; orig. `goto-line'
-  "M-g o"  #'consult-outline            ; or: `consult-org-heading'
-  "M-g m"  #'consult-mark
-  "M-g k"  #'consult-global-mark
-  "M-g i"  #'consult-imenu
-  "M-g I"  #'consult-imenu-multi
-
-  ;; M-s bindings (`search-map')
-  "M-s d"  #'consult-fd                 ; or `consult-find'
-  "M-s c"  #'consult-locate
-  "M-s e"  #'consult-isearch-history
-  "M-s g"  #'consult-ripgrep
-  "M-s G"  #'consult-git-grep
-  "M-s k"  #'consult-keep-lines
-  "M-s l"  #'consult-line
-  "M-s L"  #'consult-line-multi
-  "M-s u"  #'consult-focus-lines
-  "M-s M-s" #'consult-outline)
+  "<remap> <Info-search>" #'consult-info)
 
 (after! isearch
   (define-keymap :keymap isearch-mode-map
@@ -4395,9 +3837,6 @@ Refine preview appearance and behavior:
     "M-s l" #'consult-line              ; needed by `consult-line' to detect `isearch'
     "M-s L" #'consult-line-multi        ; needed by `consult-line' to detect `isearch'
     ))
-
-(keymap-set minibuffer-local-map "M-s" #'consult-history) ; orig. `next-matching-history-element'
-(keymap-set minibuffer-local-map "M-r" #'consult-history) ; orig. `previous-matching-history-element'
 
 (after! consult
   ;; Make narrowing help available in the minibuffer.
@@ -4525,12 +3964,8 @@ Furthermore Tempel supports syntax extensions:
 
 **** Configuration
 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (package! tempel
-  (define-keymap :keymap (current-global-map)
-    "M-+" #'tempel-complete
-    "M-*" #'tempel-insert)
-
   ;; Setup completion at point for Tempel templates.
   ;;
   ;; FIXME: prevent automatically completing `tempel-trigger-prefix'
@@ -4546,6 +3981,7 @@ Furthermore Tempel supports syntax extensions:
 use `tempel-complete' if you want to see all matches, but then
 you should also configure `tempel-trigger-prefix', such that
 Tempel does not trigger too often when you don't expect it."
+    ;; FIXME: misuse of `add-hook'!  this only works by coincidence
     (add-hook 'completion-at-point-functions #'tempel-complete -90 t)))
 
 (after! tempel
@@ -4595,8 +4031,6 @@ notably, JSON Schema completions.
 
 #+begin_src emacs-lisp
 (package! yasnippet
-  (keymap-set ceamx-insert-prefix-map "s" #'yas-insert-snippet)
-
   (defer! 3
     (yas-global-mode 1)))
 
@@ -4750,15 +4184,11 @@ A final newline would be inserted literally into the snippet expansion."
 #+end_src
 
 *** =spdx= :: insertable SPDX license headers :package:snippets:
-:PROPERTIES:
-:ID:       4f029a65-d064-4715-9947-e9d32b4bdf67
-:END:
 
 - src :: <https://github.com/condy0919/spdx.el>
 
-  #+begin_src emacs-lisp
-(package! spdx
-  (keymap-set ceamx-insert-prefix-map "L" #'spdx-insert-spdx))
+#+begin_src emacs-lisp
+(package! spdx)
 #+end_src
 
 *** =corfu= :: [co]mpletion in [r]egion [fu]nction :package:
@@ -4917,24 +4347,10 @@ See also ~popon~, the utility library powering the interface.
     ;; <https://github.com/minad/corfu/wiki#continuously-update-the-candidates>
     (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 
-  (keymap-set ceamx-insert-prefix-map "E" #'cape-emoji)
-
-  ;; cf. `cape-prefix-map' for ideas
-  (define-keymap :keymap ceamx-completion-prefix-map
-    "p" #'completion-at-point
-
-    "a" #'cape-abbrev
-    "d" #'cape-dabbrev
-    "e" (cape-capf-interactive #'elisp-completion-at-point)
-    "f" #'cape-file
-    "o" #'cape-elisp-symbol
-    "w" #'cape-dict))
+  (keymap-set ceamx-insert-prefix-map "E" #'cape-emoji))
 #+end_src
 
 *** =embark= :: [e]macs [m]ini-[b]uffer [a]ctions [r]ooted in [k]eymaps :embark:package:
-:PROPERTIES:
-:ID:       111a0c90-a300-4fa8-a954-6d5e97fcea89
-:END:
 
 - Package :: <https://github.com/oantolin/embark>
 
@@ -4944,20 +4360,6 @@ See also ~popon~, the utility library powering the interface.
   ;; delays upon invoking autoloaded commands.
   (defer! 3
     (require 'embark))
-
-  ;; NOTE: This key might be bound to emoji input in GNOME Desktop.
-  ;; However, I have not encountered a conflict on GNOME, so I must be
-  ;; doing something conveniently correct in my GNOME configurations.
-  ;; FWIW, I have enabled the Emacs-style keybindings there.
-  (keymap-global-set "C-." #'embark-act)
-
-  ;; The result of calling `embark-dwim' on a symbol still ends up
-  ;; calling `xref-find-definitions' as the default do-what-i-mean
-  ;; action.
-  (keymap-global-set "M-." #'embark-dwim) ; orig. `xref-find-definitions'
-
-  (keymap-global-set "C-h b" #'embark-bindings) ; orig: `describe-bindings'
-  (keymap-global-set "C-h B" #'describe-bindings)
 
   (unless (bound-and-true-p which-key-mode)
     (setopt prefix-help-command #'embark-prefix-help-command)))
@@ -5031,22 +4433,7 @@ Define Embark actions for acting on tabs:
   (keymap-set minibuffer-local-map "C-c C-e" #'ceamx-completion/embark-export-write))
 #+end_src
 
-*** Keybindings :keybinds:snippets:
-
-#+begin_src emacs-lisp
-(keymap-global-set "C-c p" #'completion-at-point)
-
-(define-keymap :keymap ceamx-snippet-prefix
-  "n" #'yas-new-snippet
-  "v" #'yas-visit-snippet-file
-  "y" #'yas-insert-snippet
-  "Y" #'tempel-insert)
-#+end_src
-
 *** Provide feature ~ceamx-init-completion~
-:PROPERTIES:
-:ID:       f58a3ca1-4cbd-4220-9d65-ad102ed548c9
-:END:
 
 #+begin_src emacs-lisp
 (provide 'ceamx-init-completion)
@@ -5073,27 +4460,10 @@ Define Embark actions for acting on tabs:
 #+end_src
 
 *** General customizations
-:PROPERTIES:
-:ID:       3edd2008-b6f1-4de2-b0fe-388775c61d93
-:END:
 
 #+begin_src emacs-lisp
-(setopt split-width-threshold 120
-        split-height-threshold nil)
-
-(define-keymap :keymap (current-global-map)
-  "C-x =" #'balance-windows
-  "C-x +" #'balance-windows-area
-  "C-x C-n" #'next-buffer
-  "C-x C-p" #'previous-buffer
-  ;; TODO: consider sub-mirroring window manager bindings
-  "C-x <up>" #'enlarge-window           ; also: C-x ^
-  "C-x <down>" #'shrink-window
-  "C-x <left>" #'shrink-window-horizontally
-  "C-x <right>" #'enlarge-window-horizontally)
-
-(use-feature! ceamx-window
-  :bind ("C-x o" . #'ceamx/other-window))
+(setq! split-width-threshold 120
+       split-height-threshold nil)
 #+end_src
 
 *** Buffer display
@@ -5220,7 +4590,7 @@ Action alist entries are:
     <https://github.com/karthink/.emacs.d/blob/6aa2e034ce641af60c317697de786bedc2f43a71/lisp/setup-windows.el>
 
 
-    #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (setopt display-buffer-alist
         `(
           ;; (,(rx "*" (or "Agenda Commands" "Org Select") "*")
@@ -5249,23 +4619,15 @@ Action alist entries are:
            (display-buffer-in-side-window)
            (window-height . 0.2)
            (side . bottom))))
-    #+end_src
+#+end_src
 
 **** =popper= :: Summon and dismiss "popup" windows :popup:
-:PROPERTIES:
-:ID:       22ada524-f8e6-4f97-b745-5e00219c1be4
-:END:
 
 - Website :: <https://github.com/karthink/popper>
 
 #+begin_src emacs-lisp
 (package! popper
-  (define-keymap :keymap (current-global-map)
-    "C-`" #'popper-toggle
-    "C-~" #'popper-cycle
-    "C-M-`" #'popper-toggle-type)
-
-  (setopt popper-reference-buffers
+  (setq! popper-reference-buffers
           (append
            ceamx-simple-help-modes-list
            ceamx-simple-help-buffer-names-list
@@ -5307,9 +4669,6 @@ Action alist entries are:
 #+end_src
 
 ***** Configure overrides in ~popper-repeat-map~
-:PROPERTIES:
-:ID:       df697f37-7a4d-4206-80a2-1814bae3db2b
-:END:
 
 #+begin_src emacs-lisp
 (after! popper
@@ -5338,9 +4697,6 @@ Action alist entries are:
 #+end_src
 
 **** =lentic= :: Create decoupled views of the same content
-:PROPERTIES:
-:ID:       c6b0beb5-5c7b-4125-b6db-7cf25629a06a
-:END:
 
 #+begin_src emacs-lisp
 (package! lentic
@@ -5374,8 +4730,11 @@ Action alist entries are:
 
 #+begin_src emacs-lisp
 (package! golden-ratio
-  (setopt golden-ratio-auto-scale t)
-  (setopt golden-ratio-max-width 100))
+  (golden-ratio-mode 1)
+
+  (setq! golden-ratio-max-width)
+  (setq! golden-ratio-auto-scale t)
+  (setq! golden-ratio-max-width nil))
 #+end_src
 
 **** =ace-window= :: interactively manage windows
@@ -5383,12 +4742,10 @@ Action alist entries are:
 <https://github.com/abo-abo/ace-window>
 
 #+begin_src emacs-lisp
-(package! ace-window
-  (define-keymap :keymap (current-global-map)
-    "C-x w w" #'ace-window))
+(package! ace-window)
 
 (after! ace-window
-  (setopt aw-scope 'visible)
+  (setq! aw-scope 'visible)
 
   (after! pulsar
     (dolist (fn '( aw-copy-window aw-delete-window aw-move-window
@@ -5398,21 +4755,16 @@ Action alist entries are:
 #+end_src
 
 **** =transpose-frame= :: transpose a frame's windows
-:PROPERTIES:
-:ID:       76f64487-fbd0-4754-af9b-ceebf4f0916e
-:END:
 
 #+begin_src emacs-lisp
-(package! transpose-frame
-  (keymap-global-set "C-x w SPC" #'transpose-frame))
+(package! transpose-frame)
 #+end_src
 
 **** ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
-:PROPERTIES:
-:ID:       5d1605bb-1c26-41cc-a1f7-317354ff113b
-:END:
 
 #+begin_src emacs-lisp
+(require 'transient)
+
 (transient-define-prefix ceamx/window-dispatch ()
   "Window management transient."
   :transient-suffix 'transient--do-stay
@@ -5481,9 +4833,6 @@ Action alist entries are:
 #+end_src
 
 **** =activities= :: organize window+buffer by activity :tabs:
-:PROPERTIES:
-:ID:       91310539-1562-4d0c-9648-0f3aa56cc2f0
-:END:
 
 - Website :: <https://github.com/alphapapa/activities.el>
 
@@ -5507,79 +4856,26 @@ Disabled because =persist= dependency is unavailable, likely due to GNU ELPA fuc
   (setopt activities-kill-buffers t))
 #+end_src
 
-The keybindings conflict with ~edebug~, so they need to be defined later
-than usual.  This is still the case as of [2025-01-25 Sat].
-
-#+begin_src emacs-lisp
-(defun ceamx-after-init-define-activities-keys-h ()
-  "Define keybindings for `activities' late to override `edebug'.
-Intended for use as a hook on `ceamx-after-init-hook'."
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-
-  ;; (keymap-global-unset "C-x C-a" t)
-  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
-
-  ;; TODO: still shares bindings with edebug which is confusing
-  (define-keymap :keymap (current-global-map)
-    "C-x C-a C-n" #'activities-new
-    "C-x C-a C-d" #'activities-define
-    "C-x C-a C-a" #'activities-resume
-    "C-x C-a C-s" #'activities-suspend
-    "C-x C-a C-k" #'activities-kill
-    "C-x C-a RET" #'activities-switch
-
-    "C-x C-a b" #'activities-switch-buffer
-    "C-x C-a g" #'activities-revert
-    "C-x C-a l" #'activities-list))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
-#+end_src
-
 **** =bufler= :: group buffers with programmable rules
-:PROPERTIES:
-:ID:       82ed50ad-45b4-4a0c-9ae5-e978de65cdcd
-:END:
 
 #+begin_src emacs-lisp
 (package! bufler
   (require 'bufler)
 
-  (define-keymap :keymap (current-global-map)
-    ;; "C-x b" #'bufler-switch-buffer
-    "C-x B" #'bufler-workspace-focus-buffer
-    "C-x C-b" #'bufler                  ; orig. `ibuffer'
-    "C-x C-B" #'ibuffer
+  (setq! bufler-reverse t)
+  (setq! bufler-workspace-mode-lighter "β ")
+  (setq! bufler-columns '("Name" "Size" "Mode" "VC" "Path"))
+  (setq! bufler-initial-face-depth 1)
 
-    "C-x w o" #'bufler-workspace-open
-    "C-x w r" #'bufler-workspace-reset
-    "C-x w s" #'bufler-workspace-save ; orig. `window-toggle-side-windows'
-    )
-
-  (define-keymap :keymap ceamx-workspace-prefix-map
-    "TAB" #'bufler-workspace-open
-    "b" #'bufler-workspace-switch-buffer
-    "B" #'bufler-workspace-focus-buffer
-    "r" #'bufler-workspace-reset
-    "s" #'bufler-workspace-save))
-#+end_src
-
-Here are the customizations for Bufler:
-
-#+begin_src emacs-lisp
-(after! bufler
-  (setopt bufler-reverse t)
-  (setopt bufler-workspace-mode-lighter "β ")
-  (setopt bufler-columns '("Name" "Size" "Mode" "VC" "Path"))
-  (setopt bufler-initial-face-depth 1)
   (after! prism
-    (setopt bufler-face-prefix "prism-level-")))
+    (setq! bufler-face-prefix "prism-level-")))
 #+end_src
 
 Here are the definitions for the Bufler grouping rules:
 
 #+begin_src emacs-lisp
 (after! bufler
-  ;; XXX: This absolutely MUST NOT use `setopt'!  Otherwise, the
+  ;; HACK: This absolutely MUST NOT use `setopt'!  Otherwise, the
   ;; package will fail to load due to a hard-to-trace error saying
   ;; something about nil being a void-function.  This probably has
   ;; something to do with the `setopt' type-checking.
@@ -5675,15 +4971,6 @@ Here are the definitions for the Bufler grouping rules:
           (auto-mode))))
 #+end_src
 
-**** Switch buffers with scoped buffer lists
-
-#+begin_src emacs-lisp
-(use-feature! ceamx-window
-  :commands (ceamx/switch-to-buffer)
-  :bind
-  ("C-x b" . #'ceamx/switch-to-buffer))
-#+end_src
-
 *** Pulse on window actions with =pulsar= :ui:pulsar:
 
 #+begin_src emacs-lisp
@@ -5706,7 +4993,6 @@ Here are the definitions for the Bufler grouping rules:
 ** Version Control :vcs:
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-vcs.el
-:VISIBILITY: folded
 :END:
 
 *** Requirements
@@ -5753,28 +5039,7 @@ Here are the definitions for the Bufler grouping rules:
   (require 'vc)
 
   (setq! vc-follow-symlinks t)
-  (setq! vc-handled-backends '(Git))
-
-  (define-keymap :keymap (current-global-map)
-    "C-x v B" #'vc-annotate
-    "C-x v d" #'vc-diff                 ; orig. `vc-dir'
-    "C-x v e" #'vc-ediff
-    "C-x v G" #'vc-log-search
-    "C-x v ." #'vc-dir-root
-    "C-x v RET" #'vc-dir-root))
-#+end_src
-
-Customize the =vc-dir= feature:
-
-#+begin_src emacs-lisp
-(progn
-  (setq! vc-dir-save-some-buffers-on-revert t) ; Emacs 31+
-
-  (after! vc-dir
-    (define-keymap :keymap vc-dir-mode-map
-      "d" #'vc-diff
-      "o" #'vc-dir-find-file-other-window
-      "O" #'vc-log-outgoing)))
+  (setq! vc-handled-backends '(Git)))
 #+end_src
 
 Customize Git-specific features:
@@ -5853,10 +5118,6 @@ Customize the behavior of =log-edit=:
 
 #+begin_src emacs-lisp
 (progn
-  (define-keymap :keymap (current-global-map)
-    "C-x p ." #'project-dired
-    "C-x p RET" #'project-dired
-    "C-x p DEL" #'project-forget-project)
   (setq! project-vc-extra-root-markers '(".project"))
   (setq! project-key-prompt-style t))
 #+end_src
@@ -5951,8 +5212,7 @@ NOTE: Fringe indicators will conflict with Flycheck.
 <https://codeberg.org/pidu/git-timemachine>
 
 #+begin_src emacs-lisp
-(package! git-timemachine
-  (keymap-global-set "C-x v t" #'git-timemachine))
+(package! git-timemachine)
 
 (after! git-timemachine
   ;; XXX: broken, see `ceamx/git-timemachine-dispatch'
@@ -6025,13 +5285,6 @@ not available, it will be installed imperatively.
 
 #+begin_src emacs-lisp
 (package! magit
-  (define-keymap :keymap (current-global-map)
-    "C-c g" #'magit-file-dispatch
-    "C-x g" #'magit-status
-    "C-c G" #'magit-dispatch
-    "C-x M-g" #'magit-dispatch))
-
-(after! magit
   ;; Save work-in-progress refs before some potentially-risky actions
   ;; where data loss is a possibility.  Note that this may cause a
   ;; performance hit.
@@ -6045,11 +5298,12 @@ not available, it will be installed imperatively.
   (setq! magit-bury-buffer-function #'magit-restore-window-configuration)
   ;; <https://magit.vc/manual/magit/Switching-Buffers.html#index-magit_002ddisplay_002dbuffer_002dfullframe_002dstatus_002dv1>
   (setq! magit-display-buffer-function
-          #'magit-display-buffer-fullframe-status-v1)
+         #'magit-display-buffer-fullframe-status-v1)
 
   (when (fboundp #'nerd-icons-insert)
-    (setq! magit-format-file-function #'magit-format-file-nerd-icons))
+    (setq! magit-format-file-function #'magit-format-file-nerd-icons)))
 
+(after! magit
   (define-keymap :keymap magit-status-mode-map
     "_" #'magit-revert
     ;; "V" nil
@@ -6131,9 +5385,7 @@ version!/
 (package! forge)
 
 (after! magit
-  (require 'forge)
-
-  (keymap-set vc-prefix-map "o" #'forge-browse-commit))
+  (require 'forge))
 #+end_src
 
 Forge will prefer, in order, =upstream= and then =origin=.  I use that convention
@@ -6215,15 +5467,6 @@ those three slots, and it does that by using "USERNAME /^PACKAGE/ " as the
 :END:
 
 #+begin_src emacs-lisp
-(after! prog-mode
-  ;; (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-
-  (define-keymap :keymap prog-mode-map
-    ;; Move forward out of one sexp level
-    "C-M-d" #'up-list))
-#+end_src
-
-#+begin_src emacs-lisp
 (def-hook! ceamx-init-lang-prog-mode-h ()
   '(prog-mode-hook)
   "Enable load-order-dependent features and defaults for all `prog-mode'-derived major modes.
@@ -6289,74 +5532,7 @@ Note that `emacs-lisp-mode' is excluded here due to a conflict with
     "C-c M-l" #'outline-demote))
 #+end_src
 
-**** TODO Expand the existing repeat map for outline navigation
-
-I think this needs to be /contracted/ a bit.  Some of these aren't even real commands.
-
-#+begin_src emacs-lisp
-(after! (repeat outline)
-  (define-keymap :keymap outline-navigation-repeat-map
-    "C-x" #'foldout-exit-fold
-    "x" #'foldout-exit-fold
-    "C-z" #'foldout-zoom-subtree
-    "z" #'foldout-zoom-subtree
-    "C-a" #'outline-show-all
-    "a" #'outline-show-all
-    "C-c" #'outline-hide-entry
-    "c" #'outline-hide-entry
-    "C-d" #'outline-hide-subtree
-    "C-e" #'outline-show-entry
-    "e" #'outline-show-entry
-    "TAB" #'outline-show-children
-    "C-k" #'outline-show-branches
-    "k" #'outline-show-branches
-    "C-l" #'outline-hide-leaves
-    "l" #'outline-hide-leaves
-    "RET" #'outline-insert-heading
-    "C-o" #'outline-hide-other
-    "o" #'outline-hide-other
-    "C-q" #'outline-hide-sublevels
-    "q" #'outline-hide-sublevels
-    "C-s" #'outline-show-subtree
-    "s" #'outline-show-subtree
-    "C-t" #'outline-hide-body
-    "t" #'outline-hide-body
-    "@" #'outline-mark-subtree)
-
-  (ceamx-repeatify-keymap 'outline-navigation-repeat-map))
-#+end_src
-
-**** TODO A transient menu for outline navigation
-
-#+begin_src emacs-lisp
-;; (after! (transient outline)
-;;   (transient-define-prefix ceamx/outline-dispatch ()
-;;     "Outline navigation transient menu."
-;;     [["Navigate"
-;;       ("u" "up" outline-up-heading)
-;;       ("n" "next" outline-next-visible-heading)
-;;       ("p" "prev" outline-previous-visible-heading)
-;;       ("f" "forward" outline-forward-same-level)
-;;       ("b" "backward" outline-backward-same-level)]]))
-
-;; (after! (hydra outline)
-;;   (defhydra ceamx/outline-hydra ( :color red)
-;;     "
-;; ^Navigate^            ^Subtree^        ^Metadata^
-;; ^--------^----------  ^-------^-----  ^---------^--
-;; _n_ext visible        _I_: drag up    _t_odo-state
-;; _p_revious visible    _J_: promote    _d_eadline
-;; _f_orward same level  _K_: drag down  _s_chedule
-;; _b_ack same level     _L_: demote
-;; _u_p level            _N_: narrow     _xp_: set property
-;;                       _W_: widen
-;; "))
-#+end_src
-
 *** =smart-newline= :: A self-aware newline command for programming modes :package:
-:PROPERTIES:
-:ID:       c4518207-51a4-4bf2-9aaa-0c029ab59113
-:END:
 
 #+begin_src emacs-lisp
 (use-package smart-newline
@@ -6372,6 +5548,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 (package! dumb-jump
   ;; Add to end of `xref-backend-functions' as a dumb fallback when
   ;; there are no smart options.
+  ;; FIXME: misuse of `add-hook'
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 100)
 
   (after! (hydra)
@@ -6384,10 +5561,7 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
       ("x" dumb-jump-go-prefer-external-other-window "Go external other window")
       ("i" dumb-jump-go-prompt "Prompt")
       ("l" dumb-jump-quick-look "Quick look")
-      ("b" dumb-jump-back "Back"))
-
-    (define-keymap :keymap ceamx-code-prefix
-      "j" #'ceamx/dumb-jump-dispatch/body)))
+      ("b" dumb-jump-back "Back"))))
 #+end_src
 
 *** =rainbow-mode= :: Colorize color names and hexcodes in buffers :theme:
@@ -6450,16 +5624,12 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 #+end_src
 
 *** =hl-todo= :: Highlight "TODO" and other codetags in comments and strings :package:
-:PROPERTIES:
-:ID:       fc0d70a5-e486-42ff-8e35-e4fc07069c15
-:END:
 
 - website :: <https://github.com/tarsius/hl-todo>
 - reference :: <https://peps.python.org/pep-0350/#specification>
 
 #+begin_src emacs-lisp
 (use-package hl-todo
-  ;;:ensure t
   :hook (prog-mode . hl-todo-mode))
 #+end_src
 
@@ -6476,9 +5646,6 @@ I think this needs to be /contracted/ a bit.  Some of these aren't even real com
 #+end_src
 
 *** =devdocs= :: Peruse <devdocs.io> docsets locally :help:
-:PROPERTIES:
-:ID:       9907125e-84b9-420f-8991-c24b33f84161
-:END:
 
 - Source code :: <https://github.com/astoff/devdocs.el>
 
@@ -6486,16 +5653,10 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
 
 #+begin_src emacs-lisp
 (use-package devdocs
-  ;; :ensure t
   :defer t
 
-  :bind
-  (:map help-map
-        ("D" . devdocs-lookup))
-
   :init
-  (setopt devdocs-window-select t)
-
+  (setq! devdocs-window-select t)
   (after! popper
     ;; FIXME: no effect -- maybe the package is overriding?
     (add-to-list 'popper-reference-buffers "\\*devdocs\\*"))
@@ -6508,9 +5669,6 @@ NOTE: Must run ~devdocs-install~ before a docset is available for reference.
 #+end_src
 
 *** Display multiple composed messages inside ~eldoc~ :help:
-:PROPERTIES:
-:ID:       75c14cf4-c33e-4348-963b-bf08dcf6a21c
-:END:
 
 #+begin_src emacs-lisp
 (setopt eldoc-documentation-function #'eldoc-documentation-compose)
@@ -6588,7 +5746,6 @@ enchant-lsmod-2 -list-dicts
 *** Formatters :formatting:
 **** =emacs-reformatter= :: a simple formatter factory :package:
 :PROPERTIES:
-:ID:       db715ea8-bdf8-437a-b966-df1e97aff384
 :END:
 
 #+begin_src emacs-lisp
@@ -6598,7 +5755,6 @@ enchant-lsmod-2 -list-dicts
 
 **** =apheleia= :: an opinionated auto-formatter :package:
 :PROPERTIES:
-:ID:       e4e1c7ed-dd8e-444b-bad8-ef3c8e0bc3a2
 :END:
 
 In case you run into issues with ~web-mode~ not updating syntax highlighting after
@@ -6717,18 +5873,10 @@ This section handles the curse.
 :END:
 
 #+begin_src emacs-lisp
-(progn
-  ;; Mirror the [C-c !] Flycheck prefix.
-  (define-keymap :keymap (current-global-map)
-    "C-c ! l" #'flymake-show-buffer-diagnostics
-    "C-c ! n" #'flymake-goto-next-error
-    "C-c ! p" #'flymake-goto-previous-error
-    "C-c ! c" #'flymake-show-buffer-diagnostics)
-
-  (after! flymake
-    (setopt flymake-fringe-indicator-position 'right-fringe)
-    (setopt flymake-no-changes-timeout 1.0)
-    (setopt flymake-wrap-around t)))
+(after! flymake
+  (setq! flymake-fringe-indicator-position 'right-fringe)
+  (setq! flymake-no-changes-timeout 1.0)
+  (setq! flymake-wrap-around t))
 #+end_src
 
 **** =flycheck= :: The /other/ file diagnostics provider :package:
@@ -6741,8 +5889,6 @@ This section handles the curse.
   (add-hook 'ceamx-after-init-hook #'global-flycheck-mode))
 
 (package! consult-flycheck
-  (keymap-global-set "M-g f" #'consult-flycheck)
-
   (after! (consult flycheck)
     (require 'consult-flycheck)))
 
@@ -6764,14 +5910,8 @@ This section handles the curse.
 #+end_src
 
 *** Structural editing & Tree-Sitter
-:PROPERTIES:
-:ID:       2fec391c-6023-41fd-a3b4-2dba5d91a55d
-:END:
 
 **** =puni= :: versatile structural editing
-:PROPERTIES:
-:ID:       ce9e9bd5-70bc-451c-b21c-fd29b2c38834
-:END:
 
 <https://github.com/AmaiKinono/puni>
 
@@ -6780,18 +5920,6 @@ This section handles the curse.
   (puni-global-mode)
   (add-hook 'prog-mode-hook #'puni-mode)
   (add-hook 'term-mode-hook #'puni-disable-puni-mode))
-
-(after! puni
-  (define-keymap :keymap puni-mode-map
-    "C-M-f" #'puni-forward-sexp
-    "C-M-b" #'puni-backward-sexp
-    "C-M-a" #'puni-beginning-of-sexp
-    "C-M-e" #'puni-end-of-sexp
-    "C-M-[" #'puni-backward-sexp-or-up-list
-    "C-M-]" #'puni-forward-sexp-or-up-list
-
-    "M-(" #'puni-syntactic-forward-punct
-    "M-)" #'puni-syntactic-backward-punct))
 #+end_src
 
 Work in progress.
@@ -6800,9 +5928,6 @@ This is still not quite usable as a Lispy replacement.  The goal is to
 use similar structureal editing keybindings across many major-modes.
 
 **** TODO Define a repeat-map for structural editing
-:PROPERTIES:
-:ID:       2507df8d-17be-4483-ab95-4b0762a90bf1
-:END:
 
 Note that this repeat-map should not be used in tandem with ~lispy-mode~
 because its bindings generally would need ~puni-mode~ to be active.
@@ -6856,9 +5981,6 @@ because its bindings generally would need ~puni-mode~ to be active.
 #+end_src
 
 **** =treesit-auto= :: automatically use available ~treesit~ modes
-:PROPERTIES:
-:ID:       10383b28-1e9c-435c-9fe1-ebfba527690d
-:END:
 
 + Package :: <https://github.com/renzmann/treesit-auto>
 
@@ -6912,37 +6034,21 @@ Increase the amount of syntax-highlighted structures:
 #+end_src
 
 **** =treesit-fold= :: Code folding with ~treesit~ :folding:
-:PROPERTIES:
-:ID:       f1699289-6ead-46f8-be44-fad5dd1d7906
-:END:
 
 + Package :: <https://github.com/emacs-tree-sitter/treesit-fold>
 
   There is a lot to configure…
 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (package! treesit-fold
   (setopt treesit-fold-line-count-show t)
   (setopt treesit-fold-summary-show t)
 
   (global-treesit-fold-mode 1)
   (global-treesit-fold-indicators-mode -1))
-
-(after! treesit-fold
-  (define-keymap :keymap treesit-fold-mode-map
-    "C-c l f f" #'treesit-fold-toggle
-
-    "C-c f f c" #'treesit-fold-close
-    "C-c f f C" #'treesit-fold-close-all
-    "C-c f f o" #'treesit-fold-open
-    "C-c f f O" #'treesit-fold-open-all
-    "C-c f f r" #'treesit-fold-open-recursively))
 #+end_src
 
 **** =combobulate= :: A consistent structural navigation interface
-:PROPERTIES:
-:ID:       9dd78f17-2f20-4d69-8dfa-06aa0989ba19
-:END:
 :LOGBOOK:
 - Refiled on [2025-01-26 Sun 16:39]
 :END:
@@ -7066,9 +6172,6 @@ non-syntactic meaning to the reader.
 #+end_src
 
 *** Emacs Lisp
-:PROPERTIES:
-:ID:       badaa802-a7e4-4492-bddb-6315952771c6
-:END:
 
 **** General Elisp support customizations
 
@@ -7284,12 +6387,6 @@ now, I am going to try out LSP-Mode… again…
 
 #+begin_src emacs-lisp
 (after! eglot
-  (keymap-set eglot-mode-map "C-c l a" #'eglot-code-actions)
-  (keymap-set eglot-mode-map "C-c l r" #'eglot-rename)
-
-  (after! consult
-    (keymap-set eglot-mode-map "C-c l o" #'consult-eglot-symbols))
-
   (setopt eglot-sync-connect 1)
   (setopt eglot-autoshutdown t)
   (setopt eglot-send-changes-idle-time 0.5)
@@ -7396,26 +6493,6 @@ The timing here may be delicate...
 #+begin_src emacs-lisp
 (package! consult-eglot
   (defalias 'ceamx/list-workspace-symbols #'consult-eglot-symbols))
-#+end_src
-
-***** Keybindings :keybinds:
-:PROPERTIES:
-:ID:       580d70ee-0c49-4ddf-9f38-3d6f516fb09f
-:END:
-
-#+begin_src emacs-lisp
-(keymap-global-set "C-c l a" '("action.." . eglot-code-actions))
-(keymap-global-set "C-c l r" '("rename..." . eglot-rename))
-(keymap-global-set "C-c l o" #'consult-eglot-symbols)
-
-(after! eglot
-  ;; Override the default binding for `xref-find-apropos'.
-  (keymap-set eglot-mode-map "C-M-." #'consult-eglot-symbols))
-
-(after! lsp-mode
-    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
-    ;; Override the default binding for `xref-find-apropos'.
-    (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
 #+end_src
 
 
@@ -7535,7 +6612,6 @@ Requires =emacs-lsp-booster= to be installed into the environment.
 *** TODO Debugging with ~dap-mode~ and the Debug Adapter Protocol (DAP)
 :PROPERTIES:
 :header-args: :tangle no
-:ID:       bf1c021a-4b65-4a6b-98d0-3beea5f7f151
 :END:
 
 - website :: <https://github.com/emacs-lsp/dap-mode>
@@ -7549,18 +6625,12 @@ Requires =emacs-lsp-booster= to be installed into the environment.
 #+end_src
 
 *** JSON/JSONC
-:PROPERTIES:
-:ID:       62d6b3c0-60ca-4bf3-9613-e09f403d7eac
-:END:
 
 #+begin_src emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.jsonc\\'" . json-ts-mode))
 #+end_src
 
 *** TOML :requires_external:
-:PROPERTIES:
-:ID:       04f99d67-a7a9-4a46-9095-9afec907cc4a
-:END:
 
 + Requires-External :: =taplo=
 
@@ -7571,9 +6641,6 @@ Requires =emacs-lsp-booster= to be installed into the environment.
   not supported by Biome or Prettier.
 
 **** Register =taplo= formatting utilities :formatting:
-:PROPERTIES:
-:ID:       777ee791-be1a-43b7-86d5-18dca405b75f
-:END:
 
 #+begin_src emacs-lisp
 (after! reformatter
@@ -7589,9 +6656,6 @@ Requires =emacs-lsp-booster= to be installed into the environment.
 #+end_src
 
 **** Use the =taplo= language server :eglot:lsp:
-:PROPERTIES:
-:ID:       1fbf97bf-e6f8-499d-a8c1-b08236cfb44c
-:END:
 
 #+begin_src emacs-lisp
 (use-feature! ceamx-eglot
@@ -7660,15 +6724,6 @@ Install the =yaml-language-server= from Nixpkgs first.
 
 #+begin_src emacs-lisp
 (package! csv-mode)
-
-(after! csv-mode
-  (define-keymap :keymap csv-mode-map
-    "a" #'csv-align-fields
-    "u" #'csv-unalign-fields
-    "s" #'csv-sort-fields
-    "S" #'csv-sort-numeric-fields
-    "k" #'csv-kill-fields
-    "t" #'csv-transpose))
 #+end_src
 
 *** KDL
@@ -7698,9 +6753,9 @@ Install the =yaml-language-server= from Nixpkgs first.
   (add-hook 'jq-mode-hook (##electric-pair-local-mode -1))
 
   (after! json
-    (keymap-set js-json-mode-map "C-c o r" #'jq-interactively))
+    (keymap-set js-json-mode-map "C-:" #'jq-interactively))
   (after! json-ts-mode
-    (keymap-set json-ts-mode-map "C-c o r" #'jq-interactively)))
+    (keymap-set json-ts-mode-map "C-:" #'jq-interactively)))
 #+end_src
 
 *** JavaScript
@@ -7736,15 +6791,13 @@ Install the =yaml-language-server= from Nixpkgs first.
 (package! rust-mode)
 
 (package! rustic
-
-  (setopt rustic-format-trigger nil
+  (setq! rustic-format-trigger nil
           rustic-babel-format-src-block nil)
-  (setopt rustic-cargo-use-last-stored-arguments t))
+  (setq! rustic-cargo-use-last-stored-arguments t))
 
-(after! (rust-mode rustic)
-  (pushnew! auto-mode-alist
-            '("\\.rs\\'" . rust-mode)
-            '("\\.rs\\'" . rustic-mode)))
+;; (after! (rust-mode rustic)
+;;   (map-put 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+;;   (map-put 'auto-mode-alist '("\\.rs\\'" . rustic-mode)))
 #+end_src
 
 *** Lua
@@ -7954,8 +7007,7 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (keymap-set nix-repl-mode-map "C-:" #'quit-window))
 #+end_src
 
-*** Language Support for PHP
-
+*** PHP
 **** Feature Settings
 
 #+begin_src emacs-lisp
@@ -7964,9 +7016,6 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
 #+end_src
 
 **** Ignore PHP-specific directories and files
-:PROPERTIES:
-:ID:       772ead4f-6d76-479c-8267-78d61b457c78
-:END:
 
 #+begin_src emacs-lisp
 (appendq! xref-ignored-files
@@ -7988,9 +7037,6 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   #+end_src
 
 ***** =php-ts-mode= [builtin]
-:PROPERTIES:
-:ID:       892d02b2-d88a-4ee4-8b5b-addc613e1496
-:END:
 
 ~php-ts-mode~ is part of Emacs 30.
 
@@ -8008,9 +7054,6 @@ installation might get confusing.
 #+end_src
 
 **** Display line numbers in PHP buffers
-:PROPERTIES:
-:ID:       5be5d8be-1b82-4742-a0f2-cf716e521b9f
-:END:
 
 #+begin_src emacs-lisp
 (after! php-mode
@@ -8190,9 +7233,6 @@ Requires:
   #+end_example
 
 *** Shell scripts
-:PROPERTIES:
-:ID:       2b9569ee-d623-4246-a3c3-af59abd75e1f
-:END:
 
 Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 ~flymake~ will handle it just fine.
@@ -8217,9 +7257,7 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 *** =apache-mode= :: Language support for Apache Web Server configuration files
 
 #+begin_src emacs-lisp
-(use-package apache-mode
-  ;; :ensure t
-  )
+(package! apache-mode)
 #+end_src
 
 *** =fish-mode= :: Language support for Fish shell script files
@@ -8242,9 +7280,6 @@ Make sure ~flycheck-mode~ is not enabled in shell script buffers, as
 #+end_src
 
 *** =just-mode= :: Language support for the Just task runner configuration files
-:PROPERTIES:
-:ID:       f57bb40b-4efc-4f77-8bef-bad0d8c2c1ba
-:END:
 
 #+begin_src emacs-lisp
 (package! just-ts-mode)
@@ -8290,9 +7325,7 @@ Requires that the =just-lsp= package is available in the environment.
 #+end_src
 
 *** =yuck-mode= :: Language support for =yuck= configuration files for ElKowar’s Wacky Widgets
-:PROPERTIES:
-:ID:       b3d679d4-d658-424f-bbb3-2b56548835c0
-:END:
+
 #+begin_src emacs-lisp
 (package! yuck-mode)
 #+end_src
@@ -8388,9 +7421,7 @@ Requires that the =just-lsp= package is available in the environment.
 - website :: <https://github.com/mclear-tools/consult-notes>
 
 #+begin_src emacs-lisp
-(package! consult-notes
-  (keymap-set ceamx-note-prefix-map "s" #'consult-notes)
-  (keymap-global-set "M-s n" #'consult-notes))
+(package! consult-notes)
 
 (after! consult-notes
   (setopt consult-notes-file-dir-sources
@@ -8445,9 +7476,6 @@ Requires that the =just-lsp= package is available in the environment.
 #+end_src
 
 *** Denote (denote.el)
-:PROPERTIES:
-:ID:       7b776331-4757-4a87-94e5-beddb632b3d7
-:END:
 
 - website :: <https://protesilaos.com/emacs/denote>
 
@@ -8461,30 +7489,15 @@ Requires that the =just-lsp= package is available in the environment.
   (after! mouse
     (add-hook 'context-menu-functions #'denote-context-menu))
 
-  (define-keymap :keymap ceamx-capture-prefix-map
-    ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
-    "r" #'denote-region)
 
   (keymap-global-set "C-c n" #'denote)
-
-  (define-keymap :keymap ceamx-note-prefix-map
-    "n" #'denote
-    "d" #'denote-sort-dired
-    "r" #'denote-rename-file
-    "R" #'denote-rename-file-using-front-matter)
 
   (after! dired
     (define-keymap :keymap dired-mode-map
       "C-c C-d C-i" #'denote-link-dired-marked-notes
       "C-c C-d C-r" #'denote-dired-rename-files
       "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
-      "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
-  (after! org
-    (define-keymap :keymap org-mode-map
-      "C-c n h" #'denote-org-extras-extract-org-subtree
-      "C-c n l" #'denote-link
-      "C-c n L" #'denote-add-links
-      "C-c n b" #'denote-backlinks)))
+      "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter)))
 
 (after! denote
   (setopt denote-directory ceamx-note-default-dir)
@@ -8588,7 +7601,6 @@ Requires that the =just-lsp= package is available in the environment.
 :PROPERTIES:
 :header-args: :tangle lisp/ceamx-init-org.el
 :VISIBILITY: folded
-:ID:       9f19a792-41ba-4732-90bd-021e0ae609ab
 :END:
 
 *** Requirements
@@ -8704,8 +7716,6 @@ you keep it updated.
           ;; [C-<return>], but let `org-insert-heading' ([M-<return>])
           ;; insert a heading wherever.
           org-insert-heading-respect-content nil)
-  (keymap-set org-mode-map "C-M-<return>" #'org-insert-subheading)
-  (keymap-set org-mode-map "C-M-S-<return>" #'org-insert-todo-subheading)
 
   ;;
   ;; Folding
@@ -8825,9 +7835,6 @@ Intended for use as a local hook function on
 #+end_src
 
 *** =org-modern= :ui:
-:PROPERTIES:
-:ID:       98afad65-f479-4b70-96ea-7da504ea11b8
-:END:
 
 + Package :: <https://github.com/minad/org-modern>
 
@@ -8881,9 +7888,6 @@ Intended for use as a local hook function on
 #+end_src
 
 *** Appearance: Indentation :ui:
-:PROPERTIES:
-:ID:       15b18268-d8b3-4e36-9359-9b2c481698ba
-:END:
 
 #+begin_src emacs-lisp
 (after! org
@@ -8891,9 +7895,6 @@ Intended for use as a local hook function on
 #+end_src
 
 **** Method № 1: Org-Indent-Mode
-:PROPERTIES:
-:ID:       cab6066c-6fbb-4361-8ed4-09f840b1ab76
-:END:
 
 Enable =org-indent-mode= by default:
 
@@ -8916,7 +7917,6 @@ combination with ~org-indent-mode~.
 
 **** DISABLED Method № 2: Pseudo-indentation with star-level whitespace
 :PROPERTIES:
-:ID:       42fb93b5-61da-4788-afc6-157ea42c84b2
 :header-args:emacs-lisp: :tangle no
 :END:
 
@@ -8952,9 +7952,6 @@ whitespace:
 #+end_src
 
 *** =doct= :: a template engine for ~org-capture~
-:PROPERTIES:
-:ID:       e4505731-723d-4e2b-b21b-3925bc7b73d4
-:END:
 
 - Source code :: <https://github.com/progfolio/doct>
 
@@ -8964,9 +7961,6 @@ whitespace:
 #+END_SRC
 
 *** =org-ql= :: a query-builder for ~org-mode~ elements
-:PROPERTIES:
-:ID:       763286d7-b5f7-4a56-b3f6-56c677a917b9
-:END:
 
 - Source code :: <https://github.com/alphapapa/org-ql>
 
@@ -8977,22 +7971,14 @@ whitespace:
 #+END_SRC
 
 *** =org-node= :: a lightweight intertwingler
-:PROPERTIES:
-:ID:       beb57c33-d2e4-491f-8792-a9327a097a72
-:END:
 
 + Package :: <https://github.com/meedstrom/org-node>
 
 #+begin_src emacs-lisp
 (package! org-node
-  (keymap-global-set "M-s M-f" #'org-node-find)
-  (keymap-global-set "C-c i n" #'org-node-insert-link)
-  (after! org-mode
-    (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link)))
+  (setq! org-node-extra-id-dirs (list ceamx-agenda-dir)))
 
 (after! org-node
-  (setopt org-node-extra-id-dirs (list ceamx-agenda-dir))
-
   (add-to-list 'org-node-extra-id-dirs-exclude ceamx-note-journal-dir)
 
   (org-node-backlink-mode)
@@ -9067,9 +8053,6 @@ whitespace:
 #+end_src
 
 *** Set up Org-Capture
-:PROPERTIES:
-:ID:       c9f35626-6cec-46eb-a140-50be234d55da
-:END:
 
 The basic ~org-capture-templates~ are defined in the [[id:d7334fe7-a7a2-423e-8e3b-fca7c45af07e][Org-Capture
 templates]] section.  Some feature-related capture templates (e.g. for
@@ -9086,31 +8069,21 @@ templates]] section.  Some feature-related capture templates (e.g. for
 *** TODO Refiling: Append not prepend when working on Ceamx config
 
 *** Agenda
-:PROPERTIES:
-:ID:       ad92ea31-8411-4ba4-b179-cf66e34a016c
-:END:
 
 #+BEGIN_SRC emacs-lisp
 (use-feature! org-agenda
-  :bind ( ("C-c a" . #'org-agenda)
-          :map ceamx-launch-prefix
-          ("a" . #'org-agenda))
-
   :config
-  (setopt org-agenda-tags-column 0)
-  (setopt org-agenda-block-separator ?─)
-  (setopt org-agenda-time-grid
+  (setq! org-agenda-tags-column 0)
+  (setq! org-agenda-block-separator ?─)
+  (setq! org-agenda-time-grid
           '((daily today require-timed)
             (800 1000 1200 1400 1600 1800 2000)
             " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
-  (setopt org-agenda-current-time-string
+  (setq! org-agenda-current-time-string
           "⭠ now ─────────────────────────────────────────────────"))
 #+END_SRC
 
 *** =org-super-agenda= :: enchanted groupings for Org-Agenda
-:PROPERTIES:
-:ID:       6438e6e9-5052-403d-8c23-a1ee8daf0ec2
-:END:
 
 The agenda groups are declared in [[id:815ead58-41ac-406b-b1fe-4d6c4c838617][Thee Something-Doing Flow → Org-Agenda groups]]
 
@@ -9205,13 +8178,9 @@ I don't think this is working properly...
 #+END_SRC
 
 *** =org-web-tools= :: view, capture, and archive webpages in org-mode :package:network:web:ATTACH:
-:PROPERTIES:
-:ID:       17850df6-1729-4b2b-8fc5-62f4b377c2a7
-:END:
 
 #+BEGIN_SRC emacs-lisp
-(package! org-web-tools
-  (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
+(package! org-web-tools)
 #+END_SRC
 
 *** =org-sidebar= :: provide a sidebar for Org buffers :package:
@@ -9223,23 +8192,14 @@ I don't think this is working properly...
 #+END_SRC
 
 *** =org-remark= :: annotate documents with Org-Mode
-:PROPERTIES:
-:ID:       dd60176d-3c01-49ad-b381-062cdfeaaf66
-:END:
 
 #+begin_src emacs-lisp
 (package! org-remark)
 #+end_src
 
 *** Exporters
-:PROPERTIES:
-:ID:       6edbf7a1-4ce2-4c76-bc45-50072d7390aa
-:END:
 
 **** =ox-gfm= :: org-export to GitHub Flavored Markdown (GFM) :package:
-:PROPERTIES:
-:ID:       e6aaf439-cfd5-4ed7-8d54-23aaec181b6f
-:END:
 
 #+begin_src emacs-lisp
 (package! ox-gfm
@@ -9251,9 +8211,6 @@ I don't think this is working properly...
 #+end_src
 
 *** =auto-tangle-mode= :: a minor-mode to automatically tangle Org files
-:PROPERTIES:
-:ID:       b4f86eda-af4d-405c-bbe1-395fd6f14ddf
-:END:
 
 #+BEGIN_SRC emacs-lisp
 (package! (auto-tangle-mode :host github :repo "progfolio/auto-tangle-mode.el")
@@ -9307,7 +8264,6 @@ Printing is very broken right now and I haven’t tried in a while.
 *** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
-:ID:       f2baf249-16c1-408e-a07a-a6a1e7be7ece
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-news.el :comments no
@@ -9317,9 +8273,6 @@ Printing is very broken right now and I haven’t tried in a while.
 #+end_src
 
 *** =elfeed= :: an improved feed reader
-:PROPERTIES:
-:ID:       eb9bac6b-bcc1-4eba-a921-adaf4a93273b
-:END:
 
 Filter prefixes:
 
@@ -9358,8 +8311,6 @@ The feed list is set up with =elfeed-org= and should live at
 
 #+begin_src emacs-lisp
 (package! elfeed
-  (keymap-set ceamx-launch-prefix "f" #'elfeed)
-
   (after! elfeed
     (require 'ceamx-news)
 
@@ -9423,9 +8374,6 @@ The feed list is set up with =elfeed-org= and should live at
 #+end_src
 
 *** =elfeed-score= :: provide Gnus-style scoring for =elfeed=
-:PROPERTIES:
-:ID:       f1a262e4-0274-4f5a-b8b5-f8952d7523ab
-:END:
 
 I wonder if there is a way to export NewsBlur scoring to this format…
 
@@ -9452,7 +8400,6 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 #+end_src
 
 ** TODO Mail
-
 ** Web Browsing :web:
 :PROPERTIES:
 :VISIBILITY: folded
@@ -9463,7 +8410,6 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 *** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
-:ID:       c5bfe32a-b89a-492a-bc83-e61f6cb6a23d
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-eww.el :comments no
@@ -9473,9 +8419,6 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 #+end_src
 
 *** Tell Emacs we want its Web Wowser to handle URL browsing by default
-:PROPERTIES:
-:ID:       e9e1a28b-8fee-4dfd-83ad-52421155f652
-:END:
 
 #+begin_src emacs-lisp
 (setopt browse-url-browser-function 'eww-browse-url)
@@ -9499,9 +8442,6 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 ;; When providing a list of symbols, the symbols indicate what NOT to send.
 ;; TODO: Move this elsewhere, as it probably affects other HTTP requests.
 (setopt url-privacy-level '(email lastloc))
-
-(keymap-set ceamx-launch-prefix "b" #'eww)
-(keymap-set ceamx-launch-prefix "W" #'ceamx/eww-wiki)
 
 (after! eww
   (define-keymap :keymap eww-mode-map
@@ -9543,7 +8483,6 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 *** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
-:ID:       709b1092-1de6-43f6-bbb9-3aa15b496f49
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-tools.el :comments no
@@ -9562,16 +8501,11 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 #+end_src
 
 *** =eat= :: [E]mulate [A] [T]erminal
-:PROPERTIES:
-:ID:       cafaa1b0-d633-4e7e-b470-6dbfd534c35f
-:END:
 
 + Package :: <https://codeberg.org/akib/emacs-eat/>
 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (package! eat
-  (keymap-set ceamx-launch-prefix "t" #'eat)
-
   (after! eshell
     (add-hook 'eshell-load-hook #'eat-eshell-mode)
     (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
@@ -9585,7 +8519,6 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 #+begin_src emacs-lisp
 (package! pandoc-mode
   (add-hook 'markdown-mode-hook #'pandoc-mode)
-
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 #+end_src
 
@@ -9639,25 +8572,13 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 *** =help-find= :: introspect keybindings
 
 #+begin_src emacs-lisp
-(package! help-find
-  (define-keymap :keymap help-map
-    "K b" #'help-find-keybinding
-    "K f" #'help-find-function))
+(package! help-find)
 #+end_src
 
 *** =uuidgen=: Generate and insert UUIDs
-:PROPERTIES:
-:ID:       48fbfb99-55c9-44db-a342-2c9fe847e85e
-:END:
 
 #+begin_src emacs-lisp
-(package! uuidgen
-  (define-keymap :keymap ceamx-insert-prefix-map
-    "U" (cons "uuid" (define-prefix-command 'ceamx-insert-uuid-prefix))
-    "U 1" #'uuidgen-1
-    "U 3" #'uuidgen-3
-    "U 4" #'uuidgen-4
-    "U 5" #'uuidgen-5))
+(package! uuidgen)
 #+end_src
 
 *** Augementated Intelligentry (AI) :ai:
@@ -9704,9 +8625,6 @@ I opened a ticket asking for help:
 - Package :: <https://github.com/narendraj9/hledger-mode>
 
 **** Define important feature paths :paths:
-:PROPERTIES:
-:ID:       6af77ff1-5d06-41c8-bedf-f123ae532989
-:END:
 
 #+begin_src emacs-lisp
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
@@ -9740,9 +8658,6 @@ I opened a ticket asking for help:
 #+end_src
 
 *** PDF-Tools
-:PROPERTIES:
-:ID:       9d793672-7e26-4e2d-9aeb-8aaa85d14128
-:END:
 
 - website :: <https://github.com/vedang/pdf-tools>
 - ref :: <https://github.com/jwiegley/dot-emacs/blob/master/init.org>
@@ -9807,16 +8722,12 @@ some separate binaries.
 *** DONE <https://github.com/doomemacs/doomemacs/blob/master/modules/tools/pdf/config.el>
 CLOSED: [2025-02-22 Sat 19:36]
 :PROPERTIES:
-:ID:       a2d18493-6148-4168-aa19-99d490f5a7e2
 :END:
 :LOGBOOK:
 - State "DONE"       from "TODO"       [2025-02-22 Sat 19:36]
 :END:
 
 *** =ready-player= :: multimedia file previews :nixpkgs:
-:PROPERTIES:
-:ID:       96e9c541-fc8f-42cf-9f22-b726dc37f7cb
-:END:
 
 + Package :: <https://github.com/xenodium/ready-player>
 + Dependencies :: =ffmpeg= =ffmpegthumbnailer= =mpv=
@@ -9844,18 +8755,12 @@ Provide integration with =dired-preview=:
 #+end_src
 
 *** =mpdel= :: MPD client for Emacs
-:PROPERTIES:
-:ID:       4009635b-4bf9-4b7e-afd8-e829d8ab45a6
-:END:
 
 #+begin_src emacs-lisp
 (package! mpdel)
 #+end_src
 
 *** =linkmarks= :: Keep link bookmarks in Org-Mode
-:PROPERTIES:
-:ID:       db54377f-9e4f-4708-a4ce-539e7441423e
-:END:
 
 #+begin_src emacs-lisp
 (package! (linkmarks :host github :repo "dustinlacewell/linkmarks")
@@ -9863,9 +8768,6 @@ Provide integration with =dired-preview=:
 #+end_src
 
 *** =org-capture-ref= :: Extract metadata from websites for capture
-:PROPERTIES:
-:ID:       45bc1e57-c0cf-4896-a32f-eb8ade2257c8
-:END:
 
 #+begin_src emacs-lisp
 ;; XXX: Dependency of `org-capture-ref' without recipe.
@@ -9896,9 +8798,6 @@ Provide integration with =dired-preview=:
 #+end_src
 
 *** Bibliographies
-:PROPERTIES:
-:ID:       6ffdedb4-5a6a-47bf-98ca-40e3147f7d03
-:END:
 
 #+begin_src emacs-lisp
 (package! parsebib)
@@ -9942,7 +8841,6 @@ available for legal distribution.
 **** DISABLED [[https://github.com/zzkt/i-ching][zzkt/i-ching]] (via MELPA)
 :PROPERTIES:
 :header-args: :tangle no
-:ID:       42bd3676-6f96-499c-8d38-570833d5c365
 :END:
 
 Does not support changing line commentaries!
@@ -9958,9 +8856,6 @@ Does not support changing line commentaries!
 #+end_src
 
 **** yijing.el
-:PROPERTIES:
-:ID:       c5573349-c13f-4702-8cf3-8f7cdb49add4
-:END:
 
 + src :: https://www.emacswiki.org/emacs/i-ching.el
 
@@ -9977,16 +8872,13 @@ changing lines.
 #+end_src
 
 *** Operate on buffers rectangularly with the ~rect~ feature
-:PROPERTIES:
-:ID:       8465808e-c79f-4e30-a88f-a9e64401ff95
-:END:
 :LOGBOOK:
 - Refiled on [2025-01-27 Mon 09:34]
 :END:
 
 #+begin_src emacs-lisp
 (use-feature! ceamx-tools
-  :bind ( "C-x SPC" . #'ceamx/rectangle-dispatch/body))
+  :demand t)
 #+end_src
 
 *** =ceamx-typer= :: Use Emacs anywhere (kinda) :nixpkgs:
@@ -10016,7 +8908,6 @@ changing lines.
 *** Requirements
 :PROPERTIES:
 :VISIBILITY: folded
-:ID:       71b73979-f3a8-4215-b31d-322c07cff333
 :END:
 
 #+begin_src emacs-lisp :tangle lisp/ceamx-init-fun.el :comments no
@@ -10026,13 +8917,10 @@ changing lines.
 #+end_src
 
 *** Zone out in ~zone~
-:PROPERTIES:
-:ID:       0ffe546e-0213-4686-8dd2-2c0f20770c85
-:END:
 
 + EmacsWiki :: <https://www.emacswiki.org/emacs/ZoneMode>
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (use-feature! zone
   :defer 30
   :autoload (zone-when-idle)
@@ -10074,9 +8962,6 @@ Return the new `zone' timer."
 #+end_src
 
 *** Tabletop Gaming Tools
-:PROPERTIES:
-:ID:       5ca7ecac-a050-4033-8830-ceebbe1bba01
-:END:
 
 #+begin_src emacs-lisp
 (package! (dnd5e-api :host github :repo "VivianWilde/emacs-dnd5e-api"))
@@ -10099,18 +8984,12 @@ Return the new `zone' timer."
 :END:
 
 ** Requirements
-:PROPERTIES:
-:ID:       3056ce3e-7db7-4d73-86f6-a2cd55916cfc
-:END:
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t; -*-
 #+end_src
 
 ** =elpaca-wait=
-:PROPERTIES:
-:ID:       962663f8-fe8f-4b78-88f6-a4817fdff001
-:END:
 
 #+begin_src emacs-lisp
 (elpaca-wait)
@@ -10209,17 +9088,7 @@ and encourages daily interaction and maintenance for the sake of awareness.
 
 ***** Cea: write secret journal entries without fear
 
-*****
-:PROPERTIES:
-:ID:       193b1aa9-0697-4b81-87fc-3ac9fc2f876b
-:END:
-
 **** Which flows connect to other flows?
-:PROPERTIES:
-:ID:       aaa47347-0aa9-42b3-8df0-41d3bc4a2676
-:END:
-
-
 
 *** Org-Capture templates
 :PROPERTIES:
@@ -10313,20 +9182,7 @@ Define agenda groups for display with the =org-super-agenda= extension:
 :END:
 
 
-*** Webpage archiving
-:PROPERTIES:
-:ID:       8a46fa61-d401-440b-a0ce-5ef0d76cdb95
-:END:
-
-#+begin_src emacs-lisp
-(define-keymap :keymap ceamx-web-prefix-map
-  "i" #'org-web-tools-insert-link-for-url
-  "O" #'org-web-tools-read-url-as-org)
-
-(after! org-mode
-  (keymap-set org-mode-map "C-c w a" #'org-web-tools-archive-attach)
-  (keymap-set org-mode-map "C-c w c" #'org-web-tools-convert-links-to-page-entries))
-#+end_src
+*** TODO Webpage archiving
 
 ** Provide the =ceamx-init-flows= feature
 :PROPERTIES:
@@ -10385,27 +9241,342 @@ loaded.  There’s probably a safer way to write it.
     ("y" . ceamx-focus-mode)))
 #+end_src
 
-* Command Bindings
+* Command Bindings :keybinds:
 :PROPERTIES:
 :header-args: :tangle init.el
 :VISIBILITY: folded
-:ID:       d39ff068-1ed1-4bc6-bc7e-f5aa50bb8edd
 :END:
 
-** [C-c O] :: Launch
-:PROPERTIES:
-:ID:       bb8d84ed-5854-4892-9b76-77e67063a71e
-:END:
+** Superglobals
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "ESC ESC" #'ceamx/keyboard-quit-dwim
+
+  "C-g" #'ceamx/keyboard-quit-dwim
+  "C-h" help-map
+
+  "S-RET" #'crux-smart-open-line)
+#+end_src
+
+
+** [C-] :: Global Control-Modified
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-`" #'popper-toggle
+  "C-~" #'popper-cycle
+  "C-M-`" #'popper-toggle-type
+  "C-^" #'crux-top-join-line
+  "C-=" #'expreg-expand
+  "C-+" #'expreg-contract
+  "C-;" #'avy-goto-char-timer
+  ;; "C-'" :: RESERVED: special commands e.g. `avy-org-goto-heading-timer'
+  "C-." #'embark-act
+  "C-<" #'ceamx-simple/escape-url-dwim
+
+  "C-a" #'mwim-beginning
+  "C-e" #'mwim-end
+
+  "C-RET" #'ceamx-simple/new-line-below
+  "C-S-RET" #'crux-smart-open-line-above
+
+  "C-M-SPC" #'puni-mark-sexp-at-point
+  "C-M-@" #'easy-mark
+  "C-M-#" #'consult-register
+  "C-M-$" #'jinx-languages
+
+  "C-S-d" #'crux-duplicate-current-line-or-region
+  "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
+
+  "C-k" #'crux-smart-kill-line
+
+  ;; TODO: redundant with `easy-kill'
+  "C-S-w" #'ceamx-simple/copy-line
+
+  "C-S-y" #'ceamx-simple/yank-replace-line-or-region)
+
+(after! prog-mode
+  (define-keymap :keymap prog-mode-map
+    ;; Move forward out of one sexp level
+    "C-M-d" #'up-list))
+
+(after! puni
+  (define-keymap :keymap puni-mode-map
+    "C-M-f" #'puni-forward-sexp
+    "C-M-b" #'puni-backward-sexp
+    "C-M-a" #'puni-beginning-of-sexp
+    "C-M-e" #'puni-end-of-sexp
+    "C-M-[" #'puni-backward-sexp-or-up-list
+    "C-M-]" #'puni-forward-sexp-or-up-list))
+
+(after! org
+  (define-keymap :keymap org-mode-map
+    "C-'" #'avy-org-goto-heading-timer
+    "C-\"" #'avy-org-refile-as-child
+    "C-M-<return>" #'org-insert-subheading
+    "C-M-S-<return>" #'org-insert-todo-subheading
+
+    "C-a" #'org-beginning-of-line
+    "C-e" #'org-end-of-line))
+#+end_src
+
+** [C-h] :: Help Map
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-h b" #'embark-bindings
+  "C-h B" #'describe-bindings
+  "C-h c" #'helpful-callable
+  "C-h C" #'helpful-command
+  "C-h D" #'devdocs-lookup
+  "C-h f" #'helpful-function
+  "C-h F" #'describe-face
+  ;; FIXME: conflict
+  ;; "C-h F" #'apropos-function
+  "C-h h" #'helpful-at-point
+  "C-h i" (cons "[ INFO ]" #'ceamx-info-prefix)
+  "C-h i i" #'ceamx/consult-info-dwim
+  "C-h i c" #'ceamx/completion-info
+  "C-h i e" #'ceamx/emacs-info
+  "C-h i o" #'ceamx/org-info
+  "C-h I" #'consult-info
+  "C-h k" #'helpful-key
+  "C-h K" (cons "[ KEYBINDS ]" #'ceamx-help-keybindings-prefix)
+  "C-h K b" #'help-find-keybinding
+  "C-h K f" #'help-find-function
+  "C-h K K" #'helpful-key
+  "C-h l" #'find-library
+  "C-h L" #'apropos-library
+  "C-h m" #'consult-man
+  "C-h M" #'describe-mode
+  "C-h o" #'helpful-symbol
+  "C-h t" #'describe-text-properties
+  "C-h U" #'apropos-user-option
+  "C-h v" #'helpful-variable
+  "C-h V" #'apropos-variable)
+#+end_src
+
+
+** [C-c] :: Operator Prefix
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-c a" #'org-agenda
+  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
+  "C-c c" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
+  ;; "C-c d"
+  "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
+  "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
+  "C-c g" #'magit-file-dispatch
+  "C-c G" #'magit-dispatch
+  "C-c h" (cons "[ HISTORY   ]" #'ceamx-history-prefix)
+  "C-c i" (cons "[ INSERT    ]" #'ceamx-insert-prefix)
+  ;; "C-c j"
+  "C-c k" #'consult-kmacro
+  ;; TODO: disambiguate?
+  "C-c K" (cons "[ KRYPTION  ]" #'ceamx-cryption-prefix)
+  "C-c l" (cons "[ LANG      ]" #'ceamx-code-prefix)
+  ;; TODO: disambiguate f/F
+  "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
+  "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
+  "C-c m" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
+  "C-c n" (cons "[ NOTE      ]" #'ceamx-note-prefix)
+  "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
+  "C-c p" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
+  "C-c P" #'completion-at-point
+  "C-c q" (cons "[ SESSION   ]" #'ceamx-session-prefix)
+  ;; "C-c r"
+  ;; "C-c s"
+  "C-c t" (cons "[ TOGGLE    ]" #'ceamx-toggle-prefix)
+  ;; "C-c u"
+  ;; "C-c v"
+  "C-c w" (cons "[ WORKSPACE ]" #'ceamx-workspace-prefix)
+  "C-c W" (cons "[ WEB       ]" #'ceamx-web-prefix)
+  ;; FIXME: something else... (btw this is originally set somewhere else...)
+  "C-c x" #'ceamx/macrostep-expand
+  "C-c y" (cons "[ SNIPPET   ]" #'ceamx-snippet-prefix)
+  "C-c z" (cons "[ FOLD      ]" #'ceamx-fold-prefix)
+
+  "C-c M-x" #'consult-mode-command)
+#+end_src
+
+** [C-c !] :: CHECKS :checkers:flycheck:flymake:
+
+Flycheck automatically binds its keymap to this.
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-c ! l" #'flymake-show-buffer-diagnostics
+  "C-c ! n" #'flymake-goto-next-error
+  "C-c ! p" #'flymake-goto-previous-error
+  "C-c ! c" #'flymake-show-buffer-diagnostics)
+#+end_src
+
+** [C-c b] :: BUFFER :buffer:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-buffer-prefix
+  "f" #'crux-cleanup-buffer-or-region
+
+  "M-w" #'crux-kill-buffer-truename)
+#+end_src
+
+** [C-c c] :: CAPTURE :capture:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-capture-prefix-map
+  ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
+  "r" #'denote-region)
+
+#+end_src
+
+** [C-c h] :: HISTORY
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-history-prefix
+  "h" #'consult-history)
+#+end_src
+
+** [C-c i] :: INSERT
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-insert-prefix-map
+  "d" #'ceamx-simple/insert-date
+  "I" '("icon" . nerd-icons-insert)
+  "L" #'spdx-insert-spdx
+  "n" #'org-node-insert-link
+  "s" #'yas-insert-snippet
+  "u" #'uuidgen-4)
+
+(after! org
+  (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
+#+end_src
+
+** [C-c f] :: FILE
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-file-prefix
+  ;; TODO
+  ;; "y" #'+yank-this-file-name
+
+  "c" '("copy..." . crux-copy-file-preserve-attributes)
+  "d" '("delete" . ceamx-simple/delete-current-file)
+  "f" #'find-file
+  "F" #'find-file-other-window
+  ;; `crux-rename-buffer-and-file' is another option, but its `vc'
+  ;; integration is rather annoying, requiring that changes be committed
+  ;; to version control or reverted before renaming the file.  Though
+  ;; that does sound sensible on paper...
+  ;; "r" '("move..." . ceamx-simple/move-current-file) ; alt.
+  ;; "r"
+  "r" '("move..." . crux-rename-buffer-and-file)
+
+  "s" #'save-buffer
+  "U" #'ceamx-simple/sudo-find-file
+
+  "C-d" '("diff with..." . ceamx-simple/diff-with-file))
+#+end_src
+
+** [C-c l] :: LANG :lsp:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-code-prefix
+  "j" #'ceamx/dumb-jump-dispatch/body
+  "o" nil                               ; RESERVED :: `combobulate-key-prefix'
+  )
+
+(after! eglot
+  (define-keymap :keymap eglot-mode-map
+    "C-c l a" #'eglot-code-actions
+    "C-c l l" (define-prefix-command 'ceamx-lang-specific-prefix)
+    "C-c l o" #'consult-eglot-symbols
+    "C-c l r" #'eglot-rename))
+
+(after! lsp-mode
+    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
+    ;; Override the default binding for `xref-find-apropos'.
+    (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
+
+(after! csv-mode
+  (define-keymap :keymap csv-mode-map
+    "C-c l l a" #'csv-align-fields
+    "C-c l l u" #'csv-unalign-fields
+    "C-c l l s" #'csv-sort-fields
+    "C-c l l S" #'csv-sort-numeric-fields
+    "C-c l l k" #'csv-kill-fields
+    "C-c l l t" #'csv-transpose))
+#+end_src
+
+** [C-c K] :: KRYPTION
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-cryption-prefix-map
+  "d" (cons "decrypt..." (define-prefix-command 'ceamx-cryption-d-prefix))
+  "d d" #'epa-decrypt-file
+  "d r" #'epa-decrypt-region
+  "e" (cons "encrypt..." (define-prefix-command 'ceamx-cryption-e-prefix))
+  "e e" #'epa-encrypt-file
+  "e r" #'epa-encrypt-region
+  "k" #'epa-list-keys)
+#+end_src
+
+** [C-c m] :: BOOKMARK :bookmarks:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-bookmark-prefix-map
+  "b" #'bookmark-in-project-jump
+  "m" #'consult-bookmark
+  "n" #'bookmark-in-project-jump-next
+  "p" #'bookmark-in-project-jump-previous
+  "*" #'bookmark-in-project-toggle)
+#+end_src
+
+** [C-c n] :: NOTE :notes:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-note-prefix-map
+  "n" #'denote
+  "d" #'denote-sort-dired
+  "r" #'denote-rename-file
+  "R" #'denote-rename-file-using-front-matter
+  "s" #'consult-notes)
+
+(after! org
+  (define-keymap :keymap org-mode-map
+    "C-c n h" #'denote-org-extras-extract-org-subtree
+    "C-c n l" #'denote-link
+    "C-c n L" #'denote-add-links
+    "C-c n b" #'denote-backlinks))
+#+end_src
+
+** [C-c o] :: LAUNCH
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-launch-prefix
-  "s" #'scratch-buffer)
+  "a" #'org-agenda
+  "b" #'eww
+  "f" #'elfeed
+  "s" #'scratch-buffer
+  "t" #'eat
+  "W" #'ceamx/eww-wiki)
 #+end_src
 
-** [C-c Q] :: Session
-:PROPERTIES:
-:ID:       89f0be09-aa04-40cd-9365-f41a5fbf37c6
-:END:
+** [C-c p] :: COMPLETE :completion:
+
+#+begin_src emacs-lisp
+;; cf. `cape-prefix-map' for ideas
+(define-keymap :keymap ceamx-completion-prefix-map
+  "a" #'cape-abbrev
+  "d" #'cape-dabbrev
+  "e" (cape-capf-interactive #'elisp-completion-at-point)
+  "f" #'cape-file
+  "o" #'cape-elisp-symbol
+  "p" #'completion-at-point
+  "w" #'cape-dict)
+#+end_src
+
+** [C-c q] :: SESSION
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-session-prefix
@@ -10413,11 +9584,24 @@ loaded.  There’s probably a safer way to write it.
   "a d" #'ceamx-ui/dark
   "a f" #'fontaine-set-preset
   "a l" #'ceamx-ui/light
+  "a t" #'consult-theme
   "a o" #'olivetti-mode
+
+  "p" (cons "packages..." (define-prefix-command 'ceamx-session-p-prefix))
 
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs
   "r" #'restart-emacs)
+
+(define-keymap :keymap ceamx-session-p-prefix
+  "f" #'elpaca-fetch-all
+  "F" #'elpaca-fetch
+  "i" #'elpaca-info
+  "m" #'elpaca-merge-all
+  "p" #'elpaca-pull
+  "r" #'+elpaca-reload-package
+  "t" #'elpaca-try
+  "u" #'elpaca-update)
 
 ;; (use-feature! ceamx-ui
 ;;   :commands (ceamx-ui/dark ceamx-ui/light)
@@ -10427,56 +9611,379 @@ loaded.  There’s probably a safer way to write it.
 ;;     "a l" #'ceamx-ui/light))
 #+end_src
 
-** [C-c T] :: Toggle
+** [C-c t] :: TOGGLE
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-toggle-prefix
+  "c" (cons "cycle..." (define-prefix-command 'ceamx-toggle-c-prefix))
+  "c c" #'cycle-at-point
+  "c s" #'string-inflection-toggle
+  "c +" #'shift-number-up
+  "c -" #'shift-number-down
+
   "f" #'flycheck-mode
   "k" #'keycast-mode-line-mode
   "l" #'display-line-numbers-mode
   "M" #'menu-bar-mode
   "o" #'outline-minor-mode
+  "s" #'jinx-mode
+  "t" #'typo-mode
   "T" #'tab-bar-mode
   "w" #'window-toggle-side-windows
   "W" #'toggle-window-dedicated
-  "z" #'logos-focus-mode)
+  "z" #'logos-focus-mode
+  "Z" #'focus-mode)
+
+(after! dired
+  (keymap-set dired-mode-map "C-c t p" #'dired-preview-global-mode))
 #+end_src
 
-** Window
-:PROPERTIES:
-:ID:       93d96a59-5e99-4939-8691-14aaaf942adb
-:END:
+** [C-c w] :: WINDOW :window:
 
 #+begin_src emacs-lisp
-(define-keymap :keymap ceamx-window-prefix
-  "w" #'ceamx/window-dispatch)
+(define-keymap :keymap ceamx-workspace-prefix
+  "w" #'ceamx/window-dispatch
 
-(define-keymap :keymap window-prefix-map
-  "w" #'ace-window
+  "RET" #'activities-switch
+  "C-a" #'activities-resume
+  "C-d" #'activities-define
+  "C-k" #'activities-kill
+  "C-n" #'activities-new
+  "C-s" #'activities-suspend
 
-  "d" #'ace-delete-window
-  "p" #'popper-toggle
-  "P" #'popper-toggle-type
-  "u" #'winner-undo
-  "U" #'winner-redo
+  "b" #'bufler-workspace-switch-buffer
+  "B" #'bufler-workspace-focus-buffer
+  "o" #'bufler-workspace-open
+  "r" #'bufler-workspace-save)
+#+end_src
 
-  "h" #'windmove-left
-  "H" #'ceamx/window-move-left
-  "j" #'windmove-down
-  "J" #'ceamx/window-move-down
-  "k" #'windmove-up
-  "K" #'ceamx/window-move-up
-  "l" #'windmove-right
-  "L" #'ceamx/window-move-right
+** [C-c W] :: WEB :web:
 
-  "=" #'balance-windows
-  "<" #'flip-frame
-  ">" #'flop-frame
-  "[" #'rotate-frame-clockwise
-  "]" #'rotate-frame-anticlockwise
-  "{" #'rotate-frame
-  "}" #'rotate-frame)
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-web-prefix-map
+  "i" #'org-web-tools-insert-link-for-url
+  "O" #'org-web-tools-read-url-as-org)
 
+(after! org-mode
+  (keymap-set org-mode-map "C-c w a" #'org-web-tools-archive-attach)
+  (keymap-set org-mode-map "C-c w c" #'org-web-tools-convert-links-to-page-entries))
+#+end_src
+
+** [C-c y] :: SNIPPET :snippets:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap ceamx-snippet-prefix
+  "n" #'yas-new-snippet
+  "v" #'yas-visit-snippet-file
+  "y" #'yas-insert-snippet
+  "Y" #'tempel-insert)
+#+end_src
+
+** [C-c z] :: FOLD
+
+IIRC, Vim uses some =z= stuff for folding too.
+
+#+begin_src emacs-lisp
+(keymap-set ceamx-fold-prefix "z" #'treesit-fold-toggle)
+
+(define-keymap :keymap treesit-fold-mode-map
+  "C-c z c" #'treesit-fold-close
+  "C-c z C" #'treesit-fold-close-all
+  "C-c z o" #'treesit-fold-open
+  "C-c z O" #'treesit-fold-open-all
+  "C-c z r" #'treesit-fold-open-recursively
+  "C-z z z" #'treesit-fold-toggle)
+#+end_src
+
+
+** [C-x] :: Global X-Prefix
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-x =" #'balance-windows
+  "C-x +" #'balance-windows-area
+  "C-x ]" #'logos-forward-page-dwim
+  "C-x [" #'logos-backward-page-dwim
+  "C-x <" #'scroll-right
+  "C-x >" #'scroll-left
+  "C-x SPC" #'ceamx/rectangle-dispatch/body
+
+  "C-x b" #'ceamx/switch-to-buffer
+  "C-x g" #'magit-status
+  "C-x l" #'ialign
+
+  "C-x k" #'ceamx-simple/kill-current-buffer
+  "C-x K" #'kill-buffer
+  "C-x u" #'vundo
+
+  "C-x n N" #'logos-narrow-dwim
+
+  "C-x r b" #'consult-bookmark
+
+  "C-x o"  #'crux-other-window-or-switch-buffer
+
+  "C-x x o" #'olivetti-mode
+  "C-x x f" #'follow-mode
+  "C-x x l" #'visual-line-mode
+  "C-x x r" #'rename-uniquely
+
+  "C-x <up>" #'enlarge-window
+  "C-x <down>" #'shrink-window
+  "C-x <left>" #'shrink-window-horizontally
+  "C-x <right>" #'enlarge-window-horizontally
+
+  "C-x C-b" #'ibuffer
+  "C-x C-n" #'next-buffer
+  "C-x C-p" #'previous-buffer
+
+  ;; Minimizing frames is the job of the window manager.
+  "C-x C-z" nil
+
+  ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
+  ;; that `comment-line' is bound to [C-x C-;].
+  "C-x M-;" #'comment-line
+
+  "C-x M-:" #'consult-complex-command
+  "C-x M-g" #'magit-dispatch)
+#+end_src
+
+** [C-x 4] :: Window Prefix :window:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-x 4 b" #'consult-buffer-other-window
+  "C-x 4 t" #'crux-transpose-windows)
+#+end_src
+
+** [C-x 5] :: Frame Prefix :frame:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-x 5 b" #'consult-buffer-other-frame)
+#+end_src
+
+** [C-x 8] :: Character Prefix
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-x 8 i" (cons "icons" (define-prefix-command 'ceamx-insert-icons-prefix 'ceamx-insert-icons-prefix-map))
+  "C-x 8 i i" #'nerd-icons-insert)
+#+end_src
+
+** [C-x p] :: Project Prefix
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-x p ." #'project-dired
+  "C-x p RET" #'project-dired
+  "C-x p DEL" #'project-forget-project
+
+  "C-x p b" #'consult-project-buffer)
+#+end_src
+
+** [C-x t] :: Tab Prefix
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-x t b" #'consult-buffer-other-tab)
+#+end_src
+
+** [C-x v] :: Version Control Prefix :vcs:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-x v ." #'vc-dir-root
+  "C-x v RET" #'vc-dir-root
+
+  "C-x v B" #'vc-annotate
+  "C-x v d" #'vc-diff
+  "C-x v e" #'vc-ediff
+  "C-x v G" #'vc-log-search
+  "C-x v o" #'forge-browse-commit
+  "C-x v t" #'git-timemachine)
+
+(after! vc-dir
+  (define-keymap :keymap vc-dir-mode-map
+    "d" #'vc-diff
+    "o" #'vc-dir-find-file-other-window
+    "O" #'vc-log-outgoing))
+#+end_src
+
+** [C-x w] :: Window Manipulation Prefix :window:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "C-x w w" #'ace-window
+
+  "C-x w SPC" #'transpose-frame
+
+  "C-x w d" #'ace-delete-window
+  "C-x w p" #'popper-toggle
+  "C-x w P" #'popper-toggle-type
+  "C-x w u" #'winner-undo
+  "C-x w U" #'winner-redo
+
+  "C-x w h" #'windmove-left
+  "C-x w H" #'ceamx/window-move-left
+  "C-x w j" #'windmove-down
+  "C-x w J" #'ceamx/window-move-down
+  "C-x w k" #'windmove-up
+  "C-x w K" #'ceamx/window-move-up
+  "C-x w l" #'windmove-right
+  "C-x w L" #'ceamx/window-move-right
+
+  "C-x w =" #'balance-windows
+  "C-x w <" #'flip-frame
+  "C-x w >" #'flop-frame
+  "C-x w [" #'rotate-frame-clockwise
+  "C-x w ]" #'rotate-frame-anticlockwise
+  "C-x w {" #'rotate-frame
+  "C-x w }" #'rotate-frame)
+#+end_src
+
+
+** [M-] :: Global Meta-Modified
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "M-#" #'consult-register-load
+  "M-$" #'jinx-correct
+  "M-*" #'tempel-insert
+  "M-=" #'count-words
+  "M-+" #'tempel-complete
+  "M-]" #'logos-forward-page-dwim
+  "M-[" #'logos-backward-page-dwim
+  "M-'" #'consult-register-store
+  "M-." #'embark-dwim
+
+  "M-DEL" #'ceamx/backward-kill-word
+  "M-SPC" #'cycle-spacing
+  "M-<up>" #'drag-stuff-up
+  "M-<right>" #'drag-stuff-right
+  "M-<down>" #'drag-stuff-down
+  "M-<left>" #'drag-stuff-left
+
+  "M-c" #'capitalize-dwim
+  "M-f" #'forward-word
+  "M-F" #'forward-symbol
+  ;; FIXME: reconcile with current binding for `forward-symbol'
+  ;; "M-F" #'consult-focus-lines
+  "M-k" #'ceamx-simple/kill-line-backward
+  "M-K" #'consult-keep-lines
+  "M-l" #'downcase-dwim
+  "M-o" #'crux-other-window-or-switch-buffer
+  "M-O" #'delete-blank-lines
+  "M-q" #'unfill-toggle
+  "M-Q" #'repunctuate-sentences
+  "M-u" #'upcase-dwim
+  "M-w" #'easy-kill
+  "M-y" #'consult-yank-pop
+  "M-z" #'zap-up-to-char
+  "M-Z" #'ceamx-simple/zap-to-char-backward)
+
+(keymap-set minibuffer-local-map "M-r" #'consult-history) ; orig. `previous-matching-history-element'
+
+(define-keymap :keymap prog-mode-map
+  "M-RET" #'ceamx-simple/continue-comment)
+
+(after! puni
+  (define-keymap :keymap puni-mode-map
+    "M-(" #'puni-syntactic-forward-punct
+    "M-)" #'puni-syntactic-backward-punct))
+
+;; TODO: testing disabling this
+;; (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment)
+#+end_src
+
+** [M-g] :: Goto Map :search:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "M-g d" #'ceamx/dogears-dispatch
+  "M-g e"  #'consult-compile-error
+  "M-g f"  #'consult-flycheck            ; or: `consult-flymake'
+  "M-g g"  #'consult-goto-line
+  "M-g M-g" #'consult-goto-line
+  "M-g o"  #'consult-outline
+  "M-g m"  #'consult-mark
+  "M-g k"  #'consult-global-mark
+  "M-g i"  #'consult-imenu
+  "M-g I"  #'consult-imenu-multi
+  "M-g u" #'link-hint-open-link
+  "M-g U" #'link-hint-copy-link
+  "M-g w" #'avy-goto-word-1
+
+  ;; Also see `ceamx/dogears-dispatch'.
+  "M-g M-b" #'dogears-back
+  "M-g M-f" #'dogears-forward
+  "M-g M-d" #'dogears-list
+  "M-g M-D" #'dogears-sidebar)
+
+(after! org-mode
+  (keymap-set org-mode-map "M-g o" #'consult-org-heading))
+#+end_src
+
+** [M-s] :: “Search” Prefix :search:
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "M-s b" #'ceamx-simple/buffers-major-mode
+  "M-s c"  #'consult-locate
+  "M-s d"  #'consult-fd                 ; or `consult-find'
+  "M-s e"  #'consult-isearch-history
+  "M-s g"  #'consult-ripgrep
+  "M-s G"  #'consult-git-grep
+  "M-s k"  #'consult-keep-lines
+  "M-s l"  #'consult-line
+  "M-s L"  #'consult-line-multi
+  "M-s n" #'consult-notes
+  "M-s r" '("replace..." . ceamx-replace-prefix)
+  "M-s u"  #'consult-focus-lines
+  "M-s v" #'ceamx-simple/buffers-vc-root
+
+  "M-s M-f" #'org-node-find
+  "M-s M-o" #'multi-occur
+  "M-s M-s" #'consult-outline)
+
+(define-keymap :keymap ceamx-replace-prefix
+  "b" #'substitute-target-in-buffer
+  "d" #'substitute-target-in-defun
+  "s" #'substitute-target-above-point
+  "S" #'substitute-target-below-point)
+
+(after! isearch
+  (define-keymap :keymap isearch-mode-map
+    "M-s e" #'consult-isearch-history
+    "M-s l" #'consult-line
+    "M-s L" #'consult-line-multi))
+
+(keymap-set minibuffer-local-map "M-s" #'consult-history)
+
+(after! org-mode
+  (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link))
+
+#+end_src
+
+
+** “Mouse” Input
+
+#+begin_src emacs-lisp
+(define-keymap :keymap (current-global-map)
+  "<wheel-left>" #'scroll-left
+  "<wheel-right>" #'scroll-right)
+#+end_src
+
+** Repeat Maps
+
+#+begin_src emacs-lisp
+  (defvar-keymap ceamx-string-repeat-map
+    :repeat t
+
+    "c" #'ceamx/cycle-string-inflection)
+#+end_src
+
+*** Window :window:
+
+#+begin_src emacs-lisp
 (define-keymap :keymap resize-window-repeat-map
   "<up>" #'enlarge-window
   "<down>" #'shrink-window
@@ -10499,6 +10006,7 @@ loaded.  There’s probably a safer way to write it.
   "3" #'split-window-right
   "o" #'ace-window)
 #+end_src
+
 
 * Finalize
 :PROPERTIES:

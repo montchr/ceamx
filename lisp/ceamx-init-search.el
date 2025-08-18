@@ -5,11 +5,7 @@
 ;; Baseline search configuration
 
 
-(use-feature! emacs
-  :config
-  (setopt find-library-include-other-files nil)
-
-  (keymap-set search-map "r" '("replace..." . ceamx-replace-prefix)))
+(setq! find-library-include-other-files nil)
 
 ;; Configure interactive searching with ~isearch~
 
@@ -45,9 +41,6 @@
     "s" #'isearch-repeat-forward
     "r" #'isearch-repeat-backward)
 
-  (define-keymap :keymap (current-global-map)
-    "M-s M-o" #'multi-occur)
-
   (define-keymap :keymap isearch-mode-map
     "M-<" #'isearch-beginning-of-buffer
     "M->" #'isearch-end-of-buffer
@@ -80,13 +73,7 @@
 
 
 (package! substitute
-  (define-keymap :keymap ceamx-replace-prefix
-    "b" #'substitute-target-in-buffer
-    "d" #'substitute-target-in-defun
-    "s" #'substitute-target-above-point
-    "S" #'substitute-target-below-point)
-
-  (setopt substitute-hightlight t))
+  (setq! substitute-hightlight t))
 
 (after! substitute
   ;; Provide messages reporting on matches changed in the context.
@@ -94,7 +81,6 @@
 
 ;; =wgrep= :: writable grep buffers
 ;; :PROPERTIES:
-;; :ID:       db0ec455-df43-47da-9015-b22d48699027
 ;; :END:
 
 ;; + Package :: <https://github.com/mhayashi1120/Emacs-wgrep>

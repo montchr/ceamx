@@ -12,9 +12,7 @@
   (dolist (dir (list ceamx-note-dir ceamx-note-journal-dir))
     (f-mkdir-full-path dir)))
 
-(package! consult-notes
-  (keymap-set ceamx-note-prefix-map "s" #'consult-notes)
-  (keymap-global-set "M-s n" #'consult-notes))
+(package! consult-notes)
 
 (after! consult-notes
   (setopt consult-notes-file-dir-sources
@@ -70,30 +68,15 @@
   (after! mouse
     (add-hook 'context-menu-functions #'denote-context-menu))
 
-  (define-keymap :keymap ceamx-capture-prefix-map
-    ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
-    "r" #'denote-region)
 
   (keymap-global-set "C-c n" #'denote)
-
-  (define-keymap :keymap ceamx-note-prefix-map
-    "n" #'denote
-    "d" #'denote-sort-dired
-    "r" #'denote-rename-file
-    "R" #'denote-rename-file-using-front-matter)
 
   (after! dired
     (define-keymap :keymap dired-mode-map
       "C-c C-d C-i" #'denote-link-dired-marked-notes
       "C-c C-d C-r" #'denote-dired-rename-files
       "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
-      "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter))
-  (after! org
-    (define-keymap :keymap org-mode-map
-      "C-c n h" #'denote-org-extras-extract-org-subtree
-      "C-c n l" #'denote-link
-      "C-c n L" #'denote-add-links
-      "C-c n b" #'denote-backlinks)))
+      "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter)))
 
 (after! denote
   (setopt denote-directory ceamx-note-default-dir)

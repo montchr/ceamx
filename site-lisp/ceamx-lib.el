@@ -80,6 +80,8 @@
 (require 'map)
 (require 'seq)
 
+(require 'ceamx-keymaps)
+
 ;;;; Variables
 
 ;; via <https://github.com/protesilaos/dotfiles/blob/df9834d8db815920bfd7aacfaf11ef16fa089c53/emacs/.emacs.d/prot-lisp/ceamx.el>
@@ -90,30 +92,6 @@
    "\\([-a-zA-Z0-9+&@#/%?=~_|!:,.;]+\\)\\>/?")
   "Regular expression to match (most?) URLs or email addresses.")
 
-;;;; Keymaps
-
-(define-prefix-command 'ceamx-appearance-prefix)
-(define-prefix-command 'ceamx-bookmark-prefix 'ceamx-bookmark-prefix-map)
-(define-prefix-command 'ceamx-buffer-prefix)
-(define-prefix-command 'ceamx-capture-prefix 'ceamx-capture-prefix-map)
-(define-prefix-command 'ceamx-code-prefix)
-(define-prefix-command 'ceamx-completion-prefix 'ceamx-completion-prefix-map)
-(define-prefix-command 'ceamx-cryption-prefix 'ceamx-cryption-prefix-map)
-(define-prefix-command 'ceamx-file-prefix)
-(define-prefix-command 'ceamx-help-keybindings-prefix 'ceamx-help-keybindings-prefix-map)
-(define-prefix-command 'ceamx-insert-prefix 'ceamx-insert-prefix-map "[ INSERT ]")
-(define-prefix-command 'ceamx-launch-prefix)
-(define-prefix-command 'ceamx-note-prefix 'ceamx-note-prefix-map)
-(define-prefix-command 'ceamx-journal-prefix 'ceamx-journal-prefix-map)
-(define-prefix-command 'ceamx-package-prefix)
-(define-prefix-command 'ceamx-replace-prefix)
-(define-prefix-command 'ceamx-session-prefix)
-(define-prefix-command 'ceamx-snippet-prefix)
-(define-prefix-command 'ceamx-structural-editing-prefix 'ceamx-structural-editing-prefix-map)
-(define-prefix-command 'ceamx-toggle-prefix)
-(define-prefix-command 'ceamx-window-prefix)
-(define-prefix-command 'ceamx-web-prefix 'ceamx-web-prefix-map)
-(define-prefix-command 'ceamx-workspace-prefix 'ceamx-workspace-prefix-map)
 
 ;;;; Commands
 

@@ -23,7 +23,6 @@
 
 ;;;; Requirements
 
-(require 'hydra)
 (require 'rect)
 
 ;;;; Variables

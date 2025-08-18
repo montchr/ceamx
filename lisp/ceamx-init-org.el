@@ -102,8 +102,6 @@
           ;; [C-<return>], but let `org-insert-heading' ([M-<return>])
           ;; insert a heading wherever.
           org-insert-heading-respect-content nil)
-  (keymap-set org-mode-map "C-M-<return>" #'org-insert-subheading)
-  (keymap-set org-mode-map "C-M-S-<return>" #'org-insert-todo-subheading)
 
   ;;
   ;; Folding
@@ -220,9 +218,6 @@ Intended for use as a local hook function on
   (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
 ;; =org-modern= :ui:
-;; :PROPERTIES:
-;; :ID:       98afad65-f479-4b70-96ea-7da504ea11b8
-;; :END:
 
 ;; + Package :: <https://github.com/minad/org-modern>
 
@@ -274,18 +269,12 @@ Intended for use as a local hook function on
   (setopt org-appear-trigger 'always))
 
 ;; Appearance: Indentation :ui:
-;; :PROPERTIES:
-;; :ID:       15b18268-d8b3-4e36-9359-9b2c481698ba
-;; :END:
 
 
 (after! org
   (setopt org-indent-indentation-per-level 2))
 
 ;; Method № 1: Org-Indent-Mode
-;; :PROPERTIES:
-;; :ID:       cab6066c-6fbb-4361-8ed4-09f840b1ab76
-;; :END:
 
 ;; Enable =org-indent-mode= by default:
 
@@ -325,9 +314,6 @@ Intended for use as a local hook function on
     (cl-pushnew fn pulsar-pulse-functions)))
 
 ;; =doct= :: a template engine for ~org-capture~
-;; :PROPERTIES:
-;; :ID:       e4505731-723d-4e2b-b21b-3925bc7b73d4
-;; :END:
 
 ;; - Source code :: <https://github.com/progfolio/doct>
 
@@ -336,9 +322,6 @@ Intended for use as a local hook function on
   (require 'doct))
 
 ;; =org-ql= :: a query-builder for ~org-mode~ elements
-;; :PROPERTIES:
-;; :ID:       763286d7-b5f7-4a56-b3f6-56c677a917b9
-;; :END:
 
 ;; - Source code :: <https://github.com/alphapapa/org-ql>
 
@@ -348,22 +331,14 @@ Intended for use as a local hook function on
   )
 
 ;; =org-node= :: a lightweight intertwingler
-;; :PROPERTIES:
-;; :ID:       beb57c33-d2e4-491f-8792-a9327a097a72
-;; :END:
 
 ;; + Package :: <https://github.com/meedstrom/org-node>
 
 
 (package! org-node
-  (keymap-global-set "M-s M-f" #'org-node-find)
-  (keymap-global-set "C-c i n" #'org-node-insert-link)
-  (after! org-mode
-    (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link)))
+  (setq! org-node-extra-id-dirs (list ceamx-agenda-dir)))
 
 (after! org-node
-  (setopt org-node-extra-id-dirs (list ceamx-agenda-dir))
-
   (add-to-list 'org-node-extra-id-dirs-exclude ceamx-note-journal-dir)
 
   (org-node-backlink-mode)
@@ -441,30 +416,20 @@ Intended for use as a local hook function on
           '(time file category todo itags olpath ltags)))
 
 ;; Agenda
-;; :PROPERTIES:
-;; :ID:       ad92ea31-8411-4ba4-b179-cf66e34a016c
-;; :END:
 
 
 (use-feature! org-agenda
-  :bind ( ("C-c a" . #'org-agenda)
-          :map ceamx-launch-prefix
-          ("a" . #'org-agenda))
-
   :config
-  (setopt org-agenda-tags-column 0)
-  (setopt org-agenda-block-separator ?─)
-  (setopt org-agenda-time-grid
+  (setq! org-agenda-tags-column 0)
+  (setq! org-agenda-block-separator ?─)
+  (setq! org-agenda-time-grid
           '((daily today require-timed)
             (800 1000 1200 1400 1600 1800 2000)
             " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
-  (setopt org-agenda-current-time-string
+  (setq! org-agenda-current-time-string
           "⭠ now ─────────────────────────────────────────────────"))
 
 ;; =org-super-agenda= :: enchanted groupings for Org-Agenda
-;; :PROPERTIES:
-;; :ID:       6438e6e9-5052-403d-8c23-a1ee8daf0ec2
-;; :END:
 
 ;; The agenda groups are declared in [[id:815ead58-41ac-406b-b1fe-4d6c4c838617][Thee Something-Doing Flow → Org-Agenda groups]]
 
@@ -518,13 +483,9 @@ Intended for use as a local hook function on
   (add-hook 'dired-mode-hook #'org-download-enable))
 
 ;; =org-web-tools= :: view, capture, and archive webpages in org-mode :package:network:web:ATTACH:
-;; :PROPERTIES:
-;; :ID:       17850df6-1729-4b2b-8fc5-62f4b377c2a7
-;; :END:
 
 
-(package! org-web-tools
-  (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
+(package! org-web-tools)
 
 ;; =org-sidebar= :: provide a sidebar for Org buffers :package:
 
@@ -534,17 +495,11 @@ Intended for use as a local hook function on
 (package! org-sidebar)
 
 ;; =org-remark= :: annotate documents with Org-Mode
-;; :PROPERTIES:
-;; :ID:       dd60176d-3c01-49ad-b381-062cdfeaaf66
-;; :END:
 
 
 (package! org-remark)
 
 ;; =ox-gfm= :: org-export to GitHub Flavored Markdown (GFM) :package:
-;; :PROPERTIES:
-;; :ID:       e6aaf439-cfd5-4ed7-8d54-23aaec181b6f
-;; :END:
 
 
 (package! ox-gfm
@@ -555,9 +510,6 @@ Intended for use as a local hook function on
       '(eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
 
 ;; =auto-tangle-mode= :: a minor-mode to automatically tangle Org files
-;; :PROPERTIES:
-;; :ID:       b4f86eda-af4d-405c-bbe1-395fd6f14ddf
-;; :END:
 
 
 (package! (auto-tangle-mode :host github :repo "progfolio/auto-tangle-mode.el")

@@ -10,7 +10,6 @@
 
 ;; Set up the ~ceamx-modeline~
 ;; :PROPERTIES:
-;; :ID:       e8fa729f-3a84-4b3b-88eb-450406dde0a5
 ;; :END:
 
 
@@ -21,8 +20,6 @@
 
 (use-feature! ceamx-modeline
   :hook (ceamx-after-init . ceamx-modeline-mode)
-  :init
-  (keymap-set ceamx-toggle-prefix "m" #'ceamx-modeline-mode)
   :config
   (setq-default mode-line-format
                 '("%e"
@@ -56,9 +53,6 @@
                   )))
 
 ;; =minions= :: minimize many mode-line minor-modes
-;; :PROPERTIES:
-;; :ID:       af187c9b-e6b2-47dc-a1b0-848a38455d74
-;; :END:
 
 
 (package! minions

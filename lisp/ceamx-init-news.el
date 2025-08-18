@@ -3,8 +3,6 @@
 (require 'ceamx-paths)
 
 (package! elfeed
-  (keymap-set ceamx-launch-prefix "f" #'elfeed)
-
   (after! elfeed
     (require 'ceamx-news)
 

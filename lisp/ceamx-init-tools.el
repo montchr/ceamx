@@ -4,6 +4,8 @@
 (require 'ceamx-lib)
 (require 'seq)
 
+(require 'ceamx-tools)
+
 ;; Set up ~eshell~, the Emacs-Lisp shell
 
 
@@ -11,16 +13,11 @@
   (setopt eshell-scroll-to-bottom-on-input 'this))
 
 ;; =eat= :: [E]mulate [A] [T]erminal
-;; :PROPERTIES:
-;; :ID:       cafaa1b0-d633-4e7e-b470-6dbfd534c35f
-;; :END:
 
 ;; + Package :: <https://codeberg.org/akib/emacs-eat/>
 
 
 (package! eat
-  (keymap-set ceamx-launch-prefix "t" #'eat)
-
   (after! eshell
     (add-hook 'eshell-load-hook #'eat-eshell-mode)
     (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
@@ -33,7 +30,6 @@
 
 (package! pandoc-mode
   (add-hook 'markdown-mode-hook #'pandoc-mode)
-
   (add-hook 'pandoc-mode-hook #'pandoc-load-default-settings))
 
 ;; =verb= :: organize and send http requests
@@ -81,24 +77,12 @@
 ;; =help-find= :: introspect keybindings
 
 
-(package! help-find
-  (define-keymap :keymap help-map
-    "K b" #'help-find-keybinding
-    "K f" #'help-find-function))
+(package! help-find)
 
 ;; =uuidgen=: Generate and insert UUIDs
-;; :PROPERTIES:
-;; :ID:       48fbfb99-55c9-44db-a342-2c9fe847e85e
-;; :END:
 
 
-(package! uuidgen
-  (define-keymap :keymap ceamx-insert-prefix-map
-    "U" (cons "uuid" (define-prefix-command 'ceamx-insert-uuid-prefix))
-    "U 1" #'uuidgen-1
-    "U 3" #'uuidgen-3
-    "U 4" #'uuidgen-4
-    "U 5" #'uuidgen-5))
+(package! uuidgen)
 
 ;; Augementated Intelligentry (AI) :ai:
 
@@ -135,9 +119,6 @@ This should be updated when a new version is available.")
   (setq! efrit-model ceamx-ai-claude-opus-current-model))
 
 ;; Define important feature paths :paths:
-;; :PROPERTIES:
-;; :ID:       6af77ff1-5d06-41c8-bedf-f123ae532989
-;; :END:
 
 
 (defconst ceamx-ledger-dir (expand-file-name "~/ledger"))
@@ -167,9 +148,6 @@ This should be updated when a new version is available.")
   (setopt flycheck-hledger-strict t))
 
 ;; PDF-Tools
-;; :PROPERTIES:
-;; :ID:       9d793672-7e26-4e2d-9aeb-8aaa85d14128
-;; :END:
 
 ;; - website :: <https://github.com/vedang/pdf-tools>
 ;; - ref :: <https://github.com/jwiegley/dot-emacs/blob/master/init.org>
@@ -231,9 +209,6 @@ This should be updated when a new version is available.")
     (require 'saveplace-pdf-view)))
 
 ;; =ready-player= :: multimedia file previews :nixpkgs:
-;; :PROPERTIES:
-;; :ID:       96e9c541-fc8f-42cf-9f22-b726dc37f7cb
-;; :END:
 
 ;; + Package :: <https://github.com/xenodium/ready-player>
 ;; + Dependencies :: =ffmpeg= =ffmpegthumbnailer= =mpv=
@@ -261,26 +236,17 @@ This should be updated when a new version is available.")
   (keymap-set dired-preview-mode-map "C-c C-p" #'ceamx/ready-player-dired-preview-play-toggle))
 
 ;; =mpdel= :: MPD client for Emacs
-;; :PROPERTIES:
-;; :ID:       4009635b-4bf9-4b7e-afd8-e829d8ab45a6
-;; :END:
 
 
 (package! mpdel)
 
 ;; =linkmarks= :: Keep link bookmarks in Org-Mode
-;; :PROPERTIES:
-;; :ID:       db54377f-9e4f-4708-a4ce-539e7441423e
-;; :END:
 
 
 (package! (linkmarks :host github :repo "dustinlacewell/linkmarks")
   (setopt linkmarks-file (expand-file-name "bookmarks.org" ceamx-biblio-dir)))
 
 ;; =org-capture-ref= :: Extract metadata from websites for capture
-;; :PROPERTIES:
-;; :ID:       45bc1e57-c0cf-4896-a32f-eb8ade2257c8
-;; :END:
 
 
 ;; XXX: Dependency of `org-capture-ref' without recipe.
@@ -310,9 +276,6 @@ This should be updated when a new version is available.")
                           :immediate-finish t))))))
 
 ;; Bibliographies
-;; :PROPERTIES:
-;; :ID:       6ffdedb4-5a6a-47bf-98ca-40e3147f7d03
-;; :END:
 
 
 (package! parsebib)
@@ -348,9 +311,6 @@ This should be updated when a new version is available.")
   (require 'oc-csl))
 
 ;; yijing.el
-;; :PROPERTIES:
-;; :ID:       c5573349-c13f-4702-8cf3-8f7cdb49add4
-;; :END:
 
 ;; + src :: https://www.emacswiki.org/emacs/i-ching.el
 
@@ -366,16 +326,13 @@ This should be updated when a new version is available.")
              yijing/cast))
 
 ;; Operate on buffers rectangularly with the ~rect~ feature
-;; :PROPERTIES:
-;; :ID:       8465808e-c79f-4e30-a88f-a9e64401ff95
-;; :END:
 ;; :LOGBOOK:
 ;; - Refiled on [2025-01-27 Mon 09:34]
 ;; :END:
 
 
 (use-feature! ceamx-tools
-  :bind ( "C-x SPC" . #'ceamx/rectangle-dispatch/body))
+  :demand t)
 
 ;; =ceamx-typer= :: Use Emacs anywhere (kinda) :nixpkgs:
 

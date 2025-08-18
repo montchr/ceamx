@@ -4,27 +4,10 @@
 (require 'ceamx-window)
 
 ;; General customizations
-;; :PROPERTIES:
-;; :ID:       3edd2008-b6f1-4de2-b0fe-388775c61d93
-;; :END:
 
 
-(setopt split-width-threshold 120
-        split-height-threshold nil)
-
-(define-keymap :keymap (current-global-map)
-  "C-x =" #'balance-windows
-  "C-x +" #'balance-windows-area
-  "C-x C-n" #'next-buffer
-  "C-x C-p" #'previous-buffer
-  ;; TODO: consider sub-mirroring window manager bindings
-  "C-x <up>" #'enlarge-window           ; also: C-x ^
-  "C-x <down>" #'shrink-window
-  "C-x <left>" #'shrink-window-horizontally
-  "C-x <right>" #'enlarge-window-horizontally)
-
-(use-feature! ceamx-window
-  :bind ("C-x o" . #'ceamx/other-window))
+(setq! split-width-threshold 120
+       split-height-threshold nil)
 
 ;; Configure window behavior for help buffers
 
@@ -176,20 +159,12 @@
            (side . bottom))))
 
 ;; =popper= :: Summon and dismiss "popup" windows :popup:
-;; :PROPERTIES:
-;; :ID:       22ada524-f8e6-4f97-b745-5e00219c1be4
-;; :END:
 
 ;; - Website :: <https://github.com/karthink/popper>
 
 
 (package! popper
-  (define-keymap :keymap (current-global-map)
-    "C-`" #'popper-toggle
-    "C-~" #'popper-cycle
-    "C-M-`" #'popper-toggle-type)
-
-  (setopt popper-reference-buffers
+  (setq! popper-reference-buffers
           (append
            ceamx-simple-help-modes-list
            ceamx-simple-help-buffer-names-list
@@ -230,9 +205,6 @@
   (popper-echo-mode))
 
 ;; Configure overrides in ~popper-repeat-map~
-;; :PROPERTIES:
-;; :ID:       df697f37-7a4d-4206-80a2-1814bae3db2b
-;; :END:
 
 
 (after! popper
@@ -242,9 +214,6 @@
     "~" #'popper-cycle-backwards))
 
 ;; =lentic= :: Create decoupled views of the same content
-;; :PROPERTIES:
-;; :ID:       c6b0beb5-5c7b-4125-b6db-7cf25629a06a
-;; :END:
 
 
 (package! lentic
@@ -270,20 +239,21 @@
 
 
 (package! golden-ratio
-  (setopt golden-ratio-auto-scale t)
-  (setopt golden-ratio-max-width 100))
+  (golden-ratio-mode 1)
+
+  (setq! golden-ratio-max-width)
+  (setq! golden-ratio-auto-scale t)
+  (setq! golden-ratio-max-width nil))
 
 ;; =ace-window= :: interactively manage windows
 
 ;; <https://github.com/abo-abo/ace-window>
 
 
-(package! ace-window
-  (define-keymap :keymap (current-global-map)
-    "C-x w w" #'ace-window))
+(package! ace-window)
 
 (after! ace-window
-  (setopt aw-scope 'visible)
+  (setq! aw-scope 'visible)
 
   (after! pulsar
     (dolist (fn '( aw-copy-window aw-delete-window aw-move-window
@@ -292,19 +262,14 @@
       (cl-pushnew fn pulsar-pulse-functions))))
 
 ;; =transpose-frame= :: transpose a frame's windows
-;; :PROPERTIES:
-;; :ID:       76f64487-fbd0-4754-af9b-ceebf4f0916e
-;; :END:
 
 
-(package! transpose-frame
-  (keymap-global-set "C-x w SPC" #'transpose-frame))
+(package! transpose-frame)
 
 ;; ~ceamx/window-dispatch~: a window-management menu :transient:menu:keybinds:
-;; :PROPERTIES:
-;; :ID:       5d1605bb-1c26-41cc-a1f7-317354ff113b
-;; :END:
 
+
+(require 'transient)
 
 (transient-define-prefix ceamx/window-dispatch ()
   "Window management transient."
@@ -372,9 +337,6 @@
   (setopt ceamx-window-workspace-provider 'activities))
 
 ;; =activities= :: organize window+buffer by activity :tabs:
-;; :PROPERTIES:
-;; :ID:       91310539-1562-4d0c-9648-0f3aa56cc2f0
-;; :END:
 
 ;; - Website :: <https://github.com/alphapapa/activities.el>
 
@@ -397,74 +359,19 @@
   ;; Kill buffers upon invocation of `activities-suspend'.
   (setopt activities-kill-buffers t))
 
-
-
-;; The keybindings conflict with ~edebug~, so they need to be defined later
-;; than usual.  This is still the case as of [2025-01-25 Sat].
-
-
-(defun ceamx-after-init-define-activities-keys-h ()
-  "Define keybindings for `activities' late to override `edebug'.
-Intended for use as a hook on `ceamx-after-init-hook'."
-  (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-
-  ;; (keymap-global-unset "C-x C-a" t)
-  (keymap-global-set "C-x C-a" (cons "Activities" (define-prefix-command 'ceamx-activities-prefix)))
-
-  ;; TODO: still shares bindings with edebug which is confusing
-  (define-keymap :keymap (current-global-map)
-    "C-x C-a C-n" #'activities-new
-    "C-x C-a C-d" #'activities-define
-    "C-x C-a C-a" #'activities-resume
-    "C-x C-a C-s" #'activities-suspend
-    "C-x C-a C-k" #'activities-kill
-    "C-x C-a RET" #'activities-switch
-
-    "C-x C-a b" #'activities-switch-buffer
-    "C-x C-a g" #'activities-revert
-    "C-x C-a l" #'activities-list))
-
-(add-hook 'ceamx-after-init-hook #'ceamx-after-init-define-activities-keys-h)
-
 ;; =bufler= :: group buffers with programmable rules
-;; :PROPERTIES:
-;; :ID:       82ed50ad-45b4-4a0c-9ae5-e978de65cdcd
-;; :END:
 
 
 (package! bufler
   (require 'bufler)
 
-  (define-keymap :keymap (current-global-map)
-    ;; "C-x b" #'bufler-switch-buffer
-    "C-x B" #'bufler-workspace-focus-buffer
-    "C-x C-b" #'bufler                  ; orig. `ibuffer'
-    "C-x C-B" #'ibuffer
+  (setq! bufler-reverse t)
+  (setq! bufler-workspace-mode-lighter "β ")
+  (setq! bufler-columns '("Name" "Size" "Mode" "VC" "Path"))
+  (setq! bufler-initial-face-depth 1)
 
-    "C-x w o" #'bufler-workspace-open
-    "C-x w r" #'bufler-workspace-reset
-    "C-x w s" #'bufler-workspace-save ; orig. `window-toggle-side-windows'
-    )
-
-  (define-keymap :keymap ceamx-workspace-prefix-map
-    "TAB" #'bufler-workspace-open
-    "b" #'bufler-workspace-switch-buffer
-    "B" #'bufler-workspace-focus-buffer
-    "r" #'bufler-workspace-reset
-    "s" #'bufler-workspace-save))
-
-
-
-;; Here are the customizations for Bufler:
-
-
-(after! bufler
-  (setopt bufler-reverse t)
-  (setopt bufler-workspace-mode-lighter "β ")
-  (setopt bufler-columns '("Name" "Size" "Mode" "VC" "Path"))
-  (setopt bufler-initial-face-depth 1)
   (after! prism
-    (setopt bufler-face-prefix "prism-level-")))
+    (setq! bufler-face-prefix "prism-level-")))
 
 
 
@@ -472,7 +379,7 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
 
 (after! bufler
-  ;; XXX: This absolutely MUST NOT use `setopt'!  Otherwise, the
+  ;; HACK: This absolutely MUST NOT use `setopt'!  Otherwise, the
   ;; package will fail to load due to a hard-to-trace error saying
   ;; something about nil being a void-function.  This probably has
   ;; something to do with the `setopt' type-checking.
@@ -566,14 +473,6 @@ Intended for use as a hook on `ceamx-after-init-hook'."
 
           (auto-directory)
           (auto-mode))))
-
-;; Switch buffers with scoped buffer lists
-
-
-(use-feature! ceamx-window
-  :commands (ceamx/switch-to-buffer)
-  :bind
-  ("C-x b" . #'ceamx/switch-to-buffer))
 
 ;; Pulse on window actions with =pulsar= :ui:pulsar:
 

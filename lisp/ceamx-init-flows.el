@@ -63,13 +63,5 @@
                  :order 9)
           (:priority<= "B" :order 1))))
 
-(define-keymap :keymap ceamx-web-prefix-map
-  "i" #'org-web-tools-insert-link-for-url
-  "O" #'org-web-tools-read-url-as-org)
-
-(after! org-mode
-  (keymap-set org-mode-map "C-c w a" #'org-web-tools-archive-attach)
-  (keymap-set org-mode-map "C-c w c" #'org-web-tools-convert-links-to-page-entries))
-
 (provide 'ceamx-init-flows)
 ;;; ceamx-init-flows.el ends here

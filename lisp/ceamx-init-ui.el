@@ -84,9 +84,6 @@
 (setopt custom-safe-themes t)
 
 ;; =standard-themes= :: Prot's themes like the default but more consistent
-;; :PROPERTIES:
-;; :ID:       09f2005b-1d4d-4d92-9f36-2327ca55757d
-;; :END:
 
 
 (package! standard-themes
@@ -109,9 +106,6 @@
             standard-light-tinted)))
 
 ;; =modus-themes= :: Prot’s accessible themes conforming to WCAG AAA
-;; :PROPERTIES:
-;; :ID:       3700042e-1b73-416f-aaa1-2cbd9f2101f0
-;; :END:
 
 ;; - Website :: <https://protesilaos.com/modus-themes/>
 
@@ -138,9 +132,6 @@
   (setopt modus-themes-org-blocks 'tinted-background))
 
 ;; =ef-themes= :: Prot’s colorful yet legible themes
-;; :PROPERTIES:
-;; :ID:       3f512af0-7bad-4447-a14d-08a5371e14c5
-;; :END:
 
 ;; - Website :: <https://protesilaos.com/emacs/ef-themes>
 
@@ -156,9 +147,6 @@
           ef-themes-variable-pitch-ui t))
 
 ;; =doric-themes= :: Prot’s minimalist themes
-;; :PROPERTIES:
-;; :ID:       d39feac9-ef27-41b0-94f9-92ed49b24055
-;; :END:
 
 
 (package! doric-themes
@@ -170,9 +158,6 @@
   (setopt doric-themes-to-rotate doric-themes-collection))
 
 ;; Configure the preferred themes
-;; :PROPERTIES:
-;; :ID:       a21cb155-3353-4e2c-9593-1680b43f4575
-;; :END:
 
 
 (use-feature! ceamx-ui
@@ -188,9 +173,6 @@
 (setopt calendar-longitude -75.133)
 
 ;; =circadian= :: theme phasing based on sunrise/sunset time
-;; :PROPERTIES:
-;; :ID:       badbc4d6-c784-4936-bd84-e1312a67273c
-;; :END:
 
 
 (package! circadian
@@ -325,9 +307,6 @@
     (cl-pushnew #'sideline-eglot sideline-backends-right)))
 
 ;; =avy= :: can do anything
-;; :PROPERTIES:
-;; :ID:       05cb2761-07fc-476b-8b78-0d08e0a89469
-;; :END:
 
 ;; + Package :: <https://github.com/abo-abo/avy>
 ;; + Article :: <https://karthinks.com/software/avy-can-do-anything/>
@@ -336,26 +315,15 @@
 (package! avy
   (defer! 2 (require 'avy))
 
-  (define-keymap :keymap (current-global-map)
-    "C-;" #'avy-goto-char-timer
-    ;; "C-'" is reserved for special commands e.g. `avy-org-goto-heading-timer'
-
-    "M-g w" #'avy-goto-word-1)
-
-  (after! org
-    (keymap-set org-mode-map "C-'" #'avy-org-goto-heading-timer)
-    (keymap-set org-mode-map "C-\"" #'avy-org-refile-as-child)))
-
-(after! avy
-  (setopt avy-style 'at-full)
-  (setopt avy-all-windows t)
-  (setopt avy-case-fold-search t)
+  (setq! avy-style 'at-full)
+  (setq! avy-all-windows t)
+  (setq! avy-case-fold-search t)
 
   ;; Prevent conflicts with themes.
-  (setopt avy-background nil)
+  (setq! avy-background nil)
 
   ;; Anything lower feels unusable.
-  (setopt avy-timeout-seconds 0.25))
+  (setq! avy-timeout-seconds 0.25))
 
 ;; Highlight current line in programming modes
 
@@ -377,15 +345,15 @@
 
 (package! pulsar
   (add-hook 'ceamx-after-init-hook #'pulsar-global-mode)
-  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line))
+  (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line)
 
-(after! pulsar
-  (setopt pulsar-pulse t
+  (setq! pulsar-pulse t
           pulsar-delay 0.055
           pulsar-iterations 20)
-  (setopt pulsar-face 'pulsar-generic
-          pulsar-highlight-face 'pulsar-face)
+  (setq! pulsar-face 'pulsar-generic
+         pulsar-highlight-face 'pulsar-face))
 
+(after! pulsar
   (dolist (fn '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
                  bookmark-jump other-window delete-window delete-other-windows
                  forward-page backward-page scroll-up-command scroll-down-command
@@ -403,12 +371,9 @@
 ;; Window highlighting
 
 
-(setopt highlight-nonselected-windows nil)
+(setq! highlight-nonselected-windows nil)
 
 ;; Hide frame decorations
-;; :PROPERTIES:
-;; :ID:       c532e9e7-8729-4442-8bd7-2c50717a9dc7
-;; :END:
 
 
 (unless (ceamx-host-macos-p)
@@ -426,10 +391,7 @@
     "TODO: Provide source for this approach (Doom?), and why it does what it does."
     (when-let (frame (or frame (selected-frame)))
       (when (display-graphic-p frame)
-        (set-frame-parameter frame 'menu-bar-lines 1))))
-
-  ;; Stop C-z from minimizing windows.
-  (keymap-global-unset "C-z" t))
+        (set-frame-parameter frame 'menu-bar-lines 1)))))
 
 ;; =spacious-padding= :: a comfortable layout density
 
@@ -456,14 +418,12 @@
 
 
 (package! olivetti
-  (keymap-set ctl-x-x-map "o" #'olivetti-mode))
-
-(after! olivetti
-  (setopt olivetti-body-width 0.7
+  (setq! olivetti-body-width 0.7
           olivetti-minimum-body-width 40
           olivetti-recall-visual-line-mode-entry-state t)
-  (setopt olivetti-style 'fancy)
+  (setq! olivetti-style 'fancy))
 
+(after! olivetti
   (def-hook! +olivetti-mode-on--disable-conflicting-features-h ()
     '(olivetti-mode-on-hook)
     "Disable features that conflict with `olivetti-mode' appearance."
@@ -471,29 +431,17 @@
       (diff-hl-mode -1))))
 
 ;; =logos= :: a simple focus mode with page breaks or outlines :present:
-;; :PROPERTIES:
-;; :ID:       9f620970-a54b-46bf-bbc4-ad3712646506
-;; :END:
 
 
 (package! logos
-  (define-keymap :keymap (current-global-map)
-    "C-x n N" #'logos-narrow-dwim
-
-    "C-x ]" #'logos-forward-page-dwim
-    "C-x [" #'logos-backward-page-dwim)
-
-    "M-]" #'logos-forward-page-dwim
-    "M-[" #'logos-backward-page-dwim)
-
-(after! logos
-  (setopt logos-outlines-are-pages t)
-  (setopt logos-outline-regexp-alist
+  (setq! logos-outlines-are-pages t)
+  (setq! logos-outline-regexp-alist
           `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
             (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
             (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
-            (conf-toml-mode . "^\\[")))
+            (conf-toml-mode . "^\\["))))
 
+(after! logos
   ;; These apply buffer-locally when `logos-focus-mode' is enabled.
   (setq-default logos-hide-cursor t
                 logos-hide-mode-line t
@@ -521,10 +469,7 @@
 ;; Focusing by sentence, paragraph, or code block.
 
 
-;; TODO: keybindings to C-c T z as prefix
-(package! focus
-  (define-keymap :keymap ceamx-toggle-prefix
-    "Z" #'focus-mode))
+(package! focus)
 
 ;; =moc= :: "Master of Ceremonies" presentation utilities :present:
 
@@ -713,9 +658,6 @@
     (fontaine-mode 1)))
 
 ;; ~ligature.el~ :: improved ligature support
-;; :PROPERTIES:
-;; :ID:       faf642cc-811e-4b58-bbaa-51e9e11b1dff
-;; :END:
 
 ;; + Package :: <https://github.com/mickeynp/ligature.el>
 
@@ -781,14 +723,7 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 (package! nerd-icons
   (require 'nerd-icons)
 
-  (keymap-set ceamx-insert-prefix-map "I" '("icon" . nerd-icons-insert))
-
-  (define-keymap :keymap (current-global-map)
-    "C-x 8 i" (cons "icons" (define-prefix-command 'ceamx-insert-icons-prefix 'ceamx-insert-icons-prefix-map))
-    "C-x 8 i i" #'nerd-icons-insert))
-
-(after! nerd-icons
-  (setopt nerd-icons-font-family "Symbols Nerd Font Mono"))
+  (setq! nerd-icons-font-family "Symbols Nerd Font Mono"))
 
 ;; Provide common dependency: ~svg-lib~ :package:
 
@@ -819,6 +754,9 @@ x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 ;; =savefold= :: Persist overlay-based folding state
 
 ;; + Package :: <https://github.com/jcfk/savefold.el/>
+
+;; This is a really nice package.  Works so seamlessly, I forget it’s even
+;; there.  But it is, and it’s an improvement over the default behavior.
 
 
 (package! savefold

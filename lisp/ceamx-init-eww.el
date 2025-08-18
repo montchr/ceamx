@@ -15,9 +15,6 @@
 ;; TODO: Move this elsewhere, as it probably affects other HTTP requests.
 (setopt url-privacy-level '(email lastloc))
 
-(keymap-set ceamx-launch-prefix "b" #'eww)
-(keymap-set ceamx-launch-prefix "W" #'ceamx/eww-wiki)
-
 (after! eww
   (define-keymap :keymap eww-mode-map
     "," '("scroll down" . scroll-up-command)
