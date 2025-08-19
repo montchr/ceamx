@@ -975,14 +975,14 @@ file is reloaded and ~elpaca-process-queues~ runs in
 ***** Install the latest version of Org-Mode
 
 #+begin_src emacs-lisp
-;; (unless after-init-time
-;;   (when (featurep 'org)
-;;     (unload-feature 'org)))
+(unless after-init-time
+  (when (featurep 'org)
+    (unload-feature 'org)))
 
-;; (elpaca (org :autoloads "org-loaddefs.el"))
+(elpaca (org :autoloads "org-loaddefs.el"))
 #+end_src
 
-**** Install the latest version of ~use-package~
+***** Install the latest version of ~use-package~
 :PROPERTIES:
 :ID:       87854bdb-fb6f-4117-884e-81354c924c07
 :END:
@@ -1061,6 +1061,8 @@ unimportant since it happens during compilation anyway."
 ;; (package! (persist :host github :repo "emacsmirror/persist")
 ;;   (require 'persist))
 #+end_src
+
+***
 
 ** =init.el=: Environment
 :PROPERTIES:

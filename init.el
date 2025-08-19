@@ -351,11 +351,11 @@ The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
 ;; Install the latest version of Org-Mode
 
 
-;; (unless after-init-time
-;;   (when (featurep 'org)
-;;     (unload-feature 'org)))
+(unless after-init-time
+  (when (featurep 'org)
+    (unload-feature 'org)))
 
-;; (elpaca (org :autoloads "org-loaddefs.el"))
+(elpaca (org :autoloads "org-loaddefs.el"))
 
 ;; Install the latest version of ~use-package~
 ;; :PROPERTIES:

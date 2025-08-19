@@ -5,41 +5,41 @@
 ;; Baseline minibuffer settings
 
 
-(progn
-  (minibuffer-depth-indicate-mode 1)
-  (minibuffer-electric-default-mode 1)
-  (file-name-shadow-mode 1)
+  (progn
+    (minibuffer-depth-indicate-mode 1)
+    (minibuffer-electric-default-mode 1)
+    (file-name-shadow-mode 1)
 
-  (setq! echo-keystrokes 0.25)
-  (setq! read-answer-short t)
-  (setq! savehist-save-minibuffer-history t)
+    (setq! echo-keystrokes 0.25)
+    (setq! read-answer-short t)
+    (setq! savehist-save-minibuffer-history t)
 
-  ;; Allow opening the minibuffer from inside the minibuffer.
-  (setq! enable-recursive-minibuffers t)
+    ;; Allow opening the minibuffer from inside the minibuffer.
+    (setq! enable-recursive-minibuffers t)
 
-  ;; Expand mini-windows to fit their contents if necessary.
-  (setq! resize-mini-windows 'grow-only)
+    ;; Expand mini-windows to fit their contents if necessary.
+    (setq! resize-mini-windows 'grow-only)
 
-  ;; Hide commands in M-x which do not apply to the current mode.
-  (setq! read-extended-command-predicate #'command-completion-default-include-p)
+    ;; Hide commands in M-x which do not apply to the current mode.
+    (setq! read-extended-command-predicate #'command-completion-default-include-p)
 
-  ;; Hide the cursor in the minibuffer prompt.
-  (setq! minibuffer-prompt-properties '( read-only t
-                                         cursor-intangible t
-                                         face minibuffer-prompt))
+    ;; Hide the cursor in the minibuffer prompt.
+    (setq! minibuffer-prompt-properties '( read-only t
+                                           cursor-intangible t
+                                           face minibuffer-prompt))
 
-  (setq! completion-ignore-case t
-         read-buffer-completion-ignore-case t
-         read-file-name-completion-ignore-case t)
-  (setq-default case-fold-search t)
+    (setq! completion-ignore-case t
+           read-buffer-completion-ignore-case t
+           read-file-name-completion-ignore-case t)
+    (setq-default case-fold-search t)
 
-  ;; No need to restore windows upon exiting the minibuffer.
-  (setq! read-minibuffer-restore-windows nil)
+    ;; No need to restore windows upon exiting the minibuffer.
+    (setq! read-minibuffer-restore-windows nil)
 
-  (setq! minibuffer-default-prompt-format " [%s]")
+    (setq! minibuffer-default-prompt-format " [%s]")
 
-  ;; Emacs 31+: Make `partial-completion' behave like `substring'.
-  (setq! completion-pcm-leading-wildcard t))
+    ;; Emacs 31+: Make `partial-completion' behave like `substring'.
+    (setq! completion-pcm-leading-wildcard t))
 
 
 
