@@ -4,8 +4,6 @@
 (require 'ceamx-lib)
 (require 'seq)
 
-(require 'ceamx-tools)
-
 ;; Set up ~eshell~, the Emacs-Lisp shell
 
 
