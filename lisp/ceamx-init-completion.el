@@ -325,16 +325,13 @@ We display [CRM<separator>], e.g., [CRM,] if the separator is a comma."
 
 
 (after! consult
-  (setopt consult-preview-key 'any)
+  (setq! consult-preview-key 'any)
 
   (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)
-
-   consult-ripgrep consult-git-grep consult-grep
+   consult-theme consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
    consult--source-bookmark consult--source-file-register
    consult--source-recent-file consult--source-project-recent-file
-   ;; :preview-key (kbd "M-.")
    :preview-key '(:debounce 0.4 any)))
 
 ;; Search pre-defined sets of Info pages with ~consult-info~ :consult:

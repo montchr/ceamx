@@ -624,8 +624,8 @@ unimportant since it happens during compilation anyway."
   "C-~" #'popper-cycle
   "C-M-`" #'popper-toggle-type
   "C-^" #'crux-top-join-line
-  "C-=" #'expreg-expand
-  "C-+" #'expreg-contract
+  "C-+" #'expreg-expand
+  "C-=" #'expreg-contract
   "C-;" #'avy-goto-char-timer
   ;; "C-'" :: RESERVED: special commands e.g. `avy-org-goto-heading-timer'
   "C-." #'embark-act
@@ -783,6 +783,7 @@ unimportant since it happens during compilation anyway."
 
 
 (define-keymap :keymap ceamx-history-prefix
+  "f" #'consult-recent-file
   "h" #'consult-history)
 
 ;; [C-c i] :: INSERT
@@ -981,16 +982,18 @@ unimportant since it happens during compilation anyway."
 (define-keymap :keymap ceamx-workspace-prefix
   "w" #'ceamx/window-dispatch
 
-  "RET" #'activities-switch
-  "C-a" #'activities-resume
-  "C-d" #'activities-define
-  "C-k" #'activities-kill
-  "C-n" #'activities-new
-  "C-s" #'activities-suspend
+  "a" (cons "[ ACTIVITIES ]" #'ceamx-activities-prefix)
+
+  "a RET" #'activities-switch
+  "a a" #'activities-resume
+  "a d" #'activities-define
+  "a g" #'activities-revert
+  "a k" #'activities-kill
+  "a n" #'activities-new
+  "a s" #'activities-suspend
 
   "b" #'bufler-workspace-switch-buffer
   "B" #'bufler-workspace-focus-buffer
-  "g" #'activities-revert
   "o" #'bufler-workspace-open
   "r" #'bufler-workspace-save)
 
@@ -1027,6 +1030,7 @@ unimportant since it happens during compilation anyway."
   "C-c z o" #'treesit-fold-open
   "C-c z O" #'treesit-fold-open-all
   "C-c z r" #'treesit-fold-open-recursively
+  "C-c z t" #'treesit-fold-toggle
   "C-z z z" #'treesit-fold-toggle)
 
 ;; [C-x] :: Global X-Prefix

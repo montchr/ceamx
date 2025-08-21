@@ -3800,16 +3800,13 @@ Refine preview appearance and behavior:
 
 #+begin_src emacs-lisp
 (after! consult
-  (setopt consult-preview-key 'any)
+  (setq! consult-preview-key 'any)
 
   (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)
-
-   consult-ripgrep consult-git-grep consult-grep
+   consult-theme consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
    consult--source-bookmark consult--source-file-register
    consult--source-recent-file consult--source-project-recent-file
-   ;; :preview-key (kbd "M-.")
    :preview-key '(:debounce 0.4 any)))
 #+end_src
 
@@ -5133,6 +5130,9 @@ Customize the behavior of =log-edit=:
 #+end_src
 
 *** =vc-jj= :: Support for the Jujutsu version control system :package:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 
 + Package :: https://codeberg.org/emacs-jj-vc/vc-jj.el
 + Bug :: <https://codeberg.org/emacs-jj-vc/vc-jj.el/issues/82>
@@ -9268,8 +9268,8 @@ loaded.  There’s probably a safer way to write it.
   "C-~" #'popper-cycle
   "C-M-`" #'popper-toggle-type
   "C-^" #'crux-top-join-line
-  "C-=" #'expreg-expand
-  "C-+" #'expreg-contract
+  "C-+" #'expreg-expand
+  "C-=" #'expreg-contract
   "C-;" #'avy-goto-char-timer
   ;; "C-'" :: RESERVED: special commands e.g. `avy-org-goto-heading-timer'
   "C-." #'embark-act
@@ -9435,6 +9435,7 @@ Flycheck automatically binds its keymap to this.
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-history-prefix
+  "f" #'consult-recent-file
   "h" #'consult-history)
 #+end_src
 
@@ -9644,16 +9645,18 @@ Flycheck automatically binds its keymap to this.
 (define-keymap :keymap ceamx-workspace-prefix
   "w" #'ceamx/window-dispatch
 
-  "RET" #'activities-switch
-  "C-a" #'activities-resume
-  "C-d" #'activities-define
-  "C-k" #'activities-kill
-  "C-n" #'activities-new
-  "C-s" #'activities-suspend
+  "a" (cons "[ ACTIVITIES ]" #'ceamx-activities-prefix)
+
+  "a RET" #'activities-switch
+  "a a" #'activities-resume
+  "a d" #'activities-define
+  "a g" #'activities-revert
+  "a k" #'activities-kill
+  "a n" #'activities-new
+  "a s" #'activities-suspend
 
   "b" #'bufler-workspace-switch-buffer
   "B" #'bufler-workspace-focus-buffer
-  "g" #'activities-revert
   "o" #'bufler-workspace-open
   "r" #'bufler-workspace-save)
 #+end_src
@@ -9693,6 +9696,7 @@ IIRC, Vim uses some =z= stuff for folding too.
   "C-c z o" #'treesit-fold-open
   "C-c z O" #'treesit-fold-open-all
   "C-c z r" #'treesit-fold-open-recursively
+  "C-c z t" #'treesit-fold-toggle
   "C-z z z" #'treesit-fold-toggle)
 #+end_src
 

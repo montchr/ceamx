@@ -24,6 +24,7 @@
 
 ;;; Code:
 
+(define-prefix-command 'ceamx-activities-prefix)
 (define-prefix-command 'ceamx-appearance-prefix)
 (define-prefix-command 'ceamx-bookmark-prefix 'ceamx-bookmark-prefix-map)
 (define-prefix-command 'ceamx-buffer-prefix)
