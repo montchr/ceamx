@@ -9638,7 +9638,7 @@ Flycheck automatically binds its keymap to this.
   (keymap-set dired-mode-map "C-c t p" #'dired-preview-global-mode))
 #+end_src
 
-** [C-c w] :: WINDOW :window:
+** [C-c w] :: WORKSPACE :window:workspace:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-workspace-prefix
@@ -9653,6 +9653,7 @@ Flycheck automatically binds its keymap to this.
 
   "b" #'bufler-workspace-switch-buffer
   "B" #'bufler-workspace-focus-buffer
+  "g" #'activities-revert
   "o" #'bufler-workspace-open
   "r" #'bufler-workspace-save)
 #+end_src

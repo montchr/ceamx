@@ -975,7 +975,7 @@ unimportant since it happens during compilation anyway."
 (after! dired
   (keymap-set dired-mode-map "C-c t p" #'dired-preview-global-mode))
 
-;; [C-c w] :: WINDOW :window:
+;; [C-c w] :: WORKSPACE :window:workspace:
 
 
 (define-keymap :keymap ceamx-workspace-prefix
@@ -990,6 +990,7 @@ unimportant since it happens during compilation anyway."
 
   "b" #'bufler-workspace-switch-buffer
   "B" #'bufler-workspace-focus-buffer
+  "g" #'activities-revert
   "o" #'bufler-workspace-open
   "r" #'bufler-workspace-save)
 
