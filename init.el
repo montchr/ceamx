@@ -580,6 +580,7 @@ unimportant since it happens during compilation anyway."
 (require 'ceamx-init-langs)
 (require 'ceamx-init-notes)
 (require 'ceamx-init-org)
+(require 'ceamx-init-email)
 (require 'ceamx-init-tools)
 (require 'ceamx-init-news)
 (require 'ceamx-init-eww)
@@ -716,7 +717,7 @@ unimportant since it happens during compilation anyway."
 
 (define-keymap :keymap (current-global-map)
   "C-c a" #'org-agenda
-  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
+  "C-c b" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
   "C-c c" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
   "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
@@ -733,7 +734,7 @@ unimportant since it happens during compilation anyway."
   ;; TODO: disambiguate f/F
   "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
   "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
-  "C-c m" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
+  "C-c m" #'notmuch
   "C-c n" (cons "[ NOTE      ]" #'ceamx-note-prefix)
   "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
   "C-c p" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
@@ -764,13 +765,15 @@ unimportant since it happens during compilation anyway."
   "C-c ! p" #'flymake-goto-previous-error
   "C-c ! c" #'flymake-show-buffer-diagnostics)
 
-;; [C-c b] :: BUFFER :buffer:
+;; [C-c b] :: BOOKMARK :bookmarks:
 
 
-(define-keymap :keymap ceamx-buffer-prefix
-  "f" #'crux-cleanup-buffer-or-region
-
-  "M-w" #'crux-kill-buffer-truename)
+(define-keymap :keymap ceamx-bookmark-prefix
+  "b" #'bookmark-in-project-jump
+  "m" #'consult-bookmark
+  "n" #'bookmark-in-project-jump-next
+  "p" #'bookmark-in-project-jump-previous
+  "*" #'bookmark-in-project-toggle)
 
 ;; [C-c c] :: CAPTURE :capture:
 
@@ -865,16 +868,6 @@ unimportant since it happens during compilation anyway."
   "e r" #'epa-encrypt-region
   "k" #'epa-list-keys)
 
-;; [C-c m] :: BOOKMARK :bookmarks:
-
-
-(define-keymap :keymap ceamx-bookmark-prefix-map
-  "b" #'bookmark-in-project-jump
-  "m" #'consult-bookmark
-  "n" #'bookmark-in-project-jump-next
-  "p" #'bookmark-in-project-jump-previous
-  "*" #'bookmark-in-project-toggle)
-
 ;; [C-c n] :: NOTE :notes:
 
 
@@ -892,13 +885,14 @@ unimportant since it happens during compilation anyway."
     "C-c n L" #'denote-add-links
     "C-c n b" #'denote-backlinks))
 
-;; [C-c o] :: LAUNCH
+;; [C-c o] :: LAUNCH :web:mail:agenda:
 
 
 (define-keymap :keymap ceamx-launch-prefix
   "a" #'org-agenda
   "b" #'eww
   "f" #'elfeed
+  "m" #'notmuch
   "s" #'scratch-buffer
   "t" #'eat
   "W" #'ceamx/eww-wiki)
@@ -1047,10 +1041,10 @@ unimportant since it happens during compilation anyway."
 
   "C-x b" #'ceamx/switch-to-buffer
   "C-x g" #'magit-status
-  "C-x l" #'ialign
-
   "C-x k" #'ceamx-simple/kill-current-buffer
   "C-x K" #'kill-buffer
+  "C-x l" #'ialign
+  "C-x m" #'notmuch-mua-new-mail        ; orig. `compose-mail'
   "C-x u" #'vundo
 
   "C-x n N" #'logos-narrow-dwim

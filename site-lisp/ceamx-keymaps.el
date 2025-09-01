@@ -26,8 +26,7 @@
 
 (define-prefix-command 'ceamx-activities-prefix)
 (define-prefix-command 'ceamx-appearance-prefix)
-(define-prefix-command 'ceamx-bookmark-prefix 'ceamx-bookmark-prefix-map)
-(define-prefix-command 'ceamx-buffer-prefix)
+(define-prefix-command 'ceamx-bookmark-prefix)
 (define-prefix-command 'ceamx-capture-prefix 'ceamx-capture-prefix-map)
 (define-prefix-command 'ceamx-code-prefix)
 (define-prefix-command 'ceamx-completion-prefix 'ceamx-completion-prefix-map)

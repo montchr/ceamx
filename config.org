@@ -2120,7 +2120,10 @@ there.  But it is, and it’s an improvement over the default behavior.
 (line-number-mode 1)
 (column-number-mode 1)
 
-(setopt display-time-24hr-format t)
+(setq! display-time-24hr-format t)
+
+;; Handled manually.
+(setq! notmuch-indicator-add-to-mode-line-misc-info nil)
 
 (use-feature! ceamx-modeline
   :hook (ceamx-after-init . ceamx-modeline-mode)
@@ -2150,7 +2153,7 @@ there.  But it is, and it’s an improvement over the default behavior.
                   mode-line-modes
                   " "
                   ceamx-modeline-format-on-save
-                  ;; ceamx-modeline-notmuch-indicator
+                  ceamx-modeline-notmuch-indicator
                   " "
                   ceamx-modeline-misc-info
                   ;;ceamx-modeline-scrollbar
@@ -8472,7 +8475,167 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 ;;; ceamx-init-news.el ends here
 #+end_src
 
-** TODO Mail
+** Email
+:PROPERTIES:
+:ID:       fc95a6fb-6bef-419e-940d-49beffc50ee1
+:header-args: :tangle lisp/ceamx-init-email.el
+:END:
+
+*** Requirements
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-email.el :comments no
+;; -*- lexical-binding: t;  -*-
+
+(require 'ceamx-paths)
+(require 'ceamx-lib)
+#+end_src
+
+*** Configure message encyption
+
+#+begin_src emacs-lisp
+(setq! mm-encrypt-option nil
+       mm-sign-option nil)
+
+(setq! mml-secure-openpgp-encrypt-to-self t
+       mml-secure-openpgp-sign-with-sender t
+       mml-secure-smime-encrypt-to-self t
+       mml-secure-smime-sign-with-sender t)
+#+end_src
+
+*** Configure message composition (=message.el=)
+
+#+begin_src emacs-lisp
+(after! message
+  (add-hook 'message-setup-hook #'message-sort-headers))
+
+(setq! mail-user-agent 'message-user-agent
+       message-mail-user-agent t)
+(setq! mail-header-separator "-- text follows this line --")
+(setq! message-elide-ellipsis "\n> [... %l lines elided]\n")
+(setq! compose-mail-user-agent-warnings nil)
+(setq! message-signature "Chris Montgomery"
+       mail-signature message-signature)
+(setq! message-citation-line-function #'message-insert-formatted-citation-line)
+(setq! message-citation-line-format (concat "> From: %f\n"
+                                            "> Date: %a, %e %b %Y %T %z\n"
+                                            ">")
+       message-ignored-cited-headers "")
+(setq! message-confirm-send t)
+(setq! message-kill-buffer-on-exit t)
+;; Always reply-all.
+(setq! message-wide-reply-confirm-recipients nil)
+#+end_src
+
+*** Configure Dired integration for email attachments (~gnus-dired-mode~)
+
+#+begin_src emacs-lisp
+(after! dired
+  (add-hook 'dired-mode-hook #'turn-on-gnus-dired-mode))
+#+end_src
+
+*** =notmuch= :: just an email system :package:requires_external:
+
+#+begin_src emacs-lisp
+(package! notmuch
+  (setq! notmuch-show-logo nil
+         notmuch-column-control 1.0
+         notmuch-hello-auto-refresh t
+         notmuch-hello-recent-searches-max 20
+         notmuch-hello-thousands-separator ""
+         ;; notmuch-hello-sections '(notmuch-hello-insert-saved-searches)
+         notmuch-show-all-tags-list t)
+
+;;;;; Searches
+
+  (setq! notmuch-search-oldest-first nil)
+  (setq! notmuch-show-empty-saved-searches t)
+  (setq! notmuch-saved-searches
+         '(( :name "inbox"
+             :query "tag:inbox"
+             :sort-order newest-first
+             :key "i")
+           ( :name "unread"
+             :query "tag:unread and tag:inbox"
+             :sort-order newest-first
+             :key "u")))
+
+;;;;; Composing Messages
+
+  (setq! notmuch-mua-compose-in 'current-window)
+  (setq! notmuch-mua-hidden-headers nil)
+  (setq! notmuch-address-command 'internal)
+  (setq! notmuch-address-use-company nil)
+  (setq! notmuch-always-prompt-for-sender t)
+  (setq! notmuch-mua-cite-function #'message-cite-original-without-signature)
+  (setq! notmuch-mua-reply-insert-header-p-function #'notmuch-show-reply-insert-header-p-never)
+  (setq! notmuch-mua-user-agent-function nil)
+  (setq! notmuch-maildir-use-notmuch-insert t)
+  (setq! notmuch-crypto-process-mime t
+         notmuch-crypto-get-keys-asynchronously t)
+
+;;;;; Reading Messages
+
+  (setq! notmuch-show-relative-dates t)
+  (setq! notmuch-show-all-multipart/alternative-parts nil)
+  (setq! notmuch-show-indent-messages-width 1
+         notmuch-show-indent-multipart nil)
+  (setq! notmuch-show-part-button-default-action #'notmuch-show-view-part) ; orig. `notmuch-show-save-part'
+  (setq! notmuch-wash-wrap-lines-length 120)
+  (setq! notmuch-unthreaded-show-out nil)
+  (setq! notmuch-message-headers '("To" "Cc" "Subject" "Date")
+         notmuch-message-headers-visible t)
+
+  ;; Disable buttonisation of long quotes.
+  (let ((count most-positive-fixnum))
+    (setq! notmuch-wash-citation-lines-prefix count
+           notmuch-wash-citation-lines-suffix count)))
+
+;;;;; Keybindings
+
+(after! notmuch
+  (define-keymap :keymap notmuch-search-mode-map
+    "/" #'notmuch-search-filter
+    "r" #'notmuch-search-reply-to-thread
+    "R" #'notmuch-search-reply-to-thread-sender)
+
+  (define-keymap :keymap notmuch-show-mode-map
+    "r" #'notmuch-search-reply-to-thread
+    "R" #'notmuch-search-reply-to-thread-sender))
+
+#+end_src
+
+*** =consult-notmuch= :: Consult interface for Notmuch :consult:package:
+
+#+begin_src emacs-lisp
+(package! consult-notmuch)
+#+end_src
+
+*** =notmuch-indicator= :: Display message count in the mode line :modeline:
+
+#+begin_src emacs-lisp
+(package! notmuch-indicator
+  (setq! notmuch-indicator-args
+         '(( :terms "tag:unread and tag:inbox"
+             :label "[U] ")))
+  (setq! notmuch-indicator-refresh-count (* 60 3))
+  (setq! notmuch-indicator-hide-empty-counters t)
+  (setq! notmuch-indicator-force-refresh-commands '(notmuch-refresh-this-buffer))
+
+  (notmuch-indicator-mode 1))
+#+end_src
+
+*** Footer
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
+#+begin_src emacs-lisp :tangle lisp/ceamx-init-email.el :comments no
+(provide 'ceamx-init-email)
+#+end_src
+
 ** Web Browsing :web:
 :PROPERTIES:
 :VISIBILITY: folded
@@ -8505,16 +8668,16 @@ I wonder if there is a way to export NewsBlur scoring to this format…
 :END:
 
 #+begin_src emacs-lisp
-(setopt shr-use-colors t)
-(setopt shr-folding-mode t)
-(setopt shr-bullet "• ")
+(setq! shr-use-colors t)
+(setq! shr-folding-mode t)
+(setq! shr-bullet "• ")
 
-(setopt eww-search-prefix "https://duckduckgo.com/html?q=")
+(setq! eww-search-prefix "https://duckduckgo.com/html?q=")
 
 ;; HTTP headers may contain user information, which we can limit as needed.
 ;; When providing a list of symbols, the symbols indicate what NOT to send.
 ;; TODO: Move this elsewhere, as it probably affects other HTTP requests.
-(setopt url-privacy-level '(email lastloc))
+(setq! url-privacy-level '(email lastloc))
 
 (after! eww
   (define-keymap :keymap eww-mode-map
@@ -9287,6 +9450,7 @@ Define agenda groups for display with the =org-super-agenda= extension:
 (require 'ceamx-init-langs)
 (require 'ceamx-init-notes)
 (require 'ceamx-init-org)
+(require 'ceamx-init-email)
 (require 'ceamx-init-tools)
 (require 'ceamx-init-news)
 (require 'ceamx-init-eww)
@@ -9436,7 +9600,7 @@ loaded.  There’s probably a safer way to write it.
 #+begin_src emacs-lisp
 (define-keymap :keymap (current-global-map)
   "C-c a" #'org-agenda
-  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
+  "C-c b" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
   "C-c c" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
   "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
@@ -9453,7 +9617,7 @@ loaded.  There’s probably a safer way to write it.
   ;; TODO: disambiguate f/F
   "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
   "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
-  "C-c m" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
+  "C-c m" #'notmuch
   "C-c n" (cons "[ NOTE      ]" #'ceamx-note-prefix)
   "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
   "C-c p" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
@@ -9486,13 +9650,15 @@ Flycheck automatically binds its keymap to this.
   "C-c ! c" #'flymake-show-buffer-diagnostics)
 #+end_src
 
-** [C-c b] :: BUFFER :buffer:
+** [C-c b] :: BOOKMARK :bookmarks:
 
 #+begin_src emacs-lisp
-(define-keymap :keymap ceamx-buffer-prefix
-  "f" #'crux-cleanup-buffer-or-region
-
-  "M-w" #'crux-kill-buffer-truename)
+(define-keymap :keymap ceamx-bookmark-prefix
+  "b" #'bookmark-in-project-jump
+  "m" #'consult-bookmark
+  "n" #'bookmark-in-project-jump-next
+  "p" #'bookmark-in-project-jump-previous
+  "*" #'bookmark-in-project-toggle)
 #+end_src
 
 ** [C-c c] :: CAPTURE :capture:
@@ -9594,18 +9760,6 @@ Flycheck automatically binds its keymap to this.
   "e r" #'epa-encrypt-region
   "k" #'epa-list-keys)
 #+end_src
-
-** [C-c m] :: BOOKMARK :bookmarks:
-
-#+begin_src emacs-lisp
-(define-keymap :keymap ceamx-bookmark-prefix-map
-  "b" #'bookmark-in-project-jump
-  "m" #'consult-bookmark
-  "n" #'bookmark-in-project-jump-next
-  "p" #'bookmark-in-project-jump-previous
-  "*" #'bookmark-in-project-toggle)
-#+end_src
-
 ** [C-c n] :: NOTE :notes:
 
 #+begin_src emacs-lisp
@@ -9624,13 +9778,14 @@ Flycheck automatically binds its keymap to this.
     "C-c n b" #'denote-backlinks))
 #+end_src
 
-** [C-c o] :: LAUNCH
+** [C-c o] :: LAUNCH :web:mail:agenda:
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-launch-prefix
   "a" #'org-agenda
   "b" #'eww
   "f" #'elfeed
+  "m" #'notmuch
   "s" #'scratch-buffer
   "t" #'eat
   "W" #'ceamx/eww-wiki)
@@ -9788,10 +9943,10 @@ IIRC, Vim uses some =z= stuff for folding too.
 
   "C-x b" #'ceamx/switch-to-buffer
   "C-x g" #'magit-status
-  "C-x l" #'ialign
-
   "C-x k" #'ceamx-simple/kill-current-buffer
   "C-x K" #'kill-buffer
+  "C-x l" #'ialign
+  "C-x m" #'notmuch-mua-new-mail        ; orig. `compose-mail'
   "C-x u" #'vundo
 
   "C-x n N" #'logos-narrow-dwim

@@ -78,7 +78,7 @@
      ;; ceamx-modeline-flymake
      "  "
      mode-line-format-right-align   ; Emacs 30
-     ;; ceamx-modeline-notmuch-indicator
+     ceamx-modeline-notmuch-indicator
      "  "
      ceamx-modeline-misc-info)
   "Modeline format for `ceamx-modeline-mode'."
@@ -99,7 +99,7 @@ package).")
     (((class color) (min-colors 88) (background dark))
      :foreground "#ff9f9f")
     (t :foreground "red"))
-  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  "Face for modeline indicators (e.g. see Prot's `notmuch-indicator')."
   :group 'ceamx-modeline-faces)
 
 (defface ceamx-modeline-indicator-red-bg
@@ -119,7 +119,7 @@ package).")
     (((class color) (min-colors 88) (background dark))
      :foreground "#73fa7f")
     (t :foreground "green"))
-  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  "Face for modeline indicators (e.g. see Prot's `notmuch-indicator')."
   :group 'ceamx-modeline-faces)
 
 (defface ceamx-modeline-indicator-green-bg
@@ -139,7 +139,7 @@ package).")
     (((class color) (min-colors 88) (background dark))
      :foreground "#f0c526")
     (t :foreground "yellow"))
-  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  "Face for modeline indicators (e.g. see Prot's `notmuch-indicator')."
   :group 'ceamx-modeline-faces)
 
 (defface ceamx-modeline-indicator-yellow-bg
@@ -159,7 +159,7 @@ package).")
     (((class color) (min-colors 88) (background dark))
      :foreground "#88bfff")
     (t :foreground "blue"))
-  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  "Face for modeline indicators (e.g. see Prot's `notmuch-indicator')."
   :group 'ceamx-modeline-faces)
 
 (defface ceamx-modeline-indicator-blue-bg
@@ -179,7 +179,7 @@ package).")
     (((class color) (min-colors 88) (background dark))
      :foreground "#e0a0ff")
     (t :foreground "magenta"))
-  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  "Face for modeline indicators (e.g. see Prot's `notmuch-indicator')."
   :group 'ceamx-modeline-faces)
 
 (defface ceamx-modeline-indicator-magenta-bg
@@ -199,7 +199,7 @@ package).")
     (((class color) (min-colors 88) (background dark))
      :foreground "#30b7cc")
     (t :foreground "cyan"))
-  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  "Face for modeline indicators (e.g. see Prot's `notmuch-indicator')."
   :group 'ceamx-modeline-faces)
 
 (defface ceamx-modeline-indicator-cyan-bg
@@ -214,7 +214,7 @@ package).")
 
 (defface ceamx-modeline-indicator-gray
   '((t :inherit shadow))
-  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  "Face for modeline indicators (e.g. see Prot's `notmuch-indicator')."
   :group 'ceamx-modeline-faces)
 
 (defface ceamx-modeline-indicator-gray-bg

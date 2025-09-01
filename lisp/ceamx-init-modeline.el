@@ -16,7 +16,10 @@
 (line-number-mode 1)
 (column-number-mode 1)
 
-(setopt display-time-24hr-format t)
+(setq! display-time-24hr-format t)
+
+;; Handled manually.
+(setq! notmuch-indicator-add-to-mode-line-misc-info nil)
 
 (use-feature! ceamx-modeline
   :hook (ceamx-after-init . ceamx-modeline-mode)
@@ -46,7 +49,7 @@
                   mode-line-modes
                   " "
                   ceamx-modeline-format-on-save
-                  ;; ceamx-modeline-notmuch-indicator
+                  ceamx-modeline-notmuch-indicator
                   " "
                   ceamx-modeline-misc-info
                   ;;ceamx-modeline-scrollbar
