@@ -9538,13 +9538,13 @@ Flycheck automatically binds its keymap to this.
   "d" '("delete" . ceamx-simple/delete-current-file)
   "f" #'find-file
   "F" #'find-file-other-window
-  ;; `crux-rename-buffer-and-file' is another option, but its `vc'
+  ;; `crux-rename-file-and-buffer' is another option, but its `vc'
   ;; integration is rather annoying, requiring that changes be committed
   ;; to version control or reverted before renaming the file.  Though
   ;; that does sound sensible on paper...
   ;; "r" '("move..." . ceamx-simple/move-current-file) ; alt.
   ;; "r"
-  "r" '("move..." . crux-rename-buffer-and-file)
+  "r" '("move..." . crux-rename-file-and-buffer)
 
   "s" #'save-buffer
   "U" #'ceamx-simple/sudo-find-file
