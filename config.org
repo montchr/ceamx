@@ -6988,6 +6988,79 @@ NOTE: ~nix-mode~ should not be loaded when using ~nix-ts-mode~.
   (add-to-list 'ceamx-eglot-server-configurations-alist '("nix-nil" . nil)))
 #+end_src
 
+**** Automatically insert a semicolon after contextual character sequences :edit:
+
+This is a game-changer and huge motion-saver.  Without this, I was
+always moving up and down lines to add semicolons every time I added new
+braces, which happens a lot in Nix.
+
+FIXME: Note that the equals-space (“= ”) sequence does not trigger insertion as
+it should!
+
+#+begin_src emacs-lisp
+(defun ceamx-char-next (&optional pos)
+  "Next non-space character after POS within a three-character range.
+POS defaults to point.  POS is an integer or a marker as in
+`char-after', which see.
+
+Examples of matching behavior, where each string represents the
+three characters immediately following point:
+
+  \"abc\" => \"a\"
+  \"a c\" => \"a\"
+  \" bc\" => \"b\"
+  \"  c\" => \"c\"
+  \"   \" => \" \"
+  \"a b\" => \"a\"
+"
+  (let* ((position (or pos (point)))
+         (next (char-after position)))
+    (if (or (char-equal ?\s next)
+            (char-equal ?\s (char-after next)))
+        (char-after next)
+      next)))
+
+(defun ceamx-nix-insert-semicolon-after-sequence ()
+  "Insert a semicolon after relevant characters in `nix-ts-mode'.
+
+Closing square brackets, closing curly brackets, and the equals sign are
+handled, while parens are ignored.  This behavior is compatible with
+`electric-pair-mode'.
+
+The following character sequences will allow semicolon insertion:
+
+ - Immediately after a single one of: right square bracket, right curly
+   bracket; for example: \"}\"
+
+ - After a single space preceded by one of: equals sign; for example:
+   \"= \"
+
+A semicolon will not be inserted under the following conditions:
+
+ - Point is at end of buffer or, by extension, the bracket(s) are the
+   top-level form in the buffer.
+
+ - The closing bracket precedes a semicolon, left brace, any paren, or
+   any square bracket separated by zero to two spaces."
+  (when (and (eq major-mode #'nix-ts-mode)
+             (or (memq (char-before (point)) '(?\} ?\]))
+                 (and (eq (char-before (point)) ?\s)
+                      (memq (char-before (char-before (point))) '(?=))))
+             (not (memq (ceamx-char-next) '(?\; ?\{ ?\) ?\( ?\[ ?\])))
+             (not (eq (point) (point-max))))
+    (insert ";")
+    (backward-char)))
+#+end_src
+
+For the automatic behavior, the function will need to be hooked into
+~post-self-insert-hook~:
+
+#+begin_src emacs-lisp
+(add-hook 'post-self-insert-hook #'ceamx-nix-insert-semicolon-after-sequence)
+#+end_src
+
+In the future, this should be a minor mode.
+
 **** Keybindings :keybinds:
 :PROPERTIES:
 :ID:       108e009a-acd4-434a-9eb5-448ba94ebb77
