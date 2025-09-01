@@ -19,7 +19,8 @@ in
     programs.emacs.extraPackages = epkgs: [
       (epkgs.jinx.override { enchant2 = enchant; })
       epkgs.pdf-tools
-      epkgs.ready-player
+      # XXX(2025-09-02): build failure
+      #      epkgs.ready-player
       epkgs.treesit-grammars.with-all-grammars
       epkgs.treesit-auto
     ];

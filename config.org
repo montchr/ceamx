@@ -8963,21 +8963,27 @@ CLOSED: [2025-02-22 Sat 19:36]
 - State "DONE"       from "TODO"       [2025-02-22 Sat 19:36]
 :END:
 
-*** =ready-player= :: multimedia file previews :nixpkgs:
+*** DISABLED =ready-player= :: multimedia file previews :requires_external:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 
 + Package :: <https://github.com/xenodium/ready-player>
 + Dependencies :: =ffmpeg= =ffmpegthumbnailer= =mpv=
 
 This should be installed via Nixpkgs due to external dependencies.
 
+As of 2025-09-02, the Nix package is failing its build, so this
+configuration has been disabled.
+
 #+begin_src emacs-lisp
 (use-feature! ready-player
   :mode
   ("\\.\\(aiff\\|flac\\|mp3\\|m4a\\|mp4\\|mkv\\|opus\\|wav\\|webm\\)\\'" . ready-player-major-mode)
   :config
-  (setopt ready-player-autoplay nil
-          ready-player-repeat nil
-          ready-player-shuffle nil))
+  (setq! ready-player-autoplay nil
+         ready-player-repeat nil
+         ready-player-shuffle nil))
 #+end_src
 
 Provide integration with =dired-preview=:

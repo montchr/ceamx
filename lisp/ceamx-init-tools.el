@@ -206,33 +206,6 @@ This should be updated when a new version is available.")
   (after! pdf-view
     (require 'saveplace-pdf-view)))
 
-;; =ready-player= :: multimedia file previews :nixpkgs:
-
-;; + Package :: <https://github.com/xenodium/ready-player>
-;; + Dependencies :: =ffmpeg= =ffmpegthumbnailer= =mpv=
-
-;; This should be installed via Nixpkgs due to external dependencies.
-
-
-(use-feature! ready-player
-  :mode
-  ("\\.\\(aiff\\|flac\\|mp3\\|m4a\\|mp4\\|mkv\\|opus\\|wav\\|webm\\)\\'" . ready-player-major-mode)
-  :config
-  (setopt ready-player-autoplay nil
-          ready-player-repeat nil
-          ready-player-shuffle nil))
-
-
-
-;; Provide integration with =dired-preview=:
-
-
-(use-feature! ceamx-tools
-  :after (dired-preview)
-  :commands (ceamx/ready-player-dired-preview-play-toggle)
-  :config
-  (keymap-set dired-preview-mode-map "C-c C-p" #'ceamx/ready-player-dired-preview-play-toggle))
-
 ;; =mpdel= :: MPD client for Emacs
 
 

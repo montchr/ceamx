@@ -4,16 +4,16 @@
 
 (setopt browse-url-browser-function 'eww-browse-url)
 
-(setopt shr-use-colors t)
-(setopt shr-folding-mode t)
-(setopt shr-bullet "• ")
+(setq! shr-use-colors t)
+(setq! shr-folding-mode t)
+(setq! shr-bullet "• ")
 
-(setopt eww-search-prefix "https://duckduckgo.com/html?q=")
+(setq! eww-search-prefix "https://duckduckgo.com/html?q=")
 
 ;; HTTP headers may contain user information, which we can limit as needed.
 ;; When providing a list of symbols, the symbols indicate what NOT to send.
 ;; TODO: Move this elsewhere, as it probably affects other HTTP requests.
-(setopt url-privacy-level '(email lastloc))
+(setq! url-privacy-level '(email lastloc))
 
 (after! eww
   (define-keymap :keymap eww-mode-map

@@ -1291,10 +1291,10 @@ unimportant since it happens during compilation anyway."
 ;; Repeat Maps
 
 
-(defvar-keymap ceamx-string-repeat-map
-  :repeat t
+  (defvar-keymap ceamx-string-repeat-map
+    :repeat t
 
-  "c" #'ceamx/cycle-string-inflection)
+    "c" #'ceamx/cycle-string-inflection)
 
 ;; Window :window:
 
