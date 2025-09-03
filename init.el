@@ -1,8 +1,9 @@
-;;; init.el --- Ceamx -*- lexical-binding: t; no-byte-compile: t; -*-
+;;; init.el --- Ceamx                                -*- lexical-binding: t; -*-
 
-;; Copyright (c) 2022-2025  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (C) 2022-2025  Chris Montgomery
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -17,610 +18,1593 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 ;;; Commentary:
+
+;;
+
 ;;; Code:
 
-;; Requirements
 
+;;;; Requirements
 
 (require 'cl-lib)
 
 (require 'ceamx-paths)
 (require 'ceamx-lib)
-(require 'ceamx-keymaps)
 
-;; Configure default identity
+(setq load-path (append (ceamx-subdirs ceamx-lisp-dir)
+                        (ceamx-subdirs ceamx-site-lisp-dir)
+                        load-path))
 
+(require 'ceamx-lisp)
+
+
+;;;; Bootstrap
+
+(setq custom-file (locate-user-emacs-file "custom.el"))
 
 (setq-default user-full-name "Chris Montgomery"
               user-mail-address "chmont@protonmail.com")
 
-;; Profiling
 
-;; - source :: <https://github.com/progfolio/.emacs.d/blob/ed159dc6076664ad9976949d8cb3af8e86fe39d1/init.org#profiling>
-
-
-(add-hook 'ceamx-after-init-hook
-          (lambda ()
-            (message "Emacs loaded in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract (current-time) before-init-time)))
-                     gcs-done)))
-
-;; Initialize the =ceamx= user options
-
+;;;; Customization
 
 (defgroup ceamx nil
-  "User-configurable options for Ceamx."
+  "User settings for Ceamx."
   :group 'emacs)
-
-;; The user option to define directory trees whose files should be opened in read-only buffers :config:
-
 
 (defcustom ceamx-buffer-read-only-dirs-list (list ceamx-packages-dir)
   "List of directories whose files should be opened in read-only buffers."
   :group 'ceamx
   :type '(string))
 
-;; The user option to determine whether to load ~custom-file~
-
-
-(defcustom ceamx-load-custom-file t
-  "Whether to load the user `custom-file' (custom.el)."
-  :group 'ceamx
-  :type '(boolean))
-
-;; Configure ~custom-file~ location
-;; :PROPERTIES:
-;; :ID:       59f6ed70-cdb4-45fd-8980-0d57d1aad12e
-;; :END:
-
-
-(setq custom-file (locate-user-emacs-file "custom.el"))
-
-;; Security improvements
-;; :PROPERTIES:
-;; :ID:       870f1c8f-5998-4960-9c0d-98121a73df16
-;; :END:
-
-
-;; Prevent Emacs from pinging domain names unexpectedly.
-(setq ffap-machine-p-known 'reject)
-
-(with-eval-after-load 'gnutls
-  (eval-when-compile
-    (require 'gnutls))
-
-  ;; Disallow insecure TLS connections.
-  (setq gnutls-verify-error t)
-  ;; This is an acceptably-modern security expectation.
-  (setq gnutls-min-prime-bits 3072))
-
-;; Declare safe local variable directories and values relating to Emacs initialization
-;; :PROPERTIES:
-;; :ID:       dfe910c3-8b2f-4702-b380-ae8d669b981e
-;; :END:
-
-
-(setopt safe-local-variable-directories
-        ;; NOTE: `user-emacs-directory' is intentionally not included
-        ;; here because its value can change based on the value of the
-        ;; "--init-directory" initialization flag.
-        (list (file-name-concat ceamx-config-dir "emacs")
-              (file-name-concat ceamx-config-dir "ceamx")))
-(setopt safe-local-variable-values
-        '((eval load-file "./ceamx-dev-loader.el")
-          (eval add-hook 'after-save-hook #'org-gfm-export-to-markdown t t)))
-
-;; Enable/disable some commands that are disabled/enabled by default
-;; :PROPERTIES:
-;; :ID:       b1ce92a4-139c-4054-9fa4-982d47c720d3
-;; :END:
-
-
-;; Enable these commands
-(dolist (cmd '(downcase-region
-               list-timers
-               narrow-to-page
-               narrow-to-region
-               upcase-region
-               scroll-left
-               scroll-right))
-  (put cmd 'disabled nil))
-
-;; Disable these commands
-(dolist (cmd '( diary
-                iconify-frame
-                overwrite-mode
-                suspend-frame))
-  (put cmd 'disabled t))
-
-;; Display the scratch buffer as initial buffer
-
-
-(setq initial-buffer-choice nil
-      initial-major-mode 'lisp-interaction-mode
-      inhibit-startup-screen t)
-(setq initial-scratch-message
-      (format ";; This is `%s'.  Use `%s' to evaluate and print results.\n\n"
-              'lisp-interaction-mode
-              (propertize
-               (substitute-command-keys "\\<lisp-interaction-mode-map>\\[eval-print-last-sexp]")
-               'face 'help-key-binding)))
-
-;; =site-lisp/on=: Define additional Emacs event hooks
-
-
-(require 'on)
-
-;; Elpaca
-
-
-(defvar elpaca-directory (expand-file-name "elpaca/" ceamx-packages-dir))
-
-;; Avoid aggressive GitHub API rate limiting.
-(defvar elpaca-queue-limit 30)
-
-
-
-;; Elpaca needs to know about the Nix build date of the current version
-;; of Emacs to set ~elpaca-core-date~ correctly.  [[https://github.com/progfolio/elpaca/wiki/Usage-with-Nix#retrieving-the-date-via-file-name][From the wiki]]:
-
-
-(require 'ceamx-lib)
-
-;; FIXME: only works for emacs-git
-;; TODO: this should probably take effect for *any* Nix-built Emacs
-;; package, not just on NixOS
-;; (when (ceamx-host-nixos-p)
-;;   (setq elpaca-core-date (list (ceamx-emacs-nix-build-date))))
-
-
-
-;; The installation code only needs to be changed when the Elpaca warns
-;; about an installer version mismatch.
-
-;; This should be copied verbatim from the Elpaca documentation, with the
-;; definition for ~elpaca-directory~ removed.
-
-
-(defvar elpaca-installer-version 0.11)
-(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
-(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil :depth 1 :inherit ignore
-                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                              :build (:not elpaca--activate-package)))
-(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-       (build (expand-file-name "elpaca/" elpaca-builds-directory))
-       (order (cdr elpaca-order))
-       (default-directory repo))
-  (add-to-list 'load-path (if (file-exists-p build) build repo))
-  (unless (file-exists-p repo)
-    (make-directory repo t)
-    (when (<= emacs-major-version 28) (require 'subr-x))
-    (condition-case-unless-debug err
-        (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                  ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-                                                  ,@(when-let* ((depth (plist-get order :depth)))
-                                                      (list (format "--depth=%d" depth) "--no-single-branch"))
-                                                  ,(plist-get order :repo) ,repo))))
-                  ((zerop (call-process "git" nil buffer t "checkout"
-                                        (or (plist-get order :ref) "--"))))
-                  (emacs (concat invocation-directory invocation-name))
-                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                  ((require 'elpaca))
-                  ((elpaca-generate-autoloads "elpaca" repo)))
-            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-          (error "%s" (with-current-buffer buffer (buffer-string))))
-      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-  (unless (require 'elpaca-autoloads nil t)
-    (require 'elpaca)
-    (elpaca-generate-autoloads "elpaca" repo)
-    (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
-(add-hook 'after-init-hook #'elpaca-process-queues)
-(elpaca `(,@elpaca-order))
-
-;; Add a command to reload a package after update without restarting Emacs
-
-;; + Source :: [[https://github.com/progfolio/elpaca/wiki/Reloading-a-package’s-features-after-updating-a-package][Reloading a package’s features after updating a package · progfolio/elpaca Wiki]]
-
-
-(defun +elpaca-reload-package (package &optional allp)
-  "Reload PACKAGE's features.
-If ALLP is non-nil (interactively, with prefix), load all of its
-features; otherwise only load ones that were already loaded.
-
-This is useful to reload a package after upgrading it.  Since a
-package may provide multiple features, to reload it properly
-would require either restarting Emacs or manually unloading and
-reloading each loaded feature.  This automates that process.
-
-Note that this unloads all of the package's symbols before
-reloading.  Any data stored in those symbols will be lost, so if
-the package would normally save that data, e.g. when a mode is
-deactivated or when Emacs exits, the user should do so before
-using this command."
-  (interactive
-   (list (let ((elpaca-overriding-prompt "Reload package: "))
-           (elpaca--read-queued))
-         current-prefix-arg))
-  ;; This finds features in the currently installed version of PACKAGE, so if
-  ;; it provided other features in an older version, those are not unloaded.
-  (when (yes-or-no-p (format "Unload all of %s's symbols and reload its features? " package))
-    (let* ((package-name (symbol-name package))
-           (package-dir (file-name-directory
-                         (locate-file package-name load-path (get-load-suffixes))))
-           (package-files (directory-files package-dir 'full (rx ".el" eos)))
-           (package-features
-            (cl-loop for file in package-files
-                     when (with-temp-buffer
-                            (insert-file-contents file)
-                            (when (re-search-forward (rx bol "(provide" (1+ space)) nil t)
-                              (goto-char (match-beginning 0))
-                              (cadadr (read (current-buffer)))))
-                     collect it)))
-      (unless allp
-        (setf package-features (seq-intersection package-features features)))
-      (dolist (feature package-features)
-        (ignore-errors
-          ;; Ignore error in case it's not loaded.
-          (unload-feature feature 'force)))
-      (dolist (feature package-features)
-        (require feature))
-      (when package-features
-        (message "Reloaded: %s" (mapconcat #'symbol-name package-features " "))))))
-
-;; Run the custom init and startup hooks on ~elpaca-after-init-hook~
-
-
-(add-hook 'elpaca-after-init-hook #'ceamx-after-init-hook)
-(add-hook 'elpaca-after-init-hook #'ceamx-emacs-startup-hook)
-
-;; Pretend file-visiting-buffers in the package directory are read-only
-
-
-(require 'ceamx-simple)
-
-(def-hook! ceamx-register-read-only-buffers-h ()
-  'ceamx-after-init-hook
-  "Use read-only buffers for files in some directories.
-The affected directories are listed in `ceamx-buffer-read-only-dirs-list'"
-
-  ;; Define a read-only directory class
-  (dir-locals-set-class-variables
-   'read-only
-   '((nil . ((buffer-read-only . t)))))
-
-  ;; Associate directories with the read-only class
-  (dolist (dir ceamx-buffer-read-only-dirs-list)
-    (dir-locals-set-directory-class (file-truename dir) 'read-only)))
-
-;; Encourage a ~no-littering~ policy for packages to artifice in the designated areas
-
-;; - Website :: <https://github.com/emacscollective/no-littering/>
-
-;; By default, Emacs features and many packages default to dumping their state
-;; files into ~user-emacs-directory~.  This makes sense for the sake of visibility.
-;; However, because E rarely thinks about any of those machine-generated and
-;; non-human-friendly files, they may be effectively designated as clutter.  Ceamx
-;; offloads these sanitation duties to the =no-littering= package because it works
-;; effectively and almost-invisibly.
-
-;; In some cases, especially for new packages / package features / targets, it may
-;; be necessary to manage such configuration by hand.
-
-;; Ceamx avoids ~use-package~ here so that:
-
-;; - ~no-littering~ may be installed and loaded as early as possible
-;; - the time-consuming invocations of ~elpaca-wait~ should be kept to the absolute minimum
-
-
-(require 'ceamx-paths)
-
-;; These must be set prior to package load.
-(setq no-littering-etc-directory ceamx-etc-dir)
-(setq no-littering-var-directory ceamx-var-dir)
-
-(elpaca no-littering
-  (require 'no-littering))
-
-;; Install the latest version of Org-Mode
-
-
-(unless after-init-time
-  (when (featurep 'org)
-    (unload-feature 'org)))
-
-(elpaca (org :autoloads "org-loaddefs.el"))
-
-;; Install the latest version of ~use-package~
-
-
-(elpaca use-package)
-
-;; =elpaca-use-package=: integrate ~elpaca~ and ~use-package~
-
-
-(elpaca elpaca-use-package
-  (elpaca-use-package-mode))
-
-;; Elpaca-Wait № 1: ~no-littering~ + ~use-package~ :wait:
-
-;; Reason:
-
-;; - Continuing otherwise will result in race conditions on the
-;;   definition of storage paths.
-;; - ~use-package~ must be loaded for byte-compilation checks
-
-
-(elpaca-wait)
-
-;; Configure ~use-package~ behavior
-
-
-(setopt use-package-always-ensure t)
-(setopt use-package-expand-minimally t)
-
-(when (bound-and-true-p init-file-debug)
-  (require 'use-package)
-  (setopt use-package-expand-minimally nil)
-  (setopt use-package-verbose t)
-  (setopt use-package-compute-statistics t))
-
-;; Improve ~use-package~ completion-at-point availability
-
-
-(def-advice! ceamx+use-package--bind-handle-sharp-quotes-a (args)
-  :filter-args #'use-package-normalize-binder
-  "Make `use-package' handle sharp-quoted functions correctly in `:bind'.
-Performs a recursive find-and-replace on sharp quotes in the arguments,
-because that's the simple solution and the performance overhead is
-unimportant since it happens during compilation anyway."
-  (ceamx--remove-sharp-quotes args))
-
-;; Install utility libraries
-
-
-(package! llama
-  (require 'llama))
-(package! f)
-(package! request)
-(package! transient
-  (require 'transient)
-  (after! transient
-    (keymap-set transient-map "<escape>" #'transient-quit-one)))
-(package! (org-mem :host github :repo "meedstrom/org-mem"))
-
-;; Install the =persist= package from =emacsmirror= because of GNU ELPA server issues
-
-
-;; (package! (persist :host github :repo "emacsmirror/persist")
-;;   (require 'persist))
-
-;; Disable unnecessary OS-specific command-line options :macos:
-
-
-(unless (ceamx-host-macos-p)
-  (setq command-line-ns-option-alist nil))
-
-(unless (ceamx-host-gnu-linux-p)
-  (setq command-line-x-option-alist nil))
-
-;; =exec-path-from-shell=: Inherit environment variables from variable environments :package:
-
-
-(package! exec-path-from-shell
-  (require 'exec-path-from-shell)
-  (dolist (var '("SSH_AUTH_SOCK"
-                 "SSH_AGENT_PID"
-                 "GPG_AGENT_INFO"
-                 "LANG"
-                 "LC_CTYPE"
-                 "NIX_SSL_CERT_FILE"
-                 "NIX_PATH"
-                 "LSP_USE_PLISTS"))
-    (add-to-list 'exec-path-from-shell-variables var))
-  (exec-path-from-shell-initialize))
-
-;; =inheritenv=: Make temporary buffers inherit buffer-local environment variables :package:
-
-;; - website :: <https://github.com/purcell/inheritenv>
-
-
-(package! inheritenv
-  (with-eval-after-load 'exec-path-from-shell
-    (require 'inheritenv)))
-
-;; =with-editor=: Ensure shell/term modes use session as =$EDITOR= :package:
-
-
-(package! with-editor
-  (keymap-global-set "<remap> <async-shell-command>"
-                     #'with-editor-async-shell-command)
-  (keymap-global-set "<remap> <shell-command>"
-                     #'with-editor-shell-command)
-
-  (add-hook 'shell-mode-hook #'with-editor-export-editor)
-  (add-hook 'eshell-mode-hook #'with-editor-export-editor)
-  (add-hook 'term-exec-hook #'with-editor-export-editor)
-
-  ;; Make sure that `eat' does not break `magit-commit'.
-  ;; <https://codeberg.org/akib/emacs-eat/issues/55#issuecomment-871388>
-  (with-eval-after-load 'eat
-    (add-hook 'eat-mode-hook #'shell-command-with-editor-mode)))
-
-;; =envrc= :: Direnv integration :package:
-
-;; - src :: <https://github.com/purcell/envrc>
-;; - upstream :: <https://github.com/direnv/direnv>
-
-;; Q: How does this differ from `direnv.el`?
-
-;; <https://github.com/wbolster/emacs-direnv> repeatedly changes the global
-;; Emacs environment, based on tracking what buffer you're working on.
-
-;; Instead, `envrc.el` simply sets and stores the right environment in each
-;; buffer, as a buffer-local variable.
-
-
-(package! envrc
-  (after! exec-path-from-shell
-    (envrc-global-mode))
-  (after! popper
-    (add-to-list 'popper-reference-buffers "\\*envrc\\*")))
-
-;; Elpaca-Wait № 3 :wait:
-
-
-(elpaca-wait)
-
-;; TRAMP Support
-
-
-(setopt tramp-default-method "ssh")
-(setopt tramp-default-remote-shell "/bin/bash")
-(setopt tramp-connection-timeout (* 60 10))
-;; Do not auto-save remote files. Note the reversed logic.
-(setopt remote-file-name-inhibit-auto-save t)                 ; Emacs 30
-(setopt remote-file-name-inhibit-auto-save-visited t)
-;; Avoid expensive operations on remote files.
-(setopt remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
-
-(after! tramp
-  (dolist (path '("~/.local/bin"
-                  "~/.nix-profile/bin"
-                  "~/.local/state/nix/profiles/profile/bin/"
-                  "/nix/var/nix/profiles/default/bin"
-                  "/run/current-system/sw/bin"))
-    (add-to-list 'tramp-remote-path path)))
-
-;; Input languages
-
-
-(set-language-environment "UTF-8")
-
-;; `set-language-environment' also presumptively sets `default-input-method'.
-(setopt default-input-method nil)
-
-;; Disable bidirectional text scanning
-;; (setq-default bidi-display-reordering 'left-to-right)
-;; (setq-default bidi-paragraph-direction 'left-to-right)
-;; (setq bidi-inhibit-bpa t)
-
-;; Mouse support
-
-
-(setopt mouse-yank-at-point t)
-
-;; Avoid collision of mouse with point
-(mouse-avoidance-mode 'exile)
-
-
-
-;; Support scrolling with the mouse wheel or trackpad gestures within
-;; non-graphical frames.  Mouse support is available by default in
-;; graphical frames.
-
-
-(unless (display-graphic-p)
-
-  ;; Basic mouse support e.g. click and drag
-  (xterm-mouse-mode 1)
-
-  ;; By default, `scroll-down' and `scroll-up' scroll by a huge amount.
-  (eval-and-compile
-    (defun ceamx/scroll-down ()
-      "Scroll down one line."
-      (interactive)
-      (scroll-down 1))
-
-    (defun ceamx/scroll-up ()
-      "Scroll up one line."
-      (interactive)
-      (scroll-up 1)))
-
-  (global-set-key [mouse-4] #'ceamx/scroll-down)
-  (global-set-key [mouse-5] #'ceamx/scroll-up))
-
-;; Load site-specific configuration, to be ignored by version control
-
-
-(require 'site-config (file-name-concat user-emacs-directory "site-config") t)
-
-;; =init.el= :: Miscellaneous Variables
-;; :PROPERTIES:
-;; :header-args: :tangle init.el
-;; :END:
-
-
-(defconst ceamx-text-mode-derived-prog-modes-list
+(defcustom ceamx-text-mode-derived-prog-modes
   '(nxml-mode sgml-mode toml-ts-mode yaml-mode)
-  "Programming modes who are sadly derived from `text-mode'.")
+  "Programming modes who are sadly derived from `text-mode'."
+  :type '(repeat symbol)
+  :group 'ceamx)
 
-;; Load Features
-;; :PROPERTIES:
-;; :header-args: :tangle init.el
-;; :VISIBILITY: folded
-;; :ID:       4e93b7dc-8c0c-44b5-903b-f86ea342fd61
-;; :END:
+(defcustom ceamx-typo-mode-excluded-modes nil
+  "Modes where `typo-mode' should not be enabled."
+  :type '(symbol)
+  :group 'ceamx)
+
+(defcustom ceamx-checkers-buffer-names-regexp
+  (rx "*" (or "Flycheck" "Package-Lint"))
+  "Regular expression matching buffer names for checker buffers."
+  :type 'regexp
+  :group 'ceamx)
+
+(defcustom ceamx-grep-modes-list
+  '(occur-mode
+    grep-mode
+    xref--xref-buffer-mode
+    flymake-diagnostics-buffer-mode)
+  "List of major-modes used in occur-type buffers."
+  :type '(repeat symbol)
+  :group 'ceamx)
+
+(defcustom ceamx-repl-modes-list
+  '(eshell-mode
+    inferior-emacs-lisp-mode            ; ielm
+    shell-mode
+    eat-mode
+    nix-repl-mode)
+  "List of major-modes used in REPL buffers."
+  :type '(repeat symbol)
+  :group 'ceamx)
+
+(defcustom ceamx-repl-buffer-names-list
+  '("^\\*\\(?:.*?-\\)\\{0,1\\}e*shell[^z-a]*\\(?:\\*\\|<[[:digit:]]+>\\)$"
+    "\\*.*REPL.*\\*"
+    "\\*Inferior .*\\*$"
+    "\\*ielm\\*"
+    "\\*edebug\\*")
+  "List of buffer names used in REPL buffers."
+  :type '(repeat string)
+  :group 'ceamx)
+
+(defcustom ceamx-help-modes-list
+  '(helpful-mode
+    help-mode
+    eldoc-mode)
+  "List of major-modes used in documentation buffers."
+  :type '(repeat symbol)
+  :group 'ceamx)
+
+(defcustom ceamx-help-buffer-names-list
+  '("^\\*Apropos"
+    "^\\*eldoc\\*")
+  "List of buffer names used in help buffers."
+  :type '(repeat string)
+  :group 'ceamx)
+
+(defcustom ceamx-manual-modes-list '(Man-mode woman-mode)
+  "List of major-modes used in Man-type buffers."
+  :type '(repeat symbol)
+  :group 'ceamx)
+
+(defcustom ceamx-message-modes-list
+  '(compilation-mode
+     edebug-eval-mode)
+  "List of major-modes used in message buffers."
+  :type '(repeat symbol)
+  :group 'ceamx)
 
 
-(require 'ceamx-init-ui)
-(require 'ceamx-init-modeline)
-(require 'ceamx-init-essentials)
-(require 'ceamx-init-completion)
-(require 'ceamx-init-search)
-(require 'ceamx-init-dired)
-(require 'ceamx-init-window)
-(require 'ceamx-init-vcs)
-(require 'ceamx-init-langs)
-(require 'ceamx-init-notes)
-(require 'ceamx-init-org)
-(require 'ceamx-init-email)
-(require 'ceamx-init-tools)
-(require 'ceamx-init-news)
-(require 'ceamx-init-eww)
-(require 'ceamx-init-printing)
-(require 'ceamx-init-fun)
-(require 'ceamx-init-flows)
+;;;; Startup
 
-;; =ceamx-focus= :: A custom focus mode to enable/disable other modes
-;; :LOGBOOK:
-;; - Refiled on [2025-07-31 Thu 20:54]
-;; :END:
-
-;; This could potentially be abstracted to a generalized mode-toggling mode
-;; factory.  Yep.  Or not.
-
-;; This is loaded late because it depends on all the other stuff being
-;; loaded.  There’s probably a safer way to write it.
+(menu-bar-mode 1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
 
 
-(use-feature! ceamx-focus
-  :bind
-  ( :map ceamx-toggle-prefix
-    ;; "y" because not quite "zzzzzzzz" because z already bound
-    ("y" . ceamx-focus-mode)))
+;;;; Security
 
-;; Superglobals
+(setq ffap-machine-p-known 'reject)
+(setq gnutls-verify-error t)
+(setq gnutls-min-prime-bits 3072)
 
 
-(define-keymap :keymap (current-global-map)
-  "ESC ESC" #'ceamx/keyboard-quit-dwim
+;;;; Keymaps
 
-  "C-g" #'ceamx/keyboard-quit-dwim
+(define-prefix-command 'ceamx-activities-prefix)
+(define-prefix-command 'ceamx-appearance-prefix)
+(define-prefix-command 'ceamx-bookmark-prefix)
+(define-prefix-command 'ceamx-capture-prefix)
+(define-prefix-command 'ceamx-code-prefix)
+(define-prefix-command 'ceamx-completion-prefix)
+(define-prefix-command 'ceamx-cryption-prefix)
+(define-prefix-command 'ceamx-file-prefix)
+(define-prefix-command 'ceamx-fold-prefix)
+(define-prefix-command 'ceamx-help-keybindings-prefix)
+(define-prefix-command 'ceamx-history-prefix)
+(define-prefix-command 'ceamx-info-prefix)
+(define-prefix-command 'ceamx-insert-prefix)
+(define-prefix-command 'ceamx-launch-prefix)
+(define-prefix-command 'ceamx-note-prefix)
+(define-prefix-command 'ceamx-journal-prefix)
+(define-prefix-command 'ceamx-package-prefix)
+(define-prefix-command 'ceamx-replace-prefix)
+(define-prefix-command 'ceamx-session-prefix)
+(define-prefix-command 'ceamx-snippet-prefix)
+(define-prefix-command 'ceamx-structural-editing-prefix)
+(define-prefix-command 'ceamx-toggle-prefix)
+(define-prefix-command 'ceamx-web-prefix)
+(define-prefix-command 'ceamx-workspace-prefix)
+
+
+;;;; Packages Setup
+
+(require 'package)
+
+(setq package-user-dir ceamx-packages-dir)
+(setq package-native-compile t)
+;; Too flaky.  As long as package archives use HTTPS, no worries.
+(setq package-check-signature nil)
+
+(push '("melpa" . "https://melpa.org/packages/") package-archives)
+;; Official MELPA Mirror, in case necessary.
+;; (push '("melpa-mirror" . "https://www.mirrorservice.org/sites/melpa.org/packages/")
+;;       package-archives)
+
+(package-initialize)
+
+(let ((package-check-signature nil))
+  (unless (package-installed-p 'gnu-elpa-keyring-update)
+    (package-install 'gnu-elpa-keyring-update)))
+
+(progn
+  ;; These must be set before the package loads.
+  (eval-and-compile
+    (setq no-littering-etc-directory ceamx-storage-dir
+          no-littering-var-directory ceamx-cache-dir))
+  (unless (package-installed-p 'no-littering)
+    (package-install 'no-littering))
+  (require 'no-littering)
+  (setq history-file (expand-file-name "history" ceamx-cache-dir))
+  (setq recentf-save-file (expand-file-name "recentf" ceamx-cache-dir))
+  (setq bookmark-default-file (expand-file-name "bookmarks" ceamx-cache-dir))
+  (setq project-list-file (expand-file-name "projects" ceamx-cache-dir))
+  (with-eval-after-load 'recentf
+    (cl-pushnew (recentf-expand-file-name no-littering-var-directory) recentf-exclude)
+    (cl-pushnew (recentf-expand-file-name no-littering-etc-directory) recentf-exclude)))
+
+
+;;;;; setup.el
+
+;; <https://www.emacswiki.org/emacs/SetupEl>
+(progn
+  (unless (package-installed-p 'setup)
+    (package-vc-install '(setup . (:url "https://codeberg.org/pkal/setup.el"))))
+  (require 'setup)
+
+  (setup-define :load-after
+    (lambda (&rest features)
+      (let ((body `(require ',(setup-get 'feature))))
+        (dolist (feature (nreverse features))
+          (setq body `(with-eval-after-load ',feature ,body)))
+        body))
+    :documentation "Load the current feature after FEATURES."))
+
+;; Override the builtin ":hook" macro to accept priority.
+;; FIXME: "ensure" spec causes error...
+;; (setup-define :hook
+;;   (lambda (function &optional depth)
+;;     `(add-hook ',(setup-get 'hook) ,function ,depth))
+;;   :documentation "Add FUNCTION to current hook with optional DEPTH."
+;;   :ensure '(func nil)
+;;   :repeatable t)
+
+
+;;;; Paths
+
+
+
+
+;;;; Libraries
+
+(setup transient
+  (:when-loaded
+    (:with-map transient-map
+      (:bind "<escape>" #'transient-quit-one))))
+
+(setup (:package llama)
+  (:require))
+
+(setup (:package f))
+
+(setup (:package tmr)
+  (:with-feature embark
+    (:when-loaded
+      (defvar-keymap ceamx+embark+tmr-action-map
+	:doc "Action map for TMR timers"
+	"k" #'tmr-remove
+	"r" #'tmr-remove
+	"R" #'tmr-remove-finished
+	"c" #'tmr-clone
+	"a" #'tmr-toggle-acknowledge
+	"e" #'tmr-edit-description
+	"s" #'tmr-reschedule)
+      (cl-pushnew '(tmr-timer . ceamx+embark+tmr-action-map) embark-keymap-alist)
+      (cl-loop
+       for cmd the key-bindings of ceamx+embark+tmr-action-map
+       if (commandp cmd) do
+       (cl-pushnew (list cmd 'embark--restart) embark-post-action-hooks)))))
+
+(setup (:package uuidgen))
+
+
+;;;; Environment
+
+(setup (:package exec-path-from-shell)
+  (require 'exec-path-from-shell)
+  (dolist (var '("SSH_AUTH_SOCK" "SSH_AGENT_PID" "GPG_AGENT_INFO" "LANG" "LC_CTYPE" "NIX_SSL_CERT_FILE" "NIX_PATH"))
+    (add-to-list 'exec-path-from-shell-variables var)))
+
+(setup (:package inheritenv)
+  (:with-feature exec-path-from-shell
+    (:when-loaded
+      (require 'inheritenv))))
+
+(setup (:package envrc)
+  (:with-feature exec-path-from-shell
+    (:when-loaded
+      (envrc-global-mode))))
+
+
+;;;; Input Methods
+
+(setup emacs
+  (set-language-environment "UTF-8")
+  (setq! default-input-method nil))
+
+(setup mouse
+  ;; (:with-feature ceamx-simple
+  ;;   (:with-function '(ceamx/scroll-down ceamx/scroll-up)
+  ;;     (:autoload-this))
+  ;;   (keymap-global-set "<mouse-4>" #'ceamx/scroll-down)
+  ;;   (keymap-global-set "<mouse-5>" #'ceamx/scroll-up))
+  (setq! mouse-drag-and-drop-region-cross-program t)
+  (mouse-avoidance-mode 'exile)
+  (unless (display-graphic-p)
+    (xterm-mouse-mode 1)))
+
+;;;;; Repeat Mode
+
+(setup repeat
+  (setq! repeat-exit-timeout 15
+         repeat-exit-key "<return>")
+  (setq! repeat-keep-prefix t)
+  (repeat-mode 1)
+  (:with-feature emacs
+    (setq! set-mark-command-repeat-pop t)))
+
+
+;;;; Appearance
+
+;;;;; Theme
+
+(setup emacs
+  ;; Consider all themes "safe".
+  (setq! custom-safe-themes t)
+  (setq! custom-theme-allow-multiple-selections nil))
+
+;;;;;; Doric Themes
+
+(setup (:package doric-themes)
+  (require 'doric-themes)
+  (setq! doric-themes-to-toggle '(doric-light doric-dark))
+  (setq! doric-themes-to-rotate doric-themes-collection)
+  ;; (doric-themes-select 'doric-light)
+  )
+
+;;;;;; Modus Themes
+
+(setup (:package modus-themes)
+  (require 'modus-themes)
+  (setq! modus-themes-to-rotate '(modus-operandi modus-vivendi))
+  (setq! modus-themes-bold-constructs t
+    modus-themes-italic-constructs t))
+
+
+;;;;; Font
+
+(setup emacs
+  (setq-default text-scale-remap-header-line t))
+
+(setup (:package fontaine)
+  (:only-if (display-graphic-p))
+  (require 'fontaine)
+  (setq! fontaine-latest-state-file
+    (expand-file-name "fontaine-latest-state.eld" ceamx-storage-dir))
+  (setq! fontaine-presets
+    `((tiny
+	:default-height 78)
+       (small
+	 :default-height 90)
+       (regular
+	 :default-height 102)
+       (medium
+	 :default-height 117)
+       (large
+	 :default-height 133)
+       (huge
+	 :default-height 155)
+       (t
+	 ;; Inherit the default font from the window manager.
+	 :default-family "Monospace"
+	 :default-height 94
+         :fixed-pitch-family "Monospace"
+         :variable-pitch-family "iA Writer Duospace"
+         :mode-line-active-family "Berkeley Mono"
+         :mode-line-active-height 0.8
+         :mode-line-inactive-family "Berkeley Mono"
+         :mode-line-inactive-height 0.8
+         :header-line-family "Berkeley Mono"
+         :header-line-height 0.8
+         :line-number-family "Berkeley Mono"
+         :line-number-height 0.8
+         :tab-bar-family "Berkeley Mono"
+         :tab-bar-height 0.8
+         :tab-line-family "Berkeley Mono"
+         :tab-line-height 0.8
+	 :line-spacing 0.01)))
+  (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+  (fontaine-mode 1))
+
+(setup (:package ligature)
+  (:only-if (display-graphic-p))
+  (:with-feature fontaine
+    (:when-loaded
+      (global-ligature-mode 1)))
+  (:when-loaded
+    (ligature-set-ligatures
+     'prog-mode
+     '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->"
+       "<---->" "<!--" "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">="
+       "<=>" "<==>" "<===>" "<====>" "<!---" "<~~" "<~" "~>" "~~>"
+       "::" ":::" "==" "!=" "===" "!==" ":=" ":-" ":+" "<*" "<*>"
+       "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))))
+
+(setup (:package show-font)
+  (:only-if (display-graphic-p))
+  (setq! show-font-pangram 'prot))
+
+
+;;;;; Layout
+
+(setup (:package spacious-padding)
+  (:hook-into after-init-hook)
+  (setq! spacious-padding-widths
+    '( :internal-border-width 4
+       :header-line-width 2
+       :mode-line-width 2
+       :tab-width 4
+       :right-divider-width 6
+       :scroll-bar-width 6
+       :left-fringe-width 2
+       :right-fringe-width 2))
+  (setq! spacious-padding-subtle-frame-lines nil))
+
+
+;;;;; Decorations
+
+(setup (:package nerd-icons)
+  (require 'nerd-icons)
+  (setq! nerd-icons-font-family "Symbols Nerd Font Mono"))
+
+(setup (:package page-break-lines)
+  (:with-hook after-init-hook
+    (:hook #'global-page-break-lines-mode)))
+
+(setup (:package svg-lib)
+  (:when-loaded
+    (plist-put svg-lib-style-default :padding 2)
+    (plist-put svg-lib-style-default :margin 2)
+    (plist-put svg-lib-style-default :height 0.9)))
+
+
+;;;;; Feedback
+
+(setup hl-line
+  (:with-mode prog-mode
+    (:hook #'hl-line-mode))
+  ;; Disable line highlight in unfocused windows.
+  (setq! hl-line-sticky-flag nil))
+
+(setup (:package lin)
+  (:with-hook after-init-hook
+    (:hook #'lin-global-mode)))
+
+(setup (:package pulsar)
+  (:with-hook after-init-hook
+    (:hook #'pulsar-global-mode))
+  (:with-hook minibuffer-setup-hook
+    (:hook #'pulsar-pulse-line))
+
+  (setq! pulsar-pulse t
+	 pulsar-delay 0.055
+	 pulsar-iterations 30)
+  (setq! pulsar-face 'pulsar-generic
+	 pulsar-highlight-face 'pulsar-face)
+
+  (with-eval-after-load 'pulsar
+    (dolist (fn '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
+                 bookmark-jump other-window delete-window delete-other-windows
+                 forward-page backward-page scroll-up-command scroll-down-command
+                 tab-new tab-close tab-next outline-backward-same-level
+                 outline-forward-same-level outline-next-heading outline-next-visible-heading
+                 outline-previous-heading outline-previous-visible-heading
+                 outline-up-heading))
+    (cl-pushnew fn pulsar-pulse-functions))
+
+  (dolist (fn '(pulsar-pulse-line-red
+                pulsar-recenter-top
+                pulsar-reveal-entry))
+    (add-hook 'next-error-hook #'fn))))
+
+(setup (:package cursory)
+  (require 'cursory)
+  (add-hook 'after-init-hook
+	    (defun ceamx-enable-cursory-mode ()
+	      (cursory-mode 1)
+	      (cursory-set-preset (or (cursory-restore-latest-preset) 'box))))
+  (setq! cursory-latest-state-file (expand-file-name "cursory-latest-state.eld" ceamx-storage-dir))
+  (setq! cursory-presets
+	 '((box
+	    :blink-cursor-interval 0.2)
+	   (bar
+	    :cursor-type (bar . 2)
+	    :blink-cursor-interval 0.6)
+	   (t
+	    :cursor-type box
+	    :cursor-in-non-selected-windows hollow
+	    :blink-cursor-mode 1
+	    :blink-cursor-blinks 33
+	    :blink-cursor-interval 0.4
+	    :blink-cursor-delay 0.2))))
+
+;;;;; Images
+
+(setup image-mode
+  (setq! image-animate-loop t))
+
+;;;;; Focus
+
+(setup (:package olivetti)
+  (add-hook 'olivetti-mode-on-hook
+	    (defun +olivetti-mode-on--disable-conflicting-features-h ()
+	      (when (fboundp 'diff-hl-mode)
+		(diff-hl-mode -1)))))
+
+
+;;;; Frame
+
+(setup emacs
+  (setq! fit-frame-to-buffer t)
+  (undelete-frame-mode 1))
+
+
+;;;; Window
+
+(setup window
+  (setq! split-width-threshold 120
+    split-height-threshold nil)
+  (setq! help-window-select t
+    Man-notify-method 'aggressive))
+
+(setup winner
+  (:hook-into after-init-hook))
+
+;;;;; Scrolling
+
+(setup window
+  (setq! recenter-positions '(top middle bottom))
+  (setq! auto-hscroll-mode 'current-line)
+  (setq! ;; scroll-error-top-bottom t
+    ;; scroll-preserve-screen-position t
+    scroll-conservatively 10000))
+
+;;;;; Display buffer
+
+(setup window
+  ;; Hide this buffer until there is output to show.
+  (setq! async-shell-command-display-buffer nil)
+  (setq! switch-to-buffer-in-dedicated-window 'pop)
+  (setq! switch-to-buffer-obey-display-actions t)
+  (setq! window-resize-pixelwise t)
+
+  (setq! display-buffer-base-action
+    '((display-buffer-reuse-window display-buffer-in-previous-window)))
+
+  (setq! display-buffer-alist
+    `( (,ceamx-checkers-buffer-names-regexp
+         ( display-buffer-in-direction
+           display-buffer-in-side-window)
+         (window-parameters . ((no-other-window . t))))
+
+       ((lambda (buf act)
+          ;; TODO: double-check this
+          (member (derived-mode-p (with-current-buffer buf major-mode))
+            ceamx-message-modes-list))
+         ( display-buffer-at-bottom
+           display-buffer-in-side-window))
+
+       (,(rx "*" (group (or "Compile-Log" "Messages" "Warnings")) "*")
+         ( display-buffer-at-bottom
+           display-buffer-in-side-window
+           display-buffer-in-direction))
+
+       (,(rx "*" (group (or "Backtrace")) "*")
+         ( display-buffer-in-side-window)
+         (window-height . 0.2)
+         (side . bottom)))))
+
+;;;;; Popups
+
+(setup (:package popper)
+  (setq! popper-reference-buffers
+    (append
+      ceamx-help-modes-list
+      ceamx-help-buffer-names-list
+      ceamx-manual-modes-list
+      ceamx-repl-modes-list
+      ceamx-repl-buffer-names-list
+      ceamx-grep-modes-list
+      '( compilation-mode
+         epa-info-mode
+         messages-buffer-mode)
+      (list ceamx-checkers-buffer-names-regexp)
+      `(,(rx "Output*" eol)
+         ,(rx "*" (or
+                    "Async-native-compile-log"
+                    "Backtrace"
+                    "Compile-Log"
+                    "Completions"
+                    "compilation"
+                    "elpaca-diff"
+                    "Error"
+                    "Messages"
+                    "Shell Command Output"
+                    "vc"
+                    "Warnings")
+            "*")
+         "^\\*Embark Export"
+         "^Calc:"
+         "\\*Async Shell Command\\*"
+         ;; ("\\*Async Shell Command\\*" . hide)
+         ("\\*Detached Shell Command\\*" . hide))))
+  (popper-mode)
+  (popper-echo-mode)
+  (defvar-keymap popper-repeat-map
+    :repeat t
+    "`" #'popper-cycle
+    "~" #'popper-cycle-backwards))
+
+;;;;; Window management
+
+(setup (:package golden-ratio)
+  (:hook-into after-init-hook)
+  (setq! golden-ratio-auto-scale t))
+
+(setup (:package ace-window)
+  (setq! aw-scope 'visible)
+  (:with-feature pulsar
+    (:when-loaded
+      (dolist (fn '( aw-copy-window aw-delete-window aw-move-window
+                   aw-split-window-fair aw-split-window-horz
+                   aw-split-window-vert aw-swap-window))
+        (cl-pushnew fn pulsar-pulse-functions)))))
+
+(setup (:package transpose-frame))
+
+
+;;;; Buffer
+
+(setup emacs
+  (:with-hook ( prog-mode-hook text-mode-hook)
+    (:hook #'auto-fill-mode))
+  (:with-hook prog-mode-hook
+    (:hook (defun ceamx-prog-mode-auto-fill-comments-only-h ()
+             (setq-local comment-auto-fill-only-comments t))))
+  (setq-default
+    fill-column 72
+    truncate-lines t)
+  (setq!
+    uniquify-buffer-name-style 'post-forward-angle-brackets
+    uniquify-separator "/"
+    uniquify-ignore-buffers-re "^\\*"))
+
+(setup autorevert
+  (setq! global-auto-revert-non-file-buffers t)
+  (setq! auto-revert-interval 2)
+  (global-auto-revert-mode 1))
+
+(setup goto-addr
+  (:with-hook prog-mode-hook
+    (:hook #'goto-address-prog-mode)))
+
+(setup (:package link-hint))
+
+;;;;; `ibuffer'
+
+
+;;;; Tabs
+
+(setup tab-bar
+  (tab-bar-mode 1)
+  (setq! tab-bar-auto-width-max '((120) 20)))
+
+
+;;;; Workspaces
+
+(setup (:package activities)
+  (:hook-into after-init-hook)
+  (:with-mode activities-tabs-mode
+    (:hook-into tab-bar-mode-hook))
+  (setq! activities-bookmark-store nil)
+  (setq! activites-kill-buffers t))
+
+
+;;;; Mode Line
+
+(setup (:package mlscroll)
+  (:hook-into after-init-hook))
+
+(setup (:package minions)
+  (:hook-into after-init-hook))
+
+
+;;;; Header Line
+
+(setup (:package breadcrumb)
+  (:hook-into after-init-mode))
+
+
+;;;; Help
+
+(setup info
+  (:with-hook info-mode-hook
+    (:hook #'hl-line-mode)
+    (:hook #'scroll-lock-mode)))
+
+(setup eldoc
+  (setq! eldoc-documentation-function #'eldoc-documentation-compose)
+  (advice-add #'elisp-get-var-docstring :around
+              (defun ceamx+eldoc-append-value-a (fn sym)
+                "Display variable value next to docstring in eldoc."
+                (when-let (ret (funcall fn sym))
+                  (if (boundp sym)
+                      (concat ret " "
+                              (let* ( (truncated " [...]")
+                                      (print-escape-newlines t)
+                                      (str (symbol-value sym))
+                                      (str (prin1-to-string str))
+                                      (limit (- (frame-width) (length ret) (length truncated) 1)))
+                                (format (format "%%0.%ds%%s" (max limit 0))
+                                        (propertize str 'face 'warning)
+                                        (if (< (length str) limit) "" truncated))))
+                    ret)))))
+
+(setup keyboard
+  (:with-feature embark
+    (:when-loaded
+      (setq! prefix-help-command #'embark-prefix-help-command)
+      (:with-feature vertico
+	(:when-loaded
+	  (cl-pushnew '(embark-keybinding grid) vertico-multiform-categories))))))
+
+(setup (:package helpful)
+  (require 'helpful))
+
+(setup (:package devdocs)
+  (:with-hook after-init-hook
+    (:hook #'devdocs-update-all))
+  (:with-feature popper
+    (:when-loaded
+      (cl-pushnew "\\*devdocs\\*" popper-reference-buffers))))
+
+
+;;;; Secrets
+
+;;;;; Auth Source
+
+(setup auth-source
+  (require 'auth-source)
+  (setq! auth-sources (list "~/.authinfo.gpg")))
+
+(setup auth-source-pass
+  (require 'auth-source-pass)
+  (auth-source-pass-enable))
+
+;;;;; GnuPG
+
+(setup epa
+  (require 'epa)
+  ;; Enable automatic encryption on GPG files.
+  (epa-file-enable))
+
+(setup epg
+  (setq! epg-pinentry-mode 'loopback))
+
+;;;; Essentials
+
+(setup emacs
+  (setq! message-log-max 10000)
+  (setq! auto-mode-case-fold nil))
+
+
+;;;; History
+
+(setup savehist
+  (require 'savehist)
+  (dolist (var '(kill-ring
+                 regexp-search-ring
+                 search-ring
+                 register-alist))
+    (cl-pushnew var savehist-additional-variables))
+  (setq! history-length 333
+         history-delete-duplicates nil)
+  (setq! savehist-autosave-interval 30)
+  (savehist-mode 1))
+
+(setup saveplace
+  (save-place-mode 1))
+
+(setup recentf
+  (require 'recentf)
+  (setq! recentf-max-menu-items 20
+         recentf-max-saved-items 50)
+  (setq! recentf-auto-cleanup 'never)
+  (dolist (path '(ceamx-storage-dir ceamx-cache-dir))
+    (cl-pushnew path recentf-exclude))
+  (recentf-mode 1))
+
+(setup undo
+  (setq! undo-limit (* 64 (* 1024 1024))
+         undo-strong-limit (* 96 (* 1024 1024))
+         undo-outer-limit (* undo-strong-limit 100)))
+
+(setup (:package undo-fu-session)
+  (require 'undo-fu-session)
+  (setq! undo-fu-session-directory (expand-file-name "undo-fu-session" ceamx-storage-dir))
+  (setq! undo-fu-session-incompatible-files '("/git-rebase-todo\\'"))
+  (setq! undo-fu-session-ignore-temp-files t
+         undo-fu-session-ignore-encrypted-files t)
+  (setq! undo-fu-session-compression 'zst)
+  (undo-fu-session-global-mode))
+
+(setup (:package vundo)
+  (:when-loaded
+    (setq! vundo-glyph-alist vundo-unicode-symbols)))
+
+
+;;;; Bookmarks
+
+(setup (:package bookmark-in-project))
+
+
+;;;; Editing
+
+(setup emacs
+  (setq! save-interprogram-paste-before-kill t)
+  ;; Replace region when inserting text.
+  (delete-selection-mode 1)
+  (global-subword-mode 1))
+
+(setup (:package crux)
+  (:with-feature pulsar
+    (:when-loaded
+      (cl-pushnew #'crux-other-window-or-switch-buffer pulsar-pulse-functions))))
+
+(setup (:package easy-kill))
+
+(setup (:package expreg))
+
+(setup (:package drag-stuff))
+
+(setup (:package editorconfig)
+  (:with-hook after-init-hook
+    (:hook #'editorconfig-mode))
+  (:with-hook editorconfig-after-apply-functions
+    (:hook
+     ;; via <https://github.com/doomemacs/doomemacs/commit/43870bf8318f6471c4ce5e14565c9f0a3fb6e368>
+     (defun +editorconfig-enforce-org-mode-tab-width-h (props)
+       "Prevent `editorconfig' from changing `tab-width' in `org-mode'.
+A \"tab-width\" of any value other than 8 is an error state in
+org-mode, so it must not be changed.
+
+PROPS is as in `editorconfig-after-apply-functions'."
+       (when (and (gethash 'indent_size props)
+                  (derived-mode-p 'org-mode))
+         (setq tab-width 8)))))
+  ;; This is super important! Yikes...
+  (setq! editorconfig-lisp-use-default-indent t))
+
+(setup (:package ialign))
+
+(setup (:package string-inflection))
+
+(setup (:package shift-number))
+
+(setup (:package cycle-quotes))
+
+(setup (:package smart-newline)
+  (:hook-into prog-mode-hook))
+
+;;;;; Character pair handling
+
+(setup emacs
+  (setq! blink-matching-paren 'jump)
+  (setq! show-paren-style 'mixed)
+  (show-paren-mode 1))
+
+(setup electric
+  (setq! electric-pair-open-newline-between-pairs t)
+  (electric-pair-mode 1)
+  (electric-quote-mode 1))
+
+;;;;; Whitespace and indentation handling
+
+(setup emacs
+  (:with-hook before-save-hook
+    (:hook #'delete-trailing-whitespace))
+  (:with-hook prog-mode-hook
+    (:hook #'whitespace-mode))
+  (setq-default indent-tabs-mode nil
+                tab-width 8
+                )
+  (setq! backward-delete-char-untabify-method 'hungry)
+  (setq! cycle-spacing-actions '(delete-all-space just-one-space restore))
+  (setq! sentence-end-double-space t)
+  (setq! kill-whole-line t)
+  (setq! whitespace-style
+         '( face tabs spaces trailing-whitespace space-before-tab lines-tail
+            empty space-after-tab space-before-tab missing-newline-at-eof
+            )))
+
+(setup electric
+  (electric-indent-mode 1)
+  (electric-layout-mode 1))
+
+(setup (:package aggressive-indent)
+  (global-aggressive-indent-mode 1))
+
+;;;; Search
+
+(setup emacs
+  (setq-default case-fold-search t)
+  (setq! find-library-include-other-files nil))
+
+(setup xref
+  (setq! xref-prompt-for-identifier nil))
+
+(setup (:package avy)
+  (setq! avy-style 'at-full)
+  (setq! avy-all-windows t)
+  (setq! avy-case-fold-search t)
+  ;; Prevent conflict with themes.
+  (setq! avy-background nil)
+  (setq! avy-timeout-seconds 0.30))
+
+(setup (:package substitute)
+  (:with-hook substitute-post-replace-functions
+    (:hook #'substitute-report-operation)))
+
+(setup (:package wgrep)
+  (:with-function wgrep-change-to-wgrep-mode
+    (:autoload-this)))
+
+;;;;; `isearch'
+
+(setup isearch
+  (setq! isearch-lazy-count t
+         lazy-count-prefix-format "[%s/%s] ")
+  (setq! isearch-repeat-on-direction-change t)
+  (:bind "M-<" #'isearch-beginning-of-buffer
+         "M->" #'isearch-end-of-buffer
+         "M-/" #'isearch-complete
+         "M-e" nil
+         "M-w" #'isearch-yank-word-or-char
+         "M-s <" #'isearch-beginning-of-buffer
+         "M-s >" #'isearch-end-of-buffer
+         "C-g" #'isearch-cancel
+         "C-w" nil)
+  (:with-map minibuffer-local-isearch-map
+    (:bind "M-/" #'isearch-complete-edit)))
+
+
+;;;; Version Control
+
+;;;;; `vc-mode'
+
+(setup vc
+  (require 'vc)
+  (setq! vc-follow-symlinks t))
+
+(setup vc-annotate
+  (setq! vc-annotate-display-mode 'scale)
+  (:bind
+    "RET" #'vc-annotate-find-revision-at-line
+    "C-c C-c" #'vc-annotate-goto-line
+    "M-q" #'vc-annotate-toggle-annotation-visibility))
+
+(setup log-edit
+  ;; FIXME: sometimes it does not get loaded automatically
+  (require 'log-edit)
+  (setq! log-edit-confirm 'changed)
+  (setq! log-edit-setup-add-author t)
+  (:unbind "M-r")
+  (:unbind "M-s"))
+
+(setup log-view
+  (:bind
+    "<return>" #'log-view-find-revision
+    "<tab>" #'log-view-toggle-entry-display
+    "f" #'vc-log-incoming
+    "F" #'vc-update
+    "o" #'vc-log-outgoing
+    "P" #'vc-push
+    "s" #'vc-log-search))
+
+;;;;; Diff
+
+(setup ediff
+  (setq!
+    ediff-keep-variants nil
+    ediff-make-buffers-readonly-at-startup nil
+    ediff-show-clashes-only t)
+  (setq! ediff-window-setup-function #'ediff-setup-windows-plain))
+
+(setup diff
+  (setq! diff-default-read-only t)
+  (setq! diff-font-lock-prettify t
+    diff-font-lock-syntax 'hunk-also))
+
+(setup (:package diff-hl)
+  (:with-mode global-diff-hl-mode
+    (:hook-into after-init-hook))
+  (if (display-graphic-p)
+    (diff-hl-show-hunk-mouse-mode 1)
+    (diff-hl-margin-mode 1))
+  (:with-feature magit
+    (:with-hook magit-pre-refresh-hook
+      (:hook #'diff-hl-magit-pre-refresh))
+    (:with-hook magit-post-refresh-hook
+      (:hook #'diff-hl-magit-post-refresh)))
+  (:with-feature dired
+    (:hook #'diff-hl-dired-mode)))
+
+;;;;; Git
+
+(setup vc-git
+  (setq! vc-git-diff-switches '( "--patch-with-stat"
+                                 "--histogram"))
+  (setq! vc-git-log-switches '("--stat"))
+  (setq! vc-git-print-log-follow t)
+  (setq! vc-git-revision-complete-only-branches t)
+  ;; <https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html>
+  (setq! vc-git-log-edit-summary-target-len 50
+    vc-git-log-edit-summary-max-len 72)
+  (:with-map vc-git-stash-shared-map
+    "A" #'vc-git-stash-apply-at-point
+    "P" #'vc-git-stash-pop-at-point
+    "z" #'vc-git-stash
+    "Z" #'vc-git-stash-snapshot))
+
+(setup (:package git-modes))
+
+(setup (:package git-timemachine))
+
+(setup (:package magit)
+  (magit-wip-mode 1)
+  (setq! magit-diff-refine-hunk t)
+  (setq! magit-save-repository-buffers nil)
+  (setq! magit-process-finish-apply-ansi-colors t)
+  (setq! magit-process-popup-time 3)
+  (:with-mode magit-status-mode
+    (:bind "_" #'magit-revert)
+    (:bind "x" #'magit-discard))
+  (:with-feature nerd-icons
+    (when (fboundp #'nerd-icons-insert)
+      (setq! magit-format-file-function #'magit-format-file-nerd-icons)))
+  (:when-loaded
+    (transient-append-suffix 'magit-commit "-n"
+      '("-S" "Disable GPG signing" "--no-gpg"))
+    (transient-append-suffix 'magit-fetch "-p"
+      '("-t" "Fetch all tags" ("-t" "--tags")))
+    (transient-append-suffix 'magit-pull "-r"
+      '("-a" "Autostash" "--autostash"))))
+
+
+;;;;; Jujutsu (jj)
+
+(setup (:package vc-jj)
+  (require 'vc-jj))
+
+
+;;;; Projects
+
+
+;;;; Dired
+
+(setup dired
+  (:hook #'hl-line-mode)
+  (:hook #'dired-omit-mode)
+  ;; -A => dotfiles without . and ..
+  ;; -F => append special chars to special files
+  ;; -G => omit group name
+  ;; -h => human-readable file sizes
+  ;; -l => long listing, required by dired
+  ;; -v => sort files by version number, not lexicographic
+  (setq! dired-listing-switches
+    "-AGFhlv --group-directories-first --time-style=long-iso")
+  (setq! dired-auto-revert-buffer #'dired-directory-changed-p)
+  (setq! dired-dwim-target t)
+  (setq!
+    dired-create-destination-dirs 'ask
+    dired-create-destination-dirs-on-trailing-dirsep t
+    dired-recursive-copies 'always
+    dired-recursive-deletes 'always)
+  (setq! dired-backup-overwrite 'always)
+  (:with-feature mouse
+    (setq! dired-make-directory-clickable t)
+    (setq! dired-mouse-drag-files t))
+  (:with-feature vc
+    (setq! dired-vc-rename-file nil))
+  (:bind "C-+" #'dired-create-empty-file
+    "C-RET" #'dired-do-open
+    "C-c C-e" #'wdired-change-to-wdired-mode))
+
+(setup image-dired
+  (:with-mode image-dired-thumbnail-mode
+    (:bind "RET" #'image-dired-thumbnail-display-external))
+  ;; (setq! image-dired-thumbnail-storage)
+  )
+
+(setup wdired
+  (:bind "C-c C-k" #'wdired-change-to-dired-mode)
+  (setq! wdired-create-parent-directories t)
+  (setq! wdired-allow-to-change-permissions t))
+
+(setup (:package dired-preview))
+
+(setup (:package dired-subtree)
+  (:with-feature dired
+    (:bind
+      "<tab>" #'dired-subtree-toggle
+      "TAB" #'dired-subtree-toggle
+      "<backtab>" #'dired-subtree-remove
+      "S-TAB" #'dired-subtree-remove))
+  (setq! dired-subtree-use-backgrounds nil))
+
+(setup (:package diredfl)
+  (:with-mode diredfl-global-mode
+    (:hook-into after-init-hook))
+  (:when-loaded
+    (set-face-attribute 'diredfl-dir-name nil :bold t)))
+
+(setup (:package nerd-icons-dired)
+  (:hook-into dired-mode-hook))
+
+
+;;;; Completion
+
+(setup (:package orderless)
+  (require 'orderless)
+  (setq! completion-styles (append '(orderless) completion-styles))
+  (setq! completion-category-overrides
+    '((file . (styles . (partial-completion)))
+       (bookmark . (styles . (basic substring)))
+       (library . (styles . (basic substring)))
+       (imenu . (styles . (orderless substring basic)))
+       (kill-ring . (styles . (orderless))))))
+
+(setup (:package consult)
+  (:with-feature register
+    (setq! register-preview-function #'consult-register-format
+	   register-preview-delay 0.5)
+    (advice-add #'register-preview :override #'consult-register-window))
+  (:with-feature xref
+    (setq! xref-show-definitions-function #'consult-xref
+	   xref-show-xrefs-function #'consult-xref))
+  (:with-feature pulsar
+    (setq! consult-after-jump-hook nil)
+    (:with-hook consult-after-jump-hook
+      (:hook pulsar-recenter-top)
+      (:hook pulsar-reveal-entry)))
+  (:with-feature isearch
+    (:with-map isearch-mode-map
+      "M-e"   #'consult-isearch-history	; orig. `isearch-edit-string'
+      "M-s e" #'consult-isearch-history	; orig. `isearch-edit-string'
+      "M-s l" #'consult-line ; needed by `consult-line' to detect `isearch'
+      "M-s L" #'consult-line-multi ; needed by `consult-line' to detect `isearch'
+      ))
+  (:with-feature info
+    (keymap-global-set "<remap> <Info-search>" #'consult-info))
+  (:with-feature embark
+    (:with-map consult-narrow-map
+      (:bind (concat consult-narrow-key " ?") #'embark-prefix-help-command)))
+  (:with-map consult-narrow-map
+    (:bind "?" #'consult-narrow-help))
+  (:when-loaded
+    (:with-feature consult-imenu
+      (require 'consult-imenu)))
+  (require 'consult)
+  (setq! consult-narrow-key "<")
+  (setq! consult-preview-key 'any)
+  (consult-customize
+   consult-theme consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   :preview-key '(:debounce 0.4 any)))
+
+(setup (:package vertico)
+  (:hook-into after-init-hook)
+  (:with-hook rfn-eshadow-update-overlay-hook
+    (:hook #'vertico-directory-tidy))
+  (:with-feature savehist
+    (:when-loaded
+      (cl-pushnew #'vertico-repeat-history savehist-additional-variables)
+      (:with-feature minibuffer
+	(:with-hook minibuffer-setup-hook
+	  (:hook #'vertico-repeat-save)))))
+  (:with-feature vertico-multiform
+    (:with-map vertico-multiform-map
+      (:bind "C-l" #'vertico-multiform-vertical))
+    (setq! vertico-multiform-commands
+           `((consult-line buffer)
+             (consult-imenu buffer)
+             (consult-org-heading ,(lambda (_) (text-scale-set -1)))))
+    (setq! vertico-multiform-categories
+           '((buffer flat (vertico-cycle . t))
+             (consult-grep buffer)
+             (imenu (:not indexed mouse))
+             (symbol (vertico-sort-function . vertico-sort-alpha))))
+    (vertico-multiform-mode))
+  (:with-map vertico-map
+    (:bind "RET" #'vertico-directory-enter
+	 "DEL" #'vertico-directory-delete-char
+	 ;; TODO: prevent adding deletion to kill-ring
+	 "M-DEL" #'vertico-directory-delete-word
+	 "M-q" #'vertico-quick-insert
+	 "C-j" #'vertico-insert
+	 "C-q" #'vertico-quick-exit))
+  (setq! vertico-count 8
+	 vertico-cycle t
+	 vertico-resize t))
+
+
+;;;;; Minibuffer
+
+(setup minibuffer
+  (minibuffer-depth-indicate-mode 1)
+  (minibuffer-electric-default-mode 1)
+  (file-name-shadow-mode 1)
+
+  (setq! read-answer-short t)
+
+  (setq! enable-recursive-minibuffers t)
+
+  ;; Hide commands in M-x which do not apply to the current mode.
+  (setq! read-extended-command-predicate #'command-completion-default-include-p)
+
+  (setq! minibuffer-prompt-properties
+	 '( read-only t
+            cursor-intangible t
+            face minibuffer-prompt))
+
+  (setq! completion-ignore-case t
+         read-buffer-completion-ignore-case t
+         read-file-name-completion-ignore-case t)
+
+  (:with-feature savehist
+    (setq! savehist-save-minibuffer-history t)))
+
+(setup (:package marginalia)
+  (:hook-into after-init-hook)
+  (:with-feature minibuffer
+    (:with-map minibuffer-local-map
+      (:bind "M-a" #'marginalia-cycle)))
+  (setq! marginalia-align 'right))
+
+(setup (:package nerd-icons-completion)
+  (:with-feature marginalia
+    (:hook #'nerd-icons-completion-marginalia-setup)
+    (nerd-icons-completion-mode)))
+
+
+;;;;; Completion-At-Point
+
+(setup emacs
+  (setq! tab-always-indent 'complete))
+
+(setup (:package corfu)
+  (:with-hook after-init-hook
+    (:hook #'global-corfu-mode))
+  (:with-feature savehist
+    (:when-loaded
+      (corfu-history-mode 1)
+      (cl-pushnew 'corfu-history savehist-additional-variables)))
+  (:with-feature minibuffer
+    ;; Disable Corfu in the minibuffer when another completion UI is
+    ;; active or when entering secrets.
+    (setq! global-corfu-minibuffer
+	   (lambda ()
+             (not (or (bound-and-true-p mct--active)
+                      (bound-and-true-p vertico--input)
+                      (eq (current-local-map) read-passwd-map))))))
+  (setq! corfu-preview-current t)
+  (setq! corfu-cycle t)
+  (corfu-popupinfo-mode 1))
+
+(setup (:package kind-icon)
+  (:with-feature corfu
+    (setq! kind-icon-default-face 'corfu-default)
+    (cl-pushnew #'kind-icon-margin-formatter corfu-margin-formatters))
+  (:when-loaded
+    (plist-put kind-icon-default-style :height 0.8)
+    (:with-feature emacs
+      (:with-hook enable-theme-functions
+	(:hook (lambda (_) (kind-icon-reset-cache))))))
+  (require 'kind-icon)
+  (setq! kind-icon-use-icons (display-graphic-p))
+  (setq! kind-icon-blend-background t))
+
+
+;;;;; Embark
+
+(setup (:package embark embark-consult)
+  (:with-hook embark-collect-mode-hook
+    (:hook #'consult-preview-at-point-mode))
+  (:with-feature emacs
+    (setq! prefix-help-command #'embark-prefix-help-command))
+  (:with-feature vertico
+    (cl-pushnew '(embark-keybinding grid) vertico-multiform-categories))
+  (:with-feature mouse
+    (:with-hook context-menu-functions
+      ;; FIXME: unsupported
+      ;; (:hook #'embark-context-menu 100)
+      (add-hook 'context-menu-functions #'embark-context-menu 100)
+      ))
+  (cl-pushnew
+   '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+     nil
+     (window-parameters (mode-line-format . none)))
+   display-buffer-alist))
+
+
+;;;; Files & Directories
+
+(setup emacs
+  (setq! create-lockfiles nil
+         make-backup-files nil)
+  (setq! delete-by-moving-to-trash t)
+  (setq! find-file-suppress-same-file-warnings t
+         find-file-visit-truename t)
+  (:with-hook find-file-not-found-functions
+    (:hook (defun ceamx-find-file-create-paths-h ()
+             (unless (file-remote-p buffer-file-name)
+               (let ((parent-dir (file-name-directory buffer-file-name)))
+                 (and (not (file-directory-p parent-dir))
+                      (y-or-n-p (format "Directory `%s' does not exist!  Create it?"
+                                        parent-dir))
+                      (progn (make-directory parent-dir 'parents)
+                             t))))))))
+
+;;;;; Auto-save file-visiting buffers
+
+(setup emacs
+  (setq! auto-save-interval 300
+         auto-save-visited-interval 60
+         auto-save-timeout 60
+         ;; Don't create "~" auto-save files.
+         auto-save-default nil)
+  (auto-save-visited-mode))
+
+;;;;; Remote Paths / TRAMP
+
+(setup emacs
+  (setq! remote-file-name-inhibit-auto-save t
+    remote-file-name-inhibit-auto-save-visited t))
+
+
+;;;; Snippets
+
+(setup autoinsert
+  (auto-insert-mode 1))
+
+(setup (:package tempel)
+  (setq! tempel-path (file-name-concat ceamx-templates-dir "tempel/*.eld"))
+  (setq! tempel-trigger-prefix "<")
+  (:with-map tempel-map
+    "<tab>" #'tempel-next
+    "<backtab>" #'tempel-previous))
+
+(setup (:package yasnippet)
+  (:with-hook after-init-hook
+    (:hook #'yas-global-mode))
+  (setq! yas-snippet-dirs (list (file-name-concat ceamx-templates-dir "yasnippet")))
+  (setq! yas-prompt-functions '( yas-completing-prompt
+                                 yas-no-prompt))
+  (setq! yas-new-snippet-default
+    "# -*- mode: snippet -*-\n# name: $1\n# key: ${2:${1:$(yas--key-from-desc yas-text)}}\n# uuid: `(uuidgen-4)`\n# contributor: astratagem <chmont@protonmail.com>\n# --\n$0`(yas-escape-text yas-selected-text)`")
+  (:with-mode snippet-mode
+    (:hook (defun ceamx+yasnippet-snippet-mode-load-deps-h ()
+             (require 'uuidgen)))))
+
+(setup (:package spdx))
+
+
+;;;; Writing
+
+(add-hook 'text-mode-hook
+  (defun ceamx-text-modes-variable-pitch-h ()
+    "Display text in variable-pitch fonts in text modes."
+    (unless (derived-mode-p ceamx-text-mode-derived-prog-modes)
+      (variable-pitch-mode 1))))
+
+(setup (:package typo)
+  (:with-hook text-mode-hook
+    (:hook
+      (defun ceamx+typo-mode-maybe-enable-h ()
+        (let ((excluded-modes (append ceamx-text-mode-derived-prog-modes
+                                ceamx-typo-mode-excluded-modes)))
+          (unless (derived-mode-p excluded-modes)
+            (typo-mode 1)))))))
+
+;; Install with system package manager due to dependencies.
+(setup jinx
+  (:hook-into text-mode)
+  (setq! jinx-languages "en"))
+
+
+;;;; Outline
+
+(setup outline
+  (setq! outline-minor-mode-highlight t)
+  (setq! outline-minor-mode-cycle t)
+  (setq! outline-minor-mode-use-buttons nil))
+
+(setup (:package outli)
+  (:bind
+    "C-c C-n" #'outline-next-visible-heading
+    "C-c C-p" #'outline-previous-visible-heading
+    "C-c C-<" #'outline-promote
+    "C-c C->" #'outline-demote
+    "C-c C-u" #'outline-up-heading))
+
+
+;;;; Structural Editing & Tree-Sitter
+
+(setup treesit
+  (setq! treesit-font-lock-level 4))
+
+(setup (:package puni)
+  (puni-global-mode)
+  (:with-hook term-mode-hook
+    (:hook #'puni-disable-puni-mode)))
+
+(setup (:package treesit-auto)
+  (require 'treesit-auto)
+  (setq! treesit-auto-install nil)
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+
+(setup (:package (combobulate :url "https://github.com/mickeynp/combobulate"))
+  (:hook-into prog-mode-hook))
+
+
+;;;; Folding
+
+(setup (:package treesit-fold)
+  (setq! treesit-fold-line-count-show t)
+  (global-treesit-fold-mode 1)
+  (global-treesit-fold-indicators-mode 1))
+
+(setup (:package savefold)
+  (:hook-into after-init-hook)
+  (setq! savefold-directory (file-name-concat ceamx-cache-dir "savefold"))
+  (setq! savefold-backends '(hideshow outline))
+  (:with-feature org
+    (:when-loaded
+      (cl-pushnew 'org savefold-backends)))
+  (:with-feature treesit-fold
+    (:when-loaded
+      (cl-pushnew 'treesit-fold savefold-backends))))
+
+
+;;;; Programming Modes
+
+(require 'ceamx-prog)
+
+(setup (:package dumb-jump)
+  (:with-feature xref
+    (:when-loaded
+      (setq-default xref-backend-functions
+        (append xref-backend-functions '(dumb-jump-xref-activate))))))
+
+;; Colorize color names and hexcodes in buffers.
+(setup (:package rainbow-mode))
+
+(setup (:package hl-todo)
+  (:hook-into prog-mode-hook))
+
+(setup (:package indent-bars)
+  (:hook-into python-base-mode-hook yaml-mode-hook yaml-ts-mode-hook)
+  (setq! indent-bars-no-descend-lists t)
+  (setq! indent-bars-treesit-support t)
+  (setq! indent-bars-treesit-ignore-blank-lines-types '("module")))
+
+;;;;; Formatters
+
+(setup (:package reformatter)
+  (require 'reformatter))
+
+;;;;;; Formatter: prettier
+
+(setup reformatter
+  (:when-loaded
+    (reformatter-define prettier
+      :group 'ceamx
+      :program "prettier"
+      :args (list (concat "--plugin-search-dir="
+                    (expand-file-name
+                      (locate-dominating-file default-directory "package.json")))
+              "--stdin-filepath" (buffer-file-name)))))
+
+;;;;;; Formatter: treefmt
+
+(setup reformatter
+  (:when-loaded
+    (reformatter-define treefmt
+      :group 'ceamx
+      :program "treefmt"
+      :args (list "--stdin" (buffer-file-name)))))
+
+;;;;;; Formatter: biome
+
+(setup reformatter
+  (:when-loaded
+    (reformatter-define biome-format
+      :group 'ceamx
+      :program "biome"
+      :args (list "format" "--stdin-file-path" (buffer-file-name)))
+    (dolist (hook (ceamx-prog-biome-supported-modes-hooks))
+      (add-hook hook #'biome-format-on-save-mode))))
+
+;;;;; Flymake
+
+(setup flymake
+  (setq! flymake-fringe-indicator-position 'right-fringe)
+  (setq! flymake-no-changes-timeout 1.0))
+
+;;;;; Flycheck
+
+(setup (:package flycheck)
+  (:with-mode global-flycheck-mode
+    (:hook-into after-init-hook))
+  (setq! flycheck-emacs-lisp-load-path 'inherit)
+  (setq! flycheck-idle-change-delay 1.0)
+  (setq! flycheck-display-errors-delay 1.5)
+  (setq! flycheck-check-syntax-automatically
+    '(save idle-change mode-enabled))
+  (setq! flycheck-buffer-switch-check-intermediate-buffers nil)
+  (:when-loaded
+    ;; Disable Flycheck for modes supported by Flymake
+    (setq-default flycheck-disabled-checkers
+      (append (default-value 'flycheck-disabled-checkers)
+        '( emacs-lisp
+           emacs-lisp-checkdoc
+           emacs-lisp-package
+           sh-shellcheck)))))
+
+;;;;; All Lisps
+
+(setup emacs
+  (setq-default lisp-indent-offset nil))
+
+(setup ceamx-lisp
+  (:with-mode ceamx-lisp-global-mode
+    (:hook-into after-init-hook)))
+
+;;;;; Emacs Lisp
+
+(setup elisp-mode
+  (:with-mode emacs-lisp-mode
+    (:bind "C-:" #'ielm)))
+
+(setup (:package lispy)
+  (:bind "`" #'self-insert-command)
+  (:unbind "M-j" "M-o")
+  (setq! lispy-completion-method 'default)
+  (setq! lispy-eval-display-style 'message)
+  (:with-feature macrostep
+    (:when-loaded
+      (push 'macrostep lispy-compat)))
+  (:with-feature popper
+    (:when-loaded
+      ;; FIXME: somehow this can get added multiple times... but how? a bug?
+      (cl-pushnew "\\*lispy-message\\*" popper-reference-buffers))))
+
+;;;;; `kbd-mode'
+
+(setup (:package (kanata-kbd-mode :url "https://github.com/chmouel/kanata-kbd-mode"))
+  ;; TODO: hopefully this is not necessary
+  ;; (:match-file "\\.kbd\\'")
+  (:with-feature aggressive-indent
+    (:when-loaded
+      (cl-pushnew 'kanata-kbd-mode aggressive-indent-excluded-modes))))
+
+
+;;;; Presentation
+
+(setup (:package keycast))
+
+
+;;;; Tools
+
+;;;;; PDF-Tools
+
+;; TODO: add pdf files to `auto-mode-alist' with `pdf-view-mode'
+(setup pdf-tools)
+
+;;;; Keybindings
+
+(define-keymap :keymap global-map
+  ;; "ESC ESC" #'ceamx/keyboard-quit-dwim
+
+  ;; "C-g" #'ceamx/keyboard-quit-dwim
   "C-h" help-map
 
-  "S-RET" #'crux-smart-open-line)
+  "S-RET" #'crux-smart-open-line
+  )
 
-;; [C-] :: Global Control-Modified
+;;;;; [C-*]
 
-
-(define-keymap :keymap (current-global-map)
+(define-keymap :keymap global-map
   "C-`" #'popper-toggle
   "C-~" #'popper-cycle
   "C-M-`" #'popper-toggle-type
@@ -630,72 +1614,45 @@ unimportant since it happens during compilation anyway."
   "C-;" #'avy-goto-char-timer
   ;; "C-'" :: RESERVED: special commands e.g. `avy-org-goto-heading-timer'
   "C-." #'embark-act
-  "C-<" #'ceamx-simple/escape-url-dwim
-
-  "C-a" #'mwim-beginning
-  "C-e" #'mwim-end
+  ;; "C-<" #'ceamx-simple/escape-url-dwim
 
   "C-RET" #'ceamx-simple/new-line-below
   "C-S-RET" #'crux-smart-open-line-above
 
-  "C-M-SPC" #'puni-mark-sexp-at-point
-  "C-M-@" #'easy-mark
+  ;; "C-M-SPC" #'puni-mark-sexp-at-point
+  ;; "C-M-@" #'easy-mark
   "C-M-#" #'consult-register
-  "C-M-$" #'jinx-languages
+  ;; "C-M-$" #'jinx-languages
 
   "C-S-d" #'crux-duplicate-current-line-or-region
   "C-M-S-d" #'crux-duplicate-and-comment-current-line-or-region
 
-  "C-k" #'crux-smart-kill-line
+  ;; "C-k" #'crux-smart-kill-line
 
   ;; TODO: redundant with `easy-kill'
-  "C-S-w" #'ceamx-simple/copy-line
+  ;; "C-S-w" #'ceamx-simple/copy-line
 
-  "C-S-y" #'ceamx-simple/yank-replace-line-or-region)
+  ;; "C-S-y" #'ceamx-simple/yank-replace-line-or-region
+  )
 
-(after! prog-mode
-  (define-keymap :keymap prog-mode-map
-    ;; Move forward out of one sexp level
-    "C-M-d" #'up-list))
-
-(after! puni
-  (define-keymap :keymap puni-mode-map
-    "C-M-f" #'puni-forward-sexp
-    "C-M-b" #'puni-backward-sexp
-    "C-M-a" #'puni-beginning-of-sexp
-    "C-M-e" #'puni-end-of-sexp
-    "C-M-[" #'puni-backward-sexp-or-up-list
-    "C-M-]" #'puni-forward-sexp-or-up-list))
-
-(after! org
-  (define-keymap :keymap org-mode-map
-    "C-'" #'avy-org-goto-heading-timer
-    "C-\"" #'avy-org-refile-as-child
-    "C-M-<return>" #'org-insert-subheading
-    "C-M-S-<return>" #'org-insert-todo-subheading
-
-    "C-a" #'org-beginning-of-line
-    "C-e" #'org-end-of-line))
-
-;; [C-h] :: Help Map
-
+;;;;; [C-h] :: Help Map
 
 (define-keymap :keymap (current-global-map)
   "C-h b" #'embark-bindings
   "C-h B" #'describe-bindings
   "C-h c" #'helpful-callable
   "C-h C" #'helpful-command
-  "C-h D" #'devdocs-lookup
+  ;; "C-h D" #'devdocs-lookup
   "C-h f" #'helpful-function
   "C-h F" #'describe-face
   ;; FIXME: conflict
   ;; "C-h F" #'apropos-function
   "C-h h" #'helpful-at-point
   "C-h i" (cons "[ INFO ]" #'ceamx-info-prefix)
-  "C-h i i" #'ceamx/consult-info-dwim
-  "C-h i c" #'ceamx/completion-info
-  "C-h i e" #'ceamx/emacs-info
-  "C-h i o" #'ceamx/org-info
+  ;; "C-h i i" #'ceamx/consult-info-dwim
+  ;; "C-h i c" #'ceamx/completion-info
+  ;; "C-h i e" #'ceamx/emacs-info
+  ;; "C-h i o" #'ceamx/org-info
   "C-h I" #'consult-info
   "C-h k" #'helpful-key
   "C-h K" (cons "[ KEYBINDS ]" #'ceamx-help-keybindings-prefix)
@@ -704,16 +1661,15 @@ unimportant since it happens during compilation anyway."
   "C-h K K" #'helpful-key
   "C-h l" #'find-library
   "C-h L" #'apropos-library
-  "C-h m" #'consult-man
-  "C-h M" #'describe-mode
+  "C-h m" #'describe-mode
+  "C-h M" #'consult-man
   "C-h o" #'helpful-symbol
   "C-h t" #'describe-text-properties
   "C-h U" #'apropos-user-option
   "C-h v" #'helpful-variable
   "C-h V" #'apropos-variable)
 
-;; [C-c] :: Operator Prefix
-
+;;;;; [C-c] :: User Prefix
 
 (define-keymap :keymap (current-global-map)
   "C-c a" #'org-agenda
@@ -731,9 +1687,6 @@ unimportant since it happens during compilation anyway."
   ;; TODO: disambiguate?
   "C-c K" (cons "[ KRYPTION  ]" #'ceamx-cryption-prefix)
   "C-c l" (cons "[ LANG      ]" #'ceamx-code-prefix)
-  ;; TODO: disambiguate f/F
-  "C-c l f" (cons "folding..." (define-prefix-command 'ceamx-code-f-prefix))
-  "C-c l F" (cons "formatting..." (define-prefix-command 'ceamx-code-F-prefix))
   "C-c m" #'notmuch
   "C-c n" (cons "[ NOTE      ]" #'ceamx-note-prefix)
   "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
@@ -754,19 +1707,15 @@ unimportant since it happens during compilation anyway."
 
   "C-c M-x" #'consult-mode-command)
 
-;; [C-c !] :: CHECKS :checkers:flycheck:flymake:
+;;;;; [C-c !] :: CHECKS
 
-;; Flycheck automatically binds its keymap to this.
-
-
-(define-keymap :keymap (current-global-map)
+(define-keymap :keymap global-map
   "C-c ! l" #'flymake-show-buffer-diagnostics
   "C-c ! n" #'flymake-goto-next-error
   "C-c ! p" #'flymake-goto-previous-error
   "C-c ! c" #'flymake-show-buffer-diagnostics)
 
-;; [C-c b] :: BOOKMARK :bookmarks:
-
+;;;;; [C-c b] :: BOOKMARK
 
 (define-keymap :keymap ceamx-bookmark-prefix
   "b" #'bookmark-in-project-jump
@@ -775,193 +1724,107 @@ unimportant since it happens during compilation anyway."
   "p" #'bookmark-in-project-jump-previous
   "*" #'bookmark-in-project-toggle)
 
-;; [C-c c] :: CAPTURE :capture:
+;;;;; [C-c c] :: CAPTURE
 
-
-(define-keymap :keymap ceamx-capture-prefix-map
+(define-keymap :keymap ceamx-capture-prefix
   ;; TODO: <https://protesilaos.com/emacs/denote#text-h:eb72086e-05be-4ae3-af51-7616999fc7c9>
   "r" #'denote-region)
 
-;; [C-c h] :: HISTORY
-
+;;;;; [C-c h] :: HISTORY
 
 (define-keymap :keymap ceamx-history-prefix
   "f" #'consult-recent-file
   "h" #'consult-history)
 
-;; [C-c i] :: INSERT
+;;;;; [C-c i] :: INSERT
 
-
-(define-keymap :keymap ceamx-insert-prefix-map
+(define-keymap :keymap ceamx-insert-prefix
+  "c" #'nerd-icons-insert
   "d" #'ceamx-simple/insert-date
-  "I" '("icon" . nerd-icons-insert)
+  "i" #'yas-insert-snippet
+  "l" nil ; RESERVED: insert link (major-mode specific)
   "L" #'spdx-insert-spdx
   "n" #'org-node-insert-link
-  "s" #'yas-insert-snippet
   "u" #'uuidgen-4)
 
-(after! org
-  (keymap-set org-mode-map "C-c i l" #'org-web-tools-insert-link-for-url))
+(setup org-web-tools
+  (:with-feature org
+    (:bind "C-c i l" #'org-web-tools-insert-link-for-url)))
 
-;; [C-c f] :: FILE
-
+;;;;; [C-c f] :: FILE
 
 (define-keymap :keymap ceamx-file-prefix
-  ;; TODO
-  ;; "y" #'+yank-this-file-name
-
   "c" '("copy..." . crux-copy-file-preserve-attributes)
-  "d" '("delete" . ceamx-simple/delete-current-file)
+  ;; "d" '("delete" . ceamx-simple/delete-current-file)
+  "d" '("delete" . crux-delete-file-and-buffer)
   "f" #'find-file
   "F" #'find-file-other-window
-  ;; `crux-rename-file-and-buffer' is another option, but its `vc'
-  ;; integration is rather annoying, requiring that changes be committed
-  ;; to version control or reverted before renaming the file.  Though
-  ;; that does sound sensible on paper...
-  ;; "r" '("move..." . ceamx-simple/move-current-file) ; alt.
-  ;; "r"
-  "r" '("move..." . crux-rename-file-and-buffer)
+  "r" '("move..." . crux-rename-file-and-buffer))
 
-  "s" #'save-buffer
-  "U" #'ceamx-simple/sudo-find-file
-
-  "C-d" '("diff with..." . ceamx-simple/diff-with-file))
-
-;; [C-c l] :: LANG :lsp:
-
+;;;;; [C-c l] :: LANG / CODE
 
 (define-keymap :keymap ceamx-code-prefix
-  "j" #'ceamx/dumb-jump-dispatch/body
-  "o" nil                               ; RESERVED :: `combobulate-key-prefix'
+  "." #'xref-find-definitions
+  "f" (cons "[ FMT  ]" (define-prefix-command 'ceamx-code-F-prefix))
+  ;; "j" #'ceamx/dumb-jump-dispatch/body
+  "l" nil                            ; RESERVED: language-specific
+  "o" nil                            ; RESERVED: language server symbols
   )
 
-(after! eglot
-  (define-keymap :keymap eglot-mode-map
-    "C-c l a" #'eglot-code-actions
+(setup eglot
+  (:bind "C-c l a" #'eglot-code-actions
     "C-c l l" (define-prefix-command 'ceamx-lang-specific-prefix)
     "C-c l o" #'consult-eglot-symbols
     "C-c l r" #'eglot-rename))
 
-(after! lsp-mode
-    (keymap-global-set "C-c l o" #'consult-lsp-symbols)
-    ;; Override the default binding for `xref-find-apropos'.
-    (keymap-set lsp-mode-map "C-M-." #'consult-lsp-symbols))
+(setup csv-mode
+  (:bind "C-c l l a" #'csv-align-fields
+         "C-c l l u" #'csv-unalign-fields
+         "C-c l l s" #'csv-sort-fields
+         "C-c l l S" #'csv-sort-numeric-fields
+         "C-c l l k" #'csv-kill-fields
+         "C-c l l t" #'csv-transpose))
 
-(after! csv-mode
-  (define-keymap :keymap csv-mode-map
-    "C-c l l a" #'csv-align-fields
-    "C-c l l u" #'csv-unalign-fields
-    "C-c l l s" #'csv-sort-fields
-    "C-c l l S" #'csv-sort-numeric-fields
-    "C-c l l k" #'csv-kill-fields
-    "C-c l l t" #'csv-transpose))
-
-;; [C-c K] :: KRYPTION
-
-
-(define-keymap :keymap ceamx-cryption-prefix-map
-  "d" (cons "decrypt..." (define-prefix-command 'ceamx-cryption-d-prefix))
-  "d d" #'epa-decrypt-file
-  "d r" #'epa-decrypt-region
-  "e" (cons "encrypt..." (define-prefix-command 'ceamx-cryption-e-prefix))
-  "e e" #'epa-encrypt-file
-  "e r" #'epa-encrypt-region
-  "k" #'epa-list-keys)
-
-;; [C-c n] :: NOTE :notes:
-
-
-(define-keymap :keymap ceamx-note-prefix-map
-  "n" #'denote
-  "d" #'denote-sort-dired
-  "r" #'denote-rename-file
-  "R" #'denote-rename-file-using-front-matter
-  "s" #'consult-notes)
-
-(after! org
-  (define-keymap :keymap org-mode-map
-    "C-c n h" #'denote-org-extras-extract-org-subtree
-    "C-c n l" #'denote-link
-    "C-c n L" #'denote-add-links
-    "C-c n b" #'denote-backlinks))
-
-;; [C-c o] :: LAUNCH :web:mail:agenda:
-
-
-(define-keymap :keymap ceamx-launch-prefix
-  "a" #'org-agenda
-  "b" #'eww
-  "f" #'elfeed
-  "m" #'notmuch
-  "s" #'scratch-buffer
-  "t" #'eat
-  "W" #'ceamx/eww-wiki)
-
-;; [C-c p] :: COMPLETE :completion:
-
-
-;; cf. `cape-prefix-map' for ideas
-(define-keymap :keymap ceamx-completion-prefix-map
-  "a" #'cape-abbrev
-  "d" #'cape-dabbrev
-  "e" (cape-capf-interactive #'elisp-completion-at-point)
-  "f" #'cape-file
-  "o" #'cape-elisp-symbol
-  "p" #'completion-at-point
-  "w" #'cape-dict)
-
-;; [C-c q] :: SESSION
-
+;;;;; [C-c q] :: SESSION
 
 (define-keymap :keymap ceamx-session-prefix
   "a c" #'cursory-set-preset
-  "a d" #'ceamx-ui/dark
+  ;; "a d" #'ceamx-ui/dark
   "a f" #'fontaine-set-preset
-  "a l" #'ceamx-ui/light
+  ;; "a l" #'ceamx-ui/light
   "a t" #'consult-theme
   "a o" #'olivetti-mode
-
   "p" (cons "packages..." (define-prefix-command 'ceamx-session-p-prefix))
-
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs
   "r" #'restart-emacs)
 
-(define-keymap :keymap ceamx-session-p-prefix
-  "f" #'elpaca-fetch-all
-  "F" #'elpaca-fetch
-  "i" #'elpaca-info
-  "m" #'elpaca-merge-all
-  "p" #'elpaca-pull
-  "r" #'+elpaca-reload-package
-  "t" #'elpaca-try
-  "u" #'elpaca-update)
+;; FIXME: update for package.el
+;; (define-keymap :keymap ceamx-session-p-prefix
+;;   "f" #'elpaca-fetch-all
+;;   "F" #'elpaca-fetch
+;;   "i" #'elpaca-info
+;;   "m" #'elpaca-merge-all
+;;   "p" #'elpaca-pull
+;;   "r" #'+elpaca-reload-package
+;;   "t" #'elpaca-try
+;;   "u" #'elpaca-update)
 
-;; (use-feature! ceamx-ui
-;;   :commands (ceamx-ui/dark ceamx-ui/light)
-;;   :config
-;;   (define-keymap :keymap ceamx-session-prefix
-;;     "a d" #'ceamx-ui/dark
-;;     "a l" #'ceamx-ui/light))
-
-;; [C-c t] :: TOGGLE
-
+;;;;; [C-c t] :: TOGGLE
 
 (define-keymap :keymap ceamx-toggle-prefix
-  "a" (cons "[ AI ]" (define-prefix-command 'ceamx-toggle-a-prefix))
-  "a m" #'minuet-auto-suggestion-mode
-
-  "c" (cons "[ CYCLE ]" (define-prefix-command 'ceamx-toggle-c-prefix))
+  "c" (cons "cycle..." (define-prefix-command 'ceamx-toggle-c-prefix))
   "c c" #'cycle-at-point
   "c s" #'string-inflection-toggle
   "c +" #'shift-number-up
   "c -" #'shift-number-down
-
+  "i" nil                                 ; RESERVED: for "images"
   "f" #'flycheck-mode
   "k" #'keycast-mode-line-mode
   "l" #'display-line-numbers-mode
   "M" #'menu-bar-mode
   "o" #'outline-minor-mode
+  "p" nil                               ; RESERVED: for "previews"
   "s" #'jinx-mode
   "t" #'typo-mode
   "T" #'tab-bar-mode
@@ -970,11 +1833,14 @@ unimportant since it happens during compilation anyway."
   "z" #'logos-focus-mode
   "Z" #'focus-mode)
 
-(after! dired
-  (keymap-set dired-mode-map "C-c t p" #'dired-preview-global-mode))
+(setup dired
+  (:bind "C-c t i" #'image-dired))
 
-;; [C-c w] :: WORKSPACE :window:workspace:
+(setup dired-preview
+  (:with-feature dired
+    (:bind "C-c t p" #'dired-preview-global-mode)))
 
+;;;;; [C-c w] :: WORKSPACE
 
 (define-keymap :keymap ceamx-workspace-prefix
   "w" #'ceamx/window-dispatch
@@ -994,193 +1860,25 @@ unimportant since it happens during compilation anyway."
   "o" #'bufler-workspace-open
   "r" #'bufler-workspace-save)
 
-;; [C-c W] :: WEB :web:
+
+;;;;; [C-x]
 
 
-(define-keymap :keymap ceamx-web-prefix-map
-  "i" #'org-web-tools-insert-link-for-url
-  "O" #'org-web-tools-read-url-as-org)
 
-(after! org-mode
-  (keymap-set org-mode-map "C-c w a" #'org-web-tools-archive-attach)
-  (keymap-set org-mode-map "C-c w c" #'org-web-tools-convert-links-to-page-entries))
+;;;;; [M-*] :: Global Meta-Modified
 
-;; [C-c y] :: SNIPPET :snippets:
-
-
-(define-keymap :keymap ceamx-snippet-prefix
-  "n" #'yas-new-snippet
-  "v" #'yas-visit-snippet-file
-  "y" #'yas-insert-snippet
-  "Y" #'tempel-insert)
-
-;; [C-c z] :: FOLD
-
-;; IIRC, Vim uses some =z= stuff for folding too.
-
-
-(keymap-set ceamx-fold-prefix "z" #'treesit-fold-toggle)
-
-(define-keymap :keymap treesit-fold-mode-map
-  "C-c z c" #'treesit-fold-close
-  "C-c z C" #'treesit-fold-close-all
-  "C-c z o" #'treesit-fold-open
-  "C-c z O" #'treesit-fold-open-all
-  "C-c z r" #'treesit-fold-open-recursively
-  "C-c z t" #'treesit-fold-toggle
-  "C-z z z" #'treesit-fold-toggle)
-
-;; [C-x] :: Global X-Prefix
-
-
-(define-keymap :keymap (current-global-map)
-  "C-x =" #'balance-windows
-  "C-x +" #'balance-windows-area
-  "C-x ]" #'logos-forward-page-dwim
-  "C-x [" #'logos-backward-page-dwim
-  "C-x <" #'scroll-right
-  "C-x >" #'scroll-left
-  "C-x SPC" #'ceamx/rectangle-dispatch/body
-
-  "C-x b" #'ceamx/switch-to-buffer
-  "C-x g" #'magit-status
-  "C-x k" #'ceamx-simple/kill-current-buffer
-  "C-x K" #'kill-buffer
-  "C-x l" #'ialign
-  "C-x m" #'notmuch-mua-new-mail        ; orig. `compose-mail'
-  "C-x u" #'vundo
-
-  "C-x n N" #'logos-narrow-dwim
-
-  "C-x r b" #'consult-bookmark
-
-  "C-x o"  #'crux-other-window-or-switch-buffer
-
-  "C-x x o" #'olivetti-mode
-  "C-x x f" #'follow-mode
-  "C-x x l" #'visual-line-mode
-  "C-x x r" #'rename-uniquely
-
-  "C-x <up>" #'enlarge-window
-  "C-x <down>" #'shrink-window
-  "C-x <left>" #'shrink-window-horizontally
-  "C-x <right>" #'enlarge-window-horizontally
-
-  "C-x C-b" #'ibuffer
-  "C-x C-n" #'next-buffer
-  "C-x C-p" #'previous-buffer
-
-  ;; Minimizing frames is the job of the window manager.
-  "C-x C-z" nil
-
-  ;; Since `comment-dwim' is bound to [M-;], I find it unintuitive
-  ;; that `comment-line' is bound to [C-x C-;].
-  "C-x M-;" #'comment-line
-
-  "C-x M-:" #'consult-complex-command
-  "C-x M-g" #'magit-dispatch)
-
-;; [C-x 4] :: Window Prefix :window:
-
-
-(define-keymap :keymap (current-global-map)
-  "C-x 4 b" #'consult-buffer-other-window
-  "C-x 4 t" #'crux-transpose-windows)
-
-;; [C-x 5] :: Frame Prefix :frame:
-
-
-(define-keymap :keymap (current-global-map)
-  "C-x 5 b" #'consult-buffer-other-frame)
-
-;; [C-x 8] :: Character Prefix
-
-(define-keymap :keymap (current-global-map)
-  "C-x 8 i" (cons "icons" (define-prefix-command 'ceamx-insert-icons-prefix 'ceamx-insert-icons-prefix-map))
-  "C-x 8 i i" #'nerd-icons-insert)
-
-;; [C-x p] :: Project Prefix
-
-
-(define-keymap :keymap (current-global-map)
-  "C-x p ." #'project-dired
-  "C-x p RET" #'project-dired
-  "C-x p DEL" #'project-forget-project
-
-  "C-x p b" #'consult-project-buffer)
-
-;; [C-x t] :: Tab Prefix
-
-
-(define-keymap :keymap (current-global-map)
-  "C-x t b" #'consult-buffer-other-tab)
-
-;; [C-x v] :: Version Control Prefix :vcs:
-
-
-(define-keymap :keymap (current-global-map)
-  "C-x v ." #'vc-dir-root
-  "C-x v RET" #'vc-dir-root
-
-  "C-x v B" #'vc-annotate
-  "C-x v d" #'vc-diff
-  "C-x v e" #'vc-ediff
-  "C-x v G" #'vc-log-search
-  "C-x v o" #'forge-browse-commit
-  "C-x v t" #'git-timemachine)
-
-(after! vc-dir
-  (define-keymap :keymap vc-dir-mode-map
-    "d" #'vc-diff
-    "o" #'vc-dir-find-file-other-window
-    "O" #'vc-log-outgoing))
-
-;; [C-x w] :: Window Manipulation Prefix :window:
-
-
-(define-keymap :keymap (current-global-map)
-  "C-x w w" #'ace-window
-
-  "C-x w SPC" #'transpose-frame
-
-  "C-x w d" #'ace-delete-window
-  "C-x w p" #'popper-toggle
-  "C-x w P" #'popper-toggle-type
-  "C-x w u" #'winner-undo
-  "C-x w U" #'winner-redo
-
-  "C-x w h" #'windmove-left
-  "C-x w H" #'ceamx/window-move-left
-  "C-x w j" #'windmove-down
-  "C-x w J" #'ceamx/window-move-down
-  "C-x w k" #'windmove-up
-  "C-x w K" #'ceamx/window-move-up
-  "C-x w l" #'windmove-right
-  "C-x w L" #'ceamx/window-move-right
-
-  "C-x w =" #'balance-windows
-  "C-x w <" #'flip-frame
-  "C-x w >" #'flop-frame
-  "C-x w [" #'rotate-frame-clockwise
-  "C-x w ]" #'rotate-frame-anticlockwise
-  "C-x w {" #'rotate-frame
-  "C-x w }" #'rotate-frame)
-
-;; [M-] :: Global Meta-Modified
-
-
-(define-keymap :keymap (current-global-map)
+(define-keymap :keymap global-map
   "M-#" #'consult-register-load
-  "M-$" #'jinx-correct
+  ;; "M-$" #'jinx-correct
   "M-*" #'tempel-insert
   "M-=" #'count-words
   "M-+" #'tempel-complete
-  "M-]" #'logos-forward-page-dwim
-  "M-[" #'logos-backward-page-dwim
+  ;; "M-]" #'logos-forward-page-dwim
+  ;; "M-[" #'logos-backward-page-dwim
   "M-'" #'consult-register-store
   "M-." #'embark-dwim
 
-  "M-DEL" #'ceamx/backward-kill-word
+  ;; "M-DEL" #'ceamx/backward-kill-word
   "M-SPC" #'cycle-spacing
   "M-<up>" #'drag-stuff-up
   "M-<right>" #'drag-stuff-right
@@ -1188,42 +1886,29 @@ unimportant since it happens during compilation anyway."
   "M-<left>" #'drag-stuff-left
 
   "M-c" #'capitalize-dwim
-  "M-i" #'minuet-show-suggestion
   "M-f" #'forward-word
   "M-F" #'forward-symbol
   ;; FIXME: reconcile with current binding for `forward-symbol'
   ;; "M-F" #'consult-focus-lines
-  "M-k" #'ceamx-simple/kill-line-backward
+  ;; "M-k" #'ceamx-simple/kill-line-backward
   "M-K" #'consult-keep-lines
   "M-l" #'downcase-dwim
   "M-o" #'crux-other-window-or-switch-buffer
+  ;; "M-o" #'ace-window
   "M-O" #'delete-blank-lines
-  "M-q" #'unfill-toggle
+  ;; "M-q" #'unfill-toggle
   "M-Q" #'repunctuate-sentences
   "M-u" #'upcase-dwim
-  "M-w" #'easy-kill
+  ;; "M-w" #'easy-kill
   "M-y" #'consult-yank-pop
   "M-z" #'zap-up-to-char
-  "M-Z" #'ceamx-simple/zap-to-char-backward)
+  ;; "M-Z" #'ceamx-simple/zap-to-char-backward
+  )
 
-(keymap-set minibuffer-local-map "M-r" #'consult-history) ; orig. `previous-matching-history-element'
-
-(define-keymap :keymap prog-mode-map
-  "M-RET" #'ceamx-simple/continue-comment)
-
-(after! puni
-  (define-keymap :keymap puni-mode-map
-    "M-(" #'puni-syntactic-forward-punct
-    "M-)" #'puni-syntactic-backward-punct))
-
-;; TODO: testing disabling this
-;; (keymap-substitute (current-global-map) #'default-indent-new-line #'ceamx-simple/continue-comment)
-
-;; [M-g] :: Goto Map :search:
-
+;;;;; [M-g] :: Goto Map
 
 (define-keymap :keymap (current-global-map)
-  "M-g d" #'ceamx/dogears-dispatch
+  ;; "M-g d" #'ceamx/dogears-dispatch
   "M-g e"  #'consult-compile-error
   "M-g f"  #'consult-flycheck            ; or: `consult-flymake'
   "M-g g"  #'consult-goto-line
@@ -1238,19 +1923,16 @@ unimportant since it happens during compilation anyway."
   "M-g w" #'avy-goto-word-1
 
   ;; Also see `ceamx/dogears-dispatch'.
-  "M-g M-b" #'dogears-back
-  "M-g M-f" #'dogears-forward
-  "M-g M-d" #'dogears-list
-  "M-g M-D" #'dogears-sidebar)
+  ;; "M-g M-b" #'dogears-back
+  ;; "M-g M-f" #'dogears-forward
+  ;; "M-g M-d" #'dogears-list
+  ;; "M-g M-D" #'dogears-sidebar
+  )
 
-(after! org-mode
-  (keymap-set org-mode-map "M-g o" #'consult-org-heading))
+;;;;; [M-s] :: Search Prefix
 
-;; [M-s] :: “Search” Prefix :search:
-
-
-(define-keymap :keymap (current-global-map)
-  "M-s b" #'ceamx-simple/buffers-major-mode
+(define-keymap :keymap global-map
+  ;; "M-s b" #'ceamx-simple/buffers-major-mode
   "M-s c"  #'consult-locate
   "M-s d"  #'consult-fd                 ; or `consult-find'
   "M-s e"  #'consult-isearch-history
@@ -1260,95 +1942,26 @@ unimportant since it happens during compilation anyway."
   "M-s l"  #'consult-line
   "M-s L"  #'consult-line-multi
   "M-s n" #'consult-notes
-  "M-s r" '("replace..." . ceamx-replace-prefix)
+  "M-s r" '("[ REPLACE ]" . ceamx-replace-prefix)
   "M-s u"  #'consult-focus-lines
-  "M-s v" #'ceamx-simple/buffers-vc-root
+  ;; "M-s v" #'ceamx-simple/buffers-vc-root
 
-  "M-s M-f" #'org-node-find
+  ;; "M-s M-f" #'org-node-find
   "M-s M-o" #'multi-occur
   "M-s M-s" #'consult-outline)
 
-(define-keymap :keymap ceamx-replace-prefix
-  "b" #'substitute-target-in-buffer
-  "d" #'substitute-target-in-defun
-  "s" #'substitute-target-above-point
-  "S" #'substitute-target-below-point)
+(setup substitute
+  (define-keymap :keymap ceamx-replace-prefix
+    "b" #'substitute-target-in-buffer
+    "d" #'substitute-target-in-defun
+    "s" #'substitute-target-above-point
+    "S" #'substitute-target-below-point))
 
-(after! isearch
-  (define-keymap :keymap isearch-mode-map
-    "M-s e" #'consult-isearch-history
-    "M-s l" #'consult-line
-    "M-s L" #'consult-line-multi))
+(setup consult
+  (:with-feature isearch
+    (:bind "M-s e" #'consult-isearch-history
+	   "M-s l" #'consult-line
+	   "M-s L" #'consult-line-multi)))
 
-(keymap-set minibuffer-local-map "M-s" #'consult-history)
-
-(after! org-mode
-  (keymap-set org-mode-map "M-s M-i" #'org-node-insert-link))
-
-;; “Mouse” Input
-
-
-(define-keymap :keymap (current-global-map)
-  "<wheel-left>" #'scroll-left
-  "<wheel-right>" #'scroll-right)
-
-;; Repeat Maps
-
-
-(defvar-keymap ceamx-string-repeat-map
-  :repeat t
-
-  "c" #'ceamx/cycle-string-inflection)
-
-;; Window :window:
-
-
-(define-keymap :keymap resize-window-repeat-map
-  "<up>" #'enlarge-window
-  "<down>" #'shrink-window
-  "<left>" #'shrink-window-horizontally
-  "<right>" #'enlarge-window-horizontally)
-
-(defvar-keymap ceamx-window-transposition-repeat-map
-  :repeat t
-
-  "SPC" #'transpose-frame
-  "<" #'flip-frame
-  ">" #'flop-frame
-  "[" #'rotate-frame-clockwise
-  "]" #'rotate-frame-anticlockwise)
-
-(defvar-keymap ceamx-window-lifecycle-repeat-map
-  :repeat t
-
-  "2" #'split-window-below
-  "3" #'split-window-right
-  "o" #'ace-window)
-
-;; Start the Emacs server process if not already running
-
-
-(def-hook! ceamx-init-maybe-start-server-h ()
-  'ceamx-emacs-startup-hook
-  "Allow this Emacs process to act as server if a server is not already running."
-  (require 'server)
-  (unless (server-running-p)
-    (server-start)))
-
-;; macOS: Restart Yabai after init
-
-;; Otherwise, =yabai= will not "see" the Emacs GUI window.
-
-
-(when (and (ceamx-host-macos-p) (display-graphic-p))
-  (def-hook! ceamx-after-init-restart-yabai-h ()
-    'ceamx-after-init-hook
-    "Restart the yabai service after init."
-    (after! exec-path-from-shell
-      (async-shell-command "yabai --restart-service"))))
-
-;; Optionally load the ~custom-file~
-
-
-(when ceamx-load-custom-file
-  (load custom-file t))
+(provide 'init)
+;;; init.el ends here

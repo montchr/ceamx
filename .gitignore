@@ -11,3 +11,12 @@ result
 # interactively)
 /tree-sitter/
 /data/17/
+
+# These should not live in this directory anyway, but sometimes they get
+# re-created if there is an init file error.
+eln-cache
+history
+places
+projects
+recentf
+transient
