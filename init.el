@@ -948,7 +948,10 @@ unimportant since it happens during compilation anyway."
 
 
 (define-keymap :keymap ceamx-toggle-prefix
-  "c" (cons "cycle..." (define-prefix-command 'ceamx-toggle-c-prefix))
+  "a" (cons "[ AI ]" (define-prefix-command 'ceamx-toggle-a-prefix))
+  "a m" #'minuet-auto-suggestion-mode
+
+  "c" (cons "[ CYCLE ]" (define-prefix-command 'ceamx-toggle-c-prefix))
   "c c" #'cycle-at-point
   "c s" #'string-inflection-toggle
   "c +" #'shift-number-up
@@ -1185,6 +1188,7 @@ unimportant since it happens during compilation anyway."
   "M-<left>" #'drag-stuff-left
 
   "M-c" #'capitalize-dwim
+  "M-i" #'minuet-show-suggestion
   "M-f" #'forward-word
   "M-F" #'forward-symbol
   ;; FIXME: reconcile with current binding for `forward-symbol'
@@ -1291,10 +1295,10 @@ unimportant since it happens during compilation anyway."
 ;; Repeat Maps
 
 
-  (defvar-keymap ceamx-string-repeat-map
-    :repeat t
+(defvar-keymap ceamx-string-repeat-map
+  :repeat t
 
-    "c" #'ceamx/cycle-string-inflection)
+  "c" #'ceamx/cycle-string-inflection)
 
 ;; Window :window:
 

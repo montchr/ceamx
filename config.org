@@ -2728,6 +2728,22 @@ truncated portion of a line automatically.
   (auth-source-pass-enable))
 #+end_src
 
+Add function to simply get an auth entry from the password store:
+
+#+begin_src emacs-lisp
+(defun ceamx-auth-source/lookup (host user &optional port)
+  (require 'auth-source)
+  (require 'auth-source-pass)
+  (let ((auth (auth-source-search :host host :user user :port port)))
+    (if auth
+        (let ((secretf (plist-get (car auth) :secret)))
+          (if secretf
+              (funcall secretf)
+            (error "Auth entry for %s@%s:%s has no secret!"
+                   user host port)))
+      (error "No auth entry found for %s@%s:%s" user host port))))
+#+end_src
+
 *** Configure GnuPG integration with ~epa~ & ~epg~
 
 #+begin_src emacs-lisp
@@ -8828,11 +8844,15 @@ Cea prefers Anthropic to OpenAI.
 ;; <https://console.anthropic.com/workbench/6c76c61f-14a2-4c35-9979-a86f848453e9>
 
 (defconst ceamx-ai-claude-opus-current-model "claude-opus-4-1-20250805"
-  "String identifier for the current version of the Claude Opus LLM model.
+  "Identifier for the current version of the high-end Claude Opus LLM model.
 This should be updated when a new version is available.")
 
 (defconst ceamx-ai-claude-sonnet-current-model "claude-sonnet-4-20250514"
-  "String identifier for the current version of the Claude Sonnet LLM model.
+  "Identifier for the current version of the general-purpose Claude Sonnet LLM model.
+This should be updated when a new version is available.")
+
+(defconst ceamx-ai-claude-haiku-current-model "claude-3-5-haiku-20241022"
+  "Identifier for the current version of the task-orientated Claude Haiku LLM model.
 This should be updated when a new version is available.")
 #+end_src
 
@@ -8853,6 +8873,30 @@ I opened a ticket asking for help:
   (setq! efrit-model ceamx-ai-claude-opus-current-model))
 #+end_src
 
+
+**** =minuet= :: Augmentated code completion
+
+I’m not sure if it’s the model or something about Minuet, but the
+suggestions returned are garbage.  Oftentimes they are massive, rather
+than a minimal couple symbols or something.  Always they are
+largely unrelated to the context.  I can see the training data –
+people’s personal configurations – in the output.
+
+#+begin_src emacs-lisp
+(package! minuet
+  (setq! minuet-provider 'claude)
+
+  (after! minuet
+    (plist-put minuet-claude-options :api-key (lambda () (ceamx-auth-source/lookup "api.anthropic.com" "emacs-minuet")))
+    (plist-put minuet-claude-options :model ceamx-ai-claude-haiku-current-model)
+
+    (define-keymap :keymap minuet-active-mode-map
+      "M-p" #'minuet-previous-suggestion
+      "M-n" #'minuet-next-suggestion
+      "M-a" #'minuet-accept-suggestion-line
+      "M-A" #'minuet-accept-suggestion
+      "M-e" #'minuet-dismiss-suggestion)))
+#+end_src
 
 *** Personal Finance with =hledger=
 
@@ -9850,7 +9894,10 @@ Flycheck automatically binds its keymap to this.
 
 #+begin_src emacs-lisp
 (define-keymap :keymap ceamx-toggle-prefix
-  "c" (cons "cycle..." (define-prefix-command 'ceamx-toggle-c-prefix))
+  "a" (cons "[ AI ]" (define-prefix-command 'ceamx-toggle-a-prefix))
+  "a m" #'minuet-auto-suggestion-mode
+
+  "c" (cons "[ CYCLE ]" (define-prefix-command 'ceamx-toggle-c-prefix))
   "c c" #'cycle-at-point
   "c s" #'string-inflection-toggle
   "c +" #'shift-number-up
@@ -10102,6 +10149,7 @@ IIRC, Vim uses some =z= stuff for folding too.
   "M-<left>" #'drag-stuff-left
 
   "M-c" #'capitalize-dwim
+  "M-i" #'minuet-show-suggestion
   "M-f" #'forward-word
   "M-F" #'forward-symbol
   ;; FIXME: reconcile with current binding for `forward-symbol'

@@ -93,11 +93,15 @@
 ;; <https://console.anthropic.com/workbench/6c76c61f-14a2-4c35-9979-a86f848453e9>
 
 (defconst ceamx-ai-claude-opus-current-model "claude-opus-4-1-20250805"
-  "String identifier for the current version of the Claude Opus LLM model.
+  "Identifier for the current version of the high-end Claude Opus LLM model.
 This should be updated when a new version is available.")
 
 (defconst ceamx-ai-claude-sonnet-current-model "claude-sonnet-4-20250514"
-  "String identifier for the current version of the Claude Sonnet LLM model.
+  "Identifier for the current version of the general-purpose Claude Sonnet LLM model.
+This should be updated when a new version is available.")
+
+(defconst ceamx-ai-claude-haiku-current-model "claude-3-5-haiku-20241022"
+  "Identifier for the current version of the task-orientated Claude Haiku LLM model.
 This should be updated when a new version is available.")
 
 ;; =efrit= :: A native Emacs Lisp coding agent :package:secrets:
@@ -115,6 +119,23 @@ This should be updated when a new version is available.")
 
 (package! (efrit :host github :repo "steveyegge/efrit")
   (setq! efrit-model ceamx-ai-claude-opus-current-model))
+
+;; =minuet= :: Augmentated code completion
+
+
+(package! minuet
+  (setq! minuet-provider 'claude)
+
+  (after! minuet
+    (plist-put minuet-claude-options :api-key (lambda () (ceamx-auth-source/lookup "api.anthropic.com" "emacs-minuet")))
+    (plist-put minuet-claude-options :model ceamx-ai-claude-haiku-current-model)
+
+    (define-keymap :keymap minuet-active-mode-map
+      "M-p" #'minuet-previous-suggestion
+      "M-n" #'minuet-next-suggestion
+      "M-a" #'minuet-accept-suggestion-line
+      "M-A" #'minuet-accept-suggestion
+      "M-e" #'minuet-dismiss-suggestion)))
 
 ;; Define important feature paths :paths:
 

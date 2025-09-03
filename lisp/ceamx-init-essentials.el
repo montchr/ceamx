@@ -473,6 +473,23 @@ Common text modes including `markdown-mode' and `org-mode' also
   :config
   (auth-source-pass-enable))
 
+
+
+;; Add function to simply get an auth entry from the password store:
+
+
+(defun ceamx-auth-source/lookup (host user &optional port)
+  (require 'auth-source)
+  (require 'auth-source-pass)
+  (let ((auth (auth-source-search :host host :user user :port port)))
+    (if auth
+        (let ((secretf (plist-get (car auth) :secret)))
+          (if secretf
+              (funcall secretf)
+            (error "Auth entry for %s@%s:%s has no secret!"
+                   user host port)))
+      (error "No auth entry found for %s@%s:%s" user host port))))
+
 ;; Configure GnuPG integration with ~epa~ & ~epg~
 
 
