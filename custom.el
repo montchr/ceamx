@@ -4,36 +4,47 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-unlispify-menu-entries nil)
  '(ignored-local-variable-values
-   '((org-refile-targets (nil :maxlevel . 6))
-     (eval load-file "./ceamx-dev-loader.el")
-     (org-archive-location . "graveyard/%s.archive::datetree/")))
+   '((apheleia-formatter . alejandra)
+     (org-refile-targets (nil :maxlevel . 6))
+     (eval load-file "./ceamx-dev-loader.el")))
  '(package-selected-packages
-   '(activities aggressive-indent bookmark-in-project breadcrumb
-                combobulate consult-eglot corfu crux cursory
-                cycle-quotes devdocs diff-hl dired-preview dired-subtree
-                diredfl doric-themes dotenv-mode drag-stuff dumb-jump
-                easy-kill elisp-demos embark-consult envrc eros
-                exec-path-from-shell expreg fish-mode flycheck
-                flycheck-eglot flycheck-phpstan fontaine
-                git-commit-ts-mode git-modes git-timemachine
-                gnu-elpa-keyring-update golden-ratio helpful hl-todo
-                ialign indent-bars jinx jq-mode just-ts-mode
-                kanata-kbd-mode kdl-ts-mode keycast keymap-utils
-                kind-icon ligature lin link-hint lispy macrostep magit
-                marginalia markdown-mode markdown-ts-mode minions
-                mlscroll modus-themes morlock neon-mode
+   '(activities aggressive-indent auto-tangle-mode bookmark-in-project
+                breadcrumb combobulate consult-eglot consult-notmuch
+                corfu crux cursory cycle-quotes devdocs diff-hl
+                dired-preview dired-subtree diredfl doct doric-themes
+                dotenv-mode drag-stuff dumb-jump easy-kill eat ef-themes
+                elfeed-goodies elfeed-org elfeed-score elfeed-tube-mpv
+                elisp-demos embark-consult emmet-mode envrc eros
+                exec-path-from-shell expreg fish-mode flycheck-eglot
+                flycheck-phpstan fontaine free-keys git-commit-ts-mode
+                git-modes git-timemachine gnu-elpa-keyring-update
+                golden-ratio gptel haskell-mode haskell-ts-mode
+                help-find helpful hl-todo htmlize ialign indent-bars
+                jinx jq-mode just-ts-mode kanata-kbd-mode kdl-ts-mode
+                keycast keymap-utils kind-icon ligature lin lispy
+                macrostep magit marginalia markdown-ts-mode minions
+                mlscroll modus-themes morlock mugur mwim neon-mode
                 nerd-icons-completion nerd-icons-dired nix-ts-mode
-                no-littering olivetti orderless outli page-break-lines
-                pdf-tools popper prism pulsar puni rainbow-mode
-                reformatter rust-mode rustic savefold setup shift-number
-                show-font smart-newline spacious-padding spdx
-                string-inflection substitute svg-tag-mode tempel tmr
-                transpose-frame treesit-auto treesit-fold typo
-                undo-fu-session uuidgen vc-jj vertico vundo web-mode
-                wgrep yaml-pro yasnippet yuck-mode))
+                no-littering notmuch-indicator olivetti orderless
+                org-appear org-download org-modern org-node org-remark
+                org-sidebar org-web-tools outli ox-gfm page-break-lines
+                pandoc-mode pdf-tools popper prism pulsar puni
+                rainbow-mode reformatter rustic savefold setup
+                shift-number show-font smart-newline spacious-padding
+                spdx standard-themes string-inflection substitute
+                svg-tag-mode tempel tmr transpose-frame treesit-auto
+                treesit-fold typo undo-fu-session uuidgen vc-jj verb
+                vertico vundo web-mode wgrep yaml-pro yasnippet
+                yuck-mode))
  '(package-vc-selected-packages
-   '((kdl-ts-mode :url "https://github.com/merrickluo/kdl-ts-mode"))))
+   '((auto-tangle-mode :url
+                       "https://github.com/progfolio/auto-tangle-mode.el")))
+ '(safe-local-variable-values
+   '((jq-indent-offset . 2) (just-ts-indent-offset . 2)
+     (apheleia-formatter . nixfmt)
+     (org-archive-location . "graveyard/%s.archive::datetree/"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

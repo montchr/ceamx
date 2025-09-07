@@ -1,4 +1,4 @@
-;;; init.el --- Ceamx                                -*- lexical-binding: t; -*-
+;;; init.el --- Ceamx -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2022-2025  Chris Montgomery
 
@@ -52,6 +52,29 @@
 (defgroup ceamx nil
   "User settings for Ceamx."
   :group 'emacs)
+
+(defcustom ceamx-agenda-dir
+  (file-name-as-directory (concat ceamx-notes-dir "g2d"))
+  "Base directory for Org-Agenda."
+  :type 'directory
+  :group 'ceamx)
+
+(defcustom ceamx-default-agenda-files
+  (file-expand-wildcards (file-name-concat ceamx-agenda-dir "*.org"))
+  "List of absolute paths of all files to include in the agenda."
+  :type '(repeat file)
+  :group 'ceamx)
+
+(defcustom ceamx-default-todo-file
+  (expand-file-name "todo.org" ceamx-agenda-dir)
+  "Absolute path to default Something-Doing file."
+  :type 'file
+  :group 'ceamx)
+
+(defcustom ceamx-outline-search-max-level 5
+  "Maximum level to search in outlines."
+  :type 'number
+  :group 'ceamx)
 
 (defcustom ceamx-repl-key "C-:"
   "Key sequence for mode-specific REPL commands."
@@ -155,11 +178,13 @@
 
 (define-prefix-command 'ceamx-activities-prefix)
 (define-prefix-command 'ceamx-appearance-prefix)
+(define-prefix-command 'ceamx-buffer-prefix)
 (define-prefix-command 'ceamx-bookmark-prefix)
 (define-prefix-command 'ceamx-capture-prefix)
 (define-prefix-command 'ceamx-code-prefix)
 (define-prefix-command 'ceamx-completion-prefix)
 (define-prefix-command 'ceamx-cryption-prefix)
+(define-prefix-command 'ceamx-export-prefix)
 (define-prefix-command 'ceamx-file-prefix)
 (define-prefix-command 'ceamx-fold-prefix)
 (define-prefix-command 'ceamx-help-keybindings-prefix)
@@ -241,6 +266,13 @@
 ;;   :ensure '(func nil)
 ;;   :repeatable t)
 
+;;;;; Install the latest version of Org-Mode
+
+(unless after-init-time
+  (when (and (featurep 'org)
+             (package--active-built-in-p 'org))
+    (package-upgrade 'org)))
+
 
 ;;;; Libraries
 
@@ -250,7 +282,7 @@
       (:bind "<escape>" #'transient-quit-one))))
 
 (setup (:package llama)
-  (:require))
+  (require 'llama))
 
 (setup (:package f))
 
@@ -323,6 +355,8 @@
 
 ;;;; Appearance
 
+(require 'ceamx-ui)
+
 ;;;;; Theme
 
 (setup emacs
@@ -330,23 +364,59 @@
   (setq! custom-safe-themes t)
   (setq! custom-theme-allow-multiple-selections nil))
 
+;;;;;; Standard Themes
+
+(setup (:package standard-themes)
+  (require 'standard-themes)
+  (:with-feature ceamx-ui
+    (:when-loaded
+      (ceamx-ui-define-preferred-themes 'standard 'standard-dark 'standard-light)
+      (setq! standard-themes-to-toggle
+             (ceamx-ui-theme-family-preferred-themes 'standard))))
+  (setq! standard-themes-bold-constructs t
+         standard-themes-italic-constructs t
+         standard-themes-mixed-fonts t
+         standard-themes-variable-pitch-ui t)
+  (setq! standard-themes-prompts '(extrabold italic)))
+
 ;;;;;; Doric Themes
 
 (setup (:package doric-themes)
   (require 'doric-themes)
-  (setq! doric-themes-to-toggle '(doric-light doric-dark))
-  (setq! doric-themes-to-rotate doric-themes-collection)
-  ;; (doric-themes-select 'doric-light)
-  )
+  (:with-feature ceamx-ui
+    (:when-loaded
+      (ceamx-ui-define-preferred-themes 'doric 'doric-dark 'doric-light)
+      (setq! doric-themes-to-toggle
+             (ceamx-ui-theme-family-preferred-themes 'doric)))))
 
 ;;;;;; Modus Themes
 
 (setup (:package modus-themes)
   (require 'modus-themes)
-  (setq! modus-themes-to-rotate '(modus-operandi modus-vivendi))
+  (ceamx-ui-define-preferred-themes 'modus 'modus-vivendi 'modus-operandi)
+  (setq! modus-themes-to-toggle (ceamx-ui-theme-family-preferred-themes 'modus))
   (setq! modus-themes-bold-constructs t
-         modus-themes-italic-constructs t))
+         modus-themes-italic-constructs t
+         modus-themes-mixed-fonts t
+         modus-themes-variable-pitch-ui t)
+  (setq! modus-themes-prompts '(italic bold))
+  (setq! modus-themes-completions
+         '((matches . (extrabold underline))
+           (selection . (semibold italic)))))
 
+;;;;;; Ef Themes
+
+(setup (:package ef-themes)
+  (require 'ef-themes)
+  (ceamx-ui-define-preferred-themes 'ef 'ef-winter 'ef-frost)
+  (setq! ef-themes-to-toggle (ceamx-ui-theme-family-preferred-themes 'ef))
+  (setq! ef-themes-mixed-fonts t
+         ef-themes-variable-pitch-ui t))
+
+;;;;;; Load the preferred theme
+
+(setup ceamx-ui
+  (setq! ceamx-ui-theme-family 'modus))
 
 ;;;;; Font
 
@@ -376,7 +446,10 @@
 	    :default-family "Monospace"
 	    :default-height 94
             :fixed-pitch-family "Monospace"
-            :variable-pitch-family "iA Writer Duospace"
+            :variable-pitch-family "Aporetic Serif"
+            ;; :variable-pitch-family "Charis SIL"
+            ;; :variable-pitch-family "iA Writer Duospace"
+            :variable-pitch-height 1.1
             :mode-line-active-family "Berkeley Mono"
             :mode-line-active-height 0.8
             :mode-line-inactive-family "Berkeley Mono"
@@ -527,6 +600,8 @@
 
 
 ;;;; Window
+
+(require 'ceamx-window)
 
 (setup window
   (setq! split-width-threshold 120
@@ -680,14 +755,16 @@
 ;;;; Workspaces
 
 (setup (:package activities)
-  (:hook-into after-init-hook)
-  (:with-mode activities-tabs-mode
-    (:hook-into tab-bar-mode-hook))
+  (activities-mode 1)
+  (activities-tabs-mode 1)
   (setq! activities-bookmark-store nil)
   (setq! activites-kill-buffers t))
 
 
 ;;;; Mode Line
+
+(setup emacs
+  (column-number-mode 1))
 
 (setup (:package mlscroll)
   (:hook-into after-init-hook))
@@ -699,7 +776,7 @@
 ;;;; Header Line
 
 (setup (:package breadcrumb)
-  (:hook-into after-init-mode))
+  (:hook-into after-init-hook))
 
 
 ;;;; Help
@@ -755,8 +832,11 @@
 
 ;;;;; Auth Source
 
+(require 'ceamx-auth)
+
 (setup auth-source
   (require 'auth-source)
+  ;; Disallow unencrypted authinfo file.
   (setq! auth-sources (list "~/.authinfo.gpg")))
 
 (setup auth-source-pass
@@ -845,7 +925,7 @@
 
 (setup (:package easy-kill))
 
-(setup (:package expreg))
+(setup (:package mwim))
 
 (setup (:package drag-stuff))
 
@@ -888,7 +968,12 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (setup electric
   (setq! electric-pair-open-newline-between-pairs t)
   (electric-pair-mode 1)
-  (electric-quote-mode 1))
+  ;; `electric-quote-mode' actually misbehaves quite badly, inserting
+  ;; "smart quotes" where it should not (kind of like `typo-mode' but
+  ;; worse, because `describe-key' ends up reporting that such-and-such
+  ;; quote key is bound to `self-insert-command' despite appearances to
+  ;; the contrary!).
+  (electric-quote-mode -1))
 
 ;;;;; Whitespace and indentation handling
 
@@ -904,6 +989,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setq! cycle-spacing-actions '(delete-all-space just-one-space restore))
   (setq! sentence-end-double-space t)
   (setq! kill-whole-line t)
+  (setq! whitespace-line-column 100)
   (setq! whitespace-style
          '( face tabs spaces trailing-whitespace space-before-tab lines-tail
             empty space-after-tab space-before-tab missing-newline-at-eof
@@ -1113,7 +1199,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setq! wdired-create-parent-directories t)
   (setq! wdired-allow-to-change-permissions t))
 
-(setup (:package dired-preview))
+(setup (:package dired-preview)
+  (:with-mode dired-preview-global-mode
+    (:hook-into after-init-hook)))
 
 (setup (:package dired-subtree)
   (:with-feature dired
@@ -1447,6 +1535,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (setup treesit
   (setq! treesit-font-lock-level 4))
 
+(setup (:package expreg))
+
 (setup (:package puni)
   (puni-global-mode)
   (:with-hook term-mode-hook
@@ -1465,7 +1555,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;;;; Folding
 
 (setup (:package treesit-fold)
-  (setq! treesit-fold-line-count-show t)
+  (setq! treesit-fold-line-count-show t
+         treesit-fold-summary-show nil)
   (global-treesit-fold-mode 1)
   (global-treesit-fold-indicators-mode 1))
 
@@ -1480,6 +1571,225 @@ PROPS is as in `editorconfig-after-apply-functions'."
     (:when-loaded
       (cl-pushnew 'treesit-fold savefold-backends))))
 
+
+;;;; Org-Mode
+
+(setq! ceamx-default-agenda-files
+       (list (file-name-concat ceamx-agenda-dir "todo.org")
+             (file-name-concat ceamx-agenda-dir "work.org")))
+
+(setup org
+  (progn
+    (setq! org-directory ceamx-agenda-dir)
+    (make-directory org-directory t)))
+
+(setup (:package doct)
+  (require 'doct))
+
+(setup (:package org-ql)
+  (require 'org-ql))
+
+
+;;;;; Org-Mode: Links & IDs
+
+(setup org
+  (setq! org-agenda-files ceamx-default-agenda-files)
+  (setq! org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+  (setq! org-clone-delete-id t))
+
+;;;;; Org-Mode: Editing
+
+(setup org
+  (setq! org-return-follows-link t)
+  (setq! org-special-ctrl-a/e t
+         org-special-ctrl-k t
+         org-ctrl-k-protect-subtree t)
+  (setq! org-list-use-circular-motion t)
+  (setq! org-M-RET-may-split-line '((default . nil))
+         org-insert-heading-respect-content nil))
+
+;;;;; Org-Mode: Folding
+
+(setup org
+  (setq! org-fold-catch-invisible-edits 'show-and-error)
+  (:with-feature savefold
+    (when (bound-and-true-p savefold-mode)
+      (setq! org-startup-folded 'showeverything))))
+
+;;;;; Org-Mode: Priority
+
+(setup org
+  (setq! org-priority-start-cycle-with-default nil))
+
+;;;;; Org-Mode: Workflow states
+
+(setup org
+  (setq! org-enforce-todo-dependencies t
+         org-enforce-todo-checkbox-dependencies t)
+  (setq! org-todo-keywords
+         '((sequence
+            "TODO(t)"
+            "INPRG(i@/!)"
+            "BLOCKED(b@)"
+            "HOLD(h@)"
+            "PROJ(p)"
+            "|"
+            "DONE(d!)"
+            "CANCELLED(x@/!)")))
+  (setq! org-clock-in-switch-to-state "INPRG"))
+
+;;;;; Org-Mode: Logbook
+
+(setup org
+  (setq! org-log-done 'time
+         org-log-redeadline 'time
+         org-log-refile 'time)
+  (setq! org-log-into-drawer t)
+  (setq! org-log-states-order-reversed nil))
+
+;;;;; Org-Mode: Media & attachments
+
+(setup org
+  (setq! org-image-actual-width 480)
+  (setq! org-startup-with-inline-images t))
+
+(setup (:package org-download)
+  (:with-feature dired
+    (:hook #'org-download-enable)))
+
+(setup (:package org-web-tools))
+
+;;;;; Org-Mode: Appearance
+
+(setup org
+  (:hook #'prettify-symbols-mode)
+  ;; (setq! org-auto-align-tags nil
+  ;;        org-tags-column 0
+  ;;        org-agenda-tags-column 0)
+  (setq! org-pretty-entities t))
+
+(setup (:package org-modern)
+  (:hook-into org-mode-hook)
+  (:with-feature org-agenda
+    (:with-hook org-agenda-finalize-hook
+      (:hook #'org-modern-agenda)))
+  (setq! org-modern-checkbox nil
+         org-modern-internal-target nil
+         org-modern-keyword t
+         org-modern-priority t
+         org-modern-radio-target nil
+         org-modern-star 'replace
+         org-modern-todo t
+         org-modern-table nil)
+  ;; (setq! org-modern-replace-stars "⦿")
+  ;; (setq! org-modern-replace-stars "│")
+  (setq! org-modern-replace-stars "├")
+  (setq! org-modern-hide-stars "│")
+  ;; (setq! org-modern-hide-stars "⎸")
+  ;; (setq! org-modern-hide-stars
+  ;;        (propertize "┄" 'face 'modus-themes-fg-cyan-faint))
+  )
+
+(setup (:package org-appear)
+  (:hook-into org-mode-hook)
+  (setq! org-appear-autolinks t
+         org-appear-autoentities t
+         org-appear-autokeywords t
+         org-appear-inside-latex t)
+  (setq! org-appear-delay 0.3)
+  (setq! org-appear-trigger 'always))
+
+(setup org
+  (:with-feature pulsar
+    (:with-hook ( org-agenda-after-show-hook
+                  org-follow-link-hook)
+      (:hook #'pulsar-recenter-center
+             #'pulsar-reveal-entry))))
+
+;;;;; Org-Mode: Indentation
+
+(setup org
+  (setq! org-indent-indentation-per-level 2))
+
+;;;;; Org-Mode: Navigation
+
+(setup org-goto
+  (setq! org-goto-interface 'outline-path-completion))
+
+(defvar-keymap org-navigation-repeat-map
+  :repeat t
+  "C-b" #'org-backward-heading-same-level
+  "b" #'org-backward-heading-same-level
+  "C-f" #'org-forward-heading-same-level
+  "f" #'org-forward-heading-same-level
+  "C-n" #'org-next-visible-heading
+  "n" #'org-next-visible-heading
+  "C-p" #'org-previous-visible-heading
+  "p" #'org-previous-visible-heading
+  "C-u" #'org-up-heading
+  "u" #'org-up-heading
+  "C-<" #'org-promote-subtree
+  "<" #'org-promote-subtree
+  "C->" #'org-demote-subtree
+  ">" #'org-demote-subtree)
+
+;;;;; Org-Mode: Refiling
+
+(setup org-refile
+  (setq! org-outline-path-complete-in-steps nil)
+  (setq! org-refile-use-outline-path 'file)
+  (setq! org-refile-allow-creating-parent-nodes 'confirm)
+  (setq! org-refile-use-cache nil)
+  (setq! org-refile-targets `((,ceamx-default-todo-file . (:level 1))
+                              (nil . (:maxlevel . ,ceamx-outline-search-max-level)))))
+
+;;;;; Org-Mode: Archive
+
+(setup org-archive
+  (setq! org-archive-save-context-info
+         '(time file category todo itags olpath ltags)))
+
+;;;;; Org-Mode: Agenda
+
+(setup org-agenda
+  (setq! org-agenda-time-grid
+         '((daily today require-timed)
+           (800 1000 1200 1400 1600 1800 2000)
+           " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+  (setq! org-agenda-current-time-string
+         "⭠ now ─────────────────────────────────────────────────"))
+
+(setup (:package org-super-agenda))
+
+;;;;; Org-Mode: Literate
+
+(setup org-src
+  (setq! org-edit-src-content-indentation 0
+         org-src-preserve-indentation t)
+  (setq! org-edit-src-persistent-message nil
+         org-src-ask-before-returning-to-edit-buffer nil)
+  (setq! org-src-tab-acts-natively t)
+  (setq! org-src-window-setup 'current-window))
+
+;;;;; Org-Mode: Sidebar & Annotations
+
+(setup (:package org-sidebar))
+
+(setup (:package org-remark))
+
+;;;;; Org-Mode: Export
+
+(setup (:package ox-gfm)
+  (:with-feature org
+    (:when-loaded
+      (require 'ox-gfm))))
+
+;;;;; Org-Mode: Tangle
+
+(setup (:package (auto-tangle-mode :url "https://github.com/progfolio/auto-tangle-mode.el"))
+  (:with-feature minions
+    (:when-loaded
+      (cl-pushnew #'auto-tangle-mode minions-prominent-modes))))
 
 ;;;; Programming Modes
 
@@ -1599,15 +1909,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (:with-mode ceamx-lisp-global-mode
     (:hook-into after-init-hook)))
 
-;;;;; Emacs Lisp
-
-(setup elisp-mode
-  (:with-mode emacs-lisp-mode
-    (:bind ceamx-repl-key #'ielm)))
-
 (setup (:package lispy)
   (:bind "`" #'self-insert-command)
-  (:unbind "M-j" "M-o")
+  (:unbind "M-j" "M-o" "`" "'")
   (setq! lispy-completion-method 'default)
   (setq! lispy-eval-display-style 'message)
   (:with-feature macrostep
@@ -1617,6 +1921,12 @@ PROPS is as in `editorconfig-after-apply-functions'."
     (:when-loaded
       ;; FIXME: somehow this can get added multiple times... but how? a bug?
       (cl-pushnew "\\*lispy-message\\*" popper-reference-buffers))))
+
+;;;;; Emacs Lisp
+
+(setup elisp-mode
+  (:with-mode emacs-lisp-mode
+    (:bind ceamx-repl-key #'ielm)))
 
 (setup (:package eros)
   (:hook-into emacs-lisp-mode-hook)
@@ -1671,6 +1981,11 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 ;;;;; YAML (is a terrible)
 
+(setup yaml-ts-mode
+  (:hook (defun ceamx+yaml-ts-mode-ensure-indentation ()
+           (setq-local tab-indent 2)
+           (setq-local indent-bars-offset 2))))
+
 (setup (:package yaml-pro)
   (add-hook 'yaml-ts-mode-hook #'yaml-pro-ts-mode 100))
 
@@ -1718,7 +2033,10 @@ PROPS is as in `editorconfig-after-apply-functions'."
            (add-hook 'post-self-insert-hook #'ceamx-prog-nix-insert-semicolon-after-sequence nil t)))
   (:bind ceamx-repl-key #'nix-repl)
   (:with-feature nix-repl
-    (:bind ceamx-repl-key #'quit-window)))
+    (:bind ceamx-repl-key #'quit-window))
+  (:with-feature aggressive-indent
+    (:when-loaded
+      (cl-pushnew 'nix-ts-mode aggressive-indent-excluded-modes))))
 
 (setup reformatter
   (:when-loaded
@@ -1775,6 +2093,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;;;;; Just
 
 (setup (:package just-ts-mode)
+  (:file-match "\\.just\\'")
   (:with-feature ceamx-eglot
     (:when-loaded
       (cl-pushnew '("just-just-lsp" . nil)
@@ -1792,28 +2111,302 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (setup (:package yuck-mode))
 
+
+;;;; Notes
+
+(require 'ceamx-paths)
+
+(setup ceamx-note
+  (require 'ceamx-note))
+
+(setup (:package org-mem)
+  (setq! org-mem-do-sync-with-org-id t)
+  (org-mem-updater-mode 1))
+
+(setup (:package org-node)
+  (require 'org-node)
+  (setq! org-node-extra-id-dirs (list ceamx-agenda-dir))
+  (cl-pushnew "journal" org-node-extra-id-dirs-exclude)
+  (org-node-backlink-mode 1)
+  (org-node-cache-mode 1))
+
 ;;;; Presentation
 
 (setup (:package keycast))
 
 
+;;;; PDF-Tools
+
+;; Package installed via Nixpkgs due to dependencies.
+(setup pdf-tools
+  (:with-mode pdf-view-mode
+    (:file-match "\\.pdf\\'")))
+
+;;;; News
+
+(setup ceamx-news
+  (require 'ceamx-news))
+
+(setup (:package elfeed)
+  (:when-loaded
+    (unless (file-exists-p elfeed-db-directory)
+      (make-directory elfeed-db-directory t)))
+  (setq! elfeed-search-filter "@1-week-ago +unread")
+  (:with-feature ceamx-news
+    (setq! elfeed-show-entry-switch #'ceamx-news/open-entry
+           elfeed-show-entry-delete #'ceamx-news/delete-pane))
+  (:with-feature popper
+    (:when-loaded
+      (cl-pushnew "^\\*elfeed-entry" popper-reference-buffers))))
+
+(setup (:package elfeed-goodies)
+  (:with-feature elfeed
+    (:when-loaded
+      (require 'elfeed-goodies)
+      (elfeed-goodies/setup))))
+
+(setup (:package elfeed-org)
+  ;; Must be set prior to feature load.
+  (setq! rmh-elfeed-org-files
+         (list (file-name-concat ceamx-feeds-dir "index.org")))
+  (:with-feature elfeed
+    (:when-loaded
+      (require 'elfeed-org)
+      (elfeed-org))))
+
+(setup (:package elfeed-tube)
+  (:with-feature elfeed
+    (:when-loaded
+      (require 'elfeed-tube)
+      (setq! elfeed-tube-auto-save-p nil
+             elfeed-tube-auto-fetch-p t))
+    (:with-mode ( elfeed-show-mode elfeed-search-mode)
+      (:bind "F" #'elfeed-tube-fetch
+             "<remap> <save-buffer>" #'elfeed-tube-save))))
+
+(setup (:package elfeed-tube-mpv)
+  (:with-feature elfeed
+    (:with-mode elfeed-show-mode
+      (:bind "C-c C-f" #'elfeed-tube-mpv-follow-mode
+             "C-c C-w" #'elfeed-tube-mpv-where))))
+
+(setup (:package elfeed-score)
+  (:with-feature elfeed
+    (:when-loaded
+      (require 'elfeed-score)
+      (elfeed-score-enable)
+      (:with-mode elfeed-search-mode
+        (:bind "=" elfeed-score-map))))
+  (setq! elfeed-score-serde-score-file
+         (file-name-concat ceamx-feeds-dir "elfeed-scores.eld")))
+
+;;;; Mail
+
+(setup (:package notmuch)
+  (setq! notmuch-show-logo nil
+         notmuch-column-control 1.0
+         notmuch-hello-auto-refresh t
+         notmuch-hello-recent-searches-max 20
+         notmuch-hello-thousands-separator ""
+         ;; notmuch-hello-sections '(notmuch-hello-insert-saved-searches)
+         notmuch-show-all-tags-list t))
+
+(setup (:package notmuch-indicator)
+  (setq! notmuch-indicator-args
+         '(( :terms "tag:unread and tag:inbox"
+             :label "[U] ")))
+  (setq! notmuch-indicator-refresh-count (* 60 3))
+  (setq! notmuch-indicator-hide-empty-counters t)
+  (setq! notmuch-indicator-force-refresh-commands
+         '(notmuch-refresh-this-buffer))
+  (notmuch-indicator-mode 1))
+
+;;;;; Mail: Security
+
+(setup emacs
+  (setq! mml-secure-openpgp-encrypt-to-self t
+         mml-secure-openpgp-sign-with-sender t)
+  (setq! mml-secure-smime-encrypt-to-self t
+         mml-secure-smime-sign-with-sender t))
+
+;;;;; Mail: Search
+
+(setup notmuch
+  (setq! notmuch-search-oldest-first nil)
+  (setq! notmuch-show-empty-saved-searches t)
+  (setq! notmuch-saved-searches
+         '(( :name "inbox"
+             :query "tag:inbox"
+             :sort-order newest-first
+             :key "i")
+           ( :name "unread"
+             :query "tag:unread and tag:inbox"
+             :sort-order newest-first
+             :key "u")))
+  (:with-mode notmuch-search-mode
+    (:bind "/" #'notmuch-search-filter
+           "r" #'notmuch-search-reply-to-thread
+           "R" #'notmuch-search-reply-to-thread-sender)))
+
+(setup (:package consult-notmuch))
+
+;;;;; Mail: Compose
+
+(setup message
+  (:with-hook message-setup-hook
+    (:hook #'message-sort-headers))
+  (setq! mail-user-agent 'message-user-agent
+         message-mail-user-agent t)
+  (setq! mail-header-separator "-- text follows this line --")
+  (setq! message-elide-ellipsis "\n> [... %l lines elided]\n")
+  (setq! compose-mail-user-agent-warnings nil)
+  (setq! message-signature "Chris Montgomery"
+         mail-signature message-signature)
+  (setq! message-citation-line-function #'message-insert-formatted-citation-line)
+  (setq! message-citation-line-format (concat "> From: %f\n"
+                                              "> Date: %a, %e %b %Y %T %z\n"
+                                              ">")
+         message-ignored-cited-headers "")
+  (setq! message-confirm-send t)
+  (setq! message-kill-buffer-on-exit t)
+  ;; Always reply-all.
+  (setq! message-wide-reply-confirm-recipients nil))
+
+(setup notmuch
+  (setq! notmuch-mua-compose-in 'current-window)
+  (setq! notmuch-mua-hidden-headers nil)
+  (setq! notmuch-address-command 'internal)
+  (setq! notmuch-address-use-company nil)
+  (setq! notmuch-always-prompt-for-sender t)
+  (setq! notmuch-mua-cite-function #'message-cite-original-without-signature)
+  (setq! notmuch-mua-reply-insert-header-p-function
+         #'notmuch-show-reply-insert-header-p-never)
+  (setq! notmuch-mua-user-agent-function nil)
+  (setq! notmuch-maildir-use-notmuch-insert t)
+  (setq! notmuch-crypto-process-mime t
+         notmuch-crypto-get-keys-asynchronously t)
+  (:with-mode notmuch-show-mode
+    (:bind "r" #'notmuch-search-reply-to-thread
+           "R" #'notmuch-search-reply-to-thread-sender)))
+
+;;;;; Mail: Attachments
+
+(setup gnus
+  (:with-feature dired
+    (:hook #'turn-on-gnus-dired-mode)))
+
+;;;;; Mail: Reading Messages
+
+(setup notmuch
+  (setq! notmuch-show-relative-dates t)
+  (setq! notmuch-show-all-multipart/alternative-parts nil)
+  (setq! notmuch-show-indent-messages-width 1
+         notmuch-show-indent-multipart nil)
+  (setq! notmuch-show-part-button-default-action
+         #'notmuch-show-view-part) ; orig. `notmuch-show-save-part'
+  (setq! notmuch-wash-wrap-lines-length 120)
+  (setq! notmuch-unthreaded-show-out nil)
+  (setq! notmuch-message-headers '("To" "Cc" "Subject" "Date")
+         notmuch-message-headers-visible t)
+
+  ;; Disable buttonisation of long quotes.
+  (let ((count most-positive-fixnum))
+    (setq! notmuch-wash-citation-lines-prefix count
+           notmuch-wash-citation-lines-suffix count)))
+
+;;;; Web
+
+(setup shr
+  (setq! shr-max-width 90)
+  ;; Usually color rendering does not work out so well.  Email messages,
+  ;; which unfortunately are often HTML, have big blocks of color making
+  ;; text difficult to read.  Ideally, colors would be applied in a more
+  ;; nuanced manner, but for now, just disable.
+  (setq! shr-use-colors nil)
+  (setq! shr-folding-mode t)
+  (setq! shr-bullet "• "))
+
+(setup eww
+  (:bind "," #'scroll-up-command
+         "." #'scroll-down-command
+         "o" #'link-hint-open-link))
+
+;;;; Shells & Terminal Emulation
+
+(setup eshell
+  (setq! eshell-scroll-to-bottom-on-input 'this))
+
+(setup (:package eat)
+  (:with-feature eshell
+    (:with-hook eshell-load-hook
+      (:hook #'eat-eshell-mode)
+      (:hook #'eat-eshell-visual-command-mode)))
+  (:with-feature popper
+    (:when-loaded
+      (cl-pushnew "\\*eat\\*" popper-reference-buffers))))
+
 ;;;; Tools
 
-;;;;; PDF-Tools
+;; Make HTTP requests in Org-Mode.
+(setup (:package verb))
 
-;; TODO: add pdf files to `auto-mode-alist' with `pdf-view-mode'
-(setup pdf-tools)
+;; A QMK configurator as a Lisp.
+(setup (:package mugur))
+
+;; Show free keybindings for mod-keys or prefixes.
+(setup (:package free-keys))
+
+;; Keybinding introspection.
+(setup (:package help-find))
+
+;;;; Export
+
+(setup (:package pandoc-mode)
+  (:hook #'pandoc-load-default-settings)
+  (:with-feature markdown-mode
+    (:hook #'pandoc-mode)))
+
+(setup (:package htmlize))
+
+;;;; AI
+
+(require 'ceamx-ai)
+
+(setup (:package gptel)
+  (setq! gptel-model 'claude-sonnet-4-20250514)
+  (setq! gptel-backend
+         (gptel-make-anthropic "Claude"
+           :stream t
+           :key (## ceamx-auth/lookup "api.anthropic.com" "emacs-gptel"))))
+
+;;;; Capture
+
+(setup org-capture
+  (require 'org-capture)
+  (setq! org-capture-templates
+         (doct
+          `(("Inbox item" :keys "c"
+             :file ceamx-default-todo-file
+             :headline "Inbox"
+             :template ("* TODO %?"
+                        "%i %a")
+             :icon ("checklist" :set "octicon" :color "green"))
+            ;; ("Journal entry" :keys "j"
+            ;;  :file denote-)
+            ))))
+
 
 ;;;; Keybindings
 
 (define-keymap :keymap global-map
   ;; "ESC ESC" #'ceamx/keyboard-quit-dwim
 
+  "C-a" #'mwim-beginning
   ;; "C-g" #'ceamx/keyboard-quit-dwim
+  "C-e" #'mwim-end
   "C-h" help-map
 
-  "S-RET" #'crux-smart-open-line
-  )
+  "S-RET" #'crux-smart-open-line)
 
 ;;;;; [C-*]
 
@@ -1886,7 +2479,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (define-keymap :keymap (current-global-map)
   "C-c a" #'org-agenda
-  "C-c b" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
+  "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
   "C-c c" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
   "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
@@ -1900,7 +2493,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   ;; TODO: disambiguate?
   "C-c K" (cons "[ KRYPTION  ]" #'ceamx-cryption-prefix)
   "C-c l" (cons "[ LANG      ]" #'ceamx-code-prefix)
-  "C-c m" #'notmuch
+  "C-c m" (cons "[ BOOKMARK  ]" #'ceamx-bookmark-prefix)
   "C-c n" (cons "[ NOTE      ]" #'ceamx-note-prefix)
   "C-c o" (cons "[ LAUNCH    ]" #'ceamx-launch-prefix)
   "C-c p" (cons "[ COMPLETE  ]" #'ceamx-completion-prefix)
@@ -1928,14 +2521,11 @@ PROPS is as in `editorconfig-after-apply-functions'."
   "C-c ! p" #'flymake-goto-previous-error
   "C-c ! c" #'flymake-show-buffer-diagnostics)
 
-;;;;; [C-c b] :: BOOKMARK
+;;;;; [C-c b] :: BUFFER
 
-(define-keymap :keymap ceamx-bookmark-prefix
-  "b" #'bookmark-in-project-jump
-  "m" #'consult-bookmark
-  "n" #'bookmark-in-project-jump-next
-  "p" #'bookmark-in-project-jump-previous
-  "*" #'bookmark-in-project-toggle)
+(define-keymap :keymap ceamx-buffer-prefix
+  "e" (cons "[ EXPORT ]" #'ceamx-export-prefix)
+  "e h" #'htmlize-buffer)
 
 ;;;;; [C-c c] :: CAPTURE
 
@@ -1999,16 +2589,54 @@ PROPS is as in `editorconfig-after-apply-functions'."
          "C-c l l k" #'csv-kill-fields
          "C-c l l t" #'csv-transpose))
 
+;;;;; [C-c m] :: BOOKMARK
+
+(define-keymap :keymap ceamx-bookmark-prefix
+  "b" #'bookmark-in-project-jump
+  "m" #'consult-bookmark
+  "n" #'bookmark-in-project-jump-next
+  "p" #'bookmark-in-project-jump-previous
+  "*" #'bookmark-in-project-toggle)
+
+;;;;; [C-c n] :: NOTE
+
+(define-keymap :keymap ceamx-note-prefix
+  "o" nil                               ; RESERVED: for `org-node'
+  )
+
+(setup org-node
+  (:when-loaded
+    (keymap-global-set "C-c n o" org-node-global-prefix-map)
+    (:with-feature org
+      (:bind "C-c n o" org-node-org-prefix-map))))
+
+;;;;; [C-c o] :: LAUNCH
+
+(define-keymap :keymap ceamx-launch-prefix
+  "a" #'org-agenda
+  "b" #'eww
+  "f" #'elfeed
+  "m" #'notmuch
+  "s" #'scratch-buffer
+  "t" #'eat
+  "W" #'ceamx/eww-wiki)
+
 ;;;;; [C-c q] :: SESSION
 
 (define-keymap :keymap ceamx-session-prefix
   "a c" #'cursory-set-preset
-  ;; "a d" #'ceamx-ui/dark
+  "a d" #'ceamx-ui/dark
   "a f" #'fontaine-set-preset
-  ;; "a l" #'ceamx-ui/light
+  "a l" #'ceamx-ui/light
   "a t" #'consult-theme
   "a o" #'olivetti-mode
-  "p" (cons "packages..." (define-prefix-command 'ceamx-session-p-prefix))
+
+  "p" (cons "[ PACKAGES ]" (define-prefix-command 'ceamx-session-p-prefix))
+  "p l" #'list-packages
+  "p r" #'package-reinstall
+  "p t" #'package-install
+  "p u" #'package-upgrade-all
+
   "q" #'save-buffers-kill-emacs
   "Q" #'kill-emacs
   "r" #'restart-emacs)
@@ -2054,6 +2682,12 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (:with-feature dired
     (:bind "C-c t p" #'dired-preview-global-mode)))
 
+(setup org-modern
+  (:with-feature org
+    (:bind "C-c t p" #'org-modern-mode))
+  (:with-feature org-agenda
+    (:bind "C-c t p" #'org-modern-mode)))
+
 ;;;;; [C-c w] :: WORKSPACE
 
 (define-keymap :keymap ceamx-workspace-prefix
@@ -2075,8 +2709,50 @@ PROPS is as in `editorconfig-after-apply-functions'."
   "r" #'bufler-workspace-save)
 
 
+;;;;; [C-c z] :: FOLD
+
+(define-keymap :keymap ceamx-fold-prefix
+  "z" #'treesit-fold-toggle)
+
+(setup treesit-fold
+  (:bind "C-c z c" #'treesit-fold-close
+         "C-c z C" #'treesit-fold-close-all
+         "C-c z o" #'treesit-fold-open
+         "C-c z O" #'treesit-fold-open-all
+         "C-c z r" #'treesit-fold-open-recursively
+         "C-c z t" #'treesit-fold-toggle))
+
 ;;;;; [C-x]
 
+;;;;; [C-x w] :: Window Prefix
+
+(define-keymap :keymap global-map
+  "C-x w w" #'ace-window
+
+  "C-x w SPC" #'transpose-frame
+
+  "C-x w d" #'ace-delete-window
+  "C-x w p" #'popper-toggle
+  "C-x w P" #'popper-toggle-type
+  "C-x w u" #'winner-undo
+  "C-x w U" #'winner-redo
+
+  "C-x w h" #'windmove-left
+  "C-x w H" #'ceamx-window/move-left
+  "C-x w j" #'windmove-down
+  "C-x w J" #'ceamx-window/move-down
+  "C-x w k" #'windmove-up
+  "C-x w K" #'ceamx-window/move-up
+  "C-x w l" #'windmove-right
+  "C-x w L" #'ceamx-window/move-right
+
+  "C-x w =" #'balance-windows
+  "C-x w <" #'flip-frame
+  "C-x w >" #'flop-frame
+  "C-x w [" #'rotate-frame-clockwise
+  "C-x w ]" #'rotate-frame-anticlockwise
+  "C-x w {" #'rotate-frame
+  "C-x w }" #'rotate-frame)
 
 
 ;;;;; [M-*] :: Global Meta-Modified
@@ -2176,6 +2852,22 @@ PROPS is as in `editorconfig-after-apply-functions'."
     (:bind "M-s e" #'consult-isearch-history
 	   "M-s l" #'consult-line
 	   "M-s L" #'consult-line-multi)))
+
+
+;;;; Finalize
+
+(load-file (locate-user-emacs-file "custom.el"))
+
+;;;;; Start the daemon
+
+(setup emacs
+  (:with-hook after-init-hook
+    (:hook (defun ceamx-maybe-start-server-h ()
+             (require 'server)
+             (unless (server-running-p)
+               (server-start))))))
+
+;;;; Footer
 
 (provide 'init)
 ;;; init.el ends here

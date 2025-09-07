@@ -1,36 +1,46 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working
+with code in this repository.
 
 ## Overview
 
-Ceamx is a comprehensive Emacs configuration built for productivity, focusing on a modular architecture with extensive customization. The configuration is primarily written in Emacs Lisp and is organized as a literate configuration using Org mode, with some parts managed through traditional Elisp files.
+Ceamx is a comprehensive Emacs configuration built for productivity.
+The configuration is primarily written in Emacs Lisp using `setup.el`.
+Ceamx provides some custom libraries located in the `lisp/` directory.
 
 ## Architecture
 
 ### Core Structure
 
-- **`init.el`** - Main initialization file that bootstraps the entire configuration
-- **`config.org`** - Large literate configuration file (319KB+) containing most configuration blocks
-- **`lisp/`** - Custom Elisp modules organized by functionality:
-  - `ceamx-paths.el` - Path and directory definitions following XDG standards
-  - `ceamx-lib.el` - Core utility functions and macros (including `setq!` macro)
-  - `ceamx-simple.el` - Simple utility functions
-  - `ceamx-init-*.el` - Feature-specific initialization modules
-  - `ceamx-lisp.el`, `ceamx-completion.el` - Language and completion support
-- **`site-lisp/`** - Third-party and custom packages not available through package managers
-- **`nix/`** - Nix-based package management and development environment
+- **`init.el`** – Main initialization file that bootstraps the entire configuration
+- **`lisp/`** – Custom Elisp modules organized by functionality:
+  - `ceamx-paths.el` – Path and directory definitions following XDG standards
+  - `ceamx-lib.el` – Core utility functions and macros (including `setq!` macro)
+  - `ceamx-simple.el` – Simple utility functions
+- **`site-lisp/`** – Third-party and custom packages not available through package managers
+- **`nix/`** – Nix-based package management and home-manager module
+- **`graveyard/`** – Legacy code, no longer used, kept for reference
+  - `v1/` – Previous literate configuration defined in `config.org`
+    along with custom libraries in `site-lisp/`.  Some of these
+    libraries have been moved to the active `lisp/` directory at the
+    project root.
 
 ### Configuration Patterns
 
-**Package Management**: Uses both `package.el` (MELPA) and Nix for external dependencies. The `setup.el` macro system is used extensively for package configuration.
+**Package Management**: Uses both `package.el` and Nixpkgs for external
+dependencies.  The `setup.el` macro system is used extensively for
+package configuration.
 
-**Path Management**: Follows XDG Base Directory specification with custom path constants defined in `ceamx-paths.el`:
-- Storage: `~/.local/share/ceamx/`
+**Path Management**: Follows XDG Base Directory specification with
+custom path constants defined in `ceamx-paths.el`:
+
+- Non-volatile storage: `~/.local/share/ceamx/`
 - Cache: `~/.cache/ceamx/`
 - User directories: `~/Documents/notes/`, `~/Documents/reading/`, `~/Projects/`
 
-**Key Bindings**: Extensive custom keymaps using prefix commands:
+**Key Bindings**: Extensive custom keybindings using prefix commands:
+
 - `C-c` prefix for user commands organized by topic (bookmarks, capture, files, etc.)
 - `C-h` enhanced help system with helpful.el
 - `M-g` goto commands with consult integration

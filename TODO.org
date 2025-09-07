@@ -1,0 +1,41 @@
+#+title: Ceamx Todo
+#+author: Cea
+#+language: en
+
+* TODO Refiling: Append not prepend when working on Ceamx config
+* TODO Provide commands to archive DONE tasks
+:PROPERTIES:
+:ID:       2b459993-8258-4128-adc7-c5025def759c
+:END:
+
+| Author | Sacha Chua                                                                                 |
+| URL    | <https://pages.sachachua.com/.emacs.d/Sacha.html#quick-way-to-archive-all-done-from-inbox> |
+
+I don't think this is working properly...
+
+#+begin_src emacs-lisp :tangle no
+(require 'ceamx-paths)
+
+(defun ceamx/org-clean-up-inbox ()
+  "Archive all DONE tasks and sort the remainder by TODO order."
+  (interactive)
+  (with-current-buffer (find-file ceamx-default-todo-file)
+    (ceamx/org-archive-done-tasks 'file)
+    (goto-char (point-min))
+    (if (org-at-heading-p) (save-excursion (insert "\n")))
+    (org-sort-entries nil ?p)
+    (goto-char (point-min))
+    (org-sort-entries nil ?o)
+    (save-buffer)))
+
+(defun ceamx/org-archive-done-tasks (&optional scope)
+  "Archive finished or cancelled tasks.
+       SCOPE can be 'file or 'tree."
+  (interactive)
+  (org-map-entries
+   (lambda ()
+     (org-archive-subtree)
+     (setq org-map-continue-from (outline-previous-heading)))
+   "TODO=\"DONE\"|TODO=\"CANCELLED\""
+   (or scope (if (org-before-first-heading-p) 'file 'tree))))
+#+end_src

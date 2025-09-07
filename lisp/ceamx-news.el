@@ -32,11 +32,6 @@
   "Ceamx News"
   :group 'ceamx)
 
-(defcustom ceamx-activity-name-prefix "thee:"
-  "Name prefix string for `activities-mode' activities defined by Ceamx."
-  :type 'string
-  :group 'ceamx)
-
 (defcustom ceamx-news-activity-name "news"
   "Activity-Name name for reading the news.
 The name will be prefixed with the value of
@@ -47,7 +42,7 @@ The name will be prefixed with the value of
 ;;;; Functions
 
 ;;;###autoload
-(defun ceamx-news-dead-feeds (&optional years)
+(defun ceamx-news-list-dead-feeds (&optional years)
   "Return a list of feeds that have not updated in YEARS.
 When YEARS is nil, the threshold will be one year."
   (let* ( (years (or years 1.0))
