@@ -126,7 +126,7 @@
 
 (defcustom ceamx-message-modes-list
   '(compilation-mode
-     edebug-eval-mode)
+    edebug-eval-mode)
   "List of major-modes used in message buffers."
   :type '(repeat symbol)
   :group 'ceamx)
@@ -345,7 +345,7 @@
   (require 'modus-themes)
   (setq! modus-themes-to-rotate '(modus-operandi modus-vivendi))
   (setq! modus-themes-bold-constructs t
-    modus-themes-italic-constructs t))
+         modus-themes-italic-constructs t))
 
 
 ;;;;; Font
@@ -357,39 +357,39 @@
   (:only-if (display-graphic-p))
   (require 'fontaine)
   (setq! fontaine-latest-state-file
-    (expand-file-name "fontaine-latest-state.eld" ceamx-storage-dir))
+         (expand-file-name "fontaine-latest-state.eld" ceamx-storage-dir))
   (setq! fontaine-presets
-    `((tiny
-	:default-height 78)
-       (small
-	 :default-height 90)
-       (regular
-	 :default-height 102)
-       (medium
-	 :default-height 117)
-       (large
-	 :default-height 133)
-       (huge
-	 :default-height 155)
-       (t
-	 ;; Inherit the default font from the window manager.
-	 :default-family "Monospace"
-	 :default-height 94
-         :fixed-pitch-family "Monospace"
-         :variable-pitch-family "iA Writer Duospace"
-         :mode-line-active-family "Berkeley Mono"
-         :mode-line-active-height 0.8
-         :mode-line-inactive-family "Berkeley Mono"
-         :mode-line-inactive-height 0.8
-         :header-line-family "Berkeley Mono"
-         :header-line-height 0.8
-         :line-number-family "Berkeley Mono"
-         :line-number-height 0.8
-         :tab-bar-family "Berkeley Mono"
-         :tab-bar-height 0.8
-         :tab-line-family "Berkeley Mono"
-         :tab-line-height 0.8
-	 :line-spacing 0.01)))
+         `((tiny
+	    :default-height 78)
+           (small
+	    :default-height 90)
+           (regular
+	    :default-height 102)
+           (medium
+	    :default-height 117)
+           (large
+	    :default-height 133)
+           (huge
+	    :default-height 155)
+           (t
+	    ;; Inherit the default font from the window manager.
+	    :default-family "Monospace"
+	    :default-height 94
+            :fixed-pitch-family "Monospace"
+            :variable-pitch-family "iA Writer Duospace"
+            :mode-line-active-family "Berkeley Mono"
+            :mode-line-active-height 0.8
+            :mode-line-inactive-family "Berkeley Mono"
+            :mode-line-inactive-height 0.8
+            :header-line-family "Berkeley Mono"
+            :header-line-height 0.8
+            :line-number-family "Berkeley Mono"
+            :line-number-height 0.8
+            :tab-bar-family "Berkeley Mono"
+            :tab-bar-height 0.8
+            :tab-line-family "Berkeley Mono"
+            :tab-line-height 0.8
+	    :line-spacing 0.01)))
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (fontaine-mode 1))
 
@@ -417,14 +417,14 @@
 (setup (:package spacious-padding)
   (:hook-into after-init-hook)
   (setq! spacious-padding-widths
-    '( :internal-border-width 4
-       :header-line-width 2
-       :mode-line-width 2
-       :tab-width 4
-       :right-divider-width 6
-       :scroll-bar-width 6
-       :left-fringe-width 2
-       :right-fringe-width 2))
+         '( :internal-border-width 4
+            :header-line-width 2
+            :mode-line-width 2
+            :tab-width 4
+            :right-divider-width 6
+            :scroll-bar-width 6
+            :left-fringe-width 2
+            :right-fringe-width 2))
   (setq! spacious-padding-subtle-frame-lines nil))
 
 
@@ -471,18 +471,18 @@
 
   (with-eval-after-load 'pulsar
     (dolist (fn '( recenter-top-bottom move-to-window-line-top-bottom reposition-window
-                 bookmark-jump other-window delete-window delete-other-windows
-                 forward-page backward-page scroll-up-command scroll-down-command
-                 tab-new tab-close tab-next outline-backward-same-level
-                 outline-forward-same-level outline-next-heading outline-next-visible-heading
-                 outline-previous-heading outline-previous-visible-heading
-                 outline-up-heading))
-    (cl-pushnew fn pulsar-pulse-functions))
+                   bookmark-jump other-window delete-window delete-other-windows
+                   forward-page backward-page scroll-up-command scroll-down-command
+                   tab-new tab-close tab-next outline-backward-same-level
+                   outline-forward-same-level outline-next-heading outline-next-visible-heading
+                   outline-previous-heading outline-previous-visible-heading
+                   outline-up-heading))
+      (cl-pushnew fn pulsar-pulse-functions))
 
-  (dolist (fn '(pulsar-pulse-line-red
-                pulsar-recenter-top
-                pulsar-reveal-entry))
-    (add-hook 'next-error-hook #'fn))))
+    (dolist (fn '(pulsar-pulse-line-red
+                  pulsar-recenter-top
+                  pulsar-reveal-entry))
+      (add-hook 'next-error-hook #'fn))))
 
 (setup (:package cursory)
   (require 'cursory)
@@ -530,9 +530,9 @@
 
 (setup window
   (setq! split-width-threshold 120
-    split-height-threshold nil)
+         split-height-threshold nil)
   (setq! help-window-select t
-    Man-notify-method 'aggressive))
+         Man-notify-method 'aggressive))
 
 (setup winner
   (:hook-into after-init-hook))
@@ -543,8 +543,8 @@
   (setq! recenter-positions '(top middle bottom))
   (setq! auto-hscroll-mode 'current-line)
   (setq! ;; scroll-error-top-bottom t
-    ;; scroll-preserve-screen-position t
-    scroll-conservatively 10000))
+   ;; scroll-preserve-screen-position t
+   scroll-conservatively 10000))
 
 ;;;;; Display buffer
 
@@ -556,65 +556,65 @@
   (setq! window-resize-pixelwise t)
 
   (setq! display-buffer-base-action
-    '((display-buffer-reuse-window display-buffer-in-previous-window)))
+         '((display-buffer-reuse-window display-buffer-in-previous-window)))
 
   (setq! display-buffer-alist
-    `( (,ceamx-checkers-buffer-names-regexp
-         ( display-buffer-in-direction
-           display-buffer-in-side-window)
-         (window-parameters . ((no-other-window . t))))
+         `( (,ceamx-checkers-buffer-names-regexp
+             ( display-buffer-in-direction
+               display-buffer-in-side-window)
+             (window-parameters . ((no-other-window . t))))
 
-       ((lambda (buf act)
-          ;; TODO: double-check this
-          (member (derived-mode-p (with-current-buffer buf major-mode))
-            ceamx-message-modes-list))
-         ( display-buffer-at-bottom
-           display-buffer-in-side-window))
+            ((lambda (buf act)
+               ;; TODO: double-check this
+               (member (derived-mode-p (with-current-buffer buf major-mode))
+                       ceamx-message-modes-list))
+             ( display-buffer-at-bottom
+               display-buffer-in-side-window))
 
-       (,(rx "*" (group (or "Compile-Log" "Messages" "Warnings")) "*")
-         ( display-buffer-at-bottom
-           display-buffer-in-side-window
-           display-buffer-in-direction))
+            (,(rx "*" (group (or "Compile-Log" "Messages" "Warnings")) "*")
+             ( display-buffer-at-bottom
+               display-buffer-in-side-window
+               display-buffer-in-direction))
 
-       (,(rx "*" (group (or "Backtrace")) "*")
-         ( display-buffer-in-side-window)
-         (window-height . 0.2)
-         (side . bottom)))))
+            (,(rx "*" (group (or "Backtrace")) "*")
+             ( display-buffer-in-side-window)
+             (window-height . 0.2)
+             (side . bottom)))))
 
 ;;;;; Popups
 
 (setup (:package popper)
   (setq! popper-reference-buffers
-    (append
-      ceamx-help-modes-list
-      ceamx-help-buffer-names-list
-      ceamx-manual-modes-list
-      ceamx-repl-modes-list
-      ceamx-repl-buffer-names-list
-      ceamx-grep-modes-list
-      '( compilation-mode
-         epa-info-mode
-         messages-buffer-mode)
-      (list ceamx-checkers-buffer-names-regexp)
-      `(,(rx "Output*" eol)
-         ,(rx "*" (or
-                    "Async-native-compile-log"
-                    "Backtrace"
-                    "Compile-Log"
-                    "Completions"
-                    "compilation"
-                    "elpaca-diff"
-                    "Error"
-                    "Messages"
-                    "Shell Command Output"
-                    "vc"
-                    "Warnings")
-            "*")
-         "^\\*Embark Export"
-         "^Calc:"
-         "\\*Async Shell Command\\*"
-         ;; ("\\*Async Shell Command\\*" . hide)
-         ("\\*Detached Shell Command\\*" . hide))))
+         (append
+          ceamx-help-modes-list
+          ceamx-help-buffer-names-list
+          ceamx-manual-modes-list
+          ceamx-repl-modes-list
+          ceamx-repl-buffer-names-list
+          ceamx-grep-modes-list
+          '( compilation-mode
+             epa-info-mode
+             messages-buffer-mode)
+          (list ceamx-checkers-buffer-names-regexp)
+          `(,(rx "Output*" eol)
+            ,(rx "*" (or
+                      "Async-native-compile-log"
+                      "Backtrace"
+                      "Compile-Log"
+                      "Completions"
+                      "compilation"
+                      "elpaca-diff"
+                      "Error"
+                      "Messages"
+                      "Shell Command Output"
+                      "vc"
+                      "Warnings")
+                 "*")
+            "^\\*Embark Export"
+            "^Calc:"
+            "\\*Async Shell Command\\*"
+            ;; ("\\*Async Shell Command\\*" . hide)
+            ("\\*Detached Shell Command\\*" . hide))))
   (popper-mode)
   (popper-echo-mode)
   (defvar-keymap popper-repeat-map
@@ -633,8 +633,8 @@
   (:with-feature pulsar
     (:when-loaded
       (dolist (fn '( aw-copy-window aw-delete-window aw-move-window
-                   aw-split-window-fair aw-split-window-horz
-                   aw-split-window-vert aw-swap-window))
+                     aw-split-window-fair aw-split-window-horz
+                     aw-split-window-vert aw-swap-window))
         (cl-pushnew fn pulsar-pulse-functions)))))
 
 (setup (:package transpose-frame))
@@ -649,12 +649,12 @@
     (:hook (defun ceamx-prog-mode-auto-fill-comments-only-h ()
              (setq-local comment-auto-fill-only-comments t))))
   (setq-default
-    fill-column 72
-    truncate-lines t)
+   fill-column 72
+   truncate-lines t)
   (setq!
-    uniquify-buffer-name-style 'post-forward-angle-brackets
-    uniquify-separator "/"
-    uniquify-ignore-buffers-re "^\\*"))
+   uniquify-buffer-name-style 'post-forward-angle-brackets
+   uniquify-separator "/"
+   uniquify-ignore-buffers-re "^\\*"))
 
 (setup autorevert
   (setq! global-auto-revert-non-file-buffers t)
@@ -966,9 +966,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (setup vc-annotate
   (setq! vc-annotate-display-mode 'scale)
   (:bind
-    "RET" #'vc-annotate-find-revision-at-line
-    "C-c C-c" #'vc-annotate-goto-line
-    "M-q" #'vc-annotate-toggle-annotation-visibility))
+   "RET" #'vc-annotate-find-revision-at-line
+   "C-c C-c" #'vc-annotate-goto-line
+   "M-q" #'vc-annotate-toggle-annotation-visibility))
 
 (setup log-edit
   ;; FIXME: sometimes it does not get loaded automatically
@@ -980,33 +980,33 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (setup log-view
   (:bind
-    "<return>" #'log-view-find-revision
-    "<tab>" #'log-view-toggle-entry-display
-    "f" #'vc-log-incoming
-    "F" #'vc-update
-    "o" #'vc-log-outgoing
-    "P" #'vc-push
-    "s" #'vc-log-search))
+   "<return>" #'log-view-find-revision
+   "<tab>" #'log-view-toggle-entry-display
+   "f" #'vc-log-incoming
+   "F" #'vc-update
+   "o" #'vc-log-outgoing
+   "P" #'vc-push
+   "s" #'vc-log-search))
 
 ;;;;; Diff
 
 (setup ediff
   (setq!
-    ediff-keep-variants nil
-    ediff-make-buffers-readonly-at-startup nil
-    ediff-show-clashes-only t)
+   ediff-keep-variants nil
+   ediff-make-buffers-readonly-at-startup nil
+   ediff-show-clashes-only t)
   (setq! ediff-window-setup-function #'ediff-setup-windows-plain))
 
 (setup diff
   (setq! diff-default-read-only t)
   (setq! diff-font-lock-prettify t
-    diff-font-lock-syntax 'hunk-also))
+         diff-font-lock-syntax 'hunk-also))
 
 (setup (:package diff-hl)
   (:with-mode global-diff-hl-mode
     (:hook-into after-init-hook))
   (if (display-graphic-p)
-    (diff-hl-show-hunk-mouse-mode 1)
+      (diff-hl-show-hunk-mouse-mode 1)
     (diff-hl-margin-mode 1))
   (:with-feature magit
     (:with-hook magit-pre-refresh-hook
@@ -1026,7 +1026,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setq! vc-git-revision-complete-only-branches t)
   ;; <https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html>
   (setq! vc-git-log-edit-summary-target-len 50
-    vc-git-log-edit-summary-max-len 72)
+         vc-git-log-edit-summary-max-len 72)
   (:with-map vc-git-stash-shared-map
     "A" #'vc-git-stash-apply-at-point
     "P" #'vc-git-stash-pop-at-point
@@ -1079,14 +1079,14 @@ PROPS is as in `editorconfig-after-apply-functions'."
   ;; -l => long listing, required by dired
   ;; -v => sort files by version number, not lexicographic
   (setq! dired-listing-switches
-    "-AGFhlv --group-directories-first --time-style=long-iso")
+         "-AGFhlv --group-directories-first --time-style=long-iso")
   (setq! dired-auto-revert-buffer #'dired-directory-changed-p)
   (setq! dired-dwim-target t)
   (setq!
-    dired-create-destination-dirs 'ask
-    dired-create-destination-dirs-on-trailing-dirsep t
-    dired-recursive-copies 'always
-    dired-recursive-deletes 'always)
+   dired-create-destination-dirs 'ask
+   dired-create-destination-dirs-on-trailing-dirsep t
+   dired-recursive-copies 'always
+   dired-recursive-deletes 'always)
   (setq! dired-backup-overwrite 'always)
   (:with-feature mouse
     (setq! dired-make-directory-clickable t)
@@ -1094,8 +1094,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (:with-feature vc
     (setq! dired-vc-rename-file nil))
   (:bind "C-+" #'dired-create-empty-file
-    "C-RET" #'dired-do-open
-    "C-c C-e" #'wdired-change-to-wdired-mode))
+         "C-RET" #'dired-do-open
+         "C-c C-e" #'wdired-change-to-wdired-mode))
 
 (setup image-dired
   (:with-mode image-dired-thumbnail-mode
@@ -1113,10 +1113,10 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (setup (:package dired-subtree)
   (:with-feature dired
     (:bind
-      "<tab>" #'dired-subtree-toggle
-      "TAB" #'dired-subtree-toggle
-      "<backtab>" #'dired-subtree-remove
-      "S-TAB" #'dired-subtree-remove))
+     "<tab>" #'dired-subtree-toggle
+     "TAB" #'dired-subtree-toggle
+     "<backtab>" #'dired-subtree-remove
+     "S-TAB" #'dired-subtree-remove))
   (setq! dired-subtree-use-backgrounds nil))
 
 (setup (:package diredfl)
@@ -1135,11 +1135,11 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (require 'orderless)
   (setq! completion-styles (append '(orderless) completion-styles))
   (setq! completion-category-overrides
-    '((file . (styles . (partial-completion)))
-       (bookmark . (styles . (basic substring)))
-       (library . (styles . (basic substring)))
-       (imenu . (styles . (orderless substring basic)))
-       (kill-ring . (styles . (orderless))))))
+         '((file . (styles . (partial-completion)))
+           (bookmark . (styles . (basic substring)))
+           (library . (styles . (basic substring)))
+           (imenu . (styles . (orderless substring basic)))
+           (kill-ring . (styles . (orderless))))))
 
 (setup (:package consult)
   (:with-feature register
@@ -1206,12 +1206,12 @@ PROPS is as in `editorconfig-after-apply-functions'."
     (vertico-multiform-mode))
   (:with-map vertico-map
     (:bind "RET" #'vertico-directory-enter
-	 "DEL" #'vertico-directory-delete-char
-	 ;; TODO: prevent adding deletion to kill-ring
-	 "M-DEL" #'vertico-directory-delete-word
-	 "M-q" #'vertico-quick-insert
-	 "C-j" #'vertico-insert
-	 "C-q" #'vertico-quick-exit))
+	   "DEL" #'vertico-directory-delete-char
+	   ;; TODO: prevent adding deletion to kill-ring
+	   "M-DEL" #'vertico-directory-delete-word
+	   "M-q" #'vertico-quick-insert
+	   "C-j" #'vertico-insert
+	   "C-q" #'vertico-quick-exit))
   (setq! vertico-count 8
 	 vertico-cycle t
 	 vertico-resize t))
@@ -1348,7 +1348,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (setup emacs
   (setq! remote-file-name-inhibit-auto-save t
-    remote-file-name-inhibit-auto-save-visited t))
+         remote-file-name-inhibit-auto-save-visited t))
 
 
 ;;;; Snippets
@@ -1370,7 +1370,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setq! yas-prompt-functions '( yas-completing-prompt
                                  yas-no-prompt))
   (setq! yas-new-snippet-default
-    "# -*- mode: snippet -*-\n# name: $1\n# key: ${2:${1:$(yas--key-from-desc yas-text)}}\n# uuid: `(uuidgen-4)`\n# contributor: astratagem <chmont@protonmail.com>\n# --\n$0`(yas-escape-text yas-selected-text)`")
+         "# -*- mode: snippet -*-\n# name: $1\n# key: ${2:${1:$(yas--key-from-desc yas-text)}}\n# uuid: `(uuidgen-4)`\n# contributor: astratagem <chmont@protonmail.com>\n# --\n$0`(yas-escape-text yas-selected-text)`")
   (:with-mode snippet-mode
     (:hook (defun ceamx+yasnippet-snippet-mode-load-deps-h ()
              (require 'uuidgen)))))
@@ -1381,19 +1381,19 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;;;; Writing
 
 (add-hook 'text-mode-hook
-  (defun ceamx-text-modes-variable-pitch-h ()
-    "Display text in variable-pitch fonts in text modes."
-    (unless (derived-mode-p ceamx-text-mode-derived-prog-modes)
-      (variable-pitch-mode 1))))
+          (defun ceamx-text-modes-variable-pitch-h ()
+            "Display text in variable-pitch fonts in text modes."
+            (unless (derived-mode-p ceamx-text-mode-derived-prog-modes)
+              (variable-pitch-mode 1))))
 
 (setup (:package typo)
   (:with-hook text-mode-hook
     (:hook
-      (defun ceamx+typo-mode-maybe-enable-h ()
-        (let ((excluded-modes (append ceamx-text-mode-derived-prog-modes
-                                ceamx-typo-mode-excluded-modes)))
-          (unless (derived-mode-p excluded-modes)
-            (typo-mode 1)))))))
+     (defun ceamx+typo-mode-maybe-enable-h ()
+       (let ((excluded-modes (append ceamx-text-mode-derived-prog-modes
+                                     ceamx-typo-mode-excluded-modes)))
+         (unless (derived-mode-p excluded-modes)
+           (typo-mode 1)))))))
 
 ;; Install with system package manager due to dependencies.
 (setup jinx
@@ -1410,11 +1410,11 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (setup (:package outli)
   (:bind
-    "C-c C-n" #'outline-next-visible-heading
-    "C-c C-p" #'outline-previous-visible-heading
-    "C-c C-<" #'outline-promote
-    "C-c C->" #'outline-demote
-    "C-c C-u" #'outline-up-heading))
+   "C-c C-n" #'outline-next-visible-heading
+   "C-c C-p" #'outline-previous-visible-heading
+   "C-c C-<" #'outline-promote
+   "C-c C->" #'outline-demote
+   "C-c C-u" #'outline-up-heading))
 
 
 ;;;; Structural Editing & Tree-Sitter
@@ -1464,7 +1464,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (:with-feature xref
     (:when-loaded
       (setq-default xref-backend-functions
-        (append xref-backend-functions '(dumb-jump-xref-activate))))))
+                    (append xref-backend-functions '(dumb-jump-xref-activate))))))
 
 ;; Colorize color names and hexcodes in buffers.
 (setup (:package rainbow-mode))
@@ -1491,9 +1491,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
       :group 'ceamx
       :program "prettier"
       :args (list (concat "--plugin-search-dir="
-                    (expand-file-name
-                      (locate-dominating-file default-directory "package.json")))
-              "--stdin-filepath" (buffer-file-name)))))
+                          (expand-file-name
+                           (locate-dominating-file default-directory "package.json")))
+                  "--stdin-filepath" (buffer-file-name)))))
 
 ;;;;;; Formatter: treefmt
 
@@ -1530,16 +1530,16 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setq! flycheck-idle-change-delay 1.0)
   (setq! flycheck-display-errors-delay 1.5)
   (setq! flycheck-check-syntax-automatically
-    '(save idle-change mode-enabled))
+         '(save idle-change mode-enabled))
   (setq! flycheck-buffer-switch-check-intermediate-buffers nil)
   (:when-loaded
     ;; Disable Flycheck for modes supported by Flymake
     (setq-default flycheck-disabled-checkers
-      (append (default-value 'flycheck-disabled-checkers)
-        '( emacs-lisp
-           emacs-lisp-checkdoc
-           emacs-lisp-package
-           sh-shellcheck)))))
+                  (append (default-value 'flycheck-disabled-checkers)
+                          '( emacs-lisp
+                             emacs-lisp-checkdoc
+                             emacs-lisp-package
+                             sh-shellcheck)))))
 
 ;;;;; All Lisps
 
@@ -1773,9 +1773,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (setup eglot
   (:bind "C-c l a" #'eglot-code-actions
-    "C-c l l" (define-prefix-command 'ceamx-lang-specific-prefix)
-    "C-c l o" #'consult-eglot-symbols
-    "C-c l r" #'eglot-rename))
+         "C-c l l" (define-prefix-command 'ceamx-lang-specific-prefix)
+         "C-c l o" #'consult-eglot-symbols
+         "C-c l r" #'eglot-rename))
 
 (setup csv-mode
   (:bind "C-c l l a" #'csv-align-fields
