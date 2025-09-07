@@ -56,5 +56,29 @@ Accepts the same keyword arguments as `cl-pushnew', which see."
   `(unless (cl-member ,item ,place ,@keys)
      (setf ,place (append ,place (list ,item)))))
 
+;;;; Strings
+
+(defun ceamx-char-next (&optional pos)
+  "Next non-space character after POS within a three-character range.
+POS defaults to point.  POS is an integer or a marker as in
+`char-after', which see.
+
+Examples of matching behavior, where each string represents the
+three characters immediately following point:
+
+  \"abc\" => \"a\"
+  \"a c\" => \"a\"
+  \" bc\" => \"b\"
+  \"  c\" => \"c\"
+  \"   \" => \" \"
+  \"a b\" => \"a\"
+"
+  (let* ((position (or pos (point)))
+         (next (char-after position)))
+    (if (or (char-equal ?\s next)
+            (char-equal ?\s (char-after next)))
+        (char-after next)
+      next)))
+
 (provide 'ceamx-lib)
 ;;; ceamx-lib.el ends here

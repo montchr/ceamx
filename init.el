@@ -53,6 +53,11 @@
   "User settings for Ceamx."
   :group 'emacs)
 
+(defcustom ceamx-repl-key "C-:"
+  "Key sequence for mode-specific REPL commands."
+  :type '(key)
+  :group 'ceamx)
+
 (defcustom ceamx-buffer-read-only-dirs-list (list ceamx-packages-dir)
   "List of directories whose files should be opened in read-only buffers."
   :group 'ceamx
@@ -235,11 +240,6 @@
 ;;   :documentation "Add FUNCTION to current hook with optional DEPTH."
 ;;   :ensure '(func nil)
 ;;   :repeatable t)
-
-
-;;;; Paths
-
-
 
 
 ;;;; Libraries
@@ -737,6 +737,11 @@
 
 (setup (:package helpful)
   (require 'helpful))
+
+(setup (:package elisp-demos)
+  (:with-feature helpful
+    (:when-loaded
+      (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))))
 
 (setup (:package devdocs)
   (:with-hook after-init-hook
@@ -1277,6 +1282,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
                       (bound-and-true-p vertico--input)
                       (eq (current-local-map) read-passwd-map))))))
   (setq! corfu-preview-current t)
+  (setq! corfu-popupinfo-delay '(1.0 . 0.5))
   (setq! corfu-cycle t)
   (corfu-popupinfo-mode 1))
 
@@ -1399,6 +1405,25 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (setup jinx
   (:hook-into text-mode)
   (setq! jinx-languages "en"))
+
+;;;;; Markdown
+
+(setup (:package markdown-mode)
+  (setq! markdown-enable-wiki-links t)
+  (setq! markdown-italic-underscore t)
+  (setq! markdown-gfm-additional-languages '("sh"))
+  (setq! markdown-fontify-whole-heading-line t)
+  ;; HACK Due to jrblevin/markdown-mode#578, invoking `imenu' throws a
+  ;;      'wrong-type-argument consp nil' error if you use native-comp.
+  ;;      <https://github.com/jrblevin/markdown-mode/issues/578>
+  (setq! markdown-nested-imenu-heading-index
+         (not (ignore-errors (native-comp-available-p))))
+  (setq! markdown-open-command "xdg-open")
+  (:bind "C-c i l" #'markdown-insert-link
+         "C-c i q" #'markdown-insert-blockquote)
+  (:with-feature org-src
+    (:when-loaded
+      (cl-pushnew '("md" . markdown) org-src-lang-modes))))
 
 
 ;;;; Outline
@@ -1541,6 +1566,30 @@ PROPS is as in `editorconfig-after-apply-functions'."
                              emacs-lisp-package
                              sh-shellcheck)))))
 
+;;;;; Eglot
+
+(require 'ceamx-eglot)
+
+(setup eglot
+  (add-hook 'prog-mode-hook #'eglot-ensure)
+  (:when-loaded
+    (advice-add
+     #'eglot-ensure :around
+     (defun ceamx+eglot-ensure-available-mode-a (fn)
+       "Gate ‘eglot-ensure’ to supported modes only."
+       (when (alist-get major-mode eglot-server-programs nil nil
+                        (lambda (modes key)
+                          (if (listp modes) (member key modes) (eq key modes))))
+         (funcall fn)))))
+  (:with-feature popper
+    (:when-loaded
+      (cl-pushnew "^\\*eglot-help" popper-reference-buffers))))
+
+(setup (:package flycheck-eglot)
+  (:hook-into eglot-managed-mode-hook))
+
+(setup (:package consult-eglot))
+
 ;;;;; All Lisps
 
 (setup emacs
@@ -1554,7 +1603,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (setup elisp-mode
   (:with-mode emacs-lisp-mode
-    (:bind "C-:" #'ielm)))
+    (:bind ceamx-repl-key #'ielm)))
 
 (setup (:package lispy)
   (:bind "`" #'self-insert-command)
@@ -1569,6 +1618,21 @@ PROPS is as in `editorconfig-after-apply-functions'."
       ;; FIXME: somehow this can get added multiple times... but how? a bug?
       (cl-pushnew "\\*lispy-message\\*" popper-reference-buffers))))
 
+(setup (:package eros)
+  (:hook-into emacs-lisp-mode-hook)
+  (:with-mode emacs-lisp-mode
+    (:bind "<remap> <eval-last-sexp>" #'eros-eval-last-sexp))
+  (:with-feature lispy
+    (:hook (defun ceamx+eros+lispy-use-eros-eval-h ()
+             (lispy-define-key lispy-mode-map "e" #'eros-eval-last-sexp)))))
+
+(setup (:package macrostep))
+
+(setup (:package morlock)
+  (:hook-into after-init-hook))
+
+(setup (:package keymap-utils))
+
 ;;;;; `kbd-mode'
 
 (setup (:package (kanata-kbd-mode :url "https://github.com/chmouel/kanata-kbd-mode"))
@@ -1578,6 +1642,155 @@ PROPS is as in `editorconfig-after-apply-functions'."
     (:when-loaded
       (cl-pushnew 'kanata-kbd-mode aggressive-indent-excluded-modes))))
 
+;;;;; JSON
+
+(setup json-ts-mode
+  (:file-match "\\.jsonc\\'"))
+
+;;;;; TOML
+
+(setup reformatter
+  (:when-loaded
+    (reformatter-define toml-taplo-fmt
+      :group 'ceamx
+      :program "taplo"
+      :args (list "format" "--diff"
+                  "--stdin-filepath" (buffer-file-name)
+                  "-"))
+    (:with-mode toml-taplo-fmt-on-save-mode
+      (:hook-into conf-toml-mode-hook toml-ts-mode-hook))))
+
+(setup eglot
+  (:when-loaded
+    (:with-feature ceamx-eglot
+      (cl-pushnew '("toml-taplo" . nil) ceamx-eglot-server-configurations-alist)
+      (cl-pushnew (cons '(conf-toml-mode toml-ts-mode)
+                        (ceamx-eglot-server-contact "toml-taplo"
+                                                    "taplo" "lsp" "stdio"))
+                  eglot-server-programs))))
+
+;;;;; YAML (is a terrible)
+
+(setup (:package yaml-pro)
+  (add-hook 'yaml-ts-mode-hook #'yaml-pro-ts-mode 100))
+
+;;;;; XML
+
+(setup nxml-mode
+  (setq! nxml-slash-auto-complete-flag t)
+  (setq! nxml-auto-insert-xml-declaration-flag t))
+
+;;;;; KDL
+
+(setup (:package (kdl-ts-mode :url "https://github.com/merrickluo/kdl-ts-mode"))
+  (:file-match "\\.kdl\\'"))
+
+;;;;; jq
+
+(setup (:package jq-mode)
+  (:file-match "\\.jq$")
+  (:hook (lambda () (electric-pair-local-mode -1)))
+  (:with-feature json-ts-mode
+    (:bind ceamx-repl-key #'jq-interactively)))
+
+;;;;; JavaScript
+
+(setup typescript-ts-mode
+  (:when-loaded
+    (setq-default js-indent-level 2)))
+
+;;;;; Rust
+
+(setup (:package rust-mode))
+
+(setup (:package rustic))
+
+;;;;; Lua
+
+(setup lua-mode
+  (:when-loaded
+    (setq-default lua-indent-level 4)))
+
+;;;;; Nix
+
+(setup (:package nix-ts-mode)
+  (:hook (defun ceamx+nix-ts-mode-insert-semicolons-h ()
+           (add-hook 'post-self-insert-hook #'ceamx-prog-nix-insert-semicolon-after-sequence nil t)))
+  (:bind ceamx-repl-key #'nix-repl)
+  (:with-feature nix-repl
+    (:bind ceamx-repl-key #'quit-window)))
+
+(setup reformatter
+  (:when-loaded
+    (reformatter-define nixfmt-format
+      :group 'ceamx
+      :program "nixfmt")
+    (:with-mode nixfmt-format-on-save-mode
+      (:hook-into nix-ts-mode-hook))))
+
+;;;;; Web Development
+
+(setup (:package web-mode)
+  ;; Defer to ‘electric-pair-mode’.
+  (setq! web-mode-enable-auto-pairing nil)
+  (when (package-installed-p 'prism)
+    (setq! web-mode-enable-css-colorization nil))
+  (setq! web-mode-enable-block-face t)
+  (setq! web-mode-enable-part-face t)
+  (setq! web-mode-enable-current-element-highlight t))
+
+(setup (:package emmet-mode)
+  (:hook-into css-mode-hook web-mode-hook)
+  (setq! emmet-move-cursor-between-quotes t))
+
+;;;;; PHP
+
+(setup php-ts-mode
+  (:hook #'display-line-numbers-mode))
+
+(setup (:package neon-mode))
+
+(setup (:package flycheck-phpstan)
+  (:with-feature php-ts-mode
+    (:hook (defun ceamx+flycheck-phpstan-load-h ()
+             (require 'flycheck-phpstan)))))
+
+;;;;; Shell Scripts
+
+(setup eglot
+  (:when-loaded
+    (cl-pushnew '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))
+                eglot-server-programs)))
+
+(setup sh-script
+  (:with-mode ( sh-mode bash-ts-mode)
+    (:hook #'flymake-mode)))
+
+(setup (:package fish-mode)
+  (setq! fish-indent-offset 4)
+  (:with-feature eglot
+    (:when-loaded
+      (cl-pushnew '(fish-mode . ("fish-lsp" "start")) eglot-server-programs))))
+
+;;;;; Just
+
+(setup (:package just-ts-mode)
+  (:with-feature ceamx-eglot
+    (:when-loaded
+      (cl-pushnew '("just-just-lsp" . nil)
+                  ceamx-eglot-server-configurations-alist)
+      (:with-feature eglot
+        (:when-loaded
+          (cl-pushnew `(just-ts-mode . ,(ceamx-eglot-server-contact "just-just-lsp"))
+                      eglot-server-programs))))))
+
+;;;;; Dotenv
+
+(setup (:package dotenv-mode))
+
+;;;;; yuck
+
+(setup (:package yuck-mode))
 
 ;;;; Presentation
 
@@ -1742,9 +1955,10 @@ PROPS is as in `editorconfig-after-apply-functions'."
   "c" #'nerd-icons-insert
   "d" #'ceamx-simple/insert-date
   "i" #'yas-insert-snippet
-  "l" nil ; RESERVED: insert link (major-mode specific)
+  "l" nil                               ; RESERVED: insert link
   "L" #'spdx-insert-spdx
   "n" #'org-node-insert-link
+  "q" nil                               ; RESERVED: insert quote
   "u" #'uuidgen-4)
 
 (setup org-web-tools
