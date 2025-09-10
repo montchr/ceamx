@@ -3,7 +3,7 @@
 ;; Copyright (C) 2025  Chris Montgomery
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: 
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -24,7 +24,26 @@
 
 ;;; Code:
 
+(defun ceamx/embark-export-write ()
+  "Export the current `vertico' candidates to a writable buffer.
+Supported export flows include the following:
 
+`consult-grep'      => `wgrep'
+files               => `wdired'
+`consult-location'  => `occur-edit'"
+  (interactive)
+  (require 'embark)
+  (require 'wgrep)
+  (let* ((edit-command
+          (pcase-let ((`(,type . ,candidates)
+                       (run-hook-with-args-until-success 'embark-candidate-collectors)))
+            (pcase type
+              ('consult-grep #'wgrep-change-to-wgrep-mode)
+              ('file #'wdired-change-to-wdired-mode)
+              ('consult-location #'occur-edit-mode)
+              (x (user-error "Embark category %S doesn't support writable export" x)))))
+         (embark-after-export-hook `(,@embark-after-export-hook ,edit-command)))
+    (embark-export)))
 
 (provide 'ceamx-completion)
 ;;; ceamx-completion.el ends here

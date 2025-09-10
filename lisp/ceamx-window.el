@@ -1,9 +1,11 @@
 ;;; ceamx-window.el --- Window management support library  -*- lexical-binding: t;  -*-
 
 ;; Copyright (C) 2022-2025  Chris Montgomery <chmont@protonmail.com>
+;; Copyright (C) 2020-2024  Protesilaos Stavrou
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
 ;;         Karthik Chikmagalur <karthik.chikmagalur@gmail.com>
+;;         Protesilaos Stavrou <info@protesilaos.com>
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -34,6 +36,41 @@
 The buffer will be created if it does not exist."
   :group 'ceamx
   :type '(string))
+
+;;
+;;;; Introspection functions
+
+;; via prot-emacs
+;;;###autoload
+(defun ceamx-window-bounds ()
+  "Return start and end points in the window as a cons cell."
+  (cons (window-start) (window-end)))
+
+;; via prot-emacs
+;;;###autoload
+(defun ceamx-window-small-p ()
+  "Return non-nil if window is small.
+Check if the `window-width' or `window-height' is less than
+`split-width-threshold' and `split-height-threshold', respectively."
+  (or (and (numberp split-width-threshold)
+           (< (window-total-width) split-width-threshold))
+      (and (numberp split-height-threshold)
+           (> (window-total-height) split-height-threshold))))
+
+;; via prot-emacs
+;;;###autoload
+(defun ceamx-window-narrow-p ()
+  "Return non-nil if window is narrow.
+Check if the `window-width' is less than `split-width-threshold'."
+  (and (numberp split-width-threshold)
+       (< (window-total-width) split-width-threshold)))
+
+;;;###autoload
+(defun ceamx-window-three-or-more-windows-p (&optional frame)
+  "Return non-nil if three or more windows occupy FRAME.
+If FRAME is non-nil, inspect the current frame."
+  (>= (length (window-list frame :no-minibuffer)) 3))
+
 
 ;;
 ;;;; `display-buffer' functions

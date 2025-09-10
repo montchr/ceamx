@@ -988,7 +988,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setq! backward-delete-char-untabify-method 'hungry)
   (setq! cycle-spacing-actions '(delete-all-space just-one-space restore))
   (setq! sentence-end-double-space t)
-  (setq! kill-whole-line t)
+  (setq! kill-whole-line nil)
   (setq! whitespace-line-column 100)
   (setq! whitespace-style
          '( face tabs spaces trailing-whitespace space-before-tab lines-tail
@@ -1224,6 +1224,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 ;;;; Completion
 
+(require 'ceamx-completion)
+
 (setup (:package orderless)
   (require 'orderless)
   (setq! completion-styles (append '(orderless) completion-styles))
@@ -1409,6 +1411,12 @@ PROPS is as in `editorconfig-after-apply-functions'."
      (window-parameters (mode-line-format . none)))
    display-buffer-alist))
 
+(setup embark
+  (:with-feature wgrep
+    (:with-feature minibuffer
+      (:with-map minibuffer-local-map
+        (:bind "C-c C-e" #'ceamx/embark-export-write)))))
+
 
 ;;;; Files & Directories
 
@@ -1442,7 +1450,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (setup emacs
   (setq! remote-file-name-inhibit-auto-save t
-         remote-file-name-inhibit-auto-save-visited t))
+         remote-file-name-inhibit-auto-save-visited t)
+  ;; This makes everything take forever.
+  (setq! remote-file-name-inhibit-delete-by-moving-to-trash t))
 
 
 ;;;; Snippets
@@ -1491,8 +1501,10 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 ;; Install with system package manager due to dependencies.
 (setup jinx
-  (:hook-into text-mode)
-  (setq! jinx-languages "en"))
+  (:with-mode global-jinx-mode
+    (:hook-into after-init-hook))
+  (setq! jinx-languages "en")
+  (setq! global-jinx-modes `(text-mode (not ,@ceamx-text-mode-derived-prog-modes))))
 
 ;;;;; Markdown
 
@@ -2723,6 +2735,12 @@ PROPS is as in `editorconfig-after-apply-functions'."
          "C-c z t" #'treesit-fold-toggle))
 
 ;;;;; [C-x]
+
+(require 'ceamx-simple)
+
+(define-keymap :keymap global-map
+  "C-x k" #'ceamx/kill-current-buffer
+  "C-x K" #'kill-buffer)
 
 ;;;;; [C-x w] :: Window Prefix
 

@@ -19,25 +19,25 @@
                 elisp-demos embark-consult emmet-mode envrc eros
                 exec-path-from-shell expreg fish-mode flycheck-eglot
                 flycheck-phpstan fontaine free-keys git-commit-ts-mode
-                git-modes git-timemachine gnu-elpa-keyring-update
-                golden-ratio gptel haskell-mode haskell-ts-mode
+                git-modes git-timemachine gnu-elpa-keyring-update gnugo
+                go golden-ratio gptel haskell-mode haskell-ts-mode
                 help-find helpful hl-todo htmlize ialign indent-bars
                 jinx jq-mode just-ts-mode kanata-kbd-mode kdl-ts-mode
                 keycast keymap-utils kind-icon ligature lin lispy
-                macrostep magit marginalia markdown-ts-mode minions
-                mlscroll modus-themes morlock mugur mwim neon-mode
-                nerd-icons-completion nerd-icons-dired nix-ts-mode
-                no-littering notmuch-indicator olivetti orderless
-                org-appear org-download org-modern org-node org-remark
-                org-sidebar org-web-tools outli ox-gfm page-break-lines
-                pandoc-mode pdf-tools popper prism pulsar puni
-                rainbow-mode reformatter rustic savefold setup
-                shift-number show-font smart-newline spacious-padding
-                spdx standard-themes string-inflection substitute
-                svg-tag-mode tempel tmr transpose-frame treesit-auto
-                treesit-fold typo undo-fu-session uuidgen vc-jj verb
-                vertico vundo web-mode wgrep yaml-pro yasnippet
-                yuck-mode))
+                macrostep magit marginalia markdown-ts-mode mines
+                minions mlscroll modus-themes morlock mugur mwim
+                neon-mode nerd-icons-completion nerd-icons-dired
+                nix-ts-mode no-littering notmuch-indicator olivetti
+                orderless org-appear org-download org-modern org-node
+                org-remark org-sidebar org-web-tools outli ox-gfm
+                page-break-lines pandoc-mode pdf-tools popper prism
+                pulsar puni rainbow-mode reformatter rustic savefold
+                setup shift-number show-font smart-newline
+                spacious-padding spdx standard-themes string-inflection
+                substitute svg-tag-mode tempel tmr transpose-frame
+                treesit-auto treesit-fold typo undo-fu-session uuidgen
+                vc-jj verb vertico vundo web-mode wgrep yaml-pro
+                yasnippet yuck-mode))
  '(package-vc-selected-packages
    '((auto-tangle-mode :url
                        "https://github.com/progfolio/auto-tangle-mode.el")))

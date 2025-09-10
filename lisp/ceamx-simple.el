@@ -1,9 +1,11 @@
 ;;; ceamx-simple.el --- ceamx :: lib :: simple       -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2022-2025  Chris Montgomery
+;; Copyright (C) 2020-2024  Protesilaos Stavrou
 
 ;; Author: Chris Montgomery <chmont@protonmail.com>
-;; Keywords: 
+;;         Protesilaos Stavrou <info@protesilaos.com>
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -20,7 +22,7 @@
 
 ;;; Commentary:
 
-;; 
+;; Simple functions and commands for editing and the like.
 
 ;;; Code:
 
@@ -35,6 +37,22 @@
   "Scroll up one line."
   (interactive)
   (scroll-up 1))
+
+;; via prot-emacs
+;;;###autoload
+(defun ceamx/kill-current-buffer (&optional arg)
+  "Kill current buffer.
+With optional prefix ARG (\\[universal-argument]) delete the
+buffer's window as well.  Kill the window regardless of ARG if it
+satisfies `ceamx-window-small-p' and it has no previous
+buffers in its history."
+  (interactive "P")
+  (let ((kill-buffer-query-functions nil))
+    (if (or (and (ceamx-window-small-p)
+                 (null (window-prev-buffers)))
+            (and arg (not (one-window-p))))
+        (kill-buffer-and-window)
+      (kill-buffer))))
 
 (provide 'ceamx-simple)
 ;;; ceamx-simple.el ends here
