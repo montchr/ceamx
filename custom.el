@@ -6,7 +6,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-unlispify-menu-entries nil)
  '(ignored-local-variable-values
-   '((apheleia-formatter . alejandra)
+   '((apheleia-inhibit . t) (apheleia-formatter . alejandra)
      (org-refile-targets (nil :maxlevel . 6))
      (eval load-file "./ceamx-dev-loader.el")))
  '(package-selected-packages
@@ -22,9 +22,9 @@
                 git-modes git-timemachine gnu-elpa-keyring-update gnugo
                 go golden-ratio gptel haskell-mode haskell-ts-mode
                 help-find helpful hl-todo htmlize ialign indent-bars
-                jinx jq-mode just-ts-mode kanata-kbd-mode kdl-ts-mode
-                keycast keymap-utils kind-icon ligature lin lispy
-                macrostep magit marginalia markdown-ts-mode mines
+                jinx jq-mode just-ts-mode kanata-kbd-mode kbd-mode
+                kdl-ts-mode keycast keymap-utils kind-icon ligature lin
+                lispy macrostep magit marginalia markdown-ts-mode mines
                 minions mlscroll modus-themes morlock mugur mwim
                 neon-mode nerd-icons-completion nerd-icons-dired
                 nix-ts-mode no-littering notmuch-indicator olivetti
@@ -39,7 +39,8 @@
                 vc-jj verb vertico vundo web-mode wgrep yaml-pro
                 yasnippet yuck-mode))
  '(package-vc-selected-packages
-   '((auto-tangle-mode :url
+   '((kbd-mode :url "https://github.com/kmonad/kbd-mode")
+     (auto-tangle-mode :url
                        "https://github.com/progfolio/auto-tangle-mode.el")))
  '(safe-local-variable-values
    '((jq-indent-offset . 2) (just-ts-indent-offset . 2)

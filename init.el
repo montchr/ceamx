@@ -1957,12 +1957,18 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 ;;;;; `kbd-mode'
 
-(setup (:package (kanata-kbd-mode :url "https://github.com/chmouel/kanata-kbd-mode"))
-  ;; TODO: hopefully this is not necessary
-  ;; (:match-file "\\.kbd\\'")
-  (:with-feature aggressive-indent
-    (:when-loaded
-      (cl-pushnew 'kanata-kbd-mode aggressive-indent-excluded-modes))))
+;; This is for KMonad, not Kanata, but I've used it before and it's
+;; close enough.
+(setup (:package (kbd-mode :url "https://github.com/kmonad/kbd-mode")))
+
+;; FIXME: unfortunately not working for me: https://github.com/chmouel/kanata-kbd-mode/issues/4
+;;        other users seem to have unrelated issues with indentation as well.
+;; (setup (:package (kanata-kbd-mode :url "https://github.com/chmouel/kanata-kbd-mode"))
+;;   ;; TODO: hopefully this is not necessary
+;;   ;; (:match-file "\\.kbd\\'")
+;;   (:with-feature aggressive-indent
+;;     (:when-loaded
+;;       (cl-pushnew 'kanata-kbd-mode aggressive-indent-excluded-modes))))
 
 ;;;;; JSON
 
@@ -2460,7 +2466,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
   "C-h B" #'describe-bindings
   "C-h c" #'helpful-callable
   "C-h C" #'helpful-command
-  ;; "C-h D" #'devdocs-lookup
+  "C-h D" #'devdocs-lookup
   "C-h f" #'helpful-function
   "C-h F" #'describe-face
   ;; FIXME: conflict
