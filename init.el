@@ -1389,6 +1389,11 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setq! kind-icon-use-icons (display-graphic-p))
   (setq! kind-icon-blend-background t))
 
+(setup (:package cape)
+  ;; Order matters.
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block))
 
 ;;;;; Embark
 
@@ -1525,6 +1530,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
     (:when-loaded
       (cl-pushnew '("md" . markdown) org-src-lang-modes))))
 
+;; This is an optional dependency for editing source code blocks.
+(setup (:package edit-indirect))
 
 ;;;; Outline
 
@@ -1690,13 +1697,14 @@ PROPS is as in `editorconfig-after-apply-functions'."
          org-modern-keyword t
          org-modern-priority t
          org-modern-radio-target nil
-         org-modern-star 'replace
+         ;; org-modern-star 'replace
+         org-modern-star nil
          org-modern-todo t
          org-modern-table nil)
   ;; (setq! org-modern-replace-stars "⦿")
   ;; (setq! org-modern-replace-stars "│")
-  (setq! org-modern-replace-stars "├")
-  (setq! org-modern-hide-stars "│")
+  ;; (setq! org-modern-replace-stars "├")
+  ;; (setq! org-modern-hide-stars "│")
   ;; (setq! org-modern-hide-stars "⎸")
   ;; (setq! org-modern-hide-stars
   ;;        (propertize "┄" 'face 'modus-themes-fg-cyan-faint))
@@ -2034,9 +2042,17 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 ;;;;; Rust
 
-(setup (:package rust-mode))
+(setup (:package rust-mode)
+  (setq! rust-mode-treesitter-derive t))
 
-(setup (:package rustic))
+(setup (:package rustic)
+  (:with-feature rust-mode
+    (:when-loaded
+      (require 'rustic)))
+  (:with-feature eglot
+    (setq! rustic-lsp-client 'eglot))
+  (:hook (defun ceamx+rustic-disable-flymake-h ()
+           (flymake-mode -1))))
 
 ;;;;; Lua
 
@@ -2125,10 +2141,32 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (setup (:package dotenv-mode))
 
+;;;;; Systemd
+
+;; Major mode for editing systemd unit files.
+(setup (:package systemd))
+
 ;;;;; yuck
 
 (setup (:package yuck-mode))
 
+;;;;; Polymode
+
+;; (setup (:package polymode)
+;;   (:with-feature nix-ts-mode
+;;     (define-hostmode poly-nix-hostmode
+;;       :mode 'nix-ts-mode)
+;;     (define-auto-innermode poly-nix-dynamic-innermode
+;;       :head-matcher "[#] [*] [[:alpha:]]+ [*] [#]$"
+;;       :tail-matcher "^[ \t]+''"
+;;       :mode-matcher (cons "[#] [*] \\([[:alpha:]]+\\) [*] [#]" 1)
+;;       :head-mode 'host
+;;       :tail-mode 'host)
+;;     (define-polymode poly-nix-mode
+;;       :hostmode 'poly-nix-hostmode
+;;       :innermodes '(poly-nix-dynamic-innermode))
+;;     (:with-mode poly-nix-mode
+;;       (:file-match "\\.nix"))))
 
 ;;;; Notes
 
@@ -2273,6 +2311,9 @@ PROPS is as in `editorconfig-after-apply-functions'."
 (setup message
   (:with-hook message-setup-hook
     (:hook #'message-sort-headers))
+  (setq! mail-specify-envelope-from t
+         message-sendmail-envelope-from 'header
+         mail-envelope-from 'header)
   (setq! mail-user-agent 'message-user-agent
          message-mail-user-agent t)
   (setq! mail-header-separator "-- text follows this line --")
@@ -2281,10 +2322,10 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setq! message-signature "Chris Montgomery"
          mail-signature message-signature)
   (setq! message-citation-line-function #'message-insert-formatted-citation-line)
-  (setq! message-citation-line-format (concat "> From: %f\n"
-                                              "> Date: %a, %e %b %Y %T %z\n"
-                                              ">")
-         message-ignored-cited-headers "")
+  ;; (setq! message-citation-line-format (concat "> From: %f\n"
+  ;;                                             "> Date: %a, %e %b %Y %T %z\n"
+  ;;                                             ">"))
+  (setq! message-ignored-cited-headers "")
   (setq! message-confirm-send t)
   (setq! message-kill-buffer-on-exit t)
   ;; Always reply-all.
@@ -2304,8 +2345,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (setq! notmuch-crypto-process-mime t
          notmuch-crypto-get-keys-asynchronously t)
   (:with-mode notmuch-show-mode
-    (:bind "r" #'notmuch-search-reply-to-thread
-           "R" #'notmuch-search-reply-to-thread-sender)))
+    (:bind "r" #'notmuch-show-reply
+           "R" #'notmuch-show-reply-sender)))
 
 ;;;;; Mail: Attachments
 
@@ -2424,7 +2465,13 @@ PROPS is as in `editorconfig-after-apply-functions'."
   "C-e" #'mwim-end
   "C-h" help-map
 
-  "S-RET" #'crux-smart-open-line)
+  "S-RET" #'crux-smart-open-line
+
+  ;; For some reason, `toggle-frame-fullscreen' does not actually
+  ;; *toggle*, and requires also invoking `toggle-frame-maximized' to
+  ;; undo its effects.  This is very confusing, and I would rather let
+  ;; the window manager handle things.
+  "<f11>" nil)
 
 ;;;;; [C-*]
 
@@ -2638,6 +2685,12 @@ PROPS is as in `editorconfig-after-apply-functions'."
   "s" #'scratch-buffer
   "t" #'eat
   "W" #'ceamx/eww-wiki)
+
+;;;;; [C-c p] :: COMPLETION
+
+(setup cape
+  (require 'cape)
+  (keymap-global-set "C-c p" cape-prefix-map))
 
 ;;;;; [C-c q] :: SESSION
 
