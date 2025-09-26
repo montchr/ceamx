@@ -91,10 +91,14 @@ across systems.")
   (expand-file-name "Documents/notes/biblio/" ceamx-home-dir)
   "The user directory for bibliographies.")
 
+(defconst ceamx-diary-dir
+  (expand-file-name "diary" ceamx-notes-dir)
+  "The user directory for diary entries.")
+
 (defconst ceamx-projects-dir
   (file-name-as-directory
-    (or (getenv "XDG_PROJECTS_DIR")
-        (concat ceamx-home-dir "Projects")))
+   (or (getenv "XDG_PROJECTS_DIR")
+       (concat ceamx-home-dir "Projects")))
   "The root directory for projects.")
 
 

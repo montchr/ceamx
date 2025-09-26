@@ -847,6 +847,8 @@
 
 (setup epa
   (require 'epa)
+  (setq! epa-file-inhibit-auto-save t)
+  (setq! epa-file-select-keys nil)
   ;; Enable automatic encryption on GPG files.
   (epa-file-enable))
 
@@ -1173,12 +1175,17 @@ PROPS is as in `editorconfig-after-apply-functions'."
          "-AGFhlv --group-directories-first --time-style=long-iso")
   (setq! dired-auto-revert-buffer #'dired-directory-changed-p)
   (setq! dired-dwim-target t)
-  (setq!
-   dired-create-destination-dirs 'ask
-   dired-create-destination-dirs-on-trailing-dirsep t
-   dired-recursive-copies 'always
-   dired-recursive-deletes 'always)
-  (setq! dired-backup-overwrite 'always)
+  (setq! dired-create-destination-dirs 'ask
+         dired-create-destination-dirs-on-trailing-dirsep t
+         dired-recursive-copies 'always
+         dired-recursive-deletes 'always)
+  (setq! dired-clean-up-buffers-too t
+         dired-clean-confirm-killing-deleted-buffers nil)
+  ;; BUG: setting this to `always' results in an error in dired-aux... i
+  ;; don't feel like figuring out how to file a bug report "properly"
+  ;; (though i have not encountered this issue until now, so i wonder
+  ;; how i got into this state to begin with...)
+  (setq! dired-backup-overwrite nil)
   (:with-feature mouse
     (setq! dired-make-directory-clickable t)
     (setq! dired-mouse-drag-files t))
@@ -1201,7 +1208,8 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 (setup (:package dired-preview)
   (:with-mode dired-preview-global-mode
-    (:hook-into after-init-hook)))
+    (:hook-into after-init-hook))
+  (setq! dired-preview-kill-buffers-method '(buffer-number . 5)))
 
 (setup (:package dired-subtree)
   (:with-feature dired
@@ -2186,6 +2194,54 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (org-node-backlink-mode 1)
   (org-node-cache-mode 1))
 
+;;;;; Notes: Denote
+
+(setup (:package denote)
+  (:with-mode text-mode
+    (:hook #'denote-fontify-links-mode-maybe))
+  (:with-mode dired-mode
+    (:hook #'denote-dired-mode))
+
+  (setq! denote-directory ceamx-note-default-dir)
+  (setq! denote-excluded-directories-regexp "\\.archive")
+  (setq! denote-save-buffers nil)
+  (setq! denote-excluded-keywords-regexp nil)
+  (setq! denote-known-keywords
+         '("emacs"
+           "dev"
+           "philosophy"
+           "correspondence"
+           "language"))
+  (setq! denote-infer-keywords t
+         denote-sort-keywords t)
+  (setq! denote-prompts '(title keywords))
+  (setq! denote-org-capture-specifiers "%l\n%i\n%?")
+  (setq! denote-rename-confirmations '(modify-file-name
+                                       rewrite-front-matter))
+  (setq! denote-date-prompt-use-org-read-date t)
+
+  (denote-rename-buffer-mode 1))
+
+(setup (:package denote-journal)
+  (:with-feature calendar
+    ;; HACK: `denote-journal-calendar-mode' is not autoloaded
+    (require 'denote-journal)
+    (:hook #'denote-journal-calendar-mode))
+  (setq! denote-journal-directory (expand-file-name "journal" denote-directory))
+  (unless (file-exists-p denote-journal-directory)
+    (make-directory denote-journal-directory))
+  (setq! denote-journal-keyword "journal")
+  (setq! denote-journal-title-format 'day-date-month-year))
+
+(setup (:package denote-silo)
+  (:with-feature denote
+    (:when-loaded
+      (require 'denote-silo)))
+  (setq! denote-silo-directories
+         (list denote-directory
+               ceamx-diary-dir
+               (expand-file-name "work" ceamx-notes-dir))))
+
 ;;;; Presentation
 
 (setup (:package keycast))
@@ -2444,15 +2500,17 @@ PROPS is as in `editorconfig-after-apply-functions'."
   (require 'org-capture)
   (setq! org-capture-templates
          (doct
-          `(("Inbox item" :keys "c"
+          `(("Inbox item" :keys "i"
              :file ceamx-default-todo-file
              :headline "Inbox"
              :template ("* TODO %?"
                         "%i %a")
              :icon ("checklist" :set "octicon" :color "green"))
-            ;; ("Journal entry" :keys "j"
-            ;;  :file denote-)
-            ))))
+            ("Journal entry" :keys "j"
+             :file denote-journal-path-to-new-or-existing-entry
+             :template ("* %U %?" "%i" "%a")
+             :kill-buffer t
+             :empty-lines 1)))))
 
 
 ;;;; Keybindings
@@ -2542,10 +2600,11 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 ;;;;; [C-c] :: User Prefix
 
-(define-keymap :keymap (current-global-map)
+(define-keymap :keymap global-map
   "C-c a" #'org-agenda
   "C-c b" (cons "[ BUFFER    ]" #'ceamx-buffer-prefix)
-  "C-c c" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
+  "C-c c" #'org-capture
+  "C-c C" (cons "[ CAPTURE   ]" #'ceamx-capture-prefix)
   ;; "C-c d"
   "C-c e" (cons "[ EDIT      ]" #'ceamx-structural-editing-prefix)
   "C-c f" (cons "[ FILE      ]" #'ceamx-file-prefix)
@@ -2666,8 +2725,29 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;;;;; [C-c n] :: NOTE
 
 (define-keymap :keymap ceamx-note-prefix
+  "n" #'denote
+
+  "b" #'denote-backlinks
+  "d" #'denote-dired
+  "g" #'denote-grep
+  "l" #'denote-link
+  "L" #'denote-add-links
+  ;; "j" (cons "[ JOURNAL ]" #'ceamx-journal-prefix)
+  ;; "j j" #'denote-journal-new-or-existing-entry
+  "j" #'denote-journal-new-or-existing-entry
   "o" nil                               ; RESERVED: for `org-node'
-  )
+  "q" (cons "[ QUERY   ]" (define-prefix-command 'ceamx-note-query-prefix))
+  "q c" #'denote-query-contents-link
+  "q f" #'denote-query-filenames-link
+  "r" #'denote-rename-file
+  "R" #'denote-rename-file-using-front-matter)
+
+(setup denote
+  (:with-feature dired
+    (:bind "C-c C-d C-i" #'denote-dired-link-marked-notes
+           "C-c C-d C-r" #'denote-dired-rename-files
+           "C-c C-d C-R" #'denote-dired-rename-marked-files-using-front-matter
+           "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords)))
 
 (setup org-node
   (:when-loaded
@@ -2933,7 +3013,7 @@ PROPS is as in `editorconfig-after-apply-functions'."
 
 ;;;; Finalize
 
-(load-file (locate-user-emacs-file "custom.el"))
+(load-file custom-file)
 
 ;;;;; Start the daemon
 
