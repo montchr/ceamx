@@ -2474,6 +2474,14 @@ PROPS is as in `editorconfig-after-apply-functions'."
 ;; Keybinding introspection.
 (setup (:package help-find))
 
+;;;; Apps
+
+;;;;; Mastodon
+
+(setup (:package mastodon)
+  (setq! mastodon-instance-url "https://assemblag.es"
+         mastodon-active-user "montchr"))
+
 ;;;; Export
 
 (setup (:package pandoc-mode)

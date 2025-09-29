@@ -27,18 +27,18 @@
                 hledger-mode htmlize ialign indent-bars jinx jq-mode
                 just-ts-mode kanata-kbd-mode kbd-mode kdl-ts-mode
                 keycast keymap-utils kind-icon ledger-mode ligature lin
-                lispy macrostep magit marginalia markdown-ts-mode mines
-                minions mlscroll modus-themes morlock mugur mwim
-                neon-mode nerd-icons-completion nerd-icons-dired
-                nix-ts-mode no-littering notmuch-indicator olivetti
-                orderless org-appear org-download org-modern org-node
-                org-remark org-sidebar org-web-tools outli ox-gfm
-                page-break-lines pandoc-mode pdf-tools polymode popper
-                prism pulsar puni rainbow-mode reformatter rustic
-                savefold setup shift-number show-font smart-newline
-                spacious-padding spdx standard-themes string-inflection
-                substitute svg-tag-mode systemd tempel tmr
-                transpose-frame treesit-auto treesit-fold typo
+                lispy macrostep magit marginalia markdown-ts-mode
+                mastodon mines minions mlscroll modus-themes morlock
+                mugur mwim neon-mode nerd-icons-completion
+                nerd-icons-dired nix-ts-mode no-littering
+                notmuch-indicator olivetti orderless org-appear
+                org-download org-modern org-node org-remark org-sidebar
+                org-web-tools outli ox-gfm page-break-lines pandoc-mode
+                pdf-tools polymode popper prism pulsar puni rainbow-mode
+                reformatter rustic savefold setup shift-number show-font
+                smart-newline spacious-padding spdx standard-themes
+                string-inflection substitute svg-tag-mode systemd tempel
+                tmr transpose-frame treesit-auto treesit-fold typo
                 undo-fu-session uuidgen vc-jj verb vertico vundo
                 web-mode wgrep yaml-pro yasnippet yuck-mode))
  '(package-vc-selected-packages
