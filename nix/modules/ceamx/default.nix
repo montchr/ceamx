@@ -31,6 +31,7 @@ in
           [
             pkgs.bash-language-server
             pkgs.editorconfig-core-c
+            pkgs.systemd-lsp
             pkgs.taplo-lsp # toml language server
           ]
           ++ (with pkgs.nodePackages; [
